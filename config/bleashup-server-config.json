@@ -1,0 +1,14 @@
+{
+    "bleashup_http": {
+        "host": "localhost",
+        "port": "30000"
+    },
+    "chat": {
+        "host": "localhost",
+        "port": "5222"
+    },
+    "bleashup-tcp": {
+        "host": "localhost",
+        "port": "5555"
+    }
+}
