@@ -15,13 +15,11 @@ import EventView from "./events/eventView";
 import Status from "./status/status";
 import VariableView from "./variableview/variableView";
 
-
 class Home extends Component {
   render() {
     return (
       <Container>
         <Header hasTabs>
-
           <Left>
             <Button
               transparent
@@ -32,13 +30,12 @@ class Home extends Component {
           </Left>
 
           <Body>
-            <Title>BleashUp</Title>
+            <Title>Bleashup</Title>
           </Body>
           <Right />
         </Header>
 
         <Tabs>
-
           <Tab heading="Events">
             <EventView />
           </Tab>
@@ -50,7 +47,6 @@ class Home extends Component {
           <Tab heading="VariableName">
             <VariableView />
           </Tab>
-
         </Tabs>
       </Container>
     );
