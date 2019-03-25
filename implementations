@@ -1,0 +1,7 @@
+## this is just a file for me to be able to remember the features i've choosen to implement and where to get started with them
+
+For reading videos on the bleashup app the react-native video player https://github.com/abbasfreestyle/react-native-af-video-player can be handy
+
+picture in picture video playing mode can be implemented in android using this guid : https://developer.android.com/guide/topics/ui/picture-in-picture#java
+
+to play add the feature to play youtube videos from within the app on sharing this can be handy https://github.com/inProgress-team/react-native-youtube
