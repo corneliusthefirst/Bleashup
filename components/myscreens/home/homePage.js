@@ -32,7 +32,7 @@ class Home extends Component {
           </Left>
 
           <Body>
-            <Title>BleashUp</Title>
+            <Title>Bleashup</Title>
           </Body>
           <Right />
         </Header>
