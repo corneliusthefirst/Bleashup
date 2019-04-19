@@ -1,14 +1,18 @@
 import React, { Component } from "react";
 import { Content, Card, CardItem, Text, Body } from "native-base";
+import request from "../../../services/tcp-request";
 
 export default class EventView extends Component {
+  method() {
+    return request();
+  }
   render() {
     return (
       <Content padder>
         <Card>
           <CardItem>
             <Body>
-              <Text>NativeBase is open source and free.</Text>
+              <Text>{this.method()}</Text>
             </Body>
           </CardItem>
           <CardItem>

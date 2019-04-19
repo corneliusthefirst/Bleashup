@@ -7,7 +7,7 @@
         "host": "localhost",
         "port": "5222"
     },
-    "bleashup-tcp": {
+    "bleashup_tcp": {
         "host": "localhost",
         "port": "5555"
     }

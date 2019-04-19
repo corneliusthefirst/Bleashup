@@ -28,22 +28,18 @@ class Home extends Component {
               <Icon name="menu" />
             </Button>
           </Left>
-
           <Body>
-            <Title>Bleashup</Title>
+            <Title> Bleashup </Title>
           </Body>
           <Right />
         </Header>
-
         <Tabs>
           <Tab heading="Events">
             <EventView />
           </Tab>
-
           <Tab heading="status">
             <Status />
           </Tab>
-
           <Tab heading="VariableName">
             <VariableView />
           </Tab>

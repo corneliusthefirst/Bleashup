@@ -7,9 +7,7 @@ export default class EventView extends Component {
       <Content padder>
         <Card>
           <CardItem>
-            <Body>
-              <Text>NativeBase is open source and free.</Text>
-            </Body>
+            <Body />
           </CardItem>
           <CardItem>
             <Body>
