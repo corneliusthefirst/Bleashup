@@ -24,5 +24,10 @@ export default {
     color: "#D8D8D8",
     bottom: 6,
     marginTop: 5
-  }
+  },
+ Header : {
+  color: "lightgreen",
+  bottom: 6,
+  marginTop: 5
+ }
 };
