@@ -29,8 +29,9 @@ function appendChild(xmlDoc, parentElement, name, text) {
   xmlDoc.documentElement.setAttribute("password",password)
   xmlDoc.documentElement.setAttribute("phone",phone)
   appendChild(xmlDoc, rootElement, 'data',Data);
-  appendChild(xmlDoc, rootElement, 'refference', refference);
+  appendChild(xmlDoc, rootElement, 'reference', refference);
   appendChild(xmlDoc, rootElement, 'action',action)
+  appendChild(xmlDoc, rootElement, 'host',"192.168.43.192")
   const xmlSerializer = new XMLSerializer();
   const xmlOutput = xmlSerializer.serializeToString(xmlDoc);
   return xmlOutput;

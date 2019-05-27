@@ -1,7 +1,11 @@
 import React from "react";
 import { Root } from "native-base";
 // import { StackNavigator, DrawerNavigator } from "react-navigation";
-import { createDrawerNavigator, createStackNavigator, createAppContainer } from "react-navigation";
+import {
+  createDrawerNavigator,
+  createStackNavigator,
+  createAppContainer
+} from "react-navigation";
 /*
 import Header from "./screens/Header/";
 import Header1 from "./screens/Header/1";
@@ -154,10 +158,9 @@ const Drawer = createDrawerNavigator(
     MyReminds: { screen: MyReminds },
     Contacts: { screen: Contacts },
     Notifications: { screen: Notifications },
-    Help: { screen: Help },
+    Help: { screen: Help }
 
-
-  /*Header: { screen: Header },
+    /*Header: { screen: Header },
     Footer: { screen: Footer },
     NHBadge: { screen: NHBadge },
     NHButton: { screen: NHButton },
@@ -194,7 +197,7 @@ const Drawer = createDrawerNavigator(
 
 const AppNavigator = createStackNavigator(
   {
-    Drawer: { screen: Drawer },
+    Drawer: { screen: Drawer }
 
     /*Header1: { screen: Header1 },
     Header2: { screen: Header2 },
@@ -318,7 +321,8 @@ const AppNavigator = createStackNavigator(
     AccordionIconStyle: { screen: AccordionIconStyle },
     AccordionHeaderContentStyle: { screen: AccordionHeaderContentStyle },
     AccordionCustomHeaderContent: { screen: AccordionCustomHeaderContent }
-  */},
+  */
+  },
   {
     initialRouteName: "Drawer",
     headerMode: "none"
@@ -327,42 +331,8 @@ const AppNavigator = createStackNavigator(
 
 const AppContainer = createAppContainer(AppNavigator);
 
-export default () =>
+export default () => (
   <Root>
     <AppContainer />
-  </Root>;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  </Root>
+);
