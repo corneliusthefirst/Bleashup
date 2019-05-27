@@ -44,12 +44,28 @@ class AccordionCustomHeaderContent extends Component {
           backgroundColor: "#A9DAD6"
         }}
       >
-        <Text style={{ fontWeight: "600" }}>
-          {" "}{item.title}
+        <Text
+          style={{
+            fontWeight: "600"
+          }}
+        >
+          {item.title}
         </Text>
-        {expanded
-          ? <Icon style={{ fontSize: 18 }} name="remove-circle" />
-          : <Icon style={{ fontSize: 18 }} name="add-circle" />}
+        {expanded ? (
+          <Icon
+            style={{
+              fontSize: 18
+            }}
+            name="remove-circle"
+          />
+        ) : (
+          <Icon
+            style={{
+              fontSize: 18
+            }}
+            name="add-circle"
+          />
+        )}
       </View>
     );
   }
@@ -76,11 +92,16 @@ class AccordionCustomHeaderContent extends Component {
             </Button>
           </Left>
           <Body>
-            <Title>Custom Header Content</Title>
+            <Title> Custom Header Content </Title>
           </Body>
           <Right />
         </Header>
-        <Content padder style={{ backgroundColor: "white" }}>
+        <Content
+          padder
+          style={{
+            backgroundColor: "white"
+          }}
+        >
           <Accordion
             dataArray={dataArray}
             animation={true}

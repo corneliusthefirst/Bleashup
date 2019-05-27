@@ -42,7 +42,7 @@ class BasicFab extends Component {
             active={this.state.active}
             direction="up"
             containerStyle={{}}
-            style={{ backgroundColor: "#5067FF" }}
+            style={{ backgroundColor: "#FFF" }}
             position="bottomRight"
             onPress={() => this.setState({ active: !this.state.active })}
           >
