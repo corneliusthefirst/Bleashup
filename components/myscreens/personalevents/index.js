@@ -25,42 +25,10 @@ export default class PersonalEventView extends Component {
             backgroundColor: "transparent"
           }}
         >
-          <Tab
-            heading="Current Events"
-            tabStyle={{
-              borderRadius: 0,
-              backgroundColor: "#1FABAB"
-            }}
-            textStyle={{
-              color: "#FEFFDE"
-            }}
-            activeTabStyle={{
-              backgroundColor: "#1FABAB"
-            }}
-            activeTextStyle={{
-              color: "white",
-              fontWeight: "bold"
-            }}
-          >
+          <Tab heading="Current Events">
             <CurrentEventView />
           </Tab>
-          <Tab
-            heading="Past Events"
-            tabStyle={{
-              borderRadius: 0,
-              backgroundColor: "#1FABAB"
-            }}
-            textStyle={{
-              color: "#FEFFDE"
-            }}
-            activeTabStyle={{
-              backgroundColor: "#1FABAB"
-            }}
-            activeTextStyle={{
-              color: "white",
-              fontWeight: "bold"
-            }}
-          >
+          <Tab heading="Past Events">
             <PastEventView />
           </Tab>
         </Tabs>

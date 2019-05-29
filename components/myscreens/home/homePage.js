@@ -22,54 +22,6 @@ import InvitationView from "./../invitations/index";
 import PersonalEventView from "./../personalevents/index";
 import Chats from "../poteschat";
 import Settings from "./../settings/index";
-import {
-  setCustomView,
-  setCustomTextInput,
-  setCustomText,
-  setCustomImage,
-  setCustomTouchableOpacity
-} from "react-native-global-props";
-const customViewProps = {
-  style: {}
-};
-
-const customTextInputProps = {
-  underlineColorAndroid: "rgba(0,0,0,0)",
-  style: {
-    borderWidth: 1,
-    borderColor: "gray",
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    backgroundColor: "white"
-  }
-};
-
-const customTextProps = {
-  style: {
-    fontSize: 16,
-    fontFamily: Platform.OS === "ios" ? "HelveticaNeue" : "sans-serif",
-    color: "wheat"
-  }
-};
-
-const customImageProps = {
-  resizeMode: "cover"
-};
-
-// Adds a bigger hit box for all TouchableOpacity's.
-const customTouchableOpacityProps = {
-  hitSlop: {
-    top: 15,
-    right: 15,
-    left: 15,
-    bottom: 15
-  }
-};
-setCustomView(customViewProps);
-setCustomTextInput(customTextInputProps);
-setCustomText(customTextProps);
-setCustomImage(customImageProps);
-setCustomTouchableOpacity(customTouchableOpacityProps);
 class Home extends Component {
   render() {
     return (
@@ -117,78 +69,38 @@ class Home extends Component {
             tabStyle={{
               borderRadius: 0
             }}
-            heading="Events"
-            tabStyle={{
-              borderRadius: 0,
-              backgroundColor: "#1FABAB"
-            }}
-            textStyle={{
-              color: "#FEFFDE"
-            }}
-            activeTabStyle={{
-              backgroundColor: "#1FABAB"
-            }}
-            activeTextStyle={{
-              color: "white",
-              fontWeight: "bold"
-            }}
+            heading={
+              <TabHeading>
+                <Icon name="calendar" />
+              </TabHeading>
+            }
           >
             <PersonalEventView />
           </Tab>
           <Tab
-            heading="Invitations"
-            tabStyle={{
-              borderRadius: 0,
-              backgroundColor: "#1FABAB"
-            }}
-            textStyle={{
-              color: "#FEFFDE"
-            }}
-            activeTabStyle={{
-              backgroundColor: "#1FABAB"
-            }}
-            activeTextStyle={{
-              color: "white",
-              fontWeight: "bold"
-            }}
+            heading={
+              <TabHeading>
+                <Icon name="sc-telegram" />
+              </TabHeading>
+            }
           >
             <InvitationView />
           </Tab>
           <Tab
-            heading="Chats"
-            tabStyle={{
-              borderRadius: 0,
-              backgroundColor: "#1FABAB"
-            }}
-            textStyle={{
-              color: "#FEFFDE"
-            }}
-            activeTabStyle={{
-              backgroundColor: "#1FABAB"
-            }}
-            activeTextStyle={{
-              color: "white",
-              fontWeight: "bold"
-            }}
+            heading={
+              <TabHeading>
+                <Icon name="comment" />
+              </TabHeading>
+            }
           >
             <Chats />
           </Tab>
           <Tab
-            heading="Status"
-            tabStyle={{
-              borderRadius: 0,
-              backgroundColor: "#1FABAB"
-            }}
-            textStyle={{
-              color: "#FEFFDE"
-            }}
-            activeTabStyle={{
-              backgroundColor: "#1FABAB"
-            }}
-            activeTextStyle={{
-              color: "white",
-              fontWeight: "bold"
-            }}
+            heading={
+              <TabHeading>
+                <Icon name="user" />
+              </TabHeading>
+            }
           >
             <Status />
           </Tab>

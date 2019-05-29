@@ -94,7 +94,7 @@ export default {
     cardDefaultBg: "#FEFFDE",
     cardBorderColor: "#ccc",
     cardBorderRadius: 2,
-    cardItemPadding: platform === "ios" ? 10 : 12,
+    cardItemPadding: platform === "ios" ? 1 : 2,
 
     // CheckBox
     CheckboxRadius: platform === "ios" ? 13 : 0,
@@ -109,7 +109,7 @@ export default {
     checkboxTickColor: "#FEFFDE",
 
     // Color
-    brandPrimary: platform === "ios" ? "#007aff" : "#1FABAB",
+    brandPrimary: platform === "ios" ? "#33BDBD" : "#1FABAB",
     brandInfo: "#62B1F6",
     brandSuccess: "#5cb85c",
     brandDanger: "#d9534f",
@@ -140,28 +140,28 @@ export default {
 
     // Footer
     footerHeight: 55,
-    footerDefaultBg: platform === "ios" ? "#F8F8F8" : "#1FABAB",
+    footerDefaultBg: platform === "ios" ? "#1FABAB" : "#1FABAB",
     footerPaddingBottom: 0,
 
     // FooterTab
     tabBarTextColor: platform === "ios" ? "#737373" : "#bfc6ea",
     tabBarTextSize: platform === "ios" ? 14 : 11,
-    activeTab: platform === "ios" ? "#007aff" : "#FEFFDE",
-    sTabBarActiveTextColor: "#007aff",
+    activeTab: platform === "ios" ? "#33BDBD" : "#FEFFDE",
+    sTabBarActiveTextColor: "#33BDBD",
     tabBarActiveTextColor: platform === "ios" ? "#2874F0" : "#FEFFDE",
     tabActiveBgColor: platform === "ios" ? "#cde1f9" : "#1FABAB",
 
     // Header
-    toolbarBtnColor: platform === "ios" ? "#007aff" : "#FEFFDE",
-    toolbarDefaultBg: platform === "ios" ? "#F8F8F8" : "#1FABAB",
+    toolbarBtnColor: platform === "ios" ? "#FEFFDE" : "#FEFFDE",
+    toolbarDefaultBg: platform === "ios" ? "#1FABAB" : "#1FABAB",
     toolbarHeight: platform === "ios" ? 64 : 56,
     toolbarSearchIconSize: platform === "ios" ? 20 : 23,
-    toolbarInputColor: platform === "ios" ? "#CECDD2" : "#FEFFDE",
+    toolbarInputColor: platform === "ios" ? "#FEFFDE" : "#FEFFDE",
     searchBarHeight: platform === "ios" ? 30 : 40,
     searchBarInputHeight: platform === "ios" ? 30 : 50,
-    toolbarBtnTextColor: platform === "ios" ? "#007aff" : "#FEFFDE",
+    toolbarBtnTextColor: platform === "ios" ? "#FEFFDE" : "#FEFFDE",
     iosStatusbar: "dark-content",
-    toolbarDefaultBorder: platform === "ios" ? "#a7a6ab" : "#1FABAB",
+    toolbarDefaultBorder: platform === "ios" ? "#1FABAB" : "#1FABAB",
     get statusBarColor() {
         return color(this.toolbarDefaultBg)
             .darken(0.2)
@@ -174,7 +174,7 @@ export default {
     },
 
     // Icon
-    iconFamily: "Ionicons",
+    iconFamily: "EvilIcons",
     iconFontSize: platform === "ios" ? 30 : 28,
     iconHeaderSize: platform === "ios" ? 33 : 24,
 
@@ -206,7 +206,7 @@ export default {
     listItemPadding: platform === "ios" ? 10 : 12,
     listNoteColor: "#808080",
     listNoteSize: 13,
-    listItemSelected: platform === "ios" ? "#007aff" : "#1FABAB",
+    listItemSelected: platform === "ios" ? "#33BDBD" : "#1FABAB",
 
     // Progress Bar
     defaultProgressColor: "#E4202D",
@@ -221,11 +221,11 @@ export default {
     },
 
     // Segment
-    segmentBackgroundColor: platform === "ios" ? "#F8F8F8" : "#1FABAB",
-    segmentActiveBackgroundColor: platform === "ios" ? "#007aff" : "#FEFFDE",
-    segmentTextColor: platform === "ios" ? "#007aff" : "#FEFFDE",
+    segmentBackgroundColor: platform === "ios" ? "#1FABAB" : "#1FABAB",
+    segmentActiveBackgroundColor: platform === "ios" ? "#33BDBD" : "#FEFFDE",
+    segmentTextColor: platform === "ios" ? "#33BDBD" : "#FEFFDE",
     segmentActiveTextColor: platform === "ios" ? "#FEFFDE" : "#1FABAB",
-    segmentBorderColor: platform === "ios" ? "#007aff" : "#FEFFDE",
+    segmentBorderColor: platform === "ios" ? "#33BDBD" : "#FEFFDE",
     segmentBorderColorMain: platform === "ios" ? "#a7a6ab" : "#1FABAB",
 
     // Spinner
@@ -233,20 +233,20 @@ export default {
     inverseSpinnerColor: "#1A191B",
 
     // Tab
-    tabDefaultBg: platform === "ios" ? "#F8F8F8" : "#1FABAB",
-    topTabBarTextColor: platform === "ios" ? "#6b6b6b" : "#b3c7f9",
-    topTabBarActiveTextColor: platform === "ios" ? "#007aff" : "#FEFFDE",
-    topTabBarBorderColor: platform === "ios" ? "#a7a6ab" : "#FEFFDE",
-    topTabBarActiveBorderColor: platform === "ios" ? "#007aff" : "#FEFFDE",
+    tabDefaultBg: platform === "ios" ? "#1FABAB" : "#1FABAB",
+    topTabBarTextColor: platform === "ios" ? "#FEFFDE" : "#FEFFDE",
+    topTabBarActiveTextColor: platform === "ios" ? "white" : "white",
+    topTabBarBorderColor: platform === "ios" ? "#1FABAB" : "#1FABAB",
+    topTabBarActiveBorderColor: platform === "ios" ? "#33BDBD" : "#1FABAB",
 
     // Tabs
-    tabBgColor: "#F8F8F8",
+    tabBgColor: "#1FABAB",
     tabFontSize: 15,
 
     // Text
     textColor: "#000",
     inverseTextColor: "#FEFFDE",
-    noteFontSize: 14,
+    noteFontSize: 13,
     get defaultTextColor() {
         return this.textColor;
     },

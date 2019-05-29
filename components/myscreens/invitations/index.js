@@ -37,42 +37,10 @@ class InvitationView extends Component {
             backgroundColor: "transparent"
           }}
         >
-          <Tab
-            heading="Sent Invites"
-            tabStyle={{
-              borderRadius: 0,
-              backgroundColor: "#1FABAB"
-            }}
-            textStyle={{
-              color: "#FEFFDE"
-            }}
-            activeTabStyle={{
-              backgroundColor: "#1FABAB"
-            }}
-            activeTextStyle={{
-              color: "white",
-              fontWeight: "bold"
-            }}
-          >
+          <Tab heading="Sent Invites">
             <SentInvitations />
           </Tab>
-          <Tab
-            heading="Received Invites"
-            tabStyle={{
-              borderRadius: 0,
-              backgroundColor: "#1FABAB"
-            }}
-            textStyle={{
-              color: "#FEFFDE"
-            }}
-            activeTabStyle={{
-              backgroundColor: "#1FABAB"
-            }}
-            activeTextStyle={{
-              color: "white",
-              fontWeight: "bold"
-            }}
-          >
+          <Tab heading="Received Invites">
             <ReceivedInvitations />
           </Tab>
         </Tabs>

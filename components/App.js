@@ -47,11 +47,9 @@ const AppNavigator = createStackNavigator(
 const AppContainer = createAppContainer(AppNavigator);
 
 export default () => (
-  <StyleProvider style={getTheme(Materials)}>
-    <Root>
-      <StyleProvider style={getTheme(CommonColor)}>
-        <AppContainer />
-      </StyleProvider>
-    </Root>
-  </StyleProvider>
+  <Root>
+    <StyleProvider style={getTheme(CommonColor)}>
+      <AppContainer />
+    </StyleProvider>
+  </Root>
 );
