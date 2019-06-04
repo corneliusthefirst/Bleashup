@@ -1,6 +1,5 @@
 
 import React, { Component } from "react";
-import autobind from "autobind-decorator";
 import { Content, Card, CardItem, Text, Body,Container, Header, Form, Item,Title, Input, Left,Right,Button} from "native-base";
 //import { Button,View } from "react-native";
 
@@ -10,41 +9,17 @@ import { observer,extendObservable, inject } from "mobx-react";
 import styles from "./styles";
 import stores from "../../../stores";
 import routerActions from 'reazy-native-router-actions';
-import { functionDeclaration } from "@babel/types";
 
 
 const loginStore = stores.loginStore;
 
 @observer
-export default class LoginView extends Component {
-  constructor(props){
-   super(props);
-   this._onClickContinue = this._onClickContinue.bind(this);
-
+export default class LoginHomeView extends Component {
+  constructor(props:Object){
+   super(props)
   }
-
-//@autobind
-_onClickContinue() {
-  if (loginStore.checkUser(loginStore.PhoneNumber) == true){
-              this.props.navigation.navigate("SignIn")
-            }else{
-               this.props.navigation.navigate("SignUP");
-
-            }
-        } 
-
-//@autobind
-_onPhoneNumberChanged(phonenumber) {
-  this.loginStore.phonenumber = phonenumber;
-}
- 
-
-
-
-
   
   render() {
-
     return (
       <Container>
       <Content>
@@ -67,11 +42,11 @@ _onPhoneNumberChanged(phonenumber) {
             <Right/>
 
           <Item style={{marginTop:80}}>
-               <Input placeholder="User Phone number"  onChange={this._onPhoneNumberChanged}  />
+            <Input placeholder="User Phone number" />
           </Item>
 
           <Button   style={styles.buttonstyle}
-           onPress={this._onClickContinue}
+           onPress={() => this.props.navigation.navigate("SignUp")}
            >
           <Text style={{ paddingLeft:40}}> Continue </Text>
           </Button>
@@ -86,74 +61,6 @@ _onPhoneNumberChanged(phonenumber) {
   }
   
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-/**
- * 
- *      <View>
-        <Text> {loginStore.counter} </Text>
-     
-
-      <Button
-            style={styles.button}
-            onPress={() => loginStore.increment()}
-            title="Increment"
-            color="#805841"
-          />
-      <Button
-            style={styles.button}
-            onPress={() => loginStore.decrement()}
-            title="Decrement"
-            color="#805841"
-      />
-
-
-    </View>
- */
-
-
-/*
-//@inject('loginStore')
-//const loginStore = new LoginStore();
-//import LoginStore from "../../../stores/login/LoginStore";
-
- *       <Content padder style={{ marginTop: 0 }}>
-      <Card style={{ flex: 0 }}>
-        <CardItem>
-          <Body>
-            <Text>
-              NativeBase builds a layer on top of React Native that provides
-              you with basic set of components for mobile application
-              development. This helps you to build world-class application
-              experiences on native platforms.
-            </Text>
-          </Body>
-        </CardItem>
-      </Card>
-    </Content>
- 
-  /*constructor(props) {
-		extendObservable(this, {prop} )
-    //return super(props)
-  }
-
-//const loginStore = stores.loginStore;
-//const loginStore = React.useContext(LoginStore);
-
-    */
-
-
 
 
 

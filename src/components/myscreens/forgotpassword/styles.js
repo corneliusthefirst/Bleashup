@@ -25,18 +25,9 @@ export default {
     bottom: 6,
     marginTop: 5
   },
-  formstyle: {
-    
-    width: 300,
-    marginLeft:25
-    //height: 300
-
-  },
-  buttonstyle: {
-    marginTop:15,
-    textAlign:"center",
-    marginLeft:85,
-    width:150,
-    height:50
+  button: {
+    width: 280,
+    height: 100,
+    marginTop: 5
   }
 };

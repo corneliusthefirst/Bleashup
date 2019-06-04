@@ -4,4 +4,4 @@ class SendInviteStore {
  
 }
 
-export default SendInviteStore();
+export default SendInviteStore;

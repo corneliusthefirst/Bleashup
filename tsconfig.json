@@ -1,0 +1,16 @@
+
+{
+    "compilerOptions": {
+        "experimentalDecorators": true,
+        "allowJs": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "tslint.enable":true,
+        "tslint.jsEnable ":true,
+        "tslint.validateWithDefaultConfig":true,
+        "tslint.autoFixOnSave":true,
+
+    },
+
+  
+}

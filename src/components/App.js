@@ -1,11 +1,6 @@
-import React from "react";
+import React,{Component} from "react";
 import { Root, StyleProvider } from "native-base";
-//import { Provider } from "mobx-react";
-//import reazy from 'reazy';
-//import routerActions from 'reazy-native-router-actions';
-//import mobx from '../mobx';
 
-// import { StackNavigator, DrawerNavigator } from "react-navigation";
 import {
   createDrawerNavigator,
   createStackNavigator,
@@ -22,7 +17,145 @@ import InvitationView from "./myscreens/invitations/index";
 import PersonalEventView from "./myscreens/personalevents/index";
 import PotesChat from "./myscreens/poteschat/index";
 import Status from "./myscreens/status/index";
-import Login from "./myscreens/login/index";
+import LoginView from "./myscreens/login/index";
+import ForgotPasswordView from "./myscreens/forgotpassword/index";
+import SignUpView from "./myscreens/signUp/index";
+import SignInView from "./myscreens/signIn/index";
+import LoginHomeView from "./myscreens/loginhome/index";
+
+import routerActions from 'reazy-native-router-actions';
+import reazy from 'reazy';
+
+
+import { Provider } from "mobx-react";
+//import loginStore from "../stores/login/LoginStore";
+
+
+const AppNavigator = createStackNavigator(
+  {
+    Home: { screen: Home },
+    CurrentEvent: { screen: CurrentEventView },
+    PassEvent: { screen: PastEventView },
+    Settings: { screen: Settings },
+    Status: { screen: Status },
+    Invitation: { screen: InvitationView },
+    PersonalEvent: { screen: PersonalEventView },
+    PotesChat: { screen: PotesChat },
+    Login: { screen: LoginView },
+    ForgotPassword: { screen: ForgotPasswordView },
+    SignUp: { screen: SignUpView },
+    SignIn: { screen: SignInView },
+    LoginHome:{screen: LoginHomeView }
+  },
+  {
+    initialRouteName: "Login",
+    headerMode: "none"
+  }
+);
+
+const app = reazy();
+app.use(routerActions(), 'routerActions');
+
+const AppContainer = createAppContainer(AppNavigator);
+
+export default () => (
+  <Root>
+    <StyleProvider style={getTheme(CommonColor)}> 
+    <Provider app={app} >
+      <AppContainer />
+      </Provider>
+    </StyleProvider>
+  </Root>
+);
+
+
+/*
+import stores from "../stores/index";
+  <Provider {...stores}>
+   </Provider>
+   */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+export default class App extends Component {
+  constructor(props: Object) {
+    super(props);
+  }
+
+  render() {
+    return (
+    <Root>
+      <StyleProvider style={getTheme(CommonColor)}> 
+      <Provider {...stores}>
+        <AppContainer />
+        </Provider>
+      </StyleProvider>
+    </Root>
+    );
+  }
+}*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /*
 import Trash from "./myscreens/trash/index";
@@ -32,23 +165,16 @@ import Contacts from "./myscreens/contacts/index";
 import Notifications from "./myscreens/notifications/index";
 */
 
-const AppNavigator = createStackNavigator(
-  {
-    Home: { screen: Home },
-    CurrentEventView: { screen: CurrentEventView },
-    PassEventView: { screen: PastEventView },
-    Settings: { screen: Settings },
-    Status: { screen: Status },
-    InvitationView: { screen: InvitationView },
-    PersonalEventView: { screen: PersonalEventView },
-    PotesChat: { screen: PotesChat },
-    Login: { screen: Login }
-  },
-  {
-    initialRouteName: "Home",
-    headerMode: "none"
-  }
-);
+
+
+
+//import { Provider } from "mobx-react";
+//import reazy from 'reazy';
+//import routerActions from 'reazy-native-router-actions';
+//import mobx from '../mobx';
+
+// import { StackNavigator, DrawerNavigator } from "react-navigation";
+
 
 //const app = this;
 //const app = reazy();
@@ -61,12 +187,3 @@ const AppNavigator = createStackNavigator(
  <Provider myStores={stores}  app={app}>
   </Provider>
 */
-const AppContainer = createAppContainer(AppNavigator);
-
-export default () => (
-  <Root>
-    <StyleProvider style={getTheme(CommonColor)}> 
-      <AppContainer />
-    </StyleProvider>
-  </Root>
-);

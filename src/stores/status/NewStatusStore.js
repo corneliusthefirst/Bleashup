@@ -4,4 +4,4 @@ class NewStatusStore {
  
 }
 
-export default NewStatusStore();
+export default NewStatusStore;

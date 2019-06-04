@@ -4,4 +4,4 @@ class ReceivedInviteStore {
  
 }
 
-export default ReceivedInviteStore();
+export default ReceivedInviteStore;

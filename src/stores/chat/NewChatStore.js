@@ -4,4 +4,4 @@ class NewChatStore {
  
 }
 
-export default  NewChatStore();
+export default  NewChatStore;
