@@ -1,19 +1,12 @@
 import React, { Component } from "react";
-import { Image, View, TouchableHighlight, Platform } from "react-native";
+import { Platform, ScrollView } from "react-native";
 import {
   Container,
   Header,
   Title,
-  Button,
-  Content,
   Icon,
-  Text,
-  Footer,
-  FooterTab,
   Tabs,
   Tab,
-  Right,
-  Left,
   Body,
   TabHeading
 } from "native-base";
@@ -22,89 +15,109 @@ import InvitationView from "./../invitations/index";
 import PersonalEventView from "./../personalevents/index";
 import Chats from "../poteschat";
 import Settings from "./../settings/index";
+import { CollapsibleHeaderScrollView } from "react-native-collapsible-header-views";
+
 class Home extends Component {
+  isCloseToBottom(nativeEvent) {
+    return (
+      nativeEvent.layoutMeasurement.height + nativeEvent.contentOffset.y >=
+      nativeEvent.contentSize.height - 20
+    );
+  }
+
+  ifCloseToTop(nativeEvent) {
+    return nativeEvent.contentOffset.y == 0;
+  }
+  state = {
+    scroll: true
+  };
   render() {
     return (
-      <Container
-        style={{
-          backgroundColor: "#1FABAB"
-        }}
-      >
-        <Header
-          style={{
-            backgroundColor: "#1FABAB",
-            height: 70
+      <Container>
+        <CollapsibleHeaderScrollView
+          CollapsibleHeaderComponent={
+            <Header hasTabs>
+              <Body>
+                <Title
+                  style={{
+                    fontWeight: "bold"
+                  }}
+                >
+                  Bleashup
+                </Title>
+              </Body>
+              <Icon
+                name="cog"
+                active={true}
+                type="FontAwesome"
+                style={{
+                  padding: 15,
+                  paddingLeft: 100,
+                  color: "#FEFFDE"
+                }}
+              />
+            </Header>
+          }
+          headerHeight={50}
+          scrollEnabled={this.state.scroll}
+          onScroll={nativeEvent => {
+            if (this.isCloseToBottom(nativeEvent.nativeEvent)) {
+              this.setState(previousState => ({ scroll: false }));
+            }
+            if (this.ifCloseToTop(nativeEvent.nativeEvent)) {
+              this.setState(previousState => ({ scroll: false }));
+            }
           }}
-          hasTabs
+          statusBarHeight={Platform.OS === "ios" ? 20 : 0}
         >
-          <Body>
-            <Title
-              style={{
-                color: "#FEFFDE",
-                fontWeight: "bold"
+          <Tabs
+            tabBarPosition="overlayTop"
+            tabBarUnderlineStyle={{
+              borderBottomWidth: 0,
+              backgroundColor: "transparent"
+            }}
+          >
+            <Tab
+              tabStyle={{
+                borderRadius: 0
               }}
+              heading={
+                <TabHeading>
+                  <Icon name="calendar" />
+                </TabHeading>
+              }
             >
-              Bleashup
-            </Title>
-          </Body>
-          <Icon
-            name="cog"
-            active={true}
-            type="FontAwesome"
-            style={{
-              padding: 15,
-              paddingLeft: 100,
-              color: "#FEFFDE"
-            }}
-          />
-        </Header>
-        <Tabs
-          tabBarPosition="overlayBottom"
-          tabBarUnderlineStyle={{
-            borderBottomWidth: 0,
-            backgroundColor: "transparent"
-          }}
-        >
-          <Tab
-            tabStyle={{
-              borderRadius: 0
-            }}
-            heading={
-              <TabHeading>
-                <Icon name="calendar" />
-              </TabHeading>
-            }
-          >
-            <PersonalEventView />
-          </Tab>
-          <Tab
-            heading={
-              <TabHeading>
-                <Icon name="sc-telegram" />
-              </TabHeading>
-            }
-          >
-            <InvitationView />
-          </Tab>
-          <Tab
-            heading={
-              <TabHeading>
-                <Icon name="comment" />
-              </TabHeading>
-            }
-          >
-            <Chats />
-          </Tab>
-          <Tab
-            heading={
-              <TabHeading>
-                <Icon name="user" />
-              </TabHeading>
-            }
-          >
-            <Status />
-          </Tab>
-        </Tabs>
+              <PersonalEventView />
+            </Tab>
+            <Tab
+              heading={
+                <TabHeading>
+                  <Icon name="sc-telegram" />
+                </TabHeading>
+              }
+            >
+              <InvitationView />
+            </Tab>
+            <Tab
+              heading={
+                <TabHeading>
+                  <Icon name="comment" />
+                </TabHeading>
+              }
+            >
+              <Chats />
+            </Tab>
+            <Tab
+              heading={
+                <TabHeading>
+                  <Icon name="user" />
+                </TabHeading>
+              }
+            >
+              <Status />
+            </Tab>
+          </Tabs>
+        </CollapsibleHeaderScrollView>
       </Container>
     );
   }

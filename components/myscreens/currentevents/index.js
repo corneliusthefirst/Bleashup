@@ -1,8 +1,9 @@
 import React, { Component } from "react";
 import { Content, Card, CardItem, Text, Body } from "native-base";
-
+import storage from "../../../services/store.js";
 export default class CurrentEventView extends Component {
   render() {
+    //this.storage();
     return (
       <Content>
         <Card style={{ padding: 10 }}>
@@ -31,5 +32,23 @@ export default class CurrentEventView extends Component {
         </Card>
       </Content>
     );
+  }
+  storage() {
+    storage
+      .load({
+        key: "loginStaters",
+        autoSync: true,
+        syncInBackground: true,
+        syncParams: {
+          extraFetchOptions: {},
+          someFlag: true
+        }
+      })
+      .then(ret => {
+        console.error(ret.userid);
+      })
+      .catch(err => {
+        console.error(err);
+      });
   }
 }
