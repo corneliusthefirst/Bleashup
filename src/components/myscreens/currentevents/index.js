@@ -45,22 +45,4 @@ export default class CurrentEventView extends Component {
       </Container>
     );
   }
-  storage() {
-    storage
-      .load({
-        key: "loginStaters",
-        autoSync: true,
-        syncInBackground: true,
-        syncParams: {
-          extraFetchOptions: {},
-          someFlag: true
-        }
-      })
-      .then(ret => {
-        console.error(ret.userid);
-      })
-      .catch(err => {
-        console.error(err);
-      });
-  }
 }

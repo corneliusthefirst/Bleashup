@@ -316,7 +316,6 @@
          }
      }
  }
+ const request = new Request()
 
- export {
-     Request
- }
+ export default request

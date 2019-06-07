@@ -19,14 +19,10 @@ import {
   Title,
   Icon
 } from "native-base";
-import request from "../../../services/tcp-request";
 import SentInvitations from "../sent-invitations";
 import ReceivedInvitations from "../received-invitations";
 
 class InvitationView extends Component {
-  method() {
-    return request();
-  }
   render() {
     return (
       <Container>

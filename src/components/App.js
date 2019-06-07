@@ -25,7 +25,8 @@ import LoginHomeView from "./myscreens/loginhome/index";
 
 import routerActions from "reazy-native-router-actions";
 import reazy from "reazy";
-
+import ServerEventListener from "../services/severEventListener";
+import connection from "../services/tcpConnect";
 import { Provider } from "mobx-react";
 //import loginStore from "../stores/login/LoginStore";
 
@@ -55,7 +56,9 @@ const app = reazy();
 app.use(routerActions(), "routerActions");
 
 const AppContainer = createAppContainer(AppNavigator);
-
+connection.init().then(socket => {
+  ServerEventListener.listen(socket);
+});
 export default () => (
   <Root>
     <StyleProvider style={getTheme(CommonColor)}>

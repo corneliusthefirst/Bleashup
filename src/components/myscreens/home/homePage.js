@@ -18,8 +18,7 @@ import Settings from "./../settings/index";
 import { CollapsibleHeaderScrollView } from "react-native-collapsible-header-views";
 import GState from "../../../stores/globalState";
 import { observer } from "mobx-react";
-import UserHttpServices from "../../../services/userHttpServices";
-import request from "../../../services/tcp-request";
+//import UserHttpServices from "../../../services/userHttpServices";
 
 @observer
 class Home extends Component {
@@ -37,7 +36,6 @@ class Home extends Component {
     scroll: true
   };
   render() {
-    UserHttpServices.getSession("650594616").then(response => {});
     return (
       <Container>
         <CollapsibleHeaderScrollView
