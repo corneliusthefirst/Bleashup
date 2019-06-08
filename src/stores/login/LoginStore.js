@@ -1,31 +1,23 @@
 import { observable, action,extendObservable,autorun , computed } from 'mobx'
-import mobxstore from 'mobx-store'
-//import { filter, map, sortBy, take, toUpper } from 'lodash/fp'
-//import { create, persist } from 'mobx-persist'
-//import {AsyncStorage} from 'react-native';
-//import 'react-native-polyfill';
-//import localStorage from 'mobx-localstorage';
 
-import storage from '../BigStorage'
+import functions from '../StorageFunctions';
+import storage from '../Storage';
 
 
-class LoginStore{
 
+class LoginStore {
   
-  @observable _phonenumber = "";
-  @computed get phonenumber() { return this._phonenumber}
-  set phonenumber(phonenumber) { this._phonenumber = phonenumber}
+  //loading
+  @observable loading = false;
+  
+  /**observable */
+  @observable phoneNumber = "";
+  @observable password = "";
 
 
+  @observable user = { phone:"695527603",name: "cornelius",status: "One step ahead the worlthis.d",profile: "../../Images/myPhoto.jpg",profile_ext: "../../Images/myPhoto1.jpg",password: "jugal"}
+    
 
-  @observable user = { phone:"695527603",name: "cornelius",status: "One step ahead the world",profile: "../../Images/myPhoto.jpg",profile_ext: "../../Images/myPhoto1.jpg",password: "jugal"}
- 
-   
- /* 
-  @action insert(name,value) {
-    this.props.user.name = value;
-}
-*/
 @action returnUser(phonenumber){
  /**QUERY User from DATABASE by phone number*/
  const userdb = null
@@ -38,24 +30,32 @@ class LoginStore{
     this.user.profile_ext = userdb.profile_ext
     this.user.password = userdb.password
   }
-  console.log(this.user)
+ 
   return  this.user
 }
 
 @action checkUser(phonenumber) {
- user = this.returnUser(phonenumber)
-     if(user != null){
-    /**insert to local storage */
-    storage.save({
-      key: 'user', 
-      id: '1', 
-      data: user,
-      expires: 1000 * 60  //shall be changed to null after
-    });
-    return true;
-      }
+    
+        functions.loadData('user','1').then(ret=>{
+          
+          if(ret.phone == phonenumber){
+            //take from asynstorage if exist
+            this.user = ret
+          }else{
+            //take the one from  the database
+            this.user = this.returnUser(phonenumber)
+            console.error(this.user)
+            /**insert to local storage */
+            functions.saveData('user','1',this.user,1000*60)
+          }
+          //if data exist return locally or in database
+          if(this.user != null){
+             return true
+          }
 
-       return false ;
+       })
+
+        return false 
  
   }
 
@@ -64,7 +64,56 @@ class LoginStore{
 
 
 
+
+  //SignIn ##########################################################
+  @action
+  async login(){
+    this.loading = true;
+
+    try {
+      if (this.password === "") {
+        throw new Error("Please provide password.");
+      }
+      //check the password to that of our local storage
+      if (this.password != this.user.password) {
+      console.warn(this.password)
+      console.warn(this.user.password)
+      throw new Error("Invalid password.");
+      }
+
+      this.loading = false;
+
+    } catch (e) {
+      this.loading = false;
+      throw e;
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
+
 
 export default LoginStore
 
@@ -74,7 +123,42 @@ export default LoginStore
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /*@computed get loading(){ return this._loading; }
+  set loading(loading) { this._loading = loading; }*/
+
+//this.user = null;
+ //console.error(this.user)
+
 /* 
+/* 
+ 
+  @action insert(name,value) {
+    this.props.user.name = value;
+}
+
+@computed get phonenumber() { return this._phonenumber}
+@computed set phonenumber(phonenumber) { this._phonenumber = phonenumber}
+
+
+
   constructor(props:Object) {
      super(props)
   }

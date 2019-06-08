@@ -1,4 +1,3 @@
-
 import React, { Component } from "react";
 import autobind from "autobind-decorator";
 import { Content, Card, CardItem, Text, Body,Container, Header, Form, Item,Title, Input, Left,Right,Button} from "native-base";
@@ -20,22 +19,29 @@ export default class LoginView extends Component {
   constructor(props){
    super(props);
    this._onClickContinue = this._onClickContinue.bind(this);
+   this.state = {
+       phoneNumber:''
+    };
+   
+ }
 
-  }
-
-//@autobind
+@autobind
 _onClickContinue() {
-  if (loginStore.checkUser(loginStore.PhoneNumber) == true){
+        if (loginStore.checkUser(loginStore.phoneNumber) == true){
               this.props.navigation.navigate("SignIn")
-            }else{
-               this.props.navigation.navigate("SignUP");
+        }else{
+               this.props.navigation.navigate("SignUp")
 
             }
         } 
-
-//@autobind
-_onPhoneNumberChanged(phonenumber) {
-  this.loginStore.phonenumber = phonenumber;
+  
+      
+@autobind
+_onPhoneNumberChanged(text) {
+          this.setState({phoneNumber: text})
+          loginStore.phoneNumber = this.state.phoneNumber
+         // console.error( loginStore.phoneNumber)
+  
 }
  
 
@@ -49,7 +55,7 @@ _onPhoneNumberChanged(phonenumber) {
       <Container>
       <Content>
          <Left/>
-      <Header style={{marginBottom:200}}>
+      <Header style={{marginBottom:450}}>
       <Body>
             <Title>BleashUp </Title>
       </Body>
@@ -58,17 +64,20 @@ _onPhoneNumberChanged(phonenumber) {
 
 
         <Form style={styles.formstyle}>
-          <Header style={{marginBottom:-90}}>
+          <Header >
             <Left/>
             <Body>
             <Title>Phone Number</Title>
             </Body>
            </Header>
-            <Right/>
+          <Right/>
 
-          <Item style={{marginTop:80}}>
-               <Input placeholder="User Phone number"  onChange={this._onPhoneNumberChanged}  />
-          </Item>
+        <Item style={{marginTop:5}} regular >
+        <Input placeholder="please enter phone number"  
+        onChangeText = {this._onPhoneNumberChanged} 
+        value = {this.state.phoneNumber} 
+        keyboardType={'phone-pad'} />
+        </Item>
 
           <Button   style={styles.buttonstyle}
            onPress={this._onClickContinue}
