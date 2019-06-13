@@ -1,10 +1,10 @@
 import storage from "./BigStorage";
 import { observable, action } from "mobx";
-
 import { uniqBy, dropWhile, filter, find, findIndex, sortBy } from "lodash";
 import moment from "moment";
-import { getMapLikeKeys } from "mobx/lib/internal";
+
 export default class contribution {
+  constructor() {}
   @observable contributions = [];
   savekey = {
     key: "contribution",
@@ -32,7 +32,7 @@ export default class contribution {
       });
     });
   }
-  @cation fetchContributions(EventID) {
+  @action fetchContributions(EventID) {
     return new Promise((resolve, reject) => {
       if (this.contributions) {
         resolve(

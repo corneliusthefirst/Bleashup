@@ -12,7 +12,7 @@ import {
   Icon
 } from "native-base";
 import NestedScrollView from "react-native-nested-scroll-view";
-import GState from "../../../stores/globalState";
+//import GState from "../../../stores/globalState";
 class InvitationView extends Component {
   render() {
     return (

@@ -2,14 +2,14 @@ import storage from "./BigStorage";
 import { observable, action } from "mobx";
 import { uniqBy, dropWhile, find, sortBy, findIndex } from "lodash";
 import moment from "moment";
-import { link } from "fs";
 export default class votes {
+  constructor() {}
   @observable votes = [];
   saveKey = {
     key: "votes",
     data: []
   };
-  @action addVote(Vote) {
+  addVote(Vote) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Votes => {
         this.saveKey.data = uniqBy(Votes.concat([Vote]), "id");
@@ -20,7 +20,7 @@ export default class votes {
       });
     });
   }
-  @action removeVote(VoteID) {
+  removeVote(VoteID) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Votes => {
         this.saveKey.data = dropWhile(votes, ["id", VoteID]);
@@ -31,7 +31,7 @@ export default class votes {
       });
     });
   }
-  @action fetchVotes(EventID) {
+  fetchVotes(EventID) {
     return new Promise((resolve, reject) => {
       if (this.votes) {
         resolve(
@@ -45,7 +45,7 @@ export default class votes {
       }
     });
   }
-  @action updateVoteTitle(NewVote, inform) {
+  updateVoteTitle(NewVote, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Votes => {
         let Vote = find(Votes, { id: NewVote.id });
@@ -62,7 +62,7 @@ export default class votes {
       });
     });
   }
-  @action UpdateVoteDescription(NewVote, inform) {
+  UpdateVoteDescription(NewVote, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Votes => {
         let Vote = find(Votes, { id: NewVote.id });
@@ -80,7 +80,7 @@ export default class votes {
     });
   }
 
-  @action UpdateVotePeriod(NewVote, inform) {
+  UpdateVotePeriod(NewVote, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Votes => {
         let Vote = find(Votes, { id: NewVote.id });
@@ -97,7 +97,7 @@ export default class votes {
       });
     });
   }
-  @action PublishVote(VoteID, inform) {
+  PublishVote(VoteID, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Votes => {
         let Vote = find(Votes, { id: VoteID });
@@ -113,7 +113,7 @@ export default class votes {
       });
     });
   }
-  @action addVoteOption(NewVote, inform) {
+  addVoteOption(NewVote, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Votes => {
         let Vote = find(Votes, { id: NewVote.id });
@@ -130,7 +130,7 @@ export default class votes {
       });
     });
   }
-  @action removeVoteOption(VoteID, OptionName, inform) {
+  removeVoteOption(VoteID, OptionName, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Votes => {
         let Vote = find(Votes, { id: VoteID });
@@ -147,7 +147,7 @@ export default class votes {
       });
     });
   }
-  @action UpdateVoteOptionName(VoteID, OptionName, NewOptionName, inform) {
+  UpdateVoteOptionName(VoteID, OptionName, NewOptionName, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Votes => {
         let Vote = find(Votes, { id: VoteID });
@@ -167,7 +167,7 @@ export default class votes {
       });
     });
   }
-  @action likeVote(VoteID, inform) {
+  likeVote(VoteID, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Votes => {
         let Vote = find(Votes, { id: VoteID });
@@ -184,7 +184,7 @@ export default class votes {
       });
     });
   }
-  @action unlikeVote(VoteID) {
+  unlikeVote(VoteID) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Votes => {
         let Vote = find(Votes, { id: VoteID });
@@ -200,7 +200,7 @@ export default class votes {
       });
     });
   }
-  @action votes(VoteID, OptionName, inform) {
+  votes(VoteID, OptionName, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Votes => {
         let Vote = find(Votes, { id: VoteID });
@@ -220,7 +220,7 @@ export default class votes {
       });
     });
   }
-  @action UpdateEventVotes(EventID, NewVotes) {
+  UpdateEventVotes(EventID, NewVotes) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Votes => {
         Votes = dropWhile(Votes, ["event_id", EventID]);

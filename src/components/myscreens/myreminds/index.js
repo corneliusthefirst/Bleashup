@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { Content, Card, CardItem, Container, Text, Body } from "native-base";
-import storage from "../../../services/store.js";
 import NestedScrollView from "react-native-nested-scroll-view";
 import GState from "../../../stores/globalState";
 export default class CurrentEventView extends Component {

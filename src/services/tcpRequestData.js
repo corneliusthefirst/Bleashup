@@ -1,6 +1,6 @@
 import requestObject from "./requestObjects";
 import transfer from "./transferable";
-import { Session } from "../stores";
+//import { Session } from "../stores";
 
 class tcpRequestData {
   Presence() {

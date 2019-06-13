@@ -2,6 +2,7 @@ import { observable, action } from "mobx-localstorage";
 import { filter, uniqBy, dropWhile } from "lodash";
 import storage from "./BigStorage";
 export default class likes {
+  constructor() {}
   @observable likes = [];
   saveKey = {
     key: "likes",

@@ -15,7 +15,7 @@
     "autobind-decorator": "^2.4.0",
     "connect": "^3.7.0",
     "json-circular-stringify": "0.0.1",
-    "mobx": "^5.9.4",
+    "mobx": "^5.10.1",
     "mobx-localstorage": "^2.0.0-alpha.1",
     "mobx-persist": "^0.4.1",
     "mobx-react": "^6.0.0",

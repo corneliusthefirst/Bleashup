@@ -313,7 +313,7 @@ export default class events {
       });
     });
   }
-  @cation addVote(EventID, VoteID, inform) {
+  @action addVote(EventID, VoteID, inform) {
     return new Promise((resovle, reject) => {
       this.readFromStore().then(Events => {
         let Event = find(Events, { event_id: EventID });
@@ -417,7 +417,7 @@ export default class events {
       });
     });
   }
-  @cation joinEvent(EventID) {
+  @action joinEvent(EventID) {
     return new Promise((resovle, reject) => {
       this.readFromStore().then(Events => {
         let Event = find(Events, { event_id: EventID });

@@ -1,103 +1,91 @@
-
 import React, { Component } from "react";
 import autobind from "autobind-decorator";
-import { Content, Card, CardItem, Text, Body,Container, Header, Form, Item,Title, Input, Left,Right,Button} from "native-base";
+import {
+  Content,
+  Card,
+  CardItem,
+  Text,
+  Body,
+  Container,
+  Header,
+  Form,
+  Item,
+  Title,
+  Input,
+  Left,
+  Right,
+  Button
+} from "native-base";
 //import { Button,View } from "react-native";
 
 import { AsyncStorage } from "react-native";
 //import { observable } from 'mobx';
-import { observer,extendObservable, inject } from "mobx-react";
+import { observer, extendObservable, inject } from "mobx-react";
 import styles from "./styles";
 import stores from "../../../stores";
-import routerActions from 'reazy-native-router-actions';
+import routerActions from "reazy-native-router-actions";
 import { functionDeclaration } from "@babel/types";
 
-
-const loginStore = stores.loginStore;
+const loginStore = stores.LoginStore;
 
 @observer
 export default class LoginView extends Component {
-  constructor(props){
-   super(props);
-   this._onClickContinue = this._onClickContinue.bind(this);
-
+  constructor(props) {
+    super(props);
+    this._onClickContinue = this._onClickContinue.bind(this);
   }
 
-//@autobind
-_onClickContinue() {
-  if (loginStore.checkUser(loginStore.PhoneNumber) == true){
-              this.props.navigation.navigate("SignIn")
-            }else{
-               this.props.navigation.navigate("SignUP");
+  //@autobind
+  _onClickContinue() {
+    if (loginStore.checkUser(loginStore.PhoneNumber) == true) {
+      this.props.navigation.navigate("SignIn");
+    } else {
+      this.props.navigation.navigate("SignUP");
+    }
+  }
 
-            }
-        } 
+  //@autobind
+  _onPhoneNumberChanged(phonenumber) {
+    this.loginStore.phonenumber = phonenumber;
+  }
 
-//@autobind
-_onPhoneNumberChanged(phonenumber) {
-  this.loginStore.phonenumber = phonenumber;
-}
- 
-
-
-
-
-  
   render() {
-
     return (
       <Container>
-      <Content>
-         <Left/>
-      <Header style={{marginBottom:200}}>
-      <Body>
-            <Title>BleashUp </Title>
-      </Body>
-         <Right/>
-      </Header>
-
-
-        <Form style={styles.formstyle}>
-          <Header style={{marginBottom:-90}}>
-            <Left/>
+        <Content>
+          <Left />
+          <Header style={{ marginBottom: 200 }}>
             <Body>
-            <Title>Phone Number</Title>
+              <Title>BleashUp </Title>
             </Body>
-           </Header>
-            <Right/>
+            <Right />
+          </Header>
 
-          <Item style={{marginTop:80}}>
-               <Input placeholder="User Phone number"  onChange={this._onPhoneNumberChanged}  />
-          </Item>
+          <Form style={styles.formstyle}>
+            <Header style={{ marginBottom: -90 }}>
+              <Left />
+              <Body>
+                <Title>Phone Number</Title>
+              </Body>
+            </Header>
+            <Right />
 
-          <Button   style={styles.buttonstyle}
-           onPress={this._onClickContinue}
-           >
-          <Text style={{ paddingLeft:40}}> Continue </Text>
-          </Button>
+            <Item style={{ marginTop: 80 }}>
+              <Input
+                placeholder="User Phone number"
+                onChange={this._onPhoneNumberChanged}
+              />
+            </Item>
 
-        </Form>
-
-      </Content>
-    </Container>
-
-
+            <Button style={styles.buttonstyle} onPress={this._onClickContinue}>
+              <Text style={{ paddingLeft: 40 }}> Continue </Text>
+            </Button>
+          </Form>
+        </Content>
+      </Container>
     );
   }
-  
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * 
@@ -121,7 +109,6 @@ _onPhoneNumberChanged(phonenumber) {
 
     </View>
  */
-
 
 /*
 //@inject('loginStore')
@@ -153,74 +140,6 @@ _onPhoneNumberChanged(phonenumber) {
 
     */
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /*
   render() {
     const { loginStore} = this.props;
@@ -242,15 +161,6 @@ _onPhoneNumberChanged(phonenumber) {
       </Content>
     );
   } */
-
-
-
-
-
-
-
-
-
 
 /*
 import React, { Component } from 'react'

@@ -31,8 +31,7 @@ export default class Session {
   }
   initialzeStore() {
     return new Promise((resolve, reject) => {
-      logIn
-        .getUser()
+      LoginStore.getUser()
         .then(user => {
           let session = {
             socket: null,
@@ -84,8 +83,7 @@ export default class Session {
   }
   initialzeStoreAndUpdate(key, newValue) {
     return new Promise((resolve, reject) => {
-      logIn
-        .getUser()
+      LoginStore.getUser()
         .then(user => {
           let session = {
             socket: null,
@@ -174,7 +172,7 @@ export default class Session {
         });
     });
   }
-  @cation updateHost(newHost) {
+  @action updateHost(newHost) {
     return new Promise((resolve, reject) => {
       storage
         .load({

@@ -7,7 +7,7 @@ import {
   createAppContainer
 } from "react-navigation";
 import getTheme from ".././native-base-theme/components";
-//import Materials from ".././native-base-theme/variables/material";
+import Materials from ".././native-base-theme/variables/material";
 import CommonColor from ".././native-base-theme/variables/commonColor";
 import Home from "./myscreens/home/homePage";
 import Settings from "./myscreens/settings/index";
@@ -21,11 +21,11 @@ import LoginView from "./myscreens/login/index";
 import ForgotPasswordView from "./myscreens/forgotpassword/index";
 import SignUpView from "./myscreens/signUp/index";
 import SignInView from "./myscreens/signIn/index";
-import LoginHomeView from "./myscreens/loginhome/index";
-
+//import LoginHomeView from "./myscreens/loginhome/index";
+//import stores from "../stores";
 import routerActions from "reazy-native-router-actions";
 import reazy from "reazy";
-import ServerEventListener from "../services/severEventListener";
+//import ServerEventListener from "../services/severEventListener";
 import connection from "../services/tcpConnect";
 import { Provider } from "mobx-react";
 //import loginStore from "../stores/login/LoginStore";
@@ -40,18 +40,17 @@ const AppNavigator = createStackNavigator(
     Invitation: { screen: InvitationView },
     PersonalEvent: { screen: PersonalEventView },
     PotesChat: { screen: PotesChat },
-    Login: { screen: LoginView },
+    // Login: { screen: LoginView },
     ForgotPassword: { screen: ForgotPasswordView },
     SignUp: { screen: SignUpView },
-    SignIn: { screen: SignInView },
-    LoginHome: { screen: LoginHomeView }
+    SignIn: { screen: SignInView }
+    // LoginHome: { screen: LoginHomeView }
   },
   {
     initialRouteName: "Home",
     headerMode: "none"
   }
 );
-
 const app = reazy();
 app.use(routerActions(), "routerActions");
 
