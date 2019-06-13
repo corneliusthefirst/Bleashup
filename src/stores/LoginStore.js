@@ -1,6 +1,6 @@
 import { observable, action, extendObservable, autorun, computed } from "mobx";
-import UserSevices from "../../services/userHttpServices";
-import storage from "../BigStorage";
+import UserSevices from "../services/userHttpServices";
+import storage from "./BigStorage";
 
 export default class LoginStore {
   constructor() {}

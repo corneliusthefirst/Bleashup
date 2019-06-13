@@ -1,5 +1,5 @@
-import storage from "../BigStorage";
-import logIn from "../login";
+import storage from "./BigStorage";
+import { LoginStore } from "./";
 import { observable, action, extendObservable, autorun, computed } from "mobx";
 require("json-circular-stringify"); // !! This is added to solve the problem TypeError: JSON.stringify cannot serialize cyclic structures
 export default class Session {
@@ -56,11 +56,14 @@ export default class Session {
         });
     });
   }
-  getSession() {
+  @action getSession() {
     return new Promise((resolve, reject) => {
       if (this.SessionStore.phone === "" || this.SessionStore === "") {
         storage
-          .load({ key: "session", autoSync: true })
+          .load({
+            key: "session",
+            autoSync: true
+          })
           .then(data => {
             this.SessionStore = data;
             resolve(data);
@@ -107,16 +110,24 @@ export default class Session {
         });
     });
   }
-  updateReference(newReference) {
+  @action updateReference(newReference) {
     return new Promise((resolve, reject) => {
       storage
-        .load({ key: "session", autoSync: true })
+        .load({
+          key: "session",
+          autoSync: true
+        })
         .then(session => {
           session.reference = newReference;
           this.SessionStore = session;
-          storage.save({ key: "session", data: session }).then(() => {
-            resolve(session);
-          });
+          storage
+            .save({
+              key: "session",
+              data: session
+            })
+            .then(() => {
+              resolve(session);
+            });
         })
         .catch(error => {
           this.initialzeStoreAndUpdate("reference", newReference)
@@ -131,17 +142,25 @@ export default class Session {
     });
   }
 
-  updateSocket(newSocket) {
+  @action updateSocket(newSocket) {
     return new Promise((resolve, reject) => {
       storage
-        .load({ key: "session", autoSync: true })
+        .load({
+          key: "session",
+          autoSync: true
+        })
         .then(session => {
           session.socket = newSocket;
-          session.host = "192.168.43.192";
-          storage.save({ key: "session", data: session }).then(() => {
-            this.SessionStore = session;
-            resolve(session);
-          });
+          //session.host = "192.168.43.192";
+          storage
+            .save({
+              key: "session",
+              data: session
+            })
+            .then(() => {
+              this.SessionStore = session;
+              resolve(session);
+            });
         })
         .catch(error => {
           this.initialzeStoreAndUpdate("socket", newSocket)
@@ -155,16 +174,24 @@ export default class Session {
         });
     });
   }
-  updateHost(newHost) {
+  @cation updateHost(newHost) {
     return new Promise((resolve, reject) => {
       storage
-        .load({ key: "session", autoSync: true })
+        .load({
+          key: "session",
+          autoSync: true
+        })
         .then(session => {
           session.host = newHost;
           this.SessionStore = session;
-          storage.save({ key: "session", data: session }).then(() => {
-            resolve(session);
-          });
+          storage
+            .save({
+              key: "session",
+              data: session
+            })
+            .then(() => {
+              resolve(session);
+            });
         })
         .catch(error => {
           this.initialzeStoreAndUpdate("socket", newHost)
