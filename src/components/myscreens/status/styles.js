@@ -24,5 +24,10 @@ export default {
     color: "#D8D8D8",
     bottom: 6,
     marginTop: 5
+  },
+  button: {
+    width: 280,
+    height: 100,
+    marginTop: 5
   }
 };

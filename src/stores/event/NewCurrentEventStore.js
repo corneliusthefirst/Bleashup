@@ -4,4 +4,4 @@ class NewCurrentEventStore {
  
 }
 
-export default new NewCurrentEventStore();
+export default NewCurrentEventStore;

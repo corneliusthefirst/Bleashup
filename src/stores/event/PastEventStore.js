@@ -4,4 +4,4 @@ class PastEventStore {
  
 }
 
-export default new PastEventStore();
+export default PastEventStore

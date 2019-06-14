@@ -4,4 +4,4 @@ class StatusStore {
  
 }
 
-export default new StatusStore();
+export default StatusStore;

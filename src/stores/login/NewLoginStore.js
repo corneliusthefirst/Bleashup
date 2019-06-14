@@ -4,4 +4,4 @@ class NewLoginStore {
  
 }
 
-export default new NewLoginStore
+export default  NewLoginStore

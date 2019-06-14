@@ -3,7 +3,7 @@ const { Dimensions, Platform } = React;
 const deviceHeight = Dimensions.get("window").height;
 
 export default {
-  imageContainer: {
+ /* imageContainer: {
     flex: 1,
     width: null,
     height: null
@@ -24,5 +24,20 @@ export default {
     color: "#D8D8D8",
     bottom: 6,
     marginTop: 5
+  },*/
+  formstyle: {
+    
+    width: 300,
+    marginLeft:25,
+    marginTop:-270
+    //height: 300
+
+  },
+  buttonstyle: {
+    marginTop:15,
+    textAlign:"center",
+    marginLeft:85,
+    width:150,
+    height:50
   }
 };
