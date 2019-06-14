@@ -10,7 +10,7 @@ import {
   indexOf,
   drop
 } from "lodash";
-import storage from "./BigStorage";
+import storage from "./Storage";
 import moment from "moment";
 import requestObject from "../services/requestObjects";
 export default class events {

@@ -1,16 +1,18 @@
 import { observable, action, extendObservable, autorun, computed } from "mobx";
 import UserSevices from "../services/userHttpServices";
-import storage from "./BigStorage";
+import storage from "./Storage";
 
 export default class LoginStore {
   constructor() {}
+  @observable phonenumber = "";
+
   @observable user = {
-    phone: "694140914",
+    phone: "",
     name: "",
     status: "",
     profile: "",
     profile_ext: "",
-    password: "00000"
+    password: ""
   };
   @action getUser() {
     return new Promise((resolve, reject) => {

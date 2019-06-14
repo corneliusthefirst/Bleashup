@@ -2,11 +2,13 @@ import {
     observable,
     action
 } from 'mobx'
-import storage from './BigStorage';
+import storage from './Storage';
 import {
     uniqBy,
     dropWhile,
     find,
+    sortBy,
+    filter,
     findIndex
 } from 'lodash'
 

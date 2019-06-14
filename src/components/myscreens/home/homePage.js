@@ -18,7 +18,7 @@ import Settings from "./../settings/index";
 import { CollapsibleHeaderScrollView } from "react-native-collapsible-header-views";
 import GState from "../../../stores/globalState";
 import { observer } from "mobx-react";
-//import UserHttpServices from "../../../services/userHttpServices";
+import UserHttpServices from "../../../services/userHttpServices";
 
 @observer
 class Home extends Component {

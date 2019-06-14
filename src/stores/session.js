@@ -1,4 +1,4 @@
-import storage from "./BigStorage";
+import storage from "./Storage";
 import { LoginStore } from "./";
 import { observable, action, extendObservable, autorun, computed } from "mobx";
 require("json-circular-stringify"); // !! This is added to solve the problem TypeError: JSON.stringify cannot serialize cyclic structures
@@ -29,7 +29,7 @@ export default class Session {
         this.initialzeStore().then(session => {});
       });
   }
-  initialzeStore() {
+  @action initialzeStore() {
     return new Promise((resolve, reject) => {
       LoginStore.getUser()
         .then(user => {

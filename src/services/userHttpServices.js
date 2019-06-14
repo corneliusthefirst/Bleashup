@@ -15,6 +15,11 @@ class UserHttpServices {
                 method: "GET",
             }).then(result => {
                 result.json().then(data => {
+                    /**sample data is {
+                     * name:"Fokam Giles",
+                     * profile_ext : "some-url.com",
+                     * status : "some string"
+                     * } */
                     resolve(data)
                 })
             }).catch(error => {
@@ -45,7 +50,7 @@ class UserHttpServices {
             }).then(result => {
                 result.json().then(data => {
                     if (data.message) {
-                        resolve(data.message)
+                        reject(data.message)
                     } else {
                         resolve(data)
                     }
@@ -63,7 +68,7 @@ class UserHttpServices {
             }).then(result => {
                 result.json().then(data => {
                     if (data.message) {
-                        resolve(data.message)
+                        reject(data.message)
                     } else {
                         resolve(data)
                     }
@@ -81,7 +86,7 @@ class UserHttpServices {
             }).then(result => {
                 result.json().then(data => {
                     if (data.message) {
-                        resolve(data.message)
+                        reject(data.message)
                     } else {
                         resolve(data)
                     }
@@ -100,7 +105,7 @@ class UserHttpServices {
             }).then(result => {
                 result.json().then(data => {
                     if (data.message) {
-                        resolve(data.message)
+                        reject(data.message)
                     } else {
                         resolve(data)
                     }
@@ -118,7 +123,7 @@ class UserHttpServices {
             }).then(result => {
                 result.json().then(data => {
                     if (data.message) {
-                        resolve(data.message)
+                        reject(data.message)
                     } else {
                         resolve(data)
                     }
@@ -137,7 +142,7 @@ class UserHttpServices {
             }).then(result => {
                 result.json().then(data => {
                     if (data.message) {
-                        resolve(data.message)
+                        reject(data.message)
                     } else {
                         resolve(data)
                     }
@@ -156,7 +161,7 @@ class UserHttpServices {
             }).then(response => {
                 response.json().then(data => {
                     if (data.message) {
-                        resolve(data.message)
+                        reject(data.message)
                     } else {
                         resolve(data)
                     }
@@ -175,7 +180,7 @@ class UserHttpServices {
             }).then(response => {
                 response.json().then(data => {
                     if (data.message) {
-                        resolve(data.message)
+                        reject(data.message)
                     } else {
                         resolve(data)
                     }
@@ -192,7 +197,7 @@ class UserHttpServices {
             }).then(result => {
                 result.json().then(data => {
                     if (data.message) {
-                        resolve(data.message)
+                        reject(data.message)
                     } else {
                         resolve(data)
                     }
@@ -209,7 +214,7 @@ class UserHttpServices {
             }).then(result => {
                 result.json().then(data => {
                     if (data.message) {
-                        resolve(data.message)
+                        reject(data.message)
                     } else {
                         resolve(data)
                     }

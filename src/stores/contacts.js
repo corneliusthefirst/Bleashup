@@ -1,4 +1,4 @@
-import storage from "./BigStorage";
+import storage from "./Storage";
 import {
     observable,
     action

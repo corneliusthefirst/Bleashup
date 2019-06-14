@@ -1,6 +1,6 @@
-import storage from "./BigStorage";
+import storage from "./Storage";
 import { observable, action } from "mobx";
-import { uniqBy, dropWhile, find, sortBy, findIndex } from "lodash";
+import { uniqBy, dropWhile, find, filter, sortBy, findIndex } from "lodash";
 import moment from "moment";
 export default class votes {
   constructor() {}

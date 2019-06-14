@@ -18,14 +18,14 @@ import PersonalEventView from "./myscreens/personalevents/index";
 import PotesChat from "./myscreens/poteschat/index";
 import Status from "./myscreens/status/index";
 import LoginView from "./myscreens/login/index";
-import ForgotPasswordView from "./myscreens/forgotpassword/index";
+//import ForgotPasswordView from "./myscreens/forgotpassword/index";
 import SignUpView from "./myscreens/signUp/index";
 import SignInView from "./myscreens/signIn/index";
 //import LoginHomeView from "./myscreens/loginhome/index";
-//import stores from "../stores";
+import stores from "../stores";
 import routerActions from "reazy-native-router-actions";
 import reazy from "reazy";
-//import ServerEventListener from "../services/severEventListener";
+import ServerEventListener from "../services/severEventListener";
 import connection from "../services/tcpConnect";
 import { Provider } from "mobx-react";
 //import loginStore from "../stores/login/LoginStore";
@@ -40,14 +40,14 @@ const AppNavigator = createStackNavigator(
     Invitation: { screen: InvitationView },
     PersonalEvent: { screen: PersonalEventView },
     PotesChat: { screen: PotesChat },
-    // Login: { screen: LoginView },
-    ForgotPassword: { screen: ForgotPasswordView },
+    Login: { screen: LoginView },
+    //ForgotPassword: { screen: ForgotPasswordView },
     SignUp: { screen: SignUpView },
     SignIn: { screen: SignInView }
     // LoginHome: { screen: LoginHomeView }
   },
   {
-    initialRouteName: "Home",
+    initialRouteName: "Login",
     headerMode: "none"
   }
 );

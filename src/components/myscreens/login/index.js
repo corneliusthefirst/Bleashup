@@ -18,7 +18,7 @@ import {
 } from "native-base";
 //import { Button,View } from "react-native";
 
-import { AsyncStorage } from "react-native";
+import { AsyncStorage, View, TouchableOpacity } from "react-native";
 //import { observable } from 'mobx';
 import { observer, extendObservable, inject } from "mobx-react";
 import styles from "./styles";
@@ -26,22 +26,69 @@ import stores from "../../../stores";
 import routerActions from "reazy-native-router-actions";
 import { functionDeclaration } from "@babel/types";
 
-const loginStore = stores.LoginStore;
+import PhoneInput from "react-native-phone-input";
+import CountryPicker from "react-native-country-picker-modal";
 
 @observer
 export default class LoginView extends Component {
   constructor(props) {
     super(props);
-    this._onClickContinue = this._onClickContinue.bind(this);
+    this.onClickContinue = this.onClickContinue.bind(this);
+    this.state = {
+      cca2: "US",
+      valid: "",
+      type: "",
+      value: ""
+    };
+  }
+  loginStore = stores.LoginStore;
+  componentDidMount() {
+    this.setState({
+      pickerData: this.phone.getPickerData()
+    });
+  }
+  @autobind
+  onPressFlag() {
+    this.countryPicker.openModal();
   }
 
-  //@autobind
-  _onClickContinue() {
-    if (loginStore.checkUser(loginStore.PhoneNumber) == true) {
-      this.props.navigation.navigate("SignIn");
-    } else {
-      this.props.navigation.navigate("SignUP");
+  selectCountry(country) {
+    this.phone.selectCountry(country.cca2.toLowerCase());
+    this.setState({ cca2: country.cca2 });
+  }
+
+  @autobind
+  async updateInfo() {
+    this.setState({
+      valid: this.phone.isValidNumber(),
+      type: this.phone.getNumberType(),
+      value: this.phone.getValue()
+    });
+  }
+
+  @autobind
+  async onClickContinue() {
+    try {
+      await this.updateInfo();
+
+      if (this.state.value == "") {
+        throw new Error("Please provide phone number.");
+      }
+    } catch (e) {
+      alert(e.message);
     }
+
+    console.warn(this.state.valid);
+    console.warn(this.state.type);
+    console.warn(this.state.value);
+    console.warn(this.state.cca2);
+
+    /*  if (loginStore.checkUser(loginStore.phoneNumber) == true){
+              this.props.navigation.navigate("SignIn")
+        }else{
+               this.props.navigation.navigate("SignUp")
+
+        }*/
   }
 
   //@autobind
@@ -54,7 +101,7 @@ export default class LoginView extends Component {
       <Container>
         <Content>
           <Left />
-          <Header style={{ marginBottom: 200 }}>
+          <Header style={{ marginBottom: 450 }}>
             <Body>
               <Title>BleashUp </Title>
             </Body>
@@ -62,22 +109,42 @@ export default class LoginView extends Component {
           </Header>
 
           <Form style={styles.formstyle}>
-            <Header style={{ marginBottom: -90 }}>
+            <Header>
               <Left />
               <Body>
-                <Title>Phone Number</Title>
+                <Title>BleashUp </Title>
               </Body>
             </Header>
             <Right />
 
-            <Item style={{ marginTop: 80 }}>
-              <Input
-                placeholder="User Phone number"
-                onChange={this._onPhoneNumberChanged}
+            <Item style={{ marginTop: 5 }} regular>
+              <PhoneInput
+                ref={ref => {
+                  this.phone = ref;
+                }}
+                onChange={value => this.updateInfo()}
+                onPressFlag={this.onPressFlag}
+                value={this.state.value}
               />
             </Item>
 
-            <Button style={styles.buttonstyle} onPress={this._onClickContinue}>
+            <CountryPicker
+              ref={ref => {
+                this.countryPicker = ref;
+              }}
+              onChange={value => this.selectCountry(value)}
+              translation="eng"
+              cca2={this.state.cca2}
+            >
+              <View />
+            </CountryPicker>
+
+            <Button
+              style={styles.buttonstyle}
+              onPress={() => {
+                this.onClickContinue();
+              }}
+            >
               <Text style={{ paddingLeft: 40 }}> Continue </Text>
             </Button>
           </Form>
@@ -87,8 +154,120 @@ export default class LoginView extends Component {
   }
 }
 
+//console.warn(this.state.value)
+//console.warn(this.state.type)
+//console.warn(this.state.valid.toString())
+
 /**
- * 
+ * import React, { Component } from "react";
+import autobind from "autobind-decorator";
+import { Content, Card, CardItem, Text, Body,Container, Header, Form, Item,Title, Input, Left,Right,Button} from "native-base";
+//import { Button,View } from "react-native";
+
+import { AsyncStorage } from "react-native";
+//import { observable } from 'mobx';
+import { observer,extendObservable, inject } from "mobx-react";
+import styles from "./styles";
+import stores from "../../../stores";
+import routerActions from 'reazy-native-router-actions';
+import { functionDeclaration } from "@babel/types";
+
+
+const loginStore = stores.loginStore;
+
+@observer
+export default class LoginView extends Component {
+  constructor(props){
+   super(props);
+   this._onClickContinue = this._onClickContinue.bind(this);
+   this.state = {
+       phoneNumber:''
+    };
+   
+ }
+
+@autobind
+_onClickContinue() {
+        if (loginStore.checkUser(loginStore.phoneNumber) == true){
+              this.props.navigation.navigate("SignIn")
+        }else{
+               this.props.navigation.navigate("SignUp")
+
+            }
+        } 
+  
+      
+@autobind
+_onPhoneNumberChanged(text) {
+          this.setState({phoneNumber: text})
+          loginStore.phoneNumber = this.state.phoneNumber
+         // console.error( loginStore.phoneNumber)
+  
+}
+ 
+
+
+
+
+  
+  render() {
+
+    return (
+      <Container>
+      <Content>
+         <Left/>
+      <Header style={{marginBottom:450}}>
+      <Body>
+            <Title>BleashUp </Title>
+      </Body>
+         <Right/>
+      </Header>
+
+
+        <Form style={styles.formstyle}>
+          <Header >
+            <Left/>
+            <Body>
+            <Title>Phone Number</Title>
+            </Body>
+           </Header>
+          <Right/>
+
+        <Item style={{marginTop:5}} regular >
+        <Input placeholder="please enter phone number"  
+        onChangeText = {this._onPhoneNumberChanged} 
+        value = {this.state.phoneNumber} 
+        keyboardType={'phone-pad'} />
+        </Item>
+
+          <Button   style={styles.buttonstyle}
+           onPress={this._onClickContinue}
+           >
+          <Text style={{ paddingLeft:40}}> Continue </Text>
+          </Button>
+
+        </Form>
+
+      </Content>
+    </Container>
+
+
+    );
+  }
+  
+}
+
+
+
+ */
+
+/**
+ *         <Input placeholder="please enter phone number"  
+        onChangeText = {this._onPhoneNumberChanged} 
+        value = {this.state.phoneNumber} 
+        keyboardType={'phone-pad'} />
+
+
  *      <View>
         <Text> {loginStore.counter} </Text>
      
@@ -138,7 +317,35 @@ export default class LoginView extends Component {
 //const loginStore = stores.loginStore;
 //const loginStore = React.useContext(LoginStore);
 
-    */
+    
+
+
+@autobind
+renderInfo() {
+  if (this.state.value) {
+    return (
+      <View style={styles.info}>
+        <Text>
+          Is Valid:{" "}
+          <Text style={{ fontWeight: "bold" }}>
+            {this.state.valid.toString()}
+          </Text>
+        </Text>
+        <Text>
+          Type: <Text style={{ fontWeight: "bold" }}>{this.state.type}</Text>
+        </Text>
+        <Text>
+          Value:{" "}
+          <Text style={{ fontWeight: "bold" }}>{this.state.value}</Text>
+        </Text>
+        <Text>
+          Value:{" "}
+          <Text style={{ fontWeight: "bold" }}>{this.state.cca2}</Text>
+        </Text>
+      </View>
+    );
+  }
+}*/
 
 /*
   render() {
