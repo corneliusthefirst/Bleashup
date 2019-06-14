@@ -21,6 +21,7 @@ export default class highlights {
       });
     });
   }
+  
   @action removeHighlight(id) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Highlights => {
