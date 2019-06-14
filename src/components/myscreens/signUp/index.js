@@ -3,8 +3,13 @@ import React, { Component } from 'react';
 //import { StyleSheet,Button,Text, TouchableOpacity , View } from 'react-native';
 import autobind from "autobind-decorator";
 import {
-  Content,Card,CardItem,Text,Body,Container,Header,Form,Item,Title,Input,Left,Right,H3,H1,H2,Spinner,Button
+  Content,Card,CardItem,Text,Body,Container,Icon,Header,Form,Item,Title,Input,Left,Right,H3,H1,H2,Spinner,Button,InputGroup
 } from "native-base";
+import styles from "./styles";
+import UserService from '../../../services/userHttpServices';
+import stores from "../../../stores";
+
+
 export default  class SignUpView extends Component {
   constructor() {
     super();
@@ -47,19 +52,55 @@ export default  class SignUpView extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
-      <Input></Input>
-      <Input></Input>
-      <Input></Input>
-      <Input></Input>
+      
+        <Container>
+        <Content >
+          <Left />
+          <Header>
+            <Body>
+              <Title>BleashUp </Title>
+            </Body>
+            <Right />
+          </Header>
 
-     <Button  onPress={this.SignUp} title="SignUp">
-           
-     </Button>
+      
+          <InputGroup>  
+          
+      <Item>
+            <Icon active type="MaterialIcon" name='email' />
+            <Input placeholder='user name'/>
+      </Item>
+      <Item>
+            <Icon active name='user' />
+            <Input placeholder='please enter email'/>
+      </Item>
+      <Item>
+            <Icon active name='md-unlock' />
+            <Input secureTextEntry  placeholder='enter password'/>
+      </Item>
+      <Item>
+            <Icon active name='log' />
+            <Input secureTextEntry  placeholder='confirm password'/>
+      </Item>
+    
 
-        
+        </InputGroup>
 
-      </View>
+        <Button  block rounded
+              style={styles.buttonstyle}
+              onPress={() => {
+                this.SignUp();
+              }}
+              >
+               <Text> SignUp </Text>
+             
+            </Button>
+
+       
+
+          
+        </Content>
+      </Container>
     );
   }
 }

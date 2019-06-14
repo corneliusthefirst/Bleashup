@@ -3,7 +3,6 @@ import autobind from "autobind-decorator";
 import {
   Content,Card,CardItem,Text,Body,Container,Header,Form,Item,Title,Input,Left,Right,H3,H1,H2,Spinner,Button
 } from "native-base";
-//import { Button,View } from "react-native";
 
 import { AsyncStorage, View, TouchableOpacity } from "react-native";
 //import { observable } from 'mobx';
@@ -127,13 +126,13 @@ export default class LoginView extends Component {
             </Item>
             
             
-            <Button  rounded
+            <Button  block rounded
               style={styles.buttonstyle}
               onPress={() => {
                 this.onClickContinue();
               }}
               >
-              {globalState.loading  ? <Spinner color="white" /> : <Text style={{paddingLeft:52}}> Continue </Text>}
+              {globalState.loading  ? <Spinner color="white" /> : <Text> Continue </Text>}
              
             </Button>
             
