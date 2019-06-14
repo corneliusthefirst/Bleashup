@@ -26,7 +26,7 @@ export default class globalState {
         return this.loading
     }
     set loading(newValue) {
-        this.loading= newValue
+        this.loading = newValue
     }
 
 
