@@ -36,14 +36,16 @@ export default {
 
  
   buttonstyle: {
-    marginTop:15,
-    width:deviceWidth,
+    marginTop:170,
+    width:deviceWidth/2,
+    marginLeft:deviceWidth/4
+    
     
   },
   H3:{
     marginTop:-deviceHeight / 2,
     fontSize:18,
-    color:'seagreen',
+    color:'#1FABAB',
     marginLeft: deviceHeight / 50
     
   }

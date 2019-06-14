@@ -1,134 +1,70 @@
 
 import React, { Component } from 'react';
-import { StyleSheet,Button,Text, TouchableOpacity , View } from 'react-native';
+//import { StyleSheet,Button,Text, TouchableOpacity , View } from 'react-native';
 import autobind from "autobind-decorator";
-
-import PhoneInput from 'react-native-phone-input';
-import CountryPicker from 'react-native-country-picker-modal';
-
+import {
+  Content,Card,CardItem,Text,Body,Container,Header,Form,Item,Title,Input,Left,Right,H3,H1,H2,Spinner,Button
+} from "native-base";
 export default  class SignUpView extends Component {
   constructor() {
     super();
-
-    this.onPressFlag = this.onPressFlag.bind(this);
-    this.selectCountry = this.selectCountry.bind(this);
     this.state = {
-      cca2: 'US',
-      country:"",
-      valid:"",
-      type:"",
-      value:""
+      name:'',
+      email:'',
+      password:'',
+      newPassword:''
+
     };
   }
 
-  componentDidMount() {
-    this.setState({
-      pickerData: this.phone.getPickerData(),
-    });
-  }
-
-  onPressFlag() {
-    this.countryPicker.openModal();
-  }
-
-  selectCountry(country) {
-    this.phone.selectCountry(country.cca2.toLowerCase());
-    this.setState({ cca2: country.name });
-  }
   @autobind
-  updateInfo() {
-    this.setState({
-      valid: this.phone.isValidNumber(),
-      type: this.phone.getNumberType(),
-      value: this.phone.getValue(),
-    });
-    console.warn(this.state.value) 
-    console.warn(this.state.type) 
-    console.warn(this.state.valid.toString()) 
+  OnChangedName(value){ 
+    this.setState({ name: value});
   }
 
   @autobind
-   _onClickSignUp() {
-    console.warn(this.state.cca2) 
-    //console.warn(this.state.country) 
-    //console.warn(this.state.value) 
-    console.warn(this.state.valid.toString()) 
-    //console.warn(this.state.type) 
+  OnChangedEmail(value){ 
+    this.setState({ email: value});
+  }
+  @autobind
+  OnChangedPassword(value){
+    this.setState({ password: value});
+  }
+
+  @autobind
+  OnChangedNewPassword(value){
+    this.setState({ newPassword: value});
+  }
+
+  @autobind
+   SignUp() {
+
     
     } 
-    renderInfo() {
-      if (this.state.value) {
-        return (
-          <View style={styles.info}>
-            <Text>
-              Is Valid:{" "}
-              <Text style={{ fontWeight: "bold" }}>
-                {this.state.valid.toString()}
-              </Text>
-            </Text>
-            <Text>
-              Type: <Text style={{ fontWeight: "bold" }}>{this.state.type}</Text>
-            </Text>
-            <Text>
-              Value:{" "}
-              <Text style={{ fontWeight: "bold" }}>{this.state.value}</Text>
-            </Text>
-            <Text>
-              Value:{" "}
-              <Text style={{ fontWeight: "bold" }}>{this.state.country}</Text>
-            </Text>
-          </View>
-        );
-      }
-    }
+ 
 
 
 
   render() {
     return (
       <View style={styles.container}>
-        <PhoneInput
-          ref={(ref) => {
-            this.phone = ref;
-          }}
-          onChange={value => this.updateInfo}
-          onPressFlag={this.onPressFlag}
-        />
+      <Input></Input>
+      <Input></Input>
+      <Input></Input>
+      <Input></Input>
 
-        <CountryPicker
-          ref={(ref) => {
-            this.countryPicker = ref;
-          }}
-          onChange={value => this.selectCountry(value)}
-          translation="eng"
-          cca2={this.state.cca2}
-        >
-          <View />
-        </CountryPicker>
-
-        <TouchableOpacity onPress={this.updateInfo} >
-          <Text>Get Info</Text>
-        </TouchableOpacity>
-
-        <Button  onPress={this._onClickSignUp} title="SignUp">
+     <Button  onPress={this.SignUp} title="SignUp">
            
-        </Button>
+     </Button>
 
-        {this.renderInfo()}
+        
 
       </View>
     );
   }
 }
 
-let styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    padding: 20,
-    paddingTop: 60,
-  },
-});
+
 
 
 
