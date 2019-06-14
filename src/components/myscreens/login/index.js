@@ -20,7 +20,6 @@ import {
   Spinner,
   Button
 } from "native-base";
-//import { Button,View } from "react-native";
 
 import { AsyncStorage, View, TouchableOpacity } from "react-native";
 //import { observable } from 'mobx';
@@ -66,11 +65,15 @@ export default class LoginView extends Component {
 
   @autobind
   async updateInfo() {
-    this.setState({
-      valid: this.phone.isValidNumber(),
-      type: this.phone.getNumberType(),
-      value: this.phone.getValue()
-    });
+    try {
+      this.setState({
+        valid: this.phone.isValidNumber(),
+        type: this.phone.getNumberType(),
+        value: this.phone.getValue()
+      });
+    } catch (e) {
+      alert(e.message);
+    }
   }
 
   @autobind
@@ -90,11 +93,19 @@ export default class LoginView extends Component {
     console.warn(this.state.value);
     console.warn(this.state.cca2);
 
-    this.UserService.checkUser(this.state.value).then({
-      if(response) {
-        globalState.loading = true;
-      }
-    });
+    this.UserService.checkUser(this.state.value)
+      .then(response => {
+        if (response) {
+          globalState.loading = true;
+          this.props.navigation.navigate("SignIn");
+        } else {
+          this.props.navigation.navigate("SignUp");
+        }
+      })
+      .catch(error => {
+        reject(error);
+        alert("Sorry Please Check your internet connection");
+      });
   }
 
   render() {
@@ -123,6 +134,7 @@ export default class LoginView extends Component {
           </Item>
 
           <Button
+            block
             rounded
             style={styles.buttonstyle}
             onPress={() => {
@@ -135,7 +147,6 @@ export default class LoginView extends Component {
               <Text> Continue </Text>
             )}
           </Button>
-
           <CountryPicker
             ref={ref => {
               this.countryPicker = ref;
