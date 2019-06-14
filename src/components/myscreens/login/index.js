@@ -3,7 +3,6 @@ import autobind from "autobind-decorator";
 import {
   Content,Card,CardItem,Text,Body,Container,Header,Form,Item,Title,Input,Left,Right,H3,H1,H2,Spinner,Button
 } from "native-base";
-//import { Button,View } from "react-native";
 
 import { AsyncStorage, View, TouchableOpacity } from "react-native";
 //import { observable } from 'mobx';
@@ -49,11 +48,18 @@ export default class LoginView extends Component {
 
   @autobind
   async updateInfo() {
+    try {
     this.setState({
       valid: this.phone.isValidNumber(),
       type: this.phone.getNumberType(),
       value: this.phone.getValue()
     });
+
+  }catch (e) {
+    alert(e.message);
+  }
+
+
   }
 
   @autobind
@@ -73,31 +79,27 @@ export default class LoginView extends Component {
     console.warn(this.state.value);
     console.warn(this.state.cca2);
 
-    this.UserService.checkUser(this.state.value).then({
+    this.UserService.checkUser(this.state.value).then((response) => {
       if(response){
         globalState.loading = true
+        this.props.navigation.navigate("SignIn")
+      }else{
+        this.props.navigation.navigate("SignUp")
       }
-    })
       
-
-
-    /*  if (loginStore.checkUser(loginStore.phoneNumber) == true){
-              this.props.navigation.navigate("SignIn")
-        }else{
-               this.props.navigation.navigate("SignUp")
-
-        }*/
+    }      
+  ).catch(error => {
+    reject(error)
+    alert("Sorry Please Check your internet connection")
+})
+      
   }
 
-  //@autobind
-  /*_onPhoneNumberChanged(phonenumber) {
-    this.loginStore.phonenumber = phonenumber;
-  }*/
-
+ 
   render() {
     return (
       <Container>
-        <Content>
+        <Content >
           <Left />
           <Header style={{ marginBottom: 450 }}>
             <Body>
@@ -123,15 +125,18 @@ export default class LoginView extends Component {
              />
             </Item>
             
-              <Button  rounded
+            
+            <Button  block rounded
               style={styles.buttonstyle}
               onPress={() => {
                 this.onClickContinue();
               }}
               >
-              {globalState.loading  ? <Spinner color="white" /> : <Text style={{paddingLeft:132 }}> Continue </Text>}
+              {globalState.loading  ? <Spinner color="white" /> : <Text> Continue </Text>}
              
             </Button>
+            
+              
             
            
 
@@ -157,6 +162,10 @@ export default class LoginView extends Component {
 //console.warn(this.state.value)
 //console.warn(this.state.type)
 //console.warn(this.state.valid.toString())
+ //@autobind
+  /*_onPhoneNumberChanged(phonenumber) {
+    this.loginStore.phonenumber = phonenumber;
+  }*/
 
 /**
  * import React, { Component } from "react";

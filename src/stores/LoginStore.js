@@ -63,7 +63,10 @@ export default class LoginStore {
         data: this.user
       });
       resolve();
+    }).catch(error => {
+      reject(error);
     });
+    
   }
 
   @action updateName(newName) {
