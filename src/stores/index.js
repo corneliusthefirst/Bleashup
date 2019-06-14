@@ -7,10 +7,12 @@ import Likes from "./likes"
 import Invitations from "./Invitations"
 import Events from "./events"
 import LoginStore from "./LoginStore"
+import ChatStore from "./ChatStore"
 import ChangeLogs from "./changelogs"
 
 export default {
 
+    ChatStore: new ChatStore(),
     LoginStore: new LoginStore(),
     Highlights: new Highlights(),
     Events: new Events(),

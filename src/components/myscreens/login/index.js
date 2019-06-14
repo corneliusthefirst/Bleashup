@@ -1,20 +1,7 @@
 import React, { Component } from "react";
 import autobind from "autobind-decorator";
 import {
-  Content,
-  Card,
-  CardItem,
-  Text,
-  Body,
-  Container,
-  Header,
-  Form,
-  Item,
-  Title,
-  Input,
-  Left,
-  Right,
-  Button
+  Content,Card,CardItem,Text,Body,Container,Header,Form,Item,Title,Input,Left,Right,H3,H1,H2,Spinner,Button
 } from "native-base";
 //import { Button,View } from "react-native";
 
@@ -28,6 +15,8 @@ import { functionDeclaration } from "@babel/types";
 
 import PhoneInput from "react-native-phone-input";
 import CountryPicker from "react-native-country-picker-modal";
+import UserService from '../../../services/userHttpServices';
+import globalState from '../../../stores/globalState';
 
 @observer
 export default class LoginView extends Component {
@@ -42,6 +31,7 @@ export default class LoginView extends Component {
     };
   }
   loginStore = stores.LoginStore;
+
   componentDidMount() {
     this.setState({
       pickerData: this.phone.getPickerData()
@@ -83,6 +73,14 @@ export default class LoginView extends Component {
     console.warn(this.state.value);
     console.warn(this.state.cca2);
 
+    this.UserService.checkUser(this.state.value).then({
+      if(response){
+        globalState.loading = true
+      }
+    })
+      
+
+
     /*  if (loginStore.checkUser(loginStore.phoneNumber) == true){
               this.props.navigation.navigate("SignIn")
         }else{
@@ -92,9 +90,9 @@ export default class LoginView extends Component {
   }
 
   //@autobind
-  _onPhoneNumberChanged(phonenumber) {
+  /*_onPhoneNumberChanged(phonenumber) {
     this.loginStore.phonenumber = phonenumber;
-  }
+  }*/
 
   render() {
     return (
@@ -108,16 +106,13 @@ export default class LoginView extends Component {
             <Right />
           </Header>
 
-          <Form style={styles.formstyle}>
-            <Header>
-              <Left />
-              <Body>
-                <Title>BleashUp </Title>
-              </Body>
-            </Header>
-            <Right />
+      
+            
+            <H3 style={styles.H3} >Phone number</H3>
+            
+        
 
-            <Item style={{ marginTop: 5 }} regular>
+            <Item style={styles.phoneinput} rounded >
               <PhoneInput
                 ref={ref => {
                   this.phone = ref;
@@ -125,8 +120,20 @@ export default class LoginView extends Component {
                 onChange={value => this.updateInfo()}
                 onPressFlag={this.onPressFlag}
                 value={this.state.value}
-              />
+             />
             </Item>
+            
+              <Button  rounded
+              style={styles.buttonstyle}
+              onPress={() => {
+                this.onClickContinue();
+              }}
+              >
+              {globalState.loading  ? <Spinner color="white" /> : <Text style={{paddingLeft:132 }}> Continue </Text>}
+             
+            </Button>
+            
+           
 
             <CountryPicker
               ref={ref => {
@@ -139,15 +146,8 @@ export default class LoginView extends Component {
               <View />
             </CountryPicker>
 
-            <Button
-              style={styles.buttonstyle}
-              onPress={() => {
-                this.onClickContinue();
-              }}
-            >
-              <Text style={{ paddingLeft: 40 }}> Continue </Text>
-            </Button>
-          </Form>
+           
+          
         </Content>
       </Container>
     );

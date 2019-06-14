@@ -18,10 +18,10 @@ import PersonalEventView from "./myscreens/personalevents/index";
 import PotesChat from "./myscreens/poteschat/index";
 import Status from "./myscreens/status/index";
 import LoginView from "./myscreens/login/index";
-//import ForgotPasswordView from "./myscreens/forgotpassword/index";
+import ForgotPasswordView from "./myscreens/forgotpassword/index";
 import SignUpView from "./myscreens/signUp/index";
 import SignInView from "./myscreens/signIn/index";
-//import LoginHomeView from "./myscreens/loginhome/index";
+import LoginHomeView from "./myscreens/loginhome/index";
 import stores from "../stores";
 import routerActions from "reazy-native-router-actions";
 import reazy from "reazy";
@@ -41,10 +41,10 @@ const AppNavigator = createStackNavigator(
     PersonalEvent: { screen: PersonalEventView },
     PotesChat: { screen: PotesChat },
     Login: { screen: LoginView },
-    //ForgotPassword: { screen: ForgotPasswordView },
+    ForgotPassword: { screen: ForgotPasswordView },
     SignUp: { screen: SignUpView },
-    SignIn: { screen: SignInView }
-    // LoginHome: { screen: LoginHomeView }
+    SignIn: { screen: SignInView },
+    LoginHome: { screen: LoginHomeView }
   },
   {
     initialRouteName: "Login",

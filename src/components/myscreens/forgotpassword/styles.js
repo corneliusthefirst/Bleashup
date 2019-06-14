@@ -1,10 +1,9 @@
 const React = require("react-native");
 const { Dimensions, Platform } = React;
 const deviceHeight = Dimensions.get("window").height;
-const deviceWidth = Dimensions.get("window").width;
 
 export default {
- /* imageContainer: {
+  /*imageContainer: {
     flex: 1,
     width: null,
     height: null
@@ -25,27 +24,25 @@ export default {
     color: "#D8D8D8",
     bottom: 6,
     marginTop: 5
-  },*/
-  phoneinput : {
-    flex: 1,
-    marginTop: deviceHeight / 20,
-    height:deviceHeight / 17,
-    padding:10,
-    //marginLeft: deviceHeight / 50
   },
+  button: {
+    width: 280,
+    height: 100,
+    marginTop: 5
+  },*/
+  formstyle: {
+    
+    position:"absolute",
+    width: 300,
+    marginLeft:25
+    //height: 300
 
- 
+  },
   buttonstyle: {
     marginTop:15,
-    width:deviceWidth,
-    
-  },
-  H3:{
-    marginTop:-deviceHeight / 2,
-    fontSize:18,
-    color:'seagreen',
-    marginLeft: deviceHeight / 50
-    
+    textAlign:"center",
+    marginLeft:85,
+    width:150,
+    height:50
   }
-
 };
