@@ -6,9 +6,10 @@ import {
     computed
 } from 'mobx'
 
-export default class globlaState {
+export default class globalState {
     @observable scrollOuter = true
     @observable isScrolling = true
+    @observable loading = false;
 
     get scrollOuter() {
         return this.scrollOuter
@@ -19,4 +20,14 @@ export default class globlaState {
     @computed get continueScroll() {
         return true
     }
+
+
+    get loading() {
+        return this.loading
+    }
+    set loading(newValue) {
+        this.loading= newValue
+    }
+
+
 }
