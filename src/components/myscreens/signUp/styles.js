@@ -48,6 +48,9 @@ export default {
     color:'#1FABAB',
     marginLeft: deviceHeight / 50
     
+  },
+  input:{
+    marginTop:20,
   }
 
 };

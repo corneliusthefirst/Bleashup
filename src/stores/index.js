@@ -7,6 +7,7 @@ import Likes from "./likes"
 import Invitations from "./Invitations"
 import Events from "./events"
 import LoginStore from "./LoginStore"
+import TempLoginStore from "./TempLoginStore"
 import ChatStore from "./ChatStore"
 import ChangeLogs from "./changelogs"
 
@@ -14,6 +15,7 @@ export default {
 
     ChatStore: new ChatStore(),
     LoginStore: new LoginStore(),
+    TempLoginStore: new TempLoginStore(),
     Highlights: new Highlights(),
     Events: new Events(),
     Contributions: new Contributions(),

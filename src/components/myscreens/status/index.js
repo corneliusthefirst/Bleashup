@@ -2,31 +2,19 @@ import React, { Component } from "react";
 import { Content, Card, CardItem, Text, Body } from "native-base";
 import NestedScrollView from "react-native-nested-scroll-view";
 import GState from "../../../stores/globalState";
+import autobind from "autobind-decorator";
+import {
+  Content,Card,CardItem,Text,Body,Container,Header,Form,Item,Title,Input,Left,Right,H3,H1,H2,Spinner,Button,Footer
+} from "native-base";
+import {
+  Image,Dimensions,StyleSheet,View,TouchableOpacity,Text
+} from "react-native";
+import { observer} from "mobx-react";
+import ParallaxScrollView from "react-native-parallax-scroll-view";
+//import IconOc from "react-native-vector-icons/Octicons";
+
+
+
 export default class Status extends Component {
-  render() {
-    return (
-      <NestedScrollView
-        onScroll={nativeEvent => {
-          GState.scrollOuter = true;
-        }}
-        alwaysBounceHorizontal={true}
-        scrollEventThrottle={16}
-      >
-        <Content padder style={{ marginTop: 0 }}>
-          <Card style={{ flex: 0 }}>
-            <CardItem>
-              <Body>
-                <Text>
-                  NativeBase builds a layer on top of React Native that provides
-                  you with basic set of components for mobile application
-                  development. This helps you to build world-class application
-                  experiences on native platforms.
-                </Text>
-              </Body>
-            </CardItem>
-          </Card>
-        </Content>
-      </NestedScrollView>
-    );
-  }
+
 }

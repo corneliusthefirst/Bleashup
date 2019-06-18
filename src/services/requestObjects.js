@@ -304,6 +304,7 @@
              phone: "",
              nick_name: "",
              status: "",
+             age:"",
              profile: "",
              profile_ext: "",
              password: "",

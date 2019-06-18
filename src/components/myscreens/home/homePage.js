@@ -22,6 +22,11 @@ import UserHttpServices from "../../../services/userHttpServices";
 
 @observer
 class Home extends Component {
+  constructor(props) {
+    super(props);
+   
+  }
+
   isCloseToBottom(nativeEvent) {
     return (
       nativeEvent.layoutMeasurement.height + nativeEvent.contentOffset.y >=
@@ -59,6 +64,7 @@ class Home extends Component {
                   paddingLeft: 100,
                   color: "#FEFFDE"
                 }}
+                onPress = {this.props.navigation.navigate('Settings')}
               />
             </Header>
           }
@@ -114,7 +120,7 @@ class Home extends Component {
             <Tab
               heading={
                 <TabHeading>
-                  <Icon name="user" />
+                  <Icon name="user" onPress = {this.props.navigation.navigate('Status')}/>
                 </TabHeading>
               }
             >

@@ -1,113 +1,126 @@
 import React, { Component } from "react";
 import autobind from "autobind-decorator";
 import {
-  Content,
-  Card,
-  CardItem,
-  Text,
-  Body,
-  Container,
-  Header,
-  Form,
-  Item,
-  Title,
-  Input,
-  Left,
-  Right,
-  H3,
-  Spinner,
-  Button
+  Content,Card,CardItem,Text,Body,Container,Icon,Header,Form,Item,Title,Input,Left,Right,H3,H1,H2,Spinner,Button,InputGroup,DatePicker,Thumbnail
 } from "native-base";
 //import { Button,View } from "react-native";
 
 import { AsyncStorage } from "react-native";
-import { observer, extendObservable, inject } from "mobx-react";
+import { observer } from "mobx-react";
 import styles from "./styles";
 import stores from "../../../stores";
 import routerActions from "reazy-native-router-actions";
 import { functionDeclaration } from "@babel/types";
-//console.error();
-const loginStore = stores.LoginStore;
+import globalState from '../../../stores/globalState';
+
 
 @observer
 export default class ForgotPasswordView extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      password: ""
+      email: ''
     };
   }
 
+  loginStore = stores.LoginStore;
+  temploginStore = stores.TempLoginStore;
+
   @autobind
-  _onPasswordChanged(text) {
-    this.setState({ password: text });
-    //console.warn(loginStore.password);
+  onChangedEmail(text) {
+    this.setState({ email: text });
+
   }
 
   @autobind
-  _onClickForgotPassword() {
-    this.props.navigation.navigate("ForgotPassword");
+  back(){
+    this.props.navigation.navigate('SignIn');
+    
   }
 
   @autobind
-  async _onClickSignIn() {
-    loginStore.password = this.state.password;
-
-    try {
-      await loginStore.login();
-      if (loginStore.loading == true) {
-        this.props.navigation.navigate("Home");
-      }
-    } catch (e) {
-      alert(e.message);
-    }
+  removeError(){
+    globalState.error = false
   }
+
+  @autobind
+  onClickReset() {
+    if(this.temploginStore.user.email == this.state.email){
+      console.warn(this.state.email) 
+      /*
+      Resetcode = Math.floor(Math.random() * 6000) + 1000
+      this.temploginStore.deleteData('resetcode')
+      this.temploginStore.saveData(Resetcode,'resetcode')
+     
+
+      console.warn(Resetcode) 
+     */
+
+      /**Code to send a reset link through email */
+      
+      this.props.navigation.navigate('ResetCode');
+
+   }else{
+     globalState.error = true
+   } 
+  }
+
 
   render() {
     return (
+    
+       
       <Container>
-        <Content>
-          <Left />
-          <Header style={{ marginBottom: 450 }}>
-            <Body>
-              <Title>BleashUp </Title>
-            </Body>
-            <Right />
-          </Header>
+      <Content >
+        <Left />
+        <Header>
+          <Body>
+            <Title>BleashUp </Title>
+          </Body>
+          <Right>
+          <Button onPress={this.back} transparent>
+                <Icon type='Ionicons' name="md-arrow-round-back" />
+          </Button>
+          </Right>
+        </Header>
 
-          <Form style={styles.formstyle}>
-            <Button
-              transparent
-              full
-              onPress={this._onClickForgotPassword}
-              style={{ marginBottom: 0, marginTop: 190, marginLeft: 0 }}
-            >
-              <H3 style={{ color: "green", fontSize: 15, marginLeft: 170 }}>
-                Forgot password?
-              </H3>
-            </Button>
 
-            <Header style={{ marginBottom: -70 }}>
-              <Left />
-              <Body>
-                <Title style={{ paddingLeft: 20 }}>Password</Title>
-              </Body>
-            </Header>
 
-            <Item style={{ marginTop: 60 }} regular>
-              <Input
-                placeholder="Please enter password"
-                onChangeText={this._onPasswordChanged}
-                value={this.state.password}
-              />
-            </Item>
 
-            <Button style={styles.buttonstyle} onPress={this._onClickSignIn}>
-              <Text style={{ paddingLeft: 50 }}>Sign In</Text>
-            </Button>
-          </Form>
-        </Content>
-      </Container>
+
+
+    <Button  transparent regular style={{marginBottom:-22,marginTop:50}}>
+       <Text>Reset Password </Text>               
+    </Button>
+
+
+    
+    
+        
+    <Item rounded style={styles.input}  error={globalState.error} >
+          <Icon active type='MaterialIcons' name='email' />
+          <Input  placeholder={globalState.error == false ? 'Please enter email to reset': 'Invalid email' } keyboardType='email-address'  autoCapitalize="none" returnKeyType='next' inverse last
+            onChangeText={(value) =>this.onChangedEmail(value)}  />
+            {globalState.error == false ? <Text></Text> : <Icon onPress={this.removeError} type='Ionicons' name='close-circle' style={{color:'#00C497'}}/>}
+    </Item>
+
+  
+
+    
+
+      <Button  block rounded
+            style={styles.buttonstyle}
+            onPress={ this.onClickReset}
+       >
+             <Text> Send Reset Code </Text>
+           
+          </Button>
+
+     
+
+        
+      </Content>
+    </Container>
     );
   }
 }
