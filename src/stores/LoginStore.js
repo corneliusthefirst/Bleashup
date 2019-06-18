@@ -5,7 +5,6 @@ import storage from "./Storage";
 export default class LoginStore {
   constructor() {}
   @observable phonenumber = "";
-  
 
   @observable user = {
     phone: "",
@@ -33,13 +32,12 @@ export default class LoginStore {
               profile_ext: data.profile_ext
             };
             resolve(this.user);
-            
           })
           .catch(error => {
             //TODO: redirection to the login page occurs here
             //reject()
-            this.props.navigation.navigate("SignUp")
-            
+            this.props.navigation.navigate("SignUp");
+
             resolve(this.user);
           });
       } else {
@@ -66,7 +64,6 @@ export default class LoginStore {
     }).catch(error => {
       reject(error);
     });
-    
   }
 
   @action updateName(newName) {
