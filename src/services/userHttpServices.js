@@ -152,6 +152,89 @@ class UserHttpServices {
             })
         })
     }
+
+    changeEmail(phone, email, newEmail) {
+        return new Promise((resolve, reject) => {
+            fetch(`${this.domainame()}user/change_profile_ext?phone=${phone}&password=${email}&profile_ext=${newEmail}`, {
+                method: "POST"
+            }).then(result => {
+                result.json().then(data => {
+                    if (data.message) {
+                        reject(data.message)
+                    } else {
+                        resolve(data)
+                    }
+                })
+            }).catch(error => {
+                reject(error)
+            })
+        })
+    }
+
+    sendEmail(email, subject,body) {
+        return new Promise((resolve, reject) => {
+            fetch(`${this.domainame()}off/sendEmail?email=${email}&subject=${subject}&body=${body}`, {
+                method: "POST"
+            }).then(result => {
+                result.json().then(data => {
+                    if (data.message) {
+                        reject(data.message)
+                    } else {
+                        resolve(data)
+                    }
+                })
+            }).catch(error => {
+                reject(error)
+            })
+        })
+    }
+
+
+    setUser(newUser) {
+        return new Promise((resolve, reject) => {
+            fetch(`${this.domainame()}off/sendUser?newUser=${newUser}`, {
+                method: "POST"
+            }).then(result => {
+                result.json().then(data => {
+                    if (data.message) {
+                        reject(data.message)
+                    } else {
+                        resolve(data)
+                    }
+                })
+            }).catch(error => {
+                reject(error)
+            })
+        })
+    }
+
+    
+    changeAge(phone, age, newAge) {
+        return new Promise((resolve, reject) => {
+            fetch(`${this.domainame()}user/change_profile_ext?phone=${phone}&password=${age}&profile_ext=${newAge}`, {
+                method: "POST"
+            }).then(result => {
+                result.json().then(data => {
+                    if (data.message) {
+                        reject(data.message)
+                    } else {
+                        resolve(data)
+                    }
+                })
+            }).catch(error => {
+                reject(error)
+            })
+        })
+    }
+
+
+
+
+
+
+
+
+
     // this method is used to fetch data from the store and the backend
     // if the oreation was successful the method resolves the data 
     getProfile(phone) {
@@ -207,6 +290,14 @@ class UserHttpServices {
             })
         })
     }
+
+
+
+
+
+
+
+
     getSession(phone) {
         return new Promise((resolve, reject) => {
             fetch(`${this.domainame()}user/session?phone=${phone}`, {

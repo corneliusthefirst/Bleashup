@@ -1,22 +1,7 @@
 import React, { Component } from "react";
 import autobind from "autobind-decorator";
 import {
-  Content,
-  Card,
-  CardItem,
-  Text,
-  Body,
-  Container,
-  Header,
-  Form,
-  Item,
-  Title,
-  Input,
-  Left,
-  Right,
-  H3,
-  Spinner,
-  Button
+  Content,Card,CardItem,Text,Body,Container,Header,Form,Item,Title,Input,Left,Right,H3,H1,H2,Spinner,Button
 } from "native-base";
 //import { Button,View } from "react-native";
 
@@ -30,7 +15,7 @@ import { functionDeclaration } from "@babel/types";
 const loginStore = stores.LoginStore;
 
 @observer
-export default class SignInView extends Component {
+export default class SettingView extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -111,3 +96,41 @@ export default class SignInView extends Component {
     );
   }
 }
+
+/*
+import React, { Component } from "react";
+import { StyleSheet, Button, View } from 'react-native'
+import email from 'react-native-email'
+ 
+export default class SettingView extends Component {
+    render() {
+        return (
+            <View style={styles.container}>
+                <Button title="Send Mail" onPress={this.handleEmail} />
+            </View>
+        )
+    }
+ 
+    handleEmail = () => {
+        const to = ['gf.694765457@gmail.com'] // string or array of email addresses
+        email(to, {
+            // Optional additional arguments
+            cc: ['bazzy@moo.com', 'doooo@daaa.com'], // string or array of email addresses
+            bcc: 'mee@mee.com', // string or array of email addresses
+            subject: 'Show how to use',
+            body: 'Some body right here'
+        }).catch(console.error)
+    }
+}
+
+ 
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#fff',
+        alignItems: 'center',
+        justifyContent: 'center'
+    }
+})
+
+*/

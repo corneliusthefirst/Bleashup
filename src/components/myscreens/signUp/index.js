@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 //import { StyleSheet,Button,Text, TouchableOpacity , View } from 'react-native';
 import autobind from "autobind-decorator";
 import {
-  Content,Card,CardItem,Text,Body,Container,Icon,Header,Form,Item,Title,Input,Left,Right,H3,H1,H2,Spinner,Button,InputGroup
+  Content,Card,CardItem,Text,Body,Container,Icon,Header,Form,Item,Title,Input,Left,Right,H3,H1,H2,Spinner,Button,InputGroup,DatePicker
 } from "native-base";
 import styles from "./styles";
 import UserService from '../../../services/userHttpServices';
@@ -11,16 +11,19 @@ import stores from "../../../stores";
 
 
 export default  class SignUpView extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       name:'',
       email:'',
+      age:new Date(),
       password:'',
       newPassword:''
 
     };
   }
+  loginStore = stores.LoginStore;
+
 
   @autobind
   OnChangedName(value){ 
@@ -30,6 +33,11 @@ export default  class SignUpView extends Component {
   @autobind
   OnChangedEmail(value){ 
     this.setState({ email: value});
+  }
+  @autobind
+  OnChangedAge(value){
+    this.setState({ age: value});
+    
   }
   @autobind
   OnChangedPassword(value){
@@ -43,10 +51,47 @@ export default  class SignUpView extends Component {
 
   @autobind
    SignUp() {
+  /*
+        this.loginStore.updateName(this.state.name).then((response) => {
+          if(response){}
+        }).catch(error => {
+        reject(error)
+    
+      })
 
+       this.loginStore.updateEmail(this.state.email).then((response) => {
+        if(response){}
+      }).catch(error => {
+      reject(error)
+  
+     })
+       this.loginStore.updateAge(this.state.age).then((response) => {
+        if(response){}
+      }).catch(error => {
+      reject(error)
+  
+     })
+       this.loginStore.updatePassword(this.state.password).then((response) => {
+        if(response){}
+      }).catch(error => {
+        reject(error)
+  
+      })*/
+
+       console.warn(this.state.password)
+       console.warn(this.state.name)
+       console.warn(this.state.newPassword)
+       console.warn(this.state.email)
+       console.warn(this.state.age)
+
+       //this.props.navigation.navigate("Home")
+    
     
     } 
- 
+  @autobind
+  back(){
+    this.props.navigation.navigate('Login');
+  }
 
 
 
@@ -56,35 +101,62 @@ export default  class SignUpView extends Component {
         <Container>
         <Content >
           <Left />
-          <Header>
+          <Header style={{marginBottom:15}}>
             <Body>
               <Title>BleashUp </Title>
             </Body>
-            <Right />
+            <Right>
+            <Button onPress={this.back} transparent>
+                  <Icon type='Ionicons' name="md-arrow-round-back" />
+            </Button>
+            </Right>
           </Header>
 
       
-          <InputGroup>  
           
-      <Item>
-            <Icon active type="MaterialIcon" name='email' />
-            <Input placeholder='user name'/>
+          
+      <Item rounded style={styles.input}>
+            <Icon active  name='user'   style={{color: "#1FABAB"}}/>
+            <Input placeholder='user name'
+              onChangeText={value => this.OnChangedName(value)} />
       </Item>
-      <Item>
-            <Icon active name='user' />
-            <Input placeholder='please enter email'/>
+      <Item rounded style={styles.input}>
+            <Icon active type='MaterialIcons' name='email' style={{color: "#1FABAB"}}/>
+            <Input keyboardType="email-address" placeholder='please enter email'   
+              onChangeText={value => this.OnChangedEmail(value)}/>
       </Item>
-      <Item>
-            <Icon active name='md-unlock' />
-            <Input secureTextEntry  placeholder='enter password'/>
+  
+      <Item rounded style={styles.input}>
+      <Icon active type='MaterialIcons' name='date-range' style={{color: "#1FABAB"}}/>
+      <DatePicker 
+            defaultDate={new Date(2018, 4, 4)}
+            minimumDate={new Date(2018, 1, 1)}
+            maximumDate={new Date(2018, 12, 31)}
+            locale={"en"}
+            timeZoneOffsetInMinutes={undefined}
+            modalTransparent={false}
+            animationType={"fade"}
+            androidMode={"default"}
+            placeHolderText="Select date of birth"
+            textStyle={{ color: "green" }}
+            placeHolderTextStyle={{ color: "#696969" }}
+            onDateChange={this.OnChangedAge}
+          />
+       </Item>
+      <Item rounded style={styles.input}>
+            <Icon active type='Ionicons' name='ios-lock' style={{color: "#1FABAB"}}/>
+            <Input secureTextEntry  placeholder='enter password' 
+              onChangeText={value => this.OnChangedPassword(value)} />
+              
       </Item>
-      <Item>
-            <Icon active name='log' />
-            <Input secureTextEntry  placeholder='confirm password'/>
+      <Item rounded style={styles.input}>
+            <Icon active type='Ionicons' name='ios-lock' style={{color: "#1FABAB"}}/>
+            <Input secureTextEntry  placeholder='confirm password'
+              onChangeText={value => this.OnChangedNewPassword(value)} />
       </Item>
     
 
-        </InputGroup>
+      
 
         <Button  block rounded
               style={styles.buttonstyle}
@@ -117,6 +189,9 @@ export default  class SignUpView extends Component {
 
 
 
+
+//</Container><Input type='date' placeholder='please enter birth date'  
+//onChangeText={value => this.OnChangedAge(value)}/>
 
 
 
