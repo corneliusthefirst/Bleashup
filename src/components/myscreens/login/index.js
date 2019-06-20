@@ -21,7 +21,8 @@ import {
   Button
 } from "native-base";
 
-import { AsyncStorage, View, TouchableOpacity } from "react-native";
+import { View, TouchableOpacity } from "react-native";
+import { AsyncStorage } from "@react-native-community/async-storage";
 //import { observable } from 'mobx';
 import { observer, extendObservable, inject } from "mobx-react";
 import styles from "./styles";
@@ -47,6 +48,7 @@ export default class LoginView extends Component {
     };
   }
   loginStore = stores.LoginStore;
+  temploginStore = stores.TempLoginStore;
 
   componentDidMount() {
     this.setState({
@@ -93,7 +95,7 @@ export default class LoginView extends Component {
     console.warn(this.state.value);
     console.warn(this.state.cca2);
 
-    this.UserService.checkUser(this.state.value)
+    UserService.checkUser(this.state.value)
       .then(response => {
         if (response) {
           globalState.loading = true;
@@ -103,7 +105,6 @@ export default class LoginView extends Component {
         }
       })
       .catch(error => {
-        reject(error);
         alert("Sorry Please Check your internet connection");
       });
   }

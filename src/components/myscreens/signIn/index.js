@@ -1,113 +1,173 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
+//import { StyleSheet,Button,Text, TouchableOpacity , View } from 'react-native';
 import autobind from "autobind-decorator";
+import { Image,TouchableOpacity } from 'react-native';
+import { observer } from "mobx-react";
 import {
-  Content,
-  Card,
-  CardItem,
-  Text,
-  Body,
-  Container,
-  Header,
-  Form,
-  Item,
-  Title,
-  Input,
-  Left,
-  Right,
-  H3,
-  Spinner,
-  Button
+  Content,Card,CardItem,Text,Body,Container,Icon,Header,Form,Item,Title,Input,Left,Right,H3,H1,H2,Spinner,Button,InputGroup,DatePicker,Thumbnail
 } from "native-base";
-//import { Button,View } from "react-native";
-
-import { AsyncStorage } from "react-native";
-import { observer, extendObservable, inject } from "mobx-react";
 import styles from "./styles";
-import stores from "../../../stores";
-import routerActions from "reazy-native-router-actions";
-import { functionDeclaration } from "@babel/types";
-
-const loginStore = stores.LoginStore;
+import UserService from '../../../services/userHttpServices';
+import stores from "../../../stores/index";
+import globalState from '../../../stores/globalState';
 
 @observer
-export default class SignInView extends Component {
+export default  class SignInView extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      password: ""
+      password:'',
+
     };
   }
+  loginStore = stores.LoginStore;
 
+
+ 
   @autobind
-  _onPasswordChanged(text) {
-    this.setState({ password: text });
-    //console.warn(loginStore.password);
+  OnChangedPassword(value){
+    this.setState({ password: value});
   }
 
-  @autobind
-  _onClickForgotPassword() {
-    this.props.navigation.navigate("ForgotPassword");
-  }
+
 
   @autobind
-  async _onClickSignIn() {
-    loginStore.password = this.state.password;
-
-    try {
-      await loginStore.login();
-      if (loginStore.loading == true) {
-        this.props.navigation.navigate("Home");
-      }
-    } catch (e) {
-      alert(e.message);
+   SignIn() {
+     if(this.loginStore.user.password == this.state.password){
+        console.warn(this.state.password) 
+        this.props.navigation.navigate("Home")
+     }else{
+       globalState.error = true
+     }  
+    
+    } 
+ 
+    @autobind
+    back(){
+      this.props.navigation.navigate('Login');
+      
     }
-  }
+  
+    @autobind
+    removeError(){
+      globalState.error = false
+    }
+
+    @autobind
+    forgotPassword(){
+      this.props.navigation.navigate('ForgotPassword');
+      
+    }
+    
 
   render() {
     return (
-      <Container>
-        <Content>
+      
+       
+        <Container>
+        <Content >
           <Left />
-          <Header style={{ marginBottom: 450 }}>
+          <Header>
             <Body>
               <Title>BleashUp </Title>
             </Body>
-            <Right />
+            <Right>
+            <Button onPress={this.back} transparent>
+                  <Icon type='Ionicons' name="md-arrow-round-back" />
+            </Button>
+            </Right>
           </Header>
 
-          <Form style={styles.formstyle}>
-            <Button
-              transparent
-              full
-              onPress={this._onClickForgotPassword}
-              style={{ marginBottom: 0, marginTop: 190, marginLeft: 0 }}
-            >
-              <H3 style={{ color: "green", fontSize: 15, marginLeft: 170 }}>
-                Forgot password?
-              </H3>
+
+        
+      
+        <Content>
+          <Card>
+            <CardItem>
+              <Left>
+                <Thumbnail source={this.loginStore.user.profile}  />
+                <Body>
+                  <Text>{this.loginStore.user.name}</Text>
+                  <Text note>{this.loginStore.user.status}</Text>
+                </Body>
+              </Left>
+            </CardItem>
+            <CardItem cardBody>
+              <Image  source={this.loginStore.user.profile_ext} style={{height: 200, width: null, flex: 1}}/>
+            </CardItem>
+            
+            <CardItem style={{height:60}}>
+
+            </CardItem>
+           
+          </Card>
+        </Content>
+     
+
+
+
+
+
+
+  
+      <Button  transparent regular style={{marginBottom:-31}}>
+         <Text> Password </Text>               
+      </Button>
+  
+
+           <TouchableOpacity style={{paddingLeft:220,marginBottom:-22}}  onPress={this.forgotPassword}>
+           <Text style={{color:'#1FABAB',fontSize:14}} > forgot password ? </Text> 
+           </TouchableOpacity>
+  
+      
+      
+          
+      <Item rounded style={styles.input}  error={globalState.error} >
+            <Icon active type='FontAwesome' name='unlock' />
+            <Input secureTextEntry  placeholder={globalState.error == false ? 'Please enter password': 'Invalid password' }
+              onChangeText={(value) =>this.OnChangedPassword(value)}  />
+              {globalState.error == false ? <Text></Text> : <Icon onPress={this.removeError} type='Ionicons' name='close-circle' style={{color:'#00C497'}}/>}
+      </Item>
+  
+    
+
+      
+
+        <Button  block rounded
+              style={styles.buttonstyle}
+              onPress={() => {
+                this.SignIn();
+              }}
+              >
+               <Text> SignIn </Text>
+             
             </Button>
 
-            <Header style={{ marginBottom: -70 }}>
-              <Left />
-              <Body>
-                <Title style={{ paddingLeft: 20 }}>Password</Title>
-              </Body>
-            </Header>
+       
 
-            <Item style={{ marginTop: 60 }} regular>
-              <Input
-                placeholder="Please enter password"
-                onChangeText={this._onPasswordChanged}
-                value={this.state.password}
-              />
-            </Item>
-
-            <Button style={styles.buttonstyle} onPress={this._onClickSignIn}>
-              <Text style={{ paddingLeft: 50 }}>Sign In</Text>
-            </Button>
-          </Form>
+          
         </Content>
       </Container>
     );
   }
 }
+
+
+
+/** <CardItem>
+              <Left>
+                <Button transparent>
+                  <Icon active type='Ionicons' name="ios-thumbs-up" />
+                  <Text>12 Likes</Text>
+                </Button>
+              </Left>
+              <Body>
+                <Button transparent>
+                  <Icon active type='Ionicons' name="ios-chatbubbles" />
+                  <Text>4 Comments</Text>
+                </Button>
+              </Body>
+              <Right>
+                <Text style={{color:'#1FABAB'}}>11h ago</Text>
+              </Right>
+            </CardItem> */

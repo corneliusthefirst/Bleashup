@@ -1,32 +1,153 @@
 import React, { Component } from "react";
-import { Content, Card, CardItem, Text, Body } from "native-base";
-import NestedScrollView from "react-native-nested-scroll-view";
-import GState from "../../../stores/globalState";
-export default class Status extends Component {
+import autobind from "autobind-decorator";
+import {
+  Content,
+  Card,
+  CardItem,
+  Text,
+  Body,
+  Container,
+  Header,
+  Form,
+  Item,
+  Title,
+  Input,
+  Left,
+  Right,
+  H3,
+  H1,
+  H2,
+  Spinner,
+  Button
+} from "native-base";
+//import { Button,View } from "react-native";
+
+import { AsyncStorage } from "react-native";
+import { observer, extendObservable, inject } from "mobx-react";
+import styles from "./styles";
+import stores from "../../../stores";
+import routerActions from "reazy-native-router-actions";
+import { functionDeclaration } from "@babel/types";
+//console.error();
+const loginStore = stores.LoginStore;
+
+@observer
+export default class SettingView extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      password: ""
+    };
+  }
+
+  @autobind
+  _onPasswordChanged(text) {
+    this.setState({ password: text });
+    //console.warn(loginStore.password);
+  }
+
+  @autobind
+  _onClickForgotPassword() {
+    this.props.navigation.navigate("ForgotPassword");
+  }
+
+  @autobind
+  async _onClickSignIn() {
+    loginStore.password = this.state.password;
+
+    try {
+      await loginStore.login();
+      if (loginStore.loading == true) {
+        this.props.navigation.navigate("Home");
+      }
+    } catch (e) {
+      alert(e.message);
+    }
+  }
+
   render() {
     return (
-      <NestedScrollView
-        onScroll={nativeEvent => {
-          GState.scrollOuter = true;
-        }}
-        alwaysBounceHorizontal={true}
-        scrollEventThrottle={16}
-      >
-        <Content padder style={{ marginTop: 0 }}>
-          <Card style={{ flex: 0 }}>
-            <CardItem>
+      <Container>
+        <Content>
+          <Left />
+          <Header style={{ marginBottom: 450 }}>
+            <Body>
+              <Title>BleashUp </Title>
+            </Body>
+            <Right />
+          </Header>
+
+          <Form style={styles.formstyle}>
+            <Button
+              transparent
+              full
+              onPress={this._onClickForgotPassword}
+              style={{ marginBottom: 0, marginTop: 190, marginLeft: 0 }}
+            >
+              <H3 style={{ color: "green", fontSize: 15, marginLeft: 170 }}>
+                Forgot password?
+              </H3>
+            </Button>
+
+            <Header style={{ marginBottom: -70 }}>
+              <Left />
               <Body>
-                <Text>
-                  NativeBase builds a layer on top of React Native that provides
-                  you with basic set of components for mobile application
-                  development. This helps you to build world-class application
-                  experiences on native platforms.
-                </Text>
+                <Title style={{ paddingLeft: 20 }}>Password</Title>
               </Body>
-            </CardItem>
-          </Card>
+            </Header>
+
+            <Item style={{ marginTop: 60 }} regular>
+              <Input
+                placeholder="Please enter password"
+                onChangeText={this._onPasswordChanged}
+                value={this.state.password}
+              />
+            </Item>
+
+            <Button style={styles.buttonstyle} onPress={this._onClickSignIn}>
+              <Text style={{ paddingLeft: 50 }}>Sign In</Text>
+            </Button>
+          </Form>
         </Content>
-      </NestedScrollView>
+      </Container>
     );
   }
 }
+
+/*
+import React, { Component } from "react";
+import { StyleSheet, Button, View } from 'react-native'
+import email from 'react-native-email'
+
+export default class SettingView extends Component {
+    render() {
+        return (
+            <View style={styles.container}>
+                <Button title="Send Mail" onPress={this.handleEmail} />
+            </View>
+        )
+    }
+
+    handleEmail = () => {
+        const to = ['gf.694765457@gmail.com'] // string or array of email addresses
+        email(to, {
+            // Optional additional arguments
+            cc: ['bazzy@moo.com', 'doooo@daaa.com'], // string or array of email addresses
+            bcc: 'mee@mee.com', // string or array of email addresses
+            subject: 'Show how to use',
+            body: 'Some body right here'
+        }).catch(console.error)
+    }
+}
+
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#fff',
+        alignItems: 'center',
+        justifyContent: 'center'
+    }
+})
+
+*/

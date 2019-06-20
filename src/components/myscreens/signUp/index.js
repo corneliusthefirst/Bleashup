@@ -1,173 +1,188 @@
-
-import React, { Component } from 'react';
+import React, { Component } from "react";
 //import { StyleSheet,Button,Text, TouchableOpacity , View } from 'react-native';
 import autobind from "autobind-decorator";
 import {
-  Content,Card,CardItem,Text,Body,Container,Icon,Header,Form,Item,Title,Input,Left,Right,H3,H1,H2,Spinner,Button,InputGroup
+  Content,
+  Card,
+  CardItem,
+  Text,
+  Body,
+  Container,
+  Icon,
+  Header,
+  Form,
+  Item,
+  Title,
+  Input,
+  Left,
+  Right,
+  H3,
+  H1,
+  H2,
+  Spinner,
+  Button,
+  InputGroup,
+  DatePicker
 } from "native-base";
 import styles from "./styles";
-import UserService from '../../../services/userHttpServices';
+import UserService from "../../../services/userHttpServices";
 import stores from "../../../stores";
 
-
-export default  class SignUpView extends Component {
-  constructor() {
-    super();
+export default class SignUpView extends Component {
+  constructor(props) {
+    super(props);
     this.state = {
-      name:'',
-      email:'',
-      password:'',
-      newPassword:''
-
+      name: "",
+      email: "",
+      age: new Date(),
+      password: "",
+      newPassword: ""
     };
   }
+  loginStore = stores.LoginStore;
 
   @autobind
-  OnChangedName(value){ 
-    this.setState({ name: value});
+  OnChangedName(value) {
+    this.setState({ name: value });
   }
 
   @autobind
-  OnChangedEmail(value){ 
-    this.setState({ email: value});
+  OnChangedEmail(value) {
+    this.setState({ email: value });
   }
   @autobind
-  OnChangedPassword(value){
-    this.setState({ password: value});
+  OnChangedAge(value) {
+    this.setState({ age: value });
+  }
+  @autobind
+  OnChangedPassword(value) {
+    this.setState({ password: value });
   }
 
   @autobind
-  OnChangedNewPassword(value){
-    this.setState({ newPassword: value});
+  OnChangedNewPassword(value) {
+    this.setState({ newPassword: value });
   }
 
   @autobind
-   SignUp() {
+  SignUp() {
+    console.warn(this.state.password);
+    console.warn(this.state.name);
+    console.warn(this.state.newPassword);
+    console.warn(this.state.email);
+    console.warn(this.state.age);
 
-    
-    } 
- 
-
-
+    //this.props.navigation.navigate("Home")
+  }
+  @autobind
+  back() {
+    this.props.navigation.navigate("Login");
+  }
 
   render() {
     return (
-      
-        <Container>
-        <Content >
+      <Container>
+        <Content>
           <Left />
-          <Header>
+          <Header style={{ marginBottom: 15 }}>
             <Body>
               <Title>BleashUp </Title>
             </Body>
-            <Right />
+            <Right>
+              <Button onPress={this.back} transparent>
+                <Icon type="Ionicons" name="md-arrow-round-back" />
+              </Button>
+            </Right>
           </Header>
 
-      
-          <InputGroup>  
-          
-      <Item>
-            <Icon active type="MaterialIcon" name='email' />
-            <Input placeholder='user name'/>
-      </Item>
-      <Item>
-            <Icon active name='user' />
-            <Input placeholder='please enter email'/>
-      </Item>
-      <Item>
-            <Icon active name='md-unlock' />
-            <Input secureTextEntry  placeholder='enter password'/>
-      </Item>
-      <Item>
-            <Icon active name='log' />
-            <Input secureTextEntry  placeholder='confirm password'/>
-      </Item>
-    
+          <Item rounded style={styles.input}>
+            <Icon active name="user" style={{ color: "#1FABAB" }} />
+            <Input
+              placeholder="user name"
+              onChangeText={value => this.OnChangedName(value)}
+            />
+          </Item>
+          <Item rounded style={styles.input}>
+            <Icon
+              active
+              type="MaterialIcons"
+              name="email"
+              style={{ color: "#1FABAB" }}
+            />
+            <Input
+              keyboardType="email-address"
+              placeholder="please enter email"
+              onChangeText={value => this.OnChangedEmail(value)}
+            />
+          </Item>
 
-        </InputGroup>
+          <Item rounded style={styles.input}>
+            <Icon
+              active
+              type="MaterialIcons"
+              name="date-range"
+              style={{ color: "#1FABAB" }}
+            />
+            <DatePicker
+              defaultDate={new Date(2018, 4, 4)}
+              minimumDate={new Date(2018, 1, 1)}
+              maximumDate={new Date(2018, 12, 31)}
+              locale={"en"}
+              timeZoneOffsetInMinutes={undefined}
+              modalTransparent={false}
+              animationType={"fade"}
+              androidMode={"default"}
+              placeHolderText="Select date of birth"
+              textStyle={{ color: "green" }}
+              placeHolderTextStyle={{ color: "#696969" }}
+              onDateChange={this.OnChangedAge}
+            />
+          </Item>
+          <Item rounded style={styles.input}>
+            <Icon
+              active
+              type="Ionicons"
+              name="ios-lock"
+              style={{ color: "#1FABAB" }}
+            />
+            <Input
+              secureTextEntry
+              placeholder="enter password"
+              onChangeText={value => this.OnChangedPassword(value)}
+            />
+          </Item>
+          <Item rounded style={styles.input}>
+            <Icon
+              active
+              type="Ionicons"
+              name="ios-lock"
+              style={{ color: "#1FABAB" }}
+            />
+            <Input
+              secureTextEntry
+              placeholder="confirm password"
+              onChangeText={value => this.OnChangedNewPassword(value)}
+            />
+          </Item>
 
-        <Button  block rounded
-              style={styles.buttonstyle}
-              onPress={() => {
-                this.SignUp();
-              }}
-              >
-               <Text> SignUp </Text>
-             
-            </Button>
-
-       
-
-          
+          <Button
+            block
+            rounded
+            style={styles.buttonstyle}
+            onPress={() => {
+              this.SignUp();
+            }}
+          >
+            <Text> SignUp </Text>
+          </Button>
         </Content>
       </Container>
     );
   }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//</Container><Input type='date' placeholder='please enter birth date'
+//onChangeText={value => this.OnChangedAge(value)}/>
 
 /*
 import React, { Component } from "react";
