@@ -69,6 +69,14 @@ export default class ForgotPasswordView extends Component {
      
       UserService.sendEmail(name,email, subject,body).then((response) => {
         if(response = 'ok'){
+          
+          this.temploginStore.saveData(resetCode,'resetCode').then((response) => {
+            if(response){}
+          }).catch(error => {
+            reject(error)
+      
+          })
+
           this.props.navigation.navigate('ResetCode');
          }
       }).catch(error => {

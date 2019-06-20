@@ -1,4 +1,3 @@
-
 import React, { Component } from 'react';
 //import { StyleSheet,Button,Text, TouchableOpacity , View } from 'react-native';
 import autobind from "autobind-decorator";
@@ -25,8 +24,8 @@ export default  class SignUpView extends Component {
       status: "",
       email:"",
       age:"",
-      profile: require('../../Images/8.jpg'),
-      profile_ext:require('../../Images/7.jpg'),
+      profile:loginStore.user.profile,
+      profile_ext:loginStore.user.profile_ext,
       password: "",
       created_at:moment.format("YYYY-MM-DD HH:mm"),
       updated_at:moment.format("YYYY-MM-DD HH:mm")
@@ -123,12 +122,15 @@ export default  class SignUpView extends Component {
         if(response = 'ok'){
           
 
-          this.temploginStore.saveData(emailVerificationCode,'verificationCode').then((response) => {
+          this.temploginStore.saveData(emailVerificationCode,'emailVerificationCode').then((response) => {
             if(response){}
           }).catch(error => {
             reject(error)
       
           })
+
+          
+          //set the temporal loginstore for user
           this.temploginStore.setUser(this.state)
 
           this.props.navigation.navigate('EmailVerification');
@@ -138,11 +140,8 @@ export default  class SignUpView extends Component {
   
       })  
 
-     
-
-       this.props.navigation.navigate('Login');
     }
-    moment.format("YYYY-MM-DD HH:mm");
+  
     } 
 
 
@@ -246,91 +245,3 @@ export default  class SignUpView extends Component {
     );
   }
 }
-
-
-
-/**
- *       this.loginStore.updateName(this.state.name).then((response) => {
-        if(response){}
-      }).catch(error => {
-      reject(error)
-  
-    })
-
-     this.loginStore.updateEmail(this.state.email).then((response) => {
-      if(response){}
-    }).catch(error => {
-    reject(error)
-
-   })
-     this.loginStore.updateAge(this.state.age).then((response) => {
-      if(response){}
-    }).catch(error => {
-    reject(error)
-
-   })
-     this.loginStore.updatePassword(this.state.password).then((response) => {
-      if(response){}
-    }).catch(error => {
-      reject(error)
-
-    })
- */
-
-
-
-
-
-
-
-
-
-
-//</Container><Input type='date' placeholder='please enter birth date'  
-//onChangeText={value => this.OnChangedAge(value)}/>
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

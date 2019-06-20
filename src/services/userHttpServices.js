@@ -171,9 +171,10 @@ class UserHttpServices {
         })
     }
 
-    sendEmail(name,email, subject,body) {
+    sendEmail(name, email, subject, body) {
         return new Promise((resolve, reject) => {
-            fetch(`${this.domainame()}auth/sendEmail?name=${name}&email=${email}&subject=${subject}&body=${body}`, {
+            fetch(`${this.domainame()}auth/send_email?name=${name}&email=${email}&subject=${subject}&body=${body}&
+            server_reference=${configs.server_reference}`, {
                 method: "POST"
             }).then(result => {
                 result.json().then(data => {
@@ -192,7 +193,7 @@ class UserHttpServices {
 
     setUser(newUser) {
         return new Promise((resolve, reject) => {
-            fetch(`${this.domainame()}auth/setUser?newUser=${newUser}`, {
+            fetch(`${this.domainame()}auth/set_user?newUser=${newUser}`, {
                 method: "POST"
             }).then(result => {
                 result.json().then(data => {
@@ -208,7 +209,7 @@ class UserHttpServices {
         })
     }
 
-    
+
     changeAge(phone, age, newAge) {
         return new Promise((resolve, reject) => {
             fetch(`${this.domainame()}user/change_profile_ext?phone=${phone}&password=${age}&profile_ext=${newAge}`, {

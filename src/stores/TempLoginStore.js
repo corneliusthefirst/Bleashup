@@ -12,71 +12,56 @@ export default class TempLoginStore {
     phone: "0666406835",
     name: "cornelius",
     status: "one step ahead the world",
-    email:'ndeffocornelius@gmail.com',
-    age:"17/12/1996",
-    profile: require('../../Images/8.jpg'),
-    profile_ext:require('../../Images/7.jpg'),
-    password: "cornelius",
-    created_at:"",
-    updated_at:""
+    email: "ndeffocornelius@gmail.com",
+    age: "17/12/1996",
+    profile: require("../../Images/8.jpg"),
+    profile_ext: require("../../Images/7.jpg"),
+    password: "cornelius"
   };
 
-  
-  @action  deleteData(userKey) {
+  //Please check this commented code
+
+  @action deleteData(userKey) {
     return new Promise((resolve, reject) => {
       storage.remove({
-        key: userKey,       
+        key: userKey
       });
-
       resolve();
     }).catch(error => {
       reject(error);
     });
-
   }
 
-
-
-
-  @action  saveData(data,key) {
+  @action saveData(data, key) {
     return new Promise((resolve, reject) => {
       storage.save({
-        key: key, 
-        data: data      
+        key: key,
+        data: data
       });
 
       resolve();
-
     }).catch(error => {
       reject(error);
     });
-
   }
 
-  @action  loadSaveData(key) {
+  @action loadSaveData(key) {
     return new Promise((resolve, reject) => {
-      
-        storage
-          .load({
-            key: key,
-            autoSync: true
-          })
-          .then(data => {
-            
-            resolve(data);
-            
-          })
-          .catch(error => {
-            reject(error)
-          });
-
-        
+      storage
+        .load({
+          key: key,
+          autoSync: true
+        })
+        .then(data => {
+          resolve(data);
+        })
+        .catch(error => {
+          reject(error);
         });
+    });
   }
 
-
-
-  @action  getUser() {
+  @action getUser() {
     return new Promise((resolve, reject) => {
       if (this.user.phone == "" || this.user.password == "") {
         storage
@@ -89,19 +74,18 @@ export default class TempLoginStore {
               phone: data.phone,
               name: data.name,
               status: data.status,
-              age:data.age,
+              age: data.age,
               password: data.password,
               profile: data.profile,
               profile_ext: data.profile_ext
             };
             resolve(this.user);
-            
           })
           .catch(error => {
             //TODO: redirection to the login page occurs here
             //reject()
             //this.props.navigation.navigate("SignUp")
-            
+
             resolve(this.user);
           });
       } else {
@@ -110,34 +94,22 @@ export default class TempLoginStore {
     });
   }
 
-  @action  setUser(newUser) {
+  @action setUser(newUser) {
     return new Promise((resolve, reject) => {
       this.user = {
         phone: newUser.phone,
         name: newUser.name,
         status: newUser.status,
-        age:newUser.age,
+        age: newUser.age,
         password: newUser.password,
         profile: newUser.profile,
         profile_ext: newUser.profile_ext
       };
-
-
       storage.save({
         key: "temploginStore",
         data: this.user
       });
       resolve();
-    }).catch(error => {
-      reject(error);
     });
-
   }
-
-
-
 }
-
-
-
-

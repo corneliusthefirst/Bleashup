@@ -53,7 +53,7 @@ const AppNavigator = createStackNavigator(
     LoginHome: { screen: LoginHomeView }
   },
   {
-    initialRouteName: "Login",
+    initialRouteName: "EmailVerification",
     headerMode: "none"
   }
 );

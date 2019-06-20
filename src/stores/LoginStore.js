@@ -11,10 +11,10 @@ export default class LoginStore {
     phone: "0666406835",
     name: "cornelius",
     status: "one step ahead the world",
-    email:'ndeffocornelius@gmail.com',
-    age:"17/12/1996",
-    profile: require('../../Images/8.jpg'),
-    profile_ext:require('../../Images/7.jpg'),
+    email: "ndeffocornelius@gmail.com",
+    age: "17/12/1996",
+    profile: require("../../Images/8.jpg"),
+    profile_ext: require("../../Images/7.jpg"),
     password: "cornelius"
   };
   @action  getUser() {
@@ -30,19 +30,18 @@ export default class LoginStore {
               phone: data.phone,
               name: data.name,
               status: data.status,
-              age:data.age,
+              age: data.age,
               password: data.password,
               profile: data.profile,
               profile_ext: data.profile_ext
             };
             resolve(this.user);
-            
           })
           .catch(error => {
             //TODO: redirection to the login page occurs here
             //reject()
-            this.props.navigation.navigate("SignUp")
-            
+            this.props.navigation.navigate("SignUp");
+
             resolve(this.user);
           });
       } else {
@@ -57,7 +56,7 @@ export default class LoginStore {
         phone: newUser.phone,
         name: newUser.name,
         status: newUser.status,
-        age:newUser.age,
+        age: newUser.age,
         password: newUser.password,
         profile: newUser.profile,
         profile_ext: newUser.profile_ext
@@ -70,10 +69,9 @@ export default class LoginStore {
     }).catch(error => {
       reject(error);
     });
-
   }
 
-  @action  updateName(newName) {
+  @action updateName(newName) {
     return new Promise((resolve, reject) => {
       storage
         .load({
@@ -104,7 +102,7 @@ export default class LoginStore {
     });
   }
 
-  @action  updateStatus(newStatus) {
+  @action updateStatus(newStatus) {
     return new Promise((resolve, reject) => {
       storage
         .load({
@@ -134,7 +132,7 @@ export default class LoginStore {
         });
     });
   }
-  @action  updateProfile(newProfile) {
+  @action updateProfile(newProfile) {
     return new Promise((resolve, reject) => {
       storage
         .load({
@@ -165,7 +163,7 @@ export default class LoginStore {
     });
   }
 
-  @action  updateProfileExt(newProfileExt) {
+  @action updateProfileExt(newProfileExt) {
     return new Promise((resolve, reject) => {
       storage
         .load({
@@ -196,7 +194,7 @@ export default class LoginStore {
     });
   }
 
-  @action  updatePassword(newPassword) {
+  @action updatePassword(newPassword) {
     return new Promise((resolve, reject) => {
       storage
         .load({
@@ -227,85 +225,96 @@ export default class LoginStore {
     });
   }
 
-  
+  @action updateEmail(newEmail) {
+    return new Promise((resolve, reject) => {
+      storage
+        .load({
+          key: "loginStore",
+          autoSync: true
+        })
+        .then(data => {
+          UserSevices.changePassword(data.phone, data.email, newEmail)
+            .then(() => {
+              data.email = newEmail;
+              storage
+                .save({
+                  key: "loginStore",
+                  data: data
+                })
+                .then(() => {
+                  this.user = data;
+                  resolve();
+                });
+            })
+            .catch(error => {
+              reject(error);
+            });
+        })
+        .catch(error => {
+          reject(error);
+        });
+    });
+  }
 
+  @action updateAge(newAge) {
+    return new Promise((resolve, reject) => {
+      storage
+        .load({
+          key: "loginStore",
+          autoSync: true
+        })
+        .then(data => {
+          UserSevices.changeAge(data.phone, data.age, newAge)
+            .then(() => {
+              data.age = newAge;
+              storage
+                .save({
+                  key: "loginStore",
+                  data: data
+                })
+                .then(() => {
+                  this.user = data;
+                  resolve();
+                });
+            })
+            .catch(error => {
+              reject(error);
+            });
+        })
+        .catch(error => {
+          reject(error);
+        });
+    });
+  }
 
-
-@action updateEmail(newEmail) {
-  return new Promise((resolve, reject) => {
-    storage
-      .load({
-        key: "loginStore",
-        autoSync: true
-      })
-      .then(data => {
-        UserSevices.changeEmail(data.phone, data.email, newEmail)
-          .then(() => {
-            data.email = newEmail;
-            storage
-              .save({
-                key: "loginStore",
-                data: data
-              })
-              .then(() => {
-                this.user = data;
-                resolve();
-              });
-          })
-          .catch(error => {
-            reject(error);
-          });
-      })
-      .catch(error => {
-        reject(error);
-      });
-  });
+  @action async updateAge(newAge) {
+    return new Promise((resolve, reject) => {
+      storage
+        .load({
+          key: "loginStore",
+          autoSync: true
+        })
+        .then(data => {
+          UserSevices.changeAge(data.phone, data.age, newAge)
+            .then(() => {
+              data.age = newAge;
+              storage
+                .save({
+                  key: "loginStore",
+                  data: data
+                })
+                .then(() => {
+                  this.user = data;
+                  resolve();
+                });
+            })
+            .catch(error => {
+              reject(error);
+            });
+        })
+        .catch(error => {
+          reject(error);
+        });
+    });
+  }
 }
-
-
-@action updateAge(newAge) {
-  return new Promise((resolve, reject) => {
-    storage
-      .load({
-        key: "loginStore",
-        autoSync: true
-      })
-      .then(data => {
-        UserSevices.changeAge(data.phone, data.age, newAge)
-          .then(() => {
-            data.age = newAge;
-            storage
-              .save({
-                key: "loginStore",
-                data: data
-              })
-              .then(() => {
-                this.user = data;
-                resolve();
-              });
-          })
-          .catch(error => {
-            reject(error);
-          });
-      })
-      .catch(error => {
-        reject(error);
-      });
-  });
-}
-
-
-
-
-
-
-
-
-
-
-
-}
-
-
-
-

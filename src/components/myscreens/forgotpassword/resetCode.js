@@ -12,6 +12,7 @@ import stores from "../../../stores";
 import routerActions from "reazy-native-router-actions";
 import { functionDeclaration } from "@babel/types";
 import globalState from '../../../stores/globalState';
+import UserService from '../../../services/userHttpServices';
 import { observable } from "mobx";
 
 
@@ -44,15 +45,48 @@ export default class ResetCodeView extends Component {
     globalState.error = false
   }
 
+
+
+  @autobind
+  resendCode(){
+ 
+   resetCode = Math.floor(Math.random() * 600000) + 1000
+   
+   subject=' Reset password'
+   name =this.temploginStore.user.name
+   body = 'hello '+name+' this is your reset code '+ resetCode
+   email = this.temploginStore.user.email
+ 
+   UserService.sendEmail(name,email, subject,body).then((response) => {
+     if(response = 'ok'){
+       
+ 
+       this.temploginStore.saveData(resetCode,'resetCode').then((response) => {
+         if(response){}
+       }).catch(error => {
+         reject(error)
+   
+       })
+ 
+      }
+   }).catch(error => {
+     reject(error)
+ 
+   })  
+ 
+  }
+
+
+
   @autobind
   onClickReset() {
-                      //to check
-    /*
-    Resetcode = this.temploginStore.loadSaveData(this.temploginStore.resetCode,'resetcode')
-    console.warn(Resetcode) 
-    */
+    
+   this.temploginStore.resetCode = this.temploginStore.loadSaveData('resetCode').
+   then((response) => { if(response){} }).catch(error => { reject(error) })
+
+
     if(this.temploginStore.resetCode == this.state.code){
-        console.warn(this.state.code) 
+        //console.warn(this.state.code) 
 
         this.props.navigation.navigate('ResetPassword');
 
@@ -61,6 +95,7 @@ export default class ResetCodeView extends Component {
    } 
   }
 
+  
 
   render() {
     return (
@@ -85,11 +120,13 @@ export default class ResetCodeView extends Component {
 
 
 
-    <Button  transparent regular style={{marginBottom:-22,marginTop:50}}>
-       <Text>Reset Password </Text>               
+    <Button  transparent regular style={{marginBottom:-22,marginTop:50,marginLeft:-12
+    }}>
+       <Text>Password Reset Code </Text>               
     </Button>
 
-
+    <Text style={{color:'skyblue',marginTop:20 }} > Please check your phone a code  for your password reset was send to you.Please enter the  code in the field below </Text>
+    
     
     
         
@@ -101,7 +138,7 @@ export default class ResetCodeView extends Component {
             
     </Item>
 
-  
+    <Text style={{color:'royalblue',marginTop:20,marginLeft:210 }} onPress={this.resendCode} >Resend  reset code </Text>
 
     
 

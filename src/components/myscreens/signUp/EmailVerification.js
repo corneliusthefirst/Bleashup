@@ -3,7 +3,7 @@ import autobind from "autobind-decorator";
 import {
   Content,Card,CardItem,Text,Body,Container,Icon,Header,Form,Item,Title,Input,Left,Right,H3,H1,H2,Spinner,Button,InputGroup,DatePicker,Thumbnail
 } from "native-base";
-import { touchableOpacity } from "react-native";
+//import { TouchableOpacity } from "react-native";
 
 import { AsyncStorage } from "react-native";
 import { observer } from "mobx-react";
@@ -49,7 +49,7 @@ export default class EmailVerificationView extends Component {
  resendCode(){
 
   emailVerificationCode = Math.floor(Math.random() * 600000) + 1000
-  //UserService.register(this.state.phone,this.state.password)
+  
   subject='Verify email acccount'
   name =this.temploginStore.user.name
   body = 'Welcome to Bleashup '+name+' this is your new code to check '+ emailVerificationCode
@@ -59,7 +59,7 @@ export default class EmailVerificationView extends Component {
     if(response = 'ok'){
       
 
-      this.temploginStore.saveData(emailVerificationCode,'verificationCode').then((response) => {
+      this.temploginStore.saveData(emailVerificationCode,'emailVerificationCode').then((response) => {
         if(response){}
       }).catch(error => {
         reject(error)
@@ -75,22 +75,19 @@ export default class EmailVerificationView extends Component {
  }
 
   @autobind
-  onClickReset() {
-                      //to check
-    /*
-    Resetcode = this.temploginStore.loadSaveData(this.temploginStore.resetCode,'resetcode')
-    console.warn(Resetcode) 
-    */
+  onClickEmailVerification() {
+ 
    this.temploginStore.emailVerificationCode = this.temploginStore.loadSaveData('emailVerificationCode').then((response) => {
         if(response){}
-    }).catch(error => {
-          reject(error) })
+    }).catch(error => { reject(error) })
 
     if(this.temploginStore.emailVerificationCode == this.state.code){
-        //console.warn(this.state.code) 
-        
+        //we register the user
+        UserService.register(this.temploginStore.user.phone,this.temploginStore.user.password)
         //we set the user real data then go back to login
-        this.loginStore.setUser(this.temploginStore.getUser());
+
+        loginStore.setUser(JSON.stringify(this.temploginStore.getUser()))
+        
         this.props.navigation.navigate('Login');
 
    }else{
@@ -122,11 +119,11 @@ export default class EmailVerificationView extends Component {
 
 
 
-    <Button  transparent regular style={{marginBottom:-22,marginTop:50}}>
-       <Text>Email Verifiction </Text>               
+    <Button  transparent regular style={{marginBottom:-22,marginTop:50,marginLeft:-12}}>
+       <Text>Email Verification </Text>               
     </Button>
 
-    <Text> Please check your phone a code verification for your email was send to you.Please enter the  code below </Text>
+    <Text style={{color:'skyblue',marginTop:20 }} > Please check your phone a code verification for your email was send to you.Please enter the  code below </Text>
     
     
         
@@ -139,16 +136,18 @@ export default class EmailVerificationView extends Component {
     </Item>
 
   
-<touchableOpacity onPress={this.resendCode}> resent Code</touchableOpacity>
+    
+        <Text style={{color:'royalblue',marginTop:20,marginLeft:175 }} onPress={this.resendCode} >Resend verification code </Text>
+    
     
 
       <Button  block rounded
             style={styles.buttonstyle}
-            onPress={ this.onClickReset}
+            onPress={ this.onClickEmailVerification}
        >
-             <Text> Continue </Text>
+         <Text> Ok </Text>
            
-          </Button>
+       </Button>
 
      
 
