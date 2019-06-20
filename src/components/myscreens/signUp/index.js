@@ -10,6 +10,7 @@ import UserService from '../../../services/userHttpServices';
 import stores from "../../../stores";
 import globalState from '../../../stores/globalState';
 import { observer } from "mobx-react";
+import moment  from "moment"
 
 
 
@@ -18,16 +19,23 @@ export default  class SignUpView extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      name:'',
-      email:'',
-      age: '',
-      password:'',
-      newPassword:''
+
+      phone: this.temploginStore.phonenumber,
+      name: "",
+      status: "",
+      email:"",
+      age:"",
+      profile: require('../../Images/8.jpg'),
+      profile_ext:require('../../Images/7.jpg'),
+      password: "",
+      created_at:moment.format("YYYY-MM-DD HH:mm"),
+      updated_at:moment.format("YYYY-MM-DD HH:mm")
 
     };
   }
-  loginStore = stores.LoginStore;
 
+  loginStore = stores.LoginStore;
+  temploginStore = stores.TempLoginStore;
 
   @autobind
   onChangedName(value){ 
@@ -101,38 +109,40 @@ export default  class SignUpView extends Component {
     
     if( (globalState.newPasswordError==false) && (globalState.passwordError==false)&&  (globalState.nameError==false) &&(globalState.emailError==false) && (globalState.ageError==false)){
  
-      this.globalState.loading = true
+      globalState.loading = true
 
-      this.loginStore.updateName(this.state.name).then((response) => {
-        if(response){}
+
+      emailVerificationCode = Math.floor(Math.random() * 60000) + 1000
+      //UserService.register(this.state.phone,this.state.password)
+      subject='Verify email acccount'
+      name =this.state.name
+      body = 'Welcome to Bleashup '+name+' this is your code to check '+emailVerificationCode
+      email = this.state.email
+
+      UserService.sendEmail(name,email, subject,body).then((response) => {
+        if(response = 'ok'){
+          
+
+          this.temploginStore.saveData(emailVerificationCode,'verificationCode').then((response) => {
+            if(response){}
+          }).catch(error => {
+            reject(error)
+      
+          })
+          this.temploginStore.setUser(this.state)
+
+          this.props.navigation.navigate('EmailVerification');
+         }
       }).catch(error => {
-      reject(error)
+        reject(error)
   
-    })
+      })  
 
-     this.loginStore.updateEmail(this.state.email).then((response) => {
-      if(response){}
-    }).catch(error => {
-    reject(error)
-
-   })
-     this.loginStore.updateAge(this.state.age).then((response) => {
-      if(response){}
-    }).catch(error => {
-    reject(error)
-
-   })
-     this.loginStore.updatePassword(this.state.password).then((response) => {
-      if(response){}
-    }).catch(error => {
-      reject(error)
-
-    })
      
 
        this.props.navigation.navigate('Login');
     }
-    
+    moment.format("YYYY-MM-DD HH:mm");
     } 
 
 
@@ -239,7 +249,33 @@ export default  class SignUpView extends Component {
 
 
 
+/**
+ *       this.loginStore.updateName(this.state.name).then((response) => {
+        if(response){}
+      }).catch(error => {
+      reject(error)
+  
+    })
 
+     this.loginStore.updateEmail(this.state.email).then((response) => {
+      if(response){}
+    }).catch(error => {
+    reject(error)
+
+   })
+     this.loginStore.updateAge(this.state.age).then((response) => {
+      if(response){}
+    }).catch(error => {
+    reject(error)
+
+   })
+     this.loginStore.updatePassword(this.state.password).then((response) => {
+      if(response){}
+    }).catch(error => {
+      reject(error)
+
+    })
+ */
 
 
 

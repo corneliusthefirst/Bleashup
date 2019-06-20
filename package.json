@@ -27,7 +27,6 @@
     "prop-types": "^15.7.2",
     "react": "16.8.3",
     "react-native": "^0.59.8",
-    "react-native-awesome-alert": "^0.4.5",
     "react-native-collapsible-header-views": "^1.0.2",
     "react-native-country-picker-modal": "^0.7.1",
     "react-native-email": "^1.0.2",

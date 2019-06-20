@@ -22,6 +22,7 @@ import ForgotPasswordView from "./myscreens/forgotpassword/index";
 import ResetCodeView from "./myscreens/forgotpassword/resetCode";
 import ResetPasswordView from "./myscreens/forgotpassword/resetPassword";
 import SignUpView from "./myscreens/signUp/index";
+import EmailVerificationView from "./myscreens/signUp/EmailVerification";
 import SignInView from "./myscreens/signIn/index";
 import LoginHomeView from "./myscreens/loginhome/index";
 import stores from "../stores";
@@ -47,6 +48,7 @@ const AppNavigator = createStackNavigator(
     ResetCode: { screen: ResetCodeView },
     ResetPassword: { screen: ResetPasswordView },
     SignUp: { screen: SignUpView },
+    EmailVerification: { screen: EmailVerificationView },
     SignIn: { screen: SignInView },
     LoginHome: { screen: LoginHomeView }
   },

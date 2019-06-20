@@ -6,6 +6,7 @@ export default class TempLoginStore {
   constructor() {}
   @observable phonenumber = "";
   @observable resetCode = "2525256";
+  @observable emailVerificationCode = "";
 
   @observable user = {
     phone: "0666406835",
@@ -15,10 +16,10 @@ export default class TempLoginStore {
     age:"17/12/1996",
     profile: require('../../Images/8.jpg'),
     profile_ext:require('../../Images/7.jpg'),
-    password: "cornelius"
+    password: "cornelius",
+    created_at:"",
+    updated_at:""
   };
-
-                  //Please check this commented code
 
   
   @action  deleteData(userKey) {
@@ -52,7 +53,7 @@ export default class TempLoginStore {
 
   }
 
-  @action  loadSaveData(dataname,key) {
+  @action  loadSaveData(key) {
     return new Promise((resolve, reject) => {
       
         storage
@@ -61,8 +62,8 @@ export default class TempLoginStore {
             autoSync: true
           })
           .then(data => {
-            this.dataname = data
-            resolve(this.dataname);
+            
+            resolve(data);
             
           })
           .catch(error => {
@@ -72,6 +73,7 @@ export default class TempLoginStore {
         
         });
   }
+
 
 
   @action  getUser() {
@@ -120,7 +122,6 @@ export default class TempLoginStore {
         profile_ext: newUser.profile_ext
       };
 
-      deleteUser("temploginStore");
 
       storage.save({
         key: "temploginStore",

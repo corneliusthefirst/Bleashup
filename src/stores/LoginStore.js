@@ -17,7 +17,7 @@ export default class LoginStore {
     profile_ext:require('../../Images/7.jpg'),
     password: "cornelius"
   };
-  @action async getUser() {
+  @action  getUser() {
     return new Promise((resolve, reject) => {
       if (this.user.phone == "" || this.user.password == "") {
         storage
@@ -239,7 +239,7 @@ export default class LoginStore {
         autoSync: true
       })
       .then(data => {
-        UserSevices.changePassword(data.phone, data.email, newEmail)
+        UserSevices.changeEmail(data.phone, data.email, newEmail)
           .then(() => {
             data.email = newEmail;
             storage

@@ -4,7 +4,7 @@ import {
   Content,Card,CardItem,Text,Body,Container,Header,Form,Item,Title,Input,Left,Right,H3,H1,H2,Spinner,Button
 } from "native-base";
 
-import {  View, TouchableOpacity } from "react-native";
+import {  View, TouchableOpacity,Alert } from "react-native";
 import  { AsyncStorage } from '@react-native-community/async-storage';
 //import { observable } from 'mobx';
 import { observer, extendObservable, inject } from "mobx-react";
@@ -12,12 +12,12 @@ import styles from "./styles";
 import stores from "../../../stores";
 import routerActions from "reazy-native-router-actions";
 import { functionDeclaration } from "@babel/types";
-import CheckAlert from "react-native-awesome-alert"
 
 import PhoneInput from "react-native-phone-input";
 import CountryPicker from "react-native-country-picker-modal";
 import UserService from '../../../services/userHttpServices';
 import globalState from '../../../stores/globalState';
+
 
 @observer
 export default class LoginView extends Component {
@@ -65,6 +65,7 @@ export default class LoginView extends Component {
 
   }
 
+
   }
 
 
@@ -86,7 +87,16 @@ export default class LoginView extends Component {
       
 
     } catch (e) {
-      alert(e.message);
+      
+      Alert.alert(
+         'Phone Error',
+         e.message,
+        [
+          {text: 'OK', onPress: () => console.log('OK Pressed')},
+        ],
+       
+      );
+
     }
 
 
@@ -94,9 +104,17 @@ export default class LoginView extends Component {
      
       if(response){ 
        
+        temploginStore.phonenumber = this.state.value
         //if ok we get the user to loginStore
-        loginStore.getUser()
+        loginStore.getUser().then((response) => {
+          if(response){}
+        }).catch(error => {
+        reject(error)
+    
+       })
         this.props.navigation.navigate("SignIn")
+        globalState.loading = false
+
       }else{
         this.props.navigation.navigate("SignUp")
       }
@@ -168,6 +186,9 @@ export default class LoginView extends Component {
             >
               <View />
             </CountryPicker>
+          
+   
+       
 
            
           
@@ -192,10 +213,5 @@ console.warn(this.state.cca2);
        
  
   @autobind
-  onPhoneErrorAlert = () => {
-    this.checkAlert.alert("Hello!!", PhoneErrorView, [
-      { text: "OK", onPress: () => console.log("OK touch") },
-      { text: "Cancel", onPress: () => console.log("Cancel touch") }
-    ])
-  }      
+        
        */
