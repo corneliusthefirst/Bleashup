@@ -25,7 +25,6 @@ export default class TempLoginStore {
       storage.remove({
         key: userKey
       });
-
       resolve();
     }).catch(error => {
       reject(error);
@@ -45,7 +44,7 @@ export default class TempLoginStore {
     });
   }
 
-  @action loadSaveData(dataname, key) {
+  @action loadSaveData(key) {
     return new Promise((resolve, reject) => {
       storage
         .load({
@@ -53,8 +52,7 @@ export default class TempLoginStore {
           autoSync: true
         })
         .then(data => {
-          this.dataname = data;
-          resolve(this.dataname);
+          resolve(data);
         })
         .catch(error => {
           reject(error);
@@ -106,16 +104,11 @@ export default class TempLoginStore {
         profile: newUser.profile,
         profile_ext: newUser.profile_ext
       };
-
-      deleteUser("temploginStore");
-
       storage.save({
         key: "temploginStore",
         data: this.user
       });
       resolve();
-    }).catch(error => {
-      reject(error);
     });
   }
 }

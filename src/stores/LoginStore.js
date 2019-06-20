@@ -71,7 +71,7 @@ export default class LoginStore {
     });
   }
 
-  @action async updateName(newName) {
+  @action updateName(newName) {
     return new Promise((resolve, reject) => {
       storage
         .load({
@@ -102,7 +102,7 @@ export default class LoginStore {
     });
   }
 
-  @action async updateStatus(newStatus) {
+  @action updateStatus(newStatus) {
     return new Promise((resolve, reject) => {
       storage
         .load({
@@ -132,7 +132,7 @@ export default class LoginStore {
         });
     });
   }
-  @action async updateProfile(newProfile) {
+  @action updateProfile(newProfile) {
     return new Promise((resolve, reject) => {
       storage
         .load({
@@ -163,7 +163,7 @@ export default class LoginStore {
     });
   }
 
-  @action async updateProfileExt(newProfileExt) {
+  @action updateProfileExt(newProfileExt) {
     return new Promise((resolve, reject) => {
       storage
         .load({
@@ -225,7 +225,7 @@ export default class LoginStore {
     });
   }
 
-  @action async updateEmail(newEmail) {
+  @action updateEmail(newEmail) {
     return new Promise((resolve, reject) => {
       storage
         .load({
@@ -236,6 +236,37 @@ export default class LoginStore {
           UserSevices.changePassword(data.phone, data.email, newEmail)
             .then(() => {
               data.email = newEmail;
+              storage
+                .save({
+                  key: "loginStore",
+                  data: data
+                })
+                .then(() => {
+                  this.user = data;
+                  resolve();
+                });
+            })
+            .catch(error => {
+              reject(error);
+            });
+        })
+        .catch(error => {
+          reject(error);
+        });
+    });
+  }
+
+  @action updateAge(newAge) {
+    return new Promise((resolve, reject) => {
+      storage
+        .load({
+          key: "loginStore",
+          autoSync: true
+        })
+        .then(data => {
+          UserSevices.changeAge(data.phone, data.age, newAge)
+            .then(() => {
+              data.age = newAge;
               storage
                 .save({
                   key: "loginStore",

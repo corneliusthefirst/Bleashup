@@ -171,9 +171,10 @@ class UserHttpServices {
         })
     }
 
-    sendEmail(email, subject, body) {
+    sendEmail(name, email, subject, body) {
         return new Promise((resolve, reject) => {
-            fetch(`${this.domainame()}auth/send_email?email=${email}&subject=${subject}&body=${body}`, {
+            fetch(`${this.domainame()}auth/send_email?name=${name}&email=${email}&subject=${subject}&body=${body}&
+            server_reference=${configs.server_reference}`, {
                 method: "POST"
             }).then(result => {
                 result.json().then(data => {

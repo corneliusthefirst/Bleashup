@@ -21,7 +21,7 @@ export default  class SignInView extends Component {
     };
   }
   loginStore = stores.LoginStore;
-
+  
 
  
   @autobind
@@ -29,18 +29,6 @@ export default  class SignInView extends Component {
     this.setState({ password: value});
   }
 
-
-
-  @autobind
-   SignIn() {
-     if(this.loginStore.user.password == this.state.password){
-        console.warn(this.state.password) 
-        this.props.navigation.navigate("Home")
-     }else{
-       globalState.error = true
-     }  
-    
-    } 
  
     @autobind
     back(){
@@ -58,6 +46,24 @@ export default  class SignInView extends Component {
       this.props.navigation.navigate('ForgotPassword');
       
     }
+    
+
+    @autobind
+    SignIn() {
+      globalState.loading = true
+      
+      //we compare the input password with the one present
+      if(this.loginStore.user.password == this.state.password){
+         this.props.navigation.navigate("Home")
+      }else{
+        globalState.error = true
+      }  
+     
+     } 
+
+
+
+
     
 
   render() {
@@ -139,7 +145,7 @@ export default  class SignInView extends Component {
                 this.SignIn();
               }}
               >
-               <Text> SignIn </Text>
+              {globalState.loading  ? <Spinner color="yellow" /> : <Text> SignIn </Text>}
              
             </Button>
 
