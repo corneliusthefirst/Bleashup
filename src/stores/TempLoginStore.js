@@ -20,7 +20,7 @@ export default class TempLoginStore {
 
                   //Please check this commented code
 
-  /*
+  
   @action  deleteData(userKey) {
     return new Promise((resolve, reject) => {
       storage.remove({
@@ -72,7 +72,7 @@ export default class TempLoginStore {
         
         });
   }
-*/
+
 
   @action  getUser() {
     return new Promise((resolve, reject) => {

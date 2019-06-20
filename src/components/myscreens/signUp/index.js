@@ -3,20 +3,24 @@ import React, { Component } from 'react';
 //import { StyleSheet,Button,Text, TouchableOpacity , View } from 'react-native';
 import autobind from "autobind-decorator";
 import {
-  Content,Card,CardItem,Text,Body,Container,Icon,Header,Form,Item,Title,Input,Left,Right,H3,H1,H2,Spinner,Button,InputGroup,DatePicker
+  Content,Card,CardItem,Text,Body,Container,Icon,Header,Form,Item,Title,Input,Left,Right,H3,H1,H2,Spinner,Button,InputGroup,DatePicker,CheckBox
 } from "native-base";
 import styles from "./styles";
 import UserService from '../../../services/userHttpServices';
 import stores from "../../../stores";
+import globalState from '../../../stores/globalState';
+import { observer } from "mobx-react";
 
 
+
+@observer
 export default  class SignUpView extends Component {
   constructor(props) {
     super(props);
     this.state = {
       name:'',
       email:'',
-      age:new Date(),
+      age: '',
       password:'',
       newPassword:''
 
@@ -26,68 +30,113 @@ export default  class SignUpView extends Component {
 
 
   @autobind
-  OnChangedName(value){ 
+  onChangedName(value){ 
     this.setState({ name: value});
   }
 
   @autobind
-  OnChangedEmail(value){ 
+  onChangedEmail(value){ 
     this.setState({ email: value});
   }
   @autobind
-  OnChangedAge(value){
+  onChangedAge(value){
     this.setState({ age: value});
     
   }
   @autobind
-  OnChangedPassword(value){
+  onChangedPassword(value){
     this.setState({ password: value});
   }
 
   @autobind
-  OnChangedNewPassword(value){
+  onChangedNewPassword(value){
     this.setState({ newPassword: value});
   }
 
+  //Error state handling
+  @autobind
+  removePasswordError(){
+    globalState.passwordError =false
+  }
+  @autobind
+  removeNewPasswordError(){
+    globalState.newPasswordError = false
+  }
+  @autobind
+  removeNameError(){
+    globalState.nameError = false
+  }
+  @autobind
+  removeEmailError(){
+    globalState.emailError = false
+  }
+
+  @autobind
+  removeAgeError(){
+    globalState.ageError = false
+  }
+
+
+
   @autobind
    SignUp() {
-  /*
-        this.loginStore.updateName(this.state.name).then((response) => {
-          if(response){}
-        }).catch(error => {
-        reject(error)
+     
+    if(this.state.password != this.state.newPassword){
+      globalState.newPasswordError = true
+    }
+    if(this.state.password == '' ){
+      globalState.passwordError = true
+    }
+    if(this.state.name == '' ){
+      globalState.nameError = true
+    }
+    if(this.state.email == '' ){
+      globalState.emailError = true
+      //console.warn(this.date.defaultDate)
+    }   
+    if(this.state.age == '' ){
+      globalState.ageError = true
+      console.warn(globalState.ageError)
+    }
     
-      })
+    if( (globalState.newPasswordError==false) && (globalState.passwordError==false)&&  (globalState.nameError==false) &&(globalState.emailError==false) && (globalState.ageError==false)){
+ 
+      this.globalState.loading = true
 
-       this.loginStore.updateEmail(this.state.email).then((response) => {
+      this.loginStore.updateName(this.state.name).then((response) => {
         if(response){}
       }).catch(error => {
       reject(error)
   
-     })
-       this.loginStore.updateAge(this.state.age).then((response) => {
-        if(response){}
-      }).catch(error => {
+    })
+
+     this.loginStore.updateEmail(this.state.email).then((response) => {
+      if(response){}
+    }).catch(error => {
+    reject(error)
+
+   })
+     this.loginStore.updateAge(this.state.age).then((response) => {
+      if(response){}
+    }).catch(error => {
+    reject(error)
+
+   })
+     this.loginStore.updatePassword(this.state.password).then((response) => {
+      if(response){}
+    }).catch(error => {
       reject(error)
-  
-     })
-       this.loginStore.updatePassword(this.state.password).then((response) => {
-        if(response){}
-      }).catch(error => {
-        reject(error)
-  
-      })*/
 
-       console.warn(this.state.password)
-       console.warn(this.state.name)
-       console.warn(this.state.newPassword)
-       console.warn(this.state.email)
-       console.warn(this.state.age)
+    })
+     
 
-       //this.props.navigation.navigate("Home")
-    
+       this.props.navigation.navigate('Login');
+    }
     
     } 
+
+
+
   @autobind
   back(){
     this.props.navigation.navigate('Login');
@@ -115,62 +164,73 @@ export default  class SignUpView extends Component {
       
           
           
-      <Item rounded style={styles.input}>
+      <Item rounded style={styles.input} error={globalState.nameError}>
             <Icon active  name='user'   style={{color: "#1FABAB"}}/>
-            <Input placeholder='user name'
-              onChangeText={value => this.OnChangedName(value)} />
+            <Input placeholder={globalState.nameError == false ? 'please enter your full name': 'user name cannot be empty' } autoCapitalize="none" 
+              onChangeText={(value) => this.onChangedName(value)} />
+            
+            {globalState.nameError == false ? <Text></Text> : <Icon onPress={this.removeNameError} type='Ionicons' name='close-circle' style={{color:'#00C497'}}/>}
+
       </Item>
-      <Item rounded style={styles.input}>
+
+      <Item rounded style={styles.input} error={globalState.emailError}>
             <Icon active type='MaterialIcons' name='email' style={{color: "#1FABAB"}}/>
-            <Input keyboardType="email-address" placeholder='please enter email'   
-              onChangeText={value => this.OnChangedEmail(value)}/>
+            <Input keyboardType="email-address"  placeholder={globalState.emailError == false ? 'please enter email': 'Please enter valid email' } autoCapitalize="none" 
+              onChangeText={(value) => this.onChangedEmail(value)}/>
+          
+            {globalState.emailError == false ? <Text></Text> : <Icon onPress={this.removeEmailError} type='Ionicons' name='close-circle' style={{color:'#00C497'}}/>}
       </Item>
   
-      <Item rounded style={styles.input}>
+      <Item rounded style={styles.input} error={globalState.ageError}>
       <Icon active type='MaterialIcons' name='date-range' style={{color: "#1FABAB"}}/>
       <DatePicker 
-            defaultDate={new Date(2018, 4, 4)}
-            minimumDate={new Date(2018, 1, 1)}
-            maximumDate={new Date(2018, 12, 31)}
+           //defaultDate={new Date(2019, 6, 18)}
+            minimumDate={new Date(1900, 1, 1)}
+            maximumDate={new Date(2019, 5, 31)}
             locale={"en"}
-            timeZoneOffsetInMinutes={undefined}
+            timeZoneOffsetInMinutes
             modalTransparent={false}
             animationType={"fade"}
             androidMode={"default"}
-            placeHolderText="Select date of birth"
+
+            placeHolderText= {globalState.ageError == false ?'Select date of birth': 'Please enter valid birth date' }
             textStyle={{ color: "green" }}
             placeHolderTextStyle={{ color: "#696969" }}
-            onDateChange={this.OnChangedAge}
+            onDateChange={this.onChangedAge}
+            autoCapitalize="none" 
+            
           />
+
+           {globalState.ageError == false ? <Text></Text> : <Icon onPress={this.removeAgeError} type='Ionicons' name='close-circle' style={{color:'#00C497'}}/>}
        </Item>
-      <Item rounded style={styles.input}>
-            <Icon active type='Ionicons' name='ios-lock' style={{color: "#1FABAB"}}/>
-            <Input secureTextEntry  placeholder='enter password' 
-              onChangeText={value => this.OnChangedPassword(value)} />
-              
-      </Item>
-      <Item rounded style={styles.input}>
-            <Icon active type='Ionicons' name='ios-lock' style={{color: "#1FABAB"}}/>
-            <Input secureTextEntry  placeholder='confirm password'
-              onChangeText={value => this.OnChangedNewPassword(value)} />
-      </Item>
+
+     
+    <Item rounded style={styles.input}  error={globalState.passwordError} >
+          <Icon active type='Ionicons' name='ios-lock' style={{color: "#1FABAB"}} />
+          <Input secureTextEntry  placeholder={globalState.passwordError == false ? 'Please enter   password': 'password cannot be empty' }  autoCapitalize="none" returnKeyType='next' inverse
+            onChangeText={(value) =>this.onChangedPassword(value)}  />
+            
+            {globalState.passwordError == false ? <Text></Text> : <Icon onPress={this.removePasswordError} type='Ionicons' name='close-circle' style={{color:'#00C497'}}/>}
+    </Item>
+
+    <Item rounded style={styles.input}  error={globalState.newPasswordError} >
+          <Icon active type='Ionicons' name='ios-lock' style={{color: "#1FABAB"}} />
+          <Input secureTextEntry  placeholder={globalState.newPasswordError == false ? 'Please confirm password': 'password not matching' }  autoCapitalize="none"  returnKeyType='go' inverse last
+            onChangeText={(value) =>this.onChangedNewPassword(value)}  />
+            {globalState.newPasswordError == false ? <Text></Text> : <Icon onPress={this.removeNewPasswordError} type='Ionicons' name='close-circle' style={{color:'#00C497'}}/>}
+    </Item>
     
 
       
 
         <Button  block rounded
               style={styles.buttonstyle}
-              onPress={() => {
-                this.SignUp();
-              }}
+              onPress={this.SignUp}
               >
-               <Text> SignUp </Text>
+               {globalState.loading  ? <Spinner color="yellow" /> : <Text> SignUp </Text>}
              
-            </Button>
-
-       
-
-          
+        </Button>
+      
         </Content>
       </Container>
     );
@@ -193,240 +253,48 @@ export default  class SignUpView extends Component {
 //</Container><Input type='date' placeholder='please enter birth date'  
 //onChangeText={value => this.OnChangedAge(value)}/>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-import React, { Component } from "react";
-import autobind from "autobind-decorator";
-import { Content, Card, CardItem, Text, Body,Container, Header, Form, Item,Title, Input, Left,Right,H3,Spinner,Button} from "native-base";
-//import { Button,View } from "react-native";
-
-import { AsyncStorage } from "react-native";
-import { observer,extendObservable, inject } from "mobx-react";
-import styles from "./styles";
-import stores from "../../../stores";
-import routerActions from 'reazy-native-router-actions';
-import { functionDeclaration } from "@babel/types";
-
-
-const loginStore = stores.loginStore;
-
-@observer
-export default class SignUpView extends Component {
- 
-  constructor(props){
-    super(props);
-    this.state = {
-      name:'',
-      surname:'',
-      country:'',
-      email:'',
-      birthDate:'',  
-      password:'',
-      confirmPassword:''
-     };
-    
-  }
-
-@autobind
-_onNameChanged(text) {
-      this.setState({name: text})    
-      //console.warn(loginStore.password);
-}
-@autobind
-_onSurnameChanged(text) {
-      this.setState({surname: text})    
-      //console.warn(loginStore.password);
-}  
-@autobind
-_onCountryChanged(text) {
-      this.setState({country: text})    
-      //console.warn(loginStore.password);
-}  
-@autobind
-_onEmailChanged(text) {
-      this.setState({email: text})    
-      //console.warn(loginStore.password);
-}
-  @autobind
-_onBirthDateChanged(text) {
-      this.setState({birthDate: text})    
-      //console.warn(loginStore.password);
-}  
-@autobind
-_onPasswordChanged(text) {
-      this.setState({password: text})    
-      //console.warn(loginStore.password);
-}
-@autobind
-_onConfirmPasswordChanged(text) {
-      this.setState({confirmPassword: text})    
-      //console.warn(loginStore.password);
-}
-
-
-
-@autobind
-_onClickForgotPassword(){this.props.navigation.navigate("ForgotPassword")} 
   
 
-  @autobind
-  async _onClickSignIn() {
-    loginStore.password = this.state.password
-    
-    try {
-        await loginStore.login();
-        if (loginStore.loading == true){
-            this.props.navigation.navigate("Home")
-        }
-    } catch (e) {
-      alert(e.message);
-    }
-
-    } 
-
-      
-
-
-  render() {
-   
-  
-    return (
-
-      <Container>
-      <Content>
-      <Left/>
-      <Header style={{marginBottom:450}}>
-      <Body>
-            <Title>BleashUp </Title>
-      </Body>
-         <Right/>
-      </Header>
-
-
-        <Form style={styles.formstyle}>
-        
-         <Button transparent full onPress={this._onClickForgotPassword}
-         style={{marginBottom:0,marginTop:190,marginLeft:0}} >
-          <H3  style={{color:"green",fontSize:15,marginLeft:170}}>Forgot password?</H3>
-          </Button>
-
-          <Header style={{marginBottom:-70}}>
-            <Left/>
-            <Body>
-            <Title style={{paddingLeft:20}}>Sign Up</Title>
-            </Body>
-           </Header>
-          
-
-        <Item style={{marginTop:30}} regular >
-        <Input placeholder="Please enter name"  
-        onChangeText = {this._onNameChanged} 
-        value = {this.state.name}  />
-        </Item>
-        <Item style={{marginTop:5}} regular >
-        <Input placeholder="Please enter surname"  
-        onChangeText = {this._onSurnameChanged} 
-        value = {this.state.surname}  />
-        </Item>
-        <Item style={{marginTop:5}} regular >
-        <Input placeholder="Please enter country"  
-        onChangeText = {this._onCountryChanged} 
-        value = {this.state.country}  />
-        </Item>
-        <Item style={{marginTop:5}} regular >
-        <Input placeholder="Please enter email"  
-        onChangeText = {this._onEmailChanged} 
-        value = {this.state.email}  keyboardType="email-address"
-        autoCapitalize="none" autoCorrect={false} />
-        </Item>
-        <Item style={{marginTop:5}} regular >
-        <Input placeholder="Please enter birthDate"  
-        onChangeText = {this._onBirthDateChanged} 
-        value = {this.state.birthDate} />
-        </Item>
-        <Item style={{marginTop:5}} regular >
-        <Input placeholder="Please enter password"  
-        onChangeText = {this._onPasswordChanged} 
-        value = {this.state.password} secureTextEntry      autoCapitalize="none" autoCorrect={false}/>
-        </Item>
-        <Item style={{marginTop:5}} regular >
-        <Input placeholder="Please confirm password"  
-        onChangeText = {this._onConfirmPasswordChanged} 
-        value = {this.state.confirmPassword} secureTextEntry      autoCapitalize="none" autoCorrect={false}/>
-        </Item>
 
 
 
 
-          <Button   style={styles.buttonstyle}
-             onPress={this._onClickSignIn}>
-           <Text style={{ paddingLeft:50}} >Sign In</Text>
-           
-          </Button>
 
-        </Form>
 
-      </Content>
-    </Container>
-   
-   
-   
-   
-      );
-  
-    }
 
-  
-}
 
-*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

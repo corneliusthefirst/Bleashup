@@ -54,29 +54,28 @@ export default class ResetPasswordView extends Component {
 
   @autobind
   onClickResetPassword() {
-      if(this.state.password != this.state.newPassword){
+    
+    if(this.state.password != this.state.newPassword){
         globalState.newPasswordError = true
       }
       else if((this.state.password == '') &&(this.state.newPassword == '') ){
         globalState.passwordError = true
       }
       else{
-        globalState.success = true
-        console.warn(this.state.password)
-        console.warn(this.state.newPassword)
-        this.props.navigation.navigate('SignIn');
+
+        globalState.loading = true
+         // console.warn(this.state.password)
+        //console.warn(this.state.newPassword)
+        this.loginStore.updatePassword(this.state.password).then((response) => {
+          if(response = 'ok'){
+            this.props.navigation.navigate('SignIn');
+          }
+        }).catch(error => {
+          reject(error)
+    
+        })
+
       }
-
-      /*
-    if(this.loginStore.user.email == this.state.email){
-      console.warn(this.state.email) 
-
-      /**Code to send a reset link through email 
-      
-
-   }else{
-     globalState.error = true
-   }*/
 
   }
 
@@ -116,6 +115,7 @@ export default class ResetPasswordView extends Component {
           <Icon active type='Ionicons' name='ios-lock' />
           <Input secureTextEntry  placeholder={globalState.passwordError == false ? 'Please enter password': 'password cannot be empty' }  autoCapitalize="none" returnKeyType='next' inverse
             onChangeText={(value) =>this.onChangedPassword(value)}  />
+            
             {globalState.passwordError == false ? <Text></Text> : <Icon onPress={this.removePasswordError} type='Ionicons' name='close-circle' style={{color:'#00C497'}}/>}
     </Item>
 
@@ -132,7 +132,7 @@ export default class ResetPasswordView extends Component {
             style={styles.buttonstyle}
             onPress={ this.onClickResetPassword}
        >
-             <Text>  Reset </Text>
+            {globalState.loading  ? <Spinner color="#FEFFDE" /> : <Text> Reset </Text>}
            
           </Button>
 

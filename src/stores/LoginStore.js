@@ -73,7 +73,7 @@ export default class LoginStore {
 
   }
 
-  @action async updateName(newName) {
+  @action  updateName(newName) {
     return new Promise((resolve, reject) => {
       storage
         .load({
@@ -104,7 +104,7 @@ export default class LoginStore {
     });
   }
 
-  @action async updateStatus(newStatus) {
+  @action  updateStatus(newStatus) {
     return new Promise((resolve, reject) => {
       storage
         .load({
@@ -134,7 +134,7 @@ export default class LoginStore {
         });
     });
   }
-  @action async updateProfile(newProfile) {
+  @action  updateProfile(newProfile) {
     return new Promise((resolve, reject) => {
       storage
         .load({
@@ -165,7 +165,7 @@ export default class LoginStore {
     });
   }
 
-  @action async updateProfileExt(newProfileExt) {
+  @action  updateProfileExt(newProfileExt) {
     return new Promise((resolve, reject) => {
       storage
         .load({
@@ -231,7 +231,7 @@ export default class LoginStore {
 
 
 
-@action async updateEmail(newEmail) {
+@action updateEmail(newEmail) {
   return new Promise((resolve, reject) => {
     storage
       .load({
@@ -263,7 +263,7 @@ export default class LoginStore {
 }
 
 
-@action async updateAge(newAge) {
+@action updateAge(newAge) {
   return new Promise((resolve, reject) => {
     storage
       .load({

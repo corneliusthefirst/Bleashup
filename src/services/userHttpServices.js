@@ -171,9 +171,9 @@ class UserHttpServices {
         })
     }
 
-    sendEmail(email, subject,body) {
+    sendEmail(name,email, subject,body) {
         return new Promise((resolve, reject) => {
-            fetch(`${this.domainame()}off/sendEmail?email=${email}&subject=${subject}&body=${body}`, {
+            fetch(`${this.domainame()}auth/sendEmail?name=${name}&email=${email}&subject=${subject}&body=${body}`, {
                 method: "POST"
             }).then(result => {
                 result.json().then(data => {
@@ -192,7 +192,7 @@ class UserHttpServices {
 
     setUser(newUser) {
         return new Promise((resolve, reject) => {
-            fetch(`${this.domainame()}off/sendUser?newUser=${newUser}`, {
+            fetch(`${this.domainame()}auth/setUser?newUser=${newUser}`, {
                 method: "POST"
             }).then(result => {
                 result.json().then(data => {

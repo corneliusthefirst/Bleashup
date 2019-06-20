@@ -12,6 +12,7 @@ import styles from "./styles";
 import stores from "../../../stores";
 import routerActions from "reazy-native-router-actions";
 import { functionDeclaration } from "@babel/types";
+import CheckAlert from "react-native-awesome-alert"
 
 import PhoneInput from "react-native-phone-input";
 import CountryPicker from "react-native-country-picker-modal";
@@ -27,8 +28,9 @@ export default class LoginView extends Component {
       cca2: "US",
       valid: "",
       type: "",
-      value: ""
-    };
+      value: "",
+      erroMessage:""  
+      };
   }
   loginStore = stores.LoginStore;
   temploginStore = stores.TempLoginStore;
@@ -59,31 +61,41 @@ export default class LoginView extends Component {
 
   }catch (e) {
     alert(e.message);
+    //this.setState({erroMessage: e.message});
+
   }
 
-
   }
+
 
   @autobind
   async onClickContinue() {
+    
     try {
       await this.updateInfo();
 
       if (this.state.value == "") {
         throw new Error("Please provide phone number.");
       }
+      else if((this.state.valid == false) || (this.state.type != 'MOBILE')){
+        throw new Error("Please provide a valid mobile phone number.");
+      }else{
+        
+           globalState.loading = true
+      }
+      
+
     } catch (e) {
       alert(e.message);
     }
 
-    console.warn(this.state.valid);
-    console.warn(this.state.type);
-    console.warn(this.state.value);
-    console.warn(this.state.cca2);
 
-    this.UserService.checkUser(this.state.value).then((response) => {
-      if(response){
-        globalState.loading = true
+    UserService.checkUser(this.state.value).then((response) => {
+     
+      if(response){ 
+       
+        //if ok we get the user to loginStore
+        loginStore.getUser()
         this.props.navigation.navigate("SignIn")
       }else{
         this.props.navigation.navigate("SignUp")
@@ -124,7 +136,11 @@ export default class LoginView extends Component {
                 onChange={value => this.updateInfo()}
                 onPressFlag={this.onPressFlag}
                 value={this.state.value}
+                error={globalState.error}
+                autoFormat = {true}
+                pickerBackgroundColor='blue'
              />
+             
             </Item>
             
             
@@ -134,7 +150,7 @@ export default class LoginView extends Component {
                 this.onClickContinue();
               }}
               >
-              {globalState.loading  ? <Spinner color="white" /> : <Text> Continue </Text>}
+              {globalState.loading  ? <Spinner color="#FEFFDE" /> : <Text> Continue </Text>}
              
             </Button>
             
@@ -161,3 +177,25 @@ export default class LoginView extends Component {
   }
 }
 
+/*
+console.warn(this.state.valid);
+console.warn(this.state.type);
+console.warn(this.state.value);
+console.warn(this.state.cca2);
+
+  const PhoneErrorView = (
+        <View style={{}}>
+          <Text style={{}}>{e.message}</Text>
+        </View>
+      )
+       this.onPhoneErrorAlert()
+       
+ 
+  @autobind
+  onPhoneErrorAlert = () => {
+    this.checkAlert.alert("Hello!!", PhoneErrorView, [
+      { text: "OK", onPress: () => console.log("OK touch") },
+      { text: "Cancel", onPress: () => console.log("Cancel touch") }
+    ])
+  }      
+       */

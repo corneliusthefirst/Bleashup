@@ -12,7 +12,7 @@ import stores from "../../../stores";
 import routerActions from "reazy-native-router-actions";
 import { functionDeclaration } from "@babel/types";
 import globalState from '../../../stores/globalState';
-
+import UserService from '../../../services/userHttpServices';
 
 @observer
 export default class ForgotPasswordView extends Component {
@@ -45,20 +45,36 @@ export default class ForgotPasswordView extends Component {
 
   @autobind
   onClickReset() {
-    if(this.temploginStore.user.email == this.state.email){
-      console.warn(this.state.email) 
-      /*
-      Resetcode = Math.floor(Math.random() * 6000) + 1000
-      this.temploginStore.deleteData('resetcode')
-      this.temploginStore.saveData(Resetcode,'resetcode')
-     
 
-      console.warn(Resetcode) 
-     */
+    if(this.loginStore.user.email == this.state.email){
+      
+      globalState.loading = true
+
+       ResetCode = Math.floor(Math.random() * 6000) + 1000
+      //this.temploginStore.deleteData('resetcode')
+      this.temploginStore.saveData(ResetCode,'resetcode').then((response) => {
+        if(response){}
+      }).catch(error => {
+        reject(error)
+  
+      })  
 
       /**Code to send a reset link through email */
-      
-      this.props.navigation.navigate('ResetCode');
+
+      subject='reset bleashup password'
+      name =this.loginStore.user.name
+      body = 'hello '+name+' the reset code for your password is '+ResetCode
+      email = this.loginStore.user.email
+      console.warn(body)
+     
+      UserService.sendEmail(name,email, subject,body).then((response) => {
+        if(response = 'ok'){
+          this.props.navigation.navigate('ResetCode');
+         }
+      }).catch(error => {
+        reject(error)
+  
+      })  
 
    }else{
      globalState.error = true
@@ -111,10 +127,10 @@ export default class ForgotPasswordView extends Component {
       <Button  block rounded
             style={styles.buttonstyle}
             onPress={ this.onClickReset}
-       >
-             <Text> Send Reset Code </Text>
+      >
+             {globalState.loading  ? <Spinner color="#FEFFDE" /> : <Text> Send Reset Code </Text>}
            
-          </Button>
+      </Button>
 
      
 
