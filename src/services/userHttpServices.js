@@ -11,7 +11,7 @@ class UserHttpServices {
     //this method is used to test for a user to if the account exists
     checkUser(phone) {
         return new Promise((resolve, reject) => {
-            fetch(`${this.domainame()}auth/check_user?phone=${phone}`, {
+            fetch(`${this.domainame()}auth/check_user?phone=${phone}&server_key=${configs.server_reference}`, {
                 method: "GET",
             }).then(result => {
                 result.json().then(data => {
