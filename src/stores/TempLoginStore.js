@@ -5,8 +5,9 @@ import storage from "./Storage";
 export default class TempLoginStore {
   constructor() {}
   @observable phonenumber = "";
-  @observable resetCode = "2525256";
+  @observable resetCode = "";
   @observable emailVerificationCode = "";
+  @observable counter = 0;
 
   @observable user = {
     phone: "0666406835",
@@ -82,9 +83,6 @@ export default class TempLoginStore {
             resolve(this.user);
           })
           .catch(error => {
-            //TODO: redirection to the login page occurs here
-            //reject()
-            //this.props.navigation.navigate("SignUp")
 
             resolve(this.user);
           });

@@ -65,10 +65,19 @@ export default class ForgotPasswordView extends Component {
       name =this.loginStore.user.name
       body = 'hello '+name+' the reset code for your password is '+ResetCode
       email = this.loginStore.user.email
-      console.warn(body)
+      //console.warn(body)
+
+      while(this.temploginStore.counter < 300){
+        this.temploginStore.counter++;
+      } 
+      if(this.temploginStore.counter == 300){
+        this.temploginStore.resetCode = ""
+      }
      
       UserService.sendEmail(name,email, subject,body).then((response) => {
         if(response = 'ok'){
+
+
           
           this.temploginStore.saveData(resetCode,'resetCode').then((response) => {
             if(response){}

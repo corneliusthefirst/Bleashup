@@ -24,11 +24,11 @@ export default  class SignUpView extends Component {
       status: "",
       email:"",
       age:"",
-      profile:loginStore.user.profile,
-      profile_ext:loginStore.user.profile_ext,
+      profile:this.loginStore.user.profile,
+      profile_ext:this.loginStore.user.profile_ext,
       password: "",
-      created_at:moment.format("YYYY-MM-DD HH:mm"),
-      updated_at:moment.format("YYYY-MM-DD HH:mm")
+      created_at: moment().format("YYYY-MM-DD HH:mm"),
+      updated_at: moment().format("YYYY-MM-DD HH:mm")
 
     };
   }
@@ -99,41 +99,57 @@ export default  class SignUpView extends Component {
     }
     if(this.state.email == '' ){
       globalState.emailError = true
-      //console.warn(this.date.defaultDate)
+      
     }   
     if(this.state.age == '' ){
       globalState.ageError = true
-      console.warn(globalState.ageError)
+    
     }
     
     if( (globalState.newPasswordError==false) && (globalState.passwordError==false)&&  (globalState.nameError==false) &&(globalState.emailError==false) && (globalState.ageError==false)){
  
       globalState.loading = true
-
+      console.warn(this.state)
 
       emailVerificationCode = Math.floor(Math.random() * 60000) + 1000
-      //UserService.register(this.state.phone,this.state.password)
       subject='Verify email acccount'
       name =this.state.name
-      body = 'Welcome to Bleashup '+name+' this is your code to check '+emailVerificationCode
+      body = 'Welcome to Bleashup '+name+', this is your code to check '+emailVerificationCode
       email = this.state.email
 
+     
+       while(this.temploginStore.counter <= 300){
+            this.temploginStore.counter++;
+          } 
+
+
+      
+
+   
       UserService.sendEmail(name,email, subject,body).then((response) => {
         if(response = 'ok'){
           
 
-          this.temploginStore.saveData(emailVerificationCode,'emailVerificationCode').then((response) => {
-            if(response){}
-          }).catch(error => {
+          this.temploginStore.saveData(emailVerificationCode,'emailVerificationCode').then((response) => {  if(response){} 
+           }).catch(error => {
             reject(error)
       
           })
 
           
           //set the temporal loginstore for user
-          this.temploginStore.setUser(this.state)
+          this.temploginStore.setUser(this.state).then((response) => {
+            if(response){}
+          }).catch(error => {
+            reject(error)
+      
+          })
+
+          globalState.loading = false
 
           this.props.navigation.navigate('EmailVerification');
+               
+
          }
       }).catch(error => {
         reject(error)
@@ -141,6 +157,9 @@ export default  class SignUpView extends Component {
       })  
 
     }
+
+
+    
   
     } 
 
@@ -236,7 +255,7 @@ export default  class SignUpView extends Component {
               style={styles.buttonstyle}
               onPress={this.SignUp}
               >
-               {globalState.loading  ? <Spinner color="yellow" /> : <Text> SignUp </Text>}
+               {globalState.loading  ? <Spinner color="#FEFFDE" /> : <Text> SignUp </Text>}
              
         </Button>
       
@@ -245,3 +264,9 @@ export default  class SignUpView extends Component {
     );
   }
 }
+
+
+          /*
+          if(this.temploginStore.counter == 300){
+            this.temploginStore.emailVerificationCode = ""
+          }*/

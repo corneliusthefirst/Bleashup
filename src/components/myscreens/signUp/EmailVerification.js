@@ -5,7 +5,7 @@ import {
 } from "native-base";
 //import { TouchableOpacity } from "react-native";
 
-import { AsyncStorage } from "react-native";
+import { AsyncStorage,Alert } from "react-native";
 import { observer } from "mobx-react";
 import styles from "./styles";
 import stores from "../../../stores";
@@ -27,6 +27,7 @@ export default class EmailVerificationView extends Component {
   loginStore = stores.LoginStore;
   temploginStore = stores.TempLoginStore;
 
+  
   @autobind
   onChangedCode(text) {
     this.setState({ code: text });
@@ -55,9 +56,16 @@ export default class EmailVerificationView extends Component {
   body = 'Welcome to Bleashup '+name+' this is your new code to check '+ emailVerificationCode
   email = this.temploginStore.user.email
 
+  while(this.temploginStore.counter <= 300){
+    this.temploginStore.counter++;
+  } 
+  //turn on the spinner
+  globalState.loading = true
+
   UserService.sendEmail(name,email, subject,body).then((response) => {
     if(response = 'ok'){
-      
+      //turn off the spinner
+      globalState.loading = false
 
       this.temploginStore.saveData(emailVerificationCode,'emailVerificationCode').then((response) => {
         if(response){}
@@ -76,25 +84,67 @@ export default class EmailVerificationView extends Component {
 
   @autobind
   onClickEmailVerification() {
- 
-   this.temploginStore.emailVerificationCode = this.temploginStore.loadSaveData('emailVerificationCode').then((response) => {
-        if(response){}
-    }).catch(error => { reject(error) })
 
-    if(this.temploginStore.emailVerificationCode == this.state.code){
-        //we register the user
-        UserService.register(this.temploginStore.user.phone,this.temploginStore.user.password)
-        //we set the user real data then go back to login
+   
 
-        loginStore.setUser(JSON.stringify(this.temploginStore.getUser()))
-        
-        this.props.navigation.navigate('Login');
+    this.temploginStore.getUser().then((response) => {
+      if(response){}
+     }).catch(error => { reject(error) })
 
-   }else{
-         globalState.error = true
-   } 
+
+    globalState.loading = true
+
+   if(this.temploginStore.counter = 300){
+  
+      Alert.alert(
+        'Verification code expired',
+        'Please click on Resend verification code',
+       [
+         {text: 'OK', onPress: () => console.log('OK Pressed')},
+       ],
+      
+     );
+
+     this.temploginStore.deleteData('emailVerificationCode')
+     globalState.loading = false
+     this.temploginStore.counter  = 0
+   
   }
+  else {
+      
+  this.temploginStore.loadSaveData('emailVerificationCode').then((response) => {
+    
+    if(response){
 
+         this.temploginStore.emailVerificationCode = response
+
+          if(this.temploginStore.emailVerificationCode == this.state.code){
+          //if all is right reset the counter to 0 
+           this.temploginStore.counter = 0
+            //we register the user
+            UserService.register(this.temploginStore.user.phone,this.temploginStore.user.password)
+            //we set the user real data then go back to login
+        
+            loginStore.setUser(JSON.stringify(this.temploginStore.user)).then((response) => {
+              if(response){}
+             }).catch(error => { reject(error) })
+            
+            globalState.loading = false
+            this.props.navigation.navigate('Login');
+        
+          }else{
+             globalState.error = true
+            } 
+         
+          }
+    
+
+      }).catch(error => { reject(error) })
+
+   }
+}
+
+  
 
   render() {
     return (
@@ -145,7 +195,7 @@ export default class EmailVerificationView extends Component {
             style={styles.buttonstyle}
             onPress={ this.onClickEmailVerification}
        >
-         <Text> Ok </Text>
+         {globalState.loading  ? <Spinner color="#FEFFDE" /> : <Text> Ok </Text>}
            
        </Button>
 

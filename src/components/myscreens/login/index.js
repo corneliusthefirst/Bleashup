@@ -110,7 +110,7 @@ export default class LoginView extends Component {
       .then(response => {
         if (response) {
           //if ok we get the user to loginStore
-          loginStore.getUser();
+          this.loginStore.getUser();
           globalState.loading = false;
           this.props.navigation.navigate("SignIn");
         } else {

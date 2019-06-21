@@ -5,7 +5,7 @@ import {
 } from "native-base";
 //import { Button,View } from "react-native";
 
-import { AsyncStorage } from "react-native";
+import { AsyncStorage, Alert } from "react-native";
 import { observer } from "mobx-react";
 import styles from "./styles";
 import stores from "../../../stores";
@@ -80,13 +80,27 @@ export default class ResetCodeView extends Component {
 
   @autobind
   onClickReset() {
+
+    if( this.temploginStore.resetCode = ""){
+      Alert.alert(
+        'Reset code expire',
+        'Please click on Resend reset code',
+       [
+         {text: 'OK', onPress: () => console.log('OK Pressed')},
+       ],
+      
+     );
+
+    }
+
     
    this.temploginStore.resetCode = this.temploginStore.loadSaveData('resetCode').
    then((response) => { if(response){} }).catch(error => { reject(error) })
 
 
     if(this.temploginStore.resetCode == this.state.code){
-        //console.warn(this.state.code) 
+        //reset the counter to 0
+        this.temploginStore.counter = 0
 
         this.props.navigation.navigate('ResetPassword');
 
