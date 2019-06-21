@@ -67,7 +67,7 @@ export default class events {
           let Event = find(Events, { event_id: EventID });
           let index = findIndex(Events, { event_id: EventID });
           Event.past = true;
-          Event.update_date = moment.format("YYYY-MM-DD HH:mm");
+          Event.updated_at = moment().format("YYYY-MM-DD HH:mm");
           Events.splice(index, 1, Event);
           this.saveKey.data = Events;
           storage.save(this.saveKey).then(() => {
@@ -100,7 +100,7 @@ export default class events {
         });
         Event.participants.splice(index, 1, newParticipant);
         if (inform) Event.participant_update = true;
-        Event.update_date = moment.format("YYYY-MM-DD HH:mm");
+        Event.updated_at = moment().format("YYYY-MM-DD HH:mm");
         Events.splice(eventIndex, 1, Event);
         this.saveKey.data = Events;
         storage.save(this.saveKey).then(() => {
@@ -118,7 +118,7 @@ export default class events {
         Event.participants = Event.participants.concat([Participant]);
         if (inform) Event.participant_added = true;
         else Event.joint = true;
-        Event.update_date = moment.format("YYYY-MM-DD HH:mm");
+        Event.updated_at = moment().format("YYYY-MM-DD HH:mm");
         Events.splice(eventIndex, 1, Event);
         this.saveKey.data = Events;
         storage.save(this.saveKey).then(() => {
@@ -135,7 +135,7 @@ export default class events {
         let eventIndex = findIndex(Events, { event_id: EventID });
         Event.period = NewPeriod;
         if (inform) Event.period_updated = true;
-        Event.update_date = moment.format("YYYY-MM-DD HH:mm");
+        Event.updated_at = moment().format("YYYY-MM-DD HH:mm");
         Events.splice(eventIndex, 1, Event);
         this.saveKey.data = Events;
         storage.save(this.saveKey).then(() => {
@@ -152,7 +152,7 @@ export default class events {
         let eventIndex = findIndex(Events, { event_id: EventID });
         Event.location = NewLocation;
         if (inform) Event.location_updated = true;
-        Event.update_date = moment.format("YYYY-MM-DD HH:mm");
+        Event.updated_at = moment().format("YYYY-MM-DD HH:mm");
         Events.splice(eventIndex, 1, Event);
         this.saveKey.data = Events;
         storage.save(this.saveKey).then(() => {
@@ -169,7 +169,7 @@ export default class events {
         let eventIndex = findIndex(Events, { event_id: EventID });
         Event.background = NewBackground;
         if (inform) Event.background_updated = true;
-        Event.update_date = moment.format("YYYY-MM-DD HH:mm");
+        Event.updated_at = moment().format("YYYY-MM-DD HH:mm");
         Events.splice(eventIndex, 1, Event);
         this.saveKey.data = Events;
         storage.save(this.saveKey).then(() => {
@@ -186,7 +186,7 @@ export default class events {
         let eventIndex = findIndex(Events, { event_id: EventID });
         Event.about.title = NewTitle;
         if (inform) Event.title_updated = true;
-        Event.update_date = moment.format("YYYY-MM-DD HH:mm");
+        Event.updated_at = moment().format("YYYY-MM-DD HH:mm");
         Events.splice(eventIndex, 1, Event);
         this.saveKey.data = Events;
         storage.save(this.saveKey).then(() => {
@@ -203,7 +203,7 @@ export default class events {
         let eventIndex = findIndex(Events, { event_id: EventID });
         Event.about.description = NewDescription;
         if (inform) Event.description_updated = true;
-        Event.update_date = moment.format("YYYY-MM-DD HH:mm");
+        Event.updated_at = moment().format("YYYY-MM-DD HH:mm");
         Events.splice(eventIndex, 1, Event);
         this.saveKey.data = Events;
         storage.save(this.saveKey).then(() => {
@@ -460,7 +460,7 @@ export default class events {
     });
   }
   setProperties(Events, inform) {
-    if (inform) Events = sortBy(Events, ["update_date"]);
+    if (inform) Events = sortBy(Events, ["updated_at"]);
     this.currentEvents = filter(Events, { past: false });
     this.PastEvents = filter(Events, { past: true });
     this.myReminds = filter(Events, { reminds: true });
