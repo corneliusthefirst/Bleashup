@@ -45,6 +45,7 @@ export default class SignUpView extends Component {
         birth_date: "",
         profile: "",
         profile_ext: "",
+        nickname: "",
         password: "",
         created_at: moment().format("YYYY-MM-DD HH:mm"),
         updated_at: moment().format("YYYY-MM-DD HH:mm")

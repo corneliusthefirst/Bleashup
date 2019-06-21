@@ -29,6 +29,7 @@ export default class LoginStore {
             this.user = {
               phone: data.phone,
               name: data.name,
+              nickname: data.nickname,
               status: data.status,
               age: data.age,
               created_at: data.created_at,
@@ -51,31 +52,30 @@ export default class LoginStore {
 
   @action async setUser(newUser) {
     return new Promise((resolve, reject) => {
-      UserSevices.setUser(newUser).then(response => {
-        this.user = {
-          phone: newUser.phone,
-          name: newUser.name,
-          status: newUser.status,
-          age: newUser.age,
-          email: newUser.email,
-          created_at: newUser.created_at,
-          updated_at: newUser.updated_at,
-          password: newUser.password,
-          profile: newUser.profile,
-          profile_ext: newUser.profile_ext
-        };
-        storage
-          .save({
-            key: "loginStore",
-            data: this.user
-          })
-          .then(() => {
-            resolve();
-          })
-          .catch(error => {
-            reject(error);
-          });
-      });
+      this.user = {
+        phone: newUser.phone,
+        name: newUser.name,
+        status: newUser.status,
+        age: newUser.age,
+        nickname: newUser.nickname,
+        email: newUser.email,
+        created_at: newUser.created_at,
+        updated_at: newUser.updated_at,
+        password: newUser.password,
+        profile: newUser.profile,
+        profile_ext: newUser.profile_ext
+      };
+      storage
+        .save({
+          key: "loginStore",
+          data: this.user
+        })
+        .then(() => {
+          resolve();
+        })
+        .catch(error => {
+          reject(error);
+        });
     });
   }
 

@@ -102,7 +102,7 @@ export default class LoginView extends Component {
       this.state.value.replace(/\s/g, "").replace("+", "00")
     )
       .then(response => {
-        if (response.status) {
+        if (response) {
           this.loginStore
             .setUser({
               phone: this.state.value.replace(/\s/g, "").replace("+", "00"),
@@ -111,10 +111,10 @@ export default class LoginView extends Component {
               profile_ext: response.profile_ext,
               name: response.name,
               nickname: response.nickname,
-              created_at: "",
-              updated_at: "",
+              created_at: response.created_at,
+              updated_at: response.updated_at,
               birth_date: response.birth_date,
-              email: ""
+              email: response.email
             })
             .then(() => {
               globalState.loading = false;
