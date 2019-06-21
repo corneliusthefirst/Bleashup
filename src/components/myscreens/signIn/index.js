@@ -61,11 +61,6 @@ export default  class SignInView extends Component {
      
      } 
 
-
-
-
-    
-
   render() {
     return (
       
@@ -82,11 +77,8 @@ export default  class SignInView extends Component {
                   <Icon type='Ionicons' name="md-arrow-round-back" />
             </Button>
             </Right>
-          </Header>
+          </Header>     
 
-
-        
-      
         <Content>
           <Card>
             <CardItem>
@@ -108,13 +100,6 @@ export default  class SignInView extends Component {
            
           </Card>
         </Content>
-     
-
-
-
-
-
-
   
       <Button  transparent regular style={{marginBottom:-31}}>
          <Text> Password </Text>               
@@ -124,9 +109,7 @@ export default  class SignInView extends Component {
            <TouchableOpacity style={{paddingLeft:220,marginBottom:-22}}  onPress={this.forgotPassword}>
            <Text style={{color:'#1FABAB',fontSize:14}} > forgot password ? </Text> 
            </TouchableOpacity>
-  
-      
-      
+        
           
       <Item rounded style={styles.input}  error={globalState.error} >
             <Icon active type='FontAwesome' name='unlock' />
@@ -134,10 +117,6 @@ export default  class SignInView extends Component {
               onChangeText={(value) =>this.OnChangedPassword(value)}  />
               {globalState.error == false ? <Text></Text> : <Icon onPress={this.removeError} type='Ionicons' name='close-circle' style={{color:'#00C497'}}/>}
       </Item>
-  
-    
-
-      
 
         <Button  block rounded
               style={styles.buttonstyle}
@@ -148,9 +127,6 @@ export default  class SignInView extends Component {
               {globalState.loading  ? <Spinner color="yellow" /> : <Text> SignIn </Text>}
              
             </Button>
-
-       
-
           
         </Content>
       </Container>
