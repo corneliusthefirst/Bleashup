@@ -1,5 +1,5 @@
 import storage from "./Storage";
-import { LoginStore } from "./";
+import stores from "./";
 import { observable, action, extendObservable, autorun, computed } from "mobx";
 require("json-circular-stringify"); // !! This is added to solve the problem TypeError: JSON.stringify cannot serialize cyclic structures
 export default class Session {
@@ -26,12 +26,16 @@ export default class Session {
         };
       })
       .catch(error => {
-        this.initialzeStore().then(session => {});
+        this.initialzeStore()
+          .then(session => {
+            this.SessionStore = session;
+          })
+          .catch(error => {});
       });
   }
   @action initialzeStore() {
     return new Promise((resolve, reject) => {
-      LoginStore.getUser()
+      stores.LoginStore.getUser()
         .then(user => {
           let session = {
             socket: null,
@@ -83,7 +87,7 @@ export default class Session {
   }
   initialzeStoreAndUpdate(key, newValue) {
     return new Promise((resolve, reject) => {
-      LoginStore.getUser()
+      stores.LoginStore.getUser()
         .then(user => {
           let session = {
             socket: null,
