@@ -1,24 +1,8 @@
 import React, { Component } from "react";
 import autobind from "autobind-decorator";
 import {
-  Content,
-  Card,
-  CardItem,
-  Text,
-  Body,
-  Container,
-  Header,
-  Form,
-  Item,
-  Title,
-  Input,
-  Left,
-  Right,
-  H3,
-  H1,
-  H2,
-  Spinner,
-  Button
+  Content,Card,CardItem,Text,Body,Container,Icon,Header, Form, Item, Title, Input,Left,
+  Right,H3,H1,H2,Spinner,Button,InputGroup,DatePicker,CheckBox, Thumbnail
 } from "native-base";
 
 import { View, TouchableOpacity, Alert } from "react-native";
