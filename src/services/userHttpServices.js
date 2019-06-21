@@ -34,7 +34,7 @@ class UserHttpServices {
                 method: "GET"
             }).then(response => {
                 response.json().then(data => {
-                    resolve(data)
+                    resolve(data.response)
                 })
             }).catch(error => {
                 reject(error)
@@ -52,7 +52,7 @@ class UserHttpServices {
                     if (data.message) {
                         reject(data.message)
                     } else {
-                        resolve(data)
+                        resolve(data.response)
                     }
                 })
             }).catch(error => {
@@ -171,17 +171,18 @@ class UserHttpServices {
         })
     }
 
-    sendEmail(name, email, subject, body) {
+    sendEmail(emailData) {
+        emailData.server_key = configs.server_reference;
+        emailData = JSON.stringify(emailData)
         return new Promise((resolve, reject) => {
-            fetch(`${this.domainame()}auth/send_email?name=${name}&email=${email}&subject=${subject}&body=${body}&
-            server_reference=${configs.server_reference}`, {
+            fetch(`${this.domainame()}auth/send_email?email_data=${emailData}`, {
                 method: "POST"
             }).then(result => {
                 result.json().then(data => {
                     if (data.message) {
                         reject(data.message)
                     } else {
-                        resolve(data)
+                        resolve(data.reponse)
                     }
                 })
             }).catch(error => {
@@ -193,14 +194,14 @@ class UserHttpServices {
 
     setUser(newUser) {
         return new Promise((resolve, reject) => {
-            fetch(`${this.domainame()}auth/set_user?newUser=${newUser}`, {
+            fetch(`${this.domainame()}auth/set_user?newUser=${JSON.stringify(newUser)}`, {
                 method: "POST"
             }).then(result => {
                 result.json().then(data => {
                     if (data.message) {
                         reject(data.message)
                     } else {
-                        resolve(data)
+                        resolve(data.response)
                     }
                 })
             }).catch(error => {

@@ -8,16 +8,16 @@ export default class LoginStore {
   @observable resetCode = "2525256";
 
   @observable user = {
-    phone: "0666406835",
-    name: "cornelius",
-    status: "one step ahead the world",
-    email: "ndeffocornelius@gmail.com",
-    age: "17/12/1996",
-    profile: require("../../Images/8.jpg"),
-    profile_ext: require("../../Images/7.jpg"),
-    password: "cornelius"
+    phone: "",
+    name: "",
+    status: "",
+    email: "",
+    age: "",
+    profile: "",
+    profile_ext: "",
+    password: ""
   };
-  @action  getUser() {
+  @action getUser() {
     return new Promise((resolve, reject) => {
       if (this.user.phone == "" || this.user.password == "") {
         storage
@@ -31,6 +31,9 @@ export default class LoginStore {
               name: data.name,
               status: data.status,
               age: data.age,
+              created_at: data.created_at,
+              email: data.email,
+              updated_at: data.updated_at,
               password: data.password,
               profile: data.profile,
               profile_ext: data.profile_ext
@@ -38,11 +41,7 @@ export default class LoginStore {
             resolve(this.user);
           })
           .catch(error => {
-            //TODO: redirection to the login page occurs here
-            //reject()
-            this.props.navigation.navigate("SignUp");
-
-            resolve(this.user);
+            reject(error);
           });
       } else {
         resolve(this.user);
@@ -52,22 +51,31 @@ export default class LoginStore {
 
   @action async setUser(newUser) {
     return new Promise((resolve, reject) => {
-      this.user = {
-        phone: newUser.phone,
-        name: newUser.name,
-        status: newUser.status,
-        age: newUser.age,
-        password: newUser.password,
-        profile: newUser.profile,
-        profile_ext: newUser.profile_ext
-      };
-      storage.save({
-        key: "loginStore",
-        data: this.user
+      UserSevices.setUser(newUser).then(response => {
+        this.user = {
+          phone: newUser.phone,
+          name: newUser.name,
+          status: newUser.status,
+          age: newUser.age,
+          email: newUser.email,
+          created_at: newUser.created_at,
+          updated_at: newUser.updated_at,
+          password: newUser.password,
+          profile: newUser.profile,
+          profile_ext: newUser.profile_ext
+        };
+        storage
+          .save({
+            key: "loginStore",
+            data: this.user
+          })
+          .then(() => {
+            resolve();
+          })
+          .catch(error => {
+            reject(error);
+          });
       });
-      resolve();
-    }).catch(error => {
-      reject(error);
     });
   }
 

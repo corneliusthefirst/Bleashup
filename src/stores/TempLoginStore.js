@@ -10,14 +10,16 @@ export default class TempLoginStore {
   @observable counter = 0;
 
   @observable user = {
-    phone: "0666406835",
-    name: "cornelius",
-    status: "one step ahead the world",
-    email: "ndeffocornelius@gmail.com",
-    age: "17/12/1996",
-    profile: require("../../Images/8.jpg"),
-    profile_ext: require("../../Images/7.jpg"),
-    password: "cornelius"
+    phone: "",
+    name: "",
+    status: "",
+    created_at: "",
+    updated_at: "",
+    email: "",
+    age: "",
+    profile: "",
+    profile_ext: "",
+    password: ""
   };
 
   //Please check this commented code
@@ -75,7 +77,10 @@ export default class TempLoginStore {
               phone: data.phone,
               name: data.name,
               status: data.status,
-              age: data.age,
+              birth_date: data.birth_date,
+              created_at: data.created_at,
+              email: data.email,
+              updated_at: data.updated_at,
               password: data.password,
               profile: data.profile,
               profile_ext: data.profile_ext
@@ -83,8 +88,7 @@ export default class TempLoginStore {
             resolve(this.user);
           })
           .catch(error => {
-
-            resolve(this.user);
+            reject(error);
           });
       } else {
         resolve(this.user);
@@ -98,8 +102,11 @@ export default class TempLoginStore {
         phone: newUser.phone,
         name: newUser.name,
         status: newUser.status,
-        age: newUser.age,
+        birth_date: newUser.birth_date,
         password: newUser.password,
+        email: newUser.email,
+        created_at: newUser.created_at,
+        updated_at: newUser.updated_at,
         profile: newUser.profile,
         profile_ext: newUser.profile_ext
       };

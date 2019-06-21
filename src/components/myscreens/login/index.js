@@ -21,8 +21,8 @@ import {
   Button
 } from "native-base";
 
-import {  View, TouchableOpacity,Alert } from "react-native";
-import  { AsyncStorage } from '@react-native-community/async-storage';
+import { View, TouchableOpacity, Alert } from "react-native";
+import { AsyncStorage } from "@react-native-community/async-storage";
 //import { observable } from 'mobx';
 import { observer, extendObservable, inject } from "mobx-react";
 import styles from "./styles";
@@ -34,7 +34,6 @@ import PhoneInput from "react-native-phone-input";
 import CountryPicker from "react-native-country-picker-modal";
 import UserService from "../../../services/userHttpServices";
 import globalState from "../../../stores/globalState";
-
 
 @observer
 export default class LoginView extends Component {
@@ -94,32 +93,47 @@ export default class LoginView extends Component {
         globalState.loading = true;
       }
     } catch (e) {
-      
-      Alert.alert(
-         'Phone Error',
-         e.message,
-        [
-          {text: 'OK', onPress: () => console.log('OK Pressed')},
-        ],
-       
-      );
-
+      Alert.alert("Phone Error", e.message, [
+        { text: "OK", onPress: () => console.log("OK Pressed") }
+      ]);
     }
 
-    UserService.checkUser(this.state.value)
+    UserService.checkUser(
+      this.state.value.replace(/\s/g, "").replace("+", "00")
+    )
       .then(response => {
-        if (response) {
-          //if ok we get the user to loginStore
-          this.loginStore.getUser();
-          globalState.loading = false;
-          this.props.navigation.navigate("SignIn");
+        if (response.status) {
+          this.loginStore
+            .setUser({
+              phone: this.state.value.replace(/\s/g, "").replace("+", "00"),
+              password: "",
+              profile: response.profile,
+              profile_ext: response.profile_ext,
+              name: response.name,
+              nickname: response.nickname,
+              created_at: "",
+              updated_at: "",
+              birth_date: response.birth_date,
+              email: ""
+            })
+            .then(() => {
+              globalState.loading = false;
+              this.props.navigation.navigate("SignIn");
+            });
         } else {
-          globalState.loading = false;
-          this.props.navigation.navigate("SignUp");
+          this.temploginStore
+            .saveData(
+              this.state.value.replace(/\s/g, "").replace("+", "00"),
+              "phone"
+            )
+            .then(() => {
+              globalState.loading = false;
+              this.props.navigation.navigate("SignUp");
+            });
         }
       })
       .catch(error => {
-        reject(error);
+        globalState.loading = false;
         alert("Sorry Please Check your internet connection");
       });
   }

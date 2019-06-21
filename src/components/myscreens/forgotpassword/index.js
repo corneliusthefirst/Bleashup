@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import autobind from "autobind-decorator";
 import {
-  Content,Card,CardItem,Text,Body,Container,Icon,Header,Form,Item,Title,Input,Left,Right,H3,H1,H2,Spinner,Button,InputGroup,DatePicker,Thumbnail
+  Content,Card,CardItem,Text,Body,Container,Icon,Header,Form,Item,Title,Input,Left,Right,H3,H1,H2,Spinner,Button,InputGroup,DatePicker,Thumbnail,Alert
 } from "native-base";
 //import { Button,View } from "react-native";
 
@@ -51,13 +51,7 @@ export default class ForgotPasswordView extends Component {
       globalState.loading = true
 
        ResetCode = Math.floor(Math.random() * 6000) + 1000
-      //this.temploginStore.deleteData('resetcode')
-      this.temploginStore.saveData(ResetCode,'resetcode').then((response) => {
-        if(response){}
-      }).catch(error => {
-        reject(error)
   
-      })  
 
       /**Code to send a reset link through email */
 
@@ -65,33 +59,32 @@ export default class ForgotPasswordView extends Component {
       name =this.loginStore.user.name
       body = 'hello '+name+' the reset code for your password is '+ResetCode
       email = this.loginStore.user.email
-      //console.warn(body)
+      
 
-      while(this.temploginStore.counter < 300){
+      while(this.temploginStore.counter >= 0){
         this.temploginStore.counter++;
       } 
-      if(this.temploginStore.counter == 300){
-        this.temploginStore.resetCode = ""
-      }
-     
-      UserService.sendEmail(name,email, subject,body).then((response) => {
-        if(response = 'ok'){
+      let emailData = {
+        name: name,
+        email: email,
+        subject: subject,
+        body: body
+      };
 
-
-          
-          this.temploginStore.saveData(resetCode,'resetCode').then((response) => {
-            if(response){}
-          }).catch(error => {
-            reject(error)
-      
-          })
-
-          this.props.navigation.navigate('ResetCode');
-         }
-      }).catch(error => {
-        reject(error)
-  
-      })  
+      UserService.sendEmail(emailData).then(response => {
+          if ((response = "ok")) {
+            this.temploginStore.saveData(resetCode, "resetCode")
+              .then(() => {
+                
+                  globalState.loading = false;
+                  this.props.navigation.navigate("ResetCode");
+                
+              })
+          }
+        })
+        .catch(error => {
+          alert("An error Occured When sending you an Email please try later");
+        });
 
    }else{
      globalState.error = true

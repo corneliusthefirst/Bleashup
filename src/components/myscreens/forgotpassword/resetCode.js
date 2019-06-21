@@ -49,31 +49,39 @@ export default class ResetCodeView extends Component {
 
   @autobind
   resendCode(){
- 
+   this.temploginStore.counter = 0
    resetCode = Math.floor(Math.random() * 600000) + 1000
    
    subject=' Reset password'
    name =this.temploginStore.user.name
    body = 'hello '+name+' this is your reset code '+ resetCode
    email = this.temploginStore.user.email
- 
-   UserService.sendEmail(name,email, subject,body).then((response) => {
-     if(response = 'ok'){
-       
- 
-       this.temploginStore.saveData(resetCode,'resetCode').then((response) => {
-         if(response){}
-       }).catch(error => {
-         reject(error)
-   
-       })
- 
+
+   let emailData = {
+    name: name,
+    email: email,
+    subject: subject,
+    body: body
+  };
+  while(this.temploginStore.counter >= 0){
+    this.temploginStore.counter++;
+  } 
+  UserService.sendEmail(emailData)
+    .then(response => {
+      if ((response = "ok")) {
+        this.temploginStore.saveData(resetCode, "resetCode").then(response => {
+            if (response) {
+            }
+          })
+          .catch(error => {
+            reject(error)
+          })
       }
-   }).catch(error => {
-     reject(error)
- 
-   })  
- 
+    })
+    .catch(error => {
+      reject(error)
+    })
+
   }
 
 
@@ -81,7 +89,7 @@ export default class ResetCodeView extends Component {
   @autobind
   onClickReset() {
 
-    if( this.temploginStore.resetCode = ""){
+    if( this.temploginStore.counter >= 300){
       Alert.alert(
         'Reset code expire',
         'Please click on Resend reset code',
@@ -91,22 +99,26 @@ export default class ResetCodeView extends Component {
       
      );
 
+    }else{
+      globalState.loading = true
+      //reset counter
+      this.temploginStore.counter = 0
+      this.temploginStore.resetCode = this.temploginStore.loadSaveData('resetCode').
+      then(data => {
+       this.temploginStore.resetCode = data
+       if(this.temploginStore.resetCode == this.state.code){
+         
+        this.temploginStore.deleteData('resetCode').then(response => {
+             globalState.loading  =false
+             this.props.navigation.navigate('ResetPassword');
+        })
+        
+       }else{
+                 globalState.error = true
+            } 
+       })
     }
 
-    
-   this.temploginStore.resetCode = this.temploginStore.loadSaveData('resetCode').
-   then((response) => { if(response){} }).catch(error => { reject(error) })
-
-
-    if(this.temploginStore.resetCode == this.state.code){
-        //reset the counter to 0
-        this.temploginStore.counter = 0
-
-        this.props.navigation.navigate('ResetPassword');
-
-   }else{
-         globalState.error = true
-   } 
   }
 
   
@@ -160,7 +172,7 @@ export default class ResetCodeView extends Component {
             style={styles.buttonstyle}
             onPress={ this.onClickReset}
        >
-             <Text> Continue</Text>
+             {globalState.loading  ? <Spinner color="#FEFFDE" /> : <Text> Continue </Text>}
            
           </Button>
 
