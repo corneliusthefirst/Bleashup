@@ -18,52 +18,54 @@ import {
   Spinner,
   Button
 } from "native-base";
-//import { Button,View } from "react-native";
+import { Image } from "react-native";
 
 import { AsyncStorage } from "react-native";
 import { observer, extendObservable, inject } from "mobx-react";
 import styles from "./styles";
 import stores from "../../../stores";
 import routerActions from "reazy-native-router-actions";
-import { functionDeclaration } from "@babel/types";
-//console.error();
-const loginStore = stores.LoginStore;
+import initialRoute from '../../initialRoute'
+import globalState from "../../../stores/globalState";
+
+import { Email, Item, Span, A, renderEmail } from 'react-html-email'
 
 @observer
 export default class LoginHomeView extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      password: ""
-    };
-  }
-
-  @autobind
-  _onPasswordChanged(text) {
-    this.setState({ password: text });
-    //console.warn(loginStore.password);
-  }
-
-  @autobind
-  _onClickForgotPassword() {
-    this.props.navigation.navigate("ForgotPassword");
-  }
-
-  @autobind
-  async _onClickSignIn() {
-    loginStore.password = this.state.password;
-
-    try {
-      await loginStore.login();
-      if (loginStore.loading == true) {
-        this.props.navigation.navigate("Home");
-      }
-    } catch (e) {
-      alert(e.message);
     }
+    initialRoute.initialRoute()
+
+    if(globalState.loading = true){
+      routeName = initialRoute.routeName
+      console.warn(routeName,'***')
+     // this.props.navigation.navigate(routeName)
+      globalState.loading = false
+    }
+
+
   }
+
+ 
 
   render() {
+    globalState.loading = true
+    
+ 
+    const emailHTML = renderEmail(
+      <Email title="Hello World!">
+        <Item align="center">
+          <Span fontSize={20}>
+            This is an example email made with:
+            <A href="https://github.com/chromakode/react-html-email">react-html-email</A>.
+          </Span>
+        </Item>
+      </Email>
+    )
+   
+    
     return (
       <Container>
         <Content>
@@ -75,37 +77,9 @@ export default class LoginHomeView extends Component {
             <Right />
           </Header>
 
-          <Form style={styles.formstyle}>
-            <Button
-              transparent
-              full
-              onPress={this._onClickForgotPassword}
-              style={{ marginBottom: 0, marginTop: 190, marginLeft: 0 }}
-            >
-              <H3 style={{ color: "green", fontSize: 15, marginLeft: 170 }}>
-                Forgot password?
-              </H3>
-            </Button>
+          {globalState.loading ? (<Spinner color="#1FABAB" style={{marginTop:-175}} />) : (<Text> </Text>)}
+         <Text>emailHTML</Text>
 
-            <Header style={{ marginBottom: -70 }}>
-              <Left />
-              <Body>
-                <Title style={{ paddingLeft: 20 }}>Password</Title>
-              </Body>
-            </Header>
-
-            <Item style={{ marginTop: 60 }} regular>
-              <Input
-                placeholder="Please enter password"
-                onChangeText={this._onPasswordChanged}
-                value={this.state.password}
-              />
-            </Item>
-
-            <Button style={styles.buttonstyle} onPress={this._onClickSignIn}>
-              <Text style={{ paddingLeft: 50 }}>Sign In</Text>
-            </Button>
-          </Form>
         </Content>
       </Container>
     );

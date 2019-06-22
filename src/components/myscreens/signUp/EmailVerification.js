@@ -49,12 +49,10 @@ export default class EmailVerificationView extends Component {
 
     subject = "Verify email acccount";
     name = this.temploginStore.user.name;
-    body =
-      "Welcome to Bleashup " +
-      name +
-      " this is your new code to check " +
-      emailVerificationCode;
-
+    body =("Welcome to Bleashup"+name+
+           "this is your new code to check "
+           +emailVerificationCode)
+    
     email = this.temploginStore.user.email;
     let emailData = {
       name: name,

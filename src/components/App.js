@@ -16,7 +16,7 @@ import CurrentEventView from "./myscreens/currentevents/index";
 import InvitationView from "./myscreens/invitations/index";
 import PersonalEventView from "./myscreens/personalevents/index";
 import PotesChat from "./myscreens/poteschat/index";
-import Status from "./myscreens/status/index";
+import StatusView from "./myscreens/status/index";
 import LoginView from "./myscreens/login/index";
 import ForgotPasswordView from "./myscreens/forgotpassword/index";
 import ResetCodeView from "./myscreens/forgotpassword/resetCode";
@@ -31,7 +31,8 @@ import reazy from "reazy";
 import ServerEventListener from "../services/severEventListener";
 import connection from "../services/tcpConnect";
 import { Provider } from "mobx-react";
-//import loginStore from "../stores/login/LoginStore";
+import UserService from "../services/userHttpServices";
+
 
 const AppNavigator = createStackNavigator(
   {
@@ -39,7 +40,7 @@ const AppNavigator = createStackNavigator(
     CurrentEvent: { screen: CurrentEventView },
     PassEvent: { screen: PastEventView },
     Settings: { screen: SettingView },
-    Status: { screen: Status },
+    Status: { screen: StatusView },
     Invitation: { screen: InvitationView },
     PersonalEvent: { screen: PersonalEventView },
     PotesChat: { screen: PotesChat },
@@ -53,7 +54,7 @@ const AppNavigator = createStackNavigator(
     LoginHome: { screen: LoginHomeView }
   },
   {
-    initialRouteName: "SignUp",
+    initialRouteName:"LoginHome",
     headerMode: "none"
   }
 );
@@ -64,6 +65,7 @@ const AppContainer = createAppContainer(AppNavigator);
 connection.init().then(socket => {
   ServerEventListener.listen(socket);
 });
+
 export default () => (
   <Root>
     <StyleProvider style={getTheme(CommonColor)}>
