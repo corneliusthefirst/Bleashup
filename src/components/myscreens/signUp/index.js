@@ -2,8 +2,29 @@ import React, { Component } from "react";
 //import { StyleSheet,Button,Text, TouchableOpacity , View } from 'react-native';
 import autobind from "autobind-decorator";
 import {
-  Content,Card,CardItem,Text,Body,Container,Icon,Header, Form, Item, Title, Input,Left,
-  Right,H3,H1,H2,Spinner,Button,InputGroup,DatePicker,CheckBox, Thumbnail
+  Content,
+  Card,
+  CardItem,
+  Text,
+  Body,
+  Container,
+  Icon,
+  Header,
+  Form,
+  Item,
+  Title,
+  Input,
+  Left,
+  Right,
+  H3,
+  H1,
+  H2,
+  Spinner,
+  Button,
+  InputGroup,
+  DatePicker,
+  CheckBox,
+  Thumbnail
 } from "native-base";
 import styles from "./styles";
 import UserService from "../../../services/userHttpServices";
@@ -99,7 +120,6 @@ export default class SignUpView extends Component {
     }
     if (this.state.age == "") {
       globalState.ageError = true;
-      console.warn(globalState.ageError);
     }
 
     if (
@@ -123,7 +143,6 @@ export default class SignUpView extends Component {
         " this is your code to check " +
         emailVerificationCode;
 
-
       email = this.state.email;
       let emailData = {
         name: name,
@@ -132,9 +151,9 @@ export default class SignUpView extends Component {
         body: body
       };
 
-      while(this.temploginStore.counter >= 0){
+      while (this.temploginStore.counter >= 0) {
         this.temploginStore.counter++;
-      } 
+      }
 
       UserService.sendEmail(emailData)
         .then(response => {
@@ -359,5 +378,3 @@ export default class SignUpView extends Component {
     );
   }
 }
-
-
