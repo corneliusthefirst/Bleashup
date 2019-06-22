@@ -2,28 +2,8 @@ import React, { Component } from "react";
 //import { StyleSheet,Button,Text, TouchableOpacity , View } from 'react-native';
 import autobind from "autobind-decorator";
 import {
-  Content,
-  Card,
-  CardItem,
-  Text,
-  Body,
-  Container,
-  Icon,
-  Header,
-  Form,
-  Item,
-  Title,
-  Input,
-  Left,
-  Right,
-  H3,
-  H1,
-  H2,
-  Spinner,
-  Button,
-  InputGroup,
-  DatePicker,
-  CheckBox
+  Content,Card,CardItem,Text,Body,Container,Icon,Header, Form, Item, Title, Input,Left,
+  Right,H3,H1,H2,Spinner,Button,InputGroup,DatePicker,CheckBox, Thumbnail
 } from "native-base";
 import styles from "./styles";
 import UserService from "../../../services/userHttpServices";
@@ -55,6 +35,7 @@ export default class SignUpView extends Component {
   user = {};
   loginStore = stores.LoginStore;
   temploginStore = stores.TempLoginStore;
+
   @autobind
   onChangedName(value) {
     this.setState({ name: value });
@@ -141,6 +122,8 @@ export default class SignUpView extends Component {
         name +
         " this is your code to check " +
         emailVerificationCode;
+
+
       email = this.state.email;
       let emailData = {
         name: name,
@@ -148,6 +131,11 @@ export default class SignUpView extends Component {
         subject: subject,
         body: body
       };
+
+      while(this.temploginStore.counter >= 0){
+        this.temploginStore.counter++;
+      } 
+
       UserService.sendEmail(emailData)
         .then(response => {
           if ((response = "ok")) {
@@ -361,7 +349,7 @@ export default class SignUpView extends Component {
             onPress={this.SignUp}
           >
             {globalState.loading ? (
-              <Spinner color="yellow" />
+              <Spinner color="#FEFFDE" />
             ) : (
               <Text> SignUp </Text>
             )}
@@ -371,3 +359,5 @@ export default class SignUpView extends Component {
     );
   }
 }
+
+

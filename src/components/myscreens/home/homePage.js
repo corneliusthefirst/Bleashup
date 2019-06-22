@@ -10,20 +10,23 @@ import {
   Body,
   TabHeading
 } from "native-base";
-import Status from "./../status/index";
+import StatusView from "./../status/index";
 import InvitationView from "./../invitations/index";
 import PersonalEventView from "./../personalevents/index";
 import Chats from "../poteschat";
-import Settings from "./../settings/index";
+import SettingView from "./../settings/index";
 import { CollapsibleHeaderScrollView } from "react-native-collapsible-header-views";
 import GState from "../../../stores/globalState";
 import { observer } from "mobx-react";
 import UserHttpServices from "../../../services/userHttpServices";
+import routerActions from "reazy-native-router-actions";
+import autobind from "autobind-decorator";
 
 @observer
 class Home extends Component {
   constructor(props) {
     super(props);
+    this.state = {};
   }
 
   isCloseToBottom(nativeEvent) {
@@ -39,6 +42,9 @@ class Home extends Component {
   state = {
     scroll: true
   };
+  @autobind
+  settings() {}
+
   render() {
     return (
       <Container>
@@ -54,6 +60,7 @@ class Home extends Component {
                   Bleashup
                 </Title>
               </Body>
+
               <Icon
                 name="cog"
                 active={true}
@@ -63,7 +70,7 @@ class Home extends Component {
                   paddingLeft: 100,
                   color: "#FEFFDE"
                 }}
-                //onPress={this.props.navigation.navigate("Settings")}
+                onPress={this.settings()}
               />
             </Header>
           }
@@ -123,7 +130,7 @@ class Home extends Component {
                 </TabHeading>
               }
             >
-              <Status />
+              <StatusView />
             </Tab>
           </Tabs>
         </CollapsibleHeaderScrollView>
@@ -133,3 +140,5 @@ class Home extends Component {
 }
 
 export default Home;
+
+//  onPress = {this.props.navigation.navigate('Settings')}

@@ -7,6 +7,7 @@ export default class TempLoginStore {
   @observable phonenumber = "";
   @observable resetCode = "";
   @observable emailVerificationCode = "";
+  @observable counter = 0;
 
   @observable user = {
     phone: "",

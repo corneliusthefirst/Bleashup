@@ -75,7 +75,8 @@ export default class SignInView extends Component {
           });
         } else {
           globalState.loading = false;
-          alert("Wrong password !");
+          globalState.error == true
+          //alert("Wrong password !");
         }
       });
     });

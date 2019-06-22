@@ -42,7 +42,7 @@ export default {
 
  
   buttonstyle: {
-    marginTop:100,
+    marginTop:50,
     width:deviceWidth/2,
     marginLeft:deviceWidth/4
     
