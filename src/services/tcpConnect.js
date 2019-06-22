@@ -2,7 +2,6 @@ import TcpRequestData from "./tcpRequestData";
 let net = require("react-native-tcp");
 import * as config from "../config/bleashup-server-config.json";
 import stores from "../stores";
-//import { Session } from "../stores";
 
 class Connection {
   client = null;

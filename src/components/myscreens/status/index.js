@@ -1,155 +1,46 @@
 import React, { Component } from "react";
+import { Content, Card, CardItem, Container, Text, Body } from "native-base";
 import NestedScrollView from "react-native-nested-scroll-view";
 import GState from "../../../stores/globalState";
-import autobind from "autobind-decorator";
-import {
-  Content,
-  Card,
-  CardItem,
-  Text,
-  Body,
-  Container,
-  Header,
-  Form,
-  Item,
-  Title,
-  Input,
-  Left,
-  Right,
-  H3,
-  H1,
-  H2,
-  Spinner,
-  Button
-} from "native-base";
-//import { Button,View } from "react-native";
-
-import { AsyncStorage } from "react-native";
-import { observer, extendObservable, inject } from "mobx-react";
-import styles from "./styles";
-import stores from "../../../stores";
-import routerActions from "reazy-native-router-actions";
-import { functionDeclaration } from "@babel/types";
-//console.error();
-const loginStore = stores.LoginStore;
-
-@observer
-export default class SettingView extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      password: ""
-    };
-  }
-
-  @autobind
-  _onPasswordChanged(text) {
-    this.setState({ password: text });
-    //console.warn(loginStore.password);
-  }
-
-  @autobind
-  _onClickForgotPassword() {
-    this.props.navigation.navigate("ForgotPassword");
-  }
-
-  @autobind
-  async _onClickSignIn() {
-    loginStore.password = this.state.password;
-
-    try {
-      await loginStore.login();
-      if (loginStore.loading == true) {
-        this.props.navigation.navigate("Home");
-      }
-    } catch (e) {
-      alert(e.message);
-    }
-  }
-
+export default class CurrentEventView extends Component {
   render() {
     return (
       <Container>
-        <Content>
-          <Left />
-          <Header style={{ marginBottom: 450 }}>
-            <Body>
-              <Title>BleashUp </Title>
-            </Body>
-            <Right />
-          </Header>
-
-          <Form style={styles.formstyle}>
-            <Button
-              transparent
-              full
-              onPress={this._onClickForgotPassword}
-              style={{ marginBottom: 0, marginTop: 190, marginLeft: 0 }}
-            >
-              <H3 style={{ color: "green", fontSize: 15, marginLeft: 170 }}>
-                Forgot password?
-              </H3>
-            </Button>
-
-            <Header style={{ marginBottom: -70 }}>
-              <Left />
-              <Body>
-                <Title style={{ paddingLeft: 20 }}>Password</Title>
-              </Body>
-            </Header>
-
-            <Item style={{ marginTop: 60 }} regular>
-              <Input
-                placeholder="Please enter password"
-                onChangeText={this._onPasswordChanged}
-                value={this.state.password}
-              />
-            </Item>
-
-            <Button style={styles.buttonstyle} onPress={this._onClickSignIn}>
-              <Text style={{ paddingLeft: 50 }}>Sign In</Text>
-            </Button>
-          </Form>
-        </Content>
+        <NestedScrollView
+          onScroll={nativeEvent => {
+            GState.scrollOuter = true;
+          }}
+          alwaysBounceHorizontal={true}
+          scrollEventThrottle={16}
+        >
+          <Content>
+            <Card style={{ padding: 10 }}>
+              <CardItem
+                style={{
+                  paddingLeft: 0,
+                  paddingRight: 0,
+                  paddingTop: 0,
+                  paddingBottom: 10
+                }}
+              >
+                <Body>
+                  <Text>what a fuck!!!!</Text>
+                </Body>
+              </CardItem>
+            </Card>
+            <Card>
+              <CardItem>
+                <Body>
+                  <Text>
+                    NativeBase gives you the potential of building applications
+                    that run on iOS and Android using a single codebase.
+                  </Text>
+                </Body>
+              </CardItem>
+            </Card>
+          </Content>
+        </NestedScrollView>
       </Container>
     );
   }
 }
-
-/*
-import React, { Component } from "react";
-import { StyleSheet, Button, View } from 'react-native'
-import email from 'react-native-email'
-
-export default class SettingView extends Component {
-    render() {
-        return (
-            <View style={styles.container}>
-                <Button title="Send Mail" onPress={this.handleEmail} />
-            </View>
-        )
-    }
-
-    handleEmail = () => {
-        const to = ['gf.694765457@gmail.com'] // string or array of email addresses
-        email(to, {
-            // Optional additional arguments
-            cc: ['bazzy@moo.com', 'doooo@daaa.com'], // string or array of email addresses
-            bcc: 'mee@mee.com', // string or array of email addresses
-            subject: 'Show how to use',
-            body: 'Some body right here'
-        }).catch(console.error)
-    }
-}
-
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center'
-    }
-})
-
-*/

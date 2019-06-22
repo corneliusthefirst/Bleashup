@@ -31,7 +31,6 @@ import reazy from "reazy";
 import ServerEventListener from "../services/severEventListener";
 import connection from "../services/tcpConnect";
 import { Provider } from "mobx-react";
-//import loginStore from "../stores/login/LoginStore";
 
 const AppNavigator = createStackNavigator(
   {
