@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Platform, ScrollView } from "react-native";
+import { Platform, ScrollView, BackHandler, ToastAndroid } from "react-native";
 import {
   Container,
   Header,
@@ -28,7 +28,16 @@ class Home extends Component {
     super(props);
     this.state = {};
   }
-
+  componentDidMount() {
+    BackHandler.addEventListener("hardwareBackPress", this.handleBackButton);
+  }
+  componentWillUnmount() {
+    BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton);
+  }
+  handleBackButton() {
+    ToastAndroid.show("Back button is pressed", ToastAndroid.SHORT);
+    return true;
+  }
   isCloseToBottom(nativeEvent) {
     return (
       nativeEvent.layoutMeasurement.height + nativeEvent.contentOffset.y >=
