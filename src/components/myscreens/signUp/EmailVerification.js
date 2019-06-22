@@ -22,11 +22,11 @@ import {
   Button,
   InputGroup,
   DatePicker,
+  CheckBox,
   Thumbnail
 } from "native-base";
-//import { TouchableOpacity } from "react-native";
 
-import { AsyncStorage } from "react-native";
+import { AsyncStorage, Alert } from "react-native";
 import { observer } from "mobx-react";
 import styles from "./styles";
 import stores from "../../../stores";
@@ -65,23 +65,28 @@ export default class EmailVerificationView extends Component {
 
   @autobind
   resendCode() {
+    this.temploginStore.counter = 0;
     emailVerificationCode = Math.floor(Math.random() * 600000) + 1000;
 
     subject = "Verify email acccount";
     name = this.temploginStore.user.name;
     body =
-      "Welcome to Bleashup " +
+      "Welcome to Bleashup" +
       name +
-      " this is your new code to check " +
+      "this is your new code to check " +
       emailVerificationCode;
+
     email = this.temploginStore.user.email;
-    let EmailData = {
+    let emailData = {
       name: name,
       email: email,
       subject: subject,
       body: body
     };
-    UserService.sendEmail(EmailData)
+    while (this.temploginStore.counter >= 0) {
+      this.temploginStore.counter++;
+    }
+    UserService.sendEmail(emailData)
       .then(response => {
         if ((response = "ok")) {
           this.temploginStore
@@ -102,27 +107,45 @@ export default class EmailVerificationView extends Component {
 
   @autobind
   onClickEmailVerification() {
-    this.temploginStore
-      .loadSaveData("emailVerificationCode")
-      .then(response => {
-        if (response) {
-          this.temploginStore.emailVerificationCode = response;
-          if (this.temploginStore.emailVerificationCode == this.state.code) {
-            //we register the user
-            this.temploginStore.getUser().then(user => {
-              UserServices.register(user.phone, user.password).then(res => {
-                this.loginStore.setUser(user).then(response => {
-                  this.props.navigation.navigate("Home");
-                });
+    if (this.temploginStore.counter >= 300) {
+      Alert.alert(
+        "Verification code expired",
+        "Please click on Resend verification code",
+        [{ text: "OK", onPress: () => console.log("OK Pressed") }]
+      );
+    } else {
+      globalState.loading = true;
+      //if code do not expired we renisialise the counter to 0
+      this.temploginStore.counter = 0;
+      this.temploginStore.loadSaveData("emailVerificationCode").then(data => {
+        this.temploginStore.emailVerificationCode = data;
+
+        if (this.temploginStore.emailVerificationCode == this.state.code) {
+          //we register the user
+          this.temploginStore.getUser().then(user => {
+            UserServices.register(user.phone, user.password).then(res => {
+              this.loginStore.setUser(user).then(response => {
+                //Delete temporal data
+                this.temploginStore
+                  .deleteData("emailVerificationCode")
+                  .then(res => {
+                    this.temploginStore.deleteData("phonenumber").then(res => {
+                      this.temploginStore
+                        .deleteData("temploginStore")
+                        .then(res => {
+                          globalState.loading = false;
+                          this.props.navigation.navigate("Home");
+                        });
+                    });
+                  });
               });
             });
-            //we set the user real data then go back to login
-          } else {
-            globalState.error = true;
-          }
+          });
+        } else {
+          globalState.error = true;
         }
-      })
-      .catch(error => {});
+      });
+    }
   }
 
   render() {
@@ -195,7 +218,11 @@ export default class EmailVerificationView extends Component {
             style={styles.buttonstyle}
             onPress={this.onClickEmailVerification}
           >
-            <Text> Ok </Text>
+            {globalState.loading ? (
+              <Spinner color="#FEFFDE" />
+            ) : (
+              <Text> Ok </Text>
+            )}
           </Button>
         </Content>
       </Container>
