@@ -1,3 +1,4 @@
+import emitter from './eventEmiter'
 class ServerEventListener {
     constructor() {
 
@@ -7,7 +8,14 @@ class ServerEventListener {
             console.error(error.toString(), "error")
         });
         socket.on("data", data => {
+            if (data.response) {
+                switch (data.response) {
+                    case "current-events": emitter.emit("current-events", data.body);
+                        break;    
+                } 
+            }
             console.error(data.toString(), "data")
+
         });
         socket.on("timeout", data => {
             console.error(data.toString(), "timeout")

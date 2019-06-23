@@ -1,91 +1,81 @@
-import {
-    observable,
-    action,
-    extendObservable,
-    autorun,
-    computed
-} from 'mobx'
+import { observable, action, extendObservable, autorun, computed } from "mobx";
 
 export default class globalState {
-   
-    @observable scrollOuter = true
-    @observable isScrolling = true
-    @observable loading= false;
-    @observable error=false;
-    @observable success= false;
-    @observable passwordError=false;
-    @observable newPasswordError=false;
+  @observable scrollOuter = true;
+  @observable isScrolling = true;
+  @observable loading = false;
+  @observable error = false;
+  @observable success = false;
+  @observable passwordError = false;
+  @observable newPasswordError = false;
+  writing = false;
+  @observable nameError = false;
+  @observable emailError = false;
+  @observable ageError = false;
 
-    @observable  nameError=false;
-    @observable  emailError=false;
-    @observable  ageError=false;
-    
-    get scrollOuter() {
-        return this.scrollOuter
-    }
-    set scrollOuter(newValue) {
-        this.scrollOuter = newValue
-    }
-    @computed get continueScroll() {
-        return true
-    }
+  get scrollOuter() {
+    return this.scrollOuter;
+  }
+  set scrollOuter(newValue) {
+    this.scrollOuter = newValue;
+  }
+  @computed get continueScroll() {
+    return true;
+  }
 
+  get loading() {
+    return this.loading;
+  }
+  set loading(newValue) {
+    this.loading = newValue;
+  }
 
-     get loading() {
-        return this.loading
-    }
-    set loading(newValue) {
-        this.loading = newValue
-    }
+  get error() {
+    return this.error;
+  }
+  set error(newValue) {
+    this.error = newValue;
+  }
 
-     get error() {
-        return this.error
-    }
-    set error(newValue) {
-        this.error = newValue
-    }
+  get success() {
+    return this.success;
+  }
+  set success(newValue) {
+    this.success = newValue;
+  }
 
-     get success() {
-        return this.success
-    }
-    set success(newValue) {
-        this.success = newValue
-    }
+  get passwordError() {
+    return this.passwordError;
+  }
+  set passwordError(newValue) {
+    this.passwordError = newValue;
+  }
 
-    get passwordError() {
-        return this.passwordError
-    }
-    set passwordError(newValue) {
-        this.passwordError = newValue
-    }
+  get newPasswordError() {
+    return this.newPasswordError;
+  }
+  set newPasswordError(newValue) {
+    this.newPasswordError = newValue;
+  }
 
-    get newPasswordError() {
-        return this.newPasswordError
-    }
-    set newPasswordError(newValue) {
-        this.newPasswordError = newValue
-    }
+  get nameError() {
+    return this.nameError;
+  }
+  set nameError(newValue) {
+    this.nameError = newValue;
+  }
 
-    get nameError() {
-        return this.nameError
-    }
-    set nameError(newValue) {
-        this.nameError = newValue
-    }
+  get emailError() {
+    return this.emailError;
+  }
+  set emailError(newValue) {
+    this.emailError = newValue;
+  }
 
-    get emailError() {
-        return this.emailError
-    }
-    set emailError(newValue) {
-        this.emailError = newValue
-    }
-
-    get ageError() {
-        return this.ageError
-    }
-    set ageError(newValue) {
-        this.ageError = newValue
-    }
-
-
+  get ageError() {
+    return this.ageError;
+  }
+  set ageError(newValue) {
+    this.ageError = newValue;
+  }
 }

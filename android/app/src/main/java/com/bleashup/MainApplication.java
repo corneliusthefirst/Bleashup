@@ -12,7 +12,7 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
 import com.rnnestedscrollview.RNNestedScrollViewPackage;
-
+import com.github.wumke.RNExitApp.RNExitAppPackage;
 import java.util.Arrays;
 import java.util.List;
 
@@ -30,6 +30,7 @@ public class MainApplication extends Application implements ReactApplication {
           new MainReactPackage(),
             new AsyncStoragePackage(),
             new VectorIconsPackage(),
+            new RNExitAppPackage(),
             new TcpSocketsModule(),
             new RNGestureHandlerPackage(),
             new RNNestedScrollViewPackage()

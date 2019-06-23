@@ -1,11 +1,39 @@
 import React, { Component } from "react";
 import autobind from "autobind-decorator";
 import {
-  Content,Card,CardItem,Text,Body,Container,Icon,Header, Form, Item, Title, Input,Left,
-  Right,H3,H1,H2,Spinner,Button,InputGroup,DatePicker,CheckBox, Thumbnail
+  Content,
+  Card,
+  CardItem,
+  Text,
+  Body,
+  Container,
+  Icon,
+  Header,
+  Form,
+  Item,
+  Title,
+  Input,
+  Left,
+  Right,
+  H3,
+  H1,
+  H2,
+  Spinner,
+  Button,
+  InputGroup,
+  DatePicker,
+  CheckBox,
+  Thumbnail
 } from "native-base";
 
-import { View, TouchableOpacity, Alert } from "react-native";
+import {
+  Platform,
+  View,
+  TouchableOpacity,
+  Alert,
+  BackHandler,
+  ToastAndroid
+} from "react-native";
 import { AsyncStorage } from "@react-native-community/async-storage";
 //import { observable } from 'mobx';
 import { observer, extendObservable, inject } from "mobx-react";
@@ -18,6 +46,7 @@ import PhoneInput from "react-native-phone-input";
 import CountryPicker from "react-native-country-picker-modal";
 import UserService from "../../../services/userHttpServices";
 import globalState from "../../../stores/globalState";
+import RNExitApp from "react-native-exit-app";
 
 @observer
 export default class LoginView extends Component {
@@ -36,9 +65,18 @@ export default class LoginView extends Component {
   temploginStore = stores.TempLoginStore;
 
   componentDidMount() {
+    BackHandler.addEventListener("hardwareBackPress", this.handleBackButton);
     this.setState({
       pickerData: this.phone.getPickerData()
     });
+  }
+  componentWillUnmount() {
+    BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton);
+  }
+  handleBackButton() {
+    ToastAndroid.show("Back button is pressed", ToastAndroid.SHORT);
+    RNExitApp.exitApp();
+    return true;
   }
   @autobind
   onPressFlag() {

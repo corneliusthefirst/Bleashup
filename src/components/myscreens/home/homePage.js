@@ -21,6 +21,7 @@ import { observer } from "mobx-react";
 import UserHttpServices from "../../../services/userHttpServices";
 import routerActions from "reazy-native-router-actions";
 import autobind from "autobind-decorator";
+import RNExitApp from "react-native-exit-app";
 
 @observer
 class Home extends Component {
@@ -36,6 +37,7 @@ class Home extends Component {
   }
   handleBackButton() {
     ToastAndroid.show("Back button is pressed", ToastAndroid.SHORT);
+    RNExitApp.exitApp();
     return true;
   }
   isCloseToBottom(nativeEvent) {
