@@ -51,7 +51,7 @@
      Invitation() {
          return {
              inviter: "",
-             id: "",
+             invitation_id: "",
              host: "",
              period: "",
              event_id: "",

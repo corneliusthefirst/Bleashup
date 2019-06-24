@@ -33,10 +33,10 @@ class ServerEventListener {
             emitter.emit("reschedule", data.body);
             break;
           case "denied_invitation":
-            emitter.emit("denied_invitation", data.body);
+            emitter.emit("denied_invitation", data.body, data.invitee);
             break;
           case "accepted_invitation":
-            emitter.emit("accepted_invitation", data.body);
+            emitter.emit("accepted_invitation", data.body, data.invitee);
             break;
           case "current_event_field":
             emitter.emit(
