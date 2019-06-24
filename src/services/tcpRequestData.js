@@ -1,6 +1,6 @@
 import requestObject from "./requestObjects";
 import transfer from "./transferable";
-//import { Session } from "../stores";
+import stores from "../stores";
 
 class tcpRequestData {
   Presence() {
@@ -112,7 +112,7 @@ class tcpRequestData {
 
   sendData(action, data) {
     return new Promise((resolve, reject) => {
-      Session.getSession().then(session => {
+      stores.Session.getSession().then(session => {
         transfer.formTransferableData(session, action, data).then(JSONData => {
           resolve(JSONData);
         });

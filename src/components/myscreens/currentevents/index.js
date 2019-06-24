@@ -6,6 +6,13 @@ import emitter from "../../../services/eventEmiter";
 import stores from "../../../stores";
 export default class CurrentEventView extends Component {
   render() {
+    emitter.emit("test", "testing");
+    emitter.on("test", function(testMessage) {
+      console.warn(testMessage);
+    });
+    emitter.on("invitation", Invitation => {
+      console.warn(Invitation);
+    });
     /*stores.Session.getSession(session => {
       if (GState.writing) {
         emitter.on("writing", State => {

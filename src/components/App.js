@@ -62,7 +62,7 @@ app.use(routerActions(), "routerActions");
 
 const AppContainer = createAppContainer(AppNavigator);
 connection.init().then(socket => {
-  stores.Session.updateSocket(socket).then(() => {
+  stores.Session.updateSocket(socket).then(session => {
     ServerEventListener.listen(socket);
   });
 });

@@ -51,6 +51,9 @@
      Invitation() {
          return {
              inviter: "",
+             id: "",
+             host: "",
+             period: "",
              event_id: "",
              status: ""
          }
@@ -115,6 +118,8 @@
              likes: 0,
              event_id: "",
              title: "",
+             created_at: "",
+             updated_at: "",
              period: this.Period(),
              option: [this.Option()],
              description: "",
@@ -164,6 +169,8 @@
              id: "",
              creator: "",
              event_id: "",
+             created_at: "",
+             updated_at: "",
              title: "",
              period: this.Period(),
              contribution_mean: [this.ContributionMean()],
@@ -180,6 +187,8 @@
              id: "",
              creator: "",
              event_id: "",
+             created_at: "",
+             updated_at: "",
              title: "",
              description: "",
              url: ""
@@ -229,6 +238,9 @@
      Event() {
          return {
              id: "",
+             host: "",
+             created_at: "",
+             updated_at: "",
              creator_phone: "",
              about: this.About(),
              period: this.Period(),
@@ -303,12 +315,14 @@
          return {
              phone: "",
              nick_name: "",
+             name: "",
+             current_host: "",
+             email: "",
+             birth_date: "",
              status: "",
-             age:"",
              profile: "",
              profile_ext: "",
-             password: "",
-             salt: ""
+             password: ""
          }
      }
      None() {

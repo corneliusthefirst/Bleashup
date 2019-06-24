@@ -152,17 +152,28 @@ export default class Session {
           autoSync: true
         })
         .then(session => {
-          session.socket = newSocket;
-          //session.host = "192.168.43.192";
-          storage
-            .save({
-              key: "session",
-              data: session
-            })
-            .then(() => {
-              this.SessionStore = session;
-              resolve(session);
-            });
+          if (session.password) {
+            session.socket = newSocket;
+            session.host = "192.168.43.192";
+            storage
+              .save({
+                key: "session",
+                data: session
+              })
+              .then(() => {
+                this.SessionStore = session;
+                resolve(this.SessionStore);
+              });
+          } else {
+            this.initialzeStoreAndUpdate("socket", newSocket)
+              .then(session => {
+                this.SessionStore = session;
+                resolve(session);
+              })
+              .catch(error => {
+                reject(error);
+              });
+          }
         })
         .catch(error => {
           this.initialzeStoreAndUpdate("socket", newSocket)
