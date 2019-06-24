@@ -165,7 +165,7 @@ export default class SignInView extends Component {
             }}
           >
             {globalState.loading ? (
-              <Spinner color="yellow" />
+              <Spinner color="#FEFFDE" />
             ) : (
               <Text> SignIn </Text>
             )}

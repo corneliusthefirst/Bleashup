@@ -9,7 +9,6 @@ import {
   Container,
   Header,
   Form,
-  Item,
   Title,
   Input,
   Left,
@@ -20,15 +19,14 @@ import {
 } from "native-base";
 import { Image } from "react-native";
 
-import { AsyncStorage } from "react-native";
-import { observer, extendObservable, inject } from "mobx-react";
+import { observer } from "mobx-react";
 import styles from "./styles";
 import stores from "../../../stores";
 import routerActions from "reazy-native-router-actions";
 import initialRoute from '../../initialRoute'
 import globalState from "../../../stores/globalState";
 
-import { Email, Item, Span, A, renderEmail } from 'react-html-email'
+
 
 @observer
 export default class LoginHomeView extends Component {
@@ -38,13 +36,6 @@ export default class LoginHomeView extends Component {
     }
     initialRoute.initialRoute()
 
-    if(globalState.loading = true){
-      routeName = initialRoute.routeName
-      console.warn(routeName,'***')
-     // this.props.navigation.navigate(routeName)
-      globalState.loading = false
-    }
-
 
   }
 
@@ -52,19 +43,7 @@ export default class LoginHomeView extends Component {
 
   render() {
     globalState.loading = true
-    
  
-    const emailHTML = renderEmail(
-      <Email title="Hello World!">
-        <Item align="center">
-          <Span fontSize={20}>
-            This is an example email made with:
-            <A href="https://github.com/chromakode/react-html-email">react-html-email</A>.
-          </Span>
-        </Item>
-      </Email>
-    )
-   
     
     return (
       <Container>
@@ -78,7 +57,7 @@ export default class LoginHomeView extends Component {
           </Header>
 
           {globalState.loading ? (<Spinner color="#1FABAB" style={{marginTop:-175}} />) : (<Text> </Text>)}
-         <Text>emailHTML</Text>
+           
 
         </Content>
       </Container>
