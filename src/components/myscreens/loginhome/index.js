@@ -9,7 +9,6 @@ import {
   Container,
   Header,
   Form,
-  Item,
   Title,
   Input,
   Left,
@@ -20,18 +19,17 @@ import {
 } from "native-base";
 import { Image } from "react-native";
 
+import { observer } from "mobx-react";
 import styles from "./styles";
 import stores from "../../../stores";
 import routerActions from "reazy-native-router-actions";
 import initialRoute from "../../initialRoute";
 import globalState from "../../../stores/globalState";
-
 export default class LoginHomeView extends Component {
   constructor(props) {
     super(props);
     this.state = {};
   }
-
   render() {
     routeName = initialRoute.routeName;
     if ((globalState.loading = true)) {

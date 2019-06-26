@@ -1,5 +1,6 @@
 import TcpRequestData from "./tcpRequestData";
 let net = require("react-native-tcp");
+import ServerEventListener from "./severEventListener";
 import * as config from "../config/bleashup-server-config.json";
 import stores from "../stores";
 
@@ -12,6 +13,7 @@ class Connection {
         config.bleashup_tcp.port,
         config.bleashup_tcp.host,
         () => {
+          ServerEventListener.listen(socket);
           stores.Session.updateSocket(socket).then(session => {
             TcpRequestData.Presence().then(JSONData => {
               socket.write(JSONData);

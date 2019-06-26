@@ -31,7 +31,7 @@ import reazy from "reazy";
 import ServerEventListener from "../services/severEventListener";
 import connection from "../services/tcpConnect";
 import { Provider } from "mobx-react";
-import tcpRequest from "../services/tcpRequestData";
+import UpdatesDispatcher from "../services/updatesDispatcher";
 
 const AppNavigator = createStackNavigator(
   {
@@ -62,9 +62,7 @@ app.use(routerActions(), "routerActions");
 
 const AppContainer = createAppContainer(AppNavigator);
 connection.init().then(socket => {
-  stores.Session.updateSocket(socket).then(session => {
-    ServerEventListener.listen(socket);
-  });
+  stores.Session.updateSocket(socket).then(session => {});
 });
 export default () => (
   <Root>

@@ -10,6 +10,12 @@ export default class Session {
     reference: "#Ref<0.3996024962.2836135937.9226>",
     host: "bleashup.com"
   };
+  get SessionStore() {
+    return this.SessionStore;
+  }
+  set SessionStore(New) {
+    this.SessionStore = New;
+  }
   constructor() {
     storage
       .load({
@@ -32,6 +38,9 @@ export default class Session {
           })
           .catch(error => {});
       });
+  }
+  @action getSocke() {
+    return this.SessionStore.socket;
   }
   @action initialzeStore() {
     return new Promise((resolve, reject) => {
@@ -61,28 +70,24 @@ export default class Session {
   }
   @action getSession() {
     return new Promise((resolve, reject) => {
-      if (this.SessionStore.phone === "" || this.SessionStore === "") {
-        storage
-          .load({
-            key: "session",
-            autoSync: true
-          })
-          .then(data => {
-            this.SessionStore = data;
-            resolve(data);
-          })
-          .catch(error => {
-            this.initialzeStore()
-              .then(data => {
-                resolve(data);
-              })
-              .catch(error => {
-                reject(error);
-              });
-          });
-      } else {
-        resolve(this.SessionStore);
-      }
+      storage
+        .load({
+          key: "session",
+          autoSync: true
+        })
+        .then(data => {
+          data.socket = this.SessionStore.socket;
+          resolve(data);
+        })
+        .catch(error => {
+          this.initialzeStore()
+            .then(data => {
+              resolve(data);
+            })
+            .catch(error => {
+              reject(error);
+            });
+        });
     });
   }
   initialzeStoreAndUpdate(key, newValue) {

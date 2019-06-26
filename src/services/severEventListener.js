@@ -1,4 +1,9 @@
 import emitter from "./eventEmiter";
+import stores from "../stores";
+import tcpRequest from "./tcpRequestData";
+import requestObject from "./requestObjects";
+import UpdatesDispatcher from "./updatesDispatcher";
+
 class ServerEventListener {
   constructor() {}
   listen(socket) {
@@ -13,15 +18,26 @@ class ServerEventListener {
             emitter.emit("current-events", data.body);
             break;
           case "news":
-            if (data.updated) emmitter.emit("updated-news", data.updated);
-            if (data.new_events)
-              emitter.emit("new-events-news", data.new_events);
-            if (data.reschedules)
-              emitter.emit("reschedules-news", data.reschedules);
-            if (data.info) emitter.emit("info-news", data.info);
+            stores.Session.updateReference(data.reference).then(sessios => {
+              stores.Session.getSession().then(session => {
+                let EventID = requestObject.EventID();
+                EventID.event_id = "AnGfyncazIZnFoZCL7FPYfZOiGxUkjiLXhz3";
+                tcpRequest.getCurrentEvent(EventID).then(JSONData => {
+                  UpdatesDispatcher.get_data(JSONData).then(Event => {
+                    console.warn(Event);
+                  });
+                });
+              });
+              if (data.updated) emitter.emit("updated_news", data.updated);
+              if (data.new_events)
+                emitter.emit("new_events_news", data.new_events);
+              if (data.reschedules)
+                emitter.emit("reschedules_news", data.reschedules);
+              if (data.info) emitter.emit("info_news", data.info);
+            });
             break;
           case "current_event":
-            emitter.emit("current_event", data.body);
+            emitter.emit("successful", "current_event", data.body);
             break;
           case "events":
             emitter.emit("events", data.body);
@@ -53,13 +69,18 @@ class ServerEventListener {
         if (data.status) {
           switch (data.status) {
             case "successful":
-              if (data.response) emitter.emit("successful", data.response);
+              if (data.data) emitter.emit("successful", "data", data.data);
               if (data.message) emitter.emit("successful", data.message);
               break;
             case "unsuccessful":
-              emitter.emit("unsuccessful", data.message);
+              if (data.data) emitter.emit("unsuccessful", "data", data.data);
+              if (data.message) emitter.emit("unsuccessful", data.message);
+              break;
           }
         }
+      }
+      if (data.error) {
+        console.error(data.message);
       }
     });
     socket.on("timeout", data => {

@@ -1,5 +1,13 @@
 import { observable, action } from "mobx";
-import { filter, uniqBy, dropWhile } from "lodash";
+import {
+  filter,
+  drop,
+  find,
+  findIndex,
+  indexOf,
+  uniqBy,
+  dropWhile
+} from "lodash";
 import storage from "./Storage";
 export default class likes {
   constructor() {}
@@ -13,7 +21,7 @@ export default class likes {
       this.readFromStore().then(likes => {
         if (likes) {
           resolve(
-            filter(likes, {
+            find(likes, {
               event_id: id
             })
           );
@@ -23,11 +31,15 @@ export default class likes {
       });
     });
   }
-  @action addlikes(Like) {
+  @action like(ID, Liker) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Likes => {
         if (Likes) {
-          this.saveKey.data = uniqBy(Likes.concat([Like]), "liker");
+          let Like = find(Likes, { event_id: ID });
+          let likeIndex = findIndex(Likes, { event_id: ID });
+          Like.likers.concat([Liker]);
+          Likes.splice(likeIndex, 1, Like);
+          this.saveKey.data = Likes;
           storage.save(this.saveKey).then(() => {
             resolve();
           });
@@ -35,10 +47,14 @@ export default class likes {
       });
     });
   }
-  @action removeFromLikes(phone) {
+  @action unlike(ID, phone) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Likes => {
-        Likes = dropWhile(Likes, ["phone", phone]);
+        let Like = find(Likes, { event_id: ID });
+        let likeIndex = findIndex(Likes, { event_id: ID });
+        Like.likers = drop(Like.likers, indexOf(Like.likers, phone));
+        Like.likes -= 1;
+        Likes.splice(likeIndex, 1, Like);
         this.saveKey.data = Likes;
         storage.save(this.saveKey).then(() => {
           resolve();

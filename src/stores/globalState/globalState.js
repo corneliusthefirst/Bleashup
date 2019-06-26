@@ -2,9 +2,11 @@ import { observable, action, extendObservable, autorun, computed } from "mobx";
 
 export default class globalState {
   @observable scrollOuter = true;
+  @observable eventUpdated = false;
   @observable isScrolling = true;
   @observable loading = false;
   @observable error = false;
+  @observable newContribution = false;
   @observable success = false;
   @observable passwordError = false;
   @observable newPasswordError = false;
@@ -15,6 +17,18 @@ export default class globalState {
 
   get scrollOuter() {
     return this.scrollOuter;
+  }
+  get eventUpdated() {
+    return this.eventUpdated;
+  }
+  get newContribution() {
+    return this.newContribution;
+  }
+  set newContribution(state) {
+    this.newContribution = state;
+  }
+  set eventUpdated(newState) {
+    this.eventUpdated = newState;
   }
   set scrollOuter(newValue) {
     this.scrollOuter = newValue;

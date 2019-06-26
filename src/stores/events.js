@@ -44,6 +44,32 @@ export default class events {
       });
     });
   }
+
+  @action loadCurrentEvent(EventID) {
+    return new Promise((resovle, reject) => {
+      if (this.currentEvents || this.pastEvents) {
+        if (this.currentEvents) {
+          let Event = find(this.currentEvents, {
+            event_id: EventID
+          })
+          if (Event) resolve(EventID);
+        }
+        if (this.pastEvents) {
+          let Event = find(this.pastEvents, {
+            event_id: EventID
+          })
+          if (Event) resovle(Event)
+        }
+      } else {
+        this.readFromStore().then(Events => {
+          Event = find(Events, { event_id: EventID })
+          resovle(EventID)
+        }).catch(error => {
+          console.warn(error)
+        })
+      }
+    })
+  }
   @action loadCurrentEvents() {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
@@ -127,6 +153,24 @@ export default class events {
         });
       });
     });
+  }
+  @action removeParticipant(EventID, Phone, inform) {
+    return new Promise((resolve, reject) => {
+      this.readFromStore().then(Events => {
+        let Event = find(Events, { event_id: EventID });
+        let eventIndex = findIndex(Events, { event_id: EventID });
+        Event.participants = dropWhile(Event.participants, ["phone", Phone]);
+        if (inform) Event.participant_removed = true;
+        else Event.left = true
+        Event.updated_at = moment().format('YYY-MM-DD HH-mm');
+        Events.splice(eventIndex, 1, Event);
+        this.saveKey.data = Events
+        storage.save(this.saveKey).then(() => {
+          this.setProperties(this.saveKey.data, inform)
+          resolve()
+        })
+      })
+    })
   }
   @action updatePeriod(EventID, NewPeriod, inform) {
     return new Promise((resolve, reject) => {
