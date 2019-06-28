@@ -44,31 +44,46 @@ export default class events {
       });
     });
   }
-
+  isParticipant(EventID, phone) {
+    return new Promise((resolve, reject) => {
+      this.readFromStore().then(Events => {
+        let Event = find(Events, { event_id: EventID });
+        if (
+          find(Event.participants, {
+            phone: phone
+          })
+        )
+          resolve(true);
+        else resolve(false);
+      });
+    });
+  }
   @action loadCurrentEvent(EventID) {
     return new Promise((resovle, reject) => {
       if (this.currentEvents || this.pastEvents) {
         if (this.currentEvents) {
           let Event = find(this.currentEvents, {
             event_id: EventID
-          })
+          });
           if (Event) resolve(EventID);
         }
         if (this.pastEvents) {
           let Event = find(this.pastEvents, {
             event_id: EventID
-          })
-          if (Event) resovle(Event)
+          });
+          if (Event) resovle(Event);
         }
       } else {
-        this.readFromStore().then(Events => {
-          Event = find(Events, { event_id: EventID })
-          resovle(EventID)
-        }).catch(error => {
-          console.warn(error)
-        })
+        this.readFromStore()
+          .then(Events => {
+            Event = find(Events, { event_id: EventID });
+            resovle(EventID);
+          })
+          .catch(error => {
+            console.warn(error);
+          });
       }
-    })
+    });
   }
   @action loadCurrentEvents() {
     return new Promise((resolve, reject) => {
@@ -93,6 +108,33 @@ export default class events {
           let Event = find(Events, { event_id: EventID });
           let index = findIndex(Events, { event_id: EventID });
           Event.past = true;
+          Event.updated_at = moment().format("YYYY-MM-DD HH:mm");
+          Events.splice(index, 1, Event);
+          this.saveKey.data = Events;
+          storage.save(this.saveKey).then(() => {
+            this.setProperties(this.saveKey.data, inform);
+            resolve();
+          });
+        }
+      });
+    });
+  }
+  @action RescheduleEvent(Reschedule) {
+    return new Promise((resolve, reject) => {
+      this.readFromStore().then(Events => {
+        if (Events) {
+          let Event = find(Events, {
+            event_id: Reschedule.event_id
+          });
+          let index = findIndex(Events, {
+            event_id: Reschedule.event_id
+          });
+          Event.past = false;
+          (Event.period = {
+            date: Reschedule.new_date,
+            time: Reschedule.new_time
+          }),
+            (Event.rescheduled = true);
           Event.updated_at = moment().format("YYYY-MM-DD HH:mm");
           Events.splice(index, 1, Event);
           this.saveKey.data = Events;
@@ -161,16 +203,16 @@ export default class events {
         let eventIndex = findIndex(Events, { event_id: EventID });
         Event.participants = dropWhile(Event.participants, ["phone", Phone]);
         if (inform) Event.participant_removed = true;
-        else Event.left = true
-        Event.updated_at = moment().format('YYY-MM-DD HH-mm');
+        else Event.left = true;
+        Event.updated_at = moment().format("YYY-MM-DD HH-mm");
         Events.splice(eventIndex, 1, Event);
-        this.saveKey.data = Events
+        this.saveKey.data = Events;
         storage.save(this.saveKey).then(() => {
-          this.setProperties(this.saveKey.data, inform)
-          resolve()
-        })
-      })
-    })
+          this.setProperties(this.saveKey.data, inform);
+          resolve();
+        });
+      });
+    });
   }
   @action updatePeriod(EventID, NewPeriod, inform) {
     return new Promise((resolve, reject) => {
@@ -510,4 +552,3 @@ export default class events {
     this.myReminds = filter(Events, { reminds: true });
   }
 }
-

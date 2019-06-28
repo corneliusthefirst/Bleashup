@@ -48,9 +48,19 @@
              url: ""
          }
      }
+     remind() {
+         return {
+             remind_id: '',
+             creator: '',
+             title: '',
+             description: '',
+             period: ''
+         }
+     }
      Invitation() {
          return {
              inviter: "",
+             invitee: "",
              invitation_id: "",
              host: "",
              period: "",

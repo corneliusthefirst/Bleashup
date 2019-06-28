@@ -209,7 +209,7 @@ export default class votes {
         let optionIndex = findIndex(Vote.option, { name: OptionName });
         option.vote_number += 1;
         Vote.option.splice(optionIndex, 1, option);
-        Vote.voted = true;
+        Vote.voted = inform;
         Vote.update_date = moment.format("YYYY-MM-DD HH:mm");
         Votes.splice(index, 1, Vote);
         this.saveKey.data = sortBy(Votes, "update_date");

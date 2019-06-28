@@ -21,7 +21,7 @@ export default class highlights {
       });
     });
   }
-  
+
   @action removeHighlight(id) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Highlights => {
@@ -68,7 +68,7 @@ export default class highlights {
         });
         Highlight.title = newHightlight.title;
         if (inform) Highlight.title_updated = true;
-        Highlight.update_date = moment.format("YYYY-MM-DD HH:mm");
+        Highlight.update_date = moment().format("YYYY-MM-DD HH:mm");
         Highlights.splice(index, 1, Highlight);
         this.saveKey.data = sortBy(Highlights, "update_date");
         storage.save(this.saveKey).then(() => {
@@ -89,7 +89,7 @@ export default class highlights {
         });
         Highlight.description = newHightlight.description;
         if (inform) Highlight.description_updated = true;
-        Highlight.update_date = moment.format("YYYY-MM-DD HH:mm");
+        Highlight.update_date = moment().format("YYYY-MM-DD HH:mm");
         Highlights.splice(index, 1, Highlight);
         this.saveKey.data = sortBy(Highlights, "update_date");
         storage.save(this.saveKey).then(() => {
@@ -110,7 +110,7 @@ export default class highlights {
         });
         Highlight.url = newHightlight.url;
         if (inform) Highlight.url_updated = true;
-        Highlight.update_date = moment.format("YYYY-MM-DD HH:mm");
+        Highlight.update_date = moment().format("YYYY-MM-DD HH:mm");
         Highlights.splice(index, 1, Highlight);
         this.saveKey.data = sortBy(Highlights, "update_date");
         storage.save(this.saveKey).then(() => {
