@@ -435,9 +435,15 @@ event_id = EventID, updater = Updater,
             .then(JSONData => {
               this.get_data(JSONData).then(Contribution => {
                 stores.Contributions.addContribution(Contribution).then(() => {
-                  GState.eventUpdated = true;
-                  GState.newContribution = true;
-                  resolve();
+                  stores.Events.addContribution(
+                    Contribution.event_id,
+                    Contribution.id,
+                    true
+                  ).then(() => {
+                    GState.eventUpdated = true;
+                    GState.newContribution = true;
+                    resolve();
+                  });
                 });
               });
             });
@@ -521,28 +527,167 @@ event_id = EventID, updater = Updater,
     },
 
     contribution_title_updated: update => {
-      return new Promise((resolve, reject) => {});
+      return new Promise((resolve, reject) => {
+        let Change = {
+          event_id: update.event_id,
+          changed: "Contribution Title Updated",
+          updater: update.updater,
+          new_value: update.new_data,
+          date: update.date,
+          time: update.time
+        };
+        stores.ChangeLogs.addChanges(Change).then(() => {
+          stores.Contributions.updateContributionTitle(
+            {
+              id: update.new_data.contribution_id,
+              title: update.new_data.data
+            },
+            true
+          ).then(() => {
+            GState.eventUpdated = true;
+            resolve();
+          });
+        });
+      });
     },
 
     contribution_description_updated: update => {
-      return new Promise((resolve, reject) => {});
+      return new Promise((resolve, reject) => {
+        let Change = {
+          event_id: update.event_id,
+          changed: "Contribution Description Changed",
+          updater: update.updater,
+          new_value: update.new_data,
+          date: update.date,
+          time: update.time
+        };
+        stores.Contributions.updateDescription(
+          {
+            id: update.new_data.contribution_id,
+            description: update.new_data.description
+          },
+          true
+        ).then(() => {
+          GState.eventUpdated = true;
+          resolve();
+        });
+      });
     },
 
     contribution_added_contribution_mean: update => {
-      return new Promise((resolve, reject) => {});
+      return new Promise((resolve, reject) => {
+        let Change = {
+          event_id: update.event_id,
+          changed: "New Contribution Mean",
+          updater: update.updater,
+          new_value: update.new_data,
+          date: update.date,
+          time: update.time
+        };
+        stores.ChangeLogs.addChanges(Change).then(() => {
+          stores.Contributions.AddContributionMean(
+            update.new_data.contribution_id,
+            update.new_data.new_mean,
+            true
+          ).then(() => {
+            GState.eventUpdated = true;
+            resolve();
+          });
+        });
+      });
     },
     contribution_remove_contribution_mean: update => {
-      return new Promise((resolve, reject) => {});
+      return new Promise((resolve, reject) => {
+        let Change = {
+          event_id: update.event_id,
+          changed: "Removed Contribution Mean",
+          updater: update.updater,
+          new_value: update.new_data,
+          date: update.date,
+          time: update.time
+        };
+        stores.ChangeLogs.addChanges(Change).then(() => {
+          stores.Contributions.removeContributionMean(
+            update.new_data.contribution_id,
+            update.new_data.mean_name,
+            true
+          ).then(() => {
+            GState.eventUpdated = true;
+            resolve();
+          });
+        });
+      });
     },
     update_contribution_amount: update => {
-      return new Promise((resolve, reject) => {});
+      return new Promise((resolve, reject) => {
+        let Change = {
+          event_id: update.event_id,
+          changed: "Contribution Amount Changed",
+          updater: update.updater,
+          new_value: update.new_data,
+          date: update.date,
+          time: update.time
+        };
+        stores.ChangeLogs.addChanges(Change).then(() => {
+          stores.Contributions.updateContributionAmount(
+            {
+              id: update.new_data.contribution_id,
+              amount: update.new_data.amount
+            },
+            true
+          ).then(() => {
+            GState.eventUpdated = true;
+            resolve();
+          });
+        });
+      });
     },
     update_contribution_mean_name: update => {
-      return new Promise((resolve, reject) => {});
+      return new Promise((resolve, reject) => {
+        let Change = {
+          event_id: update.event_id,
+          changed: "Contribution Mean Name Changed",
+          updater: update.updater,
+          new_value: update.new_data,
+          date: update.date,
+          time: update.time
+        };
+        stores.ChangeLogs.addChanges(Change).then(() => {
+          stores.Contributions.updateContributionMeanName(
+            update.new_data.contribution_id,
+            update.new_data.mean_name,
+            update.new_data.new_name,
+            true
+          ).then(() => {
+            GState.eventUpdated = true;
+            resolve();
+          });
+        });
+      });
     },
 
     update_contribution_mean_credential: update => {
-      return new Promise((resolve, reject) => {});
+      return new Promise((resolve, reject) => {
+        let Change = {
+          event_id: update.event_id,
+          changed: "Contribution Mean Credential changed",
+          updater: update.updater,
+          new_value: update.new_data,
+          date: update.date,
+          time: update.time
+        };
+        stores.ChangeLogs.addChanges(Change).then(() => {
+          stores.Contributions.updateContributionMeanCredential(
+            update.new_data.contribution_id,
+            update.new_data.mean_name,
+            update.new_data.new_credential,
+            true
+          ).then(() => {
+            GState.eventUpdated = true;
+            resolve();
+          });
+        });
+      });
     },
     new_highlight: update => {
       return new Promise((resolve, reject) => {
@@ -560,9 +705,14 @@ event_id = EventID, updater = Updater,
           tcpRequestData.getHighlight(RequestObject).then(JSONData => {
             this.get_data(JSONData).then(Highlight => {
               stores.Highlights.addHighlights(Highlight).then(() => {
-                GState.newHightlight = true;
-                GState.eventUpdated = true;
-                resolve();
+                stores.Events.addHighlight(
+                  Highlight.event_id,
+                  Highlight.id
+                ).then(() => {
+                  GState.newHightlight = true;
+                  GState.eventUpdated = true;
+                  resolve();
+                });
               });
             });
           });
@@ -631,8 +781,13 @@ event_id = EventID, updater = Updater,
         };
         stores.ChangeLogs.addChanges(Change).then(() => {
           stores.Highlights.removeHighlight(update.new_data).then(() => {
-            GState.eventUpdated = true;
-            resolve();
+            stores.Events.removeHighlights(
+              update.event_id,
+              update.new_data
+            ).then(() => {
+              GState.eventUpdated = true;
+              resolve();
+            });
           });
         });
       });
@@ -652,8 +807,11 @@ event_id = EventID, updater = Updater,
         tcpRequestData.getVote(VoteID).then(JSONData => {
           this.get_data(JSONData).then(Vote => {
             stores.Votes.addVote(Vote).then(() => {
-              GState.newVote = true;
-              GState.eventUpdated = true;
+              stores.Events.addVote(Vote.event_id, Vote.id).then(() => {
+                GState.newVote = true;
+                GState.eventUpdated = true;
+                resolve();
+              });
             });
           });
         });
@@ -671,8 +829,12 @@ event_id = EventID, updater = Updater,
         };
         stores.ChangeLogs.addChanges(Changed).then(() => {
           stores.Votes.removeVote(update.new_data).then(() => {
-            GState.eventUpdated = true;
-            resolve();
+            stores.Events.removeVote(update.event_id, update.new_data).then(
+              () => {
+                GState.eventUpdated = true;
+                resolve();
+              }
+            );
           });
         });
       });
@@ -716,19 +878,115 @@ event_id = EventID, updater = Updater,
       });
     },
     vote_description_updated: update => {
-      return new Promise((resolve, reject) => {});
+      return new Promise((resolve, reject) => {
+        let Change = {
+          event_id: update.event_id,
+          changed: "Vote Description Changed",
+          updater: update.updater,
+          new_value: update.new_data,
+          date: update.date,
+          time: update.time
+        };
+        stores.ChangeLogs.addChanges(Change).then(() => {
+          stores.Votes.UpdateVoteDescription(
+            {
+              id: update.new_data.vote_id,
+              description: update.new_data.description
+            },
+            true
+          ).then(() => {
+            GState.eventUpdated = true;
+            resolve();
+          });
+        });
+      });
     },
     vote_title_updated: update => {
-      return new Promise((resolve, reject) => {});
+      return new Promise((resolve, reject) => {
+        let Change = {
+          event_id: update.event_id,
+          changed: "Vote Title Updated",
+          updater: update.updater,
+          new_value: update.new_data,
+          date: update.date,
+          time: update.time
+        };
+        stores.ChangeLogs.addChanges(Change).then(() => {
+          stores.Votes.updateVoteTitle(
+            { id: update.new_data.vote_id, title: update.new_data.title },
+            true
+          ).then(() => {
+            GState.eventUpdated = true;
+            resolve();
+          });
+        });
+      });
     },
     added_vote_option: update => {
-      return new Promise((resolve, reject) => {});
+      return new Promise((resolve, reject) => {
+        let Change = {
+          event_id: update.event_id,
+          changed: "New Vote Option",
+          updater: update.updater,
+          new_value: update.new_data,
+          date: update.date,
+          time: update.time
+        };
+        stores.ChangeLogs.addChanges(Change).then(() => {
+          stores.Votes.addVoteOption(
+            { id: update.new_data.vote_id, option: update.new_data.option },
+            true
+          ).then(() => {
+            GState.eventUpdated = true;
+            resolve();
+          });
+        });
+      });
     },
-    remove_option_option: update => {
-      return new Promise((resolve, reject) => {});
+    removed_option_option: update => {
+      return new Promise((resolve, reject) => {
+        let Change = {
+          event_id: update.event_id,
+          changed: "Removed Vote Option",
+          updater: update.updater,
+          new_value: update.new_data,
+          date: update.date,
+          time: update.time
+        };
+        stores.ChangeLogs.addChanges(Change).then(() => {
+          stores.Votes.removeVoteOption(
+            update.new_data.vote_id,
+            update.new_data.vote_option_name_updated,
+            true
+          ).then(() => {
+            GState.eventUpdated = true;
+            resolve();
+          });
+        });
+      });
     },
     vote_option_name_updated: update => {
-      return new Promise((resolve, reject) => {});
+      return new Promise((resolve, reject) => {
+        let Change = {
+          event_id: update.event_id,
+          changed: "Vote Option Name Changed",
+          updater: update.updater,
+          new_value: update.new_data,
+          date: update.date,
+          time: update.time
+        };
+        stores.ChangeLogs.addChanges(Change).then(() => {
+          stores.Votes.UpdateVoteOptionName(
+            update.new_data.vote_id,
+            update.new_data.option_name,
+            update.new_data.new_name,
+            true
+          ).then(() => {
+            GState.eventUpdated = true;
+            resolve();
+          });
+        });
+      });
     },
     added: update => {
       let Participant = requestObjects.Participant();
@@ -779,19 +1037,117 @@ event_id = EventID, updater = Updater,
       });
     },
     remind_added: update => {
-      return new Promise((resolve, reject) => {});
+      return new Promise((resolve, reject) => {
+        let Change = {
+          event_id: update.event_id,
+          changed: "New Remind Created",
+          updater: update.updater,
+          new_value: update.new_data,
+          date: update.date,
+          time: update.time
+        };
+        stores.ChangeLogs.addChanges(Change).then(() => {
+          let RemindID = requestObjects.RemindID();
+          RemindID.remind_id = update.new_data;
+          tcpRequestData.getRemind(RemindID).then(JSONData => {
+            this.get_data(JSONData).then(Remind => {
+              stores.Reminds.addReminds(Remind).then(() => {
+                stores.Events.addRemind(Remind.id).then(() => {
+                  GState.eventUpdated = true;
+                  resolve();
+                });
+              });
+            });
+          });
+        });
+      });
     },
     remind_period_updated: update => {
-      return new Promise((resolve, reject) => {});
+      return new Promise((resolve, reject) => {
+        let Change = {
+          event_id: update.event_id,
+          changed: "Remind Period Updated",
+          updater: update.updater,
+          new_value: update.new_data,
+          date: update.date,
+          time: update.time
+        };
+        stores.ChangeLogs.addChanges(Change).then(() => {
+          stores.Reminds.updatePeriod(
+            {
+              id: update.new_data.remind_id,
+              period: update.new_data.period
+            },
+            true
+          ).then(() => {
+            GState.eventUpdated = true;
+            resolve();
+          });
+        });
+      });
     },
-    remind_description_update: update => {
-      return new Promise((resolve, reject) => {});
+    remind_description_updated: update => {
+      return new Promise((resolve, reject) => {
+        let Change = {
+          event_id: update.event_id,
+          changed: "Remind Description Updated",
+          updater: update.updater,
+          new_value: update.new_data,
+          date: update.date,
+          time: update.time
+        };
+        stores.ChangeLogs.addChanges(Change).then(() => {
+          stores.Reminds.updateDescription(
+            {
+              id: update.new_data.remind_id,
+              decription: update.new_data.description
+            },
+            true
+          ).then(() => {
+            GState.eventUpdated = true;
+            resolve();
+          });
+        });
+      });
     },
-    remind_title_update: update => {
-      return new Promise((resolve, reject) => {});
+    remind_title_updated: update => {
+      return new Promise((resolve, reject) => {
+        let Change = {
+          event_id: update.event_id,
+          changed: "Remind Title Updated",
+          updater: update.updater,
+          new_value: update.new_data,
+          date: update.date,
+          time: update.time
+        };
+        stores.ChangeLogs.addChanges(Change).then(() => {
+          stores.Reminds.updateTitle(
+            { id: update.new_data.remind_id, title: update.new_data.title },
+            true
+          ).then(() => {
+            GState.eventUpdated = true;
+            resolve();
+          });
+        });
+      });
     },
     remind_deleted: update => {
-      return new Promise((resolve, reject) => {});
+      return new Promise((resolve, reject) => {
+        let Change = {
+          event_id: update.event_id,
+          changed: "Remind Title Updated",
+          updater: update.updater,
+          new_value: update.new_data,
+          date: update.date,
+          time: update.time
+        };
+        stores.ChangeLogs.addChanges(Change).then(() => {
+          stores.Reminds.removeRemind(update.new_data).then(() => {
+            GState.eventUpdated = true;
+            resolve();
+          });
+        });
+      });
     }
   };
 

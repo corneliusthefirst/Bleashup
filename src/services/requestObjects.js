@@ -34,11 +34,41 @@
              host: ""
          }
      }
+     updateVote() {
+         return {
+             event_id: "",
+             vote_id: "",
+             action: "",
+             data: ""
+         }
+     }
+     addVoteOption() {
+         return {
+             event_id: "",
+             vote_id: "",
+             option: this.Option()
+         }
+     }
+     removeVoteOption() {
+         return {
+             event_id: "",
+             vote_id: "",
+             option_name: ""
+         }
+     }
      PeriodUpdate() {
          return {
              action: "",
              date: "",
              time: ""
+         }
+     }
+     ContributionUpdate() {
+         return {
+             event_id: "",
+             contribution_id: "",
+             new_data: "",
+             action: ""
          }
      }
      LocationUpdate() {
@@ -50,11 +80,27 @@
      }
      remind() {
          return {
-             remind_id: '',
+             id: '',
+             event_id: "",
              creator: '',
              title: '',
              description: '',
              period: ''
+         }
+     }
+
+     RemindID() {
+         return {
+             remind_id: ''
+         }
+     }
+
+     RemindUdate() {
+         return {
+             action: "",
+             event_id: "",
+             remind_id: "",
+             data: ""
          }
      }
      Invitation() {
@@ -174,6 +220,28 @@
              contribution_id: ""
          }
      }
+     AddContributionMean() {
+         return {
+             event_id: "",
+             contribution_id: "",
+             new_mean: this.ContributionMean()
+         }
+     }
+     RemoveContributionMean() {
+         return {
+             event_id: "",
+             contribution_id: "",
+             mean_name: ""
+         }
+     }
+     UpdateContributionMeamName() {
+         return {
+             event_id: "",
+             contribution_id: "",
+             mean_name: "",
+             new_name: ""
+         }
+     }
      Contribution() {
          return {
              id: "",
@@ -258,6 +326,7 @@
              background: "",
              participant: [this.Participant()],
              likes: 0,
+             reminds: [""],
              public: false,
              votes: [""],
              highlights: [""],

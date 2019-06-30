@@ -503,6 +503,43 @@ export default class events {
       });
     });
   }
+  @action addRemind(EventID, RemindID, inform) {
+    return new Promise((resovle, reject) => {
+      this.readFromStore().then(Events => {
+        let Event = find(Events, {
+          event_id: EventID
+        });
+        let index = findIndex(Events, {
+          event_id: EventID
+        });
+        Event.reminds = uniq(Event.reminds.concat([RemindID]));
+        if (inform) Event.remind_added = true;
+        Events.splice(index, 1, Event);
+        this.saveKey.data = Events;
+        storage.save(this.saveKey).then(() => {
+          this.setProperties(this.saveKey.data, inform);
+          resovle();
+        });
+      });
+    });
+  }
+
+  @action removeRemind(EventID, RemindID, inform) {
+    return new Promise((resovle, reject) => {
+      this.readFromStore().then(Events => {
+        let Event = find(Events, { event_id: EventID });
+        let index = findIndex(Events, { event_id: EventID });
+        Event.reminds = drop(Event.reminds, indexOf(Event.reminds, RemindID));
+        if (inform) Event.remind_removed = true;
+        Events.splice(index, 1, Event);
+        this.saveKey.data = Events;
+        storage.save(this.saveKey).then(() => {
+          this.setProperties(this.saveKey.data, inform);
+          resovle();
+        });
+      });
+    });
+  }
   @action joinEvent(EventID) {
     return new Promise((resovle, reject) => {
       this.readFromStore().then(Events => {
