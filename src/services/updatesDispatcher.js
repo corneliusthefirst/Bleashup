@@ -22,7 +22,6 @@ event_id = EventID, updater = Updater,
     });
   }
   dispatchUpdate(update) {
-    console.warn(update.update);
     return this.UpdatePossibilities[update.update](update);
   }
   UpdatePossibilities = {

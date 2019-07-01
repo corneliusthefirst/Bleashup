@@ -89,7 +89,6 @@ export default class contribution {
         let Contribution = find(Contributions, {
           id: NewContribution.id
         });
-        console.warn(Contributions);
         let index = findIndex(Contributions, {
           id: NewContribution.id
         });
