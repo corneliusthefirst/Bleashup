@@ -12,7 +12,8 @@ export default class votes {
   addVote(Vote) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Votes => {
-        this.saveKey.data = uniqBy(Votes.concat([Vote]), "id");
+        if (Votes) this.saveKey.data = uniqBy(Votes.concat([Vote]), "id");
+        else this.saveKey.data = [Vote];
         storage.save(this.saveKey).then(() => {
           this.votes = this.saveKey.data;
           resolve();
@@ -118,7 +119,8 @@ export default class votes {
       this.readFromStore().then(Votes => {
         let Vote = find(Votes, { id: NewVote.id });
         let index = findIndex(Votes, { id: NewVote.id });
-        Vote.option = Vote.option.concat([NewVote.option]);
+        if (Vote.option) Vote.option = Vote.option.concat([NewVote.option]);
+        else Vote.option = [NewVote.option];
         if (inform) Vote.option_added = true;
         Vote.update_date = moment.format("YYYY-MM-DD HH:mm");
         Votes.splice(index, 1, Vote);

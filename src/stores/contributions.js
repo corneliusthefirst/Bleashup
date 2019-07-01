@@ -6,16 +6,21 @@ import moment from "moment";
 export default class contribution {
   constructor() {}
   @observable contributions = [];
-  savekey = {
-    key: "contribution",
+  saveKey = {
+    key: "contributions",
     data: []
   };
   @action addContribution(Contribution) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Contributions => {
-        this.savekey.data = uniqBy(Contribution.concat([Contribution]), "id");
-        storage.save(this.savekey).then(() => {
-          this.contributions = this.savekey.data;
+        if (Contributions)
+          this.saveKey.data = uniqBy(
+            Contributions.concat([Contribution]),
+            "id"
+          );
+        else this.saveKey.data = [Contribution];
+        storage.save(this.saveKey).then(() => {
+          this.contributions = this.saveKey.data;
           resolve();
         });
       });
@@ -24,9 +29,9 @@ export default class contribution {
   @action removeContribution(ContributionID) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Contributions => {
-        this.savekey.data = dropWhile(Contributions, ["id", ContributionID]);
-        storage.save(this.savekey).then(() => {
-          this.contributions = this.savekey.data;
+        this.saveKey.data = dropWhile(Contributions, ["id", ContributionID]);
+        storage.save(this.saveKey).then(() => {
+          this.contributions = this.saveKey.data;
           resolve();
         });
       });
@@ -70,7 +75,7 @@ export default class contribution {
         if (inform) Contribution.title_update = true;
         Contribution.update_date = moment().format("YYYY-MM-DD HH:mm");
         Contributions.splice(index, 1, Contribution);
-        this.savekey.data = sortBy(Contributions, "update_date");
+        this.saveKey.data = sortBy(Contributions, "update_date");
         storage.save(this.saveKey).then(() => {
           this.contributions = this.saveKey;
           resolve();
@@ -84,6 +89,7 @@ export default class contribution {
         let Contribution = find(Contributions, {
           id: NewContribution.id
         });
+        console.warn(Contributions);
         let index = findIndex(Contributions, {
           id: NewContribution.id
         });
@@ -91,7 +97,7 @@ export default class contribution {
         if (inform) Contribution.description_update = true;
         Contribution.update_date = moment().format("YYYY-MM-DD HH:mm");
         Contributions.splice(index, 1, Contribution);
-        this.savekey.data = sortBy(Contributions, "update_date");
+        this.saveKey.data = sortBy(Contributions, "update_date");
         storage.save(this.saveKey).then(() => {
           this.contributions = this.saveKey;
           resolve();
@@ -109,14 +115,16 @@ export default class contribution {
         let index = findIndex(Contributions, {
           id: ContributionID
         });
-        Contribution.contribution_mean = uniqBy(
-          Contribution.contribution_mean.concat([NewContribution]),
-          "name"
-        );
+        if (Contribution.contribution_mean)
+          Contribution.contribution_mean = uniqBy(
+            Contribution.contribution_mean.concat([NewMean]),
+            "name"
+          );
+        else Contribution.contribution_mean = [NewMean];
         if (inform) Contribution.added_contribution_mean = true;
         Contribution.update_date = moment().format("YYYY-MM-DD HH:mm");
         Contributions.splice(index, 1, Contribution);
-        this.savekey.data = sortBy(Contributions, "update_date");
+        this.saveKey.data = sortBy(Contributions, "update_date");
         storage.save(this.saveKey).then(() => {
           this.contributions = this.saveKey;
           resolve();
@@ -150,7 +158,7 @@ export default class contribution {
         if (inform) Contribution.updated_contribution_mean_credential = true;
         Contribution.update_date = moment().format("YYYY-MM-DD HH:mm");
         Contributions.splice(index, 1, Contribution);
-        this.savekey.data = sortBy(Contributions, "update_date");
+        this.saveKey.data = sortBy(Contributions, "update_date");
         storage.save(this.saveKey).then(() => {
           this.contributions = this.saveKey;
           resolve();
@@ -184,7 +192,7 @@ export default class contribution {
         if (inform) Contribution.updated_contribution_mean_name = true;
         Contribution.update_date = moment().format("YYYY-MM-DD HH:mm");
         Contributions.splice(index, 1, Contribution);
-        this.savekey.data = sortBy(Contributions, "update_date");
+        this.saveKey.data = sortBy(Contributions, "update_date");
         storage.save(this.saveKey).then(() => {
           this.contributions = this.saveKey;
           resolve();
@@ -209,7 +217,7 @@ export default class contribution {
         if (inform) Contribution.removed_contribution_mean = true;
         Contribution.update_date = moment().format("YYYY-MM-DD HH:mm");
         Contributions.splice(index, 1, Contribution);
-        this.savekey.data = sortBy(Contributions, "update_date");
+        this.saveKey.data = sortBy(Contributions, "update_date");
         storage.save(this.saveKey).then(() => {
           this.contributions = this.saveKey;
           resolve();
@@ -230,7 +238,7 @@ export default class contribution {
         if (inform) Contribution.period_updated = true;
         Contribution.update_date = moment().format("YYYY-MM-DD HH:mm");
         Contributions.splice(index, 1, Contribution);
-        this.savekey.data = sortBy(Contributions, "update_date");
+        this.saveKey.data = sortBy(Contributions, "update_date");
         storage.save(this.saveKey).then(() => {
           this.contributions = this.saveKey;
           resolve();
@@ -251,7 +259,7 @@ export default class contribution {
         if (inform) Contribution.amount_updated = true;
         Contribution.update_date = moment().format("YYYY-MM-DD HH:mm");
         Contributions.splice(index, 1, Contribution);
-        this.savekey.data = sortBy(Contributions, "update_date");
+        this.saveKey.data = sortBy(Contributions, "update_date");
         storage.save(this.saveKey).then(() => {
           this.contributions = this.saveKey;
           resolve();
@@ -271,7 +279,7 @@ export default class contribution {
         Contribution.published = true;
         Contribution.update_date = moment().format("YYYY-MM-DD HH:mm");
         Contributions.splice(index, 1, Contribution);
-        this.savekey.data = sortBy(Contributions, "update_date");
+        this.saveKey.data = sortBy(Contributions, "update_date");
         storage.save(this.saveKey).then(() => {
           this.contributions = this.saveKey;
           resolve();
@@ -293,7 +301,7 @@ export default class contribution {
         if (inform) Contribution.likes_updated = true;
         Contribution.update_date = moment().format("YYYY-MM-DD HH:mm");
         Contributions.splice(index, 1, Contribution);
-        this.savekey.data = sortBy(Contributions, "update_date");
+        this.saveKey.data = sortBy(Contributions, "update_date");
         storage.save(this.saveKey).then(() => {
           this.contributions = this.saveKey;
           resolve();
@@ -314,7 +322,7 @@ export default class contribution {
         Contribution.likes -= 1;
         Contribution.update_date = moment().format("YYYY-MM-DD HH:mm");
         Contributions.splice(index, 1, Contribution);
-        this.savekey.data = sortBy(Contributions, "update_date");
+        this.saveKey.data = sortBy(Contributions, "update_date");
         storage.save(this.saveKey).then(() => {
           this.contributions = this.saveKey;
           resolve();
@@ -336,7 +344,7 @@ export default class contribution {
         if (inform) Contribution.contribution_opened = true;
         Contribution.update_date = moment().format("YYYY-MM-DD HH:mm");
         Contributions.splice(index, 1, Contribution);
-        this.savekey.data = sortBy(Contributions, "update_date");
+        this.saveKey.data = sortBy(Contributions, "update_date");
         storage.save(this.saveKey).then(() => {
           this.contributions = this.saveKey;
           resolve();
@@ -358,7 +366,7 @@ export default class contribution {
         if (inform) Contribution.contribution_closed = true;
         Contribution.update_date = moment().format("YYYY-MM-DD HH:mm");
         Contributions.splice(index, 1, Contribution);
-        this.savekey.data = sortBy(Contributions, "update_date");
+        this.saveKey.data = sortBy(Contributions, "update_date");
         storage.save(this.saveKey).then(() => {
           this.contributions = this.saveKey;
           resolve();
@@ -382,7 +390,7 @@ export default class contribution {
         if (inform) Contribution.contributor_added = true;
         Contribution.update_date = moment().format("YYYY-MM-DD HH:mm");
         Contributions.splice(index, 1, Contribution);
-        this.savekey.data = sortBy(Contributions, "update_date");
+        this.saveKey.data = sortBy(Contributions, "update_date");
         storage.save(this.saveKey).then(() => {
           this.contributions = this.saveKey;
           resolve();
@@ -396,7 +404,7 @@ export default class contribution {
       this.readFromStore().then(Contributions => {
         Contributions = dropWhile(Contributions, ["event_id", EventID]);
         Contributions = Contributions.concat(NewContributions);
-        this.savekey.data = sortBy(Contributions, "update_date");
+        this.saveKey.data = sortBy(Contributions, "update_date");
         storage.save(this.saveKey).then(() => {
           this.contributions = this.saveKey;
           resolve();

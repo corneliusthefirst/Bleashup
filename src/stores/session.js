@@ -51,7 +51,7 @@ export default class Session {
             phone: user.phone,
             password: user.password,
             reference: "#Ref<0.3996024962.2836135937.9226>",
-            host: "bleashup.com"
+            host: "192.168.43.192"
           };
           storage
             .save({

@@ -12,7 +12,9 @@ export default class highlights {
   @action addHighlights(Highlight) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Highlights => {
-        Highlights = uniqBy(Highlights.concat([Highlight]), "id");
+        if (Highlights)
+          Highlights = uniqBy(Highlights.concat([Highlight]), "id");
+        else Highlights = [Highlight];
         this.saveKey.data = Highlights;
         storage.save(this.saveKey.data).then(() => {
           this.highlights = this.saveKey.data;

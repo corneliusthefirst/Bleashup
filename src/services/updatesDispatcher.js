@@ -22,7 +22,8 @@ event_id = EventID, updater = Updater,
     });
   }
   dispatchUpdate(update) {
-    return this.UpdatePossibilities[update.updated](update);
+    console.warn(update.update);
+    return this.UpdatePossibilities[update.update](update);
   }
   UpdatePossibilities = {
     title: update => {
@@ -33,14 +34,14 @@ event_id = EventID, updater = Updater,
             changed: "New Event Title",
             old_value: Event.about.title,
             updater: update.updater,
-            new_value: update.new_data,
+            new_value: update.new_value,
             date: update.date,
             time: update.time
           };
           stores.ChangeLogs.addChanges(Change).then(() => {
             stores.Events.updateTitle(
               update.event_id,
-              update.new_data,
+              update.new_value,
               true
             ).then(() => {
               GState.eventUpdated = true;
@@ -59,14 +60,14 @@ event_id = EventID, updater = Updater,
             changed: "New Event Background Image",
             updater: update.updater,
             old_value: Event.background,
-            new_value: update.new_data,
+            new_value: update.new_value,
             date: update.date,
             time: update.time
           };
           stores.ChangeLogs.addChanges(Change).then(() => {
             stores.Events.updateBackground(
               update.event_id,
-              update.new_data,
+              update.new_value,
               true
             ).then(() => {
               GState.eventUpdated = true;
@@ -91,7 +92,7 @@ event_id = EventID, updater = Updater,
           stores.ChangeLogs.addChanges(Change).then(() => {
             stores.Events.updateDescription(
               update.event_id,
-              update.new_data,
+              update.new_value,
               true
             ).then(() => {
               GState.eventUpdated = true;
@@ -115,7 +116,7 @@ event_id = EventID, updater = Updater,
           stores.ChangeLogs(Change).then(() => {
             stores.Events.updatePeriod(
               update.event_id,
-              update.new_data,
+              update.new_value,
               true
             ).then(() => {
               GState.eventUpdated = true;
@@ -134,7 +135,7 @@ event_id = EventID, updater = Updater,
             updater: update.updater,
             old_value: Event.location,
             new_value: {
-              string: update.new_data,
+              string: update.new_value,
               url: Event.location.url
             },
             date: update.date,
@@ -144,7 +145,7 @@ event_id = EventID, updater = Updater,
             stores.Events.updateLocation(
               update.event_id,
               {
-                string: update.new_data,
+                string: update.new_value,
                 url: Event.location.url
               },
               true
@@ -235,7 +236,7 @@ event_id = EventID, updater = Updater,
             old_value: Event.location,
             new_value: {
               string: Event.location.string,
-              url: update.new_data
+              url: update.new_value
             },
             date: update.date,
             time: update.time
@@ -245,7 +246,7 @@ event_id = EventID, updater = Updater,
               update.event_id,
               {
                 string: Event.location.string,
-                url: update.new_data
+                url: update.new_value
               },
               true
             ).then(() => {
@@ -262,7 +263,7 @@ event_id = EventID, updater = Updater,
           let Participant = find(Event.participants, {
             phone: update.addedphone
           });
-          Participant.host = update.new_data;
+          Participant.host = update.new_value;
           stores.Events.updateEventParticipant(
             update.event_id,
             Participant,
@@ -285,12 +286,12 @@ event_id = EventID, updater = Updater,
             changed: "New Event Master Status",
             updater: update.updater,
             old_value: Participant.master,
-            new_value: update.new_data,
+            new_value: update.new_value,
             date: update.date,
             time: update.time
           };
           stores.ChangeLogs.addChanges(Change).then(() => {
-            Participant.master = update.new_data;
+            Participant.master = update.new_value;
             stores.Events.updateEventParticipant(
               update.event_id,
               Participant,
@@ -321,7 +322,7 @@ event_id = EventID, updater = Updater,
           stores.ChangeLogs.addChanges(Change).then(() => {
             stores.Events.removeParticipant(
               update.event_id,
-              update.new_data,
+              update.new_value,
               true
             ).then(() => {
               GState.eventUpdated = true;
@@ -343,16 +344,16 @@ event_id = EventID, updater = Updater,
             });
             break;
           case "like_vote":
-            stores.Likes.like(updated.new_data, update.updater).then(() => {
-              stores.Votes.likeVote(update.new_data, true).then(() => {
+            stores.Likes.like(updated.new_value, update.updater).then(() => {
+              stores.Votes.likeVote(update.new_value, true).then(() => {
                 GState.eventUpdated = true;
                 resolve();
               });
             });
             break;
           case "like_contribution":
-            stores.Likes.like(update.new_data, update.updater).then(() => {
-              stores.Contributions.like(update.new_data, true).then(() => {
+            stores.Likes.like(update.new_value, update.updater).then(() => {
+              stores.Contributions.like(update.new_value, true).then(() => {
                 GState.eventUpdated = true;
                 resolve();
               });
@@ -365,7 +366,7 @@ event_id = EventID, updater = Updater,
       return new Promise((resolve, reject) => {
         switch (update.addedphone) {
           case "unlike":
-            stores.Likes.unlike(update.new_data, update.updater).then(() => {
+            stores.Likes.unlike(update.new_value, update.updater).then(() => {
               stores.Events.unlikeEvent(update.event_id).then(() => {
                 GState.eventUpdated = true;
                 resolve();
@@ -373,16 +374,16 @@ event_id = EventID, updater = Updater,
             });
             break;
           case "unlike_vote":
-            stores.Likes.unlike(update.new_data, update.updater).then(() => {
-              stores.Votes.unlikeVote(update.new_data).then(() => {
+            stores.Likes.unlike(update.new_value, update.updater).then(() => {
+              stores.Votes.unlikeVote(update.new_value).then(() => {
                 GState.eventUpdated = true;
                 resolve();
               });
             });
             break;
           case "unlike_contribution":
-            stores.Likes.unlike(update.new_data, update.updater).then(() => {
-              stores.Contributions.unlike(update.new_data).then(() => {
+            stores.Likes.unlike(update.new_value, update.updater).then(() => {
+              stores.Contributions.unlike(update.new_value).then(() => {
                 GState.eventUpdated = true;
                 resolve();
               });
@@ -400,14 +401,14 @@ event_id = EventID, updater = Updater,
             changed: "New Must Contribute Amount",
             updater: update.updater,
             old_value: Event.must_contribute,
-            new_value: update.new_data,
+            new_value: update.new_value,
             date: update.date,
             time: update.time
           };
           stores.ChangeLogs.addChanges(Change).then(() => {
             stores.Events.addMustToContribute(
               update.event_id,
-              update.new_data,
+              update.new_value,
               true
             ).then(() => {
               GState.eventUpdated = true;
@@ -423,13 +424,13 @@ event_id = EventID, updater = Updater,
           event_id: update.event_id,
           changed: "New Contriburion",
           updater: update.updater,
-          new_value: update.new_data,
+          new_value: update.new_value,
           date: update.date,
           time: update.time
         };
         stores.ChangeLogs.addChanges(Change).then(() => {
           let requestObject = requestObjects.CID();
-          requestObject.contribution_id = update.new_data;
+          requestObject.contribution_id = update.new_value;
           let requestData = tcpRequestData
             .getContribution(requestObject)
             .then(JSONData => {
@@ -440,9 +441,12 @@ event_id = EventID, updater = Updater,
                     Contribution.id,
                     true
                   ).then(() => {
-                    GState.eventUpdated = true;
-                    GState.newContribution = true;
-                    resolve();
+                    stores.Contributions.readFromStore().then(Contributions => {
+                      console.warn(Contributions);
+                      GState.eventUpdated = true;
+                      GState.newContribution = true;
+                      resolve();
+                    });
                   });
                 });
               });
@@ -457,15 +461,15 @@ event_id = EventID, updater = Updater,
           event_id: update.event_id,
           changed: "New Contribution State",
           updater: update.updater,
-          new_value: update.new_data,
+          new_value: update.new_value,
           date: update.date,
           time: update.time
         };
         stores.ChangeLogs.addChanges(Change).then(() => {
-          switch (update.new_data.new_state) {
+          switch (update.new_value.new_state) {
             case "open":
               stores.Contributions.openContribution(
-                update.new_data.contribution_id,
+                update.new_value.contribution_id,
                 true
               ).then(() => {
                 GState.eventUpdated = true;
@@ -474,7 +478,7 @@ event_id = EventID, updater = Updater,
               break;
             case "closed":
               stores.Contributions.closeContribution(
-                update.new_data.contribution_id
+                update.new_value.contribution_id
               ).then(() => {
                 GState.eventUpdated = true;
                 resolve();
@@ -489,15 +493,15 @@ event_id = EventID, updater = Updater,
           event_id: update.event_id,
           changed: "New Contribution Period",
           updater: update.updater,
-          new_value: update.new_data,
+          new_value: update.new_value,
           date: update.date,
           time: update.time
         };
         stores.ChangeLogs.addChanges(Change).then(() => {
           stores.Contributions.updateContributionPeriod(
             {
-              id: update.new_data.contribution_id,
-              period: update.new_data.new_period
+              id: update.new_value.contribution_id,
+              period: update.new_value.new_period
             },
             true
           ).then(() => {
@@ -513,15 +517,17 @@ event_id = EventID, updater = Updater,
           event_id: update.event_id,
           changed: "Contribution Published",
           updater: update.updater,
-          new_value: update.new_data,
+          new_value: update.new_value,
           date: update.date,
           time: update.time
         };
         stores.ChangeLogs.addChanges(Change).then(() => {
-          stores.Contributions.publishContribution(update.new_data).then(() => {
-            GState.eventUpdated = true;
-            resolve();
-          });
+          stores.Contributions.publishContribution(update.new_value).then(
+            () => {
+              GState.eventUpdated = true;
+              resolve();
+            }
+          );
         });
       });
     },
@@ -532,15 +538,15 @@ event_id = EventID, updater = Updater,
           event_id: update.event_id,
           changed: "Contribution Title Updated",
           updater: update.updater,
-          new_value: update.new_data,
+          new_value: update.new_value,
           date: update.date,
           time: update.time
         };
         stores.ChangeLogs.addChanges(Change).then(() => {
           stores.Contributions.updateContributionTitle(
             {
-              id: update.new_data.contribution_id,
-              title: update.new_data.data
+              id: update.new_value.contribution_id,
+              title: update.new_value.title
             },
             true
           ).then(() => {
@@ -550,21 +556,20 @@ event_id = EventID, updater = Updater,
         });
       });
     },
-
     contribution_description_updated: update => {
       return new Promise((resolve, reject) => {
         let Change = {
           event_id: update.event_id,
           changed: "Contribution Description Changed",
           updater: update.updater,
-          new_value: update.new_data,
+          new_value: update.new_value,
           date: update.date,
           time: update.time
         };
         stores.Contributions.updateDescription(
           {
-            id: update.new_data.contribution_id,
-            description: update.new_data.description
+            id: update.new_value.contribution_id,
+            description: update.new_value.description
           },
           true
         ).then(() => {
@@ -574,20 +579,20 @@ event_id = EventID, updater = Updater,
       });
     },
 
-    contribution_added_contribution_mean: update => {
+    added_contribution_mean: update => {
       return new Promise((resolve, reject) => {
         let Change = {
           event_id: update.event_id,
           changed: "New Contribution Mean",
           updater: update.updater,
-          new_value: update.new_data,
+          new_value: update.new_value,
           date: update.date,
           time: update.time
         };
         stores.ChangeLogs.addChanges(Change).then(() => {
           stores.Contributions.AddContributionMean(
-            update.new_data.contribution_id,
-            update.new_data.new_mean,
+            update.new_value.contribution_id,
+            update.new_value.new_mean,
             true
           ).then(() => {
             GState.eventUpdated = true;
@@ -596,20 +601,20 @@ event_id = EventID, updater = Updater,
         });
       });
     },
-    contribution_remove_contribution_mean: update => {
+    contribution_mean_removed: update => {
       return new Promise((resolve, reject) => {
         let Change = {
           event_id: update.event_id,
           changed: "Removed Contribution Mean",
           updater: update.updater,
-          new_value: update.new_data,
+          new_value: update.new_value,
           date: update.date,
           time: update.time
         };
         stores.ChangeLogs.addChanges(Change).then(() => {
           stores.Contributions.removeContributionMean(
-            update.new_data.contribution_id,
-            update.new_data.mean_name,
+            update.new_value.contribution_id,
+            update.new_value.mean_name,
             true
           ).then(() => {
             GState.eventUpdated = true;
@@ -618,21 +623,21 @@ event_id = EventID, updater = Updater,
         });
       });
     },
-    update_contribution_amount: update => {
+    contribution_amount_updated: update => {
       return new Promise((resolve, reject) => {
         let Change = {
           event_id: update.event_id,
           changed: "Contribution Amount Changed",
           updater: update.updater,
-          new_value: update.new_data,
+          new_value: update.new_value,
           date: update.date,
           time: update.time
         };
         stores.ChangeLogs.addChanges(Change).then(() => {
           stores.Contributions.updateContributionAmount(
             {
-              id: update.new_data.contribution_id,
-              amount: update.new_data.amount
+              id: update.new_value.contribution_id,
+              amount: update.new_value.amount
             },
             true
           ).then(() => {
@@ -642,21 +647,21 @@ event_id = EventID, updater = Updater,
         });
       });
     },
-    update_contribution_mean_name: update => {
+    contribution_mean_name_updated: update => {
       return new Promise((resolve, reject) => {
         let Change = {
           event_id: update.event_id,
           changed: "Contribution Mean Name Changed",
           updater: update.updater,
-          new_value: update.new_data,
+          new_value: update.new_value,
           date: update.date,
           time: update.time
         };
         stores.ChangeLogs.addChanges(Change).then(() => {
           stores.Contributions.updateContributionMeanName(
-            update.new_data.contribution_id,
-            update.new_data.mean_name,
-            update.new_data.new_name,
+            update.new_value.contribution_id,
+            update.new_value.mean_name,
+            update.new_value.new_name,
             true
           ).then(() => {
             GState.eventUpdated = true;
@@ -666,21 +671,21 @@ event_id = EventID, updater = Updater,
       });
     },
 
-    update_contribution_mean_credential: update => {
+    contribution_mean_credentials_updated: update => {
       return new Promise((resolve, reject) => {
         let Change = {
           event_id: update.event_id,
           changed: "Contribution Mean Credential changed",
           updater: update.updater,
-          new_value: update.new_data,
+          new_value: update.new_value,
           date: update.date,
           time: update.time
         };
         stores.ChangeLogs.addChanges(Change).then(() => {
           stores.Contributions.updateContributionMeanCredential(
-            update.new_data.contribution_id,
-            update.new_data.mean_name,
-            update.new_data.new_credential,
+            update.new_value.contribution_id,
+            update.new_value.mean_name,
+            update.new_value.new_credential,
             true
           ).then(() => {
             GState.eventUpdated = true;
@@ -695,13 +700,13 @@ event_id = EventID, updater = Updater,
           event_id: update.event_id,
           changed: "New Highlight",
           updater: update.updater,
-          new_value: update.new_data,
+          new_value: update.new_value,
           date: update.date,
           time: update.time
         };
         stores.ChangeLogs.addChanges(Change).then(() => {
           let RequestObject = requestObjects.HID();
-          RequestObject.h_id = update.new_data;
+          RequestObject.h_id = update.new_value;
           tcpRequestData.getHighlight(RequestObject).then(JSONData => {
             this.get_data(JSONData).then(Highlight => {
               stores.Highlights.addHighlights(Highlight).then(() => {
@@ -726,15 +731,15 @@ event_id = EventID, updater = Updater,
           event_id: update.event_id,
           changed: "New Highlight Description",
           updater: update.updater,
-          new_value: update.new_data,
+          new_value: update.new_value,
           date: update.date,
           time: update.time
         };
         stores.ChangeLogs.addChanges(Change).then(() => {
           stores.Highlights.updateHighlightDescription(
             {
-              id: update.new_data.highlight_id,
-              description: update.new_data.new_desciption
+              id: update.new_value.highlight_id,
+              description: update.new_value.new_desciption
             },
             true
           ).then(() => {
@@ -751,15 +756,15 @@ event_id = EventID, updater = Updater,
           event_id: update.event_id,
           changed: "New Highlight Title",
           updater: update.updater,
-          new_value: update.new_data,
+          new_value: update.new_value,
           date: update.date,
           time: update.time
         };
         stores.ChangeLogs.addChanges(Change).then(() => {
           stores.Highlights.updateHighlightTitle(
             {
-              id: update.new_data.highlight_id,
-              description: update.new_data.new_title
+              id: update.new_value.highlight_id,
+              description: update.new_value.new_title
             },
             true
           ).then(() => {
@@ -775,15 +780,15 @@ event_id = EventID, updater = Updater,
           event_id: update.event_id,
           changed: "New Highlight Title",
           updater: update.updater,
-          new_value: update.new_data,
+          new_value: update.new_value,
           date: update.date,
           time: update.time
         };
         stores.ChangeLogs.addChanges(Change).then(() => {
-          stores.Highlights.removeHighlight(update.new_data).then(() => {
+          stores.Highlights.removeHighlight(update.new_value).then(() => {
             stores.Events.removeHighlights(
               update.event_id,
-              update.new_data
+              update.new_value
             ).then(() => {
               GState.eventUpdated = true;
               resolve();
@@ -798,12 +803,12 @@ event_id = EventID, updater = Updater,
           event_id: update.event_id,
           changed: "New Vote",
           updater: update.updater,
-          new_value: update.new_data,
+          new_value: update.new_value,
           date: update.date,
           time: update.time
         };
         let VoteID = requestObjects.VID();
-        VoteID.vote_id = update.new_data;
+        VoteID.vote_id = update.new_value;
         tcpRequestData.getVote(VoteID).then(JSONData => {
           this.get_data(JSONData).then(Vote => {
             stores.Votes.addVote(Vote).then(() => {
@@ -823,13 +828,13 @@ event_id = EventID, updater = Updater,
           event_id: update.event_id,
           changed: "Vote Deleted",
           updater: update.updater,
-          new_value: update.new_data,
+          new_value: update.new_value,
           date: update.date,
           time: update.time
         };
         stores.ChangeLogs.addChanges(Changed).then(() => {
-          stores.Votes.removeVote(update.new_data).then(() => {
-            stores.Events.removeVote(update.event_id, update.new_data).then(
+          stores.Votes.removeVote(update.new_value).then(() => {
+            stores.Events.removeVote(update.event_id, update.new_value).then(
               () => {
                 GState.eventUpdated = true;
                 resolve();
@@ -845,12 +850,12 @@ event_id = EventID, updater = Updater,
           event_id: update.event_id,
           changed: "Vote Published",
           updater: update.updater,
-          new_value: update.new_data,
+          new_value: update.new_value,
           date: update.date,
           time: update.time
         };
         stores.ChangeLogs.addChanges(Change).then(() => {
-          stores.Votes.PublishVote(update.new_data).then(() => {
+          stores.Votes.PublishVote(update.new_value).then(() => {
             GState.eventUpdated = true;
           });
         });
@@ -862,13 +867,16 @@ event_id = EventID, updater = Updater,
           event_id: update.event_id,
           changed: "New Vote Period",
           updater: update.updater,
-          new_value: update.new_data,
+          new_value: update.new_value,
           date: update.date,
           time: update.time
         };
         stores.ChangeLogs.addChanges(Change).then(() => {
           stores.Votes.UpdateEventVotes(
-            { id: update.new_data.vote_id, period: update.new_data.new_period },
+            {
+              id: update.new_value.vote_id,
+              period: update.new_value.new_period
+            },
             true
           ).then(() => {
             GState.eventUpdated = true;
@@ -883,15 +891,15 @@ event_id = EventID, updater = Updater,
           event_id: update.event_id,
           changed: "Vote Description Changed",
           updater: update.updater,
-          new_value: update.new_data,
+          new_value: update.new_value,
           date: update.date,
           time: update.time
         };
         stores.ChangeLogs.addChanges(Change).then(() => {
           stores.Votes.UpdateVoteDescription(
             {
-              id: update.new_data.vote_id,
-              description: update.new_data.description
+              id: update.new_value.vote_id,
+              description: update.new_value.description
             },
             true
           ).then(() => {
@@ -907,13 +915,13 @@ event_id = EventID, updater = Updater,
           event_id: update.event_id,
           changed: "Vote Title Updated",
           updater: update.updater,
-          new_value: update.new_data,
+          new_value: update.new_value,
           date: update.date,
           time: update.time
         };
         stores.ChangeLogs.addChanges(Change).then(() => {
           stores.Votes.updateVoteTitle(
-            { id: update.new_data.vote_id, title: update.new_data.title },
+            { id: update.new_value.vote_id, title: update.new_value.title },
             true
           ).then(() => {
             GState.eventUpdated = true;
@@ -928,13 +936,13 @@ event_id = EventID, updater = Updater,
           event_id: update.event_id,
           changed: "New Vote Option",
           updater: update.updater,
-          new_value: update.new_data,
+          new_value: update.new_value,
           date: update.date,
           time: update.time
         };
         stores.ChangeLogs.addChanges(Change).then(() => {
           stores.Votes.addVoteOption(
-            { id: update.new_data.vote_id, option: update.new_data.option },
+            { id: update.new_value.vote_id, option: update.new_value.option },
             true
           ).then(() => {
             GState.eventUpdated = true;
@@ -943,20 +951,20 @@ event_id = EventID, updater = Updater,
         });
       });
     },
-    removed_option_option: update => {
+    removed_vote_option: update => {
       return new Promise((resolve, reject) => {
         let Change = {
           event_id: update.event_id,
           changed: "Removed Vote Option",
           updater: update.updater,
-          new_value: update.new_data,
+          new_value: update.new_value,
           date: update.date,
           time: update.time
         };
         stores.ChangeLogs.addChanges(Change).then(() => {
           stores.Votes.removeVoteOption(
-            update.new_data.vote_id,
-            update.new_data.vote_option_name_updated,
+            update.new_value.vote_id,
+            update.new_value.vote_option_name_updated,
             true
           ).then(() => {
             GState.eventUpdated = true;
@@ -971,15 +979,15 @@ event_id = EventID, updater = Updater,
           event_id: update.event_id,
           changed: "Vote Option Name Changed",
           updater: update.updater,
-          new_value: update.new_data,
+          new_value: update.new_value,
           date: update.date,
           time: update.time
         };
         stores.ChangeLogs.addChanges(Change).then(() => {
           stores.Votes.UpdateVoteOptionName(
-            update.new_data.vote_id,
-            update.new_data.option_name,
-            update.new_data.new_name,
+            update.new_value.vote_id,
+            update.new_value.option_name,
+            update.new_value.new_name,
             true
           ).then(() => {
             GState.eventUpdated = true;
@@ -991,13 +999,13 @@ event_id = EventID, updater = Updater,
     added: update => {
       let Participant = requestObjects.Participant();
       Participant.phone = update.updater;
-      Participant.master = update.new_data.master;
-      Participant.host = update.new_data.host;
-      Participant.status = update.new_data.status;
+      Participant.master = update.new_value.master;
+      Participant.host = update.new_value.host;
+      Participant.status = update.new_value.status;
       let Change = {
         event_id: update.event_id,
         changed: "New Participant",
-        updater: update.new_data.inviter,
+        updater: update.new_value.inviter,
         new_value: Participant,
         date: update.date,
         time: update.time
@@ -1015,13 +1023,13 @@ event_id = EventID, updater = Updater,
       return new Promise((resolve, reject) => {
         let Participant = requestObjects.Participant();
         Participant.phone = update.updater;
-        Participant.master = update.new_data.master;
-        Participant.host = update.new_data.host;
-        Participant.status = update.new_data.status;
+        Participant.master = update.new_value.master;
+        Participant.host = update.new_value.host;
+        Participant.status = update.new_value.status;
         let Change = {
           event_id: update.event_id,
           changed: "New Participant by Joining",
-          updater: update.new_data.inviter,
+          updater: update.new_value.inviter,
           new_value: Participant,
           date: update.date,
           time: update.time
@@ -1042,17 +1050,17 @@ event_id = EventID, updater = Updater,
           event_id: update.event_id,
           changed: "New Remind Created",
           updater: update.updater,
-          new_value: update.new_data,
+          new_value: update.new_value,
           date: update.date,
           time: update.time
         };
         stores.ChangeLogs.addChanges(Change).then(() => {
           let RemindID = requestObjects.RemindID();
-          RemindID.remind_id = update.new_data;
+          RemindID.remind_id = update.new_value;
           tcpRequestData.getRemind(RemindID).then(JSONData => {
             this.get_data(JSONData).then(Remind => {
               stores.Reminds.addReminds(Remind).then(() => {
-                stores.Events.addRemind(Remind.id).then(() => {
+                stores.Events.addRemind(update.event_id, Remind.id).then(() => {
                   GState.eventUpdated = true;
                   resolve();
                 });
@@ -1068,18 +1076,12 @@ event_id = EventID, updater = Updater,
           event_id: update.event_id,
           changed: "Remind Period Updated",
           updater: update.updater,
-          new_value: update.new_data,
+          new_value: update.new_value,
           date: update.date,
           time: update.time
         };
         stores.ChangeLogs.addChanges(Change).then(() => {
-          stores.Reminds.updatePeriod(
-            {
-              id: update.new_data.remind_id,
-              period: update.new_data.period
-            },
-            true
-          ).then(() => {
+          stores.Reminds.updatePeriod(update.new_value, true).then(() => {
             GState.eventUpdated = true;
             resolve();
           });
@@ -1092,18 +1094,12 @@ event_id = EventID, updater = Updater,
           event_id: update.event_id,
           changed: "Remind Description Updated",
           updater: update.updater,
-          new_value: update.new_data,
+          new_value: update.new_value,
           date: update.date,
           time: update.time
         };
         stores.ChangeLogs.addChanges(Change).then(() => {
-          stores.Reminds.updateDescription(
-            {
-              id: update.new_data.remind_id,
-              decription: update.new_data.description
-            },
-            true
-          ).then(() => {
+          stores.Reminds.updateDescription(update.new_value, true).then(() => {
             GState.eventUpdated = true;
             resolve();
           });
@@ -1116,15 +1112,12 @@ event_id = EventID, updater = Updater,
           event_id: update.event_id,
           changed: "Remind Title Updated",
           updater: update.updater,
-          new_value: update.new_data,
+          new_value: update.new_value,
           date: update.date,
           time: update.time
         };
         stores.ChangeLogs.addChanges(Change).then(() => {
-          stores.Reminds.updateTitle(
-            { id: update.new_data.remind_id, title: update.new_data.title },
-            true
-          ).then(() => {
+          stores.Reminds.updateTitle(update.new_value, true).then(() => {
             GState.eventUpdated = true;
             resolve();
           });
@@ -1137,12 +1130,12 @@ event_id = EventID, updater = Updater,
           event_id: update.event_id,
           changed: "Remind Title Updated",
           updater: update.updater,
-          new_value: update.new_data,
+          new_value: update.new_value,
           date: update.date,
           time: update.time
         };
         stores.ChangeLogs.addChanges(Change).then(() => {
-          stores.Reminds.removeRemind(update.new_data).then(() => {
+          stores.Reminds.removeRemind(update.new_value).then(() => {
             GState.eventUpdated = true;
             resolve();
           });

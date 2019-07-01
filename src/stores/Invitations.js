@@ -29,7 +29,9 @@ export default class Invitations {
     @action addInvitations(Invitation) {
         return new Promise((resolve, reject) => {
             this.readFromStore().then(Invitations => {
-                Invitations = uniqBy(Invitations, "invitation_id").concat([Invitation])
+                if (Invitations)
+                    Invitations = uniqBy(Invitations, "invitation_id").concat([Invitation])
+                else Invitations = [Invitation]
                 this.saveKey.data = Invitations
                 storage.save(this.saveKey).then(() => {
                     this.setProperties(this.saveKey.data, true)
@@ -104,6 +106,15 @@ export default class Invitations {
                     this.setProperties(this.saveKey.data, true)
                     resolve()
                 })
+            })
+        })
+    }
+    @action getInvitation(InvitationID) {
+        return new Promise((resolve, reject) => {
+            this.readFromStore().then(Invitations => {
+                resolve(find(Invitations, {
+                    invitation_id: InvitationID
+                }))
             })
         })
     }

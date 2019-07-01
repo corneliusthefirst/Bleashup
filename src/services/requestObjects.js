@@ -85,7 +85,7 @@
              creator: '',
              title: '',
              description: '',
-             period: ''
+             period: this.Period()
          }
      }
 

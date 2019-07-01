@@ -13,6 +13,7 @@ class ServerEventListener {
       console.error(error.toString(), "error");
     });
     socket.on("data", datar => {
+      console.warn(datar.toString());
       data = JSON.parse(datar.toString());
       if (data.response) {
         switch (data.response) {
@@ -22,12 +23,16 @@ class ServerEventListener {
           case "news":
             stores.Session.updateReference(data.reference).then(sessios => {
               let EventID = requestObject.EventID();
-              if (data.updated) UpdatesDispatcher.dispatchUpdates(updated);
-              if (data.new_events)
+              if (data.updated) UpdatesDispatcher.dispatchUpdates(data.updated);
+              if (data.new_events) {
+                console.warn(data.new_events, "*****");
                 InvitationDispatcher.dispatchUpdates(
                   data.new_events,
                   "invitation"
-                );
+                ).then(() => {
+                  console.warn("ok !");
+                });
+              }
               if (data.reschedules)
                 RescheduleDispatcher.dispatchReschedules(data.reschedules);
               if (data.info)
