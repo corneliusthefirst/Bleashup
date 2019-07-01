@@ -441,7 +441,6 @@ event_id = EventID, updater = Updater,
                     true
                   ).then(() => {
                     stores.Contributions.readFromStore().then(Contributions => {
-                      console.warn(Contributions);
                       GState.eventUpdated = true;
                       GState.newContribution = true;
                       resolve();
@@ -1145,7 +1144,6 @@ event_id = EventID, updater = Updater,
 
   get_data(data) {
     return new Promise((resolve, reject) => {
-      console.warn("getting data...");
       emitter.once("successful", (response, dataResponse) => {
         resolve(dataResponse);
       });

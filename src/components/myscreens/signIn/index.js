@@ -67,7 +67,6 @@ export default class SignInView extends Component {
     globalState.loading = true;
     this.loginStore.getUser().then(user => {
       UserService.login(user.phone, this.state.password).then(response => {
-        console.warn(response);
         if (response === "true") {
           user.password = this.state.password;
           this.loginStore.setUser(user).then(() => {

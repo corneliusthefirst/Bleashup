@@ -39,7 +39,6 @@ export default class Reminds {
         Remind.updated_at = moment().format("YYYY-MM-DD HH:mm");
         Remind.description_updated = inform;
         Reminds.splice(RemindIndex, 1, Remind);
-        console.warn(Reminds);
         this.keyData.data = Reminds;
         storage.save(this.keyData).then(() => {
           GState.eventUpdated = true;

@@ -8,7 +8,7 @@ import stores from "../../../stores";
 import emitter from "../../../services/eventEmiter";
 export default class CurrentEventView extends Component {
   render() {
-    let Remind = requestObjects.remind();
+    /* let Remind = requestObjects.remind();
     Remind.event_id = "gROHjPU89tj2i2AhYzC2Kh5mCpQFELhkRS7d";
     Remind.id = "my_remind";
     Remind.title = "test_remind";
@@ -22,7 +22,7 @@ export default class CurrentEventView extends Component {
         });
         session.socket.write(JSONData);
       });
-    });
+    });*/
     return (
       <Container>
         <NestedScrollView

@@ -28,7 +28,6 @@ class InvitationDispatcher {
     }
     dispatcher(invitation, action) {
         return new Promise((resolve, reject) => {
-            console.warn(this.InvitationPossibilities[action])
             this.InvitationPossibilities[action](invitation).then(() => {
                 resolve()
             })
@@ -68,7 +67,6 @@ class InvitationDispatcher {
         },
         invitation(Invitation) {
             return new Promise((resolve, reject) => {
-                console.warn("called")
                 stores.Invitations.addInvitations(Invitation)
                 GState.invitationUpdated = true
                 resolve()
