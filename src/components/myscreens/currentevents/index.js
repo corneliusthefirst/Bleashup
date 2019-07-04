@@ -1,10 +1,64 @@
 import React, { Component } from "react";
-import { Content, Card, CardItem, Container, Text, Body } from "native-base";
+import {
+  Image,
+  Dimensions,
+  View,
+  TouchableOpacity,
+  TouchableHighlight,
+  ActivityIndicator,
+  activityIndicatorStyle
+} from "react-native";
+import imageCacheHoc from "react-native-image-cache-hoc";
+const w = Dimensions.get("window");
+
+import {
+  Content,
+  Card,
+  CardItem,
+  Container,
+  Text,
+  Icon,
+  Body,
+  Left,
+  Button,
+  Thumbnail,
+  Right,
+  DeckSwiper
+} from "native-base";
+import ImageActivityIndicator from "./imageActivityIndicator";
 import NestedScrollView from "react-native-nested-scroll-view";
 import GState from "../../../stores/globalState";
 import emitter from "../../../services/eventEmiter";
 import stores from "../../../stores";
+import { createOpenLink } from "react-native-open-maps";
+import UpdateStateIndicator from "./updateStateIndicator";
+const CacheableImage = imageCacheHoc(Image, {
+  defaultPlaceholder: {
+    component: ImageActivityIndicator,
+    props: {
+      style: activityIndicatorStyle
+    }
+  }
+});
+
+const Data = {
+  tile: "Sample Description",
+  Description:
+    "sfezrftert everterterterterptertkepg,fg dkglerktletertertertetetlmgfdgmergreggdg ertoeprgkdfgkdlg,dg" +
+    "ertfdgdifogdfgkldfgkldfg,ereotpeortgdmfgere" +
+    "ezteropnvdfgeprotkpoertdkflg,eritertjedfgllkg,erizeropezksf" +
+    "zertprtegszzer",
+  image:
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/GDC_onlywayaround.jpg/300px-GDC_onlywayaround.jpg"
+};
+
+const Query = { query: "central hospital Bertoua" };
+const OpenLink = createOpenLink(Query);
+const OpenLinkZoom = createOpenLink({ ...Query, zoom: 50 });
 export default class CurrentEventView extends Component {
+  state = {
+    currentIndex: 0
+  };
   render() {
     emitter.emit("test", "testing");
     emitter.on("test", function(testMessage) {
@@ -13,31 +67,6 @@ export default class CurrentEventView extends Component {
     emitter.on("invitation", Invitation => {
       console.warn(Invitation);
     });
-    /*stores.Session.getSession(session => {
-      if (GState.writing) {
-        emitter.on("writing", State => {
-          if (State == false) {
-            session.write(NewEvent);
-            GState.writing = true;
-            emitter.emit("writing", true);
-            emitter.on("successfull", (message, eventID) => {
-              NewEvent.event_id = eventID;
-              emitter.emit("writing", false);
-              stores.events.addEvent(NewEvent).then(() => {});
-            });
-          }
-        });
-      } else {
-        session.write(NewEvent);
-        GState.writing = true;
-        emitter.emit("writing", true);
-        emitter.on("successfull", (message, eventID) => {
-          NewEvent.event_id = eventID;
-          emitter.emit("writing", false);
-          stores.events.addEvent(NewEvent).then(() => {});
-        });
-      }
-    });*/
     return (
       <Container>
         <NestedScrollView
@@ -49,17 +78,102 @@ export default class CurrentEventView extends Component {
         >
           <Content>
             <Card style={{ padding: 10 }}>
+              <CardItem>
+                <Left>
+                  <Icon
+                    name="thumbs-up"
+                    type="Entypo"
+                    style={{ color: "#0A4E52", fontSize: 16 }}
+                  />
+                  <Text note>31 Likers</Text>
+                </Left>
+                <UpdateStateIndicator />
+                <Right>
+                  <Icon
+                    name="dots-three-vertical"
+                    style={{ color: "#0A4E52", fontSize: 16 }}
+                    type="Entypo"
+                  />
+                </Right>
+              </CardItem>
+              <CardItem
+                style={{
+                  flexDirection: "column",
+                  justifyContent: "space-between"
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 20,
+                    fontFamily: "Roboto"
+                  }}
+                >
+                  Dancing Event Dancing Event Dancing Event
+                </Text>
+                <Text style={{ color: "#1FABAB" }} note>
+                  15-26-2019 14:54 PM
+                </Text>
+              </CardItem>
               <CardItem
                 style={{
                   paddingLeft: 0,
                   paddingRight: 0,
-                  paddingTop: 0,
+                  paddingTop: 20,
                   paddingBottom: 10
                 }}
+                cardBody
               >
-                <Body>
-                  <Text>what a fuck!!!!</Text>
-                </Body>
+                <Left>
+                  <View>
+                    <CacheableImage
+                      source={{
+                        uri:
+                          "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/GDC_onlywayaround.jpg/300px-GDC_onlywayaround.jpg"
+                      }}
+                      parmenent={false}
+                      style={{
+                        height: 125,
+                        width: 180,
+                        borderRadius: 20
+                      }}
+                      resizeMode="contain"
+                      onLoad={() => {}}
+                    />
+                  </View>
+                </Left>
+                <Right>
+                  <View>
+                    <TouchableOpacity>
+                      <Text ellipsizeMode="clip" numberOfLines={2}>
+                        General Hospital Bertoua
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableHighlight onPress={OpenLinkZoom}>
+                      <Image
+                        source={require("../../../../Images/google-maps-alternatives-china-720x340.jpg")}
+                        style={{ height: 60, width: 100, borderRadius: 20 }}
+                        resizeMode="contain"
+                        onLoad={() => {}}
+                      />
+                    </TouchableHighlight>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "space-between"
+                      }}
+                    >
+                      <TouchableOpacity onPress={OpenLink}>
+                        <Text note> View On Map </Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </Right>
+              </CardItem>
+              <CardItem>
+                <DeckSwiper
+                  ref={c => (this._deckSwiper = c)}
+                  dataSource={cards}
+                />
               </CardItem>
             </Card>
             <Card>

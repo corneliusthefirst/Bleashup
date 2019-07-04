@@ -233,8 +233,8 @@ export default {
     segmentBorderColorMain: platform === "ios" ? "#a7a6ab" : "#1FABAB",
 
     // Spinner
-    defaultSpinnerColor: "#45D56E",
-    inverseSpinnerColor: "#1A191B",
+    defaultSpinnerColor: "#20B29E",
+    inverseSpinnerColor: "#305455",
 
     // Tab
     tabDefaultBg: platform === "ios" ? "#1FABAB" : "#1FABAB",
@@ -248,8 +248,8 @@ export default {
     tabFontSize: 15,
 
     // Text
-    textColor: "#000",
-    inverseTextColor: "#FEFFDE",
+    textColor: "#0A4E52",
+    inverseTextColor: "#053135",
     noteFontSize: 13,
     get defaultTextColor() {
         return this.textColor;
