@@ -22,8 +22,9 @@ import {
   Left,
   Button,
   Thumbnail,
+  DeckSwiper,
   Right,
-  DeckSwiper
+  Title
 } from "native-base";
 import ImageActivityIndicator from "./imageActivityIndicator";
 import NestedScrollView from "react-native-nested-scroll-view";
@@ -32,6 +33,8 @@ import emitter from "../../../services/eventEmiter";
 import stores from "../../../stores";
 import { createOpenLink } from "react-native-open-maps";
 import UpdateStateIndicator from "./updateStateIndicator";
+import Carousel from "react-native-snap-carousel";
+
 const CacheableImage = imageCacheHoc(Image, {
   defaultPlaceholder: {
     component: ImageActivityIndicator,
@@ -41,16 +44,45 @@ const CacheableImage = imageCacheHoc(Image, {
   }
 });
 
-const Data = {
-  tile: "Sample Description",
-  Description:
-    "sfezrftert everterterterterptertkepg,fg dkglerktletertertertetetlmgfdgmergreggdg ertoeprgkdfgkdlg,dg" +
-    "ertfdgdifogdfgkldfgkldfg,ereotpeortgdmfgere" +
-    "ezteropnvdfgeprotkpoertdkflg,eritertjedfgllkg,erizeropezksf" +
-    "zertprtegszzer",
-  image:
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/GDC_onlywayaround.jpg/300px-GDC_onlywayaround.jpg"
-};
+const Data = [
+  {
+    tile: "Sample Description",
+    Description:
+      "sfezrftert everterterterterptertkepg,fg dkglerktletertertertetetlmgfdgmergreggdg ertoeprgkdfgkdlg,dg" +
+      "ertfdgdifogdfgkldfgkldfg,ereotpeortgdmfgere" +
+      "ezteropnvdfgeprotkpoertdkflg,eritertjedfgllkg,erizeropezksf" +
+      "zertprtegszzer",
+    image: {
+      uri:
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/GDC_onlywayaround.jpg/300px-GDC_onlywayaround.jpg"
+    }
+  },
+  {
+    tile: "Sample Description",
+    Description:
+      "sfezrftert everterterterterptertkepg,fg dkglerktletertertertetetlmgfdgmergreggdg ertoeprgkdfgkdlg,dg" +
+      "ertfdgdifogdfgkldfgkldfg,ereotpeortgdmfgere" +
+      "ezteropnvdfgeprotkpoertdkflg,eritertjedfgllkg,erizeropezksf" +
+      "zertprtegszzer",
+    image: {
+      uri:
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/GDC_onlywayaround.jpg/300px-GDC_onlywayaround.jpg"
+    }
+  },
+
+  {
+    tile: "Sample Description",
+    Description:
+      "sfezrftert everterterterterptertkepg,fg dkglerktletertertertetetlmgfdgmergreggdg ertoeprgkdfgkdlg,dg" +
+      "ertfdgdifogdfgkldfgkldfg,ereotpeortgdmfgere" +
+      "ezteropnvdfgeprotkpoertdkflg,eritertjedfgllkg,erizeropezksf" +
+      "zertprtegszzer",
+    image: {
+      uri:
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/GDC_onlywayaround.jpg/300px-GDC_onlywayaround.jpg"
+    }
+  }
+];
 
 const Query = { query: "central hospital Bertoua" };
 const OpenLink = createOpenLink(Query);
@@ -59,6 +91,15 @@ export default class CurrentEventView extends Component {
   state = {
     currentIndex: 0
   };
+  _renderItem({ item, index }) {
+    return (
+      <View style={{ borderRadius: 15 }}>
+        <Text style={{ borderRadius: 15 }}>{item.tile}</Text>
+        <Image source={{ uri: item.image }} />
+        <Text>{item.Description}</Text>
+      </View>
+    );
+  }
   render() {
     emitter.emit("test", "testing");
     emitter.on("test", function(testMessage) {
@@ -77,7 +118,15 @@ export default class CurrentEventView extends Component {
           scrollEventThrottle={16}
         >
           <Content>
-            <Card style={{ padding: 10 }}>
+            <Card
+              style={{
+                padding: 10,
+                borderColor: "#1FABAB",
+                border: 50,
+                height: 500
+              }}
+              bordered
+            >
               <CardItem>
                 <Left>
                   <Icon
@@ -134,7 +183,7 @@ export default class CurrentEventView extends Component {
                       style={{
                         height: 125,
                         width: 180,
-                        borderRadius: 20
+                        borderRadius: 15
                       }}
                       resizeMode="contain"
                       onLoad={() => {}}
@@ -151,7 +200,7 @@ export default class CurrentEventView extends Component {
                     <TouchableHighlight onPress={OpenLinkZoom}>
                       <Image
                         source={require("../../../../Images/google-maps-alternatives-china-720x340.jpg")}
-                        style={{ height: 60, width: 100, borderRadius: 20 }}
+                        style={{ height: 60, width: 100, borderRadius: 15 }}
                         resizeMode="contain"
                         onLoad={() => {}}
                       />
@@ -170,10 +219,45 @@ export default class CurrentEventView extends Component {
                 </Right>
               </CardItem>
               <CardItem>
-                <DeckSwiper
-                  ref={c => (this._deckSwiper = c)}
-                  dataSource={cards}
-                />
+                <View>
+                  <DeckSwiper
+                    ref={c => (this._deckSwiper = c)}
+                    dataSource={Data}
+                    renderItem={item => (
+                      <Card style={{ elevation: 3, width: 380, height: 250 }}>
+                        <Text note>Description</Text>
+                        <CardItem style={{ paddingBottom: 10 }}>
+                          <View>
+                            <Text>{item.tile}</Text>
+                          </View>
+                        </CardItem>
+                        <CardItem cardBody>
+                          <Icon
+                            name="caretleft"
+                            type="AntDesign"
+                            style={{}}
+                            onPress={() => this._deckSwiper._root.swipeLeft()}
+                          />
+
+                          <Left>
+                            <Image
+                              style={{ width: 300, height: 80 }}
+                              source={item.image}
+                              resizeMode="contain"
+                            />
+                            <Icon
+                              name="caretright"
+                              type="AntDesign"
+                              onPress={() =>
+                                this._deckSwiper._root.swipeRight()
+                              }
+                            />
+                          </Left>
+                        </CardItem>
+                      </Card>
+                    )}
+                  />
+                </View>
               </CardItem>
             </Card>
             <Card>
