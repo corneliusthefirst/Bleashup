@@ -19,8 +19,8 @@ import {
   Title,
   Icon
 } from "native-base";
-import SentInvitations from "../sent-invitations";
-import ReceivedInvitations from "../received-invitations";
+import SentInvitations from "../sent-invitations/index";
+import ReceivedInvitations from "../received-invitations/index";
 
 class InvitationView extends Component {
   render() {

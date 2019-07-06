@@ -1,19 +1,18 @@
 import React, { Component } from "react";
+import {Platform, StyleSheet,Image,TextInput,FlatList, ActivityIndicator, View,Alert,TouchableHighlight} from 'react-native';
+
+import autobind from "autobind-decorator";
 import {
-  Header,
-  Container,
-  Content,
-  Card,
-  CardItem,
-  Text,
-  Body,
-  ScrollableTab,
-  Title,
-  Icon
+  Content,Card,CardItem,Text,Body,Container,Icon,Header,Form,Thumbnail,Item,Title,Input,Left,Right,H3,H1,H2,Spinner,Button,InputGroup,DatePicker,CheckBox,List,Accordion,DeckSwiper
 } from "native-base";
+
 import NestedScrollView from "react-native-nested-scroll-view";
 import GState from "../../../stores/globalState";
-class InvitationView extends Component {
+//import styles from './style';
+
+
+
+class SentInvitations extends Component {
   render() {
     return (
       <Container>
@@ -42,6 +41,7 @@ class InvitationView extends Component {
                     Any native third - party libraries can be included along
                     with NativeBase.
                   </Text>
+
                 </Body>
               </CardItem>
               <CardItem>
@@ -476,4 +476,4 @@ class InvitationView extends Component {
   }
 }
 
-export default InvitationView;
+export default SentInvitations;

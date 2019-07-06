@@ -53,7 +53,7 @@ const AppNavigator = createStackNavigator(
     LoginHome: { screen: LoginHomeView }
   },
   {
-    initialRouteName: "LoginHome",
+    initialRouteName: "Invitation",
     headerMode: "none"
   }
 );
