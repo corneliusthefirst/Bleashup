@@ -442,8 +442,14 @@ event_id = EventID, updater = Updater,
                   ).then(() => {
                     stores.Contributions.readFromStore().then(Contributions => {
                       GState.eventUpdated = true;
-                      GState.newContribution = true;
-                      resolve();
+                      stores.Events.changeUpdatedStatus(
+                        update.event_id,
+                        "contribution_updated",
+                        true
+                      ).then(() => {
+                        GState.eventUpdated = true;
+                        resolve();
+                      });
                     });
                   });
                 });
@@ -478,8 +484,14 @@ event_id = EventID, updater = Updater,
               stores.Contributions.closeContribution(
                 update.new_value.contribution_id
               ).then(() => {
-                GState.eventUpdated = true;
-                resolve();
+                stores.Events.changeUpdatedStatus(
+                  update.event_id,
+                  "contribution_updated",
+                  true
+                ).then(() => {
+                  GState.eventUpdated = true;
+                  resolve();
+                });
               });
           }
         });
@@ -503,8 +515,14 @@ event_id = EventID, updater = Updater,
             },
             true
           ).then(() => {
-            GState.eventUpdated = true;
-            resolve();
+            stores.Events.changeUpdatedStatus(
+              update.event_id,
+              "contribution_updated",
+              true
+            ).then(() => {
+              GState.eventUpdated = true;
+              resolve();
+            });
           });
         });
       });
@@ -522,8 +540,14 @@ event_id = EventID, updater = Updater,
         stores.ChangeLogs.addChanges(Change).then(() => {
           stores.Contributions.publishContribution(update.new_value).then(
             () => {
-              GState.eventUpdated = true;
-              resolve();
+              stores.Events.changeUpdatedStatus(
+                update.event_id,
+                "contribution_updated",
+                true
+              ).then(() => {
+                GState.eventUpdated = true;
+                resolve();
+              });
             }
           );
         });
@@ -548,8 +572,14 @@ event_id = EventID, updater = Updater,
             },
             true
           ).then(() => {
-            GState.eventUpdated = true;
-            resolve();
+            stores.Events.changeUpdatedStatus(
+              update.event_id,
+              "contribution_updated",
+              true
+            ).then(() => {
+              GState.eventUpdated = true;
+              resolve();
+            });
           });
         });
       });
@@ -571,8 +601,14 @@ event_id = EventID, updater = Updater,
           },
           true
         ).then(() => {
-          GState.eventUpdated = true;
-          resolve();
+          stores.Events.changeUpdatedStatus(
+            update.event_id,
+            "contribution_updated",
+            true
+          ).then(() => {
+            GState.eventUpdated = true;
+            resolve();
+          });
         });
       });
     },
@@ -593,8 +629,14 @@ event_id = EventID, updater = Updater,
             update.new_value.new_mean,
             true
           ).then(() => {
-            GState.eventUpdated = true;
-            resolve();
+            stores.Events.changeUpdatedStatus(
+              update.event_id,
+              "contribution_updated",
+              true
+            ).then(() => {
+              GState.eventUpdated = true;
+              resolve();
+            });
           });
         });
       });
@@ -615,8 +657,14 @@ event_id = EventID, updater = Updater,
             update.new_value.mean_name,
             true
           ).then(() => {
-            GState.eventUpdated = true;
-            resolve();
+            stores.Events.changeUpdatedStatus(
+              update.event_id,
+              "contribution_updated",
+              true
+            ).then(() => {
+              GState.eventUpdated = true;
+              resolve();
+            });
           });
         });
       });
@@ -639,8 +687,14 @@ event_id = EventID, updater = Updater,
             },
             true
           ).then(() => {
-            GState.eventUpdated = true;
-            resolve();
+            stores.Events.changeUpdatedStatus(
+              update.event_id,
+              "contribution_updated",
+              true
+            ).then(() => {
+              GState.eventUpdated = true;
+              resolve();
+            });
           });
         });
       });
@@ -662,8 +716,14 @@ event_id = EventID, updater = Updater,
             update.new_value.new_name,
             true
           ).then(() => {
-            GState.eventUpdated = true;
-            resolve();
+            stores.Events.changeUpdatedStatus(
+              update.event_id,
+              "contribution_updated",
+              true
+            ).then(() => {
+              GState.eventUpdated = true;
+              resolve();
+            });
           });
         });
       });
@@ -686,8 +746,14 @@ event_id = EventID, updater = Updater,
             update.new_value.new_credential,
             true
           ).then(() => {
-            GState.eventUpdated = true;
-            resolve();
+            stores.Events.changeUpdatedStatus(
+              update.event_id,
+              "contribution_updated",
+              true
+            ).then(() => {
+              GState.eventUpdated = true;
+              resolve();
+            });
           });
         });
       });
@@ -713,8 +779,14 @@ event_id = EventID, updater = Updater,
                   Highlight.id
                 ).then(() => {
                   GState.newHightlight = true;
-                  GState.eventUpdated = true;
-                  resolve();
+                  stores.Events.changeUpdatedStatus(
+                    update.event_id,
+                    "highlight_updated",
+                    true
+                  ).then(() => {
+                    GState.eventUpdated = true;
+                    resolve();
+                  });
                 });
               });
             });
@@ -741,8 +813,14 @@ event_id = EventID, updater = Updater,
             },
             true
           ).then(() => {
-            GState.eventUpdated = true;
-            resolve();
+            stores.Events.changeUpdatedStatus(
+              update.event_id,
+              "highlight_updated",
+              true
+            ).then(() => {
+              GState.eventUpdated = true;
+              resolve();
+            });
           });
         });
       });
@@ -766,8 +844,14 @@ event_id = EventID, updater = Updater,
             },
             true
           ).then(() => {
-            GState.eventUpdated = true;
-            resolve();
+            stores.Events.changeUpdatedStatus(
+              update.event_id,
+              "highlight_updated",
+              true
+            ).then(() => {
+              GState.eventUpdated = true;
+              resolve();
+            });
           });
         });
       });
@@ -788,8 +872,14 @@ event_id = EventID, updater = Updater,
               update.event_id,
               update.new_value
             ).then(() => {
-              GState.eventUpdated = true;
-              resolve();
+              stores.Events.changeUpdatedStatus(
+                update.event_id,
+                "highlight_updated",
+                true
+              ).then(() => {
+                GState.eventUpdated = true;
+                resolve();
+              });
             });
           });
         });
@@ -812,8 +902,14 @@ event_id = EventID, updater = Updater,
             stores.Votes.addVote(Vote).then(() => {
               stores.Events.addVote(Vote.event_id, Vote.id).then(() => {
                 GState.newVote = true;
-                GState.eventUpdated = true;
-                resolve();
+                stores.Events.changeUpdatedStatus(
+                  update.event_id,
+                  "vote_updated",
+                  true
+                ).then(() => {
+                  GState.eventUpdated = true;
+                  resolve();
+                });
               });
             });
           });
@@ -834,8 +930,14 @@ event_id = EventID, updater = Updater,
           stores.Votes.removeVote(update.new_value).then(() => {
             stores.Events.removeVote(update.event_id, update.new_value).then(
               () => {
-                GState.eventUpdated = true;
-                resolve();
+                stores.Events.changeUpdatedStatus(
+                  update.event_id,
+                  "vote_updated",
+                  true
+                ).then(() => {
+                  GState.eventUpdated = true;
+                  resolve();
+                });
               }
             );
           });
@@ -854,7 +956,14 @@ event_id = EventID, updater = Updater,
         };
         stores.ChangeLogs.addChanges(Change).then(() => {
           stores.Votes.PublishVote(update.new_value).then(() => {
-            GState.eventUpdated = true;
+            stores.Events.changeUpdatedStatus(
+              update.event_id,
+              "vote_updated",
+              true
+            ).then(() => {
+              GState.eventUpdated = true;
+              resolve();
+            });
           });
         });
       });
@@ -877,8 +986,14 @@ event_id = EventID, updater = Updater,
             },
             true
           ).then(() => {
-            GState.eventUpdated = true;
-            resolve();
+            stores.Events.changeUpdatedStatus(
+              update.event_id,
+              "vote_updated",
+              true
+            ).then(() => {
+              GState.eventUpdated = true;
+              resolve();
+            });
           });
         });
       });
@@ -901,8 +1016,14 @@ event_id = EventID, updater = Updater,
             },
             true
           ).then(() => {
-            GState.eventUpdated = true;
-            resolve();
+            stores.Events.changeUpdatedStatus(
+              update.event_id,
+              "vote_updated",
+              true
+            ).then(() => {
+              GState.eventUpdated = true;
+              resolve();
+            });
           });
         });
       });
@@ -922,8 +1043,14 @@ event_id = EventID, updater = Updater,
             { id: update.new_value.vote_id, title: update.new_value.title },
             true
           ).then(() => {
-            GState.eventUpdated = true;
-            resolve();
+            stores.Events.changeUpdatedStatus(
+              update.event_id,
+              "vote_updated",
+              true
+            ).then(() => {
+              GState.eventUpdated = true;
+              resolve();
+            });
           });
         });
       });
@@ -943,8 +1070,14 @@ event_id = EventID, updater = Updater,
             { id: update.new_value.vote_id, option: update.new_value.option },
             true
           ).then(() => {
-            GState.eventUpdated = true;
-            resolve();
+            stores.Events.changeUpdatedStatus(
+              update.event_id,
+              "vote_updated",
+              true
+            ).then(() => {
+              GState.eventUpdated = true;
+              resolve();
+            });
           });
         });
       });
@@ -965,8 +1098,14 @@ event_id = EventID, updater = Updater,
             update.new_value.vote_option_name_updated,
             true
           ).then(() => {
-            GState.eventUpdated = true;
-            resolve();
+            stores.Events.changeUpdatedStatus(
+              update.event_id,
+              "vote_updated",
+              true
+            ).then(() => {
+              GState.eventUpdated = true;
+              resolve();
+            });
           });
         });
       });
@@ -988,8 +1127,14 @@ event_id = EventID, updater = Updater,
             update.new_value.new_name,
             true
           ).then(() => {
-            GState.eventUpdated = true;
-            resolve();
+            stores.Events.changeUpdatedStatus(
+              update.event_id,
+              "vote_updated",
+              true
+            ).then(() => {
+              GState.eventUpdated = true;
+              resolve();
+            });
           });
         });
       });
@@ -1059,8 +1204,15 @@ event_id = EventID, updater = Updater,
             this.get_data(JSONData).then(Remind => {
               stores.Reminds.addReminds(Remind).then(() => {
                 stores.Events.addRemind(update.event_id, Remind.id).then(() => {
-                  GState.eventUpdated = true;
-                  resolve();
+                  stores.Events.changeUpdatedStatus(
+                    update.event_id,
+                    "remind_updated",
+                    true
+                  ).then(() => {
+                    GState.newRemind = true;
+                    GState.eventUpdated = true;
+                    resolve();
+                  });
                 });
               });
             });
@@ -1080,8 +1232,14 @@ event_id = EventID, updater = Updater,
         };
         stores.ChangeLogs.addChanges(Change).then(() => {
           stores.Reminds.updatePeriod(update.new_value, true).then(() => {
-            GState.eventUpdated = true;
-            resolve();
+            stores.Events.changeUpdatedStatus(
+              update.event_id,
+              "remind_updated",
+              true
+            ).then(() => {
+              GState.eventUpdated = true;
+              resolve();
+            });
           });
         });
       });
@@ -1098,8 +1256,14 @@ event_id = EventID, updater = Updater,
         };
         stores.ChangeLogs.addChanges(Change).then(() => {
           stores.Reminds.updateDescription(update.new_value, true).then(() => {
-            GState.eventUpdated = true;
-            resolve();
+            stores.Events.changeUpdatedStatus(
+              update.event_id,
+              "remind_updated",
+              true
+            ).then(() => {
+              GState.eventUpdated = true;
+              resolve();
+            });
           });
         });
       });
@@ -1116,8 +1280,14 @@ event_id = EventID, updater = Updater,
         };
         stores.ChangeLogs.addChanges(Change).then(() => {
           stores.Reminds.updateTitle(update.new_value, true).then(() => {
-            GState.eventUpdated = true;
-            resolve();
+            stores.Events.changeUpdatedStatus(
+              update.event_id,
+              "remind_updated",
+              true
+            ).then(() => {
+              GState.eventUpdated = true;
+              resolve();
+            });
           });
         });
       });
@@ -1134,8 +1304,14 @@ event_id = EventID, updater = Updater,
         };
         stores.ChangeLogs.addChanges(Change).then(() => {
           stores.Reminds.removeRemind(update.new_value).then(() => {
-            GState.eventUpdated = true;
-            resolve();
+            stores.Events.changeUpdatedStatus(
+              update.event_id,
+              "remind_updated",
+              true
+            ).then(() => {
+              GState.eventUpdated = true;
+              resolve();
+            });
           });
         });
       });

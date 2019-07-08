@@ -38,6 +38,7 @@ export default class Reminds {
         Remind.description = NewRemind.description;
         Remind.updated_at = moment().format("YYYY-MM-DD HH:mm");
         Remind.description_updated = inform;
+        Remind.updated = inform;
         Reminds.splice(RemindIndex, 1, Remind);
         this.keyData.data = Reminds;
         storage.save(this.keyData).then(() => {
@@ -55,6 +56,7 @@ export default class Reminds {
         Remind.title = NewRemind.title;
         Remind.updated_at = moment().format("YYYY-MM-DD HH:mm");
         Remind.description_updated = inform;
+        Remind.updated = inform;
         Reminds.splice(RemindIndex, 1, Remind);
         this.keyData.data = Reminds;
         storage.save(this.keyData).then(() => {
@@ -72,6 +74,7 @@ export default class Reminds {
         Remind.period = NewRemind.period;
         Remind.updated_at = moment().format("YYYY-MM-DD HH:mm");
         Remind.description_updated = inform;
+        Remind.updated = inform;
         Reminds.splice(RemindIndex, 1, Remind);
         this.keyData.data = Reminds;
         storage.save(this.keyData).then(() => {

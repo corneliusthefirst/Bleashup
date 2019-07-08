@@ -69,7 +69,10 @@ export default class highlights {
           id: newHightlight.id
         });
         Highlight.title = newHightlight.title;
-        if (inform) Highlight.title_updated = true;
+        if (inform) {
+          Highlight.title_updated = true;
+          Highlight.updated = true;
+        }
         Highlight.update_date = moment().format("YYYY-MM-DD HH:mm");
         Highlights.splice(index, 1, Highlight);
         this.saveKey.data = sortBy(Highlights, "update_date");
@@ -90,7 +93,10 @@ export default class highlights {
           id: newHightlight.id
         });
         Highlight.description = newHightlight.description;
-        if (inform) Highlight.description_updated = true;
+        if (inform) {
+          Highlight.description_updated = true;
+          Highlight.updated = true;
+        }
         Highlight.update_date = moment().format("YYYY-MM-DD HH:mm");
         Highlights.splice(index, 1, Highlight);
         this.saveKey.data = sortBy(Highlights, "update_date");
@@ -111,7 +117,10 @@ export default class highlights {
           id: newHightlight.id
         });
         Highlight.url = newHightlight.url;
-        if (inform) Highlight.url_updated = true;
+        if (inform) {
+          Highlight.url_updated = true;
+          Highlight.updated = true;
+        }
         Highlight.update_date = moment().format("YYYY-MM-DD HH:mm");
         Highlights.splice(index, 1, Highlight);
         this.saveKey.data = sortBy(Highlights, "update_date");

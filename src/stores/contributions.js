@@ -72,7 +72,10 @@ export default class contribution {
           id: NewContribution.id
         });
         Contribution.title = NewContribution.title;
-        if (inform) Contribution.title_update = true;
+        if (inform) {
+          Contribution.title_update = true;
+          Contribution.updated = true;
+        }
         Contribution.update_date = moment().format("YYYY-MM-DD HH:mm");
         Contributions.splice(index, 1, Contribution);
         this.saveKey.data = sortBy(Contributions, "update_date");
@@ -93,7 +96,10 @@ export default class contribution {
           id: NewContribution.id
         });
         Contribution.description = NewContribution.description;
-        if (inform) Contribution.description_update = true;
+        if (inform) {
+          Contribution.description_update = true;
+          Contribution.updated = true;
+        }
         Contribution.update_date = moment().format("YYYY-MM-DD HH:mm");
         Contributions.splice(index, 1, Contribution);
         this.saveKey.data = sortBy(Contributions, "update_date");
@@ -120,7 +126,10 @@ export default class contribution {
             "name"
           );
         else Contribution.contribution_mean = [NewMean];
-        if (inform) Contribution.added_contribution_mean = true;
+        if (inform) {
+          Contribution.added_contribution_mean = true;
+          Contribution.updated = true;
+        }
         Contribution.update_date = moment().format("YYYY-MM-DD HH:mm");
         Contributions.splice(index, 1, Contribution);
         this.saveKey.data = sortBy(Contributions, "update_date");
@@ -154,7 +163,10 @@ export default class contribution {
         });
         Mean.credential = newCredential;
         Contribution.contribution_mean.splice(MeanIndex, 1, Mean);
-        if (inform) Contribution.updated_contribution_mean_credential = true;
+        if (inform) {
+          Contribution.updated_contribution_mean_credential = true;
+          Contribution.updated = true;
+        }
         Contribution.update_date = moment().format("YYYY-MM-DD HH:mm");
         Contributions.splice(index, 1, Contribution);
         this.saveKey.data = sortBy(Contributions, "update_date");
@@ -188,7 +200,10 @@ export default class contribution {
         });
         Mean.name = NewMeanName;
         Contribution.contribution_mean.splice(MeanIndex, 1, Mean);
-        if (inform) Contribution.updated_contribution_mean_name = true;
+        if (inform) {
+          Contribution.updated_contribution_mean_name = true;
+          Contribution.updated = true;
+        }
         Contribution.update_date = moment().format("YYYY-MM-DD HH:mm");
         Contributions.splice(index, 1, Contribution);
         this.saveKey.data = sortBy(Contributions, "update_date");
@@ -213,7 +228,10 @@ export default class contribution {
           Contribution.contribution_mean,
           ["name", MeanName]
         );
-        if (inform) Contribution.removed_contribution_mean = true;
+        if (inform) {
+          Contribution.removed_contribution_mean = true;
+          Contribution.updated = true;
+        }
         Contribution.update_date = moment().format("YYYY-MM-DD HH:mm");
         Contributions.splice(index, 1, Contribution);
         this.saveKey.data = sortBy(Contributions, "update_date");
@@ -234,7 +252,10 @@ export default class contribution {
           id: NewContribution
         });
         Contribution.period = NewContribution.period;
-        if (inform) Contribution.period_updated = true;
+        if (inform) {
+          Contribution.period_updated = true;
+          Contribution.updated = true;
+        }
         Contribution.update_date = moment().format("YYYY-MM-DD HH:mm");
         Contributions.splice(index, 1, Contribution);
         this.saveKey.data = sortBy(Contributions, "update_date");
@@ -255,7 +276,10 @@ export default class contribution {
           id: NewContribution
         });
         Contribution.amount = NewContribution.amount;
-        if (inform) Contribution.amount_updated = true;
+        if (inform) {
+          Contribution.amount_updated = true;
+          Contribution.updated = true;
+        }
         Contribution.update_date = moment().format("YYYY-MM-DD HH:mm");
         Contributions.splice(index, 1, Contribution);
         this.saveKey.data = sortBy(Contributions, "update_date");
@@ -276,6 +300,7 @@ export default class contribution {
           id: ContributionID
         });
         Contribution.published = true;
+        if (inform) Contribution.updated = true;
         Contribution.update_date = moment().format("YYYY-MM-DD HH:mm");
         Contributions.splice(index, 1, Contribution);
         this.saveKey.data = sortBy(Contributions, "update_date");
@@ -297,7 +322,10 @@ export default class contribution {
           id: ContributionID
         });
         Contribution.likes += 1;
-        if (inform) Contribution.likes_updated = true;
+        if (inform) {
+          Contribution.likes_updated = true;
+          Contribution.updated = true;
+        }
         Contribution.update_date = moment().format("YYYY-MM-DD HH:mm");
         Contributions.splice(index, 1, Contribution);
         this.saveKey.data = sortBy(Contributions, "update_date");
@@ -340,7 +368,10 @@ export default class contribution {
           id: ContributionID
         });
         Contribution.state = "open";
-        if (inform) Contribution.contribution_opened = true;
+        if (inform) {
+          Contribution.contribution_opened = true;
+          Contribution.updated = true;
+        }
         Contribution.update_date = moment().format("YYYY-MM-DD HH:mm");
         Contributions.splice(index, 1, Contribution);
         this.saveKey.data = sortBy(Contributions, "update_date");
@@ -362,7 +393,10 @@ export default class contribution {
           id: ContributionID
         });
         Contribution.state = "closed";
-        if (inform) Contribution.contribution_closed = true;
+        if (inform) {
+          Contribution.contribution_closed = true;
+          Contribution.updated = true;
+        }
         Contribution.update_date = moment().format("YYYY-MM-DD HH:mm");
         Contributions.splice(index, 1, Contribution);
         this.saveKey.data = sortBy(Contributions, "update_date");
@@ -386,7 +420,10 @@ export default class contribution {
         Contribution.contribtor = Contribution.contribtor.concat([
           NewContributor
         ]);
-        if (inform) Contribution.contributor_added = true;
+        if (inform) {
+          Contribution.contributor_added = true;
+          Contribution.updated = true;
+        }
         Contribution.update_date = moment().format("YYYY-MM-DD HH:mm");
         Contributions.splice(index, 1, Contribution);
         this.saveKey.data = sortBy(Contributions, "update_date");
