@@ -5,7 +5,7 @@ import {
   sortBy,
   find,
   findIndex,
-  dropWhile,
+  reject,
   uniq,
   indexOf,
   drop
@@ -153,7 +153,7 @@ export default class events {
   @action removeEvent(EventID) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
-        let NewEvents = dropWhile(Events, ["id", EventID]);
+        let NewEvents = reject(Events, ["id", EventID]);
         this.saveKey.data = NewEvents;
         storage.save(this.saveKey).then(() => {
           this.setProperties(this.saveKey.data, inform);
@@ -211,7 +211,7 @@ export default class events {
       this.readFromStore().then(Events => {
         let Event = find(Events, { id: EventID });
         let eventIndex = findIndex(Events, { id: EventID });
-        Event.participants = dropWhile(Event.participants, ["phone", Phone]);
+        Event.participants = reject(Event.participants, ["phone", Phone]);
         if (inform) {
           Event.participant_removed = true;
           Event.updated = true

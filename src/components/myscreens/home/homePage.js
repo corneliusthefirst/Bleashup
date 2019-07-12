@@ -19,7 +19,6 @@ import { CollapsibleHeaderScrollView } from "react-native-collapsible-header-vie
 import GState from "../../../stores/globalState";
 import { observer } from "mobx-react";
 import UserHttpServices from "../../../services/userHttpServices";
-import routerActions from "reazy-native-router-actions";
 import autobind from "autobind-decorator";
 import RNExitApp from "react-native-exit-app";
 import ServerEventListener from "../../../services/severEventListener";
@@ -58,11 +57,11 @@ class Home extends Component {
     scroll: true
   };
   @autobind
-  settings() {}
+  settings() { }
 
   render() {
     connection.init().then(socket => {
-      stores.Session.updateSocket(socket).then(session => {});
+      stores.Session.updateSocket(socket).then(session => { });
     });
     return (
       <Container>
@@ -105,6 +104,7 @@ class Home extends Component {
           statusBarHeight={Platform.OS === "ios" ? 20 : 0}
         >
           <Tabs
+            locked
             tabBarPosition="overlayTop"
             tabBarUnderlineStyle={{
               borderBottomWidth: 0,
@@ -121,7 +121,7 @@ class Home extends Component {
                 </TabHeading>
               }
             >
-              <PersonalEventView />
+              <PersonalEventView {...this.props} />
             </Tab>
             <Tab
               heading={
@@ -130,7 +130,7 @@ class Home extends Component {
                 </TabHeading>
               }
             >
-              <InvitationView />
+              <InvitationView {...this.props} />
             </Tab>
             <Tab
               heading={
@@ -139,7 +139,7 @@ class Home extends Component {
                 </TabHeading>
               }
             >
-              <Chats />
+              <Chats {...this.props} />
             </Tab>
             <Tab
               heading={
@@ -148,7 +148,7 @@ class Home extends Component {
                 </TabHeading>
               }
             >
-              <StatusView />
+              <StatusView {...this.props} />
             </Tab>
           </Tabs>
         </CollapsibleHeaderScrollView>

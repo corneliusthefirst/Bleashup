@@ -8,7 +8,7 @@ import {
     findIndex,
     uniq,
     sortBy,
-    dropWhile
+    reject
 } from "lodash";
 export default class contacts {
     constructor() {
@@ -37,7 +37,7 @@ export default class contacts {
     @action removeContact(phone) {
         return new Promise((resolve, reject) => {
             this.readFromStore().then(Contacts => {
-                Contacts = dropWhile(Contacts, ["phone", phone]);
+                Contacts = reject(Contacts, ["phone", phone]);
                 this.saveKey.data = sortBy(Contacts, ["name"]);
                 storage.save(this.saveKey).then(() => {
                     this.contacts = this.saveKey.data;

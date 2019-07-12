@@ -1,7 +1,7 @@
 import storage from "./Storage";
 import { observable, action } from "mobx";
 
-import { uniqBy, dropWhile, filter, find, findIndex, sortBy } from "lodash";
+import { uniqBy, reject, filter, find, findIndex, sortBy } from "lodash";
 import moment from "moment";
 export default class highlights {
   @observable highlights = [];
@@ -27,7 +27,7 @@ export default class highlights {
   @action removeHighlight(id) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Highlights => {
-        Highlights = dropWhile(Highlights, ["id", id]);
+        Highlights = reject(Highlights, ["id", id]);
         this.saveKey.data = Highlights;
         storage.save(this.saveKey.data).then(() => {
           this.highlights = this.saveKey.data;
@@ -134,7 +134,7 @@ export default class highlights {
   @action updateEventHighlights(eventID, newHightlights) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Highlights => {
-        Highlights = dropWhile(Highlights, ["event_id", eventID]);
+        Highlights = reject(Highlights, ["event_id", eventID]);
         Highlights = Highlights.concat(newHightlights);
         this.saveKey.data = sortBy(Highlights, "update_date");
         storage.save(this.saveKey).then(() => {

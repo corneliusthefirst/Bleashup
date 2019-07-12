@@ -1,6 +1,6 @@
 import storage from "./Storage";
 import { observable, action } from "mobx";
-import { uniqBy, dropWhile, filter, find, findIndex, sortBy } from "lodash";
+import { uniqBy, reject, filter, find, findIndex, sortBy } from "lodash";
 import moment from "moment";
 
 export default class contribution {
@@ -29,7 +29,7 @@ export default class contribution {
   @action removeContribution(ContributionID) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Contributions => {
-        this.saveKey.data = dropWhile(Contributions, ["id", ContributionID]);
+        this.saveKey.data = reject(Contributions, ["id", ContributionID]);
         storage.save(this.saveKey).then(() => {
           this.contributions = this.saveKey.data;
           resolve();
@@ -224,7 +224,7 @@ export default class contribution {
         let index = findIndex(Contributions, {
           id: ContributionID
         });
-        Contribution.contribution_mean = dropWhile(
+        Contribution.contribution_mean = reject(
           Contribution.contribution_mean,
           ["name", MeanName]
         );
@@ -438,7 +438,7 @@ export default class contribution {
   @action updateEventContribution(EventID, NewContributions) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Contributions => {
-        Contributions = dropWhile(Contributions, ["event_id", EventID]);
+        Contributions = reject(Contributions, ["event_id", EventID]);
         Contributions = Contributions.concat(NewContributions);
         this.saveKey.data = sortBy(Contributions, "update_date");
         storage.save(this.saveKey).then(() => {

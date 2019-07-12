@@ -3,7 +3,7 @@ import GState from "../stores/globalState";
 import requestObjects from "./requestObjects";
 import tcpRequestData from "./tcpRequestData";
 import emitter from "./eventEmiter";
-import { find, findIndex, drop, dropWhile, forEach } from "lodash";
+import { find, findIndex, drop, reject, forEach } from "lodash";
 class UpdatesDispatcher {
   constructor() {}
   /* prepare_updated(EventID, Updated, Updater, AddPhone,

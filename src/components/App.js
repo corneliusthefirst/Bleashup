@@ -30,6 +30,14 @@ import routerActions from "reazy-native-router-actions";
 import reazy from "reazy";
 
 import { Provider } from "mobx-react";
+import Event from "./myscreens/event";
+import Contributions from "./myscreens/contributions";
+import Votes from "./myscreens/votes";
+import Highlights from "./myscreens/highlights";
+import ChangeLogs from "./myscreens/changelogs";
+import EventDetail from "./myscreens/eventDetails";
+import EventChat from "./myscreens/eventDetails";
+import Reminds from "./myscreens/reminds";
 
 const AppNavigator = createStackNavigator(
   {
@@ -48,10 +56,18 @@ const AppNavigator = createStackNavigator(
     SignUp: { screen: SignUpView },
     EmailVerification: { screen: EmailVerificationView },
     SignIn: { screen: SignInView },
-    LoginHome: { screen: LoginHomeView }
+    LoginHome: { screen: LoginHomeView },
+    Event: { screen: Event },
+    Contributions: { screen: Contributions },
+    Votes: { screen: Votes },
+    Highlights: { screen: Highlights },
+    ChangeLogs: { screen: ChangeLogs },
+    EventDetails: { screen: EventDetail },
+    EventChat: { screen: EventChat },
+    Reminds: { screen: Reminds }
   },
   {
-    initialRouteName: "LoginHome",
+    initialRouteName: "Home",
     headerMode: "none"
   }
 );

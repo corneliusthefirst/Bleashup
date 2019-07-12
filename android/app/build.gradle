@@ -136,6 +136,7 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-reanimated')
     implementation project(':react-native-svg')
     implementation project(':@react-native-community_async-storage')
     implementation project(':react-native-vector-icons')
@@ -157,3 +158,11 @@ task copyDownloadableDepsToLibs(type: Copy) {
     from configurations.compile
     into 'libs'
 }
+
+ext {
+compileSdkVersion           = 25
+targetSdkVersion            = 25
+buildToolsVersion           = "25.0.2"
+googlePlayServicesVersion   = "12.0.1"
+supportLibVersion           = "27.0.0"
+ }

@@ -5,7 +5,7 @@ import {
 } from "mobx";
 import {
     uniqBy,
-    dropWhile,
+    reject,
     find,
     filter,
     sortBy,
@@ -34,7 +34,7 @@ export default class votes {
     removeVote(VoteID) {
         return new Promise((resolve, reject) => {
             this.readFromStore().then(Votes => {
-                this.saveKey.data = dropWhile(votes, ["id", VoteID]);
+                this.saveKey.data = reject(votes, ["id", VoteID]);
                 storage.save(this.saveKey).then(() => {
                     this.votes = this.saveKey.data;
                     resolve();
@@ -184,7 +184,7 @@ export default class votes {
                 let index = findIndex(Votes, {
                     id: VoteID
                 });
-                Vote.option = dropWhile(Vote.option, ["name", OptionName]);
+                Vote.option = reject(Vote.option, ["name", OptionName]);
                 if (inform) {
                     Vote.option_removed = true;
                     Vote.updated = true;
@@ -302,7 +302,7 @@ export default class votes {
     UpdateEventVotes(EventID, NewVotes) {
         return new Promise((resolve, reject) => {
             this.readFromStore().then(Votes => {
-                Votes = dropWhile(Votes, ["event_id", EventID]);
+                Votes = reject(Votes, ["event_id", EventID]);
                 Votes = Votes.concat(NewVotes);
                 this.saveKey.data = sortBy(Votes, "update_date");
                 storage.save(this.saveKey).then(() => {

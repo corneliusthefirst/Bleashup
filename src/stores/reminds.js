@@ -1,5 +1,5 @@
 import { observable, action } from "mobx";
-import { find, findIndex, uniqBy, dropWhile } from "lodash";
+import { find, findIndex, uniqBy, reject } from "lodash";
 import storage from "./Storage";
 import moment from "moment";
 import GState from "./globalState";
@@ -87,7 +87,7 @@ export default class Reminds {
   @action removeRemind(id) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Reminds => {
-        Reminds = dropWhile(Reminds, ["id", id]);
+        Reminds = reject(Reminds, ["id", id]);
         this.saveKey.data = Reminds;
         storage.save(this.saveKey.data).then(() => {
           this.Reminds = this.saveKey.data;

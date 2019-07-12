@@ -68,11 +68,12 @@ const Events = [
         secs: "15 GMT"
       }
     },
-    event_update: true,
+    liked: true,
+    updated: true,
     contribution_updated: true,
     vote_updated: true,
     highlight_updated: true,
-    remind_updated: true,
+    remind_upated: true,
     background:
       "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/GDC_onlywayaround.jpg/300px-GDC_onlywayaround.jpg",
     creator: "650594616",
@@ -137,11 +138,11 @@ const Events = [
       }
     },
     liked: true,
-    event_update: true,
+    update: true,
     contribution_updated: true,
     vote_updated: true,
     highlight_updated: true,
-    remind_updated: true,
+    remind_upated: true,
     background:
       "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/GDC_onlywayaround.jpg/300px-GDC_onlywayaround.jpg",
     creator: "650594616",
@@ -154,11 +155,14 @@ const Events = [
     likes: 12
   }
 ];
-
+import routerActions from "reazy-native-router-actions";
 const Query = { query: "central hospital Bertoua" };
 const OpenLink = createOpenLink(Query);
 const OpenLinkZoom = createOpenLink({ ...Query, zoom: 50 });
 export default class CurrentEventView extends Component {
+  constructor(props) {
+    super(props);
+  }
   componentDidMount() {
     stores.Events.readFromStore().then(Events => {
       this.setState({
@@ -175,27 +179,27 @@ export default class CurrentEventView extends Component {
   _renderItem() {
     return Events.map(event => {
       return event.public ? (
-        <PublicEvent key={event.id} Event={event} />
+        <PublicEvent key={event.id} {...this.props} Event={event} />
       ) : (
-        <PrivateEvent key={event.id} Event={event} />
-      );
+          <PrivateEvent key={event.id} {...this.props} Event={event} />
+        );
     });
   }
   render() {
     return this.state.loadingEvents ? (
       <ImageActivityIndicator />
     ) : (
-      <Container>
-        <NestedScrollView
-          onScroll={nativeEvent => {
-            GState.scrollOuter = true;
-          }}
-          alwaysBounceHorizontal={true}
-          scrollEventThrottle={16}
-        >
-          <Content>{this._renderItem()}</Content>
-        </NestedScrollView>
-      </Container>
-    );
+        <Container>
+          <NestedScrollView
+            onScroll={nativeEvent => {
+              GState.scrollOuter = true;
+            }}
+            alwaysBounceHorizontal={true}
+            scrollEventThrottle={16}
+          >
+            <Content>{this._renderItem()}</Content>
+          </NestedScrollView>
+        </Container>
+      );
   }
 }

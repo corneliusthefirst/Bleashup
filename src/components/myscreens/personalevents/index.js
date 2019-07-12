@@ -15,10 +15,14 @@ import PastEventView from "./../pastevents/index";
 import Reminds from "./../myreminds/index";
 
 export default class PersonalEventView extends Component {
+  constructor(props) {
+    super(props);
+  }
   render() {
     return (
       <Container>
         <Tabs
+          locked
           tabBarPosition="overlayTop"
           tabBarUnderlineStyle={{
             borderBottomWidth: 0,
@@ -26,13 +30,13 @@ export default class PersonalEventView extends Component {
           }}
         >
           <Tab heading="Current Events">
-            <CurrentEventView />
+            <CurrentEventView {...this.props} />
           </Tab>
           <Tab heading="Past Events">
-            <PastEventView />
+            <PastEventView {...this.props} />
           </Tab>
           <Tab heading="My Reminds">
-            <Reminds />
+            <Reminds {...this.props} />
           </Tab>
         </Tabs>
       </Container>

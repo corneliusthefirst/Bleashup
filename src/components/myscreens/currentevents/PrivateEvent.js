@@ -4,7 +4,6 @@ import {
   Dimensions,
   View,
   TouchableOpacity,
-  TouchableHighlight,
   ActivityIndicator,
   activityIndicatorStyle
 } from "react-native";
@@ -24,6 +23,7 @@ import {
   Title,
   Badge
 } from "native-base";
+import autobind from "autobind-decorator";
 import ImageActivityIndicator from "./imageActivityIndicator";
 import { createOpenLink } from "react-native-open-maps";
 import UpdateStateIndicator from "./updateStateIndicator";
@@ -42,11 +42,49 @@ const CacheableImage = imageCacheHoc(Image, {
 });
 
 export default class PrivateEvent extends Component {
+  constructor(props) {
+    super(props);
+  }
   state = {
     fetching: true,
     creator: (creator = { name: "", status: "", profile: "" })
   };
-
+  @autobind navigateToEventDetails() {
+    this.props.navigation.navigate("Event", {
+      Event: this.props.Event,
+      tab: "EventDetails"
+    });
+  }
+  @autobind navigateToReminds() {
+    this.props.navigation.navigate("Event", {
+      Event: this.props.Event,
+      tab: "Reminds"
+    });
+  }
+  @autobind navigateToHighLights() {
+    this.props.navigation.navigate("Event", {
+      Event: this.props.Event,
+      tab: "Highlights"
+    });
+  }
+  @autobind navigateToEventChat() {
+    this.props.navigation.navigate("Event", {
+      Event: this.props.Event,
+      tab: "EventChat"
+    });
+  }
+  @autobind navigateToVotes() {
+    this.props.navigation.navigate("Event", {
+      Event: this.props.Event,
+      tab: "Votes"
+    });
+  }
+  @autobind navigateToContributions() {
+    this.props.navigation.navigate("Event", {
+      Event: this.props.Event,
+      tab: "Contributions"
+    });
+  }
   Query = { query: this.props.Event.location.string };
   OpenLink = createOpenLink(this.Query);
   OpenLinkZoom = createOpenLink({ ...this.Query, zoom: 50 });
@@ -63,9 +101,12 @@ export default class PrivateEvent extends Component {
       });
     });
   }
+  blinkerSize = 26;
   indicatorMargin = {
-    marginLeft: -23,
-    marginTop: -27
+    marginLeft: "5%",
+    marginTop: "-7%",
+    position: 'absolute',
+
   };
   transparent = "rgba(52, 52, 52, 0.0)";
   render() {
@@ -97,22 +138,22 @@ export default class PrivateEvent extends Component {
                 </View>
               </View>
             ) : (
-              <View style={{ flexDirection: "row", flex: 5 }}>
-                <View>
-                  <Icon
-                    name="thumbs-up"
-                    type="Entypo"
-                    style={{
-                      color: "#0A4E52",
-                      fontSize: 23
-                    }}
-                  />
+                <View style={{ flexDirection: "row", flex: 5 }}>
+                  <View>
+                    <Icon
+                      name="thumbs-up"
+                      type="Entypo"
+                      style={{
+                        color: "#0A4E52",
+                        fontSize: 23
+                      }}
+                    />
+                  </View>
+                  <View style={{ marginTop: 7 }}>
+                    <Text note>{this.props.Event.likes} Likers</Text>
+                  </View>
                 </View>
-                <View style={{ marginTop: 7 }}>
-                  <Text note>{this.props.Event.likes} Likers</Text>
-                </View>
-              </View>
-            )}
+              )}
           </Left>
           {this.props.Event.updated ? <UpdateStateIndicator /> : null}
           <Right>
@@ -133,22 +174,22 @@ export default class PrivateEvent extends Component {
             {this.state.fetching ? (
               <ImageActivityIndicator />
             ) : (
-              <View style={{ flexDirection: "row", flex: 5 }}>
-                <View>
-                  <Thumbnail
-                    source={{
-                      uri: this.state.creator.profile
-                    }}
-                  />
+                <View style={{ flexDirection: "row", flex: 5 }}>
+                  <View>
+                    <Thumbnail
+                      source={{
+                        uri: this.state.creator.profile
+                      }}
+                    />
+                  </View>
+                  <View style={{ marginTop: 9 }}>
+                    <Body>
+                      <Text> {this.state.creator.name} </Text>
+                      <Text note> {this.state.creator.status} </Text>
+                    </Body>
+                  </View>
                 </View>
-                <View style={{ marginTop: 9 }}>
-                  <Body>
-                    <Text> {this.state.creator.name} </Text>
-                    <Text note> {this.state.creator.status} </Text>
-                  </Body>
-                </View>
-              </View>
-            )}
+              )}
           </Left>
         </CardItem>
         <CardItem
@@ -157,36 +198,40 @@ export default class PrivateEvent extends Component {
             justifyContent: "space-between"
           }}
         >
-          <Text
-            adjustsFontSizeToFit={true}
-            style={{
-              fontSize: 20,
-              fontWeight: "bold",
-              textAlign: "center",
-              textAlignVertical: "center",
-              fontFamily: "Roboto"
-            }}
-          >
-            {this.props.Event.about.title}
-          </Text>
-          <Text
-            style={{
-              color: "#1FABAB"
-            }}
-            note
-          >
-            {this.props.Event.period.date.year +
-              "-" +
-              this.props.Event.period.date.month +
-              "-" +
-              this.props.Event.period.date.day +
-              "  at " +
-              this.props.Event.period.time.hour +
-              "-" +
-              this.props.Event.period.time.mins +
-              "-" +
-              this.props.Event.period.time.secs}
-          </Text>
+          <TouchableOpacity onPress={this.navigateToEventDetails}>
+            <View>
+              <Text
+                adjustsFontSizeToFit={true}
+                style={{
+                  fontSize: 20,
+                  fontWeight: "bold",
+                  textAlign: "center",
+                  textAlignVertical: "center",
+                  fontFamily: "Roboto"
+                }}
+              >
+                {this.props.Event.about.title}
+              </Text>
+              <Text
+                style={{
+                  color: "#1FABAB"
+                }}
+                note
+              >
+                {this.props.Event.period.date.year +
+                  "-" +
+                  this.props.Event.period.date.month +
+                  "-" +
+                  this.props.Event.period.date.day +
+                  "  at " +
+                  this.props.Event.period.time.hour +
+                  "-" +
+                  this.props.Event.period.time.mins +
+                  "-" +
+                  this.props.Event.period.time.secs}
+              </Text>
+            </View>
+          </TouchableOpacity>
         </CardItem>
         <CardItem
           style={{
@@ -215,7 +260,7 @@ export default class PrivateEvent extends Component {
                   borderRadius: 15
                 }}
                 resizeMode="contain"
-                onLoad={() => {}}
+                onLoad={() => { }}
               />
             </View>
           </Left>
@@ -226,7 +271,7 @@ export default class PrivateEvent extends Component {
                   {this.props.Event.location.string}
                 </Text>
               </TouchableOpacity>
-              <TouchableHighlight onPress={this.OpenLinkZoom}>
+              <TouchableOpacity onPress={this.OpenLinkZoom}>
                 <Image
                   source={require("../../../../Images/google-maps-alternatives-china-720x340.jpg")}
                   style={{
@@ -235,9 +280,9 @@ export default class PrivateEvent extends Component {
                     borderRadius: 15
                   }}
                   resizeMode="contain"
-                  onLoad={() => {}}
+                  onLoad={() => { }}
                 />
-              </TouchableHighlight>
+              </TouchableOpacity>
               <View
                 style={{
                   flexDirection: "row",
@@ -253,7 +298,6 @@ export default class PrivateEvent extends Component {
         </CardItem>
         <CardItem
           style={{
-            fex: 20,
             flexDirection: "row"
           }}
         >
@@ -262,114 +306,138 @@ export default class PrivateEvent extends Component {
               width: "19%"
             }}
           >
-            <SvgUri width={25} height={30} svgXmlData={SVGs.event} />
-            {this.props.Event.updated ? (
-              <View style={this.indicatorMargin}>
-                <UpdateStateIndicator size={this.blinkerSize} />
+            <TouchableOpacity onPress={this.navigateToEventDetails}>
+              <View style={this.svgStyle}>
+                <SvgUri style={{ borderRaduis: 20 }} width={22} height={30} svgXmlData={SVGs.event} />
+                {this.props.Event.updated ? (
+                  <View style={this.indicatorMargin}>
+                    <UpdateStateIndicator size={this.blinkerSize} />
+                  </View>
+                ) : (
+                    <View style={this.indicatorMargin}>
+                      <UpdateStateIndicator
+                        size={this.blinkerSize}
+                        color={this.transparent}
+                      />
+                    </View>
+                  )}
               </View>
-            ) : (
-              <View style={this.indicatorMargin}>
-                <UpdateStateIndicator
-                  size={this.blinkerSize}
-                  color={this.transparent}
-                />
-              </View>
-            )}
+            </TouchableOpacity>
           </View>
           <View
             style={{
               width: "19%"
             }}
           >
-            <SvgUri width={25} height={30} svgXmlData={SVGs.remind} />
-            {this.props.Event.remind_upated ? (
-              <View style={this.indicatorMargin}>
-                <UpdateStateIndicator size={this.blinkerSize} />
+            <TouchableOpacity onPress={this.navigateToReminds}>
+              <View style={this.svgStyle}>
+                <SvgUri width={22} height={30} svgXmlData={SVGs.remind} />
+                {this.props.Event.remind_upated ? (
+                  <View style={this.indicatorMargin}>
+                    <UpdateStateIndicator size={this.blinkerSize} />
+                  </View>
+                ) : (
+                    <View style={this.indicatorMargin}>
+                      <UpdateStateIndicator
+                        size={this.blinkerSize}
+                        color={this.transparent}
+                      />
+                    </View>
+                  )}
               </View>
-            ) : (
-              <View style={this.indicatorMargin}>
-                <UpdateStateIndicator
-                  size={this.blinkerSize}
-                  color={this.transparent}
-                />
-              </View>
-            )}
+            </TouchableOpacity>
           </View>
           <View
             style={{
               width: "19%"
             }}
           >
-            <SvgUri width={25} height={30} svgXmlData={SVGs.highlight} />
-            {this.props.Event.highlight_updated ? (
-              <View style={this.indicatorMargin}>
-                <UpdateStateIndicator size={this.blinkerSize} />
+            <TouchableOpacity onPress={this.navigateToHighLights}>
+              <View style={this.svgStyle}>
+                <SvgUri width={22} height={30} svgXmlData={SVGs.highlight} />
+                {this.props.Event.highlight_updated ? (
+                  <View style={this.indicatorMargin}>
+                    <UpdateStateIndicator size={this.blinkerSize} />
+                  </View>
+                ) : (
+                    <View style={this.indicatorMargin}>
+                      <UpdateStateIndicator
+                        size={this.blinkerSize}
+                        color={this.transparent}
+                      />
+                    </View>
+                  )}
               </View>
-            ) : (
-              <View style={this.indicatorMargin}>
-                <UpdateStateIndicator
-                  size={this.blinkerSize}
-                  color={this.transparent}
-                />
-              </View>
-            )}
+            </TouchableOpacity>
           </View>
           <View
             style={{
               width: "19%"
             }}
           >
-            <SvgUri width={25} height={30} svgXmlData={SVGs.chat} />
-            {this.props.Event.chat_updated ? (
-              <View style={this.indicatorMargin}>
-                <UpdateStateIndicator size={22} />
-              </View>
-            ) : (
-              <View style={this.indicatorMargin}>
-                <UpdateStateIndicator
-                  size={this.blinkerSize}
-                  color={this.transparent}
-                />
-              </View>
-            )}
+            <TouchableOpacity onPress={this.navigateToEventChat}>
+              <View style={this.svgStyle}>
+                <SvgUri width={25} height={30} svgXmlData={SVGs.chat} />
+                {this.props.Event.chat_updated ? (
+                  <View style={this.indicatorMargin}>
+                    <UpdateStateIndicator size={22} />
+                  </View>
+                ) : (
+                    <View style={this.indicatorMargin}>
+                      <UpdateStateIndicator
+                        size={this.blinkerSize}
+                        color={this.transparent}
+                      />
+                    </View>
+                  )}
+              </View >
+            </TouchableOpacity>
           </View>
           <View
             style={{
               width: "19%"
             }}
           >
-            <SvgUri width={25} height={30} svgXmlData={SVGs.vote} />
-            {this.props.Event.vote_updated ? (
-              <View style={this.indicatorMargin}>
-                <UpdateStateIndicator size={this.blinkerSize} />
+            <TouchableOpacity onPress={this.navigateToVotes}>
+              <View style={this.svgStyle}>
+                <SvgUri width={25} height={30} svgXmlData={SVGs.vote} />
+                {this.props.Event.vote_updated ? (
+                  <View style={this.indicatorMargin}>
+                    <UpdateStateIndicator size={this.blinkerSize} />
+                  </View>
+                ) : (
+                    <View style={this.indicatorMargin}>
+                      <UpdateStateIndicator
+                        size={this.blinkerSize}
+                        color={this.transparent}
+                      />
+                    </View>
+                  )}
               </View>
-            ) : (
-              <View style={this.indicatorMargin}>
-                <UpdateStateIndicator
-                  size={this.blinkerSize}
-                  color={this.transparent}
-                />
-              </View>
-            )}
+            </TouchableOpacity>
           </View>
           <View
             style={{
               width: "19%"
             }}
           >
-            <SvgUri width={25} height={30} svgXmlData={SVGs.contribution} />
-            {this.props.Event.contribution_updated ? (
-              <View style={this.indicatorMargin}>
-                <UpdateStateIndicator size={this.blinkerSize} />
+            <TouchableOpacity onPress={this.navigateToContributions}>
+              <View style={this.svgStyle}>
+                <SvgUri width={25} height={30} svgXmlData={SVGs.contribution} />
+                {this.props.Event.contribution_updated ? (
+                  <View style={this.indicatorMargin}>
+                    <UpdateStateIndicator size={this.blinkerSize} />
+                  </View>
+                ) : (
+                    <View style={this.indicatorMargin}>
+                      <UpdateStateIndicator
+                        size={this.blinkerSize}
+                        color={this.transparent}
+                      />
+                    </View>
+                  )}
               </View>
-            ) : (
-              <View style={this.indicatorMargin}>
-                <UpdateStateIndicator
-                  size={this.blinkerSize}
-                  color={this.transparent}
-                />
-              </View>
-            )}
+            </TouchableOpacity>
           </View>
         </CardItem>
       </Card>

@@ -19,14 +19,15 @@ import {
   Title,
   Icon
 } from "native-base";
-import SentInvitations from "../sent-invitations";
-import ReceivedInvitations from "../received-invitations";
+import SentInvitations from "../sent-invitations/index";
+import ReceivedInvitations from "../received-invitations/index";
 
 class InvitationView extends Component {
   render() {
     return (
       <Container>
         <Tabs
+          locked
           tabBarPosition="overlayTop"
           tabBarUnderlineStyle={{
             borderBottomWidth: 0,
@@ -34,10 +35,10 @@ class InvitationView extends Component {
           }}
         >
           <Tab heading="Sent Invites">
-            <SentInvitations />
+            <SentInvitations {...this.props} />
           </Tab>
           <Tab heading="Received Invites">
-            <ReceivedInvitations />
+            <ReceivedInvitations {...this.props} />
           </Tab>
         </Tabs>
       </Container>

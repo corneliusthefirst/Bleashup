@@ -5,7 +5,7 @@ import {
 import storage from './Storage';
 import {
     uniqBy,
-    dropWhile,
+    reject,
     find,
     sortBy,
     filter,
@@ -43,7 +43,7 @@ export default class Invitations {
     @action removeInvitation(InvitationID) {
         return new Promise((resolve, reject) => {
             this.readFromStore().then(Invitations => {
-                Invitations = dropWhile(Invitations, ["invitation_id", InvitationID])
+                Invitations = reject(Invitations, ["invitation_id", InvitationID])
                 this.saveKey.data = Invitations
                 storage.save(this.saveKey).then(() => {
                     this.setProperties(this.saveKey.data, false)

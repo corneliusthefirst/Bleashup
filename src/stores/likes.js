@@ -6,7 +6,7 @@ import {
   findIndex,
   indexOf,
   uniqBy,
-  dropWhile
+  reject
 } from "lodash";
 import storage from "./Storage";
 export default class likes {
@@ -65,7 +65,7 @@ export default class likes {
   @action UpdateEventLikes(EvenID, NewLikes) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Likes => {
-        Likes = dropWhile(Likes, ["event_id", EvenID]);
+        Likes = reject(Likes, ["event_id", EvenID]);
         Likes = Likes.concat(NewLikes);
         this.saveKey.data = Likes;
         storage.save(this.saveKey).then(() => {
