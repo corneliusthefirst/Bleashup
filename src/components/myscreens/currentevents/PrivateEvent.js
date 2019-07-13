@@ -308,7 +308,7 @@ export default class PrivateEvent extends Component {
           >
             <TouchableOpacity onPress={this.navigateToEventDetails}>
               <View style={this.svgStyle}>
-                <SvgUri style={{ borderRaduis: 20 }} width={22} height={30} svgXmlData={SVGs.event} />
+                <SvgUri style={{ borderRaduis: 20 }} width={25} height={30} svgXmlData={SVGs.event} />
                 {this.props.Event.updated ? (
                   <View style={this.indicatorMargin}>
                     <UpdateStateIndicator size={this.blinkerSize} />
@@ -331,31 +331,8 @@ export default class PrivateEvent extends Component {
           >
             <TouchableOpacity onPress={this.navigateToReminds}>
               <View style={this.svgStyle}>
-                <SvgUri width={22} height={30} svgXmlData={SVGs.remind} />
+                <SvgUri width={25} height={30} svgXmlData={SVGs.remind} />
                 {this.props.Event.remind_upated ? (
-                  <View style={this.indicatorMargin}>
-                    <UpdateStateIndicator size={this.blinkerSize} />
-                  </View>
-                ) : (
-                    <View style={this.indicatorMargin}>
-                      <UpdateStateIndicator
-                        size={this.blinkerSize}
-                        color={this.transparent}
-                      />
-                    </View>
-                  )}
-              </View>
-            </TouchableOpacity>
-          </View>
-          <View
-            style={{
-              width: "19%"
-            }}
-          >
-            <TouchableOpacity onPress={this.navigateToHighLights}>
-              <View style={this.svgStyle}>
-                <SvgUri width={22} height={30} svgXmlData={SVGs.highlight} />
-                {this.props.Event.highlight_updated ? (
                   <View style={this.indicatorMargin}>
                     <UpdateStateIndicator size={this.blinkerSize} />
                   </View>
@@ -393,6 +370,31 @@ export default class PrivateEvent extends Component {
               </View >
             </TouchableOpacity>
           </View>
+            <View
+              style={{
+                width: "19%"
+              }}
+            >
+             
+            <TouchableOpacity onPress={this.navigateToHighLights}>
+              <View style={this.svgStyle}>
+                <SvgUri width={22} height={30} svgXmlData={SVGs.highlight} />
+                {this.props.Event.highlight_updated ? (
+                  <View style={this.indicatorMargin}>
+                    <UpdateStateIndicator size={this.blinkerSize} />
+                  </View>
+                ) : (
+                    <View style={this.indicatorMargin}>
+                      <UpdateStateIndicator
+                        size={this.blinkerSize}
+                        color={this.transparent}
+                      />
+                    </View>
+                  )}
+              </View>
+            </TouchableOpacity>
+          </View>
+
           <View
             style={{
               width: "19%"
