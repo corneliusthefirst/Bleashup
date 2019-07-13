@@ -148,6 +148,7 @@ dependencies {
     implementation project(':react-native-nested-scroll-view')
     implementation project(':react-native-exit-app')
     compile project(':react-native-fetch-blob')
+    implementation project(':react-native-svg')
 }
 
 // Run this once to be able to run the application with BUCK

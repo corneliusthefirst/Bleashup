@@ -1,17 +1,19 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet,Image,TextInput,FlatList, ActivityIndicator, View,Alert,TouchableHighlight} from 'react-native';
+import {Platform, StyleSheet,Image,TextInput,FlatList,TouchableOpacity, ActivityIndicator, View,Alert,TouchableHighlight} from 'react-native';
 
 import autobind from "autobind-decorator";
 import {
   Content,Card,CardItem,Text,Body,Container,Icon,Header,Form,Thumbnail,Item,Title,Input,Left,Right,H3,H1,H2,Spinner,Button,InputGroup,DatePicker,CheckBox,List,Accordion,DeckSwiper
 } from "native-base";
 
-import cardListData from './EventData';
 import Swipeout from 'react-native-swipeout';
 import Modal from  'react-native-modalbox';
 import imageCacheHoc from 'react-native-image-cache-hoc';
 import styles from './style';
-
+import Exstyles from './style';
+import svg from '../../../../svg/svg';
+import SvgUri from 'react-native-svg-uri';
+import { createOpenLink } from "react-native-open-maps";
 
 
 const defaultPlaceholderObject = {
@@ -34,16 +36,7 @@ const CacheableImage = imageCacheHoc(Thumbnail, {
   defaultPlaceholder: defaultPlaceholderObject
 });
 
-/*  {
-    text: 'Card One',
-    name: 'One',
-    image: "https://upload.wikimedia.org/wikipedia/commons/b/bf/Cornish_cream_tea_2.jpg",
-  },
-  {
-    text: 'Card Two',
-    name: 'Two',
-    image: "https://upload.wikimedia.org/wikipedia/commons/b/bf/Cornish_cream_tea_2.jpg",
-  }*/
+
 
 
 
@@ -52,15 +45,26 @@ class CardListItem extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            //this shall be used on choosing a key to delete
+           //this shall be used on choosing a key to delete
            activeRowKey: null,
            isOpen:false,
            isOpenStatus:false,
            enlargeEventImage:false,
            descriptionEnd:false,
            highlightEnd:false
+           
        };
     }
+
+
+
+//Maps schedule
+  Query = { query: this.props.item.location };
+  OpenLink = createOpenLink(this.Query);
+  OpenLinkZoom = createOpenLink({ ...this.Query, zoom: 50 });
+
+
+
  
     _renderHeader(item, expanded) {
       return (
@@ -114,7 +118,7 @@ Desc(item){
     return(
       
 
-               <Card style={{ elevation: 3 }}>
+               <Card style={{ elevation: 3,marginTop:95 }}>
                 <CardItem style={{height:40,marginBottom:-10}} >
                  
                       <Text style={{fontSize:19}}>{item.title}</Text> 
@@ -157,7 +161,7 @@ Desc(item){
 
   }else {
          return(
-           <Card style={{ elevation: 3 }}>
+           <Card style={{ elevation: 3,marginTop:95 }}>
                 <CardItem style={{height:40}}>
                  
                       <Text note>{item.event_title}</Text>               
@@ -166,7 +170,7 @@ Desc(item){
                 <CardItem cardBody>
                   <Icon name="caretleft" type="AntDesign" style={{}} onPress={() => this._deckSwiper._root.swipeLeft()} />
                  
-                     <Text style={{ height: 260, flex: 1 }} >
+                     <Text style={{ height: 230, flex: 1 }} >
                       {<Text style={{marginBottom:7}} note>Description:                                                     </Text>}
                       {item.event_description}...
                       {<Text style={{color:"blue"}} onPress={()=>this.setState({ descriptionEnd:true })}> view all</Text>}
@@ -222,8 +226,8 @@ Desc(item){
          //creating the event description starting and ending data
          const descriptionData = item.event_description
          max_length1 = item.event_description.length
-         descriptionStartData = descriptionData.slice(0,400)
-         descriptionEndData = descriptionData.slice(400,max_length1)
+         descriptionStartData = descriptionData.slice(0,300)
+         descriptionEndData = descriptionData.slice(300,max_length1)
                  
 
          Description = {event_title:item.event_title,event_description:descriptionStartData}
@@ -267,7 +271,9 @@ Desc(item){
                                {text:'Yes', onPress: () => {
                                  cardListData.splice(this.props.index, 1);
                                  //make request to delete to database(back-end)
+                                    /**
 
+                                    */
                                  //Refresh FlatList
                                  this.props.parentCardList.refreshCardList(deletingRow);
                                }},
@@ -291,7 +297,7 @@ Desc(item){
             <Swipeout {...swipeSettings}>
 
             
-          <Card style={{height:this.state.isOpen||this.state.isOpenStatus||this.state.enlargeEventImage?400:150}}>
+          <Card style={{height:this.state.isOpen||this.state.isOpenStatus||this.state.enlargeEventImage?530:150}}>
             <CardItem>
               <Left>
               <TouchableHighlight onPress={()=>this.setState({ isOpenStatus: true })} >
@@ -356,17 +362,20 @@ Desc(item){
            <Modal
            isOpen={this.state.isOpen}
            onClosed={() => this.setState({ isOpen: false })}
-           style={{ justifyContent: 'center',alignItems: 'center',height: 700,borderRadius:15,backgroundColor:'#FEFFDE',width:350}}
+           style={{ justifyContent: 'center',alignItems: 'center',height: 510,borderRadius:10,backgroundColor:'#FEFFDE',width:350}}
            //backdrop={false}
            position={'center'}
            >
 
-          <View  style={{width:330,height:300,marginTop:-310}}>
+       
+
+
+          <View  style={{width:330,height:280,marginTop:-245}}>
           <DeckSwiper
             ref={(c) => this._deckSwiper = c}
             dataSource={cards}
             renderEmpty={() =>
-              <View style={{ alignSelf: "center" }}>
+              <View style={{ alignSelf: "center"}}>
                 <Text>Over</Text>
               </View>
             }
@@ -377,15 +386,61 @@ Desc(item){
 
       </View>
 
-       
+
+      
+ 
+          <View style={{height:"20%"}}>
+         
+
+            <View style={{marginLeft:160,marginTop:"30%"}}>
+              <TouchableOpacity>
+                <Text ellipsizeMode="clip" numberOfLines={3} style={{fontSize:14,color:"#1FABAB"}}>
+                  {this.props.item.location}
+                </Text>
+              </TouchableOpacity>
+              <TouchableHighlight onPress={this.OpenLinkZoom}>
+                <Image
+                  source={require("../../../../Images/google-maps-alternatives-china-720x340.jpg")}
+                  style={{
+                    height: 100,
+                    width: "70%",
+                    borderRadius: 15,
+                    marginTop:-10
+                  }}
+                  resizeMode="contain"
+                  onLoad={() => {}}
+                />
+              </TouchableHighlight>
+
+                <TouchableOpacity onPress={this.OpenLink} style={{marginTop:-20}}>
+                  <Text note> View On Map </Text>
+                </TouchableOpacity>
            
-       
-       
+             </View> 
+              
+             <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  marginTop:35
+                }}
+              >
+
+              <Text  style={{marginLeft:7}}note>
+                  {this.props.item.created_date}
+                </Text>
+
+               <Text  style={{marginLeft:"-30%",fontStyle:"italic"}} note>
+                  Organised by {this.props.item.event_organiser_name}
+                </Text>
+              </View>
 
 
-   </Modal>
+        </View>
 
 
+
+ </Modal>
 
 
 
@@ -436,9 +491,24 @@ Desc(item){
 
 
 
+
 export default  CardListItem 
 
+
+
+
+
+
+
+
+
+
+
+
+
 /*
+import RemindListItem from "./RemindsCard";
+
 <Content>
 <Card>
 
@@ -467,4 +537,47 @@ export default  CardListItem
 
  /* <Thumbnail source={{uri: this.props.item.sender_Image}} 
      />
+
+
+
+
+          {this.props.item.reminds.length == 0 ? <Text style={{marginTop:120,marginLeft:15,width:"50%",height:70,flexDirection: "column"}}></Text> : 
+         <TouchableHighlight>
+          <Button style={{marginTop:120,marginLeft:15,width:"37%",height:70,flexDirection: "column"}}
+            onPress={() => this.setState({ remindsModal: true })}> 
+              <Text> Scheduled</Text>
+              <Text> Reminds</Text>
+          </Button>  
+          </TouchableHighlight> 
+        }
+          
+         <Modal
+           isOpen={this.state.remindsModal}
+           onClosed={() => this.setState({ remindsModal: false })}
+           style={{ justifyContent: 'center',alignItems: 'center',height:280,borderRadius:15,backgroundColor:'#FEFFDE',width:260}}
+           position={'center'}
+           >
+
+            <FlatList 
+    
+             ref={"remindlist"}
+             listKey={'Reminds'}
+             data={this.props.item.reminds}
+             renderItem={( {item,index} )=> {
+           
+              return(
+              
+               <RemindListItem  item={item} index={index} >
+               </RemindListItem>
+
+                 );
+
+
+             }}
+             >
+                
+             </FlatList>
+     
+
+          </Modal>
         */

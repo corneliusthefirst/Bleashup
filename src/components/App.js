@@ -33,6 +33,15 @@ import connection from "../services/tcpConnect";
 import { Provider } from "mobx-react";
 import UpdatesDispatcher from "../services/updatesDispatcher";
 
+
+/*
+
+let {height, width} = Dimensions.get('window');
+EStyleSheet.build({
+  $rem: width > 340 ? 18 : 16
+});*/
+
+
 const AppNavigator = createStackNavigator(
   {
     Home: { screen: Home },

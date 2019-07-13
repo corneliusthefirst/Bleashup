@@ -16,6 +16,7 @@ import com.github.wumke.RNExitApp.RNExitAppPackage;
 import java.util.Arrays;
 import java.util.List;
 import com.RNFetchBlob.RNFetchBlobPackage;
+import com.horcrux.svg.SvgPackage;
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -35,7 +36,8 @@ public class MainApplication extends Application implements ReactApplication {
             new TcpSocketsModule(),
             new RNGestureHandlerPackage(),
             new RNNestedScrollViewPackage(),
-            new RNFetchBlobPackage() 
+            new RNFetchBlobPackage(),
+            new SvgPackage() 
       );
     }
 
