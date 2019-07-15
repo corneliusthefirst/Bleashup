@@ -40,7 +40,7 @@ class Home extends Component {
   }
   handleBackButton() {
     ToastAndroid.show("Back button is pressed", ToastAndroid.SHORT);
-    RNExitApp.exitApp();
+    // RNExitApp.exitApp();
     return true;
   }
   isCloseToBottom(nativeEvent) {

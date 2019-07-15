@@ -10,38 +10,47 @@ import {
   createStackNavigator,
   createAppContainer
 } from "react-navigation";
-import getTheme from ".././native-base-theme/components";
-import Materials from ".././native-base-theme/variables/material";
-import CommonColor from ".././native-base-theme/variables/commonColor";
-import Home from "./myscreens/home/homePage";
-import SettingView from "./myscreens/settings/index";
-import PastEventView from "./myscreens/pastevents/index";
-import CurrentEventView from "./myscreens/currentevents/index";
-import InvitationView from "./myscreens/invitations/index";
-import PersonalEventView from "./myscreens/personalevents/index";
-import PotesChat from "./myscreens/poteschat/index";
-import Status from "./myscreens/status/index";
-import LoginView from "./myscreens/login/index";
-import ForgotPasswordView from "./myscreens/forgotpassword/index";
-import ResetCodeView from "./myscreens/forgotpassword/resetCode";
-import ResetPasswordView from "./myscreens/forgotpassword/resetPassword";
-import SignUpView from "./myscreens/signUp/index";
-import EmailVerificationView from "./myscreens/signUp/EmailVerification";
-import SignInView from "./myscreens/signIn/index";
-import LoginHomeView from "./myscreens/loginhome/index";
-import stores from "../stores";
+import getTheme from "./native-base-theme/components";
+import Materials from "./native-base-theme/variables/material";
+import CommonColor from "./native-base-theme/variables/commonColor";
+import Home from "./components/myscreens/home/homePage";
+import SettingView from "./components/myscreens/settings/index";
+import PastEventView from "./components/myscreens/pastevents/index";
+import CurrentEventView from "./components/myscreens/currentevents/index";
+import InvitationView from "./components/myscreens/invitations/index";
+import PersonalEventView from "./components/myscreens/personalevents/index";
+import PotesChat from "./components/myscreens/poteschat/index";
+import Status from "./components/myscreens/status/index";
+import LoginView from "./components/myscreens/login/index";
+import ForgotPasswordView from "./components/myscreens/forgotpassword/index";
+import ResetCodeView from "./components/myscreens/forgotpassword/resetCode";
+import ResetPasswordView from "./components/myscreens/forgotpassword/resetPassword";
+import SignUpView from "./components/myscreens/signUp/index";
+import EmailVerificationView from "./components/myscreens/signUp/EmailVerification";
+import SignInView from "./components/myscreens/signIn/index";
+import LoginHomeView from "./components/myscreens/loginhome/index";
+import stores from "./stores";
 import routerActions from "reazy-native-router-actions";
 import reazy from "reazy";
 
 import { Provider } from "mobx-react";
-import Event from "./myscreens/event";
-import Contributions from "./myscreens/contributions";
-import Votes from "./myscreens/votes";
-import Highlights from "./myscreens/highlights";
-import ChangeLogs from "./myscreens/changelogs";
-import EventDetail from "./myscreens/eventDetails";
-import EventChat from "./myscreens/eventDetails";
-import Reminds from "./myscreens/reminds";
+import Event from "./components/myscreens/event";
+import Contributions from "./components/myscreens/contributions";
+import Votes from "./components/myscreens/votes";
+import Highlights from "./components/myscreens/highlights";
+import ChangeLogs from "./components/myscreens/changelogs";
+import EventDetail from "./components/myscreens/eventDetails";
+import EventChat from "./components/myscreens/eventDetails";
+import Reminds from "./components/myscreens/reminds";
+
+
+/*
+
+let {height, width} = Dimensions.get('window');
+EStyleSheet.build({
+  $rem: width > 340 ? 18 : 16
+});*/
+
 
 const AppNavigator = createStackNavigator(
   {
@@ -71,7 +80,7 @@ const AppNavigator = createStackNavigator(
     Reminds: { screen: Reminds }
   },
   {
-    initialRouteName: "Home",
+    initialRouteName: "Invitation",
     headerMode: "none"
   }
 );

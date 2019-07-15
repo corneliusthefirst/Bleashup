@@ -38,8 +38,8 @@ public class MainApplication extends Application implements ReactApplication {
             new TcpSocketsModule(),
             new RNGestureHandlerPackage(),
             new RNNestedScrollViewPackage(),
-            new RNFetchBlobPackage() 
-      );
+            new RNFetchBlobPackage()
+                  );
     }
 
     @Override
