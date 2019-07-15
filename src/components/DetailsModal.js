@@ -1,8 +1,11 @@
 import React, { Component } from 'react'
 import Modal from 'react-native-modalbox';
 import { View, Text, TouchableOpacity, DeviceEventEmitter, Image } from 'react-native'
-import { Button, Icon, DeckSwiper, Card, CardItem } from 'native-base'
+import { Button, Icon, DeckSwiper, Card, CardItem, Right } from 'native-base'
 import CacheImages from './CacheImages'
+import autobind from 'autobind-decorator';
+import { TouchableHighlight } from 'react-native-gesture-handler';
+import ImageActivityIndicator from './myscreens/currentevents/imageActivityIndicator';
 
 export default class DetailsModal extends Component {
     constructor(props) {
@@ -13,24 +16,30 @@ export default class DetailsModal extends Component {
         isOpen: false,
         created_date: undefined,
         event_organiser_name: undefined,
-        location: undefined
+        location: undefined,
+        isJoining: false,
+        isToBeJoint: false
     }
+    transparent = "rgba(52, 52, 52, 0.0)";
     details = []
     created_date = "";
     event_organiser_name = ""
     location = ""
+    isToBeJoint = false
     componentDidMount() {
         this.setState({
             details: this.props.details ? this.props.details : this.details,
             isOpen: this.props.isOpen,
             created_date: this.props.created_date ? this.props.created_date : this.created_date,
             event_organiser_name: this.props.event_organiser_name ? this.props.event_organiser_name : this.event_organiser_name,
-            location: this.props.location ? this.props.location : this.location
+            location: this.props.location ? this.props.location : this.location,
+            isToBeJoint: this.props.isToBeJoint ? this.props.isToBeJoint : false
         })
         this.details = this.props.details ? this.props.details : this.details
         this.created_date = this.props.created_date ? this.props.created_date : this.created_date;
         this.event_organiser_name = this.props.event_organiser_name ? this.props.event_organiser_name : this.event_organiser_name;
         this.location = this.props.location ? this.props.location : this.location;
+        this.isToBeJoint = this.props.isToBeJoint ? this.props.isToBeJoint : false
     }
     componentWillReceiveProps(nextProps) {
         this.setState({
@@ -38,7 +47,8 @@ export default class DetailsModal extends Component {
             isOpen: nextProps.isOpen,
             created_date: this.props.created_date ? this.props.created_date : this.created_date,
             event_organiser_name: this.props.event_organiser_name ? this.props.event_organiser_name : this.event_organiser_name,
-            location: this.props.location ? this.props.location : this.location
+            location: this.props.location ? this.props.location : this.location,
+            isToBeJoint: this.props.isToBeJoint ? this.props.isToBeJoint : this.isToBeJoint
         })
     }
 
@@ -47,23 +57,22 @@ export default class DetailsModal extends Component {
             //creating the highlights starting and ending data
             const highlightData = item.description
             max_length = highlightData.length
-            highlightStartData = highlightData.slice(0, 62)
-            highlightEndData = highlightData.slice(62, max_length)
+            highlightStartData = highlightData.slice(0, 250)
+            highlightEndData = highlightData.slice(250, max_length)
 
             return (
-                <Card style={{ elevation: 3, marginTop: 95 }}>
-                    <CardItem style={{ height: 40, marginBottom: -10 }} >
-
-                        <Text style={{ fontSize: 19 }}>{item.title}</Text>
+                <Card style={{ elevation: 3, marginTop: 50 }} >
+                    <CardItem >
+                        <Text note>highlight</Text>
                     </CardItem>
-                    <CardItem style={{ height: 16, marginLeft: 25, marginTop: 5 }}>
-                        <Text note>highlight:</Text>
+                    <CardItem  >
+                        <Text style={{ fontSize: 19, height: 40, color: "#1FABAB" }}>{item.title}</Text>
                     </CardItem>
                     <CardItem cardBody>
                         <Icon name="caretleft" type="AntDesign" style={{ color: "#1FABAB" }}
                             onPress={() => this._deckSwiper._root.swipeLeft()} />
 
-                        <Image style={{ height: 150, marginTop: 5, flex: 1 }} source={{ uri: item.image }} />
+                        <Image style={{ height: 150, flex: 1 }} source={{ uri: item.image }} />
 
                         <Icon name="caretright" type="AntDesign" style={{ color: "#1FABAB" }} onPress={() => this._deckSwiper._root.swipeRight()} />
 
@@ -71,9 +80,7 @@ export default class DetailsModal extends Component {
 
                     <CardItem style={{}}>
 
-                        <Text style={{ padding: 10 }} >
-                            {<Text style={{ marginBottom: 7 }} note>Description:
-                                 </Text>}
+                        <Text style={{ height: 140 }} >
                             {highlightStartData}...
                       {<Text style={{ color: "blue" }} onPress={() => this.setState({ highlightEnd: true })}> view all</Text>}
                         </Text>
@@ -82,7 +89,10 @@ export default class DetailsModal extends Component {
                     <Modal
                         isOpen={this.state.highlightEnd}
                         onClosed={() => this.setState({ highlightEnd: false })}
-                        style={{ padding: 20, alignItems: 'center', height: 220, flex: 1, borderRadius: 15, backgroundColor: '#FEFFDE', width: 330 }}
+                        style={{
+                            padding: 20, alignItems: 'center', height: 220, flex: 1, borderRadius: 15,
+                            backgroundColor: '#FEFFDE', width: 330
+                        }}
                         position={'center'}
                     >
 
@@ -95,22 +105,21 @@ export default class DetailsModal extends Component {
         } else {
             const descriptionData = item.event_description
             max_length1 = item.event_description.length
-            descriptionStartData = descriptionData.slice(0, 300)
-            descriptionEndData = descriptionData.slice(300, max_length1)
+            descriptionStartData = descriptionData.slice(0, 250)
+            descriptionEndData = descriptionData.slice(250, max_length1)
             return (
-                <Card style={{ elevation: 3, marginTop: 95 }}>
+                <Card style={{ elevation: 3, marginTop: 50 }}>
+                    <CardItem>
+                        <Text note>description</Text>
+                    </CardItem>
                     <CardItem style={{ height: 40 }}>
-
-                        <Text note>{item.event_title}</Text>
-
+                        <Text style={{ color: "#1FABAB", fontSize: 19 }}>{item.event_title}</Text>
                     </CardItem>
                     <CardItem cardBody>
                         <Icon name="caretleft" type="AntDesign" style={{ color: "#1FABAB" }}
                             onPress={() => this._deckSwiper._root.swipeLeft()} />
 
-                        <Text style={{ height: 230, flex: 1 }} >
-                            {<Text style={{ marginBottom: 7 }} note>Description:
-                           </Text>}
+                        <Text style={{ height: 300, flex: 1 }} >
                             {item.event_description}...
                       {<Text style={{ color: "blue" }} onPress={() => this.setState({ descriptionEnd: true })}> view all</Text>}
                         </Text>
@@ -135,24 +144,66 @@ export default class DetailsModal extends Component {
         }
 
     }
-
+    @autobind close() {
+        DeviceEventEmitter.emit('DetailsModalClosed', true);
+    }
+    @autobind join() {
+        this.setState({ isJoining: true })
+        DeviceEventEmitter.emit("joining", true)
+    }
     render() {
         return this.state.details ? (
             <Modal
                 isOpen={this.state.isOpen}
                 onClosed={() => {
-                    this.setState({ isOpen: false })
                     DeviceEventEmitter.emit('DetailsModalClosed', true);
                 }
                 }
                 style={{
-                    justifyContent: 'center', alignItems: 'center', height: 510,
-                    borderRadius: 10, backgroundColor: '#FEFFDE', width: 350
+                    justifyContent: 'center', alignItems: 'center', height: 630, display: 'flex', flexDirection: 'column',
+                    borderRadius: 10, backgroundColor: '#FEFFDE', width: 420
                 }}
                 //backdrop={false}
                 position={'center'}
             >
-                <View style={{ width: 330, height: 280, marginTop: -245 }}>
+                <View style={{ height: "5%", marginTop: "10%" }}>
+                    <View style={{ flexDirection: 'row' }}>
+                        <View style={{ marginLeft: "40%" }}>
+                            <Button
+                                onPress={this.close} transparent>
+                                <Icon style={{ color: "#1FABAB", fontSize: 35 }} name="cross" type="Entypo" />
+                            </Button>
+                        </View>
+                        <View style={{ marginLeft: "25%" }}>
+                            {this.state.isToBeJoint ?
+                                <Right>{this.state.isJoining ? <ImageActivityIndicator /> : <Button
+                                    onPress={this.join}
+                                    transparent><Text style={{
+                                        fontWeight: "bold",
+                                        fontSize: 20, color: "#54F5CA"
+                                    }}>JOIN</Text></Button>}</Right> :
+                                <Button transparent><Text style={{
+                                    fontWeight: "bold", fontSize: 20,
+                                    color: this.transparent
+                                }}>JOIN</Text></Button>}
+                        </View>
+                    </View>
+                    <View
+                        style={{
+                            flexDirection: "row",
+                            justifyContent: "space-between",
+                        }}
+                    >
+                        <Text style={{ marginLeft: 7 }} note>
+                            {this.state.created_date}
+                        </Text>
+                        <Text style={{ marginLeft: "-30%", fontStyle: "italic" }} note>
+                            Organised by {this.state.event_organiser_name}
+                        </Text>
+                    </View>
+                </View>
+
+                <View style={{ width: 400, height: "80%" }}>
                     <DeckSwiper
                         ref={(c) => this._deckSwiper = c}
                         dataSource={this.state.details}
@@ -165,17 +216,7 @@ export default class DetailsModal extends Component {
                     />
                 </View>
                 <View style={{ height: "20%" }}>
-                    <View>
-                        <Button style={{ marginLeft: "35%", marginTop: "-80%" }}
-                            onPress={() => {
-                                this.setState({ isOpen: false })
-                                DeviceEventEmitter.emit('DetailsModalClosed', true);
-                            }
-                            } transparent>
-                            <Icon style={{ color: "#1FABAB", fontSize: 35 }} name="cross" type="Entypo" />
-                        </Button>
-                    </View>
-                    <View style={{ marginLeft: 160, marginTop: "30%" }}>
+                    <View style={{ marginLeft: 160, }}>
                         <TouchableOpacity>
                             <Text ellipsizeMode="clip" numberOfLines={3} style={{ fontSize: 14, color: "#1FABAB" }}>
                                 {this.state.location}
@@ -189,31 +230,19 @@ export default class DetailsModal extends Component {
                                     width: "70%",
                                     borderRadius: 15,
                                     marginTop: -10
+
                                 }}
                                 resizeMode="contain"
                                 onLoad={() => { }}
                             />
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={this.OpenLink} style={{ marginTop: -20 }}>
+                        <TouchableOpacity onPress={this.OpenLink} style={{}}>
                             <Text note> View On Map </Text>
                         </TouchableOpacity>
                     </View>
-                    <View
-                        style={{
-                            flexDirection: "row",
-                            justifyContent: "space-between",
-                            marginTop: 35
-                        }}
-                    >
-                        <Text style={{ marginLeft: 7 }} note>
-                            {this.state.created_date}
-                        </Text>
-                        <Text style={{ marginLeft: "-30%", fontStyle: "italic" }} note>
-                            Organised by {this.state.event_organiser_name}
-                        </Text>
-                    </View>
                 </View>
-            </Modal>) : null
+            </Modal>
+        ) : null
     }
 }
 

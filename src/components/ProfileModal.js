@@ -48,7 +48,10 @@ export default class ProfileModal extends Component {
                     DeviceEventEmitter.emit('StatusModalClosed', true)
                 }
                 }
-                style={{ backgroundColor: this.transparent, justifyContent: 'center', alignItems: 'center', height: 380, borderRadius: 15, backgroundColor: '#FEFFDE', width: 330 }}
+                style={{
+                    backgroundColor: this.transparent, justifyContent: 'center', alignItems: 'center',
+                    height: 380, borderRadius: 15, backgroundColor: '#FEFFDE', width: 330
+                }}
                 position={'center'}
             >
                 <View>
@@ -70,9 +73,6 @@ export default class ProfileModal extends Component {
                 } >
                     <CacheImages thumbnails source={{ uri: this.state.profile.image }} square style={{ marginTop: 20, width: 300, height: 200 }} />
                 </TouchableOpacity>
-
-                <Text style={{ fontSize: 18, fontWeight: '500', marginLeft: -245, marginTop: 10 }}>Status:</Text>
-
                 {this.state.profile.status.length > 35 ? <Text style={{ fontSize: 17, fontWeight: '600', marginLeft: 14, marginTop: 10 }} note>
                     {this.state.profile.status}</Text> :
                     <Text style={{ fontSize: 17, fontWeight: '600', marginLeft: -104, marginTop: 10 }} note>{this.state.profile.status}</Text>}

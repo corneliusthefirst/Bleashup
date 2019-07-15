@@ -210,7 +210,7 @@ class CardListItem extends Component {
 
         return(
             <Swipeout {...swipeSettings}>
-          <Card style={{height:this.state.isOpen||this.state.isOpenStatus||this.state.enlargeEventImage?530:180}}>
+          <Card style={{ height:this.state.isOpen||this.state.isOpenStatus||this.state.enlargeEventImage?610:180}}>
             <CardItem>
               <Left>
               <TouchableOpacity onPress={()=>this.setState({ isOpenStatus: true })} >
