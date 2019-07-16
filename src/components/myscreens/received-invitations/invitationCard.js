@@ -14,6 +14,7 @@ import Exstyles from './style';
 import svg from '../../../../svg/svg';
 import SvgUri from 'react-native-svg-uri';
 import { createOpenLink } from "react-native-open-maps";
+import globalState from "../../../stores/globalState";
 
 
 const defaultPlaceholderObject = {
@@ -51,7 +52,11 @@ class CardListItem extends Component {
            isOpenStatus:false,
            enlargeEventImage:false,
            descriptionEnd:false,
-           highlightEnd:false
+           highlightEnd:false,
+           accept:false,
+           deny:false,
+           message:"",
+           textcolor:""
            
        };
     }
@@ -201,9 +206,34 @@ Desc(item){
 }
 
 
+@autobind
+onAccept(){
+  this.state.accept = true
+  globalState.loading = true
+  
+   //what to do on waiting
+   //globalState.loading = false
+  
 
+  this.state.message =  "accepted"
+  this.state.textcolor = "limegreen"  
+  this.props.refresh  
+}
 
+@autobind
+onDenied(){
 
+  this.state.deny = true
+  globalState.loading = true
+  
+  //what to do on waiting
+  //globalState.loading = false
+  
+  this.state.message =  "Denied"
+  this.state.textcolor = "goldenrod"
+  this.props.refresh   
+  
+}
 
 
 
@@ -238,7 +268,7 @@ Desc(item){
            cards.push(item.highlight[i])
         }
 
-       //console.warn(cards)
+        
 
 
  
@@ -297,7 +327,7 @@ Desc(item){
             <Swipeout {...swipeSettings}>
 
             
-          <Card style={{height:this.state.isOpen||this.state.isOpenStatus||this.state.enlargeEventImage?530:150}}>
+          <Card style={{height:this.state.isOpen||this.state.isOpenStatus||this.state.enlargeEventImage?530:220}}>
             <CardItem>
               <Left>
               <TouchableHighlight onPress={()=>this.setState({ isOpenStatus: true })} >
@@ -332,6 +362,7 @@ Desc(item){
             <CacheableImage  source={{uri: this.props.item.receiver_Image}} />
             
             <TouchableHighlight onPress={()=>this.setState({ enlargeEventImage: true })} >
+
             <CacheableImage  source={{uri: this.props.item.event_Image}} style={{marginLeft:-30 }}/>
             </TouchableHighlight>
 
@@ -345,9 +376,32 @@ Desc(item){
           
               
            </Body>
-
               
             </CardItem>
+
+            <CardItem>
+                 {this.state.accept||this.state.deny ?   
+                  <View style={{opacity:this.state.accept||this.state.deny ? 10 : 0 }}>
+                   <Text style={{marginLeft:this.state.accept ? 267:286,fontSize:18,color:this.state.textcolor}} note>{this.state.message}</Text>
+                 </View> : 
+                 <View style={{flexDirection:'row',marginTop:10,opacity:this.state.accept||this.state.deny ? 0 :20 }}>
+                   <Button style={{marginLeft:50,marginRight:80}} onPress={this.onAccept} success>
+                   {globalState.loading == true ? 
+                 <Spinner color="#1FABAB" style={{}} />
+                   : 
+                   <Text>Accept</Text> }
+                  </Button>
+                  
+                   <Button style={{}} onPress={this.onDenied} danger>
+                    {globalState.loading ? 
+                  <Spinner color="#1FABAB" style={{}} />
+                    : 
+                   <Text>Denied</Text> }
+                   </Button> 
+
+                 </View>}
+               
+           </CardItem>
        
             <CardItem style={{marginTop:10}}>
               <Right>

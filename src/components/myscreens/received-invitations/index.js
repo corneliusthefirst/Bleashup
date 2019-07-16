@@ -91,7 +91,7 @@ class ReceivedInvitations extends Component {
            
               return(
                      //this is my private class just created
-                     <CardListItem item={item} index={index} parentCardList = {this}>
+                     <CardListItem item={item} index={index} parentCardList = {this} refresh={this.refreshCardList}>
                      </CardListItem>
                  );
 
