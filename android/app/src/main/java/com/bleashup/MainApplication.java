@@ -1,7 +1,7 @@
 package com.bleashup;
 
 import android.app.Application;
-
+import com.horcrux.svg.SvgPackage;
 import com.facebook.react.ReactApplication;
 import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import com.oblador.vectoricons.VectorIconsPackage;
@@ -9,14 +9,14 @@ import com.peel.react.TcpSocketsModule;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
+import com.RNFetchBlob.RNFetchBlobPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
+import com.swmansion.reanimated.ReanimatedPackage;
 import com.rnnestedscrollview.RNNestedScrollViewPackage;
 import com.github.wumke.RNExitApp.RNExitAppPackage;
 import java.util.Arrays;
 import java.util.List;
-import com.RNFetchBlob.RNFetchBlobPackage;
-import com.horcrux.svg.SvgPackage;
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -30,15 +30,16 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+          new SvgPackage(),
             new AsyncStoragePackage(),
             new VectorIconsPackage(),
             new RNExitAppPackage(),
+            new ReanimatedPackage(),
             new TcpSocketsModule(),
             new RNGestureHandlerPackage(),
             new RNNestedScrollViewPackage(),
-            new RNFetchBlobPackage(),
-            new SvgPackage() 
-      );
+            new RNFetchBlobPackage()
+                  );
     }
 
     @Override

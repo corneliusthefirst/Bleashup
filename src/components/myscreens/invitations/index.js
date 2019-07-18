@@ -27,6 +27,7 @@ class InvitationView extends Component {
     return (
       <Container>
         <Tabs
+          locked
           tabBarPosition="overlayTop"
           tabBarUnderlineStyle={{
             borderBottomWidth: 0,
@@ -34,10 +35,10 @@ class InvitationView extends Component {
           }}
         >
           <Tab heading="Sent Invites">
-            <SentInvitations />
+            <SentInvitations {...this.props} />
           </Tab>
           <Tab heading="Received Invites">
-            <ReceivedInvitations />
+            <ReceivedInvitations {...this.props} />
           </Tab>
         </Tabs>
       </Container>

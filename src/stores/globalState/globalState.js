@@ -12,9 +12,37 @@ export default class globalState {
   @observable newPasswordError = false;
   writing = false;
   @observable nameError = false;
+  @observable newEvent = false;
   @observable emailError = false;
   @observable ageError = false;
+  @observable invitationUpdated = true;
+  @observable newHightlight = false;
+  @observable newVote = false;
 
+  get newEvent() {
+    return this.newEvent;
+  }
+  set newEvent(New) {
+    this.newEvent = New;
+  }
+  get invitationUpdated() {
+    return this.invitationUpdated;
+  }
+  set invitationUpdated(New) {
+    this.invitationUpdated = New;
+  }
+  get newVote() {
+    return this.newVote;
+  }
+  set newVote(New) {
+    this.newVote = New;
+  }
+  get newHightlight() {
+    return this.newHightlight;
+  }
+  set newHightlight(New) {
+    this.newHightlight = New;
+  }
   get scrollOuter() {
     return this.scrollOuter;
   }
@@ -27,6 +55,7 @@ export default class globalState {
   set newContribution(state) {
     this.newContribution = state;
   }
+
   set eventUpdated(newState) {
     this.eventUpdated = newState;
   }

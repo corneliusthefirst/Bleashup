@@ -10,10 +10,12 @@ import LoginStore from "./LoginStore"
 import TempLoginStore from "./TempLoginStore"
 import ChatStore from "./ChatStore"
 import ChangeLogs from "./changelogs"
+import Reminds from "./reminds"
 
 export default {
 
     ChatStore: new ChatStore(),
+    Reminds: new Reminds(),
     LoginStore: new LoginStore(),
     TempLoginStore: new TempLoginStore(),
     Highlights: new Highlights(),

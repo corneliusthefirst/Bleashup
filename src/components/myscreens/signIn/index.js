@@ -67,15 +67,17 @@ export default class SignInView extends Component {
     globalState.loading = true;
     this.loginStore.getUser().then(user => {
       UserService.login(user.phone, this.state.password).then(response => {
-        if (response = true) {
+        if (response === "true") {
           user.password = this.state.password;
           this.loginStore.setUser(user).then(() => {
-            globalState.loading = false;
-            this.props.navigation.navigate("Home");
+            stores.Session.initialzeStore().then(session => {
+              globalState.loading = false;
+              this.props.navigation.navigate("Home");
+            });
           });
         } else {
           globalState.loading = false;
-          globalState.error = true
+          globalState.error = true;
           //alert("Wrong password !");
         }
       });

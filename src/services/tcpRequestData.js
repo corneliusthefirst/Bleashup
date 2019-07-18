@@ -335,6 +335,48 @@ class tcpRequestData {
   deleteHighlight(data) {
     return this.sendData("delete_highlight", data);
   }
+  udateContribution(data) {
+    return this.sendData("update_contribution", data);
+  }
+  addContributionMean(data) {
+    return this.sendData("add_contribution_mean", data);
+  }
+  removeContributionMean(data) {
+    return this.sendData("remove_contribution_mean", data);
+  }
+  updateContributionMeanName(data) {
+    return this.sendData("update_contribution_mean_name", data);
+  }
+  updateContributionMeanCredential(data) {
+    return this.sendData("update_contribution_mean_credential", data);
+  }
+  updateVote(data) {
+    return this.sendData("update_vote", data);
+  }
+  addVoteOption(data) {
+    return this.sendData("add_vote_option", data);
+  }
+  removeVoteOption(data) {
+    return this.sendData("remove_vote_option", data);
+  }
+  updateVoteOptionName(data) {
+    return this.sendData("update_vote_option_name", data);
+  }
+  addRemind(data) {
+    return this.sendData("add_remind", data);
+  }
+  getReminds(data) {
+    return this.sendData("get_reminds", data);
+  }
+  getRemind(data) {
+    return this.sendData("get_remind", data);
+  }
+  deleteRemind(data) {
+    return this.sendData("delete_remind", data);
+  }
+  updateRemind(data) {
+    return this.sendData("update_remind", data);
+  }
 }
 
 const tcpRequest = new tcpRequestData();

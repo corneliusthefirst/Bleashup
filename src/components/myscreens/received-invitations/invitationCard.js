@@ -1,22 +1,27 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet,Image,TextInput,FlatList,TouchableOpacity, ActivityIndicator, View,Alert,TouchableHighlight} from 'react-native';
+import {
+  Platform, StyleSheet, Image, TextInput, FlatList, TouchableOpacity,
+  ActivityIndicator, View, Alert, BackHandler, ToastAndroid,DeviceEventEmitter
+} from 'react-native';
 
 import autobind from "autobind-decorator";
 import {
-  Content,Card,CardItem,Text,Body,Container,Icon,Header,Form,Thumbnail,Item,Title,Input,Left,Right,H3,H1,H2,Spinner,Button,InputGroup,DatePicker,CheckBox,List,Accordion,DeckSwiper
+  Content, Card, CardItem, Text, Body, Container, Icon, Header, Form, Thumbnail, Item,
+  Title, Input, Left, Right, H3, H1, H2, Spinner, Button, InputGroup,
+  DatePicker, CheckBox, List, Accordion, DeckSwiper
 } from "native-base";
 
 import Swipeout from 'react-native-swipeout';
 import Modal from  'react-native-modalbox';
-import imageCacheHoc from 'react-native-image-cache-hoc';
 import styles from './style';
+import CacheImages from "../../CacheImages"
 import Exstyles from './style';
 import svg from '../../../../svg/svg';
-import SvgUri from 'react-native-svg-uri';
 import { createOpenLink } from "react-native-open-maps";
+import ProfileModal from '../../ProfileModal'
+import PhotoModal from "../../PhotoModal"
+import DetailModal from "../../DetailsModal"
 import globalState from "../../../stores/globalState";
-
-
 const defaultPlaceholderObject = {
   component: ActivityIndicator,
   props: {
@@ -33,12 +38,6 @@ const propOverridePlaceholderObject = {
   }
 };
  
-const CacheableImage = imageCacheHoc(Thumbnail, {
-  defaultPlaceholder: defaultPlaceholderObject
-});
-
-
-
 
 
 //Private class component for a flatLisItem
@@ -59,18 +58,54 @@ class CardListItem extends Component {
            textcolor:""
            
        };
-    }
+	}
+	componentDidMount() {
+    BackHandler.addEventListener("hardwareBackPress", this.handleBackButton);
+    this.eventListener = DeviceEventEmitter.addListener('StatusModalClosed', this.handleEvent);
+    this.eventListener2 = DeviceEventEmitter.addListener('PhotoModalClosed', this.handleEvent2);
+    this.eventListener3 = DeviceEventEmitter.addListener('DetailsModalClosed', this.handleEvent3);
 
+	}
+	componentWillUnmount() {
+    this.eventListener.remove();
+    this.eventListener2.remove()
+    this.eventListener3.remove()
+		BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton);
+	}
 
+  handleBackButton() {
+	ToastAndroid.show("Back button is pressedee", ToastAndroid.SHORT);
+	  this.closeAllModals    
+    return true;
+  }
+  handleEvent = (event) => {
+    this.setState({
+      isOpenStatus : false
+    })
+  }
+  handleEvent2 = (event) => {
+    this.setState({
+      enlargeEventImage: false
+    })
+  }
 
+  handleEvent3 = (event) => {
+    this.setState({
+      isOpen: false
+    })
+  }
+	@autobind closeAllModals() {
+		return this.setState({
+			isOpen: false,
+			isOpenStatus: false,
+			enlargeEventImage: false
+		})
+	}
 //Maps schedule
   Query = { query: this.props.item.location };
   OpenLink = createOpenLink(this.Query);
   OpenLinkZoom = createOpenLink({ ...this.Query, zoom: 50 });
 
-
-
- 
     _renderHeader(item, expanded) {
       return (
         <View style={{
@@ -80,7 +115,7 @@ class CardListItem extends Component {
           alignItems: "center" ,
           backgroundColor: "#FEFFDE" }}  >
         <Text style={{ fontWeight: "400", fontStyle: "italic" }} note>
-            {" "}{item.title}
+            {item.title}
           </Text>
           {expanded
             ? <Icon style={{ fontSize: 18 }} name="arrow-up" />
@@ -106,150 +141,10 @@ class CardListItem extends Component {
       );
     }
 
-
-
-
-Desc(item){
-       
-
-  if(item.image){
-      //creating the highlights starting and ending data
-
-         const highlightData = item.description
-         max_length = highlightData.length
-         highlightStartData = highlightData.slice(0,62)
-         highlightEndData = highlightData.slice(62,max_length) 
-
-    return(
-      
-
-               <Card style={{ elevation: 3,marginTop:95 }}>
-                <CardItem style={{height:40,marginBottom:-10}} >
-                 
-                      <Text style={{fontSize:19}}>{item.title}</Text> 
-                </CardItem>
-                <CardItem style={{height:16,marginLeft:25,marginTop:5}}>
-                      <Text note>highlight:</Text>    
-                </CardItem>
-                <CardItem cardBody>
-                  <Icon name="caretleft" type="AntDesign" style={{}} onPress={() => this._deckSwiper._root.swipeLeft()} />
-
-                  <Image style={{ height: 150,marginTop:5, flex: 1 }} source={{uri:item.image}} />
-
-                  <Icon name="caretright" type="AntDesign" onPress={() => this._deckSwiper._root.swipeRight()}/>
-
-                </CardItem>
-
-                <CardItem style={{}}>
-                
-                    <Text style={{ padding:10}} >
-                      {<Text style={{marginBottom:7}} note>Description:                                                     </Text>}
-                      {highlightStartData}...
-                      {<Text style={{color:"blue"}} onPress={()=>this.setState({ highlightEnd:true })}> view all</Text>}
-                    </Text>
-
-                </CardItem>
-
-
-           <Modal
-           isOpen={this.state.highlightEnd}
-           onClosed={() => this.setState({ highlightEnd: false })}
-           style={{ padding:20,alignItems: 'center',height: 220,flex:1,borderRadius:15,backgroundColor:'#FEFFDE',width:330}}
-           position={'center'}
-           >
-
-            <Text style={{}}>{highlightEndData}</Text>
-
-           </Modal>
-
-         </Card>)
-
-  }else {
-         return(
-           <Card style={{ elevation: 3,marginTop:95 }}>
-                <CardItem style={{height:40}}>
-                 
-                      <Text note>{item.event_title}</Text>               
-                
-                </CardItem>
-                <CardItem cardBody>
-                  <Icon name="caretleft" type="AntDesign" style={{}} onPress={() => this._deckSwiper._root.swipeLeft()} />
-                 
-                     <Text style={{ height: 230, flex: 1 }} >
-                      {<Text style={{marginBottom:7}} note>Description:                                                     </Text>}
-                      {item.event_description}...
-                      {<Text style={{color:"blue"}} onPress={()=>this.setState({ descriptionEnd:true })}> view all</Text>}
-                      </Text>
-                      
-              
-
-                  <Icon name="caretright" type="AntDesign" onPress={() => this._deckSwiper._root.swipeRight()}/>
-
-                </CardItem>
-
-           <Modal
-           isOpen={this.state.descriptionEnd}
-           onClosed={() => this.setState({ descriptionEnd: false })}
-           style={{ padding:20,alignItems: 'center',height: 220,flex:1,borderRadius:15,backgroundColor:'#FEFFDE',width:330}}
-           position={'center'}
-           >
-
-               <Text style={{}}>{descriptionEndData}</Text>
-
-           </Modal>
-
-  
-          </Card> )
-
-  }
-
-}
-
-
-@autobind
-onAccept(){
-  this.state.accept = true
-  globalState.loading = true
-  
-   //what to do on waiting
-   //globalState.loading = false
-  
-
-  this.state.message =  "accepted"
-  this.state.textcolor = "limegreen"  
-  this.props.refresh  
-}
-
-@autobind
-onDenied(){
-
-  this.state.deny = true
-  globalState.loading = true
-  
-  //what to do on waiting
-  //globalState.loading = false
-  
-  this.state.message =  "Denied"
-  this.state.textcolor = "goldenrod"
-  this.props.refresh   
-  
-}
-
-
-
-
-
-
-
-
-
-
     render(){
-   
         const AccordData = this.props.item.sender_status
         max_length = this.props.item.sender_status.length
         let dataArray = [{title:AccordData.slice(0,35),content:AccordData.slice(35,max_length)}] 
-        
         //deck swiper object
         const cards = [];
         item = this.props.item
@@ -268,10 +163,7 @@ onDenied(){
            cards.push(item.highlight[i])
         }
 
-        
-
-
- 
+       //console.warn(cards)
         const swipeSettings = {
             autoClose:true,
             //take this and do something onClose
@@ -279,7 +171,6 @@ onDenied(){
                 if(this.state.activeRowKey != null){
                     this.setState({activeRowKey: null});
                 }
-
             }, 
             //on open i set the activerowkey
             onOpen: (secId,rowId,direction) =>{
@@ -321,25 +212,22 @@ onDenied(){
             sectionId: 1
         }
 
-   
-
         return(
             <Swipeout {...swipeSettings}>
-
-            
-          <Card style={{height:this.state.isOpen||this.state.isOpenStatus||this.state.enlargeEventImage?530:220}}>
+          <Card style={{ height:this.state.isOpen||this.state.isOpenStatus||this.state.enlargeEventImage?610:180}}>
             <CardItem>
               <Left>
-              <TouchableHighlight onPress={()=>this.setState({ isOpenStatus: true })} >
-              <CacheableImage  source={{uri: this.props.item.sender_Image}} 
+              <TouchableOpacity onPress={()=>this.setState({ isOpenStatus: true })} >
+              <CacheImages small thumbnails  source={{uri: this.props.item.sender_Image}} 
                  />
-              </TouchableHighlight>
-               
-              
+              </TouchableOpacity>
                 <Body >
                   <Text style={styles.flatlistItem} >{this.props.item.sender_name}</Text>    
                    
-                {dataArray.content == "" ? <Text style={{ color:'dimgray',padding:10,fontSize:16,marginTop:-10,borderWidth:0}} note>{this.props.item.sender_status}</Text>:
+                    {dataArray.content == "" ? <Text style={{
+                      color: 'dimgray', padding: 10,
+                      fontSize: 16, marginTop: -10, borderWidth: 0
+                    }} note>{this.props.item.sender_status}</Text> :
               
                   <Accordion
                   dataArray={dataArray}
@@ -351,194 +239,52 @@ onDenied(){
                 />
              
                 }
-
                 </Body>
               </Left>
             </CardItem>
 
             <CardItem cardBody>
             <Left> 
-
-            <CacheableImage  source={{uri: this.props.item.receiver_Image}} />
-            
-            <TouchableHighlight onPress={()=>this.setState({ enlargeEventImage: true })} >
-
-            <CacheableImage  source={{uri: this.props.item.event_Image}} style={{marginLeft:-30 }}/>
-            </TouchableHighlight>
-
+            <CacheImages thumbnails large source={{uri: this.props.item.receiver_Image}} />
+            <TouchableOpacity onPress={()=>this.setState({ enlargeEventImage: true })} >
+              <CacheImages thumbnails large source={{uri: this.props.item.event_Image}} style={{marginLeft:-30 }}/>
+            </TouchableOpacity>
             </Left>
-            
             <Body >
-              
-                  <Text style={{marginLeft:-40}} onPress={()=>this.setState({ isOpen: true })} >{this.props.item.event_title}</Text>
-
-                  <Text style={{marginLeft:-40,color:'dimgray',fontSize:12}} onPress={()=>this.setState({ isOpen: true })}> on the {this.props.item.created_date} at {this.props.item.event_time}</Text>
-          
-              
+                  <Text style={{ marginLeft: -40 }} onPress={() => this.setState({ isOpen: true })}
+                  >{this.props.item.event_title}</Text>
+                  <Text style={{ marginLeft: -40, color: 'dimgray', fontSize: 12 }}
+                    onPress={() => this.setState({ isOpen: true })}> on the {this.props.item.created_date} at
+                    {this.props.item.event_time}</Text>
            </Body>
-              
             </CardItem>
-
-            <CardItem>
-                 {this.state.accept||this.state.deny ?   
-                  <View style={{opacity:this.state.accept||this.state.deny ? 10 : 0 }}>
-                   <Text style={{marginLeft:this.state.accept ? 267:286,fontSize:18,color:this.state.textcolor}} note>{this.state.message}</Text>
-                 </View> : 
-                 <View style={{flexDirection:'row',marginTop:10,opacity:this.state.accept||this.state.deny ? 0 :20 }}>
-                   <Button style={{marginLeft:50,marginRight:80}} onPress={this.onAccept} success>
-                   {globalState.loading == true ? 
-                 <Spinner color="#1FABAB" style={{}} />
-                   : 
-                   <Text>Accept</Text> }
-                  </Button>
-                  
-                   <Button style={{}} onPress={this.onDenied} danger>
-                    {globalState.loading ? 
-                  <Spinner color="#1FABAB" style={{}} />
-                    : 
-                   <Text>Denied</Text> }
-                   </Button> 
-
-                 </View>}
-               
-           </CardItem>
-       
             <CardItem style={{marginTop:10}}>
               <Right>
-                <Text style={{marginRight:-60,color:'dimgray',marginBottom:-10,fontSize:13}}>{this.props.item.received_date}</Text>
-
-                <Text style={{marginRight:220,marginTop:-10,color:'dimgray',fontSize:13}}>{this.props.item.invitation_status}</Text>
+                  <Text style={{
+                    marginRight: -60, color: 'dimgray', marginBottom: -10,
+                    fontSize: 13
+                  }}>{this.props.item.received_date}</Text>
+                  <Text style={{
+                    marginRight: 220, marginTop: -10,
+                    color: 'dimgray', fontSize: 13
+                  }}>{this.props.item.invitation_status}</Text>
               </Right>
             </CardItem>
-          
 
-
-           <Modal
-           isOpen={this.state.isOpen}
-           onClosed={() => this.setState({ isOpen: false })}
-           style={{ justifyContent: 'center',alignItems: 'center',height: 510,borderRadius:10,backgroundColor:'#FEFFDE',width:350}}
-           //backdrop={false}
-           position={'center'}
-           >
-
-       
-
-
-          <View  style={{width:330,height:280,marginTop:-245}}>
-          <DeckSwiper
-            ref={(c) => this._deckSwiper = c}
-            dataSource={cards}
-            renderEmpty={() =>
-              <View style={{ alignSelf: "center"}}>
-                <Text>Over</Text>
-              </View>
-            }
-            renderItem={item => this.Desc(item)}
-
-             
-      />
-
-      </View>
-
-
-      
- 
-          <View style={{height:"20%"}}>
          
 
-            <View style={{marginLeft:160,marginTop:"30%"}}>
-              <TouchableOpacity>
-                <Text ellipsizeMode="clip" numberOfLines={3} style={{fontSize:14,color:"#1FABAB"}}>
-                  {this.props.item.location}
-                </Text>
-              </TouchableOpacity>
-              <TouchableHighlight onPress={this.OpenLinkZoom}>
-                <Image
-                  source={require("../../../../Images/google-maps-alternatives-china-720x340.jpg")}
-                  style={{
-                    height: 100,
-                    width: "70%",
-                    borderRadius: 15,
-                    marginTop:-10
-                  }}
-                  resizeMode="contain"
-                  onLoad={() => {}}
-                />
-              </TouchableHighlight>
-
-                <TouchableOpacity onPress={this.OpenLink} style={{marginTop:-20}}>
-                  <Text note> View On Map </Text>
-                </TouchableOpacity>
-           
-             </View> 
-              
-             <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  marginTop:35
-                }}
-              >
-
-              <Text  style={{marginLeft:7}}note>
-                  {this.props.item.created_date}
-                </Text>
-
-               <Text  style={{marginLeft:"-30%",fontStyle:"italic"}} note>
-                  Organised by {this.props.item.event_organiser_name}
-                </Text>
-              </View>
-
-
-        </View>
-
-
-
- </Modal>
-
-
-
-
-           <Modal
-           isOpen={this.state.isOpenStatus}
-           onClosed={() => this.setState({ isOpenStatus: false })}
-           style={{ justifyContent: 'center',alignItems: 'center',height: 380,borderRadius:15,backgroundColor:'#FEFFDE',width:330}}
-           position={'center'}
-           >
-      
-      <Text style={{fontSize:18,fontWeight:'600',marginLeft:-220}}>{this.props.item.sender_name}</Text>
-    
-      <TouchableHighlight onPress={()=>this.setState({ isOpenStatus: false })} >
-      <CacheableImage  source={{uri: this.props.item.sender_Image}} square style={{marginTop:20,width:300,height:200}} />
-      </TouchableHighlight>
-
-     <Text  style={{fontSize:18,fontWeight:'500',marginLeft:-245,marginTop:10}}>Status:</Text>
-
-     {this.props.item.sender_status.length > 35 ?     <Text  style={{fontSize:17,fontWeight:'600',marginLeft:14,marginTop:10}} note>{this.props.item.sender_status}</Text>:<Text  style={{fontSize:17,fontWeight:'600',marginLeft:-104,marginTop:10}} note>{this.props.item.sender_status}</Text>}
-  
-      </Modal>
-
-
-
-           <Modal
-           isOpen={this.state.enlargeEventImage}
-           onClosed={() => this.setState({ enlargeEventImage: false })}
-           style={{ justifyContent: 'center',alignItems: 'center',height: 380,borderRadius:15,backgroundColor:'#FEFFDE',width:330}}
-           position={'center'}
-           >
-           <TouchableHighlight onPress={()=>this.setState({ enlargeEventImage: false })} >
-           <CacheableImage  source={{uri: this.props.item.event_Image}} square style={{width:310,height:360,padding:10,}} />          
-           </TouchableHighlight>
-
-
-           </Modal>
-
-
+              <ProfileModal isOpen = {this.state.isOpenStatus} profile={{
+                name: this.props.item.sender_name,
+                image: this.props.item.sender_Image,
+                status: this.props.item.sender_status
+              }} />
+              <PhotoModal isOpen={this.state.enlargeEventImage} image={this.props.item.event_Image} />
+              <DetailModal isOpen={this.state.isOpen} details={cards} location={this.props.item.location}
+                event_organiser_name={this.props.item.event_organiser_name}
+                created_date={this.props.item.created_date}
+              />
           </Card>
            </Swipeout>
-
-            
-           
         );
     }
 }
@@ -557,81 +303,3 @@ export default  CardListItem
 
 
 
-
-
-
-/*
-import RemindListItem from "./RemindsCard";
-
-<Content>
-<Card>
-
-  <CardItem header>
-  <Left>
-      <CacheableImage  source={{uri: this.props.item.sender_Image}} />
-      <Body>
-        <Text>{this.props.item.sender_name}</Text>
-        <Text note>{this.props.item.sender_status}</Text>
-      </Body>
-    </Left>
-  </CardItem>
-
-  <CardItem>
-    <Body>
-    <CacheableImage  source={{uri: this.props.item.sender_Image}} style={{height: 200, width: null, flex: 1}}/>
-    </Body>
-  </CardItem>
-
-  <CardItem footer>
-    <Text>GeekyAnts</Text>
-  </CardItem>
-
-</Card>
-</Content>*/
-
- /* <Thumbnail source={{uri: this.props.item.sender_Image}} 
-     />
-
-
-
-
-          {this.props.item.reminds.length == 0 ? <Text style={{marginTop:120,marginLeft:15,width:"50%",height:70,flexDirection: "column"}}></Text> : 
-         <TouchableHighlight>
-          <Button style={{marginTop:120,marginLeft:15,width:"37%",height:70,flexDirection: "column"}}
-            onPress={() => this.setState({ remindsModal: true })}> 
-              <Text> Scheduled</Text>
-              <Text> Reminds</Text>
-          </Button>  
-          </TouchableHighlight> 
-        }
-          
-         <Modal
-           isOpen={this.state.remindsModal}
-           onClosed={() => this.setState({ remindsModal: false })}
-           style={{ justifyContent: 'center',alignItems: 'center',height:280,borderRadius:15,backgroundColor:'#FEFFDE',width:260}}
-           position={'center'}
-           >
-
-            <FlatList 
-    
-             ref={"remindlist"}
-             listKey={'Reminds'}
-             data={this.props.item.reminds}
-             renderItem={( {item,index} )=> {
-           
-              return(
-              
-               <RemindListItem  item={item} index={index} >
-               </RemindListItem>
-
-                 );
-
-
-             }}
-             >
-                
-             </FlatList>
-     
-
-          </Modal>
-        */

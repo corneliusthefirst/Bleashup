@@ -116,7 +116,6 @@ export default class SignUpView extends Component {
     }
     if (this.state.email == "") {
       globalState.emailError = true;
-      //console.warn(this.date.defaultDate)
     }
     if (this.state.age == "") {
       globalState.ageError = true;

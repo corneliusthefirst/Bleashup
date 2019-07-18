@@ -1,7 +1,7 @@
 import storage from "./Storage";
 import { observable, action } from "mobx";
 
-import { uniqBy, dropWhile, filter, find, findIndex, sortBy } from "lodash";
+import { uniqBy, reject, filter, find, findIndex, sortBy } from "lodash";
 import moment from "moment";
 export default class highlights {
   @observable highlights = [];
@@ -12,7 +12,9 @@ export default class highlights {
   @action addHighlights(Highlight) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Highlights => {
-        Highlights = uniqBy(Highlights.concat([Highlight]), "id");
+        if (Highlights)
+          Highlights = uniqBy(Highlights.concat([Highlight]), "id");
+        else Highlights = [Highlight];
         this.saveKey.data = Highlights;
         storage.save(this.saveKey.data).then(() => {
           this.highlights = this.saveKey.data;
@@ -21,11 +23,11 @@ export default class highlights {
       });
     });
   }
-  
+
   @action removeHighlight(id) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Highlights => {
-        Highlights = dropWhile(Highlights, ["id", id]);
+        Highlights = reject(Highlights, ["id", id]);
         this.saveKey.data = Highlights;
         storage.save(this.saveKey.data).then(() => {
           this.highlights = this.saveKey.data;
@@ -67,8 +69,11 @@ export default class highlights {
           id: newHightlight.id
         });
         Highlight.title = newHightlight.title;
-        if (inform) Highlight.title_updated = true;
-        Highlight.update_date = moment.format("YYYY-MM-DD HH:mm");
+        if (inform) {
+          Highlight.title_updated = true;
+          Highlight.updated = true;
+        }
+        Highlight.update_date = moment().format("YYYY-MM-DD HH:mm");
         Highlights.splice(index, 1, Highlight);
         this.saveKey.data = sortBy(Highlights, "update_date");
         storage.save(this.saveKey).then(() => {
@@ -88,8 +93,11 @@ export default class highlights {
           id: newHightlight.id
         });
         Highlight.description = newHightlight.description;
-        if (inform) Highlight.description_updated = true;
-        Highlight.update_date = moment.format("YYYY-MM-DD HH:mm");
+        if (inform) {
+          Highlight.description_updated = true;
+          Highlight.updated = true;
+        }
+        Highlight.update_date = moment().format("YYYY-MM-DD HH:mm");
         Highlights.splice(index, 1, Highlight);
         this.saveKey.data = sortBy(Highlights, "update_date");
         storage.save(this.saveKey).then(() => {
@@ -109,8 +117,11 @@ export default class highlights {
           id: newHightlight.id
         });
         Highlight.url = newHightlight.url;
-        if (inform) Highlight.url_updated = true;
-        Highlight.update_date = moment.format("YYYY-MM-DD HH:mm");
+        if (inform) {
+          Highlight.url_updated = true;
+          Highlight.updated = true;
+        }
+        Highlight.update_date = moment().format("YYYY-MM-DD HH:mm");
         Highlights.splice(index, 1, Highlight);
         this.saveKey.data = sortBy(Highlights, "update_date");
         storage.save(this.saveKey).then(() => {
@@ -123,7 +134,7 @@ export default class highlights {
   @action updateEventHighlights(eventID, newHightlights) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Highlights => {
-        Highlights = dropWhile(Highlights, ["event_id", eventID]);
+        Highlights = reject(Highlights, ["event_id", eventID]);
         Highlights = Highlights.concat(newHightlights);
         this.saveKey.data = sortBy(Highlights, "update_date");
         storage.save(this.saveKey).then(() => {
