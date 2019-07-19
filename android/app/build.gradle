@@ -150,6 +150,8 @@ dependencies {
     implementation project(':react-native-nested-scroll-view')
     implementation project(':react-native-exit-app')
     implementation project(':rn-fetch-blob') 
+    
+    
 }
 
 // Run this once to be able to run the application with BUCK
@@ -166,3 +168,13 @@ buildToolsVersion           = "25.0.2"
 googlePlayServicesVersion   = "12.0.1"
 supportLibVersion           = "27.0.0"
  }
+
+ 
+preBuild.doFirst { ant.replaceregexp(match:'android.support.v4.util.Pools;', replace:'androidx.core.util.Pools;', flags:'g', byline:true) { fileset(dir: '../../node_modules/react-native-gesture-handler/android/src/main/java/com/swmansion/gesturehandler/react/', includes: '*.java') }
+}
+//preBuild.doFirst { ant.replaceregexp(match:'android.support.annotation.Nullable;', replace:'androidx.annotation.Nullable;', flags:'g', byline:true) { fileset(dir: '../../node_modules/react-native-tcp/android/src/main/java/com/peel/react/', includes: '*.java') }
+//}
+//preBuild.doFirst { ant.replaceregexp(match:'@Override', replace:'/*@Override*/', flags:'g', byline:true) { fileset(dir: '../../node_modules/', includes: '*.java') }
+//}
+//preBuild.doFirst { ant.replaceregexp(match:'@override', replace:'/*@override*/', flags:'g', byline:true) { fileset(dir: '../../node_modules/', includes: '*.java') }
+//}      

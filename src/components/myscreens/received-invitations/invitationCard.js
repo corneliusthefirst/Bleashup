@@ -14,7 +14,7 @@ import {
 import Swipeout from 'react-native-swipeout';
 import Modal from  'react-native-modalbox';
 import styles from './style';
-import CacheImages from "../../CacheImages"
+import CacheImages from "../../CacheImages";
 import Exstyles from './style';
 import svg from '../../../../svg/svg';
 import { createOpenLink } from "react-native-open-maps";
@@ -22,6 +22,7 @@ import ProfileModal from '../../ProfileModal'
 import PhotoModal from "../../PhotoModal"
 import DetailModal from "../../DetailsModal"
 import globalState from "../../../stores/globalState";
+
 const defaultPlaceholderObject = {
   component: ActivityIndicator,
   props: {

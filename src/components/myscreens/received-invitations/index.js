@@ -83,6 +83,7 @@ class ReceivedInvitations extends Component {
     
            <FlatList 
              //reference name to Flatlist
+             style={{flex:1}}
              ref={"cardlist"}
              listKey={'Invitations'}
              data={cardListData}
