@@ -30,6 +30,7 @@ export default class PhotoModal extends Component {
     render() {
         return this.state.image ? (
             <Modal
+                coverScreen={true}
                 isOpen={this.state.isOpen}
                 onClosed={() => {
                     this.setState({ isOpen: false })
@@ -40,13 +41,13 @@ export default class PhotoModal extends Component {
                 position={'center'}
             >
                 <View>
-                    <Button style={{}} onPress={() => {
+                    <TouchableOpacity style={{}} onPress={() => {
                         this.setState({ isOpen: false })
                         DeviceEventEmitter.emit('PhotoModalClosed', true);
                     }
                     } transparent>
                         <Icon style={{ color: "#1FABAB", fontSize: 35 }} name="cross" type="Entypo" />
-                    </Button>
+                    </TouchableOpacity>
                 </View>
                 <TouchableOpacity onPress={() => {
                     this.setState({ isOpen: false })
@@ -55,8 +56,6 @@ export default class PhotoModal extends Component {
                 } >
                     <CacheImages thumbnails source={{ uri: this.state.image }} style={{ width: 310, height: 330, marginTop: 14 }} square />
                 </TouchableOpacity>
-
-
             </Modal>
         ) : null
     }

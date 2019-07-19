@@ -42,6 +42,7 @@ export default class ProfileModal extends Component {
     render() {
         return this.state.profile ? (
             <Modal
+                coverScreen={true}
                 isOpen={this.state.isOpen}
                 onClosed={() => {
                     this.setState({ isOpen: false })
@@ -55,13 +56,13 @@ export default class ProfileModal extends Component {
                 position={'center'}
             >
                 <View>
-                    <Button style={{}} onPress={() => {
+                    <TouchableOpacity style={{}} onPress={() => {
                         this.setState({ isOpen: false })
                         DeviceEventEmitter.emit('StatusModalClosed', true);
                     }
                     } transparent>
                         <Icon style={{ color: "#1FABAB", fontSize: 35 }} name="cross" type="Entypo" />
-                    </Button>
+                    </TouchableOpacity>
                 </View>
                 <Text style={{ fontSize: 18, fontWeight: '600', marginLeft: -220 }}>{this.state.profile.name}</Text>
 

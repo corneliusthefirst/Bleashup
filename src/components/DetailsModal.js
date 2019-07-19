@@ -4,7 +4,7 @@ import { View, Text, TouchableOpacity, DeviceEventEmitter, Image } from 'react-n
 import { Button, Icon, DeckSwiper, Card, CardItem, Right } from 'native-base'
 import CacheImages from './CacheImages'
 import autobind from 'autobind-decorator';
-import { TouchableHighlight } from 'react-native-gesture-handler';
+import { TouchableHighlight, ScrollView } from 'react-native-gesture-handler';
 import ImageActivityIndicator from './myscreens/currentevents/imageActivityIndicator';
 
 export default class DetailsModal extends Component {
@@ -18,7 +18,8 @@ export default class DetailsModal extends Component {
         event_organiser_name: undefined,
         location: undefined,
         isJoining: false,
-        isToBeJoint: false
+        isToBeJoint: false,
+        id: undefined
     }
     transparent = "rgba(52, 52, 52, 0.0)";
     details = []
@@ -26,6 +27,7 @@ export default class DetailsModal extends Component {
     event_organiser_name = ""
     location = ""
     isToBeJoint = false
+    id = ""
     componentDidMount() {
         this.setState({
             details: this.props.details ? this.props.details : this.details,
@@ -33,8 +35,10 @@ export default class DetailsModal extends Component {
             created_date: this.props.created_date ? this.props.created_date : this.created_date,
             event_organiser_name: this.props.event_organiser_name ? this.props.event_organiser_name : this.event_organiser_name,
             location: this.props.location ? this.props.location : this.location,
-            isToBeJoint: this.props.isToBeJoint ? this.props.isToBeJoint : false
+            isToBeJoint: this.props.isToBeJoint ? this.props.isToBeJoint : false,
+            id: this.props.id ? this.props.id : this.id
         })
+        this.id = this.props.id ? this.props.id : this.id
         this.details = this.props.details ? this.props.details : this.details
         this.created_date = this.props.created_date ? this.props.created_date : this.created_date;
         this.event_organiser_name = this.props.event_organiser_name ? this.props.event_organiser_name : this.event_organiser_name;
@@ -48,7 +52,8 @@ export default class DetailsModal extends Component {
             created_date: this.props.created_date ? this.props.created_date : this.created_date,
             event_organiser_name: this.props.event_organiser_name ? this.props.event_organiser_name : this.event_organiser_name,
             location: this.props.location ? this.props.location : this.location,
-            isToBeJoint: this.props.isToBeJoint ? this.props.isToBeJoint : this.isToBeJoint
+            isToBeJoint: this.props.isToBeJoint ? this.props.isToBeJoint : this.isToBeJoint,
+            id: this.props.id ? this.props.id : this.id
         })
     }
 
@@ -74,7 +79,8 @@ export default class DetailsModal extends Component {
 
                         <Image style={{ height: 150, flex: 1 }} source={{ uri: item.image }} />
 
-                        <Icon name="caretright" type="AntDesign" style={{ color: "#1FABAB" }} onPress={() => this._deckSwiper._root.swipeRight()} />
+                        <Icon name="caretright" type="AntDesign" style={{ color: "#1FABAB" }} onPress={() =>
+                            this._deckSwiper._root.swipeRight()} />
 
                     </CardItem>
 
@@ -149,39 +155,47 @@ export default class DetailsModal extends Component {
     }
     @autobind join() {
         this.setState({ isJoining: true })
-        DeviceEventEmitter.emit("joining", true)
+        DeviceEventEmitter.emit(this.state.id + "joining", true)
     }
     render() {
         return this.state.details ? (
             <Modal
+                backdropPressToClose={false}
+                swipeToClose={false}
+                backdropOpacity={0.5}
+                animationDuration={100}
+                backButtonClose={true}
+                position='bottom'
+                coverScreen={true}
                 isOpen={this.state.isOpen}
                 onClosed={() => {
+                    this.setState({
+                        isOpen: false
+                    })
                     DeviceEventEmitter.emit('DetailsModalClosed', true);
                 }
                 }
                 style={{
-                    justifyContent: 'center', alignItems: 'center', height: 630, display: 'flex', flexDirection: 'column',
-                    borderRadius: 10, backgroundColor: '#FEFFDE', width: 420
+                    justifyContent: 'center', alignItems: 'center', height: 620, display: 'flex', flexDirection: 'column',
+                    borderRadius: 8, backgroundColor: '#FEFFDE', width: 420
                 }}
-                //backdrop={false}
-                position={'center'}
             >
                 <View style={{ height: "5%", marginTop: "10%" }}>
                     <View style={{ flexDirection: 'row' }}>
                         <View style={{ marginLeft: "40%" }}>
-                            <Button
+                            <TouchableOpacity
                                 onPress={this.close} transparent>
                                 <Icon style={{ color: "#1FABAB", fontSize: 35 }} name="cross" type="Entypo" />
-                            </Button>
+                            </TouchableOpacity>
                         </View>
                         <View style={{ marginLeft: "25%" }}>
                             {this.state.isToBeJoint ?
-                                <Right>{this.state.isJoining ? <ImageActivityIndicator /> : <Button
+                                <Right>{this.state.isJoining ? <ImageActivityIndicator /> : <TouchableOpacity
                                     onPress={this.join}
                                     transparent><Text style={{
                                         fontWeight: "bold",
                                         fontSize: 20, color: "#54F5CA"
-                                    }}>JOIN</Text></Button>}</Right> :
+                                    }}>JOIN</Text></TouchableOpacity>}</Right> :
                                 <Button transparent><Text style={{
                                     fontWeight: "bold", fontSize: 20,
                                     color: this.transparent
@@ -235,11 +249,13 @@ export default class DetailsModal extends Component {
                                 resizeMode="contain"
                                 onLoad={() => { }}
                             />
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={this.OpenLink} style={{}}>
                             <Text note> View On Map </Text>
                         </TouchableOpacity>
+                        <TouchableOpacity onPress={this.OpenLink} style={{}}>
+
+                        </TouchableOpacity>
                     </View>
+
                 </View>
             </Modal>
         ) : null

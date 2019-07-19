@@ -22,7 +22,8 @@ import {
   DeckSwiper,
   Right,
   Title,
-  Badge
+  Badge,
+  Footer
 } from "native-base";
 import autobind from "autobind-decorator";
 import ImageActivityIndicator from "./imageActivityIndicator";
@@ -35,6 +36,8 @@ import ProfileModal from "../../ProfileModal";
 import PhotoModal from "../../PhotoModal";
 import UserService from "../../../services/userHttpServices";
 import stores from "../../../stores"
+import ProfileView from "../../ProfileView"
+import CacheImages from "../../CacheImages";
 const entireScreenWidth = Dimensions.get("window").width;
 const rem = entireScreenWidth / 380;
 const CacheableImage = imageCacheHoc(Image, {
@@ -221,59 +224,23 @@ Once you've found three to five sample listings that describe your job goals, co
     return (
       <Card
         style={{
-          padding: 10,
           borderColor: "#1FABAB",
           border: 50,
-          height: this.state.isPhotoModalOpened
-            || this.state.isDetailsModalOpened
-            || this.state.isProfileModalOpened ? 640 : null
+
         }}
         bordered
       >
         <CardItem>
-          <Left>
-            {this.props.Event.liked ? (
-              <View style={{ flexDirection: "row" }}>
-                <View>
-                  <Icon
-                    name="thumbs-up"
-                    type="Entypo"
-                    style={{
-                      color: "#54F5CA",
-                      fontSize: 23
-                    }}
-                  />
-                </View>
-                <View style={{ marginTop: 7 }}>
-                  <Text note> {this.props.Event.likes} Likers </Text>
-                </View>
-              </View>
-            ) : (
-                <View style={{ flexDirection: "row", flex: 5 }}>
-                  <View>
-                    <Icon
-                      name="thumbs-up"
-                      type="Entypo"
-                      style={{
-                        color: "#0A4E52",
-                        fontSize: 23
-                      }}
-                    />
-                  </View>
-                  <View style={{ marginTop: 7 }}>
-                    <Text note>{this.props.Event.likes} Likers</Text>
-                  </View>
-                </View>
-              )}
-          </Left>
           {this.props.Event.updated ? <UpdateStateIndicator /> : null}
-          <Right>
+
+          <View style={{ marginTop: "2%", marginLeft: "97%" }}>
             <Icon
               name="dots-three-vertical"
-              style={{ color: "#0A4E52", fontSize: 16 }}
+              style={{ color: "#0A4E52", fontSize: 16, }}
               type="Entypo"
             />
-          </Right>
+          </View>
+
         </CardItem>
         <CardItem
           style={{
@@ -287,19 +254,7 @@ Once you've found three to five sample listings that describe your job goals, co
             ) : (
                 <TouchableOpacity onPress={() => this.setState({ isProfileModalOpened: true })}>
                   <View style={{ flexDirection: "row", flex: 5 }}>
-                    <View>
-                      <Thumbnail
-                        source={{
-                          uri: this.state.creator.image
-                        }}
-                      />
-                    </View>
-                    <View style={{ marginTop: 9 }}>
-                      <Body>
-                        <Text> {this.state.creator.name} </Text>
-                        <Text note> {this.state.creator.status} </Text>
-                      </Body>
-                    </View>
+                    <ProfileView profile={(this.state.creator)}></ProfileView>
                   </View>
                 </TouchableOpacity>
 
@@ -364,7 +319,7 @@ Once you've found three to five sample listings that describe your job goals, co
               }}
             >
               <TouchableOpacity onPress={() => this.setState({ isPhotoModalOpened: true })}>
-                <CacheableImage
+                <CacheImages
                   source={{
                     uri: this.props.Event.background
                   }}
@@ -557,6 +512,44 @@ Once you've found three to five sample listings that describe your job goals, co
             </TouchableOpacity>
           </View>
         </CardItem>
+        <Footer>
+
+          {this.props.Event.liked ? (
+            <View style={{ flexDirection: "row" }}>
+              <View >
+                <Icon
+                  name="thumbs-up"
+                  type="Entypo"
+                  style={{
+                    color: "#54F5CA",
+                    fontSize: 23
+                  }}
+                />
+              </View>
+              <View style={{ marginTop: 7 }}>
+                <Text style={{ color: "#54F5CA" }} note> {this.props.Event.likes} Likers </Text>
+              </View>
+            </View>
+          ) : (
+              <View style={{ flexDirection: "row", flex: 5 }}>
+                <View style={{ marginTop: "3%" }}>
+                  <Icon
+                    name="thumbs-up"
+                    type="Entypo"
+                    style={{
+                      color: "#0A4E52",
+                      fontSize: 23
+                    }}
+                  />
+                </View>
+                <View style={{ marginTop: "5%" }}>
+                  <Text style={{ color: "#0A4E52" }} note>{this.props.Event.likes} Likers</Text>
+                </View>
+              </View>
+            )}
+
+
+        </Footer>
         <DetailsModal
           isToBeJoint
           isOpen={this.state.isDetailsModalOpened}
