@@ -23,7 +23,8 @@ import {
   DeckSwiper,
   Right,
   Title,
-  Badge
+  Badge,
+  Footer
 } from "native-base";
 import autobind from "autobind-decorator";
 import ImageActivityIndicator from "./imageActivityIndicator";
@@ -36,6 +37,11 @@ import stores from "../../../stores";
 import DetailsModal from "../../DetailsModal";
 import ProfileModal from "../../ProfileModal";
 import PhotoModal from "../../PhotoModal";
+import ProfileView from "../../ProfileView";
+import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu'
+import CacheImages from "../../CacheImages";
+import MenuListView from "./MenuListView"
+import PublishersModal from "../../PublishersModal";
 const entireScreenWidth = Dimensions.get("window").width;
 const rem = entireScreenWidth / 380;
 const CacheableImage = imageCacheHoc(Image, {
@@ -57,7 +63,12 @@ export default class PublicEvent extends Component {
     details: [],
     isDetailsModalOpened: false,
     isProfileModalOpened: false,
-    isPhotoModalOpened: false
+    isPhotoModalOpened: false,
+    profileToview: undefined,
+    publicData: undefined,
+    button: undefined,
+    isMount: false,
+    isPublisherModalOpened: false
   };
   @autobind navigateToEventDetails() {
     if (!this.props.Event.joint) {
@@ -69,6 +80,25 @@ export default class PublicEvent extends Component {
       });
     }
   }
+  sampelPublishers = [{
+    name: "Fokam Giles",
+    status: "One Step Ahead The World",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/GDC_onlywayaround.jpg/300px-GDC_onlywayaround.jpg"
+
+  }, {
+    name: "CorneLius Mboupda",
+    status: "One Step Ahead The World",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/GDC_onlywayaround.jpg/300px-GDC_onlywayaround.jpg"
+
+  },
+  {
+    name: "Fokou Soh",
+    status: "One Step Ahead The World",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/GDC_onlywayaround.jpg/300px-GDC_onlywayaround.jpg"
+
+  },
+  ]
+
   @autobind navigateToReminds() {
     this.props.navigation.navigate("Event", {
       Event: this.props.Event,
@@ -140,6 +170,26 @@ Once you've found three to five sample listings that describe your job goals, co
       })
     })
   }
+  publish() {
+    console.warn("publish clicked")
+  }
+  formPublicData(publicData) {
+    return new Promise((resolve, reject) => {
+      temp = [];
+      temp[0] = (<TouchableOpacity onPress={() => this.publish()}><Text
+        style={{ color: "#54F5CA", fontWeight: "italic", fontSize: 18 }}>Publish</Text></TouchableOpacity>)
+      let i = 0;
+      publicData.map(data => {
+        temp2 = (<TouchableOpacity onPress={() => this.setState({
+          profileToview: data,
+          isProfileModalOpened: true
+        })}><ProfileView profile={data} /></TouchableOpacity>)
+        temp.push(temp2);
+        if (i == publicData.length - 1) resolve(temp)
+        i++
+      })
+    })
+  }
   @autobind navigateToHighLights() {
     this.props.navigation.navigate("Event", {
       Event: this.props.Event,
@@ -164,6 +214,12 @@ Once you've found three to five sample listings that describe your job goals, co
       tab: "Contributions"
     });
   }
+  creator = {
+    name: "Fokam Giles",
+    status: "One Step Ahead The World",
+    image:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/GDC_onlywayaround.jpg/300px-GDC_onlywayaround.jpg"
+  }
   Query = { query: this.props.Event.location.string };
   OpenLink = createOpenLink(this.Query);
   OpenLinkZoom = createOpenLink({ ...this.Query, zoom: 50 });
@@ -171,20 +227,25 @@ Once you've found three to five sample listings that describe your job goals, co
     this.eventListener = DeviceEventEmitter.addListener('StatusModalClosed', this.handleEvent);
     this.eventListener2 = DeviceEventEmitter.addListener('PhotoModalClosed', this.handleEvent2);
     this.eventListener3 = DeviceEventEmitter.addListener('DetailsModalClosed', this.handleEvent3);
-    this.eventListener4 = DeviceEventEmitter.addListener('joining', this.handleEvent4);
+    this.eventListener4 = DeviceEventEmitter.addListener(this.props.Event.id + 'joining', this.handleEvent4);
+    this.eventListener5 = DeviceEventEmitter.addListener('PublishersModalClosed', this.handleEvent5)
+    this.showPublishersList = DeviceEventEmitter.addListener(this.props.Event.id + 'showPublishers', this.showPulishersListener)
+    this.publish = DeviceEventEmitter.addListener(this.props.Event.id + 'publish', this.publisher)
     UserService.checkUser(this.props.Event.creator).then(creator => {
-      this.formDetailFormData().then((details) => {
-        this.setState({
-          creator: {
-            name: "Fokam Giles",
-            status: "One Step Ahead The World",
-            image:
-              "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/GDC_onlywayaround.jpg/300px-GDC_onlywayaround.jpg"
-          },
-          fetching: false,
-          details: details
+      this.formPublicData(this.sampelPublishers).then(data => {
+        this.formDetailFormData().then((details) => {
+          this.setState({
+            creator: this.creator,
+            fetching: false,
+            details: details,
+            profileToview: this.creator,
+            publicData: data,
+            button: <Text> Shw Menue</Text> /**/,
+            isMount: true
+          });
         });
-      });
+      })
+
     })
   }
   componentWillUnmount() {
@@ -192,18 +253,35 @@ Once you've found three to five sample listings that describe your job goals, co
     this.eventListener2.remove()
     this.eventListener3.remove()
     this.eventListener4.remove()
+    this.eventListener5.remove()
+    this.showPublishersList.remove()
+    this.publish.remove()
+  }
+  showPulishersListener = (event) => {
+    console.warn('show plishers clicked')
+    this.setState({
+      isPublisherModalOpened: true
+    })
+  }
+  publisher = (event) => {
+    console.warn('publish clicked ! ')
   }
   handleEvent = (event) => {
     this.setState({
       isProfileModalOpened: false
     })
   }
+
   handleEvent2 = (event) => {
     this.setState({
       isPhotoModalOpened: false
     })
   }
-
+  handleEvent5 = (event) => {
+    this.setState({
+      isPublisherModalOpened: false
+    })
+  }
   handleEvent3 = (event) => {
     this.setState({
       isDetailsModalOpened: false
@@ -222,20 +300,19 @@ Once you've found three to five sample listings that describe your job goals, co
     position: 'absolute',
 
   };
+
   transparent = "rgba(52, 52, 52, 0.0)";
   svgStyle = {
   }
   blinkerSize = 26;
   render() {
-    return (
+    return this.state.isMount ? (
       <View>
         <Card
           style={{
             borderColor: "#1FABAB",
             border: 50,
-            height: this.state.isPhotoModalOpened
-              || this.state.isDetailsModalOpened
-              || this.state.isProfileModalOpened ? 640 : null
+
           }
           }
           bordered
@@ -246,15 +323,17 @@ Once you've found three to five sample listings that describe your job goals, co
             }}
           >
             <Left>
-              <Icon
-                name="forward"
-                type="Entypo"
-                style={{
-                  fontSize: 16,
-                  color: "#0A4E52"
-                }}
-              />
-              <Text note> Published </Text>
+              <View>
+                <Icon
+                  name="forward"
+                  type="Entypo"
+                  style={{
+                    fontSize: 16,
+                    color: "#0A4E52"
+                  }}
+                />
+                <MenuListView eventID={this.props.Event.id} button="Published" menuList={this.state.publicData} />
+              </View>
             </Left>
             {!this.props.Event.past ? <UpdateStateIndicator /> : null}
             <Right>
@@ -266,68 +345,6 @@ Once you've found three to five sample listings that describe your job goals, co
                 }}
                 type="Entypo"
               />
-            </Right>
-          </CardItem>
-          <CardItem>
-            <Left>
-              {this.props.Event.liked ? (
-                <View style={{ flexDirection: "row" }}>
-                  <View>
-                    <Icon
-                      name="thumbs-up"
-                      type="Entypo"
-                      style={{
-                        color: "#54F5CA",
-                        fontSize: 23
-                      }}
-                    />
-                  </View>
-                  <View style={{ marginTop: 7 }}>
-                    <Text note> {this.props.Event.likes} Likers </Text>
-                  </View>
-                </View>
-              ) : (
-                  <View style={{ flexDirection: "row", flex: 5 }}>
-                    <View>
-                      <Icon
-                        name="thumbs-up"
-                        type="Entypo"
-                        style={{
-                          color: "#0A4E52",
-                          fontSize: 23
-                        }}
-                      />
-                    </View>
-                    <View style={{ marginTop: 7 }}>
-                      <Text note>{this.props.Event.likes} Likers</Text>
-                    </View>
-                  </View>
-                )}
-            </Left>
-            <Right>
-              {this.props.Event.joint ? (
-                <View>
-                  <SvgUri width={25} height={30} svgXmlData={SVGs.join} />
-                  <Text
-                    style={{
-                      color: "#0A4E52"
-                    }}
-                  >
-                    Joint
-                </Text>
-                </View>
-              ) : (
-                  <View>
-                    <SvgUri width={25} height={30} svgXmlData={SVGs.join} />
-                    <Text
-                      style={{
-                        color: "#54F5CA"
-                      }}
-                    >
-                      Join
-                </Text>
-                  </View>
-                )}
             </Right>
           </CardItem>
           <CardItem
@@ -342,19 +359,7 @@ Once you've found three to five sample listings that describe your job goals, co
               ) : (
                   <TouchableOpacity onPress={() => this.setState({ isProfileModalOpened: true })}>
                     <View style={{ flexDirection: "row", flex: 5 }}>
-                      <View>
-                        <Thumbnail
-                          source={{
-                            uri: this.state.creator.image
-                          }}
-                        />
-                      </View>
-                      <View style={{ marginTop: 9 }}>
-                        <Body>
-                          <Text> {this.state.creator.name} </Text>
-                          <Text note> {this.state.creator.status} </Text>
-                        </Body>
-                      </View>
+                      <ProfileView profile={(this.state.creator)}></ProfileView>
                     </View>
                   </TouchableOpacity>
 
@@ -419,7 +424,7 @@ Once you've found three to five sample listings that describe your job goals, co
                 }}
               >
                 <TouchableOpacity onPress={() => this.setState({ isPhotoModalOpened: true })}>
-                  <CacheableImage
+                  <CacheImages
                     source={{
                       uri: this.props.Event.background
                     }}
@@ -612,7 +617,70 @@ Once you've found three to five sample listings that describe your job goals, co
               </TouchableOpacity>
             </View>
           </CardItem>
+          <Footer>
+            <Left>
+              {this.props.Event.liked ? (
+                <View style={{ flexDirection: "row" }}>
+                  <View>
+                    <Icon
+                      name="thumbs-up"
+                      type="Entypo"
+                      style={{
+                        color: "#54F5CA",
+                        fontSize: 23
+                      }}
+                    />
+                  </View>
+                  <View style={{ marginTop: 7 }}>
+                    <Text style={{ color: "#54F5CA" }} note> {this.props.Event.likes} Likers </Text>
+                  </View>
+                </View>
+              ) : (
+                  <View style={{ flexDirection: "row", flex: 5 }}>
+                    <View>
+                      <Icon
+                        name="thumbs-up"
+                        type="Entypo"
+                        style={{
+                          color: "#0A4E52",
+                          fontSize: 23
+                        }}
+                      />
+                    </View>
+                    <View style={{ marginTop: 10 }}>
+                      <Text style={{ color: "#0A4E52" }} note>{this.props.Event.likes} Likers</Text>
+                    </View>
+                  </View>
+                )}
+            </Left>
+            <Right>
+              {this.props.Event.joint ? (
+                <View>
+                  <SvgUri width={25} height={30} svgXmlData={SVGs.join} />
+                  <Text
+                    style={{
+                      color: "#0A4E52"
+                    }}
+                  >
+                    Joint
+                </Text>
+                </View>
+              ) : (
+                  <View>
+                    <SvgUri width={25} height={30} svgXmlData={SVGs.join} />
+                    <Text
+                      style={{
+                        color: "#54F5CA"
+                      }}
+                    >
+                      Join
+                </Text>
+                  </View>
+                )}
+            </Right>
+          </Footer>
           <DetailsModal
+            id={this.props.Event.id}
             isToBeJoint
             isOpen={this.state.isDetailsModalOpened}
             details={this.state.details}
@@ -620,12 +688,13 @@ Once you've found three to five sample listings that describe your job goals, co
             location={this.props.Event.location.string}
             event_organiser_name={this.state.creator.name}
           />
+          <PhotoModal isOpen={this.state.isPhotoModalOpened} image={this.props.Event.background} />
           <ProfileModal
             isOpen={this.state.isProfileModalOpened}
-            profile={this.state.creator} />
-          <PhotoModal isOpen={this.state.isPhotoModalOpened} image={this.props.Event.background} />
+            profile={this.state.profileToview} />
+          <PublishersModal id={this.props.Event.id} isOpen={this.state.isPublisherModalOpened}></PublishersModal>
         </Card>
       </View>
-    );
+    ) : <ImageActivityIndicator />;
   }
 }

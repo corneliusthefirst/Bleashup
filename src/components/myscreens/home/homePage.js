@@ -92,15 +92,15 @@ class Home extends Component {
             </Header>
           }
           headerHeight={50}
-          scrollEnabled={GState.scrollOuter}
-          onScroll={nativeEvent => {
-            if (this.isCloseToBottom(nativeEvent.nativeEvent)) {
-              GState.scrollOuter = false;
-            }
-            if (this.ifCloseToTop(nativeEvent.nativeEvent)) {
-              GState.scrollOuter = false;
-            }
-          }}
+          /*  scrollEnabled={GState.scrollOuter}
+          /*  onScroll={nativeEvent => {
+              if (this.isCloseToBottom(nativeEvent.nativeEvent)) {
+                GState.scrollOuter = false;
+              }
+              if (this.ifCloseToTop(nativeEvent.nativeEvent)) {
+                GState.scrollOuter = false;
+              }
+            }}*/
           statusBarHeight={Platform.OS === "ios" ? 20 : 0}
         >
           <Tabs

@@ -52,6 +52,7 @@ const CacheableImage = imageCacheHoc(Image, {
 
 const Events = [
   {
+    id: "1",
     about: {
       title: "This is a sample Event",
       description: ""
@@ -94,6 +95,7 @@ Use the sample job postings below to help write your job description and improve
     likes: 12
   },
   {
+    id: "2",
     about: {
       title: "This is a sample Event",
       description: ""
@@ -142,6 +144,7 @@ Develops sales by making initial presentation; explaining product and service en
     likes: 12
   },
   {
+    id: "3",
     about: {
       title: "This is a sample Event",
       description: ""
@@ -220,11 +223,11 @@ export default class CurrentEventView extends Component {
     ) : (
         <Container>
           <NestedScrollView
-            onScroll={nativeEvent => {
-              GState.scrollOuter = true;
-            }}
+            /*  onScroll={nativeEvent => {
+                GState.scrollOuter = true;
+              }}*/
             alwaysBounceHorizontal={true}
-            scrollEventThrottle={16}
+          // scrollEventThrottle={16}
           >
             <Content>{this._renderItem()}</Content>
           </NestedScrollView>

@@ -1,28 +1,28 @@
-import React, {Component} from 'react';
-import {Platform, StyleSheet,Image,TextInput,FlatList, View,Alert,TouchableHighlight} from 'react-native';
+import React, { Component } from 'react';
+import { Platform, StyleSheet, Image, TextInput, FlatList, View, Alert, TouchableHighlight } from 'react-native';
 
 import autobind from "autobind-decorator";
 import {
-  Content,Card,CardItem,Text,Body,Container,Icon,Header,Form,Item,Title,Input,Left,Right,H3,H1,H2,Spinner,Button,InputGroup,DatePicker,CheckBox,Thumbnail,List
+  Content, Card, CardItem, Text, Body, Container, Icon, Header, Form, Item, Title, Input, Left, Right, H3, H1, H2, Spinner, Button, InputGroup, DatePicker, CheckBox, Thumbnail, List
 } from "native-base";
 
 import cardListData from './EventData';
 
 import CardListItem from './invitationCard';
 
-
+import NestedScrollView from "react-native-nested-scroll-view"
 
 class ReceivedInvitations extends Component {
   constructor(props) {
-      super(props);
-      this.state = ({
-          deletedRowKey: null,
-        
-      });
-      
+    super(props);
+    this.state = ({
+      deletedRowKey: null,
+
+    });
+
   }
-  
-  ComponentWillMount(){
+
+  ComponentWillMount() {
     /*create this object from ariving data to form new_invitation
      cardListData = [
     {
@@ -51,60 +51,58 @@ class ReceivedInvitations extends Component {
     //then
     //cardListData.push(new_invitation)
   }
- 
-  
+
+
 
 
   //callback function to refresh state of change
   refreshCardList = (activeKey) => {
-     this.setState((prevState) => {
-         return {
-             //give the key to delete to the deleted row key
-             deletedRowKey: activeKey
-         };
+    this.setState((prevState) => {
+      return {
+        //give the key to delete to the deleted row key
+        deletedRowKey: activeKey
+      };
 
-     }); 
-     //flatlist here is a reference to flatlist
-     this.refs.cardlist.scrollToEnd();
+    });
+    //flatlist here is a reference to flatlist
+    this.refs.cardlist.scrollToEnd();
   }
 
- 
-      /// Adding a new item using a modal
-/*   @autobind
-  _onPressAdd () {
-      //alert("You add Item");
-      this.refs.addModal.showAddModal();
-  }*/
+
+  /// Adding a new item using a modal
+  /*   @autobind
+    _onPressAdd () {
+        //alert("You add Item");
+        this.refs.addModal.showAddModal();
+    }*/
   render() {
 
-     return (
-           <Content>
-        
-    
-           <FlatList 
-             //reference name to Flatlist
-             ref={"cardlist"}
-             listKey={'Invitations'}
-             data={cardListData}
-             renderItem={( {item,index} )=> {
-                 //console.log(`Item=${JSON.stringify(item)}, Index = ${index}`);
-           
-              return(
-                     //this is my private class just created
-                     <CardListItem item={item} index={index} parentCardList = {this}>
-                     </CardListItem>
-                 );
+    return (
+      <Content>
+        <FlatList
+          //reference name to Flatlist
+          ref={"cardlist"}
+          listKey={'Invitations'}
+          data={cardListData}
+          renderItem={({ item, index }) => {
+            //console.log(`Item=${JSON.stringify(item)}, Index = ${index}`);
+
+            return (
+              //this is my private class just created
+              <CardListItem item={item} index={index} parentCardList={this}>
+              </CardListItem>
+            );
 
 
-             }}
-             >
-                
-             </FlatList>
+          }}
+        >
 
-           </Content>
-        
-           
-     );
+        </FlatList>
+
+      </Content>
+
+
+    );
   }
 }
 
@@ -164,7 +162,7 @@ export default ReceivedInvitations;
 
 /*
   <Image source={{uri: 'Image URL'}} style={{height: 200, width: null, flex: 1}}/>
-  
+
 <AddModal  ref={'addModal'} parentFlatList={this}>
 </AddModal>
 
