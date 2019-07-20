@@ -168,12 +168,16 @@ export default class DetailsModal extends Component {
                 position='bottom'
                 coverScreen={true}
                 isOpen={this.state.isOpen}
-                onClosed={() => {
-                    this.setState({
+                onClosed={ 
+                    this.props.onclosed
+                    /*() => {
+                   
+                   this.setState({
                         isOpen: false
                     })
-                    DeviceEventEmitter.emit('DetailsModalClosed', true);
-                }
+                    //DeviceEventEmitter.emit('DetailsModalClosed', true);
+                }*/
+
                 }
                 style={{
                     justifyContent: 'center', alignItems: 'center', height: 620, display: 'flex', flexDirection: 'column',

@@ -282,7 +282,7 @@ class CardListItem extends Component {
               <PhotoModal isOpen={this.state.enlargeEventImage} image={this.props.item.event_Image} />
               <DetailModal isOpen={this.state.isOpen} details={cards} location={this.props.item.location}
                 event_organiser_name={this.props.item.event_organiser_name}
-                created_date={this.props.item.created_date}
+                created_date={this.props.item.created_date} onclosed={()=>{this.setState({isOpen:false})}}
               />
           </Card>
            </Swipeout>
