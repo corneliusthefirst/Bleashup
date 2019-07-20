@@ -224,13 +224,6 @@ Once you've found three to five sample listings that describe your job goals, co
   OpenLink = createOpenLink(this.Query);
   OpenLinkZoom = createOpenLink({ ...this.Query, zoom: 50 });
   componentDidMount() {
-    this.eventListener = DeviceEventEmitter.addListener('StatusModalClosed', this.handleEvent);
-    this.eventListener2 = DeviceEventEmitter.addListener('PhotoModalClosed', this.handleEvent2);
-    this.eventListener3 = DeviceEventEmitter.addListener('DetailsModalClosed', this.handleEvent3);
-    this.eventListener4 = DeviceEventEmitter.addListener(this.props.Event.id + 'joining', this.handleEvent4);
-    this.eventListener5 = DeviceEventEmitter.addListener('PublishersModalClosed', this.handleEvent5)
-    this.showPublishersList = DeviceEventEmitter.addListener(this.props.Event.id + 'showPublishers', this.showPulishersListener)
-    this.publish = DeviceEventEmitter.addListener(this.props.Event.id + 'publish', this.publisher)
     UserService.checkUser(this.props.Event.creator).then(creator => {
       this.formPublicData(this.sampelPublishers).then(data => {
         this.formDetailFormData().then((details) => {
@@ -249,45 +242,17 @@ Once you've found three to five sample listings that describe your job goals, co
     })
   }
   componentWillUnmount() {
-    this.eventListener.remove();
-    this.eventListener2.remove()
-    this.eventListener3.remove()
-    this.eventListener4.remove()
-    this.eventListener5.remove()
-    this.showPublishersList.remove()
-    this.publish.remove()
   }
-  showPulishersListener = (event) => {
+  showPulishersListener() {
     console.warn('show plishers clicked')
     this.setState({
       isPublisherModalOpened: true
     })
   }
-  publisher = (event) => {
+  publishe() {
     console.warn('publish clicked ! ')
   }
-  handleEvent = (event) => {
-    this.setState({
-      isProfileModalOpened: false
-    })
-  }
-
-  handleEvent2 = (event) => {
-    this.setState({
-      isPhotoModalOpened: false
-    })
-  }
-  handleEvent5 = (event) => {
-    this.setState({
-      isPublisherModalOpened: false
-    })
-  }
-  handleEvent3 = (event) => {
-    this.setState({
-      isDetailsModalOpened: false
-    })
-  }
-  handleEvent4 = (event) => {
+  join() {
     this.props.Event.joint = true
     this.setState({
       isDetailsModalOpened: false
@@ -332,7 +297,9 @@ Once you've found three to five sample listings that describe your job goals, co
                     color: "#0A4E52"
                   }}
                 />
-                <MenuListView eventID={this.props.Event.id} button="Published" menuList={this.state.publicData} />
+                <MenuListView publish={() => this.publish()}
+                  showPublishers={() => this.showPublishersList()}
+                  button="Published" menuList={this.state.publicData} />
               </View>
             </Left>
             {!this.props.Event.past ? <UpdateStateIndicator /> : null}
@@ -683,16 +650,21 @@ Once you've found three to five sample listings that describe your job goals, co
             id={this.props.Event.id}
             isToBeJoint
             isOpen={this.state.isDetailsModalOpened}
+            isJoining={() => this.join()}
             details={this.state.details}
             created_date={this.props.Event.created_at}
             location={this.props.Event.location.string}
             event_organiser_name={this.state.creator.name}
           />
-          <PhotoModal isOpen={this.state.isPhotoModalOpened} image={this.props.Event.background} />
+          <PhotoModal isOpen={this.state.isPhotoModalOpened} image={this.props.Event.background}
+            onClosed={() => this.setState({ isPhotoModalOpened: false })} />
           <ProfileModal
             isOpen={this.state.isProfileModalOpened}
+            onClosed={() => this.setState({ isProfileModalOpened: false })}
             profile={this.state.profileToview} />
-          <PublishersModal id={this.props.Event.id} isOpen={this.state.isPublisherModalOpened}></PublishersModal>
+          <PublishersModal onClosed={() =>
+            this.setState({ isPublisherModalOpened: false })}
+            isOpen={this.state.isPublisherModalOpened}></PublishersModal>
         </Card>
       </View>
     ) : <ImageActivityIndicator />;

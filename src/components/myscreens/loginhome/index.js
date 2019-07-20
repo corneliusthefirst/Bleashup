@@ -55,6 +55,7 @@ export default class LoginHomeView extends Component {
             <Text> Waiting ... </Text>
           )}
         </Content>
+        
       </Container>
     );
   }

@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import Modal from 'react-native-modalbox';
-import { View, Text, TouchableOpacity, DeviceEventEmitter } from 'react-native'
+import { View, Text, TouchableOpacity } from 'react-native'
 import { Button, Icon } from 'native-base'
 import CacheImages from './CacheImages'
 
@@ -44,10 +44,8 @@ export default class ProfileModal extends Component {
             <Modal
                 coverScreen={true}
                 isOpen={this.state.isOpen}
-                onClosed={() => {
-                    this.setState({ isOpen: false })
-                    //DeviceEventEmitter.emit('StatusModalClosed', true)
-                }
+                onClosed={() =>
+                    this.props.onClosed
                 }
                 style={{
                     backgroundColor: this.transparent, justifyContent: 'center', alignItems: 'center',
@@ -56,10 +54,8 @@ export default class ProfileModal extends Component {
                 position={'center'}
             >
                 <View>
-                    <TouchableOpacity style={{}} onPress={() => {
-                        this.setState({ isOpen: false })
-                        //DeviceEventEmitter.emit('StatusModalClosed', true);
-                    }
+                    <TouchableOpacity style={{}} onPress={() =>
+                        this.props.onClosed
                     } transparent>
                         <Icon style={{ color: "#1FABAB", fontSize: 35 }} name="cross" type="Entypo" />
                     </TouchableOpacity>
@@ -67,8 +63,7 @@ export default class ProfileModal extends Component {
                 <Text style={{ fontSize: 18, fontWeight: '600', marginLeft: -220 }}>{this.state.profile.name}</Text>
 
                 <TouchableOpacity onPress={() => {
-                    this.setState({ isOpen: false })
-                    DeviceEventEmitter.emit('StatusModalClosed', true);
+                    this.props.onClosed
 
                 }
                 } >
