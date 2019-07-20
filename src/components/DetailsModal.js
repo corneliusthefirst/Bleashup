@@ -151,7 +151,7 @@ export default class DetailsModal extends Component {
 
     }
     @autobind close() {
-        DeviceEventEmitter.emit('DetailsModalClosed', true);
+        this.setState({ isOpen: true })       //DeviceEventEmitter.emit('DetailsModalClosed', true);
     }
     @autobind join() {
         this.setState({ isJoining: true })
@@ -172,7 +172,7 @@ export default class DetailsModal extends Component {
                     this.setState({
                         isOpen: false
                     })
-                    DeviceEventEmitter.emit('DetailsModalClosed', true);
+                    // DeviceEventEmitter.emit('DetailsModalClosed', true);
                 }
                 }
                 style={{

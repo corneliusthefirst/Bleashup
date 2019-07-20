@@ -46,7 +46,7 @@ export default class ProfileModal extends Component {
                 isOpen={this.state.isOpen}
                 onClosed={() => {
                     this.setState({ isOpen: false })
-                    DeviceEventEmitter.emit('StatusModalClosed', true)
+                    //DeviceEventEmitter.emit('StatusModalClosed', true)
                 }
                 }
                 style={{
@@ -58,7 +58,7 @@ export default class ProfileModal extends Component {
                 <View>
                     <TouchableOpacity style={{}} onPress={() => {
                         this.setState({ isOpen: false })
-                        DeviceEventEmitter.emit('StatusModalClosed', true);
+                        //DeviceEventEmitter.emit('StatusModalClosed', true);
                     }
                     } transparent>
                         <Icon style={{ color: "#1FABAB", fontSize: 35 }} name="cross" type="Entypo" />
