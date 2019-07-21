@@ -1,5 +1,4 @@
 import React, { Component } from "react"
-import { DeviceEventEmitter } from 'react-native';
 import Modal from "react-native-modalbox"
 import { Content, List, ListItem, Body, Left, Right, Text } from "native-base"
 import CacheImages from "./CacheImages";
@@ -34,7 +33,7 @@ export default class PublishersModal extends Component {
                 coverScreen={true}
                 isOpen={this.state.isOpen}
                 onClosed={() => {
-                    DeviceEventEmitter.emit('PublishersModalClosed', true);
+                    this.props.onClosed
                 }
                 }
                 style={{

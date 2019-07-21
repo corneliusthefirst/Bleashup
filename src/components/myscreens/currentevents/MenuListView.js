@@ -37,11 +37,11 @@ export default class MenuListView extends Component {
     };
     publish() {
         this._menu.hide();
-        DeviceEventEmitter.emit(this.props.eventID + 'publish', true);
+        this.props.publish
     }
     showPublishers() {
         this._menu.hide()
-        DeviceEventEmitter.emit(this.props.eventID + 'showPublishers', true)
+        this.props.showPublishers
     }
     _renderMenuItems() {
         return this.state.menuList.map(data => {

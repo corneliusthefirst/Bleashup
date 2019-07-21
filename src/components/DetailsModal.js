@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import Modal from 'react-native-modalbox';
-import { View, Text, TouchableOpacity, DeviceEventEmitter, Image } from 'react-native'
+import { View, Text, TouchableOpacity, Image } from 'react-native'
 import { Button, Icon, DeckSwiper, Card, CardItem, Right } from 'native-base'
 import CacheImages from './CacheImages'
 import autobind from 'autobind-decorator';
@@ -151,11 +151,11 @@ export default class DetailsModal extends Component {
 
     }
     @autobind close() {
-        DeviceEventEmitter.emit('DetailsModalClosed', true);
+        this.setState({ isOpen: true })
     }
     @autobind join() {
         this.setState({ isJoining: true })
-        DeviceEventEmitter.emit(this.state.id + "joining", true)
+        this.props.isJoining
     }
     render() {
         return this.state.details ? (
@@ -168,27 +168,24 @@ export default class DetailsModal extends Component {
                 position='bottom'
                 coverScreen={true}
                 isOpen={this.state.isOpen}
-                onClosed={ 
-                    this.props.onclosed
-                    /*() => {
-                   
-                   this.setState({
+                onClosed={() => {
+                    this.setState({
                         isOpen: false
                     })
-                    //DeviceEventEmitter.emit('DetailsModalClosed', true);
-                }*/
-
+                }
                 }
                 style={{
                     justifyContent: 'center', alignItems: 'center', height: 620, display: 'flex', flexDirection: 'column',
-                    borderRadius: 8, backgroundColor: '#FEFFDE', width: 420
+                    borderRadius: 8, backgroundColor: '#FEFFDE', width: "100%"
                 }}
             >
                 <View style={{ height: "5%", marginTop: "10%" }}>
                     <View style={{ flexDirection: 'row' }}>
                         <View style={{ marginLeft: "40%" }}>
                             <TouchableOpacity
-                                onPress={ this.props.onclosed} transparent>
+                                onPress={
+                                    this.props.onclosed
+                                } transparent>
                                 <Icon style={{ color: "#1FABAB", fontSize: 35 }} name="cross" type="Entypo" />
                             </TouchableOpacity>
                         </View>
@@ -221,7 +218,7 @@ export default class DetailsModal extends Component {
                     </View>
                 </View>
 
-                <View style={{ width: 400, height: "80%" }}>
+                <View style={{ width: "100%", height: 300 }}>
                     <DeckSwiper
                         ref={(c) => this._deckSwiper = c}
                         dataSource={this.state.details}
