@@ -188,7 +188,7 @@ export default class DetailsModal extends Component {
                     <View style={{ flexDirection: 'row' }}>
                         <View style={{ marginLeft: "40%" }}>
                             <TouchableOpacity
-                                onPress={this.close} transparent>
+                                onPress={ this.props.onclosed} transparent>
                                 <Icon style={{ color: "#1FABAB", fontSize: 35 }} name="cross" type="Entypo" />
                             </TouchableOpacity>
                         </View>
