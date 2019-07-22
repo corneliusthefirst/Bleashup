@@ -43,9 +43,10 @@ export default class ProfileModal extends Component {
         return this.state.profile ? (
             <Modal
                 coverScreen={true}
+                backButtonClose={true}
                 isOpen={this.state.isOpen}
                 onClosed={() =>
-                    this.props.onClosed
+                    this.props.onClosed()
                 }
                 style={{
                     backgroundColor: this.transparent, justifyContent: 'center', alignItems: 'center',
@@ -55,23 +56,31 @@ export default class ProfileModal extends Component {
             >
                 <View>
                     <TouchableOpacity style={{}} onPress={() =>
-                        this.props.onClosed
+                        this.props.onClosed()
                     } transparent>
-                        <Icon style={{ color: "#1FABAB", fontSize: 35 }} name="cross" type="Entypo" />
+                        <Icon style={{ color: "#1FABAB", fontSize: 35 }} name="close" type="EvilIcons" />
                     </TouchableOpacity>
                 </View>
                 <Text style={{ fontSize: 18, fontWeight: '600', marginLeft: -220 }}>{this.state.profile.name}</Text>
 
                 <TouchableOpacity onPress={() => {
-                    this.props.onClosed
+                    this.props.onClosed()
 
                 }
                 } >
-                    <CacheImages thumbnails source={{ uri: this.state.profile.image }} square style={{ marginTop: 20, width: 300, height: 200 }} />
+                    <CacheImages thumbnails source={{ uri: this.state.profile.image }}
+                        square style={{ marginTop: 20, width: 300, height: 200 }} />
                 </TouchableOpacity>
-                {this.state.profile.status.length > 35 ? <Text style={{ fontSize: 17, fontWeight: '600', marginLeft: 14, marginTop: 10 }} note>
-                    {this.state.profile.status}</Text> :
-                    <Text style={{ fontSize: 17, fontWeight: '600', marginLeft: -104, marginTop: 10 }} note>{this.state.profile.status}</Text>}
+                {this.state.profile.status.length > 35 ?
+                    <Text style={{
+                        fontSize: 17, fontWeight: '600',
+                        marginLeft: 14, marginTop: 10
+                    }} note>
+                        {this.state.profile.status}</Text> :
+                    <Text style={{
+                        fontSize: 17, fontWeight: '600',
+                        marginLeft: -104, marginTop: 10
+                    }} note>{this.state.profile.status}</Text>}
 
             </Modal>
         ) : null

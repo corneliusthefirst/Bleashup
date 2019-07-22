@@ -79,9 +79,9 @@ class Home extends Component {
               </Body>
 
               <Icon
-                name="cog"
+                name="gear"
                 active={true}
-                type="FontAwesome"
+                type="EvilIcons"
                 style={{
                   padding: 15,
                   paddingLeft: 100,

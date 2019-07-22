@@ -108,11 +108,10 @@ export default class Event extends Component {
   @autobind goToChangeLogs() {
     this.props.navigation.navigate("ChangeLogs", { ...this.props })
   }
-  blinkerSize = 65;
+  blinkerSize = 35;
   changeLogIndicatorStyle = {
-    position: 'absolute',
-    margin: "-89.75%",
-    marginTop: "-88.86%"
+    margin: "-40%",
+    marginTop: "85%"
   }
   @autobind goToHome() {
     this.props.navigation.navigate("Home");
@@ -123,7 +122,7 @@ export default class Event extends Component {
         <Header>
           <Left>
             <Button onPress={this.goToHome} transparent>
-              <Icon style={{ color: "#FEFFDE" }} name="cross" type="Entypo" />
+              <Icon style={{ color: "#FEFFDE" }} name="close" type="EvilIcons" />
             </Button>
           </Left>
           <Body>
@@ -139,7 +138,7 @@ export default class Event extends Component {
                 <Icon style={{
                   fontSize: 23,
                   color: "#FEFFDE"
-                }} name="exclamation-circle" type="FontAwesome5">
+                }} name="exclamation" type="EvilIcons">
                 </Icon>
               </TouchableOpacity>
             </View>

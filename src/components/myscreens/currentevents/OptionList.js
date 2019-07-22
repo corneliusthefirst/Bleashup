@@ -6,7 +6,7 @@ import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
 import ImageActivityIndicator from "./imageActivityIndicator";
 import { Icon, } from "native-base"
 
-export default class MenuListView extends Component {
+export default class OptionList extends Component {
     constructor(props) {
         super(props)
     }
@@ -23,11 +23,6 @@ export default class MenuListView extends Component {
             published: this.props.published
         })
     }
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.hide) {
-            this._menu.hide()
-        }
-    }
     _menu = null;
 
     setMenuRef = ref => {
@@ -43,12 +38,11 @@ export default class MenuListView extends Component {
     };
     publish() {
         this._menu.hide();
-        return this.props.publish
+        this.props.publish
     }
-    showPublishers = () => {
-        return this.props.showPublishers
-        //this._menu.hide()
-
+    showPublishers() {
+        this._menu.hide()
+        this.props.showPublishers
     }
     _renderMenuItems() {
         return this.state.menuList.map(data => {
@@ -61,13 +55,15 @@ export default class MenuListView extends Component {
                 <Menu
                     style={{ backgroundColor: "#FEFFDE" }}
                     ref={this.setMenuRef}
-                    button={<Text onPress={this.showMenu} style={{ color: "#0A4E52" }}>{this.state.published ? "Pubished" : "Publish"}</Text>}
+                    button={<Text onPress={this.showMenu} style={{ color: "#0A4E52" }}>Options</Text>}
                 >
-                    <MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => this.publish()}>Publish</MenuItem>
-                    {this.state.published ? <View>
-                        <MenuDivider color="#1FABAB" />
-                        <MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => this.props.showPublishers()}>View Publshers</MenuItem>
-                    </View> : null}
+                    <MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => this.props.publish()}>Publish</MenuItem>
+                    <MenuDivider color="#1FABAB" />
+                    <MenuItem textStyle={{ color: "red" }} onPress={() => this.props.showPublishers()}>Delete</MenuItem>
+                    <MenuDivider color="#1FABAB" />
+                    <MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => this.props.hide()}>Hide</MenuItem>
+                    <MenuDivider color="#1FABAB" />
+                    <MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => this.props.showPublishers()}>Hide</MenuItem>
                 </Menu>
             </View>
         ) : <ImageActivityIndicator />;

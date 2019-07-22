@@ -32,8 +32,9 @@ export default class PhotoModal extends Component {
             <Modal
                 coverScreen={true}
                 isOpen={this.state.isOpen}
+                backButtonClose={true}
                 onClosed={() =>
-                    this.props.onClosed
+                    this.props.onClosed()
                 }
                 style={{
                     justifyContent: 'center',
@@ -43,8 +44,8 @@ export default class PhotoModal extends Component {
                 position={'center'}
             >
                 <View>
-                    <TouchableOpacity style={{}} onPress={() => this.props.onClosed} transparent>
-                        <Icon style={{ color: "#1FABAB", fontSize: 35 }} name="cross" type="Entypo" />
+                    <TouchableOpacity style={{}} onPress={() => this.props.onClosed()} transparent>
+                        <Icon style={{ color: "#1FABAB", fontSize: 35 }} name="close" type="EvilIcons" />
                     </TouchableOpacity>
                 </View>
                 <TouchableOpacity onPress={() =>

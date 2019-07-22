@@ -6,15 +6,18 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   activityIndicatorStyle,
-  DeviceEventEmitter
+  DeviceEventEmitter,
 } from "react-native";
-import imageCacheHoc from "react-native-image-cache-hoc";
+import MenuListView from "./MenuListView"
 const w = Dimensions.get("window");
 import {
   Card,
   CardItem,
   Text,
   Icon,
+  List,
+  ListItem,
+  Label,
   Body,
   Left,
   Button,
@@ -32,6 +35,7 @@ import UpdateStateIndicator from "./updateStateIndicator";
 import SvgUri from "react-native-svg-uri";
 import SVGs from "./svgsStrings";
 import DetailsModal from "../../DetailsModal";
+import Swipeout from 'react-native-swipeout';
 import ProfileModal from "../../ProfileModal";
 import PhotoModal from "../../PhotoModal";
 import UserService from "../../../services/userHttpServices";
@@ -40,15 +44,6 @@ import ProfileView from "../../ProfileView"
 import CacheImages from "../../CacheImages";
 const entireScreenWidth = Dimensions.get("window").width;
 const rem = entireScreenWidth / 380;
-const CacheableImage = imageCacheHoc(Image, {
-  defaultPlaceholder: {
-    component: ImageActivityIndicator,
-    props: {
-      style: activityIndicatorStyle
-    }
-  }
-});
-
 export default class PrivateEvent extends Component {
   constructor(props) {
     super(props);
@@ -162,10 +157,6 @@ Once you've found three to five sample listings that describe your job goals, co
   OpenLink = createOpenLink(this.Query);
   OpenLinkZoom = createOpenLink({ ...this.Query, zoom: 50 });
   componentDidMount() {
-    this.eventListener = DeviceEventEmitter.addListener('StatusModalClosed', this.handleEvent);
-    this.eventListener2 = DeviceEventEmitter.addListener('PhotoModalClosed', this.handleEvent2);
-    this.eventListener3 = DeviceEventEmitter.addListener('DetailsModalClosed', this.handleEvent3);
-    this.eventListener4 = DeviceEventEmitter.addListener('joining', this.handleEvent4);
     UserService.checkUser(this.props.Event.creator).then(creator => {
       this.formDetailFormData().then((details) => {
         this.setState({
@@ -181,34 +172,96 @@ Once you've found three to five sample listings that describe your job goals, co
       });
     })
   }
+  swipperComponent = (<View>
+    <List style={{
+      backgroundColor: "#FFFFF6",
+      height: "100%"
+    }}>
+      <ListItem style={{ alignSelf: 'flex-start' }}>
+        <TouchableOpacity>
+          <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="forward" type="Entypo">
+          </Icon>
+          <Label style={{ fontSize: 12, color: "#1FABAB" }}>Publish</Label>
+        </TouchableOpacity>
+      </ListItem>
+      <ListItem style={{ alignSelf: 'flex-start' }}>
+        <TouchableOpacity>
+          <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="archive" type="EvilIcons">
+          </Icon>
+          <Label style={{ fontSize: 12, color: "#1FABAB" }}>Hide</Label>
+        </TouchableOpacity>
+      </ListItem>
+      <ListItem>
+        <TouchableOpacity>
+          <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="universal-access" type="Foundation">
+          </Icon>
+          <Label style={{
+            color: "#1FABAB",
+            fontSize: 12
+          }}
+          >
+            Join
+              </Label>
+        </TouchableOpacity>
+      </ListItem>
+      <ListItem style={{ alignSelf: 'flex-start' }}>
+        <TouchableOpacity>
+          <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="comment" type="EvilIcons">
+          </Icon>
+          <Label style={{ fontSize: 12, color: "#1FABAB" }}>chat</Label>
+        </TouchableOpacity>
+      </ListItem>
+      <ListItem style={{ alignSelf: 'flex-start' }}>
+        <TouchableOpacity>
+          <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="exclamation" type="EvilIcons">
+          </Icon>
+          <Label style={{ fontSize: 12, color: "#1FABAB" }}>Logs</Label>
+        </TouchableOpacity>
+      </ListItem>
+      <ListItem style={{ alignSelf: 'flex-start' }}>
+        <TouchableOpacity>
+          <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="archive" type="EvilIcons">
+          </Icon>
+          <Label style={{ fontSize: 12, color: "#1FABAB" }}>Hide</Label>
+        </TouchableOpacity>
+      </ListItem>
+      <ListItem>
+        <TouchableOpacity>
+          <Icon name="trash" style={{ fontSize: 16, color: "red" }} type="EvilIcons">
+          </Icon>
+          <Label style={{ fontSize: 12, color: "red" }} >Delete</Label>
+        </TouchableOpacity>
+      </ListItem>
+    </List>
+  </View>)
   componentWillUnmount() {
-    this.eventListener.remove();
-    this.eventListener2.remove()
-    this.eventListener3.remove()
-    this.eventListener4.remove()
   }
-  handleEvent = (event) => {
-    this.setState({
-      isProfileModalOpened: false
-    })
+  swipeSettings = {
+    autoClose: true,
+    sensitivity: 100,
+    right: [
+      {
+        component: this.swipperComponent
+
+      }
+    ],
+
+    rowId: this.props.index,
+    sectionId: 1
   }
-  handleEvent2 = (event) => {
-    this.setState({
-      isPhotoModalOpened: false
-    })
+  componentWillUnmount() {
+
   }
 
-  handleEvent3 = (event) => {
-    this.setState({
-      isDetailsModalOpened: false
-    })
+  publish() {
+    console.warn("publish clicked")
   }
-  handleEvent4 = (event) => {
-    this.props.Event.joint = true
+
+  showPublishersList() {
+    console.warn('show plishers clicked')
     this.setState({
-      isDetailsModalOpened: false
+      isPublisherModalOpened: true
     })
-    console.warn('joint!')
   }
   indicatorMargin = {
     marginLeft: "5%",
@@ -222,347 +275,388 @@ Once you've found three to five sample listings that describe your job goals, co
   blinkerSize = 26;
   render() {
     return (
-      <Card
-        style={{
-          borderColor: "#1FABAB",
-          border: 50,
-
-        }}
-        bordered
-      >
-        <CardItem>
-          {this.props.Event.updated ? <UpdateStateIndicator /> : null}
-
-          <View style={{ marginTop: "2%", marginLeft: "97%" }}>
-            <Icon
-              name="dots-three-vertical"
-              style={{ color: "#0A4E52", fontSize: 16, }}
-              type="Entypo"
-            />
-          </View>
-
-        </CardItem>
-        <CardItem
+      <Swipeout {...this.swipeSettings}>
+        <Card
           style={{
-            paddingBottom: 20,
-            paddingTop: 10
-          }}
-        >
-          <Left>
-            {this.state.fetching ? (
-              <ImageActivityIndicator />
-            ) : (
-                <TouchableOpacity onPress={() => this.setState({ isProfileModalOpened: true })}>
-                  <View style={{ flexDirection: "row", flex: 5 }}>
-                    <ProfileView profile={(this.state.creator)}></ProfileView>
-                  </View>
-                </TouchableOpacity>
+            borderColor: "#1FABAB",
+            border: 50,
 
-              )}
-          </Left>
-        </CardItem>
-        <CardItem
-          style={{
-            flexDirection: "column",
-            justifyContent: "space-between"
           }}
+          bordered
         >
-          <TouchableOpacity onPress={this.navigateToEventDetails}>
-            <View>
-              <Text
-                adjustsFontSizeToFit={true}
-                style={{
-                  fontSize: 20,
-                  fontWeight: "bold",
-                  textAlign: "center",
-                  textAlignVertical: "center",
-                  fontFamily: "Roboto"
-                }}
-              >
-                {this.props.Event.about.title}
-              </Text>
-              <Text
-                style={{
-                  color: "#1FABAB"
-                }}
-                note
-              >
-                {this.props.Event.period.date.year +
-                  "-" +
-                  this.props.Event.period.date.month +
-                  "-" +
-                  this.props.Event.period.date.day +
-                  "  at " +
-                  this.props.Event.period.time.hour +
-                  "-" +
-                  this.props.Event.period.time.mins +
-                  "-" +
-                  this.props.Event.period.time.secs}
-              </Text>
-            </View>
-          </TouchableOpacity>
-        </CardItem>
-        <CardItem
-          style={{
-            paddingLeft: 0,
-            aspectRatio: 3 / 1,
-            paddingRight: 0,
-            paddingTop: 20,
-            paddingBottom: 10
-          }}
-          cardBody
-        >
-          <Left>
-            <View
-              style={{
-                width: "70%"
-              }}
-            >
-              <TouchableOpacity onPress={() => this.setState({ isPhotoModalOpened: true })}>
-                <CacheImages
-                  source={{
-                    uri: this.props.Event.background
-                  }}
-                  parmenent={false}
+          <CardItem>
+            <Left>
+              <View>
+                <Icon
+                  name="forward"
+                  type="Entypo"
                   style={{
-                    height: 125,
-                    width: "100%",
-                    borderRadius: 15
+                    fontSize: 16,
+                    color: "#0A4E52"
                   }}
-                  resizeMode="contain"
-                  onLoad={() => { }}
-                /></TouchableOpacity>
-
-            </View>
-          </Left>
-          <Right>
-            <View>
-              <TouchableOpacity>
-                <Text ellipsizeMode="clip" numberOfLines={2}>
-                  {this.props.Event.location.string}
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={this.OpenLinkZoom}>
-                <Image
-                  source={require("../../../../Images/google-maps-alternatives-china-720x340.jpg")}
-                  style={{
-                    height: 60,
-                    width: "30%",
-                    borderRadius: 15
-                  }}
-                  resizeMode="contain"
-                  onLoad={() => { }}
                 />
-              </TouchableOpacity>
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between"
-                }}
-              >
-                <TouchableOpacity onPress={this.OpenLink}>
-                  <Text note> View On Map </Text>
-                </TouchableOpacity>
+                <MenuListView publish={() => this.publish()}
+                  showPublishers={() => this.showPublishersList()}
+                />
               </View>
+            </Left>
+            {!this.props.Event.past ? <UpdateStateIndicator /> : null}
+            <Right><View style={{ marginTop: "2%" }}>
+              <Icon
+                name="dots-three-vertical"
+                style={{ color: "#0A4E52", fontSize: 16, }}
+                type="Entypo"
+              />
             </View>
-          </Right>
-        </CardItem>
-        <CardItem
-          style={{
-            flexDirection: "row"
-          }}
-        >
-          <View
+            </Right>
+          </CardItem>
+          <CardItem
             style={{
-              width: "19%"
+              paddingBottom: 10,
+              paddingTop: 10
+            }}
+          >
+            <Left>
+              {this.state.fetching ? (
+                <ImageActivityIndicator />
+              ) : (
+                  <TouchableOpacity onPress={() => this.setState({ isProfileModalOpened: true })}>
+                    <View style={{ flexDirection: "row", flex: 5 }}>
+                      <ProfileView profile={(this.state.creator)}></ProfileView>
+                    </View>
+                  </TouchableOpacity>
+
+                )}
+            </Left>
+          </CardItem>
+          {this.props.Event.recursive ? <CardItem>
+            <Left>
+              <View style={
+                {
+                  flexDirection: "column"
+                }
+              }>
+                <View>
+                  <Text style={{
+                    color: "#54F5CA"
+                  }} note>
+                    {this.props.Event.recursion.type}
+                  </Text>
+                </View>
+
+                <View>
+                  <Text note>
+                    {this.props.Event.recursion.days}
+                  </Text>
+                </View>
+              </View>
+            </Left>
+          </CardItem> : null}
+          <CardItem
+            style={{
+              flexDirection: "column",
+              justifyContent: "space-between"
             }}
           >
             <TouchableOpacity onPress={this.navigateToEventDetails}>
-              <View style={this.svgStyle}>
-                <SvgUri style={{ borderRaduis: 20 }} width={25} height={30} svgXmlData={SVGs.event} />
-                {this.props.Event.updated ? (
-                  <View style={this.indicatorMargin}>
-                    <UpdateStateIndicator size={this.blinkerSize} />
-                  </View>
-                ) : (
-                    <View style={this.indicatorMargin}>
-                      <UpdateStateIndicator
-                        size={this.blinkerSize}
-                        color={this.transparent}
-                      />
-                    </View>
-                  )}
-              </View>
-            </TouchableOpacity>
-          </View>
-          <View
-            style={{
-              width: "19%"
-            }}
-          >
-            <TouchableOpacity onPress={this.navigateToReminds}>
-              <View style={this.svgStyle}>
-                <SvgUri width={25} height={30} svgXmlData={SVGs.remind} />
-                {this.props.Event.remind_upated ? (
-                  <View style={this.indicatorMargin}>
-                    <UpdateStateIndicator size={this.blinkerSize} />
-                  </View>
-                ) : (
-                    <View style={this.indicatorMargin}>
-                      <UpdateStateIndicator
-                        size={this.blinkerSize}
-                        color={this.transparent}
-                      />
-                    </View>
-                  )}
-              </View>
-            </TouchableOpacity>
-          </View>
-          <View
-            style={{
-              width: "19%"
-            }}
-          >
-            <TouchableOpacity onPress={this.navigateToEventChat}>
-              <View style={this.svgStyle}>
-                <SvgUri width={25} height={30} svgXmlData={SVGs.chat} />
-                {this.props.Event.chat_updated ? (
-                  <View style={this.indicatorMargin}>
-                    <UpdateStateIndicator size={22} />
-                  </View>
-                ) : (
-                    <View style={this.indicatorMargin}>
-                      <UpdateStateIndicator
-                        size={this.blinkerSize}
-                        color={this.transparent}
-                      />
-                    </View>
-                  )}
-              </View >
-            </TouchableOpacity>
-          </View>
-          <View
-            style={{
-              width: "19%"
-            }}
-          >
-            <TouchableOpacity onPress={this.navigateToHighLights}>
-              <View style={this.svgStyle}>
-                <SvgUri width={22} height={30} svgXmlData={SVGs.highlight} />
-                {this.props.Event.highlight_updated ? (
-                  <View style={this.indicatorMargin}>
-                    <UpdateStateIndicator size={this.blinkerSize} />
-                  </View>
-                ) : (
-                    <View style={this.indicatorMargin}>
-                      <UpdateStateIndicator
-                        size={this.blinkerSize}
-                        color={this.transparent}
-                      />
-                    </View>
-                  )}
-              </View>
-            </TouchableOpacity>
-          </View>
-
-          <View
-            style={{
-              width: "19%"
-            }}
-          >
-            <TouchableOpacity onPress={this.navigateToVotes}>
-              <View style={this.svgStyle}>
-                <SvgUri width={25} height={30} svgXmlData={SVGs.vote} />
-                {this.props.Event.vote_updated ? (
-                  <View style={this.indicatorMargin}>
-                    <UpdateStateIndicator size={this.blinkerSize} />
-                  </View>
-                ) : (
-                    <View style={this.indicatorMargin}>
-                      <UpdateStateIndicator
-                        size={this.blinkerSize}
-                        color={this.transparent}
-                      />
-                    </View>
-                  )}
-              </View>
-            </TouchableOpacity>
-          </View>
-          <View
-            style={{
-              width: "19%"
-            }}
-          >
-            <TouchableOpacity onPress={this.navigateToContributions}>
-              <View style={this.svgStyle}>
-                <SvgUri width={25} height={30} svgXmlData={SVGs.contribution} />
-                {this.props.Event.contribution_updated ? (
-                  <View style={this.indicatorMargin}>
-                    <UpdateStateIndicator size={this.blinkerSize} />
-                  </View>
-                ) : (
-                    <View style={this.indicatorMargin}>
-                      <UpdateStateIndicator
-                        size={this.blinkerSize}
-                        color={this.transparent}
-                      />
-                    </View>
-                  )}
-              </View>
-            </TouchableOpacity>
-          </View>
-        </CardItem>
-        <Footer>
-
-          {this.props.Event.liked ? (
-            <View style={{ flexDirection: "row" }}>
-              <View >
-                <Icon
-                  name="thumbs-up"
-                  type="Entypo"
+              <View>
+                <Text
+                  adjustsFontSizeToFit={true}
                   style={{
-                    color: "#54F5CA",
-                    fontSize: 23
+                    fontSize: 20,
+                    fontWeight: "bold",
+                    textAlign: "center",
+                    textAlignVertical: "center",
+                    fontFamily: "Roboto"
                   }}
-                />
+                >
+                  {this.props.Event.about.title}
+                </Text>
+                <Text
+                  style={{
+                    color: "#1FABAB"
+                  }}
+                  note
+                >
+                  {this.props.Event.period.date.year +
+                    "-" +
+                    this.props.Event.period.date.month +
+                    "-" +
+                    this.props.Event.period.date.day +
+                    "  at " +
+                    this.props.Event.period.time.hour +
+                    "-" +
+                    this.props.Event.period.time.mins +
+                    "-" +
+                    this.props.Event.period.time.secs}
+                </Text>
               </View>
-              <View style={{ marginTop: 7 }}>
-                <Text style={{ color: "#54F5CA" }} note> {this.props.Event.likes} Likers </Text>
+            </TouchableOpacity>
+          </CardItem>
+          <CardItem
+            style={{
+              paddingLeft: 0,
+              aspectRatio: 3 / 1,
+              paddingRight: 0,
+              paddingTop: 20,
+              paddingBottom: 10
+            }}
+            cardBody
+          >
+            <Left>
+              <View
+                style={{
+                  width: "70%"
+                }}
+              >
+                <TouchableOpacity onPress={() => this.setState({ isPhotoModalOpened: true })}>
+                  <CacheImages
+                    source={{
+                      uri: this.props.Event.background
+                    }}
+                    parmenent={false}
+                    style={{
+                      height: 125,
+                      width: "100%",
+                      borderRadius: 15
+                    }}
+                    resizeMode="contain"
+                    onLoad={() => { }}
+                  /></TouchableOpacity>
+
               </View>
+            </Left>
+            <Right>
+              <View>
+                <TouchableOpacity>
+                  <Text ellipsizeMode="clip" numberOfLines={2}>
+                    {this.props.Event.location.string}
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={this.OpenLinkZoom}>
+                  <Image
+                    source={require("../../../../Images/google-maps-alternatives-china-720x340.jpg")}
+                    style={{
+                      height: 60,
+                      width: "30%",
+                      borderRadius: 15
+                    }}
+                    resizeMode="contain"
+                    onLoad={() => { }}
+                  />
+                </TouchableOpacity>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between"
+                  }}
+                >
+                  <TouchableOpacity onPress={this.OpenLink}>
+                    <Text note> View On Map </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </Right>
+          </CardItem>
+          <CardItem
+            style={{
+              flexDirection: "row"
+            }}
+          >
+            <View
+              style={{
+                width: "19%"
+              }}
+            >
+              <TouchableOpacity onPress={this.navigateToEventDetails}>
+                <View style={this.svgStyle}>
+                  <SvgUri style={{ borderRaduis: 20 }} width={25} height={30} svgXmlData={SVGs.event} />
+                  {this.props.Event.updated ? (
+                    <View style={this.indicatorMargin}>
+                      <UpdateStateIndicator size={this.blinkerSize} />
+                    </View>
+                  ) : (
+                      <View style={this.indicatorMargin}>
+                        <UpdateStateIndicator
+                          size={this.blinkerSize}
+                          color={this.transparent}
+                        />
+                      </View>
+                    )}
+                </View>
+              </TouchableOpacity>
             </View>
-          ) : (
-              <View style={{ flexDirection: "row", flex: 5 }}>
-                <View style={{ marginTop: "3%" }}>
+            <View
+              style={{
+                width: "19%"
+              }}
+            >
+              <TouchableOpacity onPress={this.navigateToReminds}>
+                <View style={this.svgStyle}>
+                  <SvgUri width={25} height={30} svgXmlData={SVGs.remind} />
+                  {this.props.Event.remind_upated ? (
+                    <View style={this.indicatorMargin}>
+                      <UpdateStateIndicator size={this.blinkerSize} />
+                    </View>
+                  ) : (
+                      <View style={this.indicatorMargin}>
+                        <UpdateStateIndicator
+                          size={this.blinkerSize}
+                          color={this.transparent}
+                        />
+                      </View>
+                    )}
+                </View>
+              </TouchableOpacity>
+            </View>
+            <View
+              style={{
+                width: "19%"
+              }}
+            >
+              <TouchableOpacity onPress={this.navigateToEventChat}>
+                <View style={this.svgStyle}>
+                  <SvgUri width={25} height={30} svgXmlData={SVGs.chat} />
+                  {this.props.Event.chat_updated ? (
+                    <View style={this.indicatorMargin}>
+                      <UpdateStateIndicator size={22} />
+                    </View>
+                  ) : (
+                      <View style={this.indicatorMargin}>
+                        <UpdateStateIndicator
+                          size={this.blinkerSize}
+                          color={this.transparent}
+                        />
+                      </View>
+                    )}
+                </View >
+              </TouchableOpacity>
+            </View>
+            <View
+              style={{
+                width: "19%"
+              }}
+            >
+              <TouchableOpacity onPress={this.navigateToHighLights}>
+                <View style={this.svgStyle}>
+                  <SvgUri width={22} height={30} svgXmlData={SVGs.highlight} />
+                  {this.props.Event.highlight_updated ? (
+                    <View style={this.indicatorMargin}>
+                      <UpdateStateIndicator size={this.blinkerSize} />
+                    </View>
+                  ) : (
+                      <View style={this.indicatorMargin}>
+                        <UpdateStateIndicator
+                          size={this.blinkerSize}
+                          color={this.transparent}
+                        />
+                      </View>
+                    )}
+                </View>
+              </TouchableOpacity>
+            </View>
+
+            <View
+              style={{
+                width: "19%"
+              }}
+            >
+              <TouchableOpacity onPress={this.navigateToVotes}>
+                <View style={this.svgStyle}>
+                  <SvgUri width={25} height={30} svgXmlData={SVGs.vote} />
+                  {this.props.Event.vote_updated ? (
+                    <View style={this.indicatorMargin}>
+                      <UpdateStateIndicator size={this.blinkerSize} />
+                    </View>
+                  ) : (
+                      <View style={this.indicatorMargin}>
+                        <UpdateStateIndicator
+                          size={this.blinkerSize}
+                          color={this.transparent}
+                        />
+                      </View>
+                    )}
+                </View>
+              </TouchableOpacity>
+            </View>
+            <View
+              style={{
+                width: "19%"
+              }}
+            >
+              <TouchableOpacity onPress={this.navigateToContributions}>
+                <View style={this.svgStyle}>
+                  <SvgUri width={25} height={30} svgXmlData={SVGs.contribution} />
+                  {this.props.Event.contribution_updated ? (
+                    <View style={this.indicatorMargin}>
+                      <UpdateStateIndicator size={this.blinkerSize} />
+                    </View>
+                  ) : (
+                      <View style={this.indicatorMargin}>
+                        <UpdateStateIndicator
+                          size={this.blinkerSize}
+                          color={this.transparent}
+                        />
+                      </View>
+                    )}
+                </View>
+              </TouchableOpacity>
+            </View>
+          </CardItem>
+          <Footer>
+
+            {this.props.Event.liked ? (
+              <View style={{ flexDirection: "row" }}>
+                <View >
                   <Icon
                     name="thumbs-up"
                     type="Entypo"
                     style={{
-                      color: "#0A4E52",
+                      color: "#54F5CA",
                       fontSize: 23
                     }}
                   />
                 </View>
-                <View style={{ marginTop: "5%" }}>
-                  <Text style={{ color: "#0A4E52" }} note>{this.props.Event.likes} Likers</Text>
+                <View style={{ marginTop: 7 }}>
+                  <Text style={{ color: "#54F5CA" }} note> {this.props.Event.likes} Likers </Text>
                 </View>
               </View>
-            )}
+            ) : (
+                <View style={{ flexDirection: "row", flex: 5 }}>
+                  <View style={{ marginTop: "3%" }}>
+                    <Icon
+                      name="thumbs-up"
+                      type="Entypo"
+                      style={{
+                        color: "#0A4E52",
+                        fontSize: 23
+                      }}
+                    />
+                  </View>
+                  <View style={{ marginTop: "5%" }}>
+                    <Text style={{ color: "#0A4E52" }} note>{this.props.Event.likes} Likers</Text>
+                  </View>
+                </View>
+              )}
 
 
-        </Footer>
-        <DetailsModal
-          isToBeJoint
-          isOpen={this.state.isDetailsModalOpened}
-          details={this.state.details}
-          created_date={this.props.Event.created_at}
-          location={this.props.Event.location.string}
-          event_organiser_name={this.state.creator.name}
-        />
-        <ProfileModal
-          isOpen={this.state.isProfileModalOpened}
-          profile={this.state.creator} />
-        <PhotoModal isOpen={this.state.isPhotoModalOpened} image={this.props.Event.background} />
-      </Card>
+          </Footer>
+          <DetailsModal
+            isToBeJoint
+            isOpen={this.state.isDetailsModalOpened}
+            details={this.state.details}
+            created_date={this.props.Event.created_at}
+            location={this.props.Event.location.string}
+            event_organiser_name={this.state.creator.name}
+          />
+          <PhotoModal isOpen={this.state.isPhotoModalOpened} image={this.props.Event.background}
+            onClosed={() => this.setState({ isPhotoModalOpened: false })} />
+          <ProfileModal
+            isOpen={this.state.isProfileModalOpened}
+            onClosed={() => this.setState({ isProfileModalOpened: false })}
+            profile={this.state.profileToview} />
+        </Card>
+      </Swipeout>
     );
   }
 }

@@ -36,7 +36,7 @@ export default class Session {
           .then(session => {
             this.SessionStore = session;
           })
-          .catch(error => {});
+          .catch(error => { });
       });
   }
   @action getSocke() {
@@ -51,7 +51,7 @@ export default class Session {
             phone: user.phone,
             password: user.password,
             reference: "#Ref<0.3996024962.2836135937.9226>",
-            host: "192.168.43.192"
+            host: "192.168.43.69"
           };
           storage
             .save({
@@ -159,7 +159,7 @@ export default class Session {
         .then(session => {
           if (session.password) {
             session.socket = newSocket;
-            session.host = "192.168.43.192";
+            session.host = "192.168.43.69";
             storage
               .save({
                 key: "session",

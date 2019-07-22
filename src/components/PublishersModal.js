@@ -15,7 +15,6 @@ export default class PublishersModal extends Component {
         })
     }
     componentWillReceiveProps(nextProps) {
-
         this.setState({
             isOpen: nextProps.isOpen
         })
@@ -32,9 +31,9 @@ export default class PublishersModal extends Component {
                 position='bottom'
                 coverScreen={true}
                 isOpen={this.state.isOpen}
-                onClosed={() => {
-                    this.props.onClosed
-                }
+                onClosed={() =>
+                    this.props.onClosed()
+
                 }
                 style={{
                     justifyContent: 'center', alignItems: 'center', height: 620, display: 'flex', flexDirection: 'column',

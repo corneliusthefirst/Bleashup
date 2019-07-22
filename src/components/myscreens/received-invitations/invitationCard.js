@@ -12,7 +12,6 @@ import {
 } from "native-base";
 
 import Swipeout from 'react-native-swipeout';
-import Modal from 'react-native-modalbox';
 import styles from './style';
 import CacheImages from "../../CacheImages";
 import Exstyles from './style';

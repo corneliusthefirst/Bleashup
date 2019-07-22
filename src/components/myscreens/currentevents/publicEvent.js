@@ -9,7 +9,6 @@ import {
   DeviceEventEmitter
 } from "react-native";
 
-import imageCacheHoc from "react-native-image-cache-hoc";
 const w = Dimensions.get("window");
 import {
   Card,
@@ -24,7 +23,10 @@ import {
   Right,
   Title,
   Badge,
-  Footer
+  Footer,
+  List,
+  ListItem,
+  Label
 } from "native-base";
 import autobind from "autobind-decorator";
 import ImageActivityIndicator from "./imageActivityIndicator";
@@ -36,22 +38,15 @@ import UserService from "../../../services/userHttpServices";
 import stores from "../../../stores";
 import DetailsModal from "../../DetailsModal";
 import ProfileModal from "../../ProfileModal";
+import OptionList from "./OptionList"
 import PhotoModal from "../../PhotoModal";
 import ProfileView from "../../ProfileView";
-import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu'
 import CacheImages from "../../CacheImages";
 import MenuListView from "./MenuListView"
 import PublishersModal from "../../PublishersModal";
+import Swipeout from 'react-native-swipeout';
 const entireScreenWidth = Dimensions.get("window").width;
 const rem = entireScreenWidth / 380;
-const CacheableImage = imageCacheHoc(Image, {
-  defaultPlaceholder: {
-    component: ImageActivityIndicator,
-    props: {
-      style: activityIndicatorStyle
-    }
-  }
-});
 
 export default class PublicEvent extends Component {
   constructor(props) {
@@ -68,7 +63,9 @@ export default class PublicEvent extends Component {
     publicData: undefined,
     button: undefined,
     isMount: false,
-    isPublisherModalOpened: false
+    swipeClosed: true,
+    isPublisherModalOpened: false,
+    currentUser: undefined
   };
   @autobind navigateToEventDetails() {
     if (!this.props.Event.joint) {
@@ -214,6 +211,7 @@ Once you've found three to five sample listings that describe your job goals, co
       tab: "Contributions"
     });
   }
+  currentUser = undefined
   creator = {
     name: "Fokam Giles",
     status: "One Step Ahead The World",
@@ -234,24 +232,99 @@ Once you've found three to five sample listings that describe your job goals, co
             profileToview: this.creator,
             publicData: data,
             button: <Text> Shw Menue</Text> /**/,
-            isMount: true
+            isMount: true,
+            currentUser: {
+              phone: stores.Session.SessionStore.phone ? stores.SessionStore.phone : "650564616"
+            }
           });
-        });
+        })
       })
 
     })
   }
+
+  swipperComponent = (<View>
+    <List style={{
+      backgroundColor: "#FFFFF6",
+      height: "100%"
+    }}>
+      <ListItem style={{ alignSelf: 'flex-start' }}>
+        <TouchableOpacity>
+          <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="forward" type="Entypo">
+          </Icon>
+          <Label style={{ fontSize: 12, color: "#1FABAB" }}>Publish</Label>
+        </TouchableOpacity>
+      </ListItem>
+      <ListItem style={{ alignSelf: 'flex-start' }}>
+        <TouchableOpacity>
+          <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="archive" type="EvilIcons">
+          </Icon>
+          <Label style={{ fontSize: 12, color: "#1FABAB" }}>Hide</Label>
+        </TouchableOpacity>
+      </ListItem>
+      <ListItem>
+        <TouchableOpacity>
+          <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="universal-access" type="Foundation">
+          </Icon>
+          <Label style={{
+            color: "#1FABAB",
+            fontSize: 12
+          }}
+          >
+            Join
+              </Label>
+        </TouchableOpacity>
+      </ListItem>
+      <ListItem style={{ alignSelf: 'flex-start' }}>
+        <TouchableOpacity>
+          <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="comment" type="EvilIcons">
+          </Icon>
+          <Label style={{ fontSize: 12, color: "#1FABAB" }}>chat</Label>
+        </TouchableOpacity>
+      </ListItem>
+      <ListItem style={{ alignSelf: 'flex-start' }}>
+        <TouchableOpacity>
+          <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="exclamation" type="EvilIcons">
+          </Icon>
+          <Label style={{ fontSize: 12, color: "#1FABAB" }}>Logs</Label>
+        </TouchableOpacity>
+      </ListItem>
+      <ListItem style={{ alignSelf: 'flex-start' }}>
+        <TouchableOpacity>
+          <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="archive" type="EvilIcons">
+          </Icon>
+          <Label style={{ fontSize: 12, color: "#1FABAB" }}>Hide</Label>
+        </TouchableOpacity>
+      </ListItem>
+      <ListItem>
+        <TouchableOpacity>
+          <Icon name="trash" style={{ fontSize: 16, color: "red" }} type="EvilIcons">
+          </Icon>
+          <Label style={{ fontSize: 12, color: "red" }} >Delete</Label>
+        </TouchableOpacity>
+      </ListItem>
+    </List>
+  </View>)
   componentWillUnmount() {
   }
-  showPulishersListener() {
-    console.warn('show plishers clicked')
+  swipeSettings = {
+    //disabled: true,
+    autoClose: true,
+    sensitivity: 100,
+    right: [
+      {
+        component: this.swipperComponent
+      }
+    ],
+  }
+
+  showPublishersList() {
     this.setState({
-      isPublisherModalOpened: true
+      isPublisherModalOpened: true,
+      hide: true
     })
   }
-  publishe() {
-    console.warn('publish clicked ! ')
-  }
+
   join() {
     this.props.Event.joint = true
     this.setState({
@@ -272,7 +345,7 @@ Once you've found three to five sample listings that describe your job goals, co
   blinkerSize = 26;
   render() {
     return this.state.isMount ? (
-      <View>
+      <Swipeout  {...this.swipeSettings}>
         <Card
           style={{
             borderColor: "#1FABAB",
@@ -297,26 +370,28 @@ Once you've found three to five sample listings that describe your job goals, co
                     color: "#0A4E52"
                   }}
                 />
-                <MenuListView publish={() => this.publish()}
+                <MenuListView hide={this.state.hide} published publish={() => this.publish()}
                   showPublishers={() => this.showPublishersList()}
-                  button="Published" menuList={this.state.publicData} />
+                />
               </View>
             </Left>
             {!this.props.Event.past ? <UpdateStateIndicator /> : null}
             <Right>
-              <Icon
-                name="dots-three-vertical"
-                style={{
-                  color: "#0A4E52",
-                  fontSize: 16
-                }}
-                type="Entypo"
-              />
+              <View>
+                <Icon
+                  name="dots-three-vertical"
+                  style={{
+                    color: "#0A4E52",
+                    fontSize: 16
+                  }}
+                  type="Entypo"
+                />
+              </View>
             </Right>
           </CardItem>
           <CardItem
             style={{
-              paddingBottom: 20,
+              paddingBottom: 10,
               paddingTop: 10
             }}
           >
@@ -333,6 +408,29 @@ Once you've found three to five sample listings that describe your job goals, co
                 )}
             </Left>
           </CardItem>
+          {this.props.Event.recursive ? <CardItem>
+            <Left>
+              <View style={
+                {
+                  flexDirection: "column"
+                }
+              }>
+                <View>
+                  <Text style={{
+                    color: "#54F5CA"
+                  }} note>
+                    {this.props.Event.recursion.type}
+                  </Text>
+                </View>
+
+                <View>
+                  <Text note>
+                    {this.props.Event.recursion.days}
+                  </Text>
+                </View>
+              </View>
+            </Left>
+          </CardItem> : null}
           <CardItem
             style={{
               flexDirection: "column",
@@ -623,10 +721,13 @@ Once you've found three to five sample listings that describe your job goals, co
             <Right>
               {this.props.Event.joint ? (
                 <View>
-                  <SvgUri width={25} height={30} svgXmlData={SVGs.join} />
+                  <Icon name="universal-access" style={{
+                    color: "#54F5CA",
+                    fontSize: 23
+                  }} type="Foundation" />
                   <Text
                     style={{
-                      color: "#0A4E52"
+                      color: "#54F5CA"
                     }}
                   >
                     Joint
@@ -634,10 +735,13 @@ Once you've found three to five sample listings that describe your job goals, co
                 </View>
               ) : (
                   <View>
-                    <SvgUri width={25} height={30} svgXmlData={SVGs.join} />
+                    <Icon name="universal-access" style={{
+                      color: "#0A4E52",
+                      fontSize: 23
+                    }} type="Foundation" />
                     <Text
                       style={{
-                        color: "#54F5CA"
+                        color: "#0A4E52"
                       }}
                     >
                       Join
@@ -647,7 +751,6 @@ Once you've found three to five sample listings that describe your job goals, co
             </Right>
           </Footer>
           <DetailsModal
-            id={this.props.Event.id}
             isToBeJoint
             isOpen={this.state.isDetailsModalOpened}
             isJoining={() => this.join()}
@@ -655,6 +758,7 @@ Once you've found three to five sample listings that describe your job goals, co
             created_date={this.props.Event.created_at}
             location={this.props.Event.location.string}
             event_organiser_name={this.state.creator.name}
+            onClosed={() => this.setState({ isDetailsModalOpened: false })}
           />
           <PhotoModal isOpen={this.state.isPhotoModalOpened} image={this.props.Event.background}
             onClosed={() => this.setState({ isPhotoModalOpened: false })} />
@@ -666,7 +770,7 @@ Once you've found three to five sample listings that describe your job goals, co
             this.setState({ isPublisherModalOpened: false })}
             isOpen={this.state.isPublisherModalOpened}></PublishersModal>
         </Card>
-      </View>
+      </Swipeout>
     ) : <ImageActivityIndicator />;
   }
 }

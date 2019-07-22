@@ -69,6 +69,11 @@ const Events = [
         secs: "15 GMT"
       }
     },
+    recursive: true,
+    recursion: {
+      type: "Monthly",
+      days: " 21st"
+    },
     created_at: "16-11-2018",
     description: `Job Description Writing Process
 The process of writing a job description requires having a clear understanding of the job’s duties and responsibilities. The job posting should also include a concise picture of the skills required for the position to attract qualified job candidates. Organize the job description into five sections: Company Information, Job Description, Job Requirements, Benefits and a Call to Action. Be sure to include keywords that will help make your job posting searchable. A well-defined job description will help attract qualified candidates as well as help reduce employee turnover  in the long run.
@@ -84,7 +89,7 @@ Use the sample job postings below to help write your job description and improve
     remind_upated: true,
     background:
       "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/GDC_onlywayaround.jpg/300px-GDC_onlywayaround.jpg",
-    creator: "650594616",
+    creator: "650594916",
     location: {
       string: "General Hospital Bertoua",
       url: "some url"
@@ -133,10 +138,15 @@ Develops sales by making initial presentation; explaining product and service en
     remind_updated: true,
     background:
       "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/GDC_onlywayaround.jpg/300px-GDC_onlywayaround.jpg",
-    creator: "650594616",
+    creator: "650594916",
     location: {
       string: "General Hospital Bertoua",
       url: "some url"
+    },
+    recursive: true,
+    recursion: {
+      type: "Daily",
+      days: undefined
     },
     liked: false,
     joint: true,
@@ -171,6 +181,11 @@ They are also known as a job specification, job profiles, JD, and position descr
     contribution_updated: true,
     vote_updated: true,
     past: true,
+    recursive: true,
+    recursion: {
+      type: "Weekly",
+      days: "Mon,Wed,Fri,Sat"
+    },
     created_at: "12-12-2014",
     highlight_updated: true,
     remind_upated: true,
@@ -185,6 +200,55 @@ They are also known as a job specification, job profiles, JD, and position descr
     public: true,
     likes: 12
   }
+  ,
+  {
+    id: "4",
+    about: {
+      title: "This is a sample Event",
+      description: ""
+    },
+    period: {
+      date: {
+        year: "2018",
+        month: "April",
+        day: "25"
+      },
+      time: {
+        hour: "12",
+        mins: "45",
+        secs: "15 GMT"
+      }
+    },
+    recursive: false,
+    recursion: {
+      type: "Monthly",
+      days: " 21st"
+    },
+    created_at: "16-11-2018",
+    description: `Job Description Writing Process
+The process of writing a job description requires having a clear understanding of the job’s duties and responsibilities. The job posting should also include a concise picture of the skills required for the position to attract qualified job candidates. Organize the job description into five sections: Company Information, Job Description, Job Requirements, Benefits and a Call to Action. Be sure to include keywords that will help make your job posting searchable. A well-defined job description will help attract qualified candidates as well as help reduce employee turnover  in the long run.
+
+Use the sample job postings below to help write your job description and improve your job posting results. Then when you're ready, post your job on Monster to reach the right talent – act now and save 20% when you buy a 60-day job ad!`,
+    liked: true,
+    updated: true,
+    highlights: [87, 11, 10, 9],
+    contribution_updated: true,
+    vote_updated: true,
+    past: false,
+    highlight_updated: true,
+    remind_upated: true,
+    background:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/GDC_onlywayaround.jpg/300px-GDC_onlywayaround.jpg",
+    creator: "650594916",
+    location: {
+      string: "General Hospital Bertoua",
+      url: "some url"
+    },
+    liked: true,
+    joint: true,
+    public: true,
+    likes: 12
+  },
 ];
 import routerActions from "reazy-native-router-actions";
 const Query = { query: "central hospital Bertoua" };

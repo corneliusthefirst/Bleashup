@@ -16,7 +16,7 @@ export default class ChangeLogs extends Component {
       <Header>
         <Left>
           <TouchableOpacity onPress={this.goBack} >
-            <Icon style={{ color: "#FEFFDE" }} name="back" type="Entypo"></Icon>
+            <Icon style={{ color: "#FEFFDE" }} name="arrow-left" type="EvilIcons"></Icon>
           </TouchableOpacity>
         </Left>
         <Body><View><Title>

@@ -86,7 +86,7 @@ export default class DetailsModal extends Component {
 
                     <CardItem style={{}}>
 
-                        <Text style={{ height: 140 }} >
+                        <Text style={{}} >
                             {highlightStartData}...
                       {<Text style={{ color: "blue" }} onPress={() => this.setState({ highlightEnd: true })}> view all</Text>}
                         </Text>
@@ -168,11 +168,7 @@ export default class DetailsModal extends Component {
                 position='bottom'
                 coverScreen={true}
                 isOpen={this.state.isOpen}
-                onClosed={() => {
-                    this.setState({
-                        isOpen: false
-                    })
-                }
+                onClosed={() => this.props.onClosed()
                 }
                 style={{
                     justifyContent: 'center', alignItems: 'center', height: 620, display: 'flex', flexDirection: 'column',
@@ -183,11 +179,39 @@ export default class DetailsModal extends Component {
                     <View style={{ flexDirection: 'row' }}>
                         <View style={{ marginLeft: "40%" }}>
                             <TouchableOpacity
-                                onPress={
-                                    this.props.onclosed
+                                onPress={() =>
+                                    this.props.onClosed()
                                 } transparent>
-                                <Icon style={{ color: "#1FABAB", fontSize: 35 }} name="cross" type="Entypo" />
+                                <Icon style={{ color: "#1FABAB", fontSize: 35 }} name="close" type="EvilIcons" />
                             </TouchableOpacity>
+                        </View>
+                        <View style={{ height: "20%" }}>
+                            <View style={{ marginLeft: 160, }}>
+                                <TouchableOpacity>
+                                    <Text ellipsizeMode="clip" numberOfLines={3} style={{ fontSize: 14, color: "#1FABAB" }}>
+                                        {this.state.location}
+                                    </Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={this.OpenLinkZoom}>
+                                    <Image
+                                        source={require("../../Images/google-maps-alternatives-china-720x340.jpg")}
+                                        style={{
+                                            height: 100,
+                                            width: "70%",
+                                            borderRadius: 15,
+                                            marginTop: -10
+
+                                        }}
+                                        resizeMode="contain"
+                                        onLoad={() => { }}
+                                    />
+                                    <Text note> View On Map </Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={this.OpenLink} style={{}}>
+
+                                </TouchableOpacity>
+                            </View>
+
                         </View>
                         <View style={{ marginLeft: "25%" }}>
                             {this.state.isToBeJoint ?
@@ -218,7 +242,7 @@ export default class DetailsModal extends Component {
                     </View>
                 </View>
 
-                <View style={{ width: "100%", height: 300 }}>
+                <View style={{ width: "100%" }}>
                     <DeckSwiper
                         ref={(c) => this._deckSwiper = c}
                         dataSource={this.state.details}
@@ -229,34 +253,6 @@ export default class DetailsModal extends Component {
                         }
                         renderItem={item => this.Desc(item)}
                     />
-                </View>
-                <View style={{ height: "20%" }}>
-                    <View style={{ marginLeft: 160, }}>
-                        <TouchableOpacity>
-                            <Text ellipsizeMode="clip" numberOfLines={3} style={{ fontSize: 14, color: "#1FABAB" }}>
-                                {this.state.location}
-                            </Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={this.OpenLinkZoom}>
-                            <Image
-                                source={require("../../Images/google-maps-alternatives-china-720x340.jpg")}
-                                style={{
-                                    height: 100,
-                                    width: "70%",
-                                    borderRadius: 15,
-                                    marginTop: -10
-
-                                }}
-                                resizeMode="contain"
-                                onLoad={() => { }}
-                            />
-                            <Text note> View On Map </Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={this.OpenLink} style={{}}>
-
-                        </TouchableOpacity>
-                    </View>
-
                 </View>
             </Modal>
         ) : null

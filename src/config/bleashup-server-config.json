@@ -1,14 +1,14 @@
 {
     "bleashup_http": {
-        "host": "192.168.43.192",
+        "host": "192.168.43.69",
         "port": "30001"
     },
     "chat": {
-        "host": "192.168.43.192",
+        "host": "192.168.43.69",
         "port": "5222"
     },
     "bleashup_tcp": {
-        "host": "192.168.43.192",
+        "host": "192.168.43.69",
         "port": 5555
     },
     "server_reference": "gilesCorneliusBleashup"
