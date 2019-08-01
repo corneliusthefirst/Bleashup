@@ -1,24 +1,15 @@
 import stores from "../stores";
 import GState from "../stores/globalState";
+import Getter from "./Getter"
 import requestObjects from "./requestObjects";
 import tcpRequestData from "./tcpRequestData";
 import emitter from "./eventEmiter";
 import { find, findIndex, drop, reject, forEach } from "lodash";
 class UpdatesDispatcher {
-  constructor() {}
-  /* prepare_updated(EventID, Updated, Updater, AddPhone,
-        NewData) ->
-            { Date, Time } = calendar: universal_time(),
-#updated{
-event_id = EventID, updater = Updater,
-    update = binary_or_atom(Updated),
-    time = to_bleashup_time(Time),
-    date = to_bleashup_date(Date), new_value = NewData,
-    addedphone = AddPhone
-}*/
+  constructor() { }
   dispatchUpdates(updates) {
     forEach(updates, update => {
-      this.dispatchUpdate(update).then(() => {});
+      this.dispatchUpdate(update).then(() => { });
     });
   }
   dispatchUpdate(update) {
@@ -433,7 +424,7 @@ event_id = EventID, updater = Updater,
           let requestData = tcpRequestData
             .getContribution(requestObject)
             .then(JSONData => {
-              this.get_data(JSONData).then(Contribution => {
+              Getter.get_data(JSONData).then(Contribution => {
                 stores.Contributions.addContribution(Contribution).then(() => {
                   stores.Events.addContribution(
                     Contribution.event_id,
@@ -772,7 +763,7 @@ event_id = EventID, updater = Updater,
           let RequestObject = requestObjects.HID();
           RequestObject.h_id = update.new_value;
           tcpRequestData.getHighlight(RequestObject).then(JSONData => {
-            this.get_data(JSONData).then(Highlight => {
+            Getter.get_data(JSONData).then(Highlight => {
               stores.Highlights.addHighlights(Highlight).then(() => {
                 stores.Events.addHighlight(
                   Highlight.event_id,
@@ -898,7 +889,7 @@ event_id = EventID, updater = Updater,
         let VoteID = requestObjects.VID();
         VoteID.vote_id = update.new_value;
         tcpRequestData.getVote(VoteID).then(JSONData => {
-          this.get_data(JSONData).then(Vote => {
+          Getter.get_data(JSONData).then(Vote => {
             stores.Votes.addVote(Vote).then(() => {
               stores.Events.addVote(Vote.event_id, Vote.id).then(() => {
                 GState.newVote = true;
@@ -1201,7 +1192,7 @@ event_id = EventID, updater = Updater,
           let RemindID = requestObjects.RemindID();
           RemindID.remind_id = update.new_value;
           tcpRequestData.getRemind(RemindID).then(JSONData => {
-            this.get_data(JSONData).then(Remind => {
+            Getter.get_data(JSONData).then(Remind => {
               stores.Reminds.addReminds(Remind).then(() => {
                 stores.Events.addRemind(update.event_id, Remind.id).then(() => {
                   stores.Events.changeUpdatedStatus(
@@ -1318,19 +1309,6 @@ event_id = EventID, updater = Updater,
     }
   };
 
-  get_data(data) {
-    return new Promise((resolve, reject) => {
-      emitter.once("successful", (response, dataResponse) => {
-        resolve(dataResponse);
-      });
-      emitter.once("unsuccessful", (response, dataError) => {
-        reject(dataError);
-      });
-      stores.Session.getSession().then(session => {
-        session.socket.write(data);
-      });
-    });
-  }
 }
 
 const UpdatesDispatch = new UpdatesDispatcher();

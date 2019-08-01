@@ -1,5 +1,7 @@
 import stores from "../stores";
 import GState from "../stores/globalState";
+import requestObject from "../services/requestObjects"
+import requestData from "../services/tcpRequestData"
 import {
     forEach
 } from "lodash"
@@ -67,9 +69,16 @@ class InvitationDispatcher {
         },
         invitation(Invitation) {
             return new Promise((resolve, reject) => {
-                stores.Invitations.addInvitations(Invitation)
-                GState.invitationUpdated = true
-                resolve()
+                stores.Invitations.addInvitations(Invitation).then(() => {
+                    let eventId = requestObject.EventID
+                    eventId.event_id = Invitation.event_id
+                    requestData.getEvents(eventId).then(Event => {
+                        stores.Events.addEvent(Event).then(() => {
+                            GState.invitationUpdated = true
+                            resolve()
+                        })
+                    })
+                })
             })
         }
 

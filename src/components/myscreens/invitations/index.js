@@ -22,23 +22,23 @@ import {
 import SentInvitations from "../sent-invitations/index";
 import ReceivedInvitations from "../received-invitations/index";
 
-class InvitationView extends Component {
+export default class InvitationView extends Component {
   render() {
     return (
       <Container>
         <Tabs
           locked
-          tabBarPosition="overlayTop"
+          tabBarPosition="overlayBottom"
           tabBarUnderlineStyle={{
             borderBottomWidth: 0,
             backgroundColor: "transparent"
           }}
         >
-          <Tab heading="Sent Invites">
-            <SentInvitations {...this.props} />
-          </Tab>
           <Tab heading="Received Invites">
             <ReceivedInvitations {...this.props} />
+          </Tab>
+          <Tab heading="Sent Invites">
+            <SentInvitations {...this.props} />
           </Tab>
         </Tabs>
       </Container>
@@ -46,4 +46,3 @@ class InvitationView extends Component {
   }
 }
 
-export default InvitationView;

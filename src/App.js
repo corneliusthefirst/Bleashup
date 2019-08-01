@@ -80,7 +80,7 @@ const AppNavigator = createStackNavigator(
     Reminds: { screen: Reminds }
   },
   {
-    initialRouteName: "Home",
+    initialRouteName: "LoginHome",
     headerMode: "none"
   }
 );

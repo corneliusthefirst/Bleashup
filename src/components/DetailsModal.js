@@ -45,16 +45,18 @@ export default class DetailsModal extends Component {
         this.location = this.props.location ? this.props.location : this.location;
         this.isToBeJoint = this.props.isToBeJoint ? this.props.isToBeJoint : false
     }
-    componentWillReceiveProps(nextProps) {
-        this.setState({
-            details: nextProps.details ? nextProps.details : this.details,
-            isOpen: nextProps.isOpen,
-            created_date: this.props.created_date ? this.props.created_date : this.created_date,
-            event_organiser_name: this.props.event_organiser_name ? this.props.event_organiser_name : this.event_organiser_name,
-            location: this.props.location ? this.props.location : this.location,
-            isToBeJoint: this.props.isToBeJoint ? this.props.isToBeJoint : this.isToBeJoint,
-            id: this.props.id ? this.props.id : this.id
-        })
+    shouldComponentUpdate(nextProps, nextState) {
+        if (nextProps.isOpen !== this.state.isOpen) return true
+        else return false
+    }
+    componentDidUpdate(PreviousProps) {
+        if (this.props.isOpen !== this.state.isOpen) {
+            this.setState({
+                isOpen: this.props.isOpen
+            })
+        }
+
+
     }
 
     Desc(item) {
@@ -179,8 +181,9 @@ export default class DetailsModal extends Component {
                     <View style={{ flexDirection: 'row' }}>
                         <View style={{ marginLeft: "40%" }}>
                             <TouchableOpacity
-                                onPress={() =>
+                                onPress={() => requestAnimationFrame(() => {
                                     this.props.onClosed()
+                                })
                                 } transparent>
                                 <Icon style={{ color: "#1FABAB", fontSize: 35 }} name="close" type="EvilIcons" />
                             </TouchableOpacity>

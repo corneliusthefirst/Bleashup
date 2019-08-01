@@ -5,6 +5,7 @@ import {
 import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
 import ImageActivityIndicator from "./imageActivityIndicator";
 import { Icon, } from "native-base"
+import PublishersModal from "../../PublishersModal"
 
 export default class MenuListView extends Component {
     constructor(props) {
@@ -13,14 +14,16 @@ export default class MenuListView extends Component {
     state = {
         button: undefined,
         menuList: undefined,
-        isMount: false
+        isMount: false,
+        isPublisherModalOpened: false
     }
     componentDidMount() {
         this.setState({
             button: this.props.button,
             menuList: this.props.menuList,
             isMount: true,
-            published: this.props.published
+            published: this.props.published,
+            isPublisherModalOpened: false
         })
     }
     componentWillReceiveProps(nextProps) {
@@ -66,9 +69,19 @@ export default class MenuListView extends Component {
                     <MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => this.publish()}>Publish</MenuItem>
                     {this.state.published ? <View>
                         <MenuDivider color="#1FABAB" />
-                        <MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => this.props.showPublishers()}>View Publshers</MenuItem>
+                        <MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
+                            this.hideMenu()
+                            return this.setState({ isPublisherModalOpened: true })
+                        }
+                        }>View Publshers</MenuItem>
                     </View> : null}
                 </Menu>
+                <PublishersModal onClosed={() => {
+                    this.hideMenu()
+                    return this.setState({ isPublisherModalOpened: false })
+                }
+                }
+                    isOpen={this.state.isPublisherModalOpened}></PublishersModal>
             </View>
         ) : <ImageActivityIndicator />;
     }

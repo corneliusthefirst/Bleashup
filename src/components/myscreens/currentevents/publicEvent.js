@@ -6,7 +6,8 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   activityIndicatorStyle,
-  DeviceEventEmitter
+  Animated,
+  Easing
 } from "react-native";
 
 const w = Dimensions.get("window");
@@ -45,10 +46,18 @@ import CacheImages from "../../CacheImages";
 import MenuListView from "./MenuListView"
 import PublishersModal from "../../PublishersModal";
 import Swipeout from 'react-native-swipeout';
+import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import { observer } from "mobx-react";
 const entireScreenWidth = Dimensions.get("window").width;
 const rem = entireScreenWidth / 380;
+let scaleValue = new Animated.Value(0)
+const cardScale = scaleValue.interpolate({
+  inputRange: [0, 0.5, 1],
+  outputRange: [1, 1.15, 1.2],
 
-export default class PublicEvent extends Component {
+})
+
+@observer class PublicEvent extends Component {
   constructor(props) {
     super(props);
   }
@@ -218,6 +227,12 @@ Once you've found three to five sample listings that describe your job goals, co
     image:
       "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/GDC_onlywayaround.jpg/300px-GDC_onlywayaround.jpg"
   }
+  handleOnPress() {
+    requestAnimationFrame(() => {
+      console.warn("open request received !"); return this.setState({ isProfileModalOpened: true })
+    });
+  }
+
   Query = { query: this.props.Event.location.string };
   OpenLink = createOpenLink(this.Query);
   OpenLinkZoom = createOpenLink({ ...this.Query, zoom: 50 });
@@ -225,16 +240,17 @@ Once you've found three to five sample listings that describe your job goals, co
     UserService.checkUser(this.props.Event.creator).then(creator => {
       this.formPublicData(this.sampelPublishers).then(data => {
         this.formDetailFormData().then((details) => {
+          console.warn(creator, "**")
           this.setState({
             creator: this.creator,
             fetching: false,
             details: details,
             profileToview: this.creator,
             publicData: data,
-            button: <Text> Shw Menue</Text> /**/,
+            button: <Text> Shw Menu</Text> /**/,
             isMount: true,
             currentUser: {
-              phone: stores.Session.SessionStore.phone ? stores.SessionStore.phone : "650564616"
+              phone: stores.Session.SessionStore.phone ? stores.Session.SessionStore.phone : "650564616"
             }
           });
         })
@@ -255,13 +271,6 @@ Once you've found three to five sample listings that describe your job goals, co
           <Label style={{ fontSize: 12, color: "#1FABAB" }}>Publish</Label>
         </TouchableOpacity>
       </ListItem>
-      <ListItem style={{ alignSelf: 'flex-start' }}>
-        <TouchableOpacity>
-          <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="archive" type="EvilIcons">
-          </Icon>
-          <Label style={{ fontSize: 12, color: "#1FABAB" }}>Hide</Label>
-        </TouchableOpacity>
-      </ListItem>
       <ListItem>
         <TouchableOpacity>
           <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="universal-access" type="Foundation">
@@ -273,6 +282,13 @@ Once you've found three to five sample listings that describe your job goals, co
           >
             Join
               </Label>
+        </TouchableOpacity>
+      </ListItem>
+      <ListItem style={{ alignSelf: 'flex-start' }}>
+        <TouchableOpacity>
+          <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="calendar" type="EvilIcons">
+          </Icon>
+          <Label style={{ fontSize: 12, color: "#1FABAB" }}>Detail</Label>
         </TouchableOpacity>
       </ListItem>
       <ListItem style={{ alignSelf: 'flex-start' }}>
@@ -396,10 +412,18 @@ Once you've found three to five sample listings that describe your job goals, co
             }}
           >
             <Left>
+              <ProfileModal
+                isOpen={this.state.isProfileModalOpened}
+                onClosed={() => this.setState({ isProfileModalOpened: false })}
+                profile={this.state.profileToview} />
               {this.state.fetching ? (
                 <ImageActivityIndicator />
               ) : (
-                  <TouchableOpacity onPress={() => this.setState({ isProfileModalOpened: true })}>
+                  <TouchableOpacity onPress={() => {
+                    requestAnimationFrame(() => {
+                      return this.setState({ isProfileModalOpened: true })
+                    });
+                  }}>
                     <View style={{ flexDirection: "row", flex: 5 }}>
                       <ProfileView profile={(this.state.creator)}></ProfileView>
                     </View>
@@ -437,7 +461,9 @@ Once you've found three to five sample listings that describe your job goals, co
               justifyContent: "space-between"
             }}
           >
-            <TouchableOpacity onPress={this.navigateToEventDetails}>
+            <TouchableOpacity onPress={() => requestAnimationFrame(() =>
+              this.navigateToEventDetails()
+            )}>
               <View>
                 <Text
                   adjustsFontSizeToFit={true}
@@ -488,7 +514,9 @@ Once you've found three to five sample listings that describe your job goals, co
                   width: "70%"
                 }}
               >
-                <TouchableOpacity onPress={() => this.setState({ isPhotoModalOpened: true })}>
+                <TouchableOpacity onPress={() => requestAnimationFrame(() => {
+                  this.setState({ isPhotoModalOpened: true })
+                })}>
                   <CacheImages
                     source={{
                       uri: this.props.Event.background
@@ -685,49 +713,105 @@ Once you've found three to five sample listings that describe your job goals, co
           <Footer>
             <Left>
               {this.props.Event.liked ? (
+
                 <View style={{ flexDirection: "row" }}>
-                  <View>
-                    <Icon
-                      name="thumbs-up"
-                      type="Entypo"
-                      style={{
-                        color: "#54F5CA",
-                        fontSize: 23
-                      }}
-                    />
-                  </View>
-                  <View style={{ marginTop: 7 }}>
-                    <Text style={{ color: "#54F5CA" }} note> {this.props.Event.likes} Likers </Text>
-                  </View>
-                </View>
-              ) : (
-                  <View style={{ flexDirection: "row", flex: 5 }}>
-                    <View>
+                  <TouchableWithoutFeedback onPressIn={() => {
+                    scaleValue.setValue(0);
+                    Animated.timing(scaleValue, {
+                      toValue: 1,
+                      duration: 250,
+                      easing: Easing.linear,
+                      userNativeDriver: true
+                    }).start()
+                  }} onPressOut={() => {
+                    Animated.timing(scaleValue, {
+                      toValue: 1,
+                      duration: 100,
+                      easing: Easing.linear,
+                      userNativeDriver: true
+                    }).start()
+                  }} >
+                    <Animated.View style={{ transform: [{ scale: cardScale }] }} >
                       <Icon
                         name="thumbs-up"
                         type="Entypo"
                         style={{
-                          color: "#0A4E52",
+                          color: "#FEFFDE",
                           fontSize: 23
                         }}
                       />
-                    </View>
-                    <View style={{ marginTop: 10 }}>
-                      <Text style={{ color: "#0A4E52" }} note>{this.props.Event.likes} Likers</Text>
+                    </Animated.View>
+
+                  </TouchableWithoutFeedback>
+                  <View style={{ marginTop: 7 }}>
+                    <Text style={{ color: "#FEFFDE" }} note> {this.props.Event.likes} Likers </Text>
+                  </View>
+                </View>
+              ) : (
+                  <View style={{ flexDirection: "row" }}>
+                    <TouchableWithoutFeedback onPressIn={() => {
+                      scaleValue.setValue(0);
+                      Animated.timing(scaleValue, {
+                        toValue: 1,
+                        duration: 250,
+                        easing: Easing.linear,
+                        userNativeDriver: true
+                      }).start()
+                    }} onPressOut={() => {
+                      Animated.timing(scaleValue, {
+                        toValue: 1,
+                        duration: 100,
+                        easing: Easing.linear,
+                        userNativeDriver: true
+                      }).start()
+                    }} >
+                      <Animated.View style={{ transform: [{ scale: cardScale }] }} >
+                        <Icon
+                          name="thumbs-up"
+                          type="Entypo"
+                          style={{
+                            color: "#7DD2D2",
+                            fontSize: 23
+                          }}
+                        />
+                      </Animated.View>
+
+                    </TouchableWithoutFeedback>
+                    <View style={{ marginTop: 7 }}>
+                      <Text style={{ color: "#7DD2D2" }} note>{this.props.Event.likes} Likers</Text>
                     </View>
                   </View>
                 )}
             </Left>
             <Right>
               {this.props.Event.joint ? (
-                <View>
-                  <Icon name="universal-access" style={{
-                    color: "#54F5CA",
-                    fontSize: 23
-                  }} type="Foundation" />
+                <View style={{ padding: "-5%", marginLeft: "-5%", width: "20%" }}>
+                  <TouchableWithoutFeedback onPressIn={() => {
+                    scaleValue.setValue(0);
+                    Animated.timing(scaleValue, {
+                      toValue: 1,
+                      duration: 250,
+                      easing: Easing.linear,
+                      userNativeDriver: true
+                    }).start()
+                  }} onPressOut={() => {
+                    Animated.timing(scaleValue, {
+                      toValue: 1,
+                      duration: 100,
+                      easing: Easing.linear,
+                      userNativeDriver: true
+                    }).start()
+                  }} >
+                    <Animated.View style={{ transform: [{ scale: cardScale }] }}>
+                      <Icon name="universal-access" style={{
+                        color: "#FEFFDE",
+                        fontSize: 23
+                      }} type="Foundation" />
+                    </Animated.View>
+                  </TouchableWithoutFeedback>
                   <Text
                     style={{
-                      color: "#54F5CA"
+                      color: "#FEFFDE"
                     }}
                   >
                     Joint
@@ -735,13 +819,32 @@ Once you've found three to five sample listings that describe your job goals, co
                 </View>
               ) : (
                   <View>
-                    <Icon name="universal-access" style={{
-                      color: "#0A4E52",
-                      fontSize: 23
-                    }} type="Foundation" />
+                    <TouchableWithoutFeedback onPressIn={() => {
+                      scaleValue.setValue(0);
+                      Animated.timing(scaleValue, {
+                        toValue: 1,
+                        duration: 250,
+                        easing: Easing.linear,
+                        userNativeDriver: true
+                      }).start()
+                    }} onPressOut={() => {
+                      Animated.timing(scaleValue, {
+                        toValue: 1,
+                        duration: 100,
+                        easing: Easing.linear,
+                        userNativeDriver: true
+                      }).start()
+                    }} >
+                      <Animated.View style={{ transform: [{ scale: cardScale }] }}>
+                        <Icon name="universal-access" style={{
+                          color: "#7DD2D2",
+                          fontSize: 23
+                        }} type="Foundation" />
+                      </Animated.View>
+                    </TouchableWithoutFeedback>
                     <Text
                       style={{
-                        color: "#0A4E52"
+                        color: "#7DD2D2"
                       }}
                     >
                       Join
@@ -762,15 +865,9 @@ Once you've found three to five sample listings that describe your job goals, co
           />
           <PhotoModal isOpen={this.state.isPhotoModalOpened} image={this.props.Event.background}
             onClosed={() => this.setState({ isPhotoModalOpened: false })} />
-          <ProfileModal
-            isOpen={this.state.isProfileModalOpened}
-            onClosed={() => this.setState({ isProfileModalOpened: false })}
-            profile={this.state.profileToview} />
-          <PublishersModal onClosed={() =>
-            this.setState({ isPublisherModalOpened: false })}
-            isOpen={this.state.isPublisherModalOpened}></PublishersModal>
         </Card>
       </Swipeout>
     ) : <ImageActivityIndicator />;
   }
 }
+export default PublicEvent

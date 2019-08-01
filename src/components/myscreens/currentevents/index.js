@@ -89,13 +89,13 @@ Use the sample job postings below to help write your job description and improve
     remind_upated: true,
     background:
       "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/GDC_onlywayaround.jpg/300px-GDC_onlywayaround.jpg",
-    creator: "650594916",
+    creator: "00237650594916",
     location: {
       string: "General Hospital Bertoua",
       url: "some url"
     },
     liked: true,
-    joint: true,
+    joint: false,
     public: true,
     likes: 12
   },
@@ -138,7 +138,7 @@ Develops sales by making initial presentation; explaining product and service en
     remind_updated: true,
     background:
       "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/GDC_onlywayaround.jpg/300px-GDC_onlywayaround.jpg",
-    creator: "650594916",
+    creator: "650594616",
     location: {
       string: "General Hospital Bertoua",
       url: "some url"
@@ -172,7 +172,7 @@ Develops sales by making initial presentation; explaining product and service en
         secs: "15 GMT"
       }
     },
-    liked: true,
+    liked: false,
     update: true,
     description: `What Is a Job Description?
 A job description is an internal document that clearly states the essential job requirements, job duties, job responsibilities, and skills required to perform a specific role. A more detailed job description will cover how success is measured in the role so it can be used during performance evaluations.
@@ -191,12 +191,12 @@ They are also known as a job specification, job profiles, JD, and position descr
     remind_upated: true,
     background:
       "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/GDC_onlywayaround.jpg/300px-GDC_onlywayaround.jpg",
-    creator: "650594616",
+    creator: "00237650594916",
     location: {
       string: "General Hospital Bertoua",
       url: "some url"
     },
-    joint: false,
+    joint: true,
     public: true,
     likes: 12
   }
@@ -239,7 +239,7 @@ Use the sample job postings below to help write your job description and improve
     remind_upated: true,
     background:
       "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/GDC_onlywayaround.jpg/300px-GDC_onlywayaround.jpg",
-    creator: "650594916",
+    creator: "00237650594916",
     location: {
       string: "General Hospital Bertoua",
       url: "some url"
@@ -251,6 +251,7 @@ Use the sample job postings below to help write your job description and improve
   },
 ];
 import routerActions from "reazy-native-router-actions";
+import { FlatList } from "react-native-gesture-handler";
 const Query = { query: "central hospital Bertoua" };
 const OpenLink = createOpenLink(Query);
 const OpenLinkZoom = createOpenLink({ ...Query, zoom: 50 });
@@ -259,33 +260,35 @@ export default class CurrentEventView extends Component {
     super(props);
   }
   componentDidMount() {
-    stores.Events.readFromStore().then(Events => {
-      console.warn(Events, "****")
+    setTimeout(() => {
       this.setState({
         loadingEvents: false,
-        Events: Events
+        Events: stores.Events.events.length !== 0 ? stores.Events.events : Events
       });
-    });
+    }, 0);
   }
   state = {
     currentIndex: 0,
     loadingEvents: true,
     Events: undefined
   };
-  _renderItem() {
-    return Events.map(event => {
-      return event.public ? (
-        <PublicEvent key={event.id} {...this.props} Event={event} />
-      ) : (
-          <PrivateEvent key={event.id} {...this.props} Event={event} />
-        );
+  //callback function to refresh state of change
+  refreshCardList = (activeKey) => {
+    this.setState((prevState) => {
+      return {
+        //give the key to delete to the deleted row key
+        deletedRowKey: activeKey
+      };
+
     });
+    //flatlist here is a reference to flatlist
+    this.refs.cardlist.scrollToEnd();
   }
   render() {
     return this.state.loadingEvents ? (
       <ImageActivityIndicator />
     ) : (
-        <Container>
+        <View>
           <NestedScrollView
             /*  onScroll={nativeEvent => {
                 GState.scrollOuter = true;
@@ -293,9 +296,27 @@ export default class CurrentEventView extends Component {
             alwaysBounceHorizontal={true}
           // scrollEventThrottle={16}
           >
-            <Content>{this._renderItem()}</Content>
+            <View>
+              <FlatList
+                style={{ flex: 1 }}
+                ref={"cardlist"}
+                listKey={"id"}
+                keyExtractor={(item, index) => item.id}
+                data={this.state.Events}
+                renderItem={({ item, index }) => {
+                  return item.public ? (
+                    <PublicEvent index={index} {...this.props} Event={item} />
+                  ) : (
+                      <PrivateEvent index={index} {...this.props} parentCardList={this} refresh={this.refreshCardList} Event={item} />
+                    );
+
+                }}
+              >
+
+              </FlatList>
+            </View>
           </NestedScrollView>
-        </Container>
+        </View>
       );
   }
 }

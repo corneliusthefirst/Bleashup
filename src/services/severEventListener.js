@@ -7,7 +7,7 @@ import InvitationDispatcher from "./invitationDispatcher";
 import RescheduleDispatcher from "./reschedulDispatcher";
 
 class ServerEventListener {
-  constructor() {}
+  constructor() { }
   listen(socket) {
     socket.on("error", error => {
       console.error(error.toString(), "error");
@@ -38,7 +38,7 @@ class ServerEventListener {
             });
             break;
           case "event_changes":
-            UpdatesDispatcher.dispatchUpdate(data.updated).then(() => {});
+            UpdatesDispatcher.dispatchUpdate(data.updated).then(() => { });
             break;
           case "current_event":
             emitter.emit("successful", "current_event", data.body);
@@ -48,27 +48,29 @@ class ServerEventListener {
             break;
           case "invitation":
             InvitationDispatcher.dispatcher(data.body, "invitation").then(
-              () => {}
+              () => {
+                console.warn("invitation dispatch !!")
+              }
             );
             break;
           case "reschedule":
-            RescheduleDispatcher.applyReschedule(body).then(() => {});
+            RescheduleDispatcher.applyReschedule(body).then(() => { });
             break;
           case "denied_invitation":
             InvitationDispatcher.dispatcher(
               data.body,
               "denied_invitation"
-            ).then(() => {});
+            ).then(() => { });
             break;
           case "accepted_invitation":
             InvitationDispatcher.dispatcher(
               data.body,
               "accepted_invitation"
-            ).then(() => {});
+            ).then(() => { });
             break;
           case "sent_invitation":
             InvitationDispatcher.dispatcher(data.body, "sent_invitation").then(
-              () => {}
+              () => { }
             );
             break;
 
@@ -76,7 +78,7 @@ class ServerEventListener {
             InvitationDispatcher.dispatcher(
               data.body,
               "received_invitation"
-            ).then(() => {});
+            ).then(() => { });
             break;
           case "current_event_field":
             emitter.emit(

@@ -184,13 +184,6 @@ Once you've found three to five sample listings that describe your job goals, co
           <Label style={{ fontSize: 12, color: "#1FABAB" }}>Publish</Label>
         </TouchableOpacity>
       </ListItem>
-      <ListItem style={{ alignSelf: 'flex-start' }}>
-        <TouchableOpacity>
-          <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="archive" type="EvilIcons">
-          </Icon>
-          <Label style={{ fontSize: 12, color: "#1FABAB" }}>Hide</Label>
-        </TouchableOpacity>
-      </ListItem>
       <ListItem>
         <TouchableOpacity>
           <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="universal-access" type="Foundation">
@@ -202,6 +195,13 @@ Once you've found three to five sample listings that describe your job goals, co
           >
             Join
               </Label>
+        </TouchableOpacity>
+      </ListItem>
+      <ListItem style={{ alignSelf: 'flex-start' }}>
+        <TouchableOpacity>
+          <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="calendar" type="EvilIcons">
+          </Icon>
+          <Label style={{ fontSize: 12, color: "#1FABAB" }}>Details</Label>
         </TouchableOpacity>
       </ListItem>
       <ListItem style={{ alignSelf: 'flex-start' }}>
@@ -320,7 +320,9 @@ Once you've found three to five sample listings that describe your job goals, co
               {this.state.fetching ? (
                 <ImageActivityIndicator />
               ) : (
-                  <TouchableOpacity onPress={() => this.setState({ isProfileModalOpened: true })}>
+                  <TouchableOpacity onPress={() => requestAnimationFrame(() => {
+                    this.setState({ isProfileModalOpened: true })
+                  })}>
                     <View style={{ flexDirection: "row", flex: 5 }}>
                       <ProfileView profile={(this.state.creator)}></ProfileView>
                     </View>
@@ -358,7 +360,9 @@ Once you've found three to five sample listings that describe your job goals, co
               justifyContent: "space-between"
             }}
           >
-            <TouchableOpacity onPress={this.navigateToEventDetails}>
+            <TouchableOpacity onPress={() => requestAnimationFrame(() => {
+              this.navigateToEventDetails()
+            })}>
               <View>
                 <Text
                   adjustsFontSizeToFit={true}
@@ -409,7 +413,9 @@ Once you've found three to five sample listings that describe your job goals, co
                   width: "70%"
                 }}
               >
-                <TouchableOpacity onPress={() => this.setState({ isPhotoModalOpened: true })}>
+                <TouchableOpacity onPress={() => requestAnimationFrame(() => {
+                  this.setState({ isPhotoModalOpened: true })
+                })}>
                   <CacheImages
                     source={{
                       uri: this.props.Event.background
@@ -612,13 +618,13 @@ Once you've found three to five sample listings that describe your job goals, co
                     name="thumbs-up"
                     type="Entypo"
                     style={{
-                      color: "#54F5CA",
+                      color: "#FFFFFF",
                       fontSize: 23
                     }}
                   />
                 </View>
                 <View style={{ marginTop: 7 }}>
-                  <Text style={{ color: "#54F5CA" }} note> {this.props.Event.likes} Likers </Text>
+                  <Text style={{ color: "#FFFFFF" }} note> {this.props.Event.likes} Likers </Text>
                 </View>
               </View>
             ) : (
@@ -628,13 +634,13 @@ Once you've found three to five sample listings that describe your job goals, co
                       name="thumbs-up"
                       type="Entypo"
                       style={{
-                        color: "#0A4E52",
+                        color: "#7DD2D2",
                         fontSize: 23
                       }}
                     />
                   </View>
                   <View style={{ marginTop: "5%" }}>
-                    <Text style={{ color: "#0A4E52" }} note>{this.props.Event.likes} Likers</Text>
+                    <Text style={{ color: "#7DD2D2" }} note>{this.props.Event.likes} Likers</Text>
                   </View>
                 </View>
               )}
@@ -654,7 +660,7 @@ Once you've found three to five sample listings that describe your job goals, co
           <ProfileModal
             isOpen={this.state.isProfileModalOpened}
             onClosed={() => this.setState({ isProfileModalOpened: false })}
-            profile={this.state.profileToview} />
+            profile={this.state.creator} />
         </Card>
       </Swipeout>
     );

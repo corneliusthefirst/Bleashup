@@ -21,6 +21,7 @@ import ProfileModal from '../../ProfileModal'
 import PhotoModal from "../../PhotoModal"
 import DetailModal from "../../DetailsModal"
 import globalState from "../../../stores/globalState";
+import ImageActivityIndicator from '../currentevents/imageActivityIndicator';
 
 const defaultPlaceholderObject = {
   component: ActivityIndicator,
@@ -44,26 +45,30 @@ const propOverridePlaceholderObject = {
 class CardListItem extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      //this shall be used on choosing a key to delete
-      activeRowKey: null,
-      isOpen: false,
-      isOpenStatus: false,
-      enlargeEventImage: false,
-      descriptionEnd: false,
-      highlightEnd: false,
-      accept: false,
-      deny: false,
-      message: "",
-      textcolor: ""
 
-    };
   }
+  state = {
+    //this shall be used on choosing a key to delete
+    activeRowKey: null,
+    isOpen: false,
+    isOpenStatus: false,
+    enlargeEventImage: false,
+    descriptionEnd: false,
+    highlightEnd: false,
+    accept: false,
+    deny: false,
+    message: "",
+    textcolor: "",
+    isLoadin: true
+
+  };
   componentDidMount() {
-    BackHandler.addEventListener("hardwareBackPress", this.handleBackButton);
+    this.setState({
+      isLoadin: false
+    })
   }
+
   componentWillUnmount() {
-    BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton);
   }
 
   handleBackButton() {
@@ -208,7 +213,7 @@ class CardListItem extends Component {
       sectionId: 1
     }
 
-    return (
+    return this.state.isLoadin ? <ImageActivityIndicator></ImageActivityIndicator> : (
       <Swipeout {...swipeSettings}>
         <Card style={{ height: this.state.isOpen || this.state.isOpenStatus || this.state.enlargeEventImage ? 610 : 180 }}>
           <CardItem>

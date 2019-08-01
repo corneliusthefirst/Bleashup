@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import Modal from 'react-native-modalbox';
-import { View, Text, TouchableOpacity } from 'react-native'
-import { Button, Icon } from 'native-base'
+import { View, TouchableOpacity } from 'react-native'
+import { Button, Text, Icon } from 'native-base'
 import CacheImages from './CacheImages'
 
 export default class ProfileModal extends Component {
@@ -32,44 +32,53 @@ export default class ProfileModal extends Component {
          })
  
      }*/
-    componentWillReceiveProps(nextProps) {
-        this.setState({
-            profile: nextProps.profile ? nextProps.profile : this.profile,
-            isOpen: nextProps.isOpen
-        })
+    shouldComponentUpdate(nextProps, nextState) {
+        if (nextProps.isOpen !== this.state.isOpen) return true
+        else return false
+    }
+    componentDidUpdate(PreviousProps) {
+        if (this.props.isOpen !== this.state.isOpen) {
+            this.setState({
+                profile: this.props.profile,
+                isOpen: this.props.isOpen
+            })
+        }
+
 
     }
     render() {
-        return this.state.profile ? (
+        return this.state.isOpen ? (
             <Modal
                 coverScreen={true}
                 backButtonClose={true}
                 isOpen={this.state.isOpen}
-                onClosed={() =>
-                    this.props.onClosed()
+                onClosed={() => {
+                    //this.setState({ isOpen: false })
+                    return this.props.onClosed()
+                }
                 }
                 style={{
                     backgroundColor: this.transparent, justifyContent: 'center', alignItems: 'center',
-                    height: 380, borderRadius: 15, backgroundColor: '#FEFFDE', width: 330
+                    height: 380, borderRadius: 15, backgroundColor: '#FEFFDE', width: 350
                 }}
                 position={'center'}
             >
                 <View>
                     <TouchableOpacity style={{}} onPress={() =>
-                        this.props.onClosed()
+                        requestAnimationFrame(() => {
+                            this.props.onClosed()
+                        })
                     } transparent>
                         <Icon style={{ color: "#1FABAB", fontSize: 35 }} name="close" type="EvilIcons" />
                     </TouchableOpacity>
                 </View>
                 <Text style={{ fontSize: 18, fontWeight: '600', marginLeft: -220 }}>{this.state.profile.name}</Text>
 
-                <TouchableOpacity onPress={() => {
+                <TouchableOpacity onPress={() =>
                     this.props.onClosed()
-
-                }
                 } >
                     <CacheImages thumbnails source={{ uri: this.state.profile.image }}
-                        square style={{ marginTop: 20, width: 300, height: 200 }} />
+                        square style={{ marginTop: 20, width: 350, height: 200 }} />
                 </TouchableOpacity>
                 {this.state.profile.status.length > 35 ?
                     <Text style={{
@@ -80,7 +89,7 @@ export default class ProfileModal extends Component {
                     <Text style={{
                         fontSize: 17, fontWeight: '600',
                         marginLeft: -104, marginTop: 10
-                    }} note>{this.state.profile.status}</Text>}
+                    }} >{this.state.profile.status}</Text>}
 
             </Modal>
         ) : null

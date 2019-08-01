@@ -21,8 +21,11 @@ class UserHttpServices {
                      * status : "some string"
                      * } */
                     resolve(data)
+                }).catch((error)=>{
+                    console.warn(error,"------");
                 })
             }).catch(error => {
+                console.warn(error,"***");
                 reject(error)
             })
         })

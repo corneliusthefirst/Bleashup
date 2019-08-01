@@ -19,11 +19,16 @@ export default class PhotoModal extends Component {
         })
         this.image = this.props.image ? this.props.image : this.image
     }
-    componentWillReceiveProps(nextProps) {
-        this.setState({
-            image: nextProps.image ? nextProps.image : this.image,
-            isOpen: nextProps.isOpen
-        })
+    shouldComponentUpdate(nextProps, nextState) {
+        if (nextProps.isOpen !== this.state.isOpen) return true
+        else return false
+    }
+    componentDidUpdate(PreviousProps) {
+        if (this.props.isOpen !== this.state.isOpen) {
+            this.setState({
+                isOpen: this.props.isOpen
+            })
+        }
     }
     transparent = "rgba(52, 52, 52, 0.3)";
 
@@ -39,19 +44,23 @@ export default class PhotoModal extends Component {
                 style={{
                     justifyContent: 'center',
                     alignItems: 'center', height: 420, borderRadius: 15,
-                    backgroundColor: this.transparent, width: 330
+                    backgroundColor: this.transparent, width: 350
                 }}
                 position={'center'}
             >
                 <View>
-                    <TouchableOpacity style={{}} onPress={() => this.props.onClosed()} transparent>
+                    <TouchableOpacity style={{}} onPress={() => requestAnimationFrame(() => {
+                        this.props.onClosed()
+                    })} transparent>
                         <Icon style={{ color: "#1FABAB", fontSize: 35 }} name="close" type="EvilIcons" />
                     </TouchableOpacity>
                 </View>
                 <TouchableOpacity onPress={() =>
-                    this.props.onClosed
+                    requestAnimationFrame(() => {
+                        this.props.onClosed()
+                    })
                 } >
-                    <CacheImages thumbnails source={{ uri: this.state.image }} style={{ width: 310, height: 330, marginTop: 14 }} square />
+                    <CacheImages source={{ uri: this.state.image }} style={{ width: 350, height: 260, marginTop: 14 }} square />
                 </TouchableOpacity>
             </Modal>
         ) : null
