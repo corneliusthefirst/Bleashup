@@ -117,7 +117,7 @@ class Home extends Component {
               }}
               heading={
                 <TabHeading>
-                  <Icon name="calendar" />
+                  <Icon name="calendar"  type="EvilIcons" />
                 </TabHeading>
               }
             >
@@ -126,7 +126,7 @@ class Home extends Component {
             <Tab
               heading={
                 <TabHeading>
-                  <Icon name="sc-telegram" />
+                  <Icon name="sc-telegram" type="EvilIcons" />
                 </TabHeading>
               }
             >
@@ -135,7 +135,7 @@ class Home extends Component {
             <Tab
               heading={
                 <TabHeading>
-                  <Icon name="comment" />
+                  <Icon name="comment"  type="EvilIcons" />
                 </TabHeading>
               }
             >
@@ -144,7 +144,7 @@ class Home extends Component {
             <Tab
               heading={
                 <TabHeading>
-                  <Icon name="user" />
+                  <Icon name="user"  type="EvilIcons" />
                 </TabHeading>
               }
             >
@@ -159,4 +159,3 @@ class Home extends Component {
 
 export default Home;
 
-//  onPress = {this.props.navigation.navigate('Settings')}

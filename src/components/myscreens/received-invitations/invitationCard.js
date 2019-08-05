@@ -18,10 +18,13 @@ import CacheImages from "../../CacheImages";
 import Exstyles from './style';
 import svg from '../../../../svg/svg';
 import { createOpenLink } from "react-native-open-maps";
-import ProfileModal from '../../ProfileModal'
-import PhotoModal from "../../PhotoModal"
-import DetailModal from "../../DetailsModal"
+import ProfileModal from '../invitations/dependencies/ProfileModal';
+import PhotoModal from "../invitations/dependencies/PhotoModal";
+import DetailsModal from "../invitations/dependencies/DetailsModal";
 import globalState from "../../../stores/globalState";
+import AccordionModule from "../invitations/dependencies/Accordion";
+import DoublePhoto from "../invitations/dependencies/doublePhoto";
+
 
 const defaultPlaceholderObject = {
   component: ActivityIndicator,
@@ -48,109 +51,54 @@ class CardListItem extends Component {
     this.state = {
       //this shall be used on choosing a key to delete
       activeRowKey: null,
-      isOpen: false,
+      isOpenDetails: false,
       isOpenStatus: false,
       enlargeEventImage: false,
-      descriptionEnd: false,
-      highlightEnd: false,
-      accept: false,
-      deny: false,
+      accept: this.props.item.accept,
+      deny: this.props.item.deny,
       message: "",
-      textcolor: ""
+      textcolor: "",
+      isJoining:false,
+      hasJoin:false
 
     };
   }
-  componentDidMount() {
-    BackHandler.addEventListener("hardwareBackPress", this.handleBackButton);
-  }
-  componentWillUnmount() {
-    BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton);
-  }
+ 
 
-  handleBackButton() {
-    ToastAndroid.show("Back button is pressedee", ToastAndroid.SHORT);
-    this.closeAllModals
-    return true;
-  }
-  handleEvent = (event) => {
-    this.setState({
-      isOpenStatus: false
-    })
-  }
-  handleEvent2 = (event) => {
-    this.setState({
-      enlargeEventImage: false
-    })
-  }
 
-  handleEvent3 = (event) => {
-    this.setState({
-      isOpen: false
-    })
-  }
-  @autobind closeAllModals() {
-    return this.setState({
-      isOpen: false,
-      isOpenStatus: false,
-      enlargeEventImage: false
-    })
-  }
+
   //Maps schedule
   Query = { query: this.props.item.location };
   OpenLink = createOpenLink(this.Query);
   OpenLinkZoom = createOpenLink({ ...this.Query, zoom: 50 });
 
-  _renderHeader(item, expanded) {
-    return (
-      <View style={{
-        flexDirection: "row",
-        padding: 5,
-        justifyContent: "space-between",
-        alignItems: "center",
-        backgroundColor: "#FEFFDE"
-      }}  >
-        <Text style={{ fontWeight: "400", fontStyle: "italic" }} note>
-          {item.title}
-        </Text>
-        {expanded
-          ? <Icon style={{ fontSize: 18 }} name="arrow-up" />
-          : <Icon style={{ fontSize: 18 }} name="arrow-down" />}
 
-      </View>
-    );
-  }
-  _renderContent(item) {
-    return (
-      <Text
-        style={{
-          backgroundColor: "#FEFFDE",
-          paddingTop: -30,
-          paddingLeft: 10,
-          paddingBottom: 10,
-          fontStyle: "italic",
-        }}
-        note
-      >
-        {item.content}
-      </Text>
-    );
-  }
+//accepted invitation
+@autobind
+onAccept() {
+  this.setState({accept:true})
+  this.props.item.accept = true
+ //;
+}
+//refused invitation
+@autobind
+onDenied() {
+  this.setState({deny:true})
+  this.props.item.deny = true
+}
+
 
   render() {
+    //console.warn('counter')
+
     const AccordData = this.props.item.sender_status
     max_length = this.props.item.sender_status.length
     let dataArray = [{ title: AccordData.slice(0, 35), content: AccordData.slice(35, max_length) }]
     //deck swiper object
     const cards = [];
     item = this.props.item
-    //creating the event description starting and ending data
-    const descriptionData = item.event_description
-    max_length1 = item.event_description.length
-    descriptionStartData = descriptionData.slice(0, 300)
-    descriptionEndData = descriptionData.slice(300, max_length1)
-
-
-    Description = { event_title: item.event_title, event_description: descriptionStartData }
+  
+    Description = { event_title: item.event_title, event_description: item.event_description}
     cards.push(Description)
 
 
@@ -158,7 +106,7 @@ class CardListItem extends Component {
       cards.push(item.highlight[i])
     }
 
-    //console.warn(cards)
+     
     const swipeSettings = {
       autoClose: true,
       //take this and do something onClose
@@ -186,13 +134,11 @@ class CardListItem extends Component {
 
                 {
                   text: 'Yes', onPress: () => {
-                    cardListData.splice(this.props.index, 1);
+                    this.props.cardListData.splice(this.props.index, 1);
                     //make request to delete to database(back-end)
-                    /**
-
-                    */
+                  
                     //Refresh FlatList
-                    this.props.parentCardList.refreshCardList(deletingRow);
+                    this.props.parentCardList.refreshFlatList(deletingRow);
                   }
                 },
               ],
@@ -209,9 +155,11 @@ class CardListItem extends Component {
       sectionId: 1
     }
 
+
+ 
     return (
       <Swipeout {...swipeSettings}>
-        <Card style={{ height: this.state.isOpen || this.state.isOpenStatus || this.state.enlargeEventImage ? 610 : 180 }}>
+        <Card style={{}}>
           <CardItem>
             <Left>
               <TouchableOpacity onPress={() => this.setState({ isOpenStatus: true })} >
@@ -226,14 +174,7 @@ class CardListItem extends Component {
                   fontSize: 16, marginTop: -10, borderWidth: 0
                 }} note>{this.props.item.sender_status}</Text> :
 
-                  <Accordion
-                    dataArray={dataArray}
-                    animation={true}
-                    expanded={true}
-                    renderHeader={this._renderHeader}
-                    renderContent={this._renderContent}
-                    style={{ borderWidth: 0 }}
-                  />
+                  <AccordionModule dataArray={dataArray}/>
 
                 }
               </Body>
@@ -242,44 +183,68 @@ class CardListItem extends Component {
 
           <CardItem cardBody>
             <Left>
-              <CacheImages thumbnails large source={{ uri: this.props.item.receiver_Image }} />
-              <TouchableOpacity onPress={() => this.setState({ enlargeEventImage: true })} >
-                <CacheImages thumbnails large source={{ uri: this.props.item.event_Image }} style={{ marginLeft: -30 }} />
-              </TouchableOpacity>
+              <DoublePhoto enlargeImage={() => this.setState({ enlargeEventImage: true })} LeftImage={this.props.item.receiver_Image}
+                RightImage={this.props.item.event_Image }/>
             </Left>
+
             <Body >
-              <Text style={{ marginLeft: -40 }} onPress={() => this.setState({ isOpen: true })}
+            <TouchableOpacity onPress={() => this.setState({ isOpenDetails: true })} >
+              <Text style={{ marginLeft: -40 }} 
               >{this.props.item.event_title}</Text>
-              <Text style={{ marginLeft: -40, color: 'dimgray', fontSize: 12 }}
-                onPress={() => this.setState({ isOpen: true })}> on the {this.props.item.created_date} at
-                    {this.props.item.event_time}</Text>
+              <Text style={{ marginLeft: -40, color: 'dimgray', fontSize: 12 }}> on the {this.props.item.created_date} at {this.props.item.event_time}</Text>
+            </TouchableOpacity>                
             </Body>
           </CardItem>
-          <CardItem style={{ marginTop: 10 }}>
-            <Right>
-              <Text style={{
-                marginRight: -60, color: 'dimgray', marginBottom: -10,
-                fontSize: 13
-              }}>{this.props.item.received_date}</Text>
-              <Text style={{
-                marginRight: 220, marginTop: -10,
-                color: 'dimgray', fontSize: 13
-              }}>{this.props.item.invitation_status}</Text>
-            </Right>
+
+          <CardItem>
+           {this.state.accept||this.state.deny ? 
+             (this.state.accept ? <View style={{}}><Text style={{marginTop:5,marginLeft:265,fontSize:17,fontWeight:"600",color:"forestgreen"}}  note>Accepted</Text></View> : 
+              <View  style={{}} ><Text style={{marginTop:5,marginLeft:270,fontSize:17,fontWeight:"600",color:"darkorange"}} note>Denied</Text></View>):
+            
+            <View style={{flexDirection:'row',justifyContent:'space-between',marginTop:10}}>
+             <Button onPress={this.onAccept}  style ={{marginLeft:40,borderRadius:5}} success ><Text>Accept</Text></Button>
+
+              <View style={{flexDirection:'column',alignItems:'center',marginLeft:40}}>
+              <Icon name="comment"  type="FontAwesome5" onPress={{}} style={{color:"#1FABAB"}}/>
+              <Text style={{marginTop:5,color:"#1FABAB"}}>chat</Text>
+              </View>
+
+             <Button onPress={this.onDenied}  style ={{borderRadius:5,marginLeft:40}} danger ><Text>Deny</Text></Button>
+            </View>
+           
+            }
+
           </CardItem>
 
+          <CardItem style={{ margin: 10,flexDirection:'row',justifyContent:'space-between' }}>
+          
+              <Text style={{ color: 'dimgray', fontSize: 13}}>{this.props.item.received_date}</Text>
 
+              <Text style={{  color: 'dimgray', fontSize: 13}}>{this.props.item.invitation_status}</Text>
+          
+          </CardItem>
 
-          <ProfileModal isOpen={this.state.isOpenStatus} profile={{
+            <ProfileModal isOpen={this.state.isOpenStatus} profile={{
             name: this.props.item.sender_name,
             image: this.props.item.sender_Image,
             status: this.props.item.sender_status
-          }} onClosed={() => this.setState({ isOpenStatus: false })} />
-          <PhotoModal isOpen={this.state.enlargeEventImage} image={this.props.item.event_Image} onClosed={() => this.setState({ enlargeEventImage: false })} />
-          <DetailModal isOpen={this.state.isOpen} details={cards} location={this.props.item.location}
-            event_organiser_name={this.props.item.event_organiser_name}
-            created_date={this.props.item.created_date} isJoining={() => this.join()} onclosed={() => this.setState({ isOpen: false })}
-          />
+          }} onClosed={() => this.setState({ isOpenStatus: false })} onAccept ={this.onAccept} onDenied={this.onDenied} deny={this.state.deny}
+           accept={this.state.accept} isJoining={this.state.isJoining} hasJoin={this.state.hasJoin}
+           joined={() => this.setState({ hasJoin: true })} />
+
+          <PhotoModal isOpen={this.state.enlargeEventImage} image={this.props.item.event_Image} onClosed={() => this.setState({ enlargeEventImage: false })} 
+           onAccept ={this.onAccept} onDenied={this.onDenied} deny={this.state.deny}
+           accept={this.state.accept} isJoining={this.state.isJoining} hasJoin={this.state.hasJoin}
+           joined={() => this.setState({ hasJoin: true })} />
+
+
+         <DetailsModal isOpen={this.state.isOpenDetails} details={cards} location={this.props.item.location}
+          event_organiser_name={this.props.item.event_organiser_name}
+          created_date={this.props.item.created_date} 
+          onClosed={() => this.setState({ isOpenDetails: false })} item={this.props.item}
+          OpenLinkZoom = {this.OpenLinkZoom}  OpenLink={this.OpenLink} onAccept ={this.onAccept} onDenied ={this.onDenied} deny={this.state.deny}
+          accept={this.state.accept} isJoining={this.state.isJoining} hasJoin={this.state.hasJoin} joined={() => this.setState({ hasJoin: true })}/>        
+
         </Card>
       </Swipeout>
     );
@@ -295,7 +260,49 @@ export default CardListItem
 
 
 
+/* 
+*/
 
+
+
+ /*
+  componentDidMount() {
+    BackHandler.addEventListener("hardwareBackPress", this.handleBackButton);
+
+  }
+  componentWillUnmount() {
+    BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton);
+  }
+
+  handleBackButton() {
+    ToastAndroid.show("Back button is pressedee", ToastAndroid.SHORT);
+    this.closeAllModals
+    return true;
+  }
+  handleEvent = (event) => {
+    this.setState({
+      isOpenStatus: false
+    })
+  }
+  handleEvent2 = (event) => {
+    this.setState({
+      enlargeEventImage: false
+    })
+  }
+
+  handleEvent3 = (event) => {
+    this.setState({
+      isOpenDetails: false
+    })
+  }
+  @autobind closeAllModals() {
+    return this.setState({
+      isOpenDetails: false,
+      isOpenStatus: false,
+      enlargeEventImage: false
+    })
+  }
+*/
 
 
 

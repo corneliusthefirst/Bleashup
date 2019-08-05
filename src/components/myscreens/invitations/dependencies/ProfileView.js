@@ -1,8 +1,8 @@
 import React, { Component } from "react"
-import CacheImages from "./CacheImages";
+import CacheImages from '../../../CacheImages';
 import { View } from "react-native";
 import { Body, Text, Accordion, Content } from "native-base"
-import ImageActivityIndicator from "./myscreens/currentevents/imageActivityIndicator";
+import ImageActivityIndicator from '../../currentevents/imageActivityIndicator';
 
 export default class ProfileView extends Component {
     constructor(props) {

@@ -34,10 +34,10 @@ import SvgUri from "react-native-svg-uri";
 import SVGs from "./svgsStrings";
 import UserService from "../../../services/userHttpServices";
 import stores from "../../../stores";
-import DetailsModal from "../../DetailsModal";
-import ProfileModal from "../../ProfileModal";
-import PhotoModal from "../../PhotoModal";
-import ProfileView from "../../ProfileView";
+import DetailsModal from "../invitations/dependencies/DetailModal";
+import ProfileModal from "../invitations/dependencies/ProfileModal";
+import PhotoModal from "../invitations/dependencies/PhotoModal";
+import ProfileView from "../invitations/dependencies/ProfileView";
 import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu'
 import CacheImages from "../../CacheImages";
 import MenuListView from "./MenuListView"

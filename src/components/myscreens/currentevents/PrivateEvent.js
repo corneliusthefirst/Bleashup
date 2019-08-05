@@ -31,12 +31,12 @@ import { createOpenLink } from "react-native-open-maps";
 import UpdateStateIndicator from "./updateStateIndicator";
 import SvgUri from "react-native-svg-uri";
 import SVGs from "./svgsStrings";
-import DetailsModal from "../../DetailsModal";
-import ProfileModal from "../../ProfileModal";
-import PhotoModal from "../../PhotoModal";
+import DetailsModal from "../invitations/dependencies/DetailModal";
+import ProfileModal from "../invitations/dependencies/ProfileModal";
+import PhotoModal from "../invitations/dependencies/PhotoModal";
 import UserService from "../../../services/userHttpServices";
 import stores from "../../../stores"
-import ProfileView from "../../ProfileView"
+import ProfileView from "../invitations/dependencies/ProfileView";
 import CacheImages from "../../CacheImages";
 const entireScreenWidth = Dimensions.get("window").width;
 const rem = entireScreenWidth / 380;

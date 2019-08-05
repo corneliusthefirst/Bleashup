@@ -15,6 +15,7 @@ import {
 export default class Invitations {
     @observable SendInvitations = [];
     @observable ReceivedInvitations = [];
+
     saveKey = {
         key: "Invitations",
         data: [{}]
@@ -71,6 +72,7 @@ export default class Invitations {
             })
         })
     }
+    
     @action markAsReceived(InvitationID) {
         return new Promise((resolve, reject) => {
             this.readFromStore().then(Invitations => {

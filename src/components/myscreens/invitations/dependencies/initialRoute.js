@@ -1,4 +1,4 @@
-import stores from "../stores";
+import stores from '../../../../stores';
 
 const loginStore = stores.LoginStore;
 const temploginStore = stores.TempLoginStore;
