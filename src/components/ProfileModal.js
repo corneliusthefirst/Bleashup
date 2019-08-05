@@ -66,7 +66,7 @@ export default class ProfileModal extends Component {
                 <View>
                     <TouchableOpacity style={{}} onPress={() =>
                         requestAnimationFrame(() => {
-                            this.props.onClosed()
+                            this.props.parent.setState({ isProfileModalOpened: false })
                         })
                     } transparent>
                         <Icon style={{ color: "#1FABAB", fontSize: 35 }} name="close" type="EvilIcons" />

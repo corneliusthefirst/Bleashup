@@ -20,7 +20,7 @@ class UpdatesDispatcher {
       return new Promise((resolve, reject) => {
         stores.Events.loadCurrentEvent(update.event_id).then(Event => {
           let Change = {
-            event_id: EventID,
+            event_id: update.event_id,
             changed: "New Event Title",
             old_value: Event.about.title,
             updater: update.updater,
@@ -1308,7 +1308,6 @@ class UpdatesDispatcher {
       });
     }
   };
-
 }
 
 const UpdatesDispatch = new UpdatesDispatcher();

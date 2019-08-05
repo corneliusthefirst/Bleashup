@@ -57,6 +57,7 @@ const cardScale = scaleValue.interpolate({
 
 })
 
+
 @observer class PublicEvent extends Component {
   constructor(props) {
     super(props);
@@ -240,7 +241,6 @@ Once you've found three to five sample listings that describe your job goals, co
     UserService.checkUser(this.props.Event.creator).then(creator => {
       this.formPublicData(this.sampelPublishers).then(data => {
         this.formDetailFormData().then((details) => {
-          console.warn(creator, "**")
           this.setState({
             creator: this.creator,
             fetching: false,
@@ -361,7 +361,7 @@ Once you've found three to five sample listings that describe your job goals, co
   blinkerSize = 26;
   render() {
     return this.state.isMount ? (
-      <Swipeout  {...this.swipeSettings}>
+      <Swipeout style={{ backgroundColor: this.props.Event.new ? "#cdfcfc" : null }}  {...this.swipeSettings}>
         <Card
           style={{
             borderColor: "#1FABAB",
@@ -414,6 +414,7 @@ Once you've found three to five sample listings that describe your job goals, co
             <Left>
               <ProfileModal
                 isOpen={this.state.isProfileModalOpened}
+                parent={this}
                 onClosed={() => this.setState({ isProfileModalOpened: false })}
                 profile={this.state.profileToview} />
               {this.state.fetching ? (

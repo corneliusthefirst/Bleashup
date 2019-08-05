@@ -26,7 +26,7 @@ export default class Invitations {
             }
         })
     }
-    @action addInvitations(Invitation) {
+    addInvitations(Invitation) {
         return new Promise((resolve, reject) => {
             this.readFromStore().then(Invitations => {
                 if (Invitations)
@@ -40,7 +40,7 @@ export default class Invitations {
             })
         })
     }
-    @action removeInvitation(InvitationID) {
+    removeInvitation(InvitationID) {
         return new Promise((resolve, reject) => {
             this.readFromStore().then(Invitations => {
                 Invitations = reject(Invitations, ["invitation_id", InvitationID])
@@ -52,7 +52,7 @@ export default class Invitations {
             })
         })
     }
-    @action markAsSentStatus(InvitationID) {
+    markAsSentStatus(InvitationID) {
         return new Promise((resolve, reject) => {
             this.readFromStore().then(Invitations => {
                 let Invitation = find(Invitations, {
@@ -71,7 +71,7 @@ export default class Invitations {
             })
         })
     }
-    @action markAsReceived(InvitationID) {
+    markAsReceived(InvitationID) {
         return new Promise((resolve, reject) => {
             this.readFromStore().then(Invitations => {
                 let Invitation = find(Invitations, {
@@ -90,7 +90,7 @@ export default class Invitations {
             })
         })
     }
-    @action acceptInvitation(InvitationID) {
+    acceptInvitation(InvitationID) {
         return new Promise((resolve, reject) => {
             this.readFromStore().then(Invitations => {
                 let Invitation = find(Invitations, {
@@ -109,7 +109,7 @@ export default class Invitations {
             })
         })
     }
-    @action getInvitation(InvitationID) {
+    getInvitation(InvitationID) {
         return new Promise((resolve, reject) => {
             this.readFromStore().then(Invitations => {
                 resolve(find(Invitations, {
@@ -118,7 +118,7 @@ export default class Invitations {
             })
         })
     }
-    @action denieInvitation(InvitationID) {
+    denieInvitation(InvitationID) {
         return new Promise((resolve, reject) => {
             this.readFromStore().then(Invitations => {
                 let Invitation = find(Invitations, {
@@ -137,7 +137,7 @@ export default class Invitations {
             })
         })
     }
-    @action changeNewInvitationStatus(InvitationID) {
+    changeNewInvitationStatus(InvitationID) {
         return new Promise((resolve, reject) => {
             this.readFromStore().then(Invitations => {
                 let Invitation = find(Invitations, {
@@ -168,7 +168,7 @@ export default class Invitations {
             })
         })
     }
-    setProperties(Events, inform) {
+    @action setProperties(Events, inform) {
         if (inform) Events = sortBy(Events, ["update_date"]);
         this.SendInvitations = filter(Events, {
             type: "sent"

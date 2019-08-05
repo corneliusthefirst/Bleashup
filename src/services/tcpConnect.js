@@ -6,7 +6,8 @@ import stores from "../stores";
 
 class Connection {
   client = null;
-  constructor() {}
+  socket = null;
+  constructor() { }
   init() {
     return new Promise((resolve, reject) => {
       let socket = net.createConnection(
@@ -17,6 +18,7 @@ class Connection {
           stores.Session.updateSocket(socket).then(session => {
             TcpRequestData.Presence().then(JSONData => {
               socket.write(JSONData);
+              this.socket = socket;
               resolve(socket);
             });
           });
@@ -24,9 +26,9 @@ class Connection {
       );
     });
   }
-  sendRequest(socket, data) {
+  sendRequest(data) {
     return new Promise((resolve, reject) => {
-      socket.write(data);
+      this.socket.write(data);
       resolve();
     });
   }
