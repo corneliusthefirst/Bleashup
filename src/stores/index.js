@@ -11,22 +11,24 @@ import TempLoginStore from "./TempLoginStore"
 import ChatStore from "./ChatStore"
 import ChangeLogs from "./changelogs"
 import Reminds from "./reminds"
+import TemporalUsersStore from "./temporalUsersStore"
 
 export default {
 
-    ChatStore: new ChatStore(),
-    Reminds: new Reminds(),
-    LoginStore: new LoginStore(),
-    TempLoginStore: new TempLoginStore(),
-    Highlights: new Highlights(),
-    Events: new Events(),
-    Contributions: new Contributions(),
-    Session: new Session(),
-    Contacts: new Contacts(),
-    Votes: new Votes(),
-    Invitations: new Invitations(),
-    ChangeLogs: new ChangeLogs(),
-    Likes: new Likes(),
+  ChatStore: new ChatStore(),
+  Reminds: new Reminds(),
+  LoginStore: new LoginStore(),
+  TempLoginStore: new TempLoginStore(),
+  Highlights: new Highlights(),
+  Events: new Events(),
+  Contributions: new Contributions(),
+  Session: new Session(),
+  Contacts: new Contacts(),
+  Votes: new Votes(),
+  Invitations: new Invitations(),
+  ChangeLogs: new ChangeLogs(),
+  Likes: new Likes(),
+  TemporalUsersStore: new TemporalUsersStore()
 
 
 };
@@ -97,5 +99,5 @@ export default function() {
     };
   }
 
-} 
+}
  */

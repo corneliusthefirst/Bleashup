@@ -111,7 +111,7 @@ class ServerEventListener {
         }
       }
       if (data.error) {
-        console.error(data.message);
+          console.warn("reconnection attempted", "deu to ", data.error)
       }
     });
     socket.on("timeout", data => {
@@ -131,6 +131,17 @@ class ServerEventListener {
       });
       this.socket.write(data);
     });
+  }
+  sendRequest(data) {
+    return new Promise((resolve, reject) => {
+      emitter.once("successful", (response) => {
+        resolve(response);
+      });
+      emitter.once("unsuccessful", (response) => {
+        reject(response);
+      });
+      this.socket.write(data);
+    })
   }
   GetData(EventId) {
     return new Promise((resolve, reject) => {

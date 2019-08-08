@@ -2,7 +2,7 @@ import React, { Component } from "react"
 import Modal from "react-native-modalbox"
 import { Content, List, ListItem, Body, Left, Right, Text } from "native-base"
 import CacheImages from "./CacheImages";
-import ImageActivityIndicator from "./myscreens/currentevents/imageActivityIndicator";
+import ImageActivityIndicator from "./myscreens/currentevents/components/imageActivityIndicator";
 import stores from "../stores";
 import ContactList from "./ContactList";
 export default class PublishersModal extends Component {
@@ -14,9 +14,9 @@ export default class PublishersModal extends Component {
         isloaded: false
     }
     componentDidMount() {
-            this.setState({
-                isOpen: false,
-            });
+        this.setState({
+            isOpen: false,
+        });
     }
     shouldComponentUpdate(nextProps, nextState) {
         if (nextProps.isOpen !== this.state.isOpen) return true
@@ -53,6 +53,6 @@ export default class PublishersModal extends Component {
                 </Content>
             </Modal>
 
-        ) ;
+        );
     }
 }

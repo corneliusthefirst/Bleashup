@@ -24,7 +24,7 @@ import {
   H3,
   H2,
 } from "native-base";
-import ImageActivityIndicator from "../currentevents/imageActivityIndicator";
+import ImageActivityIndicator from "../currentevents/components/imageActivityIndicator";
 import EventDatails from "../eventDetails";
 import Remind from "../reminds";
 import Highlights from "../highlights";
@@ -34,7 +34,7 @@ import EventChat from "../eventChat";
 import Contributions from "../contributions";
 import autobind from "autobind-decorator";
 import { TouchableHighlight, TouchableOpacity } from "react-native-gesture-handler";
-import UpdateStateIndicator from "../currentevents/updateStateIndicator";
+import UpdateStateIndicator from "../currentevents/components/updateStateIndicator";
 
 export default class Event extends Component {
   constructor(props) {

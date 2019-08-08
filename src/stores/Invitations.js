@@ -15,6 +15,7 @@ import {
 export default class Invitations {
     @observable SendInvitations = [];
     @observable ReceivedInvitations = [];
+
     saveKey = {
         key: "Invitations",
         data: [{}]
