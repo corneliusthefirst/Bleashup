@@ -4,8 +4,8 @@ import {
 } from "react-native";
 
 import NestedScrollView from "react-native-nested-scroll-view";
-import NewEvents from "./NewEvents";
-import CurrentEvents from "./CurrentEvents";
+import NewEvents from "./components/NewEvents";
+import CurrentEvents from "./components/CurrentEvents";
 
 class CurrentEventView extends Component {
   constructor(props) {
@@ -19,7 +19,7 @@ class CurrentEventView extends Component {
           alwaysBounceHorizontal={true}
         >
           <View>
-            <CurrentEvents></CurrentEvents>
+            <CurrentEvents {...this.props}></CurrentEvents>
           </View>
         </NestedScrollView>
       </View>

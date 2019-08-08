@@ -1,7 +1,7 @@
 import React, { Component } from "react"
 import { Content, List, ListItem, Body, Left, Right, Text } from "native-base"
 import CacheImages from "./CacheImages";
-import ImageActivityIndicator from "./myscreens/currentevents/imageActivityIndicator";
+import ImageActivityIndicator from "./myscreens/currentevents/components/imageActivityIndicator";
 import stores from "../stores";
 import UserService from "../services/userHttpServices"
 export default class ContactList extends Component {

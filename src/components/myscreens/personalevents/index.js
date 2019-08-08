@@ -10,7 +10,7 @@ import {
   Body,
   Container
 } from "native-base";
-import CurrentEventView from "./../currentevents/index";
+import CurrentEventView from "../currentevents/index";
 import PastEventView from "./../pastevents/index";
 import Reminds from "./../myreminds/index";
 

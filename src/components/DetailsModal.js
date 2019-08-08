@@ -5,7 +5,7 @@ import { Button, Icon, DeckSwiper, Card, CardItem, Right } from 'native-base'
 import CacheImages from './CacheImages'
 import autobind from 'autobind-decorator';
 import { TouchableHighlight, ScrollView } from 'react-native-gesture-handler';
-import ImageActivityIndicator from './myscreens/currentevents/imageActivityIndicator';
+import ImageActivityIndicator from './myscreens/currentevents/components/imageActivityIndicator';
 
 export default class DetailsModal extends Component {
     constructor(props) {

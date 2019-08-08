@@ -141,6 +141,7 @@ dependencies {
     implementation project(':@react-native-community_async-storage')
     implementation project(':react-native-vector-icons')
     implementation project(':react-native-tcp')
+     implementation project(':react-native-linear-gradient')
     implementation project(':react-native-gesture-handler')
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'com.android.support:appcompat-v7:27.1.1'
@@ -170,8 +171,8 @@ supportLibVersion           = "27.0.0"
  }
 
  
-//preBuild.doFirst { ant.replaceregexp(match:'android.support.v4.util.Pools;', replace:'androidx.core.util.Pools;', flags:'g', byline:true) { fileset(dir: '../../node_modules/react-native-gesture-handler/android/src/main/java/com/swmansion/gesturehandler/react/', includes: '*.java') }
-//}
+preBuild.doFirst { ant.replaceregexp(match:'android.support.v4.util.Pools;', replace:'androidx.core.util.Pools;', flags:'g', byline:true) { fileset(dir: '../../node_modules/react-native-gesture-handler/android/src/main/java/com/swmansion/gesturehandler/react/', includes: '*.java') }
+}
 //preBuild.doFirst { ant.replaceregexp(match:'android.support.annotation.Nullable;', replace:'androidx.annotation.Nullable;', flags:'g', byline:true) { fileset(dir: '../../node_modules/react-native-tcp/android/src/main/java/com/peel/react/', includes: '*.java') }
 //}
 //preBuild.doFirst { ant.replaceregexp(match:'@Override', replace:'/*@Override*/', flags:'g', byline:true) { fileset(dir: '../../node_modules/', includes: '*.java') }

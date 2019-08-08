@@ -20,6 +20,8 @@ export default class events {
     /*storage.remove({
       key: 'Events'
     });*/
+    console.warn("constructor called")
+
     this.readFromStore().then(Events => {
       if (Events) {
         this.setProperties(Events, true);
@@ -29,7 +31,6 @@ export default class events {
   @observable currentEvents = [];
   @observable pastEvents = [];
   events = []
-  @observable newEvents = [];
   @observable myReminds = [];
   storeAccessKey = {
     key: "Events",
@@ -51,7 +52,7 @@ export default class events {
         storage.save(this.saveKey).then(() => {
           this.setProperties(this.saveKey.data, true);
           NewEvent.new = true;
-          this.newEvents.unshift(NewEvent)
+          this.events.unshift(NewEvent)
           resolve();
         });
       });
@@ -62,11 +63,11 @@ export default class events {
       this.readFromStore().then((Events) => {
         index = findIndex(Events, { id: EventID });
         Events[index].new = false
-        indexNew = findIndex(this.newEvents, { id: EventID });
+        indexNew = findIndex(this.events, { id: EventID });
         this.saveKey.data = uniqBy(Events, "id")
         storage.save(this.saveKey).then(() => {
           this.setProperties(this.saveKey.data)
-          this.newEvents[indexNew].new = false
+          this.events[indexNew].new = false
           resolve()
         })
       })
@@ -77,7 +78,7 @@ export default class events {
       this.readFromStore().then(Events => {
         let Event = find(Events, { id: EventID });
         if (
-          find(Event.participants, {
+          find(Event.participant, {
             phone: phone
           })
         )
@@ -190,10 +191,10 @@ export default class events {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let eventIndex = findIndex(Events, { id: EventID });
-        let index = findIndex(Event.participants, {
+        let index = findIndex(Event.participant, {
           phone: newParticipant.phone
         });
-        Events[eventIndex].participants[index] = newParticipant;
+        Events[eventIndex].participant[index] = newParticipant;
         if (inform) {
           Events[eventIndex].participant_update = true;
           Events[eventIndex].updated = true;
@@ -211,7 +212,7 @@ export default class events {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let eventIndex = findIndex(Events, { id: EventID });
-        Events[eventIndex].participants = Events[eventIndex].participants.concat([Participant]);
+        Events[eventIndex].participant = Events[eventIndex].participant.concat([Participant]);
         if (inform) {
           Events[eventIndex].participant_added = true;
           Events[eventIndex].updated = true;
@@ -231,7 +232,7 @@ export default class events {
       this.readFromStore().then(Events => {
         let Event = find(Events, { id: EventID });
         let eventIndex = findIndex(Events, { id: EventID });
-        Event.participants = reject(Event.participants, ["phone", Phone]);
+        Event.participant = reject(Event.participant, ["phone", Phone]);
         if (inform) {
           Event.participant_removed = true;
           Event.updated = true

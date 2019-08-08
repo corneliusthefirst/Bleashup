@@ -15,23 +15,10 @@ export default class ProfileModal extends Component {
     profile = null;
     componentDidMount() {
         this.setState({
-            profile: this.props.profile ? this.props.profile : this.profile,
             isOpen: this.props.isOpen
         })
         this.profile = this.props.profile ? this.props.profile : this.profile
     }
-    /* shouldComponentUpdate(nextProps) {
-         return (this.props.profile.name !== nextProps.profile.name)
-             || (this.props.profile.image !== nextProps.profile.image)
-             || (this.props.isOpen !== nextProps.isOpen) ? true : false;
-     }
-     componentDidUpdate(PreviousProp) {
-         this.setState({
-             profile: this.props.profile.name,
-             isOpen: this.props.isOpen
-         })
- 
-     }*/
     shouldComponentUpdate(nextProps, nextState) {
         if (nextProps.isOpen !== this.state.isOpen) return true
         else return false
@@ -66,18 +53,18 @@ export default class ProfileModal extends Component {
                 <View>
                     <TouchableOpacity style={{}} onPress={() =>
                         requestAnimationFrame(() => {
-                            this.props.parent.setState({ isProfileModalOpened: false })
+                            return this.props.onClosed()
                         })
                     } transparent>
                         <Icon style={{ color: "#1FABAB", fontSize: 35 }} name="close" type="EvilIcons" />
                     </TouchableOpacity>
                 </View>
-                <Text style={{ fontSize: 18, fontWeight: '600', marginLeft: -220 }}>{this.state.profile.name}</Text>
+                <Text style={{ fontSize: 18, fontWeight: '600', marginLeft: -220 }}>{this.state.profile.nickname}</Text>
 
                 <TouchableOpacity onPress={() =>
                     this.props.onClosed()
                 } >
-                    <CacheImages thumbnails source={{ uri: this.state.profile.image }}
+                    <CacheImages thumbnails source={{ uri: this.props.profile.profile }}
                         square style={{ marginTop: 20, width: 350, height: 200 }} />
                 </TouchableOpacity>
                 {this.state.profile.status.length > 35 ?
