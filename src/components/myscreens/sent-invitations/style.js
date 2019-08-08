@@ -3,6 +3,7 @@ const { Dimensions, Platform } = React;
 const deviceHeight = Dimensions.get("window").height;
 const deviceWidth = Dimensions.get("window").width;
 
+
 export default {
 
     cardlistItem: {
@@ -23,6 +24,6 @@ export default {
   activityIndicatorStyle: {
     width: 150,
     height: 204,
-    backgroundColor: '#dc143c'
+    backgroundColor: 'transparent'
   }
 }

@@ -74,7 +74,7 @@ export default class DetailsModal extends Component {
                 isOpen={this.props.isOpen}
                 onClosed={this.props.onClosed}
                  style={{
-                     height:this.props.accept||this.props.deny ? "95%": "98%",width:"98%", flexDirection: 'column',borderRadius: 8, backgroundColor: '#FEFFDE',marginTop:-5 }}
+                     height:this.props.accept||this.props.deny ? "95%": "98%",width:"98%", flexDirection: 'column',borderRadius: 8, backgroundColor: '#FEFFDE',marginTop:(!this.props.accept||!this.props.deny) ?-5:-15 }}
                 
             >
 
@@ -89,7 +89,7 @@ export default class DetailsModal extends Component {
               
               
             
-                <View style = {{flexDirection:"column",marginTop:(this.props.accept||this.props.deny) ? "25%" : "22%",marginLeft:"58%"}}>
+                <View style = {{flexDirection:"column",marginTop:(this.props.accept||this.props.deny) ? "20%" : "18%",marginLeft:"58%"}}>
                  
         
                         <TouchableOpacity>
@@ -124,7 +124,7 @@ export default class DetailsModal extends Component {
            </View>
 
            {this.props.isJoining ?(this.props.hasJoin?
-             <View style={{flexDirection:'column',alignItems:'center',marginTop:10}}>
+             <View style={{flexDirection:'column',alignItems:'center',marginTop:7}}>
              <Icon name="comment"  type="FontAwesome5" onPress={{}} style={{color:"#1FABAB"}}/>
              <Text style={{marginTop:5,color:"#1FABAB"}}>chat</Text>
              </View> :
@@ -138,7 +138,7 @@ export default class DetailsModal extends Component {
              </View> )
               :
              (this.props.accept||this.props.deny ?              
-             <View style={{flexDirection:'column',alignItems:'center',marginTop:10}}>
+             <View style={{flexDirection:'column',alignItems:'center',marginTop:7}}>
              <Icon name="comment"  type="FontAwesome5" onPress={{}} style={{color:"#1FABAB"}}/>
              <Text style={{marginTop:5,color:"#1FABAB"}}>chat</Text>
              </View> : 
@@ -161,7 +161,7 @@ export default class DetailsModal extends Component {
                         style={{
                             flexDirection: "row",
                             justifyContent: "space-between",
-                            marginTop:this.props.location.length > 19?20:this.props.location.length > 38?10:35 
+                            marginTop:this.props.location.length > 19?15:this.props.location.length > 38?5:35
 
                         }}
                     >
