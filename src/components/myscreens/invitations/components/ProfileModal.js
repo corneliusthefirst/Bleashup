@@ -51,7 +51,7 @@ export default class ProfileModal extends Component {
                 </TouchableOpacity>
 
                 {this.props.profile.status.length > 35 ? <Text style={{ fontSize: 17, fontWeight: '600', marginLeft: 8, marginTop: -80, color: "#ffebcd" }}>
-                    {this.state.profile.status}</Text> :
+                    {this.props.profile.status}</Text> :
                     <Text style={{ fontSize: 17, fontWeight: '600', marginLeft: -112, marginTop: -80, color: "#ffebcd" }} >{this.props.profile.status}</Text>}
 
                 {this.props.isJoining ? (this.props.hasJoin ?

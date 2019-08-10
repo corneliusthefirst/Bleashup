@@ -59,6 +59,7 @@
     "react-navigation": "^3.4.1",
     "reazy": "0.0.19",
     "reazy-native-router-actions": "0.0.2",
+    "recyclerlistview": "^1.3.4",
     "rn-fetch-blob": "^0.10.15",
     "tiny-emitter": "^2.1.0"
   },

@@ -1,28 +1,52 @@
 import React, { Component } from "react";
 import {
-  View
+  View,
+  Dimensions
 } from "react-native";
-
-import NestedScrollView from "react-native-nested-scroll-view";
+import { forEach } from "lodash"
 import NewEvents from "./components/NewEvents";
 import CurrentEvents from "./components/CurrentEvents";
-
+import { DataProvider } from "recyclerlistview"
+import stores from "../../../stores"
+import { Spinner } from "native-base";
 class CurrentEventView extends Component {
   constructor(props) {
     super(props);
   }
+  state = {
+    isLoading: true,
+    Events: undefined
+  }
+  componentDidMount() {
+    this.changeToRecyclerArray().then((array) => {
+
+      this.setState({
+        Events: new DataProvider((r1, r2) => r1 !== r2).cloneWithRows(array),
+        isLoading: false
+      })
+    })
+  }
+
+  changeToRecyclerArray() {
+    return new Promise((resolve, reject) => {
+      let result = []
+      let i = 0;
+      forEach(stores.Events.events, (item) => {
+        result[i] = {
+          type: "NORMAL",
+          item: item,
+        }
+        if (i == stores.Events.events.length - 1) resolve(result);
+        i++;
+      })
+    })
+  }
   render() {
     return (
-
-      <View>
-        <NestedScrollView
-          alwaysBounceHorizontal={true}
-        >
-          <View>
-            <CurrentEvents {...this.props}></CurrentEvents>
-          </View>
-        </NestedScrollView>
-      </View>
+      this.state.isLoading ? <Spinner></Spinner> :
+        <View>
+          <CurrentEvents data={this.state.Events} {...this.props}></CurrentEvents>
+        </View>
     );
   }
 }

@@ -224,8 +224,8 @@ class CardListItem extends Component {
           </CardItem>
 
           <ProfileModal isOpen={this.state.isOpenStatus} profile={{
-            name: this.props.item.sender_name,
-            image: this.props.item.sender_Image,
+            nickname: this.props.item.sender_name,
+            profile: this.props.item.sender_Image,
             status: this.props.item.sender_status
           }} onClosed={() => this.setState({ isOpenStatus: false })} onAccept={this.onAccept} onDenied={this.onDenied} deny={this.state.deny}
             accept={this.state.accept} isJoining={this.state.isJoining} hasJoin={this.state.hasJoin}

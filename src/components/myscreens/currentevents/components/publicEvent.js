@@ -38,7 +38,6 @@ import SvgAnimatedLinearGradient from 'react-native-svg-animated-linear-gradient
 import Svg, { Circle, Rect } from 'react-native-svg'
 import PhotoView from "./PhotoView";
 import MapView from "./MapView";
-import SwipeOutView from "./SwipeOutView";
 import Requester from "../Requester";
 let scaleValue = new Animated.Value(0)
 const cardScale = scaleValue.interpolate({
@@ -50,24 +49,26 @@ const cardScale = scaleValue.interpolate({
 class PublicEvent extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      fetching: true,
+      creator: (creator = { name: "", status: "", image: "" }),
+      details: [],
+      isDetailsModalOpened: false,
+      isMount: false,
+      event: this.props.Event,
+      swipeClosed: true,
+      isjoint: false,
+      isPublisherModalOpened: false,
+      currentUser: undefined
+    };
   }
-  state = {
-    fetching: true,
-    creator: (creator = { name: "", status: "", image: "" }),
-    details: [],
-    isDetailsModalOpened: false,
-    isMount: false,
-    swipeClosed: true,
-    isjoint: false,
-    isPublisherModalOpened: false,
-    currentUser: undefined
-  };
+
   @autobind navigateToEventDetails() {
-    if (!this.props.Event.joint) {
+    if (!this.state.event.joint) {
       this.setState({ isDetailsModalOpened: true })
     } else {
       this.props.navigation.navigate("Event", {
-        Event: this.props.Event,
+        Event: this.state.event,
         tab: "EventDetails"
       });
     }
@@ -90,10 +91,71 @@ class PublicEvent extends Component {
 
   },
   ]
-
+  swipperComponent = (<View>
+    <List style={{
+      backgroundColor: "#FFFFF6",
+      height: "100%"
+    }}>
+      <ListItem style={{ alignSelf: 'flex-start' }}>
+        <TouchableOpacity>
+          <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="forward" type="Entypo">
+          </Icon>
+          <Label style={{ fontSize: 12, color: "#1FABAB" }}>Publish</Label>
+        </TouchableOpacity>
+      </ListItem>
+      <ListItem>
+        <TouchableOpacity>
+          <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="universal-access" type="Foundation">
+          </Icon>
+          <Label style={{
+            color: "#1FABAB",
+            fontSize: 12
+          }}
+          >
+            Join
+              </Label>
+        </TouchableOpacity>
+      </ListItem>
+      <ListItem style={{ alignSelf: 'flex-start' }}>
+        <TouchableOpacity>
+          <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="calendar" type="EvilIcons">
+          </Icon>
+          <Label style={{ fontSize: 12, color: "#1FABAB" }}>Detail</Label>
+        </TouchableOpacity>
+      </ListItem>
+      <ListItem style={{ alignSelf: 'flex-start' }}>
+        <TouchableOpacity>
+          <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="comment" type="EvilIcons">
+          </Icon>
+          <Label style={{ fontSize: 12, color: "#1FABAB" }}>chat</Label>
+        </TouchableOpacity>
+      </ListItem>
+      <ListItem style={{ alignSelf: 'flex-start' }}>
+        <TouchableOpacity>
+          <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="exclamation" type="EvilIcons">
+          </Icon>
+          <Label style={{ fontSize: 12, color: "#1FABAB" }}>Logs</Label>
+        </TouchableOpacity>
+      </ListItem>
+      <ListItem style={{ alignSelf: 'flex-start' }}>
+        <TouchableOpacity>
+          <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="archive" type="EvilIcons">
+          </Icon>
+          <Label style={{ fontSize: 12, color: "#1FABAB" }}>Hide</Label>
+        </TouchableOpacity>
+      </ListItem>
+      <ListItem>
+        <TouchableOpacity>
+          <Icon name="trash" style={{ fontSize: 16, color: "red" }} type="EvilIcons">
+          </Icon>
+          <Label style={{ fontSize: 12, color: "red" }} >Delete</Label>
+        </TouchableOpacity>
+      </ListItem>
+    </List>
+  </View>)
   @autobind navigateToReminds() {
     this.props.navigation.navigate("Event", {
-      Event: this.props.Event,
+      Event: this.state.event,
       tab: "Reminds"
     });
   }
@@ -147,10 +209,10 @@ Once you've found three to five sample listings that describe your job goals, co
     return new Promise((resolve, reject) => {
       let details = [];
       details[0] = {
-        event_title: this.props.Event.about.title,
-        event_description: this.props.Event.description
+        event_title: this.state.event.about.title,
+        event_description: this.state.event.description
       }
-      this.fetchHightlight(this.props.Event.id).then(Highlights => {
+      this.fetchHightlight(this.state.event.id).then(Highlights => {
         let i = 0;
         Highlights.map(High => {
           details[i + 1] = High
@@ -164,45 +226,56 @@ Once you've found three to five sample listings that describe your job goals, co
   }
   @autobind navigateToHighLights() {
     this.props.navigation.navigate("Event", {
-      Event: this.props.Event,
+      Event: this.state.event,
       tab: "Highlights"
     });
   }
   @autobind navigateToEventChat() {
     this.props.navigation.navigate("Event", {
-      Event: this.props.Event,
+      Event: this.state.event,
       tab: "EventChat"
     });
   }
   @autobind navigateToVotes() {
     this.props.navigation.navigate("Event", {
-      Event: this.props.Event,
+      Event: this.state.event,
       tab: "Votes"
     });
   }
   @autobind navigateToContributions() {
     this.props.navigation.navigate("Event", {
-      Event: this.props.Event,
+      Event: this.state.event,
       tab: "Contributions"
     });
   }
   componentDidMount() {
-    setTimeout(()=>{
- this.formDetailFormData().then((details) => {
-      this.setState({
-        fetching: false,
-        details: details,
-        isMount: true,
+    setTimeout(() => {
+      this.formDetailFormData().then((details) => {
+        this.setState({
+          fetching: false,
+          details: details,
+          isMount: true,
+        })
       })
-    })
-	},15)
+    }, 5)
   }
   shouldComponentUpdate(nextProps, nextState) {
-    return nextProps.Event.id !== this.props.Event.id ||
+    return (nextProps.Event ? nextProps.Event.id !== this.state.event.id : false) ||
       this.state.isMount !== nextState.isMount ||
       this.state.isjoint !== nextState.isJoint ||
       this.state.isJoining !== nextState.isJoining
       ? true : false
+  }
+  componentDidUpdate() {
+    if (this.props.Event) {
+      if (this.props.Event.id !== this.state.event.id) {
+        this.setState({
+          event: this.props.Event
+        })
+      } else {
+
+      }
+    }
   }
 
 
@@ -213,7 +286,7 @@ Once you've found three to five sample listings that describe your job goals, co
     sensitivity: 100,
     right: [
       {
-        component: <SwipeOutView></SwipeOutView>
+        component: this.swipperComponent
       }
     ],
   }
@@ -229,11 +302,11 @@ Once you've found three to five sample listings that describe your job goals, co
     this.setState({
       isJoining: true
     })
-    this.props.Event.joint = true
+    this.state.event.joint = true
     this.setState({
       isDetailsModalOpened: false
     })
-    Requester.join(this.props.Event.id, this.props.Event.event_host).then((status) => {
+    Requester.join(this.state.event.id, this.state.event.event_host).then((status) => {
       this.setState({ isJoint: true, isJoining: false });
     })
   }
@@ -244,13 +317,14 @@ Once you've found three to five sample listings that describe your job goals, co
 
   };
 
+
   transparent = "rgba(52, 52, 52, 0.0)";
   svgStyle = {
   }
   blinkerSize = 26;
   render() {
-    return this.state.isMount ? (
-      <Swipeout style={{ backgroundColor: this.props.Event.new ? "#cdfcfc" : null }}  {...this.swipeSettings}>
+    return this.state.event ? (this.state.isMount ? (
+      <Swipeout style={{ backgroundColor: this.state.event.new ? "#cdfcfc" : null }}  {...this.swipeSettings}>
         <Card
           style={{
             borderColor: "#1FABAB",
@@ -280,7 +354,7 @@ Once you've found three to five sample listings that describe your job goals, co
                 />
               </View>
             </Left>
-            {this.props.Event.updated ? <UpdateStateIndicator /> : null}
+            {this.state.event.updated ? <UpdateStateIndicator /> : null}
             <Right>
               <View>
                 <Icon
@@ -302,11 +376,11 @@ Once you've found three to five sample listings that describe your job goals, co
           >
             <Left>
               <View style={{ flexDirection: "row", flex: 5 }}>
-                <ProfileView phone={(this.props.Event.creator_phone)}></ProfileView>
+                <ProfileView phone={(this.state.event.creator_phone)}></ProfileView>
               </View>
             </Left>
           </CardItem>
-          {this.props.Event.recursive ? <CardItem>
+          {this.state.event.recursive ? <CardItem>
             <Left>
               <View style={
                 {
@@ -317,13 +391,13 @@ Once you've found three to five sample listings that describe your job goals, co
                   <Text style={{
                     color: "#54F5CA"
                   }} note>
-                    {this.props.Event.recursion.type}
+                    {this.state.event.recursion.type}
                   </Text>
                 </View>
 
                 <View>
                   <Text note>
-                    {this.props.Event.recursion.days}
+                    {this.state.event.recursion.days}
                   </Text>
                 </View>
               </View>
@@ -349,7 +423,7 @@ Once you've found three to five sample listings that describe your job goals, co
                     fontFamily: "Roboto"
                   }}
                 >
-                  {this.props.Event.about.title}
+                  {this.state.event.about.title}{"  "}{this.state.event.id}
                 </Text>
                 <Text
                   style={{
@@ -357,17 +431,17 @@ Once you've found three to five sample listings that describe your job goals, co
                   }}
                   note
                 >
-                  {this.props.Event.period.date.year +
+                  {this.state.event.period.date.year +
                     "-" +
-                    this.props.Event.period.date.month +
+                    this.state.event.period.date.month +
                     "-" +
-                    this.props.Event.period.date.day +
+                    this.state.event.period.date.day +
                     "  at " +
-                    this.props.Event.period.time.hour +
+                    this.state.event.period.time.hour +
                     "-" +
-                    this.props.Event.period.time.mins +
+                    this.state.event.period.time.mins +
                     "-" +
-                    this.props.Event.period.time.secs}
+                    this.state.event.period.time.secs}
                 </Text>
               </View>
             </TouchableOpacity>
@@ -386,10 +460,10 @@ Once you've found three to five sample listings that describe your job goals, co
               <PhotoView style={{
                 width: "70%",
                 marginLeft: "4%"
-              }} photo={this.props.Event.background} width={170} height={125} borderRadius={10} />
+              }} photo={this.state.event.background} width={170} height={125} borderRadius={10} />
             </Left>
             <Right >
-              <MapView style={{ marginRight: "11%" }} location={this.props.Event.location.string}></MapView>
+              <MapView style={{ marginRight: "11%" }} location={this.state.event.location.string}></MapView>
             </Right>
           </CardItem>
           <CardItem
@@ -405,7 +479,7 @@ Once you've found three to five sample listings that describe your job goals, co
               <TouchableOpacity onPress={this.navigateToEventDetails}>
                 <View style={this.svgStyle}>
                   <SvgUri style={{ borderRaduis: 20 }} width={25} height={30} svgXmlData={SVGs.event} />
-                  {this.props.Event.updated ? (
+                  {this.state.event.updated ? (
                     <View style={this.indicatorMargin}>
                       <UpdateStateIndicator size={this.blinkerSize} />
                     </View>
@@ -428,7 +502,7 @@ Once you've found three to five sample listings that describe your job goals, co
               <TouchableOpacity onPress={this.navigateToReminds}>
                 <View style={this.svgStyle}>
                   <SvgUri width={25} height={30} svgXmlData={SVGs.remind} />
-                  {this.props.Event.remind_upated ? (
+                  {this.state.event.remind_upated ? (
                     <View style={this.indicatorMargin}>
                       <UpdateStateIndicator size={this.blinkerSize} />
                     </View>
@@ -451,7 +525,7 @@ Once you've found three to five sample listings that describe your job goals, co
               <TouchableOpacity onPress={this.navigateToEventChat}>
                 <View style={this.svgStyle}>
                   <SvgUri width={25} height={30} svgXmlData={SVGs.chat} />
-                  {this.props.Event.chat_updated ? (
+                  {this.state.event.chat_updated ? (
                     <View style={this.indicatorMargin}>
                       <UpdateStateIndicator size={22} />
                     </View>
@@ -474,7 +548,7 @@ Once you've found three to five sample listings that describe your job goals, co
               <TouchableOpacity onPress={this.navigateToHighLights}>
                 <View style={this.svgStyle}>
                   <SvgUri width={22} height={30} svgXmlData={SVGs.highlight} />
-                  {this.props.Event.highlight_updated ? (
+                  {this.state.event.highlight_updated ? (
                     <View style={this.indicatorMargin}>
                       <UpdateStateIndicator size={this.blinkerSize} />
                     </View>
@@ -498,7 +572,7 @@ Once you've found three to five sample listings that describe your job goals, co
               <TouchableOpacity onPress={this.navigateToVotes}>
                 <View style={this.svgStyle}>
                   <SvgUri width={25} height={30} svgXmlData={SVGs.vote} />
-                  {this.props.Event.vote_updated ? (
+                  {this.state.event.vote_updated ? (
                     <View style={this.indicatorMargin}>
                       <UpdateStateIndicator size={this.blinkerSize} />
                     </View>
@@ -521,7 +595,7 @@ Once you've found three to five sample listings that describe your job goals, co
               <TouchableOpacity onPress={this.navigateToContributions}>
                 <View style={this.svgStyle}>
                   <SvgUri width={25} height={30} svgXmlData={SVGs.contribution} />
-                  {this.props.Event.contribution_updated ? (
+                  {this.state.event.contribution_updated ? (
                     <View style={this.indicatorMargin}>
                       <UpdateStateIndicator size={this.blinkerSize} />
                     </View>
@@ -539,7 +613,7 @@ Once you've found three to five sample listings that describe your job goals, co
           </CardItem>
           <Footer>
             <Left>
-              {this.props.Event.liked ? (
+              {this.state.event.liked ? (
 
                 <View style={{ flexDirection: "row" }}>
                   <TouchableWithoutFeedback onPressIn={() => {
@@ -571,7 +645,7 @@ Once you've found three to five sample listings that describe your job goals, co
 
                   </TouchableWithoutFeedback>
                   <View style={{ marginTop: 7 }}>
-                    <Text style={{ color: "#FEFFDE" }} note> {this.props.Event.likes} Likers </Text>
+                    <Text style={{ color: "#FEFFDE" }} note> {this.state.event.likes} Likers </Text>
                   </View>
                 </View>
               ) : (
@@ -605,14 +679,14 @@ Once you've found three to five sample listings that describe your job goals, co
 
                     </TouchableWithoutFeedback>
                     <View style={{ marginTop: 7 }}>
-                      <Text style={{ color: "#7DD2D2" }} note>{this.props.Event.likes} Likers</Text>
+                      <Text style={{ color: "#7DD2D2" }} note>{this.state.event.likes} Likers</Text>
                     </View>
                   </View>
                 )}
             </Left>
             <Right>
               <View style={{ padding: "-5%", marginLeft: "-25%" }}>
-                {this.props.Event.joint || this.state.isjoint ? (
+                {this.state.event.joint || this.state.isjoint ? (
                   <View>
                     <TouchableWithoutFeedback onPressIn={() => {
                       scaleValue.setValue(0);
@@ -691,13 +765,13 @@ Once you've found three to five sample listings that describe your job goals, co
             isOpen={this.state.isDetailsModalOpened}
             isJoining={() => this.join()}
             details={this.state.details}
-            created_date={this.props.Event.created_at}
-            location={this.props.Event.location.string}
+            created_date={this.state.event.created_at}
+            location={this.state.event.location.string}
             event_organiser_name={this.state.creator.name}
             onClosed={() => this.setState({ isDetailsModalOpened: false })}
           />
         </Card>
-      </Swipeout>
+      </Swipeout >
     ) : <SvgAnimatedLinearGradient primaryColor="#cdfcfc"
       secondaryColor="#FEFFDE" height={300}>
         <Circle cx="30" cy="30" r="30" />
@@ -705,7 +779,7 @@ Once you've found three to five sample listings that describe your job goals, co
         <Rect x="75" y="37" rx="4" ry="4" width="50" height="8" />
         <Rect x="0" y="70" rx="5" ry="5" width="400" height="200" />
         <Spinner style={{ marginTop: "40%" }}></Spinner>
-      </SvgAnimatedLinearGradient>;
+      </SvgAnimatedLinearGradient>) : null;
   }
 }
 export default PublicEvent
