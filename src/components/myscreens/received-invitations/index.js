@@ -88,8 +88,9 @@ generateKey(numberOfCharacters){
     }
 
        globalState.cardListData.push(newdata);
-      //this.refs.cardlist.scrollToEnd();
-        this.refreshCardList(newKey);
+        //this.refs.cardlist.scrollToEnd();
+        //this.refreshCardList(newKey);
+        setTimeout(() => this.refs.flatList.scrollToEnd(), 200)
         //this.refs.cardlist.scrollToIndex({viewPosition:0});
 }
 
@@ -121,6 +122,7 @@ generateKey(numberOfCharacters){
 
              <View>
              <FlatList
+              scrollEnabled={false}
               initialNumToRender={5}
               maxToRenderPerBatch={6}
               windowSize={10}
@@ -156,12 +158,6 @@ generateKey(numberOfCharacters){
 export default ReceivedInvitations;
 
 */
-
-
-
-
-
-
 
 
 
@@ -290,12 +286,13 @@ onRefresh(){
             
              <View style={{flex:1,flexDirection: 'column'}}>
              <FlatList
-              initialNumToRender={5}
-              maxToRenderPerBatch={6}
+              initialNumToRender={4}
+              maxToRenderPerBatch={5}
+              removeClippedSubviews={true}
               windowSize={10}
               ref={"cardlist"}
-              onContentSizeChange={()=> this.refs.cardlist.scrollToEnd()}
-              updateCellsBatchingPeriod={25} 
+              //onContentSizeChange={()=> this.refs.cardlist.scrollToEnd()}
+              //updateCellsBatchingPeriod={25} 
               listKey={'Invitations'}
               keyExtractor={this._keyExtractor}
               data={globalState.cardListData}
@@ -327,19 +324,22 @@ onRefresh(){
 export default ReceivedInvitations;
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+/*@autobind
+Onscroll(){
+  if(this.state.position+3 < globalState.cardListData.length ){
+    for(let i=this.state.position;i<this.state.position+3;i++){
+      this.state.receivedData.push(globalState.cardListData[i])
+      this.state.position++;
+    }
+    console.warn( this.state.receivedData.)
+  }else{
+    while(this.state.position < globalState.cardListData.length){
+      this.state.receivedData.push(globalState.cardListData[i])
+      this.state.position++;
+    }
+  }
+}
+*/
 
 
 

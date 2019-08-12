@@ -119,12 +119,14 @@ onRefresh(){
             
              <View style={{flex:1,flexDirection: 'column'}}>
              <FlatList
-              initialNumToRender={5}
-              maxToRenderPerBatch={6}
+              initialNumToRender={4}
+              maxToRenderPerBatch={5}
+              //disableVirtualization={true}
+              //removeClippedSubviews={true}
               windowSize={10}
               ref={"cardlist"}
-              onContentSizeChange={()=> this.refs.cardlist.scrollToEnd()}
-              updateCellsBatchingPeriod={25} 
+              //onContentSizeChange={()=> this.refs.cardlist.scrollToEnd()}
+              //updateCellsBatchingPeriod={25} 
               listKey={'Invitations'}
               keyExtractor={this._keyExtractor}
               data={globalState.sendCardListData}

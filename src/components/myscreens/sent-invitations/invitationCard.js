@@ -241,14 +241,14 @@ onDenied() {
            accept={this.state.accept} isJoining={this.state.isJoining} hasJoin={this.state.hasJoin}
            joined={() => this.setState({ hasJoin: true })} />
 
-
+         <View style={{marginBottom:10}}>
          <DetailsModal isOpen={this.state.isOpenDetails} details={cards} location={this.props.item.location}
           event_organiser_name={this.props.item.event_organiser_name}
           created_date={this.props.item.created_date} 
           onClosed={() => this.setState({ isOpenDetails: false })} item={this.props.item}
           OpenLinkZoom = {this.OpenLinkZoom}  OpenLink={this.OpenLink} onAccept ={this.onAccept} onDenied ={this.onDenied} deny={this.state.deny}
           accept={this.state.accept} isJoining={this.state.isJoining} hasJoin={this.state.hasJoin} joined={() => this.setState({ hasJoin: true })}/>        
-
+          </View>
         </Card>
       </Swipeout>
     );

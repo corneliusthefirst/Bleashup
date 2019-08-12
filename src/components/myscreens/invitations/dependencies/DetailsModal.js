@@ -62,6 +62,9 @@ export default class DetailsModal extends Component {
 
 
     render() {
+       const  accept = this.state.accept
+       const deny = this.state.deny
+
         return this.state.details ? (
             <Modal
                 backdropPressToClose={false}
@@ -74,7 +77,7 @@ export default class DetailsModal extends Component {
                 isOpen={this.props.isOpen}
                 onClosed={this.props.onClosed}
                  style={{
-                     height:this.props.accept||this.props.deny ? "95%": "98%",width:"98%", flexDirection: 'column',borderRadius: 8, backgroundColor: '#FEFFDE',marginTop:(!this.props.accept||!this.props.deny) ?-5:-15 }}
+                     height:"98%",width:"98%", flexDirection: 'column',borderRadius: 8, backgroundColor: '#FEFFDE',marginTop:-5 }}
                 
             >
 
@@ -89,7 +92,7 @@ export default class DetailsModal extends Component {
               
               
             
-                <View style = {{flexDirection:"column",marginTop:(this.props.accept||this.props.deny) ? "20%" : "18%",marginLeft:"58%"}}>
+                <View style = {{flexDirection:"column",marginTop:"20%",marginLeft:"58%"}}>
                  
         
                         <TouchableOpacity>
