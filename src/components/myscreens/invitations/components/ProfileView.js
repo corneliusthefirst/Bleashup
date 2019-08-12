@@ -38,7 +38,9 @@ export default class ProfileView extends Component {
                 </TouchableOpacity>
 
                 <View>
-                    <Body>
+                    <Body style={{
+                        marginTop: "7%"
+                    }}>
                         <Text style={{
 
                         }}>{this.state.profile.nickname}</Text>

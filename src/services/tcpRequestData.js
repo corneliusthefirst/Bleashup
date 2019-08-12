@@ -179,6 +179,10 @@ class tcpRequestData {
     return this.sendData("publish", data);
   }
 
+  getPublishers(data) {
+    return this.sendData("get_publishers", data);
+  }
+
   //My data is requestObject.EventID()
   unpublishEvent(data) {
     return this.sendData("unpublish", data);

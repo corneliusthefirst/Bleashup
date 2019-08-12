@@ -7,19 +7,50 @@ class Requester {
         this.currentUserPhone = stores.Session.SessionStore.phone;
     }
     currentUserPhone = ""
-    like() {
+    like(event_id) {
         return new Promise((resolve, reject) => {
-
+            let eventID = requestObject.EventID()
+            eventID.event_id = event_id;
+            requestData.likeEvent(eventID).then(JSONData => {
+                serverEventListener.sendRequest(JSONData).then(SuccessMessage => {
+                    stores.Events.likeEvent(event_id, false).then(() => {
+                        resolve("ok");
+                    })
+                }).catch(error => {
+                    console.error(error)
+                    reject(error)
+                })
+            })
         })
     }
-    unlike() {
+    unlike(event_id) {
         return new Promise((resolve, reject) => {
-
+            let eventID = requestObject.EventID()
+            eventID.event_id = event_id;
+            requestData.unlikeEvent(eventID).then((JSONData) => {
+                serverEventListener.sendRequest(JSONData).then(SuccessMessage => {
+                    stores.Events.unlikeEvent(event_id, false).then(() => {
+                        resolve("ok")
+                    })
+                }).catch(error => {
+                    console.error(error)
+                    reject(error)
+                })
+            })
         })
     }
-    publish() {
+    publish(event_id) {
         return new Promise((resolve, reject) => {
-
+            let eventID = requestObject.EventID();
+            eventID.event_id = event_id;
+            requestData.publishEvent(eventID).then(JSONData => {
+                serverEventListener.sendRequest(JSONData).then(SuccessMessage => {
+                    stores.Events.publishEvent(event_id, false)
+                })
+            }).catch(error => {
+                console.error(error)
+                reject(error)
+            })
         })
     }
     join(EventID, EventHost) {
@@ -46,14 +77,18 @@ class Requester {
             })
         })
     }
-    delete() {
+    delete(event_id) {
         return new Promise((resolve, reject) => {
-
+            stores.Events.delete(event_id).then((response) => {
+                resolve("ok");
+            })
         })
     }
-    hide() {
-        return new promise((resovle, reject) => {
-
+    hide(event_id) {
+        return new Promise((resolve, reject) => {
+            stores.Events.hide(event_id).then(() => {
+                resolve("ok")
+            })
         })
     }
 }
