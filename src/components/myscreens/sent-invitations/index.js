@@ -12,7 +12,7 @@ import cardListData from './EventData';
 import CardListItem from './invitationCard';
 
 import NestedScrollView from "react-native-nested-scroll-view"
-import ImageActivityIndicator from "../currentevents/imageActivityIndicator";
+import ImageActivityIndicator from "../currentevents/components/imageActivityIndicator";
 import {OptimizedFlatList} from 'react-native-optimized-flatlist'
 import { observable, action} from "mobx";
 import globalState from "../../../stores/globalState"

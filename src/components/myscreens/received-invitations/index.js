@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Platform, StyleSheet, Image, TextInput, FlatList, View, Alert, TouchableHighlight, RefreshControl } from 'react-native';
+import { Platform, StyleSheet, Image, TextInput, FlatList, View, Alert, TouchableHighlight, RefreshControl,ScrollView} from 'react-native';
 
 import autobind from "autobind-decorator";
 import {
@@ -118,16 +118,16 @@ class ReceivedInvitations extends Component {
             <NestedScrollView  alwaysBounceHorizontal={true}>
             
              <View style={{flex:1,flexDirection: 'column'}}>
-             <FlatList
+             <ScrollView
               initialNumToRender={4}
               maxToRenderPerBatch={5}
-              removeClippedSubviews={true}
-              windowSize={10}
+              //removeClippedSubviews={true}
+              //windowSize={10}
               ref={"cardlist"}
               //onContentSizeChange={()=> this.refs.cardlist.scrollToEnd()}
               //updateCellsBatchingPeriod={25} 
-              listKey={'Invitations'}
-              keyExtractor={this._keyExtractor}
+              //listKey={'Invitations'}
+              //keyExtractor={this._keyExtractor}
               data={globalState.cardListData}
               renderItem={({ item, index }) => {
                 return (
@@ -143,7 +143,7 @@ class ReceivedInvitations extends Component {
               }
             >
 
-            </FlatList>
+            </ScrollView>
           </View>
         </NestedScrollView>
 

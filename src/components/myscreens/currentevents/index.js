@@ -9,6 +9,7 @@ import CurrentEvents from "./components/CurrentEvents";
 import { DataProvider } from "recyclerlistview"
 import stores from "../../../stores"
 import { Spinner } from "native-base";
+
 class CurrentEventView extends Component {
   constructor(props) {
     super(props);
