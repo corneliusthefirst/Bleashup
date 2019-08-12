@@ -14,7 +14,7 @@ import storage from "./Storage";
 import moment from "moment";
 import requestObject from "../services/requestObjects";
 import tcpRequest from "../services/tcpRequestData";
-import Getter from "../services/Getter"
+import serverEventListener from "../services/severEventListener"
 export default class events {
   constructor() {
     /*storage.remove({
@@ -30,7 +30,7 @@ export default class events {
   }
   @observable currentEvents = [];
   @observable pastEvents = [];
-  events = []
+  @observable events = []
   @observable myReminds = [];
   storeAccessKey = {
     key: "Events",
@@ -50,7 +50,7 @@ export default class events {
         else this.saveKey.data = [NewEvent];
         this.saveKey.data = uniqBy(this.saveKey.data, "id");
         storage.save(this.saveKey).then(() => {
-          this.setProperties(this.saveKey.data, true);
+          this.setProperties(this.saveKey.data, false);
           NewEvent.new = true;
           this.events.unshift(NewEvent)
           resolve();
@@ -58,16 +58,53 @@ export default class events {
       });
     });
   }
+  @action delete(EventID) {
+    return new Promise((resolve, reject) => {
+      this.readFromStore().then(Events => {
+        Events = drop(Events, indexOf(EventID, EventID))
+        this.saveKey.data = Events;
+        storage.save(this.saveKey).then(() => {
+          this.setProperties(this.saveKey.data, false);
+          resolve("ok")
+        })
+
+      })
+    })
+  }
+  @action hide(EventID) {
+    return new Promise((resolve, reject) => {
+      this.readFromStore().then(Events => {
+        let index = findIndex(Events, { id: EventID })
+        Events[index].hiden = true;
+        this.saveKey.data = Events;
+        storage.save(this.saveKey).then(() => {
+          this.setProperties(this.saveKey.data, false);
+          resolve("ok")
+        })
+      })
+    })
+  }
+  isMaster(EventID, Phone) {
+    return new Promise((resolve, reject) => {
+      this.readFromStore().then(Events => {
+        let index = findIndex(Events, { id: EventID });
+        let Participants = Events[index].participant
+        let Masters = filter(Participants, { master: true });
+        if (find(Masters, { phone, Phone })) resolve(true)
+        else resolve(false)
+      })
+    })
+  }
   @action markAsSeen(EventID) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then((Events) => {
-        index = findIndex(Events, { id: EventID });
+        let index = findIndex(Events, { id: EventID });
         Events[index].new = false
         indexNew = findIndex(this.events, { id: EventID });
         this.saveKey.data = uniqBy(Events, "id")
         storage.save(this.saveKey).then(() => {
-          this.setProperties(this.saveKey.data)
-          this.events[indexNew].new = false
+          this.setProperties(this.saveKey.data, false)
+          //this.events[indexNew].new = false
           resolve()
         })
       })
@@ -402,7 +439,7 @@ export default class events {
     });
   }
 
-  @action unlikeEvent(EventID) {
+  @action unlikeEvent(EventID, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let Event = find(Events, { id: EventID });
@@ -486,7 +523,7 @@ export default class events {
           let EID = requestObject.EventID();
           EID.event_id = EventID;
           tcpRequest.getCurrentEvent(EID).then(JSONData => {
-            Getter.get_data(JSONData).then(E => {
+            serverEventListener.get_data(JSONData).then(E => {
               this.addEvent(E).then(() => {
                 this.addVote(EventID, VoteID, true).then(() => {
                   resolve()
@@ -542,7 +579,7 @@ export default class events {
           let EID = requestObject.EventID();
           EID.event_id = EventID;
           tcpRequest.getCurrentEvent(EID).then(JSONData => {
-            Getter.get_data(JSONData).then(E => {
+            serverEventListener.get_data(JSONData).then(E => {
               this.addEvent(E).then(() => {
                 this.addContribution(EventID, ContributionID, true).then(() => {
                   resolve()
@@ -623,7 +660,7 @@ export default class events {
           let EID = requestObject.EventID();
           EID.event_id = EventID;
           tcpRequest.getCurrentEvent(EID).then(JSONData => {
-            Getter.get_data(JSONData).then(E => {
+            serverEventListener.get_data(JSONData).then(E => {
               this.addEvent(E).then(() => {
                 this.addHighlight(EventID, HighlightID, true).then(() => {
                   resolve()
@@ -662,7 +699,7 @@ export default class events {
           let EID = requestObject.EventID();
           EID.event_id = EventID;
           tcpRequest.getCurrentEvent(EID).then(JSONData => {
-            Getter.get_data(JSONData).then(E => {
+            serverEventListener.get_data(JSONData).then(E => {
               this.addEvent(E).then(() => {
                 this.addRemind(EventID, RemindID, true).then(() => {
                   resolve()

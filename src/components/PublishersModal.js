@@ -8,15 +8,13 @@ import ContactList from "./ContactList";
 export default class PublishersModal extends Component {
     constructor(props) {
         super(props)
-    }
-    state = {
-        isOpen: false,
-        isloaded: false
-    }
-    componentDidMount() {
-        this.setState({
+        this.state = {
             isOpen: false,
-        });
+        };
+    }
+
+    componentDidMount() {
+
     }
     shouldComponentUpdate(nextProps, nextState) {
         if (nextProps.isOpen !== this.state.isOpen) return true
@@ -32,10 +30,9 @@ export default class PublishersModal extends Component {
     render() {
         return (
             <Modal
-                backdropPressToClose={false}
-                swipeToClose={false}
+                // backdropPressToClose={false}
+                //swipeToClose={false}
                 backdropOpacity={0.7}
-                animationDuration={100}
                 backButtonClose={true}
                 position='bottom'
                 coverScreen={true}
@@ -45,11 +42,11 @@ export default class PublishersModal extends Component {
 
                 }
                 style={{
-                    justifyContent: 'center', alignItems: 'center', height: 620, display: 'flex', flexDirection: 'column',
-                    borderRadius: 8, backgroundColor: '#FEFFDE', width: 420
+                    justifyContent: 'center', alignItems: 'center', height: "97%", display: 'flex', flexDirection: 'column',
+                    borderRadius: 8, backgroundColor: '#FEFFDE', width: "100%"
                 }}>
                 <Content>
-                    <ContactList></ContactList>
+                    <ContactList event_id={this.props.event_id}></ContactList>
                 </Content>
             </Modal>
 

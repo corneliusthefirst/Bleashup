@@ -49,10 +49,11 @@ export default class CurrentEvents extends Component {
                 zero: this.zero,
                 one: this.one,
                 two: this.two,
-                three: this.three
+                three: this.three,
+                topReached: false
             })
             renderPerBatch == 3 ? this.refs._scrollView.scrollTo({ x: 0.5, y: 0.5, animated: true }) :
-                this.refs._scrollView.scrollTo({ x: 0, y: 781.1, animated: true });
+                this.refs._scrollView.scrollTo({ x: 0, y: 650.1, animated: true });
             this.scroll = 0;
         } else {
             this.setState({
@@ -105,7 +106,7 @@ export default class CurrentEvents extends Component {
                         if (isCloseToBottom(nativeEvent)) {
                             this.continueScrollDown(this.renderPerBatch)
                         }
-                    } else {
+                    } else if(this.scroll<=200 && this.scroll >= 20) {
                         if (ifCloseToTop(nativeEvent)) {
                             this.setState({
                                 topReached: false
@@ -115,6 +116,8 @@ export default class CurrentEvents extends Component {
                         if (isCloseToBottom(nativeEvent)) {
                             this.continueScrollDown(1);
                         }
+                    }else{
+                        this.scroll = 0
                     }
                 }}
             >

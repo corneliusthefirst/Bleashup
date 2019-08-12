@@ -14,7 +14,9 @@ class ServerEventListener {
   listen(socket) {
     this.socket = socket
     socket.on("error", error => {
-      console.error(error.toString(), "error");
+      console.warn(error.toString(), "error");
+      tcpConnect.init().then(socket => {
+      })
     });
     socket.on("data", datar => {
       data = JSON.parse(datar.toString());
@@ -114,6 +116,8 @@ class ServerEventListener {
         console.warn("reconnection attempted", "deu to ", data.error)
         tcpConnect.init().then(() => {
           console.warn("ok! reconnected !");
+          tcpConnect.init().then(() => {
+          })
         })
       }
     });
