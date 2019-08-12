@@ -36,7 +36,7 @@ export default class Session {
           .then(session => {
             this.SessionStore = session;
           })
-          .catch(error => {});
+          .catch(error => { });
       });
   }
   @action getSocke() {
@@ -51,7 +51,7 @@ export default class Session {
             phone: user.phone,
             password: user.password,
             reference: "#Ref<0.3996024962.2836135937.9226>",
-            host: "192.168.43.192"
+            host: "192.168.43.69"
           };
           storage
             .save({
@@ -59,6 +59,8 @@ export default class Session {
               data: session
             })
             .then(() => {
+              session.socket = this.SessionStore.socket
+              session.reference = this.SessionStore.reference
               this.SessionStore = session;
               resolve(session);
             });
@@ -76,7 +78,7 @@ export default class Session {
           autoSync: true
         })
         .then(data => {
-          data.socket = this.SessionStore.socket;
+          data.socket = this.SessionStore.socket
           resolve(data);
         })
         .catch(error => {
@@ -101,6 +103,9 @@ export default class Session {
             reference: "#Ref<0.3996024962.2836135937.9226>",
             host: "bleashup.com"
           };
+          if (key !== "socket")
+            session.socket = this.SessionStore.socket
+          if (key !== "reference") session.reference = this.SessionStore.reference
           session[key] = newValue;
           storage
             .save({
@@ -125,20 +130,20 @@ export default class Session {
           autoSync: true
         })
         .then(session => {
-          session.reference = newReference;
-          this.SessionStore = session;
+          this.SessionStore.reference = newReference
           storage
             .save({
               key: "session",
-              data: session
+              data: this.SessionStore
             })
             .then(() => {
-              resolve(session);
+              resolve(this.SessionStore);
             });
         })
         .catch(error => {
           this.initialzeStoreAndUpdate("reference", newReference)
             .then(session => {
+              session.socket = this.SessionStore.socket;
               this.SessionStore = session;
               resolve(session);
             })
@@ -159,7 +164,8 @@ export default class Session {
         .then(session => {
           if (session.password) {
             session.socket = newSocket;
-            session.host = "192.168.43.192";
+            session.reference = this.SessionStore.reference
+            session.host = "192.168.43.69";
             storage
               .save({
                 key: "session",
@@ -201,6 +207,8 @@ export default class Session {
         })
         .then(session => {
           session.host = newHost;
+          session.socket = this.SessionStore.socket
+          session.reference = this.SessionStore.reference
           this.SessionStore = session;
           storage
             .save({

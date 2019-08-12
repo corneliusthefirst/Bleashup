@@ -1,8 +1,12 @@
 import stores from "../stores";
 import GState from "../stores/globalState";
+import requestObject from "../services/requestObjects"
+import requestData from "../services/tcpRequestData"
+import ServerEventListener from "./severEventListener"
 import {
     forEach
 } from "lodash"
+import Getter from "./Getter";
 class InvitationDispatcher {
     dispatchUpdates(Invitations, action) {
         return new Promise((resolve, reject) => {
@@ -67,9 +71,14 @@ class InvitationDispatcher {
         },
         invitation(Invitation) {
             return new Promise((resolve, reject) => {
-                stores.Invitations.addInvitations(Invitation)
-                GState.invitationUpdated = true
-                resolve()
+                stores.Invitations.addInvitations(Invitation).then(() => {
+                    ServerEventListener.GetData(Invitation.event_id).then(Event => {
+                        stores.Events.addEvent(Event).then(() => {
+                            GState.invitationUpdated = true
+                            resolve()
+                        })
+                    })
+                })
             })
         }
 

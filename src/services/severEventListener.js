@@ -5,10 +5,14 @@ import requestObject from "./requestObjects";
 import UpdatesDispatcher from "./updatesDispatcher";
 import InvitationDispatcher from "./invitationDispatcher";
 import RescheduleDispatcher from "./reschedulDispatcher";
+import tcpConnect from "./tcpConnect"
+import GState from "../stores/globalState";
 
 class ServerEventListener {
-  constructor() {}
+  constructor() { }
+  socket = () => { }
   listen(socket) {
+    this.socket = socket
     socket.on("error", error => {
       console.error(error.toString(), "error");
     });
@@ -20,6 +24,7 @@ class ServerEventListener {
             emitter.emit("current-events", data.body);
             break;
           case "news":
+            GState.writing = data.reference
             stores.Session.updateReference(data.reference).then(sessios => {
               let EventID = requestObject.EventID();
               if (data.updated) UpdatesDispatcher.dispatchUpdates(data.updated);
@@ -28,7 +33,6 @@ class ServerEventListener {
                   data.new_events,
                   "invitation"
                 ).then(() => {
-                  console.warn("ok !");
                 });
               }
               if (data.reschedules)
@@ -38,7 +42,7 @@ class ServerEventListener {
             });
             break;
           case "event_changes":
-            UpdatesDispatcher.dispatchUpdate(data.updated).then(() => {});
+            UpdatesDispatcher.dispatchUpdate(data.updated).then(() => { });
             break;
           case "current_event":
             emitter.emit("successful", "current_event", data.body);
@@ -47,28 +51,30 @@ class ServerEventListener {
             emitter.emit("events", data.body);
             break;
           case "invitation":
+
             InvitationDispatcher.dispatcher(data.body, "invitation").then(
-              () => {}
+              () => {
+              }
             );
             break;
           case "reschedule":
-            RescheduleDispatcher.applyReschedule(body).then(() => {});
+            RescheduleDispatcher.applyReschedule(body).then(() => { });
             break;
           case "denied_invitation":
             InvitationDispatcher.dispatcher(
               data.body,
               "denied_invitation"
-            ).then(() => {});
+            ).then(() => { });
             break;
           case "accepted_invitation":
             InvitationDispatcher.dispatcher(
               data.body,
               "accepted_invitation"
-            ).then(() => {});
+            ).then(() => { });
             break;
           case "sent_invitation":
             InvitationDispatcher.dispatcher(data.body, "sent_invitation").then(
-              () => {}
+              () => { }
             );
             break;
 
@@ -76,7 +82,7 @@ class ServerEventListener {
             InvitationDispatcher.dispatcher(
               data.body,
               "received_invitation"
-            ).then(() => {});
+            ).then(() => { });
             break;
           case "current_event_field":
             emitter.emit(
@@ -86,12 +92,13 @@ class ServerEventListener {
               data.event_id
             );
             break;
-          case "event_changes":
+          /*case "event_changes":
             emitter.emit("event_changes", data.updated);
-            break;
+            break;*/
         }
       }
       if (data.status) {
+        console.warn(data.status)
         switch (data.status) {
           case "successful":
             if (data.data) emitter.emit("successful", "data", data.data);
@@ -104,7 +111,10 @@ class ServerEventListener {
         }
       }
       if (data.error) {
-        console.error(data.message);
+        console.warn("reconnection attempted", "deu to ", data.error)
+        tcpConnect.init().then(() => {
+          console.warn("ok! reconnected !");
+        })
       }
     });
     socket.on("timeout", data => {
@@ -114,25 +124,38 @@ class ServerEventListener {
       console.error(error.toString(), "closed");
     });
   }
-  sampleGetData() {
-    EventID.event_id = "AnGfyncazIZnFoZCL7FPYfZOiGxUkjiLXhz3";
-    tcpRequest.getCurrentEvent(EventID).then(JSONData => {
-      UpdatesDispatcher.get_data(JSONData).then(Event => {
-        console.warn(Event, "1");
-        EventID.event_id = "VoLIk0izYUYWFd5IvafwwHxXfMGU36hd3iOX";
-        tcpRequest.getContributions(EventID).then(JSONData => {
-          UpdatesDispatcher.get_data(JSONData).then(Event => {
-            console.warn(Event, "2");
-            EventID.event_id = "wb1IjaiJ4cEmu8mCnEsOJhnliqpTVLfXyFvY";
-            tcpRequest.getCurrentEvent(EventID).then(JSONData => {
-              UpdatesDispatcher.get_data(JSONData).then(Event => {
-                console.warn(Event, "3");
-              });
-            });
-          });
+  get_data(data) {
+    return new Promise((resolve, reject) => {
+      emitter.once("successful", (response, dataResponse) => {
+        resolve(dataResponse);
+      });
+      emitter.once("unsuccessful", (response, dataError) => {
+        reject(dataError);
+      });
+      this.socket.write(data);
+    });
+  }
+  sendRequest(data) {
+    return new Promise((resolve, reject) => {
+      emitter.once("successful", (response) => {
+        resolve(response);
+      });
+      emitter.once("unsuccessful", (response) => {
+        reject(response);
+      });
+      this.socket.write(data);
+    })
+  }
+  GetData(EventId) {
+    return new Promise((resolve, reject) => {
+      let EventID = requestObject.EventID()
+      EventID.event_id = EventId;
+      tcpRequest.getCurrentEvent(EventID).then(JSONData => {
+        this.get_data(JSONData).then(Event => {
+          resolve(Event)
         });
       });
-    });
+    })
   }
 }
 

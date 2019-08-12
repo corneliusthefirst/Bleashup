@@ -2,6 +2,7 @@ import { observable, action, extendObservable, autorun, computed } from "mobx";
 
 export default class globalState {
   @observable scrollOuter = true;
+  @observable writing = false;
   @observable eventUpdated = false;
   @observable isScrolling = true;
   @observable loading = false;

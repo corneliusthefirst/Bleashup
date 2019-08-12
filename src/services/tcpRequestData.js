@@ -1,6 +1,7 @@
 import requestObject from "./requestObjects";
 import transfer from "./transferable";
 import stores from "../stores";
+import GState from "../stores/globalState";
 
 class tcpRequestData {
   Presence() {
@@ -113,6 +114,7 @@ class tcpRequestData {
   sendData(action, data) {
     return new Promise((resolve, reject) => {
       stores.Session.getSession().then(session => {
+        session.reference = GState.writing ? GState.writing : session.reference
         transfer.formTransferableData(session, action, data).then(JSONData => {
           resolve(JSONData);
         });

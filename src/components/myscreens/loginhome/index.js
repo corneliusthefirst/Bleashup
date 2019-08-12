@@ -22,7 +22,7 @@ import { observer } from "mobx-react";
 import styles from "./styles";
 import stores from "../../../stores";
 import routerActions from "reazy-native-router-actions";
-import initialRoute from "../invitations/dependencies/initialRoute";
+import initialRoute from "../invitations/components/initialRoute";
 import globalState from "../../../stores/globalState";
 export default class LoginHomeView extends Component {
   constructor(props) {
@@ -52,10 +52,10 @@ export default class LoginHomeView extends Component {
           {globalState.loading ? (
             <Spinner color="#1FABAB" style={{ marginTop: -175 }} />
           ) : (
-            <Text> Waiting ... </Text>
-          )}
+              <Text> Waiting ... </Text>
+            )}
         </Content>
-        
+
       </Container>
     );
   }

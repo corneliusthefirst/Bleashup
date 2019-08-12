@@ -10,7 +10,7 @@ import {
   Body,
   Container
 } from "native-base";
-import CurrentEventView from "./../currentevents/index";
+import CurrentEventView from "../currentevents/index";
 import PastEventView from "./../pastevents/index";
 import Reminds from "./../myreminds/index";
 
@@ -23,7 +23,7 @@ export default class PersonalEventView extends Component {
       <Container>
         <Tabs
           locked
-          tabBarPosition="overlayTop"
+          tabBarPosition="overlayBottom"
           tabBarUnderlineStyle={{
             borderBottomWidth: 0,
             backgroundColor: "transparent"
