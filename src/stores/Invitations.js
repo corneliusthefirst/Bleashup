@@ -11,8 +11,10 @@ import {
     filter,
     findIndex
 } from 'lodash'
+import stores from '.';
 
 export default class Invitations {
+    @observable invitations = [];
     @observable SendInvitations = [];
     @observable ReceivedInvitations = [];
 
@@ -24,6 +26,61 @@ export default class Invitations {
         this.readFromStore().then(Invitations => {
             if (Invitations) {
                 this.setProperties(Invitations, true)
+            }
+        })
+    }
+    translateToinvitationData(invitation) {
+        return new Promise((resolve, reject) => {
+            stores.Events.loadCurrentEvent(invitation.event_id).then(event => {
+                stores.Highlights.fetchHighlights(invitation.event_id).then((hightlights) => {
+                    stores.LoginStore.getUser().then((user) => {
+                        stores.Contacts.getContact(invitation.inviter).then(contact => {
+                            resolve({
+                                "key": invitation.invitation_id,
+                                "sender_Image": contact.profile,
+                                "sender_name": contact.nickname,
+                                "sender_status": contact.status,
+                                "receiver_Image": user.profile,
+                                "received_date": invitation.period.date.year + "/" +
+                                    invitation.period.date.month + "/" +
+                                    invitation.period.date.day + " on " + invitation.period.time.hour + ": " + invitation.period.time.mins + ": " + invitation.period.time.secs,
+                                "created_date": event.created_at,
+                                "event_organiser_name": contact.nickname,
+                                "event_description": event.about.description,
+                                "event_Image": event.background,
+                                "event_time": event.period.date.year + "/" +
+                                    event.period.date.month + "/" +
+                                    event.period.date.day + " on " + event.period.time.hour + ": " + event.period.time.mins + ": " + event.period.time.secs,
+                                "event_title": event.about.title,
+                                "location": event.location.string,
+                                "invitation_status": invitation.status,
+                                "highlight": hightlights,
+                                "accept": invitation.accept,
+                                "deny": invitation.deny,
+                                "sent": invitation.sent,
+                                "recevied": invitation.received,
+                                "seen": invitation.seen
+                            })
+                        })
+                    })
+                })
+            })
+        })
+    }
+    initStoreForInitationDisplay() {
+        return new Promise((resolve, reject) => {
+            let result = [];
+            let i = 0;
+            if (this.invitations.length !== 0) {
+                this.invitations.forEach((invitation) => {
+                    this.translateToinvitationData(invitation).then(data => {
+                        result.push(data)
+                        if (i === this.invitations.length - 1) {
+                            resolve(result)
+                        }
+                        i++
+                    })
+                })
             }
         })
     }
@@ -56,14 +113,10 @@ export default class Invitations {
     markAsSentStatus(InvitationID) {
         return new Promise((resolve, reject) => {
             this.readFromStore().then(Invitations => {
-                let Invitation = find(Invitations, {
-                    invitation_id: InvitationID
-                })
                 let index = findIndex(Invitations, {
                     invitation_id: InvitationID
                 })
                 Invitation.sent = true
-                Invitations.splice(index, 1, Invitation)
                 this.saveKey.data = Invitations
                 storage.save(this.saveKey).then(() => {
                     this.setProperties(this.setProperties(this.saveKey, true))
@@ -75,14 +128,25 @@ export default class Invitations {
     markAsReceived(InvitationID) {
         return new Promise((resolve, reject) => {
             this.readFromStore().then(Invitations => {
-                let Invitation = find(Invitations, {
-                    invitation_id: InvitationID
-                })
                 let index = findIndex(Invitations, {
                     invitation_id: InvitationID
                 })
-                Invitation.received = true
-                Invitations.splice(index, 1, Invitation)
+                Invitations[index].received = true
+                this.saveKey.data = Invitations
+                storage.save(this.saveKey).then(() => {
+                    this.setProperties(this.setProperties(this.saveKey, true))
+                    resolve()
+                })
+            })
+        })
+    }
+    markAsSeen(InvitationID) {
+        return new Promise((resolve, reject) => {
+            this.readFromStore().then(Invitations => {
+                let index = findIndex(Invitations, {
+                    invitation_id: InvitationID
+                })
+                Invitations[index].seen = true
                 this.saveKey.data = Invitations
                 storage.save(this.saveKey).then(() => {
                     this.setProperties(this.setProperties(this.saveKey, true))
@@ -94,14 +158,10 @@ export default class Invitations {
     acceptInvitation(InvitationID) {
         return new Promise((resolve, reject) => {
             this.readFromStore().then(Invitations => {
-                let Invitation = find(Invitations, {
-                    invitation_id: InvitationID
-                })
                 let index = findIndex(Invitations, {
                     invitation_id: InvitationID
                 })
-                Invitation.status = "accepted"
-                Invitations.splice(index, 1, Invitation)
+                Invitations[index].accept = true
                 this.saveKey.data = Invitations
                 storage.save(this.saveKey).then(() => {
                     this.setProperties(this.saveKey.data, true)
@@ -122,14 +182,10 @@ export default class Invitations {
     denieInvitation(InvitationID) {
         return new Promise((resolve, reject) => {
             this.readFromStore().then(Invitations => {
-                let Invitation = find(Invitations, {
-                    invitation_id: InvitationID
-                })
                 let index = findIndex(Invitations, {
                     invitation_id: InvitationID
                 })
-                Invitation.status = "denied"
-                Invitations.splice(index, 1, Invitation)
+                Invitations[index].deny = true
                 this.saveKey.data = Invitations
                 storage.save(this.saveKey).then(() => {
                     this.setProperties(this.saveKey.data, true)
@@ -141,14 +197,10 @@ export default class Invitations {
     changeNewInvitationStatus(InvitationID) {
         return new Promise((resolve, reject) => {
             this.readFromStore().then(Invitations => {
-                let Invitation = find(Invitations, {
-                    invitation_id: InvitationID
-                })
                 let index = findIndex(Invitations, {
                     invitation_id: InvitationID
                 })
-                Invitation.new = false
-                Invitations.splice(index, 1, Invitation)
+                Invitations[index].new = false
                 this.saveKey.data = Invitations
                 storage.save(this.saveKey).then(() => {
                     this.setProperties(this.saveKey.data, true)
@@ -177,5 +229,6 @@ export default class Invitations {
         this.ReceivedInvitations = filter(Events, {
             type: "received"
         });
+        this.invitations = Events
     }
 }

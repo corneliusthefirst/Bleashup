@@ -88,8 +88,9 @@ generateKey(numberOfCharacters){
     }
 
        globalState.cardListData.push(newdata);
-      //this.refs.cardlist.scrollToEnd();
-        this.refreshCardList(newKey);
+        //this.refs.cardlist.scrollToEnd();
+        //this.refreshCardList(newKey);
+        setTimeout(() => this.refs.flatList.scrollToEnd(), 200)
         //this.refs.cardlist.scrollToIndex({viewPosition:0});
 }
 
@@ -121,6 +122,7 @@ generateKey(numberOfCharacters){
 
              <View>
              <FlatList
+              scrollEnabled={false}
               initialNumToRender={5}
               maxToRenderPerBatch={6}
               windowSize={10}
@@ -164,14 +166,8 @@ export default ReceivedInvitations;
 
 
 
-
-
-
-
-
-
 import React, { Component } from 'react';
-import { Platform, StyleSheet, Image, TextInput, FlatList, View, Alert, TouchableHighlight, RefreshControl } from 'react-native';
+import { Platform, StyleSheet, Image, ScrollView, TextInput, FlatList, View, Alert, TouchableHighlight, RefreshControl } from 'react-native';
 
 import autobind from "autobind-decorator";
 import {
@@ -182,12 +178,11 @@ import cardListData from './EventData';
 
 import CardListItem from './invitationCard';
 
-import NestedScrollView from "react-native-nested-scroll-view"
 import ImageActivityIndicator from "../currentevents/components/imageActivityIndicator";
-import { OptimizedFlatList } from 'react-native-optimized-flatlist'
 import { observable, action } from "mobx";
 import globalState from "../../../stores/globalState"
 import { observer } from "mobx-react";
+import stores from '../../../stores';
 
 
 @observer
@@ -241,6 +236,10 @@ class ReceivedInvitations extends Component {
       "key": newKey,
       "sender_Image": "https://upload.wikimedia.org/wikipedia/commons/b/bf/Cornish_cream_tea_2.jpg",
       "sender_name": "giles",
+      type: {
+        name: "",
+        params: ""
+      },
       "sender_status": "Falling on the way means you need to work harder",
       "receiver_Image": "https://upload.wikimedia.org/wikipedia/commons/6/6e/Lactarius_indigo_48568.jpg",
       "received_date": "28/06/2019",
@@ -287,19 +286,20 @@ class ReceivedInvitations extends Component {
       <ImageActivityIndicator />
     ) : (
 
-        <NestedScrollView alwaysBounceHorizontal={true}>
+        <ScrollView nestedScrollEnabled={true}>
 
           <View style={{ flex: 1, flexDirection: 'column' }}>
             <FlatList
-              initialNumToRender={5}
-              maxToRenderPerBatch={6}
+              initialNumToRender={4}
+              maxToRenderPerBatch={5}
+              removeClippedSubviews={true}
               windowSize={10}
               ref={"cardlist"}
-              onContentSizeChange={() => this.refs.cardlist.scrollToEnd()}
-              updateCellsBatchingPeriod={25}
+              //onContentSizeChange={()=> this.refs.cardlist.scrollToEnd()}
+              //updateCellsBatchingPeriod={25} 
               listKey={'Invitations'}
               keyExtractor={this._keyExtractor}
-              data={globalState.cardListData}
+              data={stores.Invitations.invitations}
               renderItem={({ item, index }) => {
                 return (
                   //this is my private class just created
@@ -316,7 +316,7 @@ class ReceivedInvitations extends Component {
 
             </FlatList>
           </View>
-        </NestedScrollView>
+        </ScrollView>
 
 
 
@@ -328,19 +328,22 @@ class ReceivedInvitations extends Component {
 export default ReceivedInvitations;
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+/*@autobind
+Onscroll(){
+  if(this.state.position+3 < globalState.cardListData.length ){
+    for(let i=this.state.position;i<this.state.position+3;i++){
+      this.state.receivedData.push(globalState.cardListData[i])
+      this.state.position++;
+    }
+    console.warn( this.state.receivedData.)
+  }else{
+    while(this.state.position < globalState.cardListData.length){
+      this.state.receivedData.push(globalState.cardListData[i])
+      this.state.position++;
+    }
+  }
+}
+*/
 
 
 

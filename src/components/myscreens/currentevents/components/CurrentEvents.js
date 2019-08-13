@@ -1,8 +1,6 @@
 
 import React, { Component } from 'react';
 import { StyleSheet, View, Dimensions, Text, Image, ScrollView } from 'react-native';
-import faker from 'faker';
-import { RecyclerListView, DataProvider, LayoutProvider, } from 'recyclerlistview';
 import PublicEvent from "./publicEvent.js"
 import { CardItem, Card, Spinner } from 'native-base';
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -106,7 +104,7 @@ export default class CurrentEvents extends Component {
                         if (isCloseToBottom(nativeEvent)) {
                             this.continueScrollDown(this.renderPerBatch)
                         }
-                    } else if(this.scroll<=200 && this.scroll >= 20) {
+                    } else if (this.scroll <= 100 && this.scroll >= 20) {
                         if (ifCloseToTop(nativeEvent)) {
                             this.setState({
                                 topReached: false
@@ -116,7 +114,7 @@ export default class CurrentEvents extends Component {
                         if (isCloseToBottom(nativeEvent)) {
                             this.continueScrollDown(1);
                         }
-                    }else{
+                    } else {
                         this.scroll = 0
                     }
                 }}

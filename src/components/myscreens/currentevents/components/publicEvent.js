@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import {
-  Image,
   View,
   TouchableOpacity,
   ActivityIndicator,
@@ -29,7 +28,6 @@ import stores from "../../../../stores";
 import DetailsModal from "../../../DetailsModal";
 import OptionList from "./OptionList"
 import ProfileView from "../../invitations/components/ProfileView";
-import CacheImages from "../../../CacheImages";
 import MenuListView from "./MenuListView"
 import Swipeout from 'react-native-swipeout';
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
@@ -221,25 +219,26 @@ Once you've found three to five sample listings that describe your job goals, co
         height: "100%"
       }}>
         <ListItem style={{ alignSelf: 'flex-start' }}>
-          {this.state.public || this.state.event.public ? (<TouchableOpacity onPress={() => {
+          {this.state.event ? (this.state.public || this.state.event.public ? (<TouchableOpacity onPress={() => {
             this.publish()
           }}>
             {this.state.publishing ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
             <Icon style={{ fontSize: 16, color: "#bfc6ea" }} name="forward" type="Entypo">
             </Icon>
             <Label style={{ fontSize: 12, color: "#bfc6ea" }}>Publish</Label>
-          </TouchableOpacity>) : (<TouchableOpacity onPress={() => {
-            this.publish()
-          }
-          }>
-            {this.state.publishing ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
-            <Icon style={{ fontSize: 16, color: "#7DD2D2" }} name="forward" type="Entypo">
-            </Icon>
-            <Label style={{ fontSize: 12, color: "#7DD2D2" }}>Publish</Label>
-          </TouchableOpacity>)}
+          </TouchableOpacity>) :
+            (<TouchableOpacity onPress={() => {
+              this.publish()
+            }
+            }>
+              {this.state.publishing ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
+              <Icon style={{ fontSize: 16, color: "#7DD2D2" }} name="forward" type="Entypo">
+              </Icon>
+              <Label style={{ fontSize: 12, color: "#7DD2D2" }}>Publish</Label>
+            </TouchableOpacity>)) : null}
         </ListItem>
         <ListItem>
-          {this.state.isJoin || this.state.event.joint ? (<TouchableOpacity>
+          {this.state.event ? (this.state.isJoin || this.state.event.joint ? (<TouchableOpacity>
             <Icon style={{ fontSize: 16, color: "#7DD2D2" }} name="universal-access" type="Foundation">
             </Icon>
             <Label style={{
@@ -262,7 +261,7 @@ Once you've found three to five sample listings that describe your job goals, co
             >
               Join
               </Label>
-          </TouchableOpacity>)}
+          </TouchableOpacity>)) : null}
 
         </ListItem>
         <ListItem style={{ alignSelf: 'flex-start' }}>
@@ -271,7 +270,7 @@ Once you've found three to five sample listings that describe your job goals, co
           }}>
             <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="calendar" type="EvilIcons">
             </Icon>
-            {this.state.event.updated ? (
+            {this.state.event ? (this.state.event.updated ? (
               <View style={this.indicatorMargin}>
                 <UpdateStateIndicator size={this.blinkerSize} />
               </View>
@@ -282,7 +281,7 @@ Once you've found three to five sample listings that describe your job goals, co
                     color={this.transparent}
                   />
                 </View>
-              )}
+              )) : null}
             <Label style={{ fontSize: 12, color: "#1FABAB" }}>Detail</Label>
           </TouchableOpacity>
         </ListItem>
@@ -292,7 +291,7 @@ Once you've found three to five sample listings that describe your job goals, co
           }}>
             <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="comment" type="EvilIcons">
             </Icon>
-            {this.state.event.chat_upated ? (
+            {this.state.event ? (this.state.event.chat_upated ? (
               <View style={this.indicatorMargin}>
                 <UpdateStateIndicator size={this.blinkerSize} />
               </View>
@@ -303,7 +302,7 @@ Once you've found three to five sample listings that describe your job goals, co
                     color={this.transparent}
                   />
                 </View>
-              )}
+              )) : null}
             <Label style={{ fontSize: 12, color: "#1FABAB" }}>chat</Label>
           </TouchableOpacity>
         </ListItem>
@@ -313,7 +312,7 @@ Once you've found three to five sample listings that describe your job goals, co
           }}>
             <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="exclamation" type="EvilIcons">
             </Icon>
-            {this.state.event.upated ? (
+            {this.state.event ? (this.state.event.upated ? (
               <View style={this.indicatorMargin}>
                 <UpdateStateIndicator size={this.blinkerSize} />
               </View>
@@ -324,7 +323,7 @@ Once you've found three to five sample listings that describe your job goals, co
                     color={this.transparent}
                   />
                 </View>
-              )}
+              )) : null}
             <Label style={{ fontSize: 12, color: "#1FABAB" }}>Logs</Label>
           </TouchableOpacity>
         </ListItem>
@@ -376,7 +375,7 @@ Once you've found three to five sample listings that describe your job goals, co
   }
 
   like() {
-    setState({
+    this.setState({
       liking: true
     })
     Requester.like(this.state.event.id).then(response => {
@@ -476,331 +475,366 @@ Once you've found three to five sample listings that describe your job goals, co
   }
   blinkerSize = 26;
   render() {
-    return this.state.event.hiden || this.state.hiden ? null :
-      (this.state.event ? (this.state.isMount ? (
-        <Swipeout style={{ backgroundColor: this.state.event.new ? "#cdfcfc" : null }}  {...this.state.swipeOutSettings}>
-          <Card
+    return this.state.event ? (this.state.event.hiden || this.state.hiden ? null : (this.state.isMount ? (
+      <Swipeout style={{ backgroundColor: this.state.event.new ? "#cdfcfc" : null }}  {...this.state.swipeOutSettings}>
+        <Card
+          style={{
+            borderColor: "#1FABAB",
+            border: 50,
+
+          }
+          }
+          bordered
+        >
+          <CardItem
             style={{
-              borderColor: "#1FABAB",
-              border: 50,
-
-            }
-            }
-            bordered
+              paddingBottom: 15
+            }}
           >
-            <CardItem
-              style={{
-                paddingBottom: 15
-              }}
-            >
-              <Left>
+            <Left>
+              <View>
+                {this.state.publishing ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
+                <Icon
+                  name="forward"
+                  type="Entypo"
+                  style={{
+                    fontSize: 16,
+                    color: "#0A4E52"
+                  }}
+                />
+                <MenuListView hide={this.state.hide} event_id={this.state.event.id} published publish={() => this.publish()}
+                  showPublishers={() => this.showPublishersList()}
+                />
+              </View>
+            </Left>
+            {this.state.event.updated ? <UpdateStateIndicator /> : null}
+            <Right>
+              <View>
+                <Icon
+                  name="dots-three-vertical"
+                  style={{
+                    color: "#0A4E52",
+                    fontSize: 16
+                  }}
+                  type="Entypo"
+                />
+              </View>
+            </Right>
+          </CardItem>
+          <CardItem
+            style={{
+              paddingBottom: 10,
+              paddingTop: 10
+            }}
+          >
+            <Left>
+              <View style={{ flexDirection: "row", flex: 5 }}>
+                <ProfileView phone={(this.state.event.creator_phone)}></ProfileView>
+              </View>
+            </Left>
+          </CardItem>
+          {this.state.event.recursive ? <CardItem>
+            <Left>
+              <View style={
+                {
+                  flexDirection: "column"
+                }
+              }>
                 <View>
-                  {this.state.publishing ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
-                  <Icon
-                    name="forward"
-                    type="Entypo"
-                    style={{
-                      fontSize: 16,
-                      color: "#0A4E52"
-                    }}
-                  />
-                  <MenuListView hide={this.state.hide} event_id={this.state.event.id} published publish={() => this.publish()}
-                    showPublishers={() => this.showPublishersList()}
-                  />
+                  <Text style={{
+                    color: "#54F5CA"
+                  }} note>
+                    {this.state.event.recursion.type}
+                  </Text>
                 </View>
-              </Left>
-              {this.state.event.updated ? <UpdateStateIndicator /> : null}
-              <Right>
-                <View>
-                  <Icon
-                    name="dots-three-vertical"
-                    style={{
-                      color: "#0A4E52",
-                      fontSize: 16
-                    }}
-                    type="Entypo"
-                  />
-                </View>
-              </Right>
-            </CardItem>
-            <CardItem
-              style={{
-                paddingBottom: 10,
-                paddingTop: 10
-              }}
-            >
-              <Left>
-                <View style={{ flexDirection: "row", flex: 5 }}>
-                  <ProfileView phone={(this.state.event.creator_phone)}></ProfileView>
-                </View>
-              </Left>
-            </CardItem>
-            {this.state.event.recursive ? <CardItem>
-              <Left>
-                <View style={
-                  {
-                    flexDirection: "column"
-                  }
-                }>
-                  <View>
-                    <Text style={{
-                      color: "#54F5CA"
-                    }} note>
-                      {this.state.event.recursion.type}
-                    </Text>
-                  </View>
 
-                  <View>
-                    <Text note>
-                      {this.state.event.recursion.days}
-                    </Text>
-                  </View>
+                <View>
+                  <Text note>
+                    {this.state.event.recursion.days}
+                  </Text>
                 </View>
-              </Left>
-            </CardItem> : null}
-            <CardItem
+              </View>
+            </Left>
+          </CardItem> : null}
+          <CardItem
+            style={{
+              flexDirection: "column",
+              justifyContent: "space-between"
+            }}
+          >
+            <TouchableOpacity onPress={() => requestAnimationFrame(() =>
+              this.navigateToEventDetails()
+            )}>
+              <View>
+                <Text
+                  adjustsFontSizeToFit={true}
+                  style={{
+                    fontSize: 20,
+                    fontWeight: "bold",
+                    textAlign: "center",
+                    textAlignVertical: "center",
+                    fontFamily: "Roboto"
+                  }}
+                >
+                  {this.state.event.about.title}
+                </Text>
+                <Text
+                  style={{
+                    color: "#1FABAB"
+                  }}
+                  note
+                >
+                  {this.writeDateTime()}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </CardItem>
+          <CardItem
+            style={{
+              paddingLeft: 0,
+              aspectRatio: 3 / 1,
+              paddingRight: 0,
+              paddingTop: 20,
+              paddingBottom: 10
+            }}
+            cardBody
+          >
+            <Left>
+              <PhotoView style={{
+                width: "70%",
+                marginLeft: "4%"
+              }} photo={this.state.event.background} width={170} height={125} borderRadius={10} />
+            </Left>
+            <Right >
+              <MapView style={{ marginRight: "11%" }} location={this.state.event.location.string}></MapView>
+            </Right>
+          </CardItem>
+          <CardItem
+            style={{
+              flexDirection: "row"
+            }}
+          >
+            <View
               style={{
-                flexDirection: "column",
-                justifyContent: "space-between"
+                width: "19%"
               }}
             >
-              <TouchableOpacity onPress={() => requestAnimationFrame(() =>
-                this.navigateToEventDetails()
-              )}>
-                <View>
-                  <Text
-                    adjustsFontSizeToFit={true}
-                    style={{
-                      fontSize: 20,
-                      fontWeight: "bold",
-                      textAlign: "center",
-                      textAlignVertical: "center",
-                      fontFamily: "Roboto"
-                    }}
-                  >
-                    {this.state.event.about.title}
-                  </Text>
-                  <Text
-                    style={{
+              <TouchableOpacity onPress={this.navigateToEventDetails}>
+                <View style={this.svgStyle}>
+                  <Icon type="EvilIcons" name="calendar" style={
+                    {
                       color: "#1FABAB"
-                    }}
-                    note
-                  >
-                    {this.writeDateTime()}
-                  </Text>
+                    }
+                  }></Icon>
+                  <Label style={{
+                    marginLeft: "-8%"
+                  }}>details</Label>
+                  {this.state.event.updated ? (
+                    <View style={this.indicatorMargin}>
+                      <UpdateStateIndicator size={this.blinkerSize} />
+                    </View>
+                  ) : (
+                      <View style={this.indicatorMargin}>
+                        <UpdateStateIndicator
+                          size={this.blinkerSize}
+                          color={this.transparent}
+                        />
+                      </View>
+                    )}
                 </View>
               </TouchableOpacity>
-            </CardItem>
-            <CardItem
+            </View>
+            <View
               style={{
-                paddingLeft: 0,
-                aspectRatio: 3 / 1,
-                paddingRight: 0,
-                paddingTop: 20,
-                paddingBottom: 10
-              }}
-              cardBody
-            >
-              <Left>
-                <PhotoView style={{
-                  width: "70%",
-                  marginLeft: "4%"
-                }} photo={this.state.event.background} width={170} height={125} borderRadius={10} />
-              </Left>
-              <Right >
-                <MapView style={{ marginRight: "11%" }} location={this.state.event.location.string}></MapView>
-              </Right>
-            </CardItem>
-            <CardItem
-              style={{
-                flexDirection: "row"
+                width: "19%"
               }}
             >
-              <View
-                style={{
-                  width: "19%"
-                }}
-              >
-                <TouchableOpacity onPress={this.navigateToEventDetails}>
-                  <View style={this.svgStyle}>
-                    <Icon type="EvilIcons" name="calendar" style={
-                      {
-                        color: "#1FABAB"
-                      }
-                    }></Icon>
-                    <Label style={{
-                      marginLeft: "-8%"
-                    }}>details</Label>
-                    {this.state.event.updated ? (
+              <TouchableOpacity onPress={this.navigateToReminds}>
+                <View style={this.svgStyle}>
+                  <Icon type="EvilIcons" name="bell" style={
+                    {
+                      color: "#1FABAB"
+                    }
+                  }></Icon>
+                  <Label style={{
+                    marginLeft: "-20%"
+                  }} > reminds</Label>
+                  {this.state.event.remind_upated ? (
+                    <View style={this.indicatorMargin}>
+                      <UpdateStateIndicator size={this.blinkerSize} />
+                    </View>
+                  ) : (
                       <View style={this.indicatorMargin}>
-                        <UpdateStateIndicator size={this.blinkerSize} />
+                        <UpdateStateIndicator
+                          size={this.blinkerSize}
+                          color={this.transparent}
+                        />
                       </View>
-                    ) : (
-                        <View style={this.indicatorMargin}>
-                          <UpdateStateIndicator
-                            size={this.blinkerSize}
-                            color={this.transparent}
-                          />
-                        </View>
-                      )}
-                  </View>
-                </TouchableOpacity>
-              </View>
-              <View
-                style={{
-                  width: "19%"
-                }}
-              >
-                <TouchableOpacity onPress={this.navigateToReminds}>
-                  <View style={this.svgStyle}>
-                    <Icon type="EvilIcons" name="bell" style={
-                      {
-                        color: "#1FABAB"
-                      }
-                    }></Icon>
-                    <Label style={{
-                      marginLeft: "-20%"
-                    }} > reminds</Label>
-                    {this.state.event.remind_upated ? (
+                    )}
+                </View>
+              </TouchableOpacity>
+            </View>
+            <View
+              style={{
+                width: "19%"
+              }}
+            >
+              <TouchableOpacity onPress={this.navigateToEventChat}>
+                <View style={this.svgStyle}>
+                  <Icon name="comment" type="EvilIcons" style={
+                    {
+                      color: "#1FABAB"
+                    }
+                  }></Icon>
+                  <Label style={{
+                    marginLeft: "-5%"
+                  }}>chats</Label>
+                  {this.state.event.chat_updated ? (
+                    <View style={this.indicatorMargin}>
+                      <UpdateStateIndicator size={22} />
+                    </View>
+                  ) : (
                       <View style={this.indicatorMargin}>
-                        <UpdateStateIndicator size={this.blinkerSize} />
+                        <UpdateStateIndicator
+                          size={this.blinkerSize}
+                          color={this.transparent}
+                        />
                       </View>
-                    ) : (
-                        <View style={this.indicatorMargin}>
-                          <UpdateStateIndicator
-                            size={this.blinkerSize}
-                            color={this.transparent}
-                          />
-                        </View>
-                      )}
-                  </View>
-                </TouchableOpacity>
-              </View>
-              <View
-                style={{
-                  width: "19%"
-                }}
-              >
-                <TouchableOpacity onPress={this.navigateToEventChat}>
-                  <View style={this.svgStyle}>
-                    <Icon name="comment" type="EvilIcons" style={
-                      {
-                        color: "#1FABAB"
-                      }
-                    }></Icon>
-                    <Label style={{
-                      marginLeft: "-5%"
-                    }}>chats</Label>
-                    {this.state.event.chat_updated ? (
+                    )}
+                </View >
+              </TouchableOpacity>
+            </View>
+            <View
+              style={{
+                width: "19%"
+              }}
+            >
+              <TouchableOpacity onPress={this.navigateToHighLights}>
+                <View style={this.svgStyle}>
+                  <Icon name="star" type="EvilIcons" style={
+                    {
+                      color: "#1FABAB"
+                    }
+                  }></Icon>
+                  <Label style={{
+                    marginLeft: "-12%"
+                  }} >highlts</Label>
+                  {this.state.event.highlight_updated ? (
+                    <View style={this.indicatorMargin}>
+                      <UpdateStateIndicator size={this.blinkerSize} />
+                    </View>
+                  ) : (
                       <View style={this.indicatorMargin}>
-                        <UpdateStateIndicator size={22} />
+                        <UpdateStateIndicator
+                          size={this.blinkerSize}
+                          color={this.transparent}
+                        />
                       </View>
-                    ) : (
-                        <View style={this.indicatorMargin}>
-                          <UpdateStateIndicator
-                            size={this.blinkerSize}
-                            color={this.transparent}
-                          />
-                        </View>
-                      )}
-                  </View >
-                </TouchableOpacity>
-              </View>
-              <View
-                style={{
-                  width: "19%"
-                }}
-              >
-                <TouchableOpacity onPress={this.navigateToHighLights}>
-                  <View style={this.svgStyle}>
-                    <Icon name="star" type="EvilIcons" style={
-                      {
-                        color: "#1FABAB"
-                      }
-                    }></Icon>
-                    <Label style={{
-                      marginLeft: "-12%"
-                    }} >highlts</Label>
-                    {this.state.event.highlight_updated ? (
-                      <View style={this.indicatorMargin}>
-                        <UpdateStateIndicator size={this.blinkerSize} />
-                      </View>
-                    ) : (
-                        <View style={this.indicatorMargin}>
-                          <UpdateStateIndicator
-                            size={this.blinkerSize}
-                            color={this.transparent}
-                          />
-                        </View>
-                      )}
-                  </View>
-                </TouchableOpacity>
-              </View>
+                    )}
+                </View>
+              </TouchableOpacity>
+            </View>
 
-              <View
-                style={{
-                  width: "19%"
-                }}
-              >
-                <TouchableOpacity onPress={this.navigateToVotes}>
-                  <View style={this.svgStyle}>
-                    <Icon type="AntDesign" name="totop" style={
-                      {
-                        color: "#1FABAB"
-                      }
-                    }></Icon>
-                    <Label>votes</Label>
-                    {this.state.event.vote_updated ? (
+            <View
+              style={{
+                width: "19%"
+              }}
+            >
+              <TouchableOpacity onPress={this.navigateToVotes}>
+                <View style={this.svgStyle}>
+                  <Icon type="AntDesign" name="totop" style={
+                    {
+                      color: "#1FABAB"
+                    }
+                  }></Icon>
+                  <Label>votes</Label>
+                  {this.state.event.vote_updated ? (
+                    <View style={this.indicatorMargin}>
+                      <UpdateStateIndicator size={this.blinkerSize} />
+                    </View>
+                  ) : (
                       <View style={this.indicatorMargin}>
-                        <UpdateStateIndicator size={this.blinkerSize} />
+                        <UpdateStateIndicator
+                          size={this.blinkerSize}
+                          color={this.transparent}
+                        />
                       </View>
-                    ) : (
-                        <View style={this.indicatorMargin}>
-                          <UpdateStateIndicator
-                            size={this.blinkerSize}
-                            color={this.transparent}
-                          />
-                        </View>
-                      )}
-                  </View>
-                </TouchableOpacity>
-              </View>
-              <View
-                style={{
-                  width: "19%"
-                }}
-              >
-                <TouchableOpacity onPress={this.navigateToContributions}>
-                  <View style={this.svgStyle}>
-                    <Icon type="Foundation" name="dollar" style={
-                      {
-                        color: "#1FABAB"
-                      }
-                    }></Icon>
-                    <Label style={{
-                      marginLeft: "-30%"
-                    }}>contrbs</Label>
-                    {this.state.event.contribution_updated ? (
+                    )}
+                </View>
+              </TouchableOpacity>
+            </View>
+            <View
+              style={{
+                width: "19%"
+              }}
+            >
+              <TouchableOpacity onPress={this.navigateToContributions}>
+                <View style={this.svgStyle}>
+                  <Icon type="Foundation" name="dollar" style={
+                    {
+                      color: "#1FABAB"
+                    }
+                  }></Icon>
+                  <Label style={{
+                    marginLeft: "-30%"
+                  }}>contrbs</Label>
+                  {this.state.event.contribution_updated ? (
+                    <View style={this.indicatorMargin}>
+                      <UpdateStateIndicator size={this.blinkerSize} />
+                    </View>
+                  ) : (
                       <View style={this.indicatorMargin}>
-                        <UpdateStateIndicator size={this.blinkerSize} />
+                        <UpdateStateIndicator
+                          size={this.blinkerSize}
+                          color={this.transparent}
+                        />
                       </View>
-                    ) : (
-                        <View style={this.indicatorMargin}>
-                          <UpdateStateIndicator
-                            size={this.blinkerSize}
-                            color={this.transparent}
-                          />
-                        </View>
-                      )}
-                  </View>
-                </TouchableOpacity>
-              </View>
-            </CardItem>
-            <Footer>
-              <Left>
-                {this.state.event.liked || this.state.liked ? (
+                    )}
+                </View>
+              </TouchableOpacity>
+            </View>
+          </CardItem>
+          <Footer>
+            <Left>
+              {this.state.event.liked || this.state.liked ? (
 
+                <View style={{ flexDirection: "row" }}>
+                  <TouchableWithoutFeedback onPressIn={() => {
+                    scaleValue.setValue(0);
+                    Animated.timing(scaleValue, {
+                      toValue: 1,
+                      duration: 250,
+                      easing: Easing.linear,
+                      userNativeDriver: true
+                    }).start()
+                  }} onPressOut={() => {
+                    Animated.timing(scaleValue, {
+                      toValue: 1,
+                      duration: 100,
+                      easing: Easing.linear,
+                      userNativeDriver: true
+                    }).start()
+                    return this.unlike()
+                  }} >
+                    <Animated.View style={{ transform: [{ scale: cardScale }] }} >
+                      <Icon
+                        name="thumbs-up"
+                        type="Entypo"
+                        style={{
+                          color: "#7DD2D2",
+                          fontSize: 23
+                        }}
+                      />
+                    </Animated.View>
+
+                  </TouchableWithoutFeedback>
+                  <View style={{ marginTop: 7 }}>
+                    <Text style={{ color: "#7DD2D2" }} note> {this.state.event.likes + this.state.likeIncrelment} Likers </Text>
+                  </View>
+                </View>
+              ) : (
                   <View style={{ flexDirection: "row" }}>
+                    {this.state.liking ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
                     <TouchableWithoutFeedback onPressIn={() => {
                       scaleValue.setValue(0);
                       Animated.timing(scaleValue, {
@@ -809,6 +843,7 @@ Once you've found three to five sample listings that describe your job goals, co
                         easing: Easing.linear,
                         userNativeDriver: true
                       }).start()
+                      return this.like()
                     }} onPressOut={() => {
                       Animated.timing(scaleValue, {
                         toValue: 1,
@@ -816,14 +851,13 @@ Once you've found three to five sample listings that describe your job goals, co
                         easing: Easing.linear,
                         userNativeDriver: true
                       }).start()
-                      return this.unlike()
                     }} >
                       <Animated.View style={{ transform: [{ scale: cardScale }] }} >
                         <Icon
                           name="thumbs-up"
                           type="Entypo"
                           style={{
-                            color: "#7DD2D2",
+                            color: "#bfc6ea",
                             fontSize: 23
                           }}
                         />
@@ -831,12 +865,37 @@ Once you've found three to five sample listings that describe your job goals, co
 
                     </TouchableWithoutFeedback>
                     <View style={{ marginTop: 7 }}>
-                      <Text style={{ color: "#7DD2D2" }} note> {this.state.event.likes + this.state.likeIncrelment} Likers </Text>
+                      <Text style={{ color: "#bfc6ea" }} note>{this.state.event.likes + this.state.likeIncrelment} Likers</Text>
+                    </View>
+                  </View>
+                )}
+            </Left>
+            <Right>
+              <View style={{ padding: "-5%", marginLeft: "-25%" }}>
+                {this.state.event.joint || this.state.isjoint ? (
+                  <View style={{ flexDirection: "row" }}>
+                    <TouchableWithoutFeedback onPress={() => Toast.show({
+                      text: 'Joint already!',
+                      buttonText: 'Okay'
+                    })} >
+                      <View >
+                        <Icon
+                          name="universal-access"
+                          type="Foundation"
+                          style={{
+                            color: "#7DD2D2",
+                            fontSize: 23
+                          }}
+                        />
+                      </View>
+                    </TouchableWithoutFeedback>
+                    <View style={{ marginTop: 1 }}>
+                      <Text style={{ color: "#7DD2D2" }} note> joint </Text>
                     </View>
                   </View>
                 ) : (
                     <View style={{ flexDirection: "row" }}>
-                      {this.state.liking ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
+                      {this.state.isJoining ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
                       <TouchableWithoutFeedback onPressIn={() => {
                         scaleValue.setValue(0);
                         Animated.timing(scaleValue, {
@@ -845,7 +904,7 @@ Once you've found three to five sample listings that describe your job goals, co
                           easing: Easing.linear,
                           userNativeDriver: true
                         }).start()
-                        return this.like()
+                        return this.join()
                       }} onPressOut={() => {
                         Animated.timing(scaleValue, {
                           toValue: 1,
@@ -854,114 +913,41 @@ Once you've found three to five sample listings that describe your job goals, co
                           userNativeDriver: true
                         }).start()
                       }} >
-                        <Animated.View style={{ transform: [{ scale: cardScale }] }} >
-                          <Icon
-                            name="thumbs-up"
-                            type="Entypo"
-                            style={{
-                              color: "#bfc6ea",
-                              fontSize: 23
-                            }}
-                          />
-                        </Animated.View>
-
-                      </TouchableWithoutFeedback>
-                      <View style={{ marginTop: 7 }}>
-                        <Text style={{ color: "#bfc6ea" }} note>{this.state.event.likes + this.state.likeIncrelment} Likers</Text>
-                      </View>
-                    </View>
-                  )}
-              </Left>
-              <Right>
-                <View style={{ padding: "-5%", marginLeft: "-25%" }}>
-                  {this.state.event.joint || this.state.isjoint ? (
-                    <View style={{ flexDirection: "row" }}>
-                      <TouchableWithoutFeedback onPressIn={() => {
-                        scaleValue.setValue(0);
-                        Animated.timing(scaleValue, {
-                          toValue: 1,
-                          duration: 250,
-                          easing: Easing.linear,
-                          userNativeDriver: true
-                        }).start()
-                      }} onPressOut={() => {
-                        Animated.timing(scaleValue, {
-                          toValue: 1,
-                          duration: 100,
-                          easing: Easing.linear,
-                          userNativeDriver: true
-                        }).start()
-                      }} >
-                        <Animated.View style={{ transform: [{ scale: cardScale }] }} >
-                          <Icon
-                            name="universal-access"
-                            type="Foundation"
-                            style={{
-                              color: "#7DD2D2",
-                              fontSize: 23
-                            }}
-                          />
+                        <Animated.View style={{ transform: [{ scale: cardScale }] }}>
+                          <Icon name="universal-access" style={{
+                            color: "#bfc6ea",
+                            fontSize: 23
+                          }} type="Foundation" />
                         </Animated.View>
                       </TouchableWithoutFeedback>
                       <View style={{ marginTop: 1 }}>
-                        <Text style={{ color: "#7DD2D2" }} note> joint </Text>
+                        <Text style={{ color: "#bfc6ea" }} note> joint </Text>
                       </View>
                     </View>
-                  ) : (
-                      <View style={{ flexDirection: "row" }}>
-                        {this.state.isJoining ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
-                        <TouchableWithoutFeedback onPressIn={() => {
-                          scaleValue.setValue(0);
-                          Animated.timing(scaleValue, {
-                            toValue: 1,
-                            duration: 250,
-                            easing: Easing.linear,
-                            userNativeDriver: true
-                          }).start()
-                          return this.join()
-                        }} onPressOut={() => {
-                          Animated.timing(scaleValue, {
-                            toValue: 1,
-                            duration: 100,
-                            easing: Easing.linear,
-                            userNativeDriver: true
-                          }).start()
-                        }} >
-                          <Animated.View style={{ transform: [{ scale: cardScale }] }}>
-                            <Icon name="universal-access" style={{
-                              color: "#bfc6ea",
-                              fontSize: 23
-                            }} type="Foundation" />
-                          </Animated.View>
-                        </TouchableWithoutFeedback>
-                        <View style={{ marginTop: 1 }}>
-                          <Text style={{ color: "#bfc6ea" }} note> joint </Text>
-                        </View>
-                      </View>
-                    )}
-                </View>
-              </Right>
-            </Footer>
-            <DetailsModal
-              isToBeJoint
-              isOpen={this.state.isDetailsModalOpened}
-              isJoining={() => this.join()}
-              details={this.state.details}
-              created_date={this.state.event.created_at}
-              location={this.state.event.location.string}
-              event_organiser_name={this.state.creator.name}
-              onClosed={() => this.setState({ isDetailsModalOpened: false })}
-            />
-          </Card>
-        </Swipeout >
-      ) : <SvgAnimatedLinearGradient primaryColor="#cdfcfc"
-        secondaryColor="#FEFFDE" height={300}>
-          <Circle cx="30" cy="30" r="30" />
-          <Rect x="75" y="13" rx="4" ry="4" width="100" height="13" />
-          <Rect x="75" y="37" rx="4" ry="4" width="50" height="8" />
-          <Rect x="0" y="70" rx="5" ry="5" width="400" height="200" />
-          <Spinner style={{ marginTop: "40%" }}></Spinner>
-        </SvgAnimatedLinearGradient>) : null);
+                  )}
+              </View>
+            </Right>
+          </Footer>
+          <DetailsModal
+            isToBeJoint
+            isOpen={this.state.isDetailsModalOpened}
+            isJoining={() => this.join()}
+            details={this.state.details}
+            created_date={this.state.event.created_at}
+            location={this.state.event.location.string}
+            event_organiser_name={this.state.creator.name}
+            onClosed={() => this.setState({ isDetailsModalOpened: false })}
+          />
+        </Card>
+      </Swipeout >
+    ) : <SvgAnimatedLinearGradient primaryColor="#cdfcfc"
+      secondaryColor="#FEFFDE" height={300}>
+        <Circle cx="30" cy="30" r="30" />
+        <Rect x="75" y="13" rx="4" ry="4" width="100" height="13" />
+        <Rect x="75" y="37" rx="4" ry="4" width="50" height="8" />
+        <Rect x="0" y="70" rx="5" ry="5" width="400" height="200" />
+        <Spinner style={{ marginTop: "40%" }}></Spinner>
+      </SvgAnimatedLinearGradient>)) : null;
   }
 }
 export default PublicEvent

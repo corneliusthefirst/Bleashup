@@ -8,7 +8,7 @@ import NewEvents from "./components/NewEvents";
 import CurrentEvents from "./components/CurrentEvents";
 import { DataProvider } from "recyclerlistview"
 import stores from "../../../stores"
-import { Spinner } from "native-base";
+import { Spinner, Fab, Icon } from "native-base";
 class CurrentEventView extends Component {
   constructor(props) {
     super(props);
@@ -46,6 +46,7 @@ class CurrentEventView extends Component {
       this.state.isLoading ? <Spinner></Spinner> :
         <View>
           <CurrentEvents data={this.state.Events} {...this.props}></CurrentEvents>
+          <Fab position="topRight" style={{ backgroundColor: "#1FABAB" }} ><Icon type="Entypo" name="plus" style={{ color: "#7DD2D2" }}></Icon></Fab>
         </View>
     );
   }

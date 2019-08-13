@@ -17,7 +17,7 @@ export default class SwiperCard extends Component {
                         <Text note>description</Text>
                     </CardItem>
                     <CardItem style={{ height: 40 }}>
-                        <Text style={{ color: "#1FABAB", fontSize: 19 }}>{this.props.item.event_title}</Text>
+                        <Text style={{ color: "#1FABAB", fontSize: 18,marginLeft:24 }}>{this.props.item.event_title}</Text>
                     </CardItem>
                     <CardItem cardBody>
                         <Icon name="caretleft" type="AntDesign" style={{ color: "#1FABAB" }}
@@ -41,7 +41,6 @@ export default class SwiperCard extends Component {
                         style={{ padding: 20, alignItems: 'center', height: 220, flex: 1, borderRadius: 15, backgroundColor: '#FEFFDE', width: 330 }}
                         position={'center'}
                         swipeArea={210}
-          
                         backdropOpacity={0.1}
                     >
                        <ScrollView style={{}}>
