@@ -67,11 +67,40 @@ class CardListItem extends Component {
       isJoining:false,
       hasJoin:false,
       hasGone:true,
-      seen:true
+      seen:true,
+      cards:[],
+      dataArray:[]
 
     };
   }
  
+
+componentWillMount(){  
+    this.setInitialData().then(()=>{
+      resolve();
+    })
+}
+ 
+@autobind 
+setInitialData(){
+    return new Promise((resolve,reject)=> {
+
+    const AccordData = this.props.item.sender_status
+    max_length = this.props.item.sender_status.length
+    this.state.dataArray = [{ title: AccordData.slice(0, 35), content: AccordData.slice(35, max_length) }]
+    //deck swiper object
+
+    item = this.props.item
+
+    Description = { event_title: item.event_title, event_description: item.event_description }
+    this.state.cards.push(Description)
+
+
+    for (i = 0; i < item.highlight.length; i++) {
+      this.state.cards.push(item.highlight[i])
+    }
+      })
+ }
 
 
 
@@ -97,25 +126,7 @@ onDenied() {
 
 
   render() {
-    //console.warn('counter')
-
-    const AccordData = this.props.item.sender_status
-    max_length = this.props.item.sender_status.length
-    let dataArray = [{ title: AccordData.slice(0, 35), content: AccordData.slice(35, max_length) }]
-    //deck swiper object
-    const cards = [];
-    item = this.props.item
-  
-    Description = { event_title: item.event_title, event_description: item.event_description}
-    cards.push(Description)
-
-
-    for (i = 0; i < item.highlight.length; i++) {
-      cards.push(item.highlight[i])
-    }
-
-
-     
+ 
     const swipeSettings = {
       autoClose: true,
       //take this and do something onClose
@@ -179,12 +190,12 @@ onDenied() {
               <Body >
                 <Text style={styles.flatlistItem} >{this.props.item.sender_name}</Text>
 
-                {dataArray.content == "" ? <Text style={{
+                {this.state.dataArray.content == "" ? <Text style={{
                   color: 'dimgray', padding: 10,
                   fontSize: 16, marginTop: -10, borderWidth: 0
                 }} note>{this.props.item.sender_status}</Text> :
 
-                  <AccordionModule dataArray={dataArray}/>
+                  <AccordionModule dataArray={this.state.dataArray}/>
 
                 }
               </Body>
@@ -229,7 +240,7 @@ onDenied() {
           </CardItem>
 
             <ProfileModal isOpen={this.state.isOpenStatus} profile={{
-            name: this.props.item.sender_name,
+            nickname: this.props.item.sender_name,
             image: this.props.item.sender_Image,
             status: this.props.item.sender_status
           }} onClosed={() => this.setState({ isOpenStatus: false })} onAccept ={this.onAccept} onDenied={this.onDenied} deny={this.state.deny}
@@ -242,7 +253,7 @@ onDenied() {
            joined={() => this.setState({ hasJoin: true })} />
 
          <View style={{marginBottom:10}}>
-         <DetailsModal isOpen={this.state.isOpenDetails} details={cards} location={this.props.item.location}
+         <DetailsModal isOpen={this.state.isOpenDetails} details={this.state.cards} location={this.props.item.location}
           event_organiser_name={this.props.item.event_organiser_name}
           created_date={this.props.item.created_date} 
           onClosed={() => this.setState({ isOpenDetails: false })} item={this.props.item}

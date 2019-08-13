@@ -25,7 +25,8 @@ class ReceivedInvitations extends Component {
     this.state = ({
       deletedRowKey: null,
       loadingInvitations: true,
-      refreshing: false
+      refreshing: false,
+      
 
     });
 
@@ -37,6 +38,11 @@ class ReceivedInvitations extends Component {
         loadingInvitations: false
       });
     }, 15)
+ /*   let i=0;
+    while(i<4){
+      globalState.receivedData.push(globalState.cardListData[i])
+      i++;
+    }*/
   }
 
 
@@ -103,11 +109,6 @@ class ReceivedInvitations extends Component {
 
 
 
-
-
-
-
-
   _keyExtractor = (item, index) => item.key;
 
   render() {
@@ -115,24 +116,27 @@ class ReceivedInvitations extends Component {
       <ImageActivityIndicator />
     ) : (
          
-            <NestedScrollView  alwaysBounceHorizontal={true}>
+            <NestedScrollView  alwaysBounceHorizontal={false} scrollEnabled={false} >
             
              <View style={{flex:1,flexDirection: 'column'}}>
-             <ScrollView
+             <FlatList
               initialNumToRender={4}
-              maxToRenderPerBatch={5}
+              maxToRenderPerBatch={4}
               //removeClippedSubviews={true}
-              //windowSize={10}
+              //onScroll={this._LoadMoreData()}
+              windowSize={10}
               ref={"cardlist"}
               //onContentSizeChange={()=> this.refs.cardlist.scrollToEnd()}
               //updateCellsBatchingPeriod={25} 
-              //listKey={'Invitations'}
-              //keyExtractor={this._keyExtractor}
-              data={globalState.cardListData}
+              listKey={'Invitations'}
+              keyExtractor={this._keyExtractor}
+              data={ globalState.cardListData}
+              onEndReachedThreshold={0.01}
+              //onEndReached={({ distanceFromEnd }) => {this._LoadMoreData()}}
               renderItem={({ item, index }) => {
                 return (
                   //this is my private class just created
-                  <CardListItem cardListData={globalState.cardListData} item={item} index={index} parentCardList={this} refresh={this.refreshCardList}>
+                  <CardListItem cardListData={ globalState.cardListData} item={item} index={index} parentCardList={this} refresh={this.refreshCardList}>
                   </CardListItem>
                 );
 
@@ -143,7 +147,7 @@ class ReceivedInvitations extends Component {
               }
             >
 
-            </ScrollView>
+            </FlatList>
           </View>
         </NestedScrollView>
 
@@ -155,6 +159,75 @@ class ReceivedInvitations extends Component {
 
 
 export default ReceivedInvitations;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -182,6 +255,52 @@ Onscroll(){
   }
 }
 */
+/*
+@autobind
+_LoadMoreData(){
+
+  if(this.state.position+3 < globalState.cardListData.length ){
+    
+    while(this.state.position+3 <  globalState.cardListData.length){
+      globalState.receivedData.push(globalState.cardListData[this.state.position])
+     this.setState({position:this.state.position+1})
+    }
+    console.warn( this.state.receivedData)
+  }else{
+    while(this.state.position < globalState.cardListData.length){
+      globalState.receivedData.push(globalState.cardListData[this.state.position])
+      this.setState({position:this.state.position+1})
+    }
+  }
+    const newKey = this.generateKey(6)
+    const newdata = {
+      "key": newKey,
+      "sender_Image": "https://upload.wikimedia.org/wikipedia/commons/b/bf/Cornish_cream_tea_2.jpg",
+      "sender_name": "onEndReached",
+      "sender_status": "Falling on the way means you need to work harder",
+      "receiver_Image": "https://upload.wikimedia.org/wikipedia/commons/6/6e/Lactarius_indigo_48568.jpg",
+      "received_date": "28/06/2019",
+      "created_date": "27/06/2019",
+      "event_organiser_name": "corneliusthefirst",
+      "event_description": "De plus, les nouvelles API à votre disposition sont également « entraînables » de façon très simple. Prenons l’exemple d’une API de reconnaissance visuelle : il vous suffit de la nourrir d’une vingtaine d’images d’un objet pour qu’elle apprenne ensuite à le faire seule,De plus, les nouvelles API à votre disposition sont également « entraînables » de façon très simple. Prenons l’exemple d’une API de reconnaissance visuelle : il vous suffit de la nourrir d’une vingtaine d’images d’un objet pour qu’elle apprenne ensuite à le faire seule, grâce au machine learning De plus, les nouvelles API à votre disposition sont également « entraînables » de façon très simple. Prenons l’exemple d’une API de reconnaissance visuelle : il vous suffit de la nourrir d’une vingtaine d’images d’un objet pour qu’elle apprenne ensuite à le faire seule,",
+      "event_Image": "https://upload.wikimedia.org/wikipedia/commons/a/ac/Simple_somen.jpg",
+      "event_time": "13:51",
+      "event_title": "Ceremony anesty",
+      "location": "pizza Hut grenoble",
+      "invitation_status": "master",
+      "highlight": [
+        { title: "highlight_1", description: " Prenons l’exemple d’une API de reconnaissance visuelle : il vous suffit de la nourrir d’une vingtaine d’images d’un objet pour qu’elle apprenne ensuite à le faire seule,Prenons l’exemple d’une API de reconnaissance visuelle : il vous suffit de la nourrir d’une vingtaine d’images d’un objet pour qu’elle apprenne ensuite à le faire seule,Prenons l’exemple d’une API de reconnaissance visuelle : il vous suffit de la nourrir d’une vingtaine d’images d’un objet pour qu’elle apprenne ensuite à le faire seule", image: "https://cdn.stocksnap.io/img-thumbs/960w/VQZNYH80K6.jpg" },
+        { title: "highlight_2", description: " Prenons l’exemple d’une API de reconnaissance visuelle : il vous suffit de la nourrir d’une vingtaine d’images d’un objet pour qu’elle apprenne ensuite à le faire seule", image: "https://cdn.stocksnap.io/img-thumbs/960w/X6QBLPBXAJ.jpg" }
+      ],
+      "accept": false,
+      "deny": false
+
+
+    }
+
+    globalState.receivedData.push(newdata);
+    
+}*/
 
 
 

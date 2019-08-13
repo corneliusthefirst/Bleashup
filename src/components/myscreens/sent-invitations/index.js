@@ -126,7 +126,7 @@ onRefresh(){
               windowSize={10}
               ref={"cardlist"}
               //onContentSizeChange={()=> this.refs.cardlist.scrollToEnd()}
-              //updateCellsBatchingPeriod={25} 
+              updateCellsBatchingPeriod={300} 
               listKey={'Invitations'}
               keyExtractor={this._keyExtractor}
               data={globalState.sendCardListData}

@@ -124,7 +124,7 @@ export default class globalState {
   }
 
 
-
+//@observable receivedData = [];
 @observable cardListData = [
     {
       "key" : "32143",
@@ -517,8 +517,9 @@ export default class globalState {
       "accept":false,
       "deny":false
       
-      },
-      {
+      }
+   
+   /*   {
         "key" : "321498",
         "sender_Image":"https://upload.wikimedia.org/wikipedia/commons/b/bf/Cornish_cream_tea_2.jpg",
         "sender_name":"cornelius",
@@ -1155,7 +1156,7 @@ export default class globalState {
        "accept":false,
        "deny":false
       }
-     
+     */
 ];
 
 

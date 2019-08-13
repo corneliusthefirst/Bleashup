@@ -57,13 +57,41 @@ class CardListItem extends Component {
       deny: this.props.item.deny,
       message: "",
       textcolor: "",
-      isJoining: false,
-      hasJoin: false
+      isJoining: true,
+      hasJoin: false,
+      dataArray:[],
+      cards:[]
+    
 
     };
   }
 
+componentWillMount(){  
+    this.setInitialData().then(()=>{
+      resolve();
+    })
+}
+ 
+@autobind 
+setInitialData(){
+    return new Promise((resolve,reject)=> {
 
+    const AccordData = this.props.item.sender_status
+    max_length = this.props.item.sender_status.length
+    this.state.dataArray = [{ title: AccordData.slice(0, 35), content: AccordData.slice(35, max_length) }]
+    //deck swiper object
+
+    item = this.props.item
+
+    Description = { event_title: item.event_title, event_description: item.event_description }
+    this.state.cards.push(Description)
+
+
+    for (i = 0; i < item.highlight.length; i++) {
+      this.state.cards.push(item.highlight[i])
+    }
+      })
+ }
 
 
   //Maps schedule
@@ -89,22 +117,6 @@ class CardListItem extends Component {
 
   render() {
     //console.warn('counter')
-
-    const AccordData = this.props.item.sender_status
-    max_length = this.props.item.sender_status.length
-    let dataArray = [{ title: AccordData.slice(0, 35), content: AccordData.slice(35, max_length) }]
-    //deck swiper object
-    const cards = [];
-    item = this.props.item
-
-    Description = { event_title: item.event_title, event_description: item.event_description }
-    cards.push(Description)
-
-
-    for (i = 0; i < item.highlight.length; i++) {
-      cards.push(item.highlight[i])
-    }
-
 
     const swipeSettings = {
       autoClose: true,
@@ -168,12 +180,12 @@ class CardListItem extends Component {
               <Body >
                 <Text style={styles.flatlistItem} >{this.props.item.sender_name}</Text>
 
-                {dataArray.content == "" ? <Text style={{
+                {this.state.dataArray.content == "" ? <Text style={{
                   color: 'dimgray', padding: 10,
                   fontSize: 16, marginTop: -10, borderWidth: 0
                 }} note>{this.props.item.sender_status}</Text> :
 
-                  <AccordionModule dataArray={dataArray} />
+                  <AccordionModule dataArray={this.state.dataArray} />
 
                 }
               </Body>
@@ -197,19 +209,24 @@ class CardListItem extends Component {
 
           <CardItem>
             {this.state.accept || this.state.deny ?
-              (this.state.accept ? <View style={{}}><Text style={{ marginTop: 5, marginLeft: 265, fontSize: 17, fontWeight: "600", color: "forestgreen" }} note>Accepted</Text></View> :
-                <View style={{}} ><Text style={{ marginTop: 5, marginLeft: 270, fontSize: 17, fontWeight: "600", color: "darkorange" }} note>Denied</Text></View>) :
+              (this.state.accept ? 
+                <View style={{flex: 1,flexDirection: 'row',justifyContent: 'flex-end'}}>
+                <Text style={{ marginTop: 5, fontSize: 17, fontWeight: "600", color: "forestgreen" }} note>Accepted</Text>
+                </View> :
+                <View style={{flex: 1,flexDirection: 'row',justifyContent: 'flex-end'}} >
+                <Text style={{ marginTop: 5, marginRight:13, fontSize: 17, fontWeight: "600", color: "darkorange"}} note>Denied</Text>
+                </View>) :
 
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
-                <Button onPress={this.onAccept} style={{ marginLeft: 40, borderRadius: 5 }} success ><Text>Accept</Text></Button>
+              <Item style={{flex:1,justifyContent: 'space-between', marginLeft: 20,marginRight:20,marginTop:10,borderRadius:0,borderColor:"transparent" }}>
+                <Button onPress={this.onAccept} style={{  borderRadius: 5 }} success ><Text>Accept</Text></Button>
 
-                <View style={{ flexDirection: 'column', alignItems: 'center', marginLeft: 40 }}>
+                <Item style={{ flexDirection: 'column', alignItems: 'center',borderRadius:0,borderColor:"transparent"}}>
                   <Icon name="comment" type="FontAwesome5" onPress={{}} style={{ color: "#1FABAB" }} />
                   <Text style={{ marginTop: 5, color: "#1FABAB" }}>chat</Text>
-                </View>
+                </Item>
 
-                <Button onPress={this.onDenied} style={{ borderRadius: 5, marginLeft: 40 }} danger ><Text>Deny</Text></Button>
-              </View>
+                <Button onPress={this.onDenied} style={{ borderRadius: 5}} danger ><Text>Deny</Text></Button>
+              </Item>
 
             }
 
@@ -225,7 +242,7 @@ class CardListItem extends Component {
 
           <ProfileModal isOpen={this.state.isOpenStatus} profile={{
             nickname: this.props.item.sender_name,
-            profile: this.props.item.sender_Image,
+            image: this.props.item.sender_Image,
             status: this.props.item.sender_status
           }} onClosed={() => this.setState({ isOpenStatus: false })} onAccept={this.onAccept} onDenied={this.onDenied} deny={this.state.deny}
             accept={this.state.accept} isJoining={this.state.isJoining} hasJoin={this.state.hasJoin}
@@ -237,7 +254,7 @@ class CardListItem extends Component {
             joined={() => this.setState({ hasJoin: true })} />
 
 
-          <DetailsModal isOpen={this.state.isOpenDetails} details={cards} location={this.props.item.location}
+          <DetailsModal isOpen={this.state.isOpenDetails} details={this.state.cards} location={this.props.item.location}
             event_organiser_name={this.props.item.event_organiser_name}
             created_date={this.props.item.created_date}
             onClosed={() => this.setState({ isOpenDetails: false })} item={this.props.item}
@@ -254,6 +271,10 @@ class CardListItem extends Component {
 
 
 export default CardListItem
+
+
+
+
 
 
 
