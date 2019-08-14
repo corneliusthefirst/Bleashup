@@ -57,7 +57,7 @@ class CardListItem extends Component {
       deny: this.props.item.deny,
       message: "",
       textcolor: "",
-      isJoining: true,
+      isJoining: false,
       hasJoin: false,
       dataArray:[],
       cards:[]

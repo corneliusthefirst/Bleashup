@@ -26,7 +26,7 @@ class ReceivedInvitations extends Component {
       deletedRowKey: null,
       loadingInvitations: true,
       refreshing: false,
-      
+      scrollEnable:false
 
     });
 
@@ -116,12 +116,14 @@ class ReceivedInvitations extends Component {
       <ImageActivityIndicator />
     ) : (
          
-            <NestedScrollView  alwaysBounceHorizontal={false} scrollEnabled={false} >
+            <NestedScrollView  alwaysBounceHorizontal={false}  
+              
+              >
             
              <View style={{flex:1,flexDirection: 'column'}}>
              <FlatList
               initialNumToRender={4}
-              maxToRenderPerBatch={4}
+              //maxToRenderPerBatch={4}
               //removeClippedSubviews={true}
               //onScroll={this._LoadMoreData()}
               windowSize={10}
@@ -131,7 +133,7 @@ class ReceivedInvitations extends Component {
               listKey={'Invitations'}
               keyExtractor={this._keyExtractor}
               data={ globalState.cardListData}
-              onEndReachedThreshold={0.01}
+              //onEndReachedThreshold={0.01}
               //onEndReached={({ distanceFromEnd }) => {this._LoadMoreData()}}
               renderItem={({ item, index }) => {
                 return (
