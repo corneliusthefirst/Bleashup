@@ -26,7 +26,6 @@ class ReceivedInvitations extends Component {
       loadingInvitations: true,
       refreshing: false,
 
-
     });
 
   }
@@ -124,7 +123,7 @@ class ReceivedInvitations extends Component {
           <View style={{ flex: 1, flexDirection: 'column' }}>
             <FlatList
               initialNumToRender={4}
-              maxToRenderPerBatch={4}
+              //maxToRenderPerBatch={4}
               //removeClippedSubviews={true}
               //onScroll={this._LoadMoreData()}
               windowSize={10}

@@ -12,6 +12,7 @@ import DeckSwiperModule from './deckswiper/index';
 export default class DetailsModal extends Component {
     constructor(props) {
         super(props);
+        this.state = {}
     }
     state = {
         details: undefined,
@@ -66,7 +67,7 @@ export default class DetailsModal extends Component {
         const accept = this.state.accept
         const deny = this.state.deny
 
-        return this.state.details ? (
+        return this.props.details ? (
             <Modal
                 backdropPressToClose={false}
                 swipeToClose={false}
@@ -78,7 +79,8 @@ export default class DetailsModal extends Component {
                 isOpen={this.props.isOpen}
                 onClosed={this.props.onClosed}
                 style={{
-                    height: "98%", width: "98%", flexDirection: 'column', borderRadius: 8, backgroundColor: '#FEFFDE', marginTop: -5
+                    height: "98%", width: "98%", flexDirection: 'column', borderRadius: 8,
+                    backgroundColor: '#FEFFDE', marginTop: -5
                 }}
 
             >
@@ -182,3 +184,8 @@ export default class DetailsModal extends Component {
         ) : null
     }
 }
+
+
+
+
+/*marginTop:this.props.location.length > 19?15:this.props.location.length > 38?5:35*/
