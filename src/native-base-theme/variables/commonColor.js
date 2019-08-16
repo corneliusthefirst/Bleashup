@@ -148,7 +148,7 @@ export default {
     footerPaddingBottom: 0,
 
     // FooterTab
-    tabBarTextColor: platform === "ios" ? "#737373" : "#bfc6ea",
+    tabBarTextColor: platform === "ios" ? "#7DD2D2" : "#7DD2D2",
     tabBarTextSize: platform === "ios" ? 14 : 11,
     activeTab: platform === "ios" ? "#33BDBD" : "#FEFFDE",
     sTabBarActiveTextColor: "#33BDBD",
@@ -240,17 +240,17 @@ export default {
     tabDefaultBg: platform === "ios" ? "#1FABAB" : "#1FABAB",
     topTabBarTextColor: platform === "ios" ? "#7DD2D2" : "#7DD2D2",
     topTabBarActiveTextColor: platform === "ios" ? "#FEFFDE" : "#FEFFDE",
-    topTabBarBorderColor: platform === "ios" ? "#1FABAB" : "#1FABAB",
+    topTabBarBorderColor: platform === "ios" ? "#FEFFDE" : "#FEFFDE",
     topTabBarActiveBorderColor: platform === "ios" ? "#33BDBD" : "#1FABAB",
 
     // Tabs
     tabBgColor: "#1FABAB",
-    tabFontSize: 15,
+    tabFontSize: 16,
 
     // Text
     textColor: "#0A4E52",
     inverseTextColor: "#053135",
-    noteFontSize: 13,
+    noteFontSize: 11,
     get defaultTextColor() {
         return this.textColor;
     },

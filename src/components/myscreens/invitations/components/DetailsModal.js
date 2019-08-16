@@ -86,7 +86,7 @@ export default class DetailsModal extends Component {
             >
 
                 <View style={{ margin: 5, alignItems: 'center' }}>
-                    <TouchableOpacity style={{}} onPress={this.props.onClosed}>
+                    <TouchableOpacity style={{}} onPress={() => this.props.onClosed()}>
                         <Icon style={{ color: "#1FABAB", fontSize: 35 }} name="close" type="EvilIcons" />
                     </TouchableOpacity>
                 </View>

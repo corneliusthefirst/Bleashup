@@ -24,7 +24,7 @@ import globalState from "../../../stores/globalState";
 import AccordionModule from "../invitations/components/Accordion";
 import DoublePhoto from "../invitations/components/doublePhoto";
 import stores from '../../../stores';
-import { forEach } from "lodash";
+import { forEach, filter } from "lodash";
 import ImageActivityIndicator from '../currentevents/components/imageActivityIndicator';
 import { observer } from 'mobx-react';
 import Requester from "../invitations/Requester"
@@ -115,6 +115,19 @@ const propOverridePlaceholderObject = {
       console.warn(response);
     })
   }
+  openDetails() {
+    if (this.props.item.accept || this.state.accept) {
+      let event = filter(stores.Events.events, { id: this.state.event_id })
+      this.props.navigation.navigate("Event", {
+        Event: event[0],
+        tab: "EventDetails"
+      })
+    } else {
+      this.setState({
+        isOpenDetails: true
+      })
+    }
+  }
   onSeen() {
     if (this.isSeen || this.props.item.seen) {
     } else {
@@ -150,6 +163,7 @@ const propOverridePlaceholderObject = {
           textcolor: "",
           loading: false,
           item: data,
+          event_id: this.props.item.event_id,
           seen: false,
           isJoining: false,
           hasJoin: false,
@@ -259,9 +273,7 @@ const propOverridePlaceholderObject = {
             </Left>
 
             <Body >
-              <TouchableOpacity onPress={() => this.setState({
-                isOpenDetails: true
-              })
+              <TouchableOpacity onPress={() => this.openDetails()
               } >
                 <Text style={{ marginLeft: -40 }}
                 >{this.state.item.event_title}</Text>

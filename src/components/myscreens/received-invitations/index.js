@@ -115,7 +115,7 @@ class ReceivedInvitations extends Component {
 
   render() {
     return this.state.loadingInvitations ? (
-      <ImageActivityIndicator />
+      <Spinner></Spinner>
     ) : (
 
         <ScrollView nestedScrollEnabled={true}>

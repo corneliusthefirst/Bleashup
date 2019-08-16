@@ -173,156 +173,158 @@ const cardScale = scaleValue.interpolate({
   }*/
 
   componentDidMount() {
-    this.formDetailModal(this.props.Event).then(details => {
-      let swipeOut = (<View>
-        <List style={{
-          backgroundColor: "#FFFFF6",
-          height: "100%"
-        }}>
-          <ListItem style={{ alignSelf: 'flex-start' }}>
-            {this.props.Event ? (this.state.public || this.props.Event.public ? (<TouchableOpacity onPress={() => {
-              this.publish()
-            }}>
-              {this.state.publishing ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
-              <Icon style={{ fontSize: 16, color: "#bfc6ea" }} name="forward" type="Entypo">
-              </Icon>
-              <Label style={{ fontSize: 12, color: "#bfc6ea" }}>Publish</Label>
-            </TouchableOpacity>) :
-              (<TouchableOpacity onPress={() => {
+    setTimeout(() => {
+      this.formDetailModal(this.props.Event).then(details => {
+        let swipeOut = (<View>
+          <List style={{
+            backgroundColor: "#FFFFF6",
+            height: "100%"
+          }}>
+            <ListItem style={{ alignSelf: 'flex-start' }}>
+              {this.props.Event ? (this.state.public || this.props.Event.public ? (<TouchableOpacity onPress={() => {
                 this.publish()
-              }
-              }>
+              }}>
                 {this.state.publishing ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
-                <Icon style={{ fontSize: 16, color: "#7DD2D2" }} name="forward" type="Entypo">
+                <Icon style={{ fontSize: 16, color: "#bfc6ea" }} name="forward" type="Entypo">
                 </Icon>
-                <Label style={{ fontSize: 12, color: "#7DD2D2" }}>Publish</Label>
+                <Label style={{ fontSize: 12, color: "#bfc6ea" }}>Publish</Label>
+              </TouchableOpacity>) :
+                (<TouchableOpacity onPress={() => {
+                  this.publish()
+                }
+                }>
+                  {this.state.publishing ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
+                  <Icon style={{ fontSize: 16, color: "#7DD2D2" }} name="forward" type="Entypo">
+                  </Icon>
+                  <Label style={{ fontSize: 12, color: "#7DD2D2" }}>Publish</Label>
+                </TouchableOpacity>)) : null}
+            </ListItem>
+            <ListItem>
+              {this.props.Event ? (this.state.isjoint || this.props.Event.joint ? (<TouchableOpacity>
+                <Icon style={{ fontSize: 16, color: "#7DD2D2" }} name="universal-access" type="Foundation">
+                </Icon>
+                <Label style={{
+                  color: "#7DD2D2",
+                  fontSize: 12
+                }}
+                >
+                  Joint
+              </Label>
+              </TouchableOpacity>) : (<TouchableOpacity onPress={() => {
+                this.join()
+              }}>
+                {this.state.isJoining ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
+                <Icon style={{ fontSize: 16, color: "#bfc6ea" }} name="universal-access" type="Foundation">
+                </Icon>
+                <Label style={{
+                  color: "#bfc6ea",
+                  fontSize: 12
+                }}
+                >
+                  Join
+              </Label>
               </TouchableOpacity>)) : null}
-          </ListItem>
-          <ListItem>
-            {this.props.Event ? (this.state.isjoint || this.props.Event.joint ? (<TouchableOpacity>
-              <Icon style={{ fontSize: 16, color: "#7DD2D2" }} name="universal-access" type="Foundation">
-              </Icon>
-              <Label style={{
-                color: "#7DD2D2",
-                fontSize: 12
-              }}
-              >
-                Joint
-              </Label>
-            </TouchableOpacity>) : (<TouchableOpacity onPress={() => {
-              this.join()
-            }}>
-              {this.state.isJoining ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
-              <Icon style={{ fontSize: 16, color: "#bfc6ea" }} name="universal-access" type="Foundation">
-              </Icon>
-              <Label style={{
-                color: "#bfc6ea",
-                fontSize: 12
-              }}
-              >
-                Join
-              </Label>
-            </TouchableOpacity>)) : null}
 
-          </ListItem>
-          <ListItem style={{ alignSelf: 'flex-start' }}>
-            <TouchableOpacity onPress={() => {
-              this.navigateToEventDetails()
-            }}>
-              <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="calendar" type="EvilIcons">
-              </Icon>
-              {this.props.Event ? (this.props.Event.updated ? (
-                <View style={this.indicatorMargin}>
-                  <UpdateStateIndicator size={this.blinkerSize} />
-                </View>
-              ) : (
+            </ListItem>
+            <ListItem style={{ alignSelf: 'flex-start' }}>
+              <TouchableOpacity onPress={() => {
+                this.navigateToEventDetails()
+              }}>
+                <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="calendar" type="EvilIcons">
+                </Icon>
+                {this.props.Event ? (this.props.Event.updated ? (
                   <View style={this.indicatorMargin}>
-                    <UpdateStateIndicator
-                      size={this.blinkerSize}
-                      color={this.transparent}
-                    />
+                    <UpdateStateIndicator size={this.blinkerSize} />
                   </View>
-                )) : null}
-              <Label style={{ fontSize: 12, color: "#1FABAB" }}>Detail</Label>
-            </TouchableOpacity>
-          </ListItem>
-          <ListItem style={{ alignSelf: 'flex-start' }}>
-            <TouchableOpacity onPress={() => {
-              this.navigateToEventChat()
-            }}>
-              <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="comment" type="EvilIcons">
-              </Icon>
-              {this.props.Event ? (this.props.Event.chat_upated ? (
-                <View style={this.indicatorMargin}>
-                  <UpdateStateIndicator size={this.blinkerSize} />
-                </View>
-              ) : (
+                ) : (
+                    <View style={this.indicatorMargin}>
+                      <UpdateStateIndicator
+                        size={this.blinkerSize}
+                        color={this.transparent}
+                      />
+                    </View>
+                  )) : null}
+                <Label style={{ fontSize: 12, color: "#1FABAB" }}>Detail</Label>
+              </TouchableOpacity>
+            </ListItem>
+            <ListItem style={{ alignSelf: 'flex-start' }}>
+              <TouchableOpacity onPress={() => {
+                this.navigateToEventChat()
+              }}>
+                <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="comment" type="EvilIcons">
+                </Icon>
+                {this.props.Event ? (this.props.Event.chat_upated ? (
                   <View style={this.indicatorMargin}>
-                    <UpdateStateIndicator
-                      size={this.blinkerSize}
-                      color={this.transparent}
-                    />
+                    <UpdateStateIndicator size={this.blinkerSize} />
                   </View>
-                )) : null}
-              <Label style={{ fontSize: 12, color: "#1FABAB" }}>chat</Label>
-            </TouchableOpacity>
-          </ListItem>
-          <ListItem style={{ alignSelf: 'flex-start' }}>
-            <TouchableOpacity onPress={() => {
-              this.navigateToLogs()
-            }}>
-              <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="exclamation" type="EvilIcons">
-              </Icon>
-              {this.props.Event ? (this.props.Event.upated ? (
-                <View style={this.indicatorMargin}>
-                  <UpdateStateIndicator size={this.blinkerSize} />
-                </View>
-              ) : (
+                ) : (
+                    <View style={this.indicatorMargin}>
+                      <UpdateStateIndicator
+                        size={this.blinkerSize}
+                        color={this.transparent}
+                      />
+                    </View>
+                  )) : null}
+                <Label style={{ fontSize: 12, color: "#1FABAB" }}>chat</Label>
+              </TouchableOpacity>
+            </ListItem>
+            <ListItem style={{ alignSelf: 'flex-start' }}>
+              <TouchableOpacity onPress={() => {
+                this.navigateToLogs()
+              }}>
+                <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="exclamation" type="EvilIcons">
+                </Icon>
+                {this.props.Event ? (this.props.Event.upated ? (
                   <View style={this.indicatorMargin}>
-                    <UpdateStateIndicator
-                      size={this.blinkerSize}
-                      color={this.transparent}
-                    />
+                    <UpdateStateIndicator size={this.blinkerSize} />
                   </View>
-                )) : null}
-              <Label style={{ fontSize: 12, color: "#1FABAB" }}>Logs</Label>
-            </TouchableOpacity>
-          </ListItem>
-          <ListItem style={{ alignSelf: 'flex-start' }}>
-            <TouchableOpacity onPress={() => {
-              return this.hide()
-            }}>
-              {this.state.hiding ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
-              <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="archive" type="EvilIcons">
-              </Icon>
-              <Label style={{ fontSize: 12, color: "#1FABAB" }}>Hide</Label>
-            </TouchableOpacity>
-          </ListItem>
-          <ListItem>
-            <TouchableOpacity onPress={() => {
-              return this.delete()
-            }}>
-              {this.state.deleting ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
-              <Icon name="trash" style={{ fontSize: 16, color: "red" }} type="EvilIcons">
-              </Icon>
-              <Label style={{ fontSize: 12, color: "red" }} >Delete</Label>
-            </TouchableOpacity>
-          </ListItem>
-        </List>
-      </View>)
-      this.setState({
-        swipeOutSettings: {
-          autoClose: true,
-          sensitivity: 100,
-          right: [
-            {
-              component: swipeOut
-            }
-          ],
-        },
-        details: details
+                ) : (
+                    <View style={this.indicatorMargin}>
+                      <UpdateStateIndicator
+                        size={this.blinkerSize}
+                        color={this.transparent}
+                      />
+                    </View>
+                  )) : null}
+                <Label style={{ fontSize: 12, color: "#1FABAB" }}>Logs</Label>
+              </TouchableOpacity>
+            </ListItem>
+            <ListItem style={{ alignSelf: 'flex-start' }}>
+              <TouchableOpacity onPress={() => {
+                return this.hide()
+              }}>
+                {this.state.hiding ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
+                <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="archive" type="EvilIcons">
+                </Icon>
+                <Label style={{ fontSize: 12, color: "#1FABAB" }}>Hide</Label>
+              </TouchableOpacity>
+            </ListItem>
+            <ListItem>
+              <TouchableOpacity onPress={() => {
+                return this.delete()
+              }}>
+                {this.state.deleting ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
+                <Icon name="trash" style={{ fontSize: 16, color: "red" }} type="EvilIcons">
+                </Icon>
+                <Label style={{ fontSize: 12, color: "red" }} >Delete</Label>
+              </TouchableOpacity>
+            </ListItem>
+          </List>
+        </View>)
+        this.setState({
+          swipeOutSettings: {
+            autoClose: true,
+            sensitivity: 100,
+            right: [
+              {
+                component: swipeOut
+              }
+            ],
+          },
+          details: details
+        })
       })
-    })
+    }, 20)
   }
 
   componentWillUnmount() {

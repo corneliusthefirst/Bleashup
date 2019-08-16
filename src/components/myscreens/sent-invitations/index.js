@@ -34,12 +34,14 @@ class SendInvitations extends Component {
   }
 
   componentDidMount() {
-    stores.Invitations.readFromStore().then(invitations => {
-      this.setState({
-        loadingInvitations: false,
-        invitations: invitations
-      });
-    })
+    setTimeout(() => {
+      stores.Invitations.readFromStore().then(invitations => {
+        this.setState({
+          loadingInvitations: false,
+          invitations: invitations
+        });
+      })
+    }, 12)
   }
 
 
@@ -79,7 +81,7 @@ class SendInvitations extends Component {
   render() {
 
     return this.state.loadingInvitations ? (
-      <ImageActivityIndicator />
+      <Spinner></Spinner>
     ) : (
         <BleashupScrollView
           initialRender={4}

@@ -91,7 +91,7 @@ class Home extends Component {
               />
             </Header>
           }
-          headerHeight={50}
+          headerHeight={40}
           /*  scrollEnabled={GState.scrollOuter}
           /*  onScroll={nativeEvent => {
               if (this.isCloseToBottom(nativeEvent.nativeEvent)) {
@@ -158,4 +158,3 @@ class Home extends Component {
 }
 
 export default Home;
-
