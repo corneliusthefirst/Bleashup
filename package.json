@@ -30,6 +30,7 @@
     "react": "16.8.3",
     "react-html-email": "^3.0.0",
     "react-native": "^0.59.9",
+    "react-native-action-button": "^2.8.5",
     "react-native-cached-image": "^1.4.3",
     "react-native-collapsible-header-views": "^1.0.2",
     "react-native-country-picker-modal": "^0.7.1",
