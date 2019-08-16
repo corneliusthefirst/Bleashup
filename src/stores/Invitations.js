@@ -7,7 +7,7 @@ import {
     uniqBy,
     reject,
     find,
-    sortBy,
+    orderBy,
     filter,
     findIndex
 } from 'lodash'
@@ -23,6 +23,9 @@ export default class Invitations {
         data: [{}]
     }
     constructor() {
+        /*   storage.remove({
+               key: 'Invitations'
+           });*/
         this.readFromStore().then(Invitations => {
             if (Invitations) {
                 this.setProperties(Invitations, true)
@@ -33,24 +36,25 @@ export default class Invitations {
         return new Promise((resolve, reject) => {
             stores.Events.loadCurrentEvent(invitation.event_id).then(event => {
                 stores.Highlights.fetchHighlights(invitation.event_id).then((hightlights) => {
-                    stores.LoginStore.getUser().then((user) => {
-                        stores.Contacts.getContact(invitation.inviter).then(contact => {
+                    stores.LoginStore.getUser().then((Thisuser) => {
+                        stores.TemporalUsersStore.getUser(invitation.inviter).then(user => {
                             resolve({
                                 "key": invitation.invitation_id,
-                                "sender_Image": contact.profile,
-                                "sender_name": contact.nickname,
-                                "sender_status": contact.status,
+                                "sender_Image": user.profile,
+                                "event_id": event.id,
+                                "sender_name": user.nickname,
+                                "sender_status": user.status,
                                 "receiver_Image": user.profile,
                                 "received_date": invitation.period.date.year + "/" +
                                     invitation.period.date.month + "/" +
-                                    invitation.period.date.day + " on " + invitation.period.time.hour + ": " + invitation.period.time.mins + ": " + invitation.period.time.secs,
+                                    invitation.period.date.day + " at " + invitation.period.time.hour + ": " + invitation.period.time.mins + ": " + invitation.period.time.secs,
                                 "created_date": event.created_at,
-                                "event_organiser_name": contact.nickname,
+                                "event_organiser_name": user.nickname,
                                 "event_description": event.about.description,
                                 "event_Image": event.background,
                                 "event_time": event.period.date.year + "/" +
                                     event.period.date.month + "/" +
-                                    event.period.date.day + " on " + event.period.time.hour + ": " + event.period.time.mins + ": " + event.period.time.secs,
+                                    event.period.date.day + " at " + event.period.time.hour + ": " + event.period.time.mins + ": " + event.period.time.secs,
                                 "event_title": event.about.title,
                                 "location": event.location.string,
                                 "invitation_status": invitation.status,
@@ -88,7 +92,7 @@ export default class Invitations {
         return new Promise((resolve, reject) => {
             this.readFromStore().then(Invitations => {
                 if (Invitations)
-                    Invitations = uniqBy(Invitations, "invitation_id").concat([Invitation])
+                    Invitations = uniqBy(Invitations.concat([Invitation]), "invitation_id")
                 else Invitations = [Invitation]
                 this.saveKey.data = Invitations
                 storage.save(this.saveKey).then(() => {
@@ -119,7 +123,7 @@ export default class Invitations {
                 Invitation.sent = true
                 this.saveKey.data = Invitations
                 storage.save(this.saveKey).then(() => {
-                    this.setProperties(this.setProperties(this.saveKey, true))
+                    this.setProperties(this.saveKey, true)
                     resolve()
                 })
             })
@@ -134,7 +138,7 @@ export default class Invitations {
                 Invitations[index].received = true
                 this.saveKey.data = Invitations
                 storage.save(this.saveKey).then(() => {
-                    this.setProperties(this.setProperties(this.saveKey, true))
+                    this.setProperties(this.saveKey, true)
                     resolve()
                 })
             })
@@ -149,7 +153,7 @@ export default class Invitations {
                 Invitations[index].seen = true
                 this.saveKey.data = Invitations
                 storage.save(this.saveKey).then(() => {
-                    this.setProperties(this.setProperties(this.saveKey, true))
+                    this.setProperties(this.saveKey.data, true)
                     resolve()
                 })
             })
@@ -222,7 +226,7 @@ export default class Invitations {
         })
     }
     @action setProperties(Events, inform) {
-        if (inform) Events = sortBy(Events, ["update_date"]);
+        if (inform) Events = orderBy(Events, ["arrival_date"], ["desc"]);
         this.SendInvitations = filter(Events, {
             type: "sent"
         });

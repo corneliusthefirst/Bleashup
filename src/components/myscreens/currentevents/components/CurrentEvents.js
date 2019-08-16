@@ -3,18 +3,102 @@ import React, { Component } from 'react';
 import { StyleSheet, View, Dimensions, Text, Image, ScrollView } from 'react-native';
 import PublicEvent from "./publicEvent.js"
 import { CardItem, Card, Spinner } from 'native-base';
+import { observer } from 'mobx-react';
+import { forEach } from "lodash"
+import BleashupScrollView from '../../../BleashupScrollView.js';
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
-const ifCloseToTop = ({ layoutMeasurement, contentOffset, contentSize }) => {
+
+@observer export default class CurrentEvents extends Component {
+    constructor(props) {
+        super(props)
+    }
+    render() {
+        return (
+            <BleashupScrollView
+                keyExtractor={(item, index) => item.id}
+                dataSource={this.props.data}
+                renderItem={(item, index) => <PublicEvent key={item.id}  {...this.props} Event={item} />}
+                firstIndex={0}
+                renderPerBatch={4}
+                initialRender={4}
+            >
+
+            </BleashupScrollView>
+        )
+    }
+}
+
+
+
+
+
+/*const ifCloseToTop = ({ layoutMeasurement, contentOffset, contentSize }) => {
     return contentOffset.y == 0;
 }
 const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
     const paddingToBottom = 20;
     return layoutMeasurement.height + contentOffset.y >=
-        contentSize.height - paddingToBottom;
+        ((contentSize.height - paddingToBottom) * (0.9));
 };
 
-export default class CurrentEvents extends Component {
+@observer export default class CurrentEvents extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            currentRender: this.initialRender,
+            endReached: false
+        }
+    }
+    initialRender = 3
+    renderPerBatch = 3
+    previousRendered = 0
+    _renderEvents(array) {
+        return array.map(element => {
+            return <PublicEvent key={element.id} index={element.id}  {...this.props} Event={element} />
+        })
+    }
+    continueScrollDown(renderPerBatch) {
+        this.previousRendered = this.state.currentRender
+        if (this.state.currentRender <= this.props.data.length - 1) {
+            this.setState({
+                currentRender: this.previousRendered + this.renderPerBatch
+            })
+        } else {
+            this.setState({
+                endReached: true
+            })
+        }
+    }
+    render() {
+        return (
+            <ScrollView
+                nestedScrollEnabled={true}
+                ref='_scrollView'
+                onScroll={({ nativeEvent }) => {
+                    // console.warn(nativeEvent)
+                }}
+                onScrollEndDrag={({ nativeEvent }) => {
+                    if (isCloseToBottom(nativeEvent)) {
+                        this.continueScrollDown(this.initialRender)
+                    }
+                }
+                }
+            >
+                {
+                    this._renderEvents(this.props.data.slice(0, this.state.currentRender))}
+                <CardItem style={{ height: 25 }} >
+                    {this.state.endReached ? <Text style={{
+                        marginLeft: "35%"
+                    }}>no more events to load</Text> : <Spinner size={"small"}></Spinner>}
+                </CardItem>
+            </ScrollView>
+        )
+    }
+}
+*/
+
+/*@observer export default class CurrentEvents extends Component {
     constructor(props) {
         super(props)
         this.data = this.props.data._data;
@@ -137,6 +221,13 @@ export default class CurrentEvents extends Component {
         )
     }
 }
+
+
+
+*/
+
+
+
 
 
 /*export default class CurrentEvents extends Component {

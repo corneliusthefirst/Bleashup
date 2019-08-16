@@ -12,12 +12,11 @@ class Requester {
             let eventID = requestObject.EventID()
             eventID.event_id = event_id;
             requestData.likeEvent(eventID).then(JSONData => {
-                serverEventListener.sendRequest(JSONData).then(SuccessMessage => {
+                serverEventListener.sendRequest(JSONData, EventID).then(SuccessMessage => {
                     stores.Events.likeEvent(event_id, false).then(() => {
                         resolve("ok");
                     })
                 }).catch(error => {
-                    console.error(error)
                     reject(error)
                 })
             })
@@ -28,12 +27,11 @@ class Requester {
             let eventID = requestObject.EventID()
             eventID.event_id = event_id;
             requestData.unlikeEvent(eventID).then((JSONData) => {
-                serverEventListener.sendRequest(JSONData).then(SuccessMessage => {
+                serverEventListener.sendRequest(JSONData, EventID).then(SuccessMessage => {
                     stores.Events.unlikeEvent(event_id, false).then(() => {
                         resolve("ok")
                     })
                 }).catch(error => {
-                    console.error(error)
                     reject(error)
                 })
             })
@@ -44,12 +42,13 @@ class Requester {
             let eventID = requestObject.EventID();
             eventID.event_id = event_id;
             requestData.publishEvent(eventID).then(JSONData => {
-                serverEventListener.sendRequest(JSONData).then(SuccessMessage => {
-                    stores.Events.publishEvent(event_id, false)
+                serverEventListener.sendRequest(JSONData, EventID).then(SuccessMessage => {
+                    stores.Events.publishEvent(event_id, false).then(() => {
+                        resolve()
+                    })
+                }).catch(error => {
+                    reject(error)
                 })
-            }).catch(error => {
-                console.error(error)
-                reject(error)
             })
         })
     }
@@ -64,7 +63,7 @@ class Requester {
             Join.event_id = EventID;
             Join.host = EventHost;
             requestData.joinEvent(Join).then((JSONData) => {
-                serverEventListener.sendRequest(JSONData).then((SuccessMessage) => {
+                serverEventListener.sendRequest(JSONData, EventID).then((SuccessMessage) => {
                     stores.Events.addParticipant(EventID, Participant, false).then(() => {
                         stores.Events.joinEvent(EventID).then(() => {
                             resolve("ok")

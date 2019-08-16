@@ -28,18 +28,20 @@ export default class InvitationView extends Component {
       <Container>
         <Tabs
           locked
-          tabBarPosition="overlayBottom"
+          tabBarPosition="overlayTop"
           tabBarUnderlineStyle={{
             borderBottomWidth: 0,
             backgroundColor: "transparent"
           }}
         >
-          <Tab heading="Received Invites">
-            <ReceivedInvitations {...this.props} />
-          </Tab>
           <Tab heading="Sent Invites">
             <SentInvitations {...this.props} />
           </Tab>
+
+          <Tab heading="Received Invites">
+            <ReceivedInvitations {...this.props} />
+          </Tab>
+
         </Tabs>
       </Container>
     );

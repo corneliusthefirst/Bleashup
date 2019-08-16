@@ -25,7 +25,7 @@ import {
 import autobind from "autobind-decorator";
 import UpdateStateIndicator from "./updateStateIndicator";
 import stores from "../../../../stores";
-import DetailsModal from "../../../DetailsModal";
+import DetailsModal from "../../invitations/components/DetailsModal";
 import OptionList from "./OptionList"
 import ProfileView from "../../invitations/components/ProfileView";
 import MenuListView from "./MenuListView"
@@ -36,6 +36,7 @@ import Svg, { Circle, Rect } from 'react-native-svg'
 import PhotoView from "./PhotoView";
 import MapView from "./MapView";
 import Requester from "../Requester";
+import { observer } from "mobx-react";
 let scaleValue = new Animated.Value(0)
 const cardScale = scaleValue.interpolate({
   inputRange: [0, 0.5, 1],
@@ -43,7 +44,7 @@ const cardScale = scaleValue.interpolate({
 
 })
 
-class PublicEvent extends Component {
+@observer class PublicEvent extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -64,6 +65,7 @@ class PublicEvent extends Component {
       swipeOutSettings: null,
       hiden: false,
       isjoint: false,
+      unliking: false,
       liked: false,
       likeIncrelment: 0,
       isPublisherModalOpened: false,
@@ -72,11 +74,11 @@ class PublicEvent extends Component {
   }
 
   @autobind navigateToEventDetails() {
-    if (!this.state.event.joint) {
+    if (!this.props.Event.joint) {
       this.setState({ isDetailsModalOpened: true })
     } else {
       this.props.navigation.navigate("Event", {
-        Event: this.state.event,
+        Event: this.props.Event,
         tab: "EventDetails"
       });
     }
@@ -84,116 +86,74 @@ class PublicEvent extends Component {
   swipperComponent = null
   @autobind navigateToReminds() {
     this.props.navigation.navigate("Event", {
-      Event: this.state.event,
+      Event: this.props.Event,
       tab: "Reminds"
     });
   }
-  @autobind fetchHightlight(EventID) {
+
+  formDetailModal(event) {
     return new Promise((resolve, reject) => {
-      stores.Highlights.fetchHighlights(EventID).then(Hightlihgts => {
-        if (Hightlihgts.length == 0) {
-          resolve([{
-            title: "Sample Highlight",
-            description: `It doesn’t matter what you do for a living; when you decide to look for work, you instantly become a marketer.
+      stores.Highlights.fetchHighlights(event.id).then(highlights => {
+        let card = [];
+        let i = 0;
+        Description = { event_title: event.about.title, event_description: event.about.description }
+        card.push(Description)
+        if (highlights.length !== 0) {
+          forEach(highlights, hightlight => {
+            card.push(hightlight);
+            if (i === highlights.length - 1) {
 
-As a job seeker, you are required to advertise your qualifications and professional reputation — in other words, your personal brand— to employers and recruiters in your desired field online, in person, and on paper.
-
-One of the most important documents you'll need to update or create for this process is your professional resume. A great resume is written with a specific job goal in mind. It should be tailored for each job application by showcasing your most valuable and relevant skills in a way that positions you as an ideal candidate for the job you want.
-
-In order to ensure that your professional resume is supporting your career goals, gather a few sample job descriptions that describe the type of position you're interested in and qualified for. Then, compare the skills and qualifications on your resume with the desired qualifications in the sample job descriptions.`
-            ,
-            image: `https://d3kqdc25i4tl0t.cloudfront.net/articles/content/364_843132_160805jobdescription_Augustine_hero.jpg`
-          },
-          {
-            title: 'Sample Highlihgt 2',
-            description: `This will aid your job search in many ways. First, it will help you determine if you're missing any important skills that recruiters are looking for. Once you have this information, then you can take steps to build up those skill sets with courses, certification programs, side projects, or internships to become a more attractive job candidate.
-
-Second, these sample job descriptions will help you decide which of your current qualifications should be highlighted throughout your professional resume and cover letter.
-
-And finally, you can use example job descriptions to find the right words to describe the roles and responsibilities you held in each job listed in your work history.
-
-To help you get started, take a look at the sample job descriptions below. For additional example job descriptions, search for listings on your favorite online job boards, and check out the following links from Workable.com and Monster.com.
-
-Search for two types of sample job descriptions:
-
-Job posts that are similar to roles you've previously held; and
-
-Listings that represent the type of position you're currently targeting.
-
-In both of these instances, don't worry about the job's location. For the purpose of this exercise, instead only focus on the job description and its requirements.
-
-Use the sample job descriptions that match titles in your work history to beef up your professional resume's Employment History section. Click on the following link to learn how to use these job listings to brag about your experience.
-
-Once you've found three to five sample listings that describe your job goals, copy and paste the text of each job description into a Word document and bold any phrases that routinely pop up. Then, highlight each term that describes a qualification you possess. Use this information to edit your resume and cover letter so that your key accomplishments and skills match those desired by your target employer. Your end result should be a professional resume that mirrors the employer's requirements.`
-            ,
-            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWJbtGFelIkuleZLnVnvIyNQJ5R9HPT6CRty-VFN_vVk253n8i'
-          }])
+              resolve(card)
+            }
+            i++
+          })
         } else {
-          resolve(Hightlihgts)
+          resolve(card)
         }
       })
     })
   }
-  @autobind formDetailFormData() {
-    return new Promise((resolve, reject) => {
-      let details = [];
-      details[0] = {
-        event_title: this.state.event.about.title,
-        event_description: this.state.event.description
-      }
-      this.fetchHightlight(this.state.event.id).then(Highlights => {
-        let i = 0;
-        Highlights.map(High => {
-          details[i + 1] = High
-          i++;
-          if (i == Highlights.length - 1) {
-            resolve(details)
-          }
-        })
-      })
-    })
-  }
   writeDateTime() {
-    this.state.event.period.date.year +
-      "-" +
-      this.state.event.period.date.month +
-      "-" +
-      this.state.event.period.date.day +
+    return "on the " + this.props.Event.period.date.year +
+      "/" +
+      this.props.Event.period.date.month +
+      "/" +
+      this.props.Event.period.date.day +
       "  at " +
-      this.state.event.period.time.hour +
-      "-" +
-      this.state.event.period.time.mins +
-      "-" +
-      this.state.event.period.time.secs
+      this.props.Event.period.time.hour +
+      ":" +
+      this.props.Event.period.time.mins +
+      ":" +
+      this.props.Event.period.time.secs
   }
 
   @autobind navigateToHighLights() {
     this.props.navigation.navigate("Event", {
-      Event: this.state.event,
+      Event: this.props.Event,
       tab: "Highlights"
     });
   }
   @autobind navigateToEventChat() {
     this.props.navigation.navigate("Event", {
-      Event: this.state.event,
+      Event: this.props.Event,
       tab: "EventChat"
     });
   }
   @autobind navigateToVotes() {
     this.props.navigation.navigate("Event", {
-      Event: this.state.event,
+      Event: this.props.Event,
       tab: "Votes"
     });
   }
   @autobind navigateToContributions() {
     this.props.navigation.navigate("Event", {
-      Event: this.state.event,
+      Event: this.props.Event,
       tab: "Contributions"
     });
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    return (nextProps.Event ? nextProps.Event.id !== this.state.event.id : false) ||
+  /*shouldComponentUpdate(nextProps, nextState) {
+    return (nextProps.Event ? nextProps.Event.id !== this.props.Event.id : false) ||
       this.state.isMount !== nextState.isMount ||
       this.state.isjoint !== nextState.isJoint ||
       this.state.liked !== nextState.liked ||
@@ -202,7 +162,7 @@ Once you've found three to five sample listings that describe your job goals, co
   }
   componentDidUpdate() {
     if (this.props.Event) {
-      if (this.props.Event.id !== this.state.event.id) {
+      if (this.props.Event.id !== this.props.Event.id) {
         this.setState({
           event: this.props.Event
         })
@@ -210,156 +170,158 @@ Once you've found three to five sample listings that describe your job goals, co
 
       }
     }
-  }
+  }*/
 
   componentDidMount() {
-    let swipeOut = (<View>
-      <List style={{
-        backgroundColor: "#FFFFF6",
-        height: "100%"
-      }}>
-        <ListItem style={{ alignSelf: 'flex-start' }}>
-          {this.state.event ? (this.state.public || this.state.event.public ? (<TouchableOpacity onPress={() => {
-            this.publish()
-          }}>
-            {this.state.publishing ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
-            <Icon style={{ fontSize: 16, color: "#bfc6ea" }} name="forward" type="Entypo">
-            </Icon>
-            <Label style={{ fontSize: 12, color: "#bfc6ea" }}>Publish</Label>
-          </TouchableOpacity>) :
-            (<TouchableOpacity onPress={() => {
+    this.formDetailModal(this.props.Event).then(details => {
+      let swipeOut = (<View>
+        <List style={{
+          backgroundColor: "#FFFFF6",
+          height: "100%"
+        }}>
+          <ListItem style={{ alignSelf: 'flex-start' }}>
+            {this.props.Event ? (this.state.public || this.props.Event.public ? (<TouchableOpacity onPress={() => {
               this.publish()
-            }
-            }>
+            }}>
               {this.state.publishing ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
-              <Icon style={{ fontSize: 16, color: "#7DD2D2" }} name="forward" type="Entypo">
+              <Icon style={{ fontSize: 16, color: "#bfc6ea" }} name="forward" type="Entypo">
               </Icon>
-              <Label style={{ fontSize: 12, color: "#7DD2D2" }}>Publish</Label>
+              <Label style={{ fontSize: 12, color: "#bfc6ea" }}>Publish</Label>
+            </TouchableOpacity>) :
+              (<TouchableOpacity onPress={() => {
+                this.publish()
+              }
+              }>
+                {this.state.publishing ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
+                <Icon style={{ fontSize: 16, color: "#7DD2D2" }} name="forward" type="Entypo">
+                </Icon>
+                <Label style={{ fontSize: 12, color: "#7DD2D2" }}>Publish</Label>
+              </TouchableOpacity>)) : null}
+          </ListItem>
+          <ListItem>
+            {this.props.Event ? (this.state.isjoint || this.props.Event.joint ? (<TouchableOpacity>
+              <Icon style={{ fontSize: 16, color: "#7DD2D2" }} name="universal-access" type="Foundation">
+              </Icon>
+              <Label style={{
+                color: "#7DD2D2",
+                fontSize: 12
+              }}
+              >
+                Joint
+              </Label>
+            </TouchableOpacity>) : (<TouchableOpacity onPress={() => {
+              this.join()
+            }}>
+              {this.state.isJoining ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
+              <Icon style={{ fontSize: 16, color: "#bfc6ea" }} name="universal-access" type="Foundation">
+              </Icon>
+              <Label style={{
+                color: "#bfc6ea",
+                fontSize: 12
+              }}
+              >
+                Join
+              </Label>
             </TouchableOpacity>)) : null}
-        </ListItem>
-        <ListItem>
-          {this.state.event ? (this.state.isJoin || this.state.event.joint ? (<TouchableOpacity>
-            <Icon style={{ fontSize: 16, color: "#7DD2D2" }} name="universal-access" type="Foundation">
-            </Icon>
-            <Label style={{
-              color: "#7DD2D2",
-              fontSize: 12
-            }}
-            >
-              Joint
-              </Label>
-          </TouchableOpacity>) : (<TouchableOpacity onPress={() => {
-            this.join()
-          }}>
-            {this.state.isJoining ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
-            <Icon style={{ fontSize: 16, color: "#bfc6ea" }} name="universal-access" type="Foundation">
-            </Icon>
-            <Label style={{
-              color: "#bfc6ea",
-              fontSize: 12
-            }}
-            >
-              Join
-              </Label>
-          </TouchableOpacity>)) : null}
 
-        </ListItem>
-        <ListItem style={{ alignSelf: 'flex-start' }}>
-          <TouchableOpacity onPress={() => {
-            this.navigateToEventDetails()
-          }}>
-            <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="calendar" type="EvilIcons">
-            </Icon>
-            {this.state.event ? (this.state.event.updated ? (
-              <View style={this.indicatorMargin}>
-                <UpdateStateIndicator size={this.blinkerSize} />
-              </View>
-            ) : (
+          </ListItem>
+          <ListItem style={{ alignSelf: 'flex-start' }}>
+            <TouchableOpacity onPress={() => {
+              this.navigateToEventDetails()
+            }}>
+              <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="calendar" type="EvilIcons">
+              </Icon>
+              {this.props.Event ? (this.props.Event.updated ? (
                 <View style={this.indicatorMargin}>
-                  <UpdateStateIndicator
-                    size={this.blinkerSize}
-                    color={this.transparent}
-                  />
+                  <UpdateStateIndicator size={this.blinkerSize} />
                 </View>
-              )) : null}
-            <Label style={{ fontSize: 12, color: "#1FABAB" }}>Detail</Label>
-          </TouchableOpacity>
-        </ListItem>
-        <ListItem style={{ alignSelf: 'flex-start' }}>
-          <TouchableOpacity onPress={() => {
-            this.navigateToEventChat()
-          }}>
-            <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="comment" type="EvilIcons">
-            </Icon>
-            {this.state.event ? (this.state.event.chat_upated ? (
-              <View style={this.indicatorMargin}>
-                <UpdateStateIndicator size={this.blinkerSize} />
-              </View>
-            ) : (
+              ) : (
+                  <View style={this.indicatorMargin}>
+                    <UpdateStateIndicator
+                      size={this.blinkerSize}
+                      color={this.transparent}
+                    />
+                  </View>
+                )) : null}
+              <Label style={{ fontSize: 12, color: "#1FABAB" }}>Detail</Label>
+            </TouchableOpacity>
+          </ListItem>
+          <ListItem style={{ alignSelf: 'flex-start' }}>
+            <TouchableOpacity onPress={() => {
+              this.navigateToEventChat()
+            }}>
+              <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="comment" type="EvilIcons">
+              </Icon>
+              {this.props.Event ? (this.props.Event.chat_upated ? (
                 <View style={this.indicatorMargin}>
-                  <UpdateStateIndicator
-                    size={this.blinkerSize}
-                    color={this.transparent}
-                  />
+                  <UpdateStateIndicator size={this.blinkerSize} />
                 </View>
-              )) : null}
-            <Label style={{ fontSize: 12, color: "#1FABAB" }}>chat</Label>
-          </TouchableOpacity>
-        </ListItem>
-        <ListItem style={{ alignSelf: 'flex-start' }}>
-          <TouchableOpacity onPress={() => {
-            this.navigateToLogs()
-          }}>
-            <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="exclamation" type="EvilIcons">
-            </Icon>
-            {this.state.event ? (this.state.event.upated ? (
-              <View style={this.indicatorMargin}>
-                <UpdateStateIndicator size={this.blinkerSize} />
-              </View>
-            ) : (
+              ) : (
+                  <View style={this.indicatorMargin}>
+                    <UpdateStateIndicator
+                      size={this.blinkerSize}
+                      color={this.transparent}
+                    />
+                  </View>
+                )) : null}
+              <Label style={{ fontSize: 12, color: "#1FABAB" }}>chat</Label>
+            </TouchableOpacity>
+          </ListItem>
+          <ListItem style={{ alignSelf: 'flex-start' }}>
+            <TouchableOpacity onPress={() => {
+              this.navigateToLogs()
+            }}>
+              <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="exclamation" type="EvilIcons">
+              </Icon>
+              {this.props.Event ? (this.props.Event.upated ? (
                 <View style={this.indicatorMargin}>
-                  <UpdateStateIndicator
-                    size={this.blinkerSize}
-                    color={this.transparent}
-                  />
+                  <UpdateStateIndicator size={this.blinkerSize} />
                 </View>
-              )) : null}
-            <Label style={{ fontSize: 12, color: "#1FABAB" }}>Logs</Label>
-          </TouchableOpacity>
-        </ListItem>
-        <ListItem style={{ alignSelf: 'flex-start' }}>
-          <TouchableOpacity onPress={() => {
-            return this.hide()
-          }}>
-            {this.state.hiding ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
-            <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="archive" type="EvilIcons">
-            </Icon>
-            <Label style={{ fontSize: 12, color: "#1FABAB" }}>Hide</Label>
-          </TouchableOpacity>
-        </ListItem>
-        <ListItem>
-          <TouchableOpacity onPress={() => {
-            return this.delete()
-          }}>
-            {this.state.deleting ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
-            <Icon name="trash" style={{ fontSize: 16, color: "red" }} type="EvilIcons">
-            </Icon>
-            <Label style={{ fontSize: 12, color: "red" }} >Delete</Label>
-          </TouchableOpacity>
-        </ListItem>
-      </List>
-    </View>)
-    this.setState({
-      swipeOutSettings: {
-        autoClose: true,
-        sensitivity: 100,
-        right: [
-          {
-            component: swipeOut
-          }
-        ],
-      }
-
+              ) : (
+                  <View style={this.indicatorMargin}>
+                    <UpdateStateIndicator
+                      size={this.blinkerSize}
+                      color={this.transparent}
+                    />
+                  </View>
+                )) : null}
+              <Label style={{ fontSize: 12, color: "#1FABAB" }}>Logs</Label>
+            </TouchableOpacity>
+          </ListItem>
+          <ListItem style={{ alignSelf: 'flex-start' }}>
+            <TouchableOpacity onPress={() => {
+              return this.hide()
+            }}>
+              {this.state.hiding ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
+              <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="archive" type="EvilIcons">
+              </Icon>
+              <Label style={{ fontSize: 12, color: "#1FABAB" }}>Hide</Label>
+            </TouchableOpacity>
+          </ListItem>
+          <ListItem>
+            <TouchableOpacity onPress={() => {
+              return this.delete()
+            }}>
+              {this.state.deleting ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
+              <Icon name="trash" style={{ fontSize: 16, color: "red" }} type="EvilIcons">
+              </Icon>
+              <Label style={{ fontSize: 12, color: "red" }} >Delete</Label>
+            </TouchableOpacity>
+          </ListItem>
+        </List>
+      </View>)
+      this.setState({
+        swipeOutSettings: {
+          autoClose: true,
+          sensitivity: 100,
+          right: [
+            {
+              component: swipeOut
+            }
+          ],
+        },
+        details: details
+      })
     })
   }
 
@@ -373,46 +335,72 @@ Once you've found three to five sample listings that describe your job goals, co
       hide: true
     })
   }
-
+  liking = false
+  unliking = false
   like() {
-    this.setState({
-      liking: true
-    })
-    Requester.like(this.state.event.id).then(response => {
-      this.setState({
-        liked: true,
-        likeIncrelment: 1,
-        liking: false
+    if (this.liking || this.state.liking || this.state.liked || this.props.Event.liked) { } else {
+      this.liking = true
+      Requester.like(this.props.Event.id).then(response => {
+        this.setState({
+          liking: false
+        })
+        this.liking = false;
+      }).catch(error => {
+        this.setState({
+          liking: false
+        })
+        this.liking = false
+        Toast.show({
+          text: 'unable to connect to the server !',
+          buttonText: 'Okay'
+        })
       })
-    })
+    }
+
   }
   unlike() {
-    this.setState({
-      liking: true
-    })
-    Requester.unlike(this.state.event.id).then(response => {
-      this.setState({
-        liked: false,
-        likeIncrelment: 0,
-        liking: false
+    if (this.unliking || this.state.unliking || !this.props.Event.liked) { } else {
+      this.unliking = true
+      Requester.unlike(this.props.Event.id).then(response => {
+        this.setState({
+          unliking: false
+        })
+        this.unliking = false
+      }).catch(error => {
+        this.setState({
+          liking: false,
+        })
+        this.liking = false
+        Toast.show({
+          text: 'unable to connect to the server ',
+          buttonText: 'Okay'
+        })
       })
-    })
+    }
   }
   publish() {
     this.setState({
       publishing: true
     })
-    if (this.state.event.public) {
-      Requester.publish(this.state.event.id).then(() => {
+    if (this.props.Event.public) {
+      Requester.publish(this.props.Event.id).then(() => {
         this.setState({
           publishing: false,
           public: true
         })
+      }).catch(error => {
+        this.setState({
+          publishing: false
+        })
+        Toast.show({
+          text: 'unable to connect to the server ',
+          buttonText: 'Okay'
+        })
       })
     } else {
-      stores.Events.isMaster(this.state.event.id, stores.Session.SessionStore.phone).then(status => {
+      stores.Events.isMaster(this.props.Event.id, stores.Session.SessionStore.phone).then(status => {
         if (status) {
-          Requester.publish(this.state.event.id).then(() => {
+          Requester.publish(this.props.Event.id).then(() => {
             this.setState({
               public: true,
               publishing: false
@@ -432,7 +420,7 @@ Once you've found three to five sample listings that describe your job goals, co
     this.setState({
       deleting: true
     })
-    Requester.delete(this.state.event.id).then(() => {
+    Requester.delete(this.props.Event.id).then(() => {
       this.setState({
         deleting: false,
         hiden: true
@@ -443,7 +431,7 @@ Once you've found three to five sample listings that describe your job goals, co
     this.setState({
       hiding: true
     })
-    Requester.hide(this.state.event.id).then(() => {
+    Requester.hide(this.props.Event.id).then(() => {
       this.setState({
         hiden: true,
         hiding: false
@@ -454,12 +442,12 @@ Once you've found three to five sample listings that describe your job goals, co
     this.setState({
       isJoining: true
     })
-    this.state.event.joint = true
+    this.props.Event.joint = true
     this.setState({
       isDetailsModalOpened: false
     })
-    Requester.join(this.state.event.id, this.state.event.event_host).then((status) => {
-      this.setState({ isJoint: true, isJoining: false });
+    Requester.join(this.props.Event.id, this.props.Event.event_host).then((status) => {
+      this.setState({ isjoint: true, isJoining: false });
     })
   }
   indicatorMargin = {
@@ -475,13 +463,12 @@ Once you've found three to five sample listings that describe your job goals, co
   }
   blinkerSize = 26;
   render() {
-    return this.state.event ? (this.state.event.hiden || this.state.hiden ? null : (this.state.isMount ? (
-      <Swipeout style={{ backgroundColor: this.state.event.new ? "#cdfcfc" : null }}  {...this.state.swipeOutSettings}>
+    return this.props.Event ? (this.props.Event.hiden || this.state.hiden ? null : (this.state.isMount ? (
+      <Swipeout style={{ backgroundColor: this.props.Event.new ? "#cdfcfc" : null }}  {...this.state.swipeOutSettings}>
         <Card
           style={{
             borderColor: "#1FABAB",
             border: 50,
-
           }
           }
           bordered
@@ -493,21 +480,20 @@ Once you've found three to five sample listings that describe your job goals, co
           >
             <Left>
               <View>
-                {this.state.publishing ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
-                <Icon
+                {this.state.publishing ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : <Icon
                   name="forward"
                   type="Entypo"
                   style={{
                     fontSize: 16,
                     color: "#0A4E52"
                   }}
-                />
-                <MenuListView hide={this.state.hide} event_id={this.state.event.id} published publish={() => this.publish()}
+                />}
+                <MenuListView hide={this.state.hide} event_id={this.props.Event.id} published publish={() => this.publish()}
                   showPublishers={() => this.showPublishersList()}
                 />
               </View>
             </Left>
-            {this.state.event.updated ? <UpdateStateIndicator /> : null}
+            {this.props.Event.updated ? <UpdateStateIndicator /> : null}
             <Right>
               <View>
                 <Icon
@@ -529,11 +515,11 @@ Once you've found three to five sample listings that describe your job goals, co
           >
             <Left>
               <View style={{ flexDirection: "row", flex: 5 }}>
-                <ProfileView phone={(this.state.event.creator_phone)}></ProfileView>
+                <ProfileView phone={(this.props.Event.creator_phone)}></ProfileView>
               </View>
             </Left>
           </CardItem>
-          {this.state.event.recursive ? <CardItem>
+          {this.props.Event.recursive ? <CardItem>
             <Left>
               <View style={
                 {
@@ -544,13 +530,13 @@ Once you've found three to five sample listings that describe your job goals, co
                   <Text style={{
                     color: "#54F5CA"
                   }} note>
-                    {this.state.event.recursion.type}
+                    {this.props.Event.recursion.type}
                   </Text>
                 </View>
 
                 <View>
                   <Text note>
-                    {this.state.event.recursion.days}
+                    {this.props.Event.recursion.days}
                   </Text>
                 </View>
               </View>
@@ -576,7 +562,7 @@ Once you've found three to five sample listings that describe your job goals, co
                     fontFamily: "Roboto"
                   }}
                 >
-                  {this.state.event.about.title}
+                  {this.props.Event.about.title}{" "}{this.props.Event.id}
                 </Text>
                 <Text
                   style={{
@@ -603,10 +589,10 @@ Once you've found three to five sample listings that describe your job goals, co
               <PhotoView style={{
                 width: "70%",
                 marginLeft: "4%"
-              }} photo={this.state.event.background} width={170} height={125} borderRadius={10} />
+              }} photo={this.props.Event.background} width={170} height={125} borderRadius={10} />
             </Left>
             <Right >
-              <MapView style={{ marginRight: "11%" }} location={this.state.event.location.string}></MapView>
+              <MapView style={{ marginRight: "11%" }} location={this.props.Event.location.string}></MapView>
             </Right>
           </CardItem>
           <CardItem
@@ -629,7 +615,7 @@ Once you've found three to five sample listings that describe your job goals, co
                   <Label style={{
                     marginLeft: "-8%"
                   }}>details</Label>
-                  {this.state.event.updated ? (
+                  {this.props.Event.updated ? (
                     <View style={this.indicatorMargin}>
                       <UpdateStateIndicator size={this.blinkerSize} />
                     </View>
@@ -659,7 +645,7 @@ Once you've found three to five sample listings that describe your job goals, co
                   <Label style={{
                     marginLeft: "-20%"
                   }} > reminds</Label>
-                  {this.state.event.remind_upated ? (
+                  {this.props.Event.remind_upated ? (
                     <View style={this.indicatorMargin}>
                       <UpdateStateIndicator size={this.blinkerSize} />
                     </View>
@@ -689,7 +675,7 @@ Once you've found three to five sample listings that describe your job goals, co
                   <Label style={{
                     marginLeft: "-5%"
                   }}>chats</Label>
-                  {this.state.event.chat_updated ? (
+                  {this.props.Event.chat_updated ? (
                     <View style={this.indicatorMargin}>
                       <UpdateStateIndicator size={22} />
                     </View>
@@ -719,7 +705,7 @@ Once you've found three to five sample listings that describe your job goals, co
                   <Label style={{
                     marginLeft: "-12%"
                   }} >highlts</Label>
-                  {this.state.event.highlight_updated ? (
+                  {this.props.Event.highlight_updated ? (
                     <View style={this.indicatorMargin}>
                       <UpdateStateIndicator size={this.blinkerSize} />
                     </View>
@@ -748,7 +734,7 @@ Once you've found three to five sample listings that describe your job goals, co
                     }
                   }></Icon>
                   <Label>votes</Label>
-                  {this.state.event.vote_updated ? (
+                  {this.props.Event.vote_updated ? (
                     <View style={this.indicatorMargin}>
                       <UpdateStateIndicator size={this.blinkerSize} />
                     </View>
@@ -778,7 +764,7 @@ Once you've found three to five sample listings that describe your job goals, co
                   <Label style={{
                     marginLeft: "-30%"
                   }}>contrbs</Label>
-                  {this.state.event.contribution_updated ? (
+                  {this.props.Event.contribution_updated ? (
                     <View style={this.indicatorMargin}>
                       <UpdateStateIndicator size={this.blinkerSize} />
                     </View>
@@ -796,9 +782,9 @@ Once you've found three to five sample listings that describe your job goals, co
           </CardItem>
           <Footer>
             <Left>
-              {this.state.event.liked || this.state.liked ? (
-
+              {this.props.Event.liked || this.state.liked ? (
                 <View style={{ flexDirection: "row" }}>
+                  {this.state.unliking ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
                   <TouchableWithoutFeedback onPressIn={() => {
                     scaleValue.setValue(0);
                     Animated.timing(scaleValue, {
@@ -829,7 +815,7 @@ Once you've found three to five sample listings that describe your job goals, co
 
                   </TouchableWithoutFeedback>
                   <View style={{ marginTop: 7 }}>
-                    <Text style={{ color: "#7DD2D2" }} note> {this.state.event.likes + this.state.likeIncrelment} Likers </Text>
+                    <Text style={{ color: "#7DD2D2" }} note> {this.props.Event.likes} Likers </Text>
                   </View>
                 </View>
               ) : (
@@ -865,14 +851,14 @@ Once you've found three to five sample listings that describe your job goals, co
 
                     </TouchableWithoutFeedback>
                     <View style={{ marginTop: 7 }}>
-                      <Text style={{ color: "#bfc6ea" }} note>{this.state.event.likes + this.state.likeIncrelment} Likers</Text>
+                      <Text style={{ color: "#bfc6ea" }} note>{this.props.Event.likes + this.state.likeIncrelment} Likers</Text>
                     </View>
                   </View>
                 )}
             </Left>
             <Right>
               <View style={{ padding: "-5%", marginLeft: "-25%" }}>
-                {this.state.event.joint || this.state.isjoint ? (
+                {this.props.Event.joint || this.state.isjoint ? (
                   <View style={{ flexDirection: "row" }}>
                     <TouchableWithoutFeedback onPress={() => Toast.show({
                       text: 'Joint already!',
@@ -929,12 +915,13 @@ Once you've found three to five sample listings that describe your job goals, co
             </Right>
           </Footer>
           <DetailsModal
-            isToBeJoint
+            isToBeJoint={!(this.state.isJoin || this.props.Event.joint)}
+            join={() => this.join()}
             isOpen={this.state.isDetailsModalOpened}
-            isJoining={() => this.join()}
+            isJoining={this.state.isJoining}
             details={this.state.details}
-            created_date={this.state.event.created_at}
-            location={this.state.event.location.string}
+            created_date={this.props.Event.created_at}
+            location={this.props.Event.location.string}
             event_organiser_name={this.state.creator.name}
             onClosed={() => this.setState({ isDetailsModalOpened: false })}
           />

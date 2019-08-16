@@ -34,7 +34,7 @@ import { createOpenLink } from "react-native-open-maps";
 import UpdateStateIndicator from "./updateStateIndicator";
 import SvgUri from "react-native-svg-uri";
 import SVGs from "./svgsStrings";
-import DetailsModal from "../../../DetailsModal";
+import DetailsModal from "../../invitations/components/DetailsModal";
 import Swipeout from 'react-native-swipeout';
 import ProfileModal from "../../../ProfileModal";
 import PhotoModal from "../../invitations/components/PhotoModal";
