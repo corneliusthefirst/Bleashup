@@ -34,11 +34,11 @@ export default class InvitationView extends Component {
             backgroundColor: "transparent"
           }}
         >
-          <Tab heading="Sent Invites">
+          <Tab activeTextStyle={{ color: '#FEFFDE', fontWeight: 'bold' }} textStyle={{ color: '#7DD2D2' }} heading="Sent Invites">
             <SentInvitations {...this.props} />
           </Tab>
 
-          <Tab heading="Received Invites">
+          <Tab activeTextStyle={{ color: '#FEFFDE', fontWeight: 'bold' }} textStyle={{ color: '#7DD2D2' }} heading="Received Invites">
             <ReceivedInvitations {...this.props} />
           </Tab>
 

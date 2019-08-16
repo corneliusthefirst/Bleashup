@@ -136,6 +136,15 @@ class tcpRequestData {
     return this.sendData("invite", data);
   }
 
+  // My data is requestObject.Invite()
+  received_invitation(data) {
+    return this.sendData("received_invitation", data);
+  }
+
+  // My data is requestObject.Invite()
+  seen_invitation(data) {
+    return this.sendData("seen_invitation", data);
+  }
   //My data is {"phone":phoneToLeave}
   leaveEvent(data) {
     return this.sendData("leave_event", data);

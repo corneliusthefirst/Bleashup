@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Platform, StyleSheet, Image, TextInput, FlatList, View, Alert, TouchableHighlight, RefreshControl,ScrollView} from 'react-native';
+import { Platform, StyleSheet, Image, ScrollView, TextInput, FlatList, View, Alert, TouchableHighlight, RefreshControl } from 'react-native';
 
 import autobind from "autobind-decorator";
 import {
@@ -10,12 +10,11 @@ import cardListData from './EventData';
 
 import CardListItem from './invitationCard';
 
-import NestedScrollView from "react-native-nested-scroll-view"
 import ImageActivityIndicator from "../currentevents/components/imageActivityIndicator";
-import { OptimizedFlatList } from 'react-native-optimized-flatlist'
 import { observable, action } from "mobx";
 import globalState from "../../../stores/globalState"
 import { observer } from "mobx-react";
+import stores from '../../../stores';
 
 
 @observer
@@ -26,7 +25,6 @@ class ReceivedInvitations extends Component {
       deletedRowKey: null,
       loadingInvitations: true,
       refreshing: false,
-      scrollEnable:false
 
     });
 
@@ -38,11 +36,11 @@ class ReceivedInvitations extends Component {
         loadingInvitations: false
       });
     }, 15)
- /*   let i=0;
-    while(i<4){
-      globalState.receivedData.push(globalState.cardListData[i])
-      i++;
-    }*/
+    /*   let i=0;
+       while(i<4){
+         globalState.receivedData.push(globalState.cardListData[i])
+         i++;
+       }*/
   }
 
 
@@ -75,6 +73,10 @@ class ReceivedInvitations extends Component {
       "key": newKey,
       "sender_Image": "https://upload.wikimedia.org/wikipedia/commons/b/bf/Cornish_cream_tea_2.jpg",
       "sender_name": "giles",
+      type: {
+        name: "",
+        params: ""
+      },
       "sender_status": "Falling on the way means you need to work harder",
       "receiver_Image": "https://upload.wikimedia.org/wikipedia/commons/6/6e/Lactarius_indigo_48568.jpg",
       "received_date": "28/06/2019",
@@ -109,19 +111,17 @@ class ReceivedInvitations extends Component {
 
 
 
-  _keyExtractor = (item, index) => item.key;
+  _keyExtractor = (item, index) => item.invitation_id;
 
   render() {
     return this.state.loadingInvitations ? (
-      <ImageActivityIndicator />
+      <Spinner></Spinner>
     ) : (
-         
-            <NestedScrollView  alwaysBounceHorizontal={false}  
-              
-              >
-            
-             <View style={{flex:1,flexDirection: 'column'}}>
-             <FlatList
+
+        <ScrollView nestedScrollEnabled={true}>
+
+          <View style={{ flex: 1, flexDirection: 'column' }}>
+            <FlatList
               initialNumToRender={4}
               //maxToRenderPerBatch={4}
               //removeClippedSubviews={true}
@@ -132,13 +132,11 @@ class ReceivedInvitations extends Component {
               //updateCellsBatchingPeriod={25} 
               listKey={'Invitations'}
               keyExtractor={this._keyExtractor}
-              data={ globalState.cardListData}
-              //onEndReachedThreshold={0.01}
-              //onEndReached={({ distanceFromEnd }) => {this._LoadMoreData()}}
+              data={stores.Invitations.ReceivedInvitations}
               renderItem={({ item, index }) => {
                 return (
                   //this is my private class just created
-                  <CardListItem cardListData={ globalState.cardListData} item={item} index={index} parentCardList={this} refresh={this.refreshCardList}>
+                  <CardListItem cardListData={globalState.cardListData} item={item} {...this.props} index={index} parentCardList={this} refresh={this.refreshCardList}>
                   </CardListItem>
                 );
 
@@ -151,7 +149,7 @@ class ReceivedInvitations extends Component {
 
             </FlatList>
           </View>
-        </NestedScrollView>
+        </ScrollView>
 
 
 
@@ -262,7 +260,7 @@ Onscroll(){
 _LoadMoreData(){
 
   if(this.state.position+3 < globalState.cardListData.length ){
-    
+
     while(this.state.position+3 <  globalState.cardListData.length){
       globalState.receivedData.push(globalState.cardListData[this.state.position])
      this.setState({position:this.state.position+1})
@@ -301,7 +299,7 @@ _LoadMoreData(){
     }
 
     globalState.receivedData.push(newdata);
-    
+
 }*/
 
 
@@ -364,7 +362,7 @@ class ReceivedInvitations extends Component {
 
 
 generateKey(numberOfCharacters){
-       return require('random-string')({length: numberOfCharacters});    
+       return require('random-string')({length: numberOfCharacters});
  }
 
 @autobind
@@ -393,7 +391,7 @@ generateKey(numberOfCharacters){
       "accept":false,
       "deny":false
 
-   
+
     }
 
        globalState.cardListData.push(newdata);
@@ -414,13 +412,13 @@ generateKey(numberOfCharacters){
 
 
  _keyExtractor = (item, index) => item.key;
- 
+
   render() {
 
      return this.state.loadingInvitations ? (
       <ImageActivityIndicator />
     ) : (
-         
+
             <NestedScrollView  alwaysBounceHorizontal={true}>
              <View>
              <View style={{flex:1,flexDirection: 'column'}}>
@@ -437,11 +435,11 @@ generateKey(numberOfCharacters){
               windowSize={10}
               ref={"cardlist"}
               onContentSizeChange={()=> this.refs.cardlist.scrollToEnd()}
-              updateCellsBatchingPeriod={25} 
+              updateCellsBatchingPeriod={25}
               listKey={'Invitations'}
               keyExtractor={this._keyExtractor}
               data={globalState.cardListData}
-              renderItem={( {item,index} )=> {           
+              renderItem={( {item,index} )=> {
               return(
                      //this is my private class just created
                      <CardListItem cardListData={globalState.cardListData} item={item} index={index} parentCardList = {this} refresh={this.refreshCardList}>
@@ -451,14 +449,14 @@ generateKey(numberOfCharacters){
 
              }}
              >
-                
+
              </FlatList>
              </View>
             </View>
             </NestedScrollView>
-           
-        
-           
+
+
+
      );
   }
 }

@@ -1,11 +1,11 @@
 import React, { Component } from "react";
 import { Content, Card, CardItem, Text, Body } from "native-base";
-import NestedScrollView from "react-native-nested-scroll-view";
 import GState from "../../../stores/globalState";
+import { ScrollView } from "react-native";
 export default class PotesChat extends Component {
   render() {
     return (
-      <NestedScrollView
+      <ScrollView
         onScroll={nativeEvent => {
           GState.scrollOuter = true;
         }}
@@ -35,7 +35,7 @@ export default class PotesChat extends Component {
             </CardItem>
           </Card>
         </Content>
-      </NestedScrollView>
+      </ScrollView>
     );
   }
 }

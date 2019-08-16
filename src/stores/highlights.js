@@ -40,11 +40,11 @@ export default class highlights {
     return new Promise((resolve, reject) => {
       if (!this.highlights) {
         this.readFromStore().then(Highlights => {
+          let result = filter(Highlights, {
+            event_id: eventID
+          })
           resolve(
-            filter(Highlights, {
-              event_id: eventID
-            }),
-            "update_date"
+            result ? result : []
           );
         });
       } else {

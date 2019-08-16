@@ -21,55 +21,60 @@ export default class PhotoModal extends Component {
                 coverScreen={true}
                 isOpen={this.props.isOpen}
                 onClosed={this.props.onClosed}
-                style={{height: "80%", borderRadius: 15,
-                backgroundColor: this.transparent, width: "95%"
+                style={{
+                    height: "80%", borderRadius: 15,
+                    backgroundColor: this.transparent, width: "95%"
                 }}
                 position={'center'}
             >
-                <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                     <TouchableOpacity style={{}} onPress={this.props.onClosed} transparent>
-                        <Icon style={{ color: "#1FABAB", fontSize: 35 }} name="cross" type="Entypo" />
+                        <Icon style={{ color: "#1FABAB", fontSize: 35 }} name="close" type="EvilIcons" />
                     </TouchableOpacity>
                 </View>
 
-                <View style={{flex:6,flexDirection:'column'}}>
-                <TouchableOpacity onPress={() => this.setState({ enlargeImage: true })} >
-                    <CacheImages thumbnails source={{ uri: this.props.image }} style={{ height:"100%",width:"100%",marginTop:14,borderWidth:4,borderColor:"#1FABAB",borderRadius:3 }} square />
-                </TouchableOpacity>
+                <View style={{ flex: 6, flexDirection: 'column' }}>
+                    <TouchableOpacity onPress={() => this.setState({ enlargeImage: true })} >
+                        <CacheImages thumbnails source={{ uri: this.props.image }} style={{
+                            height: "100%",
+                            width: "100%", marginTop: 14, borderWidth: 1, borderColor: "#1FABAB", borderRadius: 3
+                        }} square />
+                    </TouchableOpacity>
                 </View>
 
                 {this.props.isJoining ? (this.props.hasJoin ?
-                    <View style={{flex:2,flexDirection: 'column', alignItems: 'center', justifyContent:'center' }}>
-                        <Icon name="comment" type="FontAwesome5" onPress={{}} style={{ color: "#1FABAB" }} />
+                    <View style={{ flex: 2, flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                        <Icon name="comment" type="EvilIcons" onPress={{}} style={{ color: "#1FABAB" }} />
                         <Text style={{ marginTop: 5, color: "#1FABAB" }}>chat</Text>
                     </View> :
 
-                    <View style={{flex:2,flexDirection: 'row', justifyContent: 'space-between',alignItems:'center' }}>
+                    <View style={{ flex: 2, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                         <View>
-                        <Button onPress={this.props.joined} style={{ justifyContent:'center', marginLeft: 40, width: 100, borderRadius: 3 }} success ><Text style={{fontWeight:"500",fontSize:18}}>Join</Text></Button>
+                            <Button onPress={this.props.joined} style={{ justifyContent: 'center', marginLeft: 40, width: 100, borderRadius: 3 }} success ><Text style={{ fontWeight: "500", fontSize: 18 }}>Join</Text></Button>
                         </View>
                         <View style={{ flexDirection: 'column' }}>
-                            <Icon name="comment" type="FontAwesome5" onPress={{}} style={{ marginRight: 40, color: "#1FABAB" }} />
+                            <Icon name="comment" type="EvilIcons" onPress={{}}
+                                style={{ marginRight: 40, color: "#1FABAB" }} />
                             <Text style={{ marginTop: 5, color: "#1FABAB", marginRight: 40 }}>chat</Text>
                         </View>
                     </View>)
                     :
                     (this.props.accept || this.props.deny ?
-                        <View style={{flex:2,flexDirection: 'column', alignItems: 'center',justifyContent:'center' }}>
+                        <View style={{ flex: 2, flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                             <Icon name="comment" type="FontAwesome5" onPress={{}} style={{ color: "#1FABAB" }} />
                             <Text style={{ marginTop: 5, color: "#1FABAB" }}>chat</Text>
                         </View> :
 
-                        <View style={{flex:2,flexDirection: 'row', justifyContent: 'space-between',alignItems:'center'}}>
+                        <View style={{ flex: 2, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                             <View>
-                            <Button onPress={this.props.onAccept} style={{ width: 100,justifyContent:'center',borderRadius:2,marginLeft:20}} success ><Text>Accept</Text></Button>
+                                <Button onPress={this.props.onAccept} style={{ width: 100, justifyContent: 'center', borderRadius: 2, marginLeft: 20 }} success ><Text>Accept</Text></Button>
                             </View>
                             <View style={{ flexDirection: 'column', alignItems: 'center' }}>
                                 <Icon name="comment" type="FontAwesome5" onPress={{}} style={{ color: "#1FABAB" }} />
                                 <Text style={{ marginTop: 5, color: "#1FABAB" }}>chat</Text>
                             </View>
-                             <View>
-                            <Button onPress={this.props.onDenied} style={{  width: 100,justifyContent:'center',borderRadius:2 ,marginRight:20}} danger ><Text>Deny</Text></Button>
+                            <View>
+                                <Button onPress={this.props.onDenied} style={{ width: 100, justifyContent: 'center', borderRadius: 2, marginRight: 20 }} danger ><Text>Deny</Text></Button>
                             </View>
                         </View>
 

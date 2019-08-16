@@ -2,7 +2,7 @@ import { observable, action } from "mobx";
 import {
   filter,
   uniqBy,
-  sortBy,
+  orderBy,
   find,
   findIndex,
   reject,
@@ -41,18 +41,18 @@ export default class events {
     data: []
   };
   @action addEvent(NewEvent) {
+    NewEvent.updated_at = moment().format("YYYY-MM-DD HH:mm")
+    NewEvent.new = true
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
-        if (Events) {
+        if (Events.length !== 0) {
           Events.unshift(NewEvent)
           this.saveKey.data = Events;
         }
         else this.saveKey.data = [NewEvent];
-        this.saveKey.data = uniqBy(this.saveKey.data, "id");
+        this.saveKey.data = uniqBy(this.saveKey.data, 'id');
         storage.save(this.saveKey).then(() => {
-          this.setProperties(this.saveKey.data, false);
-          NewEvent.new = true;
-          this.events.unshift(NewEvent)
+          this.setProperties(this.saveKey.data, true);
           resolve();
         });
       });
@@ -124,7 +124,7 @@ export default class events {
       });
     });
   }
-  loadCurrentEvent(EventID) {
+  @action loadCurrentEvent(EventID) {
     return new Promise((resolve, reject) => {
       if (this.currentEvents.length !== 0 || this.pastEvents.length !== 0 || this.events.length !== 0) {
         if (this.currentEvents.length !== 0) {
@@ -141,20 +141,45 @@ export default class events {
         }
         if (this.events.length !== 0) {
           let Event = find(this.events, { id: EventID })
-          resolve(Event)
+          if (!Event) {
+            serverEventListener.GetData(EventID).then(event => {
+              this.addEvent(event).then(() => {
+                resolve(event)
+              })
+            })
+          } else {
+            resolve(Event)
+          }
         }
       } else {
         this.readFromStore()
           .then(Events => {
-            console.warn(EventID)
             Event = find(Events, { id: EventID });
-            resolve(EventID);
+            if (!Event) {
+              serverEventListener.GetData(EventID).then(event => {
+                this.addEvent(event).then(() => {
+
+                  resolve(event)
+                })
+              })
+            } else {
+              resolve(Event)
+            }
+            ;
           })
           .catch(error => {
             console.warn(error);
           });
       }
     });
+  }
+  @action loadEvents() {
+    return new Promise((resolve, reject) => {
+      this.readFromStore().then(events => {
+        this.setProperties(events, true);
+        resolve()
+      })
+    })
   }
   @action loadCurrentEvents() {
     return new Promise((resolve, reject) => {
@@ -793,7 +818,7 @@ export default class events {
     });
   }
   setProperties(Events, inform) {
-    if (inform) Events = sortBy(Events, ["updated_at"]).reverse();
+    if (inform) Events = orderBy(Events, ["updated_at"], ["desc"]);
     this.events = Events;
     this.newEvent = [Events[2]]
     this.currentEvents = filter(Events, { past: false });

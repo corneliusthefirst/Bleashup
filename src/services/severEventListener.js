@@ -26,11 +26,9 @@ class ServerEventListener {
             emitter.emit("current-events", data.body);
             break;
           case "news":
-            GState.writing = data.reference
             stores.Session.updateReference(data.reference).then(sessios => {
-              let EventID = requestObject.EventID();
-              if (data.updated) UpdatesDispatcher.dispatchUpdates(data.updated);
-              if (data.new_events) {
+              if (data.updated.length !== 0) UpdatesDispatcher.dispatchUpdates(data.updated);
+              if (data.new_events.length !== 0) {
                 InvitationDispatcher.dispatchUpdates(
                   data.new_events,
                   "invitation"
@@ -53,7 +51,6 @@ class ServerEventListener {
             emitter.emit("events", data.body);
             break;
           case "invitation":
-
             InvitationDispatcher.dispatcher(data.body, "invitation").then(
               () => {
               }
@@ -74,8 +71,8 @@ class ServerEventListener {
               "accepted_invitation"
             ).then(() => { });
             break;
-          case "sent_invitation":
-            InvitationDispatcher.dispatcher(data.body, "sent_invitation").then(
+          case "seen_invitation":
+            InvitationDispatcher.dispatcher(data.body, "seen_invitation").then(
               () => { }
             );
             break;
@@ -116,8 +113,6 @@ class ServerEventListener {
         console.warn("reconnection attempted", "deu to ", data.error)
         tcpConnect.init().then(() => {
           console.warn("ok! reconnected !");
-          tcpConnect.init().then(() => {
-          })
         })
       }
     });
@@ -128,34 +123,56 @@ class ServerEventListener {
       console.error(error.toString(), "closed");
     });
   }
-  get_data(data) {
+  get_data(data, id) {
     return new Promise((resolve, reject) => {
-      emitter.once("successful", (response, dataResponse) => {
-        resolve(dataResponse);
+      emitter.on("successful", (response, dataResponse) => {
+        if (dataResponse.id == id) {
+          resolve(dataResponse)
+        }
       });
-      emitter.once("unsuccessful", (response, dataError) => {
+      emitter.on("unsuccessful", (response, dataError) => {
         reject(dataError);
       });
-      this.socket.write(data);
+      if (this.socket.write) {
+        this.socket.write(data)
+      } else {
+        reject("not connected");
+      }
     });
   }
-  sendRequest(data) {
-    return new Promise((resolve, reject) => {
-      emitter.once("successful", (response) => {
-        resolve(response);
-      });
-      emitter.once("unsuccessful", (response) => {
-        reject(response);
-      });
-      this.socket.write(data);
-    })
+  sendRequest(data, id) {
+    let exit = false;
+    do {
+      if (!GState.writing) {
+        GState.writing = true
+        return new Promise((resolve, reject) => {
+          emitter.once("successful", (response) => {
+            GState.writing = false
+            exit = true
+            resolve(response);
+          });
+          emitter.once("unsuccessful", (response) => {
+            GState.writing = false
+            exit = true
+            reject(response);
+          });
+          if (this.socket.write) {
+            this.socket.write(data)
+          } else {
+            exit = true
+            GState.writing = false
+            reject("not connected to server")
+          }
+        })
+      }
+    } while (!GState.writing || exit)
   }
   GetData(EventId) {
     return new Promise((resolve, reject) => {
       let EventID = requestObject.EventID()
       EventID.event_id = EventId;
       tcpRequest.getCurrentEvent(EventID).then(JSONData => {
-        this.get_data(JSONData).then(Event => {
+        this.get_data(JSONData, EventId).then(Event => {
           resolve(Event)
         });
       });
