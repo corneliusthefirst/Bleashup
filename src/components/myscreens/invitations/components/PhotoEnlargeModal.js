@@ -46,22 +46,22 @@ export default class PhotoEnlargeModal extends Component {
                 }}
                 position={'center'}
             >
-              <View style={{flex:1,alignSelf:'stretch'}}>
-                <View style={{ flex:1,flexDirection:'column',backgroundColor: "black",justifyContent:'center',alignItems: 'center' }}>
-                    <TouchableOpacity onPress={this.props.onClosed} transparent>
-                        <Icon style={{ color: "#1FABAB", fontSize: 35 }} name="cross" type="Entypo" />
-                    </TouchableOpacity>
-                </View>
+                <View style={{ flex: 1, alignSelf: 'stretch' }}>
+                    <View style={{ flex: 1, flexDirection: 'column', backgroundColor: "black", justifyContent: 'center', alignItems: 'center' }}>
+                        <TouchableOpacity onPress={this.props.onClosed} transparent>
+                            <Icon style={{ color: "#1FABAB", fontSize: 35 }} name="cross" type="Entypo" />
+                        </TouchableOpacity>
+                    </View>
 
-                <View style={{flex:6,flexDirection:'column'}}>  
-                    <TouchableOpacity onPress={this.props.onClosed} >
-                        <CacheImages thumbnails source={{ uri: this.state.image }} style={{ width:"100%", height:"100%"}} square />
-                    </TouchableOpacity>
-                </View>
+                    <View style={{ flex: 6, flexDirection: 'column' }}>
+                        <TouchableOpacity onPress={this.props.onClosed} >
+                            <CacheImages thumbnails source={{ uri: this.state.image }} style={{ width: "100%", height: "100%" }} square />
+                        </TouchableOpacity>
+                    </View>
 
-                <View style={{ flex:1,backgroundColor: "black",flexDirection:'column'}}>
+                    <View style={{ flex: 1, backgroundColor: "black", flexDirection: 'column' }}>
+                    </View>
                 </View>
-               </View>
             </Modal>
         ) : null
     }

@@ -12,7 +12,7 @@ class Requester {
             let eventID = requestObject.EventID()
             eventID.event_id = event_id;
             requestData.likeEvent(eventID).then(JSONData => {
-                serverEventListener.sendRequest(JSONData, EventID).then(SuccessMessage => {
+                serverEventListener.sendRequest(JSONData, event_id).then(SuccessMessage => {
                     stores.Events.likeEvent(event_id, false).then(() => {
                         resolve("ok");
                     })
@@ -27,7 +27,7 @@ class Requester {
             let eventID = requestObject.EventID()
             eventID.event_id = event_id;
             requestData.unlikeEvent(eventID).then((JSONData) => {
-                serverEventListener.sendRequest(JSONData, EventID).then(SuccessMessage => {
+                serverEventListener.sendRequest(JSONData, event_id).then(SuccessMessage => {
                     stores.Events.unlikeEvent(event_id, false).then(() => {
                         resolve("ok")
                     })
@@ -42,7 +42,7 @@ class Requester {
             let eventID = requestObject.EventID();
             eventID.event_id = event_id;
             requestData.publishEvent(eventID).then(JSONData => {
-                serverEventListener.sendRequest(JSONData, EventID).then(SuccessMessage => {
+                serverEventListener.sendRequest(JSONData, event_id).then(SuccessMessage => {
                     stores.Events.publishEvent(event_id, false).then(() => {
                         resolve()
                     })
@@ -70,7 +70,6 @@ class Requester {
                         })
                     })
                 }).catch(error => {
-                    console.error(error)
                     reject(error)
                 })
             })

@@ -74,7 +74,6 @@ class CardListItem extends Component {
   }
 
   componentDidMount() {
-
     stores.Invitations.translateToinvitationData(this.props.item).then(data => {
       let AccordData = data.sender_status
       max_length = data.sender_status.length

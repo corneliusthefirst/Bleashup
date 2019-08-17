@@ -52,7 +52,7 @@ export default class ProfileModal extends Component {
 
 
 
-                {this.props.isJoining ? (this.props.hasJoin ?
+                {this.props.isToBeJoint ? (this.props.hasJoin ?
                     <View style={{ flex: 1, flexDirection: 'column', alignItems: 'center', marginTop: 10 }}>
                         <Icon name="comment" type="EvilIcons" style={{ color: "#1FABAB" }} />
                         <Text style={{ marginTop: 5, color: "#1FABAB" }}>chat</Text>

@@ -74,21 +74,40 @@ const cardScale = scaleValue.interpolate({
   }
 
   @autobind navigateToEventDetails() {
-    if (!this.props.Event.joint) {
-      this.setState({ isDetailsModalOpened: true })
-    } else {
-      this.props.navigation.navigate("Event", {
-        Event: this.props.Event,
-        tab: "EventDetails"
-      });
+    if (this.props.Event.new) {
+      stores.Events.markAsSeen(this.props.Event.id).then(() => {
+      })
     }
+    stores.Events.isParticipant(this.props.Event.id, stores.Session.SessionStore.phone).then(status => {
+      if (status) {
+        this.props.navigation.navigate("Event", {
+          Event: this.props.Event,
+          tab: "EventDetails"
+        });
+      } else {
+        this.setState({ isDetailsModalOpened: true })
+      }
+    })
   }
   swipperComponent = null
   @autobind navigateToReminds() {
-    this.props.navigation.navigate("Event", {
-      Event: this.props.Event,
-      tab: "Reminds"
-    });
+    if (this.props.Event.new) {
+      stores.Events.markAsSeen(this.props.Event.id).then(() => {
+      })
+    }
+    stores.Events.isParticipant(this.props.Event.id, stores.Session.SessionStore.phone).then(status => {
+      if (status) {
+        this.props.navigation.navigate("Event", {
+          Event: this.props.Event,
+          tab: "Reminds"
+        });
+      } else {
+        Toast.show({
+          text: "please join the event to see the updates about !",
+          buttonText: "ok"
+        })
+      }
+    })
   }
 
   formDetailModal(event) {
@@ -128,50 +147,98 @@ const cardScale = scaleValue.interpolate({
   }
 
   @autobind navigateToHighLights() {
-    this.props.navigation.navigate("Event", {
-      Event: this.props.Event,
-      tab: "Highlights"
-    });
+    if (this.props.Event.new) {
+      stores.Events.markAsSeen(this.props.Event.id).then(() => {
+      })
+    }
+    stores.Events.isParticipant(this.props.Event.id, stores.Session.SessionStore.phone).then((status) => {
+      if (status) {
+        this.props.navigation.navigate("Event", {
+          Event: this.props.Event,
+          tab: "Highlights"
+        });
+      } else {
+        Toast.show({
+          text: "please join the event to see the updates about !",
+          buttonText: "ok"
+        })
+      }
+    })
   }
   @autobind navigateToEventChat() {
-    this.props.navigation.navigate("Event", {
-      Event: this.props.Event,
-      tab: "EventChat"
-    });
+    if (this.props.Event.new) {
+      stores.Events.markAsSeen(this.props.Event.id).then(() => {
+      })
+    }
+    stores.Events.isParticipant(this.props.Event.id, stores.Session.SessionStore.phone).then(status => {
+      if (status) {
+        this.props.navigation.navigate("Event", {
+          Event: this.props.Event,
+          tab: "EventChat"
+        });
+      } else {
+        Toast.show({
+          text: "please join the event to see the updates about !",
+          buttonText: "ok"
+        })
+      }
+    })
   }
   @autobind navigateToVotes() {
-    this.props.navigation.navigate("Event", {
-      Event: this.props.Event,
-      tab: "Votes"
-    });
+    if (this.props.Event.new) {
+      stores.Events.markAsSeen(this.props.Event.id).then(() => {
+      })
+    }
+    stores.Events.isParticipant(this.props.Event.id, stores.Session.SessionStore.phone).then((status) => {
+      if (status) {
+        this.props.navigation.navigate("Event", {
+          Event: this.props.Event,
+          tab: "Votes"
+        });
+      } else {
+        Toast.show({
+          text: "please join the event to see the updates about !",
+          buttonText: "ok"
+        })
+      }
+    })
   }
   @autobind navigateToContributions() {
-    this.props.navigation.navigate("Event", {
-      Event: this.props.Event,
-      tab: "Contributions"
-    });
-  }
-
-  /*shouldComponentUpdate(nextProps, nextState) {
-    return (nextProps.Event ? nextProps.Event.id !== this.props.Event.id : false) ||
-      this.state.isMount !== nextState.isMount ||
-      this.state.isjoint !== nextState.isJoint ||
-      this.state.liked !== nextState.liked ||
-      this.state.isJoining !== nextState.isJoining
-      ? true : false
-  }
-  componentDidUpdate() {
-    if (this.props.Event) {
-      if (this.props.Event.id !== this.props.Event.id) {
-        this.setState({
-          event: this.props.Event
-        })
-      } else {
-
-      }
+    if (this.props.Event.new) {
+      stores.Events.markAsSeen(this.props.Event.id).then(() => {
+      })
     }
-  }*/
+    stores.Events.isParticipant(this.props.Event.id, stores.Session.SessionStore.phone).then(status => {
+      if (status) {
+        this.props.navigation.navigate("Event", {
+          Event: this.props.Event,
+          tab: "Contributions"
+        });
+      } else {
+        Toast.show({
+          text: "please join the event to see the updates about !",
+          buttonText: "ok"
+        })
+      }
+    })
+  }
 
+  @autobind navigateToLogs() {
+    if (this.props.Event.new) {
+      stores.Events.markAsSeen(this.props.Event.id).then(() => {
+      })
+    }
+    stores.Events.isParticipant(this.props.Event.id, stores.Session.SessionStore.phone).then(status => {
+      if (status) {
+        this.props.navigation.navigate("ChangeLogs", { ...this.props })
+      } else {
+        Toast.show({
+          text: "please join the event to see the updates about !",
+          buttonText: "ok"
+        })
+      }
+    })
+  }
   componentDidMount() {
     setTimeout(() => {
       this.formDetailModal(this.props.Event).then(details => {
@@ -336,10 +403,18 @@ const cardScale = scaleValue.interpolate({
       isPublisherModalOpened: true,
       hide: true
     })
+    if (this.props.Event.new) {
+      stores.Events.markAsSeen(this.props.Event.id).then(() => {
+      })
+    }
   }
   liking = false
   unliking = false
   like() {
+    if (this.props.Event.new) {
+      stores.Events.markAsSeen(this.props.Event.id).then(() => {
+      })
+    }
     if (this.liking || this.state.liking || this.state.liked || this.props.Event.liked) { } else {
       this.liking = true
       Requester.like(this.props.Event.id).then(response => {
@@ -384,6 +459,10 @@ const cardScale = scaleValue.interpolate({
     this.setState({
       publishing: true
     })
+    if (this.props.Event.new) {
+      stores.Events.markAsSeen(this.props.Event.id).then(() => {
+      })
+    }
     if (this.props.Event.public) {
       Requester.publish(this.props.Event.id).then(() => {
         this.setState({
@@ -400,6 +479,10 @@ const cardScale = scaleValue.interpolate({
         })
       })
     } else {
+      if (this.props.Event.new) {
+        stores.Events.markAsSeen(this.props.Event.id).then(() => {
+        })
+      }
       stores.Events.isMaster(this.props.Event.id, stores.Session.SessionStore.phone).then(status => {
         if (status) {
           Requester.publish(this.props.Event.id).then(() => {
@@ -418,7 +501,23 @@ const cardScale = scaleValue.interpolate({
       })
     }
   }
+  onOpenPhotoModal() {
+    if (this.props.Event.new) {
+      stores.Events.markAsSeen(this.props.Event.id).then(() => {
+      })
+    }
+  }
+  onOpenDetaiProfileModal() {
+    if (this.props.Event.new) {
+      stores.Events.markAsSeen(this.props.Event.id).then(() => {
+      })
+    }
+  }
   delete() {
+    if (this.props.Event.new) {
+      stores.Events.markAsSeen(this.props.Event.id).then(() => {
+      })
+    }
     this.setState({
       deleting: true
     })
@@ -430,6 +529,10 @@ const cardScale = scaleValue.interpolate({
     })
   }
   hide() {
+    if (this.props.Event.new) {
+      stores.Events.markAsSeen(this.props.Event.id).then(() => {
+      })
+    }
     this.setState({
       hiding: true
     })
@@ -441,15 +544,25 @@ const cardScale = scaleValue.interpolate({
     })
   }
   join() {
+    if (this.props.Event.new) {
+      stores.Events.markAsSeen(this.props.Event.id).then(() => {
+      })
+    }
     this.setState({
       isJoining: true
     })
-    this.props.Event.joint = true
     this.setState({
       isDetailsModalOpened: false
     })
     Requester.join(this.props.Event.id, this.props.Event.event_host).then((status) => {
+      this.props.Event.joint = true
       this.setState({ isjoint: true, isJoining: false });
+    }).catch((error) => {
+      this.setState({ isJoining: false })
+      Toast.show({
+        text: 'unable to connect to the server ',
+        buttonText: 'Okay'
+      })
     })
   }
   indicatorMargin = {
@@ -517,7 +630,7 @@ const cardScale = scaleValue.interpolate({
           >
             <Left>
               <View style={{ flexDirection: "row", flex: 5 }}>
-                <ProfileView phone={(this.props.Event.creator_phone)}></ProfileView>
+                <ProfileView joined={() => this.join()} hasJoin={this.props.Event.joint} onOpen={() => this.onOpenDetaiProfileModal()} phone={(this.props.Event.creator_phone)}></ProfileView>
               </View>
             </Left>
           </CardItem>
@@ -588,7 +701,7 @@ const cardScale = scaleValue.interpolate({
             cardBody
           >
             <Left>
-              <PhotoView style={{
+              <PhotoView joined={() => this.join()} isToBeJoint hasJoin={this.props.Event.joint} onOpen={() => this.onOpenPhotoModal()} style={{
                 width: "70%",
                 marginLeft: "4%"
               }} photo={this.props.Event.background} width={170} height={125} borderRadius={10} />
@@ -883,7 +996,6 @@ const cardScale = scaleValue.interpolate({
                   </View>
                 ) : (
                     <View style={{ flexDirection: "row" }}>
-                      {this.state.isJoining ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
                       <TouchableWithoutFeedback onPressIn={() => {
                         scaleValue.setValue(0);
                         Animated.timing(scaleValue, {

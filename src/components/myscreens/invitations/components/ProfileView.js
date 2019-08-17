@@ -49,8 +49,15 @@ export default class ProfileView extends Component {
                 </View>
                 <ProfileModal
                     isOpen={this.state.isModalOpened}
+                    hasJoin={this.props.hasJoin}
+                    isToBeJoint
+                    joined={this.props.joined}
                     parent={this}
-                    onClosed={() => this.setState({ isModalOpened: false })}
+                    onClosed={() => {
+                        this.setState({ isModalOpened: false })
+                        //this.props.onOpen()
+                    }
+                    }
                     profile={this.state.profile}
                 ></ProfileModal>
             </View>

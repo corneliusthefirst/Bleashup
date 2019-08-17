@@ -20,8 +20,8 @@ const SCREEN_WIDTH = Dimensions.get('window').width;
                 dataSource={this.props.data}
                 renderItem={(item, index) => <PublicEvent key={item.id}  {...this.props} Event={item} />}
                 firstIndex={0}
-                renderPerBatch={4}
-                initialRender={4}
+                renderPerBatch={1}
+                initialRender={3}
             >
 
             </BleashupScrollView>

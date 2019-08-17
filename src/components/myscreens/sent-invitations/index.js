@@ -85,7 +85,7 @@ class SendInvitations extends Component {
     ) : (
         <BleashupScrollView
           initialRender={4}
-          renderPerBatch={5}
+          renderPerBatch={2}
           firstIndex={0}
           keyExtractor={this._keyExtractor}
           dataSource={this.state.invitations}

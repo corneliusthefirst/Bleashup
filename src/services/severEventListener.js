@@ -110,10 +110,7 @@ class ServerEventListener {
         }
       }
       if (data.error) {
-        console.warn("reconnection attempted", "deu to ", data.error)
-        tcpConnect.init().then(() => {
-          console.warn("ok! reconnected !");
-        })
+        console.warn("reconnection attempted", "deu to ", data)
       }
     });
     socket.on("timeout", data => {

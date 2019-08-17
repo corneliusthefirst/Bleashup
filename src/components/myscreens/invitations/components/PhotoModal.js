@@ -42,7 +42,7 @@ export default class PhotoModal extends Component {
                     </TouchableOpacity>
                 </View>
 
-                {this.props.isJoining ? (this.props.hasJoin ?
+                {this.props.isToBeJoin ? (this.props.hasJoin ?
                     <View style={{ flex: 2, flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                         <Icon name="comment" type="EvilIcons" onPress={{}} style={{ color: "#1FABAB" }} />
                         <Text style={{ marginTop: 5, color: "#1FABAB" }}>chat</Text>

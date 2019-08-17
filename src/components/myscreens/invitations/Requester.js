@@ -14,6 +14,8 @@ class Requester {
                     stores.Invitations.markAsSeen(invitation.invitation_id).then(() => {
                         resolve("ok");
                     })
+                }).catch(error => {
+                    reject(error)
                 })
             })
         })
@@ -29,6 +31,8 @@ class Requester {
                     stores.Invitations.markAsReceived(invitation.invitation_id).then(() => {
                         resolve("ok");
                     })
+                }).catch(error => {
+                    reject(error)
                 })
             })
         })
@@ -44,6 +48,8 @@ class Requester {
                     stores.Invitations.acceptInvitation(invitation.invitation_id).then(() => {
                         resolve('ok')
                     })
+                }).catch(error => {
+                    reject(error)
                 })
             })
         })
@@ -59,6 +65,8 @@ class Requester {
                     stores.Invitations.denieInvitation(invitation.invitation_id).then(() => {
                         resolve("ok");
                     })
+                }).catch(error => {
+                    reject(error)
                 })
             })
         })

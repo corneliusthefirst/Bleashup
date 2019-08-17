@@ -8,7 +8,7 @@ import autobind from "autobind-decorator";
 import {
   Content, Card, CardItem, Text, Body, Container, Icon, Header, Form, Thumbnail, Item,
   Title, Input, Left, Right, H3, H1, H2, Spinner, Button, InputGroup,
-  DatePicker, CheckBox, List, Accordion, DeckSwiper, Label
+  DatePicker, CheckBox, List, Accordion, DeckSwiper, Label, Toast
 } from "native-base";
 
 import Swipeout from 'react-native-swipeout';
@@ -91,6 +91,14 @@ const propOverridePlaceholderObject = {
     Requester.accept(invitation).then(response => {
       this.setState({ accept: true, isRequesting: false })
       this.props.item.accept = true
+    }).catch(error => {
+      this.setState({
+        isRequesting: false,
+      })
+      Toast.show({
+        text: 'unable to connect to the server ',
+        buttonText: 'Okay'
+      })
     })
     //;
   }
@@ -113,6 +121,14 @@ const propOverridePlaceholderObject = {
       this.setState({ deny: true, isRequesting: false })
       this.props.item.deny = true
       console.warn(response);
+    }).catch(error => {
+      this.setState({
+        isRequesting: false
+      })
+      Toast.show({
+        text: 'unable to connect to the server ',
+        buttonText: 'Okay'
+      })
     })
   }
   openDetails() {
@@ -142,6 +158,8 @@ const propOverridePlaceholderObject = {
       }
       Requester.seen(invitation).then(resposne => {
         this.isSeen = true;
+      }).catch((error) => {
+
       })
     }
   }

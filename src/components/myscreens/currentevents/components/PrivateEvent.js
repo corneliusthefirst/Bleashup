@@ -172,9 +172,7 @@ Once you've found three to five sample listings that describe your job goals, co
       });
     })
   }
-  shouldComponentUpdate(nextProps, nextState) {
-    return nextProps.Event.id !== this.props.Event.id || this.state.isMount !== nextState.isMount ? true : false
-  }
+
   swipperComponent = (<View>
     <List style={{
       backgroundColor: "#FFFFF6",

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import autobind from "autobind-decorator";
 import {
-  Content,Card,CardItem,Text,Body,Container,Header,Form,Item,Title,Input,Left,Right,H3,H1,H2,Spinner,Button
+  Content, Card, CardItem, Text, Body, Container, Header, Form, Item, Title, Input, Left, Right, H3, H1, H2, Spinner, Button
 } from "native-base";
 //import { Button,View } from "react-native";
 
@@ -21,8 +21,8 @@ export default class SettingView extends Component {
     this.state = {}
   }
 
-  render(){
-    return(
+  render() {
+    return (
       <Text>Settings</Text>
     )
   }

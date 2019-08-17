@@ -214,13 +214,13 @@ export default class SignUpView extends Component {
             {globalState.nameError == false ? (
               <Text />
             ) : (
-              <Icon
-                onPress={this.removeNameError}
-                type="Ionicons"
-                name="close-circle"
-                style={{ color: "#00C497" }}
-              />
-            )}
+                <Icon
+                  onPress={this.removeNameError}
+                  type="Ionicons"
+                  name="close-circle"
+                  style={{ color: "#00C497" }}
+                />
+              )}
           </Item>
 
           <Item rounded style={styles.input} error={globalState.emailError}>
@@ -244,13 +244,13 @@ export default class SignUpView extends Component {
             {globalState.emailError == false ? (
               <Text />
             ) : (
-              <Icon
-                onPress={this.removeEmailError}
-                type="Ionicons"
-                name="close-circle"
-                style={{ color: "#00C497" }}
-              />
-            )}
+                <Icon
+                  onPress={this.removeEmailError}
+                  type="Ionicons"
+                  name="close-circle"
+                  style={{ color: "#00C497" }}
+                />
+              )}
           </Item>
 
           <Item rounded style={styles.input} error={globalState.ageError}>
@@ -283,13 +283,13 @@ export default class SignUpView extends Component {
             {globalState.ageError == false ? (
               <Text />
             ) : (
-              <Icon
-                onPress={this.removeAgeError}
-                type="Ionicons"
-                name="close-circle"
-                style={{ color: "#00C497" }}
-              />
-            )}
+                <Icon
+                  onPress={this.removeAgeError}
+                  type="Ionicons"
+                  name="close-circle"
+                  style={{ color: "#00C497" }}
+                />
+              )}
           </Item>
 
           <Item rounded style={styles.input} error={globalState.passwordError}>
@@ -315,13 +315,13 @@ export default class SignUpView extends Component {
             {globalState.passwordError == false ? (
               <Text />
             ) : (
-              <Icon
-                onPress={this.removePasswordError}
-                type="Ionicons"
-                name="close-circle"
-                style={{ color: "#00C497" }}
-              />
-            )}
+                <Icon
+                  onPress={this.removePasswordError}
+                  type="Ionicons"
+                  name="close-circle"
+                  style={{ color: "#00C497" }}
+                />
+              )}
           </Item>
 
           <Item
@@ -351,13 +351,13 @@ export default class SignUpView extends Component {
             {globalState.newPasswordError == false ? (
               <Text />
             ) : (
-              <Icon
-                onPress={this.removeNewPasswordError}
-                type="Ionicons"
-                name="close-circle"
-                style={{ color: "#00C497" }}
-              />
-            )}
+                <Icon
+                  onPress={this.removeNewPasswordError}
+                  type="Ionicons"
+                  name="close-circle"
+                  style={{ color: "#00C497" }}
+                />
+              )}
           </Item>
 
           <Button
@@ -369,8 +369,8 @@ export default class SignUpView extends Component {
             {globalState.loading ? (
               <Spinner color="#FEFFDE" />
             ) : (
-              <Text> SignUp </Text>
-            )}
+                <Text> SignUp </Text>
+              )}
           </Button>
         </Content>
       </Container>
