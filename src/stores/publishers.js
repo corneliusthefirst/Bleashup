@@ -45,8 +45,8 @@ class Publishers {
             else {
                 let eventID = requestObject.EventID()
                 eventID.event_id = EventID;
-                tcpRequest.getPublishers(eventID).then(JSONData => {
-                    serverEventListener.sendRequest(JSONData).then(Data => {
+                tcpRequest.getPublishers(eventID, EventID + "publishers").then(JSONData => {
+                    serverEventListener.sendRequest(JSONData, EventID + "publishers").then(Data => {
                         this.addPublishers(EventID, Data).then(() => {
                             resolve(Data);
                         })

@@ -1,6 +1,5 @@
 import React, { Component } from "react"
-import { Content, List, ListItem, Body, Left, Right, Text, Card, CardItem } from "native-base"
-import CacheImages from "./CacheImages";
+import { List, ListItem, Body, Left, Right, Text } from "native-base"
 import { View } from "react-native"
 import ImageActivityIndicator from "./myscreens/currentevents/components/imageActivityIndicator";
 import stores from "../stores";
@@ -13,7 +12,7 @@ export default class ContactList extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            contacts: stores.Publishers.Publishers
+            publishers: []
         }
     }
     state = {
@@ -39,10 +38,12 @@ export default class ContactList extends Component {
 
     componentDidMount() {
         setTimeout(() => {
-
-            this.setState({
-                isloaded: true,
-            });
+            stores.Publishers.getPublishers(this.props.event_id).then(publishers => {
+                this.setState({
+                    publishers: publishers.publishers,
+                    isloaded: true,
+                });
+            })
         }, 350)
     }
     _keyExtractor = (item, index) => item.phone
@@ -68,7 +69,7 @@ export default class ContactList extends Component {
                         updateCellsBatchingPeriod={25}
                         listKey={'publishers'}
                         keyExtractor={this._keyExtractor}
-                        data={stores.Publishers.Publishers}
+                        data={this.state.publishers}
                         renderItem={({ item, index }) => {
                             return (
                                 <ListItem >

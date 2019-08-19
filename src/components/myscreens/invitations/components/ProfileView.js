@@ -30,6 +30,7 @@ export default class ProfileView extends Component {
         return this.state.isMount ? (
             <View style={{ flexDirection: "row" }}>
                 <TouchableOpacity onPress={() => {
+                    console.warn("profile modal opened !! ")
                     requestAnimationFrame(() => {
                         return this.setState({ isModalOpened: true })
                     });

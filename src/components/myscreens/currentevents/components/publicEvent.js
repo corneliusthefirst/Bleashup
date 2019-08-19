@@ -37,13 +37,13 @@ import PhotoView from "./PhotoView";
 import MapView from "./MapView";
 import Requester from "../Requester";
 import { observer } from "mobx-react";
-let scaleValue = new Animated.Value(0)
-const cardScale = scaleValue.interpolate({
+import Like from "./Like";
+scaleValue = new Animated.Value(0)
+cardScale = this.scaleValue.interpolate({
   inputRange: [0, 0.5, 1],
   outputRange: [1, 1.15, 1.2],
 
 })
-
 @observer class PublicEvent extends Component {
   constructor(props) {
     super(props);
@@ -60,6 +60,8 @@ const cardScale = scaleValue.interpolate({
       attempt_to_puplish: false,
       public: false,
       liking: false,
+      participant: false,
+      master: false,
       hiding: false,
       deleting: false,
       swipeOutSettings: null,
@@ -241,156 +243,169 @@ const cardScale = scaleValue.interpolate({
   }
   componentDidMount() {
     setTimeout(() => {
-      this.formDetailModal(this.props.Event).then(details => {
-        let swipeOut = (<View>
-          <List style={{
-            backgroundColor: "#FFFFF6",
-            height: "100%"
-          }}>
-            <ListItem style={{ alignSelf: 'flex-start' }}>
-              {this.props.Event ? (this.state.public || this.props.Event.public ? (<TouchableOpacity onPress={() => {
-                this.publish()
+      stores.Events.isParticipant(this.props.Event.id, stores.Session.SessionStore.phone).then(status => {
+        stores.Events.isMaster(this.props.Event.id, stores.Session.SessionStore.phone).then(master => {
+          this.formDetailModal(this.props.Event).then(details => {
+            let swipeOut = (<View>
+              <List style={{
+                backgroundColor: "#FFFFF6",
+                height: "100%"
               }}>
-                {this.state.publishing ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
-                <Icon style={{ fontSize: 16, color: "#bfc6ea" }} name="forward" type="Entypo">
-                </Icon>
-                <Label style={{ fontSize: 12, color: "#bfc6ea" }}>Publish</Label>
-              </TouchableOpacity>) :
-                (<TouchableOpacity onPress={() => {
-                  this.publish()
-                }
-                }>
-                  {this.state.publishing ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
-                  <Icon style={{ fontSize: 16, color: "#7DD2D2" }} name="forward" type="Entypo">
-                  </Icon>
-                  <Label style={{ fontSize: 12, color: "#7DD2D2" }}>Publish</Label>
-                </TouchableOpacity>)) : null}
-            </ListItem>
-            <ListItem>
-              {this.props.Event ? (this.state.isjoint || this.props.Event.joint ? (<TouchableOpacity>
-                <Icon style={{ fontSize: 16, color: "#7DD2D2" }} name="universal-access" type="Foundation">
-                </Icon>
-                <Label style={{
-                  color: "#7DD2D2",
-                  fontSize: 12
-                }}
-                >
-                  Joint
+                <ListItem style={{ alignSelf: 'flex-start' }}>
+                  {this.props.Event ? (this.state.public || this.props.Event.public ? (<TouchableOpacity onPress={() => {
+                    this.publish()
+                  }}>
+                    {this.state.publishing ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
+                    <Icon style={{ fontSize: 16, color: "#bfc6ea" }} name="forward" type="Entypo">
+                    </Icon>
+                    <Label style={{ fontSize: 12, color: "#bfc6ea" }}>Publish</Label>
+                  </TouchableOpacity>) :
+                    (<TouchableOpacity onPress={() => {
+                      this.publish()
+                    }
+                    }>
+                      {this.state.publishing ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
+                      <Icon style={{ fontSize: 16, color: "#7DD2D2" }} name="forward" type="Entypo">
+                      </Icon>
+                      <Label style={{ fontSize: 12, color: "#7DD2D2" }}>Publish</Label>
+                    </TouchableOpacity>)) : null}
+                </ListItem>
+                <ListItem>
+                  {this.props.Event ? (this.state.isjoint || status ? (<TouchableOpacity>
+                    <Icon style={{ fontSize: 16, color: "#7DD2D2" }} name="universal-access" type="Foundation">
+                    </Icon>
+                    <Label style={{
+                      color: "#7DD2D2",
+                      fontSize: 12
+                    }}
+                    >
+                      Joint
               </Label>
-              </TouchableOpacity>) : (<TouchableOpacity onPress={() => {
-                this.join()
-              }}>
-                {this.state.isJoining ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
-                <Icon style={{ fontSize: 16, color: "#bfc6ea" }} name="universal-access" type="Foundation">
-                </Icon>
-                <Label style={{
-                  color: "#bfc6ea",
-                  fontSize: 12
-                }}
-                >
-                  Join
+                  </TouchableOpacity>) : (<TouchableOpacity onPress={() => {
+                    if (!this.state.participant) {
+                      this.join()
+                    } else {
+                      Toast.show({
+                        text: "Joint Already !"
+                      })
+                    }
+                  }}>
+                    {this.state.isJoining ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
+                    <Icon style={{ fontSize: 16, color: "#bfc6ea" }} name="universal-access" type="Foundation">
+                    </Icon>
+                    <Label style={{
+                      color: "#bfc6ea",
+                      fontSize: 12
+                    }}
+                    >
+                      Join
               </Label>
-              </TouchableOpacity>)) : null}
+                  </TouchableOpacity>)) : null}
 
-            </ListItem>
-            <ListItem style={{ alignSelf: 'flex-start' }}>
-              <TouchableOpacity onPress={() => {
-                this.navigateToEventDetails()
-              }}>
-                <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="calendar" type="EvilIcons">
-                </Icon>
-                {this.props.Event ? (this.props.Event.updated ? (
-                  <View style={this.indicatorMargin}>
-                    <UpdateStateIndicator size={this.blinkerSize} />
-                  </View>
-                ) : (
-                    <View style={this.indicatorMargin}>
-                      <UpdateStateIndicator
-                        size={this.blinkerSize}
-                        color={this.transparent}
-                      />
-                    </View>
-                  )) : null}
-                <Label style={{ fontSize: 12, color: "#1FABAB" }}>Detail</Label>
-              </TouchableOpacity>
-            </ListItem>
-            <ListItem style={{ alignSelf: 'flex-start' }}>
-              <TouchableOpacity onPress={() => {
-                this.navigateToEventChat()
-              }}>
-                <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="comment" type="EvilIcons">
-                </Icon>
-                {this.props.Event ? (this.props.Event.chat_upated ? (
-                  <View style={this.indicatorMargin}>
-                    <UpdateStateIndicator size={this.blinkerSize} />
-                  </View>
-                ) : (
-                    <View style={this.indicatorMargin}>
-                      <UpdateStateIndicator
-                        size={this.blinkerSize}
-                        color={this.transparent}
-                      />
-                    </View>
-                  )) : null}
-                <Label style={{ fontSize: 12, color: "#1FABAB" }}>chat</Label>
-              </TouchableOpacity>
-            </ListItem>
-            <ListItem style={{ alignSelf: 'flex-start' }}>
-              <TouchableOpacity onPress={() => {
-                this.navigateToLogs()
-              }}>
-                <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="exclamation" type="EvilIcons">
-                </Icon>
-                {this.props.Event ? (this.props.Event.upated ? (
-                  <View style={this.indicatorMargin}>
-                    <UpdateStateIndicator size={this.blinkerSize} />
-                  </View>
-                ) : (
-                    <View style={this.indicatorMargin}>
-                      <UpdateStateIndicator
-                        size={this.blinkerSize}
-                        color={this.transparent}
-                      />
-                    </View>
-                  )) : null}
-                <Label style={{ fontSize: 12, color: "#1FABAB" }}>Logs</Label>
-              </TouchableOpacity>
-            </ListItem>
-            <ListItem style={{ alignSelf: 'flex-start' }}>
-              <TouchableOpacity onPress={() => {
-                return this.hide()
-              }}>
-                {this.state.hiding ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
-                <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="archive" type="EvilIcons">
-                </Icon>
-                <Label style={{ fontSize: 12, color: "#1FABAB" }}>Hide</Label>
-              </TouchableOpacity>
-            </ListItem>
-            <ListItem>
-              <TouchableOpacity onPress={() => {
-                return this.delete()
-              }}>
-                {this.state.deleting ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
-                <Icon name="trash" style={{ fontSize: 16, color: "red" }} type="EvilIcons">
-                </Icon>
-                <Label style={{ fontSize: 12, color: "red" }} >Delete</Label>
-              </TouchableOpacity>
-            </ListItem>
-          </List>
-        </View>)
-        this.setState({
-          swipeOutSettings: {
-            autoClose: true,
-            sensitivity: 100,
-            right: [
-              {
-                component: swipeOut
-              }
-            ],
-          },
-          details: details
+                </ListItem>
+                <ListItem style={{ alignSelf: 'flex-start' }}>
+                  <TouchableOpacity onPress={() => {
+                    this.navigateToEventDetails()
+                  }}>
+                    <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="calendar" type="EvilIcons">
+                    </Icon>
+                    {this.props.Event ? (this.props.Event.updated ? (
+                      <View style={this.indicatorMargin}>
+                        <UpdateStateIndicator size={this.blinkerSize} />
+                      </View>
+                    ) : (
+                        <View style={this.indicatorMargin}>
+                          <UpdateStateIndicator
+                            size={this.blinkerSize}
+                            color={this.transparent}
+                          />
+                        </View>
+                      )) : null}
+                    <Label style={{ fontSize: 12, color: "#1FABAB" }}>Detail</Label>
+                  </TouchableOpacity>
+                </ListItem>
+                <ListItem style={{ alignSelf: 'flex-start' }}>
+                  <TouchableOpacity onPress={() => {
+                    this.navigateToEventChat()
+                  }}>
+                    <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="comment" type="EvilIcons">
+                    </Icon>
+                    {this.props.Event ? (this.props.Event.chat_upated ? (
+                      <View style={this.indicatorMargin}>
+                        <UpdateStateIndicator size={this.blinkerSize} />
+                      </View>
+                    ) : (
+                        <View style={this.indicatorMargin}>
+                          <UpdateStateIndicator
+                            size={this.blinkerSize}
+                            color={this.transparent}
+                          />
+                        </View>
+                      )) : null}
+                    <Label style={{ fontSize: 12, color: "#1FABAB" }}>chat</Label>
+                  </TouchableOpacity>
+                </ListItem>
+                <ListItem style={{ alignSelf: 'flex-start' }}>
+                  <TouchableOpacity onPress={() => {
+                    this.navigateToLogs()
+                  }}>
+                    <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="exclamation" type="EvilIcons">
+                    </Icon>
+                    {this.props.Event ? (this.props.Event.upated ? (
+                      <View style={this.indicatorMargin}>
+                        <UpdateStateIndicator size={this.blinkerSize} />
+                      </View>
+                    ) : (
+                        <View style={this.indicatorMargin}>
+                          <UpdateStateIndicator
+                            size={this.blinkerSize}
+                            color={this.transparent}
+                          />
+                        </View>
+                      )) : null}
+                    <Label style={{ fontSize: 12, color: "#1FABAB" }}>Logs</Label>
+                  </TouchableOpacity>
+                </ListItem>
+                <ListItem style={{ alignSelf: 'flex-start' }}>
+                  <TouchableOpacity onPress={() => {
+                    return this.hide()
+                  }}>
+                    {this.state.hiding ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
+                    <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="archive" type="EvilIcons">
+                    </Icon>
+                    <Label style={{ fontSize: 12, color: "#1FABAB" }}>Hide</Label>
+                  </TouchableOpacity>
+                </ListItem>
+                <ListItem>
+                  <TouchableOpacity onPress={() => {
+                    return this.delete()
+                  }}>
+                    {this.state.deleting ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
+                    <Icon name="trash" style={{ fontSize: 16, color: "red" }} type="EvilIcons">
+                    </Icon>
+                    <Label style={{ fontSize: 12, color: "red" }} >Delete</Label>
+                  </TouchableOpacity>
+                </ListItem>
+              </List>
+            </View>)
+            this.setState({
+              swipeOutSettings: {
+                autoClose: true,
+                sensitivity: 100,
+                right: [
+                  {
+                    component: swipeOut
+                  }
+                ],
+              },
+              details: details,
+              participant: status,
+              master: master
+            })
+          })
         })
       })
+
     }, 20)
   }
 
@@ -408,52 +423,9 @@ const cardScale = scaleValue.interpolate({
       })
     }
   }
-  liking = false
-  unliking = false
-  like() {
-    if (this.props.Event.new) {
-      stores.Events.markAsSeen(this.props.Event.id).then(() => {
-      })
-    }
-    if (this.liking || this.state.liking || this.state.liked || this.props.Event.liked) { } else {
-      this.liking = true
-      Requester.like(this.props.Event.id).then(response => {
-        this.setState({
-          liking: false
-        })
-        this.liking = false;
-      }).catch(error => {
-        this.setState({
-          liking: false
-        })
-        this.liking = false
-        Toast.show({
-          text: 'unable to connect to the server !',
-          buttonText: 'Okay'
-        })
-      })
-    }
-
-  }
-  unlike() {
-    if (this.unliking || this.state.unliking || !this.props.Event.liked) { } else {
-      this.unliking = true
-      Requester.unlike(this.props.Event.id).then(response => {
-        this.setState({
-          unliking: false
-        })
-        this.unliking = false
-      }).catch(error => {
-        this.setState({
-          liking: false,
-        })
-        this.liking = false
-        Toast.show({
-          text: 'unable to connect to the server ',
-          buttonText: 'Okay'
-        })
-      })
-    }
+  markAsSeen() {
+    stores.Events.markAsSeen(this.props.id).then(() => {
+    })
   }
   publish() {
     this.setState({
@@ -469,6 +441,7 @@ const cardScale = scaleValue.interpolate({
           publishing: false,
           public: true
         })
+        Toast.show({ type: "success", text: "successfully published to your contacts", buttonText: "ok" })
       }).catch(error => {
         this.setState({
           publishing: false
@@ -479,16 +452,20 @@ const cardScale = scaleValue.interpolate({
         })
       })
     } else {
-      if (this.props.Event.new) {
-        stores.Events.markAsSeen(this.props.Event.id).then(() => {
-        })
-      }
       stores.Events.isMaster(this.props.Event.id, stores.Session.SessionStore.phone).then(status => {
         if (status) {
           Requester.publish(this.props.Event.id).then(() => {
             this.setState({
               public: true,
               publishing: false
+            })
+          }).catch(error => {
+            this.setState({
+              publishing: false
+            })
+            Toast.show({
+              text: 'unable to connect to the server ',
+              buttonText: 'Okay'
             })
           })
         } else {
@@ -555,8 +532,7 @@ const cardScale = scaleValue.interpolate({
       isDetailsModalOpened: false
     })
     Requester.join(this.props.Event.id, this.props.Event.event_host).then((status) => {
-      this.props.Event.joint = true
-      this.setState({ isjoint: true, isJoining: false });
+      this.setState({ participant: true, isJoining: false });
     }).catch((error) => {
       this.setState({ isJoining: false })
       Toast.show({
@@ -595,7 +571,7 @@ const cardScale = scaleValue.interpolate({
           >
             <Left>
               <View>
-                {this.state.publishing ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : <Icon
+                {this.state.publishing ? <View style={{ height: 18 }}><Spinner size={"small"} color="#7DD2D2"></Spinner></View> : <Icon
                   name="forward"
                   type="Entypo"
                   style={{
@@ -630,7 +606,7 @@ const cardScale = scaleValue.interpolate({
           >
             <Left>
               <View style={{ flexDirection: "row", flex: 5 }}>
-                <ProfileView joined={() => this.join()} hasJoin={this.props.Event.joint} onOpen={() => this.onOpenDetaiProfileModal()} phone={(this.props.Event.creator_phone)}></ProfileView>
+                <ProfileView joined={() => this.join()} hasJoin={this.state.participant} onOpen={() => this.onOpenDetaiProfileModal()} phone={(this.props.Event.creator_phone)}></ProfileView>
               </View>
             </Left>
           </CardItem>
@@ -663,8 +639,9 @@ const cardScale = scaleValue.interpolate({
               justifyContent: "space-between"
             }}
           >
-            <TouchableOpacity onPress={() => requestAnimationFrame(() =>
+            <TouchableOpacity onPress={() => requestAnimationFrame(() => {
               this.navigateToEventDetails()
+            }
             )}>
               <View>
                 <Text
@@ -701,7 +678,7 @@ const cardScale = scaleValue.interpolate({
             cardBody
           >
             <Left>
-              <PhotoView joined={() => this.join()} isToBeJoint hasJoin={this.props.Event.joint} onOpen={() => this.onOpenPhotoModal()} style={{
+              <PhotoView joined={() => this.join()} isToBeJoint hasJoin={this.state.participant} onOpen={() => this.onOpenPhotoModal()} style={{
                 width: "70%",
                 marginLeft: "4%"
               }} photo={this.props.Event.background} width={170} height={125} borderRadius={10} />
@@ -897,83 +874,13 @@ const cardScale = scaleValue.interpolate({
           </CardItem>
           <Footer>
             <Left>
-              {this.props.Event.liked || this.state.liked ? (
-                <View style={{ flexDirection: "row" }}>
-                  {this.state.unliking ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
-                  <TouchableWithoutFeedback onPressIn={() => {
-                    scaleValue.setValue(0);
-                    Animated.timing(scaleValue, {
-                      toValue: 1,
-                      duration: 250,
-                      easing: Easing.linear,
-                      userNativeDriver: true
-                    }).start()
-                  }} onPressOut={() => {
-                    Animated.timing(scaleValue, {
-                      toValue: 1,
-                      duration: 100,
-                      easing: Easing.linear,
-                      userNativeDriver: true
-                    }).start()
-                    return this.unlike()
-                  }} >
-                    <Animated.View style={{ transform: [{ scale: cardScale }] }} >
-                      <Icon
-                        name="thumbs-up"
-                        type="Entypo"
-                        style={{
-                          color: "#7DD2D2",
-                          fontSize: 23
-                        }}
-                      />
-                    </Animated.View>
-
-                  </TouchableWithoutFeedback>
-                  <View style={{ marginTop: 7 }}>
-                    <Text style={{ color: "#7DD2D2" }} note> {this.props.Event.likes} Likers </Text>
-                  </View>
-                </View>
-              ) : (
-                  <View style={{ flexDirection: "row" }}>
-                    {this.state.liking ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
-                    <TouchableWithoutFeedback onPressIn={() => {
-                      scaleValue.setValue(0);
-                      Animated.timing(scaleValue, {
-                        toValue: 1,
-                        duration: 250,
-                        easing: Easing.linear,
-                        userNativeDriver: true
-                      }).start()
-                      return this.like()
-                    }} onPressOut={() => {
-                      Animated.timing(scaleValue, {
-                        toValue: 1,
-                        duration: 100,
-                        easing: Easing.linear,
-                        userNativeDriver: true
-                      }).start()
-                    }} >
-                      <Animated.View style={{ transform: [{ scale: cardScale }] }} >
-                        <Icon
-                          name="thumbs-up"
-                          type="Entypo"
-                          style={{
-                            color: "#bfc6ea",
-                            fontSize: 23
-                          }}
-                        />
-                      </Animated.View>
-
-                    </TouchableWithoutFeedback>
-                    <View style={{ marginTop: 7 }}>
-                      <Text style={{ color: "#bfc6ea" }} note>{this.props.Event.likes + this.state.likeIncrelment} Likers</Text>
-                    </View>
-                  </View>
-                )}
+              <View style={{ flexDirection: "row" }}>
+                <Like id={this.props.Event.id} end={() => this.markAsSeen()} />
+              </View>
             </Left>
             <Right>
               <View style={{ padding: "-5%", marginLeft: "-25%" }}>
-                {this.props.Event.joint || this.state.isjoint ? (
+                {this.props.Event.joint || this.state.participant ? (
                   <View style={{ flexDirection: "row" }}>
                     <TouchableWithoutFeedback onPress={() => Toast.show({
                       text: 'Joint already!',
@@ -1000,28 +907,28 @@ const cardScale = scaleValue.interpolate({
                         scaleValue.setValue(0);
                         Animated.timing(scaleValue, {
                           toValue: 1,
-                          duration: 250,
+                          duration: 300,
+                          easing: Easing.linear,
+                          userNativeDriver: true
+                        }).start()
+                      }} onPressOut={() => {
+                        Animated.timing(scaleValue, {
+                          toValue: 1,
+                          duration: 200,
                           easing: Easing.linear,
                           userNativeDriver: true
                         }).start()
                         return this.join()
-                      }} onPressOut={() => {
-                        Animated.timing(scaleValue, {
-                          toValue: 1,
-                          duration: 100,
-                          easing: Easing.linear,
-                          userNativeDriver: true
-                        }).start()
                       }} >
                         <Animated.View style={{ transform: [{ scale: cardScale }] }}>
                           <Icon name="universal-access" style={{
                             color: "#bfc6ea",
-                            fontSize: 23
+                            fontSize: 27
                           }} type="Foundation" />
                         </Animated.View>
                       </TouchableWithoutFeedback>
-                      <View style={{ marginTop: 1 }}>
-                        <Text style={{ color: "#bfc6ea" }} note> joint </Text>
+                      <View style={{ marginTop: 4 }}>
+                        <Text style={{ fontSize: 13, color: "#bfc6ea" }} note> {" "}join </Text>
                       </View>
                     </View>
                   )}

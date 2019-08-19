@@ -61,7 +61,7 @@ export default class events {
   @action delete(EventID) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
-        Events = drop(Events, indexOf(EventID, EventID))
+        Events = drop(Events, indexOf(EventID, EventID) + 1)
         this.saveKey.data = Events;
         storage.save(this.saveKey).then(() => {
           this.setProperties(this.saveKey.data, false);
@@ -90,7 +90,7 @@ export default class events {
         let index = findIndex(Events, { id: EventID });
         let Participants = Events[index].participant
         let Masters = filter(Participants, { master: true });
-        if (find(Masters, { phone, Phone })) resolve(true)
+        if (find(Masters, { phone: Phone })) resolve(true)
         else resolve(false)
       })
     })
@@ -274,16 +274,18 @@ export default class events {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let eventIndex = findIndex(Events, { id: EventID });
-        Events[eventIndex].participant = Events[eventIndex].participant.concat([Participant]);
+        Events[eventIndex].participant = uniqBy(Events[eventIndex].participant.concat([Participant]), "phone");
         if (inform) {
           Events[eventIndex].participant_added = true;
           Events[eventIndex].updated = true;
         }
         else Events[eventIndex].joint = true;
-        Events[eventIndex].updated_at = moment().format("YYYY-MM-DD HH:mm");
+        if (inform)
+          Events[eventIndex].updated_at = moment().format("YYYY-MM-DD HH:mm");
         this.saveKey.data = Events;
         storage.save(this.saveKey).then(() => {
-          this.setProperties(this.saveKey.data, inform);
+          if (indexOf)
+            this.setProperties(this.saveKey.data, inform);
           resolve();
         });
       });
@@ -420,7 +422,8 @@ export default class events {
         Events.splice(index, 1, Event);
         this.saveKey.data = Events;
         storage.save(this.saveKey).then(() => {
-          this.setProperties(this.saveKey.data, inform);
+          if (inform)
+            this.setProperties(this.saveKey.data, inform);
           resolve();
         });
       });
@@ -508,7 +511,7 @@ export default class events {
         let index = findIndex(Events, { id: EventID });
         Event.must_contribute = drop(
           Event.must_contribute,
-          indexOf(Event.must_contribute, ContributionID)
+          indexOf(Event.must_contribute, ContributionID) + 1
         );
         if (inform) {
           Event.must_contribute_update = true;
@@ -547,7 +550,7 @@ export default class events {
         } else {
           let EID = requestObject.EventID();
           EID.event_id = EventID;
-          tcpRequest.getCurrentEvent(EID).then(JSONData => {
+          tcpRequest.getCurrentEvent(EID, EventID).then(JSONData => {
             serverEventListener.get_data(JSONData).then(E => {
               this.addEvent(E).then(() => {
                 this.addVote(EventID, VoteID, true).then(() => {
@@ -603,7 +606,7 @@ export default class events {
         } else {
           let EID = requestObject.EventID();
           EID.event_id = EventID;
-          tcpRequest.getCurrentEvent(EID).then(JSONData => {
+          tcpRequest.getCurrentEvent(EID, EventID).then(JSONData => {
             serverEventListener.get_data(JSONData).then(E => {
               this.addEvent(E).then(() => {
                 this.addContribution(EventID, ContributionID, true).then(() => {
@@ -623,7 +626,7 @@ export default class events {
         let index = findIndex(Events, { id: EventID });
         Event.contributions = drop(
           Event.contributions,
-          indexOf(Event.contributions, ContributionID)
+          indexOf(Event.contributions, ContributionID) + 1
         );
         if (inform) {
           Event.contribtion_removed = true;
@@ -645,7 +648,7 @@ export default class events {
         let index = findIndex(Events, { id: EventID });
         Event.highlights = drop(
           Event.highlights,
-          indexOf(Event.highlights, HighlightID)
+          indexOf(Event.highlights, HighlightID) + 1
         );
         if (inform) {
           Event.highlight_removed = true;
@@ -684,7 +687,7 @@ export default class events {
         } else {
           let EID = requestObject.EventID();
           EID.event_id = EventID;
-          tcpRequest.getCurrentEvent(EID).then(JSONData => {
+          tcpRequest.getCurrentEvent(EID, EventID).then(JSONData => {
             serverEventListener.get_data(JSONData).then(E => {
               this.addEvent(E).then(() => {
                 this.addHighlight(EventID, HighlightID, true).then(() => {
@@ -723,7 +726,7 @@ export default class events {
         } else {
           let EID = requestObject.EventID();
           EID.event_id = EventID;
-          tcpRequest.getCurrentEvent(EID).then(JSONData => {
+          tcpRequest.getCurrentEvent(EID, EventID).then(JSONData => {
             serverEventListener.get_data(JSONData).then(E => {
               this.addEvent(E).then(() => {
                 this.addRemind(EventID, RemindID, true).then(() => {
@@ -742,7 +745,7 @@ export default class events {
       this.readFromStore().then(Events => {
         let Event = find(Events, { id: EventID });
         let index = findIndex(Events, { id: EventID });
-        Event.reminds = drop(Event.reminds, indexOf(Event.reminds, RemindID));
+        Event.reminds = drop(Event.reminds, indexOf(Event.reminds, RemindID) + 1);
         if (inform) {
           Event.remind_removed = true;
           Event.updated = true;
@@ -765,7 +768,7 @@ export default class events {
         Events.splice(index, 1, Event);
         this.saveKey.data = Events;
         storage.save(this.saveKey).then(() => {
-          this.setProperties(this.saveKey.data, true);
+          //this.setProperties(this.saveKey.data, true);
           resolve();
         });
       });

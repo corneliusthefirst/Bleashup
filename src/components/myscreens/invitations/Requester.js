@@ -9,8 +9,8 @@ class Requester {
             invite.invitation = invitation
             invite.invitee = stores.Session.SessionStore.phone
             invite.host = stores.Session.SessionStore.host
-            tcpRequest.seen_invitation(invite).then(JSONData => {
-                serverEventListener.sendRequest(JSONData, invitation.invitation_id).then(response => {
+            tcpRequest.seen_invitation(invite, invitation.invitation_id + "seen").then(JSONData => {
+                serverEventListener.sendRequest(JSONData, invitation.invitation_id + "seen").then(response => {
                     stores.Invitations.markAsSeen(invitation.invitation_id).then(() => {
                         resolve("ok");
                     })
@@ -26,8 +26,8 @@ class Requester {
             invite.invitation = invitation
             invite.invitee = stores.Session.SessionStore.phone
             invite.host = stores.Session.SessionStore.host
-            tcpRequest.received_invitation(invite).then(JSONData => {
-                serverEventListener.sendRequest(JSONData, invitation.invitation_id).then(response => {
+            tcpRequest.received_invitation(invite, invitation.invitation_id + "received").then(JSONData => {
+                serverEventListener.sendRequest(JSONData, invitation.invitation_id + "received").then(response => {
                     stores.Invitations.markAsReceived(invitation.invitation_id).then(() => {
                         resolve("ok");
                     })
@@ -43,8 +43,8 @@ class Requester {
             invite.invitation = invitation
             invite.invitee = stores.Session.SessionStore.phone
             invite.host = stores.Session.SessionStore.host
-            tcpRequest.acceptInvtation(invite).then(JSONData => {
-                serverEventListener.sendRequest(JSONData, invitation.invitation_id).then((response) => {
+            tcpRequest.acceptInvtation(invite, invitation.invitation_id + "accept").then(JSONData => {
+                serverEventListener.sendRequest(JSONData, invitation.invitation_id + "accept").then((response) => {
                     stores.Invitations.acceptInvitation(invitation.invitation_id).then(() => {
                         resolve('ok')
                     })
@@ -60,8 +60,8 @@ class Requester {
             invite.invitation = invitation
             invite.invitee = stores.Session.SessionStore.phone
             invite.host = stores.Session.SessionStore.host
-            tcpRequest.denieInvitation(invite).then(JSONData => {
-                serverEventListener.sendRequest(JSONData, invitation.invitation_id).then(response => {
+            tcpRequest.denieInvitation(invite, invitation.invitation_id + "denie").then(JSONData => {
+                serverEventListener.sendRequest(JSONData, invitation.invitation_id + "denie").then(response => {
                     stores.Invitations.denieInvitation(invitation.invitation_id).then(() => {
                         resolve("ok");
                     })

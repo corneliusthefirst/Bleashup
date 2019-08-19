@@ -5,10 +5,10 @@ import GState from "../stores/globalState";
 
 class tcpRequestData {
   Presence() {
-    return this.sendData("presence", requestObject.None());
+    return this.sendData("presence", requestObject.None(), "presence");
   }
 
-  UpdateCurrentEvent(phone, eventID, action, data) {
+  UpdateCurrentEvent(phone, eventID, action, data, id) {
     let UpdateData = () => {
       if (action === "title") {
         let Update = requestObject.Update();
@@ -104,18 +104,18 @@ class tcpRequestData {
         return Update;
       }
     };
-    return this.sendData(action, data);
+    return this.sendData(action, data, id);
   }
 
-  createEvent(event) {
-    return this.sendData("create_event", event);
+  createEvent(event, id) {
+    return this.sendData("create_event", event, id);
   }
 
-  sendData(action, data) {
+  sendData(action, data, id) {
     return new Promise((resolve, reject) => {
       stores.Session.getSession().then(session => {
-        session.reference = GState.writing ? GState.writing : session.reference
-        transfer.formTransferableData(session, action, data).then(JSONData => {
+        session.reference = session.reference
+        transfer.formTransferableData(session, action, data, id).then(JSONData => {
           resolve(JSONData);
         });
       });
@@ -123,274 +123,278 @@ class tcpRequestData {
   }
 
   //My data is requestObject.Invitation()
-  acceptInvtation(invitation) {
-    return this.sendData("accept_invitation", invitation);
+  acceptInvtation(invitation, id) {
+    return this.sendData("accept_invitation", invitation, id);
   }
 
   //My data is requestObject.Invitation()
-  denieInvitation(invitation) {
-    return this.sendData("denie_invitation", invitation);
+  denieInvitation(invitation, id) {
+    return this.sendData("denie_invitation", invitation, id);
   }
   //My data is requestObject.Invite()
   invite(invite) {
-    return this.sendData("invite", data);
+    return this.sendData("invite", data, id);
   }
 
   // My data is requestObject.Invite()
-  received_invitation(data) {
-    return this.sendData("received_invitation", data);
+  received_invitation(data, id) {
+    return this.sendData("received_invitation", data, id);
   }
 
   // My data is requestObject.Invite()
-  seen_invitation(data) {
-    return this.sendData("seen_invitation", data);
+  seen_invitation(data, id) {
+    return this.sendData("seen_invitation", data, id);
   }
   //My data is {"phone":phoneToLeave}
-  leaveEvent(data) {
-    return this.sendData("leave_event", data);
+  leaveEvent(data, id) {
+    return this.sendData("leave_event", data, id);
   }
 
   //My data is requestObject.EventID()
-  postponeEvent(data) {
-    return this.sendData("postpone_event", data);
+  postponeEvent(data, id) {
+    return this.sendData("postpone_event", data, id);
   }
   //My data is requestObject.EventID()
-  pastEvent(data) {
-    return this.sendData("past_event", data);
-  }
-
-  //My data is requestObject.EventID()
-  likeEvent(data) {
-    return this.sendData("like_event", data);
+  pastEvent(data, id) {
+    return this.sendData("past_event", data, id);
   }
 
   //My data is requestObject.EventID()
-  unlikeEvent(data) {
-    return this.sendData("unlike_event", data);
+  likeEvent(data, id) {
+    return this.sendData("like_event", data, id);
+  }
+
+  //My data is requestObject.EventID()
+  unlikeEvent(data, id) {
+    return this.sendData("unlike_event", data, id);
   }
 
   //My data is requestObject.None()
-  getContacts(phone, data) {
-    return this.sendData("get_contacts", data);
+  getContacts(phone, data, id) {
+    return this.sendData("get_contacts", data, id);
   }
 
   //My data is requestObject.Contact()
-  addContact(data) {
-    return this.sendData("add_contact", data);
+  addContact(data, id) {
+    return this.sendData("add_contact", data, id);
   }
   //My data is requestObject.Contact()
-  removeContact(data) {
-    return this.sendData("remove_contact", data);
+  removeContact(data, id) {
+    return this.sendData("remove_contact", data, id);
   }
 
   //My data is requestObject.EventID()
-  publishEvent(data) {
-    return this.sendData("publish", data);
+  publishEvent(data, id) {
+    return this.sendData("publish", data, id);
   }
 
-  getPublishers(data) {
-    return this.sendData("get_publishers", data);
-  }
-
-  //My data is requestObject.EventID()
-  unpublishEvent(data) {
-    return this.sendData("unpublish", data);
+  getPublishers(data, id) {
+    return this.sendData("get_publishers", data, id);
   }
 
   //My data is requestObject.EventID()
-  addToPublic(data) {
-    return this.sendData("add_to_public", data);
+  unpublishEvent(data, id) {
+    return this.sendData("unpublish", data, id);
   }
 
   //My data is requestObject.EventID()
-  removeFromPublic(data) {
-    return this.sendData("remove_from_public", data);
+  addToPublic(data, id) {
+    return this.sendData("add_to_public", data, id);
   }
 
   //My data is requestObject.EventID()
-  joinEvent(data) {
-    return this.sendData("join_event", data);
+  removeFromPublic(data, id) {
+    return this.sendData("remove_from_public", data, id);
+  }
+
+  //My data is requestObject.EventID()
+  joinEvent(data, id) {
+    return this.sendData("join_event", data, id);
   }
 
   //My data is requestObject.None()
-  getEvents(data) {
-    return this.sendData("get_events", data);
+  getEvents(data, id) {
+    return this.sendData("get_events", data, id);
   }
 
   //My data is requestObject.EventID()
-  getCurrentEvent(data) {
-    return this.sendData("get_current_event", data);
+  getCurrentEvent(data, id) {
+    return this.sendData("get_current_event", data, id);
   }
 
   //My data is requestObject.None()
-  collectCurrentEvents(data) {
-    return this.sendData("collect_current_events", data);
+  collectCurrentEvents(data, id) {
+    return this.sendData("collect_current_events", data, id);
   }
 
   //My data is requestObject.Field()
-  getFromCurrentEvent(data) {
-    return this.sendData("get_from_current_event", data);
+  getFromCurrentEvent(data, id) {
+    return this.sendData("get_from_current_event", data, id);
   }
 
   //My data is requestObject.Vote()
-  CreateVote(data) {
-    return this.sendData("create_vote", data);
+  CreateVote(data, id) {
+    return this.sendData("create_vote", data, id);
   }
 
   //My data is requestObject.Voter()
-  Vote(data) {
-    return this.sendData("vote", data);
+  Vote(data, id) {
+    return this.sendData("vote", data, id);
   }
 
   //My data is requestObject.VEID()
-  deleteVote(data) {
-    return this.sendData("delete_vote", data);
+  deleteVote(data, id) {
+    return this.sendData("delete_vote", data, id);
   }
 
   //My data is requestObject.VEID()
-  publishVote(data) {
-    return this.sendData("publish_vote", data);
+  publishVote(data, id) {
+    return this.sendData("publish_vote", data, id);
   }
 
   //My data is requestObject.VotePeriod()
-  changeVotePeriod(data) {
-    return this.sendData("change_vote_period", data);
+  changeVotePeriod(data, id) {
+    return this.sendData("change_vote_period", data, id);
   }
 
   //My data is requestObject.VID()
-  getVote(data) {
-    return this.sendData("get_vote", data);
+  getVote(data, id) {
+    return this.sendData("get_vote", data, id);
   }
 
   //My data is requestObject.EID()
-  getVotes(data) {
-    return this.sendData("get_votes", data);
+  getVotes(data, id) {
+    return this.sendData("get_votes", data, id);
   }
   // My data is requestObject.VEID()
-  likeVote(data) {
-    return this.sendData("like_vote", data);
+  likeVote(data, id) {
+    return this.sendData("like_vote", data, id);
   }
 
   // My data is requestObject.VEID()
-  unlikeVote(data) {
-    return this.sendData("unlike_vote", data);
+  unlikeVote(data, id) {
+    return this.sendData("unlike_vote", data, id);
   }
 
   //My data is requestObject.Contribution()
-  createContribution(data) {
-    return this.sendData("create_contribution", data);
+  createContribution(data, id) {
+    return this.sendData("create_contribution", data, id);
   }
 
   //My Data is requestObject.ContributionState()
-  changeContributionState(data) {
-    return this.sendData("change_contribution_state", data);
+  changeContributionState(data, id) {
+    return this.sendData("change_contribution_state", data, id);
   }
 
+  //my dada here is requestObject.EventID()
+  getLikes(data, id) {
+    return this.sendData("get_likes", data, id);
+  }
   //My Data is requestObject.ContributionPeriod()
-  changeContributionPeriod(data) {
-    return this.sendData("change_contribution_period", data);
+  changeContributionPeriod(data, id) {
+    return this.sendData("change_contribution_period", data, id);
   }
 
   //My Data is requestObject.Contribute()
-  contribute(data) {
-    return this.sendData("contribute", data);
+  contribute(data, id) {
+    return this.sendData("contribute", data, id);
   }
 
   //My Data is requestObject.CID()
-  getContribution(data) {
-    return this.sendData("get_contribution", data);
+  getContribution(data, id) {
+    return this.sendData("get_contribution", data, id);
   }
 
   //My Data is requestObject.EID()
-  getContributions(data) {
-    return this.sendData("get_contributions", data);
+  getContributions(data, id) {
+    return this.sendData("get_contributions", data, id);
   }
 
   //My Data is requestObject.CEID()
-  publishContribution(data) {
-    return this.sendData("publish_contribution", data);
+  publishContribution(data, id) {
+    return this.sendData("publish_contribution", data, id);
   }
 
   //My Data is requestObject.CEID()
-  likeContribution(data) {
-    return this.sendData("like_contribution", data);
+  likeContribution(data, id) {
+    return this.sendData("like_contribution", data, id);
   }
 
   //My Data is requestObject.CEID()
-  unlikeContribution(data) {
-    return this.sendData("unlike_contribution", data);
+  unlikeContribution(data, id) {
+    return this.sendData("unlike_contribution", data, id);
   }
 
   //My Data is requestObject.CEID()
-  UpdateMustContribute(data) {
-    return this.sendData("update_must_contribute", data);
+  UpdateMustContribute(data, id) {
+    return this.sendData("update_must_contribute", data, id);
   }
 
   //My Data is requestObject.Highlight()
-  addHighlight(data) {
-    return this.sendData("add_highlight", data);
+  addHighlight(data, id) {
+    return this.sendData("add_highlight", data, id);
   }
 
   //My Data is requestObject.HID()
-  getHighlight(data) {
-    return this.sendData("get_highlight", data);
+  getHighlight(data, id) {
+    return this.sendData("get_highlight", data, id);
   }
 
   //My Data is requestObject.EID()
-  getHighlights(data) {
-    return this.sendData("get_highlights", data);
+  getHighlights(data, id) {
+    return this.sendData("get_highlights", data, id);
   }
 
   //My Data is requestObject.HUpdate()
-  updateHighlight(data) {
-    return this.sendData("update_highlight", data);
+  updateHighlight(data, id) {
+    return this.sendData("update_highlight", data, id);
   }
 
   //My Data is requestObject.HEID()
-  deleteHighlight(data) {
-    return this.sendData("delete_highlight", data);
+  deleteHighlight(data, id) {
+    return this.sendData("delete_highlight", data, id);
   }
-  udateContribution(data) {
-    return this.sendData("update_contribution", data);
+  udateContribution(data, id) {
+    return this.sendData("update_contribution", data, id);
   }
-  addContributionMean(data) {
-    return this.sendData("add_contribution_mean", data);
+  addContributionMean(data, id) {
+    return this.sendData("add_contribution_mean", data, id);
   }
-  removeContributionMean(data) {
-    return this.sendData("remove_contribution_mean", data);
+  removeContributionMean(data, id) {
+    return this.sendData("remove_contribution_mean", data, id);
   }
-  updateContributionMeanName(data) {
-    return this.sendData("update_contribution_mean_name", data);
+  updateContributionMeanName(data, id) {
+    return this.sendData("update_contribution_mean_name", data, id);
   }
-  updateContributionMeanCredential(data) {
-    return this.sendData("update_contribution_mean_credential", data);
+  updateContributionMeanCredential(data, id) {
+    return this.sendData("update_contribution_mean_credential", data, id);
   }
-  updateVote(data) {
-    return this.sendData("update_vote", data);
+  updateVote(data, id) {
+    return this.sendData("update_vote", data, id);
   }
-  addVoteOption(data) {
-    return this.sendData("add_vote_option", data);
+  addVoteOption(data, id) {
+    return this.sendData("add_vote_option", data, id);
   }
-  removeVoteOption(data) {
-    return this.sendData("remove_vote_option", data);
+  removeVoteOption(data, id) {
+    return this.sendData("remove_vote_option", data, id);
   }
-  updateVoteOptionName(data) {
-    return this.sendData("update_vote_option_name", data);
+  updateVoteOptionName(data, id) {
+    return this.sendData("update_vote_option_name", data, id);
   }
-  addRemind(data) {
-    return this.sendData("add_remind", data);
+  addRemind(data, id) {
+    return this.sendData("add_remind", data, id);
   }
   getReminds(data) {
     return this.sendData("get_reminds", data);
   }
-  getRemind(data) {
-    return this.sendData("get_remind", data);
+  getRemind(data, id) {
+    return this.sendData("get_remind", data, id);
   }
-  deleteRemind(data) {
-    return this.sendData("delete_remind", data);
+  deleteRemind(data, id) {
+    return this.sendData("delete_remind", data, id);
   }
-  updateRemind(data) {
-    return this.sendData("update_remind", data);
+  updateRemind(data, id) {
+    return this.sendData("update_remind", data, id);
   }
 }
 

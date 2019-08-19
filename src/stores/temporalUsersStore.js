@@ -56,7 +56,7 @@ export default class TemporalUsersStore {
         return new Promise((resolve, reject) => {
             if (this.Users.length !== 0) {
                 let user = find(this.Users, { phone: phone });
-                if (user.phone) {
+                if (user) {
                     resolve(user);
                 } else {
                     console.error(this.Users)
@@ -72,7 +72,7 @@ export default class TemporalUsersStore {
             } else {
                 this.readFromStore().then(users => {
                     let user = find(users, { phone: phone });
-                    if (user.phone) {
+                    if (user) {
                         this.setPropterties(users);
                         resolve(user)
                     }
@@ -107,7 +107,7 @@ export default class TemporalUsersStore {
             forEach(phones, (phone) => {
                 if (this.Users.length !== 0) {
                     user = find(this.Users, { phone: phone });
-                    if (user.phone) {
+                    if (user) {
                         result.push(user)
                         i++
                     } else {
@@ -117,7 +117,7 @@ export default class TemporalUsersStore {
                 } else {
                     this.readFromStore().then(users => {
                         user = find(users, { phone: phone });
-                        if (user.phone) {
+                        if (user) {
                             result.push(user)
                             i++;
                         } else {

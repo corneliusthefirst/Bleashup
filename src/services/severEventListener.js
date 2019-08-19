@@ -97,7 +97,7 @@ class ServerEventListener {
         }
       }
       if (data.status) {
-        console.warn(data.status)
+        // console.warn(data.status)
         switch (data.status) {
           case "successful":
             if (data.data) emitter.emit("successful", "data", data.data);
@@ -111,6 +111,7 @@ class ServerEventListener {
       }
       if (data.error) {
         console.warn("reconnection attempted", "deu to ", data)
+        emitter.emit("unsuccessful", data.message)
       }
     });
     socket.on("timeout", data => {
@@ -123,8 +124,10 @@ class ServerEventListener {
   get_data(data, id) {
     return new Promise((resolve, reject) => {
       emitter.on("successful", (response, dataResponse) => {
-        if (dataResponse.id == id) {
-          resolve(dataResponse)
+        if (dataResponse) {
+          if (dataResponse.id == id) {
+            resolve(dataResponse.data)
+          }
         }
       });
       emitter.on("unsuccessful", (response, dataError) => {
@@ -138,37 +141,29 @@ class ServerEventListener {
     });
   }
   sendRequest(data, id) {
-    let exit = false;
-    do {
-      if (!GState.writing) {
-        GState.writing = true
-        return new Promise((resolve, reject) => {
-          emitter.once("successful", (response) => {
-            GState.writing = false
-            exit = true
-            resolve(response);
-          });
-          emitter.once("unsuccessful", (response) => {
-            GState.writing = false
-            exit = true
-            reject(response);
-          });
-          if (this.socket.write) {
-            this.socket.write(data)
-          } else {
-            exit = true
-            GState.writing = false
-            reject("not connected to server")
-          }
-        })
+    return new Promise((resolve, reject) => {
+      emitter.on("successful", (response) => {
+        if (response.id == id) {
+          resolve(response.data);
+        }
+      });
+      emitter.on("unsuccessful", (response) => {
+        console.warn(response)
+        if (response.id === id)
+          reject(response);
+      });
+      if (this.socket.write) {
+        this.socket.write(data)
+      } else {
+        reject("not connected to server")
       }
-    } while (!GState.writing || exit)
+    })
   }
   GetData(EventId) {
     return new Promise((resolve, reject) => {
       let EventID = requestObject.EventID()
       EventID.event_id = EventId;
-      tcpRequest.getCurrentEvent(EventID).then(JSONData => {
+      tcpRequest.getCurrentEvent(EventID, EventId).then(JSONData => {
         this.get_data(JSONData, EventId).then(Event => {
           resolve(Event)
         });
