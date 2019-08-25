@@ -129,7 +129,7 @@ class ServerEventListener {
         data = data.replace("_end_","")
         this.accumulator += data
         this.dispatch(JSON.parse(this.accumulator))
-        this.dispatch = ""
+        this.accumulator = ""
       }else{
         this.accumulator += data
       }
