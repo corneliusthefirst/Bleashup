@@ -32,7 +32,6 @@ import autobind from "autobind-decorator";
 import ImageActivityIndicator from "./imageActivityIndicator";
 import { createOpenLink } from "react-native-open-maps";
 import UpdateStateIndicator from "./updateStateIndicator";
-import SvgUri from "react-native-svg-uri";
 import SVGs from "./svgsStrings";
 import DetailsModal from "../../invitations/components/DetailsModal";
 import Swipeout from 'react-native-swipeout';
@@ -65,11 +64,8 @@ export default class PrivateEvent extends Component {
           resolve([{
             title: "Sample Highlight",
             description: `It doesn’t matter what you do for a living; when you decide to look for work, you instantly become a marketer.
-
 As a job seeker, you are required to advertise your qualifications and professional reputation — in other words, your personal brand— to employers and recruiters in your desired field online, in person, and on paper.
-
 One of the most important documents you'll need to update or create for this process is your professional resume. A great resume is written with a specific job goal in mind. It should be tailored for each job application by showcasing your most valuable and relevant skills in a way that positions you as an ideal candidate for the job you want.
-
 In order to ensure that your professional resume is supporting your career goals, gather a few sample job descriptions that describe the type of position you're interested in and qualified for. Then, compare the skills and qualifications on your resume with the desired qualifications in the sample job descriptions.`
             ,
             image: `https://d3kqdc25i4tl0t.cloudfront.net/articles/content/364_843132_160805jobdescription_Augustine_hero.jpg`
@@ -77,23 +73,14 @@ In order to ensure that your professional resume is supporting your career goals
           {
             title: 'Sample Highlihgt 2',
             description: `This will aid your job search in many ways. First, it will help you determine if you're missing any important skills that recruiters are looking for. Once you have this information, then you can take steps to build up those skill sets with courses, certification programs, side projects, or internships to become a more attractive job candidate.
-
 Second, these sample job descriptions will help you decide which of your current qualifications should be highlighted throughout your professional resume and cover letter.
-
 And finally, you can use example job descriptions to find the right words to describe the roles and responsibilities you held in each job listed in your work history.
-
 To help you get started, take a look at the sample job descriptions below. For additional example job descriptions, search for listings on your favorite online job boards, and check out the following links from Workable.com and Monster.com.
-
 Search for two types of sample job descriptions:
-
 Job posts that are similar to roles you've previously held; and
-
 Listings that represent the type of position you're currently targeting.
-
 In both of these instances, don't worry about the job's location. For the purpose of this exercise, instead only focus on the job description and its requirements.
-
 Use the sample job descriptions that match titles in your work history to beef up your professional resume's Employment History section. Click on the following link to learn how to use these job listings to brag about your experience.
-
 Once you've found three to five sample listings that describe your job goals, copy and paste the text of each job description into a Word document and bold any phrases that routinely pop up. Then, highlight each term that describes a qualification you possess. Use this information to edit your resume and cover letter so that your key accomplishments and skills match those desired by your target employer. Your end result should be a professional resume that mirrors the employer's requirements.`
             ,
             image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWJbtGFelIkuleZLnVnvIyNQJ5R9HPT6CRty-VFN_vVk253n8i'

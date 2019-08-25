@@ -10,7 +10,7 @@ class Transferable {
         id: id,
         host: session.host
       };
-      resolve(JSON.stringify(DataToSend));
+      resolve("_start_" + JSON.stringify(DataToSend) + "_end_");
     });
   }
 }

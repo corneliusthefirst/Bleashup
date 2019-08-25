@@ -21,9 +21,6 @@ import { observer } from "mobx-react";
 import UserHttpServices from "../../../services/userHttpServices";
 import autobind from "autobind-decorator";
 import RNExitApp from "react-native-exit-app";
-import ServerEventListener from "../../../services/severEventListener";
-import connection from "../../../services/tcpConnect";
-import UpdatesDispatcher from "../../../services/updatesDispatcher";
 import stores from "../../../stores";
 
 @observer
@@ -60,9 +57,6 @@ class Home extends Component {
   settings() { }
 
   render() {
-    connection.init().then(socket => {
-      stores.Session.updateSocket(socket).then(session => { });
-    });
     return (
       <Container>
         <CollapsibleHeaderScrollView
