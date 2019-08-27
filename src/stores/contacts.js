@@ -1,133 +1,147 @@
 import storage from "./Storage";
-import {
-    observable,
-    action
-} from "mobx";
-import {
-    find,
-    findIndex,
-    uniq,
-    sortBy,
-    reject
-} from "lodash";
+import { observable, action } from "mobx";
+import { find, findIndex, uniq, sortBy, reject } from "lodash";
+import tcpRequest from "../services/tcpRequestData";
+import serverEventListener from "../services/severEventListener";
 export default class contacts {
-    constructor() {
-        this.readFromStore().then(Contacts => {
-            if (Contacts) this.contacts = Contacts;
-            else this.contacts = [{}];
+  constructor() {
+    this.readFromStore().then(Contacts => {
+      if (Contacts) this.contacts = Contacts;
+      else this.contacts = [{}];
+    });
+  }
+  @observable contacts = [];
+  saveKey = {
+    key: "contacts",
+    data: [{}]
+  };
+  @action addContact(NewContact) {
+    return new Promise((resolve, reject) => {
+      this.readFromStore().then(Contacts => {
+        Contacts = uniq(Contacts.concat([NewContact]), "phone");
+        this.saveKey.data = sortBy(Contacts, ["name"]);
+        storage.save(this.saveKey).then(() => {
+          this.contacts = this.saveKey.data;
+          resolve();
         });
-    }
-    @observable contacts = [];
-    saveKey = {
-        key: "contacts",
-        data: [{}]
-    };
-    @action addContact(NewContact) {
-        return new Promise((resolve, reject) => {
-            this.readFromStore().then(Contacts => {
-                Contacts = uniq(Contacts.concat([NewContact]), "phone");
-                this.saveKey.data = sortBy(Contacts, ["name"]);
+      });
+    });
+  }
+  @action removeContact(phone) {
+    return new Promise((resolve, reject) => {
+      this.readFromStore().then(Contacts => {
+        Contacts = reject(Contacts, ["phone", phone]);
+        this.saveKey.data = sortBy(Contacts, ["name"]);
+        storage.save(this.saveKey).then(() => {
+          this.contacts = this.saveKey.data;
+          resolve();
+        });
+      });
+    });
+  }
+  getContacts(phone) {
+    return new Promise((resolve, reject) => {
+      this.readFromStore().then(contacts => {
+        if (contacts.length == 0) {
+          tcpRequest
+            .getContacts(phone, { phone: phone }, phone)
+            .then(JSONData => {
+              serverEventListener.sendRequest(JSONData, phone).then(contcs => {
+                this.saveKey.data = contcs;
                 storage.save(this.saveKey).then(() => {
-                    this.contacts = this.saveKey.data;
-                    resolve();
+                  resolve(contcs);
                 });
+              });
             });
+        } else {
+          resolve(contacts);
+        }
+      });
+    });
+  }
+
+  getContact(phone) {
+    return new Promise((resolve, reject) => {
+      this.readFromStore().then(Contacts => {
+        resolve(
+          find(Contacts, {
+            phone: phone
+          })
+        );
+        // it return an object of the contact or undefined if the contact doesnot exits
+      });
+    });
+  }
+  @action updateName(Newcontact) {
+    return new Promise((resolve, reject) => {
+      this.readFromStore().then(Contacts => {
+        let Contact = find(Contacts, {
+          phone: Newcontact.phone
         });
-    }
-    @action removeContact(phone) {
-        return new Promise((resolve, reject) => {
-            this.readFromStore().then(Contacts => {
-                Contacts = reject(Contacts, ["phone", phone]);
-                this.saveKey.data = sortBy(Contacts, ["name"]);
-                storage.save(this.saveKey).then(() => {
-                    this.contacts = this.saveKey.data;
-                    resolve();
-                });
-            });
+        let index = findIndex(Contacts, {
+          phone: phone
         });
-    }
-    getContact(phone) {
-        return new Promise((resolve, reject) => {
-            this.readFromStore().then(Contacts => {
-                resolve(
-                    find(Contacts, {
-                        phone: phone
-                    })
-                );
-                // it return an object of the contact or undefined if the contact doesnot exits
-            });
+        Contact.name = Newcontact.name;
+        Contacts.splice(index, 1, Contact);
+        this.saveKey.data = sortBy(Contacts, ["name"]);
+        storage.save(this.saveKey).then(() => {
+          this.contacts = this.saveKey.data;
+          resolve();
         });
-    }
-    @action updateName(Newcontact) {
-        return new Promise((resolve, reject) => {
-            this.readFromStore().then(Contacts => {
-                let Contact = find(Contacts, {
-                    phone: Newcontact.phone
-                });
-                let index = findIndex(Contacts, {
-                    phone: phone
-                });
-                Contact.name = Newcontact.name;
-                Contacts.splice(index, 1, Contact);
-                this.saveKey.data = sortBy(Contacts, ["name"]);
-                storage.save(this.saveKey).then(() => {
-                    this.contacts = this.saveKey.data;
-                    resolve();
-                });
-            });
+      });
+    });
+  }
+  @action updateHost(Newcontact) {
+    return new Promise((resolve, reject) => {
+      this.readFromStore().then(Contacts => {
+        let Contact = find(Contacts, {
+          phone: Newcontact.phone
         });
-    }
-    @action updateHost(Newcontact) {
-        return new Promise((resolve, reject) => {
-            this.readFromStore().then(Contacts => {
-                let Contact = find(Contacts, {
-                    phone: Newcontact.phone
-                });
-                let index = findIndex(Contacts, {
-                    phone: phone
-                });
-                Contact.host = Newcontact.host;
-                Contacts.splice(index, 1, Contact);
-                this.saveKey.data = sortBy(Contacts, ["name"]);
-                storage.save(this.saveKey).then(() => {
-                    this.contacts = this.saveKey.data;
-                    resolve();
-                });
-            });
+        let index = findIndex(Contacts, {
+          phone: phone
         });
-    }
-    @action updateProfile(Newcontact) {
-        return new Promise((resolve, reject) => {
-            this.readFromStore().then(Contacts => {
-                let Contact = find(Contacts, {
-                    phone: Newcontact.phone
-                });
-                let index = findIndex(Contacts, {
-                    phone: phone
-                });
-                Contact.profile = Newcontact.profile;
-                Contacts.splice(index, 1, Contact);
-                this.saveKey.data = sortBy(Contacts, ["name"]);
-                storage.save(this.saveKey).then(() => {
-                    this.contacts = this.saveKey.data;
-                    resolve();
-                });
-            });
+        Contact.host = Newcontact.host;
+        Contacts.splice(index, 1, Contact);
+        this.saveKey.data = sortBy(Contacts, ["name"]);
+        storage.save(this.saveKey).then(() => {
+          this.contacts = this.saveKey.data;
+          resolve();
         });
-    }
-    readFromStore() {
-        return new Promise((resolve, rejevt) => {
-            storage
-                .load({
-                    key: "contacts",
-                    autoSync: true
-                })
-                .then(Contacts => {
-                    resolve(Contacts);
-                })
-                .catch(error => {
-                    resolve([]);
-                });
+      });
+    });
+  }
+  @action updateProfile(Newcontact) {
+    return new Promise((resolve, reject) => {
+      this.readFromStore().then(Contacts => {
+        let Contact = find(Contacts, {
+          phone: Newcontact.phone
         });
-    }
+        let index = findIndex(Contacts, {
+          phone: phone
+        });
+        Contact.profile = Newcontact.profile;
+        Contacts.splice(index, 1, Contact);
+        this.saveKey.data = sortBy(Contacts, ["name"]);
+        storage.save(this.saveKey).then(() => {
+          this.contacts = this.saveKey.data;
+          resolve();
+        });
+      });
+    });
+  }
+  readFromStore() {
+    return new Promise((resolve, rejevt) => {
+      storage
+        .load({
+          key: "contacts",
+          autoSync: true
+        })
+        .then(Contacts => {
+          resolve(Contacts);
+        })
+        .catch(error => {
+          resolve([]);
+        });
+    });
+  }
 }

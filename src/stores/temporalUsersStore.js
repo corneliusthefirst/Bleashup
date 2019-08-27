@@ -59,7 +59,6 @@ export default class TemporalUsersStore {
                 if (user) {
                     resolve(user);
                 } else {
-                    console.error(this.Users)
                     userHttpServices.checkUser(phone).then(profile => {
                         this.Users.push(profile);
                         this.saveKey.data = this.Users;

@@ -83,6 +83,10 @@ class ServerEventListener {
             data.event_id
           );
           break;
+          case "contacts":
+          emitter.emit("successful_"+data.body.id,data.body.data);
+          break;
+          case "add_as_contact":
         /*case "event_changes":
           emitter.emit("event_changes", data.updated);
           break;*/
@@ -133,7 +137,6 @@ class ServerEventListener {
       }else{
         this.accumulator += data
       }
-
        });
     socket.on("timeout", data => {
       console.error(data.toString(), "timeout");

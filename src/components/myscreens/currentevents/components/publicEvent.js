@@ -38,6 +38,7 @@ import MapView from "./MapView";
 import Requester from "../Requester";
 import { observer } from "mobx-react";
 import Like from "./Like";
+import InvitationModal from "./InvitationModal";
 scaleValue = new Animated.Value(0)
 cardScale = this.scaleValue.interpolate({
   inputRange: [0, 0.5, 1],
@@ -270,6 +271,15 @@ cardScale = this.scaleValue.interpolate({
                       <Label style={{ fontSize: 12, color: "#7DD2D2" }}>Publish</Label>
                     </TouchableOpacity>)) : null}
                 </ListItem>
+                <ListItem style={{ alignSelf: 'flex-start' }}>
+                  {this.props.Event ? (<TouchableOpacity onPress={() => {
+                    this.invite()
+                  }}>
+                    <Icon style={{ fontSize: 16, color: "#7DD2D2" }} name="sc-telegram" type="EvilIcons">
+                    </Icon>
+                    <Label style={{ fontSize: 12, color: "#7DD2D2" }}>Invite</Label>
+                  </TouchableOpacity>) : null}
+                </ListItem>
                 <ListItem>
                   {this.props.Event ? (this.state.isjoint || status ? (<TouchableOpacity>
                     <Icon style={{ fontSize: 16, color: "#7DD2D2" }} name="universal-access" type="Foundation">
@@ -400,7 +410,8 @@ cardScale = this.scaleValue.interpolate({
               },
               details: details,
               participant: status,
-              master: master
+              master: master,
+              openInviteModal:false
             })
           })
         })
@@ -427,6 +438,13 @@ cardScale = this.scaleValue.interpolate({
     stores.Events.markAsSeen(this.props.id).then(() => {
     })
   }
+
+  invite(){
+    this.setState({
+      openInviteModal:true
+    })
+  }
+
   publish() {
     this.setState({
       publishing: true
@@ -469,11 +487,10 @@ cardScale = this.scaleValue.interpolate({
             })
           })
         } else {
-          this.setState({
-            publishing: false,
-            attempt_to_puplish: true,
-            public: true
-          })
+         Toast.show({
+           text:"Cannot Publish This Event, you are not a master",
+           buttonText : "OK"
+         })
         }
       })
     }
@@ -947,6 +964,7 @@ cardScale = this.scaleValue.interpolate({
             onClosed={() => this.setState({ isDetailsModalOpened: false })}
           />
         </Card>
+        <InvitationModal isOpen={this.state.openInviteModal} close={()=> this.setState({openInviteModal:false})}></InvitationModal>
       </Swipeout >
     ) : <SvgAnimatedLinearGradient primaryColor="#cdfcfc"
       secondaryColor="#FEFFDE" height={300}>
