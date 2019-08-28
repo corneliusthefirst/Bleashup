@@ -132,10 +132,12 @@ class tcpRequestData {
     return this.sendData("denie_invitation", invitation, id);
   }
   //My data is requestObject.Invite()
-  invite(invite) {
-    return this.sendData("invite", data, id);
+  invite(invite,id) {
+    return this.sendData("invite", invite, id);
   }
-
+  invite_many(invites,id){
+    return this.sendData('invite_many',invites,id)
+  }
   // My data is requestObject.Invite()
   received_invitation(data, id) {
     return this.sendData("received_invitation", data, id);

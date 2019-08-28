@@ -2,6 +2,7 @@ import stores from "../../../stores";
 import requestObject from '../../../services/requestObjects'
 import requestData from "../../../services/tcpRequestData"
 import serverEventListener from "../../../services/severEventListener";
+import { forEach } from "lodash"
 class Requester {
     constructor() {
         this.currentUserPhone = stores.Session.SessionStore.phone;
@@ -19,6 +20,22 @@ class Requester {
                 }).catch(error => {
                     console.warn(error, "like")
                     reject(error)
+                })
+            })
+        })
+    }
+    invite(invites, id) {
+        return new Promise((resolve, reject) => {
+            let i = 0
+            requestData.invite_many(invites, id + "_invites").then(JSONData => {
+                serverEventListener.sendRequest(JSONData, id + "_invites").then(SuccessMessage => {
+                    invites.forEach(element => {
+                        element.invitation.type = 'sent';
+                        stores.Invitations.addInvitations(element.invitation).then(mes => {
+                            if (i == invites.length - 1) resolve(SuccessMessage)
+                            i++
+                        })
+                    })
                 })
             })
         })

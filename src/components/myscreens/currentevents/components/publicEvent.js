@@ -206,6 +206,8 @@ cardScale = this.scaleValue.interpolate({
       }
     })
   }
+  width = "9%"
+  padding = "9%"
   @autobind navigateToContributions() {
     if (this.props.Event.new) {
       stores.Events.markAsSeen(this.props.Event.id).then(() => {
@@ -252,12 +254,12 @@ cardScale = this.scaleValue.interpolate({
                 backgroundColor: "#FFFFF6",
                 height: "100%"
               }}>
-                <ListItem style={{ alignSelf: 'flex-start' }}>
+                <ListItem style={{height:this.width, margin:this.padding, alignSelf: 'flex-start' }}>
                   {this.props.Event ? (this.state.public || this.props.Event.public ? (<TouchableOpacity onPress={() => {
                     this.publish()
                   }}>
                     {this.state.publishing ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
-                    <Icon style={{ fontSize: 16, color: "#bfc6ea" }} name="forward" type="Entypo">
+                    <Icon style={{ fontSize: 20, color: "#bfc6ea" }} name="forward" type="Entypo">
                     </Icon>
                     <Label style={{ fontSize: 12, color: "#bfc6ea" }}>Publish</Label>
                   </TouchableOpacity>) :
@@ -266,27 +268,27 @@ cardScale = this.scaleValue.interpolate({
                     }
                     }>
                       {this.state.publishing ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
-                      <Icon style={{ fontSize: 16, color: "#7DD2D2" }} name="forward" type="Entypo">
+                      <Icon style={{ fontSize: 20, color: "#7DD2D2" }} name="forward" type="Entypo">
                       </Icon>
-                      <Label style={{ fontSize: 12, color: "#7DD2D2" }}>Publish</Label>
+                      <Label style={{ fontSize: 14, color: "#7DD2D2" }}>Publish</Label>
                     </TouchableOpacity>)) : null}
                 </ListItem>
-                <ListItem style={{ alignSelf: 'flex-start' }}>
+                <ListItem style={{ height:this.width, margin:this.padding,alignSelf: 'flex-start' }}>
                   {this.props.Event ? (<TouchableOpacity onPress={() => {
                     this.invite()
                   }}>
-                    <Icon style={{ fontSize: 16, color: "#7DD2D2" }} name="sc-telegram" type="EvilIcons">
+                    <Icon style={{ fontSize: 20, color: "#7DD2D2" }} name="sc-telegram" type="EvilIcons">
                     </Icon>
-                    <Label style={{ fontSize: 12, color: "#7DD2D2" }}>Invite</Label>
+                    <Label style={{ fontSize: 14, color: "#7DD2D2" }}>Invite</Label>
                   </TouchableOpacity>) : null}
                 </ListItem>
-                <ListItem>
+                <ListItem style={{height:this.width,margin:this.padding,}}>
                   {this.props.Event ? (this.state.isjoint || status ? (<TouchableOpacity>
-                    <Icon style={{ fontSize: 16, color: "#7DD2D2" }} name="universal-access" type="Foundation">
+                    <Icon style={{ fontSize: 20, color: "#7DD2D2" }} name="universal-access" type="Foundation">
                     </Icon>
                     <Label style={{
                       color: "#7DD2D2",
-                      fontSize: 12
+                      fontSize: 14
                     }}
                     >
                       Joint
@@ -301,11 +303,11 @@ cardScale = this.scaleValue.interpolate({
                     }
                   }}>
                     {this.state.isJoining ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
-                    <Icon style={{ fontSize: 16, color: "#bfc6ea" }} name="universal-access" type="Foundation">
+                    <Icon style={{ fontSize: 20, color: "#bfc6ea" }} name="universal-access" type="Foundation">
                     </Icon>
                     <Label style={{
                       color: "#bfc6ea",
-                      fontSize: 12
+                      fontSize: 14
                     }}
                     >
                       Join
@@ -313,11 +315,11 @@ cardScale = this.scaleValue.interpolate({
                   </TouchableOpacity>)) : null}
 
                 </ListItem>
-                <ListItem style={{ alignSelf: 'flex-start' }}>
+                <ListItem style={{ height:this.width,margin:this.padding,alignSelf: 'flex-start' }}>
                   <TouchableOpacity onPress={() => {
                     this.navigateToEventDetails()
                   }}>
-                    <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="calendar" type="EvilIcons">
+                    <Icon style={{ fontSize: 20, color: "#1FABAB" }} name="calendar" type="EvilIcons">
                     </Icon>
                     {this.props.Event ? (this.props.Event.updated ? (
                       <View style={this.indicatorMargin}>
@@ -331,14 +333,14 @@ cardScale = this.scaleValue.interpolate({
                           />
                         </View>
                       )) : null}
-                    <Label style={{ fontSize: 12, color: "#1FABAB" }}>Detail</Label>
+                    <Label style={{ fontSize: 14, color: "#1FABAB" }}>Detail</Label>
                   </TouchableOpacity>
                 </ListItem>
-                <ListItem style={{ alignSelf: 'flex-start' }}>
+                <ListItem style={{height:this.width, margin:this.padding,alignSelf: 'flex-start' }}>
                   <TouchableOpacity onPress={() => {
                     this.navigateToEventChat()
                   }}>
-                    <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="comment" type="EvilIcons">
+                    <Icon style={{ fontSize: 20, color: "#1FABAB" }} name="comment" type="EvilIcons">
                     </Icon>
                     {this.props.Event ? (this.props.Event.chat_upated ? (
                       <View style={this.indicatorMargin}>
@@ -352,14 +354,14 @@ cardScale = this.scaleValue.interpolate({
                           />
                         </View>
                       )) : null}
-                    <Label style={{ fontSize: 12, color: "#1FABAB" }}>chat</Label>
+                    <Label style={{ fontSize: 14, color: "#1FABAB" }}>chat</Label>
                   </TouchableOpacity>
                 </ListItem>
-                <ListItem style={{ alignSelf: 'flex-start' }}>
+                <ListItem style={{ height:this.width, margin:this.padding,alignSelf: 'flex-start' }}>
                   <TouchableOpacity onPress={() => {
                     this.navigateToLogs()
                   }}>
-                    <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="exclamation" type="EvilIcons">
+                    <Icon style={{ fontSize: 20, color: "#1FABAB" }} name="exclamation" type="EvilIcons">
                     </Icon>
                     {this.props.Event ? (this.props.Event.upated ? (
                       <View style={this.indicatorMargin}>
@@ -373,27 +375,27 @@ cardScale = this.scaleValue.interpolate({
                           />
                         </View>
                       )) : null}
-                    <Label style={{ fontSize: 12, color: "#1FABAB" }}>Logs</Label>
+                    <Label style={{ fontSize: 14, color: "#1FABAB" }}>Logs</Label>
                   </TouchableOpacity>
-                </ListItem>
-                <ListItem style={{ alignSelf: 'flex-start' }}>
+                </ListItem >
+                <ListItem style={{ height:this.width,margin:this.padding,alignSelf: 'flex-start' }}>
                   <TouchableOpacity onPress={() => {
                     return this.hide()
                   }}>
                     {this.state.hiding ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
-                    <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="archive" type="EvilIcons">
+                    <Icon style={{ fontSize: 20, color: "#1FABAB" }} name="archive" type="EvilIcons">
                     </Icon>
-                    <Label style={{ fontSize: 12, color: "#1FABAB" }}>Hide</Label>
+                    <Label style={{ fontSize: 14, color: "#1FABAB" }}>Hide</Label>
                   </TouchableOpacity>
                 </ListItem>
-                <ListItem>
+                <ListItem style={{height:this.width,margin:this.padding,}}>
                   <TouchableOpacity onPress={() => {
                     return this.delete()
                   }}>
                     {this.state.deleting ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
-                    <Icon name="trash" style={{ fontSize: 16, color: "red" }} type="EvilIcons">
+                    <Icon name="trash" style={{ fontSize: 20, color: "red" }} type="EvilIcons">
                     </Icon>
-                    <Label style={{ fontSize: 12, color: "red" }} >Delete</Label>
+                    <Label style={{ fontSize: 14, color: "red" }} >Delete</Label>
                   </TouchableOpacity>
                 </ListItem>
               </List>
@@ -964,7 +966,7 @@ cardScale = this.scaleValue.interpolate({
             onClosed={() => this.setState({ isDetailsModalOpened: false })}
           />
         </Card>
-        <InvitationModal isOpen={this.state.openInviteModal} close={()=> this.setState({openInviteModal:false})}></InvitationModal>
+        <InvitationModal eventID = {this.props.Event.id} isOpen={this.state.openInviteModal} close={()=> this.setState({openInviteModal:false})}></InvitationModal>
       </Swipeout >
     ) : <SvgAnimatedLinearGradient primaryColor="#cdfcfc"
       secondaryColor="#FEFFDE" height={300}>

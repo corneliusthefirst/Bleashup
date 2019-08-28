@@ -28,7 +28,7 @@ export default class ProfileView extends Component {
     }
     render() {
         return this.state.isMount ? (
-            <View style={{ flexDirection: "row" }}>
+            <View style={{ flexDirection: "row",margin: '2%', }}>
                 <TouchableOpacity onPress={() => {
                     console.warn("profile modal opened !! ")
                     requestAnimationFrame(() => {
@@ -37,16 +37,10 @@ export default class ProfileView extends Component {
                 }}>
                     {<CacheImages thumbnails {...this.props} source={{ uri: this.state.profile.profile }} />}
                 </TouchableOpacity>
-
-                <View>
-                    <Body style={{
-                        marginTop: "7%"
-                    }}>
-                        <Text style={{
-
+                <View style={{marginTop: "3%",marginLeft: "2%",display: 'flex',}}>
+                <Text style={{   
                         }}>{this.state.profile.nickname}</Text>
-                        <Text style={{ marginTop: 8 }} note>{this.state.dataArray.title}</Text>
-                    </Body>
+                        <Text  note>{this.state.dataArray.title}</Text>
                 </View>
                 <ProfileModal
                     isOpen={this.state.isModalOpened}

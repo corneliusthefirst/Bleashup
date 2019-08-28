@@ -60,12 +60,17 @@ export default class TemporalUsersStore {
                     resolve(user);
                 } else {
                     userHttpServices.checkUser(phone).then(profile => {
-                        this.Users.push(profile);
-                        this.saveKey.data = this.Users;
-                        storage.save(this.saveKey).then(() => {
-                            this.setPropterties(this.saveKey.data);
-                            resolve(profile)
-                        })
+                        console.error(profile)
+                        if (profile.message) {
+                            reject(profile.message)
+                        } else {
+                            this.Users.push(profile);
+                            this.saveKey.data = this.Users;
+                            storage.save(this.saveKey).then(() => {
+                                this.setPropterties(this.saveKey.data);
+                                resolve(profile)
+                            })
+                        }
                     })
                 }
             } else {
