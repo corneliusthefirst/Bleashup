@@ -51,6 +51,9 @@ export default class contacts {
                 storage.save(this.saveKey).then(() => {
                   resolve(contcs);
                 });
+              }).catch(error => {
+                serverEventListener.socket.write = undefined
+                resolve('empty')
               });
             });
         } else {

@@ -11,7 +11,6 @@ import styles from "./styles";
 import stores from "../../../stores";
 import routerActions from "reazy-native-router-actions";
 import { functionDeclaration } from "@babel/types";
-//console.error();
 const loginStore = stores.LoginStore;
 
 @observer

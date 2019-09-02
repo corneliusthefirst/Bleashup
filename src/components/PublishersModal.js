@@ -30,7 +30,7 @@ import { observer } from "mobx-react";
 
                 }
                 style={{
-                    justifyContent: 'center', alignItems: 'center', height: "97%", display: 'flex', flexDirection: 'column',
+                    height: "97%",
                     borderRadius: 8, backgroundColor: '#FEFFDE', width: "100%"
                 }}>
                 <Content>

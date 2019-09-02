@@ -112,10 +112,13 @@ class ServerEventListener {
   }
   accumulator = ""
   listen(socket) {
+    //socket.setTimeout(10000);
     this.socket = socket
     socket.on("error", error => {
       console.warn(error.toString(), "error");
+      this.socket.write = undefined
       tcpConnect.init().then(socket => {
+        this.socket = socket
       })
     });
     socket.on("data", datar => {
@@ -139,10 +142,20 @@ class ServerEventListener {
       }
        });
     socket.on("timeout", data => {
-      console.error(data.toString(), "timeout");
+      this.socket = () => { }
+      tcpConnect.connect().then(socket => {
+        this.socket = socket
+      })
     });
     socket.on("closed", data => {
       console.error(error.toString(), "closed");
+      this.socket = () => { }
+      tcpConnect.connect().then(socket => {
+        this.socket = socket
+      })
+    });
+    socket.on("end", () => {
+      console.error("onEnd says nothing");
     });
   }
   get_data(data, id) {
@@ -160,12 +173,16 @@ class ServerEventListener {
       if (this.socket.write) {
         this.socket.write(data)
       } else {
+        this.socket = () => {}
         reject("not connected");
       }
     });
   }
   sendRequest(data, id) {
     return new Promise((resolve, reject) => {
+      setTimeout(()=>{
+        reject("request timedout!")
+      },6000)
       emitter.once("successful_"+id, (response) => {
           resolve(response);
       });
@@ -175,6 +192,7 @@ class ServerEventListener {
       if (this.socket.write) {
         this.socket.write(data)
       } else {
+        this.socket.write = tcpConnect.socket.write
         reject("not connected to server")
       }
     })

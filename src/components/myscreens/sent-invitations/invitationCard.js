@@ -193,13 +193,11 @@ class CardListItem extends Component {
               </Body>
             </Left>
           </CardItem>
-
           <CardItem cardBody>
             <Left>
               <DoublePhoto enlargeImage={() => this.setState({ enlargeEventImage: true })} LeftImage={this.state.item.receiver_Image}
                 RightImage={this.state.item.event_Image} />
             </Left>
-
             <Body >
               <TouchableOpacity onPress={() => {
                 let event = filter(stores.Events.events, { id: this.state.event_id })

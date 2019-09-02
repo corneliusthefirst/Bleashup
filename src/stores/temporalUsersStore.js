@@ -60,7 +60,6 @@ export default class TemporalUsersStore {
                     resolve(user);
                 } else {
                     userHttpServices.checkUser(phone).then(profile => {
-                        console.error(profile)
                         if (profile.message) {
                             reject(profile.message)
                         } else {

@@ -3,6 +3,7 @@ import Modal from "react-native-modalbox"
 import { Content, List, ListItem, Body, Left, Right, Text, Header, Title } from "native-base"
 import ImageActivityIndicator from "./myscreens/currentevents/components/imageActivityIndicator";
 import Likers from "./Likers";
+import {View} from  "react-native"
 import { observer } from "mobx-react";
 
 @observer export default class LikerssModal extends PureComponent {
@@ -31,13 +32,13 @@ import { observer } from "mobx-react";
 
                 }
                 style={{
-                    justifyContent: 'center', alignItems: 'center', height: "97%", display: 'flex', flexDirection: 'column',
+                     height: "97%",
                     borderRadius: 8, backgroundColor: '#FEFFDE', width: "100%"
                 }}>
-                <Text>Likers List</Text>
-                <Content>
+                <Header><Title>Likers List</Title></Header>
+                <View style={{flex: 1,}}>
                     <Likers likers={this.props.likers}></Likers>
-                </Content>
+                </View>
             </Modal>
 
         );

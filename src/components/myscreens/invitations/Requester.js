@@ -15,6 +15,7 @@ class Requester {
                         resolve("ok");
                     })
                 }).catch(error => {
+                    serverEventListener.socket.write = undefined
                     reject(error)
                 })
             })
@@ -32,6 +33,7 @@ class Requester {
                         resolve("ok");
                     })
                 }).catch(error => {
+                    serverEventListener.socket.write = undefined
                     reject(error)
                 })
             })
@@ -49,6 +51,7 @@ class Requester {
                         resolve('ok')
                     })
                 }).catch(error => {
+                    serverEventListener.socket.write = undefined
                     reject(error)
                 })
             })
@@ -66,6 +69,7 @@ class Requester {
                         resolve("ok");
                     })
                 }).catch(error => {
+                    serverEventListener.socket.write = undefined
                     reject(error)
                 })
             })

@@ -3,7 +3,7 @@ import { Animated, View, Easing, TouchableWithoutFeedback } from "react-native"
 import { Icon, Spinner, Text, Toast } from "native-base"
 import Requester from '../Requester'
 import stores from "../../../../stores"
-import { indexOf, drop } from "lodash"
+import { indexOf, drop ,uniq} from "lodash"
 import { observer } from 'mobx-react';
 import LikerssModal from '../../../LikersModal';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -59,7 +59,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
                 this.setState({
                     liked: true,
                     likes: this.likes + 1,
-                    likers: [stores.Session.SessionStore.phone].concat(this.likers)
+                    likers: uniq([stores.Session.SessionStore.phone].concat(this.likers))
 
                 })
                 this.likes = this.state.likes

@@ -6,6 +6,7 @@ import com.facebook.react.ReactApplication;
 import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.peel.react.TcpSocketsModule;
+import com.reactnativecommunity.netinfo.NetInfoPackage;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -35,6 +36,7 @@ public class MainApplication extends Application implements ReactApplication {
             new RNExitAppPackage(),
             new ReanimatedPackage(),
             new TcpSocketsModule(),
+             new NetInfoPackage(),
             new RNGestureHandlerPackage(),
             new RNFetchBlobPackage()
                   );

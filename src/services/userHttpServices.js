@@ -14,9 +14,7 @@ class UserHttpServices {
             fetch(`${this.domainame()}auth/check_user?phone=${phone}&server_key=${configs.server_reference}`, {
                 method: "GET",
             }).then(result => {
-                console.error(result)
                 result.json().then(data => {
-                    console.error(data)
                     /**sample data is {
                      * name:"Fokam Giles",
                      * profile_ext : "some-url.com",

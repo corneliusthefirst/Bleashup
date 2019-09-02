@@ -36,12 +36,12 @@ export default class LoginHomeView extends Component {
     routeName = initialRoute.routeName;
     if ((globalState.loading = true)) {
       initialRoute.initialRoute().then(route => {
-        connection.init().then(socket => {
-          stores.Session.updateSocket(socket).then(session => { 
-            globalState.loading = false;
-            this.props.navigation.navigate(route);
-          });
-        });
+        if(route !== "Login"){
+          connection.init().then(socket => {
+          })
+        }
+        globalState.loading = false;
+        this.props.navigation.navigate(route);
       });
     }
     globalState.loading = true;

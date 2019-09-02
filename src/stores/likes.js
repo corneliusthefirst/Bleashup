@@ -71,6 +71,7 @@ export default class likes {
           Like.likers = uniq(Like.likers)
           resolve(Like)
         }).catch(error => {
+          serverEventListener.socket.write = undefined
           reject(error)
         })
       })

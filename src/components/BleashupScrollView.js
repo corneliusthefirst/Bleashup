@@ -1,7 +1,8 @@
 import React, { Component } from "react"
 import { ScrollView, View } from "react-native";
-import { Spinner, CardItem, Text } from "native-base";
+import { Spinner, CardItem, Text,List } from "native-base";
 import { observer } from "mobx-react";
+import { thisExpression } from "@babel/types";
 
 
 const ifCloseToTop = ({ layoutMeasurement, contentOffset, contentSize }) => {
@@ -55,13 +56,14 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
                 }
                 }
             >
-                {this._renderItems(this.props.dataSource.slice(this.props.firstIndex ? this.props.firstIndex : 0,
-                    this.state.currentRender))}
-                <CardItem style={{ height: 25 }} >
-                    {this.state.endReached ? <Text style={{
-                        marginLeft: "35%"
-                    }}>no more data to load</Text> : <Spinner size={"small"}></Spinner>}
-                </CardItem>
+            <List>{this._renderItems(this.props.dataSource.slice(this.props.firstIndex ? this.props.firstIndex : 0,
+                        this.state.currentRender))}
+                    {this.props.numberOfItems < this.props.initialRender?null:<CardItem style={{ height: 25 }} >
+                            {this.state.endReached ?<Text style={{
+                                marginLeft: "35%"
+                            }}>no more data to load</Text> : <Spinner size={"small"}></Spinner>}
+                    </CardItem> }
+            </List>
             </ScrollView>)
     }
 }

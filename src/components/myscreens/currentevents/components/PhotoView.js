@@ -41,7 +41,7 @@ export default class PhotoView extends Component {
             <PhotoModal joined={this.props.joined} hasJoin={this.props.hasJoin} isToBeJoin isOpen={this.state.isModalOpened} image={this.props.photo}
                 onClosed={() => {
                     this.setState({ isModalOpened: false });
-                    //this.props.onOpen()
+                    this.props.onOpen()
                 }}></PhotoModal>
         </View>)
     }

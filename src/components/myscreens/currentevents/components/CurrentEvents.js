@@ -22,6 +22,7 @@ const SCREEN_WIDTH = Dimensions.get('window').width;
                 firstIndex={0}
                 renderPerBatch={1}
                 initialRender={3}
+                numberOfItems={this.props.data.length}
             >
 
             </BleashupScrollView>

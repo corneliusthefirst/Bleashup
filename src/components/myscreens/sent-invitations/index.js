@@ -84,11 +84,12 @@ class SendInvitations extends Component {
       <Spinner></Spinner>
     ) : (
         <BleashupScrollView
-          initialRender={4}
-          renderPerBatch={2}
+          initialRender={6}
+          renderPerBatch={1}
           firstIndex={0}
           keyExtractor={this._keyExtractor}
-          dataSource={this.state.invitations}
+          dataSource={stores.Invitations.SendInvitations}
+          numberOfItems={stores.Invitations.SendInvitations.length}
           renderItem={(item, index) => {
             return (
               <CardListItem {...this.props} item={item} key={index} parentCardList={this}>

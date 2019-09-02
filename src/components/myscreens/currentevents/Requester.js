@@ -18,7 +18,7 @@ class Requester {
                         resolve("ok");
                     })
                 }).catch(error => {
-                    console.warn(error, "like")
+                    serverEventListener.socket.write = undefined
                     reject(error)
                 })
             })
@@ -36,6 +36,9 @@ class Requester {
                             i++
                         })
                     })
+                }).catch(error =>{
+                    serverEventListener.socket.write = undefined
+                    reject(error)
                 })
             })
         })
@@ -50,7 +53,7 @@ class Requester {
                         resolve("ok");
                     })
                 }).catch(error => {
-                    console.warn(error, "unlike")
+                    serverEventListener.socket.write = undefined
                     reject(error)
                 })
             })
@@ -66,6 +69,7 @@ class Requester {
                         resolve()
                     })
                 }).catch(error => {
+                    serverEventListener.socket.write = undefined
                     reject(error)
                 })
             })
@@ -89,6 +93,7 @@ class Requester {
                         })
                     })
                 }).catch(error => {
+                    serverEventListener.socket.write = undefined
                     reject(error)
                 })
             })

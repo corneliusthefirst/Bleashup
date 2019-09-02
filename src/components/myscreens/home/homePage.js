@@ -10,6 +10,7 @@ import {
   Body,
   TabHeading
 } from "native-base";
+import NetInfo from "@react-native-community/netinfo";
 import StatusView from "./../status/index";
 import InvitationView from "./../invitations/index";
 import PersonalEventView from "./../personalevents/index";
@@ -23,6 +24,8 @@ import autobind from "autobind-decorator";
 import RNExitApp from "react-native-exit-app";
 import stores from "../../../stores";
 
+
+
 @observer
 class Home extends Component {
   constructor(props) {
@@ -30,6 +33,7 @@ class Home extends Component {
     this.state = {};
   }
   componentDidMount() {
+    NetInfo.isConnected.addEventListener("connectionChange", this.handleConnectionChange);
     BackHandler.addEventListener("hardwareBackPress", this.handleBackButton);
   }
   componentWillUnmount() {
@@ -45,6 +49,10 @@ class Home extends Component {
       nativeEvent.layoutMeasurement.height + nativeEvent.contentOffset.y >=
       nativeEvent.contentSize.height - 20
     );
+  }
+
+  handleConnectionChange(connect) {
+    connect ? console.warn("connected") : console.warn("not connected")
   }
 
   ifCloseToTop(nativeEvent) {

@@ -1,12 +1,11 @@
 import React, { Component } from "react"
-import { List, ListItem, Body, Left, Right, Text } from "native-base"
-import { View } from "react-native"
+import { List, ListItem, Body, Left, Right, Text, Header, Title } from "native-base"
+import { View, FlatList } from "react-native"
 import ImageActivityIndicator from "./myscreens/currentevents/components/imageActivityIndicator";
 import stores from "../stores";
 import UserService from "../services/userHttpServices"
 import ProfileView from "./myscreens/invitations/components/ProfileView";
-import { FlatList } from "react-native-gesture-handler";
-;
+
 export default class ContactList extends Component {
 
     constructor(props) {
@@ -38,29 +37,34 @@ export default class ContactList extends Component {
 
     componentDidMount() {
         setTimeout(() => {
-            stores.Publishers.getPublishers(this.props.event_id).then(publishers => {
-                this.setState({
-                    publishers: publishers.publishers,
-                    isloaded: true,
-                });
+            stores.Publishers.getPublishers(this.props.event_id).then(publisher => {
+                if(publisher=='empty'){
+                    this.setState({
+                        isEmpty :true,
+                        isloaded:true
+                    })
+                }else{
+                    this.setState({
+                        publishers: publisher,
+                        isloaded: true,
+                    });
+                }
             })
-        }, 350)
+        }, 3)
     }
     _keyExtractor = (item, index) => item.phone
     render() {
-        return this.state.isloaded ? (
-            <View>
-                <CardItem>
-                    <Text style={{
-                        marginLeft: "38%"
-                    }}>
+        return <View>
+                <Header>
+                    <Title>
                         Publishers List
-                        </Text>
-                </CardItem>
-                <List style={{
-                    width: 420
-                }}>
-                    <FlatList
+                        </Title>
+                </Header>
+                {this.state.isloaded ? (
+                <View>
+                    {this.state.isEmpty ? <Text style={{
+                        margin: '10%',
+                    }} note>{"sory! there's no connction to the server"}</Text> : <FlatList
                         initialNumToRender={15}
                         maxToRenderPerBatch={8}
                         windowSize={20}
@@ -72,30 +76,24 @@ export default class ContactList extends Component {
                         data={this.state.publishers}
                         renderItem={({ item, index }) => {
                             return (
-                                <ListItem >
-                                    <Left>
+                                <View style={{ display: 'flex', flexDirection: 'row', }} >
+                                    <View>
                                         <ProfileView phone={item.phone}></ProfileView>
-                                    </Left>
-                                    <Right style={{
-                                        marginLeft: "15%",
-                                        width: "80%",
+                                    </View>
+                                    <View style={{
+                                        marginLeft: "40%",
+                                        marginTop: "5%",
                                     }}>
                                         <Text style={{
-
-                                            marginTop: "20%"
                                         }} note>{this.writeDateTime(item.period)}</Text>
-                                    </Right>
-                                </ListItem>
+                                    </View>
+                                </View>
                             );
-
-
                         }}
-                    >
-
-                    </FlatList>
-                </List>
-            </View >
-
-        ) : <ImageActivityIndicator></ImageActivityIndicator>
+                    ></FlatList>}
+                   
+            </View>):<ImageActivityIndicator></ImageActivityIndicator>}
+            </View>
+       
     }
 }

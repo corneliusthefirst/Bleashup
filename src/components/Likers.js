@@ -4,7 +4,7 @@ import { View } from "react-native"
 import ImageActivityIndicator from "./myscreens/currentevents/components/imageActivityIndicator";
 import UserService from "../services/userHttpServices"
 import ProfileView from "./myscreens/invitations/components/ProfileView";
-import { FlatList } from "react-native-gesture-handler";
+import { FlatList, TouchableOpacity, ScrollView } from "react-native-gesture-handler";
 import { observer } from "mobx-react";
 
 @observer export default class Likers extends PureComponent {
@@ -23,43 +23,34 @@ import { observer } from "mobx-react";
             this.setState({
                 isloaded: true,
             });
-        }, 350)
+        }, 0)
     }
     _keyExtractor = (item, index) => item
     render() {
         return this.state.isloaded ? (
-            <View>
-                <List style={{
-                    width: 420
-                }}>
-                    <FlatList
-                        initialNumToRender={15}
-                        maxToRenderPerBatch={8}
-                        windowSize={20}
-                        ref={"cardlist"}
-                        onContentSizeChange={() => this.refs.cardlist.scrollToEnd()}
-                        updateCellsBatchingPeriod={25}
-                        listKey={'likers'}
-                        keyExtractor={this._keyExtractor}
-                        data={this.props.likers}
-                        renderItem={({ item, index }) => {
-                            return (
-                                < ListItem >
-                                    <Left>
-                                        <ProfileView phone={item}></ProfileView>
-                                    </Left>
-                                    <Right>
-                                        <Icon type="EvilIcons" style={{ fontSize: 23 }} name="comment"></Icon>
-                                    </Right>
-                                </ListItem>
-
-                            );
-                        }}
-                    >
-
-                    </FlatList>
-                </List>
-            </View >
+                <FlatList
+                    initialNumToRender={15}
+                   maxToRenderPerBatch={8}
+                   windowSize={20}
+                    ref={"cardlist"}
+                   onContentSizeChange={() => this.refs.cardlist.scrollToEnd()}
+                   updateCellsBatchingPeriod={25}
+                   listKey={'likers'}
+                    keyExtractor={this._keyExtractor}
+                    data={this.props.likers}
+                    renderItem={({ item, index }) =>
+                        <TouchableOpacity opPress={() => {
+                            console.warn("pressed")
+                        }}><View style={{ display: 'flex', flexDirection: 'row', }}>
+                            <View><TouchableOpacity ><ProfileView phone={item}></ProfileView>
+                            </TouchableOpacity></View>
+                            <View style={{ marginLeft: "50%", marginTop: "5%", }}><TouchableOpacity><Icon type="EvilIcons" style={{ fontSize: 23 }}
+                                name="comment"></Icon></TouchableOpacity></View>
+                        </View></TouchableOpacity>
+                           
+                    }
+                >
+                </FlatList>
 
         ) : <ImageActivityIndicator></ImageActivityIndicator>
     }

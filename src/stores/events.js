@@ -146,6 +146,10 @@ export default class events {
               this.addEvent(event).then(() => {
                 resolve(event)
               })
+            }).catch(error => {
+              serverEventListener.socket.write = undefined
+              console.error(error,"in load events")
+              reject(error)
             })
           } else {
             resolve(Event)
@@ -161,6 +165,10 @@ export default class events {
 
                   resolve(event)
                 })
+              }).catch(error => {
+                serverEventListener.socket.write = undefined
+                console.error(error, "in load events")
+                reject(error)
               })
             } else {
               resolve(Event)

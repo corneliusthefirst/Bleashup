@@ -77,10 +77,6 @@ cardScale = this.scaleValue.interpolate({
   }
 
   @autobind navigateToEventDetails() {
-    if (this.props.Event.new) {
-      stores.Events.markAsSeen(this.props.Event.id).then(() => {
-      })
-    }
     stores.Events.isParticipant(this.props.Event.id, stores.Session.SessionStore.phone).then(status => {
       if (status) {
         this.props.navigation.navigate("Event", {
@@ -90,14 +86,11 @@ cardScale = this.scaleValue.interpolate({
       } else {
         this.setState({ isDetailsModalOpened: true })
       }
+      this.markAsSeen()
     })
   }
   swipperComponent = null
   @autobind navigateToReminds() {
-    if (this.props.Event.new) {
-      stores.Events.markAsSeen(this.props.Event.id).then(() => {
-      })
-    }
     stores.Events.isParticipant(this.props.Event.id, stores.Session.SessionStore.phone).then(status => {
       if (status) {
         this.props.navigation.navigate("Event", {
@@ -110,6 +103,7 @@ cardScale = this.scaleValue.interpolate({
           buttonText: "ok"
         })
       }
+      this.markAsSeen()
     })
   }
 
@@ -150,10 +144,6 @@ cardScale = this.scaleValue.interpolate({
   }
 
   @autobind navigateToHighLights() {
-    if (this.props.Event.new) {
-      stores.Events.markAsSeen(this.props.Event.id).then(() => {
-      })
-    }
     stores.Events.isParticipant(this.props.Event.id, stores.Session.SessionStore.phone).then((status) => {
       if (status) {
         this.props.navigation.navigate("Event", {
@@ -166,13 +156,10 @@ cardScale = this.scaleValue.interpolate({
           buttonText: "ok"
         })
       }
+      this.markAsSeen()
     })
   }
   @autobind navigateToEventChat() {
-    if (this.props.Event.new) {
-      stores.Events.markAsSeen(this.props.Event.id).then(() => {
-      })
-    }
     stores.Events.isParticipant(this.props.Event.id, stores.Session.SessionStore.phone).then(status => {
       if (status) {
         this.props.navigation.navigate("Event", {
@@ -185,13 +172,10 @@ cardScale = this.scaleValue.interpolate({
           buttonText: "ok"
         })
       }
+      this.markAsSeen()
     })
   }
   @autobind navigateToVotes() {
-    if (this.props.Event.new) {
-      stores.Events.markAsSeen(this.props.Event.id).then(() => {
-      })
-    }
     stores.Events.isParticipant(this.props.Event.id, stores.Session.SessionStore.phone).then((status) => {
       if (status) {
         this.props.navigation.navigate("Event", {
@@ -204,15 +188,12 @@ cardScale = this.scaleValue.interpolate({
           buttonText: "ok"
         })
       }
+      this.markAsSeen()
     })
   }
   width = "9%"
   padding = "9%"
   @autobind navigateToContributions() {
-    if (this.props.Event.new) {
-      stores.Events.markAsSeen(this.props.Event.id).then(() => {
-      })
-    }
     stores.Events.isParticipant(this.props.Event.id, stores.Session.SessionStore.phone).then(status => {
       if (status) {
         this.props.navigation.navigate("Event", {
@@ -225,14 +206,11 @@ cardScale = this.scaleValue.interpolate({
           buttonText: "ok"
         })
       }
+      this.markAsSeen()
     })
   }
 
   @autobind navigateToLogs() {
-    if (this.props.Event.new) {
-      stores.Events.markAsSeen(this.props.Event.id).then(() => {
-      })
-    }
     stores.Events.isParticipant(this.props.Event.id, stores.Session.SessionStore.phone).then(status => {
       if (status) {
         this.props.navigation.navigate("ChangeLogs", { ...this.props })
@@ -242,6 +220,7 @@ cardScale = this.scaleValue.interpolate({
           buttonText: "ok"
         })
       }
+      this.markAsSeen()
     })
   }
   componentDidMount() {
@@ -283,7 +262,10 @@ cardScale = this.scaleValue.interpolate({
                   </TouchableOpacity>) : null}
                 </ListItem>
                 <ListItem style={{height:this.width,margin:this.padding,}}>
-                  {this.props.Event ? (this.state.isjoint || status ? (<TouchableOpacity>
+                  {this.props.Event ? (this.state.isjoint || status ? (<TouchableOpacity onPress={() => Toast.show({
+                    text: 'Joint already!',
+                    buttonText: 'Okay'
+                  })} >
                     <Icon style={{ fontSize: 20, color: "#7DD2D2" }} name="universal-access" type="Foundation">
                     </Icon>
                     <Label style={{
@@ -431,14 +413,7 @@ cardScale = this.scaleValue.interpolate({
       isPublisherModalOpened: true,
       hide: true
     })
-    if (this.props.Event.new) {
-      stores.Events.markAsSeen(this.props.Event.id).then(() => {
-      })
-    }
-  }
-  markAsSeen() {
-    stores.Events.markAsSeen(this.props.id).then(() => {
-    })
+    this.markAsSeen()
   }
 
   invite(){
@@ -451,10 +426,6 @@ cardScale = this.scaleValue.interpolate({
     this.setState({
       publishing: true
     })
-    if (this.props.Event.new) {
-      stores.Events.markAsSeen(this.props.Event.id).then(() => {
-      })
-    }
     if (this.props.Event.public) {
       Requester.publish(this.props.Event.id).then(() => {
         this.setState({
@@ -496,24 +467,23 @@ cardScale = this.scaleValue.interpolate({
         }
       })
     }
+    this.markAsSeen()
+  }
+  markAsSeen(){
+    setTimeout(() => {
+      if (this.props.Event.new) {
+        stores.Events.markAsSeen(this.props.Event.id).then(() => {
+        })
+      }
+    }, 150)
   }
   onOpenPhotoModal() {
-    if (this.props.Event.new) {
-      stores.Events.markAsSeen(this.props.Event.id).then(() => {
-      })
-    }
+//  this.markAsSeen()
   }
   onOpenDetaiProfileModal() {
-    if (this.props.Event.new) {
-      stores.Events.markAsSeen(this.props.Event.id).then(() => {
-      })
-    }
+    this.markAsSeen()
   }
   delete() {
-    if (this.props.Event.new) {
-      stores.Events.markAsSeen(this.props.Event.id).then(() => {
-      })
-    }
     this.setState({
       deleting: true
     })
@@ -523,6 +493,7 @@ cardScale = this.scaleValue.interpolate({
         hiden: true
       })
     })
+    this.markAsSeen()
   }
   hide() {
     if (this.props.Event.new) {
