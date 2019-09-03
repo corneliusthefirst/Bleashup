@@ -20,6 +20,8 @@ import { createOpenLink } from "react-native-open-maps";
 import ProfileModal from '../invitations/components/ProfileModal';
 import PhotoModal from "../invitations/components/PhotoModal";
 import DetailsModal from "../invitations/components/DetailsModal";
+import SvgAnimatedLinearGradient from 'react-native-svg-animated-linear-gradient'
+import Svg, { Circle, Rect } from 'react-native-svg'
 import globalState from "../../../stores/globalState";
 import AccordionModule from "../invitations/components/Accordion";
 import DoublePhoto from "../invitations/components/doublePhoto";
@@ -260,7 +262,14 @@ const propOverridePlaceholderObject = {
   }
 
   render() {
-    return (this.state.loading ? <ImageActivityIndicator></ImageActivityIndicator> :
+    return (this.state.loading ? <SvgAnimatedLinearGradient primaryColor="#cdfcfc"
+      secondaryColor="#FEFFDE" height={200}>
+      <Circle cx="30" cy="30" r="30" />
+      <Rect x="75" y="13" rx="4" ry="4" width="100" height="13" />
+      <Rect x="75" y="37" rx="4" ry="4" width="50" height="8" />
+      <Circle cx="30" cy="30" r="30" /><Circle cx="30" cy="30" r="30" />
+      <Rect x="0" y="70" rx="5" ry="5" width="400" height="100" />
+    </SvgAnimatedLinearGradient>:
       <Swipeout {...this.swipeSettings}>
         <Card style={{}}>
           <CardItem>

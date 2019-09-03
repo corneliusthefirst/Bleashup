@@ -17,7 +17,7 @@ import CardListItem from './invitationCard';
 import ImageActivityIndicator from "../currentevents/components/imageActivityIndicator";
 import { observer } from "mobx-react";
 import stores from '../../../stores';
-import BleashupScrollView from '../../BleashupScrollView';
+import BleashupFlatList from '../../BleashupFlatList';
 
 
 @observer
@@ -83,7 +83,7 @@ class SendInvitations extends Component {
     return this.state.loadingInvitations ? (
       <Spinner></Spinner>
     ) : (
-        <BleashupScrollView
+        <BleashupFlatList
           initialRender={6}
           renderPerBatch={1}
           firstIndex={0}
@@ -97,7 +97,7 @@ class SendInvitations extends Component {
             );
           }}
         >
-        </BleashupScrollView>
+        </BleashupFlatList>
       );
   }
 }

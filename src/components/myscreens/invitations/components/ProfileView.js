@@ -14,7 +14,7 @@ export default class ProfileView extends Component {
     }
     state = { profile: undefined, isMount: false, dataArray: undefined }
     componentDidMount() {
-        stores.TemporalUsersStore.getUser(this.props.phone).then(user => {
+        setTimeout(() => stores.TemporalUsersStore.getUser(this.props.phone).then(user => {
             this.setState({
                 profile: user,
                 isModalOpened: false,
@@ -24,16 +24,17 @@ export default class ProfileView extends Component {
                     content: user.status
                 }
             })
-        })
+        }), 300)
+
     }
-    openModal(){
+    openModal() {
         this.setState({
-            isModalOpened:true
+            isModalOpened: true
         })
     }
     render() {
         return this.state.isMount ? (
-            <View style={{ flexDirection: "row",margin: '2%', }}>
+            <View style={{ flexDirection: "row", margin: '2%', }}>
                 <TouchableOpacity onPress={() => {
                     requestAnimationFrame(() => {
                         return this.setState({ isModalOpened: true })
@@ -41,10 +42,10 @@ export default class ProfileView extends Component {
                 }}>
                     {<CacheImages thumbnails {...this.props} source={{ uri: this.state.profile.profile }} />}
                 </TouchableOpacity>
-                <View style={{marginTop: "3%",marginLeft: "2%",display: 'flex',}}>
-                <Text style={{   
-                        }}>{this.state.profile.nickname}</Text>
-                        <Text  note>{this.state.dataArray.title}</Text>
+                <View style={{ marginTop: "3%", marginLeft: "2%", display: 'flex', }}>
+                    <Text style={{
+                    }}>{this.state.profile.nickname}</Text>
+                    <Text note>{this.state.dataArray.title}</Text>
                 </View>
                 <ProfileModal
                     isOpen={this.state.isModalOpened}

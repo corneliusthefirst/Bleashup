@@ -15,7 +15,7 @@ import { observable, action } from "mobx";
 import globalState from "../../../stores/globalState"
 import { observer } from "mobx-react";
 import stores from '../../../stores';
-import BleashupScrollView from '../../BleashupScrollView';
+import BleashupFlatList from '../../BleashupFlatList';
 
 
 @observer
@@ -55,7 +55,7 @@ class ReceivedInvitations extends Component {
     return this.state.loadingInvitations ? (
       <Spinner></Spinner>
     ) : (
-            <BleashupScrollView
+            <BleashupFlatList
               initialRender={6}
               renderPerBatch={1}
               firstIndex={0}
@@ -71,7 +71,7 @@ class ReceivedInvitations extends Component {
 
               }}
             >
-            </BleashupScrollView>
+            </BleashupFlatList>
       );
   }
 }

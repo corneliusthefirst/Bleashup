@@ -89,9 +89,11 @@ class Publishers {
     }
     addPublishers(EventID, Publishers) {
         return new Promise((resolve, reject) => {
-            this.readFromStore().then(Publishers => {
-                Publishers.concat([{ event_id: EventID, publishers: Publishers }]);
-                this.saveKey.data = Publishers
+            this.readFromStore().then(Publics => {
+                if(Publics.length == 0)
+                    Publics = [{ event_id: EventID, publishers: Publishers }]
+                    else Publics.concat([{ event_id: EventID, publishers: Publishers }]);
+                this.saveKey.data = Publics
                 storage.save(this.saveKey).then(() => {
                     this.setProperties(this.saveKey.data)
                     resolve()

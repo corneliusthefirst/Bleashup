@@ -53,7 +53,7 @@ cardScale = this.scaleValue.interpolate({
       creator: (creator = { name: "", status: "", image: "" }),
       details: [],
       isDetailsModalOpened: false,
-      isMount: true,
+      isMount: false,
       public: false,
       publishing: false,
       event: this.props.Event,
@@ -118,7 +118,6 @@ cardScale = this.scaleValue.interpolate({
           forEach(highlights, hightlight => {
             card.push(hightlight);
             if (i === highlights.length - 1) {
-
               resolve(card)
             }
             i++
@@ -395,13 +394,14 @@ cardScale = this.scaleValue.interpolate({
               details: details,
               participant: status,
               master: master,
+              isMount:true,
               openInviteModal:false
             })
           })
         })
       })
 
-    }, 20)
+    }, 100)
   }
 
   componentWillUnmount() {
@@ -544,7 +544,7 @@ cardScale = this.scaleValue.interpolate({
   }
   blinkerSize = 26;
   render() {
-    return this.props.Event ? (this.props.Event.hiden || this.state.hiden ? null : (this.state.isMount ? (
+    return (this.state.isMount ? this.props.Event ? (this.props.Event.hiden || this.state.hiden ? null :(
       <Swipeout style={{ backgroundColor: this.props.Event.new ? "#cdfcfc" : null }}  {...this.state.swipeOutSettings}>
         <Card
           style={{
@@ -561,7 +561,8 @@ cardScale = this.scaleValue.interpolate({
           >
             <Left>
               <View>
-                {this.state.publishing ? <View style={{ height: 18 }}><Spinner size={"small"} color="#7DD2D2"></Spinner></View> : <Icon
+                {this.state.publishing ? <View style={{ height: 18 }}>
+                <Spinner size={"small"} color="#7DD2D2"></Spinner></View> : <Icon
                   name="forward"
                   type="Entypo"
                   style={{
@@ -644,7 +645,7 @@ cardScale = this.scaleValue.interpolate({
                     fontFamily: "Roboto"
                   }}
                 >
-                  {this.props.Event.about.title}{" "}{this.props.Event.id}
+                  {this.props.Event.about.title}{/*{" "}{this.props.Event.id}*/}
                 </Text>
                 <Text
                   style={{
@@ -939,14 +940,14 @@ cardScale = this.scaleValue.interpolate({
         </Card>
         <InvitationModal eventID = {this.props.Event.id} isOpen={this.state.openInviteModal} close={()=> this.setState({openInviteModal:false})}></InvitationModal>
       </Swipeout >
-    ) : <SvgAnimatedLinearGradient primaryColor="#cdfcfc"
+    )) : <SvgAnimatedLinearGradient primaryColor="#cdfcfc"
       secondaryColor="#FEFFDE" height={300}>
         <Circle cx="30" cy="30" r="30" />
         <Rect x="75" y="13" rx="4" ry="4" width="100" height="13" />
         <Rect x="75" y="37" rx="4" ry="4" width="50" height="8" />
         <Rect x="0" y="70" rx="5" ry="5" width="400" height="200" />
         <Spinner style={{ marginTop: "40%" }}></Spinner>
-      </SvgAnimatedLinearGradient>)) : null;
+      </SvgAnimatedLinearGradient> : null);
   }
 }
 export default PublicEvent

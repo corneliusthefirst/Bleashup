@@ -29,6 +29,7 @@ import ProfileWithCheckBox from "./PofileWithCheckbox";
 import Request from "../Requester";
 import request from "../../../../services/requestObjects";
 import moment from "moment"
+import BleashupFlatList from '../../../BleashupFlatList';
 export default class InvitationModal extends PureComponent {
   constructor(props) {
     super(props);
@@ -229,21 +230,19 @@ export default class InvitationModal extends PureComponent {
             </Right>
           </View>
         ) : (
-            <ScrollView>
-              <View style={{ display: 'flex' }}>
+           
+              <View >
                 {this.state.isEmpty ? <Text style={{
                   margin: '10%',
-                }} note>{"sory! could not load contacts; there's no connction to the server"}</Text> :  <FlatList
-                  // initialNumToRender={15}
-                  // maxToRenderPerBatch={8}
-                  //windowSize={20}
-                  //ref={"cardlister"}
-                  // onContentSizeChange={() => this.refs.cardlister.scrollToEnd()}
-                  // updateCellsBatchingPeriod={25}
+                }} note>{"sory! could not load contacts; there's no connction to the server"}</Text> :  <BleashupFlatList
                   listKey={"contacts"}
                   keyExtractor={this._keyExtractor}
-                  data={this.state.contacts}
-                  renderItem={({ item, index }) =>
+                  dataSource={this.state.contacts}
+                  firstIndex={0}
+                  renderPerBatch={7}
+                  initialRender={15}
+                  numberOfItems={this.state.contacts.length}
+                  renderItem={(item, index ) =>
                     <View>
                       <ProfileWithCheckBox
                         index={indexOf(this.state.checked, item.phone)} phone={item.phone} check={(phone) =>
@@ -259,9 +258,8 @@ export default class InvitationModal extends PureComponent {
                 /* refreshControl={
                    <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />
                  }*/
-                ></FlatList>}
+                ></BleashupFlatList>}
               </View>
-            </ScrollView>
           )}
       </Modal> :
       <Modal

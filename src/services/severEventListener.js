@@ -180,9 +180,9 @@ class ServerEventListener {
   }
   sendRequest(data, id) {
     return new Promise((resolve, reject) => {
-      setTimeout(()=>{
-        reject("request timedout!")
-      },6000)
+      //setTimeout(()=>{
+      //  reject("request timedout!")
+     // },6000)
       emitter.once("successful_"+id, (response) => {
           resolve(response);
       });

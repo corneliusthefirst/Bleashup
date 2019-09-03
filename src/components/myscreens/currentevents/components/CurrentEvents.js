@@ -5,7 +5,7 @@ import PublicEvent from "./publicEvent.js"
 import { CardItem, Card, Spinner } from 'native-base';
 import { observer } from 'mobx-react';
 import { forEach } from "lodash"
-import BleashupScrollView from '../../../BleashupScrollView.js';
+import BleashupFlatList from '../../../BleashupFlatList';
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
 
@@ -15,7 +15,7 @@ const SCREEN_WIDTH = Dimensions.get('window').width;
     }
     render() {
         return (
-            <BleashupScrollView
+            <BleashupFlatList
                 keyExtractor={(item, index) => item.id}
                 dataSource={this.props.data}
                 renderItem={(item, index) => <PublicEvent key={item.id}  {...this.props} Event={item} />}
@@ -25,7 +25,7 @@ const SCREEN_WIDTH = Dimensions.get('window').width;
                 numberOfItems={this.props.data.length}
             >
 
-            </BleashupScrollView>
+            </BleashupFlatList>
         )
     }
 }

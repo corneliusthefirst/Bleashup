@@ -6,6 +6,7 @@ import UserService from "../services/userHttpServices"
 import ProfileView from "./myscreens/invitations/components/ProfileView";
 import { FlatList, TouchableOpacity, ScrollView } from "react-native-gesture-handler";
 import { observer } from "mobx-react";
+import BleashupFlatList from './BleashupFlatList';
 
 @observer export default class Likers extends PureComponent {
 
@@ -28,29 +29,26 @@ import { observer } from "mobx-react";
     _keyExtractor = (item, index) => item
     render() {
         return this.state.isloaded ? (
-                <FlatList
-                    initialNumToRender={15}
-                   maxToRenderPerBatch={8}
-                   windowSize={20}
-                    ref={"cardlist"}
-                   onContentSizeChange={() => this.refs.cardlist.scrollToEnd()}
-                   updateCellsBatchingPeriod={25}
-                   listKey={'likers'}
-                    keyExtractor={this._keyExtractor}
-                    data={this.props.likers}
-                    renderItem={({ item, index }) =>
-                        <TouchableOpacity opPress={() => {
-                            console.warn("pressed")
-                        }}><View style={{ display: 'flex', flexDirection: 'row', }}>
+            <BleashupFlatList
+                firstIndex={0}
+                renderPerBatch={7}
+                initialRender={15}
+                numberOfItems={this.props.likers.length}
+                keyExtractor={this._keyExtractor}
+                dataSource={this.props.likers}
+                renderItem={(item, index ) =>
+                    <TouchableOpacity opPress={() => {
+                        console.warn("pressed")
+                    }}><View style={{ display: 'flex', flexDirection: 'row', }}>
                             <View><TouchableOpacity ><ProfileView phone={item}></ProfileView>
                             </TouchableOpacity></View>
                             <View style={{ marginLeft: "50%", marginTop: "5%", }}><TouchableOpacity><Icon type="EvilIcons" style={{ fontSize: 23 }}
                                 name="comment"></Icon></TouchableOpacity></View>
                         </View></TouchableOpacity>
-                           
-                    }
-                >
-                </FlatList>
+
+                }
+            >
+            </BleashupFlatList>
 
         ) : <ImageActivityIndicator></ImageActivityIndicator>
     }

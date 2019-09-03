@@ -65,6 +65,7 @@ class Home extends Component {
   settings() { }
 
   render() {
+    //console.disableYellowBox = true; 
     return (
       <Container>
         <CollapsibleHeaderScrollView
