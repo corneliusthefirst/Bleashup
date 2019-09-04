@@ -40,7 +40,7 @@ import BleashupFlatList from './BleashupFlatList';
                     <TouchableOpacity opPress={() => {
                         console.warn("pressed")
                     }}><View style={{ display: 'flex', flexDirection: 'row', }}>
-                            <View><TouchableOpacity ><ProfileView phone={item}></ProfileView>
+                            <View style={{margin: '2%',}}><TouchableOpacity ><ProfileView phone={item}></ProfileView>
                             </TouchableOpacity></View>
                             <View style={{ marginLeft: "50%", marginTop: "5%", }}><TouchableOpacity><Icon type="EvilIcons" style={{ fontSize: 23 }}
                                 name="comment"></Icon></TouchableOpacity></View>

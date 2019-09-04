@@ -8,6 +8,7 @@ import {
   reject,
   uniq,
   indexOf,
+  forEach,
   drop
 } from "lodash";
 import storage from "./Storage";
@@ -23,9 +24,16 @@ export default class events {
     console.warn("constructor called")
 
     this.readFromStore().then(Events => {
-      if (Events) {
-        this.setProperties(Events, true);
-      }
+      let i = 0
+      forEach(Events,(Event) =>{
+        Events[i].hiden = false
+        if(i == Events.length -1){
+          if (Events) {
+            this.setProperties(Events, true);
+          }
+        }
+        i++
+      })
     });
   }
   @observable currentEvents = [];
@@ -423,11 +431,9 @@ export default class events {
   @action publishEvent(EventID, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
-        let Event = find(Events, { id: EventID });
         let index = findIndex(Events, { id: EventID });
-        Event.public = true;
-        if (inform) Event.updated = true
-        Events.splice(index, 1, Event);
+        Events[index].public = true;
+        if (inform) Events[index].updated = true
         this.saveKey.data = Events;
         storage.save(this.saveKey).then(() => {
           if (inform)

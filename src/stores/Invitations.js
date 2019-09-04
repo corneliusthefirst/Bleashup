@@ -8,6 +8,7 @@ import {
     reject,
     find,
     orderBy,
+    forEach,
     filter,
     findIndex
 } from 'lodash'
@@ -76,7 +77,7 @@ export default class Invitations {
             let result = [];
             let i = 0;
             if (this.invitations.length !== 0) {
-                this.invitations.forEach((invitation) => {
+                forEach(this.invitations,(invitation) => {
                     this.translateToinvitationData(invitation).then(data => {
                         result.push(data)
                         if (i === this.invitations.length - 1) {

@@ -19,10 +19,10 @@ export default class highlights {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Highlights => {
         if (Highlights.length !== 0)
-          Highlights = uniqBy(Highlights.concat(Highlight), "id");
+          Highlights = uniqBy(Highlights.concat(Highlight), 'id');
         else Highlights = Highlight;
         this.saveKey.data = Highlights;
-        storage.save(this.saveKey.data).then(() => {
+        storage.save(this.saveKey).then(() => {
           this.highlights = this.saveKey.data;
           resolve();
         });
@@ -72,6 +72,8 @@ export default class highlights {
             this.fetchHighlightsFromRemote(eventID).then(data =>{
               resolve(data)
             })
+          }else{
+            resolve(result)
           }
         });
       } else {
@@ -80,6 +82,8 @@ export default class highlights {
          this.fetchHighlightsFromRemote(eventID).then(data =>{
            resolve(data)
          })
+       }else{
+         resolve(highlights)
        }
       }
     });

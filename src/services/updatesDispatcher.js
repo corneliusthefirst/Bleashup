@@ -4,6 +4,7 @@ import Getter from "./Getter"
 import requestObjects from "./requestObjects";
 import tcpRequestData from "./tcpRequestData";
 import emitter from "./eventEmiter";
+import serverEventListener from "./severEventListener"
 import { find, findIndex, drop, reject, forEach } from "lodash";
 class UpdatesDispatcher {
   constructor() { }
@@ -152,32 +153,67 @@ class UpdatesDispatcher {
         stores.Session.getSession().then(session => {
           stores.Events.isParticipant(update.event_id, session.phone).then(
             status => {
-              if (status == false) {
-                let EventID = requestObjects.EventID();
-                EventID.event_id = update.event_id;
-                tcpRequestData.getCurrentEvent(EventID).then(Event => {
-                  stores.Events.addEvent(Event).then(() => {
-                    GState.newEvent = true;
-                    resolve();
+              let EventID = requestObjects.EventID();
+              EventID.event_id = update.event_id;
+              stores.Events.loadCurrentEvent(update.event_id).then(event => {
+                if (event) {
+                  let Change = {
+                    event_id: update.event_id,
+                    changed: "Published",
+                    updater: update.updater,
+                    old_value: false,
+                    new_value: true,
+                    date: update.date,
+                    time: update.time
+                  };
+                  stores.ChangeLogs.addChanges(Change).then(() => {
+                    stores.Events.publishEvent(update.event_id, true).then(() => {
+                      let publisher = {
+                        period: {
+                          date: update.date,
+                          time: update.time
+                        },
+                        phone: update.updater
+                      }
+                      stores.Publishers.addPublisher(update.event_id, publisher).then(() => {
+                        GState.eventUpdated = true;
+                        resolve();
+                      })
+                    });
                   });
-                });
-              } else {
-                let Change = {
-                  event_id: update.event_id,
-                  changed: "Published",
-                  updater: update.updater,
-                  old_value: false,
-                  new_value: true,
-                  date: update.date,
-                  time: update.time
-                };
-                stores.ChangeLogs.addChanges(Change).then(() => {
-                  stores.Events.publishEvent(update.event_id, true).then(() => {
-                    GState.eventUpdated = true;
-                    resolve();
+                } else {
+                  tcpRequestData.getCurrentEvent(EventID).then(JSONData => {
+                    serverEventListener.GetData(EventID).then((Event) => {
+                      stores.Events.addEvent(Event).then(() => {
+                        let Change = {
+                          event_id: update.event_id,
+                          changed: "Published",
+                          updater: update.updater,
+                          old_value: false,
+                          new_value: true,
+                          date: update.date,
+                          time: update.time
+                        };
+                        stores.ChangeLogs.addChanges(Change).then(() => {
+                          stores.Events.publishEvent(update.event_id, true).then(() => {
+                            let publisher = {
+                              period: {
+                                date: update.date,
+                                time: update.time
+                              },
+                              phone: update.updater
+                            }
+                            stores.Publishers.addPublisher(update.event_id, publisher).then(() => {
+                              GState.eventUpdated = true;
+                              resolve();
+                            })
+                          });
+                        });
+                      });
+                    })
                   });
-                });
-              }
+                }
+              })
             }
           );
         });
@@ -762,9 +798,9 @@ class UpdatesDispatcher {
         stores.ChangeLogs.addChanges(Change).then(() => {
           let RequestObject = requestObjects.HID();
           RequestObject.h_id = update.new_value;
-          tcpRequestData.getHighlight(RequestObject).then(JSONData => {
-            Getter.get_data(JSONData).then(Highlight => {
-              stores.Highlights.addHighlights(Highlight).then(() => {
+          tcpRequestData.getHighlight(RequestObject, update.new_value + "highlight").then(JSONData => {
+            serverEventListener.sendRequest(JSONData, update.new_value + "highlight").then(Highlight => {
+              stores.Highlights.addHighlight(Highlight).then(() => {
                 stores.Events.addHighlight(
                   Highlight.event_id,
                   Highlight.id

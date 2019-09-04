@@ -34,6 +34,7 @@ import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import SvgAnimatedLinearGradient from 'react-native-svg-animated-linear-gradient'
 import Svg, { Circle, Rect } from 'react-native-svg'
 import PhotoView from "./PhotoView";
+import {forEach} from "lodash"
 import MapView from "./MapView";
 import Requester from "../Requester";
 import { observer } from "mobx-react";
@@ -882,14 +883,14 @@ cardScale = this.scaleValue.interpolate({
                           name="universal-access"
                           type="Foundation"
                           style={{
-                            color: "#7DD2D2",
+                            color: "#54F5CA",
                             fontSize: 23
                           }}
                         />
                       </View>
                     </TouchableWithoutFeedback>
                     <View style={{ marginTop: 1 }}>
-                      <Text style={{ color: "#7DD2D2" }} note> joint </Text>
+                      <Text style={{ color: "#54F5CA" }} note> joint </Text>
                     </View>
                   </View>
                 ) : (

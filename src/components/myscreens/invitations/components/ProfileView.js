@@ -34,7 +34,7 @@ export default class ProfileView extends Component {
     }
     render() {
         return this.state.isMount ? (
-            <View style={{ flexDirection: "row", margin: '2%', }}>
+            <View style={{ flexDirection: "row", }}>
                 <TouchableOpacity onPress={() => {
                     requestAnimationFrame(() => {
                         return this.setState({ isModalOpened: true })

@@ -73,7 +73,7 @@ export default class ContactList extends Component {
                         dataSource={this.state.publishers}
                         renderItem={(item, index) =>
                             <View style={{ display: 'flex', flexDirection: 'row', }} >
-                                <View>
+                                <View style={{margin: '2%',}}>
                                     <ProfileView phone={item.phone}></ProfileView>
                                 </View>
                                 <View style={{

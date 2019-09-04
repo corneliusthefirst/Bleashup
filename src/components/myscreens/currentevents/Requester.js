@@ -66,7 +66,10 @@ class Requester {
             requestData.publishEvent(eventID, event_id + "publish").then(JSONData => {
                 serverEventListener.sendRequest(JSONData, event_id + "publish").then(SuccessMessage => {
                     stores.Events.publishEvent(event_id, false).then(() => {
-                        resolve()
+                        stores.Publishers.addPublisher(event_id,{phone:
+                            stores.Session.SessionStore.phone,period:requestObject.Period()}).then(()=>{
+                            resolve()
+                        })
                     })
                 }).catch(error => {
                     serverEventListener.socket.write = undefined

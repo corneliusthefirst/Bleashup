@@ -40,7 +40,9 @@ export default class ProfileWithCheckBox extends PureComponent {
                 <View style={{ display: 'flex', flexDirection: 'row', }}>
                     <Icon style={{ marginTop: "5%", color: "#1FABAB" }} name={this.state.checked ? "radio-button-checked" :
                         "radio-button-unchecked"} type="MaterialIcons"></Icon>
-                    <ProfileView phone={this.props.phone}></ProfileView>
+                        <View style={{margin: '2%',}}>
+                        <ProfileView phone={this.props.phone}></ProfileView>
+                        </View>
                 </View>
             </TouchableOpacity>)
     }
