@@ -290,7 +290,7 @@ export default class InvitationModal extends PureComponent {
             display: "flex",
           }}>
             <View style={{ display: 'flex' }}>
-              <View>
+              <View style={{margin: "2%",}}>
                 <ProfileView phone={this.state.checked.length>=1?this.state.checked[0].phone:null}></ProfileView>
               </View>
               <View><MenuDivider></MenuDivider></View>

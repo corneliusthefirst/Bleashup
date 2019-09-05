@@ -38,10 +38,11 @@ export default class LoginHomeView extends Component {
       initialRoute.initialRoute().then(route => {
         if(route !== "Login"){
           connection.init().then(socket => {
+            globalState.loading = false;
+            this.props.navigation.navigate(route);
           })
+          setTimeout(() => this.props.navigation.navigate(route), 5000)
         }
-        globalState.loading = false;
-        this.props.navigation.navigate(route);
       });
     }
     globalState.loading = true;

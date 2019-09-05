@@ -92,7 +92,6 @@ const propOverridePlaceholderObject = {
     }
     Requester.accept(invitation).then(response => {
       this.setState({ accept: true, isRequesting: false })
-      this.props.item.accept = true
     }).catch(error => {
       this.setState({
         isRequesting: false,
@@ -121,7 +120,6 @@ const propOverridePlaceholderObject = {
     }
     Requester.denie(invitation).then(response => {
       this.setState({ deny: true, isRequesting: false })
-      this.props.item.deny = true
       console.warn(response);
     }).catch(error => {
       this.setState({

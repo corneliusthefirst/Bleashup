@@ -362,7 +362,7 @@ class UpdatesDispatcher {
       return new Promise((resolve, reject) => {
         switch (update.addedphone) {
           case "like":
-            stores.Likes.like(update.event_id, update.updater).then(() => {
+            stores.Likes.like(update.event_id, update.updater,true).then(() => {
               stores.Events.likeEvent(update.event_id, true).then(() => {
                 GState.eventUpdated = true;
                 resolve();
@@ -370,7 +370,7 @@ class UpdatesDispatcher {
             });
             break;
           case "like_vote":
-            stores.Likes.like(updated.new_value, update.updater).then(() => {
+            stores.Likes.like(updated.new_value, update.updater,true).then(() => {
               stores.Votes.likeVote(update.new_value, true).then(() => {
                 GState.eventUpdated = true;
                 resolve();
@@ -388,11 +388,11 @@ class UpdatesDispatcher {
         }
       });
     },
-    unlike: update => {
+    unlikes: update => {
       return new Promise((resolve, reject) => {
         switch (update.addedphone) {
           case "unlike":
-            stores.Likes.unlike(update.new_value, update.updater).then(() => {
+            stores.Likes.unlike(update.new_value, update.updater,true).then(() => {
               stores.Events.unlikeEvent(update.event_id).then(() => {
                 GState.eventUpdated = true;
                 resolve();
@@ -1167,27 +1167,30 @@ class UpdatesDispatcher {
       });
     },
     added: update => {
-      let Participant = requestObjects.Participant();
-      Participant.phone = update.updater;
-      Participant.master = update.new_value.master;
-      Participant.host = update.new_value.host;
-      Participant.status = update.new_value.status;
-      let Change = {
-        event_id: update.event_id,
-        changed: "New Participant",
-        updater: update.new_value.inviter,
-        new_value: Participant,
-        date: update.date,
-        time: update.time
-      };
-      stores.ChangeLogs.addChanges(Change).then(() => {
-        stores.Events.addParticipant(update.event_id, Participant, true).then(
-          () => {
-            GState.eventUpdated = true;
-            resolve();
-          }
-        );
-      });
+      return new Promise((resolve,reject) =>{
+        let Participant = requestObjects.Participant();
+        Participant.phone = update.updater;
+        Participant.master = update.new_value.master;
+        Participant.host = update.new_value.host;
+        Participant.status = update.new_value.status;
+        let Change = {
+          event_id: update.event_id,
+          changed: "New Participant",
+          updater: update.new_value.inviter,
+          new_value: Participant,
+          date: update.date,
+          time: update.time
+        };
+        stores.ChangeLogs.addChanges(Change).then(() => {
+          stores.Events.addParticipant(update.event_id, Participant, true).then(
+            () => {
+              GState.eventUpdated = true;
+              resolve();
+            }
+          );
+        });
+      })
+     
     },
     joint: update => {
       return new Promise((resolve, reject) => {

@@ -86,6 +86,8 @@ class CardListItem extends Component {
         accept: this.props.item.accept,
         deny: this.props.item.deny,
         message: "",
+        received : this.props.item.received,
+        seen : this.props.item.seen,
         dataArray: dataArray,
         textcolor: "",
         event_id: data.event_id,
@@ -97,6 +99,31 @@ class CardListItem extends Component {
     })
   }
 
+ componentWillReceiveProps(nextProps) {
+   stores.Invitations.translateToinvitationData(nextProps.item).then(data => {
+     let AccordData = data.sender_status
+     max_length = data.sender_status.length
+     let dataArray = [{ title: AccordData.slice(0, 35), content: AccordData.slice(35, max_length) }]
+     this.setState({
+       activeRowKey: null,
+       isOpenDetails: false,
+       isOpenStatus: false,
+       enlargeEventImage: false,
+       accept: nextProps.item.accept,
+       deny: nextProps.item.deny,
+       message: "",
+       received: nextProps.item.received,
+       seen: nextProps.item.seen,
+       dataArray: dataArray,
+       textcolor: "",
+       event_id: data.event_id,
+       loading: false,
+       item: data,
+       isJoining: false,
+       hasJoin: false,
+     });
+   })
+ }
   //accepted invitation
   @autobind
   onAccept() {
@@ -216,19 +243,19 @@ class CardListItem extends Component {
           <CardItem>
             {this.state.sent || this.state.item.sent ? (this.state.received || this.state.item.received ? (this.state.seen || this.state.item.seen ?
               <View style={{}}>
-                <Icon name="check-all" type="MaterialCommunityIcons" onPress={{}} style={{ color: this.state.seen ? "#1FABAB" : "gray", marginLeft: 300 }} />
+                <Icon name="checkcircle" type="AntDesign" onPress={{}} style={{ color: this.state.seen ? "#54F5CA" : "gray", marginLeft: 300 }} />
                 {this.state.accept || this.state.item.accept ? <Text style={{ color: "green" }} note>accepted</Text> : null}
                 {this.state.item.deny || this.state.deny ? <Text style={{ color: "red" }} note>denied</Text> : null}
               </View> :
               <View style={{}}>
-                <Icon name="check-all" type="MaterialCommunityIcons" onPress={{}} style={{ color: "gray", marginLeft: 300 }} />
+                <Icon name="checkcircle" type="AntDesign" onPress={{}} style={{ color: "gray", marginLeft: 300 }} />
                 {this.state.accept || this.state.item.accept ? <Text style={{ color: "green" }} note>accepted</Text> : null}
                 {this.state.item.deny || this.state.deny ? <Text style={{ color: "red" }} note>denied</Text> : null}
               </View>
             )
               :
               <View style={{}}>
-                <Icon name="check" type="AntDesign" onPress={{}} style={{ color: "gray", marginLeft: 300 }} />
+                <Icon name="checkcircleo" type="AntDesign" onPress={{}} style={{ color: "gray", marginLeft: 300 }} />
               </View>) : <Text note>sending...</Text>}
           </CardItem>
 

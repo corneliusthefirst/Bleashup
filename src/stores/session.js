@@ -165,7 +165,7 @@ export default class Session {
           if (session.password) {
             session.socket = newSocket;
             session.reference = this.SessionStore.reference
-            session.host = "192.168.43.69";
+          //  session.host = "192.168.43.32";
             storage
               .save({
                 key: "session",

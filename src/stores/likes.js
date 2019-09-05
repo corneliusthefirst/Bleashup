@@ -1,7 +1,7 @@
 import { observable, action } from "mobx";
 import {
   filter,
-  drop,
+  dropWhile,
   find,
   findIndex,
   indexOf,
@@ -13,6 +13,7 @@ import storage from "./Storage";
 import request from "../services/requestObjects";
 import tcpRequest from "../services/tcpRequestData";
 import ServerEventListener from "../services/severEventListener"
+import stores from ".";
 export default class likes {
   constructor() {
     this.readFromStore().then(likes => {
@@ -77,7 +78,7 @@ export default class likes {
       })
     })
   }
-  @action like(ID, Liker) {
+  @action like(ID, Liker,inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Likes => {
         if (Likes.length !== 0) {
@@ -89,7 +90,7 @@ export default class likes {
             Likes = uniqBy(Likes, "event_id");
             this.saveKey.data = Likes;
             storage.save(this.saveKey).then(() => {
-              this.setPropties(this.saveKey.data)
+             if(inform) this.setPropties(this.saveKey.data)
               resolve();
             });
           } else {
@@ -122,18 +123,22 @@ export default class likes {
       })
     })
   }
-  @action unlike(ID, phone) {
+  @action unlike(ID, phone,inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Likes => {
         if (Likes.length !== 0) {
           let likeIndex = findIndex(Likes, { event_id: ID });
           if (likeIndex >= 0) {
-            Likes[likeIndex].likers = drop(Likes[likeIndex].likers, indexOf(Likes[likeIndex].likers, phone) + 1);
-            Likes[likeIndex].likes -= Likes[likeIndex].likers.length;
-            this.saveKey.data = Likes;
-            storage.save(this.saveKey).then(() => {
-              resolve();
-            });
+            if (indexOf(Likes[likeIndex].likers, phone) >= 0){
+              Likes[likeIndex].likers.splice(indexOf(Likes[likeIndex].likers, phone), 1);
+              Likes[likeIndex].likes = Likes[likeIndex].likers.length;
+              this.saveKey.data = Likes;
+              storage.save(this.saveKey).then(() => {
+               if(inform)
+                 this.setPropties(this.saveKey.data)
+                resolve();
+              });
+            }
           } else {
             this.getLikesFromRemote(ID).then(Like => {
               this.addLike(Likes, Like).then(() => {

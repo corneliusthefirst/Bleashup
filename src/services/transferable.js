@@ -8,7 +8,7 @@ class Transferable {
         action: action,
         data: data,
         id: id,
-        host: session.host
+        host:session.host
       };
       resolve("_start_" + JSON.stringify(DataToSend) + "_end_");
     });

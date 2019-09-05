@@ -7,12 +7,14 @@ import InvitationDispatcher from "./invitationDispatcher";
 import RescheduleDispatcher from "./reschedulDispatcher";
 import tcpConnect from "./tcpConnect"
 import GState from "../stores/globalState";
+import {forEach} from "lodash"
 
 class ServerEventListener {
   constructor() { }
   socket = () => { }
   dispatch(data){
     if (data.response) {
+     // console.error(data)
       switch (data.response) {
         case "current_events":
           emitter.emit("current-events", data.body);
@@ -123,24 +125,46 @@ class ServerEventListener {
     });
     socket.on("data", datar => {
      data = datar.toString()
-      if(data.includes("_start_")){
-        data = data.replace("_start_","")
-        if(data.includes("_end_")){
-          data = data.replace("_end_","")
-          this.accumulator = ""
-          this.dispatch(JSON.parse(data))
+      if (data.includes("_end__start_")){
+        let dataX = data.split("_end__start_")
+        if(dataX[0].includes("_start_")){
+          this.dispatch(JSON.parse(dataX[0].replace("_start_","")))
         }else{
+          this.accumulator += dataX[0]
+          this.dispatch(JSON.parse(this.accumulator))
+        }
+        for( i = 1; i< dataX.length ; i++){
+          if(i == dataX.length-1){
+            if(dataX[i].includes("_end_")){
+              this.dispatch(JSON.parse(dataX[i].replace("_end_","")))
+            }else{
+              this.accumulator += dataX[i]
+            }
+          }else{
+            this.dispatch(JSON.parse(dataX[i]))
+          }
+        }
+      }else{
+        if (data.includes("_start_")) {
+          let dataSub = data.replace("_start_", "")
+          if (dataSub.includes("_end_")) {
+            this.accumulator = dataSub.replace("_end_", "")
+            this.dispatch(JSON.parse(this.accumulator))
+            this.accumulator = ""
+          } else {
+            this.accumulator += dataSub
+          }
+        } else if (data.includes("_end_")) {
+          let dataSub = data.replace("_end_", "")
+          this.accumulator += dataSub
+          this.dispatch(JSON.parse(this.accumulator))
+          this.accumulator = ""
+        } else {
           this.accumulator += data
         }
-      }else if(data.includes("_end_")){
-        data = data.replace("_end_","")
-        this.accumulator += data
-        this.dispatch(JSON.parse(this.accumulator))
-        this.accumulator = ""
-      }else{
-        this.accumulator += data
+
       }
-       });
+      });
     socket.on("timeout", data => {
       this.socket = () => { }
       tcpConnect.connect().then(socket => {

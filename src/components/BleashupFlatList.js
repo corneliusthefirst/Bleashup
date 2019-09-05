@@ -52,6 +52,7 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
                         }
                     }
                     }
+                    showsVerticalScrollIndicator={false}
                     keyExtractor={this.props.keyExtractor}
                     data={this.props.dataSource.slice(this.props.firstIndex ? this.props.firstIndex : 0,
                         this.state.currentRender)}

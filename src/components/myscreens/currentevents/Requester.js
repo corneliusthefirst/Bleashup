@@ -3,6 +3,7 @@ import requestObject from '../../../services/requestObjects'
 import requestData from "../../../services/tcpRequestData"
 import serverEventListener from "../../../services/severEventListener";
 import { forEach } from "lodash"
+import moment from "moment"
 class Requester {
     constructor() {
         this.currentUserPhone = stores.Session.SessionStore.phone;
@@ -29,11 +30,14 @@ class Requester {
             let i = 0
             requestData.invite_many(invites, id + "_invites").then(JSONData => {
                 serverEventListener.sendRequest(JSONData, id + "_invites").then(SuccessMessage => {
-                    invites.forEach(element => {
+                    forEach(invites,element => {
                         element.invitation.type = 'sent';
+                        element.invitation.arrival_date = moment().format("YYYY-MM-DD HH:mm")
                         stores.Invitations.addInvitations(element.invitation).then(mes => {
-                            if (i == invites.length - 1) resolve(SuccessMessage)
-                            i++
+                            stores.Invitations.markAsSentStatus(element.invitation.invitation_id).then(()=>{
+                                if (i == invites.length - 1) resolve(SuccessMessage)
+                                i++
+                            })
                         })
                     })
                 }).catch(error =>{

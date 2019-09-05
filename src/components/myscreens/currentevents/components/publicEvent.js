@@ -40,6 +40,7 @@ import Requester from "../Requester";
 import { observer } from "mobx-react";
 import Like from "./Like";
 import InvitationModal from "./InvitationModal";
+import Join from "./Join";
 scaleValue = new Animated.Value(0)
 cardScale = this.scaleValue.interpolate({
   inputRange: [0, 0.5, 1],
@@ -225,7 +226,6 @@ cardScale = this.scaleValue.interpolate({
   }
   componentDidMount() {
     setTimeout(() => {
-      stores.Events.isParticipant(this.props.Event.id, stores.Session.SessionStore.phone).then(status => {
         stores.Events.isMaster(this.props.Event.id, stores.Session.SessionStore.phone).then(master => {
           this.formDetailModal(this.props.Event).then(details => {
             let swipeOut = (<View>
@@ -262,27 +262,8 @@ cardScale = this.scaleValue.interpolate({
                   </TouchableOpacity>) : null}
                 </ListItem>
                 <ListItem style={{height:this.width,margin:this.padding,}}>
-                  {this.props.Event ? (this.state.isjoint || status ? (<TouchableOpacity onPress={() => Toast.show({
-                    text: 'Joint already!',
-                    buttonText: 'Okay'
-                  })} >
-                    <Icon style={{ fontSize: 20, color: "#7DD2D2" }} name="universal-access" type="Foundation">
-                    </Icon>
-                    <Label style={{
-                      color: "#7DD2D2",
-                      fontSize: 14
-                    }}
-                    >
-                      Joint
-              </Label>
-                  </TouchableOpacity>) : (<TouchableOpacity onPress={() => {
-                    if (!this.state.participant) {
+                  {this.props.Event ?  (<TouchableOpacity onPress={() => {
                       this.join()
-                    } else {
-                      Toast.show({
-                        text: "Joint Already !"
-                      })
-                    }
                   }}>
                     {this.state.isJoining ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
                     <Icon style={{ fontSize: 20, color: "#bfc6ea" }} name="universal-access" type="Foundation">
@@ -294,7 +275,7 @@ cardScale = this.scaleValue.interpolate({
                     >
                       Join
               </Label>
-                  </TouchableOpacity>)) : null}
+                  </TouchableOpacity>) : null}
 
                 </ListItem>
                 <ListItem style={{ height:this.width,margin:this.padding,alignSelf: 'flex-start' }}>
@@ -393,13 +374,11 @@ cardScale = this.scaleValue.interpolate({
                 ],
               },
               details: details,
-              participant: status,
               master: master,
               isMount:true,
               openInviteModal:false
             })
           })
-        })
       })
 
     }, 100)
@@ -512,25 +491,29 @@ cardScale = this.scaleValue.interpolate({
     })
   }
   join() {
-    if (this.props.Event.new) {
-      stores.Events.markAsSeen(this.props.Event.id).then(() => {
+    if(!this.props.Event.joint){
+      if (this.props.Event.new) {
+        stores.Events.markAsSeen(this.props.Event.id).then(() => {
+        })
+      }
+      this.setState({
+        isJoining: true
       })
+      this.setState({
+        isDetailsModalOpened: false
+      })
+      Requester.join(this.props.Event.id, this.props.Event.event_host).then((status) => {
+        Toast.show({text : "Event Successfully Joint !",type:"success",buttonText:"ok"})
+      }).catch((error) => {
+        this.setState({ isJoining: false })
+        Toast.show({
+          text: 'unable to connect to the server ',
+          buttonText: 'Okay'
+        })
+      })
+    }else{
+      Toast.show({text : "Joint Already !",buttonText:"ok"})
     }
-    this.setState({
-      isJoining: true
-    })
-    this.setState({
-      isDetailsModalOpened: false
-    })
-    Requester.join(this.props.Event.id, this.props.Event.event_host).then((status) => {
-      this.setState({ participant: true, isJoining: false });
-    }).catch((error) => {
-      this.setState({ isJoining: false })
-      Toast.show({
-        text: 'unable to connect to the server ',
-        buttonText: 'Okay'
-      })
-    })
   }
   indicatorMargin = {
     marginLeft: "5%",
@@ -598,7 +581,8 @@ cardScale = this.scaleValue.interpolate({
           >
             <Left>
               <View style={{ flexDirection: "row", flex: 5 }}>
-                <ProfileView joined={() => this.join()} hasJoin={this.state.participant} onOpen={() => this.onOpenDetaiProfileModal()} phone={(this.props.Event.creator_phone)}></ProfileView>
+                <ProfileView joined={() => this.join()} hasJoin={this.props.Event.joint} 
+                onOpen={() => this.onOpenDetaiProfileModal()} phone={(this.props.Event.creator_phone)}></ProfileView>
               </View>
             </Left>
           </CardItem>
@@ -670,7 +654,7 @@ cardScale = this.scaleValue.interpolate({
             cardBody
           >
             <Left>
-              <PhotoView joined={() => this.join()} isToBeJoint hasJoin={this.state.participant} onOpen={() => this.onOpenPhotoModal()} style={{
+              <PhotoView joined={() => this.join()} isToBeJoint hasJoin={this.props.Event.joint} onOpen={() => this.onOpenPhotoModal()} style={{
                 width: "70%",
                 marginLeft: "4%"
               }} photo={this.props.Event.background} width={170} height={125} borderRadius={10} />
@@ -871,64 +855,11 @@ cardScale = this.scaleValue.interpolate({
               </View>
             </Left>
             <Right>
-              <View style={{ padding: "-5%", marginLeft: "-25%" }}>
-                {this.props.Event.joint || this.state.participant ? (
-                  <View style={{ flexDirection: "row" }}>
-                    <TouchableWithoutFeedback onPress={() => Toast.show({
-                      text: 'Joint already!',
-                      buttonText: 'Okay'
-                    })} >
-                      <View >
-                        <Icon
-                          name="universal-access"
-                          type="Foundation"
-                          style={{
-                            color: "#54F5CA",
-                            fontSize: 23
-                          }}
-                        />
-                      </View>
-                    </TouchableWithoutFeedback>
-                    <View style={{ marginTop: 1 }}>
-                      <Text style={{ color: "#54F5CA" }} note> joint </Text>
-                    </View>
-                  </View>
-                ) : (
-                    <View style={{ flexDirection: "row" }}>
-                      <TouchableWithoutFeedback onPressIn={() => {
-                        scaleValue.setValue(0);
-                        Animated.timing(scaleValue, {
-                          toValue: 1,
-                          duration: 300,
-                          easing: Easing.linear,
-                          userNativeDriver: true
-                        }).start()
-                      }} onPressOut={() => {
-                        Animated.timing(scaleValue, {
-                          toValue: 1,
-                          duration: 200,
-                          easing: Easing.linear,
-                          userNativeDriver: true
-                        }).start()
-                        return this.join()
-                      }} >
-                        <Animated.View style={{ transform: [{ scale: cardScale }] }}>
-                          <Icon name="universal-access" style={{
-                            color: "#bfc6ea",
-                            fontSize: 27
-                          }} type="Foundation" />
-                        </Animated.View>
-                      </TouchableWithoutFeedback>
-                      <View style={{ marginTop: 4 }}>
-                        <Text style={{ fontSize: 13, color: "#bfc6ea" }} note> {" "}join </Text>
-                      </View>
-                    </View>
-                  )}
-              </View>
+             <Join event = {this.props.Event}></Join>
             </Right>
           </Footer>
           <DetailsModal
-            isToBeJoint={!(this.state.isJoin || this.props.Event.joint)}
+            isToBeJoint={!( this.props.Event.joint)}
             join={() => this.join()}
             isOpen={this.state.isDetailsModalOpened}
             isJoining={this.state.isJoining}

@@ -294,17 +294,19 @@ class Request {
         }
     }
     Time() {
+        let time = moment().format("YYYY-MM-DD HH:mm").split(" ")[1].split(":")
         return {
-            hour: "",
-            mins: "",
-            secs: ""
+            hour: time[0],
+            mins: time[1],
+            secs: ''
         }
     }
     Date() {
+        let date = moment().format("YYYY-MM-DD HH:mm").split(" ")[0].split("-")
         return {
-            year: "",
-            month: "",
-            day: ""
+            year: date[0],
+            month: date[1],
+            day: date[2]
         }
     }
     //This means Highlight-update

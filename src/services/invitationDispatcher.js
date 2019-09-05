@@ -42,15 +42,15 @@ class InvitationDispatcher {
     InvitationPossibilities = {
         accepted_invitation(Invitation) {
             return new Promise((resolve, reject) => {
-                stores.Invitations.acceptInvitation(Invitation.invitation_id).then(() => {
+                stores.Invitations.acceptInvitation(Invitation.invitation_id,true).then(() => {
                     GState.invitationUpdated = true
                     resolve()
                 })
             })
         },
-        deneid_invitation(Invitation) {
+        denied_invitation(Invitation) {
             return new Promise((resolve, reject) => {
-                stores.Invitations.denieInvitation(Invitation.invitation_id).then(() => {
+                stores.Invitations.denieInvitation(Invitation.invitation_id,true).then(() => {
                     GState.invitationUpdated = true;
                     resolve()
                 })

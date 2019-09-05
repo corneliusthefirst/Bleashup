@@ -48,7 +48,16 @@ class Requester {
             tcpRequest.acceptInvtation(invite, invitation.invitation_id + "accept").then(JSONData => {
                 serverEventListener.sendRequest(JSONData, invitation.invitation_id + "accept").then((response) => {
                     stores.Invitations.acceptInvitation(invitation.invitation_id).then(() => {
-                        resolve('ok')
+                        let Participant = requestObject.Participant();
+                        Participant.phone = stores.Session.SessionStore.phone;
+                        Participant.status = "invited";
+                        Participant.master = invitation.status;
+                        Participant.host = stores.Session.SessionStore.host
+                        stores.Events.addParticipant(invitation.event_id, Participant, true).then(() => {
+                            stores.Events.joinEvent(invitation.event_id,stores.Session.SessionStore.phone).then(() => {
+                                resolve("ok")
+                            })
+                        })
                     })
                 }).catch(error => {
                     serverEventListener.socket.write = undefined
