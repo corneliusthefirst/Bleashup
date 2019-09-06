@@ -260,7 +260,7 @@ const propOverridePlaceholderObject = {
   }
 
   render() {
-    return <Swipeout {...this.swipeSettings}>
+    return <Swipeout style={{ backgroundColor: "#FEFFDE"}} {...this.swipeSettings}>
     <View>
         <Card style={{height:200}}>
           <CardItem>

@@ -34,7 +34,7 @@ class Home extends Component {
   }
   componentDidMount() {
     NetInfo.isConnected.addEventListener("connectionChange", this.handleConnectionChange);
-    BackHandler.addEventListener("hardwareBackPress", this.handleBackButton);
+   // BackHandler.addEventListener("hardwareBackPress", this.handleBackButton);
   }
   componentWillUnmount() {
     BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton);

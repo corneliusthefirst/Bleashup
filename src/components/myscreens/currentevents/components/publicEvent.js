@@ -1,12 +1,5 @@
 import React, { Component } from "react";
-import {
-  View,
-  TouchableOpacity,
-  ActivityIndicator,
-  activityIndicatorStyle,
-  Animated,
-  Easing,
-} from "react-native";
+import { View} from "react-native";
 
 import {
   Card,
@@ -25,7 +18,6 @@ import {
 import autobind from "autobind-decorator";
 import UpdateStateIndicator from "./updateStateIndicator";
 import stores from "../../../../stores";
-import DetailsModal from "../../invitations/components/DetailsModal";
 import OptionList from "./OptionList"
 import ProfileView from "../../invitations/components/ProfileView";
 import MenuListView from "./MenuListView"

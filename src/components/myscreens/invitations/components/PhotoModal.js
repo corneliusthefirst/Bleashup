@@ -59,7 +59,7 @@ export default class PhotoModal extends Component {
                         </View>
                     </View>)
                     :
-                    (this.props.accept || this.props.deny ?
+                    (this.props.reacted ? null : this.props.accept || this.props.deny ?
                         <View style={{ flex: 2, flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                             <Icon name="comment" type="FontAwesome5" onPress={{}} style={{ color: "#1FABAB" }} />
                             <Text style={{ marginTop: 5, color: "#1FABAB" }}>chat</Text>

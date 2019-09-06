@@ -52,7 +52,7 @@ swipperComponent = (
 
 
 //Private class component for a flatLisItem
- class CardListItem extends Component {
+class CardListItem extends Component {
   constructor(props) {
     super(props);
   }
@@ -72,7 +72,7 @@ swipperComponent = (
     isJoining: false,
     hasJoin: false
   }
-data = []
+  data = []
   componentDidMount() {
     stores.Invitations.translateToinvitationData(this.props.item).then(data => {
       this.data = data
@@ -87,8 +87,8 @@ data = []
         accept: this.props.item.accept,
         deny: this.props.item.deny,
         message: "",
-        received : this.props.item.received,
-        seen : this.props.item.seen,
+        received: this.props.item.received,
+        seen: this.props.item.seen,
         dataArray: dataArray,
         textcolor: "",
         event_id: data.event_id,
@@ -100,24 +100,24 @@ data = []
     })
   }
 
- shouldComponentUpdate(nextProps, nextState, nextContext) {
-    return nextProps.item.invitation_id !== this.props.item.invitation_id || 
-    this.state.loading !== nextState.loading || 
+  shouldComponentUpdate(nextProps, nextState, nextContext) {
+    return nextProps.item.invitation_id !== this.props.item.invitation_id ||
+      this.state.loading !== nextState.loading ||
       nextProps.item.sent !== this.props.item.sent ||
-      nextProps.item.received !== this.props.item.received || 
-      nextProps.item.seen !== this.props.item.seen || 
-      nextProps.item.accept !== this.props.item.accept || 
+      nextProps.item.received !== this.props.item.received ||
+      nextProps.item.seen !== this.props.item.seen ||
+      nextProps.item.accept !== this.props.item.accept ||
       nextProps.item.deny !== this.props.item.deny ||
       this.state.opening !== nextState.opening
- }
- componentWillReceiveProps(nextProps) {
-     this.setState({
-       accept: nextProps.item.accept,
-       deny: nextProps.item.deny,
-       received: nextProps.item.received,
-       seen: nextProps.item.seen,
-   })
- }
+  }
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      accept: nextProps.item.accept,
+      deny: nextProps.item.deny,
+      received: nextProps.item.received,
+      seen: nextProps.item.seen,
+    })
+  }
   //accepted invitation
   @autobind
   onAccept() {
@@ -188,17 +188,17 @@ data = []
       <Swipeout style={{
         backgroundColor: "#FEFFDE"
       }} {...this.swipeSettings}>
-        <Card style={{height:200}}>
+        <Card style={{ height: 200 }}>
           <CardItem>
             <Left>
-              <TouchableOpacity onPress={() => this.setState({opening :true, isOpenStatus: true })} >
+              <TouchableOpacity onPress={() => this.setState({ opening: true, isOpenStatus: true })} >
                 {this.state.loading ? null : <CacheImages small thumbnails source={{ uri: this.state.item.sender_Image }}
                 />}
               </TouchableOpacity>
               <Body >
-                {this.state.loading?null:<Text style={styles.flatlistItem} >{this.state.item.sender_name}</Text>}
+                {this.state.loading ? null : <Text style={styles.flatlistItem} >{this.state.item.sender_name}</Text>}
 
-                {this.state.loading?null:this.state.dataArray.content == "" ? <Text style={{
+                {this.state.loading ? null : this.state.dataArray.content == "" ? <Text style={{
                   color: 'dimgray', padding: 10,
                   fontSize: 16, marginTop: -10, borderWidth: 0
                 }} note>{this.state.item.sender_status}</Text> :
@@ -214,7 +214,7 @@ data = []
                 RightImage={this.state.item.event_Image} />}
             </Left>
             <Body >
-              {this.state.loading?null:<TouchableOpacity onPress={() => {
+              {this.state.loading ? null : <TouchableOpacity onPress={() => {
                 let event = filter(stores.Events.events, { id: this.state.event_id })
                 this.props.navigation.navigate("Event", {
                   Event: event[0],
@@ -229,7 +229,7 @@ data = []
           </CardItem>
 
           <CardItem>
-            {this.state.loading?null:this.state.sent || this.state.item.sent ? (this.state.received || this.state.item.received ? (this.state.seen || this.state.item.seen ?
+            {this.state.loading ? null : this.state.sent || this.state.item.sent ? (this.state.received || this.state.item.received ? (this.state.seen || this.state.item.seen ?
               <View style={{}}>
                 <Icon name="checkcircle" type="AntDesign" onPress={{}} style={{ color: this.state.seen ? "#54F5CA" : "gray", marginLeft: 300 }} />
                 {this.state.accept || this.state.item.accept ? <Text style={{ color: "green" }} note>accepted</Text> : null}
@@ -248,19 +248,19 @@ data = []
           </CardItem>
 
           <CardItem style={{ margin: 10, flexDirection: 'row', justifyContent: 'space-between' }}>
-            {this.state.loading?null:<Text style={{ color: 'dimgray', fontSize: 13 }}>{this.state.item.received_date}</Text>}
-            {this.state.loading?null:<Text style={{ color: 'dimgray', fontSize: 13 }}>{this.state.item.invitation_status}</Text>}
+            {this.state.loading ? null : <Text style={{ color: 'dimgray', fontSize: 13 }}>{this.state.item.received_date}</Text>}
+            {this.state.loading ? null : <Text style={{ color: 'dimgray', fontSize: 13 }}>{this.state.item.invitation_status}</Text>}
           </CardItem>
 
-          {this.state.loading?null:<ProfileModal isOpen={this.state.isOpenStatus} profile={{
+          {this.state.loading ? null : <ProfileModal isOpen={this.state.isOpenStatus} profile={{
             nickname: this.state.item.sender_name,
             image: this.state.item.sender_Image,
             status: this.state.item.sender_status
-          }} onClosed={() => this.setState({ opening : false,isOpenStatus: false })} onAccept={this.onAccept} onDenied={this.onDenied} deny={this.state.deny}
+          }} onClosed={() => this.setState({ opening: false, isOpenStatus: false })} onAccept={this.onAccept} onDenied={this.onDenied} deny={this.state.deny}
             accept={this.state.accept} isJoining={this.state.isJoining} hasJoin={this.state.hasJoin}
             joined={() => this.setState({ hasJoin: true })} />}
 
-          {this.state.loading?null:<PhotoModal isOpen={this.state.enlargeEventImage} image={this.state.item.event_Image} onClosed={() => this.setState({opening:false, enlargeEventImage: false })}
+          {this.state.loading ? null : <PhotoModal reacted isOpen={this.state.enlargeEventImage} image={this.state.item.event_Image} onClosed={() => this.setState({ opening: false, enlargeEventImage: false })}
             onAccept={this.onAccept} onDenied={this.onDenied} deny={this.state.deny}
             accept={this.state.accept} isJoining={this.state.isJoining} hasJoin={this.state.hasJoin}
             joined={() => this.setState({ hasJoin: true })} />}
