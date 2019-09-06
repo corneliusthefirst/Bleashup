@@ -188,7 +188,12 @@ class CardListItem extends Component {
       <Swipeout style={{
         backgroundColor: "#FEFFDE"
       }} {...this.swipeSettings}>
-        <Card style={{ height: 200 }}>
+        <Card style={{ height: 220 }}>
+        <CardItem>
+        <Text note>
+        sent
+        </Text>
+        </CardItem>
           <CardItem>
             <Left>
               <TouchableOpacity onPress={() => this.setState({ opening: true, isOpenStatus: true })} >
