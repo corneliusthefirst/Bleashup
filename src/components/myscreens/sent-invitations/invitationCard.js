@@ -142,7 +142,7 @@ class CardListItem extends Component {
     },
     //on open i set the activerowkey
     onOpen: (secId, rowId, direction) => {
-      this.setState({ activeRowKey: this.state.item.key });
+      this.setState({ activeRowKey: this.state.loading?null:this.state.item.key });
     },
 
     right: [
@@ -188,7 +188,12 @@ class CardListItem extends Component {
       <Swipeout style={{
         backgroundColor: "#FEFFDE"
       }} {...this.swipeSettings}>
-        <Card style={{ height: 200 }}>
+        <Card style={{ height: 220 }}>
+        <CardItem>
+        <Text note>
+        sent
+        </Text>
+        </CardItem>
           <CardItem>
             <Left>
               <TouchableOpacity onPress={() => this.setState({ opening: true, isOpenStatus: true })} >
