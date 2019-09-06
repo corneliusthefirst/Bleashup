@@ -262,7 +262,7 @@ const propOverridePlaceholderObject = {
   render() {
     return <Swipeout style={{ backgroundColor: "#FEFFDE"}} {...this.swipeSettings}>
     <View>
-        <Card style={{height:220}}>
+        <Card style={{height:230}}>
         <CardItem>
             <Text style={{ color:"#54F5CA"}} note>
             received
