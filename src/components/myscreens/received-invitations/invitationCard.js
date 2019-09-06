@@ -201,7 +201,7 @@ const propOverridePlaceholderObject = {
     },
     //on open i set the activerowkey
     onOpen: (secId, rowId, direction) => {
-      this.setState({ activeRowKey: this.state.item.key });
+      this.setState({ activeRowKey: this.state.loading?null:this.state.item.key });
     },
 
     right: [

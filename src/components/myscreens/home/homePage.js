@@ -14,11 +14,9 @@ import {
 import NetInfo from "@react-native-community/netinfo";
 import StatusView from "./../status/index";
 import InvitationView from "./../invitations/index";
-import PersonalEventView from "./../personalevents/index";
 import Chats from "../poteschat";
 import SettingView from "./../settings/index";
 import { observer } from "mobx-react";
-import UserHttpServices from "../../../services/userHttpServices";
 import autobind from "autobind-decorator";
 import RNExitApp from "react-native-exit-app";
 import stores from "../../../stores";
@@ -34,7 +32,7 @@ class Home extends Component {
   }
   componentDidMount() {
     NetInfo.isConnected.addEventListener("connectionChange", this.handleConnectionChange);
-   // BackHandler.addEventListener("hardwareBackPress", this.handleBackButton);
+  // BackHandler.addEventListener("hardwareBackPress", this.handleBackButton);
   }
   componentWillUnmount() {
     BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton);

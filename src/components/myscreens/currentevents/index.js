@@ -1,13 +1,8 @@
 import React, { Component } from "react";
 import {
-  View,
-  Dimensions
+  View
 } from "react-native";
-import { forEach } from "lodash"
-import NewEvents from "./components/NewEvents";
 import CurrentEvents from "./components/CurrentEvents";
-import stores from "../../../stores"
-import { Spinner, Fab, Icon } from "native-base";
 import { observer } from "mobx-react";
 @observer class CurrentEventView extends Component {
   constructor(props) {
