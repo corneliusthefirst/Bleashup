@@ -11,6 +11,7 @@ import TempLoginStore from "./TempLoginStore"
 import ChatStore from "./ChatStore"
 import ChangeLogs from "./changelogs"
 import Reminds from "./reminds"
+import Publishers from "./publishers"
 import TemporalUsersStore from "./temporalUsersStore"
 
 export default {
@@ -28,6 +29,7 @@ export default {
   Invitations: new Invitations(),
   ChangeLogs: new ChangeLogs(),
   Likes: new Likes(),
+  Publishers: new Publishers(),
   TemporalUsersStore: new TemporalUsersStore()
 
 

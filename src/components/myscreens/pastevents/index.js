@@ -1,11 +1,11 @@
 import React, { Component } from "react";
 import { Content, Card, CardItem, Container, Text, Body } from "native-base";
-import NestedScrollView from "react-native-nested-scroll-view";
 import GState from "../../../stores/globalState";
 import requestObjects from "../../../services/requestObjects";
 import tcpRequestData from "../../../services/tcpRequestData";
 import stores from "../../../stores";
 import emitter from "../../../services/eventEmiter";
+import { ScrollView } from "react-native";
 export default class CurrentEventView extends Component {
   render() {
     /* let Remind = requestObjects.remind();
@@ -25,7 +25,7 @@ export default class CurrentEventView extends Component {
     });*/
     return (
       <Container>
-        <NestedScrollView
+        <ScrollView
           onScroll={nativeEvent => {
             GState.scrollOuter = true;
           }}
@@ -58,7 +58,7 @@ export default class CurrentEventView extends Component {
               </CardItem>
             </Card>
           </Content>
-        </NestedScrollView>
+        </ScrollView>
       </Container>
     );
   }

@@ -196,13 +196,13 @@ export default class EmailVerificationView extends Component {
             {globalState.error == false ? (
               <Text />
             ) : (
-              <Icon
-                onPress={this.removeError}
-                type="Ionicons"
-                name="close-circle"
-                style={{ color: "#00C497" }}
-              />
-            )}
+                <Icon
+                  onPress={this.removeError}
+                  type="Ionicons"
+                  name="close-circle"
+                  style={{ color: "#00C497" }}
+                />
+              )}
           </Item>
 
           <Text
@@ -221,8 +221,8 @@ export default class EmailVerificationView extends Component {
             {globalState.loading ? (
               <Spinner color="#FEFFDE" />
             ) : (
-              <Text> Ok </Text>
-            )}
+                <Text> Ok </Text>
+              )}
           </Button>
         </Content>
       </Container>

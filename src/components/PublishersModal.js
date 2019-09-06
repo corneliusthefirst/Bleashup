@@ -1,55 +1,39 @@
-import React, { Component } from "react"
+import React, { PureComponent } from "react"
 import Modal from "react-native-modalbox"
 import { Content, List, ListItem, Body, Left, Right, Text } from "native-base"
-import CacheImages from "./CacheImages";
 import ImageActivityIndicator from "./myscreens/currentevents/components/imageActivityIndicator";
-import stores from "../stores";
 import ContactList from "./ContactList";
-export default class PublishersModal extends Component {
+import { observer } from "mobx-react";
+@observer export default class PublishersModal extends PureComponent {
     constructor(props) {
         super(props)
-    }
-    state = {
-        isOpen: false,
-        isloaded: false
-    }
-    componentDidMount() {
-        this.setState({
+        this.state = {
             isOpen: false,
-        });
+        };
     }
-    shouldComponentUpdate(nextProps, nextState) {
-        if (nextProps.isOpen !== this.state.isOpen) return true
-        else return false
-    }
-    componentDidUpdate(PreviousProps) {
-        if (this.props.isOpen !== this.state.isOpen) {
-            this.setState({
-                isOpen: this.props.isOpen
-            })
-        }
+
+    componentDidMount() {
     }
     render() {
         return (
             <Modal
-                backdropPressToClose={false}
-                swipeToClose={false}
+                // backdropPressToClose={false}
+                //swipeToClose={false}
                 backdropOpacity={0.7}
-                animationDuration={100}
                 backButtonClose={true}
                 position='bottom'
                 coverScreen={true}
-                isOpen={this.state.isOpen}
+                isOpen={this.props.isOpen}
                 onClosed={() =>
                     this.props.onClosed()
 
                 }
                 style={{
-                    justifyContent: 'center', alignItems: 'center', height: 620, display: 'flex', flexDirection: 'column',
-                    borderRadius: 8, backgroundColor: '#FEFFDE', width: 420
+                    height: "97%",
+                    borderRadius: 8, backgroundColor: '#FEFFDE', width: "100%"
                 }}>
                 <Content>
-                    <ContactList></ContactList>
+                    <ContactList event_id={this.props.event_id}></ContactList>
                 </Content>
             </Modal>
 

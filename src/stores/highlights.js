@@ -3,20 +3,26 @@ import { observable, action } from "mobx";
 
 import { uniqBy, reject, filter, find, findIndex, sortBy } from "lodash";
 import moment from "moment";
+import tcpRequest from "../services/tcpRequestData";
+import request from '../services/requestObjects';
+import serverEventListener from "../services/severEventListener"
 export default class highlights {
   @observable highlights = [];
   saveKey = {
     key: "highlights",
     data: []
   };
+  @action addHighlight(H){
+    return this.addHighlights([H])
+  }
   @action addHighlights(Highlight) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Highlights => {
-        if (Highlights)
-          Highlights = uniqBy(Highlights.concat([Highlight]), "id");
-        else Highlights = [Highlight];
+        if (Highlights.length !== 0)
+          Highlights = uniqBy(Highlights.concat(Highlight), 'id');
+        else Highlights = Highlight;
         this.saveKey.data = Highlights;
-        storage.save(this.saveKey.data).then(() => {
+        storage.save(this.saveKey).then(() => {
           this.highlights = this.saveKey.data;
           resolve();
         });
@@ -36,26 +42,49 @@ export default class highlights {
       });
     });
   }
+  fetchHighlightsFromRemote(eventID){
+    return new Promise((resolve,reject) =>{
+      let eventid = request.EventID()
+      eventid.event_id = eventID;
+      tcpRequest.getHighlights(eventid, eventid.event_id + "highlights").then(JSONDATA => {
+        serverEventListener.sendRequest(JSONDATA, eventid.event_id + "highlights").then(Data => {
+          if (Data == 'empty') {
+            resolve([])
+          } else {
+            this.addHighlights(Data).then(() => {
+              resolve(sortBy(Data,"update_date"))
+            })
+          }
+        }).catch(error => {
+          resolve([])
+        })
+      })
+    })
+  }
   @action fetchHighlights(eventID) {
     return new Promise((resolve, reject) => {
-      if (!this.highlights) {
+      if (this.highlights.length == 0) {
         this.readFromStore().then(Highlights => {
-          resolve(
-            filter(Highlights, {
-              event_id: eventID
-            }),
-            "update_date"
-          );
+          let result = filter(Highlights, {
+            event_id: eventID
+          })
+          if(result.length==0){
+            this.fetchHighlightsFromRemote(eventID).then(data =>{
+              resolve(data)
+            })
+          }else{
+            resolve(result)
+          }
         });
       } else {
-        resolve(
-          sortBy(
-            filter(this.highlights, {
-              event_id: eventID
-            })
-          ),
-          "update_date"
-        );
+       let highlights = filter(this.highlights,{event_id:eventID});
+       if(highlights.length == 0){
+         this.fetchHighlightsFromRemote(eventID).then(data =>{
+           resolve(data)
+         })
+       }else{
+         resolve(highlights)
+       }
       }
     });
   }

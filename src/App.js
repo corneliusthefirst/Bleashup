@@ -2,7 +2,7 @@ import React, { Component } from "react";
 //import { AppLoading } from 'expo';
 //import { Ionicons } from '@expo/vector-icons';
 //import * as Font from 'expo-font';
-
+import { InAppNotificationProvider } from "react-native-in-app-notification";
 import { Root, StyleProvider } from "native-base";
 
 import {
@@ -43,14 +43,12 @@ import EventDetail from "./components/myscreens/eventDetails";
 import EventChat from "./components/myscreens/eventDetails";
 import Reminds from "./components/myscreens/reminds";
 
-
 /*
 
 let {height, width} = Dimensions.get('window');
 EStyleSheet.build({
   $rem: width > 340 ? 18 : 16
 });*/
-
 
 const AppNavigator = createStackNavigator(
   {
@@ -92,13 +90,14 @@ const AppContainer = createAppContainer(AppNavigator);
 export default () => (
   <Root>
     <StyleProvider style={getTheme(CommonColor)}>
-      <Provider app={app}>
-        <AppContainer />
-      </Provider>
+      <InAppNotificationProvider>
+        <Provider app={app}>
+          <AppContainer />
+        </Provider>
+      </InAppNotificationProvider>
     </StyleProvider>
   </Root>
 );
-
 
 //Todo : Expo app setup
 /*export default class App extends React.Component {

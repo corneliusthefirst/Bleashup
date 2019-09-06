@@ -23,19 +23,18 @@ export default class PersonalEventView extends Component {
       <Container>
         <Tabs
           locked
-          tabBarPosition="overlayBottom"
           tabBarUnderlineStyle={{
             borderBottomWidth: 0,
             backgroundColor: "transparent"
           }}
         >
-          <Tab heading="Current Events">
+          <Tab textStyle={{ color: '#7DD2D2' }} activeTextStyle={{ color: '#FEFFDE', fontWeight: 'bold' }} heading="Current Events">
             <CurrentEventView {...this.props} />
           </Tab>
-          <Tab heading="Past Events">
+          <Tab textStyle={{ color: '#7DD2D2' }} activeTextStyle={{ color: '#FEFFDE', fontWeight: 'bold' }} heading="Past Events">
             <PastEventView {...this.props} />
           </Tab>
-          <Tab heading="My Reminds">
+          <Tab activeTextStyle={{ color: '#FEFFDE', fontWeight: 'bold' }} textStyle={{ color: '#7DD2D2' }} heading="My Reminds">
             <Reminds {...this.props} />
           </Tab>
         </Tabs>

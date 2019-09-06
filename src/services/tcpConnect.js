@@ -17,14 +17,27 @@ class Connection {
           ServerEventListener.listen(socket);
           stores.Session.updateSocket(socket).then(session => {
             TcpRequestData.Presence().then(JSONData => {
-              socket.write(JSONData);
-              this.socket = socket;
-              resolve(socket);
+                socket.write(JSONData)
+                this.socket = socket;
+                resolve(socket);
             });
           });
         }
       );
     });
+  }
+  connect(){
+    return new Promise((resolve,reject)=>{
+      let socket = net.createConnection(
+        config.bleashup_tcp.port,
+        config.bleashup_tcp.host,
+        () => {
+          stores.Session.updateSocket(socket).then(session => {
+            this.socket = socket
+          resolve(socket)
+          })
+        })
+    })
   }
   sendRequest(data) {
     return new Promise((resolve, reject) => {

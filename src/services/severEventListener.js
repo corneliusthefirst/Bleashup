@@ -7,148 +7,226 @@ import InvitationDispatcher from "./invitationDispatcher";
 import RescheduleDispatcher from "./reschedulDispatcher";
 import tcpConnect from "./tcpConnect"
 import GState from "../stores/globalState";
+import {forEach} from "lodash"
 
 class ServerEventListener {
   constructor() { }
   socket = () => { }
+  dispatch(data){
+    if (data.response) {
+     // console.error(data)
+      switch (data.response) {
+        case "current_events":
+          emitter.emit("current-events", data.body);
+          break;
+        case "news":
+          stores.Session.updateReference(data.reference).then(sessios => {
+            if (data.updated.length !== 0) UpdatesDispatcher.dispatchUpdates(data.updated);
+            if (data.new_events.length !== 0) {
+              InvitationDispatcher.dispatchUpdates(
+                data.new_events,
+                "invitation"
+              ).then(() => {
+              });
+            }
+            if (data.reschedules)
+              RescheduleDispatcher.dispatchReschedules(data.reschedules);
+            if (data.info)
+              InvitationDispatcher.dispatchInvitationsUpdates(data.info);
+          });
+          break;
+        case "event_changes":
+          UpdatesDispatcher.dispatchUpdate(data.updated).then(() => { });
+          break;
+        case "current_event":
+          emitter.emit("successful", "current_event", data.body);
+          break;
+        case "events":
+          emitter.emit("events", data.body);
+          break;
+        case "invitation":
+          InvitationDispatcher.dispatcher(data.body, "invitation").then(
+            () => {
+            }
+          );
+          break;
+        case "reschedule":
+          RescheduleDispatcher.applyReschedule(body).then(() => { });
+          break;
+        case "denied_invitation":
+          InvitationDispatcher.dispatcher(
+            data.body,
+            "denied_invitation"
+          ).then(() => { });
+          break;
+        case "accepted_invitation":
+          InvitationDispatcher.dispatcher(
+            data.body,
+            "accepted_invitation"
+          ).then(() => { });
+          break;
+        case "seen_invitation":
+          InvitationDispatcher.dispatcher(data.body, "seen_invitation").then(
+            () => { }
+          );
+          break;
+
+        case "received_invitation":
+          InvitationDispatcher.dispatcher(
+            data.body,
+            "received_invitation"
+          ).then(() => { });
+          break;
+        case "current_event_field":
+          emitter.emit(
+            "current_event-field",
+            data.field_name,
+            data.data,
+            data.event_id
+          );
+          break;
+          case "contacts":
+          emitter.emit("successful_"+data.body.id,data.body.data);
+          break;
+          case "add_as_contact":
+        /*case "event_changes":
+          emitter.emit("event_changes", data.updated);
+          break;*/
+      }
+    }
+    if (data.status) {
+      switch (data.status) {
+        case "successful":
+          if (data.data) emitter.emit("successful_"+data.id, "data", data.data);
+          if (data.message) emitter.emit("successful_"+data.message.id, data.message.data);
+          break;
+        case "unsuccessful":
+          if (data.data) emitter.emit("unsuccessful_"+data.id, "data", data.data);
+          if (data.message) emitter.emit("unsuccessful_"+data.message.id, data.message.data);
+          break;
+      }
+    }
+    if (data.error) {
+      console.warn("reconnection attempted", "deu to ", data)
+      emitter.emit("unsuccessful", data.message)
+    }
+
+  }
+  accumulator = ""
   listen(socket) {
+    //socket.setTimeout(10000);
     this.socket = socket
     socket.on("error", error => {
-      console.error(error.toString(), "error");
+      console.warn(error.toString(), "error");
+      this.socket.write = undefined
+      tcpConnect.init().then(socket => {
+        this.socket = socket
+      })
     });
     socket.on("data", datar => {
-      data = JSON.parse(datar.toString());
-      if (data.response) {
-        switch (data.response) {
-          case "current_events":
-            emitter.emit("current-events", data.body);
-            break;
-          case "news":
-            GState.writing = data.reference
-            stores.Session.updateReference(data.reference).then(sessios => {
-              let EventID = requestObject.EventID();
-              if (data.updated) UpdatesDispatcher.dispatchUpdates(data.updated);
-              if (data.new_events) {
-                InvitationDispatcher.dispatchUpdates(
-                  data.new_events,
-                  "invitation"
-                ).then(() => {
-                });
-              }
-              if (data.reschedules)
-                RescheduleDispatcher.dispatchReschedules(data.reschedules);
-              if (data.info)
-                InvitationDispatcher.dispatchInvitationsUpdates(data.info);
-            });
-            break;
-          case "event_changes":
-            UpdatesDispatcher.dispatchUpdate(data.updated).then(() => { });
-            break;
-          case "current_event":
-            emitter.emit("successful", "current_event", data.body);
-            break;
-          case "events":
-            emitter.emit("events", data.body);
-            break;
-          case "invitation":
-
-            InvitationDispatcher.dispatcher(data.body, "invitation").then(
-              () => {
-              }
-            );
-            break;
-          case "reschedule":
-            RescheduleDispatcher.applyReschedule(body).then(() => { });
-            break;
-          case "denied_invitation":
-            InvitationDispatcher.dispatcher(
-              data.body,
-              "denied_invitation"
-            ).then(() => { });
-            break;
-          case "accepted_invitation":
-            InvitationDispatcher.dispatcher(
-              data.body,
-              "accepted_invitation"
-            ).then(() => { });
-            break;
-          case "sent_invitation":
-            InvitationDispatcher.dispatcher(data.body, "sent_invitation").then(
-              () => { }
-            );
-            break;
-
-          case "received_invitation":
-            InvitationDispatcher.dispatcher(
-              data.body,
-              "received_invitation"
-            ).then(() => { });
-            break;
-          case "current_event_field":
-            emitter.emit(
-              "current_event-field",
-              data.field_name,
-              data.data,
-              data.event_id
-            );
-            break;
-          /*case "event_changes":
-            emitter.emit("event_changes", data.updated);
-            break;*/
+     data = datar.toString()
+      if (data.includes("_end__start_")){
+        let dataX = data.split("_end__start_")
+        if(dataX[0].includes("_start_")){
+          this.dispatch(JSON.parse(dataX[0].replace("_start_","")))
+        }else{
+          this.accumulator += dataX[0]
+          this.dispatch(JSON.parse(this.accumulator))
         }
-      }
-      if (data.status) {
-        console.warn(data.status)
-        switch (data.status) {
-          case "successful":
-            if (data.data) emitter.emit("successful", "data", data.data);
-            if (data.message) emitter.emit("successful", data.message);
-            break;
-          case "unsuccessful":
-            if (data.data) emitter.emit("unsuccessful", "data", data.data);
-            if (data.message) emitter.emit("unsuccessful", data.message);
-            break;
+        for( i = 1; i< dataX.length ; i++){
+          if(i == dataX.length-1){
+            if(dataX[i].includes("_end_")){
+              this.dispatch(JSON.parse(dataX[i].replace("_end_","")))
+            }else{
+              this.accumulator += dataX[i]
+            }
+          }else{
+            this.dispatch(JSON.parse(dataX[i]))
+          }
         }
+      }else{
+        if (data.includes("_start_")) {
+          let dataSub = data.replace("_start_", "")
+          if (dataSub.includes("_end_")) {
+            this.accumulator = dataSub.replace("_end_", "")
+            this.dispatch(JSON.parse(this.accumulator))
+            this.accumulator = ""
+          } else {
+            this.accumulator += dataSub
+          }
+        } else if (data.includes("_end_")) {
+          let dataSub = data.replace("_end_", "")
+          this.accumulator += dataSub
+          this.dispatch(JSON.parse(this.accumulator))
+          this.accumulator = ""
+        } else {
+          this.accumulator += data
+        }
+
       }
-      if (data.error) {
-          console.warn("reconnection attempted", "deu to ", data.error)
-      }
-    });
+      });
     socket.on("timeout", data => {
-      console.error(data.toString(), "timeout");
+      this.socket = () => { }
+      tcpConnect.connect().then(socket => {
+        this.socket = socket
+      })
     });
     socket.on("closed", data => {
       console.error(error.toString(), "closed");
+      this.socket = () => { }
+      tcpConnect.connect().then(socket => {
+        this.socket = socket
+      })
+    });
+    socket.on("end", () => {
+      console.error("onEnd says nothing");
     });
   }
-  get_data(data) {
+  get_data(data, id) {
     return new Promise((resolve, reject) => {
-      emitter.once("successful", (response, dataResponse) => {
-        resolve(dataResponse);
+      emitter.on("successful", (response, dataResponse) => {
+        if (dataResponse) {
+          if (dataResponse.id == id) {
+            resolve(dataResponse.data)
+          }
+        }
       });
-      emitter.once("unsuccessful", (response, dataError) => {
+      emitter.on("unsuccessful", (response, dataError) => {
         reject(dataError);
       });
-      this.socket.write(data);
+      if (this.socket.write) {
+        this.socket.write(data)
+      } else {
+        this.socket = () => {}
+        reject("not connected");
+      }
     });
   }
-  sendRequest(data) {
+  sendRequest(data, id) {
     return new Promise((resolve, reject) => {
-      emitter.once("successful", (response) => {
-        resolve(response);
+      //setTimeout(()=>{
+      //  reject("request timedout!")
+     // },6000)
+      emitter.once("successful_"+id, (response) => {
+          resolve(response);
       });
-      emitter.once("unsuccessful", (response) => {
-        reject(response);
+      emitter.once("unsuccessful_"+id, (response) => {
+          reject(response);
       });
-      this.socket.write(data);
+      if (this.socket.write) {
+        this.socket.write(data)
+      } else {
+        this.socket.write = tcpConnect.socket.write
+        reject("not connected to server")
+      }
     })
   }
   GetData(EventId) {
     return new Promise((resolve, reject) => {
       let EventID = requestObject.EventID()
       EventID.event_id = EventId;
-      tcpRequest.getCurrentEvent(EventID).then(JSONData => {
-        this.get_data(JSONData).then(Event => {
+      tcpRequest.getCurrentEvent(EventID, EventId).then(JSONData => {
+        this.get_data(JSONData, EventId).then(Event => {
           resolve(Event)
         });
       });

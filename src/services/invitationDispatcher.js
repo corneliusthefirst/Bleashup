@@ -7,6 +7,7 @@ import {
     forEach
 } from "lodash"
 import Getter from "./Getter";
+import moment from "moment"
 class InvitationDispatcher {
     dispatchUpdates(Invitations, action) {
         return new Promise((resolve, reject) => {
@@ -41,23 +42,23 @@ class InvitationDispatcher {
     InvitationPossibilities = {
         accepted_invitation(Invitation) {
             return new Promise((resolve, reject) => {
-                stores.Invitations.acceptInvitation(Invitation.invitation_id).then(() => {
+                stores.Invitations.acceptInvitation(Invitation.invitation_id,true).then(() => {
                     GState.invitationUpdated = true
                     resolve()
                 })
             })
         },
-        deneid_invitation(Invitation) {
+        denied_invitation(Invitation) {
             return new Promise((resolve, reject) => {
-                stores.Invitations.denieInvitation(Invitation.invitation_id).then(() => {
+                stores.Invitations.denieInvitation(Invitation.invitation_id,true).then(() => {
                     GState.invitationUpdated = true;
                     resolve()
                 })
             })
         },
-        sent_invitation(Invitation) {
+        seen_invitation(Invitation) {
             return new Promise((resolve, reject) => {
-                stores.Invitations.markAsSentStatus(Invitation.invitation_id).then(() => {
+                stores.Invitations.markAsSeen(Invitation.invitation_id).then(() => {
                     resolve()
                 })
             })
@@ -71,11 +72,21 @@ class InvitationDispatcher {
         },
         invitation(Invitation) {
             return new Promise((resolve, reject) => {
-                stores.Invitations.addInvitations(Invitation).then(() => {
-                    ServerEventListener.GetData(Invitation.event_id).then(Event => {
-                        stores.Events.addEvent(Event).then(() => {
-                            GState.invitationUpdated = true
-                            resolve()
+                let invite = requestObject.Invite();
+                invite.invitation = Invitation;
+                invite.host = stores.Session.SessionStore.host;
+                invite.invitee = stores.Session.SessionStore.phone;
+                requestData.received_invitation(invite,Invitation.invitation_id).then(JSONData => {
+                    ServerEventListener.sendRequest(JSONData,Invitation.invitation_id).then((response) => {
+                        Invitation.type = "received"
+                        Invitation.arrival_date = moment().format("YYYY-MM-DD HH:mm")
+                        stores.Invitations.addInvitations(Invitation).then(() => {
+                            ServerEventListener.GetData(Invitation.event_id).then(Event => {
+                                stores.Events.addEvent(Event).then(() => {
+                                    GState.invitationUpdated = true
+                                    resolve()
+                                })
+                            })
                         })
                     })
                 })

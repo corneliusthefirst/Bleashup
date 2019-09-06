@@ -24,6 +24,9 @@ import stores from "../../../stores";
 import routerActions from "reazy-native-router-actions";
 import initialRoute from "../invitations/components/initialRoute";
 import globalState from "../../../stores/globalState";
+import ServerEventListener from "../../../services/severEventListener";
+import connection from "../../../services/tcpConnect";
+import UpdatesDispatcher from "../../../services/updatesDispatcher";
 export default class LoginHomeView extends Component {
   constructor(props) {
     super(props);
@@ -33,8 +36,13 @@ export default class LoginHomeView extends Component {
     routeName = initialRoute.routeName;
     if ((globalState.loading = true)) {
       initialRoute.initialRoute().then(route => {
-        globalState.loading = false;
-        this.props.navigation.navigate(route);
+        if(route !== "Login"){
+          connection.init().then(socket => {
+            globalState.loading = false;
+            this.props.navigation.navigate(route);
+          })
+          setTimeout(() => this.props.navigation.navigate(route), 5000)
+        }
       });
     }
     globalState.loading = true;

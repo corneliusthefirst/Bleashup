@@ -1,479 +1,53 @@
-import React, { Component } from "react";
-import {Platform, StyleSheet,Image,TextInput,FlatList, ActivityIndicator, View,Alert,TouchableHighlight} from 'react-native';
+
+import React, { Component } from 'react';
+import {
+  Platform, StyleSheet, Image, TextInput, ScrollView,
+  FlatList, View, Alert, TouchableHighlight, RefreshControl
+} from 'react-native';
 
 import autobind from "autobind-decorator";
 import {
-  Content,Card,CardItem,Text,Body,Container,Icon,Header,Form,Thumbnail,Item,Title,Input,Left,Right,H3,H1,H2,Spinner,Button,InputGroup,DatePicker,CheckBox,List,Accordion,DeckSwiper
+  Text,
+  Title, Input, Left, Right, H3, H1, H2, Spinner, Button,
+  InputGroup, DatePicker, CheckBox, Thumbnail, List
 } from "native-base";
 
-import NestedScrollView from "react-native-nested-scroll-view";
-import GState from "../../../stores/globalState";
-//import styles from './style';
+
+import CardListItem from './invitationCard';
+import ImageActivityIndicator from "../currentevents/components/imageActivityIndicator";
+import { observer } from "mobx-react";
+import stores from '../../../stores';
+import BleashupFlatList from '../../BleashupFlatList';
+
+
+@observer
+class SendInvitations extends Component {
+  constructor(props) {
+    super(props);
+    this.state = ({
+      deletedRowKey: null,
+      loadingInvitations: true,
+      refreshing: false
+
+    });
+
+  }
+
+  
 
 
 
-class SentInvitations extends Component {
+
+
+
+
+
   render() {
-    return (
-      <Container>
-        <NestedScrollView
-          onScroll={nativeEvent => {
-            GState.scrollOuter = true;
-          }}
-          alwaysBounceHorizontal={true}
-          scrollEventThrottle={16}
-        >
-          <Content padder>
-            <Card>
-              <CardItem>
-                <Body>
-                  <Text> </Text>
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text> Platform specific codebase for components </Text>
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text>
-                    Any native third - party libraries can be included along
-                    with NativeBase.
-                  </Text>
 
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text>
-                    Single file to theme your app and NativeBase components.
-                  </Text>
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text>
-                    Gives an ease to include different font types in your app.
-                  </Text>
-                </Body>
-              </CardItem>
-            </Card>
-            <Card>
-              <CardItem>
-                <Body>
-                  <Text> </Text>
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text> Platform specific codebase for components </Text>
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text>
-                    Any native third - party libraries can be included along
-                    with NativeBase.
-                  </Text>
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text>
-                    Single file to theme your app and NativeBase components.
-                  </Text>
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text>
-                    Gives an ease to include different font types in your app.
-                  </Text>
-                </Body>
-              </CardItem>
-            </Card>
-            <Card>
-              <CardItem>
-                <Body>
-                  <Text> </Text>
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text> Platform specific codebase for components </Text>
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text>
-                    Any native third - party libraries can be included along
-                    with NativeBase.
-                  </Text>
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text>
-                    Single file to theme your app and NativeBase components.
-                  </Text>
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text>
-                    Gives an ease to include different font types in your app.
-                  </Text>
-                </Body>
-              </CardItem>
-            </Card>
-            <Card>
-              <CardItem>
-                <Body>
-                  <Text> </Text>
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text> Platform specific codebase for components </Text>
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text>
-                    Any native third - party libraries can be included along
-                    with NativeBase.
-                  </Text>
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text>
-                    Single file to theme your app and NativeBase components.
-                  </Text>
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text>
-                    Gives an ease to include different font types in your app.
-                  </Text>
-                </Body>
-              </CardItem>
-            </Card>
-
-            <Card>
-              <CardItem>
-                <Body>
-                  <Text> </Text>
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text> Platform specific codebase for components </Text>
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text>
-                    Any native third - party libraries can be included along
-                    with NativeBase.
-                  </Text>
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text>
-                    Single file to theme your app and NativeBase components.
-                  </Text>
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text>
-                    Gives an ease to include different font types in your app.
-                  </Text>
-                </Body>
-              </CardItem>
-            </Card>
-            <Card>
-              <CardItem>
-                <Body>
-                  <Text> </Text>
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text> Platform specific codebase for components </Text>
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text>
-                    Any native third - party libraries can be included along
-                    with NativeBase.
-                  </Text>
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text>
-                    Single file to theme your app and NativeBase components.
-                  </Text>
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text>
-                    Gives an ease to include different font types in your app.
-                  </Text>
-                </Body>
-              </CardItem>
-            </Card>
-            <Card>
-              <CardItem>
-                <Body>
-                  <Text> </Text>
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text> Platform specific codebase for components </Text>
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text>
-                    Any native third - party libraries can be included along
-                    with NativeBase.
-                  </Text>
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text>
-                    Single file to theme your app and NativeBase components.
-                  </Text>
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text>
-                    Gives an ease to include different font types in your app.
-                  </Text>
-                </Body>
-              </CardItem>
-            </Card>
-            <Card>
-              <CardItem>
-                <Body>
-                  <Text> </Text>
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text> Platform specific codebase for components </Text>
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text>
-                    Any native third - party libraries can be included along
-                    with NativeBase.
-                  </Text>
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text>
-                    Single file to theme your app and NativeBase components.
-                  </Text>
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text>
-                    Gives an ease to include different font types in your app.
-                  </Text>
-                </Body>
-              </CardItem>
-            </Card>
-            <Card>
-              <CardItem>
-                <Body>
-                  <Text> </Text>
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text> Platform specific codebase for components </Text>
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text>
-                    Any native third - party libraries can be included along
-                    with NativeBase.
-                  </Text>
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text>
-                    Single file to theme your app and NativeBase components.
-                  </Text>
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text>
-                    Gives an ease to include different font types in your app.
-                  </Text>
-                </Body>
-              </CardItem>
-            </Card>
-            <Card>
-              <CardItem>
-                <Body>
-                  <Text> </Text>
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text> Platform specific codebase for components </Text>
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text>
-                    Any native third - party libraries can be included along
-                    with NativeBase.
-                  </Text>
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text>
-                    Single file to theme your app and NativeBase components.
-                  </Text>
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text>
-                    Gives an ease to include different font types in your app.
-                  </Text>
-                </Body>
-              </CardItem>
-            </Card>
-            <Card>
-              <CardItem>
-                <Body>
-                  <Text> </Text>
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text> Platform specific codebase for components </Text>
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text>
-                    Any native third - party libraries can be included along
-                    with NativeBase.
-                  </Text>
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text>
-                    Single file to theme your app and NativeBase components.
-                  </Text>
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text>
-                    Gives an ease to include different font types in your app.
-                  </Text>
-                </Body>
-              </CardItem>
-            </Card>
-
-            <Card>
-              <CardItem>
-                <Body>
-                  <Text> </Text>
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text> Platform specific codebase for components </Text>
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text>
-                    Any native third - party libraries can be included along
-                    with NativeBase.
-                  </Text>
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text>
-                    Single file to theme your app and NativeBase components.
-                  </Text>
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text>
-                    Gives an ease to include different font types in your app.
-                  </Text>
-                </Body>
-              </CardItem>
-            </Card>
-            <Card>
-              <CardItem>
-                <Body>
-                  <Text> </Text>
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text> Platform specific codebase for components </Text>
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text>
-                    Any native third - party libraries can be included along
-                    with NativeBase.
-                  </Text>
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text>
-                    Single file to theme your app and NativeBase components.
-                  </Text>
-                </Body>
-              </CardItem>
-              <CardItem>
-                <Body>
-                  <Text>
-                    Gives an ease to include different font types in your app.
-                  </Text>
-                </Body>
-              </CardItem>
-            </Card>
-          </Content>
-        </NestedScrollView>
-      </Container>
-    );
+    return 
   }
 }
 
-export default SentInvitations;
+
+export default SendInvitations;
+

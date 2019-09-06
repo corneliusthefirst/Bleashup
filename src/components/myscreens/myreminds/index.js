@@ -1,18 +1,14 @@
 import React, { Component } from "react";
 import { Content, Card, CardItem, Container, Text, Body } from "native-base";
-import NestedScrollView from "react-native-nested-scroll-view";
 import GState from "../../../stores/globalState";
+import { ScrollView } from "react-native";
 export default class CurrentEventView extends Component {
   render() {
     //this.storage();
     return (
       <Container>
-        <NestedScrollView
-          onScroll={nativeEvent => {
-            GState.scrollOuter = true;
-          }}
-          alwaysBounceHorizontal={true}
-          scrollEventThrottle={16}
+        <ScrollView
+
         >
           <Content>
             <Card style={{ padding: 10 }}>
@@ -40,7 +36,7 @@ export default class CurrentEventView extends Component {
               </CardItem>
             </Card>
           </Content>
-        </NestedScrollView>
+        </ScrollView>
       </Container>
     );
   }

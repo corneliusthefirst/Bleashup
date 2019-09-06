@@ -2,7 +2,7 @@
 import React, { Component } from 'react'
 import Modal from 'react-native-modalbox';
 import { View, Text, TouchableOpacity, DeviceEventEmitter, Image } from 'react-native'
-import { Button, Icon, Card, CardItem, Right, Left } from 'native-base'
+import { Button, Icon, Card, CardItem, Right, Left, Spinner } from 'native-base'
 import CacheImages from '../../../CacheImages'
 import autobind from 'autobind-decorator';
 import { TouchableHighlight, ScrollView } from 'react-native-gesture-handler';
@@ -12,6 +12,7 @@ import DeckSwiperModule from './deckswiper/index';
 export default class DetailsModal extends Component {
     constructor(props) {
         super(props);
+        this.state = {}
     }
     state = {
         details: undefined,
@@ -46,6 +47,7 @@ export default class DetailsModal extends Component {
         this.event_organiser_name = this.props.event_organiser_name ? this.props.event_organiser_name : this.event_organiser_name;
         this.location = this.props.location ? this.props.location : this.location;
         this.isToBeJoint = this.props.isToBeJoint ? this.props.isToBeJoint : false
+        this.props.parent ? this.props.parent.onSeen() : null
     }
     componentWillReceiveProps(nextProps) {
         this.setState({
@@ -62,7 +64,10 @@ export default class DetailsModal extends Component {
 
 
     render() {
-        return this.state.details ? (
+        const accept = this.state.accept
+        const deny = this.state.deny
+
+        return this.props.details ? (
             <Modal
                 backdropPressToClose={false}
                 swipeToClose={false}
@@ -74,14 +79,15 @@ export default class DetailsModal extends Component {
                 isOpen={this.props.isOpen}
                 onClosed={this.props.onClosed}
                 style={{
-                    height: this.props.accept || this.props.deny ? "95%" : "98%", width: "98%", flexDirection: 'column', borderRadius: 8, backgroundColor: '#FEFFDE', marginTop: -5
+                    height: "98%", width: "98%", flexDirection: 'column', borderRadius: 8,
+                    backgroundColor: '#FEFFDE', marginTop: -5
                 }}
 
             >
 
                 <View style={{ margin: 5, alignItems: 'center' }}>
-                    <TouchableOpacity style={{}} onPress={this.props.onClosed}>
-                        <Icon style={{ color: "#1FABAB", fontSize: 35 }} name="cross" type="Entypo" />
+                    <TouchableOpacity style={{}} onPress={() => this.props.onClosed()}>
+                        <Icon style={{ color: "#1FABAB", fontSize: 35 }} name="close" type="EvilIcons" />
                     </TouchableOpacity>
                 </View>
 
@@ -90,7 +96,7 @@ export default class DetailsModal extends Component {
 
 
 
-                <View style={{ flexDirection: "column", marginTop: (this.props.accept || this.props.deny) ? "25%" : "22%", marginLeft: "58%" }}>
+                <View style={{ flexDirection: "column", marginTop: "20%", marginLeft: "58%" }}>
 
 
                     <TouchableOpacity>
@@ -124,35 +130,34 @@ export default class DetailsModal extends Component {
 
                 </View>
 
-                {this.props.isJoining ? (this.props.hasJoin ?
-                    <View style={{ flexDirection: 'column', alignItems: 'center', marginTop: 10 }}>
-                        <Icon name="comment" type="FontAwesome5" onPress={{}} style={{ color: "#1FABAB" }} />
+                {this.props.isToBeJoint ? (<View>{this.props.isJoining ? <Spinner size="small"></Spinner> : null}
+
+                    <View style={{ flexDirection: 'column', alignItems: 'center', marginTop: 7 }}>
+                        <Icon name="comment" type="EvilIcons" onPress={() => this.props.navigateToChat} style={{ color: "#1FABAB" }} />
                         <Text style={{ marginTop: 5, color: "#1FABAB" }}>chat</Text>
-                    </View> :
+                    </View>
 
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
-                        <Button onPress={this.props.onAccept} style={{ marginLeft: 40, alignItems: 'center', width: 100, marginTop: 4, borderRadius: 5 }} success ><Text style={{ fontSize: 18, fontWeight: "500", marginLeft: 31 }} onPress={this.props.joined}>Join</Text></Button>
-                        <View style={{ flexDirection: 'column' }}>
-                            <Icon name="comment" type="FontAwesome5" onPress={{}} style={{ marginRight: 40, color: "#1FABAB" }} />
-                            <Text style={{ marginTop: 5, color: "#1FABAB", marginRight: 40 }}>chat</Text>
-                        </View>
-                    </View>)
+                        <Button onPress={this.props.join} style={{ marginLeft: 40, alignItems: 'center', width: 100, marginTop: 4, borderRadius: 5 }} success ><Text style={{ fontSize: 18, fontWeight: "500", marginLeft: 31 }}>Join</Text></Button>
+                        <View style={{ flexDirection: 'column' }}></View>
+                    </View></View>)
                     :
                     (this.props.accept || this.props.deny ?
-                        <View style={{ flexDirection: 'column', alignItems: 'center', marginTop: 10 }}>
-                            <Icon name="comment" type="FontAwesome5" onPress={{}} style={{ color: "#1FABAB" }} />
+                        <View style={{ flexDirection: 'column', alignItems: 'center', marginTop: 7 }}>
+                            <Icon name="comment" type="EvilIcons" onPress={{}} style={{ color: "#1FABAB" }} />
                             <Text style={{ marginTop: 5, color: "#1FABAB" }}>chat</Text>
                         </View> :
 
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 15 }}>
-                            <Button onPress={this.props.onAccept} style={{ marginLeft: 40, width: 90, borderRadius: 5 }} success ><Text style={{ marginLeft: 21 }}>Accept</Text></Button>
+                            <Button onPress={this.props.onAccept} style={{ marginLeft: 40, width: 90, borderRadius: 5, justifyContent: 'center' }} success >
+                                <Text>Accept</Text></Button>
 
                             <View style={{ flexDirection: 'column', alignItems: 'center' }}>
-                                <Icon name="comment" type="FontAwesome5" onPress={{}} style={{ color: "#1FABAB" }} />
+                                <Icon name="comment" type="EvilIcons" onPress={{}} style={{ color: "#1FABAB" }} />
                                 <Text style={{ marginTop: 5, color: "#1FABAB" }}>chat</Text>
                             </View>
 
-                            <Button onPress={this.props.onDenied} style={{ marginRight: 40, width: 90, borderRadius: 5 }} danger ><Text style={{ marginLeft: 25 }}>Deny</Text></Button>
+                            <Button onPress={this.props.onDenied} style={{ marginRight: 40, width: 90, borderRadius: 5, justifyContent: 'center' }} danger ><Text>Deny</Text></Button>
                         </View>
 
                     )
@@ -162,7 +167,7 @@ export default class DetailsModal extends Component {
                     style={{
                         flexDirection: "row",
                         justifyContent: "space-between",
-                        marginTop: this.props.location.length > 19 ? 20 : this.props.location.length > 38 ? 10 : 35
+                        marginTop: this.props.location.length > 19 ? 15 : this.props.location.length > 38 ? 5 : 35
 
                     }}
                 >
@@ -179,3 +184,8 @@ export default class DetailsModal extends Component {
         ) : null
     }
 }
+
+
+
+
+/*marginTop:this.props.location.length > 19?15:this.props.location.length > 38?5:35*/
