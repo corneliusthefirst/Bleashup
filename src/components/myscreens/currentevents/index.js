@@ -4,6 +4,8 @@ import {
 } from "react-native";
 import CurrentEvents from "./components/CurrentEvents";
 import { observer } from "mobx-react";
+import stores from "../../../stores";
+
 @observer class CurrentEventView extends Component {
   constructor(props) {
     super(props);
