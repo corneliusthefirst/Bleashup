@@ -260,31 +260,25 @@ const propOverridePlaceholderObject = {
   }
 
   render() {
-    return (this.state.loading ? <SvgAnimatedLinearGradient primaryColor="#cdfcfc"
-      secondaryColor="#FEFFDE" height={200}>
-      <Circle cx="30" cy="30" r="30" />
-      <Rect x="75" y="13" rx="4" ry="4" width="100" height="13" />
-      <Rect x="75" y="37" rx="4" ry="4" width="50" height="8" />
-      <Circle cx="30" cy="30" r="30" /><Circle cx="30" cy="30" r="30" />
-      <Rect x="0" y="70" rx="5" ry="5" width="400" height="100" />
-    </SvgAnimatedLinearGradient>:
-      <Swipeout {...this.swipeSettings}>
-        <Card style={{}}>
+    return <Swipeout {...this.swipeSettings}>
+    <View>
+        <Card style={{height:200}}>
           <CardItem>
             <Left>
               <TouchableOpacity onPress={() => this.setState({ isOpenStatus: true })} >
-                <CacheImages small thumbnails source={{ uri: this.state.item.sender_Image }}
-                />
+                {this.state.loading ? null : <CacheImages small thumbnails source={{ uri: this.state.item.sender_Image }}
+                />}
               </TouchableOpacity>
               <Body >
-                <Text style={styles.flatlistItem} >{this.state.item.sender_name}</Text>
+                {this.state.loading ? null : <Text style={styles.flatlistItem} >{this.state.item.sender_name}</Text>}
 
-                {this.state.dataArray.content == "" ? <Text style={{
-                  color: 'dimgray', padding: 10,
-                  fontSize: 16, marginTop: -10, borderWidth: 0
-                }} note>{this.state.item.sender_status}</Text> :
+                {this.state.loading ? null :
+                  this.state.dataArray.content == "" ? <Text style={{
+                    color: 'dimgray', padding: 10,
+                    fontSize: 16, marginTop: -10, borderWidth: 0
+                  }} note>{this.state.item.sender_status}</Text> :
 
-                  <AccordionModule dataArray={this.state.dataArray} />
+                    <AccordionModule dataArray={this.state.dataArray} />
 
                 }
               </Body>
@@ -293,22 +287,22 @@ const propOverridePlaceholderObject = {
 
           <CardItem cardBody>
             <Left>
-              <DoublePhoto enlargeImage={() => this.setState({ enlargeEventImage: true })} LeftImage={this.state.item.receiver_Image}
-                RightImage={this.state.item.event_Image} />
+              {this.state.loading ? null : <DoublePhoto enlargeImage={() => this.setState({ enlargeEventImage: true })} LeftImage={this.state.item.receiver_Image}
+                RightImage={this.state.item.event_Image} />}
             </Left>
 
             <Body >
               <TouchableOpacity onPress={() => this.openDetails()
               } >
-                <Text style={{ marginLeft: -40 }}
-                >{this.state.item.event_title}</Text>
-                <Text style={{ marginLeft: -40, color: 'dimgray', fontSize: 12 }}> on the {this.state.item.event_time}</Text>
+                {this.state.loading ? null : <Text style={{ marginLeft: -40 }}
+                >{this.state.item.event_title}</Text>}
+                {this.state.loading ? null : <Text style={{ marginLeft: -40, color: 'dimgray', fontSize: 12 }}> on the {this.state.item.event_time}</Text>}
               </TouchableOpacity>
             </Body>
           </CardItem>
 
           <CardItem>
-            {this.state.accept || this.state.deny ?
+            {this.state.loading ? null : this.state.accept || this.state.deny ?
               (this.state.accept ?
                 <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end' }}>
                   <Text style={{ marginTop: 5, fontSize: 17, fontWeight: "600", color: "forestgreen" }} note>Accepted</Text>
@@ -339,13 +333,13 @@ const propOverridePlaceholderObject = {
 
           <CardItem style={{ margin: 10, flexDirection: 'row', justifyContent: 'space-between' }}>
 
-            <Text style={{ color: 'dimgray', fontSize: 13 }}>{this.state.item.received_date}</Text>
+            {this.state.loading ? null : <Text style={{ color: 'dimgray', fontSize: 13 }}>{this.state.item.received_date}</Text>}
 
-            <Text style={{ color: 'dimgray', fontSize: 13 }}>{this.state.item.invitation_status}</Text>
+            {this.state.loading ? null : <Text style={{ color: 'dimgray', fontSize: 13 }}>{this.state.item.invitation_status}</Text>}
 
           </CardItem>
 
-          <ProfileModal isOpen={this.state.isOpenStatus} profile={{
+          {this.state.loading ? null : <ProfileModal isOpen={this.state.isOpenStatus} profile={{
             nickname: this.state.item.sender_name,
             profile: this.state.item.sender_Image,
             status: this.state.item.sender_status
@@ -355,19 +349,19 @@ const propOverridePlaceholderObject = {
           }
           } onAccept={this.onAccept} onDenied={this.onDenied} deny={this.state.deny}
             accept={this.state.accept} isJoining={this.state.isJoining} hasJoin={this.state.hasJoin}
-            joined={() => this.setState({ hasJoin: true })} />
+            joined={() => this.setState({ hasJoin: true })} />}
 
-          <PhotoModal isOpen={this.state.enlargeEventImage} image={this.state.item.event_Image} onClosed={() => {
+          {this.state.loading ? null : <PhotoModal isOpen={this.state.enlargeEventImage} image={this.state.item.event_Image} onClosed={() => {
             this.setState({ enlargeEventImage: false })
             this.onSeen()
           }
           }
             onAccept={this.onAccept} onDenied={this.onDenied} deny={this.state.deny}
             accept={this.state.accept} isJoining={this.state.isJoining} hasJoin={this.state.hasJoin}
-            joined={() => this.setState({ hasJoin: true })} />
+            joined={() => this.setState({ hasJoin: true })} />}
 
 
-          <DetailsModal isOpen={this.state.isOpenDetails} details={this.state.card} location={this.state.item.location}
+          {this.state.loading ? null : <DetailsModal isOpen={this.state.isOpenDetails} details={this.state.card} location={this.state.item.location}
             event_organiser_name={this.state.item.event_organiser_name}
             created_date={this.state.item.created_date}
             onClosed={() => {
@@ -376,11 +370,11 @@ const propOverridePlaceholderObject = {
             }
             } item={this.state.item}
             OpenLinkZoom={this.OpenLinkZoom} OpenLink={this.OpenLink} onAccept={this.onAccept} onDenied={this.onDenied} deny={this.state.deny}
-            accept={this.state.accept} isJoining={this.state.isJoining} hasJoin={this.state.hasJoin} joined={() => this.setState({ hasJoin: true })} />
-
+            accept={this.state.accept} isJoining={this.state.isJoining} hasJoin={this.state.hasJoin} joined={() => this.setState({ hasJoin: true })} />}
         </Card>
-      </Swipeout>
-    );
+    </View>
+    </Swipeout>
+
   }
 }
 

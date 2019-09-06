@@ -1,14 +1,15 @@
 import React, { Component } from "react";
-import { Platform, ScrollView, BackHandler, ToastAndroid } from "react-native";
+import { Platform, ScrollView, BackHandler, ToastAndroid, View } from 'react-native';
 import {
   Container,
   Header,
   Title,
   Icon,
+  Text,
   Tabs,
   Tab,
   Body,
-  TabHeading
+  TabHeading,
 } from "native-base";
 import NetInfo from "@react-native-community/netinfo";
 import StatusView from "./../status/index";
@@ -16,13 +17,12 @@ import InvitationView from "./../invitations/index";
 import PersonalEventView from "./../personalevents/index";
 import Chats from "../poteschat";
 import SettingView from "./../settings/index";
-import { CollapsibleHeaderScrollView } from "react-native-collapsible-header-views";
-import GState from "../../../stores/globalState";
 import { observer } from "mobx-react";
 import UserHttpServices from "../../../services/userHttpServices";
 import autobind from "autobind-decorator";
 import RNExitApp from "react-native-exit-app";
 import stores from "../../../stores";
+import CurrentEventView from '../currentevents';
 
 
 
@@ -52,7 +52,7 @@ class Home extends Component {
   }
 
   handleConnectionChange(connect) {
-    connect ? console.warn("connected") : console.warn("not connected")
+    //connect ? console.warn("connected") : console.warn("not connected")
   }
 
   ifCloseToTop(nativeEvent) {
@@ -67,94 +67,81 @@ class Home extends Component {
   render() {
     //console.disableYellowBox = true; 
     return (
-      <Container>
-        <CollapsibleHeaderScrollView
-          CollapsibleHeaderComponent={
-            <Header hasTabs>
-              <Body>
-                <Title
-                  style={{
-                    fontWeight: "bold"
-                  }}
-                >
-                  Bleashup
-                </Title>
-              </Body>
-
-              <Icon
-                name="gear"
-                active={true}
-                type="EvilIcons"
-                style={{
-                  padding: 15,
-                  paddingLeft: 100,
-                  color: "#FEFFDE"
-                }}
-                onPress={this.settings()}
-              />
-            </Header>
-          }
-          headerHeight={40}
-          /*  scrollEnabled={GState.scrollOuter}
-          /*  onScroll={nativeEvent => {
-              if (this.isCloseToBottom(nativeEvent.nativeEvent)) {
-                GState.scrollOuter = false;
-              }
-              if (this.ifCloseToTop(nativeEvent.nativeEvent)) {
-                GState.scrollOuter = false;
-              }
-            }}*/
-          statusBarHeight={Platform.OS === "ios" ? 20 : 0}
-        >
-          <Tabs
-            locked
-            tabBarPosition="overlayTop"
-            tabBarUnderlineStyle={{
-              borderBottomWidth: 0,
-              backgroundColor: "transparent"
-            }}
-          >
-            <Tab
-              tabStyle={{
-                borderRadius: 0
+      <Container style={{ backgroundColor: "#FEFFDE"}}>
+        <Header hasTabs>
+          <Body>
+            <Title
+              style={{
+                fontWeight: "bold"
               }}
-              heading={
-                <TabHeading>
+            >
+              Bleashup
+                </Title>
+          </Body>
+
+          <Icon
+            name="gear"
+            active={true}
+            type="EvilIcons"
+            style={{
+              padding: 15,
+              paddingLeft: 100,
+              color: "#FEFFDE"
+            }}
+            onPress={this.settings()}
+          />
+        </Header>
+        <Tabs
+          locked
+          tabContainerStyle={{ height: 45 }}
+          tabBarPosition="bottom"
+          tabBarUnderlineStyle={{
+            borderBottomWidth: 0,
+            backgroundColor: "transparent"
+          }}
+        >
+          <Tab
+            heading={
+              <TabHeading>
+                <Icon name="sc-telegram" type="EvilIcons" />
+              </TabHeading>
+            }
+          >
+            <InvitationView {...this.props} />
+          </Tab>
+          <Tab
+            tabStyle={{
+              borderRadius: 0
+            }}
+            heading={
+              <TabHeading>
+                <View style={{ display: 'flex', }}>
                   <Icon name="calendar" type="EvilIcons" />
-                </TabHeading>
-              }
-            >
-              <PersonalEventView {...this.props} />
-            </Tab>
-            <Tab
-              heading={
-                <TabHeading>
-                  <Icon name="sc-telegram" type="EvilIcons" />
-                </TabHeading>
-              }
-            >
-              <InvitationView {...this.props} />
-            </Tab>
-            <Tab
-              heading={
-                <TabHeading>
-                  <Icon name="comment" type="EvilIcons" />
-                </TabHeading>
-              }
-            >
-              <Chats {...this.props} />
-            </Tab>
-            <Tab
-              heading={
-                <TabHeading>
-                  <Icon name="user" type="EvilIcons" />
-                </TabHeading>
-              }
-            >
-              <StatusView {...this.props} />
-            </Tab>
-          </Tabs>
-        </CollapsibleHeaderScrollView>
+                </View>
+              </TabHeading>
+            }
+          >
+            <CurrentEventView {...this.props}></CurrentEventView>
+          </Tab>
+          <Tab
+            heading={
+              <TabHeading>
+                <Icon name="ios-people" type="Ionicons" />
+              </TabHeading>
+            }
+          >
+            <Chats {...this.props} />
+          </Tab>
+          <Tab
+            heading={
+              <TabHeading>
+                <Icon name="user" type="EvilIcons" />
+              </TabHeading>
+            }
+          >
+            <StatusView {...this.props} />
+          </Tab>
+        </Tabs>
       </Container>
     );
   }

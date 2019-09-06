@@ -43,15 +43,20 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
     }
     render() {
         return (
-            <View style={{ display: 'flex', }}>
+            <View style={{ display: 'flex', backgroundColor: "#FEFFDE", }}>
                 <FlatList
-                    nestedScrollEnabled={true}
                     onScrollEndDrag={({ nativeEvent }) => {
                         if (isCloseToBottom(nativeEvent)) {
                             this.continueScrollDown()
                         }
                     }
                     }
+                    centerContent={true}
+                    ref="bleashupFlatlist"
+                    canCancelContentTouches={true}
+                    removeClippedSubviews={true}
+                    maxToRenderPerBatch={23}
+                    //updateCellsBatchingPeriod={10}
                     showsVerticalScrollIndicator={false}
                     keyExtractor={this.props.keyExtractor}
                     data={this.props.dataSource.slice(this.props.firstIndex ? this.props.firstIndex : 0,

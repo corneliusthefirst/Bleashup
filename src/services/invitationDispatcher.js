@@ -78,7 +78,6 @@ class InvitationDispatcher {
                 invite.invitee = stores.Session.SessionStore.phone;
                 requestData.received_invitation(invite,Invitation.invitation_id).then(JSONData => {
                     ServerEventListener.sendRequest(JSONData,Invitation.invitation_id).then((response) => {
-                        console.warn(response)
                         Invitation.type = "received"
                         Invitation.arrival_date = moment().format("YYYY-MM-DD HH:mm")
                         stores.Invitations.addInvitations(Invitation).then(() => {

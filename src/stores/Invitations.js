@@ -92,7 +92,7 @@ export default class Invitations {
     addInvitations(Invitation) {
         return new Promise((resolve, reject) => {
             this.readFromStore().then(Invitations => {
-                if (Invitations){
+                if (Invitations.length !== 0){
                     Invitations[Invitations.length] = Invitation
                     Invitations = uniqBy(Invitations, "invitation_id")
                 }

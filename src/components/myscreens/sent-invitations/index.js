@@ -33,41 +33,7 @@ class SendInvitations extends Component {
 
   }
 
-  componentDidMount() {
-    setTimeout(() => {
-      stores.Invitations.readFromStore().then(invitations => {
-        this.setState({
-          loadingInvitations: false,
-          invitations: invitations
-        });
-      })
-    }, 12)
-  }
-
-
-  refreshCardList = (activeKey) => {
-    this.setState((prevState) => {
-      return {
-        deletedRowKey: activeKey
-      };
-
-    });
-
-  }
-
-
-  generateKey(numberOfCharacters) {
-    return require('random-string')({ length: numberOfCharacters });
-  }
-
-
-  @autobind
-  onRefresh() {
-    this.setState({ refreshing: true })
-    //call your callback function here
-    this.addInvitation()
-    this.setState({ refreshing: false })
-  }
+  
 
 
 
@@ -75,30 +41,10 @@ class SendInvitations extends Component {
 
 
 
-
-  _keyExtractor = (item, index) => item.invitation_id;
 
   render() {
 
-    return this.state.loadingInvitations ? (
-      <Spinner></Spinner>
-    ) : (
-        <BleashupFlatList
-          initialRender={6}
-          renderPerBatch={1}
-          firstIndex={0}
-          keyExtractor={this._keyExtractor}
-          dataSource={stores.Invitations.SendInvitations}
-          numberOfItems={stores.Invitations.SendInvitations.length}
-          renderItem={(item, index) => {
-            return (
-              <CardListItem {...this.props} item={item} key={index} parentCardList={this}>
-              </CardListItem>
-            );
-          }}
-        >
-        </BleashupFlatList>
-      );
+    return 
   }
 }
 

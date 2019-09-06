@@ -32,12 +32,11 @@ class Requester {
                 serverEventListener.sendRequest(JSONData, id + "_invites").then(SuccessMessage => {
                     forEach(invites,element => {
                         element.invitation.type = 'sent';
+                        element.invitation.sent = true;
                         element.invitation.arrival_date = moment().format("YYYY-MM-DD HH:mm")
                         stores.Invitations.addInvitations(element.invitation).then(mes => {
-                            stores.Invitations.markAsSentStatus(element.invitation.invitation_id).then(()=>{
                                 if (i == invites.length - 1) resolve(SuccessMessage)
                                 i++
-                            })
                         })
                     })
                 }).catch(error =>{
