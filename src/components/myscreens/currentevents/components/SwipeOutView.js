@@ -72,7 +72,7 @@ export default class SwipeOutView extends Component {
     blinkerSize = 26;
     render() {
         return (
-            <View>
+            <View style={{ width: "100%",}}>
                 <View>
                     <List style={{
                         backgroundColor: "#FFFFF6",

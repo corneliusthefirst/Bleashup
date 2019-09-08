@@ -51,7 +51,7 @@ const propOverridePlaceholderObject = {
 
 
 //Private class component for a flatLisItem
-@observer class CardListItem extends Component {
+ class CardListItem extends Component {
   constructor(props) {
     super(props);
   }
@@ -72,6 +72,7 @@ const propOverridePlaceholderObject = {
     message: "",
     textcolor: "",
     loading: true,
+    opening : false,
     item: null,
     isJoining: false,
     isRequesting: false,
@@ -80,7 +81,6 @@ const propOverridePlaceholderObject = {
   //accepted invitation
   @autobind
   onAccept() {
-    this.setState({ isRequesting: true })
     let invitation = {
       inviter: this.props.item.inviter,
       invitee: this.props.item.invitee,
@@ -91,11 +91,8 @@ const propOverridePlaceholderObject = {
       status: this.props.item.status
     }
     Requester.accept(invitation).then(response => {
-      this.setState({ accept: true, isRequesting: false })
+      this.setState({ accept: true })
     }).catch(error => {
-      this.setState({
-        isRequesting: false,
-      })
       Toast.show({
         text: 'unable to connect to the server ',
         buttonText: 'Okay'
@@ -103,6 +100,25 @@ const propOverridePlaceholderObject = {
     })
     //;
   }
+   shouldComponentUpdate(nextProps, nextState, nextContext) {
+     return nextProps.item.invitation_id !== this.props.item.invitation_id ||
+       this.state.loading !== nextState.loading ||
+       nextProps.item.sent !== this.props.item.sent ||
+       nextProps.item.received !== this.props.item.received ||
+       nextProps.item.seen !== this.props.item.seen ||
+       nextProps.item.accept !== this.props.item.accept ||
+       nextProps.item.deny !== this.props.item.deny ||
+       this.state.opening !== nextState.opening ||
+       this.state.hasJoin !== nextState.hasJoin
+   }
+   componentWillReceiveProps(nextProps) {
+     this.setState({
+       accept: nextProps.item.accept,
+       deny: nextProps.item.deny,
+       received: nextProps.item.received,
+       seen: nextProps.item.seen,
+     })
+   }
   //refused invitation
   @autobind
   onDenied() {
@@ -120,7 +136,6 @@ const propOverridePlaceholderObject = {
     }
     Requester.denie(invitation).then(response => {
       this.setState({ deny: true, isRequesting: false })
-      console.warn(response);
     }).catch(error => {
       this.setState({
         isRequesting: false
@@ -140,6 +155,7 @@ const propOverridePlaceholderObject = {
       })
     } else {
       this.setState({
+        opening :true,
         isOpenDetails: true
       })
     }
@@ -164,6 +180,7 @@ const propOverridePlaceholderObject = {
     }
   }
   componentDidMount() {
+    setTimeout(()=>{
     stores.Invitations.translateToinvitationData(this.props.item).then(data => {
       let AccordData = data.sender_status
       max_length = data.sender_status.length
@@ -189,6 +206,7 @@ const propOverridePlaceholderObject = {
         });
       })
     })
+  },20)
 
   }
   swipeSettings = {
@@ -201,7 +219,7 @@ const propOverridePlaceholderObject = {
     },
     //on open i set the activerowkey
     onOpen: (secId, rowId, direction) => {
-      this.setState({ activeRowKey: this.state.loading?null:this.state.item.key });
+      this.setState({ activeRowKey: 1 });
     },
 
     right: [
@@ -234,7 +252,10 @@ const propOverridePlaceholderObject = {
 
       }
     ],
-
+    style:{
+      width: "100%",
+      backgroundColor: "#FEFFDE"
+    },
     rowId: this.props.index,
     sectionId: 1
   }
@@ -260,9 +281,9 @@ const propOverridePlaceholderObject = {
   }
 
   render() {
-    return <Swipeout style={{ backgroundColor: "#FEFFDE"}} {...this.swipeSettings}>
-    <View>
-        <Card style={{height:230}}>
+    return this.state.loading ? <Card style={{ height: 230}}></Card>:<View style={{ width: "100%",}}>
+    <Swipeout style={{ width: "100%", backgroundColor: "#FEFFDE"}} {...this.swipeSettings}>
+        <Card style={{ height: 230}}>
         <CardItem>
             <Text style={{ color:"#54F5CA"}} note>
             received
@@ -270,7 +291,7 @@ const propOverridePlaceholderObject = {
         </CardItem>
           <CardItem>
             <Left>
-              <TouchableOpacity onPress={() => this.setState({ isOpenStatus: true })} >
+              <TouchableOpacity onPress={() => this.setState({ opening:true,isOpenStatus: true })} >
                 {this.state.loading ? null : <CacheImages small thumbnails source={{ uri: this.state.item.sender_Image }}
                 />}
               </TouchableOpacity>
@@ -292,7 +313,7 @@ const propOverridePlaceholderObject = {
 
           <CardItem cardBody>
             <Left>
-              {this.state.loading ? null : <DoublePhoto enlargeImage={() => this.setState({ enlargeEventImage: true })} LeftImage={this.state.item.receiver_Image}
+              {this.state.loading ? null : <DoublePhoto enlargeImage={() => this.setState({opening:true, enlargeEventImage: true })} LeftImage={this.state.item.receiver_Image}
                 RightImage={this.state.item.event_Image} />}
             </Left>
 
@@ -349,7 +370,7 @@ const propOverridePlaceholderObject = {
             profile: this.state.item.sender_Image,
             status: this.state.item.sender_status
           }} onClosed={() => {
-            this.setState({ isOpenStatus: false })
+            this.setState({opening:false, isOpenStatus: false })
             this.onSeen()
           }
           } onAccept={this.onAccept} onDenied={this.onDenied} deny={this.state.deny}
@@ -357,7 +378,7 @@ const propOverridePlaceholderObject = {
             joined={() => this.setState({ hasJoin: true })} />}
 
           {this.state.loading ? null : <PhotoModal isOpen={this.state.enlargeEventImage} image={this.state.item.event_Image} onClosed={() => {
-            this.setState({ enlargeEventImage: false })
+            this.setState({opening:false, enlargeEventImage: false })
             this.onSeen()
           }
           }
@@ -370,15 +391,16 @@ const propOverridePlaceholderObject = {
             event_organiser_name={this.state.item.event_organiser_name}
             created_date={this.state.item.created_date}
             onClosed={() => {
-              this.setState({ isOpenDetails: false })
+              this.setState({opening:false, isOpenDetails: false })
               this.onSeen()
             }
             } item={this.state.item}
             OpenLinkZoom={this.OpenLinkZoom} OpenLink={this.OpenLink} onAccept={this.onAccept} onDenied={this.onDenied} deny={this.state.deny}
             accept={this.state.accept} isJoining={this.state.isJoining} hasJoin={this.state.hasJoin} joined={() => this.setState({ hasJoin: true })} />}
-        </Card>
+      </Card>
+      </Swipeout>
     </View>
-    </Swipeout>
+   
 
   }
 }

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View} from "react-native";
+import { View } from "react-native";
 
 import {
   Card,
@@ -62,37 +62,33 @@ class PublicEvent extends Component {
   }
 
   shouldComponentUpdate(nextProps, nextState, nextContext) {
-    return this.state.isMount !== nextState.isMount ||
-      this.state.openInviteModal !== nextState.openInviteModal ||
-      this.state.master !== nextState.master
-  }
+    return this.state.isMount !== nextState.isMount 
+    }
   swipperComponent = null
   componentDidMount() {
     setTimeout(() => {
+    stores.Events.isMaster(this.props.Event.id, stores.Session.SessionStore.phone).then(master => {
       this.setState({
-        swipeOutSettings: {
-          autoClose: true,
-          sensitivity: 100,
-          right: [
-            {
-              component: <SwipeOutView publish={() => this.publish()}
-                seen={() => this.markAsSeen()} delete={() => this.delete()}
-                join={() => this.join()}
-                hide={() => this.hide()} {...this.props} ></SwipeOutView>
-            }
-          ],
-        },
+        master: master,
         isMount: true,
         openInviteModal: false
       })
     })
-    stores.Events.isMaster(this.props.Event.id, stores.Session.SessionStore.phone).then(master => {
-      this.setState({
-        master: master,
-      })
-    })
+  },34)
+}
+  swipeOutSettings = {
+    autoClose: true,
+    sensitivity: 100,
+    right: [
+      {
+        component: <SwipeOutView publish={() => this.publish()}
+          seen={() => this.markAsSeen()} delete={() => this.delete()
+          }
+          join={() => this.join()}
+          hide={() => this.hide()} {...this.props} ></SwipeOutView >
+      }
+    ],
   }
-
   componentWillUnmount() {
   }
 
@@ -223,107 +219,110 @@ class PublicEvent extends Component {
   }
 
   render() {
-    return <Swipeout style={{ backgroundColor: this.props.Event.new ? "#cdfcfc" : null }}
-      {...this.state.swipeOutSettings}>
-      <Card
-        style={{
-          borderColor: "#1FABAB",
-          border: 50,
-        }
-        }
-        bordered
-      >
-        <CardItem
+    return (this.state.isMount?<View style={{ width: "100%", }}>
+    <Swipeout style={{ backgroundColor: this.props.Event.new ? "#cdfcfc" : null }}
+        {...this.swipeOutSettings}>
+        <Card
           style={{
-            paddingBottom: 15
-          }}
+            borderColor: "#1FABAB",
+            border: 100
+          }
+          }
+          bordered
         >
-          <Left>
-            {this.state.isMaster || this.props.Event.public ? <View>
-              {this.state.publishing ? <View style={{ height: 18 }}>
-                <Spinner size={"small"} color="#7DD2D2"></Spinner></View> : <Icon
-                  name="forward"
-                  type="Entypo"
-                  style={{
-                    fontSize: 16,
-                    color: "#0A4E52"
-                  }}
-                />}
-              <MenuListView hide={this.state.hide} event_id={this.props.Event.id} published publish={() => this.publish()}
-                showPublishers={() => this.showPublishersList()}
-              />
-            </View> : null}
+          <CardItem
+            style={{
+              paddingBottom: 15
+            }}
+          >
+            <Left>
+              {this.state.isMaster || this.props.Event.public ? <View>
+                {this.state.publishing ? <View style={{ height: 18 }}>
+                  <Spinner size={"small"} color="#7DD2D2"></Spinner></View> : <Icon
+                    name="forward"
+                    type="Entypo"
+                    style={{
+                      fontSize: 16,
+                      color: "#0A4E52"
+                    }}
+                  />}
+                <MenuListView hide={this.state.hide} event_id={this.props.Event.id} published publish={() => this.publish()}
+                  showPublishers={() => this.showPublishersList()}
+                />
+              </View> : null}
 
-          </Left>
-          {this.props.Event.updated ? <UpdateStateIndicator /> : null}
-          <Right>
-            <View>
-              <Icon
-                name="dots-three-vertical"
-                style={{
-                  color: "#0A4E52",
-                  fontSize: 16
-                }}
-                type="Entypo"
-              />
-            </View>
-          </Right>
-        </CardItem>
-        <CardItem
-          style={{
-            paddingBottom: 10,
-            paddingTop: 10
-          }}
-        >
-          <Left>
-            {this.state.isMount ? <View style={{ flexDirection: "row", flex: 5 }}>
-              <ProfileView joined={() => this.join()} hasJoin={this.props.Event.joint}
-                onOpen={() => this.onOpenDetaiProfileModal()} phone={(this.props.Event.creator_phone)}></ProfileView>
-            </View> : null}
-          </Left>
-        </CardItem>
-        <CardItem style={{
-          justifyContent: "center",
-        }}>
-          {this.state.isMount ? <TitleView seen={() => this.markAsSeen()}
-            {...this.props}></TitleView> : null}
-        </CardItem>
-        <CardItem
-          style={{
-            paddingLeft: 0,
-            aspectRatio: 3 / 1,
-            paddingRight: 0,
-            paddingTop: 20,
-            paddingBottom: 10
-          }}
-          cardBody
-        >
-          <Left>
-            {this.state.isMount ? <PhotoView joined={() => this.join()} isToBeJoint hasJoin={this.props.Event.joint} onOpen={() => this.onOpenPhotoModal()} style={{
-              width: "70%",
-              marginLeft: "4%"
-            }} photo={this.props.Event.background} width={170} height={125} borderRadius={10} /> : null}
-          </Left>
-          <Right >
-            {this.state.isMount ? <MapView style={{ marginRight: "11%" }}
-              location={this.props.Event.location.string}></MapView> : null}
-          </Right>
-        </CardItem>
-        <CardItem>
-          {this.state.isMount ? <Options seen={() => this.markAsSeen()} {...this.props}></Options> : null}
-        </CardItem>
-        <Footer>
-          <Left>
-            {this.state.isMount ? <View style={{ flexDirection: "row" }}>
-              <Like id={this.props.Event.id} end={() => this.markAsSeen()} />
-            </View> : null}
-          </Left>
-          <Right>
-            {this.state.isMount ? <Join event={this.props.Event}></Join> : null}
-          </Right>
-        </Footer>
-      </Card>
-    </Swipeout >
+            </Left>
+            {this.props.Event.updated ? <UpdateStateIndicator /> : null}
+            <Right>
+              <View>
+                <Icon
+                  name="dots-three-vertical"
+                  style={{
+                    color: "#0A4E52",
+                    fontSize: 16
+                  }}
+                  type="Entypo"
+                />
+              </View>
+            </Right>
+          </CardItem>
+          <CardItem
+            style={{
+              paddingBottom: 10,
+              paddingTop: 10
+            }}
+          >
+            <Left>
+              {this.state.isMount ? <View style={{ flexDirection: "row", flex: 5 }}>
+                <ProfileView joined={() => this.join()} hasJoin={this.props.Event.joint}
+                  onOpen={() => this.onOpenDetaiProfileModal()} phone={(this.props.Event.creator_phone)}></ProfileView>
+              </View> : null}
+            </Left>
+          </CardItem>
+          <CardItem style={{
+            justifyContent: "center",
+          }}>
+            {this.state.isMount ? <TitleView seen={() => this.markAsSeen()}
+              {...this.props}></TitleView> : null}
+          </CardItem>
+          <CardItem
+            style={{
+              paddingLeft: 0,
+              aspectRatio: 3 / 1,
+              paddingRight: 0,
+              paddingTop: 20,
+              paddingBottom: 10
+            }}
+            cardBody
+          >
+            <Left>
+              {this.state.isMount ? <PhotoView joined={() => this.join()} isToBeJoint hasJoin={this.props.Event.joint} onOpen={() => this.onOpenPhotoModal()} style={{
+                width: "70%",
+                marginLeft: "4%"
+              }} photo={this.props.Event.background} width={170} height={125} borderRadius={10} /> : null}
+            </Left>
+            <Right >
+              {this.state.isMount ? <MapView style={{ marginRight: "11%" }}
+                location={this.props.Event.location.string}></MapView> : null}
+            </Right>
+          </CardItem>
+          <CardItem>
+            {this.state.isMount ? <Options seen={() => this.markAsSeen()} {...this.props}></Options> : null}
+          </CardItem>
+          <Footer>
+            <Left>
+              {this.state.isMount ? <View style={{ flexDirection: "row" }}>
+                <Like id={this.props.Event.id} end={() => this.markAsSeen()} />
+              </View> : null}
+            </Left>
+            <Right>
+              {this.state.isMount ? <Join event={this.props.Event}></Join> : null}
+            </Right>
+          </Footer>
+        </Card>
+     </Swipeout>
+    </View>:<Card style={{height:390}}>
+    </Card>)
   }
 }
 export default PublicEvent

@@ -48,7 +48,7 @@ import { View } from 'react-native';
   }
   _keyExtractor = (item, index) => item.invitation_id;
   render() {
-    return <View style={{ backgroundColor: "#FEFFDE"}}>
+    return <View style={{ height:"100%", backgroundColor: "#FEFFDE"}}>
     {
       this.state.loadingInvitations ? 
         <Spinner></Spinner>: 
