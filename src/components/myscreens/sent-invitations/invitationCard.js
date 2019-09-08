@@ -74,6 +74,7 @@ class CardListItem extends Component {
   }
   data = []
   componentDidMount() {
+    setTimeout(()=>{
     stores.Invitations.translateToinvitationData(this.props.item).then(data => {
       this.data = data
       let AccordData = data.sender_status
@@ -98,6 +99,7 @@ class CardListItem extends Component {
         hasJoin: false,
       });
     })
+  },20)
   }
 
   shouldComponentUpdate(nextProps, nextState, nextContext) {
@@ -142,7 +144,7 @@ class CardListItem extends Component {
     },
     //on open i set the activerowkey
     onOpen: (secId, rowId, direction) => {
-      this.setState({ activeRowKey: this.state.loading?null:this.state.item.key });
+      this.setState({ activeRowKey: 1 });
     },
 
     right: [
@@ -176,7 +178,10 @@ class CardListItem extends Component {
       },
 
     ],
-
+    style : {
+      width: "100%",
+      backgroundColor: "#FEFFDE"
+    },
     rowId: this.props.index,
     sectionId: 1
   }
@@ -184,10 +189,8 @@ class CardListItem extends Component {
 
 
   render() {
-    return (
-      <Swipeout style={{
-        backgroundColor: "#FEFFDE"
-      }} {...this.swipeSettings}>
+    return (this.state.loading ? <Card style={{ height: 220 }}></Card>:<View style={{ width: "100%",}}>
+      <Swipeout style={{ width: "100%",}} {...this.swipeSettings}>
         <Card style={{ height: 220 }}>
         <CardItem>
         <Text note>
@@ -241,15 +244,15 @@ class CardListItem extends Component {
                 {this.state.item.deny || this.state.deny ? <Text style={{ color: "red" }} note>denied</Text> : null}
               </View> :
               <View style={{}}>
-                <Icon name="checkcircle" type="AntDesign" onPress={{}} style={{ color: "gray", marginLeft: 300 }} />
+                <Icon name="checkcircle" type="AntDesign" onPress={{}} style={{ color: "gray", marginLeft: "90%" }} />
                 {this.state.accept || this.state.item.accept ? <Text style={{ color: "green" }} note>accepted</Text> : null}
                 {this.state.item.deny || this.state.deny ? <Text style={{ color: "red" }} note>denied</Text> : null}
               </View>
             )
               :
               <View style={{}}>
-                <Icon name="checkcircleo" type="AntDesign" onPress={{}} style={{ color: "gray", marginLeft: 300 }} />
-              </View>) : <Text note>sending...</Text>}
+                <Icon name="checkcircleo" type="AntDesign" onPress={{}} style={{ color: "gray", marginLeft: "90%" }} />
+              </View>) : <Text style={{ marginLeft: "90%"}} note>sending...</Text>}
           </CardItem>
 
           <CardItem style={{ margin: 10, flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -271,7 +274,8 @@ class CardListItem extends Component {
             joined={() => this.setState({ hasJoin: true })} />}
 
         </Card>
-      </Swipeout>
+     </Swipeout>
+     </View>
     );
   }
 }

@@ -5,7 +5,7 @@ import React, { Component } from "react"
 import React, { Component } from 'react';
 import { StyleSheet, View, Dimensions, Text, Image, ScrollView } from 'react-native';
 import PublicEvent from "./publicEvent.js"
-import { CardItem, Card, Spinner } from 'native-base';
+import { CardItem, Card, Spinner, ListItem } from 'native-base';
 import { observer } from 'mobx-react';
 import { forEach } from "lodash"
 import BleashupFlatList from '../../../BleashupFlatList';
@@ -18,17 +18,18 @@ const SCREEN_WIDTH = Dimensions.get('window').width;
     }
     render() {
         return (
-            <BleashupFlatList
-                keyExtractor={(item, index) => item.id}
-                dataSource={this.props.data}
-                renderItem={(item, index) => <PublicEvent key={item.id}  {...this.props} Event={item} />}
-                firstIndex={0}
-                renderPerBatch={1}
-                initialRender={3}
-                numberOfItems={this.props.data.length}
-            >
-
-            </BleashupFlatList>
+            <View style={{ height: "100%", backgroundColor: "#FEFFDE"}}>
+                <BleashupFlatList
+                    keyExtractor={(item, index) => item.id}
+                    dataSource={this.props.data}
+                    renderItem={(item, index) => <PublicEvent key={item.id}  {...this.props} Event={item} />}
+                    firstIndex={0}
+                    renderPerBatch={1}
+                    initialRender={3}
+                    numberOfItems={this.props.data.length}
+                >
+                </BleashupFlatList>
+            </View>
         )
     }
 }

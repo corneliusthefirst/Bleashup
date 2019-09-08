@@ -83,7 +83,7 @@ import {forEach} from "lodash"
             this.props.Event.period.time.secs
     }
     render() {
-       return this.state.loaded? <View>
+       return  <View>
            <View style={{
 
            }}>
@@ -138,8 +138,7 @@ import {forEach} from "lodash"
                        </View>
                    </TouchableOpacity>
                </View>
-           </View>
-           <DetailsModal
+           </View>{this.state.loaded ? <DetailsModal
                isToBeJoint={!(this.props.Event.joint)}
                join={() => {
                    this.props.join()
@@ -154,10 +153,7 @@ import {forEach} from "lodash"
                location={this.props.Event.location.string}
                event_organiser_name={this.state.creator.name}
                onClosed={() => this.setState({ isDetailsModalOpened: false })}
-           />
-       </View> : <SvgAnimatedLinearGradient primaryColor="#cdfcfc"
-           secondaryColor="#FEFFDE" height={50}>
-               <Rect x="75" y="13" rx="4" ry="4" width="100" height="13" />
-           </SvgAnimatedLinearGradient>
-    }
+           />:null}
+       </View> 
+            }
 }
