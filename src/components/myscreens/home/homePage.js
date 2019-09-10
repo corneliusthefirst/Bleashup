@@ -19,8 +19,10 @@ import SettingView from "./../settings/index";
 import { observer } from "mobx-react";
 import autobind from "autobind-decorator";
 import RNExitApp from "react-native-exit-app";
+import { withInAppNotification } from 'react-native-in-app-notification';
 import stores from "../../../stores";
 import CurrentEventView from '../currentevents';
+import emitter from "../../../services/eventEmiter";
 
 
 
@@ -31,8 +33,18 @@ class Home extends Component {
     this.state = {};
   }
   componentDidMount() {
+    emitter.on("notify", (event) => {
+      {
+        this.props.showNotification({
+          title: 'You pressed it!',
+          message: 'The notification has been triggered ' + event,
+          vibrate: false,
+          onPress: () => Alert.alert('Alert', 'You clicked the notification!')
+        });
+      }
+    })
     NetInfo.isConnected.addEventListener("connectionChange", this.handleConnectionChange);
-  // BackHandler.addEventListener("hardwareBackPress", this.handleBackButton);
+    // BackHandler.addEventListener("hardwareBackPress", this.handleBackButton);
   }
   componentWillUnmount() {
     BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton);
@@ -63,9 +75,8 @@ class Home extends Component {
   settings() { }
 
   render() {
-    //console.disableYellowBox = true; 
     return (
-      <Container style={{ backgroundColor: "#FEFFDE"}}>
+      <Container style={{ backgroundColor: "#FEFFDE" }}>
         <Header hasTabs>
           <Body>
             <Title
@@ -145,4 +156,4 @@ class Home extends Component {
   }
 }
 
-export default Home;
+export default withInAppNotification(Home);

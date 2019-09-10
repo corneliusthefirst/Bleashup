@@ -31,6 +31,7 @@ import Join from "./Join";
 import Options from "./Options";
 import TitleView from "./TitleView";
 import SwipeOutView from "./SwipeOutView";
+import emitter from "../../../../services/eventEmiter";
 
 class PublicEvent extends Component {
   constructor(props) {
@@ -219,6 +220,7 @@ class PublicEvent extends Component {
   }
 
   render() {
+    //emitter.emit('notify', "santerss") 
     return (this.state.isMount?<View style={{ width: "100%", }}>
     <Swipeout style={{ backgroundColor: this.props.Event.new ? "#cdfcfc" : null }}
         {...this.swipeOutSettings}>

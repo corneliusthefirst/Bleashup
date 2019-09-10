@@ -1,5 +1,5 @@
 import React, { Component } from "react"
-import {  FlatList,View ,ScrollView} from "react-native";
+import {  FlatList,View} from "react-native";
 import { Spinner, CardItem, Text, List } from "native-base";
 import { observer } from "mobx-react";
 import { thisExpression } from "@babel/types";
@@ -44,7 +44,7 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
     render() {
         return (
             <View style={{ flexDirection: 'column', backgroundColor: "#FEFFDE", }}>
-                <ScrollView
+                <FlatList
                     onScrollEndDrag={({ nativeEvent }) => {
                         if (isCloseToBottom(nativeEvent)) {
                             this.continueScrollDown()
@@ -70,14 +70,8 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
                         </CardItem>
                     }
                 >
-                    {this._renderItems(this.props.dataSource.slice(this.props.firstIndex ? this.props.firstIndex : 0,
-                        this.state.currentRender))}
-                    {this.props.numberOfItems < this.props.initialRender ? null : <CardItem style={{ width: "100%", height: 25 }} >
-                        {this.state.endReached ? <Text style={{
-                            marginLeft: "35%"
-                        }}>no more data to load</Text> : <Spinner size={"small"}></Spinner>}
-                    </CardItem>}
-                </ScrollView>
+                
+                </FlatList>
             </View>)
     }
 }

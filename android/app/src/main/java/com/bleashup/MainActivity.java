@@ -1,4 +1,4 @@
-package com.bleashup;
+package com.bleashup.bleashup;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
