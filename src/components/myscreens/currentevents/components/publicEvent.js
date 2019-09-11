@@ -53,7 +53,7 @@ class PublicEvent extends Component {
       deleting: false,
       swipeOutSettings: null,
       hiden: false,
-      isjoint: false,
+      joint: false,
       unliking: false,
       liked: false,
       likeIncrelment: 0,
@@ -61,34 +61,43 @@ class PublicEvent extends Component {
       currentUser: undefined
     };
   }
-
+  state = {
+    master: true
+  }
   shouldComponentUpdate(nextProps, nextState, nextContext) {
-    return this.state.isMount !== nextState.isMount 
-    }
+    return this.state.isMount !== nextState.isMount ||
+      nextState.joint !== this.state.joint ||
+      this.props.Event.joint !== nextProps.Event.joint ||
+      this.props.Event.new !== nextProps.Event.new ||
+      this.props.Event.updated !== nextProps.Event.updated ||
+      this.props.Event.id !== nextProps.Event.id
+  }
   swipperComponent = null
   componentDidMount() {
     setTimeout(() => {
-    stores.Events.isMaster(this.props.Event.id, stores.Session.SessionStore.phone).then(master => {
-      this.setState({
-        master: master,
-        isMount: true,
-        openInviteModal: false
+      stores.Events.isMaster(this.props.Event.id, stores.Session.SessionStore.phone).then(master => {
+        this.setState({
+          master: master,
+          isMount: true,
+          openInviteModal: false
+        })
       })
-    })
-  },34)
-}
-  swipeOutSettings = {
-    autoClose: true,
-    sensitivity: 100,
-    right: [
-      {
-        component: <SwipeOutView publish={() => this.publish()}
-          seen={() => this.markAsSeen()} delete={() => this.delete()
-          }
-          join={() => this.join()}
-          hide={() => this.hide()} {...this.props} ></SwipeOutView >
-      }
-    ],
+    }, 34)
+  }
+  swipeOutSettings(master) {
+    return {
+      autoClose: true,
+      sensitivity: 100,
+      right: [
+        {
+          component: <SwipeOutView master={master} publish={() => this.publish()}
+            seen={() => this.markAsSeen()} delete={() => this.delete()
+            }
+            join={() => this.join()}
+            hide={() => this.hide()} {...this.props} ></SwipeOutView >
+        }
+      ],
+    }
   }
   componentWillUnmount() {
   }
@@ -109,10 +118,7 @@ class PublicEvent extends Component {
   }
 
   publish() {
-    this.setState({
-      publishing: true
-    })
-    if (this.props.Event.public) {
+    if (this.props.Event.public || this.state.master) {
       Requester.publish(this.props.Event.id).then(() => {
         this.setState({
           publishing: false,
@@ -207,6 +213,9 @@ class PublicEvent extends Component {
       })
       Requester.join(this.props.Event.id, this.props.Event.event_host).then((status) => {
         Toast.show({ text: "Event Successfully Joint !", type: "success", buttonText: "ok" })
+        this.setState({
+          joint: true
+        })
       }).catch((error) => {
         this.setState({ isJoining: false })
         Toast.show({
@@ -221,9 +230,9 @@ class PublicEvent extends Component {
 
   render() {
     //emitter.emit('notify', "santerss") 
-    return (this.state.isMount?<View style={{ width: "100%", }}>
-    <Swipeout style={{ backgroundColor: this.props.Event.new ? "#cdfcfc" : null }}
-        {...this.swipeOutSettings}>
+    return (this.state.isMount ? <View style={{ width: "100%", }}>
+      <Swipeout style={{ backgroundColor: this.props.Event.new ? "#cdfcfc" : null }}
+        {...this.swipeOutSettings(this.state.master)}>
         <Card
           style={{
             borderColor: "#1FABAB",
@@ -238,7 +247,7 @@ class PublicEvent extends Component {
             }}
           >
             <Left>
-              {this.state.isMaster || this.props.Event.public ? <View>
+              {this.state.master || this.props.Event.public ? <View>
                 {this.state.publishing ? <View style={{ height: 18 }}>
                   <Spinner size={"small"} color="#7DD2D2"></Spinner></View> : <Icon
                     name="forward"
@@ -276,7 +285,7 @@ class PublicEvent extends Component {
           >
             <Left>
               {this.state.isMount ? <View style={{ flexDirection: "row", flex: 5 }}>
-                <ProfileView joined={() => this.join()} hasJoin={this.props.Event.joint}
+                <ProfileView joined={() => this.join()} hasJoin={this.props.Event.joint || this.state.joint}
                   onOpen={() => this.onOpenDetaiProfileModal()} phone={(this.props.Event.creator_phone)}></ProfileView>
               </View> : null}
             </Left>
@@ -284,7 +293,7 @@ class PublicEvent extends Component {
           <CardItem style={{
             justifyContent: "center",
           }}>
-            {this.state.isMount ? <TitleView seen={() => this.markAsSeen()}
+            {this.state.isMount ? <TitleView join={() => this.join()} joint={this.state.joint} seen={() => this.markAsSeen()}
               {...this.props}></TitleView> : null}
           </CardItem>
           <CardItem
@@ -298,7 +307,7 @@ class PublicEvent extends Component {
             cardBody
           >
             <Left>
-              {this.state.isMount ? <PhotoView joined={() => this.join()} isToBeJoint hasJoin={this.props.Event.joint} onOpen={() => this.onOpenPhotoModal()} style={{
+              {this.state.isMount ? <PhotoView joined={() => this.join()} isToBeJoint hasJoin={this.props.Event.joint || this.state.joint} onOpen={() => this.onOpenPhotoModal()} style={{
                 width: "70%",
                 marginLeft: "4%"
               }} photo={this.props.Event.background} width={170} height={125} borderRadius={10} /> : null}
@@ -322,9 +331,9 @@ class PublicEvent extends Component {
             </Right>
           </Footer>
         </Card>
-     </Swipeout>
-    </View>:<Card style={{height:390}}>
-    </Card>)
+      </Swipeout>
+    </View> : <Card style={{ height: 390 }}>
+      </Card>)
   }
 }
 export default PublicEvent

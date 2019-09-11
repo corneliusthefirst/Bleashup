@@ -17,7 +17,7 @@ import { observer } from "mobx-react";
         if(this.state.participant){
             Toast.show({text:"Joint Already !", buttonText:"ok"})
         }else{
-            if (this.props.Event.new) {
+            if (this.props.event.new) {
                 stores.Events.markAsSeen(this.props.event.id).then(() => {
                 })
             }

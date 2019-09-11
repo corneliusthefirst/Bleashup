@@ -52,23 +52,27 @@ export default class InvitationModal extends PureComponent {
     this.setState({ refreshing: false })
   }
   invite(members, status) {
-    this.prepareInvites(members,status).then(invites => {
-      Request.invite(invites,this.props.eventID).then((response => {
-        this.setState({
-          checked : [],
-          inviting :false,
-          masterStatus: false
+    if(this.props.master){
+      this.prepareInvites(members, status).then(invites => {
+        Request.invite(invites, this.props.eventID).then((response => {
+          this.setState({
+            checked: [],
+            inviting: false,
+            masterStatus: false
+          })
+          Toast.show({ type: "success", text: "invitations successfully sent !", position: "bottom", buttonText: "OK" })
+        })).catch(eror => {
+          this.setState({
+            checked: [],
+            inviting: false,
+            masterStatus: false
+          })
+          Toast.show({ type: "default", text: "could not connect to the server !", position: "bottom", buttonText: "OK" })
         })
-        Toast.show({type:"success",text:"invitations successfully sent !",position:"bottom",buttonText:"OK"})
-      })).catch(eror => {
-        this.setState({
-          checked: [],
-          inviting: false,
-          masterStatus:false
-        })
-        Toast.show({ type: "default", text: "could not connect to the server !", position: "bottom", buttonText: "OK" })
       })
-    })
+    }else{
+      Toast.show({ type: "default", text: "sorry! you cannont invite for event", position: "bottom", buttonText: "OK" })
+    }
   }
   componentDidMount() {
     setTimeout(() => {

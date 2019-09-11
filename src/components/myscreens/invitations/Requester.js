@@ -54,9 +54,7 @@ class Requester {
                         Participant.master = invitation.status;
                         Participant.host = stores.Session.SessionStore.host
                         stores.Events.addParticipant(invitation.event_id, Participant, true).then(() => {
-                            stores.Events.joinEvent(invitation.event_id,stores.Session.SessionStore.phone).then(() => {
                                 resolve("ok")
-                            })
                         })
                     })
                 }).catch(error => {

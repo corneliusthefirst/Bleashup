@@ -55,7 +55,7 @@ export default class SwiperHighlight extends Component {
                 >
 
                     <Text style={{ fontStyle: 'italic', fontWeight: "600" }}></Text>
-                    <ScrollView style={{}}>
+                    <ScrollView nestedScrollEnabled style={{}}>
                         <TouchableOpacity onPress={this.props.onClosed}>
                             <Text style={{ fontStyle: 'italic', fontWeight: "600", color: "green" }}>{this.props.highlightStartData}...</Text>
                             <Text style={{ fontStyle: 'italic', fontWeight: "600" }}>...{this.props.highlightEndData}</Text>

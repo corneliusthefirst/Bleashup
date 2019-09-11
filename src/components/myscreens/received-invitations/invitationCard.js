@@ -103,13 +103,10 @@ const propOverridePlaceholderObject = {
    shouldComponentUpdate(nextProps, nextState, nextContext) {
      return nextProps.item.invitation_id !== this.props.item.invitation_id ||
        this.state.loading !== nextState.loading ||
-       nextProps.item.sent !== this.props.item.sent ||
-       nextProps.item.received !== this.props.item.received ||
-       nextProps.item.seen !== this.props.item.seen ||
-       nextProps.item.accept !== this.props.item.accept ||
-       nextProps.item.deny !== this.props.item.deny ||
+       nextState.accept !== this.state.accept ||
+       nextState.deny !== this.state.deny ||
        this.state.opening !== nextState.opening ||
-       this.state.hasJoin !== nextState.hasJoin
+       this.state.hasJoin !== nextState.hasJoin 
    }
    componentWillReceiveProps(nextProps) {
      this.setState({
@@ -374,8 +371,8 @@ const propOverridePlaceholderObject = {
             this.setState({opening:false, isOpenStatus: false })
             this.onSeen()
           }
-          } onAccept={this.onAccept} onDenied={this.onDenied} deny={this.props.item.deny}
-            accept={this.props.item.accept} isJoining={this.state.isJoining} hasJoin={this.state.hasJoin}
+          } onAccept={this.onAccept} onDenied={this.onDenied} deny={this.state.deny}
+            accept={this.state.accept} isJoining={this.state.isJoining} hasJoin={this.state.hasJoin}
             joined={() => this.setState({ hasJoin: true })} />}
 
           {this.state.loading ? null : <PhotoModal isOpen={this.state.enlargeEventImage} image={this.state.item.event_Image} onClosed={() => {
@@ -383,8 +380,8 @@ const propOverridePlaceholderObject = {
             this.onSeen()
           }
           }
-            onAccept={this.onAccept} onDenied={this.onDenied} deny={this.props.item.deny}
-            accept={this.props.item.accept} isJoining={this.state.isJoining} hasJoin={this.state.hasJoin}
+            onAccept={this.onAccept} onDenied={this.onDenied} deny={this.state.deny}
+            accept={this.state.accept} isJoining={this.state.isJoining} hasJoin={this.state.hasJoin}
             joined={() => this.setState({ hasJoin: true })} />}
 
 
