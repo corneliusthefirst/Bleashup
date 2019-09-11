@@ -85,13 +85,14 @@ const AppContainer = createAppContainer(AppNavigator);
 
 export default () => (
   <Root>
+    <InAppNotificationProvider closeInterval={7000} height={80} openCloseDuration={200}
+    iconApp={require('../assets/icon-b.png')} backgroundColour={"#FEFFDE"}>
     <StyleProvider style={getTheme(CommonColor)}>
-      <InAppNotificationProvider>
         <Provider app={app}>
           <AppContainer />
         </Provider>
-      </InAppNotificationProvider>
     </StyleProvider>
+    </InAppNotificationProvider>
   </Root>
 );
 

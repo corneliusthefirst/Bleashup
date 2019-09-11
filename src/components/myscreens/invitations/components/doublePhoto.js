@@ -13,9 +13,9 @@ export default class DoublePhoto extends Component {
     render() {
         return (
           <Item style={{borderRadius:0,borderColor:"transparent"}}>
-              <CacheImages thumbnails large source={{ uri: this.props.LeftImage }} />
+                <CacheImages style={{ borderColor: "#1FABAB",borderWidth: 4,}} thumbnails large source={{ uri: this.props.LeftImage }} />
               <TouchableOpacity onPress={this.props.enlargeImage} >
-                <CacheImages thumbnails large source={{ uri: this.props.RightImage}} style={{ marginLeft: -30 }} />
+                    <CacheImages  thumbnails large source={{ uri: this.props.RightImage}} style={{ marginLeft: -30 }} />
               </TouchableOpacity>
           </Item>
 

@@ -106,7 +106,7 @@ import {forEach} from "lodash"
                            <Text
                                style={{
                                    color: "#1FABAB",
-                                   marginLeft: "20%",
+                                   
                                }}
                                note
                            >

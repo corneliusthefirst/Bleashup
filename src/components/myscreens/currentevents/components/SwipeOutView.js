@@ -12,7 +12,6 @@ export default class SwipeOutView extends Component {
     constructor(props) {
         super(props)
         this.state = {
-
         }
     }
     width = "9%"
@@ -72,46 +71,38 @@ export default class SwipeOutView extends Component {
     blinkerSize = 26;
     render() {
         return (
-            <View style={{ width: "100%",}}>
+            <View style={{ width: "100%", }}>
                 <View>
                     <List style={{
                         backgroundColor: "#FFFFF6",
                         height: "100%"
                     }}>
                         <ListItem style={{ height: this.width, margin: this.padding, alignSelf: 'flex-start' }}>
-                            {this.props.Event.public ? (<TouchableOpacity onPress={() => {
+                            <TouchableOpacity onPress={() => {
                                 this.props.publish()
                             }}>
-                                <Icon style={{ fontSize: 20, color: "#bfc6ea" }} name="forward" type="Entypo">
+                                <Icon style={{ fontSize: 20, color: this.props.Event.public || this.props.master ? "#7DD2D2" : "#bfc6ea" }} name="forward" type="Entypo">
                                 </Icon>
-                                <Label style={{ fontSize: 12, color: "#bfc6ea" }}>Publish</Label>
-                            </TouchableOpacity>) :
-                                (<TouchableOpacity onPress={() => {
-                                    this.props.publish()
-                                }
-                                }>
-                                    <Icon style={{ fontSize: 20, color: "#7DD2D2" }} name="forward" type="Entypo">
-                                    </Icon>
-                                    <Label style={{ fontSize: 14, color: "#7DD2D2" }}>Publish</Label>
-                                </TouchableOpacity>)}
+                                <Label style={{ fontSize: 12, color: this.props.Event.public || this.props.master ? "#7DD2D2" : "#bfc6ea" }}>Publish</Label>
+                            </TouchableOpacity>
                         </ListItem>
                         <ListItem style={{ height: this.width, margin: this.padding, alignSelf: 'flex-start' }}>
                             {<TouchableOpacity onPress={() => {
                                 this.invite()
                             }}>
-                                <Icon style={{ fontSize: 20, color: "#7DD2D2" }} name="sc-telegram" type="EvilIcons">
+                                <Icon style={{ fontSize: 20, color: this.props.master ? "#7DD2D2" : "#bfc6ea" }} name="sc-telegram" type="EvilIcons">
                                 </Icon>
-                                <Label style={{ fontSize: 14, color: "#7DD2D2" }}>Invite</Label>
+                                <Label style={{ fontSize: 14, color: this.props.master ? "#7DD2D2" : "#bfc6ea" }}>Invite</Label>
                             </TouchableOpacity>}
                         </ListItem>
                         <ListItem style={{ height: this.width, margin: this.padding, }}>
                             {<TouchableOpacity onPress={() => {
                                 this.props.join()
                             }}>
-                                <Icon style={{ fontSize: 20, color: "#bfc6ea" }} name="universal-access" type="Foundation">
+                                <Icon style={{ fontSize: 20, color: this.props.Event.joint ? "#7DD2D2" : "#bfc6ea" }} name="universal-access" type="Foundation">
                                 </Icon>
                                 <Label style={{
-                                    color: "#bfc6ea",
+                                    color: this.props.Event.joint ? "#7DD2D2" : "#bfc6ea",
                                     fontSize: 14
                                 }}
                                 >
@@ -126,7 +117,7 @@ export default class SwipeOutView extends Component {
                             }}>
                                 <Icon style={{ fontSize: 20, color: "#1FABAB" }} name="calendar" type="EvilIcons">
                                 </Icon>
-                                { this.props.Event.updated ? (
+                                {this.props.Event.updated ? (
                                     <View style={this.indicatorMargin}>
                                         <UpdateStateIndicator size={this.blinkerSize} />
                                     </View>
@@ -203,7 +194,7 @@ export default class SwipeOutView extends Component {
                         </ListItem>
                     </List>
                 </View>
-                <InvitationModal eventID={this.props.Event.id} isOpen={this.state.openInviteModal}
+                <InvitationModal public={this.props.Event.public} master={this.props.master} eventID={this.props.Event.id} isOpen={this.state.openInviteModal}
                     close={() => this.setState({ openInviteModal: false })}></InvitationModal>
             </View>
         );

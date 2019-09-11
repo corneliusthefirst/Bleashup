@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "37985560898",
+    "firebase_url": "https://bleashup-1562173529011.firebaseio.com",
+    "project_id": "bleashup-1562173529011",
+    "storage_bucket": "bleashup-1562173529011.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:37985560898:android:ed817ab500e10ec8e640db",
+        "android_client_info": {
+          "package_name": "com.bleashup.bleashup"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "37985560898-0leb9mpbeca1ula48ja9vleat1iurq31.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDh34-4uS3aUdgAK6ZN-wx2uCrZExzgbCk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "37985560898-0leb9mpbeca1ula48ja9vleat1iurq31.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

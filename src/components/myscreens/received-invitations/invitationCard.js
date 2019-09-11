@@ -3,7 +3,6 @@ import {
   Platform, StyleSheet, Image, TextInput, FlatList, TouchableOpacity,
   ActivityIndicator, View, Alert, BackHandler, ToastAndroid
 } from 'react-native';
-
 import autobind from "autobind-decorator";
 import {
   Content, Card, CardItem, Text, Body, Container, Icon, Header, Form, Thumbnail, Item,
@@ -30,6 +29,7 @@ import { forEach, filter } from "lodash";
 import ImageActivityIndicator from '../currentevents/components/imageActivityIndicator';
 import { observer } from 'mobx-react';
 import Requester from "../invitations/Requester"
+import BleashupNotification from '../../../services/Notifications';
 
 
 const defaultPlaceholderObject = {
@@ -103,13 +103,10 @@ const propOverridePlaceholderObject = {
    shouldComponentUpdate(nextProps, nextState, nextContext) {
      return nextProps.item.invitation_id !== this.props.item.invitation_id ||
        this.state.loading !== nextState.loading ||
-       nextProps.item.sent !== this.props.item.sent ||
-       nextProps.item.received !== this.props.item.received ||
-       nextProps.item.seen !== this.props.item.seen ||
-       nextProps.item.accept !== this.props.item.accept ||
-       nextProps.item.deny !== this.props.item.deny ||
+       nextState.accept !== this.state.accept ||
+       nextState.deny !== this.state.deny ||
        this.state.opening !== nextState.opening ||
-       this.state.hasJoin !== nextState.hasJoin
+       this.state.hasJoin !== nextState.hasJoin 
    }
    componentWillReceiveProps(nextProps) {
      this.setState({
@@ -186,6 +183,8 @@ const propOverridePlaceholderObject = {
       max_length = data.sender_status.length
       let dataArray = [{ title: AccordData.slice(0, 35), content: AccordData.slice(35, max_length) }]
       this.formCard(data).then(card => {
+        //testing notifications
+        //BleashupNotification.sendNotification("my test notification", "you received a new invitation")
         this.setState({
           activeRowKey: null,
           isOpenDetails: false,
@@ -279,11 +278,10 @@ const propOverridePlaceholderObject = {
       }
     })
   }
-
   render() {
     return this.state.loading ? <Card style={{ height: 230}}></Card>:<View style={{ width: "100%",}}>
     <Swipeout style={{ width: "100%", backgroundColor: "#FEFFDE"}} {...this.swipeSettings}>
-        <Card style={{ height: 230}}>
+        <Card style={{ height: 250}}>
         <CardItem>
             <Text style={{ color:"#54F5CA"}} note>
             received

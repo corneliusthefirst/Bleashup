@@ -25,9 +25,9 @@ export default class events {
 
     this.readFromStore().then(Events => {
       let i = 0
-      forEach(Events,(Event) =>{
+      forEach(Events, (Event) => {
         Events[i].hiden = false
-        if(i == Events.length -1){
+        if (i == Events.length - 1) {
           if (Events) {
             this.setProperties(Events, true);
           }
@@ -134,34 +134,28 @@ export default class events {
   }
   @action loadCurrentEvent(EventID) {
     return new Promise((resolve, reject) => {
-      if (this.currentEvents.length !== 0 || this.pastEvents.length !== 0 || this.events.length !== 0) {
-        if (this.currentEvents.length !== 0) {
-          let Event = find(this.currentEvents, {
-            id: EventID
-          });
-          resolve(Event);
-        }
-        if (this.pastEvents.length !== 0) {
-          let Event = find(this.pastEvents, {
-            id: EventID
-          });
-          resolve(Event);
-        }
-        if (this.events.length !== 0) {
-          let Event = find(this.events, { id: EventID })
-          if (!Event) {
-            serverEventListener.GetData(EventID).then(event => {
-              this.addEvent(event).then(() => {
+      if (this.events.length !== 0) {
+        let Event = find(this.events, { id: EventID })
+        if (!Event) {
+          this.readFromStore()
+            .then(Events => {
+              let event = find(Events, { id: EventID });
+              if (!event) {
+                serverEventListener.GetData(EventID).then(event => {
+                  this.addEvent(event).then(() => {
+                    resolve(event)
+                  })
+                }).catch(error => {
+                  serverEventListener.socket.write = undefined
+                  console.error(error, "in load events")
+                  reject(error)
+                })
+              } else {
                 resolve(event)
-              })
-            }).catch(error => {
-              serverEventListener.socket.write = undefined
-              console.error(error,"in load events")
-              reject(error)
+              }
             })
-          } else {
-            resolve(Event)
-          }
+        } else {
+          resolve(Event)
         }
       } else {
         this.readFromStore()
@@ -290,25 +284,33 @@ export default class events {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let eventIndex = findIndex(Events, { id: EventID });
-        if(eventIndex){
-          Events[eventIndex].participant = uniqBy(Events[eventIndex].participant.concat([Participant]), "phone");
+        if (eventIndex >= 0) {
+          Events[eventIndex].participant[Events[eventIndex].participant.length] = Participant;
+          Events[eventIndex].participant[Events[eventIndex].participant.length] = uniqBy(Events[eventIndex].participant,"phone")
           if (inform) {
             Events[eventIndex].participant_added = true;
             Events[eventIndex].updated = true;
+            Events[eventIndex].updated_at = moment().format("YYYY-MM-DD HH:mm");
+            Events[eventIndex].joint = true
           }
           else Events[eventIndex].joint = true;
-          if (inform)
-            Events[eventIndex].updated_at = moment().format("YYYY-MM-DD HH:mm");
           this.saveKey.data = Events;
           storage.save(this.saveKey).then(() => {
-            if (indexOf)
+            if (inform)
               this.setProperties(this.saveKey.data, inform);
             resolve();
           });
-        }else{
-          let Event = find(this.events, { id: EventID })
-          if (!Event) {
+        } else {
             serverEventListener.GetData(EventID).then(event => {
+              event.participant[event.participant.length] = Participant;
+              event.participant = uniqBy(event.participant, "phone")
+              if (inform) {
+                event.participant_added = true;
+                event.updated = true;
+                event.updated_at = moment().format("YYYY-MM-DD HH:mm");
+                event.joint = true
+              }
+              else event.joint = true;
               this.addEvent(event).then(() => {
                 resolve(event)
               })
@@ -317,9 +319,6 @@ export default class events {
               console.error(error, "in load events")
               reject(error)
             })
-          } else {
-            resolve(Event)
-          }
         }
       });
     });
@@ -520,7 +519,7 @@ export default class events {
       this.readFromStore().then(Events => {
         let index = findIndex(Events, { id: EventID });
         Events[index].must_contribute = dropWhile(
-          Events[index].must_contribute,element => element == ContributionID
+          Events[index].must_contribute, element => element == ContributionID
         );
         if (inform) {
           Events[index].must_contribute_update = true;
@@ -540,7 +539,7 @@ export default class events {
         let index = findIndex(Events, {
           id: EventID
         });
-        if (index >= 0) { 
+        if (index >= 0) {
           if (Events[index].votes.length !== 0)
             Events[index].votes = uniq(Events[index].votes.concat([VoteID]));
           else Events[index].votes = [VoteID]
@@ -647,7 +646,7 @@ export default class events {
         let index = findIndex(Events, { id: EventID });
         Events[index].highlights = dropWhile(
           Events[index].highlights,
-         element => element == HighlightID
+          element => element == HighlightID
         );
         if (inform) {
           Events[index].highlight_removed = true;
@@ -749,19 +748,19 @@ export default class events {
       });
     });
   }
-  @action joinEvent(EventID,phone) {
+  @action joinEvent(EventID, phone) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let index = findIndex(Events, { id: EventID });
-        let participant = find(Events[index].participant,{phone:phone})
-        if(participant){
+        let participant = find(Events[index].participant, { phone: phone })
+        if (participant) {
           Events[index].joint = true;
           this.saveKey.data = Events;
           storage.save(this.saveKey).then(() => {
             this.setProperties(this.saveKey.data, false);
             resolve();
           });
-        }else{
+        } else {
           reject("not participant yet")
         }
       });
@@ -783,7 +782,7 @@ export default class events {
   changeUpdatedStatus(EventID, statusKey, newStatus) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
-      
+
         let index = findIndex(Events, {
           id: EventID
         });
@@ -811,7 +810,7 @@ export default class events {
   }
   setProperties(Events, inform) {
     if (inform) Events = orderBy(Events, ["updated_at"], ["desc"]);
-    this.events = filter(Events,event => (event.joint || event.public) && !event.hiden);
+    this.events = filter(Events, event => (event.joint || event.public) && !event.hiden);
     this.newEvent = [Events[2]]
     this.currentEvents = filter(Events, { past: false });
     this.PastEvents = filter(Events, { past: true });

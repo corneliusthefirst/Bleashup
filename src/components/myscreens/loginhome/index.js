@@ -42,6 +42,9 @@ export default class LoginHomeView extends Component {
             this.props.navigation.navigate(route);
           })
           setTimeout(() => this.props.navigation.navigate(route), 5000)
+        }else{
+          globalState.loading = false;
+          this.props.navigation.navigate(route);
         }
       });
     }

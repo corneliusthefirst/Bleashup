@@ -284,7 +284,7 @@ import stores from "../../../../stores";
                             }
                         }></Icon>
                         <Label style={{
-                            marginLeft: "-30%"
+                            marginLeft: "-17%"
                         }}>contrbs</Label>
                         {this.props.Event.contribution_updated ? (
                             <View style={this.indicatorMargin}>

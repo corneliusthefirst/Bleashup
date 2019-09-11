@@ -3,13 +3,10 @@ import React, { Component } from "react"
 =======
 
 import React, { Component } from 'react';
-import { StyleSheet, View, Dimensions, Text, Image, ScrollView } from 'react-native';
+import {  View } from 'react-native';
 import PublicEvent from "./publicEvent.js"
-import { CardItem, Card, Spinner, ListItem } from 'native-base';
 import { observer } from 'mobx-react';
-import { forEach } from "lodash"
-import BleashupFlatList from '../../../BleashupFlatList';
-const SCREEN_WIDTH = Dimensions.get('window').width;
+import BleashupScrollView from '../../../BleashupScrollView.js';
 
 
 @observer export default class CurrentEvents extends Component {
@@ -19,7 +16,7 @@ const SCREEN_WIDTH = Dimensions.get('window').width;
     render() {
         return (
             <View style={{ height: "100%", backgroundColor: "#FEFFDE"}}>
-                <BleashupFlatList
+                <BleashupScrollView
                     keyExtractor={(item, index) => item.id}
                     dataSource={this.props.data}
                     renderItem={(item, index) => <PublicEvent key={item.id}  {...this.props} Event={item} />}
@@ -28,7 +25,7 @@ const SCREEN_WIDTH = Dimensions.get('window').width;
                     initialRender={3}
                     numberOfItems={this.props.data.length}
                 >
-                </BleashupFlatList>
+                </BleashupScrollView>
             </View>
         )
     }

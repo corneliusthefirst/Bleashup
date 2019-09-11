@@ -25,7 +25,7 @@ export default class ProfileModal extends Component {
                 onClosed={this.props.onClosed}
                 style={{
                     backgroundColor: this.transparent,
-                    height: "97%", borderRadius: 15, width: "99%"
+                    height: "97%", borderRadius: 15, width: 410
                 }}
                 position={'center'}
             >
@@ -53,36 +53,36 @@ export default class ProfileModal extends Component {
 
 
                 {this.props.isToBeJoint ? (this.props.hasJoin ?
-                    <View style={{ flex: 1, flexDirection: 'column', alignItems: 'center', marginTop: 10 }}>
+                    <View style={{ flex: 1, flexDirection: 'column', alignItems: 'center', marginTop: 4 }}>
                         <Icon name="comment" type="EvilIcons" style={{ color: "#1FABAB" }} />
                         <Text style={{ marginTop: 5, color: "#1FABAB" }}>chat</Text>
                     </View> :
 
-                    <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <View style={{ marginTop: "-5%", flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                         <View>
-                            <Button onPress={this.props.joined} style={{ justifyContent: 'center', marginLeft: 40, width: 100, borderRadius: 3 }} success ><Text style={{ fontWeight: "500", fontSize: 18 }}>Join</Text></Button>
+                            <Button onPress={this.props.joined} style={{ justifyContent: 'center',  marginLeft: 40, width: 100, borderRadius: 3 }} success ><Text style={{ fontWeight: "500", fontSize: 18 }}>Join</Text></Button>
                         </View>
                         <View style={{ flexDirection: 'column' }}>
                             <Icon name="comment" type="EvilIcons" onPress={{}} style={{ marginRight: 40, color: "#1FABAB" }} />
-                            <Text style={{ marginTop: 5, color: "#1FABAB", marginRight: 40 }}>chat</Text>
+                            <Text style={{  color: "#1FABAB", marginRight: 40 }}>chat</Text>
                         </View>
                     </View>)
                     :
                     (this.props.accept || this.props.deny ?
-                        <View style={{ flex: 1, flexDirection: 'column', alignItems: 'center', marginTop: 10 }}>
+                        <View style={{ flex: 1, flexDirection: 'column', alignItems: 'center', }}>
                             <Icon name="comment" type="EvilIcons" style={{ color: "#1FABAB" }} />
                             <Text style={{ marginTop: 5, color: "#1FABAB" }}>chat</Text>
                         </View> :
 
-                        <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', marginTop: 15 }}>
-                            <Button onPress={this.props.onAccept} style={{ marginLeft: 20, width: "25%", justifyContent: 'center' }} success ><Text>Accept</Text></Button>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: "5%" }}>
+                            <Button onPress={ () => this.props.onAccept()} style={{ marginLeft: 20, width: "25%", justifyContent: 'center' }} success ><Text>Accept</Text></Button>
 
                             <View style={{ flexDirection: 'column', alignItems: 'center' }}>
                                 <Icon name="comment" type="FontAwesome5" style={{ color: "#1FABAB" }} />
                                 <Text style={{ marginTop: 5, color: "#1FABAB" }}>chat</Text>
                             </View>
 
-                            <Button onPress={this.props.onDenied} style={{ marginRight: 20, width: "25%", justifyContent: 'center' }} danger ><Text>Deny</Text></Button>
+                            <Button onPress={()=> this.props.onDenied()} style={{ marginRight: 20, width: "25%", justifyContent: 'center' }} danger ><Text>Deny</Text></Button>
                         </View>
 
                     )

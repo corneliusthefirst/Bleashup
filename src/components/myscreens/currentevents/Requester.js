@@ -94,9 +94,7 @@ class Requester {
             requestData.joinEvent(Join, EventID + "join").then((JSONData) => {
                 serverEventListener.sendRequest(JSONData, EventID + "join").then((SuccessMessage) => {
                     stores.Events.addParticipant(EventID, Participant, false).then(() => {
-                        stores.Events.joinEvent(EventID).then(() => {
                             resolve("ok")
-                        })
                     })
                 }).catch(error => {
                     serverEventListener.socket.write = undefined

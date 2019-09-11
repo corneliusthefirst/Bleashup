@@ -69,18 +69,15 @@ Desc(item) {
   render() {
 
     return (
-               <View style={{ width: null, height:"50%",margin:5,marginTop:-20}}>
-                    <DeckSwiper
-                        ref={(c) => this._deckSwiper = c}
-                        dataSource={this.props.details}
-                        renderEmpty={() =>
-                            <View style={{ alignSelf: "center" }}>
-                                <Text>Over</Text>
-                            </View>
-                        }
-                        renderItem={item => this.Desc(item)}
-                    />
-                </View>
+      <View style={{ width: "98%", height: 400,marginTop: -40 , marginLeft: 5 }}>
+        <DeckSwiper
+          ref={(c) => this._deckSwiper = c}
+          dataSource={this.props.details}
+          renderEmpty={() =>{}
+          }
+          renderItem={item => this.Desc(item)}
+        />
+      </View>
     );
 
     }

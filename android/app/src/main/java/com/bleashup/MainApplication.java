@@ -1,4 +1,4 @@
-package com.bleashup;
+package com.bleashup.bleashup;
 
 import android.app.Application;
 import com.horcrux.svg.SvgPackage;
@@ -13,6 +13,8 @@ import com.facebook.react.ReactPackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
+import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage; // <--- Import Package
+//import android.support.v7.app.AppCompatActivity;
 import com.swmansion.reanimated.ReanimatedPackage;
 import com.github.wumke.RNExitApp.RNExitAppPackage;
 import java.util.Arrays;
@@ -40,7 +42,8 @@ public class MainApplication extends Application implements ReactApplication {
             new TcpSocketsModule(),
              new NetInfoPackage(),
             new RNGestureHandlerPackage(),
-            new RNFetchBlobPackage()
+            new RNFetchBlobPackage(),
+            new ReactNativePushNotificationPackage() // <---- Add the Package
                   );
     }
 
@@ -59,5 +62,6 @@ public class MainApplication extends Application implements ReactApplication {
   public void onCreate() {
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);
+
   }
 }
