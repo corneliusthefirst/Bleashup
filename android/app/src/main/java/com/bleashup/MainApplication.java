@@ -13,6 +13,7 @@ import com.facebook.react.ReactPackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
+import com.chirag.RNMail.*;  // <--- import 
 import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage; // <--- Import Package
 //import android.support.v7.app.AppCompatActivity;
 import com.swmansion.reanimated.ReanimatedPackage;
@@ -38,6 +39,7 @@ public class MainApplication extends Application implements ReactApplication {
             new RNExitAppPackage(),
             new ReanimatedPackage(),
             new TcpSocketsModule(),
+            new RNMail() ,
              new NetInfoPackage(),
             new RNGestureHandlerPackage(),
             new RNFetchBlobPackage(),

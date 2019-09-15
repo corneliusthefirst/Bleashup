@@ -1,16 +1,17 @@
 import React, { Component } from "react";
 import { Platform, ScrollView, BackHandler, ToastAndroid, View } from 'react-native';
 import {
-  Container,
-  Header,
-  Title,
-  Icon,
-  Text,
-  Tabs,
-  Tab,
-  Body,
-  TabHeading,
-} from "native-base";
+    Container,
+    Header,
+    Title,
+    Icon,
+    Text,
+    Tabs,
+    Tab,
+    Body,
+    TabHeading,
+    Card
+} from 'native-base';
 import NetInfo from "@react-native-community/netinfo";
 import StatusView from "./../status/index";
 import InvitationView from "./../invitations/index";
@@ -76,7 +77,7 @@ class Home extends Component {
 
   render() {
     return (
-      <Container style={{ backgroundColor: "#FEFFDE" }}>
+     <Container style={{ backgroundColor: "#FEFFDE" }}>
         <Header hasTabs>
           <Body>
             <Title

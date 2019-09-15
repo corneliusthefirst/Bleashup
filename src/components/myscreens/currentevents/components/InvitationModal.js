@@ -30,6 +30,7 @@ import Request from "../Requester";
 import request from "../../../../services/requestObjects";
 import moment from "moment"
 import BleashupFlatList from '../../../BleashupFlatList';
+import Mailer from 'react-native-mail';
 export default class InvitationModal extends PureComponent {
   constructor(props) {
     super(props);
@@ -89,8 +90,31 @@ export default class InvitationModal extends PureComponent {
       );
     }, 20)
   }
-  inviteWithEmail(contacts, status) {
 
+  inviteWithEmail(email, status) {
+    Mailer.mail({
+      subject: 'need help',
+      recipients: ['fokam.giles@yahoo.com'],
+      ccRecipients: ['supportCC@example.com'],
+      bccRecipients: ['supportBCC@example.com'],
+      body: '<b>A Bold Body</b>',
+      isHTML: true,
+      attachment: {
+        path: '',  // The absolute path of the file from which to read data.
+        type: '',   // Mime Type: jpg, png, doc, ppt, html, pdf, csv
+        name: '',   // Optional: Custom filename for attachment
+      }
+    }, (error, event) => {
+      Alert.alert(
+        error,
+        event,
+        [
+          { text: 'Ok', onPress: () => console.log('OK: Email Error Response') },
+          { text: 'Cancel', onPress: () => console.log('CANCEL: Email Error Response') }
+        ],
+        { cancelable: true }
+      )
+    });
   }
   prepareInvites(contacts, status) {
     return new Promise((resolve, reject) => {
@@ -222,16 +246,16 @@ export default class InvitationModal extends PureComponent {
                 </View>
               </View>
             </Item>
-            <Right>
               <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                 this.inviteWithEmail(this.state.checked, this.state.masterStatus)
               })}>
+              <View style={{marginLeft: "40%"}}>
                 <Icon name="sc-telegram" style={{
                   color: "#1FABAB",
                   fontSize: 50,
                 }} type="EvilIcons"></Icon>
+              </View>
               </TouchableOpacity>
-            </Right>
           </View>
         ) : (
            
