@@ -4,7 +4,6 @@ import GState from "../../../stores/globalState";
 import {View} from "react-native"
 import { ScrollView } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import Draggable from 'react-native-draggable';
 import Swipeout from "react-native-swipeout";
 var swipeoutBtns = [
   {

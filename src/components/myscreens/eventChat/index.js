@@ -36,7 +36,7 @@ import { observer } from "mobx-react";
     }))
   }
   render() {
-    return <View style={{display:'flex'}}>
+    return <View style={{display:'flex',flexDirection: 'column',}}>
       <GiftedChat onSend={(message) => this.onSend(message)}
         user={{
           _id: stores.Session.SessionStore.phone, name: stores.LoginStore.user.name,
