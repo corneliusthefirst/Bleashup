@@ -147,6 +147,7 @@ export default class Event extends Component {
     this.props.navigation.navigate("Home");
   }
   renderMenu() {
+    console.warn(this.state.currentPage)
     switch (this.state.currentPage) {
       case "EventDetails":
         return <EventDatails {...this.props}></EventDatails>
@@ -156,7 +157,7 @@ export default class Event extends Component {
         return <Votes {...this.props}></Votes>
       case "Highlights":
         return <Highlights {...this.props}></Highlights>
-      case "Chat":
+      case "EventChat":
         return <EventChat {...this.props}></EventChat>
       case "Contributions":
         return <Contributions {...this.props}></Contributions>

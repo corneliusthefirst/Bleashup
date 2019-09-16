@@ -110,11 +110,7 @@ export default class TemporalUsersStore {
             forEach(phones, (phone) => {
                 if (this.Users.length !== 0) {
                     user = find(this.Users, { phone: phone });
-<<<<<<< HEAD
-                    if (user.phone) {
-=======
                     if (user) {
->>>>>>> 6a0829809d9399070bd79ee79cdcb02e6d44865a
                         result.push(user)
                         i++
                     } else {
@@ -124,11 +120,7 @@ export default class TemporalUsersStore {
                 } else {
                     this.readFromStore().then(users => {
                         user = find(users, { phone: phone });
-<<<<<<< HEAD
-                        if (user.phone) {
-=======
                         if (user) {
->>>>>>> 6a0829809d9399070bd79ee79cdcb02e6d44865a
                             result.push(user)
                             i++;
                         } else {

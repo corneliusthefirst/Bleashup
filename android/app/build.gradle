@@ -73,8 +73,12 @@ import com.android.build.OutputFile
  */
 
 project.ext.react = [
-    entryFile: "index.js"
+    entryFile: "index.js",
+    enableHermes: false
 ]
+def jscFlavor = 'org.webkit:android-jsc:+'
+def enableHermes = project.ext.react.get("enableHermes", false);
+
 apply from: "../../node_modules/react-native/react.gradle"
 apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
 
@@ -142,6 +146,12 @@ dependencies {
     implementation project(':@react-native-community_async-storage')
     implementation project(':react-native-vector-icons')
     implementation project(':react-native-tcp')
+   if (enableHermes) {
+       def hermesPath = "../../node_modules/hermesvm/android/";
+       debugImplementation files(hermesPath + "hermes-debug.aar")
+       releaseImplementation files(hermesPath + "hermes-release.aar")
+    }
+   else { implementation jscFlavor }
      implementation project(':react-native-linear-gradient')
     implementation project(':react-native-gesture-handler')
     implementation fileTree(dir: "libs", include: ["*.jar"])

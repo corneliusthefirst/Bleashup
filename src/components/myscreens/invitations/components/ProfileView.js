@@ -14,11 +14,7 @@ export default class ProfileView extends Component {
     }
     state = { profile: undefined, isMount: false, dataArray: undefined }
     componentDidMount() {
-<<<<<<< HEAD
-        stores.TemporalUsersStore.getUser(this.props.phone).then(user => {
-=======
         setTimeout(() => stores.TemporalUsersStore.getUser(this.props.phone).then(user => {
->>>>>>> 6a0829809d9399070bd79ee79cdcb02e6d44865a
             this.setState({
                 profile: user,
                 isModalOpened: false,
@@ -28,24 +24,17 @@ export default class ProfileView extends Component {
                     content: user.status
                 }
             })
-<<<<<<< HEAD
-=======
         }), 300)
 
     }
     openModal() {
         this.setState({
             isModalOpened: true
->>>>>>> 6a0829809d9399070bd79ee79cdcb02e6d44865a
         })
     }
     render() {
         return this.state.isMount ? (
-<<<<<<< HEAD
-            <View style={{ flexDirection: "row" }}>
-=======
             <View style={{ flexDirection: "row", }}>
->>>>>>> 6a0829809d9399070bd79ee79cdcb02e6d44865a
                 <TouchableOpacity onPress={() => {
                     requestAnimationFrame(() => {
                         return this.setState({ isModalOpened: true })
@@ -53,21 +42,6 @@ export default class ProfileView extends Component {
                 }}>
                     {<CacheImages thumbnails {...this.props} source={{ uri: this.state.profile.profile }} />}
                 </TouchableOpacity>
-<<<<<<< HEAD
-
-                <View>
-                    <Body>
-                        <Text style={{
-
-                        }}>{this.state.profile.nickname}</Text>
-                        <Text style={{ marginTop: 8 }} note>{this.state.dataArray.title}</Text>
-                    </Body>
-                </View>
-                <ProfileModal
-                    isOpen={this.state.isModalOpened}
-                    parent={this}
-                    onClosed={() => this.setState({ isModalOpened: false })}
-=======
                 <View style={{ marginTop: "3%", marginLeft: "2%", display: 'flex', }}>
                     <Text style={{
                     }}>{this.state.profile.nickname}</Text>
@@ -84,7 +58,6 @@ export default class ProfileView extends Component {
                         //this.props.onOpen()
                     }
                     }
->>>>>>> 6a0829809d9399070bd79ee79cdcb02e6d44865a
                     profile={this.state.profile}
                 ></ProfileModal>
             </View>

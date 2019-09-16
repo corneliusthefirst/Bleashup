@@ -2,9 +2,6 @@
 import React, { Component } from 'react'
 import Modal from 'react-native-modalbox';
 import { View, Text, TouchableOpacity, DeviceEventEmitter, Image } from 'react-native'
-<<<<<<< HEAD
-import { Button, Icon, Card, CardItem, Right, Left } from 'native-base'
-=======
 import {
     Button,
     Icon,
@@ -18,24 +15,17 @@ import {
     Footer,
     Container
 } from 'native-base';
->>>>>>> 6a0829809d9399070bd79ee79cdcb02e6d44865a
 import CacheImages from '../../../CacheImages'
 import autobind from 'autobind-decorator';
 import { TouchableHighlight, ScrollView } from 'react-native-gesture-handler';
 import ImageActivityIndicator from '../../currentevents/components/imageActivityIndicator';
 import DeckSwiperModule from './deckswiper/index';
-<<<<<<< HEAD
-=======
 import MapView from '../../currentevents/components/MapView';
->>>>>>> 6a0829809d9399070bd79ee79cdcb02e6d44865a
 
 export default class DetailsModal extends Component {
     constructor(props) {
         super(props);
-<<<<<<< HEAD
-=======
         this.state = {}
->>>>>>> 6a0829809d9399070bd79ee79cdcb02e6d44865a
     }
     state = {
         details: undefined,
@@ -70,10 +60,7 @@ export default class DetailsModal extends Component {
         this.event_organiser_name = this.props.event_organiser_name ? this.props.event_organiser_name : this.event_organiser_name;
         this.location = this.props.location ? this.props.location : this.location;
         this.isToBeJoint = this.props.isToBeJoint ? this.props.isToBeJoint : false
-<<<<<<< HEAD
-=======
         this.props.parent ? this.props.parent.onSeen() : null
->>>>>>> 6a0829809d9399070bd79ee79cdcb02e6d44865a
     }
     componentWillReceiveProps(nextProps) {
         this.setState({
@@ -90,131 +77,20 @@ export default class DetailsModal extends Component {
 
 
     render() {
-<<<<<<< HEAD
-        return this.state.details ? (
-=======
         const accept = this.state.accept
         const deny = this.state.deny
 
         return this.props.details ? (
->>>>>>> 6a0829809d9399070bd79ee79cdcb02e6d44865a
             <Modal
                 backdropPressToClose={false}
                 swipeToClose={false}
                 backdropOpacity={0.5}
-<<<<<<< HEAD
-                animationDuration={10}
-=======
->>>>>>> 6a0829809d9399070bd79ee79cdcb02e6d44865a
                 backButtonClose={true}
                 position='bottom'
                 coverScreen={true}
                 isOpen={this.props.isOpen}
                 onClosed={this.props.onClosed}
                 style={{
-<<<<<<< HEAD
-                    height: this.props.accept || this.props.deny ? "95%" : "98%", width: "98%", flexDirection: 'column', borderRadius: 8, backgroundColor: '#FEFFDE', marginTop: -5
-                }}
-
-            >
-
-                <View style={{ margin: 5, alignItems: 'center' }}>
-                    <TouchableOpacity style={{}} onPress={this.props.onClosed}>
-                        <Icon style={{ color: "#1FABAB", fontSize: 35 }} name="cross" type="Entypo" />
-                    </TouchableOpacity>
-                </View>
-
-                <DeckSwiperModule details={this.props.details} />
-
-
-
-
-                <View style={{ flexDirection: "column", marginTop: (this.props.accept || this.props.deny) ? "25%" : "22%", marginLeft: "58%" }}>
-
-
-                    <TouchableOpacity>
-                        <Text ellipsizeMode="clip" numberOfLines={3} style={{ fontSize: 14, color: "#1FABAB", marginTop: 15 }}>
-                            {this.props.location}
-                        </Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity onPress={this.props.OpenLinkZoom}>
-                        <Image
-                            source={require("../../../../../Images/google-maps-alternatives-china-720x340.jpg")}
-                            style={{
-                                height: 50,
-                                width: 300,
-                                borderRadius: 15,
-                                marginLeft: -86,
-                                marginTop: 5,
-                                marginBottom: 5
-
-
-                            }}
-                            resizeMode="contain"
-                            onLoad={() => { }}
-                        />
-
-                    </TouchableOpacity>
-
-                    <TouchableOpacity onPress={this.props.OpenLink} style={{}}>
-                        <Text note> View On Map </Text>
-                    </TouchableOpacity>
-
-                </View>
-
-                {this.props.isJoining ? (this.props.hasJoin ?
-                    <View style={{ flexDirection: 'column', alignItems: 'center', marginTop: 10 }}>
-                        <Icon name="comment" type="FontAwesome5" onPress={{}} style={{ color: "#1FABAB" }} />
-                        <Text style={{ marginTop: 5, color: "#1FABAB" }}>chat</Text>
-                    </View> :
-
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
-                        <Button onPress={this.props.onAccept} style={{ marginLeft: 40, alignItems: 'center', width: 100, marginTop: 4, borderRadius: 5 }} success ><Text style={{ fontSize: 18, fontWeight: "500", marginLeft: 31 }} onPress={this.props.joined}>Join</Text></Button>
-                        <View style={{ flexDirection: 'column' }}>
-                            <Icon name="comment" type="FontAwesome5" onPress={{}} style={{ marginRight: 40, color: "#1FABAB" }} />
-                            <Text style={{ marginTop: 5, color: "#1FABAB", marginRight: 40 }}>chat</Text>
-                        </View>
-                    </View>)
-                    :
-                    (this.props.accept || this.props.deny ?
-                        <View style={{ flexDirection: 'column', alignItems: 'center', marginTop: 10 }}>
-                            <Icon name="comment" type="FontAwesome5" onPress={{}} style={{ color: "#1FABAB" }} />
-                            <Text style={{ marginTop: 5, color: "#1FABAB" }}>chat</Text>
-                        </View> :
-
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 15 }}>
-                            <Button onPress={this.props.onAccept} style={{ marginLeft: 40, width: 90, borderRadius: 5 }} success ><Text style={{ marginLeft: 21 }}>Accept</Text></Button>
-
-                            <View style={{ flexDirection: 'column', alignItems: 'center' }}>
-                                <Icon name="comment" type="FontAwesome5" onPress={{}} style={{ color: "#1FABAB" }} />
-                                <Text style={{ marginTop: 5, color: "#1FABAB" }}>chat</Text>
-                            </View>
-
-                            <Button onPress={this.props.onDenied} style={{ marginRight: 40, width: 90, borderRadius: 5 }} danger ><Text style={{ marginLeft: 25 }}>Deny</Text></Button>
-                        </View>
-
-                    )
-                }
-
-                <View
-                    style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        marginTop: this.props.location.length > 19 ? 20 : this.props.location.length > 38 ? 10 : 35
-
-                    }}
-                >
-                    <Text style={{ marginLeft: 10 }} note>
-                        {this.props.created_date}
-                    </Text>
-                    <Text style={{ fontStyle: "italic", marginRight: 7 }} note>
-                        Organised by {this.props.event_organiser_name}
-                    </Text>
-                </View>
-
-
-=======
                     height: "100%", width: 410, flexDirection: 'column', borderRadius: 8,
                     backgroundColor: '#FEFFDE', marginTop: -5
                 }}
@@ -289,16 +165,12 @@ export default class DetailsModal extends Component {
 
                     </View>
                 </Content>
->>>>>>> 6a0829809d9399070bd79ee79cdcb02e6d44865a
             </Modal>
         ) : null
     }
 }
-<<<<<<< HEAD
-=======
 
 
 
 
 /*marginTop:this.props.location.length > 19?15:this.props.location.length > 38?5:35*/
->>>>>>> 6a0829809d9399070bd79ee79cdcb02e6d44865a
