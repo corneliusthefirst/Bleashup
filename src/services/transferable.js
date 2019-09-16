@@ -1,5 +1,5 @@
 class Transferable {
-  formTransferableData(session, action, data) {
+  formTransferableData(session, action, data, id) {
     return new Promise((resolve, reject) => {
       DataToSend = {
         phone: session.phone,
@@ -7,9 +7,10 @@ class Transferable {
         password: session.password,
         action: action,
         data: data,
-        host: session.host
+        id: id,
+        host:session.host
       };
-      resolve(JSON.stringify(DataToSend));
+      resolve("_start_" + JSON.stringify(DataToSend) + "_end_");
     });
   }
 }

@@ -2,7 +2,7 @@ import React, { Component } from "react";
 //import { AppLoading } from 'expo';
 //import { Ionicons } from '@expo/vector-icons';
 //import * as Font from 'expo-font';
-
+import { InAppNotificationProvider } from "react-native-in-app-notification";
 import { Root, StyleProvider } from "native-base";
 
 import {
@@ -15,10 +15,8 @@ import Materials from "./native-base-theme/variables/material";
 import CommonColor from "./native-base-theme/variables/commonColor";
 import Home from "./components/myscreens/home/homePage";
 import SettingView from "./components/myscreens/settings/index";
-import PastEventView from "./components/myscreens/pastevents/index";
 import CurrentEventView from "./components/myscreens/currentevents/index";
 import InvitationView from "./components/myscreens/invitations/index";
-import PersonalEventView from "./components/myscreens/personalevents/index";
 import PotesChat from "./components/myscreens/poteschat/index";
 import Status from "./components/myscreens/status/index";
 import LoginView from "./components/myscreens/login/index";
@@ -43,7 +41,6 @@ import EventDetail from "./components/myscreens/eventDetails";
 import EventChat from "./components/myscreens/eventDetails";
 import Reminds from "./components/myscreens/reminds";
 
-
 /*
 
 let {height, width} = Dimensions.get('window');
@@ -51,16 +48,13 @@ EStyleSheet.build({
   $rem: width > 340 ? 18 : 16
 });*/
 
-
 const AppNavigator = createStackNavigator(
   {
     Home: { screen: Home },
     CurrentEvent: { screen: CurrentEventView },
-    PassEvent: { screen: PastEventView },
     Settings: { screen: SettingView },
     Status: { screen: Status },
     Invitation: { screen: InvitationView },
-    PersonalEvent: { screen: PersonalEventView },
     PotesChat: { screen: PotesChat },
     Login: { screen: LoginView },
     ForgotPassword: { screen: ForgotPasswordView },
@@ -91,14 +85,16 @@ const AppContainer = createAppContainer(AppNavigator);
 
 export default () => (
   <Root>
+    <InAppNotificationProvider closeInterval={7000} height={80} openCloseDuration={200}
+    iconApp={require('../assets/icon-b.png')} backgroundColour={"#FEFFDE"}>
     <StyleProvider style={getTheme(CommonColor)}>
-      <Provider app={app}>
-        <AppContainer />
-      </Provider>
+        <Provider app={app}>
+          <AppContainer />
+        </Provider>
     </StyleProvider>
+    </InAppNotificationProvider>
   </Root>
 );
-
 
 //Todo : Expo app setup
 /*export default class App extends React.Component {

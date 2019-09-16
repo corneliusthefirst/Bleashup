@@ -46,6 +46,7 @@ export default class PhotoEnlargeModal extends Component {
                 }}
                 position={'center'}
             >
+<<<<<<< HEAD
                 <View style={{ backgroundColor: "black", alignItems: 'center', height: "100%" }}>
                     <TouchableOpacity style={{}} onPress={this.props.onClosed} transparent>
                         <Icon style={{ color: "#1FABAB", fontSize: 35 }} name="cross" type="Entypo" />
@@ -56,6 +57,24 @@ export default class PhotoEnlargeModal extends Component {
                     </TouchableOpacity>
                 </View>
 
+=======
+                <View style={{ flex: 1, alignSelf: 'stretch' }}>
+                    <View style={{ flex: 1, flexDirection: 'column', backgroundColor: "black", justifyContent: 'center', alignItems: 'center' }}>
+                        <TouchableOpacity onPress={this.props.onClosed} transparent>
+                            <Icon style={{ color: "#1FABAB", fontSize: 35 }} name="cross" type="Entypo" />
+                        </TouchableOpacity>
+                    </View>
+
+                    <View style={{ flex: 6, flexDirection: 'column' }}>
+                        <TouchableOpacity onPress={this.props.onClosed} >
+                            <CacheImages thumbnails source={{ uri: this.state.image }} style={{ width: "100%", height: "100%" }} square />
+                        </TouchableOpacity>
+                    </View>
+
+                    <View style={{ flex: 1, backgroundColor: "black", flexDirection: 'column' }}>
+                    </View>
+                </View>
+>>>>>>> 6a0829809d9399070bd79ee79cdcb02e6d44865a
             </Modal>
         ) : null
     }

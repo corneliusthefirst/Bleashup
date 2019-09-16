@@ -2,26 +2,24 @@ import React, { Component } from "react";
 import {
   View
 } from "react-native";
-
-import NestedScrollView from "react-native-nested-scroll-view";
-import NewEvents from "./components/NewEvents";
 import CurrentEvents from "./components/CurrentEvents";
+import { observer } from "mobx-react";
+import stores from "../../../stores";
 
-class CurrentEventView extends Component {
+@observer class CurrentEventView extends Component {
   constructor(props) {
     super(props);
   }
+  state = {
+    isLoading: true,
+    Events: undefined
+  }
+
+
   render() {
     return (
-
       <View>
-        <NestedScrollView
-          alwaysBounceHorizontal={true}
-        >
-          <View>
-            <CurrentEvents {...this.props}></CurrentEvents>
-          </View>
-        </NestedScrollView>
+        <CurrentEvents data={stores.Events.events} {...this.props}></CurrentEvents>
       </View>
     );
   }

@@ -10,21 +10,16 @@ import PublishersModal from "../../../PublishersModal"
 export default class MenuListView extends Component {
     constructor(props) {
         super(props)
-    }
-    state = {
-        button: undefined,
-        menuList: undefined,
-        isMount: false,
-        isPublisherModalOpened: false
-    }
-    componentDidMount() {
-        this.setState({
+        this.state = {
             button: this.props.button,
             menuList: this.props.menuList,
             isMount: true,
             published: this.props.published,
             isPublisherModalOpened: false
-        })
+        }
+    }
+    componentDidMount() {
+
     }
     componentWillReceiveProps(nextProps) {
         if (nextProps.hide) {
@@ -46,17 +41,12 @@ export default class MenuListView extends Component {
     };
     publish() {
         this._menu.hide();
-        return this.props.publish
+        return this.props.publish()
     }
     showPublishers = () => {
         return this.props.showPublishers
         //this._menu.hide()
 
-    }
-    _renderMenuItems() {
-        return this.state.menuList.map(data => {
-            return <MenuItem onPress={this.hideMenu}>{data}</MenuItem>
-        })
     }
     render() {
         return this.state.isMount ? (
@@ -76,7 +66,7 @@ export default class MenuListView extends Component {
                         }>View Publshers</MenuItem>
                     </View> : null}
                 </Menu>
-                <PublishersModal onClosed={() => {
+                <PublishersModal event_id={this.props.event_id} onClosed={() => {
                     this.hideMenu()
                     return this.setState({ isPublisherModalOpened: false })
                 }

@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import NestedScrollView from "react-native-nested-scroll-view";
 import GState from "../../../stores/globalState";
 import autobind from "autobind-decorator";
 import {

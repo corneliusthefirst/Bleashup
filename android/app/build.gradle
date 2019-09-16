@@ -100,7 +100,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.bleashup"
+        applicationId "com.bleashup.bleashup"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -137,6 +137,7 @@ android {
 
 dependencies {
     implementation project(':react-native-reanimated')
+    implementation project(':react-native-community-netinfo')
     implementation project(':react-native-svg')
     implementation project(':@react-native-community_async-storage')
     implementation project(':react-native-vector-icons')
@@ -144,11 +145,13 @@ dependencies {
      implementation project(':react-native-linear-gradient')
     implementation project(':react-native-gesture-handler')
     implementation fileTree(dir: "libs", include: ["*.jar"])
-    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation project(':react-native-push-notification')
+    implementation 'com.google.firebase:firebase-core:16.0.1'
+    implementation project(':RNMail')
+    //implementation 'androidx.appcompat:appcompat:1.0.0'
     implementation 'com.android.support:design:27.1.1'
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
     implementation "com.facebook.react:react-native:+"  // From node_modules
-    implementation project(':react-native-nested-scroll-view')
     implementation project(':react-native-exit-app')
     implementation project(':rn-fetch-blob') 
     
@@ -178,4 +181,5 @@ preBuild.doFirst { ant.replaceregexp(match:'android.support.v4.util.Pools;', rep
 //preBuild.doFirst { ant.replaceregexp(match:'@Override', replace:'/*@Override*/', flags:'g', byline:true) { fileset(dir: '../../node_modules/', includes: '*.java') }
 //}
 //preBuild.doFirst { ant.replaceregexp(match:'@override', replace:'/*@override*/', flags:'g', byline:true) { fileset(dir: '../../node_modules/', includes: '*.java') }
-//}      
+//}   
+apply plugin: 'com.google.gms.google-services'   

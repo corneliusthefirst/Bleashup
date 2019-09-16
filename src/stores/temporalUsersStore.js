@@ -56,23 +56,26 @@ export default class TemporalUsersStore {
         return new Promise((resolve, reject) => {
             if (this.Users.length !== 0) {
                 let user = find(this.Users, { phone: phone });
-                if (user.phone) {
+                if (user) {
                     resolve(user);
                 } else {
-                    console.error(this.Users)
                     userHttpServices.checkUser(phone).then(profile => {
-                        this.Users.push(profile);
-                        this.saveKey.data = this.Users;
-                        storage.save(this.saveKey).then(() => {
-                            this.setPropterties(this.saveKey.data);
-                            resolve(profile)
-                        })
+                        if (profile.message) {
+                            reject(profile.message)
+                        } else {
+                            this.Users.push(profile);
+                            this.saveKey.data = this.Users;
+                            storage.save(this.saveKey).then(() => {
+                                this.setPropterties(this.saveKey.data);
+                                resolve(profile)
+                            })
+                        }
                     })
                 }
             } else {
                 this.readFromStore().then(users => {
                     let user = find(users, { phone: phone });
-                    if (user.phone) {
+                    if (user) {
                         this.setPropterties(users);
                         resolve(user)
                     }
@@ -107,7 +110,11 @@ export default class TemporalUsersStore {
             forEach(phones, (phone) => {
                 if (this.Users.length !== 0) {
                     user = find(this.Users, { phone: phone });
+<<<<<<< HEAD
                     if (user.phone) {
+=======
+                    if (user) {
+>>>>>>> 6a0829809d9399070bd79ee79cdcb02e6d44865a
                         result.push(user)
                         i++
                     } else {
@@ -117,7 +124,11 @@ export default class TemporalUsersStore {
                 } else {
                     this.readFromStore().then(users => {
                         user = find(users, { phone: phone });
+<<<<<<< HEAD
                         if (user.phone) {
+=======
+                        if (user) {
+>>>>>>> 6a0829809d9399070bd79ee79cdcb02e6d44865a
                             result.push(user)
                             i++;
                         } else {

@@ -1,48 +1,43 @@
 import React, { Component } from "react";
-import {
-  Header,
-  Container,
-  Content,
-  Card,
-  CardItem,
-  Text,
-  Footer,
-  BodyTabs,
-  Tabs,
-  Tab,
-  Right,
-  FooterTab,
-  Button,
-  Left,
-  Body,
-  ScrollableTab,
-  Title,
-  Icon
-} from "native-base";
-import SentInvitations from "../sent-invitations/index";
-import ReceivedInvitations from "../received-invitations/index";
 
-export default class InvitationView extends Component {
+import SentInvitations from '../sent-invitations/invitationCard';
+import ReceivedInvitations from '../received-invitations/invitationCard';
+import { Spinner } from "native-base";
+import stores from "../../../stores";
+import { observer } from "mobx-react";
+import { View } from 'react-native';
+import BleashupScrollView from "../../BleashupScrollView";
+
+@observer export default class InvitationView extends Component {
+  constructor(props){
+    super(props)
+    this.state = {
+
+    }
+  }
+  _keyExtractor = (item, index) => item.invitation_id;
   render() {
-    return (
-      <Container>
-        <Tabs
-          locked
-          tabBarPosition="overlayBottom"
-          tabBarUnderlineStyle={{
-            borderBottomWidth: 0,
-            backgroundColor: "transparent"
-          }}
-        >
-          <Tab heading="Received Invites">
-            <ReceivedInvitations {...this.props} />
-          </Tab>
-          <Tab heading="Sent Invites">
-            <SentInvitations {...this.props} />
-          </Tab>
-        </Tabs>
-      </Container>
-    );
+    return <View style={{ height:"100%", backgroundColor: "#FEFFDE"}}>
+    {
+      this.state.loadingInvitations ? 
+        <Spinner></Spinner>: 
+          <BleashupScrollView
+        initialRender={6}
+        renderPerBatch={3}
+        firstIndex={0}
+        keyExtractor={this._keyExtractor}
+        dataSource={stores.Invitations.invitations}
+        numberOfItems={stores.Invitations.invitations.length}
+        renderItem={(item, index) => {
+          return item.sent ? <SentInvitations {...this.props} item={item} key={index} parentCardList={this} /> : 
+          <ReceivedInvitations  {...this.props} item={item} key={index}
+            parentCardList={this} />
+
+
+        }}
+      >
+      </BleashupScrollView>}
+    </View>
   }
 }
 
