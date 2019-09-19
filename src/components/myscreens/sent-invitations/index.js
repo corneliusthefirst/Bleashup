@@ -9,7 +9,7 @@ import autobind from "autobind-decorator";
 import {
   Text,
   Title, Input, Left, Right, H3, H1, H2, Spinner, Button,
-  InputGroup, DatePicker, CheckBox, Thumbnail, List
+  InputGroup, DatePicker, CheckBox, Thumbnail, List,Container,Content
 } from "native-base";
 
 
@@ -18,6 +18,7 @@ import ImageActivityIndicator from "../currentevents/components/imageActivityInd
 import { observer } from "mobx-react";
 import stores from '../../../stores';
 import BleashupScrollView from '../../BleashupScrollView';
+import CreateEvent from '../invitations/components/createEvent';
 
 
 @observer
@@ -27,7 +28,7 @@ class SendInvitations extends Component {
     this.state = ({
       deletedRowKey: null,
       loadingInvitations: true,
-      refreshing: false
+      invitations:null
 
     });
 
@@ -45,37 +46,6 @@ class SendInvitations extends Component {
   }
 
 
-  refreshCardList = (activeKey) => {
-    this.setState((prevState) => {
-      return {
-        deletedRowKey: activeKey
-      };
-
-    });
-
-  }
-
-
-  generateKey(numberOfCharacters) {
-    return require('random-string')({ length: numberOfCharacters });
-  }
-
-
-  @autobind
-  onRefresh() {
-    this.setState({ refreshing: true })
-    //call your callback function here
-    this.addInvitation()
-    this.setState({ refreshing: false })
-  }
-
-
-
-
-
-
-
-
   _keyExtractor = (item, index) => item.invitation_id;
 
   render() {
@@ -83,20 +53,29 @@ class SendInvitations extends Component {
     return this.state.loadingInvitations ? (
       <Spinner></Spinner>
     ) : (
+   <Container style={{flex:1}}>
+
+
         <BleashupScrollView
           initialRender={4}
           renderPerBatch={5}
           firstIndex={0}
+          ref={"sendlist"}
           keyExtractor={this._keyExtractor}
           dataSource={this.state.invitations}
           renderItem={(item, index) => {
             return (
-              <CardListItem {...this.props} item={item} key={index} parentCardList={this}>
+              <CardListItem {...this.props} item={item} key={index} parentCardList={this} Invitations={this.state.invitations}>
               </CardListItem>
             );
           }}
         >
         </BleashupScrollView>
+         
+        <CreateEvent Parentprops={this.props} ></CreateEvent>
+      
+    </Container>
+
       );
   }
 }

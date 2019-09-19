@@ -6,7 +6,6 @@ import {
 import { forEach } from "lodash"
 import NewEvents from "./components/NewEvents";
 import CurrentEvents from "./components/CurrentEvents";
-import { DataProvider } from "recyclerlistview"
 import stores from "../../../stores"
 import { Spinner, Fab, Icon } from "native-base";
 import { observer } from "mobx-react";

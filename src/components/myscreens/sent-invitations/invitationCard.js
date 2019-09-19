@@ -44,10 +44,6 @@ const propOverridePlaceholderObject = {
   }
 };
 
-swipperComponent = (
-  <View style={{ alignItems: "center" }}>
-    <Icon name="trashcan" type="Octicons" onPress={{}} style={{ color: "#1FABAB" }} />
-  </View>)
 
 
 
@@ -63,14 +59,18 @@ class CardListItem extends Component {
     isOpenDetails: false,
     isOpenStatus: false,
     enlargeEventImage: false,
-    accept: null,
-    deny: null,
+    accept: true,
+    deny: false,
     message: "",
     textcolor: "",
     loading: true,
     item: null,
     isJoining: false,
-    hasJoin: false
+    hasJoin: false,
+    hiding: false,
+    deleting: false,
+    swipeOutSettings: null,
+    hiden: false
   }
 
   componentDidMount() {
@@ -94,16 +94,124 @@ class CardListItem extends Component {
         item: data,
         isJoining: false,
         hasJoin: false,
+        hiding: false,
+        deleting: false,
+        hiden: false
       });
     })
+
+
+  setTimeout(() => {
+      this.formCard(this.props.Invitations).then(details => {
+        let swipeOut = (<View>
+          <List style={{
+            backgroundColor: "#FFFFF6",
+            height: "100%"
+          }}>
+           
+            <ListItem style={{ alignSelf: 'flex-start' }}>
+              <TouchableOpacity onPress={() => {
+                return this.hide()
+              }}>
+                {this.state.hiding ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
+                <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="archive" type="EvilIcons">
+                </Icon>
+                <Label style={{ fontSize: 12, color: "#1FABAB" }}>Hide</Label>
+              </TouchableOpacity>
+            </ListItem>
+
+            <ListItem>
+              <TouchableOpacity onPress={() => {
+                return this.delete()
+              }}>
+                {this.state.deleting ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
+                <Icon name="trash" style={{ fontSize: 16, color: "red" }} type="EvilIcons">
+                </Icon>
+                <Label style={{ fontSize: 12, color: "red" }} >Delete</Label>
+              </TouchableOpacity>
+            </ListItem>
+          </List>
+        </View>)
+        this.setState({
+          swipeOutSettings: {
+            autoClose: true,
+            sensitivity: 100,
+            right: [
+              {
+                component: swipeOut
+              }
+            ],
+          },
+          details: details
+        })
+      })
+    }, 20)
+
+
   }
+
+
+  formCard(item) {
+    return new Promise((resolve, reject) => {
+      let card = [];
+      let i = 0;
+      Description = { event_title: item.event_title, event_description: item.event_description }
+      card.push(Description)
+      if (item.highlight.length !== 0) {
+        forEach(item.highlight, hightlight => {
+          card.push(hightlight);
+          if (i === item.highlight.length - 1) {
+
+            resolve(card)
+          }
+          i++
+        })
+      } else {
+        resolve(card)
+      }
+    })
+}
+
+@autobind
+delete() {
+    this.setState({
+      deleting: true
+    })
+    Requester.delete(this.props.Invitations.invitation_id).then(() => {
+      this.setState({
+        deleting: false,
+        hiden: true
+      })
+    })
+  }
+
+@autobind
+hide() {
+    this.setState({
+      hiding: true
+    })
+    Requester.hide(this.props.Invitations.invitation_id).then(() => {
+      this.setState({
+        hiden: true,
+        hiding: false
+      })
+    })
+  }
+
+
+
+
+
+
+
+
 
   //accepted invitation
   @autobind
   onAccept() {
     this.setState({ accept: true })
     this.state.item.accept = true
-    //;
+    
   }
   //refused invitation
   @autobind
@@ -112,54 +220,8 @@ class CardListItem extends Component {
     this.state.item.deny = true
   }
 
-  swipeSettings = {
-    autoClose: true,
-    //take this and do something onClose
-    onClose: (secId, rowId, direction) => {
-      if (this.state.activeRowKey != null) {
-        this.setState({ activeRowKey: null });
-      }
-    },
-    //on open i set the activerowkey
-    onOpen: (secId, rowId, direction) => {
-      this.setState({ activeRowKey: this.state.item.key });
-    },
 
-    right: [
 
-      {
-        onPress: () => {
-          const deletingRow = this.state.activeRowKey;
-
-          Alert.alert(
-            'Alert',
-            'Are you sure you want to delete ?',
-            [
-              { text: 'No', onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
-
-              {
-                text: 'Yes', onPress: () => {
-                  this.props.sendCardListData.splice(this.props.index, 1);
-                  //make request to delete to database(back-end)
-
-                  //Refresh FlatList
-                  this.props.parentCardList.refreshFlatList(deletingRow);
-                }
-              },
-            ],
-            { cancelable: true }
-          );
-
-        },
-        text: 'Delete', type: 'delete', component: this.swipperComponent
-
-      },
-
-    ],
-
-    rowId: this.props.index,
-    sectionId: 1
-  }
 
 
 
@@ -172,7 +234,7 @@ class CardListItem extends Component {
       <Circle cx="30" cy="30" r="30" /><Circle cx="30" cy="30" r="30" />
       <Rect x="0" y="70" rx="5" ry="5" width="400" height="100" />
     </SvgAnimatedLinearGradient> :
-      <Swipeout {...this.swipeSettings}>
+      <Swipeout {...this.swipeOutSettings}>
         <Card style={{}}>
           <CardItem>
             <Left>

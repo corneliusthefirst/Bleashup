@@ -44,7 +44,7 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
         return (
             <ScrollView
                 nestedScrollEnabled={true}
-                ref='_scrollView'
+                ref={"_scrollview"}
                 onScroll={({ nativeEvent }) => {
                     // console.warn(nativeEvent)
                 }}
