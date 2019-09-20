@@ -3,6 +3,7 @@ package com.bleashup.bleashup;
 import android.app.Application;
 import com.horcrux.svg.SvgPackage;
 import com.facebook.react.ReactApplication;
+import com.wix.autogrowtextinput.AutoGrowTextInputPackage;
 import com.zmxv.RNSound.RNSoundPackage;
 import com.reactnativecommunity.slider.ReactSliderPackage;
 import com.reactnativecommunity.rctaudiotoolkit.AudioPackage;
@@ -39,6 +40,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new AutoGrowTextInputPackage(),
             new RNSoundPackage(),
             new ReactSliderPackage(),
             new AudioPackage(),
@@ -54,11 +56,8 @@ public class MainApplication extends Application implements ReactApplication {
              new SoftInputModePackage() ,
             new RNGestureHandlerPackage(),
             new RNFetchBlobPackage(),
-<<<<<<< HEAD
-            new ReactNativePushNotificationPackage() // <---- Add the Package
-=======
+            new ReactNativePushNotificationPackage(), // <---- Add the Package
             new ImagePickerPackage()
->>>>>>> 1e97a9d441b05a372cba36a25998ff64d917be81
                   );
     }
 

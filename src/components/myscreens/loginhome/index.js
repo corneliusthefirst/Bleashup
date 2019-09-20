@@ -56,7 +56,7 @@ export default class LoginHomeView extends Component {
   }
 
   render() {
-    return (
+   /* return (
       <Container>
         <Content>
        <PhotoMessage user={1} creator={2} message={this.state.message}></PhotoMessage>
@@ -64,8 +64,8 @@ export default class LoginHomeView extends Component {
         <AudioMessage></AudioMessage>
       </Content>
       </Container>
-    )
-    /* routeName = initialRoute.routeName;
+    )*/
+     routeName = initialRoute.routeName;
       if ((globalState.loading = true)) {
         initialRoute.initialRoute().then(route => {
           if(route !== "Login"){
@@ -100,7 +100,7 @@ export default class LoginHomeView extends Component {
           </Content>
   
         </Container>
-      );*/
+      );
   }
 }
 //TODO: separate these out. This is what happens when you're in a hurry!

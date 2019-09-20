@@ -44,6 +44,10 @@ const propOverridePlaceholderObject = {
   }
 };
 
+swipperComponent = (
+  <View style={{ alignItems: "center" }}>
+    <Icon name="trashcan" type="Octicons" onPress={{}} style={{ color: "#1FABAB" }} />
+  </View>)
 
 
 
@@ -59,51 +63,43 @@ class CardListItem extends Component {
     isOpenDetails: false,
     isOpenStatus: false,
     enlargeEventImage: false,
-    accept: true,
-    deny: false,
+    accept: null,
+    deny: null,
     message: "",
     textcolor: "",
     loading: true,
     item: null,
     isJoining: false,
-    hasJoin: false,
-    hiding: false,
-    deleting: false,
-    swipeOutSettings: null,
-    hiden: false
+    hasJoin: false
   }
   data = []
   componentDidMount() {
-    setTimeout(()=>{
-    stores.Invitations.translateToinvitationData(this.props.item).then(data => {
-      this.data = data
-      let AccordData = data.sender_status
-      max_length = data.sender_status.length
-      let dataArray = [{ title: AccordData.slice(0, 35), content: AccordData.slice(35, max_length) }]
-      this.setState({
-        activeRowKey: null,
-        isOpenDetails: false,
-        isOpenStatus: false,
-        enlargeEventImage: false,
-        accept: this.props.item.accept,
-        deny: this.props.item.deny,
-        message: "",
-        received: this.props.item.received,
-        seen: this.props.item.seen,
-        dataArray: dataArray,
-        textcolor: "",
-        event_id: data.event_id,
-        loading: false,
-        item: data,
-        isJoining: false,
-        hasJoin: false,
-        hiding: false,
-        deleting: false,
-        hiden: false
-      });
-    })
-<<<<<<< HEAD
-  },20)
+    setTimeout(() => {
+      stores.Invitations.translateToinvitationData(this.props.item).then(data => {
+        this.data = data
+        let AccordData = data.sender_status
+        max_length = data.sender_status.length
+        let dataArray = [{ title: AccordData.slice(0, 35), content: AccordData.slice(35, max_length) }]
+        this.setState({
+          activeRowKey: null,
+          isOpenDetails: false,
+          isOpenStatus: false,
+          enlargeEventImage: false,
+          accept: this.props.item.accept,
+          deny: this.props.item.deny,
+          message: "",
+          received: this.props.item.received,
+          seen: this.props.item.seen,
+          dataArray: dataArray,
+          textcolor: "",
+          event_id: data.event_id,
+          loading: false,
+          item: data,
+          isJoining: false,
+          hasJoin: false,
+        });
+      })
+    }, 20)
   }
 
   shouldComponentUpdate(nextProps, nextState, nextContext) {
@@ -124,121 +120,12 @@ class CardListItem extends Component {
       seen: nextProps.item.seen,
     })
   }
-=======
-
-
-  setTimeout(() => {
-      this.formCard(this.props.Invitations).then(details => {
-        let swipeOut = (<View>
-          <List style={{
-            backgroundColor: "#FFFFF6",
-            height: "100%"
-          }}>
-           
-            <ListItem style={{ alignSelf: 'flex-start' }}>
-              <TouchableOpacity onPress={() => {
-                return this.hide()
-              }}>
-                {this.state.hiding ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
-                <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="archive" type="EvilIcons">
-                </Icon>
-                <Label style={{ fontSize: 12, color: "#1FABAB" }}>Hide</Label>
-              </TouchableOpacity>
-            </ListItem>
-
-            <ListItem>
-              <TouchableOpacity onPress={() => {
-                return this.delete()
-              }}>
-                {this.state.deleting ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
-                <Icon name="trash" style={{ fontSize: 16, color: "red" }} type="EvilIcons">
-                </Icon>
-                <Label style={{ fontSize: 12, color: "red" }} >Delete</Label>
-              </TouchableOpacity>
-            </ListItem>
-          </List>
-        </View>)
-        this.setState({
-          swipeOutSettings: {
-            autoClose: true,
-            sensitivity: 100,
-            right: [
-              {
-                component: swipeOut
-              }
-            ],
-          },
-          details: details
-        })
-      })
-    }, 20)
-
-
-  }
-
-
-  formCard(item) {
-    return new Promise((resolve, reject) => {
-      let card = [];
-      let i = 0;
-      Description = { event_title: item.event_title, event_description: item.event_description }
-      card.push(Description)
-      if (item.highlight.length !== 0) {
-        forEach(item.highlight, hightlight => {
-          card.push(hightlight);
-          if (i === item.highlight.length - 1) {
-
-            resolve(card)
-          }
-          i++
-        })
-      } else {
-        resolve(card)
-      }
-    })
-}
-
-@autobind
-delete() {
-    this.setState({
-      deleting: true
-    })
-    Requester.delete(this.props.Invitations.invitation_id).then(() => {
-      this.setState({
-        deleting: false,
-        hiden: true
-      })
-    })
-  }
-
-@autobind
-hide() {
-    this.setState({
-      hiding: true
-    })
-    Requester.hide(this.props.Invitations.invitation_id).then(() => {
-      this.setState({
-        hiden: true,
-        hiding: false
-      })
-    })
-  }
-
-
-
-
-
-
-
-
-
->>>>>>> 1e97a9d441b05a372cba36a25998ff64d917be81
   //accepted invitation
   @autobind
   onAccept() {
     this.setState({ accept: true })
     this.state.item.accept = true
-    
+    //;
   }
   //refused invitation
   @autobind
@@ -247,7 +134,6 @@ hide() {
     this.state.item.deny = true
   }
 
-<<<<<<< HEAD
   swipeSettings = {
     autoClose: true,
     //take this and do something onClose
@@ -260,11 +146,9 @@ hide() {
     onOpen: (secId, rowId, direction) => {
       this.setState({ activeRowKey: 1 });
     },
-=======
->>>>>>> 1e97a9d441b05a372cba36a25998ff64d917be81
 
+    right: [
 
-<<<<<<< HEAD
       {
         onPress: () => {
           const deletingRow = this.state.activeRowKey;
@@ -294,40 +178,25 @@ hide() {
       },
 
     ],
-    style : {
+    style: {
       width: "100%",
       backgroundColor: "#FEFFDE"
     },
     rowId: this.props.index,
     sectionId: 1
   }
-=======
->>>>>>> 1e97a9d441b05a372cba36a25998ff64d917be81
 
 
 
   render() {
-<<<<<<< HEAD
-    return (this.state.loading ? <Card style={{ height: 220 }}></Card>:<View style={{ width: "100%",}}>
-      <Swipeout style={{ width: "100%",}} {...this.swipeSettings}>
+    return (this.state.loading ? <Card style={{ height: 220 }}></Card> : <View style={{ width: "100%", }}>
+      <Swipeout style={{ width: "100%", }} {...this.swipeSettings}>
         <Card style={{ height: 220 }}>
-        <CardItem>
-        <Text note>
-        sent
+          <CardItem>
+            <Text note>
+              sent
         </Text>
-        </CardItem>
-=======
-    return (this.state.loading ? <SvgAnimatedLinearGradient primaryColor="#cdfcfc"
-      secondaryColor="#FEFFDE" height={200}>
-      <Circle cx="30" cy="30" r="30" />
-      <Rect x="75" y="13" rx="4" ry="4" width="100" height="13" />
-      <Rect x="75" y="37" rx="4" ry="4" width="50" height="8" />
-      <Circle cx="30" cy="30" r="30" /><Circle cx="30" cy="30" r="30" />
-      <Rect x="0" y="70" rx="5" ry="5" width="400" height="100" />
-    </SvgAnimatedLinearGradient> :
-      <Swipeout {...this.swipeOutSettings}>
-        <Card style={{}}>
->>>>>>> 1e97a9d441b05a372cba36a25998ff64d917be81
+          </CardItem>
           <CardItem>
             <Left>
               <TouchableOpacity onPress={() => this.setState({ opening: true, isOpenStatus: true })} >
@@ -383,7 +252,7 @@ hide() {
               :
               <View style={{}}>
                 <Icon name="checkcircleo" type="AntDesign" onPress={{}} style={{ color: "gray", marginLeft: "90%" }} />
-              </View>) : <Text style={{ marginLeft: "90%"}} note>sending...</Text>}
+              </View>) : <Text style={{ marginLeft: "90%" }} note>sending...</Text>}
           </CardItem>
 
           <CardItem style={{ margin: 10, flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -405,8 +274,8 @@ hide() {
             joined={() => this.setState({ hasJoin: true })} />}
 
         </Card>
-     </Swipeout>
-     </View>
+      </Swipeout>
+    </View>
     );
   }
 }
@@ -428,12 +297,10 @@ export default CardListItem
 /*
  componentDidMount() {
    BackHandler.addEventListener("hardwareBackPress", this.handleBackButton);
-
  }
  componentWillUnmount() {
    BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton);
  }
-
  handleBackButton() {
    ToastAndroid.show("Back button is pressedee", ToastAndroid.SHORT);
    this.closeAllModals
@@ -449,7 +316,6 @@ export default CardListItem
      enlargeEventImage: false
    })
  }
-
  handleEvent3 = (event) => {
    this.setState({
      isOpenDetails: false
@@ -463,7 +329,4 @@ export default CardListItem
    })
  }
 */
-
-
-
 

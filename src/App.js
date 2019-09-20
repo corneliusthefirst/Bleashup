@@ -81,11 +81,7 @@ const AppNavigator = createStackNavigator(
     EventDetailView:{screen:EventDetailView ,navigationOptions: {gesturesEnabled: false}}
   },
   {
-<<<<<<< HEAD
     initialRouteName: "LoginHome",
-=======
-    initialRouteName: "EventDetailView",
->>>>>>> 1e97a9d441b05a372cba36a25998ff64d917be81
     headerMode: "none"
   }
 );
@@ -107,18 +103,6 @@ export default () => (
   </Root>
 );
 
-<<<<<<< HEAD
-=======
-
-
-
-
-
-
-
-
-
->>>>>>> 1e97a9d441b05a372cba36a25998ff64d917be81
 //Todo : Expo app setup
 /*export default class App extends React.Component {
   constructor(props) {

@@ -35,7 +35,7 @@ export default class PhotoEnlargeModal extends Component {
 
                     <View style={{ flex: 6, flexDirection: 'column' }}>
                         <TouchableOpacity onPress={this.props.onClosed} >
-                            <CacheImages thumbnails source={{ uri: this.state.image }} style={{ width: "100%", height: "100%" }} square />
+                            <CacheImages thumbnails source={{ uri: this.props.image }} style={{ width: "100%", height: "100%" }} square />
                         </TouchableOpacity>
                     </View>
 
