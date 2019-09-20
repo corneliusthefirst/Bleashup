@@ -4,6 +4,8 @@ import GState from "../../../stores/globalState";
 import {View} from "react-native"
 import { ScrollView } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { GiftedChat } from 'react-native-gifted-chat'
+import stores from "../../../stores";
 import Swipeout from "react-native-swipeout";
 var swipeoutBtns = [
   {
@@ -11,213 +13,45 @@ var swipeoutBtns = [
   }
 ]
 export default class PotesChat extends Component {
-  constructor(props){
+  constructor(props) {
     super(props)
+    this.state = {
+      messages: [],
+      loadEarlier: true,
+      typingText: null,
+      isLoadingEarlier: false,
+    };
   }
-  state = {
-    scrollEnabled:true
+  componentWillMount() {
+    this.setState({
+      messages: [
+        {
+          _id: 1,
+          text: 'Hello developer',
+          createdAt: new Date(),
+          user: {
+            _id: 2,
+            name: 'React Native',
+            avatar: 'https://facebook.github.io/react/img/logo_og.png',
+          },
+        },
+      ]
+    });
   }
-  _allowScroll(scrollEnabled){
-  this.setState({ scrollEnabled: scrollEnabled })
-}
+  onSend(messages = []) {
+    this.setState(previousState => ({
+      messages: GiftedChat.append(previousState.messages, messages),
+    }))
+  }
   render() {
-    return (
-      <Swipeout style={{display:"flex"}}  left={swipeoutBtns}>
-      <View style={{padding: 3,height:"100%"}}>
-      <Text> is my swipe-view</Text>
-          <ScrollView nestedScrollEnabled  style={{ display: 'flex', height: 600 }}>
-            <Card style={{}}>
-              <CardItem>
-                <Body>
-                  <Text>
-                    NativeBase is a free and open source framework that enables
-                    developers to build high-quality mobile apps using React
-                    Native iOS and Android apps with a fusion of ES6.
-                </Text>
-                </Body>
-              </CardItem>
-            </Card>
-            <Card style={{}}>
-              <CardItem>
-                <Body>
-                  <Text>
-                    NativeBase gives you the potential of building applications
-                    that run on iOS and Android using a single codebase.
-                </Text>
-                </Body>
-              </CardItem>
-            </Card>
-            <Card style={{}}>
-              <CardItem>
-                <Body>
-                  <Text>
-                    NativeBase is a free and open source framework that enables
-                    developers to build high-quality mobile apps using React
-                    Native iOS and Android apps with a fusion of ES6.
-                </Text>
-                </Body>
-              </CardItem>
-            </Card>
-            <Card style={{}}>
-              <CardItem>
-                <Body>
-                  <Text>
-                    NativeBase gives you the potential of building applications
-                    that run on iOS and Android using a single codebase.
-                </Text>
-                </Body>
-              </CardItem>
-            </Card>
-            <Card style={{}}>
-              <CardItem>
-                <Body>
-                  <Text>
-                    NativeBase is a free and open source framework that enables
-                    developers to build high-quality mobile apps using React
-                    Native iOS and Android apps with a fusion of ES6.
-                </Text>
-                </Body>
-              </CardItem>
-            </Card>
-            <Card style={{}}>
-              <CardItem>
-                <Body>
-                  <Text>
-                    NativeBase gives you the potential of building applications
-                    that run on iOS and Android using a single codebase.
-                </Text>
-                </Body>
-              </CardItem>
-            </Card>
-            <Card style={{}}>
-              <CardItem>
-                <Body>
-                  <Text>
-                    NativeBase is a free and open source framework that enables
-                    developers to build high-quality mobile apps using React
-                    Native iOS and Android apps with a fusion of ES6.
-                </Text>
-                </Body>
-              </CardItem>
-            </Card>
-            <Card style={{}}>
-              <CardItem>
-                <Body>
-                  <Text>
-                    NativeBase gives you the potential of building applications
-                    that run on iOS and Android using a single codebase.
-                </Text>
-                </Body>
-              </CardItem>
-            </Card>
-            <Card style={{}}>
-              <CardItem>
-                <Body>
-                  <Text>
-                    NativeBase is a free and open source framework that enables
-                    developers to build high-quality mobile apps using React
-                    Native iOS and Android apps with a fusion of ES6.
-                </Text>
-                </Body>
-              </CardItem>
-            </Card>
-            <Card style={{}}>
-              <CardItem>
-                <Body>
-                  <Text>
-                    NativeBase gives you the potential of building applications
-                    that run on iOS and Android using a single codebase.
-                </Text>
-                </Body>
-              </CardItem>
-            </Card>
-            <Card style={{}}>
-              <CardItem>
-                <Body>
-                  <Text>
-                    NativeBase is a free and open source framework that enables
-                    developers to build high-quality mobile apps using React
-                    Native iOS and Android apps with a fusion of ES6.
-                </Text>
-                </Body>
-              </CardItem>
-            </Card>
-            <Card style={{}}>
-              <CardItem>
-                <Body>
-                  <Text>
-                    NativeBase gives you the potential of building applications
-                    that run on iOS and Android using a single codebase.
-                </Text>
-                </Body>
-              </CardItem>
-            </Card>
-            <Card style={{}}>
-              <CardItem>
-                <Body>
-                  <Text>
-                    NativeBase is a free and open source framework that enables
-                    developers to build high-quality mobile apps using React
-                    Native iOS and Android apps with a fusion of ES6.
-                </Text>
-                </Body>
-              </CardItem>
-            </Card>
-            <Card style={{}}>
-              <CardItem>
-                <Body>
-                  <Text>
-                    NativeBase gives you the potential of building applications
-                    that run on iOS and Android using a single codebase.
-                </Text>
-                </Body>
-              </CardItem>
-            </Card>
-            <Card style={{}}>
-              <CardItem>
-                <Body>
-                  <Text>
-                    NativeBase is a free and open source framework that enables
-                    developers to build high-quality mobile apps using React
-                    Native iOS and Android apps with a fusion of ES6.
-                </Text>
-                </Body>
-              </CardItem>
-            </Card>
-            <Card style={{}}>
-              <CardItem>
-                <Body>
-                  <Text>
-                    NativeBase gives you the potential of building applications
-                    that run on iOS and Android using a single codebase.
-                </Text>
-                </Body>
-              </CardItem>
-            </Card>
-            <Card style={{}}>
-              <CardItem>
-                <Body>
-                  <Text>
-                    NativeBase is a free and open source framework that enables
-                    developers to build high-quality mobile apps using React
-                    Native iOS and Android apps with a fusion of ES6.
-                </Text>
-                </Body>
-              </CardItem>
-            </Card>
-            <Card style={{}}>
-              <CardItem>
-                <Body>
-                  <Text>
-                    NativeBase gives you the potential of building applications
-                    that run on iOS and Android using a single codebase.
-                </Text>
-                </Body>
-              </CardItem>
-            </Card>
-          </ScrollView>
-      </View>
-</Swipeout>
-    );
+    return <View style={{ display: 'flex', flexDirection: 'column', }}>
+      <GiftedChat onSend={(message) => this.onSend(message)}
+        user={{
+          _id: stores.Session.SessionStore.phone, name: stores.LoginStore.user.name,
+          avatar: stores.LoginStore.user.profile
+        }} messages={this.state.messages}>
+
+      </GiftedChat>
+    </View>
   }
 }

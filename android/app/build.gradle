@@ -136,6 +136,10 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-sound')
+    implementation project(':@react-native-community_slider')
+    implementation project(':@react-native-community_audio-toolkit')
+    implementation project(':react-native-fs')
     implementation project(':react-native-reanimated')
     implementation project(':react-native-community-netinfo')
     implementation project(':react-native-svg')
@@ -146,6 +150,7 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation project(':react-native-push-notification')
     implementation 'com.google.firebase:firebase-core:16.0.1'
+    implementation project(':react-native-set-soft-input-mode')
     implementation project(':RNMail')
     //implementation 'androidx.appcompat:appcompat:1.0.0'
     implementation 'com.android.support:design:27.1.1'

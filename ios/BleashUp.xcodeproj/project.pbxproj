@@ -44,11 +44,14 @@
 		FE1003BAAB2A4C3DAC3E9222 /* libTcpSockets.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 13A3CD6ED7754CF88E33EA6B /* libTcpSockets.a */; };
 		29A071C40D3443B4B76EC630 /* libRNVectorIcons.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F79DEC6722646D8A97479D7 /* libRNVectorIcons.a */; };
 		CDA9DE8F4C4D4EB8B7093000 /* libRNVectorIcons-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5307A0EA786E4884B9D12593 /* libRNVectorIcons-tvOS.a */; };
-<<<<<<< HEAD
-		935F631E5AB6428D9CAD2ABE /* libRNCAsyncStorage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DC4117AB3B334D17B1BE1398 /* libRNCAsyncStorage.a */; };
-=======
 		98CE82A6577046DAB18BE548 /* libRNCAsyncStorage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DCC251466F448CE97935527 /* libRNCAsyncStorage.a */; };
->>>>>>> CorneliusWorkNew
+		166F6A2C94E0473486FB2FBA /* libRNAudioRecorderPlayer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A937C58337A4840BB543169 /* libRNAudioRecorderPlayer.a */; };
+		CDEF5BEDD8E8482CA5507994 /* libReactNativePermissions.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9614F6B27DCF49D6A035440C /* libReactNativePermissions.a */; };
+		853F658D85784BBFA215872F /* libRNFS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 64F113A1ACC64448ACD53B81 /* libRNFS.a */; };
+		A454C190C23244E0AB5AC8AB /* libRNAudioRecord.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 64217D3FB3EA47069813BF89 /* libRNAudioRecord.a */; };
+		8B9DC851441944CC939DB86E /* libReactNativeAudioToolkit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EC8AE26D25334D33B7A9FAB9 /* libReactNativeAudioToolkit.a */; };
+		A102FF359BBF4397A38DA639 /* libRNCSlider.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 33BA6410A126493F9E321E89 /* libRNCSlider.a */; };
+		F3EAE8FFB95D43DAB4294D37 /* libRNSound.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D07BB142E7D54F2E92D0107C /* libRNSound.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -364,13 +367,22 @@
 		12B2CB7605574842AB1975B6 /* RNVectorIcons.xcodeproj */ = {isa = PBXFileReference; name = "RNVectorIcons.xcodeproj"; path = "../node_modules/react-native-vector-icons/RNVectorIcons.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		4F79DEC6722646D8A97479D7 /* libRNVectorIcons.a */ = {isa = PBXFileReference; name = "libRNVectorIcons.a"; path = "libRNVectorIcons.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 		5307A0EA786E4884B9D12593 /* libRNVectorIcons-tvOS.a */ = {isa = PBXFileReference; name = "libRNVectorIcons-tvOS.a"; path = "libRNVectorIcons-tvOS.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
-<<<<<<< HEAD
-		7EB1FA18330348B5B4276A24 /* RNCAsyncStorage.xcodeproj */ = {isa = PBXFileReference; name = "RNCAsyncStorage.xcodeproj"; path = "../node_modules/@react-native-community/async-storage/ios/RNCAsyncStorage.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
-		DC4117AB3B334D17B1BE1398 /* libRNCAsyncStorage.a */ = {isa = PBXFileReference; name = "libRNCAsyncStorage.a"; path = "libRNCAsyncStorage.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
-=======
 		BC23A6924F5C4E12A9345DC8 /* RNCAsyncStorage.xcodeproj */ = {isa = PBXFileReference; name = "RNCAsyncStorage.xcodeproj"; path = "../node_modules/@react-native-community/async-storage/ios/RNCAsyncStorage.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		2DCC251466F448CE97935527 /* libRNCAsyncStorage.a */ = {isa = PBXFileReference; name = "libRNCAsyncStorage.a"; path = "libRNCAsyncStorage.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
->>>>>>> CorneliusWorkNew
+		79F4FF246A184B1F8A56EA30 /* RNAudioRecorderPlayer.xcodeproj */ = {isa = PBXFileReference; name = "RNAudioRecorderPlayer.xcodeproj"; path = "../node_modules/react-native-audio-recorder-player/ios/RNAudioRecorderPlayer.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		3A937C58337A4840BB543169 /* libRNAudioRecorderPlayer.a */ = {isa = PBXFileReference; name = "libRNAudioRecorderPlayer.a"; path = "libRNAudioRecorderPlayer.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		654C6EC12E174111A4CA8C2E /* ReactNativePermissions.xcodeproj */ = {isa = PBXFileReference; name = "ReactNativePermissions.xcodeproj"; path = "../node_modules/react-native-permissions/ios/ReactNativePermissions.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		9614F6B27DCF49D6A035440C /* libReactNativePermissions.a */ = {isa = PBXFileReference; name = "libReactNativePermissions.a"; path = "libReactNativePermissions.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		43C12165A0AB4F9D8BA478A7 /* RNFS.xcodeproj */ = {isa = PBXFileReference; name = "RNFS.xcodeproj"; path = "../node_modules/react-native-fs/RNFS.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		64F113A1ACC64448ACD53B81 /* libRNFS.a */ = {isa = PBXFileReference; name = "libRNFS.a"; path = "libRNFS.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		373CBF2F4E2148B8BEBC1250 /* RNAudioRecord.xcodeproj */ = {isa = PBXFileReference; name = "RNAudioRecord.xcodeproj"; path = "../node_modules/react-native-audio-record/ios/RNAudioRecord.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		64217D3FB3EA47069813BF89 /* libRNAudioRecord.a */ = {isa = PBXFileReference; name = "libRNAudioRecord.a"; path = "libRNAudioRecord.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		F1201B33A80C4E46BCFF63FE /* ReactNativeAudioToolkit.xcodeproj */ = {isa = PBXFileReference; name = "ReactNativeAudioToolkit.xcodeproj"; path = "../node_modules/@react-native-community/audio-toolkit/ios/ReactNativeAudioToolkit/ReactNativeAudioToolkit.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		EC8AE26D25334D33B7A9FAB9 /* libReactNativeAudioToolkit.a */ = {isa = PBXFileReference; name = "libReactNativeAudioToolkit.a"; path = "libReactNativeAudioToolkit.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		91419354F1A048D8BB3ECCBB /* RNCSlider.xcodeproj */ = {isa = PBXFileReference; name = "RNCSlider.xcodeproj"; path = "../node_modules/@react-native-community/slider/ios/RNCSlider.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		33BA6410A126493F9E321E89 /* libRNCSlider.a */ = {isa = PBXFileReference; name = "libRNCSlider.a"; path = "libRNCSlider.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		7F8FC713019B49318AA5A2C0 /* RNSound.xcodeproj */ = {isa = PBXFileReference; name = "RNSound.xcodeproj"; path = "../node_modules/react-native-sound/RNSound.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		D07BB142E7D54F2E92D0107C /* libRNSound.a */ = {isa = PBXFileReference; name = "libRNSound.a"; path = "libRNSound.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -402,11 +414,14 @@
 				9887B9CEF2414BC4B29FEF13 /* libRNGestureHandler.a in Frameworks */,
 				FE1003BAAB2A4C3DAC3E9222 /* libTcpSockets.a in Frameworks */,
 				29A071C40D3443B4B76EC630 /* libRNVectorIcons.a in Frameworks */,
-<<<<<<< HEAD
-				935F631E5AB6428D9CAD2ABE /* libRNCAsyncStorage.a in Frameworks */,
-=======
 				98CE82A6577046DAB18BE548 /* libRNCAsyncStorage.a in Frameworks */,
->>>>>>> CorneliusWorkNew
+				166F6A2C94E0473486FB2FBA /* libRNAudioRecorderPlayer.a in Frameworks */,
+				CDEF5BEDD8E8482CA5507994 /* libReactNativePermissions.a in Frameworks */,
+				853F658D85784BBFA215872F /* libRNFS.a in Frameworks */,
+				A454C190C23244E0AB5AC8AB /* libRNAudioRecord.a in Frameworks */,
+				8B9DC851441944CC939DB86E /* libReactNativeAudioToolkit.a in Frameworks */,
+				A102FF359BBF4397A38DA639 /* libRNCSlider.a in Frameworks */,
+				F3EAE8FFB95D43DAB4294D37 /* libRNSound.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -601,11 +616,14 @@
 				B92B6A1623D34655BE3DC74A /* RNGestureHandler.xcodeproj */,
 				1BF9FE12DEFF46E7A8501C93 /* TcpSockets.xcodeproj */,
 				12B2CB7605574842AB1975B6 /* RNVectorIcons.xcodeproj */,
-<<<<<<< HEAD
-				7EB1FA18330348B5B4276A24 /* RNCAsyncStorage.xcodeproj */,
-=======
 				BC23A6924F5C4E12A9345DC8 /* RNCAsyncStorage.xcodeproj */,
->>>>>>> CorneliusWorkNew
+				79F4FF246A184B1F8A56EA30 /* RNAudioRecorderPlayer.xcodeproj */,
+				654C6EC12E174111A4CA8C2E /* ReactNativePermissions.xcodeproj */,
+				43C12165A0AB4F9D8BA478A7 /* RNFS.xcodeproj */,
+				373CBF2F4E2148B8BEBC1250 /* RNAudioRecord.xcodeproj */,
+				F1201B33A80C4E46BCFF63FE /* ReactNativeAudioToolkit.xcodeproj */,
+				91419354F1A048D8BB3ECCBB /* RNCSlider.xcodeproj */,
+				7F8FC713019B49318AA5A2C0 /* RNSound.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1239,6 +1257,13 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1246,6 +1271,13 @@
 					"$(SRCROOT)/../node_modules/react-native-tcp/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/@react-native-community/async-storage/ios",
+					"$(SRCROOT)/../node_modules/react-native-audio-recorder-player/ios",
+					"$(SRCROOT)/../node_modules/react-native-permissions/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-fs/**",
+					"$(SRCROOT)/../node_modules/react-native-audio-record/ios",
+					"$(SRCROOT)/../node_modules/@react-native-community/audio-toolkit/ios/ReactNativeAudioToolkit/ReactNativeAudioToolkit",
+					"$(SRCROOT)/../node_modules/@react-native-community/slider/ios",
+					"$(SRCROOT)/../node_modules/react-native-sound/RNSound",
 				);
 			};
 			name = Debug;
@@ -1273,6 +1305,13 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1280,6 +1319,13 @@
 					"$(SRCROOT)/../node_modules/react-native-tcp/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/@react-native-community/async-storage/ios",
+					"$(SRCROOT)/../node_modules/react-native-audio-recorder-player/ios",
+					"$(SRCROOT)/../node_modules/react-native-permissions/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-fs/**",
+					"$(SRCROOT)/../node_modules/react-native-audio-record/ios",
+					"$(SRCROOT)/../node_modules/@react-native-community/audio-toolkit/ios/ReactNativeAudioToolkit/ReactNativeAudioToolkit",
+					"$(SRCROOT)/../node_modules/@react-native-community/slider/ios",
+					"$(SRCROOT)/../node_modules/react-native-sound/RNSound",
 				);
 			};
 			name = Release;
@@ -1306,6 +1352,13 @@
 					"$(SRCROOT)/../node_modules/react-native-tcp/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/@react-native-community/async-storage/ios",
+					"$(SRCROOT)/../node_modules/react-native-audio-recorder-player/ios",
+					"$(SRCROOT)/../node_modules/react-native-permissions/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-fs/**",
+					"$(SRCROOT)/../node_modules/react-native-audio-record/ios",
+					"$(SRCROOT)/../node_modules/@react-native-community/audio-toolkit/ios/ReactNativeAudioToolkit/ReactNativeAudioToolkit",
+					"$(SRCROOT)/../node_modules/@react-native-community/slider/ios",
+					"$(SRCROOT)/../node_modules/react-native-sound/RNSound",
 				);
 			};
 			name = Debug;
@@ -1331,6 +1384,13 @@
 					"$(SRCROOT)/../node_modules/react-native-tcp/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/@react-native-community/async-storage/ios",
+					"$(SRCROOT)/../node_modules/react-native-audio-recorder-player/ios",
+					"$(SRCROOT)/../node_modules/react-native-permissions/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-fs/**",
+					"$(SRCROOT)/../node_modules/react-native-audio-record/ios",
+					"$(SRCROOT)/../node_modules/@react-native-community/audio-toolkit/ios/ReactNativeAudioToolkit/ReactNativeAudioToolkit",
+					"$(SRCROOT)/../node_modules/@react-native-community/slider/ios",
+					"$(SRCROOT)/../node_modules/react-native-sound/RNSound",
 				);
 			};
 			name = Release;
@@ -1366,6 +1426,13 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1373,6 +1440,13 @@
 					"$(SRCROOT)/../node_modules/react-native-tcp/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/@react-native-community/async-storage/ios",
+					"$(SRCROOT)/../node_modules/react-native-audio-recorder-player/ios",
+					"$(SRCROOT)/../node_modules/react-native-permissions/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-fs/**",
+					"$(SRCROOT)/../node_modules/react-native-audio-record/ios",
+					"$(SRCROOT)/../node_modules/@react-native-community/audio-toolkit/ios/ReactNativeAudioToolkit/ReactNativeAudioToolkit",
+					"$(SRCROOT)/../node_modules/@react-native-community/slider/ios",
+					"$(SRCROOT)/../node_modules/react-native-sound/RNSound",
 				);
 			};
 			name = Debug;
@@ -1408,6 +1482,13 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1415,6 +1496,13 @@
 					"$(SRCROOT)/../node_modules/react-native-tcp/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/@react-native-community/async-storage/ios",
+					"$(SRCROOT)/../node_modules/react-native-audio-recorder-player/ios",
+					"$(SRCROOT)/../node_modules/react-native-permissions/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-fs/**",
+					"$(SRCROOT)/../node_modules/react-native-audio-record/ios",
+					"$(SRCROOT)/../node_modules/@react-native-community/audio-toolkit/ios/ReactNativeAudioToolkit/ReactNativeAudioToolkit",
+					"$(SRCROOT)/../node_modules/@react-native-community/slider/ios",
+					"$(SRCROOT)/../node_modules/react-native-sound/RNSound",
 				);
 			};
 			name = Release;
@@ -1449,6 +1537,13 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1456,6 +1551,13 @@
 					"$(SRCROOT)/../node_modules/react-native-tcp/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/@react-native-community/async-storage/ios",
+					"$(SRCROOT)/../node_modules/react-native-audio-recorder-player/ios",
+					"$(SRCROOT)/../node_modules/react-native-permissions/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-fs/**",
+					"$(SRCROOT)/../node_modules/react-native-audio-record/ios",
+					"$(SRCROOT)/../node_modules/@react-native-community/audio-toolkit/ios/ReactNativeAudioToolkit/ReactNativeAudioToolkit",
+					"$(SRCROOT)/../node_modules/@react-native-community/slider/ios",
+					"$(SRCROOT)/../node_modules/react-native-sound/RNSound",
 				);
 			};
 			name = Debug;
@@ -1490,6 +1592,13 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1497,6 +1606,13 @@
 					"$(SRCROOT)/../node_modules/react-native-tcp/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/@react-native-community/async-storage/ios",
+					"$(SRCROOT)/../node_modules/react-native-audio-recorder-player/ios",
+					"$(SRCROOT)/../node_modules/react-native-permissions/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-fs/**",
+					"$(SRCROOT)/../node_modules/react-native-audio-record/ios",
+					"$(SRCROOT)/../node_modules/@react-native-community/audio-toolkit/ios/ReactNativeAudioToolkit/ReactNativeAudioToolkit",
+					"$(SRCROOT)/../node_modules/@react-native-community/slider/ios",
+					"$(SRCROOT)/../node_modules/react-native-sound/RNSound",
 				);
 			};
 			name = Release;
