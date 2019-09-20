@@ -816,4 +816,77 @@ export default class events {
     this.PastEvents = filter(Events, { past: true });
     this.myReminds = filter(Events, { reminds: true });
   }
+
+
+
+@observable highlightData =[
+{
+  id: "1",
+  creator: "",
+  event_id: "",
+  created_at: "",
+  updated_at: "",
+  title: "maitre gims",
+  description: "ajjsg agsgsagj sahaskkh akdajaj asjaslfjal ashs",
+  url: require('../../Images/Orange_money.jpeg')
+},
+{
+  id: "2",
+  creator: "",
+  event_id: "",
+  created_at: "",
+  updated_at: "",
+  title: "cornelius",
+  description: "ajjsg agsgsagj sahaskkh akdajaj asjaslfjal ashs",
+  url:require('../../Images/weather.jpg')
+},
+{
+  id: "3",
+  creator: "",
+  event_id: "",
+  created_at: "",
+  updated_at: "",
+  title: "giles",
+  description: "ajjsg agsgsagj sahaskkh akdajaj asjaslfjal ashs",
+  url:require('../../Images/mtn_mobile.png')
+
+},
+{
+  id: "4",
+  creator: "",
+  event_id: "",
+  created_at: "",
+  updated_at: "",
+  title: "Jugal",
+  description: "ajjsg agsgsagj sahaskkh akdajaj asjaslfjal ashs",
+  url: require('../../Images/Orange_money.jpeg')
+},
+{
+  id: "5",
+  creator: "",
+  event_id: "",
+  created_at: "",
+  updated_at: "",
+  title: "Santers",
+  description: "ajjsg agsgsagj sahaskkh akdajaj asjaslfjal ashs",
+  url:require('../../Images/weather.jpg')
+},
+{
+  id: "6",
+  creator: "",
+  event_id: "",
+  created_at: "",
+  updated_at: "",
+  title: "Hken",
+  description: "ajjsg agsgsagj sahaskkh akdajaj asjaslfjal ashs",
+  url:require('../../Images/mtn_mobile.png')
+
+}
+
+]
+
+@observable NewHighlightData = []
+
+
+
 }

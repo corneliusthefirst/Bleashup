@@ -76,7 +76,11 @@ const propOverridePlaceholderObject = {
     item: null,
     isJoining: false,
     isRequesting: false,
-    hasJoin: false
+    hasJoin: false,
+    hiding: false,
+    deleting: false,
+    swipeOutSettings: null,
+    hiden: false
   }
   //accepted invitation
   @autobind
@@ -143,6 +147,8 @@ const propOverridePlaceholderObject = {
       })
     })
   }
+
+  @autobind
   openDetails() {
     if (this.props.item.accept || this.state.accept) {
       let event = filter(stores.Events.events, { id: this.state.event_id })
@@ -157,6 +163,8 @@ const propOverridePlaceholderObject = {
       })
     }
   }
+
+  @autobind
   onSeen() {
     if (this.isSeen || this.props.item.seen) {
     } else {
@@ -169,15 +177,49 @@ const propOverridePlaceholderObject = {
         event_id: this.props.item.event_id,
         status: this.props.item.status
       }
-      Requester.seen(invitation).then(resposne => {
+      Requester.seen(invitation).then(response => {
         this.isSeen = true;
       }).catch((error) => {
 
       })
     }
   }
+
+@autobind
+delete() {
+    this.setState({
+      deleting: true
+    })
+    Requester.delete(this.props.Invitations.invitation_id).then(() => {
+      this.setState({
+        deleting: false,
+        hiden: true
+      })
+    })
+  }
+
+@autobind
+hide() {
+    this.setState({
+      hiding: true
+    })
+    Requester.hide(this.props.Invitations.invitation_id).then(() => {
+      this.setState({
+        hiden: true,
+        hiding: false
+      })
+    })
+  }
+
+
+
+
   componentDidMount() {
+<<<<<<< HEAD
     setTimeout(()=>{
+=======
+
+>>>>>>> 1e97a9d441b05a372cba36a25998ff64d917be81
     stores.Invitations.translateToinvitationData(this.props.item).then(data => {
       let AccordData = data.sender_status
       max_length = data.sender_status.length
@@ -201,12 +243,17 @@ const propOverridePlaceholderObject = {
           seen: false,
           isJoining: false,
           hasJoin: false,
-          card: card
+          card: card,
+          hiding: false,
+          deleting: false,
+          hiden: false
+
         });
       })
     })
   },20)
 
+<<<<<<< HEAD
   }
   swipeSettings = {
     autoClose: true,
@@ -233,22 +280,57 @@ const propOverridePlaceholderObject = {
             [
               { text: 'No', onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
 
+=======
+ 
+setTimeout(() => {
+
+      this.formCard(this.props.Invitations).then(details => {
+        let swipeOut = (<View>
+          <List style={{
+            backgroundColor: "#FFFFF6",
+            height: "100%"
+          }}>
+           
+            <ListItem style={{ alignSelf: 'flex-start' }}>
+              <TouchableOpacity onPress={() => {
+                return this.hide()
+              }}>
+                {this.state.hiding ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
+                <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="archive" type="EvilIcons">
+                </Icon>
+                <Label style={{ fontSize: 12, color: "#1FABAB" }}>Hide</Label>
+              </TouchableOpacity>
+            </ListItem>
+
+            <ListItem>
+              <TouchableOpacity onPress={() => {
+                return this.delete()
+              }}>
+                {this.state.deleting ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : null}
+                <Icon name="trash" style={{ fontSize: 16, color: "red" }} type="EvilIcons">
+                </Icon>
+                <Label style={{ fontSize: 12, color: "red" }} >Delete</Label>
+              </TouchableOpacity>
+            </ListItem>
+          </List>
+        </View>)
+        this.setState({
+          swipeOutSettings: {
+            autoClose: true,
+            sensitivity: 100,
+            right: [
+>>>>>>> 1e97a9d441b05a372cba36a25998ff64d917be81
               {
-                text: 'Yes', onPress: () => {
-                  this.props.cardListData.splice(this.props.index, 1);
-                  //make request to delete to database(back-end)
-
-                  //Refresh FlatList
-                  this.props.parentCardList.refreshFlatList(deletingRow);
-                }
-              },
+                component: swipeOut
+              }
             ],
-            { cancelable: true }
-          );
+          },
+          details: details
+        })
+      })
+    }, 20)
 
-        },
-        text: 'Delete', type: 'delete'
-
+<<<<<<< HEAD
       }
     ],
     style:{
@@ -257,7 +339,13 @@ const propOverridePlaceholderObject = {
     },
     rowId: this.props.index,
     sectionId: 1
+=======
+
+>>>>>>> 1e97a9d441b05a372cba36a25998ff64d917be81
   }
+
+
+
   formCard(item) {
     return new Promise((resolve, reject) => {
       let card = [];
@@ -277,6 +365,7 @@ const propOverridePlaceholderObject = {
         resolve(card)
       }
     })
+<<<<<<< HEAD
   }
   render() {
     return this.state.loading ? <Card style={{ height: 230}}></Card>:<View style={{ width: "100%",}}>
@@ -287,6 +376,16 @@ const propOverridePlaceholderObject = {
             received
         </Text>
         </CardItem>
+=======
+
+}
+
+
+  render() {
+    return (this.state.loading ? <ImageActivityIndicator></ImageActivityIndicator> :
+      <Swipeout {...this.swipeOutSettings}>
+        <Card style={{}}>
+>>>>>>> 1e97a9d441b05a372cba36a25998ff64d917be81
           <CardItem>
             <Left>
               <TouchableOpacity onPress={() => this.setState({ opening:true,isOpenStatus: true })} >

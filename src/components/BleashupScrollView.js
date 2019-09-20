@@ -43,12 +43,24 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
     }
     render() {
         return (
+<<<<<<< HEAD
             <View style={{ flexDirection: 'column', backgroundColor: "#FEFFDE", }}>
                 <ScrollView
                     onScrollEndDrag={({ nativeEvent }) => {
                         if (isCloseToBottom(nativeEvent)) {
                             this.continueScrollDown()
                         }
+=======
+            <ScrollView
+                nestedScrollEnabled={true}
+                ref={"_scrollview"}
+                onScroll={({ nativeEvent }) => {
+                    // console.warn(nativeEvent)
+                }}
+                onScrollEndDrag={({ nativeEvent }) => {
+                    if (isCloseToBottom(nativeEvent)) {
+                        this.continueScrollDown()
+>>>>>>> 1e97a9d441b05a372cba36a25998ff64d917be81
                     }
                     }
                     centerContent={true}

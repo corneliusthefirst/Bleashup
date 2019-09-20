@@ -173,4 +173,5 @@ export default class DetailsModal extends Component {
 
 
 
+
 /*marginTop:this.props.location.length > 19?15:this.props.location.length > 38?5:35*/

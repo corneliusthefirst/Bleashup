@@ -23,6 +23,7 @@ import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
 //import android.support.v7.app.AppCompatActivity;
 import com.swmansion.reanimated.ReanimatedPackage;
 import com.github.wumke.RNExitApp.RNExitAppPackage;
+import com.imagepicker.ImagePickerPackage;
 import java.util.Arrays;
 import java.util.List;
 
@@ -53,7 +54,11 @@ public class MainApplication extends Application implements ReactApplication {
              new SoftInputModePackage() ,
             new RNGestureHandlerPackage(),
             new RNFetchBlobPackage(),
+<<<<<<< HEAD
             new ReactNativePushNotificationPackage() // <---- Add the Package
+=======
+            new ImagePickerPackage()
+>>>>>>> 1e97a9d441b05a372cba36a25998ff64d917be81
                   );
     }
 

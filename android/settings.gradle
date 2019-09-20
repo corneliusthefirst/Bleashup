@@ -24,8 +24,14 @@ project(':react-native-reanimated').projectDir = new File(rootProject.projectDir
 include ':app'
 include ':rn-fetch-blob'
 project(':rn-fetch-blob').projectDir = new File(rootProject.projectDir, '../node_modules/rn-fetch-blob/android') 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 1e97a9d441b05a372cba36a25998ff64d917be81
 include ':react-native-exit-app', ':app'
 project(':react-native-exit-app').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-exit-app/android')
+
 include ':react-native-svg'
 project(':react-native-svg').projectDir = new File(rootProject.projectDir, 	'../node_modules/react-native-svg/android')
 include ':react-native-community-netinfo'
@@ -33,5 +39,15 @@ project(':react-native-community-netinfo').projectDir = new File(rootProject.pro
 include ':react-native-set-soft-input-mode'
 project(':react-native-set-soft-input-mode').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-set-soft-input-mode/android')
 
+<<<<<<< HEAD
+=======
 
+include ':react-native-fetch-blob'                                                                                                  
+project(':react-native-fetch-blob').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-fetch-blob/android')  
 
+include ':react-native-svg'
+project(':react-native-svg').projectDir = new File(rootProject.projectDir, 	'../node_modules/react-native-svg/android')
+>>>>>>> 1e97a9d441b05a372cba36a25998ff64d917be81
+
+include ':react-native-image-picker'
+project(':react-native-image-picker').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-image-picker/android')
