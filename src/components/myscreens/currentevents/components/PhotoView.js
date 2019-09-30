@@ -23,7 +23,7 @@ export default class PhotoView extends Component {
         return !this.state.ismounted ? <ImageActivityIndicator width={this.props.width} height={this.props.height}>
         </ImageActivityIndicator> : (<View style={this.props.style}>
             <TouchableOpacity onPress={() => requestAnimationFrame(() => {
-                this.setState({ isModalOpened: true })
+                this.props.video?this.props.playVideo():this.setState({ isModalOpened: true })
             })}>
                 <CacheImages source={{
                     uri: this.props.photo
@@ -36,6 +36,7 @@ export default class PhotoView extends Component {
                         borderRadius: this.props.borderRadius ? this.props.borderRadius : 0
                     }}
                     resizeMode="contain"
+                    width={this.props.width}
                 ></CacheImages>
             </TouchableOpacity>
             <PhotoModal joined={this.props.joined} hasJoin={this.props.hasJoin} isToBeJoin isOpen={this.state.isModalOpened} image={this.props.photo}

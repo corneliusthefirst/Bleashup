@@ -100,6 +100,7 @@ android {
     }
 
     defaultConfig {
+         multiDexEnabled true
         applicationId "com.bleashup.bleashup"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
@@ -136,6 +137,7 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-video')
     implementation project(':rn-fetch-blob')
     implementation project(':react-native-autogrow-textinput')
     implementation project(':react-native-sound')

@@ -1,9 +1,9 @@
 import { observable } from 'mobx'
 import storage from './Storage'
-import {orderBy,filter} from "lodash"
+import { orderBy, filter } from "lodash"
 class ChatStore {
-    constructor(){
-        this.readFromStore().then(data =>{
+    constructor() {
+        this.readFromStore().then(data => {
             this.setProperties(data)
         })
     }
@@ -40,9 +40,36 @@ class ChatStore {
         });
     }
     setProperties(chats) {
-         chats = orderBy(chats, ["updated_at"], ["desc"]);
+        chats = orderBy(chats, ["updated_at"], ["desc"]);
         this.Chats = filter(chats, chat => !chat.hidden && !chat.deleted);
+    }
+    addDuration(duration, chatID) {
+        return new Promise((resolve, reject) => {
+            console.warn("setting voice note duration")
+            resolve("ok")
+        })
+    }
+    addVideoProperties(path,totalSize,receivedSize){
+        return new Promise((resolve,reject) => {
+            resolve()
+        })
+    }
+    addVideoSizeProperties(total,recieved){
+        return new Promise((resolve,reject)=>{
+            resolve()
+        })
+    }
+    AddAudioSizePropperties(total,recieved){
+        return new Promise((resolve,reject) =>{
+            resolve()
+        })
+    }
+    addStaticFilePath(url, chatID) {
+        return new Promise((resolve, reject) => {
+            console.warn("setting message static resource");
+            resolve("ok");
+        })
     }
 }
 
-export default  ChatStore;
+export default ChatStore;

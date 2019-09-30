@@ -4,7 +4,6 @@ import GState from "../../../stores/globalState";
 import {View} from "react-native"
 import { ScrollView } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { GiftedChat } from 'react-native-gifted-chat'
 import stores from "../../../stores";
 import Swipeout from "react-native-swipeout";
 var swipeoutBtns = [
@@ -38,20 +37,9 @@ export default class PotesChat extends Component {
       ]
     });
   }
-  onSend(messages = []) {
-    this.setState(previousState => ({
-      messages: GiftedChat.append(previousState.messages, messages),
-    }))
-  }
+
   render() {
     return <View style={{ display: 'flex', flexDirection: 'column', }}>
-      <GiftedChat onSend={(message) => this.onSend(message)}
-        user={{
-          _id: stores.Session.SessionStore.phone, name: stores.LoginStore.user.name,
-          avatar: stores.LoginStore.user.profile
-        }} messages={this.state.messages}>
-
-      </GiftedChat>
     </View>
   }
 }

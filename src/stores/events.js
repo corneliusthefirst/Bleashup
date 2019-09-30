@@ -164,7 +164,6 @@ export default class events {
             if (!Event) {
               serverEventListener.GetData(EventID).then(event => {
                 this.addEvent(event).then(() => {
-
                   resolve(event)
                 })
               }).catch(error => {
