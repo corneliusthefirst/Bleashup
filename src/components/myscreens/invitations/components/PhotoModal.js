@@ -36,8 +36,7 @@ export default class PhotoModal extends Component {
                 <View style={{ flex: 6, flexDirection: 'column' }}>
                     <TouchableOpacity onPress={() => this.setState({ enlargeImage: true })} >
                         <CacheImages parmenent={false}
-                            thumbnails
-                            resizeMode="contain"
+                            resizeMode="cover"
                             source={{ uri: this.props.image }} style={{
                                 height: "100%",
                                 width: "100%", marginTop: 14, borderWidth: 1, borderColor: "#1FABAB", borderRadius: 3

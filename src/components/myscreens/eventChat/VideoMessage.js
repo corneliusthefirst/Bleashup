@@ -5,6 +5,8 @@ import PhotoView from "../currentevents/components/PhotoView";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
 import rnFetchBlob from 'rn-fetch-blob';
 import stores from "../../../stores";
+import GState from "../../../stores/globalState";
+import TextContent from "./TextContent";
 const { fs, config } = rnFetchBlob
 let dirs = rnFetchBlob.fs.dirs
 
@@ -36,11 +38,6 @@ export default class VideoMessage extends Component {
             total: this.props.message.total,
             creator: (this.props.message.sender.phone == this.props.creator)
         })
-        setTimeout(() => {
-            if (this.testForURL(this.props.message.source)) {
-                this.downloadVideo(this.props.message.source)
-            }
-        }, 1000)
     }
     DetemineRange(path) {
         return new Promise((resolve, reject) => {
@@ -56,7 +53,9 @@ export default class VideoMessage extends Component {
     }
     path = dirs.DocumentDir + '/videos_' + this.props.message.file_name
     tempPath = this.path + '.download'
-    downloadVideo(url) {
+    download(url) {
+        clearInterval(this.downloadID)
+        GState.downlading = true
         this.setState({
             downloading: true
         })
@@ -78,6 +77,7 @@ export default class VideoMessage extends Component {
                 })
             })
             this.task.catch(error => {
+                GState.downlading = false
                 console.warn(error)
                 this.setState({
                     downloading: false,
@@ -85,6 +85,7 @@ export default class VideoMessage extends Component {
                 })
             })
             this.task.then((res) => {
+                GState.downlading = false
                 temper1 = this.toMB(this.state.total)
                 temper2 = this.toMB(this.state.received)
                 temp1 = Math.floor(temper1)
@@ -113,6 +114,10 @@ export default class VideoMessage extends Component {
             })
         })
     }
+    downloadID = null
+    downloadVideo(url) {
+        this.downloadID = setInterval(() => this.download(url), 500)
+    }
     setAfterSuccess(res, cap, received) {
         stores.ChatStore.addVideoProperties(this.props.message.source, cap, received).then(() => {
             this.setState({
@@ -132,6 +137,7 @@ export default class VideoMessage extends Component {
         this.task.cancel((err, taskID) => {
             this.setState({ downloading: false })
         })
+        stores.ChatStore.SetCancledState()
         this.setState({
             downloading: false
         })
@@ -177,88 +183,55 @@ export default class VideoMessage extends Component {
             flexDirection: "column"
         }
         return (
-            <View style={topMostStyle}>
-                <View style={GeneralMessageBoxStyle}>
-                    <View style={{ flexDirection: 'row' }}>
-                        {this.state.sender ? <View style={spaceStyles}>
-                        </View> : null}
-                        <View style={senderNameStyle} >
-                            {this.state.sender ? <View style={subNameStyle}><TouchableOpacity onPress={() => {
-                                console.warn('humm ! you want to know that contact !')
-                            }}><Text style={{ fontSize: 13, color: '#1EDEB6' }}
-                                note>@{this.state.sender_name}</Text></TouchableOpacity></View> : null}
-                            <TouchableOpacity onLongPress={() => {
-                                Vibration.vibrate(this.duration)
-                                this.setState({
-                                    showTime: !this.state.showTime
-                                })
-                            }}>
-                                <View>
-                                    <PhotoView playVideo={()=> this.props.playVideo(this.props.message.source)} video style={{
-                                        marginLeft: this.state.sender ? "-1%" : null
-                                    }} borderRadius={5} photo={this.props.message.thumbnailSource}
-                                        width={290} height={340}>
-                                    </PhotoView>
-                                    <View style={{ position: 'absolute', marginTop: "35%", marginLeft: "45%", }}>
-                                        <View>
-                                            <TouchableOpacity
-                                                onPress={() => this.props.playVideo(this.props.message.source)
-                                                }>
-                                                <Icon type="EvilIcons" name="play" style={{
-                                                    fontSize: 40,
-                                                    color: "#1FABAB"
-                                                }}></Icon>
-                                                <View style={{ marginTop: "-59%", marginLeft: "-57%", }}>
-                                                    <Spinner></Spinner>
-                                                </View>
-                                            </TouchableOpacity>
-                                        </View>
-                                    </View>
-                                    <View style={{ alignSelf: this.state.sender ? 'flex-start' : 'flex-end', margin: '2%', }}>
-                                        {this.state.loaded ? <View style={{ marginTop: "-10%" }}><View><Text style={{ color: this.state.sender ? '#F8F7EE' : '#E1F8F9' }}>
-                                            {this.state.total} {"Mb"}</Text></View></View> :
-                                            <View style={{ marginTop: "-25%" }}>
-                                                <AnimatedCircularProgress size={40}
-                                                    width={2}
-                                                    fill={this.testForURL(this.props.message.source) ? this.state.downloadState : 100}
-                                                    tintColor={this.state.error ? "red" : "#1FABAB"}
-                                                    backgroundColor={this.transparent}>
-                                                    {
-                                                        (fill) => (<View>
-                                                            {this.state.downloading ? <TouchableWithoutFeedback onPress={() => this.cancelDownLoad(this.props.message.sor)}>
-                                                                <Icon type="EvilIcons" style={{ color: "#1FABAB" }} name="close">
-                                                                </Icon>
-                                                            </TouchableWithoutFeedback> : <TouchableWithoutFeedback onPress={() => this.downloadVideo(this.props.message.source)}>
-                                                                    <Icon type="EvilIcons" style={{ color: "#1FABAB" }} name="arrow-down">
-                                                                    </Icon>
-                                                                </TouchableWithoutFeedback>}
-                                                        </View>)
-                                                    }
-                                                </AnimatedCircularProgress>
-                                                <View style={{ marginTop: "15%" }}><Text note>{this.toMB(this.state.received).toFixed(1)}{"/"}
-                                                    {this.toMB(this.state.total).toFixed(1)}</Text></View></View>}</View>
+            <View>
+                <View>
+                    <PhotoView playVideo={() => this.props.playVideo(this.props.message.source)} video style={{
+                        marginLeft: this.state.sender ? "-1%" : "0%"
+                    }} borderRadius={5} photo={this.props.message.thumbnailSource}
+                        width={290} height={340}>
+                    </PhotoView>
+                    <View style={{ position: 'absolute', marginTop: "25%", marginLeft: "45%", }}>
+                        <View>
+                            <TouchableOpacity
+                                onPress={() => this.props.playVideo(this.props.message.source)
+                                }>
+                                <Icon type="EvilIcons" name="play" style={{
+                                    fontSize: 40,
+                                    color: "#1FABAB"
+                                }}></Icon>
+                                <View style={{ marginTop: "-58.5%", marginLeft: "-58%", }}>
+                                    <Spinner></Spinner>
                                 </View>
-                                {this.props.message.text ? <View style={{ padding: "2%" }}><Text styles={{
-                                    justifyContent: 'center',
-                                    fontSize: 8,
-                                    backgroundColor: this.state.sender ? '#FFBFB2' : '#C1FFF2'
-                                }}>
-                                    {this.state.text.slice(0, this.state.splicer)}
-                                </Text>
-                                    {this.state.text.length >= this.state.splicer ?
-                                        <TouchableWithoutFeedback onPress={() =>
-                                            this.setState({
-                                                splicer: this.state.splicer == this.state.text.length ? 500
-                                                    : this.state.text.length
-                                            })}>
-                                            <Text style={{ color: 'blue', }} note>
-                                                {this.state.splicer == this.state.text.length ? "read less" : "read more"}
-                                            </Text></TouchableWithoutFeedback> : null}</View> : null}
                             </TouchableOpacity>
                         </View>
                     </View>
+                    <View style={{ alignSelf: this.state.sender ? 'flex-start' : 'flex-end', margin: '2%', }}>
+                        {this.state.loaded ? <View style={{ marginTop: "-10%" }}><View><Text style={{ color: this.state.sender ? '#F8F7EE' : '#E1F8F9' }}>
+                            {this.state.total} {"Mb"}</Text></View></View> :
+                            <View style={{ marginTop: "-25%" }}>
+                                <AnimatedCircularProgress size={40}
+                                    width={2}
+                                    fill={this.testForURL(this.props.message.source) ? this.state.downloadState : 100}
+                                    tintColor={this.state.error ? "red" : "#1FABAB"}
+                                    backgroundColor={this.transparent}>
+                                    {
+                                        (fill) => (<View>
+                                            {this.state.downloading ? <TouchableWithoutFeedback onPress={() => this.cancelDownLoad(this.props.message.sor)}>
+                                                <Icon type="EvilIcons" style={{ color: "#1FABAB" }} name="close">
+                                                </Icon>
+                                            </TouchableWithoutFeedback> : <TouchableWithoutFeedback onPress={() => this.downloadVideo(this.props.message.source)}>
+                                                    <Icon type="EvilIcons" style={{ color: "#1FABAB" }} name="arrow-down">
+                                                    </Icon>
+                                                </TouchableWithoutFeedback>}
+                                        </View>)
+                                    }
+                                </AnimatedCircularProgress>
+                                <View style={{ marginTop: "15%" }}><Text note>{"("}{this.toMB(this.state.received).toFixed(1)}{"/"}
+                                    {this.toMB(this.state.total).toFixed(1)}{")Mb"}</Text></View></View>}</View>
                 </View>
-                {this.state.showTime ? <Text note style={{ marginLeft: "5%", }}>{this.state.time}</Text> : false}
+                {this.props.message.text ? <View style={{ marginTop: "-10%", padding: "2%" }}>
+                         <TextContent text={this.props.message.text}></TextContent>       
+                </View> : null}
             </View>
         );
     }

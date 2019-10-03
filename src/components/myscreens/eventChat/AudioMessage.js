@@ -7,12 +7,10 @@ import {
 import Sound from 'react-native-sound';
 import rnFetchBlob from 'rn-fetch-blob';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
-import { BarIndicator } from "react-native-indicators"
 import { Icon, Right, Spinner, Toast } from 'native-base';
 import stores from '../../../stores';
-import BarIndicat from '../../BarIndicat';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
-import { Player } from '@react-native-community/audio-toolkit';
+import GState from '../../../stores/globalState';
 let dirs = rnFetchBlob.fs.dirs
 const { fs, config } = rnFetchBlob
 export default class AudioMessage extends Component {
@@ -51,7 +49,9 @@ export default class AudioMessage extends Component {
     duration = 10
     pattern = [1000, 0, 0]
     tempPath = this.path + '.download'
-    downloadAudio(url) {
+    download(url) {
+        clearInterval(this.downloadID)
+        GState.downlading = true
         this.setState({
             downloading: true
         })
@@ -72,6 +72,7 @@ export default class AudioMessage extends Component {
                 })
             })
             this.task.catch(error => {
+                GState.downlading = false
                 console.warn(error)
                 this.setState({
                     downloading: false,
@@ -86,6 +87,7 @@ export default class AudioMessage extends Component {
                 temp1 = Math.floor(temper1)
                 temp2 = Math.floor(temper2)
                 temp3 = Math.ceil(temper2)
+                GState.downlading = false
                 console.warn(temper1, temper2)
                 if (temp1 == temp2 || temp1 == temp3) {
                     this.props.message.duration = Math.floor(res.info().headers.Duration)
@@ -109,6 +111,12 @@ export default class AudioMessage extends Component {
                 }
             })
         })
+    }
+    downloadID = null
+    downloadAudio(url) {
+        this.downloadID = setInterval(() => {
+            this.download(url)
+        }, 500)
     }
     testForURL(url) {
         let test = url.includes("http://")
@@ -136,7 +144,8 @@ export default class AudioMessage extends Component {
         })
         setTimeout(() => {
             if (this.testForURL(this.props.message.source)) {
-                this.downloadAudio(this.props.message.source)
+                if (!this.props.message.cancled)
+                    this.downloadAudio(this.props.message.source)
             }
         }, 1000)
     }
@@ -208,118 +217,64 @@ export default class AudioMessage extends Component {
     cancelDownLoad(url) {
         this.task.cancel((err, taskID) => {
         })
+        stores.ChatStore.SetCancledState()
         this.setState({
             downloading: false
         })
     }
     render() {
-        topMostStyle = {
-            marginLeft: this.state.sender ? '0%' : 0,
-            marginRight: !this.state.sender ? '1%' : 0,
-            marginTop: "1%",
-            marginBottom: "0.5%",
-            alignSelf: this.state.sender ? 'flex-start' : 'flex-end',
-        }
-        GeneralMessageBoxStyle = {
-            maxWidth: 300, flexDirection: 'column', minWidth: "10%",
-            minHeight: 10, overflow: 'hidden', borderBottomLeftRadius: this.state.sender ? 0 : 20,
-            borderTopLeftRadius: this.state.sender ? 0 : 20, backgroundColor: this.state.sender ? '#F8F7EE' : '#E1F8F9',
-            borderTopRightRadius: 20, borderBottomRightRadius: this.state.sender ? 20 : 0,
-        }
-        spaceStyles = {
-            backgroundColor: "#FFFFFF", height: "100%",
-            width: "2%",
-            borderBottomRightRadius: 3,
-            marginTop: 1,
-            borderTopRightRadius: 15,
-        }
-        senderNameStyle = {
-            maxWidth: this.state.sender ? "98%" : "100%",
-            padding: 4,
-            borderBottomLeftRadius: 40,
-        }
-        subNameStyle = {
-            marginTop: -3, paddingBottom: 5,
-            flexDirection: "column"
-        }
         textStyle = {
             width: "80%", margin: '2%', marginTop: "5%", display: 'flex', alignSelf: 'center',
             flexDirection: 'column',
         }
-        nameTextStyle = { color: '#1EDEB6', fontSize: 13, }
         return (
-            <View style={topMostStyle}>
-                <View style={GeneralMessageBoxStyle}>
-                    <View style={{ flexDirection: 'row' }}>
-                        {this.state.sender ? <View style={spaceStyles}>
-                        </View> : null}
-                        <View style={senderNameStyle} >
-                            {this.state.sender ? <View style={subNameStyle}><TouchableOpacity onPress={() => {
-                                console.warn('humm ! you want to know that contact !')
-                            }}><Text style={nameTextStyle}
-                                note>@{this.state.sender_name}</Text></TouchableOpacity></View> : null}
-                            <TouchableWithoutFeedback onPressIn={() => {
-                                this.showProgress()
-                            }} onLongPress={() => {
-                                Vibration.vibrate(this.duration)
-                                this.setState({
-                                    showTime: !this.state.showTime
-                                })
-                            }}>
-                                <View style={{ disply: 'flex', flexDirection: 'row', width: 300, }}>
-                                    <View style={textStyle}>
-                                        <View><Slider value={this.state.currentPosition} onValueChange={(value) => {
-                                            this.player.setCurrentTime(value * this.props.message.duration)
-                                            this.setState({
-                                                currentPosition: value,
-                                                currentTime: value * this.props.message.duration
-                                            })
-                                        }}></Slider>
-                                            <View style={{ display: 'flex', flexDirection: 'row', alignContent: 'space-between', }}>
-                                                <Text>{this.convertToHMS(Math.floor(this.state.currentTime))}</Text>
-                                                <Right><Text>{this.convertToHMS(this.props.message.duration)}</Text></Right>
-                                            </View>
-                                        </View>
-                                    </View>
-                                    <View style={{ marginTop: "3%", }}>
-                                        <AnimatedCircularProgress
-                                            size={40}
-                                            width={3}
-                                            fill={this.testForURL(this.props.message.source) ? this.state.downloadState : 100}
-                                            tintColor={"#1FABAB"}
-                                            backgroundColor={'#F8F7EE'}>
-                                            {
-                                                (fill) => (
-                                                    <View style={{ marginTop: "-5%" }}>
-                                                        {this.testForURL(this.props.message.source) ?
-                                                            <TouchableOpacity onPress={() => this.state.downloading ? this.cancelDownLoad(this.props.message.source) :
-                                                                this.downloadAudio(this.props.message.source)}>
-                                                                <View>
-                                                                    <Icon style={{ color: "#0A4E52" }} type="EvilIcons"
-                                                                        name={this.state.downloading ? "close" : "arrow-down"}></Icon>
-                                                                </View>
-                                                                <View style={{ position: 'absolute', marginTop: '-103%', marginLeft: '-14%', }}>
-                                                                    {this.state.downloading ? <Spinner></Spinner> : null}
-                                                                </View>
-                                                            </TouchableOpacity> : !this.state.playing ? <TouchableOpacity
-                                                                onPress={() => requestAnimationFrame(() => this.plays())}>
-                                                                <Icon type="FontAwesome5" style={{ color: "#0A4E52", fontSize: 20 }} name="play">
-                                                                </Icon>
-                                                            </TouchableOpacity> : <TouchableOpacity onPress={() => requestAnimationFrame(() => this.pause())}>
-                                                                    <Icon type="FontAwesome5" style={{ color: "#0A4E52", fontSize: 20 }} name="pause">
-                                                                    </Icon>
-                                                                </TouchableOpacity>}
-                                                    </View>
-                                                )
-                                            }
-                                        </AnimatedCircularProgress></View>
-                                </View>
-                            </TouchableWithoutFeedback>
+            <View style={{ disply: 'flex', flexDirection: 'row', width: 300, }}>
+                <View style={textStyle}>
+                    <View><Slider value={this.state.currentPosition} onValueChange={(value) => {
+                        this.player.setCurrentTime(value * this.props.message.duration)
+                        this.setState({
+                            currentPosition: value,
+                            currentTime: value * this.props.message.duration
+                        })
+                    }}></Slider>
+                        <View style={{ display: 'flex', flexDirection: 'row', alignContent: 'space-between', }}>
+                            <Text>{this.convertToHMS(Math.floor(this.state.currentTime))}</Text>
+                            <Right><Text>{this.convertToHMS(this.props.message.duration)}</Text></Right>
                         </View>
                     </View>
-
                 </View>
-                {this.state.showTime ? <Text note style={{ marginLeft: "5%", fontSize: 12, }}>{this.state.time}</Text> : false}
+                <View style={{ marginTop: "3%", }}>
+                    <AnimatedCircularProgress
+                        size={40}
+                        width={3}
+                        fill={this.testForURL(this.props.message.source) ? this.state.downloadState : 100}
+                        tintColor={"#1FABAB"}
+                        backgroundColor={'#F8F7EE'}>
+                        {
+                            (fill) => (
+                                <View style={{ marginTop: "-5%" }}>
+                                    {this.testForURL(this.props.message.source) ?
+                                        <TouchableOpacity onPress={() => this.state.downloading ? this.cancelDownLoad(this.props.message.source) :
+                                            this.downloadAudio(this.props.message.source)}>
+                                            <View>
+                                                <Icon style={{ color: "#0A4E52" }} type="EvilIcons"
+                                                    name={this.state.downloading ? "close" : "arrow-down"}></Icon>
+                                            </View>
+                                            <View style={{ position: 'absolute', marginTop: '-103%', marginLeft: '-14%', }}>
+                                                {this.state.downloading ? <Spinner></Spinner> : null}
+                                            </View>
+                                        </TouchableOpacity> : !this.state.playing ? <TouchableOpacity
+                                            onPress={() => requestAnimationFrame(() => this.plays())}>
+                                            <Icon type="FontAwesome5" style={{ color: "#0A4E52", fontSize: 20 }} name="play">
+                                            </Icon>
+                                        </TouchableOpacity> : <TouchableOpacity onPress={() => requestAnimationFrame(() => this.pause())}>
+                                                <Icon type="FontAwesome5" style={{ color: "#0A4E52", fontSize: 20 }} name="pause">
+                                                </Icon>
+                                            </TouchableOpacity>}
+                                </View>
+                            )
+                        }
+                    </AnimatedCircularProgress></View>
             </View>
         );
     }

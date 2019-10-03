@@ -64,6 +64,16 @@ class ChatStore {
             resolve()
         })
     }
+    addAudioSizeProperties(){
+        return new Promise((resolve,reject)=>{
+
+        })
+    }
+    SetCancledState(){
+        return new Promise((resolve,reject)=>{
+            resolve()
+        })
+    }
     addStaticFilePath(url, chatID) {
         return new Promise((resolve, reject) => {
             console.warn("setting message static resource");

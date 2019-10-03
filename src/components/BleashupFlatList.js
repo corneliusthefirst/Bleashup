@@ -43,7 +43,7 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
     }
     render() {
         return (
-            <View style={{ flexDirection: 'column', backgroundColor: "#FEFFDE", }}>
+            <View style={{ flexDirection: 'column', backgroundColor: this.props.backgroundColor?this.props.backgroundColor:"#FEFFDE", }}>
                 <FlatList
                     onScrollEndDrag={({ nativeEvent }) => {
                         if (isCloseToBottom(nativeEvent)) {
@@ -54,6 +54,7 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
                     centerContent={true}
                     ref="bleashupFlatlist"
                     canCancelContentTouches={true}
+                    inverted={this.props.inverted?this.props.inverted:false}
                     removeClippedSubviews={true}
                     maxToRenderPerBatch={23}
                     //updateCellsBatchingPeriod={10}

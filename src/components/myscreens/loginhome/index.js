@@ -18,21 +18,14 @@ import {
   Button
 } from "native-base";
 import {
-    Image,
     View,
-    StyleSheet,
-    TouchableWithoutFeedback,
-    TouchableOpacity,
 } from 'react-native';
 
-import { observer } from "mobx-react";
-import Menu, { MenuDivider } from 'react-native-material-menu';
 import initialRoute from "../invitations/components/initialRoute";
 import globalState from "../../../stores/globalState";
 import ServerEventListener from "../../../services/severEventListener";
 import connection from "../../../services/tcpConnect";
 import UpdatesDispatcher from "../../../services/updatesDispatcher";
-import { ScrollView } from 'react-navigation';
 import ChatRoom from "../eventChat/ChatRoom";
 export default class LoginHomeView extends Component {
   constructor(props) {
@@ -41,8 +34,8 @@ export default class LoginHomeView extends Component {
   render() {
   return (
    <ChatRoom></ChatRoom>
-    )
-     /*routeName = initialRoute.routeName;
+   )
+   /*  routeName = initialRoute.routeName;
       if ((globalState.loading = true)) {
         initialRoute.initialRoute().then(route => {
           if(route !== "Login"){

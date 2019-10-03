@@ -1,6 +1,7 @@
 import React, { Component } from "react"
 import { StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View, Vibration } from 'react-native';
 import { Text } from "native-base"
+import TextContent from "./TextContent";
 export default class TextMessage extends Component {
     constructor(props) {
         super(props)
@@ -76,16 +77,7 @@ export default class TextMessage extends Component {
                                         showTime: !this.state.showTime
                                     })
                                 }}>
-                                    <Text styles={{
-                                        justifyContent: 'center',
-                                        backgroundColor: this.state.sender ? '#FFBFB2' : '#C1FFF2',
-                                    }}>
-                                        {this.state.text.slice(0, this.state.splicer)}
-                                    </Text>
-                                    {this.state.text.length >= this.state.splicer ?
-                                        <TouchableOpacity onPress={() => this.setState({ splicer: this.state.splicer == this.state.text.length ? 500 : this.state.text.length })}>
-                                            <Text style={{ color: 'blue', }} note>{this.state.splicer == this.state.text.length ? "read less" : "read more"}
-                                            </Text></TouchableOpacity> : null}
+                                    <TextContent text={this.props.message.text}></TextContent>
                                 </TouchableOpacity>
                             </View>
                         </View>

@@ -7,6 +7,7 @@ export default class globalState {
   @observable isScrolling = true;
   @observable loading = false;
   @observable error = false;
+  @observable downlading = false
   @observable newContribution = false;
   @observable success = false;
   @observable passwordError = false;

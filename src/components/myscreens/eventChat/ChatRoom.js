@@ -36,49 +36,29 @@ import connection from "../../../services/tcpConnect";
 import UpdatesDispatcher from "../../../services/updatesDispatcher";
 import { ScrollView } from 'react-navigation';
 import Video from 'react-native-video';
-import VideoPlayer from "react-native-video-controls"
+import VideoPlayer from "./VideoController"
 
 import TextMessage from "./TextMessage";
 import PhotoMessage from "./PhotoMessage";
 import AudioMessage from "./AudioMessage";
 import VideoMessage from "./VideoMessage";
+import FileAttarchementMessaege from "./FileAttarchtmentMessage";
+import BleashupFlatList from '../../BleashupFlatList';
+import Message from "./Message";
+import { find } from "lodash"
 const screenWidth = Math.round(Dimensions.get('window').width);
 export default class ChatRoom extends Component {
     constructor(props) {
         super(props);
         this.state = {
             sender: false,
+            user:2,
             splicer: 500,
             creator: true,
+            showRepliedMessage: false,
             showVideo: false,
             playing: true,
-            message: {
-                sender: {
-                    phone: 2,
-                    nickname: "Sokeng Kamga"
-                },
-                photo: "http://192.168.43.32:8555/video/thumbnail/get/20190725_182151.jpg",
-                file_name: 'bm33r9813uloeua1aasg_bm33r9813uloeua1aat0_bm33r9813uloeua1aatg.jpg',
-                created_at: "2014-03-30 12:32",
-                text: `Hello!`
-            },
-            message2: {
-                sender: {
-                    phone: 2,
-                    nickname: "Sokeng Kamga"
-                },
-                photo: "http://192.168.43.32:8555/video/thumbnail/get/20190725_182151.jpg",
-                file_name: "bm33r9813uloeua1aasg_bm33r9813uloeua1aat0_bm33r9813uloeua1aatg.jpg",
-                created_at: "2014-03-30 12:32",
-                text: `Hello!
-        Erlang/OTP is divided into a number of OTP applications. An application normally contains Erlang modules. Some OTP applications, such as the C interface erl_interface, are written in other languages and have no Erlang modules.
-On a Unix system you can view the manual pages from the command line using
-    % erl -man <module>
-You can of course use any editor you like to write Erlang programs, but if you use Emacs there exists editing support such as indentation, syntax highlighting, electric commands, module name verification, comment support including paragraph filling, skeletons, tags support and more. See the Tools application for details.
-There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , Eclipse (ErlIDE) and IntelliJ IDEA.
-
-`
-            }
+            replyer:{}
         };
     }
     componentDidMount() {
@@ -88,12 +68,17 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
         BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton);
     }
     handleBackButton() {
-        if(this.state.showVideo){
+        if (this.state.showVideo) {
             this.setState({
                 showVideo: false
             })
             return true
-        }else{
+        }else if(this.state.showRepliedMessage){
+            this.setState({
+                showRepliedMessage:false
+            })
+            return true
+        } else {
 
         }
     }
@@ -101,28 +86,90 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
         sender: false,
         showTime: true
     }
-    message = {
+    message = [{
+        id: 1,
         source: 'http://192.168.43.32:8555/sound/get/p2.mp3',
         file_name: 'p2.mp3',
-        total:0,
-        received:0,
+        total: 0,
+        received: 0,
+        user:2,
+        creator:2,
+        type: 'audio',
         sender: {
             phone: 3,
             nickname: "Sokeng Kamga"
         },
         duration: Math.floor(0),
         created_at: "2014-03-30 12:32",
-    }
-    message2 = {
+    }, {
+        id: 2,
+        sender: {
+            phone: 2,
+            nickname: "Sokeng Kamga"
+        },
+        user:3,
+            reply: {
+                id: 3,
+                user: 2,
+                text: `Hello!  Erlang/OTP is divided into a number of OTP applications. An application normally contains Erlang modules. Some OTP applications, such as the C interface erl_interface, are written in other languages and have no Erlang modules.
+On a Unix system you can view the manual pages from the command line using
+    % erl -man <module>`,
+                video: true,
+                replyer_name: "Santers Gipson",
+                source: "http://192.168.43.32:8555/sound/get/bm33r9813uloeua1aasg_bm33r9813uloeua1aat0_bm33r9813uloeua1aatg.jpg"
+            },
+        creator:2,
+        type: "photo",
+        photo: "http://192.168.43.32:8555/sound/get/bm33r9813uloeua1aasg_bm33r9813uloeua1aat0_bm33r9813uloeua1aatg.jpg",
+        file_name: 'bm33r9813uloeua1aasg_bm33r9813uloeua1aat0_bm33r9813uloeua1aatg.jpg',
+        created_at: "2014-03-30 12:32",
+        text: `Hello!`
+    },{
+            id: 3,
+            source: 'http://192.168.43.32:8555/video/get/bma9auo13ult3nh5n690_bma9auo13ult3nh5n69g_bma9auo13ult3nh5n6a0.mp4',
+            file_name: 'bma9auo13ult3nh5n690_bma9auo13ult3nh5n69g_bma9auo13ult3nh5n6a0_thumbnail.jpeg',
+            thumbnailSource: 'http://192.168.43.32:8555/video/thumbnail/get/bma9auo13ult3nh5n690_bma9auo13ult3nh5n69g_bma9auo13ult3nh5n6a0_thumbnail.jpeg',
+            sender: {
+                phone: 3,
+                nickname: "Sokeng Kamga"
+            },
+            user: 2,
+            creator: 3,
+            type: "video",
+            received: 0,
+            total: 0,
+            reply: {
+                id:2,
+                user:3,
+                text: `Hello!  Erlang/OTP is divided into a number of OTP applications. An application normally contains Erlang modules. Some OTP applications, such as the C interface erl_interface, are written in other languages and have no Erlang modules.
+On a Unix system you can view the manual pages from the command line using
+    % erl -man <module>`,
+                video: true,
+                replyer_name: "Santers Gipson",
+                source: "http://192.168.43.32:8555/sound/get/bm33r9813uloeua1aasg_bm33r9813uloeua1aat0_bm33r9813uloeua1aatg.jpg"
+            },
+            text: `Hello!
+        Erlang/OTP is divided into a number of OTP applications. An application normally contains Erlang modules. Some OTP applications, such as the C interface erl_interface, are written in other languages and have no Erlang modules.
+On a Unix system you can view the manual pages from the command line using
+    % erl -man <module>
+You can of course use any editor you like to write Erlang programs, but if you use Emacs there exists editing support such as indentation, syntax highlighting, electric commands, module name verification, comment support including paragraph filling, skeletons, tags support and more. See the Tools application for details.
+There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , Eclipse (ErlIDE) and IntelliJ IDEA.`,
+            duration: Math.floor(0),
+            created_at: "2014-03-30 12:32",
+        }, {
+        id: 4,
         source: 'http://192.168.43.32:8555/video/get/bm6lgk013ult9gc75vmg_bm6lgk013ult9gc75vn0_bm6lgk013ult9gc75vng.mp4',
-        file_name: 'bm6lgk013ult9gc75vmg_bm6lgk013ult9gc75vn0_bm6lgk013ult9gc75vng.mp4',
-        thumbnailSource: 'http://192.168.43.32:8555/video/thumbnail/get/20190725_182151.jpg',
+            file_name: 'Black M - Le prince Aladin (Clip officiel) ft. Kev Adams.mp4',
+        thumbnailSource: 'http://192.168.43.32:8555/video/thumbnail/get/bm7sd5813ulrbjp7u1sg_bm7sd5813ulrbjp7u1t0_bm7sd5813ulrbjp7u1tg_thumbnail.jpeg',
         sender: {
             phone: 3,
             nickname: "Sokeng Kamga"
         },
-        received:0,
-        total:0,
+        user:2,
+        creator:2,
+        type: "attachement",
+        received: 0,
+        total: 0,
         text: `Hello!
         Erlang/OTP is divided into a number of OTP applications. An application normally contains Erlang modules. Some OTP applications, such as the C interface erl_interface, are written in other languages and have no Erlang modules.
 On a Unix system you can view the manual pages from the command line using
@@ -133,7 +180,32 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
 `,
         duration: Math.floor(0),
         created_at: "2014-03-30 12:32",
-    }
+    },
+        , {
+        id: 5,
+        source: 'http://192.168.43.32:8555/video/get/Black M - Le prince Aladin (Clip officiel) ft. Kev Adams.mp4',
+        file_name: 'bm6lgk013ult9gc75vmg_bm6lgk013ult9gc75vn0_bm6lgk013ult9gc75vng.mp4',
+        thumbnailSource: 'http://192.168.43.32:8555/video/thumbnail/get/bm7sd5813ulrbjp7u1sg_bm7sd5813ulrbjp7u1t0_bm7sd5813ulrbjp7u1tg_thumbnail.jpeg',
+        sender: {
+            phone: 3,
+            nickname: "Sokeng Kamga"
+        },
+        type: "video",
+        user:3,
+        creator:2,
+        received: 0,
+        total: 0,
+        text: `Hello!
+        Erlang/OTP is divided into a number of OTP applications. An application normally contains Erlang modules. Some OTP applications, such as the C interface erl_interface, are written in other languages and have no Erlang modules.
+On a Unix system you can view the manual pages from the command line using
+    % erl -man <module>
+You can of course use any editor you like to write Erlang programs, but if you use Emacs there exists editing support such as indentation, syntax highlighting, electric commands, module name verification, comment support including paragraph filling, skeletons, tags support and more. See the Tools application for details.
+There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , Eclipse (ErlIDE) and IntelliJ IDEA.
+
+`,
+        duration: Math.floor(0),
+        created_at: "2014-0s3-30 12:32",
+    }]
 
     playVideo(video) {
         this.setState({
@@ -166,9 +238,13 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
             })
         }, 5000)
     }
-    enterFullscreen(){
+
+    renderMessages(data) {
+        return data.map(element => this.chooseComponent(element))
+    }
+    enterFullscreen() {
         this.setState({
-            fullScreen:!this.state.fullScreen
+            fullScreen: !this.state.fullScreen
         })
     }
     togglePlay() {
@@ -176,20 +252,62 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
             playing: !this.state.playing
         })
     }
-    transparent = "rgba(52, 52, 52, 0.8)";
+    transparent = "rgba(50, 51, 53, 0.8)";
     render() {
         return (
             <View>
-                <View style={{}}>
-                    <ScrollView>
-                        <PhotoMessage user={2} creator={2} message={this.state.message}></PhotoMessage>
-                        <TextMessage user={2} creator={2} message={this.state.message}></TextMessage>
-                        <AudioMessage user={3} creator={3} message={this.message}></AudioMessage>
-                        <VideoMessage playVideo={(video) => {this.playVideo(video)}} message={this.message2} user={1}></VideoMessage>
-                        <TextMessage user={3} creator={2} message={this.state.message2}></TextMessage>
-                        <TextMessage user={1} creator={2} message={this.state.message2}></TextMessage>
-                    </ScrollView>
+                <View style={{ marginBottom: "2%", }}>
+                    <BleashupFlatList
+                        firstIndex={0}
+                        backgroundColor={"#FFF"}
+                        inverted={true}
+                        renderPerBatch={20}
+                        initialRender={7}
+                        numberOfItems={this.message.length}
+                        keyExtractor={(item) => item ? item.id : null}
+                        renderItem={(item) => item ? <Message message={item} openReply={(replyer) => {
+                            this.setState({
+                                replyer : replyer,
+                                showRepliedMessage : true
+                            })
+                        }} user={item.user} creator={item.creator} playVideo={(source) => this.playVideo(source)}></Message> : null}
+                        dataSource={this.message}
+                    >
+                    </BleashupFlatList>
                 </View>
+                {this.state.showRepliedMessage ? <View style={{
+                    height:1000,
+                    position: "absolute",  backgroundColor: this.transparent,
+                    width: "100%",
+                }}>
+                <View style={{display:'flex',flexDirection: 'row',}}>
+               {this.state.replyer.user==this.state.user? <TouchableOpacity onPress={()=>{
+                    this.setState({
+                        showRepliedMessage:false
+                    })
+                }}>
+                            <Icon type="EvilIcons" style={{ margin: '7%', fontSize: 35, color: "#FEFFDE" }} name={"close"}></Icon>
+                </TouchableOpacity>:null}
+                    <ScrollView>
+                        <View style={{display:"flex",flex: 1,}}>
+                                {<Message openReply={(replyer) => {
+                                    this.setState({
+                                        replyer:replyer,
+                                        showRepliedMessage:true
+                                    })
+                                }} playVideo={(source) => this.playVideo(source)}
+                                creator={2} user={2} message={find(this.message, { id: this.state.replyer.id })} />}
+                        </View>
+                    </ScrollView>
+                      {!(this.state.replyer.user==this.state.user)?<TouchableOpacity onPress={() => {
+                            this.setState({
+                                showRepliedMessage: false
+                            })
+                        }}>
+                            <Icon type="EvilIcons" style={{ margin: '2%',marginTop: "8%", fontSize: 35, color: "#FEFFDE" }} name={"close"}></Icon>
+                        </TouchableOpacity>:null}
+                    </View>
+                </View> : null}
                 {this.state.showVideo ? <View style={{
                     height: 400,
                     position: "absolute",
@@ -216,8 +334,8 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
                         //disablePlayPause={true}
                         //disableFullscreen={true}
                         onBack={() => this.hideVideo()}
-                        onEnterFullscreen={()=> this.enterFullscreen()}
-                        onExitFullscreen={()=> this.enterFullscreen()}
+                        onEnterFullscreen={() => this.enterFullscreen()}
+                        onExitFullscreen={() => this.enterFullscreen()}
                         //fullscreenOrientation={"landscape"}
                         //fullscreen={true}
                         //controls={true}
@@ -234,18 +352,6 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
                             right: 0,
                         }}             // Callback when video cannot be loaded
                     />
-                    {this.state.showActions ? <View style={{ position: "absolute" }}>
-                        <TouchableOpacity onPress={() => {
-                            this.hideVideo()
-                        }}>
-                            <Icon name="close" style={{ margin: '3%', color: "#1FABAB" }} type="EvilIcons">
-                            </Icon>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => this.togglePlay()}>
-                            <Icon type={this.state.playing ? "Foundation" : "EvilIcons"} name={this.state.playing ? "pause" : "play"} style={{ fontSize: 50, color: "#1FABAB", marginTop: "47%", marginLeft: "60.6%", }}>
-                            </Icon>
-                        </TouchableOpacity>
-                    </View> : null}
                 </View> : null}
             </View>
 

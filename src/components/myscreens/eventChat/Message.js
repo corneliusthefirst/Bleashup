@@ -1,84 +1,108 @@
-import React, { Component } from 'react'
-import { StyleSheet, View, Text, Dimensions } from 'react-native'
-import UserIcon from './ProfilePic'
-
-const fullWidth = Dimensions.get('window').width
+import React, { Component } from 'react';
+import { View, TouchableOpacity, Vibration,TouchableWithoutFeedback } from "react-native"
+import TextMessage from './TextMessage';
+import PhotoMessage from './PhotoMessage';
+import VideoMessage from './VideoMessage';
+import FileAttarchementMessaege from './FileAttarchtmentMessage';
+import AudioMessage from './AudioMessage';
+import { Left, Icon, Right,Text } from 'native-base';
+import ReplyText from './ReplyText';
 
 export default class Message extends Component {
-  getTime(dateSent) {
-    const date = dateSent ? new Date(dateSent * 1000) : new Date()
-    const hours = date.getHours()
-    const minutes = date.getMinutes()
-    return `${(hours>9)?hours:('0'+hours)}:${(minutes>9)?minutes:('0'+minutes)}`
-  }
 
-	render() {
-    const { message, otherSender } = this.props
-
-		return (
-      <View style={[styles.container, (otherSender ? styles.positionToLeft : styles.positionToRight)]}>
-        { otherSender &&
-          <UserIcon
-            photo={{uri:message.user.avatar}}
-            name={message.user.name}
-            iconSize="small"
-          />
+    constructor(props) {
+        super(props)
+        this.state = {
+            showTime: false
         }
-        <View style={[styles.message, (otherSender ? styles.messageToLeft : styles.messageToRight)]}>
-          <Text style={[styles.messageText, (otherSender ? styles.selfToLeft : styles.selfToRight)]}>
-            {message.text || ' '}
-          </Text>
-          <Text style={styles.dateSent}>
-            {this.getTime(message.createdAt)}
-          </Text>
-        </View>
-      </View>
-		)
-	}
+    }
+    chooseComponent(data, index) {
+        switch (data.type) {
+            case "text":
+                return <TextMessage user={2} index={index} creator={2} message={data}></TextMessage>
+            case "photo":
+                return <PhotoMessage user={2} index={index} creator={2} message={data}></PhotoMessage>
+            case "audio":
+                return <AudioMessage  index={index}  message={data}></AudioMessage>
+            case "video":
+                return <VideoMessage index={index} playVideo={(video) => { this.props.playVideo(video) }} user={3} creator={2} message={data}></VideoMessage>
+            case "attachement":
+                return <FileAttarchementMessaege index={index} message={data}></FileAttarchementMessaege>
+            default:
+                return null
+        }
+    }
+    componentDidMount() {
+        this.setState({
+            sender_name: this.props.message.sender.nickname,
+            sender: !(this.props.message.sender.phone == this.props.user),
+            time: this.props.message.created_at.split(" ")[1],
+            creator: (this.props.message.sender.phone == this.props.creator)
+        })
+    }
+    duration = 10
+    pattern = [1000, 0, 0]
+    render() {
+        topMostStyle = {
+            marginLeft: this.state.sender ? '0%' : 0,
+            marginRight: !this.state.sender ? '1%' : 0,
+            marginTop: "1%",
+            marginBottom: "0.5%",
+            alignSelf: this.state.sender ? 'flex-start' : 'flex-end',
+        }
+        GeneralMessageBoxStyle = {
+            maxWidth: 300, flexDirection: 'column', minWidth: "10%",
+            minHeight: 10, overflow: 'hidden', borderBottomLeftRadius: this.state.sender ? 0 : 20,
+            borderTopLeftRadius: this.state.sender ? 0 : 20, backgroundColor: this.state.sender ? '#FEFFDE' : '#E1F8F9',
+            borderTopRightRadius: 20, borderBottomRightRadius: this.state.sender ? 20 : 0,
+        }
+        spaceStyles = {
+            backgroundColor: "#FEFFDE", height: "100%",
+            width: "2%",
+            borderBottomRightRadius: 3,
+            marginTop: 1,
+            borderTopRightRadius: 15,
+        }
+        senderNameStyle = {
+            maxWidth: this.state.sender ? "98%" : "100%",
+            padding: this.state.sender ? 0 : 4,
+            borderBottomLeftRadius: 40,
+        }
+        subNameStyle = {
+            marginTop: -3, paddingBottom: 5,
+            flexDirection: "column"
+        }
+        nameTextStyle = { color: '#1EDEB6', fontSize: 13, }
+        return (
+            <View style={topMostStyle}>
+                <View style={GeneralMessageBoxStyle}>
+                    <View style={{ flexDirection: 'row' }}>
+                        {this.state.sender ? <View style={spaceStyles}>
+                        </View> : null}
+                        <View style={senderNameStyle} >
+                            {this.state.sender ? <View style={subNameStyle}><TouchableOpacity onPress={() => {
+                                console.warn('humm ! you want to know that contact !')
+                            }}><Text style={nameTextStyle}
+                                note>@{this.state.sender_name}</Text></TouchableOpacity></View> : null}
+                            {this.props.message.reply ? <View style={{ paddingRight: "1%", }}><ReplyText openReply={(replyer) => {
+                                this.props.message.reply.isThisUser = !this.state.sender
+                                return this.props.openReply(this.props.message.reply)
+                            }} reply={this.props.message.reply}></ReplyText></View>:null}
+                            <TouchableWithoutFeedback onLongPress={() => {
+                                Vibration.vibrate(this.duration)
+                                this.setState({
+                                    showTime: !this.state.showTime
+                                })
+                            }}>
+                            <View>
+                                    {this.chooseComponent(this.props.message, this.props.message.id)}
+                            </View>
+                            </TouchableWithoutFeedback>
+                        </View>
+                    </View>
+                </View>
+                {this.state.showTime ? <Text note style={{ marginLeft: "5%", fontSize: 12, }}>{this.state.time}</Text> : false}
+            </View>
+        )
+    }
 }
-
-const styles = StyleSheet.create({
-	container: {
-    padding: 10,
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-  },
-  positionToLeft: {
-    justifyContent: 'flex-start'
-  },
-  positionToRight: {
-    justifyContent: 'flex-end'
-  },
-  message: {
-    paddingTop: 5,
-    paddingBottom: 3,
-    paddingHorizontal: 6,
-    borderRadius: 10
-  },
-  messageToLeft: {
-    maxWidth: fullWidth - 90,
-    borderBottomLeftRadius: 2,
-    backgroundColor: 'mediumblue'
-  },
-  messageToRight: {
-    maxWidth: fullWidth - 55,
-    borderBottomRightRadius: 2,
-    backgroundColor: 'blue'
-  },
-  messageText: {
-    fontSize: 16,
-    color: 'white'
-  },
-  selfToLeft: {
-    alignSelf: 'flex-start'
-  },
-  selfToRight: {
-    alignSelf: 'flex-end'
-  },
-  dateSent: {
-    alignSelf: 'flex-end',
-    paddingTop: 1,
-    fontSize: 12,
-    color: 'lightcyan'
-  }
-})
