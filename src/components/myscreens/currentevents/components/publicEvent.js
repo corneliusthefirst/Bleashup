@@ -250,7 +250,7 @@ class PublicEvent extends Component {
               {this.state.master || this.props.Event.public ? <View>
                 {this.state.publishing ? <View style={{ height: 18 }}>
                   <Spinner size={"small"} color="#7DD2D2"></Spinner></View> : <Icon
-                    name="forward"
+                    name="megaphone"
                     type="Entypo"
                     style={{
                       fontSize: 16,

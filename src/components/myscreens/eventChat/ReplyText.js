@@ -23,15 +23,15 @@ export default class ReplyText extends Component {
             <TouchableOpacity onPress={()=> this.props.openReply()}>
                 <View style={{
                     display: 'flex', flexDirection: 'row', borderBottomWidth: 0,
-                    backgroundColor: "rgba(34, 0, 0, 0.1)",
-                    marginBottom: "2%", padding: "2%",
+                    backgroundColor: "rgba(34, 0, 0, 0.1)",marginLeft: "1%",
+                    marginBottom: "1%", padding: "3%",
                     borderRadius: 10, borderWidth: 1, borderColor: "#1FABAF",
                 }}>
                     <View style={{ width: "5%" }}><Icon type="FontAwesome"
                         style={{ fontSize: 12, color: "#1FABAB" }} name="quote-left"></Icon>
                     </View>
                     <View style={{ width: "90%", }}>
-                        <Text note style={{ marginBottom: "1%" }}>{"@"}{this.props.reply.replyer_name}</Text>
+                        <Text note style={{ marginBottom: "1%", color: "#81A8A0" }}>{"@"}{this.props.reply.replyer_name}</Text>
                         {this.props.reply.audio || this.props.reply.file ? <View style={{ display: "flex", flexDirection: 'row', }}>
                             <Icon type={this.props.reply.audio ? "MaterialIcons" : "MaterialCommunityIcons"}
                                 name={this.props.reply.audio ? "audiotrack" : "file-document-box"} style={{ marginRight: "50%", color: "#1FABAF" }}></Icon>
@@ -48,7 +48,7 @@ export default class ReplyText extends Component {
 
                                 </View>
                                 <View style={{ width: this.props.reply.source ? "79%" : "100%" }}>
-                                    <Text note style={{}}>{this.props.reply.text.slice(0, this.props.reply.source ? 100 : 200)} ...</Text>
+                                    <Text note style={{ color:"#81A8A0"}}>{this.props.reply.text.slice(0, this.props.reply.source ? 100 : 200)} ...</Text>
                                 </View>
                             </View>}
                     </View>

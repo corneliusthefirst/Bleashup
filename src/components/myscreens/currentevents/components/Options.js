@@ -250,7 +250,7 @@ import stores from "../../../../stores";
             >
                 <TouchableOpacity onPress={this.navigateToVotes}>
                     <View style={this.others}>
-                        <Icon type="AntDesign" name="totop" style={
+                            <Icon type="FontAwesome5" name="poll" style={
                             {
                                 color: "#1FABAB"
                             }

@@ -53,7 +53,7 @@ export default class Message extends Component {
         GeneralMessageBoxStyle = {
             maxWidth: 300, flexDirection: 'column', minWidth: "10%",
             minHeight: 10, overflow: 'hidden', borderBottomLeftRadius: this.state.sender ? 0 : 20,
-            borderTopLeftRadius: this.state.sender ? 0 : 20, backgroundColor: this.state.sender ? '#FEFFDE' : '#E1F8F9',
+            borderTopLeftRadius: this.state.sender ? 0 : 20, backgroundColor: this.state.sender ? '#DEDEDE' : '#9EEDD3',
             borderTopRightRadius: 20, borderBottomRightRadius: this.state.sender ? 20 : 0,
         }
         spaceStyles = {

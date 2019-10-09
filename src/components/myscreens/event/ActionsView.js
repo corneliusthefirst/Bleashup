@@ -16,7 +16,7 @@ export default class ActionsView extends Component {
         return (
             <View style={{ display: 'flex', flexDirection: 'column',}}>
                 <View style={{ height: this.actionHeight }}>
-                    <Icon style={{ marginLeft: "30%", color: this.actionColor, fontSize: this.fontSize, }} type="FontAwesome5" name="share"></Icon>
+                    <Icon style={{ marginLeft: "30%", color: this.actionColor, fontSize: this.fontSize, }} type="Entypo" name="megaphone"></Icon>
                     <Label style={{ marginLeft: "13%", fontSize: this.textSize, color: this.actionColor }}>Publish</Label>
                 </View>
                 <View style={{ height: this.actionHeight }}>

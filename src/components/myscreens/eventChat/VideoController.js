@@ -1069,20 +1069,7 @@ export default class VideoController extends Component {
     renderLoader() {
         if (this.state.loading) {
             return (
-                <View style={styles.seekbar.container}>
-                    <View
-                        style={styles.seekbar.track}
-                        onLayout={event => this.player.seekerWidth = event.nativeEvent.layout.width}
-                    >
-                        <View style={[
-                            styles.seekbar.fill,
-                            {
-                                width: this.state.seekerFillWidth,
-                                backgroundColor: this.props.seekColor || '#FEFFDE'
-                            }
-                        ]} />
-                    </View>
-                </View>
+               <Spinner></Spinner>
             );
         }
         return null;

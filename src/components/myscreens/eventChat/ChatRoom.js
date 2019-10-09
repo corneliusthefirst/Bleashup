@@ -24,7 +24,10 @@ import {
     TouchableWithoutFeedback,
     TouchableOpacity,
     Dimensions,
-    BackHandler
+    BackHandler,
+    Keyboard,
+    Platform,
+    KeyboardAvoidingView
 } from 'react-native';
 
 import { observer } from "mobx-react";
@@ -35,9 +38,10 @@ import ServerEventListener from "../../../services/severEventListener";
 import connection from "../../../services/tcpConnect";
 import UpdatesDispatcher from "../../../services/updatesDispatcher";
 import { ScrollView } from 'react-navigation';
+import EmojiInput from "react-native-emoji-input"
 import Video from 'react-native-video';
 import VideoPlayer from "./VideoController"
-
+import KeyboardSpacer from '@thenetcircle/react-native-keyboard-spacer';
 import TextMessage from "./TextMessage";
 import PhotoMessage from "./PhotoMessage";
 import AudioMessage from "./AudioMessage";
@@ -46,36 +50,100 @@ import FileAttarchementMessaege from "./FileAttarchtmentMessage";
 import BleashupFlatList from '../../BleashupFlatList';
 import Message from "./Message";
 import { find } from "lodash"
+import { TextInput } from "react-native-gesture-handler";
 const screenWidth = Math.round(Dimensions.get('window').width);
+const screenheight = Math.round(Dimensions.get('window').height);
 export default class ChatRoom extends Component {
     constructor(props) {
         super(props);
         this.state = {
             sender: false,
-            user:2,
+            user: 2,
             splicer: 500,
             creator: true,
+            showEmojiInput: false,
+            keyboardOpened: false,
+            messageListHeight: this.formHeight(0.91),
+            textInputHeight: this.formHeight(0.09),
+            inittialTextInputHeightFactor: 0.09,
+            initialMessaListHeightFactor: 0.91,
             showRepliedMessage: false,
             showVideo: false,
             playing: true,
-            replyer:{}
+            replyer: {}
         };
     }
+    messageListFactor = 0.5
+    textInputFactor = 0.5
     componentDidMount() {
+        this.keyboardDidShowSub = Keyboard.addListener('keyboardDidShow', this.handleKeyboardDidShow);
+        this.keyboardDidHideSub = Keyboard.addListener('keyboardDidHide', this.handleKeyboardDidHide);
         BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this))
     }
     componentWillUnmount() {
+        this.keyboardDidShowSub.remove();
+        this.keyboardDidHideSub.remove();
         BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton);
     }
+
+    handleKeyboardDidShow = (event) => {
+        const { height: windowHeight } = Dimensions.get('window');
+        const keyboardHeight = event.endCoordinates.height;
+        this.setState({
+            showEmojiInput:this.state.showEmojiInput?false:false,
+            keyboardOpened: true,
+            textInputHeight: this.formHeight(this.textInputFactor),
+            messageListHeight: this.formHeight(this.messageListFactor)
+        })
+        /*   UIManager.measure(currentlyFocusedField, (originX, originY, width, height, pageX, pageY) => {
+               const fieldHeight = height;
+               const fieldTop = pageY;
+               const gap = (windowHeight - keyboardHeight) - (fieldTop + fieldHeight);
+               if (gap >= 0) {
+                   return;
+               }
+               Animated.timing(
+                   this.state.shift,
+                   {
+                       toValue: gap,
+                       duration: 1000,
+                       useNativeDriver: true,
+                   }
+               ).start();
+           });*/
+    }
+
+    handleKeyboardDidHide = () => {
+        this.setState({
+            keyboardOpened: false,
+            messageListHeight:!this.state.showEmojiInput? this.formHeight(this.state.initialMessaListHeightFactor):this.formHeight(this.messageListFactor),
+            textInputHeight:!this.state.showEmojiInput? this.formHeight(this.state.inittialTextInputHeightFactor):this.formHeight(this.textInputFactor)
+        })
+        /*  Animated.timing(
+              this.state.shift,
+              {
+                  toValue: 0,
+                  duration: 1000,
+                  useNativeDriver: true,
+              }
+          ).start();*/
+    }
+
     handleBackButton() {
         if (this.state.showVideo) {
             this.setState({
                 showVideo: false
             })
             return true
-        }else if(this.state.showRepliedMessage){
+        } else if (this.state.showRepliedMessage) {
             this.setState({
-                showRepliedMessage:false
+                showRepliedMessage: false
+            })
+            return true
+        } else if(this.state.showEmojiInput){
+            this._textInput.focus()
+            this.setState({
+                showEmojiInput:false
             })
             return true
         } else {
@@ -92,8 +160,8 @@ export default class ChatRoom extends Component {
         file_name: 'p2.mp3',
         total: 0,
         received: 0,
-        user:2,
-        creator:2,
+        user: 2,
+        creator: 2,
         type: 'audio',
         sender: {
             phone: 3,
@@ -107,66 +175,66 @@ export default class ChatRoom extends Component {
             phone: 2,
             nickname: "Sokeng Kamga"
         },
-        user:3,
-            reply: {
-                id: 3,
-                user: 2,
-                text: `Hello!  Erlang/OTP is divided into a number of OTP applications. An application normally contains Erlang modules. Some OTP applications, such as the C interface erl_interface, are written in other languages and have no Erlang modules.
+        user: 3,
+        reply: {
+            id: 3,
+            user: 2,
+            text: `Hello!  Erlang/OTP is divided into a number of OTP applications. An application normally contains Erlang modules. Some OTP applications, such as the C interface erl_interface, are written in other languages and have no Erlang modules.
 On a Unix system you can view the manual pages from the command line using
     % erl -man <module>`,
-                video: true,
-                replyer_name: "Santers Gipson",
-                source: "http://192.168.43.32:8555/sound/get/bm33r9813uloeua1aasg_bm33r9813uloeua1aat0_bm33r9813uloeua1aatg.jpg"
-            },
-        creator:2,
+            video: true,
+            replyer_name: "Santers Gipson",
+            source: "http://192.168.43.32:8555/sound/get/bm33r9813uloeua1aasg_bm33r9813uloeua1aat0_bm33r9813uloeua1aatg.jpg"
+        },
+        creator: 2,
         type: "photo",
         photo: "http://192.168.43.32:8555/sound/get/bm33r9813uloeua1aasg_bm33r9813uloeua1aat0_bm33r9813uloeua1aatg.jpg",
         file_name: 'bm33r9813uloeua1aasg_bm33r9813uloeua1aat0_bm33r9813uloeua1aatg.jpg',
         created_at: "2014-03-30 12:32",
         text: `Hello!`
-    },{
-            id: 3,
-            source: 'http://192.168.43.32:8555/video/get/bma9auo13ult3nh5n690_bma9auo13ult3nh5n69g_bma9auo13ult3nh5n6a0.mp4',
-            file_name: 'bma9auo13ult3nh5n690_bma9auo13ult3nh5n69g_bma9auo13ult3nh5n6a0_thumbnail.jpeg',
-            thumbnailSource: 'http://192.168.43.32:8555/video/thumbnail/get/bma9auo13ult3nh5n690_bma9auo13ult3nh5n69g_bma9auo13ult3nh5n6a0_thumbnail.jpeg',
-            sender: {
-                phone: 3,
-                nickname: "Sokeng Kamga"
-            },
-            user: 2,
-            creator: 3,
-            type: "video",
-            received: 0,
-            total: 0,
-            reply: {
-                id:2,
-                user:3,
-                text: `Hello!  Erlang/OTP is divided into a number of OTP applications. An application normally contains Erlang modules. Some OTP applications, such as the C interface erl_interface, are written in other languages and have no Erlang modules.
+    }, {
+        id: 3,
+        source: 'http://192.168.43.32:8555/video/get/bma9auo13ult3nh5n690_bma9auo13ult3nh5n69g_bma9auo13ult3nh5n6a0.mp4',
+        file_name: 'bma9auo13ult3nh5n690_bma9auo13ult3nh5n69g_bma9auo13ult3nh5n6a0_thumbnail.jpeg',
+        thumbnailSource: 'http://192.168.43.32:8555/video/thumbnail/get/bma9auo13ult3nh5n690_bma9auo13ult3nh5n69g_bma9auo13ult3nh5n6a0_thumbnail.jpeg',
+        sender: {
+            phone: 3,
+            nickname: "Sokeng Kamga"
+        },
+        user: 2,
+        creator: 3,
+        type: "video",
+        received: 0,
+        total: 0,
+        reply: {
+            id: 2,
+            user: 3,
+            text: `Hello!  Erlang/OTP is divided into a number of OTP applications. An application normally contains Erlang modules. Some OTP applications, such as the C interface erl_interface, are written in other languages and have no Erlang modules.
 On a Unix system you can view the manual pages from the command line using
     % erl -man <module>`,
-                video: true,
-                replyer_name: "Santers Gipson",
-                source: "http://192.168.43.32:8555/sound/get/bm33r9813uloeua1aasg_bm33r9813uloeua1aat0_bm33r9813uloeua1aatg.jpg"
-            },
-            text: `Hello!
+            video: true,
+            replyer_name: "Santers Gipson",
+            source: "http://192.168.43.32:8555/sound/get/bm33r9813uloeua1aasg_bm33r9813uloeua1aat0_bm33r9813uloeua1aatg.jpg"
+        },
+        text: `Hello!
         Erlang/OTP is divided into a number of OTP applications. An application normally contains Erlang modules. Some OTP applications, such as the C interface erl_interface, are written in other languages and have no Erlang modules.
 On a Unix system you can view the manual pages from the command line using
     % erl -man <module>
 You can of course use any editor you like to write Erlang programs, but if you use Emacs there exists editing support such as indentation, syntax highlighting, electric commands, module name verification, comment support including paragraph filling, skeletons, tags support and more. See the Tools application for details.
 There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , Eclipse (ErlIDE) and IntelliJ IDEA.`,
-            duration: Math.floor(0),
-            created_at: "2014-03-30 12:32",
-        }, {
+        duration: Math.floor(0),
+        created_at: "2014-03-30 12:32",
+    }, {
         id: 4,
         source: 'http://192.168.43.32:8555/video/get/bm6lgk013ult9gc75vmg_bm6lgk013ult9gc75vn0_bm6lgk013ult9gc75vng.mp4',
-            file_name: 'Black M - Le prince Aladin (Clip officiel) ft. Kev Adams.mp4',
+        file_name: 'Black M - Le prince Aladin (Clip officiel) ft. Kev Adams.mp4',
         thumbnailSource: 'http://192.168.43.32:8555/video/thumbnail/get/bm7sd5813ulrbjp7u1sg_bm7sd5813ulrbjp7u1t0_bm7sd5813ulrbjp7u1tg_thumbnail.jpeg',
         sender: {
             phone: 3,
             nickname: "Sokeng Kamga"
         },
-        user:2,
-        creator:2,
+        user: 2,
+        creator: 2,
         type: "attachement",
         received: 0,
         total: 0,
@@ -191,8 +259,8 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
             nickname: "Sokeng Kamga"
         },
         type: "video",
-        user:3,
-        creator:2,
+        user: 3,
+        creator: 2,
         received: 0,
         total: 0,
         text: `Hello!
@@ -206,7 +274,10 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
         duration: Math.floor(0),
         created_at: "2014-0s3-30 12:32",
     }]
-
+    formHeight(factor) {
+       // console.warn(factor, screenheight)
+        return (factor * 100).toString() + "%"
+    }
     playVideo(video) {
         this.setState({
             video: video,
@@ -252,60 +323,115 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
             playing: !this.state.playing
         })
     }
+    _onChange(event) {
+        this.setState({ textValue: event.nativeEvent.text || '' });
+    }
+    filterFunctionByUnicode = emoji => {
+        return emoji.lib.added_in === "6.0" || emoji.lib.added_in === "6.1"
+    }
+    _resetTextInput() {
+        this._textInput.clear();
+        this._textInput.resetHeightToMin();
+    }
+    handleEmojiSelected() {
+
+    }
+    verboseLoggingFunction(error) {
+
+    }
     transparent = "rgba(50, 51, 53, 0.8)";
     render() {
         return (
             <View>
-                <View style={{ marginBottom: "2%", }}>
-                    <BleashupFlatList
-                        firstIndex={0}
-                        backgroundColor={"#FFF"}
-                        inverted={true}
-                        renderPerBatch={20}
-                        initialRender={7}
-                        numberOfItems={this.message.length}
-                        keyExtractor={(item) => item ? item.id : null}
-                        renderItem={(item) => item ? <Message message={item} openReply={(replyer) => {
-                            this.setState({
-                                replyer : replyer,
-                                showRepliedMessage : true
-                            })
-                        }} user={item.user} creator={item.creator} playVideo={(source) => this.playVideo(source)}></Message> : null}
-                        dataSource={this.message}
-                    >
-                    </BleashupFlatList>
+                <View>
+                    <View style={{ height: this.state.messageListHeight,marginBottom: "0.1%", }}>
+                        <BleashupFlatList
+                            firstIndex={0}
+                            backgroundColor={"transparent"}
+                            inverted={true}
+                            renderPerBatch={20}
+                            initialRender={7}
+                            numberOfItems={this.message.length}
+                            keyExtractor={(item) => item ? item.id : null}
+                            renderItem={(item) => item ? <Message message={item} openReply={(replyer) => {
+                                this.setState({
+                                    replyer: replyer,
+                                    showRepliedMessage: true
+                                })
+                            }} user={item.user} creator={item.creator} playVideo={(source) => this.playVideo(source)}></Message> : null}
+                            dataSource={this.message}
+                        >
+                        </BleashupFlatList>
+                    </View>
+                    <KeyboardAvoidingView  keyboardVerticalOffset>
+                    <View style={{ height: this.state.textInputHeight, }}>
+                            <View style={{ display: 'flex', flexDirection: 'row', }}>
+                                <View><Icon style={{ color: "#1FABAB" }} onPress={() => {
+                                    this.state.keyboardOpened ? Keyboard.dismiss() : this._textInput.focus()
+                                    this.setState({
+                                        showEmojiInput: !this.state.showEmojiInput,
+                                        messageListHeight: this.state.showEmojiInput ? this.formHeight(this.state.initialMessaListHeightFactor) : this.formHeight(this.messageListFactor),
+                                        textInputHeight: this.state.showEmojiInput ? this.formHeight(this.state.inittialTextInputHeightFactor) : this.formHeight(this.textInputFactor)
+                                    })
+                                }} type="Entypo" name="emoji-flirt"></Icon></View>
+                                <TextInput
+                                    value={this.state.textValue}
+                                    onChange={(event) => this._onChange(event)}
+                                    style={styles.textInput}
+                                    placeholder={'Your Message'}
+                                    placeholderTextColor='#66737C'
+                                    maxHeight={200}
+                                    multiline={this.state.keyboardOpened ? true : false}
+                                    minHeight={45}
+                                    enableScrollToCaret
+                                    ref={(r) => { this._textInput = r; }}
+                                />
+                                <View><Icon style={{ color: "#1FABAB" }} name="sc-telegram" type="EvilIcons"></Icon></View>
+                            </View>
+                            {this.state.showEmojiInput ? <View style={{ width: "100%", height:300}}>
+                                <EmojiInput onEmojiSelected={(emoji) => this.handleEmojiSelected()}
+                                    enableSearch={false}
+                                    ref={emojiInput => this._emojiInput = emojiInput}
+                                    resetSearch={this.state.reset}
+                                    loggingFunction={this.verboseLoggingFunction.bind(this)}
+                                    verboseLoggingFunction={true}
+                                    filterFunctions={[this.filterFunctionByUnicode]} ></EmojiInput>
+                            </View> : null}
+                        <KeyboardSpacer />
+                    </View>
+                    </KeyboardAvoidingView>
                 </View>
                 {this.state.showRepliedMessage ? <View style={{
-                    height:1000,
-                    position: "absolute",  backgroundColor: this.transparent,
+                    height: 1000,
+                    position: "absolute", backgroundColor: this.transparent,
                     width: "100%",
                 }}>
-                <View style={{display:'flex',flexDirection: 'row',}}>
-               {this.state.replyer.user==this.state.user? <TouchableOpacity onPress={()=>{
-                    this.setState({
-                        showRepliedMessage:false
-                    })
-                }}>
-                            <Icon type="EvilIcons" style={{ margin: '7%', fontSize: 35, color: "#FEFFDE" }} name={"close"}></Icon>
-                </TouchableOpacity>:null}
-                    <ScrollView>
-                        <View style={{display:"flex",flex: 1,}}>
-                                {<Message openReply={(replyer) => {
-                                    this.setState({
-                                        replyer:replyer,
-                                        showRepliedMessage:true
-                                    })
-                                }} playVideo={(source) => this.playVideo(source)}
-                                creator={2} user={2} message={find(this.message, { id: this.state.replyer.id })} />}
-                        </View>
-                    </ScrollView>
-                      {!(this.state.replyer.user==this.state.user)?<TouchableOpacity onPress={() => {
+                    <View style={{ display: 'flex', flexDirection: 'row', }}>
+                        {this.state.replyer.user == this.state.user ? <TouchableOpacity onPress={() => {
                             this.setState({
                                 showRepliedMessage: false
                             })
                         }}>
-                            <Icon type="EvilIcons" style={{ margin: '2%',marginTop: "8%", fontSize: 35, color: "#FEFFDE" }} name={"close"}></Icon>
-                        </TouchableOpacity>:null}
+                            <Icon type="EvilIcons" style={{ margin: '7%', fontSize: 35, color: "#FEFFDE" }} name={"close"}></Icon>
+                        </TouchableOpacity> : null}
+                        <ScrollView>
+                            <View style={{ display: "flex", }}>
+                                {<Message openReply={(replyer) => {
+                                    this.setState({
+                                        replyer: replyer,
+                                        showRepliedMessage: true
+                                    })
+                                }} playVideo={(source) => this.playVideo(source)}
+                                    creator={2} user={2} message={find(this.message, { id: this.state.replyer.id })} />}
+                            </View>
+                        </ScrollView>
+                        {!(this.state.replyer.user == this.state.user) ? <TouchableOpacity onPress={() => {
+                            this.setState({
+                                showRepliedMessage: false
+                            })
+                        }}>
+                            <Icon type="EvilIcons" style={{ margin: '2%', marginTop: "8%", fontSize: 35, color: "#FEFFDE" }} name={"close"}></Icon>
+                        </TouchableOpacity> : null}
                     </View>
                 </View> : null}
                 {this.state.showVideo ? <View style={{
@@ -358,3 +484,16 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
         )
     }
 }
+
+
+const styles = StyleSheet.create({
+    textInput: {
+        paddingLeft: 10,
+        fontSize: 17,
+        minWidth: 100,
+        maxWidth: 300,
+        backgroundColor: 'white',
+        borderWidth: 1,
+        borderRadius: 8,
+    }
+});

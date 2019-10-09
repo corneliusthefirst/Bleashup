@@ -81,7 +81,7 @@ export default class SwipeOutView extends Component {
                             <TouchableOpacity onPress={() => {
                                 this.props.publish()
                             }}>
-                                <Icon style={{ fontSize: 20, color: this.props.Event.public || this.props.master ? "#7DD2D2" : "#bfc6ea" }} name="forward" type="Entypo">
+                                <Icon style={{ fontSize: 20, color: this.props.Event.public || this.props.master ? "#7DD2D2" : "#bfc6ea" }} name="megaphone" type="Entypo">
                                 </Icon>
                                 <Label style={{ fontSize: 12, color: this.props.Event.public || this.props.master ? "#7DD2D2" : "#bfc6ea" }}>Publish</Label>
                             </TouchableOpacity>
@@ -99,7 +99,8 @@ export default class SwipeOutView extends Component {
                             {<TouchableOpacity onPress={() => {
                                 this.props.join()
                             }}>
-                                <Icon style={{ fontSize: 20, color: this.props.Event.joint ? "#7DD2D2" : "#bfc6ea" }} name="universal-access" type="Foundation">
+                                <Icon style={{ fontSize: 20, color: this.props.Event.joint ? "#7DD2D2" : "#bfc6ea" }} name="account-group"
+                                 type="MaterialCommunityIcons">
                                 </Icon>
                                 <Label style={{
                                     color: this.props.Event.joint ? "#7DD2D2" : "#bfc6ea",

@@ -50,8 +50,8 @@ import { observer } from "mobx-react";
                         <TouchableWithoutFeedback onPress={() => this.join()} >
                             <View >
                                 <Icon
-                                    name="universal-access"
-                                    type="Foundation"
+                                name="account-group"
+                                type="MaterialCommunityIcons"
                                     style={{
                                         color: this.state.participant ? "#54F5CA" : "#bfc6ea",
                                         fontSize: 23
@@ -59,7 +59,7 @@ import { observer } from "mobx-react";
                                 />
                             </View>
                         </TouchableWithoutFeedback>
-                        <View style={{ marginTop: 1 }}>
+                        <View style={{ marginTop: 5 }}>
                             <Text style={{ color: this.state.participant ? "#54F5CA" : "#bfc6ea", 
                             fontSize: 15, }} note>{this.state.participant ? " Joint" :" Join"}</Text>
                         </View>

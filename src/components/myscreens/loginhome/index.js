@@ -19,6 +19,7 @@ import {
 } from "native-base";
 import {
     View,
+    ImageBackground
 } from 'react-native';
 
 import initialRoute from "../invitations/components/initialRoute";
@@ -33,9 +34,11 @@ export default class LoginHomeView extends Component {
   }
   render() {
   return (
-   <ChatRoom></ChatRoom>
+  <ImageBackground resizeMode={"contain"} source={require("../../../../assets/Bleashup.png")} style={{ width: null, height: null, backgroundColor: "#FEFFDE",}}>
+      <ChatRoom></ChatRoom>
+    </ImageBackground>
    )
-   /*  routeName = initialRoute.routeName;
+   /* routeName = initialRoute.routeName;
       if ((globalState.loading = true)) {
         initialRoute.initialRoute().then(route => {
           if(route !== "Login"){
@@ -43,7 +46,7 @@ export default class LoginHomeView extends Component {
               globalState.loading = false;
               this.props.navigation.navigate(route);
             })
-            setTimeout(() => this.props.navigation.navigate(route), 5000)
+            setTimeout(() => this.props.navigation.navigate(route), 500)
           }else{
             globalState.loading = false;
             this.props.navigation.navigate(route);
@@ -53,23 +56,15 @@ export default class LoginHomeView extends Component {
       globalState.loading = true;
       return (
         <Container>
-          <Content>
-            <Left />
-            <Header style={{ marginBottom: 450 }}>
-              <Body>
-                <Title>BleashUp </Title>
-              </Body>
-              <Right />
-            </Header>
-  
+        <ImageBackground resizeMode={"contain"} source={require("../../../../assets/Bleashup.png")} style={{ width: "100%", height: "100%", backgroundColor: "#FEFFDE", }}>
             {globalState.loading ? (
-              <Spinner color="#1FABAB" style={{ marginTop: -175 }} />
+              <Spinner color="#FEFFDE" style={{ color:"#FEFFDE",marginTop: "96%",marginLeft: "8%", }} />
             ) : (
                 <Text> Waiting ... </Text>
               )}
-          </Content>
-  
+        </ImageBackground>
         </Container>
+        
       );*/
   }
 }
