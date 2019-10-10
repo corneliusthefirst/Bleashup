@@ -49,8 +49,10 @@ import VideoMessage from "./VideoMessage";
 import FileAttarchementMessaege from "./FileAttarchtmentMessage";
 import BleashupFlatList from '../../BleashupFlatList';
 import Message from "./Message";
-import { find } from "lodash"
+import { find,orderBy } from "lodash"
 import { TextInput } from "react-native-gesture-handler";
+import stores from "../../../stores";
+import moment from "moment";
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenheight = Math.round(Dimensions.get('window').height);
 export default class ChatRoom extends Component {
@@ -63,6 +65,7 @@ export default class ChatRoom extends Component {
             creator: true,
             showEmojiInput: false,
             keyboardOpened: false,
+            textValue:'',
             messageListHeight: this.formHeight(0.91),
             textInputHeight: this.formHeight(0.09),
             inittialTextInputHeightFactor: 0.09,
@@ -73,8 +76,8 @@ export default class ChatRoom extends Component {
             replyer: {}
         };
     }
-    messageListFactor = 0.5
-    textInputFactor = 0.5
+    messageListFactor = 0.84
+    textInputFactor = 0.16
     componentDidMount() {
         this.keyboardDidShowSub = Keyboard.addListener('keyboardDidShow', this.handleKeyboardDidShow);
         this.keyboardDidHideSub = Keyboard.addListener('keyboardDidHide', this.handleKeyboardDidHide);
@@ -116,8 +119,10 @@ export default class ChatRoom extends Component {
     handleKeyboardDidHide = () => {
         this.setState({
             keyboardOpened: false,
-            messageListHeight:!this.state.showEmojiInput? this.formHeight(this.state.initialMessaListHeightFactor):this.formHeight(this.messageListFactor),
-            textInputHeight:!this.state.showEmojiInput? this.formHeight(this.state.inittialTextInputHeightFactor):this.formHeight(this.textInputFactor)
+            messageListHeight:!this.state.showEmojiInput?
+             this.formHeight(this.state.initialMessaListHeightFactor):this.formHeight(0.50),
+            textInputHeight:!this.state.showEmojiInput? 
+            this.formHeight(this.state.inittialTextInputHeightFactor):this.formHeight(0.50)
         })
         /*  Animated.timing(
               this.state.shift,
@@ -155,7 +160,7 @@ export default class ChatRoom extends Component {
         showTime: true
     }
     message = [{
-        id: 1,
+        id: 0,
         source: 'http://192.168.43.32:8555/sound/get/p2.mp3',
         file_name: 'p2.mp3',
         total: 0,
@@ -170,6 +175,22 @@ export default class ChatRoom extends Component {
         duration: Math.floor(0),
         created_at: "2014-03-30 12:32",
     }, {
+            id: 1,
+            source: 'http://192.168.43.32:8555/sound/get/p2.mp3',
+            file_name: 'p2.mp3',
+            total: 0,
+            received: 0,
+            user: 1,
+            creator: 2,
+            type: 'text',
+            text:`hello `,
+            sender: {
+                phone: 3,
+                nickname: "Sokeng Kamga"
+            },
+            duration: Math.floor(0),
+            created_at: "2014-03-30 12:32",
+        }, {
         id: 2,
         sender: {
             phone: 2,
@@ -331,10 +352,33 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
     }
     _resetTextInput() {
         this._textInput.clear();
-        this._textInput.resetHeightToMin();
+       // this._textInput.resetHeightToMin();
     }
-    handleEmojiSelected() {
-
+    handleEmojiSelected(e) {
+        this.setState({
+            textValue: this.state.textValue +e.char
+        })
+    }
+    sendMessageText(message){
+      let  messager = {
+          id:100,
+            type:"text",
+            text : message,
+            sender:{
+                phone:3,
+                nickname:"Fokam Giles"
+            },
+            user :2,
+            creator:1,
+          created_at: moment().format("YYYY-MM-DD HH:mm")
+        }
+        this.message.unshift(messager)
+        stores.ChatStore.addMessage(messager).then(()=>{
+            this._resetTextInput()
+            this.setState({
+                newMessage:true
+            })
+        })
     }
     verboseLoggingFunction(error) {
 
@@ -344,10 +388,9 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
         return (
             <View>
                 <View>
-                    <View style={{ height: this.state.messageListHeight,marginBottom: "0.1%", }}>
+                    <View style={{ height: this.state.messageListHeight,marginBottom: "0.5%", }}>
                         <BleashupFlatList
                             firstIndex={0}
-                            backgroundColor={"transparent"}
                             inverted={true}
                             renderPerBatch={20}
                             initialRender={7}
@@ -366,14 +409,21 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
                     <KeyboardAvoidingView  keyboardVerticalOffset>
                     <View style={{ height: this.state.textInputHeight, }}>
                             <View style={{ display: 'flex', flexDirection: 'row', }}>
-                                <View><Icon style={{ color: "#1FABAB" }} onPress={() => {
-                                    this.state.keyboardOpened ? Keyboard.dismiss() : this._textInput.focus()
-                                    this.setState({
-                                        showEmojiInput: !this.state.showEmojiInput,
-                                        messageListHeight: this.state.showEmojiInput ? this.formHeight(this.state.initialMessaListHeightFactor) : this.formHeight(this.messageListFactor),
-                                        textInputHeight: this.state.showEmojiInput ? this.formHeight(this.state.inittialTextInputHeightFactor) : this.formHeight(this.textInputFactor)
-                                    })
-                                }} type="Entypo" name="emoji-flirt"></Icon></View>
+                                <View style={{marginTop: "2%", 
+                            display: 'flex',flexDirection: 'row',}}><TouchableOpacity>
+                                        <Icon name={"attach-file"} type={"MaterialIcons"} style={{ color: "#0A4E52", }}></Icon></TouchableOpacity>
+                                    <TouchableOpacity><Icon style={{ color: "#0A4E52", marginRight: "1%",}} 
+                                        type={"Ionicons"} name={"md-photos"}></Icon></TouchableOpacity><TouchableOpacity><Icon style={{ color: "#0A4E52", marginRight: "1%"}}
+                                        type={"MaterialIcons"} name={"photo-camera"}></Icon></TouchableOpacity><Icon style={{ color: "#1FABAB" }} onPress={() => {
+                                            !this.state.showEmojiInput ? Keyboard.dismiss() : this._textInput.focus()
+                                            this.setState({
+                                                showEmojiInput: !this.state.showEmojiInput,
+                                                messageListHeight: this.state.showEmojiInput ?
+                                                    this.formHeight(this.state.initialMessaListHeightFactor) : this.formHeight(0.50),
+                                                textInputHeight: this.state.showEmojiInput ?
+                                                    this.formHeight(this.state.inittialTextInputHeightFactor) : this.formHeight(0.50)
+                                            })
+                                        }} type="Entypo" name="emoji-flirt"></Icon></View>
                                 <TextInput
                                     value={this.state.textValue}
                                     onChange={(event) => this._onChange(event)}
@@ -386,10 +436,16 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
                                     enableScrollToCaret
                                     ref={(r) => { this._textInput = r; }}
                                 />
-                                <View><Icon style={{ color: "#1FABAB" }} name="sc-telegram" type="EvilIcons"></Icon></View>
+                                <View style={{ marginLeft: "2%", marginTop: "2%", display: 'flex', flexDirection: 'row', }}><TouchableOpacity><Icon style={{
+                                    color: "#0A4E52",
+                                marginRight: "8%", }} 
+                                    type={"FontAwesome5"} name={"microphone-alt"} ></Icon></TouchableOpacity>
+                                    <TouchableOpacity onPress={()=>{requestAnimationFrame(()=>{
+                                       return this.sendMessageText(this.state.textValue)
+                                    })}}><Icon style={{ color: "#1FABAB" }} name="paper-plane" type="FontAwesome"></Icon></TouchableOpacity></View>
                             </View>
                             {this.state.showEmojiInput ? <View style={{ width: "100%", height:300}}>
-                                <EmojiInput onEmojiSelected={(emoji) => this.handleEmojiSelected()}
+                                <EmojiInput onEmojiSelected={(emoji) => this.handleEmojiSelected(emoji)}
                                     enableSearch={false}
                                     ref={emojiInput => this._emojiInput = emojiInput}
                                     resetSearch={this.state.reset}
@@ -490,8 +546,9 @@ const styles = StyleSheet.create({
     textInput: {
         paddingLeft: 10,
         fontSize: 17,
-        minWidth: 100,
-        maxWidth: 300,
+        height:50,
+        width: 230,
+        borderColor: "#1FABAB",
         backgroundColor: 'white',
         borderWidth: 1,
         borderRadius: 8,

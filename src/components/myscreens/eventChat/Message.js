@@ -65,7 +65,7 @@ export default class Message extends Component {
         }
         senderNameStyle = {
             maxWidth: this.state.sender ? "98%" : "100%",
-            padding: this.state.sender ? 0 : 4,
+            margin: this.state.sender ? 0 : 4,
             borderBottomLeftRadius: 40,
         }
         subNameStyle = {
@@ -84,20 +84,22 @@ export default class Message extends Component {
                                 console.warn('humm ! you want to know that contact !')
                             }}><Text style={nameTextStyle}
                                 note>@{this.state.sender_name}</Text></TouchableOpacity></View> : null}
-                            {this.props.message.reply ? <View style={{ paddingRight: "1%", }}><ReplyText openReply={(replyer) => {
-                                this.props.message.reply.isThisUser = !this.state.sender
-                                return this.props.openReply(this.props.message.reply)
-                            }} reply={this.props.message.reply}></ReplyText></View>:null}
-                            <TouchableWithoutFeedback onLongPress={() => {
-                                Vibration.vibrate(this.duration)
-                                this.setState({
-                                    showTime: !this.state.showTime
-                                })
-                            }}>
-                            <View>
-                                    {this.chooseComponent(this.props.message, this.props.message.id)}
-                            </View>
-                            </TouchableWithoutFeedback>
+                                <View>
+                                {this.props.message.reply ? <View style={{ paddingRight: "1%", }}><ReplyText openReply={(replyer) => {
+                                    this.props.message.reply.isThisUser = !this.state.sender
+                                    return this.props.openReply(this.props.message.reply)
+                                }} reply={this.props.message.reply}></ReplyText></View> : null}
+                                <TouchableWithoutFeedback onLongPress={() => {
+                                    Vibration.vibrate(this.duration)
+                                    this.setState({
+                                        showTime: !this.state.showTime
+                                    })
+                                }}>
+                                    <View>
+                                        {this.chooseComponent(this.props.message, this.props.message.id)}
+                                    </View>
+                                </TouchableWithoutFeedback>
+                                </View>
                         </View>
                     </View>
                 </View>

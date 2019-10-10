@@ -6,7 +6,6 @@ import { List, Icon, Label, Card, CardItem, Text, Header, Thumbnail, Title } fro
 import InvitationModal from "../currentevents/components/InvitationModal";
 import autobind from "autobind-decorator";
 import { observer } from "mobx-react";
-import HeaderImageScrollView, { TriggeringView } from 'react-native-image-header-scroll-view';
 import stores from "../../../stores";
 import CacheImages from "../../CacheImages";
 import { Image } from 'react-native-svg';

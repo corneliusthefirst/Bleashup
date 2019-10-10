@@ -54,6 +54,11 @@ class ChatStore {
             resolve()
         })
     }
+    addMessage(message){
+        return new Promise((resolve,reject)=>{
+            resolve()
+        })
+    }
     addVideoSizeProperties(total,recieved){
         return new Promise((resolve,reject)=>{
             resolve()

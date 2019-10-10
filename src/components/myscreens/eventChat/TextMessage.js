@@ -29,62 +29,9 @@ export default class TextMessage extends Component {
     duration = 10
     pattern = [1000, 0, 0]
     render() {
-        topMostStyle = {
-            marginLeft: this.state.sender ? '0%' : 0,
-            marginRight: !this.state.sender ? '1%' : 0,
-            marginTop: "1%",
-            marginBottom: "0.5%",
-            alignSelf: this.state.sender ? 'flex-start' : 'flex-end',
-        }
-        GeneralMessageBoxStyle = {
-            maxWidth: 300, flexDirection: 'column', minWidth: "10%",
-            minHeight: 10, overflow: 'hidden', borderBottomLeftRadius: this.state.sender ? 0 : 20,
-            borderColor: !this.state.sender ? '#0A4E52' : "#0A4E52",
-            borderTopLeftRadius: this.state.sender ? 0 : 20, backgroundColor: this.state.sender ? '#F8F7EE' : '#E1F8F9',
-            borderTopRightRadius: 20, borderBottomRightRadius: this.state.sender ? 20 : 0,
-        }
-        spaceStyles = {
-         backgroundColor: "#FFFFFF", height: "100%",
-            width: "2%",
-            borderBottomRightRadius: 3,
-            marginTop: 1,
-            borderTopRightRadius: 15,
-        }
-        senderNameStyle = {
-            maxWidth: this.state.sender ? "98%" : "100%",
-            padding: 4,
-            borderBottomLeftRadius: 40,
-        }
-        subNameStyle = {
-            marginTop: -3, paddingBottom: 5,
-            flexDirection: "column"
-        }
         return (
-            <View style={topMostStyle}>
-                <View style={GeneralMessageBoxStyle}>
-                    <View style={{ flexDirection: 'row' }}>
-                        {this.state.sender ? <View style={spaceStyles}>
-                        </View> : null}
-                        <View style={senderNameStyle} >
-                            {this.state.sender ? <View style={subNameStyle}><TouchableOpacity onPress={() => {
-                                console.warn('humm ! you want to know that contact !')
-                            }}><Text style={{ color: '#1EDEB6', fontSize: 13, }}
-                                note>@{this.state.sender_name}</Text></TouchableOpacity></View> : null}
-                            <View style={{ margin: '2%', }}>
-                                <TouchableOpacity onLongPress={() => {
-                                    Vibration.vibrate(this.duration)
-                                    this.setState({
-                                        showTime: !this.state.showTime
-                                    })
-                                }}>
-                                    <TextContent text={this.props.message.text}></TextContent>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    </View>
-
-                </View>
-                {this.state.showTime ? <Text note style={{ marginLeft: "5%", }}>{this.state.time}</Text> : false}
+            <View style={{margin: '2%', marginTop: "-1%",}}>
+                <TextContent text={this.props.message.text}></TextContent>
             </View>
         );
     }
