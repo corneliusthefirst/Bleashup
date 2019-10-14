@@ -3,6 +3,7 @@ package com.bleashup.bleashup;
 import android.app.Application;
 import com.horcrux.svg.SvgPackage;
 import com.facebook.react.ReactApplication;
+import com.mg.app.PickerPackage;
 import com.vinzscam.reactnativefileviewer.RNFileViewerPackage;
 import com.brentvatne.react.ReactVideoPackage;
 import com.wix.autogrowtextinput.AutoGrowTextInputPackage;
@@ -42,6 +43,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new PickerPackage(),
             new RNFileViewerPackage(),
             new ReactVideoPackage(),
             new AutoGrowTextInputPackage(),

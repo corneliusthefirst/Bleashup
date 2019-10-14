@@ -1,8 +1,8 @@
 import React, { Component } from "react"
 import { View, TouchableOpacity, TouchableWithoutFeedback, Vibration } from 'react-native';
 import { Text } from 'native-base';
-import PhotoView from "../currentevents/components/PhotoView";
 import TextContent from "./TextContent";
+import Image from 'react-native-scalable-image';
 
 export default class PhotoMessage extends Component {
     constructor(props) {
@@ -29,12 +29,14 @@ export default class PhotoMessage extends Component {
     }
     render() {
         return (
-            <View style={{ padding: "3%" }}>
-                <PhotoView hasJoin onOpen={() => { }}
-                    photo={this.props.message.photo} style={{ alignSelf: 'center', }} width={290} height={340} borderRadius={5}>
-                </PhotoView>
+            <View style={{ padding: "1%" }}>
+            <TouchableOpacity onPress={()=> this.props.showPhoto(this.props.message.photo)}>
+                    <Image resizeMode={"contain"} hasJoin onOpen={() => { }}
+                        source={{ uri: this.props.message.photo }} style={{ alignSelf: 'center', }} width={290} borderRadius={20}>
+                    </Image>
+            </TouchableOpacity>
                 {this.props.message.text ? 
-                    <View>
+                    <View style={{marginLeft:"3%",marginBottom: "2%",}}>
                     <TextContent text={this.props.message.text}></TextContent>
                     </View> : null}
 

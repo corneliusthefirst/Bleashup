@@ -25,7 +25,7 @@ export default class ReplyText extends Component {
                     display: 'flex', flexDirection: 'row', borderBottomWidth: 0,
                     backgroundColor: "rgba(34, 0, 0, 0.1)",marginLeft: "1%",
                     marginBottom: "1%", padding: "3%",
-                    borderRadius: 10, borderWidth: 1, borderColor: "#1FABAF",
+                    borderRadius: 15, borderWidth: 1, borderColor: "#1FABAF",
                 }}>
                     <View style={{ width: "5%" }}><Icon type="FontAwesome"
                         style={{ fontSize: 12, color: "#1FABAB" }} name="quote-left"></Icon>

@@ -11,5 +11,10 @@
         "host": "192.168.43.32",
         "port": 5555
     },
+    "file_server":{
+     "host":"192.168.43.32",
+     "port":"8555",
+     "protocol":"http"
+    },
     "server_reference": "gilesCorneliusBleashup"
 }

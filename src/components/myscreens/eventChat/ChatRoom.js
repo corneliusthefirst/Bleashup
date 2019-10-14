@@ -18,7 +18,6 @@ import {
     Button
 } from "native-base";
 import {
-    Image,
     View,
     StyleSheet,
     TouchableWithoutFeedback,
@@ -39,17 +38,15 @@ import connection from "../../../services/tcpConnect";
 import UpdatesDispatcher from "../../../services/updatesDispatcher";
 import { ScrollView } from 'react-navigation';
 import EmojiInput from "react-native-emoji-input"
-import Video from 'react-native-video';
 import VideoPlayer from "./VideoController"
+import Image from 'react-native-scalable-image';
 import KeyboardSpacer from '@thenetcircle/react-native-keyboard-spacer';
-import TextMessage from "./TextMessage";
-import PhotoMessage from "./PhotoMessage";
-import AudioMessage from "./AudioMessage";
-import VideoMessage from "./VideoMessage";
-import FileAttarchementMessaege from "./FileAttarchtmentMessage";
+//import ImagePicker from 'react-native-image-picker';
+import ReactNativeZoomableView from '@dudigital/react-native-zoomable-view/src/ReactNativeZoomableView';
+import ImagePicker from 'react-native-customized-image-picker';
 import BleashupFlatList from '../../BleashupFlatList';
 import Message from "./Message";
-import { find,orderBy } from "lodash"
+import { find, orderBy, reject } from "lodash"
 import { TextInput } from "react-native-gesture-handler";
 import stores from "../../../stores";
 import moment from "moment";
@@ -65,7 +62,13 @@ export default class ChatRoom extends Component {
             creator: true,
             showEmojiInput: false,
             keyboardOpened: false,
-            textValue:'',
+            textValue: '',
+            image: null,
+            captionText: '',
+            textHeight: screenheight * 0.1,
+            photoHeight: screenheight * 0.9,
+            showCaption: false,
+            showEmojiInputCaption: false,
             messageListHeight: this.formHeight(0.91),
             textInputHeight: this.formHeight(0.09),
             inittialTextInputHeightFactor: 0.09,
@@ -93,10 +96,13 @@ export default class ChatRoom extends Component {
         const { height: windowHeight } = Dimensions.get('window');
         const keyboardHeight = event.endCoordinates.height;
         this.setState({
-            showEmojiInput:this.state.showEmojiInput?false:false,
+            showEmojiInput: false,
             keyboardOpened: true,
+            textHeight: screenheight * .55,
+            photoHeight: screenheight * .45,
             textInputHeight: this.formHeight(this.textInputFactor),
-            messageListHeight: this.formHeight(this.messageListFactor)
+            messageListHeight: this.formHeight(this.messageListFactor),
+            showEmojiInputCaption: false
         })
         /*   UIManager.measure(currentlyFocusedField, (originX, originY, width, height, pageX, pageY) => {
                const fieldHeight = height;
@@ -119,10 +125,12 @@ export default class ChatRoom extends Component {
     handleKeyboardDidHide = () => {
         this.setState({
             keyboardOpened: false,
-            messageListHeight:!this.state.showEmojiInput?
-             this.formHeight(this.state.initialMessaListHeightFactor):this.formHeight(0.50),
-            textInputHeight:!this.state.showEmojiInput? 
-            this.formHeight(this.state.inittialTextInputHeightFactor):this.formHeight(0.50)
+            messageListHeight: !this.state.showEmojiInput ?
+                this.formHeight(this.state.initialMessaListHeightFactor) : this.formHeight(0.50),
+            textInputHeight: !this.state.showEmojiInput || this.state.showEmojiInputCaption ?
+                this.formHeight(this.state.inittialTextInputHeightFactor) : this.formHeight(0.50),
+            textHeight: this.state.showEmojiInputCaption ? screenheight * 0.55 : screenheight * .1,
+            photoHeight: this.state.showEmojiInputCaption ? screenheight * 0.45 : screenheight * .9
         })
         /*  Animated.timing(
               this.state.shift,
@@ -145,10 +153,21 @@ export default class ChatRoom extends Component {
                 showRepliedMessage: false
             })
             return true
-        } else if(this.state.showEmojiInput){
+        } else if (this.state.showEmojiInput) {
             this._textInput.focus()
             this.setState({
-                showEmojiInput:false
+                showEmojiInput: false
+            })
+            return true
+        } else if (this.state.showCaption) {
+            Keyboard.dismiss()
+            this.setState({
+                showCaption: false
+            })
+            return true
+        } else if (this.state.showPhoto) {
+            this.setState({
+                showPhoto: false
             })
             return true
         } else {
@@ -159,144 +178,8 @@ export default class ChatRoom extends Component {
         sender: false,
         showTime: true
     }
-    message = [{
-        id: 0,
-        source: 'http://192.168.43.32:8555/sound/get/p2.mp3',
-        file_name: 'p2.mp3',
-        total: 0,
-        received: 0,
-        user: 2,
-        creator: 2,
-        type: 'audio',
-        sender: {
-            phone: 3,
-            nickname: "Sokeng Kamga"
-        },
-        duration: Math.floor(0),
-        created_at: "2014-03-30 12:32",
-    }, {
-            id: 1,
-            source: 'http://192.168.43.32:8555/sound/get/p2.mp3',
-            file_name: 'p2.mp3',
-            total: 0,
-            received: 0,
-            user: 1,
-            creator: 2,
-            type: 'text',
-            text:`hello `,
-            sender: {
-                phone: 3,
-                nickname: "Sokeng Kamga"
-            },
-            duration: Math.floor(0),
-            created_at: "2014-03-30 12:32",
-        }, {
-        id: 2,
-        sender: {
-            phone: 2,
-            nickname: "Sokeng Kamga"
-        },
-        user: 3,
-        reply: {
-            id: 3,
-            user: 2,
-            text: `Hello!  Erlang/OTP is divided into a number of OTP applications. An application normally contains Erlang modules. Some OTP applications, such as the C interface erl_interface, are written in other languages and have no Erlang modules.
-On a Unix system you can view the manual pages from the command line using
-    % erl -man <module>`,
-            video: true,
-            replyer_name: "Santers Gipson",
-            source: "http://192.168.43.32:8555/sound/get/bm33r9813uloeua1aasg_bm33r9813uloeua1aat0_bm33r9813uloeua1aatg.jpg"
-        },
-        creator: 2,
-        type: "photo",
-        photo: "http://192.168.43.32:8555/sound/get/bm33r9813uloeua1aasg_bm33r9813uloeua1aat0_bm33r9813uloeua1aatg.jpg",
-        file_name: 'bm33r9813uloeua1aasg_bm33r9813uloeua1aat0_bm33r9813uloeua1aatg.jpg',
-        created_at: "2014-03-30 12:32",
-        text: `Hello!`
-    }, {
-        id: 3,
-        source: 'http://192.168.43.32:8555/video/get/bma9auo13ult3nh5n690_bma9auo13ult3nh5n69g_bma9auo13ult3nh5n6a0.mp4',
-        file_name: 'bma9auo13ult3nh5n690_bma9auo13ult3nh5n69g_bma9auo13ult3nh5n6a0_thumbnail.jpeg',
-        thumbnailSource: 'http://192.168.43.32:8555/video/thumbnail/get/bma9auo13ult3nh5n690_bma9auo13ult3nh5n69g_bma9auo13ult3nh5n6a0_thumbnail.jpeg',
-        sender: {
-            phone: 3,
-            nickname: "Sokeng Kamga"
-        },
-        user: 2,
-        creator: 3,
-        type: "video",
-        received: 0,
-        total: 0,
-        reply: {
-            id: 2,
-            user: 3,
-            text: `Hello!  Erlang/OTP is divided into a number of OTP applications. An application normally contains Erlang modules. Some OTP applications, such as the C interface erl_interface, are written in other languages and have no Erlang modules.
-On a Unix system you can view the manual pages from the command line using
-    % erl -man <module>`,
-            video: true,
-            replyer_name: "Santers Gipson",
-            source: "http://192.168.43.32:8555/sound/get/bm33r9813uloeua1aasg_bm33r9813uloeua1aat0_bm33r9813uloeua1aatg.jpg"
-        },
-        text: `Hello!
-        Erlang/OTP is divided into a number of OTP applications. An application normally contains Erlang modules. Some OTP applications, such as the C interface erl_interface, are written in other languages and have no Erlang modules.
-On a Unix system you can view the manual pages from the command line using
-    % erl -man <module>
-You can of course use any editor you like to write Erlang programs, but if you use Emacs there exists editing support such as indentation, syntax highlighting, electric commands, module name verification, comment support including paragraph filling, skeletons, tags support and more. See the Tools application for details.
-There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , Eclipse (ErlIDE) and IntelliJ IDEA.`,
-        duration: Math.floor(0),
-        created_at: "2014-03-30 12:32",
-    }, {
-        id: 4,
-        source: 'http://192.168.43.32:8555/video/get/bm6lgk013ult9gc75vmg_bm6lgk013ult9gc75vn0_bm6lgk013ult9gc75vng.mp4',
-        file_name: 'Black M - Le prince Aladin (Clip officiel) ft. Kev Adams.mp4',
-        thumbnailSource: 'http://192.168.43.32:8555/video/thumbnail/get/bm7sd5813ulrbjp7u1sg_bm7sd5813ulrbjp7u1t0_bm7sd5813ulrbjp7u1tg_thumbnail.jpeg',
-        sender: {
-            phone: 3,
-            nickname: "Sokeng Kamga"
-        },
-        user: 2,
-        creator: 2,
-        type: "attachement",
-        received: 0,
-        total: 0,
-        text: `Hello!
-        Erlang/OTP is divided into a number of OTP applications. An application normally contains Erlang modules. Some OTP applications, such as the C interface erl_interface, are written in other languages and have no Erlang modules.
-On a Unix system you can view the manual pages from the command line using
-    % erl -man <module>
-You can of course use any editor you like to write Erlang programs, but if you use Emacs there exists editing support such as indentation, syntax highlighting, electric commands, module name verification, comment support including paragraph filling, skeletons, tags support and more. See the Tools application for details.
-There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , Eclipse (ErlIDE) and IntelliJ IDEA.
-
-`,
-        duration: Math.floor(0),
-        created_at: "2014-03-30 12:32",
-    },
-        , {
-        id: 5,
-        source: 'http://192.168.43.32:8555/video/get/Black M - Le prince Aladin (Clip officiel) ft. Kev Adams.mp4',
-        file_name: 'bm6lgk013ult9gc75vmg_bm6lgk013ult9gc75vn0_bm6lgk013ult9gc75vng.mp4',
-        thumbnailSource: 'http://192.168.43.32:8555/video/thumbnail/get/bm7sd5813ulrbjp7u1sg_bm7sd5813ulrbjp7u1t0_bm7sd5813ulrbjp7u1tg_thumbnail.jpeg',
-        sender: {
-            phone: 3,
-            nickname: "Sokeng Kamga"
-        },
-        type: "video",
-        user: 3,
-        creator: 2,
-        received: 0,
-        total: 0,
-        text: `Hello!
-        Erlang/OTP is divided into a number of OTP applications. An application normally contains Erlang modules. Some OTP applications, such as the C interface erl_interface, are written in other languages and have no Erlang modules.
-On a Unix system you can view the manual pages from the command line using
-    % erl -man <module>
-You can of course use any editor you like to write Erlang programs, but if you use Emacs there exists editing support such as indentation, syntax highlighting, electric commands, module name verification, comment support including paragraph filling, skeletons, tags support and more. See the Tools application for details.
-There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , Eclipse (ErlIDE) and IntelliJ IDEA.
-
-`,
-        duration: Math.floor(0),
-        created_at: "2014-0s3-30 12:32",
-    }]
     formHeight(factor) {
-       // console.warn(factor, screenheight)
+        // console.warn(factor, screenheight)
         return (factor * 100).toString() + "%"
     }
     playVideo(video) {
@@ -352,82 +235,185 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
     }
     _resetTextInput() {
         this._textInput.clear();
-       // this._textInput.resetHeightToMin();
+        // this._textInput.resetHeightToMin();
+    }
+    _resetCaptionInput() {
+        this._captionTextInput.clear()
+    }
+    handleEmojieSectionCaption(e) {
+        this.setState({
+            captionText: this.state.captionText + e.char
+        })
     }
     handleEmojiSelected(e) {
         this.setState({
-            textValue: this.state.textValue +e.char
+            textValue: this.state.textValue + e.char
         })
     }
-    sendMessageText(message){
-      let  messager = {
-          id:100,
-            type:"text",
-            text : message,
-            sender:{
-                phone:3,
-                nickname:"Fokam Giles"
-            },
-            user :2,
-            creator:1,
-          created_at: moment().format("YYYY-MM-DD HH:mm")
-        }
-        this.message.unshift(messager)
-        stores.ChatStore.addMessage(messager).then(()=>{
+    logOutZoomState = (event, gestureState, zoomableViewEventObject) => {
+        /*  console.log('');
+          console.log('');
+          console.log('-------------');
+          console.log('Event: ', event);
+          console.log('GestureState: ', gestureState);
+          console.log('ZoomableEventObject: ', zoomableViewEventObject);
+          console.log('');
+          console.log(`Zoomed from ${zoomableViewEventObject.lastZoomLevel} to  ${zoomableViewEventObject.zoomLevel}`);*/
+    }
+    sendMessageText(message) {
+        if (this.state.textValue !== '') {
+            let messager = {
+                id: Math.random() * 100,
+                type: "text",
+                text: message,
+                sender: {
+                    phone: 3,
+                    nickname: "Fokam Giles"
+                },
+                user: 3,
+                creator: 1,
+                created_at: moment().format("YYYY-MM-DD HH:mm")
+            }
+            stores.ChatStore.messages.unshift(messager)
             this._resetTextInput()
             this.setState({
-                newMessage:true
+                textValue: ''
+            })
+        }
+    }
+    showPhoto(photo) {
+        this.setState({
+            photo: photo,
+            showPhoto: true
+        })
+    }
+    openCamera() {
+        Keyboard.dismiss();
+        ImagePicker.openCamera({
+            cropping: false,
+            includeBase64: false,
+            title: "Take A Photo",
+            compressQuality: 50
+        }).then(response => {
+            let temp = response[0].path.split('/');
+            this.setState({
+                image: response[0].path,
+                base64: response[0].data,
+                imageSelected: true,
+                showCaption: true,
+                filename: temp[temp.length - 1],
+                content_type: response[0].mime,
+                size: response[0].size
             })
         })
     }
+    openPhotoSelector(){
+        Keyboard.dismiss()
+        ImagePicker.openPicker({
+
+        })
+    }
+    _sendCaptionMessage() {
+        let message = {
+            id: Math.random() * 100,
+            type: (this.state.imageSelected ? "photo" : "video") + "_upload",
+            source: this.state.image,
+            sender: {
+                phone: 2,
+                nickname: "Fokam Sanza"
+            },
+            user: 2,
+            created_at: moment().format("YYYY-MM-DD HH:mm"),
+            total: this.state.size,
+            send: 0,
+            data: this.state.base64,
+            content_type: this.state.content_type,
+            filename: this.state.filename,
+            text: this.state.captionText
+        }
+        stores.ChatStore.messages.unshift(message)
+        this._resetCaptionInput();
+        this.setState({
+            captionText: '',
+            showCaption: false,
+        })
+    }
+    replaceMessage(newMessage) {
+        stores.ChatStore.messages = reject(stores.ChatStore.messages, { id: newMessage.id })
+        stores.ChatStore.messages.unshift(newMessage)
+        this.setState({
+            newMessage: true
+        })
+        newMessage.photo = newMessage.source
+        //send message to the server here
+    }
     verboseLoggingFunction(error) {
 
+    }
+    _onChangeCaption(event) {
+        this.setState({
+            captionText: event.nativeEvent.text || ''
+        })
     }
     transparent = "rgba(50, 51, 53, 0.8)";
     render() {
         return (
             <View>
                 <View>
-                    <View style={{ height: this.state.messageListHeight,marginBottom: "0.5%", }}>
+                    <View style={{ height: this.state.messageListHeight, marginBottom: "0.5%", }}>
                         <BleashupFlatList
                             firstIndex={0}
                             inverted={true}
                             renderPerBatch={20}
-                            initialRender={7}
-                            numberOfItems={this.message.length}
+                            initialRender={15}
+                            numberOfItems={stores.ChatStore.messages.length}
                             keyExtractor={(item) => item ? item.id : null}
-                            renderItem={(item) => item ? <Message message={item} openReply={(replyer) => {
+                            renderItem={(item) => item ? <Message showPhoto={(photo) => this.showPhoto(photo)} replaceMessage={(data) => this.replaceMessage(data)} message={item} openReply={(replyer) => {
                                 this.setState({
                                     replyer: replyer,
                                     showRepliedMessage: true
                                 })
                             }} user={item.user} creator={item.creator} playVideo={(source) => this.playVideo(source)}></Message> : null}
-                            dataSource={this.message}
+                            dataSource={stores.ChatStore.messages}
                         >
                         </BleashupFlatList>
                     </View>
-                    <KeyboardAvoidingView  keyboardVerticalOffset>
-                    <View style={{ height: this.state.textInputHeight, }}>
+                    <KeyboardAvoidingView keyboardVerticalOffset>
+                        <View style={{ height: this.state.textInputHeight, }}>
                             <View style={{ display: 'flex', flexDirection: 'row', }}>
-                                <View style={{marginTop: "2%", 
-                            display: 'flex',flexDirection: 'row',}}><TouchableOpacity>
+                                <View style={{
+                                    marginTop: "2%",
+                                    display: 'flex', flexDirection: 'row',
+                                }}><TouchableOpacity>
                                         <Icon name={"attach-file"} type={"MaterialIcons"} style={{ color: "#0A4E52", }}></Icon></TouchableOpacity>
-                                    <TouchableOpacity><Icon style={{ color: "#0A4E52", marginRight: "1%",}} 
-                                        type={"Ionicons"} name={"md-photos"}></Icon></TouchableOpacity><TouchableOpacity><Icon style={{ color: "#0A4E52", marginRight: "1%"}}
-                                        type={"MaterialIcons"} name={"photo-camera"}></Icon></TouchableOpacity><Icon style={{ color: "#1FABAB" }} onPress={() => {
-                                            !this.state.showEmojiInput ? Keyboard.dismiss() : this._textInput.focus()
-                                            this.setState({
-                                                showEmojiInput: !this.state.showEmojiInput,
-                                                messageListHeight: this.state.showEmojiInput ?
-                                                    this.formHeight(this.state.initialMessaListHeightFactor) : this.formHeight(0.50),
-                                                textInputHeight: this.state.showEmojiInput ?
-                                                    this.formHeight(this.state.inittialTextInputHeightFactor) : this.formHeight(0.50)
-                                            })
-                                        }} type="Entypo" name="emoji-flirt"></Icon></View>
+                                    <TouchableOpacity onPress={()=> this.openPhotoSelector()}><Icon style={{ color: "#0A4E52", marginRight: "1%", }}
+                                        type={"Ionicons"} name={"md-photos"}></Icon></TouchableOpacity><TouchableOpacity
+                                            onPress={() => this.openCamera()}><Icon style={{ color: "#0A4E52", marginRight: "1%" }}
+                                                type={"MaterialIcons"} name={"photo-camera"}></Icon></TouchableOpacity><TouchableOpacity>
+                                        <Icon name={"video-camera"} type={"Entypo"} style={{ color: "#0A4E52", marginRight: "1%", }}></Icon></TouchableOpacity>
+                                    <Icon style={{ color: "#1FABAB" }} onPress={() => {
+                                        !this.state.showEmojiInput ? Keyboard.dismiss() : this._textInput.focus()
+                                        this.setState({
+                                            showEmojiInput: !this.state.showEmojiInput,
+                                            messageListHeight: this.state.showEmojiInput ?
+                                                this.formHeight(this.state.initialMessaListHeightFactor) : this.formHeight(0.50),
+                                            textInputHeight: this.state.showEmojiInput ?
+                                                this.formHeight(this.state.inittialTextInputHeightFactor) : this.formHeight(0.50)
+                                        })
+                                    }} type="Entypo" name="emoji-flirt"></Icon></View>
                                 <TextInput
                                     value={this.state.textValue}
                                     onChange={(event) => this._onChange(event)}
-                                    style={styles.textInput}
+                                    style={{
+                                        paddingLeft: 10,
+                                        fontSize: 17,
+                                        height: 50,
+                                        width: 195,
+                                        borderColor: "#1FABAB",
+                                        backgroundColor: 'white',
+                                        borderWidth: 1,
+                                        borderRadius: 8,
+                                    }}
                                     placeholder={'Your Message'}
                                     placeholderTextColor='#66737C'
                                     maxHeight={200}
@@ -438,13 +424,17 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
                                 />
                                 <View style={{ marginLeft: "2%", marginTop: "2%", display: 'flex', flexDirection: 'row', }}><TouchableOpacity><Icon style={{
                                     color: "#0A4E52",
-                                marginRight: "8%", }} 
+                                    marginRight: "8%",
+                                }}
                                     type={"FontAwesome5"} name={"microphone-alt"} ></Icon></TouchableOpacity>
-                                    <TouchableOpacity onPress={()=>{requestAnimationFrame(()=>{
-                                       return this.sendMessageText(this.state.textValue)
-                                    })}}><Icon style={{ color: "#1FABAB" }} name="paper-plane" type="FontAwesome"></Icon></TouchableOpacity></View>
+                                    <TouchableOpacity onPress={() => {
+                                        requestAnimationFrame(() => {
+                                            return this.sendMessageText(this.state.textValue)
+                                        })
+                                    }}><Icon style={{ color: "#1FABAB" }}
+                                        name="paper-plane" type="FontAwesome"></Icon></TouchableOpacity></View>
                             </View>
-                            {this.state.showEmojiInput ? <View style={{ width: "100%", height:300}}>
+                            {this.state.showEmojiInput ? <View style={{ width: "100%", height: 300 }}>
                                 <EmojiInput onEmojiSelected={(emoji) => this.handleEmojiSelected(emoji)}
                                     enableSearch={false}
                                     ref={emojiInput => this._emojiInput = emojiInput}
@@ -453,88 +443,160 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
                                     verboseLoggingFunction={true}
                                     filterFunctions={[this.filterFunctionByUnicode]} ></EmojiInput>
                             </View> : null}
-                        <KeyboardSpacer />
-                    </View>
+                        </View>
                     </KeyboardAvoidingView>
                 </View>
-                {this.state.showRepliedMessage ? <View style={{
-                    height: 1000,
-                    position: "absolute", backgroundColor: this.transparent,
-                    width: "100%",
-                }}>
-                    <View style={{ display: 'flex', flexDirection: 'row', }}>
-                        {this.state.replyer.user == this.state.user ? <TouchableOpacity onPress={() => {
-                            this.setState({
-                                showRepliedMessage: false
-                            })
-                        }}>
-                            <Icon type="EvilIcons" style={{ margin: '7%', fontSize: 35, color: "#FEFFDE" }} name={"close"}></Icon>
-                        </TouchableOpacity> : null}
-                        <ScrollView>
-                            <View style={{ display: "flex", }}>
-                                {<Message openReply={(replyer) => {
+                {
+                    // ******************Photo Viewer View ***********************//
+                    this.state.showPhoto ?
+                        <View style={{ height: screenheight, width: screenWidth, position: "absolute", backgroundColor: "black", }}>
+                        <ReactNativeZoomableView
+                            maxZoom={1.5}
+                            minZoom={0.5}
+                            zoomStep={0.5}
+                            initialZoom={1}
+                            bindToBorders={true}
+                            onZoomAfter={this.logOutZoomState}>
+                            <Image resizeMode={"contain"} width={screenWidth} height={screenheight}
+                                source={{ uri: this.state.photo }}></Image>
+                        </ReactNativeZoomableView>
+                            <Icon type="EvilIcons" onPress={()=>{
+                                this.setState({
+                                    showPhoto:false
+                                })
+                            }} style={{ margin: '1%', position:'absolute', fontSize: 30, color: "#FEFFDE" }} name={"close"}></Icon>
+                        </View> : null
+                }
+                {
+                    // **************Captions messages handling ***********************//
+
+                    this.state.showCaption ? <View style={{
+                        position: "absolute", width: screenWidth,
+                        height: screenheight, backgroundColor: "black", display: 'flex',
+                    }}>
+                        <View style={{ height: this.state.photoHeight, width: "100%" }}>
+                            {this.state.image ? <ReactNativeZoomableView
+                                maxZoom={1.5}
+                                minZoom={0.5}
+                                zoomStep={0.5}
+                                initialZoom={1}
+                                bindToBorders={true}
+                                onZoomAfter={this.logOutZoomState}><Image resizeMode={"contain"}
+                                    width={screenWidth} style={{ flex: 1 }} source={{ uri: this.state.image }}></Image></ReactNativeZoomableView> : null}
+                        </View>
+                        <KeyboardAvoidingView >
+                            <View style={{ heigh: this.state.textHeight, backgroundColor: "#1FABAB", width: "100%", display: 'flex', flexDirection: 'row', }}>
+                                <Icon onPress={() => {
+                                    !this.state.showEmojiInputCaption ? Keyboard.dismiss() : this._captionTextInput.focus()
                                     this.setState({
-                                        replyer: replyer,
-                                        showRepliedMessage: true
+                                        showEmojiInputCaption: !this.state.showEmojiInputCaption,
+                                        textHeight: screenheight * 0.55,
+                                        photoHeight: screenheight * 0.45
                                     })
-                                }} playVideo={(source) => this.playVideo(source)}
-                                    creator={2} user={2} message={find(this.message, { id: this.state.replyer.id })} />}
+                                }} type="Entypo" name="emoji-flirt" style={{ color: "#0A4E52", marginTop: "3%", width: "8%" }}>
+                                </Icon><TextInput multiline enableScrollToCaret
+                                    ref={(r) => { this._captionTextInput = r; }} value={this.state.captionText} onChange={(data) => this._onChangeCaption(data)}
+                                    style={{ left: 0, right: 0, height: 59, width: "84%" }}
+                                    placeholder={'Enter your text!'} />
+                                <Icon style={{ color: "#0A4E52", marginTop: "3%", width: "8%" }} onPress={() => this._sendCaptionMessage()} type={"FontAwesome"} name={"paper-plane"}></Icon>
                             </View>
-                        </ScrollView>
-                        {!(this.state.replyer.user == this.state.user) ? <TouchableOpacity onPress={() => {
-                            this.setState({
-                                showRepliedMessage: false
-                            })
-                        }}>
-                            <Icon type="EvilIcons" style={{ margin: '2%', marginTop: "8%", fontSize: 35, color: "#FEFFDE" }} name={"close"}></Icon>
-                        </TouchableOpacity> : null}
-                    </View>
-                </View> : null}
-                {this.state.showVideo ? <View style={{
-                    height: 400,
-                    position: "absolute",
-                    width: this.state.fullScreen ? "100%" : screenWidth,
-                    backgroundColor: this.transparent,
-                    alignSelf: 'center',
-                }}>
-                    <VideoPlayer source={{ uri: this.state.video }}   // Can be a URL or a local file.
-                        ref={(ref) => {
-                            this.videoPlayer = ref
-                        }}
-                        onBuffer={() =>
-                            this.buffering()
-                        }                // Callback when remote video is buffering
-                        onError={(error) => {
-                            console.error(error)
-                        }}
-                        toggleResizeModeOnFullscreen={false}
-                        //pictureInPicture={true}
-                        resizeMode={"contain"}
-                        disableVolume={true}
-                        seekColor="#1FABAB"
-                        controlTimeout={null}
-                        //disablePlayPause={true}
-                        //disableFullscreen={true}
-                        onBack={() => this.hideVideo()}
-                        onEnterFullscreen={() => this.enterFullscreen()}
-                        onExitFullscreen={() => this.enterFullscreen()}
-                        //fullscreenOrientation={"landscape"}
-                        //fullscreen={true}
-                        //controls={true}
-                        style={{
-                            backgroundColor: this.transparent,
-                        }}
-                        videoStyle={{
-                            alignItems: 'center',
-                            height: "100%",
-                            width: "100%",
-                            top: 0,
-                            left: 0,
-                            bottom: 0,
-                            right: 0,
-                        }}             // Callback when video cannot be loaded
-                    />
-                </View> : null}
+                            {this.state.showEmojiInputCaption ? <View style={{ width: "100%", height: 300 }}>
+                                <EmojiInput onEmojiSelected={(emoji) => this.handleEmojieSectionCaption(emoji)}
+                                    enableSearch={false}
+                                    ref={emojiInput => this._emojiInputCaption = emojiInput}
+                                    resetSearch={this.state.reset}
+                                    loggingFunction={this.verboseLoggingFunction.bind(this)}
+                                    verboseLoggingFunction={true}
+                                    filterFunctions={[this.filterFunctionByUnicode]} ></EmojiInput>
+                            </View> : null}
+                        </KeyboardAvoidingView>
+                    </View> : null}
+                {
+
+                    //******  Reply Message onClick See Reply handler View ********/
+
+
+                    this.state.showRepliedMessage ? <View style={{
+                        height: 1000,
+                        position: "absolute", backgroundColor: this.transparent,
+                        width: "100%",
+                    }}>
+                        <View style={{ display: 'flex', flexDirection: 'row', }}>
+                            {this.state.replyer.user == this.state.user ? <TouchableOpacity onPress={() => {
+                                this.setState({
+                                    showRepliedMessage: false
+                                })
+                            }}>
+                                <Icon type="EvilIcons" style={{ margin: '7%', fontSize: 35, color: "#FEFFDE" }} name={"close"}></Icon>
+                            </TouchableOpacity> : null}
+                            <ScrollView>
+                                <View style={{ display: "flex", }}>
+                                    {<Message openReply={(replyer) => {
+                                        this.setState({
+                                            replyer: replyer,
+                                            showRepliedMessage: true
+                                        })
+                                    }} playVideo={(source) => this.playVideo(source)}
+                                        creator={2} user={2} message={find(this.message, { id: this.state.replyer.id })} />}
+                                </View>
+                            </ScrollView>
+                            {!(this.state.replyer.user == this.state.user) ? <TouchableOpacity onPress={() => {
+                                this.setState({
+                                    showRepliedMessage: false
+                                })
+                            }}>
+                                <Icon type="EvilIcons" style={{ margin: '2%', marginTop: "8%", fontSize: 35, color: "#FEFFDE" }} name={"close"}></Icon>
+                            </TouchableOpacity> : null}
+                        </View>
+                    </View> : null}
+                {
+                    //** ####### Vidoe PLayer View ################ */
+
+                    this.state.showVideo ? <View style={{
+                        height: 400,
+                        position: "absolute",
+                        width: this.state.fullScreen ? "100%" : screenWidth,
+                        backgroundColor: this.transparent,
+                        alignSelf: 'center',
+                    }}>
+                        <VideoPlayer source={{ uri: this.state.video }}   // Can be a URL or a local file.
+                            ref={(ref) => {
+                                this.videoPlayer = ref
+                            }}
+                            onBuffer={() =>
+                                this.buffering()
+                            }                // Callback when remote video is buffering
+                            onError={(error) => {
+                                console.error(error)
+                            }}
+                            toggleResizeModeOnFullscreen={false}
+                            //pictureInPicture={true}
+                            resizeMode={"contain"}
+                            disableVolume={true}
+                            seekColor="#1FABAB"
+                            controlTimeout={null}
+                            //disablePlayPause={true}
+                            //disableFullscreen={true}
+                            onBack={() => this.hideVideo()}
+                            onEnterFullscreen={() => this.enterFullscreen()}
+                            onExitFullscreen={() => this.enterFullscreen()}
+                            //fullscreenOrientation={"landscape"}
+                            //fullscreen={true}
+                            //controls={true}
+                            style={{
+                                backgroundColor: this.transparent,
+                            }}
+                            videoStyle={{
+                                alignItems: 'center',
+                                height: "100%",
+                                width: "100%",
+                                top: 0,
+                                left: 0,
+                                bottom: 0,
+                                right: 0,
+                            }}             // Callback when video cannot be loaded
+                        />
+                    </View> : null}
             </View>
 
         )
@@ -546,8 +608,8 @@ const styles = StyleSheet.create({
     textInput: {
         paddingLeft: 10,
         fontSize: 17,
-        height:50,
-        width: 230,
+        height: 50,
+        width: 195,
         borderColor: "#1FABAB",
         backgroundColor: 'white',
         borderWidth: 1,

@@ -30,7 +30,7 @@ export default class TextMessage extends Component {
     pattern = [1000, 0, 0]
     render() {
         return (
-            <View style={{margin: '2%', marginTop: "-1%",}}>
+            <View style={{margin: '2%',alignSelf: 'center', marginTop: this.props.sender?"-1%":"3%",}}>
                 <TextContent text={this.props.message.text}></TextContent>
             </View>
         );

@@ -150,44 +150,12 @@ export default class VideoMessage extends Component {
     duration = 10
     pattern = [1000, 0, 0]
     render() {
-        topMostStyle = {
-            marginLeft: this.state.sender ? '0%' : 0,
-            marginRight: !this.state.sender ? '1%' : 0,
-            marginTop: "1%",
-            marginBottom: "0.5%",
-            alignSelf: this.state.sender ? 'flex-start' : 'flex-end',
-        }
-        GeneralMessageBoxStyle = {
-            maxWidth: 300, flexDirection: 'column', minWidth: "10%",
-            minHeight: 10, overflow: 'hidden', borderBottomLeftRadius: this.state.sender ? 0 : 20,
-            borderColor: !this.state.sender ? '#0A4E52' : "#0A4E52",
-            // this style is different from the others
-            borderTopLeftRadius: this.state.sender ? 0 : 10, backgroundColor: this.state.sender ? '#F8F7EE' : '#E1F8F9',
-            borderTopRightRadius: this.state.sender ? 20 : 10, borderBottomRightRadius: this.state.sender ? 20 : 0,
-        }
-        spaceStyles = {
-            backgroundColor: "#FFFFFF", height: "100%",
-            width: "2%",
-            borderBottomRightRadius: 3,
-            marginTop: 1,
-            borderTopRightRadius: 15,
-        }
-
-        senderNameStyle = {
-            maxWidth: this.state.sender ? "98%" : "100%",
-            padding: 4,
-            borderBottomLeftRadius: 40,
-        }
-        subNameStyle = {
-            marginTop: -3, paddingBottom: 5,
-            flexDirection: "column"
-        }
         return (
             <View>
                 <View>
                     <PhotoView playVideo={() => this.props.playVideo(this.props.message.source)} video style={{
-                        marginTop:"1%",
-                        marginLeft: "0.5%",
+                        marginTop:"2%",
+                        marginLeft:"1.5%",
                     }} borderRadius={10} photo={this.props.message.thumbnailSource}
                         width={290} height={340}>
                     </PhotoView>
@@ -217,7 +185,7 @@ export default class VideoMessage extends Component {
                                     backgroundColor={this.transparent}>
                                     {
                                         (fill) => (<View>
-                                            {this.state.downloading ? <TouchableWithoutFeedback onPress={() => this.cancelDownLoad(this.props.message.sor)}>
+                                            {this.state.downloading ? <TouchableWithoutFeedback onPress={() => this.cancelDownLoad(this.props.message.source)}>
                                                 <Icon type="EvilIcons" style={{ color: "#1FABAB" }} name="close">
                                                 </Icon>
                                             </TouchableWithoutFeedback> : <TouchableWithoutFeedback onPress={() => this.downloadVideo(this.props.message.source)}>
@@ -230,7 +198,7 @@ export default class VideoMessage extends Component {
                                 <View style={{ marginTop: "15%" }}><Text note>{"("}{this.toMB(this.state.received).toFixed(1)}{"/"}
                                     {this.toMB(this.state.total).toFixed(1)}{")Mb"}</Text></View></View>}</View>
                 </View>
-                {this.props.message.text ? <View style={{ marginTop: "-10%", padding: "2%" }}>
+                {this.props.message.text ? <View style={{ marginTop: "-5%", padding: "2%" }}>
                          <TextContent text={this.props.message.text}></TextContent>       
                 </View> : null}
             </View>

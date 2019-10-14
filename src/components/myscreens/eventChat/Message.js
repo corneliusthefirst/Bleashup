@@ -7,6 +7,7 @@ import FileAttarchementMessaege from './FileAttarchtmentMessage';
 import AudioMessage from './AudioMessage';
 import { Left, Icon, Right,Text } from 'native-base';
 import ReplyText from './ReplyText';
+import PhotoUploader from './PhotoUploader';
 
 export default class Message extends Component {
 
@@ -16,18 +17,24 @@ export default class Message extends Component {
             showTime: false
         }
     }
-    chooseComponent(data, index) {
+    chooseComponent(data, index,sender) {
+        //console.warn(data.type)
         switch (data.type) {
             case "text":
-                return <TextMessage user={2} index={index} creator={2} message={data}></TextMessage>
+                return <TextMessage user={2} sender={sender} index={index} creator={2} message={data}></TextMessage>
             case "photo":
-                return <PhotoMessage user={2} index={index} creator={2} message={data}></PhotoMessage>
+                return <PhotoMessage showPhoto={(url)=> this.props.showPhoto(url)} user={2} sender={sender} index={index} creator={2} message={data}></PhotoMessage>
             case "audio":
-                return <AudioMessage  index={index}  message={data}></AudioMessage>
+                return <AudioMessage index={index} sender={sender}  message={data}></AudioMessage>
             case "video":
-                return <VideoMessage index={index} playVideo={(video) => { this.props.playVideo(video) }} user={3} creator={2} message={data}></VideoMessage>
+                return <VideoMessage index={index} sender={sender} 
+                playVideo={(video) => { this.props.playVideo(video) }} message={data}></VideoMessage>
             case "attachement":
-                return <FileAttarchementMessaege index={index} message={data}></FileAttarchementMessaege>
+                return <FileAttarchementMessaege sender={sender} index={index} message={data}></FileAttarchementMessaege>;
+            case "photo_upload":
+                return <PhotoUploader showPhoto={(photo) => this.props.showPhoto(photo)} 
+                replaceMessage={data => this.props.replaceMessage(data)} sender={false} 
+                index={index} message={data}></PhotoUploader>
             default:
                 return null
         }
@@ -44,7 +51,7 @@ export default class Message extends Component {
     pattern = [1000, 0, 0]
     render() {
         topMostStyle = {
-            marginLeft: this.state.sender ? '0%' : 0,
+            marginLeft: this.state.sender ? '1%' : 0,
             marginRight: !this.state.sender ? '1%' : 0,
             marginTop: "1%",
             marginBottom: "0.5%",
@@ -52,20 +59,13 @@ export default class Message extends Component {
         }
         GeneralMessageBoxStyle = {
             maxWidth: 300, flexDirection: 'column', minWidth: "10%",
-            minHeight: 10, overflow: 'hidden', borderBottomLeftRadius: this.state.sender ? 0 : 20,
+            minHeight: 10, overflow: 'hidden', borderBottomLeftRadius:  20,
             borderTopLeftRadius: this.state.sender ? 0 : 20, backgroundColor: this.state.sender ? '#DEDEDE' : '#9EEDD3',
             borderTopRightRadius: 20, borderBottomRightRadius: this.state.sender ? 20 : 0,
         }
-        spaceStyles = {
-            backgroundColor: "#FEFFDE", height: "100%",
-            width: "2%",
-            borderBottomRightRadius: 3,
-            marginTop: 1,
-            borderTopRightRadius: 15,
-        }
         senderNameStyle = {
-            maxWidth: this.state.sender ? "98%" : "100%",
-            margin: this.state.sender ? 0 : 4,
+            maxWidth:  "100%",
+            //margin: this.state.sender ? 0 : 4,
             borderBottomLeftRadius: 40,
         }
         subNameStyle = {
@@ -76,16 +76,14 @@ export default class Message extends Component {
         return (
             <View style={topMostStyle}>
                 <View style={GeneralMessageBoxStyle}>
-                    <View style={{ flexDirection: 'row' }}>
-                        {this.state.sender ? <View style={spaceStyles}>
-                        </View> : null}
+                    <View>
                         <View style={senderNameStyle} >
                             {this.state.sender ? <View style={subNameStyle}><TouchableOpacity onPress={() => {
                                 console.warn('humm ! you want to know that contact !')
                             }}><Text style={nameTextStyle}
                                 note>@{this.state.sender_name}</Text></TouchableOpacity></View> : null}
                                 <View>
-                                {this.props.message.reply ? <View style={{ paddingRight: "1%", }}><ReplyText openReply={(replyer) => {
+                                {this.props.message.reply ? <View style={{ paddingRight: "1%",marginTop: "2%", }}><ReplyText openReply={(replyer) => {
                                     this.props.message.reply.isThisUser = !this.state.sender
                                     return this.props.openReply(this.props.message.reply)
                                 }} reply={this.props.message.reply}></ReplyText></View> : null}
@@ -96,7 +94,7 @@ export default class Message extends Component {
                                     })
                                 }}>
                                     <View>
-                                        {this.chooseComponent(this.props.message, this.props.message.id)}
+                                        {this.chooseComponent(this.props.message, this.props.message.id,this.state.sender)}
                                     </View>
                                 </TouchableWithoutFeedback>
                                 </View>

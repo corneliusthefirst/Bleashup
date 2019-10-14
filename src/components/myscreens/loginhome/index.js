@@ -34,9 +34,10 @@ export default class LoginHomeView extends Component {
   }
   render() {
   return (
-  <ImageBackground resizeMode={"contain"} source={require("../../../../assets/Bleashup.png")} style={{ width: null, height: null, backgroundColor: "#FEFFDE",}}>
+    <Container>
       <ChatRoom></ChatRoom>
-    </ImageBackground>
+    </Container>
+
    )
    /* routeName = initialRoute.routeName;
       if ((globalState.loading = true)) {
