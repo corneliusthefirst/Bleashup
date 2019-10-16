@@ -7,13 +7,13 @@ import rnFetchBlob from 'rn-fetch-blob';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import * as config from "../../../config/bleashup-server-config.json"
 const { fs } = rnFetchBlob
-export default class PhotoUploader extends Component {
+export default class VideoUploader extends Component {
     constructor(props) {
         super(props)
         this.uploadURL = config.file_server.protocol +
-            "://" + config.file_server.host + ":" + config.file_server.port + "/photo/save"
+            "://" + config.file_server.host + ":" + config.file_server.port + "/video/save"
         this.baseURL = config.file_server.protocol +
-            "://" + config.file_server.host + ":" + config.file_server.port + '/photo/get/'
+            "://" + config.file_server.host + ":" + config.file_server.port + '/video/get/'
         this.state = {
             received: 0, total: 0,
             uploadState: 0
@@ -28,6 +28,7 @@ export default class PhotoUploader extends Component {
     task = null
     uploadVideo() {
         fs.exists(this.props.message.source).then(state => {
+            //console.warn(this.uploadURL)
             this.task = rnFetchBlob.fetch("POST", this.uploadURL, {
                 'content-type': 'multipart/form-data',
             }, [{
@@ -45,29 +46,23 @@ export default class PhotoUploader extends Component {
             })
             this.task.then(response => {
                 if (response.data) {
-                    temper1 = this.toMB(this.state.total)
-                    temper2 = this.toMB(this.state.received)
-                    temp1 = Math.floor(temper1)
-                    temp2 = Math.floor(temper2)
-                    temp3 = Math.ceil(temper2)
-                    if (temp1 == temp2 || temp1 == temp3) {
-                        //  console.warn(response)
-                        newDir = `file://` + fs.dirs.DocumentDir +"/photo_"+ response.data
-                        fs.writeFile(newDir.split(`file://`)[1], this.props.message.source.split(`file://`)[1], 'uri').then(() => {
-                            this.setState({
-                                uploadState: 100,
-                                loaded: true
-                            })
-                            this.props.message.type = 'photo'
-                            this.props.message.source = this.baseURL+response.data
-                            this.props.message.photo = newDir
-                            this.props.replaceMessage(this.props.message)
-
+                    newDir = `file://` + fs.dirs.DocumentDir +"/video_"+ response.data
+                    fs.writeFile(newDir.split(`file://`)[1], this.props.message.source.split(`file://`)[1], 'uri').then(() => {
+                        this.setState({
+                            uploadState: 100,
+                            loaded: true
                         })
-                    }
+                        this.props.message.type = 'video'
+                        this.props.message.source = newDir
+                        this.props.message.thumbnailSource = this.baseURL + response.data.split('.')[0] + '_thumbnail.jpeg'
+                        this.props.message.temp = this.baseURL + response.data
+                        this.props.message.received = 0
+                        this.props.message.file_name = response.data
+                        this.props.replaceMessage(this.props.message)
+                    })
                 }
             })
-            this.task.catch((error)=>{
+            this.task.catch((error) => {
                 console.warn(error)
             })
         })
@@ -85,10 +80,28 @@ export default class PhotoUploader extends Component {
                 <View style={{ padding: "1.5%" }}>
                     <View>
                         <TouchableOpacity onPress={() => this.props.showPhoto(this.props.message.source)}>
-                            <Image resizeMode={'contain'} style={{
-                                borderRadius: 15, alignSelf: 'center',
-                                maxWidth: 380,
-                            }} source={{ uri: this.props.message.source }} height={340}></Image>
+                            <View resizeMode={'contain'} style={{
+                                borderRadius: 15,
+                                alignSelf: 'center',
+                                width: 190,
+                                height: 300,
+                                backgroundColor: 'black',
+                            }}></View>
+                            <View style={{ position: 'absolute', marginTop: "50%", marginLeft: "46%", }}>
+                                <View>
+                                    <TouchableOpacity
+                                        onPress={() => this.props.playVideo(this.props.message.source)
+                                        }>
+                                        <Icon type="EvilIcons" name="play" style={{
+                                            fontSize: 40,
+                                            color: "#1FABAB"
+                                        }}></Icon>
+                                        <View style={{ marginTop: "-79.2%", marginLeft: "-43.5%", }}>
+                                            <Spinner></Spinner>
+                                        </View>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
                         </TouchableOpacity>
                     </View>
                     <View style={{ alignSelf: 'center', margin: '2%', }}>
@@ -107,17 +120,17 @@ export default class PhotoUploader extends Component {
                                                 <Icon type="EvilIcons" style={{ color: "#1FABAB" }} name="close">
                                                 </Icon>
                                             </TouchableWithoutFeedback> : <TouchableWithoutFeedback onPress={() => this.uploadVideo()}>
-                                                <View>
-                                                   <Icon type="EvilIcons" style={{ color: "#1FABAB" }} name="arrow-up">
-                                                    </Icon>
-                                                        <Spinner style={{position:'absolute',marginTop: "-136%",marginLeft: "-15%",}}></Spinner>
-                                                </View>
+                                                    <View>
+                                                        <Icon type="EvilIcons" style={{ color: "#1FABAB" }} name="arrow-up">
+                                                        </Icon>
+                                                        <Spinner style={{ position: 'absolute', marginTop: "-136%", marginLeft: "-15%", }}></Spinner>
+                                                    </View>
 
                                                 </TouchableWithoutFeedback>}
                                         </View>)
                                     }
                                 </AnimatedCircularProgress>
-                                <View style={{ marginTop: "15%", }}><Text style={{ color: '#0A4E52'}} note>{"("}{this.toMB(this.state.received).toFixed(1)}{"/"}
+                                <View style={{ marginTop: "15%", }}><Text style={{ color: '#0A4E52' }} note>{"("}{this.toMB(this.state.received).toFixed(1)}{"/"}
                                     {this.toMB(this.state.total).toFixed(1)}{")Mb"}</Text></View></View>}</View>
                 </View>
                 <View>

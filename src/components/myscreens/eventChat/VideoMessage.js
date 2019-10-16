@@ -2,6 +2,7 @@ import React, { Component } from "react"
 import { View, TouchableOpacity, TouchableWithoutFeedback, Vibration, StyleSheet } from 'react-native';
 import { Text, Icon, Spinner, Toast } from 'native-base';
 import PhotoView from "../currentevents/components/PhotoView";
+import Image from "react-native-scalable-image"
 import { AnimatedCircularProgress } from "react-native-circular-progress";
 import rnFetchBlob from 'rn-fetch-blob';
 import stores from "../../../stores";
@@ -34,8 +35,9 @@ export default class VideoMessage extends Component {
             sender: !(this.props.message.sender.phone == this.props.user),
             time: this.props.message.created_at.split(" ")[1],
             received: this.props.message.received,
+            loaded : this.testForURL(this.props.message.source)?false:true,
             //downloadState : (this.props.message.received/this.props.message.total)*100,
-            total: this.props.message.total,
+            total: this.toMB(this.props.message.total).toFixed(2),
             creator: (this.props.message.sender.phone == this.props.creator)
         })
     }
@@ -153,12 +155,12 @@ export default class VideoMessage extends Component {
         return (
             <View>
                 <View>
-                    <PhotoView playVideo={() => this.props.playVideo(this.props.message.source)} video style={{
+                    <Image playVideo={() => this.props.playVideo(this.props.message.source)} video style={{
                         marginTop:"2%",
-                        marginLeft:"1.5%",
-                    }} borderRadius={10} photo={this.props.message.thumbnailSource}
-                        width={290} height={340}>
-                    </PhotoView>
+                        marginLeft:"1.2%",
+                    }} borderRadius={10} source={{uri:this.props.message.thumbnailSource}} photo={this.props.message.thumbnailSource}
+                        width={290} height={200}>
+                    </Image>
                     <View style={{ position: 'absolute', marginTop: "25%", marginLeft: "45%", }}>
                         <View>
                             <TouchableOpacity
@@ -168,7 +170,7 @@ export default class VideoMessage extends Component {
                                     fontSize: 40,
                                     color: "#1FABAB"
                                 }}></Icon>
-                                <View style={{ marginTop: "-58.5%", marginLeft: "-58%", }}>
+                                <View style={{ marginTop: "-57.2%", marginLeft: "-58.5%", }}>
                                     <Spinner></Spinner>
                                 </View>
                             </TouchableOpacity>

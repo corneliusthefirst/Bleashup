@@ -8,115 +8,69 @@ import rnFetchBlob from 'rn-fetch-blob';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import { Icon, Right, Spinner, Toast } from 'native-base';
 import stores from '../../../stores';
+import * as config from "../../../config/bleashup-server-config.json"
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import GState from '../../../stores/globalState';
 import FileViewer from 'react-native-file-viewer';
 let dirs = rnFetchBlob.fs.dirs
-const { fs, config } = rnFetchBlob
-export default class FileAttarchementMessaege extends Component {
+const { fs } = rnFetchBlob
+export default class FileAttarchementUploader extends Component {
     constructor(props) {
         super(props);
+        this.uploadURL = config.file_server.protocol +
+            "://" + config.file_server.host + ":" + config.file_server.port + "/other/save"
+        this.baseURL = config.file_server.protocol +
+            "://" + config.file_server.host + ":" + config.file_server.port + '/other/get/'
         this.state = {
             duration: 0,
+            received: 0, total: 0,
+            uploadState: 0,
             currentPosition: 0,
             currentTime: 0,
             downloadState: 0,
         }
-    }
-    setAfterSuccess(path) {
-        console.warn("setting success!!!!")
-        this.props.message.source = Platform.OS === 'android' ? path + "/" : '' + path
-        stores.ChatStore.addStaticFilePath(this.props.message.source, '').then(() => {
-            this.setState({
-                loaded: true
-            })
-        })
-    }
-    DetemineRange(path) {
-        return new Promise((resolve, reject) => {
-            fs.exists(path).then(ext => {
-                if (ext) {
-                    console.warn("exists")
-                    fs.stat(path).then(stat => resolve(stat.size))
-                } else {
-                    resolve(0)
-                }
-            })
-        })
     }
     path = dirs.DocumentDir + '/others_' + this.props.message.file_name
     duration = 10
     pattern = [1000, 0, 0]
     downloadID = null
     tempPath = this.path + '.download'
-    download(url) {
-        clearInterval(this.downloadID)
-        this.setState({
-            downloading: true
-        })
-        GState.downlading = true
-        this.DetemineRange(this.tempPath).then(size => {
-            this.task = rnFetchBlob.config({
-                fileCache: true
-            }).fetch('GET', url, {
-                Range: `bytes=${size}-`,
-                From: `${size}`
-            })
-            this.task.progress((received, total) => {
-                let newReceived = parseInt(size) + parseInt(received);
-                let newTotal = this.props.message.total > 0 ? this.props.message.total : total
-                newTotal = parseInt(newTotal)
+    uploadFile(url) {
+        fs.exists(this.props.message.source).then(state => {
+            //console.warn(this.uploadURL)
+            this.task = rnFetchBlob.fetch("POST", this.uploadURL, {
+                'content-type': 'multipart/form-data',
+            }, [{
+                name: "file",
+                filename: this.props.message.file_name,
+                type: this.props.message.content_type,
+                data: rnFetchBlob.wrap(this.props.message.source)
+            }])
+            this.task.uploadProgress((writen, total) => {
                 this.setState({
-                    downloadState: (newReceived / newTotal) * 100,
-                    total: newTotal, received: newReceived
+                    total: parseInt(total),
+                    received: parseInt(writen),
+                    uploadState: (parseInt(writen) / parseInt(total)) * 100
                 })
             })
-            this.task.catch(error => {
-                GState.downlading = false
-                console.warn(error)
-                this.setState({
-                    downloading: false,
-                    error: true
-                })
-            })
-            this.task.then((res) => {
-                GState.downlading = false
-                temp1 = this.state.received / 1000
-                temp2 = this.state.total / 1000
-                temper1 = temp2 / 1000
-                temper2 = temp1 / 1000
-                temp1 = Math.floor(temper1)
-                temp2 = Math.floor(temper2)
-                temp3 = Math.ceil(temper2)
-                console.warn(temper1, temper2)
-                if (temp1 == temp2 || temp1 == temp3) {
-                    this.props.message.duration = Math.floor(res.info().headers.Duration)
-                    fs.appendFile(this.tempPath, res.path(), 'uri').then(() => {
-                        fs.unlink(this.path)
-                        fs.appendFile(this.path, this.tempPath, 'uri').then(() => {
-                            fs.unlink(this.tempPath)
-                            fs.unlink(res.path())
-                            //this.props.message.source = "file://" + this.path
-                            this.setAfterSuccess(this.path, temper1, temper2)
+            this.task.then(response => {
+                if (response.data) {
+                    newDir = `file://` + fs.dirs.DocumentDir + "/others_" + response.data
+                        this.setState({
+                            uploadState: 100,
+                            loaded: true
                         })
-                    })
-                } else {
-                    fs.appendFile(this.tempPath, res.path(), 'uri').then(() => {
-                        fs.unlink(res.path())
-                        this.props.message.received = this.state.received
-                        this.props.message.total = this.state.total
-                        stores.ChatStore.addAudioSizeProperties(this.state.total, this.state.received)
-                    })
+                        this.props.message.type = 'attachement'
+                       ///this.props.message.thumbnailSource = this.baseURL + response.data.split('.')[0] + '_thumbnail.jpeg'
+                        this.props.message.temp = this.baseURL + response.data
+                        this.props.message.received = this.state.total
+                        this.props.replaceMessage(this.props.message)
                 }
             })
+            this.task.catch((error) => {
+                console.warn(error)
+            })
         })
-    }
-    downloadFile(url) {
-        this.downloadID = setInterval(() => {
-            if (!GState.downlading)
-                this.download(url)
-        }, 500)
-
     }
     openFile() {
         FileViewer.open(this.props.message.source).then(() => {
@@ -131,6 +85,8 @@ export default class FileAttarchementMessaege extends Component {
         return test || test2
     }
     componentDidMount() {
+        console.log(this.props.message, 'oo')
+
         this.setState({
             duration: null,
             currentPosition: 0,
@@ -142,10 +98,13 @@ export default class FileAttarchementMessaege extends Component {
             time: this.props.message.created_at.split(" ")[1],
             creator: (this.props.message.sender.phone == this.props.creator)
         })
+        setTimeout(() => {
+            this.uploadFile()
+        }, 500)
     }
     task = null
     previousTime = 0
-    cancelDownLoad(url) {
+    cancelUpLoad(url) {
         this.task.cancel((err, taskID) => {
             this.setState({ downloading: false })
         })
@@ -183,18 +142,18 @@ export default class FileAttarchementMessaege extends Component {
                         <AnimatedCircularProgress
                             size={40}
                             width={3}
-                            fill={this.testForURL(this.props.message.source) ? this.state.downloadState : 100}
+                            fill={this.state.downloadState}
                             tintColor={"#1FABAB"}
                             backgroundColor={'#F8F7EE'}>
                             {
                                 (fill) => (
                                     <View style={{ marginTop: "-2%" }}>
-                                        {this.testForURL(this.props.message.source) ?
-                                            <TouchableOpacity onPress={() => this.state.downloading ? this.cancelDownLoad(this.props.message.source) :
-                                                this.downloadFile(this.props.message.source)}>
+                                        {this.state.loaded ?
+                                            <TouchableOpacity onPress={() => this.state.downloading ? this.cancelUpLoad(this.props.message.source) :
+                                                this.uploadFile(this.props.message.source)}>
                                                 <View>
                                                     <Icon style={{ color: "#0A4E52" }} type="EvilIcons"
-                                                        name={this.state.downloading ? "close" : "arrow-down"}></Icon>
+                                                        name={this.state.downloading ? "close" : "arrow-up"}></Icon>
                                                 </View>
                                                 <View style={{ position: 'absolute', marginTop: '-103%', marginLeft: '-14%', }}>
                                                     {this.state.downloading ? <Spinner></Spinner> : null}
@@ -209,8 +168,8 @@ export default class FileAttarchementMessaege extends Component {
                             }
                         </AnimatedCircularProgress><View>
                             {this.state.loaded ? <Text>{this.toMB(this.state.total).toFixed(1)}{"Mb"}</Text> :
-                             <Text style={{ fontSize: 10 }} note>{"("}{this.toMB(this.state.received).toFixed(1)}{"/"}
-                                {this.toMB(this.state.total).toFixed(1)}{")Mb"}</Text>}</View></View>
+                                <Text style={{ fontSize: 10 }} note>{"("}{this.toMB(this.state.received).toFixed(1)}{"/"}
+                                    {this.toMB(this.state.total).toFixed(1)}{")Mb"}</Text>}</View></View>
                 </View>
             </View>
         );

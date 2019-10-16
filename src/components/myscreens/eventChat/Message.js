@@ -8,6 +8,9 @@ import AudioMessage from './AudioMessage';
 import { Left, Icon, Right,Text } from 'native-base';
 import ReplyText from './ReplyText';
 import PhotoUploader from './PhotoUploader';
+import VideoUploader from './VideoUploader';
+import FileAttarchementUploader from './FileAttarchmantUploader';
+import AudioUploader from './AudioUploader';
 
 export default class Message extends Component {
 
@@ -35,6 +38,16 @@ export default class Message extends Component {
                 return <PhotoUploader showPhoto={(photo) => this.props.showPhoto(photo)} 
                 replaceMessage={data => this.props.replaceMessage(data)} sender={false} 
                 index={index} message={data}></PhotoUploader>
+            case "video_upload":
+                return <VideoUploader playVideo={(video)=> this.props.playVideo(video)} replaceMessage={data => 
+                    this.props.replaceMessageVideo(data)} message={data} playVideo={(video)=>this.props.playVideo(video)} 
+                    index={index} sender={false}></VideoUploader>;
+            case "attachement_upload":
+                return <FileAttarchementUploader index={index} message={data} 
+                replaceMessage={(data)=>this.props.replaceMessageFile(data)}></FileAttarchementUploader>
+            case "audio_uploader":
+                return <AudioUploader message={data} index={data.id} 
+                replaceMessage={(data) => this.props.replaceAudioMessage(data)}></AudioUploader>
             default:
                 return null
         }
@@ -69,7 +82,7 @@ export default class Message extends Component {
             borderBottomLeftRadius: 40,
         }
         subNameStyle = {
-            marginTop: -3, paddingBottom: 5,
+            marginTop: -3, paddingBottom: 0,
             flexDirection: "column"
         }
         nameTextStyle = { color: '#1EDEB6', fontSize: 13, }
@@ -83,7 +96,8 @@ export default class Message extends Component {
                             }}><Text style={nameTextStyle}
                                 note>@{this.state.sender_name}</Text></TouchableOpacity></View> : null}
                                 <View>
-                                {this.props.message.reply ? <View style={{ paddingRight: "1%",marginTop: "2%", }}><ReplyText openReply={(replyer) => {
+                                {this.props.message.reply ? <View style={{ paddingRight: "1%",marginTop: "2%", }}>
+                                <ReplyText openReply={(replyer) => {
                                     this.props.message.reply.isThisUser = !this.state.sender
                                     return this.props.openReply(this.props.message.reply)
                                 }} reply={this.props.message.reply}></ReplyText></View> : null}

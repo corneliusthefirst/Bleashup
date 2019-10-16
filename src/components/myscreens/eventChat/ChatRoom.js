@@ -26,22 +26,23 @@ import {
     BackHandler,
     Keyboard,
     Platform,
-    KeyboardAvoidingView
+    KeyboardAvoidingView,
+    PermissionsAndroid
 } from 'react-native';
 
 import { observer } from "mobx-react";
-import Menu, { MenuDivider } from 'react-native-material-menu';
 import initialRoute from "../invitations/components/initialRoute";
 import globalState from "../../../stores/globalState";
 import ServerEventListener from "../../../services/severEventListener";
 import connection from "../../../services/tcpConnect";
+import SoundRecorder from 'react-native-sound-recorder';
 import UpdatesDispatcher from "../../../services/updatesDispatcher";
 import { ScrollView } from 'react-navigation';
 import EmojiInput from "react-native-emoji-input"
 import VideoPlayer from "./VideoController"
 import Image from 'react-native-scalable-image';
 import KeyboardSpacer from '@thenetcircle/react-native-keyboard-spacer';
-//import ImagePicker from 'react-native-image-picker';
+import DocumentPicker from 'react-native-document-picker';
 import ReactNativeZoomableView from '@dudigital/react-native-zoomable-view/src/ReactNativeZoomableView';
 import ImagePicker from 'react-native-customized-image-picker';
 import BleashupFlatList from '../../BleashupFlatList';
@@ -50,6 +51,10 @@ import { find, orderBy, reject } from "lodash"
 import { TextInput } from "react-native-gesture-handler";
 import stores from "../../../stores";
 import moment from "moment";
+import { PulseIndicator } from 'react-native-indicators';
+import Sound from 'react-native-sound';
+import rnFetchBlob from 'rn-fetch-blob';
+const { fs } = rnFetchBlob
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenheight = Math.round(Dimensions.get('window').height);
 export default class ChatRoom extends Component {
@@ -61,9 +66,12 @@ export default class ChatRoom extends Component {
             splicer: 500,
             creator: true,
             showEmojiInput: false,
+            showAudioRecorder: false,
+            recordTime: 0,
             keyboardOpened: false,
             textValue: '',
             image: null,
+            recording: false,
             captionText: '',
             textHeight: screenheight * 0.1,
             photoHeight: screenheight * 0.9,
@@ -104,22 +112,6 @@ export default class ChatRoom extends Component {
             messageListHeight: this.formHeight(this.messageListFactor),
             showEmojiInputCaption: false
         })
-        /*   UIManager.measure(currentlyFocusedField, (originX, originY, width, height, pageX, pageY) => {
-               const fieldHeight = height;
-               const fieldTop = pageY;
-               const gap = (windowHeight - keyboardHeight) - (fieldTop + fieldHeight);
-               if (gap >= 0) {
-                   return;
-               }
-               Animated.timing(
-                   this.state.shift,
-                   {
-                       toValue: gap,
-                       duration: 1000,
-                       useNativeDriver: true,
-                   }
-               ).start();
-           });*/
     }
 
     handleKeyboardDidHide = () => {
@@ -132,20 +124,13 @@ export default class ChatRoom extends Component {
             textHeight: this.state.showEmojiInputCaption ? screenheight * 0.55 : screenheight * .1,
             photoHeight: this.state.showEmojiInputCaption ? screenheight * 0.45 : screenheight * .9
         })
-        /*  Animated.timing(
-              this.state.shift,
-              {
-                  toValue: 0,
-                  duration: 1000,
-                  useNativeDriver: true,
-              }
-          ).start();*/
     }
 
     handleBackButton() {
         if (this.state.showVideo) {
             this.setState({
-                showVideo: false
+                showVideo: false,
+                showCaption: false
             })
             return true
         } else if (this.state.showRepliedMessage) {
@@ -266,12 +251,9 @@ export default class ChatRoom extends Component {
                 id: Math.random() * 100,
                 type: "text",
                 text: message,
-                sender: {
-                    phone: 3,
-                    nickname: "Fokam Giles"
-                },
-                user: 3,
-                creator: 1,
+                sender: this.sender,
+                user: this.user,
+                creator: this.creator,
                 created_at: moment().format("YYYY-MM-DD HH:mm")
             }
             stores.ChatStore.messages.unshift(messager)
@@ -279,8 +261,15 @@ export default class ChatRoom extends Component {
             this.setState({
                 textValue: ''
             })
+        } else if (this.state.showAudioRecorder) {
+            this.stopRecord()
+
+        } else {
+
         }
     }
+    user = 2;
+    creator = 1
     showPhoto(photo) {
         this.setState({
             photo: photo,
@@ -289,53 +278,113 @@ export default class ChatRoom extends Component {
     }
     openCamera() {
         Keyboard.dismiss();
-        ImagePicker.openCamera({
+        ImagePicker.openPicker({
             cropping: false,
-            includeBase64: false,
-            title: "Take A Photo",
+            isCamera: true,
+            //openCameraOnStart: true,
+            returnAfterShot: true,
+            // returnAfterShot:true,
             compressQuality: 50
         }).then(response => {
+            console.warn("opening camera")
             let temp = response[0].path.split('/');
             this.setState({
                 image: response[0].path,
                 base64: response[0].data,
-                imageSelected: true,
                 showCaption: true,
+                imageSelected: true,
                 filename: temp[temp.length - 1],
                 content_type: response[0].mime,
                 size: response[0].size
             })
         })
     }
-    openPhotoSelector(){
+    openVideo() {
+        Keyboard.dismiss();
+        ImagePicker.openPicker({
+            cropping: false,
+            includeBase64: false,
+            isVideo: true,
+            isCamera: true,
+            title: "Take A Photo",
+            // returnAfterShot:true,
+            compressQuality: 50
+        }).then(response => {
+            //console.warn(response)
+            let temp = response[0].path.split('/');
+            this.setState({
+                video: response[0].path,
+                //base64: response[0].data,
+                showCaption: true,
+                showVideo: true,
+                imageSelected: false,
+                filename: temp[temp.length - 1],
+                content_type: response[0].mime,
+                size: response[0].size
+            })
+        })
+    }
+    sender = {
+        phone: 2,
+        nickname: "Fokam Sanza"
+    }
+    openPhotoSelector() {
         Keyboard.dismiss()
         ImagePicker.openPicker({
-
+            cropping: false,
+            includeBase64: false,
+            compressQuality: 50,
+            multipleShot: false,
+            multiple: true,
+            imageLoader: "PICASSO"
+        }).then((response) => {
+            response.map(res => {
+                message = {
+                    id: Math.random() * 100,
+                    type: "photo" + "_upload",
+                    source: res.path,
+                    sender: this.sender,
+                    user: this.user,
+                    creator: this.creator,
+                    created_at: moment().format("YYYY-MM-DD HH:mm"),
+                    total: res.size,
+                    send: 0,
+                    // data: this.state.base64,
+                    content_type: res.mime,
+                    filename: res.path.split("/")[res.path.split('/').length - 1],
+                    text: this.state.captionText
+                }
+                stores.ChatStore.messages.unshift(message)
+                //  this._resetCaptionInput();
+            })
+            this.setState({
+                captionText: '',
+                // showCaption: false,
+            })
         })
     }
     _sendCaptionMessage() {
         let message = {
             id: Math.random() * 100,
             type: (this.state.imageSelected ? "photo" : "video") + "_upload",
-            source: this.state.image,
-            sender: {
-                phone: 2,
-                nickname: "Fokam Sanza"
-            },
-            user: 2,
+            source: this.state.imageSelected ? this.state.image : this.state.video,
+            sender: this.sender,
+            user: this.user,
+            creator: this.creator,
             created_at: moment().format("YYYY-MM-DD HH:mm"),
             total: this.state.size,
             send: 0,
-            data: this.state.base64,
             content_type: this.state.content_type,
             filename: this.state.filename,
             text: this.state.captionText
         }
+
         stores.ChatStore.messages.unshift(message)
         this._resetCaptionInput();
         this.setState({
             captionText: '',
             showCaption: false,
+            showVideo: false
         })
     }
     replaceMessage(newMessage) {
@@ -347,12 +396,239 @@ export default class ChatRoom extends Component {
         newMessage.photo = newMessage.source
         //send message to the server here
     }
+    replaceMessageVideo(newMessage) {
+        stores.ChatStore.messages = reject(stores.ChatStore.messages, { id: newMessage.id })
+        stores.ChatStore.messages.unshift(newMessage)
+        this.setState({
+            newMessage: true
+        })
+        // the video url is stored in the newMessage.temp
+        // newMessage.source = newMessage.temp
+        //send message to server here
+    }
+    replaceMessageFile(newMessage) {
+        ///console.warn(message)
+        stores.ChatStore.messages = reject(stores.ChatStore.messages, { id: newMessage.id })
+        stores.ChatStore.messages.unshift(newMessage)
+        this.setState({
+            newMessage: true
+        })
+        // the video url is stored in the newMessage.temp
+        // newMessage.source = newMessage.temp
+        //send message to server here
+    }
+    replaceAudioMessage(newMessage) {
+        stores.ChatStore.messages = reject(stores.ChatStore.messages, { id: newMessage.id })
+        stores.ChatStore.messages.unshift(newMessage)
+        this.setState({
+            newMessage: true
+        })
+        // the video url is stored in the newMessage.temp
+        // newMessage.source = newMessage.temp
+        //send message to server here
+    }
     verboseLoggingFunction(error) {
 
     }
+    async openAudioPicker() {
+        try {
+            const res = await DocumentPicker.pick({
+                type: [DocumentPicker.types.audio]
+            });
+            this.filename = res.uri
+            this.duration = 0
+            this.sendAudioMessge()
+        } catch (err) {
+            if (DocumentPicker.isCancel(err)) {
+                // User cancelled the picker, exit any dialogs or menus and move on
+            } else {
+                throw err;
+            }
+        }
+    }
+    async openFilePicker() {
+        try {
+            const res = await DocumentPicker.pick({
+                type: [DocumentPicker.types.allFiles],
+            });
+            res.uri.replace('content://', 'file://')
+            message = {
+                id: Math.random() * 100,
+                source: res.uri,
+                file_name: res.name,
+                sender: this.sender,
+                user: this.user,
+                creator: 2,
+                type: "attachement_upload",
+                received: 0,
+                total: res.size,
+                created_at: moment().format("YYYY-MM-DD HH:mm"),
+            }
+            stores.ChatStore.messages.unshift(message)
+            this.setState({
+                newMessage: true
+            })
+        } catch (err) {
+            if (DocumentPicker.isCancel(err)) {
+                // User cancelled the picker, exit any dialogs or menus and move on
+            } else {
+                throw err;
+            }
+        }
+    }
+    duration = 0
+    _stopRecoder() {
+        SoundRecorder.stop()
+            .then((result) => {
+                this.duration = Math.ceil(result.duration / 1000)
+                this.sendAudioMessge()
+            });
+    }
+    startRecorder() {
+        let recordAudioRequest;
+        if (Platform.OS == 'android') {
+            recordAudioRequest = this._requestRecordAudioPermission();
+        } else {
+            recordAudioRequest = new Promise(function (resolve, reject) { resolve(true); });
+        }
+
+        recordAudioRequest.then((hasPermission) => {
+            if (!hasPermission) {
+                console.warn('permission denied!!!')
+                return;
+            }
+            SoundRecorder.start(this.filename)
+                .then(() => {
+                });
+        });
+    }
+
+    async _requestRecordAudioPermission() {
+        try {
+            const granted = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+                {
+                    title: 'Microphone Permission',
+                    message: 'ExampleApp needs access to your microphone to test react-native-audio-toolkit.',
+                    buttonNeutral: 'Ask Me Later',
+                    buttonNegative: 'Cancel',
+                    buttonPositive: 'OK',
+                },
+            );
+            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (err) {
+            console.error(err);
+            return false;
+        }
+    }
+    filename = fs.dirs.DocumentDir + "/test.mp3"
     _onChangeCaption(event) {
         this.setState({
             captionText: event.nativeEvent.text || ''
+        })
+    }
+    startRecordTiming() {
+        this.recordInterval = setInterval(() => {
+            this.setState({
+                recordTime: this.state.recordTime + 1
+            })
+        }, 1000)
+    }
+    stopRecordTiming() {
+        clearInterval(this.recordInterval)
+    }
+    toggleAudioRecorder() {
+        if (this.state.showAudioRecorder) {
+            //this.stopRecordTiming()
+            SoundRecorder.stop().then((s) => {
+                this.setState({
+                    showAudioRecorder: false,
+                    recording: false,
+                    // recordTime: 0,
+
+                })
+            })
+        } else {
+            this.setState({
+                showAudioRecorder: !this.state.showAudioRecorder,
+                recording: !this.state.recording,
+                recordTime: 0,
+
+            })
+            this.startRecordTiming()
+            this.startRecorder()
+        }
+    }
+    recordInterval = null
+    stopRecord() {
+        this.stopRecordTiming()
+        this.setState({
+            recording: !this.state.recording,
+            showAudioRecorder: false,
+            recordTime: 0
+        })
+        this._stopRecoder()
+        //  this.sendAudioMessge()
+    }
+    pauseRecorder() {
+        this.stopRecordTiming()
+        SoundRecorder.pause().then(() => {
+            this.setState({
+                recording: false
+            })
+        })
+    }
+    convertToHMS(secs) {
+        var sec_num = parseInt(secs, 10)
+        var hours = Math.floor(sec_num / 3600)
+        var minutes = Math.floor(sec_num / 60) % 60
+        var seconds = sec_num % 60
+
+        return [hours, minutes, seconds]
+            .map(v => v < 10 ? "0" + v : v)
+            .filter((v, i) => v !== "00" || i > 0)
+            .join(":")
+
+    }
+    resumAudioRecoder() {
+        this.startRecordTiming()
+        SoundRecorder.resume().then(() => {
+            this.setState({
+                recording: true
+            })
+        })
+    }
+    sendAudioMessge() {
+        let message = {
+            id: Math.random() * 100,
+            source: 'file://' + this.filename,
+            duration: this.duration,
+            type: "audio_uploader",
+            sender: this.sender,
+            user: this.user,
+            content_type: 'audio/mp3',
+            total: 0,
+            received: 0,
+            file_name: 'test.mp3',
+            created_at: moment().format("YYYY-MM-DD HH:mm")
+        }
+        stores.ChatStore.messages.unshift(message)
+        this.setState({
+            newMessage: true
+        })
+    }
+    toggleEmojiKeyboard() {
+        !this.state.showEmojiInput ? Keyboard.dismiss() : this._textInput.focus()
+        this.setState({
+            showEmojiInput: !this.state.showEmojiInput,
+            messageListHeight: this.state.showEmojiInput ?
+                this.formHeight(this.state.initialMessaListHeightFactor) : this.formHeight(0.50),
+            textInputHeight: this.state.showEmojiInput ?
+                this.formHeight(this.state.inittialTextInputHeightFactor) : this.formHeight(0.50)
         })
     }
     transparent = "rgba(50, 51, 53, 0.8)";
@@ -368,103 +644,139 @@ export default class ChatRoom extends Component {
                             initialRender={15}
                             numberOfItems={stores.ChatStore.messages.length}
                             keyExtractor={(item) => item ? item.id : null}
-                            renderItem={(item) => item ? <Message showPhoto={(photo) => this.showPhoto(photo)} replaceMessage={(data) => this.replaceMessage(data)} message={item} openReply={(replyer) => {
-                                this.setState({
-                                    replyer: replyer,
-                                    showRepliedMessage: true
-                                })
-                            }} user={item.user} creator={item.creator} playVideo={(source) => this.playVideo(source)}></Message> : null}
+                            renderItem={(item) => item ? <Message
+                                replaceMessageVideo={(data) => this.replaceMessageVideo(data)}
+                                showPhoto={(photo) => this.showPhoto(photo)}
+                                replaceMessage={(data) => this.replaceMessage(data)}
+                                replaceAudioMessage={(data) => this.replaceAudioMessage(data)}
+                                message={item}
+                                openReply={(replyer) => {
+                                    this.setState({
+                                        replyer: replyer,
+                                        showRepliedMessage: true
+                                    })
+                                }}
+                                user={item.user} creator={item.creator}
+                                replaceMessageFile={(data) => this.replaceMessageFile(data)}
+                                playVideo={(source) => this.playVideo(source)}></Message> : null}
                             dataSource={stores.ChatStore.messages}
                         >
                         </BleashupFlatList>
                     </View>
-                    <KeyboardAvoidingView keyboardVerticalOffset>
-                        <View style={{ height: this.state.textInputHeight, }}>
-                            <View style={{ display: 'flex', flexDirection: 'row', }}>
-                                <View style={{
-                                    marginTop: "2%",
-                                    display: 'flex', flexDirection: 'row',
-                                }}><TouchableOpacity>
-                                        <Icon name={"attach-file"} type={"MaterialIcons"} style={{ color: "#0A4E52", }}></Icon></TouchableOpacity>
-                                    <TouchableOpacity onPress={()=> this.openPhotoSelector()}><Icon style={{ color: "#0A4E52", marginRight: "1%", }}
-                                        type={"Ionicons"} name={"md-photos"}></Icon></TouchableOpacity><TouchableOpacity
-                                            onPress={() => this.openCamera()}><Icon style={{ color: "#0A4E52", marginRight: "1%" }}
-                                                type={"MaterialIcons"} name={"photo-camera"}></Icon></TouchableOpacity><TouchableOpacity>
-                                        <Icon name={"video-camera"} type={"Entypo"} style={{ color: "#0A4E52", marginRight: "1%", }}></Icon></TouchableOpacity>
-                                    <Icon style={{ color: "#1FABAB" }} onPress={() => {
-                                        !this.state.showEmojiInput ? Keyboard.dismiss() : this._textInput.focus()
-                                        this.setState({
-                                            showEmojiInput: !this.state.showEmojiInput,
-                                            messageListHeight: this.state.showEmojiInput ?
-                                                this.formHeight(this.state.initialMessaListHeightFactor) : this.formHeight(0.50),
-                                            textInputHeight: this.state.showEmojiInput ?
-                                                this.formHeight(this.state.inittialTextInputHeightFactor) : this.formHeight(0.50)
-                                        })
-                                    }} type="Entypo" name="emoji-flirt"></Icon></View>
-                                <TextInput
-                                    value={this.state.textValue}
-                                    onChange={(event) => this._onChange(event)}
-                                    style={{
-                                        paddingLeft: 10,
-                                        fontSize: 17,
-                                        height: 50,
-                                        width: 195,
-                                        borderColor: "#1FABAB",
-                                        backgroundColor: 'white',
-                                        borderWidth: 1,
-                                        borderRadius: 8,
-                                    }}
-                                    placeholder={'Your Message'}
-                                    placeholderTextColor='#66737C'
-                                    maxHeight={200}
-                                    multiline={this.state.keyboardOpened ? true : false}
-                                    minHeight={45}
-                                    enableScrollToCaret
-                                    ref={(r) => { this._textInput = r; }}
-                                />
-                                <View style={{ marginLeft: "2%", marginTop: "2%", display: 'flex', flexDirection: 'row', }}><TouchableOpacity><Icon style={{
-                                    color: "#0A4E52",
-                                    marginRight: "8%",
-                                }}
-                                    type={"FontAwesome5"} name={"microphone-alt"} ></Icon></TouchableOpacity>
-                                    <TouchableOpacity onPress={() => {
-                                        requestAnimationFrame(() => {
-                                            return this.sendMessageText(this.state.textValue)
-                                        })
-                                    }}><Icon style={{ color: "#1FABAB" }}
-                                        name="paper-plane" type="FontAwesome"></Icon></TouchableOpacity></View>
+                    {
+                        // ***************** KeyBoard Displayer *****************************
+                        <KeyboardAvoidingView keyboardVerticalOffset>
+                            <View style={{ height: this.state.textInputHeight }}>
+                                <View style={{ display: 'flex', flexDirection: 'row', }}>
+                                    <View style={{
+                                        marginTop: "2%",
+                                        display: 'flex', flexDirection: 'row',
+                                    }}><TouchableOpacity onPress={() => this.openFilePicker()}>
+                                            <Icon name={"attach-file"} type={"MaterialIcons"} style={{ color: "#0A4E52", }}></Icon></TouchableOpacity>
+                                        <TouchableOpacity onLongPress={() => this.openPhotoSelector()} onPress={() => this.openCamera()}><Icon style={{ color: "#0A4E52", marginRight: "1%", }}
+                                            type={"Ionicons"} name={"md-photos"}></Icon></TouchableOpacity><TouchableOpacity onPress={() => this.openVideo()}>
+                                            <Icon name={"video-camera"} type={"Entypo"} style={{ color: "#0A4E52", marginRight: "1%", }}></Icon></TouchableOpacity>
+                                        <Icon onPress={() => this.toggleEmojiKeyboard()} style={{ color: "#1FABAB" }} type="Entypo" name="emoji-flirt"></Icon></View>
+                                    <TextInput
+                                        value={this.state.textValue}
+                                        onChange={(event) => this._onChange(event)}
+                                        style={{
+                                            paddingLeft: 10,
+                                            fontSize: 17,
+                                            height: 50,
+                                            width: 230,
+                                            borderColor: "#1FABAB",
+                                            backgroundColor: 'white',
+                                            borderWidth: 1,
+                                            borderRadius: 8,
+                                        }}
+                                        placeholder={'Your Message'}
+                                        placeholderTextColor='#66737C'
+                                        maxHeight={200}
+                                        multiline={this.state.keyboardOpened ? true : false}
+                                        minHeight={45}
+                                        enableScrollToCaret
+                                        ref={(r) => { this._textInput = r; }}
+                                    />
+                                    <View style={{
+                                        marginLeft: "2%", marginTop: "2%", display: 'flex',
+                                        flexDirection: 'row',
+                                    }}>
+                                        {
+                                            !this.state.showAudioRecorder ? <TouchableOpacity onLongPress={() => {
+                                                this.openAudioPicker()
+                                            }} onPress={() => this.toggleAudioRecorder()}><Icon style={{
+                                                color: "#0A4E52",
+                                                marginRight: "8%",
+                                            }}
+                                                type={"FontAwesome5"} name={"microphone-alt"} ></Icon></TouchableOpacity> : null}
+                                        <TouchableOpacity onPress={() => {
+                                            requestAnimationFrame(() => {
+                                                return this.sendMessageText(this.state.textValue)
+                                            })
+                                        }}><Icon style={{ marginLeft: this.state.showAudioRecorder ? "23%" : "0%", color: "#1FABAB" }}
+                                            name="paper-plane" type="FontAwesome"></Icon></TouchableOpacity>
+                                    </View>
+                                </View>
+                                {
+                                    // ***************** Emoji keyBoard Input ***********************//
+                                    this.state.showEmojiInput ? <View style={{ width: "100%", height: 300 }}>
+                                        <EmojiInput onEmojiSelected={(emoji) => this.handleEmojiSelected(emoji)}
+                                            enableSearch={false}
+                                            ref={emojiInput => this._emojiInput = emojiInput}
+                                            resetSearch={this.state.reset}
+                                            loggingFunction={this.verboseLoggingFunction.bind(this)}
+                                            verboseLoggingFunction={true}
+                                            filterFunctions={[this.filterFunctionByUnicode]} ></EmojiInput>
+                                    </View> : null}
+                                {
+
+                                    // ******************** Audio Recorder Input ************************//
+
+                                    this.state.showAudioRecorder ?
+                                        <View style={{
+                                            position: "absolute", width: 343, opacity: 0.97,
+                                            backgroundColor: '#4A918A', height: 50, display: 'flex', flexDirection: 'row',
+                                            marginLeft: 2, borderRadius: 10,
+                                        }}><Left><Icon onPress={() => this.toggleAudioRecorder()} type={'EvilIcons'}
+                                            name={'close'} style={{ color: "#FEFFDE" }}></Icon></Left>{this.state.recording ? <View
+                                                style={{ marginLeft: "-40%", marginTop: "1.8%", display: 'flex', flexDirection: 'row', }}>
+                                                <Icon type={"Entypo"} onPress={() => this.stopRecord()} name={"controller-stop"}
+                                                    style={{ color: "#FEFFDE", fontSize: 35, }}></Icon>
+                                                <Icon type={"FontAwesome"} name={"pause"} onPress={() => this.pauseRecorder()}
+                                                    style={{ marginTop: "5%", marginLeft: "10%", color: "#FEFFDE", fontSize: 26, }}></Icon>
+                                            </View> : <View style={{ marginLeft: "-40%", marginTop: "1.8%", display: 'flex', flexDirection: 'row', }}>
+                                                    <Icon type={"Entypo"} onPress={() => this.resumAudioRecoder()}
+                                                        name={"controller-record"} style={{ color: "#FEFFDE", fontSize: 35, }}></Icon>
+                                                </View>}
+                                            <Right><View style={{ display: 'flex', flexDirection: 'row', marginLeft: "40%", }}>
+                                                <Text style={{ marginTop: "6%", fontSize: 22, color: "#FEFFDE" }}>
+                                                    {this.convertToHMS(this.state.recordTime)}</Text>
+                                                <PulseIndicator color={'red'}>
+                                                </PulseIndicator></View></Right></View> : null}
                             </View>
-                            {this.state.showEmojiInput ? <View style={{ width: "100%", height: 300 }}>
-                                <EmojiInput onEmojiSelected={(emoji) => this.handleEmojiSelected(emoji)}
-                                    enableSearch={false}
-                                    ref={emojiInput => this._emojiInput = emojiInput}
-                                    resetSearch={this.state.reset}
-                                    loggingFunction={this.verboseLoggingFunction.bind(this)}
-                                    verboseLoggingFunction={true}
-                                    filterFunctions={[this.filterFunctionByUnicode]} ></EmojiInput>
-                            </View> : null}
-                        </View>
-                    </KeyboardAvoidingView>
+                        </KeyboardAvoidingView>
+                    }
                 </View>
                 {
                     // ******************Photo Viewer View ***********************//
                     this.state.showPhoto ?
                         <View style={{ height: screenheight, width: screenWidth, position: "absolute", backgroundColor: "black", }}>
-                        <ReactNativeZoomableView
-                            maxZoom={1.5}
-                            minZoom={0.5}
-                            zoomStep={0.5}
-                            initialZoom={1}
-                            bindToBorders={true}
-                            onZoomAfter={this.logOutZoomState}>
-                            <Image resizeMode={"contain"} width={screenWidth} height={screenheight}
-                                source={{ uri: this.state.photo }}></Image>
-                        </ReactNativeZoomableView>
-                            <Icon type="EvilIcons" onPress={()=>{
+                            <ReactNativeZoomableView
+                                maxZoom={1.5}
+                                minZoom={0.5}
+                                zoomStep={0.5}
+                                initialZoom={1}
+                                bindToBorders={true}
+                                onZoomAfter={this.logOutZoomState}>
+                                <Image resizeMode={"contain"} width={screenWidth} height={screenheight}
+                                    source={{ uri: this.state.photo }}></Image>
+                            </ReactNativeZoomableView>
+                            <Icon type="EvilIcons" onPress={() => {
                                 this.setState({
-                                    showPhoto:false
+                                    showPhoto: false
                                 })
-                            }} style={{ margin: '1%', position:'absolute', fontSize: 30, color: "#FEFFDE" }} name={"close"}></Icon>
+                            }} style={{ margin: '1%', position: 'absolute', fontSize: 30, color: "#FEFFDE" }} name={"close"}></Icon>
                         </View> : null
                 }
                 {
@@ -481,8 +793,10 @@ export default class ChatRoom extends Component {
                                 zoomStep={0.5}
                                 initialZoom={1}
                                 bindToBorders={true}
-                                onZoomAfter={this.logOutZoomState}><Image resizeMode={"contain"}
-                                    width={screenWidth} style={{ flex: 1 }} source={{ uri: this.state.image }}></Image></ReactNativeZoomableView> : null}
+                                onZoomAfter={this.logOutZoomState}>
+                                {this.state.imageSelected ? <Image resizeMode={"contain"}
+                                    width={screenWidth} style={{ flex: 1 }} source={{ uri: this.state.image }}></Image> : null
+                                }</ReactNativeZoomableView> : null}
                         </View>
                         <KeyboardAvoidingView >
                             <View style={{ heigh: this.state.textHeight, backgroundColor: "#1FABAB", width: "100%", display: 'flex', flexDirection: 'row', }}>
@@ -537,7 +851,7 @@ export default class ChatRoom extends Component {
                                             showRepliedMessage: true
                                         })
                                     }} playVideo={(source) => this.playVideo(source)}
-                                        creator={2} user={2} message={find(this.message, { id: this.state.replyer.id })} />}
+                                        creator={2} user={2} message={find(stores.ChatStore.messages, { id: this.state.replyer.id })} />}
                                 </View>
                             </ScrollView>
                             {!(this.state.replyer.user == this.state.user) ? <TouchableOpacity onPress={() => {
@@ -553,7 +867,7 @@ export default class ChatRoom extends Component {
                     //** ####### Vidoe PLayer View ################ */
 
                     this.state.showVideo ? <View style={{
-                        height: 400,
+                        height: this.state.keyboardOpened ? 300 : 400,
                         position: "absolute",
                         width: this.state.fullScreen ? "100%" : screenWidth,
                         backgroundColor: this.transparent,
