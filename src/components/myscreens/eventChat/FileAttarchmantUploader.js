@@ -14,6 +14,7 @@ import GState from '../../../stores/globalState';
 import FileViewer from 'react-native-file-viewer';
 let dirs = rnFetchBlob.fs.dirs
 const { fs } = rnFetchBlob
+const AppDir = rnFetchBlob.fs.dirs.SDCardDir + '/Bleashup'
 export default class FileAttarchementUploader extends Component {
     constructor(props) {
         super(props);
@@ -30,7 +31,7 @@ export default class FileAttarchementUploader extends Component {
             downloadState: 0,
         }
     }
-    path = dirs.DocumentDir + '/others_' + this.props.message.file_name
+    path = AppDir + '/Others/' + this.props.message.file_name
     duration = 10
     pattern = [1000, 0, 0]
     downloadID = null
@@ -55,7 +56,7 @@ export default class FileAttarchementUploader extends Component {
             })
             this.task.then(response => {
                 if (response.data) {
-                    newDir = `file://` + fs.dirs.DocumentDir + "/others_" + response.data
+                    newDir = `file://` + AppDir + "/Others/" + response.data
                         this.setState({
                             uploadState: 100,
                             loaded: true

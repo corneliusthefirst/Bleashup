@@ -15,6 +15,7 @@ import BarIndicat from '../../BarIndicat';
 import { BarIndicator } from "react-native-indicators"
 let dirs = rnFetchBlob.fs.dirs
 const { fs, config } = rnFetchBlob
+const AppDir = rnFetchBlob.fs.dirs.SDCardDir + '/Bleashup'
 export default class AudioMessage extends Component {
     constructor(props) {
         super(props);
@@ -47,7 +48,7 @@ export default class AudioMessage extends Component {
             })
         })
     }
-    path = dirs.DocumentDir + '/sounds_' + this.props.message.file_name
+    path = AppDir + '/Sound/' + this.props.message.file_name
     duration = 10
     pattern = [1000, 0, 0]
     tempPath = this.path + '.download'

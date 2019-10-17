@@ -23,13 +23,33 @@ import connection from "../../../services/tcpConnect";
 import UpdatesDispatcher from "../../../services/updatesDispatcher";
 import ChatRoom from "../eventChat/ChatRoom";
 import rnFetchBlob from 'rn-fetch-blob';
-
+const AppDir = rnFetchBlob.fs.dirs.SDCardDir + '/Bleashup'
+const PhotoDir = AppDir + '/Photo'
+const SounDir = AppDir + '/Sound'
+const VideoDir = AppDir + '/Video'
+const OthersDir = AppDir + '/Others'
+const { fs } = rnFetchBlob
 export default class LoginHomeView extends Component {
   constructor(props) {
     super(props);
   }
   render() {
     //console.disableYellowBox = true;
+    fs.exists(AppDir).then(status => {
+      if (!status) {
+        fs.mkdir(AppDir).then(() => {
+          fs.mkdir(PhotoDir).then(() => {
+            fs.mkdir(SounDir).then(() => {
+              fs.mkdir(VideoDir).then(() => {
+                fs.mkdir(OthersDir).then(() => {
+                  console.warn("all dirs created")
+                })
+              })
+            })
+          })
+        })
+      }
+    })
     return (
       <Container>
         <ChatRoom></ChatRoom>

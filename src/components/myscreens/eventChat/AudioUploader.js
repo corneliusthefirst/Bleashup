@@ -14,6 +14,7 @@ import GState from '../../../stores/globalState';
 import * as config from "../../../config/bleashup-server-config.json"
 let dirs = rnFetchBlob.fs.dirs
 const { fs } = rnFetchBlob
+const AppDir = rnFetchBlob.fs.dirs.SDCardDir + '/Bleashup'
 export default class AudioUploader extends Component {
     constructor(props) {
         super(props);
@@ -26,7 +27,7 @@ export default class AudioUploader extends Component {
             currentPosition: 0,
             loaded:false,
             currentTime: 0,
-            downloadState: 0,
+            uploadState: 0,
             downloading: true
         }
     }
@@ -50,7 +51,7 @@ export default class AudioUploader extends Component {
             })
             this.task.then(response => {
                 if (response.data) {
-                    newDir = fs.dirs.DocumentDir + "/audio_" + response.data
+                    newDir = AppDir + "/Sound/" + response.data
                     fs.writeFile(newDir, this.props.message.source.split(`file://`)[1], 'uri').then(() => {
                         this.setState({
                             uploadState: 100,

@@ -10,6 +10,8 @@ import GState from "../../../stores/globalState";
 import TextContent from "./TextContent";
 const { fs, config } = rnFetchBlob
 let dirs = rnFetchBlob.fs.dirs
+const AppDir = rnFetchBlob.fs.dirs.SDCardDir + '/Bleashup'
+
 
 export default class VideoMessage extends Component {
     constructor(props) {
@@ -53,7 +55,7 @@ export default class VideoMessage extends Component {
             })
         })
     }
-    path = dirs.DocumentDir + '/videos_' + this.props.message.file_name
+    path = AppDir + '/Video/' + this.props.message.file_name
     tempPath = this.path + '.download'
     download(url) {
         clearInterval(this.downloadID)
@@ -62,7 +64,7 @@ export default class VideoMessage extends Component {
             downloading: true
         })
         this.DetemineRange(this.tempPath).then(size => {
-            console.warn("downloading....", size)
+            //console.warn("downloading....", size)
             this.task = rnFetchBlob.config({
                 fileCache: true
             }).fetch('GET', url, {

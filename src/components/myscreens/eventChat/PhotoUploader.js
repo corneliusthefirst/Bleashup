@@ -7,6 +7,7 @@ import rnFetchBlob from 'rn-fetch-blob';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import * as config from "../../../config/bleashup-server-config.json"
 const { fs } = rnFetchBlob
+const AppDir = rnFetchBlob.fs.dirs.SDCardDir + '/Bleashup'
 export default class PhotoUploader extends Component {
     constructor(props) {
         super(props)
@@ -52,7 +53,7 @@ export default class PhotoUploader extends Component {
                     temp3 = Math.ceil(temper2)
                     if (temp1 == temp2 || temp1 == temp3) {
                         //  console.warn(response)
-                        newDir = `file://` + fs.dirs.DocumentDir +"/photo_"+ response.data
+                        newDir = `file://` + AppDir +"/Photo/"+ response.data
                         fs.writeFile(newDir.split(`file://`)[1], this.props.message.source.split(`file://`)[1], 'uri').then(() => {
                             this.setState({
                                 uploadState: 100,

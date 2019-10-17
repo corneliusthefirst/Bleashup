@@ -13,6 +13,7 @@ import GState from '../../../stores/globalState';
 import FileViewer from 'react-native-file-viewer';
 let dirs = rnFetchBlob.fs.dirs
 const { fs, config } = rnFetchBlob
+const AppDir = rnFetchBlob.fs.dirs.SDCardDir + '/Bleashup'
 export default class FileAttarchementMessaege extends Component {
     constructor(props) {
         super(props);
@@ -44,7 +45,7 @@ export default class FileAttarchementMessaege extends Component {
             })
         })
     }
-    path = dirs.DocumentDir + '/others_' + this.props.message.file_name
+    path = AppDir + '/Others/' + this.props.message.file_name
     duration = 10
     pattern = [1000, 0, 0]
     downloadID = null
