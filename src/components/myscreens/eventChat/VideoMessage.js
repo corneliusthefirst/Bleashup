@@ -64,7 +64,6 @@ export default class VideoMessage extends Component {
             downloading: true
         })
         this.DetemineRange(this.tempPath).then(size => {
-            //console.warn("downloading....", size)
             this.task = rnFetchBlob.config({
                 fileCache: true
             }).fetch('GET', url, {

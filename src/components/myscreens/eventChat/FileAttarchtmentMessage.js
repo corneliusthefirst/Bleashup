@@ -25,7 +25,6 @@ export default class FileAttarchementMessaege extends Component {
         }
     }
     setAfterSuccess(path) {
-        console.warn("setting success!!!!")
         this.props.message.source = Platform.OS === 'android' ? path + "/" : '' + path
         stores.ChatStore.addStaticFilePath(this.props.message.source, '').then(() => {
             this.setState({
@@ -89,7 +88,6 @@ export default class FileAttarchementMessaege extends Component {
                 temp1 = Math.floor(temper1)
                 temp2 = Math.floor(temper2)
                 temp3 = Math.ceil(temper2)
-                console.warn(temper1, temper2)
                 if (temp1 == temp2 || temp1 == temp3) {
                     this.props.message.duration = Math.floor(res.info().headers.Duration)
                     fs.appendFile(this.tempPath, res.path(), 'uri').then(() => {

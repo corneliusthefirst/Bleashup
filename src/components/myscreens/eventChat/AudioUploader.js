@@ -83,12 +83,10 @@ export default class AudioUploader extends Component {
     }
     initialisePlayer(source) {
         this.player = new Sound(source, '/', (error) => {
-            console.warn(error, '-------')
         })
     }
     player = null
     componentDidMount() {
-        //  console.warn(dirs.DocumentDir)
         this.setState({
             duration: this.props.message.duration,
             currentPosition: 0,
@@ -117,7 +115,6 @@ export default class AudioUploader extends Component {
         if (this.props.message.duration) {
             let refreshID = setInterval(() => {
                 this.player.getCurrentTime(time => {
-                    //console.warn(time)
                     if (this.previousTime == time) clearInterval(refreshID)
                     else {
                         this.previousTime = time

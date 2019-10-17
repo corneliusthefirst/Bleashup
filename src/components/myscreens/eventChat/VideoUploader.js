@@ -29,7 +29,6 @@ export default class VideoUploader extends Component {
     task = null
     uploadVideo() {
         fs.exists(this.props.message.source).then(state => {
-            //console.warn(this.uploadURL)
             this.task = rnFetchBlob.fetch("POST", this.uploadURL, {
                 'content-type': 'multipart/form-data',
             }, [{

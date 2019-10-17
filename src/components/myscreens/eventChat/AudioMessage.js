@@ -91,7 +91,6 @@ export default class AudioMessage extends Component {
                 temp2 = Math.floor(temper2)
                 temp3 = Math.ceil(temper2)
                 GState.downlading = false
-              //  console.warn(temper1, temper2)
                 if (temp1 == temp2 || temp1 == temp3) {
                     this.props.message.duration = Math.floor(res.info().headers.Duration)
                     fs.appendFile(this.tempPath, res.path(), 'uri').then(() => {
@@ -128,7 +127,6 @@ export default class AudioMessage extends Component {
     }
     initialisePlayer(source) {
         this.player = new Sound(source, '/', (error) => {
-            console.warn(error, '-------')
         })
     }
     player = null
@@ -168,7 +166,6 @@ export default class AudioMessage extends Component {
         if (this.props.message.duration) {
             let refreshID = setInterval(() => {
                 this.player.getCurrentTime(time => {
-                    //console.warn(time)
                     if (this.previousTime == time) clearInterval(refreshID)
                     else {
                         this.previousTime = time

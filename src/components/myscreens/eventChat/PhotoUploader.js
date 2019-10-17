@@ -52,7 +52,6 @@ export default class PhotoUploader extends Component {
                     temp2 = Math.floor(temper2)
                     temp3 = Math.ceil(temper2)
                     if (temp1 == temp2 || temp1 == temp3) {
-                        //  console.warn(response)
                         newDir = `file://` + AppDir +"/Photo/"+ response.data
                         fs.writeFile(newDir.split(`file://`)[1], this.props.message.source.split(`file://`)[1], 'uri').then(() => {
                             this.setState({

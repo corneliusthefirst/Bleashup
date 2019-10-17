@@ -778,7 +778,7 @@ export default class ChatRoom extends Component {
                                     <View style={{
                                         position: "absolute", width: 350, opacity: 0.97,
                                         marginTop: "1%",
-                                        backgroundColor: '#4A918A', height: 50, display: 'flex', flexDirection: 'row',
+                                        backgroundColor: '#5CB99E', height: 50, display: 'flex', flexDirection: 'row',
                                         marginLeft: 2, borderRadius: 10,
                                     }}><Left><TouchableOpacity onPress={() => this.toggleAudioRecorder()}><Icon type={'EvilIcons'}
                                         name={'close'} style={{ color: "#FEFFDE" }}></Icon></TouchableOpacity></Left>{this.state.recording ? <View

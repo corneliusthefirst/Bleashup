@@ -38,7 +38,6 @@ export default class FileAttarchementUploader extends Component {
     tempPath = this.path + '.download'
     uploadFile(url) {
         fs.exists(this.props.message.source).then(state => {
-            //console.warn(this.uploadURL)
             this.task = rnFetchBlob.fetch("POST", this.uploadURL, {
                 'content-type': 'multipart/form-data',
             }, [{
@@ -86,8 +85,6 @@ export default class FileAttarchementUploader extends Component {
         return test || test2
     }
     componentDidMount() {
-        console.log(this.props.message, 'oo')
-
         this.setState({
             duration: null,
             currentPosition: 0,

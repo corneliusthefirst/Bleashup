@@ -182,7 +182,6 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
     }
     addDuration(duration, chatID) {
         return new Promise((resolve, reject) => {
-            console.warn("setting voice note duration")
             resolve("ok")
         })
     }
@@ -225,7 +224,6 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
     }
     addStaticFilePath(url, chatID) {
         return new Promise((resolve, reject) => {
-            console.warn("setting message static resource");
             resolve("ok");
         })
     }
