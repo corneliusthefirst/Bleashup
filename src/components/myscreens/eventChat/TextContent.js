@@ -1,13 +1,16 @@
 import React, { Component } from "react"
 import { View, TouchableOpacity } from 'react-native'
-import {Text} from "native-base"
+import { Text } from "native-base"
 import { TouchableWithoutFeedback } from "react-native-gesture-handler"
 export default class TextContent extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            splicer:500
+            splicer: 500
         }
+    }
+    fontSizeFormular() {
+        return this.props.text.length > 10 ? 16 : 40 - this.props.text.length * 0.9
     }
     render() {
         return (
@@ -16,10 +19,10 @@ export default class TextContent extends Component {
                     ? 500 : this.props.text.length
             })}>
                 <View>
-                    <Text styles={{
+                    <Text style={{
                         justifyContent: 'center',
-                        fontSize: 8,
-                        backgroundColor: this.state.sender ? '#FFBFB2' : '#C1FFF2',
+                        fontSize: this.fontSizeFormular(),
+                        //backgroundColor: this.state.sender ? '#FFBFB2' : '#C1FFF2',
                     }}>
                         {this.props.text/*this.props.text.slice(0, this.state.splicer)}{"  "}{this.props.text.length >= 
                         this.state.splicer ? this.state.splicer == this.props.text.length ? "" : " .... ...." : ""*/}

@@ -29,7 +29,7 @@ export default class LoginHomeView extends Component {
     super(props);
   }
   render() {
-    console.disableYellowBox = true;
+    //console.disableYellowBox = true;
     return (
       <Container>
         <ChatRoom></ChatRoom>

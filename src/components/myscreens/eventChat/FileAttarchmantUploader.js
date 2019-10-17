@@ -142,13 +142,13 @@ export default class FileAttarchementUploader extends Component {
                         <AnimatedCircularProgress
                             size={40}
                             width={3}
-                            fill={this.state.downloadState}
+                            fill={this.state.uploadState}
                             tintColor={"#1FABAB"}
                             backgroundColor={'#F8F7EE'}>
                             {
                                 (fill) => (
                                     <View style={{ marginTop: "-2%" }}>
-                                        {this.state.loaded ?
+                                        {!this.state.loaded ?
                                             <TouchableOpacity onPress={() => this.state.downloading ? this.cancelUpLoad(this.props.message.source) :
                                                 this.uploadFile(this.props.message.source)}>
                                                 <View>

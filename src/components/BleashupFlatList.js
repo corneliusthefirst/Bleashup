@@ -41,6 +41,9 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
             })
         }
     }
+    scrollToEnd(){
+        this.refs.bleashupFlatlist.scrollToOffset({ animated: true, offset: 0 })
+    }
     render() {
         return (
             <View style={{ flexDirection: 'column', backgroundColor: this.props.backgroundColor?this.props.backgroundColor:"#FEFFDE", }}>

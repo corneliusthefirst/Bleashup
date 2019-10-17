@@ -15,7 +15,8 @@ import {
     Text,
     H3,
     Spinner,
-    Button
+    Button,
+    Toast
 } from "native-base";
 import {
     View,
@@ -77,10 +78,10 @@ export default class ChatRoom extends Component {
             photoHeight: screenheight * 0.9,
             showCaption: false,
             showEmojiInputCaption: false,
-            messageListHeight: this.formHeight(0.91),
-            textInputHeight: this.formHeight(0.09),
-            inittialTextInputHeightFactor: 0.09,
-            initialMessaListHeightFactor: 0.91,
+            messageListHeight: this.formHeight(((screenheight - 100) / screenheight)),
+            textInputHeight: this.formHeight((100 / screenheight)),
+            inittialTextInputHeightFactor: 100 / screenheight,
+            initialMessaListHeightFactor: (screenheight - 100) / screenheight,
             showRepliedMessage: false,
             showVideo: false,
             playing: true,
@@ -97,6 +98,9 @@ export default class ChatRoom extends Component {
     componentWillUnmount() {
         this.keyboardDidShowSub.remove();
         this.keyboardDidHideSub.remove();
+        SoundRecorder.stop().then(() => {
+
+        })
         BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton);
     }
 
@@ -153,6 +157,16 @@ export default class ChatRoom extends Component {
         } else if (this.state.showPhoto) {
             this.setState({
                 showPhoto: false
+            })
+            return true
+        } else if (this.state.showAudioRecorder) {
+            this.stopRecordTiming()
+            SoundRecorder.stop().then(()=>{
+                this.setState({
+                    recordTime:0,
+                    recording:false,
+                    showAudioRecorder:false
+                })
             })
             return true
         } else {
@@ -246,6 +260,7 @@ export default class ChatRoom extends Component {
           console.log(`Zoomed from ${zoomableViewEventObject.lastZoomLevel} to  ${zoomableViewEventObject.zoomLevel}`);*/
     }
     sendMessageText(message) {
+        this.scrollToEnd()
         if (this.state.textValue !== '') {
             let messager = {
                 id: Math.random() * 100,
@@ -286,7 +301,7 @@ export default class ChatRoom extends Component {
             // returnAfterShot:true,
             compressQuality: 50
         }).then(response => {
-            console.warn("opening camera")
+            //console.warn("opening camera")
             let temp = response[0].path.split('/');
             this.setState({
                 image: response[0].path,
@@ -306,7 +321,7 @@ export default class ChatRoom extends Component {
             includeBase64: false,
             isVideo: true,
             isCamera: true,
-            title: "Take A Photo",
+            title: "Take A Video",
             // returnAfterShot:true,
             compressQuality: 50
         }).then(response => {
@@ -364,6 +379,7 @@ export default class ChatRoom extends Component {
         })
     }
     _sendCaptionMessage() {
+        this.scrollToEnd()
         let message = {
             id: Math.random() * 100,
             type: (this.state.imageSelected ? "photo" : "video") + "_upload",
@@ -388,6 +404,7 @@ export default class ChatRoom extends Component {
         })
     }
     replaceMessage(newMessage) {
+        this.scrollToEnd()
         stores.ChatStore.messages = reject(stores.ChatStore.messages, { id: newMessage.id })
         stores.ChatStore.messages.unshift(newMessage)
         this.setState({
@@ -397,6 +414,7 @@ export default class ChatRoom extends Component {
         //send message to the server here
     }
     replaceMessageVideo(newMessage) {
+        this.scrollToEnd()
         stores.ChatStore.messages = reject(stores.ChatStore.messages, { id: newMessage.id })
         stores.ChatStore.messages.unshift(newMessage)
         this.setState({
@@ -407,6 +425,7 @@ export default class ChatRoom extends Component {
         //send message to server here
     }
     replaceMessageFile(newMessage) {
+        this.scrollToEnd()
         ///console.warn(message)
         stores.ChatStore.messages = reject(stores.ChatStore.messages, { id: newMessage.id })
         stores.ChatStore.messages.unshift(newMessage)
@@ -418,6 +437,7 @@ export default class ChatRoom extends Component {
         //send message to server here
     }
     replaceAudioMessage(newMessage) {
+        this.scrollToEnd()
         stores.ChatStore.messages = reject(stores.ChatStore.messages, { id: newMessage.id })
         stores.ChatStore.messages.unshift(newMessage)
         this.setState({
@@ -435,9 +455,11 @@ export default class ChatRoom extends Component {
             const res = await DocumentPicker.pick({
                 type: [DocumentPicker.types.audio]
             });
+            let temp = this.filename
             this.filename = res.uri
             this.duration = 0
             this.sendAudioMessge()
+            this.filename = temp
         } catch (err) {
             if (DocumentPicker.isCancel(err)) {
                 // User cancelled the picker, exit any dialogs or menus and move on
@@ -478,6 +500,7 @@ export default class ChatRoom extends Component {
     }
     duration = 0
     _stopRecoder() {
+        this.stopRecordTiming()
         SoundRecorder.stop()
             .then((result) => {
                 this.duration = Math.ceil(result.duration / 1000)
@@ -499,6 +522,14 @@ export default class ChatRoom extends Component {
             }
             SoundRecorder.start(this.filename)
                 .then(() => {
+                }).catch(error => {
+                    //console.warn(error)
+                    Toast.show({duration:4000, text: "cannot record due to " + error })
+                    this.setState({ showAudioRecorder: false, recording: false, recordTime: 0 })
+                    this.stopRecordTiming()
+                    SoundRecorder.stop().then(()=>{
+
+                    })
                 });
         });
     }
@@ -542,8 +573,14 @@ export default class ChatRoom extends Component {
         clearInterval(this.recordInterval)
     }
     toggleAudioRecorder() {
+        this.setState({
+            showAudioRecorder: !this.state.showAudioRecorder,
+            recording: !this.state.recording,
+            recordTime: 0,
+
+        })
         if (this.state.showAudioRecorder) {
-            //this.stopRecordTiming()
+            this.stopRecordTiming()
             SoundRecorder.stop().then((s) => {
                 this.setState({
                     showAudioRecorder: false,
@@ -553,12 +590,6 @@ export default class ChatRoom extends Component {
                 })
             })
         } else {
-            this.setState({
-                showAudioRecorder: !this.state.showAudioRecorder,
-                recording: !this.state.recording,
-                recordTime: 0,
-
-            })
             this.startRecordTiming()
             this.startRecorder()
         }
@@ -578,7 +609,7 @@ export default class ChatRoom extends Component {
         this.stopRecordTiming()
         SoundRecorder.pause().then(() => {
             this.setState({
-                recording: false
+                recording: false,
             })
         })
     }
@@ -603,6 +634,7 @@ export default class ChatRoom extends Component {
         })
     }
     sendAudioMessge() {
+        this.scrollToEnd()
         let message = {
             id: Math.random() * 100,
             source: 'file://' + this.filename,
@@ -631,6 +663,9 @@ export default class ChatRoom extends Component {
                 this.formHeight(this.state.inittialTextInputHeightFactor) : this.formHeight(0.50)
         })
     }
+    scrollToEnd(){
+        this.refs.bleashupFlatlistOut.scrollToEnd()
+    }
     transparent = "rgba(50, 51, 53, 0.8)";
     render() {
         return (
@@ -639,6 +674,7 @@ export default class ChatRoom extends Component {
                     <View style={{ height: this.state.messageListHeight, marginBottom: "0.5%", }}>
                         <BleashupFlatList
                             firstIndex={0}
+                            ref="bleashupFlatlistOut"
                             inverted={true}
                             renderPerBatch={20}
                             initialRender={15}
@@ -665,97 +701,102 @@ export default class ChatRoom extends Component {
                     </View>
                     {
                         // ***************** KeyBoard Displayer *****************************
-                        <KeyboardAvoidingView keyboardVerticalOffset>
-                            <View style={{ height: this.state.textInputHeight }}>
-                                <View style={{ display: 'flex', flexDirection: 'row', }}>
-                                    <View style={{
-                                        marginTop: "2%",
-                                        display: 'flex', flexDirection: 'row',
-                                    }}><TouchableOpacity onPress={() => this.openFilePicker()}>
-                                            <Icon name={"attach-file"} type={"MaterialIcons"} style={{ color: "#0A4E52", }}></Icon></TouchableOpacity>
-                                        <TouchableOpacity onLongPress={() => this.openPhotoSelector()} onPress={() => this.openCamera()}><Icon style={{ color: "#0A4E52", marginRight: "1%", }}
-                                            type={"Ionicons"} name={"md-photos"}></Icon></TouchableOpacity><TouchableOpacity onPress={() => this.openVideo()}>
-                                            <Icon name={"video-camera"} type={"Entypo"} style={{ color: "#0A4E52", marginRight: "1%", }}></Icon></TouchableOpacity>
-                                        <Icon onPress={() => this.toggleEmojiKeyboard()} style={{ color: "#1FABAB" }} type="Entypo" name="emoji-flirt"></Icon></View>
-                                    <TextInput
-                                        value={this.state.textValue}
-                                        onChange={(event) => this._onChange(event)}
-                                        style={{
-                                            paddingLeft: 10,
-                                            fontSize: 17,
-                                            height: 50,
-                                            width: 230,
-                                            borderColor: "#1FABAB",
-                                            backgroundColor: 'white',
-                                            borderWidth: 1,
-                                            borderRadius: 8,
-                                        }}
-                                        placeholder={'Your Message'}
-                                        placeholderTextColor='#66737C'
-                                        maxHeight={200}
-                                        multiline={this.state.keyboardOpened ? true : false}
-                                        minHeight={45}
-                                        enableScrollToCaret
-                                        ref={(r) => { this._textInput = r; }}
-                                    />
-                                    <View style={{
-                                        marginLeft: "2%", marginTop: "2%", display: 'flex',
-                                        flexDirection: 'row',
-                                    }}>
-                                        {
-                                            !this.state.showAudioRecorder ? <TouchableOpacity onLongPress={() => {
-                                                this.openAudioPicker()
-                                            }} onPress={() => this.toggleAudioRecorder()}><Icon style={{
-                                                color: "#0A4E52",
-                                                marginRight: "8%",
-                                            }}
-                                                type={"FontAwesome5"} name={"microphone-alt"} ></Icon></TouchableOpacity> : null}
-                                        <TouchableOpacity onPress={() => {
-                                            requestAnimationFrame(() => {
-                                                return this.sendMessageText(this.state.textValue)
-                                            })
-                                        }}><Icon style={{ marginLeft: this.state.showAudioRecorder ? "23%" : "0%", color: "#1FABAB" }}
-                                            name="paper-plane" type="FontAwesome"></Icon></TouchableOpacity>
-                                    </View>
+                        <View style={{
+                            height: this.state.textInputHeight, borderRadius: 10, alignSelf: 'center', borderWidth: 1,
+                            borderColor: '#1FABAB', padding: '1%', maxWidth: "99.9%"
+                        }}>
+                            <View style={{ display: 'flex', flexDirection: 'row', }}>
+                                <View style={{
+                                    marginTop: "2%",
+                                    width: "33%",
+                                    display: 'flex', flexDirection: 'row',
+                                }}><TouchableOpacity onPress={() => this.openFilePicker()}>
+                                        <Icon name={"attach-file"} type={"MaterialIcons"} style={{ color: "#0A4E52", marginRight: "1%", }}></Icon></TouchableOpacity>
+                                    <TouchableOpacity onLongPress={() => this.openPhotoSelector()} onPress={() => this.openCamera()}><Icon style={{ color: "#0A4E52", marginRight: "4%", }}
+                                        type={"Ionicons"} name={"md-photos"}></Icon></TouchableOpacity><TouchableOpacity onPress={() => this.openVideo()}>
+                                        <Icon name={"video-camera"} type={"Entypo"} style={{ color: "#0A4E52", marginRight: "4%" }}></Icon></TouchableOpacity>
+                                    <Icon onPress={() => this.toggleEmojiKeyboard()} style={{ color: "#1FABAB" }} type="Entypo" name="emoji-flirt"></Icon>
                                 </View>
-                                {
-                                    // ***************** Emoji keyBoard Input ***********************//
-                                    this.state.showEmojiInput ? <View style={{ width: "100%", height: 300 }}>
-                                        <EmojiInput onEmojiSelected={(emoji) => this.handleEmojiSelected(emoji)}
-                                            enableSearch={false}
-                                            ref={emojiInput => this._emojiInput = emojiInput}
-                                            resetSearch={this.state.reset}
-                                            loggingFunction={this.verboseLoggingFunction.bind(this)}
-                                            verboseLoggingFunction={true}
-                                            filterFunctions={[this.filterFunctionByUnicode]} ></EmojiInput>
-                                    </View> : null}
-                                {
-
-                                    // ******************** Audio Recorder Input ************************//
-
-                                    this.state.showAudioRecorder ?
-                                        <View style={{
-                                            position: "absolute", width: 343, opacity: 0.97,
-                                            backgroundColor: '#4A918A', height: 50, display: 'flex', flexDirection: 'row',
-                                            marginLeft: 2, borderRadius: 10,
-                                        }}><Left><Icon onPress={() => this.toggleAudioRecorder()} type={'EvilIcons'}
-                                            name={'close'} style={{ color: "#FEFFDE" }}></Icon></Left>{this.state.recording ? <View
-                                                style={{ marginLeft: "-40%", marginTop: "1.8%", display: 'flex', flexDirection: 'row', }}>
-                                                <Icon type={"Entypo"} onPress={() => this.stopRecord()} name={"controller-stop"}
-                                                    style={{ color: "#FEFFDE", fontSize: 35, }}></Icon>
-                                                <Icon type={"FontAwesome"} name={"pause"} onPress={() => this.pauseRecorder()}
-                                                    style={{ marginTop: "5%", marginLeft: "10%", color: "#FEFFDE", fontSize: 26, }}></Icon>
-                                            </View> : <View style={{ marginLeft: "-40%", marginTop: "1.8%", display: 'flex', flexDirection: 'row', }}>
-                                                    <Icon type={"Entypo"} onPress={() => this.resumAudioRecoder()}
-                                                        name={"controller-record"} style={{ color: "#FEFFDE", fontSize: 35, }}></Icon>
-                                                </View>}
-                                            <Right><View style={{ display: 'flex', flexDirection: 'row', marginLeft: "40%", }}>
-                                                <Text style={{ marginTop: "6%", fontSize: 22, color: "#FEFFDE" }}>
-                                                    {this.convertToHMS(this.state.recordTime)}</Text>
-                                                <PulseIndicator color={'red'}>
-                                                </PulseIndicator></View></Right></View> : null}
+                                <TextInput
+                                    value={this.state.textValue}
+                                    onChange={(event) => this._onChange(event)}
+                                    style={{
+                                        paddingLeft: 10,
+                                        fontSize: 17,
+                                        height: 50,
+                                        width: "50%",
+                                        borderColor: "#1FABAB",
+                                        backgroundColor: 'white',
+                                        borderWidth: 1,
+                                        borderRadius: 8,
+                                    }}
+                                    placeholder={'Your Message'}
+                                    placeholderTextColor='#66737C'
+                                    maxHeight={200}
+                                    multiline={this.state.keyboardOpened ? true : false}
+                                    minHeight={45}
+                                    enableScrollToCaret
+                                    ref={(r) => { this._textInput = r; }}
+                                />
+                                <View style={{
+                                    marginLeft: this.state.showAudioRecorder ? "5%" : "3%", marginTop: "2%", display: 'flex',
+                                    width: "17%",
+                                    flexDirection: 'row',
+                                }}>
+                                    {
+                                        !this.state.showAudioRecorder ? <TouchableOpacity onLongPress={() => {
+                                            this.openAudioPicker()
+                                        }} onPress={() => this.toggleAudioRecorder()}><Icon style={{
+                                            color: "#0A4E52",
+                                            marginRight: "8%",
+                                        }}
+                                            type={"FontAwesome5"} name={"microphone-alt"} ></Icon></TouchableOpacity> : null}
+                                    <TouchableOpacity onPress={() => {
+                                        requestAnimationFrame(() => {
+                                            return this.sendMessageText(this.state.textValue)
+                                        })
+                                    }}><Icon style={{ marginLeft: this.state.showAudioRecorder ? "23%" : "0%", color: "#1FABAB" }}
+                                        name="paper-plane" type="FontAwesome"></Icon></TouchableOpacity>
+                                </View>
                             </View>
-                        </KeyboardAvoidingView>
+                            {
+                                // ***************** Emoji keyBoard Input ***********************//
+                                this.state.showEmojiInput ? <View style={{ marginLeft: '-1.5%', width: "95%", height: 300 }}>
+                                    <EmojiInput onEmojiSelected={(emoji) => this.handleEmojiSelected(emoji)}
+                                        enableSearch={false}
+                                        ref={emojiInput => this._emojiInput = emojiInput}
+                                        resetSearch={this.state.reset}
+                                        loggingFunction={this.verboseLoggingFunction.bind(this)}
+                                        verboseLoggingFunction={true}
+                                        filterFunctions={[this.filterFunctionByUnicode]} ></EmojiInput>
+                                </View> : null}
+                            {
+
+                                // ******************** Audio Recorder Input ************************//
+
+                                this.state.showAudioRecorder ?
+                                    <View style={{
+                                        position: "absolute", width: 350, opacity: 0.97,
+                                        marginTop: "1%",
+                                        backgroundColor: '#4A918A', height: 50, display: 'flex', flexDirection: 'row',
+                                        marginLeft: 2, borderRadius: 10,
+                                    }}><Left><TouchableOpacity onPress={() => this.toggleAudioRecorder()}><Icon type={'EvilIcons'}
+                                        name={'close'} style={{ color: "#FEFFDE" }}></Icon></TouchableOpacity></Left>{this.state.recording ? <View
+                                            style={{ marginLeft: "-40%", marginTop: "1.8%", display: 'flex', flexDirection: 'row', }}>
+                                            <Icon type={"Entypo"} onPress={() => this.stopRecord()} name={"controller-stop"}
+                                                style={{ color: "#FEFFDE", fontSize: 35, }}></Icon>
+                                            <Icon type={"FontAwesome"} name={"pause"} onPress={() => this.pauseRecorder()}
+                                                style={{ marginTop: "5%", marginLeft: "10%", color: "#FEFFDE", fontSize: 26, }}></Icon>
+                                        </View> : <View style={{ marginLeft: "-40%", marginTop: "1.8%", display: 'flex', flexDirection: 'row', }}>
+                                                <Icon type={"Entypo"} onPress={() => this.resumAudioRecoder()}
+                                                    name={"controller-record"} style={{ color: "#FEFFDE", fontSize: 35, }}></Icon>
+                                            </View>}
+                                        <Right><View style={{ display: 'flex', flexDirection: 'row', marginLeft: "30%", }}>
+                                            <Text style={{ marginTop: "6%", fontSize: 22, color: "#FEFFDE" }}>
+                                                {this.convertToHMS(this.state.recordTime)}</Text>
+                                            <PulseIndicator color={'red'}>
+                                            </PulseIndicator></View></Right></View> : null}
+                        </View>
                     }
                 </View>
                 {
@@ -814,15 +855,17 @@ export default class ChatRoom extends Component {
                                     placeholder={'Enter your text!'} />
                                 <Icon style={{ color: "#0A4E52", marginTop: "3%", width: "8%" }} onPress={() => this._sendCaptionMessage()} type={"FontAwesome"} name={"paper-plane"}></Icon>
                             </View>
-                            {this.state.showEmojiInputCaption ? <View style={{ width: "100%", height: 300 }}>
-                                <EmojiInput onEmojiSelected={(emoji) => this.handleEmojieSectionCaption(emoji)}
-                                    enableSearch={false}
-                                    ref={emojiInput => this._emojiInputCaption = emojiInput}
-                                    resetSearch={this.state.reset}
-                                    loggingFunction={this.verboseLoggingFunction.bind(this)}
-                                    verboseLoggingFunction={true}
-                                    filterFunctions={[this.filterFunctionByUnicode]} ></EmojiInput>
-                            </View> : null}
+                            {
+                                //********** Caption Emoji Keyboard *******************************/
+                                this.state.showEmojiInputCaption ? <View style={{ width: "100%", height: 300 }}>
+                                    <EmojiInput onEmojiSelected={(emoji) => this.handleEmojieSectionCaption(emoji)}
+                                        enableSearch={false}
+                                        ref={emojiInput => this._emojiInputCaption = emojiInput}
+                                        resetSearch={this.state.reset}
+                                        loggingFunction={this.verboseLoggingFunction.bind(this)}
+                                        verboseLoggingFunction={true}
+                                        filterFunctions={[this.filterFunctionByUnicode]} ></EmojiInput>
+                                </View> : null}
                         </KeyboardAvoidingView>
                     </View> : null}
                 {
@@ -867,7 +910,7 @@ export default class ChatRoom extends Component {
                     //** ####### Vidoe PLayer View ################ */
 
                     this.state.showVideo ? <View style={{
-                        height: this.state.keyboardOpened ? 300 : 400,
+                        height: this.state.keyboardOpened || this.state.showEmojiInput || this.state.showEmojiInputCaption ? 300 : 400,
                         position: "absolute",
                         width: this.state.fullScreen ? "100%" : screenWidth,
                         backgroundColor: this.transparent,

@@ -199,7 +199,7 @@ export default class AudioUploader extends Component {
                     <AnimatedCircularProgress
                         size={40}
                         width={3}
-                        fill={this.state.downloadState}
+                        fill={this.state.uploadState}
                         tintColor={"#1FABAB"}
                         backgroundColor={'#F8F7EE'}>
                         {
