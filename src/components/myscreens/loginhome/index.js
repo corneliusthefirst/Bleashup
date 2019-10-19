@@ -15,7 +15,7 @@ import {
   H3,
   Spinner,
 } from "native-base";
-import { Button, PermissionsAndroid, Platform, SafeAreaView, StyleSheet, Switch, Text, View } from 'react-native';
+import { Text, View ,ImageBackground} from 'react-native';
 import initialRoute from "../invitations/components/initialRoute";
 import globalState from "../../../stores/globalState";
 import ServerEventListener from "../../../services/severEventListener";
@@ -50,7 +50,7 @@ export default class LoginHomeView extends Component {
         })
       }
     })
-    return (
+   return (
       <Container>
         <ChatRoom></ChatRoom>
       </Container>
@@ -86,31 +86,3 @@ export default class LoginHomeView extends Component {
        );*/
   }
 }
-
-const styles = StyleSheet.create({
-  slider: {
-    height: 10,
-    margin: 10,
-    marginBottom: 50,
-  },
-  settingsContainer: {
-    alignItems: 'center',
-  },
-  container: {
-    borderRadius: 4,
-    borderWidth: 0.5,
-    borderColor: '#d6d7da',
-  },
-  title: {
-    fontSize: 19,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    padding: 20,
-  },
-  errorMessage: {
-    fontSize: 15,
-    textAlign: 'center',
-    padding: 10,
-    color: 'red'
-  }
-});

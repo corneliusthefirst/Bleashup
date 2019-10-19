@@ -25,7 +25,7 @@ class ChatStore {
         created_at: "2014-03-30 12:32",
     }, {
         id: 1,
-        source: 'http://192.168.43.32:8555/sound/get/p2.mp3',
+        //source: 'http://192.168.43.32:8555/sound/get/p2.mp3',
         file_name: 'p2.mp3',
         total: 0,
         received: 0,

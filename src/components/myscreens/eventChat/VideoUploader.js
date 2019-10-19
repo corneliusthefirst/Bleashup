@@ -96,9 +96,6 @@ export default class VideoUploader extends Component {
                                             fontSize: 40,
                                             color: "#1FABAB"
                                         }}></Icon>
-                                        <View style={{ marginTop: "-79.2%", marginLeft: "-43.5%", }}>
-                                            <Spinner></Spinner>
-                                        </View>
                                     </TouchableOpacity>
                                 </View>
                             </View>

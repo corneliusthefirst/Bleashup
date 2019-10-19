@@ -21,7 +21,6 @@ import stores from "../../../../stores";
 import OptionList from "./OptionList"
 import ProfileView from "../../invitations/components/ProfileView";
 import MenuListView from "./MenuListView"
-import Swipeout from 'react-native-swipeout';
 import PhotoView from "./PhotoView";
 import MapView from "./MapView";
 import Requester from "../Requester";
@@ -32,6 +31,7 @@ import Options from "./Options";
 import TitleView from "./TitleView";
 import SwipeOutView from "./SwipeOutView";
 import emitter from "../../../../services/eventEmiter";
+import Swipeout from '../../../SwipeOut';
 
 class PublicEvent extends Component {
   constructor(props) {
@@ -88,13 +88,14 @@ class PublicEvent extends Component {
     return {
       autoClose: true,
       sensitivity: 100,
-      right: [
+      left: [
         {
           component: <SwipeOutView master={master} publish={() => this.publish()}
             seen={() => this.markAsSeen()} delete={() => this.delete()
             }
             join={() => this.join()}
-            hide={() => this.hide()} {...this.props} ></SwipeOutView >
+            hide={() => this.hide()} {...this.props} ></SwipeOutView >,
+          autoClose:true
         }
       ],
     }
@@ -231,7 +232,7 @@ class PublicEvent extends Component {
   render() {
     //emitter.emit('notify', "santerss") 
     return (this.state.isMount ? <View style={{ width: "100%", }}>
-      <Swipeout style={{ backgroundColor: this.props.Event.new ? "#cdfcfc" : null }}
+      <Swipeout style={{ backgroundColor: this.props.Event.new ? "#cdfcfc" : null }} close={true} autoClose={true}
         {...this.swipeOutSettings(this.state.master)}>
         <Card
           style={{
