@@ -19,7 +19,7 @@ class BleashupNotifications {
             // process the notification
 
             // required on iOS only (see fetchCompletionHandler docs: https://github.com/react-native-community/react-native-push-notification-ios)
-            notification.finish(PushNotificationIOS.FetchResult.NoData);
+            //notification.finish(PushNotificationIOS.FetchResult.NoData);
         },
 
         // ANDROID ONLY: GCM or FCM Sender ID (product_number) (optional - not required for local notifications, but is need to receive remote push notifications)

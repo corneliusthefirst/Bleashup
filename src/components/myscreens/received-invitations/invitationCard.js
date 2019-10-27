@@ -311,7 +311,7 @@ class CardListItem extends Component {
 
           <CardItem cardBody>
             <Left>
-              {this.state.loading ? null : <DoublePhoto enlargeImage={() => this.setState({ opening: true, enlargeEventImage: true })} LeftImage={this.state.item.receiver_Image}
+              {this.state.loading ? null : <DoublePhoto  enlargeImage={() => this.setState({ opening: true, enlargeEventImage: true })} LeftImage={this.state.item.receiver_Image}
                 RightImage={this.state.item.event_Image} />}
             </Left>
 

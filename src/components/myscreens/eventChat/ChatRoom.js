@@ -1,79 +1,67 @@
 import React, { Component } from "react";
 import {
-    Content,
-    Card,
-    CardItem,
-    Body,
-    Container,
-    Header,
-    Form,
-    Title,
-    Input,
     Left,
     Right,
     Icon,
     Text,
-    H3,
     Spinner,
-    Button,
-    Toast
-} from "native-base";
+    Toast,
+    ActionSheet
+} from 'native-base';
 import {
     View,
-    StyleSheet,
-    TouchableWithoutFeedback,
     TouchableOpacity,
     Dimensions,
     BackHandler,
     Keyboard,
     Platform,
+    TextInput,
     KeyboardAvoidingView,
-    PermissionsAndroid
+    PermissionsAndroid,
+    StatusBar
 } from 'react-native';
 
-import { observer } from "mobx-react";
-import initialRoute from "../invitations/components/initialRoute";
-import globalState from "../../../stores/globalState";
-import ServerEventListener from "../../../services/severEventListener";
-import connection from "../../../services/tcpConnect";
 import SoundRecorder from 'react-native-sound-recorder';
-import UpdatesDispatcher from "../../../services/updatesDispatcher";
-import { ScrollView } from 'react-navigation';
 import EmojiInput from "react-native-emoji-input"
 import VideoPlayer from "./VideoController"
 import Image from 'react-native-scalable-image';
+import Orientation from 'react-native-orientation-locker';
 import DocumentPicker from 'react-native-document-picker';
 import ReactNativeZoomableView from '@dudigital/react-native-zoomable-view/src/ReactNativeZoomableView';
 import ImagePicker from 'react-native-customized-image-picker';
 import BleashupFlatList from '../../BleashupFlatList';
 import Message from "./Message";
-import { find, orderBy, reject } from "lodash"
-import { TextInput } from "react-native-gesture-handler";
-import stores from "../../../stores";
+import { find, orderBy, reject, findIndex, map } from "lodash"
 import moment from "moment";
 import { PulseIndicator } from 'react-native-indicators';
 import Sound from 'react-native-sound';
 import rnFetchBlob from 'rn-fetch-blob';
 import ReplyText from "./ReplyText";
+import firebase from 'react-native-firebase'
+import ChatStore from '../../../stores/ChatStore';
+import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import { observer } from "mobx-react";
 const { fs } = rnFetchBlob
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenheight = Math.round(Dimensions.get('window').height);
-export default class ChatRoom extends Component {
+@observer export default class ChatRoom extends Component {
     constructor(props) {
         super(props);
+        this.authObserver()
         this.state = {
             sender: false,
             user: 2,
             splicer: 500,
             creator: true,
+            hideStatusBar:false,
             showEmojiInput: false,
             showAudioRecorder: false,
             recordTime: 0,
             keyboardOpened: false,
             textValue: '',
             image: null,
-            previousMessageHeight: this.formHeight(((screenheight - 100) / screenheight)),
-            previousTextHeight: this.formHeight((100 / screenheight)),
+            previousMessageHeight: this.formHeight(((screenheight - 67) / screenheight)),
+            previousTextHeight: this.formHeight((67 / screenheight)),
             replying: false,
             recording: false,
             captionText: '',
@@ -82,24 +70,107 @@ export default class ChatRoom extends Component {
             showCaption: false,
             showEmojiInputCaption: false,
             replyerOffset: 0.1,
-            messageListHeight: this.formHeight(((screenheight - 100) / screenheight)),
-            textInputHeight: this.formHeight((100 / screenheight)),
-            inittialTextInputHeightFactor: 100 / screenheight,
-            initialMessaListHeightFactor: (screenheight - 100) / screenheight,
+            messageListHeight: this.formHeight(((screenheight - 67) / screenheight)),
+            textInputHeight: this.formHeight((67 / screenheight)),
+            inittialTextInputHeightFactor: 67 / screenheight,
+            initialMessaListHeightFactor: (screenheight - 67) / screenheight,
             showRepliedMessage: false,
             showVideo: false,
             playing: true,
             replyContent: null
         };
     }
+    authObserver() {
+        firebase.auth().onAuthStateChanged(this.bootstrap)
+    }
+    getUID() {
+        return (firebase.auth().currentUser || {}).uid
+    }
+    getRef(firebaseRoom) {
+        return firebase.database().ref(firebaseRoom)
+    }
+    room = null
+    getTimestamp() {
+        return firebase.database().serverValue.TIMESTAMP
+    }
+    async  bootstrap(user) {
+        //console.warn(user)
+        if (!user) {
+            try {
+                await firebase.auth().signInAnonymously();
+            } catch (e) {
+                switch (e.code) {
+                    case 'auth/operation-not-allowed':
+                        console.warn('Enable anonymous in your firebase console.');
+                        break;
+                    default:
+                        console.warn(e);
+                        break;
+                }
+            }
+        } else {
+            console.warn('logged in already',user)
+        }
+    }
     messageListFactor = 0.85
     textInputFactor = 0.15
+    fireRef = null
+    addNewMessage(newMessage, newKey) {
+        //console.warn(newMessage)
+        let index = findIndex(this.room.messages, { id: newMessage.id })
+        //console.error(index)
+        if (this.room.messages.length > 0) {
+            if (index >= 0) {
+                this.room.messages[index] = { ...this.room.messages[index], key: newKey }
+                this.room.addNewMessage(newMessage, newKey).then(() => {
+
+                })
+            } else {
+                this.room.messages.unshift({ ...this.room.messages, key: newKey });
+                this.room.addNewMessage(newMessage, newKey).then(() => {
+                })
+            }
+        }
+    }
+    removeMessage(message) {
+        setTimeout(() => {
+            this.room.addAndReadFromStore(message).then(value => {
+                this.room.messages = reject(this.room.messages, { id: value.id });
+                this.setState({
+                    newMessage: true
+                })
+                let index = findIndex(this.room.messages, { id: value.id })
+                this.room.removeMessage(value.id).then(() => {
+
+                })
+            })
+        }, 0)
+    }
     componentDidMount() {
+        this.fireRef.endAt().limitToLast(this.props.newMessageNumber).on('child_added', snapshot => {
+            //console.warn(snapshot.val())
+            this.addNewMessage(snapshot.val(), snapshot.key)
+        })
+        this.fireRef.endAt().limitToLast(this.props.newMessageNumber).once('value', snapshot => {
+            //console.warn(snapshot)
+            map(snapshot.val(), (ele, key) => {
+                this.addNewMessage(ele, key)
+            })
+        })
+        this.fireRef.on('child_removed', message => {
+            this.removeMessage(message)
+        });
+    }
+    componentWillMount() {
+        this.fireRef = this.getRef(this.props.firebaseRoom);
+        this.room = new ChatStore(this.props.firebaseRoom)
         this.keyboardDidShowSub = Keyboard.addListener('keyboardDidShow', this.handleKeyboardDidShow);
         this.keyboardDidHideSub = Keyboard.addListener('keyboardDidHide', this.handleKeyboardDidHide);
         BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this))
+        Orientation.lockToPortrait();
     }
     componentWillUnmount() {
+        this.fireRef.off()
         this.keyboardDidShowSub.remove();
         this.keyboardDidHideSub.remove();
         SoundRecorder.stop().then(() => {
@@ -128,10 +199,10 @@ export default class ChatRoom extends Component {
         this.setState({
             keyboardOpened: false,
             messageListHeight: !this.state.showEmojiInput ?
-                this.formHeight(this.state.replying ? 0.75 : this.state.initialMessaListHeightFactor) :
+                this.formHeight(this.state.replying ? ((screenheight - 147) / screenheight) : this.state.initialMessaListHeightFactor) :
                 this.formHeight(this.state.replying ? 0.40 : 0.50),
             textInputHeight: !this.state.showEmojiInput ?
-                this.formHeight(this.state.replying ? 0.25 : this.state.inittialTextInputHeightFactor) :
+                this.formHeight(this.state.replying ? ((147) / screenheight) : this.state.inittialTextInputHeightFactor) :
                 this.formHeight(this.state.replying ? 0.60 : 0.50),
             textHeight: (this.state.showEmojiInputCaption ? screenheight * 0.55 : screenheight * .1) + (offset * screenheight),
             photoHeight: (this.state.showEmojiInputCaption ? screenheight * 0.45 : screenheight * .9) - (offset * screenheight)
@@ -145,7 +216,16 @@ export default class ChatRoom extends Component {
         if (this.state.showVideo) {
             this.setState({
                 showVideo: false,
-                showCaption: false
+                showCaption: false,
+                fullScreen:false,
+                hideStatusBar:false
+            })
+            Orientation.lockToPortrait() 
+            return true
+        } else if (this.state.showPhoto) {
+            this.setState({
+                showPhoto: false,
+                hideStatusBar: false
             })
             return true
         } else if (this.state.showRepliedMessage) {
@@ -171,12 +251,7 @@ export default class ChatRoom extends Component {
                 showCaption: false
             })
             return true
-        } else if (this.state.showPhoto) {
-            this.setState({
-                showPhoto: false
-            })
-            return true
-        } else if (this.state.showAudioRecorder) {
+        }  else if (this.state.showAudioRecorder) {
             this.stopRecordTiming()
             SoundRecorder.stop().then(() => {
                 this.setState({
@@ -215,9 +290,13 @@ export default class ChatRoom extends Component {
         })
     }
     hideVideo() {
+        Orientation.lockToPortrait();
         this.setState({
-            showVideo: false
+            showVideo: false,
+            hideStatusBar:false,
+            fullScreen:false
         })
+        Orientation.lockToPortrait() 
     }
     showActions() {
         this.setState({
@@ -244,9 +323,13 @@ export default class ChatRoom extends Component {
         return data.map(element => this.chooseComponent(element))
     }
     enterFullscreen() {
+        Keyboard.dismiss()
+        this.state.fullScreen ? Orientation.lockToPortrait() : Orientation.lockToLandscapeLeft(); //this will unlock the view to all Orientations
         this.setState({
-            fullScreen: !this.state.fullScreen
+            fullScreen: !this.state.fullScreen,
+            hideStatusBar:!this.state.hideStatusBar
         })
+
     }
     togglePlay() {
         this.setState({
@@ -286,11 +369,16 @@ export default class ChatRoom extends Component {
           console.log('');
           console.log(`Zoomed from ${zoomableViewEventObject.lastZoomLevel} to  ${zoomableViewEventObject.zoomLevel}`);*/
     }
+    sendMessage(messager) {
+        this.fireRef.push(messager)
+    }
     sendMessageText(message) {
         this.scrollToEnd()
-        if (this.state.textValue !== '') {
+        if (this.state.showAudioRecorder) {
+            this.stopRecord()
+        } else if (this.state.textValue !== '') {
             let messager = {
-                id: Math.random() * 100,
+                id: (Math.random() * 100).toString(),
                 type: "text",
                 text: message,
                 sender: this.sender,
@@ -299,27 +387,18 @@ export default class ChatRoom extends Component {
                 creator: this.creator,
                 created_at: moment().format("YYYY-MM-DD HH:mm")
             }
-            stores.ChatStore.messages.unshift(messager)
+            this.room.messages.length == 0 ? this.room.messages[0] = messager : this.room.messages.unshift(messager)
+            this.room.addMessageToStore(messager).then(() => {
+                this.sendMessage(messager)
+                this.initialzeFlatList()
+                this.informMembers()
+                //console.warn("ok!!")
+            })
             this._resetTextInput()
             this.setState({
                 textValue: '',
                 replying: false,
                 replyContent: null,
-                messageListHeight: this.state.keyboardOpened ? this.formHeight(this.messageListFactor) :
-                    this.state.showEmojiInput ? this.formHeight(0.5) :
-                        this.formHeight(this.state.initialMessaListHeightFactor),
-                textInputHeight: this.state.keyboardOpened ? this.formHeight(this.textInputFactor) :
-                    this.state.showEmojiInput ? this.formHeight(0.5) :
-                        this.formHeight(this.state.inittialTextInputHeightFactor),
-                textHeight: screenheight * 0.1,
-                photoHeight: screenheight * 0.9,
-            })
-        } else if (this.state.showAudioRecorder) {
-            this.stopRecord()
-            this.setState({
-                textValue: '',
-                // replying: false,
-                // replyContent: null,
                 messageListHeight: this.state.keyboardOpened ? this.formHeight(this.messageListFactor) :
                     this.state.showEmojiInput ? this.formHeight(0.5) :
                         this.formHeight(this.state.initialMessaListHeightFactor),
@@ -336,9 +415,11 @@ export default class ChatRoom extends Component {
     user = 2;
     creator = 1
     showPhoto(photo) {
+        Keyboard.dismiss()
         this.setState({
             photo: photo,
-            showPhoto: true
+            showPhoto: true,
+            hideStatusBar:true
         })
     }
     openCamera() {
@@ -395,6 +476,7 @@ export default class ChatRoom extends Component {
     }
     openPhotoSelector() {
         Keyboard.dismiss()
+        this.scrollToEnd()
         ImagePicker.openPicker({
             cropping: false,
             includeBase64: false,
@@ -405,7 +487,7 @@ export default class ChatRoom extends Component {
         }).then((response) => {
             response.map(res => {
                 message = {
-                    id: Math.random() * 100,
+                    id: (Math.random() * 100).toString(),
                     type: "photo" + "_upload",
                     source: res.path,
                     sender: this.sender,
@@ -419,7 +501,10 @@ export default class ChatRoom extends Component {
                     filename: res.path.split("/")[res.path.split('/').length - 1],
                     text: this.state.captionText
                 }
-                stores.ChatStore.messages.unshift(message)
+                this.room.messages.unshift(message)
+                this.room.addMessageToStore(message).then(() => {
+                    this.initialzeFlatList()
+                })
                 //  this._resetCaptionInput();
             })
             this.setState({
@@ -428,10 +513,13 @@ export default class ChatRoom extends Component {
             })
         })
     }
+    informMembers() {
+        // do some thing with room members : this.props.roomMemners
+    }
     _sendCaptionMessage() {
         this.scrollToEnd()
         let message = {
-            id: Math.random() * 100,
+            id: (Math.random() * 100).toString(),
             type: (this.state.imageSelected ? "photo" : "video") + "_upload",
             source: this.state.imageSelected ? this.state.image : this.state.video,
             sender: this.sender,
@@ -446,11 +534,17 @@ export default class ChatRoom extends Component {
             text: this.state.captionText
         }
 
-        stores.ChatStore.messages.unshift(message)
+        this.room.messages.unshift(message)
+        this.room.addMessageToStore(message).then(() => {
+            this, this.initialzeFlatList()
+        })
         this._resetCaptionInput();
+        //this._textInput.focus()
         this.setState({
             captionText: '',
             replyContent: null,
+            messageListHeight: this.formHeight(this.state.initialMessaListHeightFactor),
+            textInputHeight: this.formHeight(this.inittialTextInputHeightFactor),
             replying: false,
             showCaption: false,
             showVideo: false
@@ -458,47 +552,56 @@ export default class ChatRoom extends Component {
     }
     replaceMessage(newMessage) {
         this.scrollToEnd()
-        stores.ChatStore.messages = reject(stores.ChatStore.messages, { id: newMessage.id })
-        stores.ChatStore.messages.unshift(newMessage)
+        let index = findIndex(this.room.messages, { id: newMessage.id })
+        this.room.messages[index] = newMessage
         this.setState({
             newMessage: true
         })
-        newMessage.photo = newMessage.source
-        //send message to the server here
+        this.room.replaceMessage(newMessage).then(() => {
+            this.sendMessage({ ...newMessage, photo: newMessage.source })
+            this.informMembers()
+            //send message to the server here
+        });
     }
     replaceMessageVideo(newMessage) {
         this.scrollToEnd()
-        stores.ChatStore.messages = reject(stores.ChatStore.messages, { id: newMessage.id })
-        stores.ChatStore.messages.unshift(newMessage)
+        this.room.messages = reject(this.room.messages, { id: newMessage.id })
+        this.room.messages.unshift(newMessage)
         this.setState({
             newMessage: true
         })
-        // the video url is stored in the newMessage.temp
-        // newMessage.source = newMessage.temp
-        //send message to server here
+        this.room.replaceMessage(newMessage).then(() => {
+            this.sendMessage({ ...newMessage, source: newMessage.temp })
+            this.informMembers()
+            //send message to the server here
+        });
     }
     replaceMessageFile(newMessage) {
         this.scrollToEnd()
         ///console.warn(message)
-        stores.ChatStore.messages = reject(stores.ChatStore.messages, { id: newMessage.id })
-        stores.ChatStore.messages.unshift(newMessage)
+        this.room.messages = reject(this.room.messages, { id: newMessage.id })
+        this.room.messages.unshift(newMessage)
         this.setState({
             newMessage: true
         })
-        // the video url is stored in the newMessage.temp
-        // newMessage.source = newMessage.temp
-        //send message to server here
+        this.room.replaceMessage(newMessage).then(() => {
+            this.sendMessage({ ...newMessage, source: newMessage.temp })
+            this.informMembers()
+            //send message to the server here
+        });
     }
     replaceAudioMessage(newMessage) {
         this.scrollToEnd()
-        stores.ChatStore.messages = reject(stores.ChatStore.messages, { id: newMessage.id })
-        stores.ChatStore.messages.unshift(newMessage)
+        this.room.messages = reject(this.room.messages, { id: newMessage.id })
+        this.room.messages.unshift(newMessage)
         this.setState({
             newMessage: true
         })
-        // the video url is stored in the newMessage.temp
-        // newMessage.source = newMessage.temp
-        //send message to server here
+        this.room.replaceMessage(newMessage).then(() => {
+            this.sendMessage({ ...newMessage, source: newMessage.temp })
+            this.informMembers()
+            //send message to the server here
+        });
     }
     verboseLoggingFunction(error) {
 
@@ -527,10 +630,12 @@ export default class ChatRoom extends Component {
                 type: [DocumentPicker.types.allFiles],
             });
             res.uri.replace('content://', 'file://')
+            this.scrollToEnd()
             message = {
-                id: Math.random() * 100,
+                id: (Math.random() * 100).toString(),
                 source: res.uri,
                 file_name: res.name,
+                reply: this.state.replyContent,
                 sender: this.sender,
                 user: this.user,
                 creator: 2,
@@ -539,9 +644,15 @@ export default class ChatRoom extends Component {
                 total: res.size,
                 created_at: moment().format("YYYY-MM-DD HH:mm"),
             }
-            stores.ChatStore.messages.unshift(message)
+            this.room.messages.unshift(message)
+            this.room.addMessageToStore(message).then(() => {
+                this.initialzeFlatList()
+            })
             this.setState({
-                newMessage: true
+                replyContent: null,
+                messageListHeight: this.formHeight(this.state.initialMessaListHeightFactor),
+                textInputHeight: this.formHeight(this.inittialTextInputHeightFactor),
+                replying: false,
             })
         } catch (err) {
             if (DocumentPicker.isCancel(err)) {
@@ -656,7 +767,6 @@ export default class ChatRoom extends Component {
             recordTime: 0
         })
         this._stopRecoder()
-        //  this.sendAudioMessge()
     }
     pauseRecorder() {
         this.stopRecordTiming()
@@ -689,7 +799,7 @@ export default class ChatRoom extends Component {
     sendAudioMessge() {
         this.scrollToEnd()
         let message = {
-            id: Math.random() * 100,
+            id: (Math.random() * 100).toString(),
             source: 'file://' + this.filename,
             duration: this.duration,
             type: "audio_uploader",
@@ -702,11 +812,23 @@ export default class ChatRoom extends Component {
             file_name: 'test.mp3',
             created_at: moment().format("YYYY-MM-DD HH:mm")
         }
-        stores.ChatStore.messages.unshift(message)
+        this.room.messages.unshift(message)
+        this.room.addMessageToStore(message).then(() => {
+            this.initialzeFlatList()
+            this.sendMessage(message)
+        })
         this.setState({
             newMessage: true,
             replying: false,
-            replyContent: null
+            replyContent: null,
+            messageListHeight: this.state.keyboardOpened ? this.formHeight(this.messageListFactor) :
+                this.state.showEmojiInput ? this.formHeight(0.5) :
+                    this.formHeight(this.state.initialMessaListHeightFactor),
+            textInputHeight: this.state.keyboardOpened ? this.formHeight(this.textInputFactor) :
+                this.state.showEmojiInput ? this.formHeight(0.5) :
+                    this.formHeight(this.state.inittialTextInputHeightFactor),
+            textHeight: screenheight * 0.1,
+            photoHeight: screenheight * 0.9,
         })
     }
     toggleEmojiKeyboard() {
@@ -723,6 +845,9 @@ export default class ChatRoom extends Component {
     scrollToEnd() {
         this.refs.bleashupFlatlistOut.scrollToEnd()
     }
+    initialzeFlatList() {
+        this.refs.bleashupFlatlistOut.resetItemNumbers()
+    }
     replying(replyer, color) {
         offset = this.state.replying ? 0.2 : 0
         this.setState({
@@ -730,52 +855,69 @@ export default class ChatRoom extends Component {
             replyContent: replyer,
             replyerBackColor: color,
             textInputHeight: this.state.keyboardOpened ? this.formHeight(this.textInputFactor + offset) :
-                this.state.showEmojiInput ? this.formHeight(0.61) : this.formHeight(0.25),
+                this.state.showEmojiInput ? this.formHeight(0.61) : this.formHeight(148 / screenheight),
             messageListHeight: this.state.keyboardOpened ? this.formHeight(this.messageListFactor - offset) :
-                this.state.showEmojiInput ? this.formHeight(0.39) : this.formHeight(0.75),
-            textHeight: screenheight * 0.25,
-            photoHeight: screenheight * 0.75
+                this.state.showEmojiInput ? this.formHeight(0.39) : this.formHeight((screenheight - 148) / screenheight),
+            textHeight: screenheight * 0.20,
+            photoHeight: screenheight * 0.80
+        })
+    }
+    options = ["Remove Message", "Update Message", "Cancel"]
+    showActions(message) {
+        ActionSheet.show({ options: this.options, title: "Choose You Options", cancelButtonIndex: 2 }, (index) => {
+            if (index == 0) {
+                let messageRef = this.fireRef.child(message.key)
+                messageRef.remove()
+                //TODO: Cloud delete goes here
+            }
         })
     }
     transparent = "rgba(50, 51, 53, 0.8)";
     render() {
         return (
             <View>
-                <View>
-                    <View style={{ height: this.state.messageListHeight, marginBottom: "0.5%", }}>
-                        <BleashupFlatList
-                            firstIndex={0}
-                            ref="bleashupFlatlistOut"
-                            inverted={true}
-                            renderPerBatch={20}
-                            initialRender={15}
-                            numberOfItems={stores.ChatStore.messages.length}
-                            keyExtractor={(item) => item ? item.id : null}
-                            renderItem={(item) => item ? <Message
-                                replaceMessageVideo={(data) => this.replaceMessageVideo(data)}
-                                showPhoto={(photo) => this.showPhoto(photo)}
-                                replying={(replyer, color) => this.replying(replyer, color)}
-                                replaceMessage={(data) => this.replaceMessage(data)}
-                                replaceAudioMessage={(data) => this.replaceAudioMessage(data)}
-                                message={item}
-                                openReply={(replyer) => {
-                                    this.setState({
-                                        replyer: replyer,
-                                        showRepliedMessage: true
-                                    })
-                                }}
-                                user={item.user} creator={item.creator}
-                                replaceMessageFile={(data) => this.replaceMessageFile(data)}
-                                playVideo={(source) => this.playVideo(source)}></Message> : null}
-                            dataSource={stores.ChatStore.messages}
-                        >
-                        </BleashupFlatList>
+                <StatusBar hidden={this.state.hideStatusBar} barStyle="dark-content" backgroundColor="#9EEDD3"></StatusBar>
+                <View style={{ width: screenWidth, alignSelf: 'center', }}>
+                    <View style={{ height: this.state.messageListHeight, marginBottom: "0.5%" }}>
+                        <TouchableWithoutFeedback onPressIn={() => {
+                            Keyboard.dismiss()
+                        }}>
+                            <BleashupFlatList
+                                firstIndex={0}
+                                ref="bleashupFlatlistOut"
+                                inverted={true}
+                                renderPerBatch={5}
+                                initialRender={15}
+                                numberOfItems={this.room.messages.length}
+                                keyExtractor={(item) => item ? item.id : null}
+                                renderItem={(item) => item ? <Message
+                                    showActions={(message) => this.showActions(message)}
+                                    firebaseRoom={this.props.firebaseRoom}
+                                    replaceMessageVideo={(data) => this.replaceMessageVideo(data)}
+                                    showPhoto={(photo) => this.showPhoto(photo)}
+                                    replying={(replyer, color) => this.replying(replyer, color)}
+                                    replaceMessage={(data) => this.replaceMessage(data)}
+                                    replaceAudioMessage={(data) => this.replaceAudioMessage(data)}
+                                    message={item}
+                                    openReply={(replyer) => {
+                                        this.setState({
+                                            replyer: replyer,
+                                            showRepliedMessage: true
+                                        })
+                                    }}
+                                    user={item.user} creator={item.creator}
+                                    replaceMessageFile={(data) => this.replaceMessageFile(data)}
+                                    playVideo={(source) => this.playVideo(source)}></Message> : null}
+                                dataSource={this.room.messages}
+                            >
+                            </BleashupFlatList>
+                        </TouchableWithoutFeedback>
                     </View>
                     {
                         // ***************** KeyBoard Displayer *****************************
                         <View style={{
                             height: this.state.textInputHeight, borderRadius: 10, alignSelf: 'center', borderWidth: 1,
-                            borderColor: '#1FABAB', padding: '1%', maxWidth: "99.9%"
+                            borderColor: '#1FABAB', padding: '1%', maxWidth: "99.9%",
                         }}>
                             {
                                 //* Reply Message caption */
@@ -887,7 +1029,7 @@ export default class ChatRoom extends Component {
                 {
                     // ******************Photo Viewer View ***********************//
                     this.state.showPhoto ?
-                        <View style={{ height: screenheight, width: screenWidth, position: "absolute", backgroundColor: "black", }}>
+                        <View style={{ height: "100%", width: "100%", position: "absolute", backgroundColor: "black", }}>
                             <ReactNativeZoomableView
                                 maxZoom={1.5}
                                 minZoom={0.5}
@@ -900,7 +1042,8 @@ export default class ChatRoom extends Component {
                             </ReactNativeZoomableView>
                             <Icon type="EvilIcons" onPress={() => {
                                 this.setState({
-                                    showPhoto: false
+                                    showPhoto: false,
+                                    hideStatusBar:false
                                 })
                             }} style={{ margin: '1%', position: 'absolute', fontSize: 30, color: "#FEFFDE" }} name={"close"}></Icon>
                         </View> : null
@@ -983,17 +1126,15 @@ export default class ChatRoom extends Component {
                             }}>
                                 <Icon type="EvilIcons" style={{ margin: '7%', fontSize: 35, color: "#FEFFDE" }} name={"close"}></Icon>
                             </TouchableOpacity> : null}
-                            <ScrollView>
-                                <View style={{ display: "flex", }}>
-                                    {<Message openReply={(replyer) => {
-                                        this.setState({
-                                            replyer: replyer,
-                                            showRepliedMessage: true
-                                        })
-                                    }} playVideo={(source) => this.playVideo(source)}
-                                        creator={2} user={this.state.user} message={find(stores.ChatStore.messages, { id: this.state.replyer.id })} />}
-                                </View>
-                            </ScrollView>
+                            <View style={{ display: "flex", }}>
+                                {<Message openReply={(replyer) => {
+                                    this.setState({
+                                        replyer: replyer,
+                                        showRepliedMessage: true
+                                    })
+                                }} playVideo={(source) => this.playVideo(source)}
+                                    creator={2} user={this.state.user} message={find(this.room.messages, { id: this.state.replyer.id })} />}
+                            </View>
                             {!(this.state.replyer.sender.phone == this.state.user) ? <TouchableOpacity onPress={() => {
                                 this.setState({
                                     showRepliedMessage: false
@@ -1007,8 +1148,8 @@ export default class ChatRoom extends Component {
                     //** ####### Vidoe PLayer View ################ */
 
                     this.state.showVideo ? <View style={{
-                        height: this.state.keyboardOpened || this.state.showEmojiInput ||
-                         this.state.showEmojiInputCaption ? this.state.replying ? 255 : 300 : 400,
+                        height:this.state.fullScreen?"100%": this.state.keyboardOpened || this.state.showEmojiInput ||
+                            this.state.showEmojiInputCaption ? this.state.replying ? 255 : 300 : 400,
                         position: "absolute",
                         width: this.state.fullScreen ? "100%" : screenWidth,
                         backgroundColor: this.transparent,
@@ -1035,7 +1176,7 @@ export default class ChatRoom extends Component {
                             onBack={() => this.hideVideo()}
                             onEnterFullscreen={() => this.enterFullscreen()}
                             onExitFullscreen={() => this.enterFullscreen()}
-                            //fullscreenOrientation={"landscape"}
+                            fullscreenOrientation={"landscape"}
                             //fullscreen={true}
                             //controls={true}
                             style={{
@@ -1057,17 +1198,3 @@ export default class ChatRoom extends Component {
         )
     }
 }
-
-
-const styles = StyleSheet.create({
-    textInput: {
-        paddingLeft: 10,
-        fontSize: 17,
-        height: 50,
-        width: 195,
-        borderColor: "#1FABAB",
-        backgroundColor: 'white',
-        borderWidth: 1,
-        borderRadius: 8,
-    }
-});

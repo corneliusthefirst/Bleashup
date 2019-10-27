@@ -16,7 +16,7 @@ import TemporalUsersStore from "./temporalUsersStore"
 
 export default {
 
-  ChatStore: new ChatStore(),
+  //ChatStore: new ChatStore(),
   Reminds: new Reminds(),
   LoginStore: new LoginStore(),
   TempLoginStore: new TempLoginStore(),

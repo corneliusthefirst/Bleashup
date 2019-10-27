@@ -7,11 +7,11 @@ import {
 import rnFetchBlob from 'rn-fetch-blob';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import { Icon, Right, Spinner, Toast } from 'native-base';
-import stores from '../../../stores';
 import * as config from "../../../config/bleashup-server-config.json"
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import GState from '../../../stores/globalState';
 import FileViewer from 'react-native-file-viewer';
+import ChatStore from '../../../stores/ChatStore';
 let dirs = rnFetchBlob.fs.dirs
 const { fs } = rnFetchBlob
 const AppDir = rnFetchBlob.fs.dirs.SDCardDir + '/Bleashup'
@@ -58,7 +58,8 @@ export default class FileAttarchementUploader extends Component {
                     newDir = `file://` + AppDir + "/Others/" + response.data
                         this.setState({
                             uploadState: 100,
-                            loaded: true
+                            loaded: true,
+                            downloading:false
                         })
                         this.props.message.type = 'attachement'
                        ///this.props.message.thumbnailSource = this.baseURL + response.data.split('.')[0] + '_thumbnail.jpeg'
@@ -85,12 +86,14 @@ export default class FileAttarchementUploader extends Component {
         return test || test2
     }
     componentDidMount() {
+        this.room = new ChatStore(this.props.firebaseRoom)
         this.setState({
             duration: null,
             currentPosition: 0,
             playing: false,
             received: this.props.message.received,
             total: this.props.message.total,
+            downloading:true,
             sender_name: this.props.message.sender.nickname,
             sender: !(this.props.message.sender.phone == this.props.user),
             time: this.props.message.created_at.split(" ")[1],
@@ -106,7 +109,9 @@ export default class FileAttarchementUploader extends Component {
         this.task.cancel((err, taskID) => {
             this.setState({ downloading: false })
         })
-        stores.ChatStore.SetCancledState()
+        this.room.SetCancledState(this.props.message.id).then(()=>{
+
+        })
         this.setState({
             downloading: false
         })

@@ -344,8 +344,8 @@ const Swipeout = createReactClass({
     render: function () {
         var contentWidth = this.state.contentWidth;
         var posX = this.getTweeningValue('contentPos');
-
-        var styleSwipeout = [styles.swipeout, this.props.style];
+        var styleSwipeout = [styles.swipeout, isNaN(this.props.style.width)?
+            {...this.props.style,width:'100%'}:this.props.style];
         if (this.props.backgroundColor) {
             styleSwipeout.push([{ backgroundColor: this.props.backgroundColor }]);
         }
@@ -357,18 +357,18 @@ const Swipeout = createReactClass({
             left: {
                 left: 0,
                 overflow: 'hidden',
-                width: Math.min(limit * (posX / limit), limit),
+                width: isNaN(Math.min(limit * (posX / limit), limit)) ? "100%" : Math.min(limit * (posX / limit), limit),
             },
         };
         var styleRightPos = {
             right: {
-                left: Math.abs(contentWidth + Math.max(limit, posX)),
+                left: isNaN(Math.abs(contentWidth + Math.max(limit, posX))) ? "100%" : Math.abs(contentWidth + Math.max(limit, posX)),
                 right: 0,
             },
         };
         var styleContentPos = {
             content: {
-                transform: [{ translateX: this._rubberBandEasing(posX, limit) }],
+                transform: [{ translateX: isNaN(this._rubberBandEasing(posX, limit)) ? 0 : this._rubberBandEasing(posX, limit) }],
             },
         };
 
@@ -385,7 +385,7 @@ const Swipeout = createReactClass({
         var isLeftVisible = posX > 0;
 
         return (
-            <View style={styleSwipeout}>
+            <View style={{...styleSwipeout}}>
                 <View
                     ref={node => this.swipeoutContent = node}
                     style={styleContent}
@@ -410,9 +410,11 @@ const Swipeout = createReactClass({
 
     _renderButtons: function (buttons, isVisible, style) {
         if (buttons && isVisible) {
-            return (<View style={style}>
+            return /*this.props.isMessage?*/(<View style={style}>
                 {buttons.map(this._renderButton)}
-            </View>);
+            </View>) ///: (<View style={{ ...style, marginTop:  "-94%", width:"0%" }}>
+               // {buttons.map(this._renderButton)}
+         //   </View>);
         } else {
             return (
                 <View />

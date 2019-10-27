@@ -13,7 +13,7 @@ export default class ProfileView extends Component {
         super(props)
     }
     state = { profile: undefined, isMount: false, dataArray: undefined }
-    componentDidMount() {
+    componentWillMount() {
         setTimeout(() => stores.TemporalUsersStore.getUser(this.props.phone).then(user => {
             this.setState({
                 profile: user,
@@ -24,7 +24,7 @@ export default class ProfileView extends Component {
                     content: user.status
                 }
             })
-        }), 300)
+        }),0)
 
     }
     openModal() {
@@ -37,7 +37,7 @@ export default class ProfileView extends Component {
             <View style={{ flexDirection: "row", }}>
                 <TouchableOpacity onPress={() => {
                     requestAnimationFrame(() => {
-                        return this.setState({ isModalOpened: true })
+                        return this.props.showPhoto(this.state.profile.profile)
                     });
                 }}>
                     {<CacheImages thumbnails {...this.props} source={{ uri: this.state.profile.profile }} />}
@@ -47,7 +47,7 @@ export default class ProfileView extends Component {
                     }}>{this.state.profile.nickname}</Text>
                     <Text note>{this.state.dataArray.title}</Text>
                 </View>
-                <ProfileModal
+                {/*<ProfileModal
                     isOpen={this.state.isModalOpened}
                     hasJoin={this.props.hasJoin}
                     isToBeJoint
@@ -59,7 +59,7 @@ export default class ProfileView extends Component {
                     }
                     }
                     profile={this.state.profile}
-                ></ProfileModal>
+                ></ProfileModal>*/}
             </View>
         ) : <ProfileIdicator />
     }

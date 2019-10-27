@@ -7,7 +7,7 @@ import rnFetchBlob from 'rn-fetch-blob';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import * as config from "../../../config/bleashup-server-config.json"
 const { fs } = rnFetchBlob
-const AppDir = rnFetchBlob.fs.dirs.SDCardDir + '/Bleashup'
+const AppDir = rnFetchBlob.fs.dirs.SDCardDir + '/Bleashup/'
 export default class VideoUploader extends Component {
     constructor(props) {
         super(props)
@@ -20,7 +20,7 @@ export default class VideoUploader extends Component {
             uploadState: 0
         }
     }
-    state = {}
+    state = {uploading:true}
     componentDidMount() {
         setTimeout(() => {
             this.uploadVideo()
@@ -50,7 +50,8 @@ export default class VideoUploader extends Component {
                     fs.writeFile(newDir.split(`file://`)[1], this.props.message.source.split(`file://`)[1], 'uri').then(() => {
                         this.setState({
                             uploadState: 100,
-                            loaded: true
+                            loaded: true,
+                            uploading:false
                         })
                         this.props.message.type = 'video'
                         this.props.message.source = newDir
@@ -72,7 +73,11 @@ export default class VideoUploader extends Component {
         return data / mb
     }
     cancelUpLoad() {
-
+        this.task.cancel().then((err,taskID) =>{
+            this.setState({
+                uploading:false
+            })
+        })
     }
     render() {
         return (

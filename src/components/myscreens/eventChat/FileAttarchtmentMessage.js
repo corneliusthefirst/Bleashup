@@ -7,10 +7,10 @@ import {
 import rnFetchBlob from 'rn-fetch-blob';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import { Icon, Right, Spinner, Toast } from 'native-base';
-import stores from '../../../stores';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import GState from '../../../stores/globalState';
 import FileViewer from 'react-native-file-viewer';
+import ChatStore from '../../../stores/ChatStore';
 let dirs = rnFetchBlob.fs.dirs
 const { fs, config } = rnFetchBlob
 const AppDir = rnFetchBlob.fs.dirs.SDCardDir + '/Bleashup'
@@ -22,13 +22,15 @@ export default class FileAttarchementMessaege extends Component {
             currentPosition: 0,
             currentTime: 0,
             downloadState: 0,
+            loaded: true
         }
     }
     setAfterSuccess(path) {
         this.props.message.source = Platform.OS === 'android' ? path + "/" : '' + path
-        stores.ChatStore.addStaticFilePath(this.props.message.source, '').then(() => {
+        this.room.addStaticFilePath(this.props.message.source, this.props.message.id).then(() => {
             this.setState({
-                loaded: true
+                loaded: true,
+                downlading: false
             })
         })
     }
@@ -44,6 +46,7 @@ export default class FileAttarchementMessaege extends Component {
             })
         })
     }
+    room = null
     path = AppDir + '/Others/' + this.props.message.file_name
     duration = 10
     pattern = [1000, 0, 0]
@@ -104,7 +107,10 @@ export default class FileAttarchementMessaege extends Component {
                         fs.unlink(res.path())
                         this.props.message.received = this.state.received
                         this.props.message.total = this.state.total
-                        stores.ChatStore.addAudioSizeProperties(this.state.total, this.state.received)
+                        this.room.addAudioSizeProperties(this.props.message.id,
+                            this.state.total, this.state.received).then(() => {
+
+                            })
                     })
                 }
             })
@@ -130,6 +136,7 @@ export default class FileAttarchementMessaege extends Component {
         return test || test2
     }
     componentDidMount() {
+        this.room = new ChatStore(this.props.firebaseRoom)
         this.setState({
             duration: null,
             currentPosition: 0,
@@ -148,7 +155,7 @@ export default class FileAttarchementMessaege extends Component {
         this.task.cancel((err, taskID) => {
             this.setState({ downloading: false })
         })
-        stores.ChatStore.SetCancledState()
+        this.room.SetCancledState(this.props.message.id)
         this.setState({
             downloading: false
         })
@@ -208,8 +215,8 @@ export default class FileAttarchementMessaege extends Component {
                             }
                         </AnimatedCircularProgress><View>
                             {this.state.loaded ? <Text>{this.toMB(this.state.total).toFixed(1)}{"Mb"}</Text> :
-                             <Text style={{ fontSize: 10 }} note>{"("}{this.toMB(this.state.received).toFixed(1)}{"/"}
-                                {this.toMB(this.state.total).toFixed(1)}{")Mb"}</Text>}</View></View>
+                                <Text style={{ fontSize: 10 }} note>{"("}{this.toMB(this.state.received).toFixed(1)}{"/"}
+                                    {this.toMB(this.state.total).toFixed(1)}{")Mb"}</Text>}</View></View>
                 </View>
             </View>
         );

@@ -2,17 +2,17 @@ import React, { Component } from "react"
 import CacheImages from "../../../CacheImages";
 import ImageActivityIndicator from "./imageActivityIndicator";
 import { View, TouchableOpacity } from "react-native"
-import PhotoModal from "../../invitations/components/PhotoModal";
+import Image from 'react-native-scalable-image';
 
 export default class PhotoView extends Component {
     constructor(props) {
         super(props)
     }
     state = {
-        ismounted: false,
+        ismounted: true,
         isModalOpened: false
     }
-    componentDidMount() {
+    componentWillMount() {
         this.setState({
             ismounted: true,
             isModalOpened: false
@@ -20,12 +20,11 @@ export default class PhotoView extends Component {
     }
 
     render() {
-        return !this.state.ismounted ? <ImageActivityIndicator width={this.props.width} height={this.props.height}>
-        </ImageActivityIndicator> : (<View style={this.props.style}>
+        return (<View style={this.props.style}>
             <TouchableOpacity onPress={() => requestAnimationFrame(() => {
-                this.props.video?this.props.playVideo():this.setState({ isModalOpened: true })
+                this.props.video?this.props.playVideo():this.props.showPhoto(this.props.photo)
             })}>
-                <CacheImages source={{
+                <Image source={{
                     uri: this.props.photo
                 }
                 }
@@ -37,13 +36,13 @@ export default class PhotoView extends Component {
                     }}
                     resizeMode="contain"
                     width={this.props.width}
-                ></CacheImages>
+                ></Image>
             </TouchableOpacity>
-            <PhotoModal joined={this.props.joined} hasJoin={this.props.hasJoin} isToBeJoin isOpen={this.state.isModalOpened} image={this.props.photo}
+            {/*<PhotoModal joined={this.props.joined} hasJoin={this.props.hasJoin} isToBeJoin isOpen={this.state.isModalOpened} image={this.props.photo}
                 onClosed={() => {
                     this.setState({ isModalOpened: false });
                     this.props.onOpen()
-                }}></PhotoModal>
+                }}></PhotoModal>*/}
         </View>)
     }
 }

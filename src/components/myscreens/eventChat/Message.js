@@ -34,35 +34,35 @@ export default class Message extends Component {
         //console.warn(data.type)
         switch (data.type) {
             case "text":
-                return <TextMessage user={2} sender={sender} index={index} creator={2} message={data}></TextMessage>
+                return <TextMessage firebaseRoom={this.props.firebaseRoom} user={2} sender={sender} index={index} creator={2} message={data}></TextMessage>
             case "photo":
-                return <PhotoMessage showPhoto={(url) => this.props.showPhoto(url)} user={2} sender={sender} index={index} creator={2} message={data}></PhotoMessage>
+                return <PhotoMessage firebaseRoom={this.props.firebaseRoom} showPhoto={(url) => this.props.showPhoto(url)} user={2} sender={sender} index={index} creator={2} message={data}></PhotoMessage>
             case "audio":
-                return <AudioMessage index={index} sender={sender} message={data}></AudioMessage>
+                return <AudioMessage firebaseRoom={this.props.firebaseRoom} index={index} sender={sender} message={data}></AudioMessage>
             case "video":
-                return <VideoMessage index={index} sender={sender}
+                return <VideoMessage firebaseRoom={this.props.firebaseRoom} index={index} sender={sender}
                     playVideo={(video) => { this.props.playVideo(video) }} message={data}></VideoMessage>
             case "attachement":
-                return <FileAttarchementMessaege sender={sender} index={index} message={data}></FileAttarchementMessaege>;
+                return <FileAttarchementMessaege firebaseRoom={this.props.firebaseRoom} sender={sender} index={index} message={data}></FileAttarchementMessaege>;
             case "photo_upload":
-                return <PhotoUploader showPhoto={(photo) => this.props.showPhoto(photo)}
+                return <PhotoUploader firebaseRoom={this.props.firebaseRoom} showPhoto={(photo) => this.props.showPhoto(photo)}
                     replaceMessage={data => this.props.replaceMessage(data)} sender={false}
                     index={index} message={data}></PhotoUploader>
             case "video_upload":
-                return <VideoUploader playVideo={(video) => this.props.playVideo(video)} replaceMessage={data =>
+                return <VideoUploader firebaseRoom={this.props.firebaseRoom} playVideo={(video) => this.props.playVideo(video)} replaceMessage={data =>
                     this.props.replaceMessageVideo(data)} message={data} playVideo={(video) => this.props.playVideo(video)}
                     index={index} sender={false}></VideoUploader>;
             case "attachement_upload":
-                return <FileAttarchementUploader index={index} message={data}
+                return <FileAttarchementUploader firebaseRoom={this.props.firebaseRoom} index={index} message={data}
                     replaceMessage={(data) => this.props.replaceMessageFile(data)}></FileAttarchementUploader>
             case "audio_uploader":
-                return <AudioUploader message={data} index={data.id}
+                return <AudioUploader firebaseRoom={this.props.firebaseRoom} message={data} index={data.id}
                     replaceMessage={(data) => this.props.replaceAudioMessage(data)}></AudioUploader>
             default:
                 return null
         }
     }
-    componentDidMount() {
+    componentWillMount() {
         this.setState({
             sender_name: this.props.message.sender.nickname,
             sender: !(this.props.message.sender.phone == this.props.user),
@@ -112,7 +112,7 @@ export default class Message extends Component {
     pattern = [1000, 0, 0]
     handleReply() {
         //console.warn(this.props.message)
-       let color = this.state.sender ? '#DEDEDE' : '#9EEDD3'
+        let color = this.state.sender ? '#DEDEDE' : '#9EEDD3'
         switch (this.props.message.type) {
             case 'text':
                 tempMessage = this.props.message
@@ -139,8 +139,8 @@ export default class Message extends Component {
                 let temp = this.props.message.file_name.split('.')
                 let temper = tempMessage
                 temper.typer = temp[temp.length - 1]
-               this.props.replying(temper)
-               //tempMessage = temper
+                this.props.replying(temper)
+                //tempMessage = temper
                 break;
             case 'photo':
                 tempMessage = this.props.message
@@ -148,10 +148,13 @@ export default class Message extends Component {
                 tempMessage.sourcer = this.props.message.photo
                 this.props.replying(tempMessage)
                 break;
-            default :
-            Toast.show({text:'unable to reply for unsent messages'})
-            break
+            default:
+                Toast.show({ text: 'unable to reply for unsent messages' })
+                break
         }
+    }
+    shouldComponentUpdate(nextProps, nextState, nextContext) {
+        return false
     }
     render() {
         topMostStyle = {
@@ -174,23 +177,24 @@ export default class Message extends Component {
             borderBottomLeftRadius: 40,
         }
         subNameStyle = {
-            marginTop: -3, paddingBottom: 0,
-            flexDirection: "column"
+            paddingBottom: 0,
+            flexDirection: "row"
         }
         nameTextStyle = { color: '#1EDEB6', fontSize: 13, }
         return (
             <View style={topMostStyle}>
-                <Swipeout ref={'chatSwipeOut'} onOpen={() => { this.openingSwipeout() }}
-                 onClose={() => { this.closingSwipeout() }} autoClose={true} close={true}
+                <Swipeout isMessage onPress={this.openingSwipeout()} ref={'chatSwipeOut'} onOpen={() => { this.openingSwipeout() }}
+                    onClose={() => { this.closingSwipeout() }} autoClose={true} close={true}
                     left={[{ color: '#04FFB6', type: 'default', backgroundColor: "transparent", text: 'reply' }]}
                     style={{ backgroundColor: 'transparent', width: "100%" }}>
                     <View style={GeneralMessageBoxStyle}>
                         <View>
                             <View style={senderNameStyle}>
-                                {this.state.sender ? <View style={subNameStyle}><TouchableOpacity onPress={() => {
+                                <View style={subNameStyle}>{this.state.sender ? <TouchableOpacity onPress={() => {
                                     console.warn('humm ! you want to know that contact !')
                                 }}><Text style={nameTextStyle}
-                                    note>@{this.state.sender_name}</Text></TouchableOpacity></View> : null}
+                                    note>@{this.state.sender_name}</Text></TouchableOpacity> : null}<Right><Text note
+                                        style={{ color: this.state.sender ? null : '#1EDEB6', fontSize: 13, marginRight: "2%", marginTop: "1%", }}>{this.state.time}{"    "}</Text></Right></View>
                                 <View>
                                     {this.props.message.reply ? <View style={{ paddingRight: "1%", marginTop: "2%", }}>
                                         <ReplyText openReply={(replyer) => {
@@ -204,10 +208,8 @@ export default class Message extends Component {
                                         this.replying = false
                                     }} onLongPress={() => {
                                         this.replying = false
+                                        this.props.showActions(this.props.message)
                                         Vibration.vibrate(this.longPressDuration)
-                                        this.setState({
-                                            showTime: !this.state.showTime
-                                        })
                                     }} >
                                         <View>
                                             {this.chooseComponent(this.props.message, this.props.message.id, this.state.sender)}
@@ -218,7 +220,6 @@ export default class Message extends Component {
                         </View>
                     </View>
                 </Swipeout>
-                {this.state.showTime ? <Text note style={{ marginLeft: "5%", fontSize: 12, }}>{this.state.time}</Text> : false}
             </View>
         )
     }

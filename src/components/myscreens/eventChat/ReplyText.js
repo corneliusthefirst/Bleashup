@@ -1,6 +1,7 @@
 import React, { Component } from "react"
 import { TouchableOpacity, View } from 'react-native';
 import { Text, Icon } from "native-base"
+import Image from 'react-native-scalable-image';
 import CacheImages from "../../CacheImages";
 export default class ReplyText extends Component {
     constructor(props) {
@@ -25,7 +26,7 @@ export default class ReplyText extends Component {
                     display: 'flex', flexDirection: 'row', borderBottomWidth: 0,
                     backgroundColor: "rgba(34, 0, 0, 0.1)", marginLeft: "1%",
                     marginBottom: "1%", padding: "3%",
-                    height:75,
+                    height: 75,
                     borderRadius: 15, borderWidth: 1, borderColor: "#1FABAF",
                 }}>
                     <View style={{ width: "5%" }}><Icon type="FontAwesome"
@@ -40,18 +41,18 @@ export default class ReplyText extends Component {
                                 <Text>{this.convertToHMS(this.props.reply.duration)}</Text> : <Text style={{ fontSize: 30, }}>{this.props.reply.typer.toUpperCase()}</Text>}</View>
                         </View> : <View style={{ display: 'flex', flexDirection: 'row', }}>
                                 <View style={{ width: this.props.reply.sourcer ? "20%" : "0%", marginRight: "1%", }}>
-                                    {this.props.reply.sourcer ? <View><CacheImages thumbnails square style={{
+                                    {this.props.reply.sourcer ? <View><Image width={200} height={40} thumbnails square style={{
                                         width: "100%",
                                         height: 40, borderRadius: 5,
-                                    }} source={{ uri: this.props.reply.sourcer }}></CacheImages>
+                                    }} source={{ uri: this.props.reply.sourcer }}></Image>
                                         {this.props.reply.video ? <Icon type={"EvilIcons"} name={"play"} style={{
                                             position: "absolute", color: "#1FABAF",
                                             marginTop: "15%", marginLeft: "30%",
                                         }}></Icon> : null}</View> : null}
 
                                 </View>
-                                <View style={{ width: this.props.reply.sourcer ? "79%" : "100%" }}>
-                                    <Text note style={{ color: "#81A8A0" }}>{this.props.reply.text.slice(0, 
+                                <View style={{ width: this.props.reply.sourcer ? "79%" : "100%", alignSelf: 'center', marginLeft: this.props.reply.sourcer ? 30 : null, }}>
+                                    <Text note style={{ color: "#81A8A0" }}>{this.props.reply.text.slice(0,
                                         this.props.reply.sourcer ? 100 : 200)} {this.props.reply.text.length > 100 ? '...' : ''}</Text>
                                 </View>
                             </View>}

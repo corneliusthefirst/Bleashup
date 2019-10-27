@@ -12,6 +12,7 @@ import stores from '../../../stores';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import GState from '../../../stores/globalState';
 import * as config from "../../../config/bleashup-server-config.json"
+import ChatStore from '../../../stores/ChatStore';
 let dirs = rnFetchBlob.fs.dirs
 const { fs } = rnFetchBlob
 const AppDir = rnFetchBlob.fs.dirs.SDCardDir + '/Bleashup'
@@ -87,6 +88,7 @@ export default class AudioUploader extends Component {
     }
     player = null
     componentDidMount() {
+        this.room = new ChatStore(this.props.firebaseRoom)
         this.setState({
             duration: this.props.message.duration,
             currentPosition: 0,
@@ -135,7 +137,7 @@ export default class AudioUploader extends Component {
                         currentPosition: seconds / this.props.message.duration,
                         currentTime: seconds
                     })
-                    stores.ChatStore.addDuration(seconds).then(status => {
+                    this.room.addDuration(this.props.message.id,seconds).then(status => {
                         //this.player.release()
                     })
                 })
@@ -167,7 +169,9 @@ export default class AudioUploader extends Component {
     cancelUpLoad(url) {
         this.task.cancel((err, taskID) => {
         })
-        stores.ChatStore.SetCancledState()
+        this.room.SetCancledState(this.props.message.id).then(()=>{
+            
+        })
         this.setState({
             downloading: false
         })

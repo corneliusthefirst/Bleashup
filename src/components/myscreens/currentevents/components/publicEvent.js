@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View } from "react-native";
+import { View, Vibration, TouchableWithoutFeedback, TouchableOpacity } from 'react-native';
 
 import {
   Card,
@@ -32,6 +32,7 @@ import TitleView from "./TitleView";
 import SwipeOutView from "./SwipeOutView";
 import emitter from "../../../../services/eventEmiter";
 import Swipeout from '../../../SwipeOut';
+import InvitationModal from './InvitationModal';
 
 class PublicEvent extends Component {
   constructor(props) {
@@ -41,6 +42,7 @@ class PublicEvent extends Component {
       isMount: false,
       isMounting: true,
       public: false,
+      notPressing: false,
       publishing: false,
       event: this.props.Event,
       swipeClosed: true,
@@ -67,22 +69,25 @@ class PublicEvent extends Component {
   shouldComponentUpdate(nextProps, nextState, nextContext) {
     return this.state.isMount !== nextState.isMount ||
       nextState.joint !== this.state.joint ||
+      nextState.openInviteModal !== this.state.openInviteModal ||
       this.props.Event.joint !== nextProps.Event.joint ||
       this.props.Event.new !== nextProps.Event.new ||
       this.props.Event.updated !== nextProps.Event.updated ||
       this.props.Event.id !== nextProps.Event.id
   }
   swipperComponent = null
-  componentDidMount() {
+  componentWillMount() {
     setTimeout(() => {
+      this.setState({
+        isMount: true,
+        openInviteModal: false
+      })
       stores.Events.isMaster(this.props.Event.id, stores.Session.SessionStore.phone).then(master => {
         this.setState({
           master: master,
-          isMount: true,
-          openInviteModal: false
         })
       })
-    }, 34)
+    }, 0)
   }
   swipeOutSettings(master) {
     return {
@@ -90,12 +95,13 @@ class PublicEvent extends Component {
       sensitivity: 100,
       left: [
         {
-          component: <SwipeOutView master={master} publish={() => this.publish()}
+          component: <SwipeOutView openInvitationModal={() => { this.invite() }} master={master} publish={() => this.publish()}
             seen={() => this.markAsSeen()} delete={() => this.delete()
             }
             join={() => this.join()}
             hide={() => this.hide()} {...this.props} ></SwipeOutView >,
-          autoClose:true
+          autoClose: true,
+          backgroundColor: "transparent",
         }
       ],
     }
@@ -228,11 +234,33 @@ class PublicEvent extends Component {
       Toast.show({ text: "Joint Already !", buttonText: "ok" })
     }
   }
+  duration = 10
+  openSwipeOut() {
+    if (this.state.notPressing) {
+      Vibration.vibrate(this.duration)
+      clearTimeout(this.timeOut)
+      this.setState({ notPressing: false })
+    } else {
+      this.setState({
+        notPressing: true
+      })
+      this.timeOut = setTimeout(() => {
+        this.setState({
+          notPressing: false
+        })
+      }, 500)
+    }
 
+  }
+  onCloseSwipeout() {
+  }
   render() {
     //emitter.emit('notify', "santerss") 
     return (this.state.isMount ? <View style={{ width: "100%", }}>
-      <Swipeout style={{ backgroundColor: this.props.Event.new ? "#cdfcfc" : null }} close={true} autoClose={true}
+      <Swipeout onOpen={() => this.openSwipeOut()} onClose={() => this.onCloseSwipeout()} style={{
+        width: "100%",
+        backgroundColor: this.props.Event.new ? "#cdfcfc" : null
+      }} autoClose={true} close={true}
         {...this.swipeOutSettings(this.state.master)}>
         <Card
           style={{
@@ -285,10 +313,10 @@ class PublicEvent extends Component {
             }}
           >
             <Left>
-              {this.state.isMount ? <View style={{ flexDirection: "row", flex: 5 }}>
-                <ProfileView joined={() => this.join()} hasJoin={this.props.Event.joint || this.state.joint}
+              <View style={{ flexDirection: "row", flex: 5 }}>
+                <ProfileView joined={() => this.join()} showPhoto={(url) => this.props.showPhoto(url)} hasJoin={this.props.Event.joint || this.state.joint}
                   onOpen={() => this.onOpenDetaiProfileModal()} phone={(this.props.Event.creator_phone)}></ProfileView>
-              </View> : null}
+              </View>
             </Left>
           </CardItem>
           <CardItem style={{
@@ -308,7 +336,7 @@ class PublicEvent extends Component {
             cardBody
           >
             <Left>
-              {this.state.isMount ? <PhotoView joined={() => this.join()} isToBeJoint hasJoin={this.props.Event.joint || this.state.joint} onOpen={() => this.onOpenPhotoModal()} style={{
+              {this.state.isMount ? <PhotoView showPhoto={(url) => this.props.showPhoto(url)} joined={() => this.join()} isToBeJoint hasJoin={this.props.Event.joint || this.state.joint} onOpen={() => this.onOpenPhotoModal()} style={{
                 width: "70%",
                 marginLeft: "4%"
               }} photo={this.props.Event.background} width={170} height={125} borderRadius={10} /> : null}
@@ -332,6 +360,8 @@ class PublicEvent extends Component {
             </Right>
           </Footer>
         </Card>
+        <InvitationModal public={this.props.Event.public} master={this.props.master} eventID={this.props.Event.id} isOpen={this.state.openInviteModal}
+          close={() => this.setState({ openInviteModal: false })}></InvitationModal>
       </Swipeout>
     </View> : <Card style={{ height: 390 }}>
       </Card>)

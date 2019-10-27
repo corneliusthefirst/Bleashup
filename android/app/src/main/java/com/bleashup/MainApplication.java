@@ -2,7 +2,11 @@ package com.bleashup.bleashup;
 
 import android.app.Application;
 import com.horcrux.svg.SvgPackage;
-import com.facebook.react.ReactApplication;
+import com.facebook.react.ReactApplication; 
+import io.invertase.firebase.database.RNFirebaseDatabasePackage;
+import io.invertase.firebase.RNFirebasePackage;
+import org.wonday.orientation.OrientationPackage;
+import io.invertase.firebase.auth.RNFirebaseAuthPackage; // <-- Add this line
 import com.kevinresol.react_native_sound_recorder.RNSoundRecorderPackage;
 import io.github.elyx0.reactnativedocumentpicker.DocumentPickerPackage;
 import com.mg.app.PickerPackage;
@@ -40,6 +44,10 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNFirebasePackage(),
+            new RNFirebaseAuthPackage(),
+            new RNFirebaseDatabasePackage(),
+            new OrientationPackage(),
             new RNSoundRecorderPackage(),
             new DocumentPickerPackage(),
             new PickerPackage(),

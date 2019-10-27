@@ -50,13 +50,13 @@ export default class LoginHomeView extends Component {
         })
       }
     })
-   return (
-      <Container>
-        <ChatRoom></ChatRoom>
+  return (
+     <Container>
+        <ChatRoom newMessageNumber={10} firebaseRoom={"message"}></ChatRoom>
       </Container>
 
     )
-    /* routeName = initialRoute.routeName;
+     /*routeName = initialRoute.routeName;
        if ((globalState.loading = true)) {
          initialRoute.initialRoute().then(route => {
            if(route !== "Login"){

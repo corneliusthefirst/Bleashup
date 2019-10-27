@@ -21,11 +21,13 @@ export default class TextContent extends Component {
                 <View>
                     <Text style={{
                         justifyContent: 'center',
+                        marginLeft: "2%",
                         fontSize: this.fontSizeFormular(),
                         //backgroundColor: this.state.sender ? '#FFBFB2' : '#C1FFF2',
                     }}>
                         {this.props.text/*this.props.text.slice(0, this.state.splicer)}{"  "}{this.props.text.length >= 
                         this.state.splicer ? this.state.splicer == this.props.text.length ? "" : " .... ...." : ""*/}
+                        {this.props.text.length > 10?"":"          "}
                     </Text>
                 </View>
             </TouchableWithoutFeedback>

@@ -1,28 +1,78 @@
 
 import React, { Component } from 'react';
-import {  View } from 'react-native';
+import { View, Dimensions,BackHandler } from 'react-native';
 import PublicEvent from "./publicEvent.js"
 import { observer } from 'mobx-react';
 import BleashupScrollView from '../../../BleashupScrollView.js';
-
+import BleashupFlatList from '../../../BleashupFlatList';
+import Orientation from 'react-native-orientation-locker';
+import { ReactNativeZoomableView } from '@dudigital/react-native-zoomable-view';
+import Image from 'react-native-scalable-image';
+import { Icon } from 'native-base';
+const screenWidth = Math.round(Dimensions.get('window').width);
+const screenheight = Math.round(Dimensions.get('window').height);
 
 @observer export default class CurrentEvents extends Component {
     constructor(props) {
         super(props)
+        this.state = {}
     }
+    showPhoto(url){
+        this.setState({
+            showPhoto:true,
+            photo:url
+        })
+    }
+    componentWillMount() {
+        Orientation.unlockAllOrientations(); 
+        BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this))
+    }
+    handleBackButton() {
+        if(this.state.showPhoto){
+            this.setState({
+                showPhoto:false
+            })
+            return true
+        }
+    }
+    componentWillUnmount() {
+        BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton);
+    };
+    
     render() {
         return (
             <View style={{ height: "100%", backgroundColor: "#FEFFDE"}}>
-                <BleashupScrollView
+                <BleashupFlatList
                     keyExtractor={(item, index) => item.id}
                     dataSource={this.props.data}
-                    renderItem={(item, index) => <PublicEvent key={item.id}  {...this.props} Event={item} />}
+                    renderItem={(item, index) => <PublicEvent showPhoto={(url)=> this.showPhoto(url)} key={item.id}  {...this.props} Event={item} />}
                     firstIndex={0}
                     renderPerBatch={1}
                     initialRender={3}
                     numberOfItems={this.props.data.length}
                 >
-                </BleashupScrollView>
+                </BleashupFlatList>
+                {
+                    // ******************Photo Viewer View ***********************//
+                    this.state.showPhoto ?
+                        <View style={{ height: screenheight, width: screenWidth, position: "absolute", backgroundColor: "black", }}>
+                            <ReactNativeZoomableView
+                                maxZoom={1.5}
+                                minZoom={0.5}
+                                zoomStep={0.5}
+                                initialZoom={1}
+                                bindToBorders={true}
+                                onZoomAfter={this.logOutZoomState}>
+                                <Image resizeMode={"contain"} width={screenWidth} height={screenheight}
+                                    source={{ uri: this.state.photo }}></Image>
+                            </ReactNativeZoomableView>
+                            <Icon type="EvilIcons" onPress={() => {
+                                this.setState({
+                                    showPhoto: false
+                                })
+                            }} style={{ margin: '1%', position: 'absolute', fontSize: 30, color: "#FEFFDE" }} name={"close"}></Icon>
+                        </View> : null
+                }
             </View>
         )
     }

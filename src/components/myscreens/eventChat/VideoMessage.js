@@ -5,9 +5,9 @@ import PhotoView from "../currentevents/components/PhotoView";
 import Image from "react-native-scalable-image"
 import { AnimatedCircularProgress } from "react-native-circular-progress";
 import rnFetchBlob from 'rn-fetch-blob';
-import stores from "../../../stores";
 import GState from "../../../stores/globalState";
 import TextContent from "./TextContent";
+import ChatStore from '../../../stores/ChatStore';
 const { fs, config } = rnFetchBlob
 let dirs = rnFetchBlob.fs.dirs
 const AppDir = rnFetchBlob.fs.dirs.SDCardDir + '/Bleashup'
@@ -30,6 +30,7 @@ export default class VideoMessage extends Component {
     }
     transparent = "rgba(52, 52, 52, 0.3)";
     componentDidMount() {
+        this.room = new ChatStore(this.props.firebaseRoom)
         this.setState({
             text: this.props.message.text,
             url: this.props.message.photo,
@@ -110,7 +111,7 @@ export default class VideoMessage extends Component {
                         fs.unlink(res.path())
                         this.props.message.received = this.state.received
                         this.props.message.total = this.state.total
-                        stores.ChatStore.addVideoSizeProperties(this.state.total, this.state.received)
+                        this.room.addVideoSizeProperties(this.props.message.id,this.state.total, this.state.received)
                         this.setState({})
                     })
                 }
@@ -122,7 +123,7 @@ export default class VideoMessage extends Component {
         this.downloadID = setInterval(() => this.download(url), 500)
     }
     setAfterSuccess(res, cap, received) {
-        stores.ChatStore.addVideoProperties(this.props.message.source, cap, received).then(() => {
+        this.room.addVideoProperties(this.props.message.id,this.props.message.source, cap, received).then(() => {
             this.setState({
                 loaded: true,
                 downloading: false,
@@ -140,7 +141,7 @@ export default class VideoMessage extends Component {
         this.task.cancel((err, taskID) => {
             this.setState({ downloading: false })
         })
-        stores.ChatStore.SetCancledState()
+        this.room.SetCancledState(this.props.message.id)
         this.setState({
             downloading: false
         })

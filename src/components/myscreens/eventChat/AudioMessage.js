@@ -8,11 +8,11 @@ import Sound from 'react-native-sound';
 import rnFetchBlob from 'rn-fetch-blob';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import { Icon, Right, Spinner, Toast } from 'native-base';
-import stores from '../../../stores';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import GState from '../../../stores/globalState';
 import BarIndicat from '../../BarIndicat';
 import { BarIndicator } from "react-native-indicators"
+import ChatStore from '../../../stores/ChatStore';
 let dirs = rnFetchBlob.fs.dirs
 const { fs, config } = rnFetchBlob
 const AppDir = rnFetchBlob.fs.dirs.SDCardDir + '/Bleashup'
@@ -29,7 +29,7 @@ export default class AudioMessage extends Component {
     }
     setAfterSuccess(path) {
         this.props.message.source = Platform.OS === 'android' ? path + "/" : '' + path
-        stores.ChatStore.addStaticFilePath(this.props.message.source, '').then(() => {
+        this.room.addStaticFilePath(this.props.message.source, this.props.message.id).then(() => {
             this.initialisePlayer(this.props.message.source)
             this.setState({
                 loaded: true
@@ -107,7 +107,7 @@ export default class AudioMessage extends Component {
                         fs.unlink(res.path())
                         this.props.message.received = this.state.received
                         this.props.message.total = this.state.total
-                        stores.ChatStore.addAudioSizeProperties(this.state.total, this.state.received)
+                        this.room.addAudioSizeProperties(this.props.message.id,this.state.total, this.state.received)
                         this.setState({})
                     })
                 }
@@ -131,6 +131,7 @@ export default class AudioMessage extends Component {
     }
     player = null
     componentDidMount() {
+        this.room = new ChatStore(this.props.firebaseRoom)
         this.setState({
             duration: null,
             currentPosition: 0,
@@ -186,7 +187,7 @@ export default class AudioMessage extends Component {
                         currentPosition: seconds / this.props.message.duration,
                         currentTime: seconds
                     })
-                    stores.ChatStore.addDuration(seconds).then(status => {
+                    this.room.addDuration(seconds).then(status => {
                         //this.player.release()
                     })
                 })
@@ -218,7 +219,7 @@ export default class AudioMessage extends Component {
     cancelDownLoad(url) {
         this.task.cancel((err, taskID) => {
         })
-        stores.ChatStore.SetCancledState()
+        this.room.SetCancledState(this.props.message.id)
         this.setState({
             downloading: false
         })

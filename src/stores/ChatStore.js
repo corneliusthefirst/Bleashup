@@ -1,15 +1,82 @@
 import { observable } from 'mobx'
 import storage from './Storage'
-import { orderBy, filter ,reject} from "lodash"
+import { orderBy, filter, reject, findIndex } from "lodash"
 import autobind from 'autobind-decorator'
 class ChatStore {
-    constructor() {
-        this.readFromStore().then(data => {
-            this.setProperties(data)
+    constructor(key) {
+        this.storeAccessKey.key = key
+        this.saveKey.key = key
+        this.readFromStore().then(value => {
+            this.setProperties(value)
+        })
+
+    }
+    addToStore(data) {
+        this.saveKey.data = data;
+        return storage.save(this.saveKey)
+    }
+    addMessageToStore(newMessage) {
+        return new Promise((resolve, reject) => {
+            this.readFromStore().then(data => {
+                data.unshift(newMessage)
+                return this.addToStore(data).then(() => {
+                    resolve()
+                })
+            })
         })
     }
-    @observable messages = [{
-        id: 0,
+    addNewMessage(newMessage, newKey) {
+        return new Promise((resolve, reject) => {
+            this.readFromStore().then(data => {
+                let index = findIndex(data, { id: newMessage.id });
+                if (index >= 0) {
+                    data[index] = { ...data[index], key: newKey };
+                    this.addToStore(data).then(() => {
+                        resolve()
+                    })
+                } else {
+                    data.unshift({ ...newMessage, new: true, key: newKey })
+                    this.addToStore(data).then(() => {
+                        resolve()
+                    })
+                }
+            })
+        })
+    }
+    addAndReadFromStore(value){
+        return new Promise((resolve,rejec) =>{
+            let tempKey = {...this.saveKey,key:"temp",data:value}
+            storage.save(tempKey).then(()=>{
+                tempKey = {...this.storeAccessKey,key:"temp"}
+                storage.load(tempKey).then(data =>{
+                    resolve(data)
+                })
+            })
+        })
+    }
+    removeMessage(messageID) {
+        return new Promise((resolve, reje) => {
+            this.readFromStore().then(data => {
+                data = reject(data, { id: messageID })
+                this.addToStore(data).then(() => {
+                    resolve()
+                })
+            })
+        })
+    }
+    replaceMessage(newMessage) {
+        return new Promise((resolve, rejec) => {
+            this.readFromStore().then(data => {
+                index = findIndex(data, { id: newMessage.id })
+                data[index] = newMessage
+                this.addToStore(data).then(() => {
+                    resolve("ok")
+                })
+            })
+        })
+    }
+    @observable messages = [/*{
+        id: '0',
         source: 'http://192.168.43.32:8555/sound/get/p2.mp3',
         file_name: 'p2.mp3',
         total: 0,
@@ -24,7 +91,7 @@ class ChatStore {
         duration: Math.floor(0),
         created_at: "2014-03-30 12:32",
     }, {
-        id: 1,
+        id: '1',
         //source: 'http://192.168.43.32:8555/sound/get/p2.mp3',
         file_name: 'p2.mp3',
         total: 0,
@@ -32,7 +99,7 @@ class ChatStore {
         user: 1,
         creator: 2,
         type: 'text',
-        text: `hello `,
+        text: `hello`,
         sender: {
             phone: 3,
             nickname: "Sokeng Kamga"
@@ -40,7 +107,7 @@ class ChatStore {
         duration: Math.floor(0),
         created_at: "2014-03-30 12:32",
     }, {
-        id: 2,
+        id: '2',
         sender: {
             phone: 2,
             nickname: "Sokeng Kamga"
@@ -63,7 +130,7 @@ On a Unix system you can view the manual pages from the command line using
         created_at: "2014-03-30 12:32",
         text: `Hello!`
     }, {
-        id: 3,
+        id: '3',
         source: 'http://192.168.43.32:8555/video/get/bma9auo13ult3nh5n690_bma9auo13ult3nh5n69g_bma9auo13ult3nh5n6a0.mp4',
         file_name: 'bma9auo13ult3nh5n690_bma9auo13ult3nh5n69g_bma9auo13ult3nh5n6a0_thumbnail.jpeg',
         thumbnailSource: 'http://192.168.43.32:8555/video/thumbnail/get/bma9auo13ult3nh5n690_bma9auo13ult3nh5n69g_bma9auo13ult3nh5n6a0_thumbnail.jpeg',
@@ -95,7 +162,7 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
         duration: Math.floor(0),
         created_at: "2014-03-30 12:32",
     }, {
-        id: 4,
+        id: '4',
         source: 'http://192.168.43.32:8555/video/get/bm6lgk013ult9gc75vmg_bm6lgk013ult9gc75vn0_bm6lgk013ult9gc75vng.mp4',
         file_name: 'Black M - Le prince Aladin (Clip officiel) ft. Kev Adams.mp4',
         thumbnailSource: 'http://192.168.43.32:8555/video/thumbnail/get/bm7sd5813ulrbjp7u1sg_bm7sd5813ulrbjp7u1t0_bm7sd5813ulrbjp7u1tg_thumbnail.jpeg',
@@ -120,7 +187,7 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
         created_at: "2014-03-30 12:32",
     },
         , {
-        id: 5,
+        id: '5',
         source: 'http://192.168.43.32:8555/video/get/Black M - Le prince Aladin (Clip officiel) ft. Kev Adams.mp4',
         file_name: 'bm6lgk013ult9gc75vmg_bm6lgk013ult9gc75vn0_bm6lgk013ult9gc75vng.mp4',
         thumbnailSource: 'http://192.168.43.32:8555/video/thumbnail/get/bm7sd5813ulrbjp7u1sg_bm7sd5813ulrbjp7u1t0_bm7sd5813ulrbjp7u1tg_thumbnail.jpeg',
@@ -143,7 +210,7 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
 `,
         duration: Math.floor(0),
         created_at: "2014-0s3-30 12:32",
-    }]
+    }*/]
     storeAccessKey = {
         key: "Chats",
         autoSync: true
@@ -178,53 +245,98 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
     }
     setProperties(chats) {
         chats = orderBy(chats, ["updated_at"], ["desc"]);
-        this.Chats = filter(chats, chat => !chat.hidden && !chat.deleted);
+        this.messages = filter(chats, chat => !chat.hidden && !chat.deleted);
     }
-    addDuration(duration, chatID) {
+    addDuration(duration, id) {
         return new Promise((resolve, reject) => {
-            resolve("ok")
+            this.readFromStore().then(data => {
+                let index = findIndex(data, { id: id })
+                if (data[index]) {
+                    data[index].duration = duration;
+                    this.addToStore(data).then(() => {
+                        resolve("ok")
+                    })
+                } else {
+                    resolve("not found")
+                }
+            })
         })
     }
-    addVideoProperties(path,totalSize,receivedSize){
-        return new Promise((resolve,reject) => {
-            resolve()
+    addVideoProperties(id, path, total, received) {
+        return new Promise((resolve, reject) => {
+            this.readFromStore().then(data => {
+                let index = findIndex(data, { id: id })
+                if (data[index]) {
+                    data[index].total = total;
+                    data[index].received = received
+                    data[index].source = path
+                    this.addToStore(data).then(() => {
+                        resolve("ok")
+                    })
+                } else {
+                    resolve("not found")
+                }
+            })
         })
     }
-   @autobind addMessage(message){
-        return new Promise((resolve,reject)=>{
+    @autobind addMessage(message) {
+        return new Promise((resolve, reject) => {
             this.messages.unshift(message)
             resolve()
         })
     }
-    @autobind removeMessage(id){
+    addVideoSizeProperties(id, total, recieved) {
+        return this.addAudioSizeProperties(id, total, recieved)
+    }
+    AddAudioSizePropperties(total, recieved) {
         return new Promise((resolve, reject) => {
-            this.messages = reject(this.messages,mes => this.messages.id == id)
             resolve()
         })
     }
-    addVideoSizeProperties(total,recieved){
-        return new Promise((resolve,reject)=>{
-            resolve()
-        })
-    }
-    AddAudioSizePropperties(total,recieved){
-        return new Promise((resolve,reject) =>{
-            resolve()
-        })
-    }
-    addAudioSizeProperties(){
-        return new Promise((resolve,reject)=>{
-
-        })
-    }
-    SetCancledState(){
-        return new Promise((resolve,reject)=>{
-            resolve()
-        })
-    }
-    addStaticFilePath(url, chatID) {
+    addAudioSizeProperties(id, total, recieved) {
         return new Promise((resolve, reject) => {
-            resolve("ok");
+            this.readFromStore().then(data => {
+                let index = findIndex(data, { id: id })
+                if (data[index]) {
+                    data[index].total = total;
+                    data[index].received = recieved
+                    this.addToStore(data).then(() => {
+                        resolve("ok")
+                    })
+                } else {
+                    resolve("not found")
+                }
+            })
+        })
+    }
+    SetCancledState(id) {
+        return new Promise((resolve, reject) => {
+            this.readFromStore().then(data => {
+                let index = findIndex(data, { id: id })
+                if (data[index]) {
+                    data[index].cancled = true;
+                    this.addToStore(data).then(() => {
+                        resolve("ok")
+                    })
+                } else {
+                    resolve("not found")
+                }
+            })
+        })
+    }
+    addStaticFilePath(url, id) {
+        return new Promise((resolve, reject) => {
+            this.readFromStore().then(data => {
+                let index = findIndex(data, { id: id })
+                if (data[index]) {
+                    data[index].source = url;
+                    this.addToStore(data).then(() => {
+                        resolve("ok")
+                    })
+                } else {
+                    resolve("not found")
+                }
+            })
         })
     }
 }

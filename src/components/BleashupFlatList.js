@@ -44,6 +44,12 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
     scrollToEnd(){
         this.refs.bleashupFlatlist.scrollToOffset({ animated: true, offset: 0 })
     }
+    resetItemNumbers(){
+        this.setState({
+            currentRender:this.props.initialRender,
+            endReached:false
+        })
+    }
     render() {
         return (
             <View style={{ flexDirection: 'column', backgroundColor: this.props.backgroundColor?this.props.backgroundColor:"#FEFFDE", }}>
@@ -58,7 +64,7 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
                     ref="bleashupFlatlist"
                     canCancelContentTouches={true}
                     inverted={this.props.inverted?this.props.inverted:false}
-                    removeClippedSubviews={true}
+                    removeClippedSubviews={false}
                     maxToRenderPerBatch={23}
                     //updateCellsBatchingPeriod={10}
                     showsVerticalScrollIndicator={false}
