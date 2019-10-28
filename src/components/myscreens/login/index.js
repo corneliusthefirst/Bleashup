@@ -61,6 +61,7 @@ export default class LoginView extends Component {
       erroMessage: ""
     };
   }
+  state = {}
   loginStore = stores.LoginStore;
   temploginStore = stores.TempLoginStore;
 
@@ -88,8 +89,7 @@ export default class LoginView extends Component {
     this.setState({ cca2: country.cca2 });
   }
 
-  @autobind
-  async updateInfo() {
+  async updateInfo(value) {
     try {
       this.setState({
         valid: this.phone.isValidNumber(),
@@ -102,62 +102,70 @@ export default class LoginView extends Component {
     }
   }
 
+
   @autobind
   async onClickContinue() {
+    this.setState({
+      loading:true
+    })
     try {
       await this.updateInfo();
-
       if (this.state.value == "") {
         throw new Error("Please provide phone number.");
       } else if (this.state.valid == false || this.state.type != "MOBILE") {
         throw new Error("Please provide a valid mobile phone number.");
       } else {
-        globalState.loading = true;
+        UserService.checkUser(
+          this.state.value.replace(/\s/g, "").replace("+", "00")
+        )
+          .then(response => {
+            if (response.response !== "unknown_user" && response.response !== "wrong server_key") {
+              this.loginStore
+                .setUser({
+                  phone: this.state.value.replace(/\s/g, "").replace("+", "00"),
+                  password: "",
+                  profile: response.profile,
+                  profile_ext: response.profile_ext,
+                  name: response.name,
+                  nickname: response.nickname,
+                  created_at: response.created_at,
+                  updated_at: response.updated_at,
+                  birth_date: response.birth_date,
+                  email: response.email
+                })
+                .then(() => {
+                  globalState.loading = false;
+                  this.props.navigation.navigate("SignIn");
+                });
+            } else {
+              this.temploginStore
+                .saveData(
+                  this.state.value.replace(/\s/g, "").replace("+", "00"),
+                  "phone"
+                )
+                .then(() => {
+                  globalState.loading = false;
+                  this.props.navigation.navigate("SignUp");
+                });
+            }
+          })
+          .catch(error => {
+            console.warn(error)
+            this.setState({
+              loading: false
+            })
+            alert("Sorry Please Check your internet connection");
+          });
       }
     } catch (e) {
-      Alert.alert("Phone Error", e.message, [
+      console.warn(e.message)
+      this.setState({
+        loading:false
+      })
+      Alert.alert("Phone Error","Please provide a valid mobile phone number", [
         { text: "OK", onPress: () => console.log("OK Pressed") }
       ]);
     }
-
-    UserService.checkUser(
-      this.state.value.replace(/\s/g, "").replace("+", "00")
-    )
-      .then(response => {
-        if (response) {
-          this.loginStore
-            .setUser({
-              phone: this.state.value.replace(/\s/g, "").replace("+", "00"),
-              password: "",
-              profile: response.profile,
-              profile_ext: response.profile_ext,
-              name: response.name,
-              nickname: response.nickname,
-              created_at: response.created_at,
-              updated_at: response.updated_at,
-              birth_date: response.birth_date,
-              email: response.email
-            })
-            .then(() => {
-              globalState.loading = false;
-              this.props.navigation.navigate("SignIn");
-            });
-        } else {
-          this.temploginStore
-            .saveData(
-              this.state.value.replace(/\s/g, "").replace("+", "00"),
-              "phone"
-            )
-            .then(() => {
-              globalState.loading = false;
-              this.props.navigation.navigate("SignUp");
-            });
-        }
-      })
-      .catch(error => {
-        globalState.loading = false;
-        alert("Sorry Please Check your internet connection");
-      });
   }
 
   render() {
@@ -179,7 +187,7 @@ export default class LoginView extends Component {
               ref={ref => {
                 this.phone = ref;
               }}
-              onChange={value => this.updateInfo()}
+              onChange={value => this.updateInfo(value)}
               onPressFlag={this.onPressFlag}
               value={this.state.value}
               error={globalState.error}
@@ -196,7 +204,7 @@ export default class LoginView extends Component {
               this.onClickContinue();
             }}
           >
-            {globalState.loading ? (
+            {this.state.loading ? (
               <Spinner color="#FEFFDE" />
             ) : (
               <Text> Continue </Text>

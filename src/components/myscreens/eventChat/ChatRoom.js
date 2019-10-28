@@ -546,6 +546,7 @@ const screenheight = Math.round(Dimensions.get('window').height);
             messageListHeight: this.formHeight(this.state.initialMessaListHeightFactor),
             textInputHeight: this.formHeight(this.inittialTextInputHeightFactor),
             replying: false,
+            showEmojiInputCaption:false,
             showCaption: false,
             showVideo: false
         })

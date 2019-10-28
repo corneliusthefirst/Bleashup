@@ -19,6 +19,7 @@ export default class globalState {
   @observable invitationUpdated = true;
   @observable newHightlight = false;
   @observable newVote = false;
+  confimResult = ()=>{}
 
   get newEvent() {
     return this.newEvent;

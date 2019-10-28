@@ -7,6 +7,7 @@ import stores from "../../../stores";
 import { observer } from "mobx-react";
 import { View } from 'react-native';
 import BleashupScrollView from "../../BleashupScrollView";
+import BleashupFlatList from '../../BleashupFlatList';
 
 @observer export default class InvitationView extends Component {
   constructor(props){
@@ -21,7 +22,7 @@ import BleashupScrollView from "../../BleashupScrollView";
     {
       this.state.loadingInvitations ? 
         <Spinner></Spinner>: 
-          <BleashupScrollView
+          <BleashupFlatList
         initialRender={6}
         renderPerBatch={3}
         firstIndex={0}
@@ -36,7 +37,7 @@ import BleashupScrollView from "../../BleashupScrollView";
 
         }}
       >
-      </BleashupScrollView>}
+      </BleashupFlatList>}
     </View>
   }
 }

@@ -12,19 +12,14 @@ import {
   Container,
   Icon,
   Header,
-  Form,
   Item,
   Title,
   Input,
   Left,
   Right,
-  H3,
-  H1,
-  H2,
   Spinner,
   Button,
   InputGroup,
-  DatePicker,
   Thumbnail
 } from "native-base";
 import styles from "./styles";

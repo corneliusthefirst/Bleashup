@@ -1,5 +1,5 @@
 import React, { Component } from "react"
-import {  FlatList,View} from "react-native";
+import { FlatList, View } from "react-native";
 import { Spinner, CardItem, Text, List } from "native-base";
 import { observer } from "mobx-react";
 import { thisExpression } from "@babel/types";
@@ -41,18 +41,18 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
             })
         }
     }
-    scrollToEnd(){
+    scrollToEnd() {
         this.refs.bleashupFlatlist.scrollToOffset({ animated: true, offset: 0 })
     }
-    resetItemNumbers(){
+    resetItemNumbers() {
         this.setState({
-            currentRender:this.props.initialRender,
-            endReached:false
+            currentRender: this.props.initialRender,
+            endReached: false
         })
     }
     render() {
         return (
-            <View style={{ flexDirection: 'column', backgroundColor: this.props.backgroundColor?this.props.backgroundColor:"#FEFFDE", }}>
+            <View style={{ flexDirection: 'column', backgroundColor: this.props.backgroundColor ? this.props.backgroundColor : "#FEFFDE", }}>
                 <FlatList
                     onScrollEndDrag={({ nativeEvent }) => {
                         if (isCloseToBottom(nativeEvent)) {
@@ -63,9 +63,9 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
                     centerContent={true}
                     ref="bleashupFlatlist"
                     canCancelContentTouches={true}
-                    inverted={this.props.inverted?this.props.inverted:false}
+                    inverted={this.props.inverted ? this.props.inverted : false}
                     removeClippedSubviews={false}
-                    maxToRenderPerBatch={23}
+                    maxToRenderPerBatch={this.props.inverted ? 5 : this.state.endReached ? this.props.renderPerBatch : 3}
                     //updateCellsBatchingPeriod={10}
                     showsVerticalScrollIndicator={false}
                     keyExtractor={this.props.keyExtractor}
@@ -73,14 +73,14 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
                         this.state.currentRender)}
                     renderItem={({ item }) => this.props.renderItem(item, this.props.keyExtractor(item, 1))}
                     ListFooterComponent={() =>
-                        this.props.numberOfItems < this.props.initialRender ? null : <CardItem style={{ width:"100%",height: 25 }} >
+                        this.props.numberOfItems < this.props.initialRender ? null : <CardItem style={{ width: "100%", height: 25 }} >
                             {this.state.endReached ? <Text style={{
                                 marginLeft: "35%"
                             }}>no more data to load</Text> : <Spinner size={"small"}></Spinner>}
                         </CardItem>
                     }
                 >
-                
+
                 </FlatList>
             </View>)
     }

@@ -32,6 +32,8 @@ import stores from "../../../stores";
 import globalState from "../../../stores/globalState";
 import { observer } from "mobx-react";
 import moment from "moment";
+import firebase from 'react-native-firebase';
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 @observer
 export default class SignUpView extends Component {
@@ -53,6 +55,7 @@ export default class SignUpView extends Component {
       };
     });
   }
+  state = {}
   user = {};
   loginStore = stores.LoginStore;
   temploginStore = stores.TempLoginStore;
@@ -105,6 +108,7 @@ export default class SignUpView extends Component {
 
   @autobind
   SignUp() {
+    console.warn("sinup function called")
     if (this.state.password != this.state.newPassword) {
       globalState.newPasswordError = true;
     }
@@ -114,9 +118,9 @@ export default class SignUpView extends Component {
     if (this.state.name == "") {
       globalState.nameError = true;
     }
-    if (this.state.email == "") {
-      globalState.emailError = true;
-    }
+   // if (this.state.email == "") {
+   //   globalState.emailError = true;
+   // }
     if (this.state.age == "") {
       globalState.ageError = true;
     }
@@ -128,7 +132,9 @@ export default class SignUpView extends Component {
       globalState.emailError == false &&
       globalState.ageError == false
     ) {
-      globalState.loading = true;
+      this.setState({
+        loading:true
+      });
       this.user.password = this.state.password;
       this.user.email = this.state.email;
       this.user.birth_date = this.state.age;
@@ -153,8 +159,8 @@ export default class SignUpView extends Component {
       while (this.temploginStore.counter >= 0) {
         this.temploginStore.counter++;
       }
-
-      UserService.sendEmail(emailData)
+      console.warn(this.user.phone)
+     /* UserService.sendEmail(emailData)
         .then(response => {
           if ((response = "ok")) {
             this.temploginStore
@@ -174,7 +180,7 @@ export default class SignUpView extends Component {
         })
         .catch(error => {
           alert("An error Occured When sending you an Email please try later");
-        });
+        });*/
     }
   }
 
@@ -200,7 +206,7 @@ export default class SignUpView extends Component {
           </Header>
 
           <Item rounded style={styles.input} error={globalState.nameError}>
-            <Icon active name="user" style={{ color: "#1FABAB" }} />
+            <Icon active name="user" type="EvilIcons"  style={{ color: "#1FABAB" }} />
             <Input
               placeholder={
                 globalState.nameError == false
@@ -223,7 +229,7 @@ export default class SignUpView extends Component {
               )}
           </Item>
 
-          <Item rounded style={styles.input} error={globalState.emailError}>
+        {/*  <Item rounded style={styles.input} error={globalState.emailError}>
             <Icon
               active
               type="MaterialIcons"
@@ -252,7 +258,7 @@ export default class SignUpView extends Component {
                 />
               )}
           </Item>
-
+            */}
           <Item rounded style={styles.input} error={globalState.ageError}>
             <Icon
               active
@@ -359,19 +365,21 @@ export default class SignUpView extends Component {
                 />
               )}
           </Item>
-
-          <Button
-            block
-            rounded
-            style={styles.buttonstyle}
-            onPress={this.SignUp}
-          >
-            {globalState.loading ? (
-              <Spinner color="#FEFFDE" />
-            ) : (
-                <Text> SignUp </Text>
-              )}
-          </Button>
+            <Button
+              block
+              rounded
+              onPress={() => {
+                console.warn("Pressing!!!!")
+                this.SignUp()
+              }}
+              style={styles.buttonstyle}
+            >
+              {this.state.loading ? (
+                <Spinner color="#FEFFDE" />
+              ) : (
+                  <Text> SignUp </Text>
+                )}
+            </Button>
         </Content>
       </Container>
     );

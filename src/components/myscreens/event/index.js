@@ -9,7 +9,6 @@ import {
   ToastAndroid
 } from "react-native";
 import {
-  Container,
   Header,
   Title,
   Icon,
@@ -61,7 +60,7 @@ export default class Event extends Component {
     initalPage: "EventDetails",
     currentPage: "Details",
     enabled: false,
-    isOpen:true
+    isOpen:false
   }
   swipoutSetting = {
     close: true,
@@ -146,8 +145,8 @@ export default class Event extends Component {
   @autobind goToHome() {
     this.props.navigation.navigate("Home");
   }
+  isOpen=false
   renderMenu() {
-    console.warn(this.state.currentPage)
     switch (this.state.currentPage) {
       case "EventDetails":
         return <EventDatails {...this.props}></EventDatails>
@@ -166,23 +165,42 @@ export default class Event extends Component {
 
     }
   }
+  componentWillMount() {
+    BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this))
+
+  }
+  handleBackButton() {
+    if (!this.isOpen){
+      this.isOpen = true 
+      this.setState({
+        isOpen:true
+      })
+      return true
+    }
+  }
+  componentWillUnmount() {
+    BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton);
+
+  }
   array = new Array(100)
   _allowScroll(scrollEnabled) {
     this.setState({ scrollEnabled: scrollEnabled })
   }
   render() {
-    return (<SideMenu bounceBackOnOverdraw={false} isOpen={this.state.isOpen} openMenuOffset={this.currentWidth} menu={<SWView setCurrentPage={(page) => {
+    return (<SideMenu autoClosing={true} onMove={(position) =>{
+      
+    }} bounceBackOnOverdraw={false} onChange={(position) =>{
+      this.isOpen = position
+    }} isOpen={this.isOpen} openMenuOffset={this.currentWidth} menu={<SWView setCurrentPage={(page) => {
+      this.isOpen = false
       this.setState({ currentPage: page })
     }
     } currentPage={this.state.currentPage} width={this.currentWidth}
       event={this.props.navigation.getParam("Event")} master={true} Event={{ public: true }}></SWView>}>
-      <View style={{ display: 'flex', padding: 3, height: "100%", backgroundColor: "#FEFFDE" }}>
-        <Text> is my swipe-view</Text>
-        <View style={{ display: "flex" }}>
+      <View style={{height: "100%", backgroundColor: "#FEFFDE" }}>
           {
             this.renderMenu()
           }
-        </View>
       </View>
     </SideMenu>
     );
