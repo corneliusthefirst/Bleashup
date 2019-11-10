@@ -3,12 +3,11 @@ import { View, Animated, TouchableWithoutFeedback } from 'react-native';
 import { TouchableOpacity, ScrollView } from "react-native-gesture-handler";
 import UpdateStateIndicator from "../currentevents/components/updateStateIndicator";
 import { List, Icon, Label, Card, CardItem, Text, Header, Thumbnail, Title } from 'native-base';
+import Image from 'react-native-scalable-image';
 import InvitationModal from "../currentevents/components/InvitationModal";
 import autobind from "autobind-decorator";
 import { observer } from "mobx-react";
 import stores from "../../../stores";
-import CacheImages from "../../CacheImages";
-import { Image } from 'react-native-svg';
 import RouteView from "./RouteView";
 import ActionsView from "./ActionsView";
 import Commitee from "./Commitee";
@@ -86,7 +85,7 @@ export default class SWView extends Component {
     render() {
         return (
             <View>
-                <ScrollView showsVerticalScrollIndicator={false}
+                <ScrollView nestedScrollEnabled={true} showsVerticalScrollIndicator={false}
                     onScroll={Animated.event(
                         [{ nativeEvent: { contentOffset: { y: this.state.scrollY } } }]
                     )}>
@@ -94,9 +93,6 @@ export default class SWView extends Component {
                         marginTop: HEADER_MAX_HEIGHT,
                         height: 1000, width: "100%", backgroundColor: "#FEFFDE",
                     }}>
-                    </View>
-                    <View style={{paddingTop:200+300}}>
-                    <Commitee></Commitee>
                     </View>
                 </ScrollView>
                 <Animated.View style={[{
@@ -117,8 +113,8 @@ export default class SWView extends Component {
                         height: "100%",
                         alignItems: 'center',
                         justifyContent: 'center',
-                    }}><CacheImages thumbnails square style={{ width: this.props.width, height: "100%" }}
-                        source={{ uri: this.props.event.background }}></CacheImages>
+                    }}><Image style={{ width: this.props.width, height: "100%" }}
+                        source={{ uri: this.props.event.background }}></Image>
                     </View>
                 </Animated.View>
                 <Animated.View style={[{ display: 'flex', flexDirection: 'column', paddingTop: "-2.5%", position: "absolute" }, {
@@ -128,17 +124,18 @@ export default class SWView extends Component {
                         extrapolate: 'clamp',
                     }),
                 }]}>
-                    <View style={{ display: "flex", flexDirection: 'row', }}>
+                    <View style={{heignt:400, display: "flex", flexDirection: 'row',marginLeft: "2%", }}>
                         <View style={{ marginTop: "2%", width: "25%", borderWidth: 2, borderColor: this.actionColor, borderRadius: 12, }}>
-                           <ActionsView></ActionsView>
+                           <ActionsView showMembers={() => this.props.showMembers()}></ActionsView>
                         </View>
                         <View style={{ width: "5%", }}></View>
                         <View style={{ width: "70%" }}>
-                           <RouteView currentPage={this.props.currentPage} setCurrentPage={(page)=> this.props.setCurrentPage(page)}></RouteView>
+                           <RouteView currentPage={this.props.currentPage} 
+                           setCurrentPage={(page)=> this.props.setCurrentPage(page)}></RouteView>
                         </View>
                     </View>
-                    <View style={{ borderTopRightRadius: 15, borderBottomRightRadius: 15, marginTop: "15%", backgroundColor: "#1FABAB", height: 30, width: "100%" }}>
-                        <Text style={{ marginTop: "1.5%", alignSelf: 'center', }}>Commitees</Text>
+                    <View style={{ marginTop: "10%", }}>
+                    <Commitee event_id={this.props.event.id}></Commitee>
                     </View>
                 </Animated.View>
             </View>

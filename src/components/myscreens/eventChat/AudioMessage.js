@@ -30,10 +30,13 @@ export default class AudioMessage extends Component {
     setAfterSuccess(path) {
         this.props.message.source = Platform.OS === 'android' ? path + "/" : '' + path
         this.room.addStaticFilePath(this.props.message.source, this.props.message.id).then(() => {
-            this.initialisePlayer(this.props.message.source)
-            this.setState({
-                loaded: true
-            })
+            this.room.addAudioSizeProperties(this.props.message.id, this.state.total,
+                this.state.received, this.props.message.duration).then(()=>{
+                    this.initialisePlayer(this.props.message.source)
+                    this.setState({
+                        loaded: true
+                    })
+                })
         })
     }
     DetemineRange(path) {
@@ -107,8 +110,10 @@ export default class AudioMessage extends Component {
                         fs.unlink(res.path())
                         this.props.message.received = this.state.received
                         this.props.message.total = this.state.total
-                        this.room.addAudioSizeProperties(this.props.message.id,this.state.total, this.state.received)
-                        this.setState({})
+                        this.room.addAudioSizeProperties(this.props.message.id,this.state.total, 
+                            this.state.received,this.props.message.duration).then(() =>{
+                                this.setState({})
+                            })
                     })
                 }
             })
@@ -230,11 +235,12 @@ export default class AudioMessage extends Component {
             flexDirection: 'column',
         }
         textStyleD = {
-            width: "80%", margin: '4%', marginTop: "5%", display: 'flex', alignSelf: 'center',
+            width: "80%", margin: '4%',paddingLeft:'10%',paddingRight: '20%', marginTop: "5%", display: 'flex', alignSelf: 'center',
             flexDirection: 'column',
         }
         return (
-            <View style={{ disply: 'flex', flexDirection: 'row', width: 300, }}>
+            <TouchableWithoutFeedback onPressIn={()=> this.props.pressingIn()}>
+            <View style={{ disply: 'flex', flexDirection: 'row', minWidth: 283,maxWidth:300,minHeight: 50, }}>
                {this.props.message.duration? <View style={textStyle}>
                     <View><Slider value={this.state.currentPosition} onValueChange={(value) => {
                         this.player.setCurrentTime(value * this.props.message.duration)
@@ -250,7 +256,7 @@ export default class AudioMessage extends Component {
                     </View>
                 </View> :<View style={{textStyleD}}>{!this.state.playing ? <BarIndicat animating={false} 
                         color={"#1FABAB"} size={30} count={20} ></BarIndicat> : <BarIndicator color={"#1FABAB"} size={30} count={20}></BarIndicator>}</View>}
-                <View style={{ marginTop: this.props.message.duration? "3%":'0%',}}>
+                <View style={{ marginTop: this.props.message.duration? "3%":'1%',}}>
                     <AnimatedCircularProgress
                         size={40}
                         width={3}
@@ -283,6 +289,7 @@ export default class AudioMessage extends Component {
                         }
                     </AnimatedCircularProgress></View>
             </View>
+            </TouchableWithoutFeedback>
         );
     }
 }

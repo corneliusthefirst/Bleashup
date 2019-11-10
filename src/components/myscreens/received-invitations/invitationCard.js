@@ -29,7 +29,6 @@ import { forEach, filter } from "lodash";
 import ImageActivityIndicator from '../currentevents/components/imageActivityIndicator';
 import { observer } from 'mobx-react';
 import Requester from "../invitations/Requester"
-import BleashupNotification from '../../../services/Notifications';
 
 
 const defaultPlaceholderObject = {

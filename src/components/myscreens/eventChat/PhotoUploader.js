@@ -28,6 +28,9 @@ export default class PhotoUploader extends Component {
     }
     task = null
     uploadVideo() {
+        this.setState({
+            uploading:true
+        })
         fs.exists(this.props.message.source).then(state => {
             this.task = rnFetchBlob.fetch("POST", this.uploadURL, {
                 'content-type': 'multipart/form-data',
@@ -39,6 +42,7 @@ export default class PhotoUploader extends Component {
             }])
             this.task.uploadProgress((writen, total) => {
                 this.setState({
+                    uploading:true,
                     total: parseInt(total),
                     received: parseInt(writen),
                     uploadState: (parseInt(writen) / parseInt(total)) * 100
@@ -51,23 +55,25 @@ export default class PhotoUploader extends Component {
                     temp1 = Math.floor(temper1)
                     temp2 = Math.floor(temper2)
                     temp3 = Math.ceil(temper2)
-                    if (temp1 == temp2 || temp1 == temp3) {
-                        newDir = `file://` + AppDir +"/Photo/"+ response.data
-                        fs.writeFile(newDir.split(`file://`)[1], this.props.message.source.split(`file://`)[1], 'uri').then(() => {
-                            this.setState({
-                                uploadState: 100,
-                                loaded: true
-                            })
-                            this.props.message.type = 'photo'
-                            this.props.message.source = this.baseURL+response.data
-                            this.props.message.photo = newDir
-                            this.props.replaceMessage(this.props.message)
-
+                    newDir = `file://` + AppDir + "/Photo/" + response.data
+                    fs.writeFile(newDir.split(`file://`)[1], this.props.message.source.split(`file://`)[1], 'uri').then(() => {
+                        this.setState({
+                            uploadState: 100,
+                            uploading:false,
+                            loaded: true
                         })
-                    }
+                        this.props.message.type = 'photo'
+                        this.props.message.source = this.baseURL + response.data
+                        this.props.message.photo = newDir
+                        this.props.replaceMessage(this.props.message)
+
+                    })
                 }
             })
-            this.task.catch((error)=>{
+            this.task.catch((error) => {
+                this.setState({
+                    uploading:false
+                })
                 console.warn(error)
             })
         })
@@ -77,7 +83,8 @@ export default class PhotoUploader extends Component {
         return data / mb
     }
     cancelUpLoad() {
-
+        this.task.cancel((err, taskID) => {
+        })
     }
     render() {
         return (
@@ -86,7 +93,7 @@ export default class PhotoUploader extends Component {
                     <View>
                         <TouchableOpacity onPress={() => this.props.showPhoto(this.props.message.source)}>
                             <Image resizeMode={'contain'} style={{
-                                borderRadius: 15, alignSelf: 'center',
+                                borderRadius: 9, alignSelf: 'center',
                                 maxWidth: 380,
                             }} source={{ uri: this.props.message.source }} height={340}></Image>
                         </TouchableOpacity>
@@ -104,20 +111,23 @@ export default class PhotoUploader extends Component {
                                     {
                                         (fill) => (<View>
                                             {this.state.uploading ? <TouchableWithoutFeedback onPress={() => this.cancelUpLoad(this.props.message.source)}>
+                                            <View>
                                                 <Icon type="EvilIcons" style={{ color: "#1FABAB" }} name="close">
                                                 </Icon>
+                                                 <Spinner style={{ position: 'absolute', marginTop: "-136%", marginLeft: "-15%", }}>
+                                                 </Spinner>
+                                            </View>
                                             </TouchableWithoutFeedback> : <TouchableWithoutFeedback onPress={() => this.uploadVideo()}>
-                                                <View>
-                                                   <Icon type="EvilIcons" style={{ color: "#1FABAB" }} name="arrow-up">
-                                                    </Icon>
-                                                        <Spinner style={{position:'absolute',marginTop: "-136%",marginLeft: "-15%",}}></Spinner>
-                                                </View>
+                                                    <View>
+                                                        <Icon type="EvilIcons" style={{ color: "#1FABAB" }} name="arrow-up">
+                                                        </Icon>
+                                                    </View>
 
                                                 </TouchableWithoutFeedback>}
                                         </View>)
                                     }
                                 </AnimatedCircularProgress>
-                                <View style={{ marginTop: "15%", }}><Text style={{ color: '#0A4E52'}} note>{"("}{this.toMB(this.state.received).toFixed(1)}{"/"}
+                                <View style={{ marginTop: "15%", }}><Text style={{ color: '#0A4E52' }} note>{"("}{this.toMB(this.state.received).toFixed(1)}{"/"}
                                     {this.toMB(this.state.total).toFixed(1)}{")Mb"}</Text></View></View>}</View>
                 </View>
                 <View>

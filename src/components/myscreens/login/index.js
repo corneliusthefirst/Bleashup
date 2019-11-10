@@ -23,17 +23,19 @@ import {
   InputGroup,
   DatePicker,
   CheckBox,
-  Thumbnail
+  Thumbnail,
+  Toast
 } from "native-base";
 
 import {
-  Platform,
-  View,
-  TouchableOpacity,
-  Alert,
-  BackHandler,
-  ToastAndroid
-} from "react-native";
+    Platform,
+    View,
+    TouchableOpacity,
+    Alert,
+    BackHandler,
+    ToastAndroid,
+    KeyboardAvoidingView
+} from 'react-native';
 import { AsyncStorage } from "@react-native-community/async-storage";
 //import { observable } from 'mobx';
 import { observer, extendObservable, inject } from "mobx-react";
@@ -47,6 +49,7 @@ import CountryPicker from "react-native-country-picker-modal";
 import UserService from "../../../services/userHttpServices";
 import globalState from "../../../stores/globalState";
 import RNExitApp from "react-native-exit-app";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 @observer
 export default class LoginView extends Component {
@@ -71,12 +74,22 @@ export default class LoginView extends Component {
       pickerData: this.phone.getPickerData()
     });
   }
+  exiting=false
+  timeout = null
   componentWillUnmount() {
     BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton);
   }
   handleBackButton() {
-    ToastAndroid.show("Back button is pressed", ToastAndroid.SHORT);
+    if(this.exiting){
+    clearTimeout(this.timeout)
     RNExitApp.exitApp();
+    }else{
+      this.exiting = true
+      Toast.show({ text: "Press Again to exit app" });
+     this.timeout = setTimeout(() =>{
+       this.exiting = false
+     },800)
+    }
     return true;
   }
   @autobind
@@ -89,27 +102,20 @@ export default class LoginView extends Component {
     this.setState({ cca2: country.cca2 });
   }
 
-  async updateInfo(value) {
-    try {
+ updateInfo(value) {
       this.setState({
         valid: this.phone.isValidNumber(),
         type: this.phone.getNumberType(),
         value: this.phone.getValue()
       });
-    } catch (e) {
-      alert(e.message);
-      //this.setState({erroMessage: e.message});
-    }
   }
 
 
-  @autobind
-  async onClickContinue() {
-    this.setState({
-      loading:true
-    })
+   onClickContinue() {
     try {
-      await this.updateInfo();
+      this.setState({
+        loading: true
+      })
       if (this.state.value == "") {
         throw new Error("Please provide phone number.");
       } else if (this.state.valid == false || this.state.type != "MOBILE") {
@@ -134,6 +140,9 @@ export default class LoginView extends Component {
                   email: response.email
                 })
                 .then(() => {
+                  this.setState({
+                    loading:false
+                  })
                   globalState.loading = false;
                   this.props.navigation.navigate("SignIn");
                 });
@@ -144,13 +153,18 @@ export default class LoginView extends Component {
                   "phone"
                 )
                 .then(() => {
+                  this.setState({
+                    value:null,
+                    valid:null,
+                    loading:false,
+                    type:null
+                  })
                   globalState.loading = false;
                   this.props.navigation.navigate("SignUp");
                 });
             }
           })
           .catch(error => {
-            console.warn(error)
             this.setState({
               loading: false
             })
@@ -160,7 +174,7 @@ export default class LoginView extends Component {
     } catch (e) {
       console.warn(e.message)
       this.setState({
-        loading:false
+        loading: false
       })
       Alert.alert("Phone Error","Please provide a valid mobile phone number", [
         { text: "OK", onPress: () => console.log("OK Pressed") }
@@ -171,13 +185,12 @@ export default class LoginView extends Component {
   render() {
     return (
       <Container>
+        <KeyboardAwareScrollView>
         <Content>
-          <Left />
           <Header style={{ marginBottom: 450 }}>
             <Body>
-              <Title>BleashUp</Title>
+              <Title >Bleashup</Title>
             </Body>
-            <Right />
           </Header>
 
           <H3 style={styles.H3}>Phone number</H3>
@@ -187,7 +200,7 @@ export default class LoginView extends Component {
               ref={ref => {
                 this.phone = ref;
               }}
-              onChange={value => this.updateInfo(value)}
+              onChangePhoneNumber={value => this.updateInfo(value)}
               onPressFlag={this.onPressFlag}
               value={this.state.value}
               error={globalState.error}
@@ -222,6 +235,7 @@ export default class LoginView extends Component {
             <View />
           </CountryPicker>
         </Content>
+        </KeyboardAwareScrollView>
       </Container>
     );
   }

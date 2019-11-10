@@ -17,6 +17,7 @@ export default class VideoUploader extends Component {
             "://" + config.file_server.host + ":" + config.file_server.port + '/video/get/'
         this.state = {
             received: 0, total: 0,
+            uploading:true,
             uploadState: 0
         }
     }
@@ -40,6 +41,7 @@ export default class VideoUploader extends Component {
             this.task.uploadProgress((writen, total) => {
                 this.setState({
                     total: parseInt(total),
+                    uploading:true,
                     received: parseInt(writen),
                     uploadState: (parseInt(writen) / parseInt(total)) * 100
                 })
@@ -73,10 +75,7 @@ export default class VideoUploader extends Component {
         return data / mb
     }
     cancelUpLoad() {
-        this.task.cancel().then((err,taskID) =>{
-            this.setState({
-                uploading:false
-            })
+        this.task.cancel((err, taskID) => {
         })
     }
     render() {
@@ -119,13 +118,14 @@ export default class VideoUploader extends Component {
                                     {
                                         (fill) => (<View>
                                             {this.state.uploading ? <TouchableWithoutFeedback onPress={() => this.cancelUpLoad(this.props.message.source)}>
-                                                <Icon type="EvilIcons" style={{ color: "#1FABAB" }} name="close">
+                                                <View><Icon type="EvilIcons" style={{ color: "#1FABAB" }} name="close">
                                                 </Icon>
+                                                 <Spinner style={{ position: 'absolute', marginTop: "-136%", marginLeft: "-15%", }}></Spinner>
+                                                </View>
                                             </TouchableWithoutFeedback> : <TouchableWithoutFeedback onPress={() => this.uploadVideo()}>
                                                     <View>
                                                         <Icon type="EvilIcons" style={{ color: "#1FABAB" }} name="arrow-up">
                                                         </Icon>
-                                                        <Spinner style={{ position: 'absolute', marginTop: "-136%", marginLeft: "-15%", }}></Spinner>
                                                     </View>
 
                                                 </TouchableWithoutFeedback>}

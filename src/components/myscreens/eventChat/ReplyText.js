@@ -1,5 +1,5 @@
 import React, { Component } from "react"
-import { TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View, TouchableNativeFeedback } from 'react-native';
 import { Text, Icon } from "native-base"
 import Image from 'react-native-scalable-image';
 import CacheImages from "../../CacheImages";
@@ -21,13 +21,13 @@ export default class ReplyText extends Component {
     }
     render() {
         return (
-            <TouchableOpacity onPress={() => this.props.openReply(this.props.reply)}>
+            <TouchableNativeFeedback onPressIn={() => this.props.pressingIn()} onPress={() => this.props.openReply(this.props.reply)}>
                 <View style={{
                     display: 'flex', flexDirection: 'row', borderBottomWidth: 0,
                     backgroundColor: "rgba(34, 0, 0, 0.1)", marginLeft: "1%",
                     marginBottom: "1%", padding: "3%",
                     height: 75,
-                    borderRadius: 15, borderWidth: 1, borderColor: "#1FABAF",
+                    borderRadius: 9, borderWidth: 1, borderColor: "#1FABAF",
                 }}>
                     <View style={{ width: "5%" }}><Icon type="FontAwesome"
                         style={{ fontSize: 12, color: "#1FABAB" }} name="quote-left"></Icon>
@@ -52,15 +52,15 @@ export default class ReplyText extends Component {
 
                                 </View>
                                 <View style={{ width: this.props.reply.sourcer ? "79%" : "100%", alignSelf: 'center', marginLeft: this.props.reply.sourcer ? 30 : null, }}>
-                                    <Text note style={{ color: "#81A8A0" }}>{this.props.reply.text.slice(0,
-                                        this.props.reply.sourcer ? 100 : 200)} {this.props.reply.text.length > 100 ? '...' : ''}</Text>
+                                    <Text   style={{ color: "#81A8A0" }}>{this.props.reply.text.slice(0,
+                                        this.props.reply.sourcer ? 50 : 60)} {this.props.reply.text.length > 50 ? '...' : ''}</Text>
                                 </View>
                             </View>}
                     </View>
                     <View style={{ width: "5%" }}><Icon type="FontAwesome"
                         style={{ fontSize: 12, color: "#1FABAB" }} name="quote-right"></Icon></View>
                 </View>
-            </TouchableOpacity>
+            </TouchableNativeFeedback>
         )
     }
 }

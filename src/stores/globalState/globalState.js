@@ -9,6 +9,8 @@ export default class globalState {
   @observable error = false;
   @observable downlading = false
   @observable newContribution = false;
+  @observable connected = true
+  @observable currentRoom = null;
   @observable success = false;
   @observable passwordError = false;
   @observable newPasswordError = false;

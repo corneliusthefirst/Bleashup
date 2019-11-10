@@ -23,10 +23,11 @@ import {
   InputGroup,
   DatePicker,
   CheckBox,
-  Thumbnail
+  Thumbnail,
+  Toast
 } from "native-base";
 
-import { AsyncStorage, Alert } from "react-native";
+import { Alert, BackHandler } from "react-native";
 import { observer } from "mobx-react";
 import styles from "./styles";
 import stores from "../../../stores";
@@ -35,16 +36,18 @@ import { functionDeclaration } from "@babel/types";
 import globalState from "../../../stores/globalState";
 import { observable } from "mobx";
 import UserServices from "../../../services/userHttpServices";
+import firebase from 'react-native-firebase';
 
 @observer
 export default class EmailVerificationView extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      code: ""
+      code: "",
+      loading: false
     };
   }
-
+  state = {}
   loginStore = stores.LoginStore;
   temploginStore = stores.TempLoginStore;
 
@@ -52,8 +55,38 @@ export default class EmailVerificationView extends Component {
   onChangedCode(text) {
     this.setState({ code: text });
   }
+  componentDidMount() {
+    BackHandler.addEventListener("hardwareBackPress", this.handleBackButton);
 
-  @autobind
+  }
+  exiting = false
+  timeout = null
+  componentWillUnmount() {
+    BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton);
+  }
+  handleBackButton() {
+    if (this.exiting) {
+      clearTimeout(this.timeout)
+      this.back()
+    } else {
+      this.exiting = true
+      Toast.show({ text: "Press again to go to the previous page" });
+      this.timeout = setTimeout(() => {
+        this.exiting = false
+      }, 800)
+    }
+    return true;
+  }
+  back(){
+    this.props.navigation.navigate("SignUp")
+  }
+  componentWillMount() {
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        this.registerUserAndClean()
+      }
+    });
+  }
   back() {
     this.props.navigation.navigate("SignUp");
   }
@@ -63,88 +96,89 @@ export default class EmailVerificationView extends Component {
     globalState.error = false;
   }
 
-  @autobind
   resendCode() {
-    this.temploginStore.counter = 0;
-    emailVerificationCode = Math.floor(Math.random() * 600000) + 1000;
-
-    subject = "Verify email acccount";
-    name = this.temploginStore.user.name;
-    body =
-      "Welcome to Bleashup" +
-      name +
-      "this is your new code to check " +
-      emailVerificationCode;
-
-    email = this.temploginStore.user.email;
-    let emailData = {
-      name: name,
-      email: email,
-      subject: subject,
-      body: body
-    };
-    while (this.temploginStore.counter >= 0) {
-      this.temploginStore.counter++;
-    }
-    UserService.sendEmail(emailData)
-      .then(response => {
-        if ((response = "ok")) {
-          this.temploginStore
-            .saveData(emailVerificationCode, "emailVerificationCode")
-            .then(response => {
-              if (response) {
-              }
-            })
-            .catch(error => {
-              reject(error);
-            });
-        }
+    console.warn("resending verificatio")
+    let user = this.temploginStore.user
+      firebase.auth().signInWithPhoneNumber(user.phone.replace("00", "+")).then((confirmCode) => {
+        this.temploginStore.confirmCode = confirmCode
+      }).catch(e => {
+        alert("Verification Error", "Could not send verifiction code")
       })
-      .catch(error => {
-        reject(error);
-      });
+    /* this.temploginStore.counter = 0;
+     emailVerificationCode = Math.floor(Math.random() * 600000) + 1000;
+ 
+     subject = "Verify email acccount";
+     name = this.temploginStore.user.name;
+     body =
+       "Welcome to Bleashup" +
+       name +
+       "this is your new code to check " +
+       emailVerificationCode;
+ 
+     email = this.temploginStore.user.email;
+     let emailData = {
+       name: name,
+       email: email,
+       subject: subject,
+       body: body
+     };
+     UserService.sendEmail(emailData)
+       .then(response => {
+         if ((response = "ok")) {
+           this.temploginStore
+             .saveData(emailVerificationCode, "emailVerificationCode")
+             .then(response => {
+               if (response) {
+               }
+             })
+             .catch(error => {
+               reject(error);
+             });
+         }
+       })
+       .catch(error => {
+         reject(error);
+       });*/
   }
-
-  @autobind
-  onClickEmailVerification() {
-    if (this.temploginStore.counter >= 300) {
-      Alert.alert(
-        "Verification code expired",
-        "Please click on Resend verification code",
-        [{ text: "OK", onPress: () => console.log("OK Pressed") }]
-      );
-    } else {
-      globalState.loading = true;
-      //if code do not expired we renisialise the counter to 0
-      this.temploginStore.counter = 0;
-      this.temploginStore.loadSaveData("emailVerificationCode").then(data => {
-        this.temploginStore.emailVerificationCode = data;
-
-        if (this.temploginStore.emailVerificationCode == this.state.code) {
-          //we register the user
-          this.temploginStore.getUser().then(user => {
-            UserServices.register(user.phone, user.password).then(res => {
-              this.loginStore.setUser(user).then(response => {
-                //Delete temporal data
-                this.temploginStore
-                  .deleteData("emailVerificationCode")
-                  .then(res => {
-                    this.temploginStore.deleteData("phonenumber").then(res => {
-                      this.temploginStore
-                        .deleteData("temploginStore")
-                        .then(res => {
-                          globalState.loading = false;
-                          this.props.navigation.navigate("Home");
-                        });
-                    });
-                  });
+  registerUserAndClean() {
+    this.temploginStore.getUser().then(user => {
+      UserServices.register(user.phone, user.password, user.name, user.birth_date).then(res => {
+        this.loginStore.setUser(user).then(response => {
+          //Delete temporal data
+          this.temploginStore.deleteData("phonenumber").then(res => {
+            this.temploginStore
+              .deleteData("temploginStore")
+              .then(res => {
+                this.setState({
+                  loading: false
+                })
+                this.props.navigation.navigate("Home");
               });
-            });
           });
-        } else {
-          globalState.error = true;
-        }
+        });
       });
+    })
+  }
+  onClickEmailVerification() {
+    this.setState({
+      loading: true
+    })
+    if (this.state.code) {
+      this.temploginStore.confirmCode.confirm(this.state.code).then(success => {
+        this.registerUserAndClean()
+      }).catch(e => {
+        this.setState({
+          loading: false
+        })
+        console.warn(e, "error here")
+        alert('wrong verification code; Please try again')
+        globalState.error = true;
+      })
+    } else {
+      this.setState({
+        loading: false
+      })
+      alert("Please enter the confirmation Code")
     }
   }
 
@@ -152,16 +186,14 @@ export default class EmailVerificationView extends Component {
     return (
       <Container>
         <Content>
-          <Left />
           <Header>
-            <Body>
-              <Title>BleashUp </Title>
-            </Body>
-            <Right>
+            <Left>
               <Button onPress={this.back} transparent>
                 <Icon type="Ionicons" name="md-arrow-round-back" />
-              </Button>
-            </Right>
+              </Button></Left>
+            <Body>
+              <Title>Bleashup </Title>
+            </Body>
           </Header>
 
           <Button
@@ -169,12 +201,11 @@ export default class EmailVerificationView extends Component {
             regular
             style={{ marginBottom: -22, marginTop: 50, marginLeft: -12 }}
           >
-            <Text>Email Verification </Text>
+            <Text>Phone Number Verification {"    "}{this.temploginStore.user.phone.replace("00","+")} </Text>
           </Button>
 
           <Text style={{ color: "skyblue", marginTop: 20 }}>
-            Please check your phone a code verification for your email was send
-            to you.Please enter the code below
+            Please Comfirm your Account; A verification Code was sent to your number
           </Text>
 
           <Item rounded style={styles.input} error={globalState.error}>
@@ -207,7 +238,7 @@ export default class EmailVerificationView extends Component {
 
           <Text
             style={{ color: "royalblue", marginTop: 20, marginLeft: 175 }}
-            onPress={this.resendCode}
+            onPress={() => this.resendCode()}
           >
             Resend verification code
           </Text>
@@ -216,9 +247,9 @@ export default class EmailVerificationView extends Component {
             block
             rounded
             style={styles.buttonstyle}
-            onPress={this.onClickEmailVerification}
+            onPress={() => this.onClickEmailVerification()}
           >
-            {globalState.loading ? (
+            {this.state.loading ? (
               <Spinner color="#FEFFDE" />
             ) : (
                 <Text> Ok </Text>

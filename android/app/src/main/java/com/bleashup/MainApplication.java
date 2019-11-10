@@ -5,6 +5,8 @@ import com.horcrux.svg.SvgPackage;
 import com.facebook.react.ReactApplication; 
 import io.invertase.firebase.database.RNFirebaseDatabasePackage;
 import io.invertase.firebase.RNFirebasePackage;
+import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
+import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage; // <-- Add this line
 import org.wonday.orientation.OrientationPackage;
 import io.invertase.firebase.auth.RNFirebaseAuthPackage; // <-- Add this line
 import com.kevinresol.react_native_sound_recorder.RNSoundRecorderPackage;
@@ -24,7 +26,6 @@ import com.RNFetchBlob.RNFetchBlobPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
 import com.chirag.RNMail.*;  // <--- import 
-import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage; // <--- Import Package
 //import android.support.v7.app.AppCompatActivity;
 import com.swmansion.reanimated.ReanimatedPackage;
 import com.github.wumke.RNExitApp.RNExitAppPackage;
@@ -48,12 +49,14 @@ public class MainApplication extends Application implements ReactApplication {
             new RNFirebaseAuthPackage(),
             new RNFirebaseDatabasePackage(),
             new OrientationPackage(),
+            new RNFirebaseNotificationsPackage(),
             new RNSoundRecorderPackage(),
             new DocumentPickerPackage(),
             new PickerPackage(),
             new RNFileViewerPackage(),
             new ReactVideoPackage(),
             new RNSoundPackage(),
+            new RNFirebaseMessagingPackage(),
             new SvgPackage(),
             new AsyncStoragePackage(),
             new VectorIconsPackage(),
@@ -64,7 +67,6 @@ public class MainApplication extends Application implements ReactApplication {
              new NetInfoPackage(),
             new RNGestureHandlerPackage(),
             new RNFetchBlobPackage(),
-            new ReactNativePushNotificationPackage(), // <---- Add the Package
             new ImagePickerPackage()
                   );
     }

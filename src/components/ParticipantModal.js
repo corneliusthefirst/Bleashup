@@ -1,10 +1,10 @@
 import React, { PureComponent } from "react"
 import Modal from "react-native-modalbox"
-import { Content, List, ListItem, Body, Left, Right, Text, Container } from 'native-base';
+import { Content, List, ListItem, Body, Left, Right, Text } from "native-base"
 import ImageActivityIndicator from "./myscreens/currentevents/components/imageActivityIndicator";
-import ContactList from "./ContactList";
 import { observer } from "mobx-react";
-@observer export default class PublishersModal extends PureComponent {
+import ParticipantList from "./ParticipantList";
+@observer export default class ParticipantModal extends PureComponent {
     constructor(props) {
         super(props)
         this.state = {
@@ -33,9 +33,11 @@ import { observer } from "mobx-react";
                     height: "97%",
                     borderRadius: 8, backgroundColor: '#FEFFDE', width: "100%"
                 }}>
-                <Container>
-                    <ContactList title={"Publishers List"} event_id={this.props.event_id}></ContactList>
-                </Container>
+                <Content>
+                    <ParticipantList participants={this.props.participants ? 
+                        this.props.participants : undefined} title={"Participants List"} 
+                        event_id={this.props.event_id}></ParticipantList>
+                </Content>
             </Modal>
 
         );

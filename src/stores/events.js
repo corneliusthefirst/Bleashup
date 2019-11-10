@@ -49,22 +49,26 @@ export default class events {
     data: []
   };
   @action addEvent(NewEvent) {
-    NewEvent.updated_at = moment().format("YYYY-MM-DD HH:mm")
-    NewEvent.new = true
-    return new Promise((resolve, reject) => {
-      this.readFromStore().then(Events => {
-        if (Events.length !== 0) {
-          Events.unshift(NewEvent)
-          this.saveKey.data = Events;
-        }
-        else this.saveKey.data = [NewEvent];
-        this.saveKey.data = uniqBy(this.saveKey.data, 'id');
-        storage.save(this.saveKey).then(() => {
-          this.setProperties(this.saveKey.data, true);
-          resolve();
+    if (NewEvent == 'no_such_key') {
+      resolve()
+    } else {
+      NewEvent.updated_at = moment().format("YYYY-MM-DD HH:mm")
+      NewEvent.new = true
+      return new Promise((resolve, reject) => {
+        this.readFromStore().then(Events => {
+          if (Events.length !== 0) {
+            Events.unshift(NewEvent)
+            this.saveKey.data = Events;
+          }
+          else this.saveKey.data = [NewEvent];
+          this.saveKey.data = uniqBy(this.saveKey.data, 'id');
+          storage.save(this.saveKey).then(() => {
+            this.setProperties(this.saveKey.data, true);
+            resolve();
+          });
         });
       });
-    });
+    }
   }
   @action delete(EventID) {
     return new Promise((resolve, reject) => {
@@ -182,6 +186,13 @@ export default class events {
       }
     });
   }
+  @action getPaticipants(eventID) {
+    return new Promise((resolve, reject) => {
+      this.loadCurrentEvent(eventID).then(event => {
+        resolve(event.participant)
+      })
+    })
+  }
   @action loadEvents() {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(events => {
@@ -285,7 +296,7 @@ export default class events {
         let eventIndex = findIndex(Events, { id: EventID });
         if (eventIndex >= 0) {
           Events[eventIndex].participant[Events[eventIndex].participant.length] = Participant;
-          Events[eventIndex].participant[Events[eventIndex].participant.length] = uniqBy(Events[eventIndex].participant,"phone")
+          Events[eventIndex].participant[Events[eventIndex].participant.length] = uniqBy(Events[eventIndex].participant, "phone")
           if (inform) {
             Events[eventIndex].participant_added = true;
             Events[eventIndex].updated = true;
@@ -300,24 +311,24 @@ export default class events {
             resolve();
           });
         } else {
-            serverEventListener.GetData(EventID).then(event => {
-              event.participant[event.participant.length] = Participant;
-              event.participant = uniqBy(event.participant, "phone")
-              if (inform) {
-                event.participant_added = true;
-                event.updated = true;
-                event.updated_at = moment().format("YYYY-MM-DD HH:mm");
-                event.joint = true
-              }
-              else event.joint = true;
-              this.addEvent(event).then(() => {
-                resolve(event)
-              })
-            }).catch(error => {
-              serverEventListener.socket.write = undefined
-              console.error(error, "in load events")
-              reject(error)
+          serverEventListener.GetData(EventID).then(event => {
+            event.participant[event.participant.length] = Participant;
+            event.participant = uniqBy(event.participant, "phone")
+            if (inform) {
+              event.participant_added = true;
+              event.updated = true;
+              event.updated_at = moment().format("YYYY-MM-DD HH:mm");
+              event.joint = true
+            }
+            else event.joint = true;
+            this.addEvent(event).then(() => {
+              resolve(event)
             })
+          }).catch(error => {
+            serverEventListener.socket.write = undefined
+            console.error(error, "in load events")
+            reject(error)
+          })
         }
       });
     });
@@ -818,73 +829,73 @@ export default class events {
 
 
 
-@observable highlightData =[
-{
-  id: "1",
-  creator: "",
-  event_id: "",
-  created_at: "",
-  updated_at: "",
-  title: "maitre gims",
-  description: "ajjsg agsgsagj sahaskkh akdajaj asjaslfjal ashs",
-  url: require('../../Images/Orange_money.jpeg')
-},
-{
-  id: "2",
-  creator: "",
-  event_id: "",
-  created_at: "",
-  updated_at: "",
-  title: "cornelius",
-  description: "ajjsg agsgsagj sahaskkh akdajaj asjaslfjal ashs",
-  url:require('../../Images/weather.jpg')
-},
-{
-  id: "3",
-  creator: "",
-  event_id: "",
-  created_at: "",
-  updated_at: "",
-  title: "giles",
-  description: "ajjsg agsgsagj sahaskkh akdajaj asjaslfjal ashs",
-  url:require('../../Images/mtn_mobile.png')
+  @observable highlightData = [
+    {
+      id: "1",
+      creator: "",
+      event_id: "",
+      created_at: "",
+      updated_at: "",
+      title: "maitre gims",
+      description: "ajjsg agsgsagj sahaskkh akdajaj asjaslfjal ashs",
+      url: require('../../Images/Orange_money.jpeg')
+    },
+    {
+      id: "2",
+      creator: "",
+      event_id: "",
+      created_at: "",
+      updated_at: "",
+      title: "cornelius",
+      description: "ajjsg agsgsagj sahaskkh akdajaj asjaslfjal ashs",
+      url: require('../../Images/weather.jpg')
+    },
+    {
+      id: "3",
+      creator: "",
+      event_id: "",
+      created_at: "",
+      updated_at: "",
+      title: "giles",
+      description: "ajjsg agsgsagj sahaskkh akdajaj asjaslfjal ashs",
+      url: require('../../Images/mtn_mobile.png')
 
-},
-{
-  id: "4",
-  creator: "",
-  event_id: "",
-  created_at: "",
-  updated_at: "",
-  title: "Jugal",
-  description: "ajjsg agsgsagj sahaskkh akdajaj asjaslfjal ashs",
-  url: require('../../Images/Orange_money.jpeg')
-},
-{
-  id: "5",
-  creator: "",
-  event_id: "",
-  created_at: "",
-  updated_at: "",
-  title: "Santers",
-  description: "ajjsg agsgsagj sahaskkh akdajaj asjaslfjal ashs",
-  url:require('../../Images/weather.jpg')
-},
-{
-  id: "6",
-  creator: "",
-  event_id: "",
-  created_at: "",
-  updated_at: "",
-  title: "Hken",
-  description: "ajjsg agsgsagj sahaskkh akdajaj asjaslfjal ashs",
-  url:require('../../Images/mtn_mobile.png')
+    },
+    {
+      id: "4",
+      creator: "",
+      event_id: "",
+      created_at: "",
+      updated_at: "",
+      title: "Jugal",
+      description: "ajjsg agsgsagj sahaskkh akdajaj asjaslfjal ashs",
+      url: require('../../Images/Orange_money.jpeg')
+    },
+    {
+      id: "5",
+      creator: "",
+      event_id: "",
+      created_at: "",
+      updated_at: "",
+      title: "Santers",
+      description: "ajjsg agsgsagj sahaskkh akdajaj asjaslfjal ashs",
+      url: require('../../Images/weather.jpg')
+    },
+    {
+      id: "6",
+      creator: "",
+      event_id: "",
+      created_at: "",
+      updated_at: "",
+      title: "Hken",
+      description: "ajjsg agsgsagj sahaskkh akdajaj asjaslfjal ashs",
+      url: require('../../Images/mtn_mobile.png')
 
-}
+    }
 
-]
+  ]
 
-@observable NewHighlightData = []
+  @observable NewHighlightData = []
 
 
 

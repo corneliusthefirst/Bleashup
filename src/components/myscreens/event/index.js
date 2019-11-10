@@ -42,6 +42,8 @@ import BleashupFlatList from "../../BleashupFlatList";
 import SWView from './SWView';
 import SideMenu from 'react-native-side-menu';
 import ChangeLogs from "../changelogs";
+import ParticipantModal from "../../ParticipantModal";
+import ContactsModal from "../../ContactsModal";
 const screenWidth = Math.round(Dimensions.get('window').width);
 
 var swipeoutBtns = [
@@ -53,6 +55,19 @@ export default class Event extends Component {
   constructor(props) {
     super(props);
     this.props.Event = this.props.navigation.getParam("Event");
+    const { initialPage } = this.props;
+    this.state = {
+      Event: this.props.navigation.getParam("Event")
+        ? this.props.navigation.getParam("Event")
+        : undefined,/*{ about: { title: "Event title" }, updated: true },*/
+      initalPage: this.props.navigation.getParam("tab")
+        ? this.props.navigation.getParam("tab")
+        : "EventDetails",
+      currentPage: this.props.navigation.getParam("tab") ? this.props.navigation.getParam("tab") : "EventDetails",
+      isOpen: this.props.navigation.getParam('isOpen') ? this.props.navigation.getParam('isOpen') : false,
+      participants:undefined
+    };
+    //this.props.Event = this.props.navigation.getParam("Event");
   }
   state = {
     Event: undefined /*{ about: { title: "Event title" }, updated: true }*/,
@@ -60,7 +75,7 @@ export default class Event extends Component {
     initalPage: "EventDetails",
     currentPage: "Details",
     enabled: false,
-    isOpen:false
+    isOpen: false
   }
   swipoutSetting = {
     close: true,
@@ -120,19 +135,6 @@ export default class Event extends Component {
     color: "#FEFFDE",
     fontWeight: "bold"
   };
-  componentDidMount() {
-    this.props.Event = this.props.navigation.getParam("Event");
-    const { initialPage } = this.props;
-    this.setState({
-      Event: this.props.navigation.getParam("Event")
-        ? this.props.navigation.getParam("Event")
-        : undefined,/*{ about: { title: "Event title" }, updated: true },*/
-      initalPage: this.props.navigation.getParam("tab")
-        ? this.props.navigation.getParam("tab")
-        : "EventDetails",
-      currentPage: this.props.navigation.getParam("tab") ? this.props.navigation.getParam("tab") : "EventDetails"
-    });
-  }
   @autobind goToChangeLogs() {
     this.props.navigation.navigate("ChangeLogs", { ...this.props })
   }
@@ -145,7 +147,7 @@ export default class Event extends Component {
   @autobind goToHome() {
     this.props.navigation.navigate("Home");
   }
-  isOpen=false
+  isOpen = false
   renderMenu() {
     switch (this.state.currentPage) {
       case "EventDetails":
@@ -157,7 +159,18 @@ export default class Event extends Component {
       case "Highlights":
         return <Highlights {...this.props}></Highlights>
       case "EventChat":
-        return <EventChat {...this.props}></EventChat>
+        return <EventChat showMembers={(memebers) => {
+          console.warn(memebers)
+          this.setState({
+            showMembers:true,
+            participants:memebers
+          })
+        }} {...this.props} showContacts={(conctacts) => {
+          this.setState({
+            contactModalOpened:true,
+            contacts:conctacts
+          })
+        } }></EventChat>
       case "Contributions":
         return <Contributions {...this.props}></Contributions>
       case "ChangeLogs":
@@ -170,10 +183,10 @@ export default class Event extends Component {
 
   }
   handleBackButton() {
-    if (!this.isOpen){
-      this.isOpen = true 
+    if (!this.isOpen) {
+      this.isOpen = true
       this.setState({
-        isOpen:true
+        isOpen: true,
       })
       return true
     }
@@ -186,21 +199,39 @@ export default class Event extends Component {
   _allowScroll(scrollEnabled) {
     this.setState({ scrollEnabled: scrollEnabled })
   }
+  showMembers() {
+    this.setState({
+      showMembers: true
+    })
+  }
   render() {
-    return (<SideMenu autoClosing={true} onMove={(position) =>{
-      
-    }} bounceBackOnOverdraw={false} onChange={(position) =>{
+    return (<SideMenu autoClosing={true} onMove={(position) => {
+
+    }} bounceBackOnOverdraw={false} onChange={(position) => {
       this.isOpen = position
-    }} isOpen={this.isOpen} openMenuOffset={this.currentWidth} menu={<SWView setCurrentPage={(page) => {
-      this.isOpen = false
-      this.setState({ currentPage: page })
-    }
-    } currentPage={this.state.currentPage} width={this.currentWidth}
-      event={this.props.navigation.getParam("Event")} master={true} Event={{ public: true }}></SWView>}>
-      <View style={{height: "100%", backgroundColor: "#FEFFDE" }}>
-          {
-            this.renderMenu()
-          }
+    }} isOpen={this.isOpen} openMenuOffset={this.currentWidth}
+      menu={<SWView showMembers={() => this.showMembers()} setCurrentPage={(page) => {
+        this.isOpen = false
+        this.setState({ currentPage: page })
+      }
+      } currentPage={this.state.currentPage} width={this.currentWidth}
+        event={this.props.navigation.getParam("Event")} master={true} Event={{ public: true }}></SWView>}>
+      <View style={{ height: "100%", backgroundColor: "#FEFFDE" }}>
+        {
+          this.renderMenu()
+        }
+        <ParticipantModal participants={this.state.participants} isOpen={this.state.showMembers} onClosed={() => {
+          this.setState({
+            showMembers: false,
+            participants:undefined
+          })
+        }} event_id={this.props.navigation.getParam("Event").id}></ParticipantModal>
+        <ContactsModal isOpen={this.state.contactModalOpened} onClosed={()=>{
+          this.setState({
+            contactModalOpened:false,
+            conctacts:[]
+          })
+        }} contacts={this.state.contacts}></ContactsModal>
       </View>
     </SideMenu>
     );

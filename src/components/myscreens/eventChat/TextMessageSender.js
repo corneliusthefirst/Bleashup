@@ -1,8 +1,8 @@
-import React, { Component } from "react"
+import React, { PureComponent } from "react"
 import { StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View, Vibration } from 'react-native';
 import { Text } from "native-base"
 import TextContent from "./TextContent";
-export default class TextMessage extends Component {
+export default class TextMessageSnder extends PureComponent {
     constructor(props) {
         super(props)
         this.state = {
@@ -13,9 +13,13 @@ export default class TextMessage extends Component {
             text: "",
             time: ""
         };
+        this.senderMessage()
     }
-
-
+   senderMessage(){
+       let newMessage = {...this.props.message,type:"text"}
+       this.props.sendMessage(newMessage)
+   }
+   timeOut = null
     componentDidMount() {
         this.setState({
             text: this.props.message.text,
@@ -30,9 +34,10 @@ export default class TextMessage extends Component {
     pattern = [1000, 0, 0]
     render() {
         return (
-            <View style={{alignSelf: 'center',}}>
+            <TouchableWithoutFeedback onPressIn={()=> this.senderMessage}>
+            <View style={{ alignSelf: 'center', }}>
                 <TextContent text={this.props.message.text}></TextContent>
-            </View>
+                </View></TouchableWithoutFeedback>
         );
     }
 }

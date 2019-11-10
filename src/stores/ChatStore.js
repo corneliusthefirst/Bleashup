@@ -2,13 +2,18 @@ import { observable } from 'mobx'
 import storage from './Storage'
 import { orderBy, filter, reject, findIndex } from "lodash"
 import autobind from 'autobind-decorator'
+import moment, { months } from "moment";
 class ChatStore {
     constructor(key) {
+
         this.storeAccessKey.key = key
         this.saveKey.key = key
+        //storage.remove({key:key}).then(()=>{
+            
+        //})
         this.readFromStore().then(value => {
             this.setProperties(value)
-        })
+     })
 
     }
     addToStore(data) {
@@ -17,38 +22,56 @@ class ChatStore {
     }
     addMessageToStore(newMessage) {
         return new Promise((resolve, reject) => {
-            this.readFromStore().then(data => {
-                data.unshift(newMessage)
-                return this.addToStore(data).then(() => {
-                    resolve()
+            this.readFromStore().then(olddata => {
+                this.insetDateSeparator(olddata, newMessage).then(data => {
+                    //console.warn(data,"....")
+                    data.unshift(newMessage)
+                    return this.addToStore(data).then(() => {
+                        this.messages = data
+                        resolve(data)
+                    })
                 })
             })
         })
     }
-    addNewMessage(newMessage, newKey) {
+    insetDateSeparator(messages, newMessage) {
         return new Promise((resolve, reject) => {
-            this.readFromStore().then(data => {
-                let index = findIndex(data, { id: newMessage.id });
-                if (index >= 0) {
-                    data[index] = { ...data[index], key: newKey };
-                    this.addToStore(data).then(() => {
-                        resolve()
-                    })
-                } else {
-                    data.unshift({ ...newMessage, new: true, key: newKey })
-                    this.addToStore(data).then(() => {
-                        resolve()
-                    })
-                }
+            let separator = { ...newMessage, id: moment(newMessage.created_at).format("YYYY/MM/DD"), type: "date_separator" }
+            index = findIndex(messages, { id: separator.id })
+            let result = index >= 0 ? messages : [separator].concat(messages)
+            resolve(result)
+        })
+    }
+    addNewMessage(newMessage, newKey, type, sent, newing) {
+        return new Promise((resolve, reject) => {
+            this.readFromStore().then(olddata => {
+                this.insetDateSeparator(olddata, newMessage).then(data => {
+                    let index = findIndex(data, { id: newMessage.id });
+                    if (index >= 0) {
+                        data[index] = { ...data[index], received: newMessage.received, key: newKey, sent: sent, type: type };
+                        this.addToStore(data).then(() => {
+                            this.messages = data
+                            resolve(data)
+                        })
+                        newing ? this.messages = data : null
+                    } else {
+                        data.unshift({ ...newMessage, key: newKey, sent: sent, type: type, received: newMessage.received })
+                        newing ? this.messages = data : null
+                        this.addToStore(data).then(() => {
+                            this.messages = data
+                            resolve(data)
+                        })
+                    }
+                })
             })
         })
     }
-    addAndReadFromStore(value){
-        return new Promise((resolve,rejec) =>{
-            let tempKey = {...this.saveKey,key:"temp",data:value}
-            storage.save(tempKey).then(()=>{
-                tempKey = {...this.storeAccessKey,key:"temp"}
-                storage.load(tempKey).then(data =>{
+    addAndReadFromStore(value) {
+        return new Promise((resolve, rejec) => {
+            let tempKey = { ...this.saveKey, key: "temp", data: value }
+            storage.save(tempKey).then(() => {
+                tempKey = { ...this.storeAccessKey, key: "temp" }
+                storage.load(tempKey).then(data => {
                     resolve(data)
                 })
             })
@@ -60,6 +83,17 @@ class ChatStore {
                 data = reject(data, { id: messageID })
                 this.addToStore(data).then(() => {
                     resolve()
+                })
+            })
+        })
+    }
+    replaceNewMessage(newMessage) {
+        return new Promise((resolve, rejec) => {
+            this.readFromStore().then(data => {
+                data = reject(data, { id: newMessage.id })
+                data.unshift(newMessage)
+                this.addToStore(data).then(() => {
+                    resolve("ok")
                 })
             })
         })
@@ -244,8 +278,20 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
         });
     }
     setProperties(chats) {
-        chats = orderBy(chats, ["updated_at"], ["desc"]);
-        this.messages = filter(chats, chat => !chat.hidden && !chat.deleted);
+        //chats = chain(chats).groupBy(element => moment(element.created_at).format("YYYY/MM/DD")).map((value,key)  => {return {created_at:key, data: orderBy(value, ["created_at"], ["desc"])}})
+        //chats = orderBy(chats, ["created_at"], ["desc"])
+        this.messages = chats //= filter(chats, chat => !chat.hidden && !chat.deleted);
+    }
+    insertBulkMessages(messages) {
+        return new Promise((resolve, reject) => {
+            this.readFromStore().then(data => {
+                let newData = messages.concat(data);
+                this.addToStore(newData).then(() => {
+                    //this.messages = newData;
+                    resolve()
+                })
+            })
+        })
     }
     addDuration(duration, id) {
         return new Promise((resolve, reject) => {
@@ -293,13 +339,14 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
             resolve()
         })
     }
-    addAudioSizeProperties(id, total, recieved) {
+    addAudioSizeProperties(id, total, recieved,duration) {
         return new Promise((resolve, reject) => {
             this.readFromStore().then(data => {
                 let index = findIndex(data, { id: id })
                 if (data[index]) {
                     data[index].total = total;
                     data[index].received = recieved
+                    data[index].duration = duration
                     this.addToStore(data).then(() => {
                         resolve("ok")
                     })

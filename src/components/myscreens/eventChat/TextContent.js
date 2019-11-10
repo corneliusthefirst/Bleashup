@@ -10,7 +10,11 @@ export default class TextContent extends Component {
         }
     }
     fontSizeFormular() {
-        return this.props.text.length > 10 ? 16 : 40 - this.props.text.length * 0.9
+        return this.testForImoji(this.props.text) ? 100 : 20
+    }
+    testForImoji(message) {
+        let imoji = message.match(/\ud83c[\udf00-\udfff]|\ud83d[\udc00-\ude4f]|\ud83d[\ude80-\udeff]/g)
+        return imoji && imoji.length == 1 && message.length == imoji[0].length
     }
     render() {
         return (
@@ -27,7 +31,6 @@ export default class TextContent extends Component {
                     }}>
                         {this.props.text/*this.props.text.slice(0, this.state.splicer)}{"  "}{this.props.text.length >= 
                         this.state.splicer ? this.state.splicer == this.props.text.length ? "" : " .... ...." : ""*/}
-                        {this.props.text.length > 10?"":"          "}
                     </Text>
                 </View>
             </TouchableWithoutFeedback>

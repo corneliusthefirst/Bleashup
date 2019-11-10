@@ -15,7 +15,7 @@ import {
   H3,
   Spinner,
 } from "native-base";
-import { Text, View ,ImageBackground} from 'react-native';
+import { Text, View, ImageBackground, PermissionsAndroid,StatusBar } from 'react-native';
 import initialRoute from "../invitations/components/initialRoute";
 import globalState from "../../../stores/globalState";
 import ServerEventListener from "../../../services/severEventListener";
@@ -33,23 +33,32 @@ export default class LoginHomeView extends Component {
   constructor(props) {
     super(props);
   }
-  render() {
-    //console.disableYellowBox = true;
-    fs.exists(AppDir).then(status => {
-      if (!status) {
-        fs.mkdir(AppDir).then(() => {
-          fs.mkdir(PhotoDir).then(() => {
-            fs.mkdir(SounDir).then(() => {
-              fs.mkdir(VideoDir).then(() => {
-                fs.mkdir(OthersDir).then(() => {
-                  console.warn("all dirs created")
+  async requestReadAndWritePermission(){
+   // const pers =  await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE	,{title:"Write To Storage Permission",
+  //  message:"Bleashup Wants to write to disk"})
+  //  if(pers == PermissionsAndroid.RESULT.GRANTED){
+      fs.exists(AppDir).then(status => {
+        if (!status) {
+          fs.mkdir(AppDir).then(() => {
+            fs.mkdir(PhotoDir).then(() => {
+              fs.mkdir(SounDir).then(() => {
+                fs.mkdir(VideoDir).then(() => {
+                  fs.mkdir(OthersDir).then(() => {
+                    console.warn("all dirs created")
+                  })
                 })
               })
             })
           })
-        })
-      }
-    })
+        }
+      })
+   // }else{
+   //   console.warn("permission deneid")
+   // }
+  }
+  render() {
+    //console.disableYellowBox = true;
+    this.requestReadAndWritePermission()
   /*return (
      <Container>
         <ChatRoom newMessageNumber={10} firebaseRoom={"message"}></ChatRoom>
@@ -74,6 +83,7 @@ export default class LoginHomeView extends Component {
        globalState.loading = true;
        return (
          <Container>
+           <StatusBar backgroundColor="#FEFFDE" barStyle="dark-content"></StatusBar>
          <ImageBackground resizeMode={"contain"} source={require("../../../../assets/Bleashup.png")} style={{ width: "100%", height: "100%", backgroundColor: "#FEFFDE", }}>
              {globalState.loading ? (
                <Spinner color="#FEFFDE" style={{ color:"#FEFFDE",marginTop: "96%",marginLeft: "8%", }} />

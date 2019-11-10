@@ -28,10 +28,13 @@ export default class FileAttarchementMessaege extends Component {
     setAfterSuccess(path) {
         this.props.message.source = Platform.OS === 'android' ? path + "/" : '' + path
         this.room.addStaticFilePath(this.props.message.source, this.props.message.id).then(() => {
-            this.setState({
-                loaded: true,
-                downlading: false
-            })
+            this.room.addAudioSizeProperties(this.props.message.id, this.props.message.total,
+                this.props.message.received, this.props.message.duration).then(() => {
+                    this.setState({
+                        loaded: true,
+                        downlading: false
+                    })
+                })
         })
     }
     DetemineRange(path) {
@@ -98,7 +101,8 @@ export default class FileAttarchementMessaege extends Component {
                         fs.appendFile(this.path, this.tempPath, 'uri').then(() => {
                             fs.unlink(this.tempPath)
                             fs.unlink(res.path())
-                            //this.props.message.source = "file://" + this.path
+                            this.props.message.received = this.state.received
+                            this.props.message.total = this.state.total
                             this.setAfterSuccess(this.path, temper1, temper2)
                         })
                     })

@@ -23,7 +23,7 @@ export default class VideoMessage extends Component {
             received: 0.0,
             total: 0.0,
             showTime: false,
-            downloadState: 0,
+            downloadState: 1,
             text: "",
             time: "",
         };
@@ -31,6 +31,8 @@ export default class VideoMessage extends Component {
     transparent = "rgba(52, 52, 52, 0.3)";
     componentDidMount() {
         this.room = new ChatStore(this.props.firebaseRoom)
+        let downloadState = (this.props.message.received / this.props.message.total) * 100
+        console.warn(parseInt(downloadState))
         this.setState({
             text: this.props.message.text,
             url: this.props.message.photo,
@@ -38,11 +40,12 @@ export default class VideoMessage extends Component {
             sender: !(this.props.message.sender.phone == this.props.user),
             time: this.props.message.created_at.split(" ")[1],
             received: this.props.message.received,
-            loaded : this.testForURL(this.props.message.source)?false:true,
-            //downloadState : (this.props.message.received/this.props.message.total)*100,
-            total: this.toMB(this.props.message.total).toFixed(2),
+            loaded: this.testForURL(this.props.message.source) ? false : true,
+            ///downloadState: parseInt(downloadState) === null ? 1 : parseInt(downloadState),
+            total: this.props.message.total ? parseInt(this.props.message.total).toFixed(2) : 0,
             creator: (this.props.message.sender.phone == this.props.creator)
         })
+        // console.warn(this.state.downloadState, this.props.message.file_name)
     }
     DetemineRange(path) {
         return new Promise((resolve, reject) => {
@@ -111,7 +114,7 @@ export default class VideoMessage extends Component {
                         fs.unlink(res.path())
                         this.props.message.received = this.state.received
                         this.props.message.total = this.state.total
-                        this.room.addVideoSizeProperties(this.props.message.id,this.state.total, this.state.received)
+                        this.room.addVideoSizeProperties(this.props.message.id, this.state.total, this.state.received)
                         this.setState({})
                     })
                 }
@@ -123,11 +126,11 @@ export default class VideoMessage extends Component {
         this.downloadID = setInterval(() => this.download(url), 500)
     }
     setAfterSuccess(res, cap, received) {
-        this.room.addVideoProperties(this.props.message.id,this.props.message.source, cap, received).then(() => {
+        this.room.addVideoProperties(this.props.message.id, this.props.message.source, cap, received).then(() => {
             this.setState({
                 loaded: true,
                 downloading: false,
-                total: cap.toFixed(1),
+                total: cap.toFixed(2),
                 downloadState: 100
             })
         })
@@ -158,9 +161,9 @@ export default class VideoMessage extends Component {
             <View>
                 <View>
                     <Image playVideo={() => this.props.playVideo(this.props.message.source)} video style={{
-                        marginTop:"2%",
-                        marginLeft:"1.2%",
-                    }} borderRadius={10} source={{uri:this.props.message.thumbnailSource}} photo={this.props.message.thumbnailSource}
+                        marginTop: "2%",
+                        marginLeft: "1.2%",
+                    }} borderRadius={10} source={{ uri: this.props.message.thumbnailSource }} photo={this.props.message.thumbnailSource}
                         width={290} height={200}>
                     </Image>
                     <View style={{ position: 'absolute', marginTop: "25%", marginLeft: "45%", }}>
@@ -172,9 +175,6 @@ export default class VideoMessage extends Component {
                                     fontSize: 40,
                                     color: "#1FABAB"
                                 }}></Icon>
-                                <View style={{ marginTop: "-57.2%", marginLeft: "-58.5%", }}>
-                                    <Spinner></Spinner>
-                                </View>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -203,7 +203,7 @@ export default class VideoMessage extends Component {
                                     {this.toMB(this.state.total).toFixed(1)}{")Mb"}</Text></View></View>}</View>
                 </View>
                 {this.props.message.text ? <View style={{ marginTop: "-5%", padding: "2%" }}>
-                         <TextContent text={this.props.message.text}></TextContent>       
+                    <TextContent text={this.props.message.text}></TextContent>
                 </View> : null}
             </View>
         );

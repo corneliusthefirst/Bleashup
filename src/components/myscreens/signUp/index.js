@@ -21,9 +21,8 @@ import {
   H2,
   Spinner,
   Button,
-  InputGroup,
+  Toast,
   DatePicker,
-  CheckBox,
   Thumbnail
 } from "native-base";
 import styles from "./styles";
@@ -33,27 +32,14 @@ import globalState from "../../../stores/globalState";
 import { observer } from "mobx-react";
 import moment from "moment";
 import firebase from 'react-native-firebase';
+import RNExitApp from "react-native-exit-app";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { BackHandler } from 'react-native';
 
 @observer
 export default class SignUpView extends Component {
   constructor(props) {
     super(props);
-    this.temploginStore.loadSaveData("phone").then(phone => {
-      this.user = {
-        phone: phone,
-        name: "",
-        status: "",
-        email: "",
-        birth_date: "",
-        profile: "",
-        profile_ext: "",
-        nickname: "",
-        password: "",
-        created_at: moment().format("YYYY-MM-DD HH:mm"),
-        updated_at: moment().format("YYYY-MM-DD HH:mm")
-      };
-    });
   }
   state = {}
   user = {};
@@ -82,7 +68,31 @@ export default class SignUpView extends Component {
   onChangedNewPassword(value) {
     this.setState({ newPassword: value });
   }
+  componentDidMount() {
+    BackHandler.addEventListener("hardwareBackPress", this.handleBackButton);
 
+  }
+  exiting = false
+  timeout = null
+  componentWillUnmount() {
+    BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton);
+  }
+  handleBackButton() {
+    if (this.exiting) {
+      clearTimeout(this.timeout)
+      this.back()
+    } else {
+      this.exiting = true
+      Toast.show({ text: "Press again to go to the previous page" });
+      this.timeout = setTimeout(() => {
+        this.exiting = false
+      }, 800)
+    }
+    return true;
+  }
+  back(){
+    this.props.navigation.navigate("Login")
+  }
   //Error state handling
   @autobind
   removePasswordError() {
@@ -105,10 +115,7 @@ export default class SignUpView extends Component {
   removeAgeError() {
     globalState.ageError = false;
   }
-
-  @autobind
   SignUp() {
-    console.warn("sinup function called")
     if (this.state.password != this.state.newPassword) {
       globalState.newPasswordError = true;
     }
@@ -155,11 +162,26 @@ export default class SignUpView extends Component {
         subject: subject,
         body: body
       };
-
-      while (this.temploginStore.counter >= 0) {
-        this.temploginStore.counter++;
-      }
-      console.warn(this.user.phone)
+      this.temploginStore.loadSaveData("phone").then(phone => {
+        this.user = {...this.user,
+          phone: phone,
+          status: "",
+          profile: "",
+          profile_ext: "",
+          nickname: this.user.name,
+          created_at: moment().format("YYYY-MM-DD HH:mm"),
+          updated_at: moment().format("YYYY-MM-DD HH:mm")
+        };
+        firebase.auth().signInWithPhoneNumber(this.user.phone.replace("00", "+")).then(confirmCode => {
+          this.temploginStore.confirmCode = confirmCode
+          this.temploginStore.setUser(this.user).then(() => {
+            this.props.navigation.navigate("EmailVerification");
+          });
+        }).catch(e => {
+          alert("Unable To Verify Your Account", "Please Check Your Internet Connection")
+          console.warn(e, "errr here!!!")
+        })
+      });
      /* UserService.sendEmail(emailData)
         .then(response => {
           if ((response = "ok")) {
@@ -193,15 +215,14 @@ export default class SignUpView extends Component {
     return (
       <Container>
         <Content>
-          <Left />
           <Header style={{ marginBottom: 15 }}>
+            <Left><Button onPress={this.back} transparent>
+              <Icon type="Ionicons" name="md-arrow-round-back" />
+            </Button></Left>
             <Body>
-              <Title>BleashUp </Title>
+              <Title>Bleashup </Title>
             </Body>
             <Right>
-              <Button onPress={this.back} transparent>
-                <Icon type="Ionicons" name="md-arrow-round-back" />
-              </Button>
             </Right>
           </Header>
 

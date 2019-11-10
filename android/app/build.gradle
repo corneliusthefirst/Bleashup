@@ -156,9 +156,10 @@ dependencies {
     implementation project(':react-native-tcp')
     implementation project(':react-native-gesture-handler')
     implementation fileTree(dir: "libs", include: ["*.jar"])
-    implementation project(':react-native-push-notification')
     implementation 'com.google.firebase:firebase-core:16.0.1'
     implementation project(':RNMail')
+    implementation "com.google.firebase:firebase-messaging:18.0.0"
+    implementation 'me.leolin:ShortcutBadger:1.1.21@aar'
     //implementation 'androidx.appcompat:appcompat:1.0.0'
     implementation 'com.android.support:design:27.1.1'
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"

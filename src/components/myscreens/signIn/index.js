@@ -1,7 +1,9 @@
 import React, { Component } from "react";
 //import { StyleSheet,Button,Text, TouchableOpacity , View } from 'react-native';
 import autobind from "autobind-decorator";
-import { Image, TouchableOpacity } from "react-native";
+import RNExitApp from "react-native-exit-app";
+import { Image, TouchableOpacity, BackHandler } from "react-native";
+import Modal from 'react-native-modalbox';
 import { observer } from "mobx-react";
 import {
   Content,
@@ -19,14 +21,15 @@ import {
   Right,
   Spinner,
   Button,
-  InputGroup,
-  Thumbnail
+  Thumbnail,
+  Toast
 } from "native-base";
 import styles from "./styles";
 import UserService from "../../../services/userHttpServices";
 import stores from "../../../stores/index";
 import globalState from "../../../stores/globalState";
-
+import firebase from 'react-native-firebase';
+import VerificationModal from "../invitations/components/VerificationModal";
 @observer
 export default class SignInView extends Component {
   constructor(props) {
@@ -36,7 +39,7 @@ export default class SignInView extends Component {
     };
   }
   loginStore = stores.LoginStore;
-
+  state = {}
   @autobind
   OnChangedPassword(value) {
     this.setState({ password: value });
@@ -51,25 +54,71 @@ export default class SignInView extends Component {
   removeError() {
     globalState.error = false;
   }
+  componentWillMount() {
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        this.login()
+      }
+    });
+  }
+  componentDidMount() {
+    BackHandler.addEventListener("hardwareBackPress", this.handleBackButton);
 
+  }
+  user = null
+  exiting = false
+  timeout = null
+  componentWillUnmount() {
+    BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton);
+  }
+  handleBackButton() {
+    if (this.exiting) {
+      clearTimeout(this.timeout)
+      this.back()
+    } else {
+      this.exiting = true
+      Toast.show({ text: "Press again to go to the pervious page" });
+      this.timeout = setTimeout(() => {
+        this.exiting = false
+      }, 800)
+    }
+    return true;
+  }
+  back() {
+    this.props.navigation.navigate("Login");
+  }
+
+  phone = this.loginStore.user.phone
   @autobind
   forgotPassword() {
     this.props.navigation.navigate("ForgotPassword");
   }
-
+  verifyNumber(code) {
+    stores.TempLoginStore.confirmCode.confirm(code).then(success => {
+      this.login()
+    })
+  }
+  login() {
+    this.user.password = this.state.password;
+    this.loginStore.setUser(this.user).then(() => {
+      stores.Session.initialzeStore().then(session => {
+        globalState.loading = false;
+        this.setState({ isModalOpened: false })
+        this.props.navigation.navigate("Home");
+      });
+    });
+  }
   @autobind
   SignIn() {
     globalState.loading = true;
     this.loginStore.getUser().then(user => {
+      this.user = user;
       UserService.login(user.phone, this.state.password).then(response => {
         if (response === "true") {
-          user.password = this.state.password;
-          this.loginStore.setUser(user).then(() => {
-            stores.Session.initialzeStore().then(session => {
-              globalState.loading = false;
-              this.props.navigation.navigate("Home");
-            });
-          });
+          firebase.auth().signInWithPhoneNumber(user.phone.replace("00", "+")).then(confirmCode => {
+            stores.TempLoginStore.confirmCode = confirmCode
+            this.setState({ isModalOpened: true })
+          })
         } else {
           globalState.loading = false;
           globalState.error = true;
@@ -78,49 +127,44 @@ export default class SignInView extends Component {
       });
     });
   }
-
+  onChangedCode(value) {
+    this.setState({
+      code: value
+    })
+  }
   render() {
     return (
       <Container>
         <Content>
-          <Left />
           <Header>
+            <Left><Button onPress={this.back} transparent>
+              <Icon type="Ionicons" name="md-arrow-round-back" />
+            </Button></Left>
             <Body>
-              <Title>BleashUp </Title>
+              <Title>Bleashup </Title>
             </Body>
             <Right>
-              <Button onPress={this.back} transparent>
-                <Icon type="Ionicons" name="md-arrow-round-back" />
-              </Button>
             </Right>
           </Header>
+          <Card>
+            <CardItem>
+              <Left>
+                <Thumbnail source={this.loginStore.user.profile} />
+                <Body>
+                  <Text>{this.loginStore.user.name}</Text>
+                  <Text note>{this.loginStore.user.status}</Text>
+                </Body>
+              </Left>
+            </CardItem>
+            <CardItem cardBody>
+              <Image
+                source={this.loginStore.user.profile_ext}
+                style={{ height: 200, width: null, flex: 1 }}
+              />
+            </CardItem>
 
-          <Content>
-            <Card>
-              <CardItem>
-                <Left>
-                  <Thumbnail source={this.loginStore.user.profile} />
-                  <Body>
-                    <Text>{this.loginStore.user.name}</Text>
-                    <Text note>{this.loginStore.user.status}</Text>
-                  </Body>
-                </Left>
-              </CardItem>
-              <CardItem cardBody>
-                <Image
-                  source={this.loginStore.user.profile_ext}
-                  style={{ height: 200, width: null, flex: 1 }}
-                />
-              </CardItem>
-
-              <CardItem style={{ height: 60 }} />
-            </Card>
-          </Content>
-
-          <Button transparent regular style={{ marginBottom: -31 }}>
-            <Text> Password </Text>
-          </Button>
-
+            <CardItem style={{ height: 60 }} />
+          </Card>
           <TouchableOpacity
             style={{ paddingLeft: 220, marginBottom: -22 }}
             onPress={this.forgotPassword}
@@ -144,13 +188,13 @@ export default class SignInView extends Component {
             {globalState.error == false ? (
               <Text />
             ) : (
-              <Icon
-                onPress={this.removeError}
-                type="Ionicons"
-                name="close-circle"
-                style={{ color: "#00C497" }}
-              />
-            )}
+                <Icon
+                  onPress={this.removeError}
+                  type="Ionicons"
+                  name="close-circle"
+                  style={{ color: "#00C497" }}
+                />
+              )}
           </Item>
 
           <Button
@@ -164,10 +208,12 @@ export default class SignInView extends Component {
             {globalState.loading ? (
               <Spinner color="#FEFFDE" />
             ) : (
-              <Text> SignIn </Text>
-            )}
+                <Text> SignIn </Text>
+              )}
           </Button>
         </Content>
+        <VerificationModal isOpened={this.state.isModalOpened} phone={this.phone}
+        verifyCode={(code) => this.verifyNumber(code)}></VerificationModal>
       </Container>
     );
   }

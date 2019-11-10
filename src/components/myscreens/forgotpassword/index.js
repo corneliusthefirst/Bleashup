@@ -99,21 +99,15 @@ export default class ForgotPasswordView extends Component {
         <Content >
           <Left />
           <Header>
+            <Button onPress={this.back} transparent>
+              <Icon type='Ionicons' name="md-arrow-round-back" />
+            </Button>
             <Body>
-              <Title>BleashUp </Title>
+              <Title>Bleashup </Title>
             </Body>
             <Right>
-              <Button onPress={this.back} transparent>
-                <Icon type='Ionicons' name="md-arrow-round-back" />
-              </Button>
             </Right>
           </Header>
-
-
-
-
-
-
           <Button transparent regular style={{ marginBottom: -22, marginTop: 50 }}>
             <Text>Reset Password </Text>
           </Button>
