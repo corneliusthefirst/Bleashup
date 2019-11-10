@@ -11,12 +11,24 @@ import Modal from 'react-native-modalbox';
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 import autobind from "autobind-decorator";
 import ImagePicker from 'react-native-image-picker';
-
+import moment from "moment";
 import EventTitle from "./components/EventTitle"
 import EventPhoto from "./components/EventPhoto"
 import EventLocation from "./components/EventLocation"
 import EventDescription from "./components/EventDescription"
 import EventHighlights from "./components/EventHighlights"
+import { filter,uniqBy,orderBy,find,findIndex,reject,uniq,indexOf,forEach,dropWhile } from "lodash";
+import request from "../../../../services/requestObjects";
+import  stores from '../../../../stores/index';
+
+var uuid = require('react-native-uuid');
+uuid.v1({
+  node: [0x01, 0x23, 0x45, 0x67, 0x89, 0xab],
+  clockseq: 0x1234,
+  msecs: new Date().getTime(),
+  nsecs: Math.floor(Math.random() * 5678)+50
+});
+
 
 var radio_props = [
   {label: 'Event title', value: 0 },
@@ -28,14 +40,7 @@ var radio_props = [
 ];
 
 
-const options = {
-  title: 'Select Avatar',
-  //customButtons: [{ name: 'fb', title: 'Choose Photo from Facebook' }],
-  storageOptions: {
-    skipBackup: true,
-    path: 'images',
-  },
-};
+
 
 
 
@@ -49,106 +54,24 @@ export default class CreateEventView extends Component {
     super(props)
 
     this.state = {
-      EventTitleState:true,
+      EventTitleState:false,
       EventPhotoState:false,
       EventDescriptionState:false,
       EventLocationState:false,
       EventHighlightState:false,
       colorWhenChoosed:"#1FABAB",
-
-      event_title:'',
-      remindFrequency:'Daily',
-      reminds: [
-       {label: '  Daily  ', value: 0 },
-       {label: '  Weekly ', value: 1 },
-       {label: '  Monthly', value: 2}
-       ]
-
+      currentEvent:request.Event()
 
 
     }
-
+    stores.Events.readFromStore().then(Events =>{
+      let event = find(Events, { id:"newEventId" }); 
+       this.state.currentEvent = event;
+       //console.warn(this.state.currentEvent );
+     });
 
 
   }
-
-  @autobind
-  onChangedTitle(text) {
-    this.setState({ event_title: text });
-
-  }
-
- @autobind
- onChangedLocation(text) {
-    this.setState({EventLocationState: text });
-
-  }
-
- @autobind
- onChangedEventDescription(text) {
-    this.setState({EventDescriptionState: text });
-
-  }
-
-
-
-
-@autobind
-TakePhotoFromCamera(){
-
-return new Promise((resolve, reject) => {
-
-ImagePicker.launchCamera(options, (response) => {
-
-  if (response.didCancel) {
-    console.log('User cancelled image picker');
-  } else if (response.error) {
-    console.log('ImagePicker Error: ', response.error);
-  } else if (response.customButton) {
-    console.log('User tapped custom button: ', response.customButton);
-  } else {
-    const source = { uri: response.uri };
- 
-    // You can also display the image using data:
-    // const source = { uri: 'data:image/jpeg;base64,' + response.data };
- 
-   resolve(source)
-
-  }
-
-
-
-  })
-})
-
- }
-
-@autobind
-TakePhotoFromLibrary(){
-return new Promise((resolve, reject) => {
-ImagePicker.launchImageLibrary(options, (response) => {
- 
-  if (response.didCancel) {
-    console.log('User cancelled image picker');
-  } else if (response.error) {
-    console.log('ImagePicker Error: ', response.error);
-  } else if (response.customButton) {
-    console.log('User tapped custom button: ', response.customButton);
-  } else {
-    const source = { uri: response.uri };
- 
-    // You can also display the image using data:
-    // const source = { uri: 'data:image/jpeg;base64,' + response.data };
- 
-       resolve(source)
-    }
-   
- })
-
-})
-
-}
-
 
 
   @autobind
@@ -157,6 +80,53 @@ ImagePicker.launchImageLibrary(options, (response) => {
 
   }
 
+  @autobind
+  creatEvent(){
+    console.warn("im inside");
+    var arr = new Array(32);
+    let num = Math.floor(Math.random() * 16)
+    uuid.v1(null, arr,num); 
+    let New_id = uuid.unparse(arr,num);
+    
+    console.warn(New_id);
+  
+    stores.Events.readFromStore().then(Events =>{
+      let newEvent = request.Event(); 
+      let event = find(Events, { id:"newEventId" }); 
+      
+      newEvent = event;
+      newEvent.id = New_id;
+      //gives this new id to all highlights before pushing
+      forEach(newEvent.highlights,function(highlight){
+         highlight.event_id = New_id;
+      })
+      newEvent.created_at = moment().format("YYYY-MM-DD HH:mm");
+      stores.LoginStore.getUser().then((user)=>{
+         newEvent.creator_phone = user.creator_phone;
+         
+      })
+      console.warn(newEvent);
+      stores.Events.addEvent(newEvent).then(()=>{resolve()});
+
+      //reset new Event object
+      let reset = request.Event();
+      reset.id = "newEventId";
+      this.refs.title_ref.state.title = "";
+      this.refs.photo_ref.state.EventPhoto = "";
+      this.refs.description_ref.state.description = "";
+      this.refs.location_ref.state.location = request.Location();
+      stores.Events.delete(reset.id).then(()=>{});
+      stores.Events.addEvent(reset).then(()=>{resolve()});
+
+      //stores.Events.resetEvent("newEventId").then(()=>{resolve()});
+
+    });
+
+    stores.Events.readFromStore().then(Events =>{
+       console.warn(Events);
+    })
+
+  }
 
   render() {
 
@@ -212,7 +182,8 @@ ImagePicker.launchImageLibrary(options, (response) => {
                          this.refs.highlights.setState({animateHighlight:true})
                         break
                         default:
-                        this.setState({EventTitleState:true})
+                        this.setState({EventTitleState:false})
+                        ;
 
                        }
                     }}
@@ -220,19 +191,31 @@ ImagePicker.launchImageLibrary(options, (response) => {
                     />
                 </View>
 
-
+ 
               
-               <EventTitle        parentComponent={this} />
-               <EventPhoto        parentComponent={this}/>
-               <EventDescription  parentComponent={this}/>
-               <EventLocation     parentComponent={this}/>
-               <EventHighlights    parentComponent={this} ref={"highlights"}/>
+               <EventTitle isOpen={this.state.EventTitleState} onClosed={()=>{
+                 this.setState({EventTitleState:false}); }} ref={"title_ref"}  />
+    
+
+               <EventPhoto  isOpen={this.state.EventPhotoState} onClosed={()=>{this.setState({EventPhotoState:false})}}
+                 ref={"photo_ref"} />
+
+               <EventDescription isOpen={this.state.EventDescriptionState} onClosed={()=>{this.setState({EventDescriptionState:false})}}
+                 ref={"description_ref"} />
+
+               <EventLocation  isOpen={this.state.EventLocationState} onClosed={()=>{this.setState({EventLocationState:false})}}
+                ref={"location_ref"} />
+
+               <EventHighlights   isOpen={this.state.EventHighlightState} onClosed={()=>{this.setState({EventHighlightState:false})}}
+                parentComponent={this} ref={"highlights"}/>
 
 
                   <View style={{alignSelf:'flex-end'}}>
-                  <Button style={{width:"35%",borderRadius:8,marginRight:"2%",backgroundColor:'#1FABAB'}} onPress={()=>{ this.setState({HighlightState:true})}}>
+                  <TouchableOpacity style={{width:"35%",marginRight:"2%"}} >
+                  <Button style={{width:"100%",borderRadius:8,backgroundColor:'#1FABAB'}} onPress={()=>{this.creatEvent()}}>
                   <Text>Create Event</Text>
                   </Button>
+                  </TouchableOpacity>
                   </View>
 
 

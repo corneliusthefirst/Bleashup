@@ -10,7 +10,7 @@ import ActionButton from 'react-native-action-button';
 import Modal from 'react-native-modalbox';
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 import autobind from "autobind-decorator";
-import CacheImages from "../../../../../CacheImages";
+import CacheImages from "../../../../CacheImages";
 import Swipeout from 'react-native-swipeout';
  
 
@@ -36,14 +36,14 @@ export default class HighlightCardDetail extends Component {
 
                 coverScreen={true}
             >
-          
+           
             <ScrollView>
             <View style={{flex:1}}>
             <View style={{alignItems:'center',justifyContent:'center',height:height/7}}>
                <Text style={{color:'green',fontSize:20,fontWeight:"400"}}>{this.props.item.title}</Text>
             </View>
             <View>
-              <Image source={this.props.item.url} style={{width:"92%",marginLeft:"4%",marginRight:"4%",marginBottom:"4%",borderRadius:5,height:height/3}}></Image>
+              <Image source={{uri:this.props.item.url}} style={{width:"92%",marginLeft:"4%",marginRight:"4%",marginBottom:"4%",borderRadius:5,height:height/3}}></Image>
             </View>
             <View style={{margin:"5%",fontStyle:'italic'}}>
              <Text>{this.props.item.description}</Text>

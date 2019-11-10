@@ -150,6 +150,7 @@ dependencies {
     implementation project(':react-native-exit-app')
     implementation project(':react-native-fetch-blob') 
     implementation project(':react-native-image-picker')
+    implementation project(':react-native-datetimepicker')
     
     
 }

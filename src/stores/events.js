@@ -15,6 +15,8 @@ import moment from "moment";
 import requestObject from "../services/requestObjects";
 import tcpRequest from "../services/tcpRequestData";
 import serverEventListener from "../services/severEventListener"
+import request from "../services/requestObjects";
+
 export default class events {
   constructor() {
     /*storage.remove({
@@ -39,7 +41,7 @@ export default class events {
   saveKey = {
     key: "Events",
     data: []
-  };
+  }; 
   @action addEvent(NewEvent) {
     NewEvent.updated_at = moment().format("YYYY-MM-DD HH:mm")
     NewEvent.new = true
@@ -390,6 +392,31 @@ export default class events {
       });
     });
   }
+
+  @action updateRecursiveFrequency(EventID, recursiveFrequency, inform) {
+    console.warn(recursiveFrequency,"recurfreq");
+    return new Promise((resolve, reject) => {
+      this.readFromStore().then(Events => {
+        let Event = find(Events, { id: EventID });
+        let eventIndex = findIndex(Events, { id: EventID });
+       console.warn(Event,"Event");
+        Event.recursiveFrequency =  recursiveFrequency;
+        if (inform) {
+          Event.recursiveFrequency_updated = true;
+          Event.updated = true;
+        }
+        
+        Event.updated_at = moment().format("YYYY-MM-DD HH:mm");
+        Events.splice(eventIndex,1, Event);
+        this.saveKey.data = Events;
+        storage.save(this.saveKey).then(() => {
+          this.setProperties(this.saveKey.data, inform);
+          resolve();
+        });
+      });
+    });
+  }
+
   @action updateDescription(EventID, NewDescription, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
@@ -638,7 +665,8 @@ export default class events {
       });
     });
   }
-  @action removeHighlights(EventID, HighlightID, inform) {
+  @action removeHighlight(EventID, HighlightID, inform) {
+    console.warn("remove highlight 1");
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let Event = find(Events, { id: EventID });
@@ -660,6 +688,7 @@ export default class events {
       });
     });
   }
+
   @action addHighlight(EventID, HighlightID, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
@@ -827,6 +856,38 @@ export default class events {
   }
 
 
+  @action resetEvent(EventID) {
+    return new Promise((resolve, reject) => {
+      this.readFromStore().then(Events => {
+        let Event = find(Events, { id: EventID });
+        let eventIndex = findIndex(Events, { id: EventID });
+        Event=request.Event();
+        Event.id = EventID;
+
+        Event.updated_at = moment().format("YYYY-MM-DD HH:mm");
+        Events.splice(eventIndex, 1, Event);
+        this.saveKey.data = Events;
+        storage.save(this.saveKey).then(() => {
+          this.setProperties(this.saveKey.data, inform);
+          resolve();
+        });
+      });
+    });
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 @observable highlightData =[
 {
@@ -837,7 +898,7 @@ export default class events {
   updated_at: "",
   title: "maitre gims",
   description: "ajjsg agsgsagj sahaskkh akdajaj asjaslfjal ashs",
-  url: require('../../Images/Orange_money.jpeg')
+  url: "https://upload.wikimedia.org/wikipedia/commons/b/bf/Cornish_cream_tea_2.jpg"
 },
 {
   id: "2",
@@ -847,7 +908,7 @@ export default class events {
   updated_at: "",
   title: "cornelius",
   description: "ajjsg agsgsagj sahaskkh akdajaj asjaslfjal ashs",
-  url:require('../../Images/weather.jpg')
+  url:"https://cdn.stocksnap.io/img-thumbs/960w/KUGIZHT2VX.jpg"
 },
 {
   id: "3",
@@ -857,7 +918,7 @@ export default class events {
   updated_at: "",
   title: "giles",
   description: "ajjsg agsgsagj sahaskkh akdajaj asjaslfjal ashs",
-  url:require('../../Images/mtn_mobile.png')
+  url:"https://cdn.stocksnap.io/img-thumbs/960w/KUGIZHT2VX.jpg"
 
 },
 {
@@ -868,7 +929,7 @@ export default class events {
   updated_at: "",
   title: "Jugal",
   description: "ajjsg agsgsagj sahaskkh akdajaj asjaslfjal ashs",
-  url: require('../../Images/Orange_money.jpeg')
+  url: "https://cdn.stocksnap.io/img-thumbs/960w/KUGIZHT2VX.jpg"
 },
 {
   id: "5",
@@ -878,7 +939,7 @@ export default class events {
   updated_at: "",
   title: "Santers",
   description: "ajjsg agsgsagj sahaskkh akdajaj asjaslfjal ashs",
-  url:require('../../Images/weather.jpg')
+  url:"https://cdn.stocksnap.io/img-thumbs/960w/KUGIZHT2VX.jpg"
 },
 {
   id: "6",
@@ -888,12 +949,12 @@ export default class events {
   updated_at: "",
   title: "Hken",
   description: "ajjsg agsgsagj sahaskkh akdajaj asjaslfjal ashs",
-  url:require('../../Images/mtn_mobile.png')
+  url:"https://cdn.stocksnap.io/img-thumbs/960w/KUGIZHT2VX.jpg"
 
 }
 
 ]
-
+ 
 @observable NewHighlightData = []
 
 

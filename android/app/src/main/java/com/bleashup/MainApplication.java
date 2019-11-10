@@ -15,6 +15,7 @@ import com.facebook.soloader.SoLoader;
 import com.swmansion.reanimated.ReanimatedPackage;
 import com.github.wumke.RNExitApp.RNExitAppPackage;
 import com.imagepicker.ImagePickerPackage;
+import com.reactcommunity.rndatetimepicker.RNDateTimePickerPackage;
 import java.util.Arrays;
 import java.util.List;
 
@@ -29,8 +30,8 @@ public class MainApplication extends Application implements ReactApplication {
     @Override
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
-          new MainReactPackage(),
-          new SvgPackage(),
+            new MainReactPackage(),
+            new SvgPackage(),
             new AsyncStoragePackage(),
             new VectorIconsPackage(),
             new RNExitAppPackage(),
@@ -38,8 +39,9 @@ public class MainApplication extends Application implements ReactApplication {
             new TcpSocketsModule(),
             new RNGestureHandlerPackage(),
             new RNFetchBlobPackage(),
-            new ImagePickerPackage()
-                  );
+            new ImagePickerPackage(),
+            new RNDateTimePickerPackage()
+        );
     }
 
     @Override

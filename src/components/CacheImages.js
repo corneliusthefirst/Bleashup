@@ -4,6 +4,7 @@ import imageCacheHoc from "react-native-image-cache-hoc";
 import ImageActivityIndicator from "./myscreens/currentevents/components/imageActivityIndicator";
 import { Image, activityIndicatorStyle } from "react-native";
 import { Thumbnail } from "native-base"
+
 class CacheImages extends Component {
   constructor(props) {
     super(props)

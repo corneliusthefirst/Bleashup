@@ -16,7 +16,7 @@ import globalState from "../../../stores/globalState"
 import { observer } from "mobx-react";
 import stores from '../../../stores';
 import BleashupScrollView from '../../BleashupScrollView';
-import CreateEvent from '../invitations/components/CreateEvent';
+import CreateEvent from '../event/createEvent/CreateEvent';
 
 
 @observer

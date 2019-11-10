@@ -15,7 +15,8 @@ class Request {
             participant_update: this.ParticipantUpdate(),
             location_update: this.LocationUpdate(),
             period_update: this.PeriodUpdate(),
-            background_update: ""
+            background_update: "",
+            recursiveFrequency_update:""
         }
     }
     AboutUpdate() {
@@ -326,16 +327,17 @@ class Request {
             background: "",
             participant: [this.Participant()],
             likes: 0,
-            reminds: [""],
+            reminds: [],
+            recursiveFrequency:"None",
             public: false,
-            votes: [""],
-            highlights: [""],
-            contributions: [""],
-            must_contribute: [""]
+            votes: [],
+            highlights: [],
+            contributions: [],
+            must_contribute: []
         }
     }
     Period() {
-        return {
+        return { 
             time: this.Time(),
             date: this.Date()
         }

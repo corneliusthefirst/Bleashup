@@ -10,11 +10,11 @@ import ActionButton from 'react-native-action-button';
 import Modal from 'react-native-modalbox';
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 import autobind from "autobind-decorator";
-import CacheImages from "../../../../../CacheImages";
+import CacheImages from "../../../../CacheImages";
 import HighlightCard from "./HighlightCard"
-import PhotoEnlargeModal from "../../PhotoEnlargeModal";
+import PhotoEnlargeModal from "../../../invitations/components/PhotoEnlargeModal";
 import ImagePicker from 'react-native-image-picker';
-import  stores from '../../../../../../stores/index';
+import  stores from '../../../../../stores/index';
 import {observer} from 'mobx-react'
 
 const highlightData = stores.Events.highlightData
@@ -170,7 +170,7 @@ back(){
 
                     <TouchableOpacity onPress={this.props.OpenLinkZoom}>
                         <Image
-                            source={require("../../../../../../../Images/google-maps-alternatives-china-720x340.jpg")}
+                            source={require("../../../../../../Images/google-maps-alternatives-china-720x340.jpg")}
                             style={{
                                 height: height/10,
                                 width: width/3,

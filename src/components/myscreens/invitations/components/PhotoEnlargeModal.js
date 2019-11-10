@@ -40,7 +40,7 @@ export default class PhotoEnlargeModal extends Component {
                 </View> ):
                 (<View style={{flex:6,flexDirection:'column'}}>  
                     <TouchableOpacity onPress={this.props.onClosed} >
-                        <Image  source={this.props.photo } style={{ width:"100%", height:"100%"}} />
+                        <Image  source={{uri:this.props.photo }} style={{ width:"100%", height:"100%"}} />
                     </TouchableOpacity>
                 </View>)
 

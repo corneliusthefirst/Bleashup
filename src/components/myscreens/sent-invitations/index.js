@@ -18,7 +18,7 @@ import ImageActivityIndicator from "../currentevents/components/imageActivityInd
 import { observer } from "mobx-react";
 import stores from '../../../stores';
 import BleashupScrollView from '../../BleashupScrollView';
-import CreateEvent from '../invitations/components/createEvent';
+import CreateEvent from '../event/createEvent/CreateEvent';
 
 
 @observer
@@ -68,7 +68,7 @@ class SendInvitations extends Component {
               <CardListItem {...this.props} item={item} key={index} parentCardList={this} Invitations={this.state.invitations}>
               </CardListItem>
             );
-          }}
+          }} 
         >
         </BleashupScrollView>
          
