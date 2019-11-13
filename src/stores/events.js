@@ -826,7 +826,32 @@ export default class events {
     this.PastEvents = filter(Events, { past: true });
     this.myReminds = filter(Events, { reminds: true });
   }
+  addEventCommitee(EventID, CommiteeID) {
+    return new Promise((resolve, reject) => {
+      this.readFromStore().then(Events => {
+        let index = findIndex(Events, { id: EventID })
+        Events[index].commitees.length <= 0 ? Events[index].commitees = [CommiteeID] :
+          Events[index].commitees.unshift(CommiteeID)
+        this.saveKey.data = Events
+        storage.save(this.saveKey).then(() => {
+          resolve("ok")
+        })
+      })
+    })
+  }
 
+  removeCommitee(EventID, ID) {
+    return new Promise((resolve, reject) => {
+      this.readFromStore().then(Events => {
+        let index = findIndex(Events, { id: EventID })
+        Events[index].commitees = dropWhile(Events[index].commitees, (ele) => ele === ID)
+        this.saveKey.data = Events
+        storage.save(this.saveKey).then(() => {
+          resolve("ok")
+        })
+      })
+    })
+  }
 
 
   @observable highlightData = [

@@ -83,8 +83,8 @@ class Request {
         return {
             id: '',
             event_id: "",
-            create_at: moment().format("YYYY-MM-DD HH:mm"),
-            updated_at: moment().format("YYYY-MM-DD HH:mm"),
+            create_at: moment().format(),
+            updated_at: moment().format(),
             creator: '',
             title: '',
             description: '',
@@ -177,8 +177,8 @@ class Request {
             likes: 0,
             event_id: "",
             title: "",
-            created_at: moment().format("YYYY-MM-DD HH:mm"),
-            updated_at: moment().format("YYYY-MM-DD HH:mm"),
+            created_at: moment().format(),
+            updated_at: moment().format(),
             period: this.Period(),
             option: [this.Option()],
             description: "",
@@ -250,8 +250,8 @@ class Request {
             id: "",
             creator: "",
             event_id: "",
-            created_at: moment().format("YYYY-MM-DD HH:mm"),
-            updated_at: moment().format("YYYY-MM-DD HH:mm"),
+            created_at: moment().format(),
+            updated_at: moment().format(),
             title: "",
             period: this.Period(),
             contribution_mean: [this.ContributionMean()],
@@ -268,8 +268,8 @@ class Request {
             id: "",
             creator: "",
             event_id: "",
-            created_at: moment().format("YYYY-MM-DD HH:mm"),
-            updated_at: moment().format("YYYY-MM-DD HH:mm"),
+            created_at: moment().format(),
+            updated_at: moment().format(),
             title: "",
             description: "",
             url: ""
@@ -322,8 +322,8 @@ class Request {
         return {
             id: "",
             host: "",
-            created_at: moment().format("YYYY-MM-DD HH:mm"),
-            updated_at: moment().format("YYYY-MM-DD HH:mm"),
+            created_at: moment().format(),
+            updated_at: moment().format(),
             creator_phone: "",
             about: this.About(),
             period: this.Period(),
@@ -418,6 +418,65 @@ class Request {
     None() {
         return {
             none: ""
+        }
+    }
+    Commitee() {
+        return {
+            id: "",
+            event_id: "",
+            member: [],
+            name: "",
+            created_at: moment().format(),
+            updated_at: moment().format(),
+            public_state: true
+        }
+    }
+    UpdateCommiteeName(){
+        return {
+            commitee_id:"",
+            event_id:"",
+            name:""
+        }
+    }
+    updateCommiteeState(){
+        return {
+            commitee_id:"",
+            event_id:"",
+            state:true
+        }
+    }
+    createCommitee(){
+        return {
+            event_id:"",
+            commitee:this.Commitee()
+        }
+    }
+    removeCommitee(){
+        return {
+            commitee_id:"",
+            event_id:"",
+        }
+    }
+    addCommiteeMember(){
+        return {
+            commitee_id : "",
+            event_id: "",
+            member:this.Participant()
+        }
+    }
+    removeCommiteeMember(){
+        return {
+            commitee_id:"",
+            event_id:"",
+            member_phone:""
+        }
+    }
+    updateCommiteeMemberMaster(){
+        return {
+            commitee_id:"",
+            event_id:"",
+            member_phone:"",
+            member_status : false
         }
     }
 }

@@ -9,11 +9,14 @@ import ParticipantList from "./ParticipantList";
         super(props)
         this.state = {
             isOpen: false,
+            loaded:false,
+            participants: [],
+            event_id: null
         };
     }
-
+    state = {}
     componentDidMount() {
-
+      //  setTimeout(()=>{},20)
     }
     render() {
         return (
@@ -29,14 +32,22 @@ import ParticipantList from "./ParticipantList";
                     this.props.onClosed()
 
                 }
+                onOpened={() => {
+                    setTimeout(()=>{
+                        this.setState({
+                            participants: this.props.participants,
+                            event_id: this.props.event_id,
+                            loaded:true
+                        })
+                    },20)
+                }}
                 style={{
                     height: "97%",
                     borderRadius: 8, backgroundColor: '#FEFFDE', width: "100%"
                 }}>
-                <Content>
-                    <ParticipantList participants={this.props.participants ? 
-                        this.props.participants : undefined} title={"Participants List"} 
-                        event_id={this.props.event_id}></ParticipantList>
+                <Content>{this.state.loaded?
+                    <ParticipantList participants={this.state.participants} title={"Participants List"}
+                        event_id={this.state.event_id}></ParticipantList>:<Text style={{padding:"15%"}} note> loading participants</Text>}
                 </Content>
             </Modal>
 

@@ -44,6 +44,10 @@ import SideMenu from 'react-native-side-menu';
 import ChangeLogs from "../changelogs";
 import ParticipantModal from "../../ParticipantModal";
 import ContactsModal from "../../ContactsModal";
+import SelectableContactList from "../../SelectableContactList";
+import CreateCommiteeModal from "./CreateCommiteeModal";
+import moment from "moment";
+import stores from '../../../stores';
 const screenWidth = Math.round(Dimensions.get('window').width);
 
 var swipeoutBtns = [
@@ -65,7 +69,8 @@ export default class Event extends Component {
         : "EventDetails",
       currentPage: this.props.navigation.getParam("tab") ? this.props.navigation.getParam("tab") : "EventDetails",
       isOpen: this.props.navigation.getParam('isOpen') ? this.props.navigation.getParam('isOpen') : false,
-      participants:undefined
+      participants: undefined,
+      members: []
     };
     //this.props.Event = this.props.navigation.getParam("Event");
   }
@@ -75,6 +80,7 @@ export default class Event extends Component {
     initalPage: "EventDetails",
     currentPage: "Details",
     enabled: false,
+    members: [],
     isOpen: false
   }
   swipoutSetting = {
@@ -149,6 +155,7 @@ export default class Event extends Component {
   }
   isOpen = false
   renderMenu() {
+    //console.error(this.props.navigation.getParam("Event").participant)
     switch (this.state.currentPage) {
       case "EventDetails":
         return <EventDatails {...this.props}></EventDatails>
@@ -159,18 +166,18 @@ export default class Event extends Component {
       case "Highlights":
         return <Highlights {...this.props}></Highlights>
       case "EventChat":
-        return <EventChat showMembers={(memebers) => {
-          console.warn(memebers)
+        return <EventChat showMembers={(members) => {
+          console.warn(members)
           this.setState({
-            showMembers:true,
-            participants:memebers
+            showMembers: true,
+            participants: members
           })
         }} {...this.props} showContacts={(conctacts) => {
           this.setState({
-            contactModalOpened:true,
-            contacts:conctacts
+            contactModalOpened: true,
+            contacts: conctacts
           })
-        } }></EventChat>
+        }}></EventChat>
       case "Contributions":
         return <Contributions {...this.props}></Contributions>
       case "ChangeLogs":
@@ -179,14 +186,20 @@ export default class Event extends Component {
     }
   }
   componentWillMount() {
-    BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this))
-
+    stores.LoginStore.getUser().then(user =>{
+      this.user = user;
+      //this.event = this.props.navigation.getParam("Event")
+      BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this))
+    })
   }
+  user = null
+  event = this.props.navigation.getParam("Event")
   handleBackButton() {
     if (!this.isOpen) {
       this.isOpen = true
       this.setState({
         isOpen: true,
+        members: []
       })
       return true
     }
@@ -201,8 +214,34 @@ export default class Event extends Component {
   }
   showMembers() {
     this.setState({
-      showMembers: true
+      showMembers: true,
+      participants: this.event.participant
+
     })
+  }
+  processResult(data) {
+    this.setState({
+      isSelectableListOpened: false,
+      isCommiteeModalOpened: true,
+      commiteeMember: data
+    })
+    //console.warn(data)
+  }
+  createCommitee(data) {
+    this.setState({
+      isCommiteeModalOpened: false
+    })
+    let commitee = {
+      id: this.state.event_id + "-" + data.commiteeName,
+      creator:this.user.phone,
+      created_at: moment().format(),
+      updated_at: moment().format(),
+      member: this.state.commiteeMember.unshift(this.event.creator),
+      name: data.commiteeName,
+      public_state: data.publicState,
+      event_id: this.state.event_id
+    }
+    //console.warn(data)
   }
   render() {
     return (<SideMenu autoClosing={true} onMove={(position) => {
@@ -210,12 +249,17 @@ export default class Event extends Component {
     }} bounceBackOnOverdraw={false} onChange={(position) => {
       this.isOpen = position
     }} isOpen={this.isOpen} openMenuOffset={this.currentWidth}
-      menu={<SWView showMembers={() => this.showMembers()} setCurrentPage={(page) => {
+      menu={<SWView showSelectableMembers={() => {
+        this.setState({
+          isSelectableListOpened: true,
+          members: this.event.participant
+        })
+      }} showMembers={() => this.showMembers()} setCurrentPage={(page) => {
         this.isOpen = false
         this.setState({ currentPage: page })
       }
       } currentPage={this.state.currentPage} width={this.currentWidth}
-        event={this.props.navigation.getParam("Event")} master={true} Event={{ public: true }}></SWView>}>
+        event={this.event} master={true} Event={{ public: true }}></SWView>}>
       <View style={{ height: "100%", backgroundColor: "#FEFFDE" }}>
         {
           this.renderMenu()
@@ -223,15 +267,24 @@ export default class Event extends Component {
         <ParticipantModal participants={this.state.participants} isOpen={this.state.showMembers} onClosed={() => {
           this.setState({
             showMembers: false,
-            participants:undefined
+            participants: undefined
           })
-        }} event_id={this.props.navigation.getParam("Event").id}></ParticipantModal>
-        <ContactsModal isOpen={this.state.contactModalOpened} onClosed={()=>{
+        }} event_id={this.event.id}></ParticipantModal>
+        <ContactsModal isOpen={this.state.contactModalOpened} onClosed={() => {
           this.setState({
-            contactModalOpened:false,
-            conctacts:[]
+            contactModalOpened: false,
+            conctacts: []
           })
         }} contacts={this.state.contacts}></ContactsModal>
+        <SelectableContactList members={this.state.members} close={() => {
+          this.setState({
+            isSelectableListOpened: false
+          })
+        }} isOpen={this.state.isSelectableListOpened} takecheckedResult={(data) => this.processResult(data)}>
+        </SelectableContactList>
+        <CreateCommiteeModal isOpen={this.state.isCommiteeModalOpened} createCommitee={(data) => this.createCommitee(data)} close={() => this.setState({
+          isCommiteeModalOpened: false
+        })}></CreateCommiteeModal>
       </View>
     </SideMenu>
     );

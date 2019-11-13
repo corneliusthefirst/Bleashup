@@ -132,11 +132,11 @@ class tcpRequestData {
     return this.sendData("denie_invitation", invitation, id);
   }
   //My data is requestObject.Invite()
-  invite(invite,id) {
+  invite(invite, id) {
     return this.sendData("invite", invite, id);
   }
-  invite_many(invites,id){
-    return this.sendData('invite_many',invites,id)
+  invite_many(invites, id) {
+    return this.sendData('invite_many', invites, id)
   }
   // My data is requestObject.Invite()
   received_invitation(data, id) {
@@ -398,6 +398,28 @@ class tcpRequestData {
   updateRemind(data, id) {
     return this.sendData("update_remind", data, id);
   }
+  addcommitee(data, id) {
+    return this.sendData('add_commitee', data, id)
+  }
+  remove_commitee(data, id) {
+    return this.sendData('remove_commitee', data, id)
+  }
+  update_commitee_name(data, id) {
+    return this.sendData('update_commitee_name', data, id)
+  }
+  update_commitee_public_state(data, id) {
+    return this.sendData('update_commitee_public_state', data, id)
+  }
+  update_commitee_member_status(data, id) {
+    return this.sendData('update_commitee_member_status', data, id)
+  }
+  remove_member_from_commitee(data, id) {
+    return this.sendData('remove_member_from_commitee', data, id)
+  }
+  add_member_to_commitee(data, id) {
+    return this.sendData('add_member_to_commitee', data, id)
+  }
+
 }
 
 const tcpRequest = new tcpRequestData();

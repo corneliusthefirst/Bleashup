@@ -25,7 +25,7 @@ import {
 import SoundRecorder from 'react-native-sound-recorder';
 import VideoPlayer from "./VideoController"
 import Image from 'react-native-scalable-image';
-import Orientation from 'react-native-orientation-locker';
+//import Orientation from 'react-native-orientation-locker';
 import DocumentPicker from 'react-native-document-picker';
 import ReactNativeZoomableView from '@dudigital/react-native-zoomable-view/src/ReactNativeZoomableView';
 import ImagePicker from 'react-native-customized-image-picker';
@@ -64,7 +64,7 @@ export default class ChatRoom extends Component {
             keyboardOpened: false,
             textValue: '',
             image: null,
-            showHeader:true,
+            showHeader: true,
             previousMessageHeight: this.formHeight(((screenheight - 67) / screenheight)),
             previousTextHeight: this.formHeight((67 / screenheight)),
             replying: false,
@@ -145,8 +145,9 @@ export default class ChatRoom extends Component {
             } else {
                 //console.warn(newMessage, "PPPPPPPPPP")
                 if (this.sender.phone == newMessage.sender.phone) { } else {
+                    this.newMessages.length !== 0 ? this.newMessages.unshift(newMessage) : null
                     console.warn("saving new messagess")
-                    this.room.addNewMessage(newMessage, newKey, newMessage.type, true, true).then(() => {
+                    this.room.addNewMessage(newMessage, newKey, newMessage.type, true, this.newMessages.length == 0).then(() => {
                     })
                 }
             }
@@ -210,7 +211,7 @@ export default class ChatRoom extends Component {
         let result = [];
         return new Promise((resolve, reject) => {
             this.room.readFromStore().then(data => {
-            //    console.warn(data)
+                //    console.warn(data)
                 messages.reverse().map(element => {
                     let date = moment(element.created_at).format('YYYY/MM/DD')
                     index = findIndex(data, { id: date })
@@ -242,6 +243,15 @@ export default class ChatRoom extends Component {
                 duration: Math.floor(0),
                 created_at: "2014-03-30 12:32",
             }] : []
+            setTimeout(() => {
+                this.setState({
+                    loaded: true
+                })
+                if (this.props.newMessages.length > 0) {
+                    this.room.insertBulkMessages(this.newMessages).then(() => {
+                    })
+                }
+            }, 100)
             this.fireRef.endAt().limitToLast(1).on('child_added', snapshot => {
                 let message = snapshot.val()
                 message.received.unshift({ phone: this.props.user.phone, date: moment().format() })
@@ -278,15 +288,6 @@ export default class ChatRoom extends Component {
                 let typer = newChild.phone ? newChild.nickname : newChild
                 this.showTypingToast(typer)
             })
-            setTimeout(() => {
-                this.setState({
-                    loaded: true
-                })
-                if (this.props.newMessages.length > 0) {
-                    this.room.insertBulkMessages(this.newMessages).then(() => {
-                    })
-                }
-            }, 100)
         })
     }
     markAsRead() {
@@ -306,7 +307,7 @@ export default class ChatRoom extends Component {
         this.keyboardDidShowSub = Keyboard.addListener('keyboardDidShow', this.handleKeyboardDidShow);
         this.keyboardDidHideSub = Keyboard.addListener('keyboardDidHide', this.handleKeyboardDidHide);
         BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this))
-        Orientation.lockToPortrait();
+        //Orientation.lockToPortrait();
     }
     componentWillUnmount() {
         this.fireRef.off()
@@ -361,7 +362,7 @@ export default class ChatRoom extends Component {
                 fullScreen: false,
                 hideStatusBar: false
             })
-            Orientation.lockToPortrait()
+            //Orientation.lockToPortrait()
             return true
         } else if (this.state.showPhoto) {
             this.setState({
@@ -431,13 +432,13 @@ export default class ChatRoom extends Component {
         })
     }
     hideVideo() {
-        Orientation.lockToPortrait();
+        //Orientation.lockToPortrait();
         this.setState({
             showVideo: false,
             hideStatusBar: false,
             fullScreen: false
         })
-        Orientation.lockToPortrait()
+        //Orientation.lockToPortrait()
     }
     showActions() {
         this.setState({
@@ -1046,8 +1047,8 @@ export default class ChatRoom extends Component {
             //        this.formHeight(this.state.initialMessaListHeightFactor),
             //textInputHeight: this.state.keyboardOpened ? this.formHeight(this.textInputFactor) :
             //    this.state.showEmojiInput ? this.formHeight(0.5) :
-             //       this.formHeight(this.state.inittialTextInputHeightFactor),
-           // textHeight: screenheight * 0.1,
+            //       this.formHeight(this.state.inittialTextInputHeightFactor),
+            // textHeight: screenheight * 0.1,
             //photoHeight: screenheight * 0.9,
         })
     }
@@ -1105,7 +1106,11 @@ export default class ChatRoom extends Component {
                     })
                 }
             } else if (index == 2) {
-                this.props.showContacts(message.received)
+                firebase.database().ref(`${this.props.firebaseRoom}/${message.key}/received`).once('value', snapshot => {
+                    //console.warn(snapshot)
+                    snapshot.val() !== null ? this.props.showContacts(snapshot.val().map(ele => { return { ...ele, phone: ele.phone.replace("+", "00") } })) :
+                        this.props.showContacts(message.received.map(ele => { return { ...ele, phone: ele.phone.replace("+", "00") } }))
+                })
             }
         })
     }
@@ -1125,12 +1130,12 @@ export default class ChatRoom extends Component {
     transparent = "rgba(50, 51, 53, 0.8)";
     render() {
         return (
-            <View>
+            <View style={{ height: "100%"}}>
                 <StatusBar hidden={this.state.hideStatusBar} barStyle="dark-content" backgroundColor="#FEFFDE"></StatusBar>
-                {!this.state.loaded ? <View><ImageBackground style={{ width: "100%", height: screenheight }}
+                {!this.state.loaded ? <View><ImageBackground style={{ width: "100%", height: "100%" }}
                     resizeMode={"contain"} source={require("../../../../assets/Bleashup.png")}></ImageBackground>
-                    <Spinner color="#FEFFDE" style={{ color: "#FEFFDE", position: 'absolute', marginTop: "96%", marginLeft: "39.5%", }} />
-                </View> : <View><View style={{ width: screenWidth, alignSelf: 'center', }}>
+                    <Spinner color="#FEFFDE" style={{ color: "#FEFFDE", position: 'absolute', marginTop: "91%", marginLeft: "39.5%", }} />
+                </View> : <View><View style={{ width: "100%", alignSelf: 'center', }}>
                     <View style={{ height: this.state.messageListHeight, marginBottom: "0.5%" }}>
                         <TouchableWithoutFeedback onPressIn={() => {
                             Keyboard.dismiss()

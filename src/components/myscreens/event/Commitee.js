@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import {View} from 'react-native';
-import { Text, Content } from 'native-base';
-import { ScrollView } from 'react-native-gesture-handler';
+import { View, TouchableWithoutFeedback } from 'react-native';
+import { Text, Content, Icon } from 'native-base';
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import firebase from 'react-native-firebase';
 import stores from '../../../stores';
 export default class Commitee extends Component {
@@ -31,20 +31,38 @@ componentDidMount() {
 }
 render() {
     return (
-        <View style={{ position: 'absolute',height:400,flex: 1,}}>
+        <View style={{ height:"100%",flex: 1,}}>
             <View style={{ borderTopRightRadius: 15, borderBottomRightRadius: 15,
-            backgroundColor: "#1FABAB", height: 30, width: "95%",}}>
-                <Text style={{ marginTop: "1.5%", alignSelf: 'center', }}>Commitees</Text>
+            backgroundColor: "#1FABAB", height: 35, width: "95%",display: 'flex',flexDirection: 'row',}}>
+                <Text style={{ marginTop: "1%",fontWeight: 'bold',marginLeft: "3%",fontSize: 20, alignSelf: 'center', width: "90%" }}>Commitees</Text>
+                <TouchableWithoutFeedback onPress={()=> this.props.showSelectableMembers()}><Icon style={{marginLeft: "-6%",marginTop: "1%", color:"#0A4E52"}} 
+                    name="pluscircle" type="AntDesign"></Icon></TouchableWithoutFeedback>
             </View>
-            <ScrollView contentContainerStyle={{ flexGrow: 1 }} style={{
-                    top: 0,
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    height:"95%"}}>
-    <View style={{height:"100%",margin: 5,}}>
+            <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+    <View style={{margin: 5,height:"100%"}}>
             <Text>Reading and writing data
                     This document covers the basics of retrieving data and how to order and filter Firebase data.
+                    
+                    Firebase data is retrieved by attaching an asynchronous 
+                    listener to a firebase.database.Reference. The listener is 
+                triggered once for the initial state of the data and again anytime the data changes.Reading and writing data
+                    This document covers the basics of retrieving data and how to order and filter Firebase data.
+                    
+                    Firebase data is retrieved by attaching an asynchronous 
+                    listener to a firebase.database.Reference. The listener is 
+                triggered once for the initial state of the data and again anytime the data changes.Reading and writing data
+                    This document covers the basics of retrieving data and how to order and filter Firebase data.
+                    
+                    Firebase data is retrieved by attaching an asynchronous 
+                    listener to a firebase.database.Reference. The listener is 
+triggered once for the initial state of the data and again anytime the data changes.Firebase data is retrieved by attaching an asynchronous 
+                    listener to a firebase.database.Reference. The listener is 
+                triggered once for the initial state of the data and again anytime the data changes.Reading and writing data
+                    This document covers the basics of retrieving data and how to order and filter Firebase data.
+                    
+                    Firebase data is retrieved by attaching an asynchronous 
+                    listener to a firebase.database.Reference. The listener is 
+triggered once for the initial state of the data and again anytime the data changes   This document covers the basics of retrieving data and how to order and filter Firebase data.
                     
                     Firebase data is retrieved by attaching an asynchronous 
                     listener to a firebase.database.Reference. The listener is 

@@ -19,7 +19,7 @@ import {
   Footer,
   Toast
 } from "native-base";
-import { without, concat, indexOf, forEach, find,reject } from "lodash"
+import { without, concat, indexOf, forEach, find, reject } from "lodash"
 import stores from "../../../../stores";
 import { MenuDivider } from 'react-native-material-menu'
 import ProfileView from "../../invitations/components/ProfileView";
@@ -39,7 +39,8 @@ export default class InvitationModal extends PureComponent {
       contacts: [],
       selectedContacts: [],
       checked: [],
-      isEmty :false,
+      check: false,
+      isEmty: false,
       masterModalOpened: false,
       masterStatus: false
     };
@@ -53,7 +54,7 @@ export default class InvitationModal extends PureComponent {
     this.setState({ refreshing: false })
   }
   invite(members, status) {
-    if(this.props.master){
+    if (this.props.master) {
       this.prepareInvites(members, status).then(invites => {
         Request.invite(invites, this.props.eventID).then((response => {
           this.setState({
@@ -71,7 +72,7 @@ export default class InvitationModal extends PureComponent {
           Toast.show({ type: "default", text: "could not connect to the server !", position: "bottom", buttonText: "OK" })
         })
       })
-    }else{
+    } else {
       Toast.show({ type: "default", text: "sorry! you cannont invite for event", position: "bottom", buttonText: "OK" })
     }
   }
@@ -79,11 +80,11 @@ export default class InvitationModal extends PureComponent {
     setTimeout(() => {
       stores.Contacts.getContacts(stores.Session.SessionStore.phone).then(
         contacts => {
-          if(contacts == "empty"){
+          if (contacts == "empty") {
             this.setState({
-              isEmpty:true
+              isEmpty: true
             })
-          }else{
+          } else {
             this.setState({ contacts: contacts });
           }
         }
@@ -121,17 +122,17 @@ export default class InvitationModal extends PureComponent {
       let result = [];
       let i = 0
       contacts.forEach(contact => {
-       this.translate(contact,status).then(invite => {
-        result = result.concat([invite])
-        invite = null
-        if (i == contacts.length - 1) resolve(result)
-        i++;
-       })
+        this.translate(contact, status).then(invite => {
+          result = result.concat([invite])
+          invite = null
+          if (i == contacts.length - 1) resolve(result)
+          i++;
+        })
       })
     });
   }
-  translate(contact,status){
-    return new Promise((resolve,reject)=>{
+  translate(contact, status) {
+    return new Promise((resolve, reject) => {
       let sample = request.Invite()
       let invite = sample
       invite.invitee = contact.phone
@@ -143,7 +144,7 @@ export default class InvitationModal extends PureComponent {
         host: stores.Session.SessionStore.host,
         period: request.Period(),
         event_id: this.props.eventID,
-        status: status,    
+        status: status,
       }
       resolve(invite)
     })
@@ -152,6 +153,7 @@ export default class InvitationModal extends PureComponent {
   render() {
     return (!this.state.masterModalOpened ?
       <Modal
+        backdropPressToClose={false}
         backdropOpacity={0.7}
         swipeToClose={false}
         backButtonClose={true}
@@ -159,9 +161,12 @@ export default class InvitationModal extends PureComponent {
         coverScreen={true}
         isOpen={this.props.isOpen}
         onClosed={() => this.props.close()}
+        onOpened={() => {
+        }}
         style={{
           height: this.state.inviteViaEmail ? "30%" : "100%",
-          borderRadius: 8,
+          borderBottomLeftRadius: 8,
+          borderBottomRightRadius: 8,
           backgroundColor: "#FEFFDE",
           width: "100%"
         }}
@@ -213,7 +218,7 @@ export default class InvitationModal extends PureComponent {
             <TouchableOpacity onPress={() => requestAnimationFrame(() => {
               this.props.close()
               this.setState({
-                checked :[]
+                checked: []
               })
             })
             }>
@@ -246,58 +251,60 @@ export default class InvitationModal extends PureComponent {
                 </View>
               </View>
             </Item>
-              <TouchableOpacity onPress={() => requestAnimationFrame(() => {
-                this.inviteWithEmail(this.state.checked, this.state.masterStatus)
-              })}>
-              <View style={{marginLeft: "40%"}}>
+            <TouchableOpacity onPress={() => requestAnimationFrame(() => {
+              this.inviteWithEmail(this.state.checked, this.state.masterStatus)
+            })}>
+              <View style={{ marginLeft: "40%" }}>
                 <Icon name="sc-telegram" style={{
                   color: "#1FABAB",
                   fontSize: 50,
                 }} type="EvilIcons"></Icon>
               </View>
-              </TouchableOpacity>
+            </TouchableOpacity>
           </View>
         ) : (
-           
-              <View >
-                {this.state.isEmpty ? <Text style={{
-                  margin: '10%',
-                }} note>{"sory! could not load contacts; there's no connction to the server"}</Text> :  <BleashupFlatList
-                  listKey={"contacts"}
-                  keyExtractor={this._keyExtractor}
-                  dataSource={this.state.contacts}
-                  firstIndex={0}
-                  renderPerBatch={7}
-                  initialRender={15}
-                  numberOfItems={this.state.contacts.length}
-                  renderItem={(item, index ) =>
-                    <View>
-                      <ProfileWithCheckBox
-                        index={indexOf(this.state.checked, item.phone)} phone={item.phone} check={(phone) =>
-                          this.setState({
-                            checked: concat(this.state.checked, [find(this.state.contacts,{phone:phone})])
-                          })
-                        }
-                        uncheck={(phone) =>
-                          this.setState({ checked: reject(this.state.checked, {phone:phone}) })
-                        }></ProfileWithCheckBox>
-                    </View>
-                  }
-                /* refreshControl={
-                   <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />
-                 }*/
-                ></BleashupFlatList>}
-              </View>
+
+            <View >
+              {this.state.isEmpty ? <Text style={{
+                margin: '10%',
+              }} note>{"sory! could not load contacts; there's no connction to the server"}</Text> : <BleashupFlatList
+                listKey={"contacts"}
+                keyExtractor={this._keyExtractor}
+                dataSource={this.state.contacts}
+                firstIndex={0}
+                renderPerBatch={7}
+                initialRender={15}
+                numberOfItems={this.state.contacts.length}
+                renderItem={(item, index) =>
+                  <View>
+                    <ProfileWithCheckBox checked={this.state.check}
+                      index={indexOf(this.state.checked, item.phone)} phone={item.phone} check={(phone) =>
+                        this.setState({
+                          checked: concat(this.state.checked, [find(this.state.contacts, { phone: phone })]),
+                          check: true
+                        })
+                      }
+                      uncheck={(phone) =>
+                        this.setState({ checked: reject(this.state.checked, { phone: phone }), check: false })
+                      }></ProfileWithCheckBox>
+                  </View>
+                }
+              /* refreshControl={
+                 <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />
+               }*/
+              ></BleashupFlatList>}
+            </View>
           )}
       </Modal> :
       <Modal
-        backdropOpacity={0.7} 
+        backdropPressToClose={false}
+        backdropOpacity={0.7}
         swipeToClose={false}
         backButtonClose={true}
         position={"top"}
         coverScreen={true}
         isOpen={this.state.MasterModalOpened}
-        onClosed={() => {this.setState({checked :[]}); this.setState({ masterModalOpened: false })}}
+        onClosed={() => { this.setState({ checked: [] }); this.setState({ masterModalOpened: false }) }}
         style={{
           height: "35%",
           borderRadius: 8,
@@ -308,25 +315,28 @@ export default class InvitationModal extends PureComponent {
         <View>
           <Header>
             <Left><Text style={{ fontWeight: "bold", color: "#FEFFDE" }}>Set MASTER</Text></Left>
-            <Right><TouchableOpacity onPress={() => requestAnimationFrame(() =>{
-              this.setState({ masterModalOpened: false, masterStatus: false, checked: [] })})}><Icon style={{
-                color: "#FEFFDE"
-              }} type="EvilIcons"
-                name="close"></Icon></TouchableOpacity></Right>
+            <Right><TouchableOpacity onPress={() => requestAnimationFrame(() => {
+              this.setState({ masterModalOpened: false, masterStatus: false, checked: [] })
+            })}><Icon style={{
+              color: "#FEFFDE"
+            }} type="EvilIcons"
+              name="close"></Icon></TouchableOpacity></Right>
           </Header>
           <View style={{
             display: "flex",
           }}>
             <View style={{ display: 'flex' }}>
-              <View style={{margin: "2%",}}>
-                <ProfileView phone={this.state.checked.length>=1?this.state.checked[0].phone:null}></ProfileView>
+              <View style={{ margin: "2%", }}>
+                <ProfileView phone={this.state.checked.length >= 1 ? this.state.checked[0].phone : null}></ProfileView>
               </View>
               <View><MenuDivider></MenuDivider></View>
               <View style={{
                 margin: '2%',
               }}>
-                  <TouchableOpacity onPress={() => requestAnimationFrame(() => this.setState({ masterStatus: 
-                    !this.state.masterStatus }))}>
+                <TouchableOpacity onPress={() => requestAnimationFrame(() => this.setState({
+                  masterStatus:
+                    !this.state.masterStatus
+                }))}>
                   <View style={{
                     display: "flex",
                     flexDirection: 'row',
@@ -337,7 +347,7 @@ export default class InvitationModal extends PureComponent {
                       MASTER
                       </Text>
                   </View>
-                  </TouchableOpacity>
+                </TouchableOpacity>
               </View>
             </View>
           </View>
@@ -345,18 +355,18 @@ export default class InvitationModal extends PureComponent {
             paddingTop: "1%",
             paddingLeft: "50%",
           }}>
-          <TouchableOpacity onPress={() => requestAnimationFrame(() => {
-            this.setState({
-              masterModalOpened:false
-            })
-            this.props.close()
+            <TouchableOpacity onPress={() => requestAnimationFrame(() => {
+              this.setState({
+                masterModalOpened: false
+              })
+              this.props.close()
               this.invite(this.state.checked, this.state.masterStatus)
             })}>
               <Icon name="sc-telegram" style={{
                 color: "#1FABAB",
                 fontSize: 50,
               }} type="EvilIcons"></Icon>
-            </TouchableOpacity>    
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>

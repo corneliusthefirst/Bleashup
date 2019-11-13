@@ -5,7 +5,7 @@ import PublicEvent from "./publicEvent.js"
 import { observer } from 'mobx-react';
 import BleashupScrollView from '../../../BleashupScrollView.js';
 import BleashupFlatList from '../../../BleashupFlatList';
-import Orientation from 'react-native-orientation-locker';
+//import Orientation from 'react-native-orientation-locker';
 import { ReactNativeZoomableView } from '@dudigital/react-native-zoomable-view';
 import Image from 'react-native-scalable-image';
 import { Icon } from 'native-base';
@@ -24,7 +24,7 @@ const screenheight = Math.round(Dimensions.get('window').height);
         })
     }
     componentWillMount() {
-        Orientation.unlockAllOrientations(); 
+        //Orientation.unlockAllOrientations(); 
         BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this))
     }
     handleBackButton() {
