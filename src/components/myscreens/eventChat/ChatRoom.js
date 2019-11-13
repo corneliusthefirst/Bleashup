@@ -148,6 +148,9 @@ export default class ChatRoom extends Component {
                     this.newMessages.length !== 0 ? this.newMessages.unshift(newMessage) : null
                     console.warn("saving new messagess")
                     this.room.addNewMessage(newMessage, newKey, newMessage.type, true, this.newMessages.length == 0).then(() => {
+                        this.setState({
+                            newMessage:true
+                        })
                     })
                 }
             }
