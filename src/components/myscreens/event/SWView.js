@@ -106,7 +106,7 @@ export default class SWView extends Component {
                                     setCurrentPage={(page) => this.props.setCurrentPage(page)}></RouteView>
                             </View>
                         </View>
-                        <View style={{ marginTop: "10%", height: 300}}>
+                        <View style={{ marginTop: "10%", height: "100%"}}>
                             <Commitee showSelectableMembers={() => this.props.showSelectableMembers()} event_id={this.props.event.id}></Commitee>
                         </View>
                     </View>
