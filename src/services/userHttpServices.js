@@ -20,6 +20,8 @@ class UserHttpServices {
                      * profile_ext : "some-url.com",
                      * status : "some string"
                      * } */
+                    data.name = decodeURIComponent(data.name)
+                    data.nickname = decodeURIComponent(data.nickname)
                     resolve(data)
                 }).catch((error)=>{
                     console.warn(error,"------");
@@ -46,9 +48,9 @@ class UserHttpServices {
     }
     //this method resolves ok if the account was successfull created
     //and "This is account is already taken if there account already exists"
-    register(phone, password) {
+    register(phone, password,name,birthDate) {
         return new Promise((resolve, reject) => {
-            fetch(`${this.domainame()}auth/register?phone=${phone}&password=${password}`, {
+            fetch(`${this.domainame()}auth/register?phone=${phone}&password=${password}&name=${name}&birth_date=${birthDate}`, {
                 method: "POST"
             }).then(result => {
                 result.json().then(data => {

@@ -8,6 +8,7 @@ import {
     reject,
     find,
     orderBy,
+    forEach,
     filter,
     findIndex
 } from 'lodash'
@@ -76,7 +77,7 @@ export default class Invitations {
             let result = [];
             let i = 0;
             if (this.invitations.length !== 0) {
-                this.invitations.forEach((invitation) => {
+                forEach(this.invitations,(invitation) => {
                     this.translateToinvitationData(invitation).then(data => {
                         result.push(data)
                         if (i === this.invitations.length - 1) {
@@ -91,8 +92,10 @@ export default class Invitations {
     addInvitations(Invitation) {
         return new Promise((resolve, reject) => {
             this.readFromStore().then(Invitations => {
-                if (Invitations)
-                    Invitations = uniqBy(Invitations.concat([Invitation]), "invitation_id")
+                if (Invitations.length !== 0){
+                    Invitations[Invitations.length] = Invitation
+                    Invitations = uniqBy(Invitations, "invitation_id")
+                }
                 else Invitations = [Invitation]
                 this.saveKey.data = Invitations
                 storage.save(this.saveKey).then(() => {
@@ -120,10 +123,10 @@ export default class Invitations {
                 let index = findIndex(Invitations, {
                     invitation_id: InvitationID
                 })
-                Invitation.sent = true
+                Invitations[index].sent = true
                 this.saveKey.data = Invitations
                 storage.save(this.saveKey).then(() => {
-                    this.setProperties(this.saveKey, true)
+                    this.setProperties(this.saveKey.data, true)
                     resolve()
                 })
             })
@@ -138,7 +141,7 @@ export default class Invitations {
                 Invitations[index].received = true
                 this.saveKey.data = Invitations
                 storage.save(this.saveKey).then(() => {
-                    this.setProperties(this.saveKey, true)
+                    this.setProperties(this.saveKey.data, true)
                     resolve()
                 })
             })
@@ -159,7 +162,7 @@ export default class Invitations {
             })
         })
     }
-    acceptInvitation(InvitationID) {
+    acceptInvitation(InvitationID,inform) {
         return new Promise((resolve, reject) => {
             this.readFromStore().then(Invitations => {
                 let index = findIndex(Invitations, {
@@ -168,7 +171,7 @@ export default class Invitations {
                 Invitations[index].accept = true
                 this.saveKey.data = Invitations
                 storage.save(this.saveKey).then(() => {
-                    this.setProperties(this.saveKey.data, true)
+                    if(inform)this.setProperties(this.saveKey.data, true)
                     resolve()
                 })
             })
@@ -183,7 +186,7 @@ export default class Invitations {
             })
         })
     }
-    denieInvitation(InvitationID) {
+    denieInvitation(InvitationID,inform) {
         return new Promise((resolve, reject) => {
             this.readFromStore().then(Invitations => {
                 let index = findIndex(Invitations, {
@@ -192,7 +195,7 @@ export default class Invitations {
                 Invitations[index].deny = true
                 this.saveKey.data = Invitations
                 storage.save(this.saveKey).then(() => {
-                    this.setProperties(this.saveKey.data, true)
+                   if(inform) this.setProperties(this.saveKey.data, true)
                     resolve()
                 })
             })

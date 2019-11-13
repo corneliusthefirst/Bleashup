@@ -2,7 +2,9 @@ import React, { Component } from "react";
 
 import imageCacheHoc from "react-native-image-cache-hoc";
 import ImageActivityIndicator from "./myscreens/currentevents/components/imageActivityIndicator";
-import { Image, activityIndicatorStyle } from "react-native";
+import { activityIndicatorStyle } from "react-native";
+import Image from 'react-native-scalable-image';
+
 import { Thumbnail } from "native-base"
 
 class CacheImages extends Component {
@@ -15,6 +17,7 @@ class CacheImages extends Component {
   componentDidMount() {
     this.setState({
       CacheableImages: imageCacheHoc(this.props.thumbnails ? Thumbnail : Image, {
+        validProtocols: ['http', 'https'],
         defaultPlaceholder: {
           component: ImageActivityIndicator,
           props: {

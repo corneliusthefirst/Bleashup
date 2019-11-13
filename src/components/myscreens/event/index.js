@@ -4,16 +4,18 @@ import {
   Text,
   View,
   ScrollView,
+  Dimensions,
   BackHandler,
   ToastAndroid
 } from "react-native";
 import {
-  Container,
   Header,
   Title,
   Icon,
   Tabs,
   Left,
+  Card,
+  CardItem,
   Tab,
   Button,
   ScrollableTab,
@@ -23,6 +25,7 @@ import {
   H1,
   H3,
   H2,
+  ListItem,
 } from "native-base";
 import ImageActivityIndicator from "../currentevents/components/imageActivityIndicator";
 import EventDatails from "../eventDetails";
@@ -35,15 +38,54 @@ import Contributions from "../contributions";
 import autobind from "autobind-decorator";
 import { TouchableHighlight, TouchableOpacity } from "react-native-gesture-handler";
 import UpdateStateIndicator from "../currentevents/components/updateStateIndicator";
+import BleashupFlatList from "../../BleashupFlatList";
+import SWView from './SWView';
+import SideMenu from 'react-native-side-menu';
+import ChangeLogs from "../changelogs";
+import ParticipantModal from "../../ParticipantModal";
+import ContactsModal from "../../ContactsModal";
+const screenWidth = Math.round(Dimensions.get('window').width);
 
+var swipeoutBtns = [
+  {
+    text: 'Button'
+  }
+]
 export default class Event extends Component {
   constructor(props) {
     super(props);
+    this.props.Event = this.props.navigation.getParam("Event");
+    const { initialPage } = this.props;
+    this.state = {
+      Event: this.props.navigation.getParam("Event")
+        ? this.props.navigation.getParam("Event")
+        : undefined,/*{ about: { title: "Event title" }, updated: true },*/
+      initalPage: this.props.navigation.getParam("tab")
+        ? this.props.navigation.getParam("tab")
+        : "EventDetails",
+      currentPage: this.props.navigation.getParam("tab") ? this.props.navigation.getParam("tab") : "EventDetails",
+      isOpen: this.props.navigation.getParam('isOpen') ? this.props.navigation.getParam('isOpen') : false,
+      participants:undefined
+    };
+    //this.props.Event = this.props.navigation.getParam("Event");
   }
   state = {
     Event: undefined /*{ about: { title: "Event title" }, updated: true }*/,
     activeTab: undefined,
     initalPage: "EventDetails",
+    currentPage: "Details",
+    enabled: false,
+    isOpen: false
+  }
+  swipoutSetting = {
+    close: true,
+    autoClose: true,
+    sensitivity: 100,
+    left: [
+      {
+        component: <SWView master={true} Event={{ public: true }}></SWView>
+      }
+    ],
   }
 
   TabsNames = [
@@ -93,21 +135,10 @@ export default class Event extends Component {
     color: "#FEFFDE",
     fontWeight: "bold"
   };
-  componentDidMount() {
-    this.props.Event = this.props.navigation.getParam("Event");
-    const { initialPage } = this.props;
-    this.setState({
-      Event: this.props.navigation.getParam("Event")
-        ? this.props.navigation.getParam("Event")
-        : undefined/*{ about: { title: "Event title" }, updated: true }*/,
-      initalPage: this.props.navigation.getParam("tab")
-        ? this.props.navigation.getParam("tab")
-        : "EventDetails"
-    });
-  }
   @autobind goToChangeLogs() {
     this.props.navigation.navigate("ChangeLogs", { ...this.props })
   }
+  currentWidth = screenWidth * 2 / 3
   blinkerSize = 35;
   changeLogIndicatorStyle = {
     margin: "-40%",
@@ -116,52 +147,93 @@ export default class Event extends Component {
   @autobind goToHome() {
     this.props.navigation.navigate("Home");
   }
-  render() {
-    return this.state.Event ? (
-      <Container>
-        <Header>
-          <Left>
-            <Button onPress={this.goToHome} transparent>
-              <Icon style={{ color: "#FEFFDE" }} name="close" type="EvilIcons" />
-            </Button>
-          </Left>
-          <Body>
-            <View>
-              <Text style={{ color: "#FEFFDE", fontWeight: "bold", fontSize: 15 }}>{this.state.Event.about.title}</Text>
-            </View>
-          </Body>
-          <Right>
-            <View style={{ margin: 10 }}>
-              {this.state.Event.updated ? <View style={this.changeLogIndicatorStyle} ><UpdateStateIndicator size={this.blinkerSize}
-              ></UpdateStateIndicator></View> : null}
-              <TouchableOpacity onPress={this.goToChangeLogs}>
-                <Icon style={{
-                  fontSize: 23,
-                  color: "#FEFFDE"
-                }} name="exclamation" type="EvilIcons">
-                </Icon>
-              </TouchableOpacity>
-            </View>
-            <Button transparent>
-              <Icon name="dots-three-vertical" type="Entypo" />
-            </Button>
-          </Right>
-        </Header>
-        <Tabs
-          renderTabBar={() => <ScrollableTab style={{
-            backgroundColor: "#1FABAB"
-          }} />}
-          tabBarUnderlineStyle={{ backgroundColor: "#FEFFDE" }}
-        >
+  isOpen = false
+  renderMenu() {
+    switch (this.state.currentPage) {
+      case "EventDetails":
+        return <EventDatails {...this.props}></EventDatails>
+      case "Reminds":
+        return <Remind {...this.prpos}></Remind>
+      case "Votes":
+        return <Votes {...this.props}></Votes>
+      case "Highlights":
+        return <Highlights {...this.props}></Highlights>
+      case "EventChat":
+        return <EventChat showMembers={(memebers) => {
+          console.warn(memebers)
+          this.setState({
+            showMembers:true,
+            participants:memebers
+          })
+        }} {...this.props} showContacts={(conctacts) => {
+          this.setState({
+            contactModalOpened:true,
+            contacts:conctacts
+          })
+        } }></EventChat>
+      case "Contributions":
+        return <Contributions {...this.props}></Contributions>
+      case "ChangeLogs":
+        return <ChangeLogs></ChangeLogs>
 
-          <Tab heading={<TabHeading >{this.TabHeadings[this.state.initalPage]}</TabHeading>}>
-            <Text>{this.TabsBody[this.Names[this.state.initalPage]]}</Text>
-          </Tab>
-          {this.dropInitialRoute(this.state.initalPage).map(name => {
-            return (<Tab activeTextStyle={{ color: "#FEFFDE" }} heading={<TabHeading>{this.TabHeadings[name.name]}</TabHeading>} >{this.TabsBody[this.Names[name.name]]}</Tab>)
-          })}
-        </Tabs>
-      </Container>) :
-      <ImageActivityIndicator />
+    }
+  }
+  componentWillMount() {
+    BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this))
+
+  }
+  handleBackButton() {
+    if (!this.isOpen) {
+      this.isOpen = true
+      this.setState({
+        isOpen: true,
+      })
+      return true
+    }
+  }
+  componentWillUnmount() {
+    BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton);
+
+  }
+  array = new Array(100)
+  _allowScroll(scrollEnabled) {
+    this.setState({ scrollEnabled: scrollEnabled })
+  }
+  showMembers() {
+    this.setState({
+      showMembers: true
+    })
+  }
+  render() {
+    return (<SideMenu autoClosing={true} onMove={(position) => {
+
+    }} bounceBackOnOverdraw={false} onChange={(position) => {
+      this.isOpen = position
+    }} isOpen={this.isOpen} openMenuOffset={this.currentWidth}
+      menu={<SWView showMembers={() => this.showMembers()} setCurrentPage={(page) => {
+        this.isOpen = false
+        this.setState({ currentPage: page })
+      }
+      } currentPage={this.state.currentPage} width={this.currentWidth}
+        event={this.props.navigation.getParam("Event")} master={true} Event={{ public: true }}></SWView>}>
+      <View style={{ height: "100%", backgroundColor: "#FEFFDE" }}>
+        {
+          this.renderMenu()
+        }
+        <ParticipantModal participants={this.state.participants} isOpen={this.state.showMembers} onClosed={() => {
+          this.setState({
+            showMembers: false,
+            participants:undefined
+          })
+        }} event_id={this.props.navigation.getParam("Event").id}></ParticipantModal>
+        <ContactsModal isOpen={this.state.contactModalOpened} onClosed={()=>{
+          this.setState({
+            contactModalOpened:false,
+            conctacts:[]
+          })
+        }} contacts={this.state.contacts}></ContactsModal>
+      </View>
+    </SideMenu>
+    );
   }
 }

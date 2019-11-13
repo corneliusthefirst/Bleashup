@@ -16,7 +16,8 @@ import globalState from "../../../stores/globalState"
 import { observer } from "mobx-react";
 import stores from '../../../stores';
 import BleashupScrollView from '../../BleashupScrollView';
-import CreateEvent from '../event/createEvent/CreateEvent';
+
+
 
 
 @observer
@@ -35,68 +36,43 @@ class ReceivedInvitations extends Component {
 
   componentDidMount() {
     setTimeout(() => {
-      stores.Invitations.readFromStore().then(invitations => {
-        this.setState({
-          loadingInvitations: false,
-          invitations: invitations
-        });
-      })
-    }, 12)
+      this.setState({
+        loadingInvitations: false
+      });
+    }, 5)
   }
 
 
 
 
 
-
-
-  _keyExtractor = (item, index) => item.invitation_id;
-
   render() {
-
     return this.state.loadingInvitations ? (
       <Spinner></Spinner>
     ) : (
       <Container style={{flex:1}}>
-        <BleashupScrollView
-          initialRender={4}
-          renderPerBatch={5}
-          firstIndex={0}
-          ref={"receivedlist"}
-          keyExtractor={this._keyExtractor}
-          dataSource={this.state.invitations}
-          renderItem={(item, index) => {
-            return (
-              <CardListItem {...this.props} item={item} key={index} parentCardList={this}>
-              </CardListItem>
-            );
-          }}
-        >
-        </BleashupScrollView>
-
-        <CreateEvent Parentprops={this.props}></CreateEvent>
+            <BleashupFlatList
+              initialRender={6}
+              renderPerBatch={1}
+              firstIndex={0}
+              numberOfItems={stores.Invitations.ReceivedInvitations.length}
+              keyExtractor={this._keyExtractor}
+              dataSource={stores.Invitations.ReceivedInvitations}
+              renderItem={(item, index) => {
+                return (
+                  <CardListItem item={item} {...this.props} index={index} parentCardList={this} key={index} >
+                  </CardListItem>
+                );
 
 
-      </Container>
- 
+              }}
+            >
+            </BleashupFlatList>
+
+        </Container>
       );
   }
-
 }
-
-
-export default ReceivedInvitations;
-
-
-
-
-
-
-
-
-
-
-
 
 
 

@@ -1,6 +1,7 @@
 import storage from "./Storage"
 import {
-    filter
+    filter,
+    uniqBy
 } from "lodash"
 export default class changelogs {
     changes = []
@@ -11,7 +12,8 @@ export default class changelogs {
     addChanges(Newchange) {
         return new Promise((resolve, reject) => {
             this.readFromStore().then(Changes => {
-                Changes = Changes.concat([Newchange])
+                if(Changes.length == 0) Changes = [Newchange]
+                else Changes = uniqBy(Changes.concat([Newchange]),"id")
                 this.saveKey.data = Changes
                 storage.save(this.saveKey).then(() => {
                     resolve()

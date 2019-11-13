@@ -1,0 +1,1192 @@
+#
+# There is insufficient memory for the Java Runtime Environment to continue.
+# Native memory allocation (mmap) failed to map 130023424 bytes for committing reserved memory.
+# Possible reasons:
+#   The system is out of physical RAM or swap space
+#   The process is running with CompressedOops enabled, and the Java Heap may be blocking the growth of the native heap
+# Possible solutions:
+#   Reduce memory load on the system
+#   Increase physical memory or swap space
+#   Check if swap backing store is full
+#   Decrease Java heap size (-Xmx/-Xms)
+#   Decrease number of Java threads
+#   Decrease Java thread stack sizes (-Xss)
+#   Set larger code cache with -XX:ReservedCodeCacheSize=
+#   JVM is running with Unscaled Compressed Oops mode in which the Java heap is
+#     placed in the first 4GB address space. The Java Heap base address is the
+#     maximum limit for the native heap growth. Please use -XX:HeapBaseMinAddress
+#     to set the Java Heap base and to place the Java Heap above 4GB virtual address.
+# This output file may be truncated or incomplete.
+#
+#  Out of Memory Error (os_linux.cpp:2757), pid=4268, tid=0x00007ffb9962f700
+#
+# JRE version: OpenJDK Runtime Environment (8.0_222-b10) (build 1.8.0_222-8u222-b10-1ubuntu1~18.04.1-b10)
+# Java VM: OpenJDK 64-Bit Server VM (25.222-b10 mixed mode linux-amd64 compressed oops)
+# Failed to write core dump. Core dumps have been disabled. To enable core dumping, try "ulimit -c unlimited" before starting Java again
+#
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x00007ffbd4140000):  VMThread [stack: 0x00007ffb99530000,0x00007ffb99630000] [id=4283]
+
+Stack: [0x00007ffb99530000,0x00007ffb99630000],  sp=0x00007ffb9962e3f0,  free space=1016k
+Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
+V  [libjvm.so+0xab8992]
+V  [libjvm.so+0x4dbfd7]
+V  [libjvm.so+0x8f34f6]
+V  [libjvm.so+0x8ea78c]
+V  [libjvm.so+0x5abcf4]
+V  [libjvm.so+0x5abd7e]
+V  [libjvm.so+0x5ae915]
+V  [libjvm.so+0x614156]
+V  [libjvm.so+0x61529e]
+V  [libjvm.so+0x6157a8]
+V  [libjvm.so+0x5879fa]
+V  [libjvm.so+0x591487]
+V  [libjvm.so+0xac02e1]
+V  [libjvm.so+0xabf1d6]
+V  [libjvm.so+0xabd4d5]
+V  [libjvm.so+0xabddad]
+V  [libjvm.so+0xabe1b8]
+V  [libjvm.so+0x8f0732]
+
+VM_Operation (0x00007ffb5ecca310): G1IncCollectionPause, mode: safepoint, requested by thread 0x00007ffb40001000
+
+
+---------------  P R O C E S S  ---------------
+
+Java Threads: ( => current thread )
+  0x00007ffb40136800 JavaThread "Timer-0" [_thread_blocked, id=4374, stack(0x00007ffb5cf52000,0x00007ffb5d053000)]
+  0x00007ffb400fe000 JavaThread "Bundle File Closer" daemon [_thread_blocked, id=4373, stack(0x00007ffb5d083000,0x00007ffb5d184000)]
+  0x00007ffb44129000 JavaThread "Worker-6" [_thread_blocked, id=4358, stack(0x00007ffb5d386000,0x00007ffb5d487000)]
+  0x00007ffbd4495800 JavaThread "pool-1-thread-1" [_thread_blocked, id=4353, stack(0x00007ffb5d687000,0x00007ffb5d788000)]
+  0x00007ffbd42a9800 JavaThread "pool-2-thread-1" [_thread_blocked, id=4346, stack(0x00007ffb5d98c000,0x00007ffb5da8d000)]
+  0x00007ffb40061800 JavaThread "Worker-5: Updating Maven Dependencies" [_thread_blocked, id=4342, stack(0x00007ffb5dce1000,0x00007ffb5dde2000)]
+  0x00007ffb4405e000 JavaThread "Worker-4" [_thread_blocked, id=4341, stack(0x00007ffb5dde2000,0x00007ffb5dee3000)]
+  0x00007ffb44001000 JavaThread "Worker-3" [_thread_blocked, id=4327, stack(0x00007ffb5e576000,0x00007ffb5e677000)]
+  0x00007ffb5446f800 JavaThread "Java indexing" daemon [_thread_blocked, id=4324, stack(0x00007ffb5e8ca000,0x00007ffb5e9cb000)]
+  0x00007ffb40001000 JavaThread "Worker-2" [_thread_blocked, id=4321, stack(0x00007ffb5ebcb000,0x00007ffb5eccc000)]
+  0x00007ffb4c001000 JavaThread "Worker-1: Initialize Workspace" [_thread_blocked, id=4320, stack(0x00007ffb5eecc000,0x00007ffb5efcd000)]
+  0x00007ffb542d1800 JavaThread "Worker-0: Refreshing workspace" [_thread_blocked, id=4317, stack(0x00007ffb5f2b8000,0x00007ffb5f3b9000)]
+  0x00007ffb5409d800 JavaThread "Worker-JM" [_thread_blocked, id=4312, stack(0x00007ffb5f5c4000,0x00007ffb5f6c5000)]
+  0x00007ffbd442e800 JavaThread "Start Level: Equinox Container: 546b69fb-5ace-4a80-b129-68cfc9bcc593" daemon [_thread_blocked, id=4311, stack(0x00007ffb5fad6000,0x00007ffb5fbd7000)]
+  0x00007ffbd442b800 JavaThread "Framework Event Dispatcher: Equinox Container: 546b69fb-5ace-4a80-b129-68cfc9bcc593" daemon [_thread_blocked, id=4310, stack(0x00007ffb9801c000,0x00007ffb9811d000)]
+  0x00007ffbd43e5800 JavaThread "Active Thread: Equinox Container: 546b69fb-5ace-4a80-b129-68cfc9bcc593" [_thread_blocked, id=4309, stack(0x00007ffb9811d000,0x00007ffb9821e000)]
+  0x00007ffbd418d800 JavaThread "Service Thread" daemon [_thread_blocked, id=4297, stack(0x00007ffb98358000,0x00007ffb98459000)]
+  0x00007ffbd418a800 JavaThread "C1 CompilerThread2" daemon [_thread_blocked, id=4296, stack(0x00007ffb9845a000,0x00007ffb9855a000)]
+  0x00007ffbd4188800 JavaThread "C2 CompilerThread1" daemon [_thread_blocked, id=4294, stack(0x00007ffb9855b000,0x00007ffb9865b000)]
+  0x00007ffbd4186800 JavaThread "C2 CompilerThread0" daemon [_thread_blocked, id=4293, stack(0x00007ffb9865c000,0x00007ffb9875c000)]
+  0x00007ffbd4184000 JavaThread "Signal Dispatcher" daemon [_thread_blocked, id=4291, stack(0x00007ffb9875c000,0x00007ffb9885d000)]
+  0x00007ffbd4182000 JavaThread "Surrogate Locker Thread (Concurrent GC)" daemon [_thread_blocked, id=4290, stack(0x00007ffb9885d000,0x00007ffb9895e000)]
+  0x00007ffbd414c000 JavaThread "Finalizer" daemon [_thread_blocked, id=4287, stack(0x00007ffb9932d000,0x00007ffb9942e000)]
+  0x00007ffbd4149800 JavaThread "Reference Handler" daemon [_thread_blocked, id=4285, stack(0x00007ffb9942e000,0x00007ffb9952f000)]
+  0x00007ffbd400c000 JavaThread "main" [_thread_blocked, id=4270, stack(0x00007ffbda883000,0x00007ffbda983000)]
+
+Other Threads:
+=>0x00007ffbd4140000 VMThread [stack: 0x00007ffb99530000,0x00007ffb99630000] [id=4283]
+  0x00007ffbd4190800 WatcherThread [stack: 0x00007ffb98258000,0x00007ffb98358000] [id=4299]
+
+VM state:at safepoint (normal execution)
+
+VM Mutex/Monitor currently owned by a thread:  ([mutex/lock_event])
+[0x00007ffbd4008b10] Threads_lock - owner thread: 0x00007ffbd4140000
+[0x00007ffbd4009010] Heap_lock - owner thread: 0x00007ffb40001000
+
+heap address: 0x00000000c0000000, size: 1024 MB, Compressed Oops mode: 32-bit
+Narrow klass base: 0x0000000000000000, Narrow klass shift: 3
+Compressed class space size: 1073741824 Address: 0x0000000100000000
+
+Heap:
+ garbage-first heap   total 253952K, used 43069K [0x00000000c0000000, 0x00000000c01007c0, 0x0000000100000000)
+  region size 1024K, 1 young (1024K), 1 survivors (1024K)
+ Metaspace       used 47154K, capacity 49706K, committed 49996K, reserved 1093632K
+  class space    used 5739K, capacity 6631K, committed 6732K, reserved 1048576K
+
+Heap Regions: (Y=young(eden), SU=young(survivor), HS=humongous(starts), HC=humongous(continues), CS=collection set, F=free, TS=gc time stamp, PTAMS=previous top-at-mark-start, NTAMS=next top-at-mark-start)
+AC   0  O    TS    13 PTAMS 0x00000000c0000000 NTAMS 0x00000000c0000000 space 1024K, 100% used [0x00000000c0000000, 0x00000000c0100000)
+AC   0  O    TS     0 PTAMS 0x00000000c0200000 NTAMS 0x00000000c0200000 space 1024K, 100% used [0x00000000c0100000, 0x00000000c0200000)
+AC   0  O    TS     0 PTAMS 0x00000000c0300000 NTAMS 0x00000000c0300000 space 1024K, 100% used [0x00000000c0200000, 0x00000000c0300000)
+AC   0  O    TS    13 PTAMS 0x00000000c0300000 NTAMS 0x00000000c0300000 space 1024K, 100% used [0x00000000c0300000, 0x00000000c0400000)
+AC   0  O    TS    15 PTAMS 0x00000000c0400000 NTAMS 0x00000000c0400000 space 1024K, 100% used [0x00000000c0400000, 0x00000000c0500000)
+AC   0  O    TS     0 PTAMS 0x00000000c0600000 NTAMS 0x00000000c0600000 space 1024K, 100% used [0x00000000c0500000, 0x00000000c0600000)
+AC   0  O    TS     0 PTAMS 0x00000000c0700000 NTAMS 0x00000000c0700000 space 1024K, 100% used [0x00000000c0600000, 0x00000000c0700000)
+AC   0  O    TS     0 PTAMS 0x00000000c0800000 NTAMS 0x00000000c0800000 space 1024K, 100% used [0x00000000c0700000, 0x00000000c0800000)
+AC   0  O    TS     0 PTAMS 0x00000000c0900000 NTAMS 0x00000000c0900000 space 1024K, 100% used [0x00000000c0800000, 0x00000000c0900000)
+AC   0  O    TS     0 PTAMS 0x00000000c0a00000 NTAMS 0x00000000c0a00000 space 1024K, 100% used [0x00000000c0900000, 0x00000000c0a00000)
+AC   0  O    TS     0 PTAMS 0x00000000c0b00000 NTAMS 0x00000000c0b00000 space 1024K, 100% used [0x00000000c0a00000, 0x00000000c0b00000)
+AC   0  O    TS     0 PTAMS 0x00000000c0c00000 NTAMS 0x00000000c0c00000 space 1024K, 100% used [0x00000000c0b00000, 0x00000000c0c00000)
+AC   0  O    TS     0 PTAMS 0x00000000c0d00000 NTAMS 0x00000000c0d00000 space 1024K, 100% used [0x00000000c0c00000, 0x00000000c0d00000)
+AC   0  O    TS    15 PTAMS 0x00000000c0d00000 NTAMS 0x00000000c0d00000 space 1024K, 100% used [0x00000000c0d00000, 0x00000000c0e00000)
+AC   0  O    TS     1 PTAMS 0x00000000c0e00000 NTAMS 0x00000000c0e00000 space 1024K, 100% used [0x00000000c0e00000, 0x00000000c0f00000)
+AC   0  O    TS     1 PTAMS 0x00000000c0f00000 NTAMS 0x00000000c0f00000 space 1024K, 100% used [0x00000000c0f00000, 0x00000000c1000000)
+AC   0  O    TS     3 PTAMS 0x00000000c1000000 NTAMS 0x00000000c1000000 space 1024K, 100% used [0x00000000c1000000, 0x00000000c1100000)
+AC   0  O    TS     3 PTAMS 0x00000000c1100000 NTAMS 0x00000000c1100000 space 1024K, 100% used [0x00000000c1100000, 0x00000000c1200000)
+AC   0  O    TS     0 PTAMS 0x00000000c1300000 NTAMS 0x00000000c1300000 space 1024K, 100% used [0x00000000c1200000, 0x00000000c1300000)
+AC   0  O    TS     0 PTAMS 0x00000000c1400000 NTAMS 0x00000000c1400000 space 1024K, 100% used [0x00000000c1300000, 0x00000000c1400000)
+AC   0  O    TS     0 PTAMS 0x00000000c1500000 NTAMS 0x00000000c1500000 space 1024K, 100% used [0x00000000c1400000, 0x00000000c1500000)
+AC   0  O    TS    23 PTAMS 0x00000000c1500000 NTAMS 0x00000000c1500000 space 1024K, 100% used [0x00000000c1500000, 0x00000000c1600000)
+AC   0  O    TS     3 PTAMS 0x00000000c1600000 NTAMS 0x00000000c1600000 space 1024K, 100% used [0x00000000c1600000, 0x00000000c1700000)
+AC   0  O    TS     3 PTAMS 0x00000000c1700000 NTAMS 0x00000000c1700000 space 1024K, 100% used [0x00000000c1700000, 0x00000000c1800000)
+AC   0  O    TS     3 PTAMS 0x00000000c1800000 NTAMS 0x00000000c1800000 space 1024K, 100% used [0x00000000c1800000, 0x00000000c1900000)
+AC   0  O    TS     3 PTAMS 0x00000000c1900000 NTAMS 0x00000000c1900000 space 1024K, 100% used [0x00000000c1900000, 0x00000000c1a00000)
+AC   0  O    TS     0 PTAMS 0x00000000c1b00000 NTAMS 0x00000000c1b00000 space 1024K, 100% used [0x00000000c1a00000, 0x00000000c1b00000)
+AC   0  O    TS     0 PTAMS 0x00000000c1c00000 NTAMS 0x00000000c1c00000 space 1024K, 100% used [0x00000000c1b00000, 0x00000000c1c00000)
+AC   0  O    TS     0 PTAMS 0x00000000c1d00000 NTAMS 0x00000000c1d00000 space 1024K, 100% used [0x00000000c1c00000, 0x00000000c1d00000)
+AC   0  O    TS     0 PTAMS 0x00000000c1e00000 NTAMS 0x00000000c1e00000 space 1024K, 100% used [0x00000000c1d00000, 0x00000000c1e00000)
+AC   0  O    TS     0 PTAMS 0x00000000c1f00000 NTAMS 0x00000000c1f00000 space 1024K, 100% used [0x00000000c1e00000, 0x00000000c1f00000)
+AC   0  O    TS     0 PTAMS 0x00000000c2000000 NTAMS 0x00000000c2000000 space 1024K, 100% used [0x00000000c1f00000, 0x00000000c2000000)
+AC   0  O    TS     0 PTAMS 0x00000000c2100000 NTAMS 0x00000000c2100000 space 1024K, 100% used [0x00000000c2000000, 0x00000000c2100000)
+AC   0  O    TS     0 PTAMS 0x00000000c2200000 NTAMS 0x00000000c2200000 space 1024K, 100% used [0x00000000c2100000, 0x00000000c2200000)
+AC   0  O    TS     0 PTAMS 0x00000000c2300000 NTAMS 0x00000000c2300000 space 1024K, 100% used [0x00000000c2200000, 0x00000000c2300000)
+AC   0  O    TS    13 PTAMS 0x00000000c2300000 NTAMS 0x00000000c2300000 space 1024K, 100% used [0x00000000c2300000, 0x00000000c2400000)
+AC   0  O    TS    23 PTAMS 0x00000000c2400000 NTAMS 0x00000000c2400000 space 1024K, 100% used [0x00000000c2400000, 0x00000000c2500000)
+AC   0  O    TS    23 PTAMS 0x00000000c2500000 NTAMS 0x00000000c2500000 space 1024K, 100% used [0x00000000c2500000, 0x00000000c2600000)
+AC   0  O    TS    23 PTAMS 0x00000000c2600000 NTAMS 0x00000000c2600000 space 1024K, 100% used [0x00000000c2600000, 0x00000000c2700000)
+AC   0  O    TS    23 PTAMS 0x00000000c2700000 NTAMS 0x00000000c2700000 space 1024K, 100% used [0x00000000c2700000, 0x00000000c2800000)
+AC   0  O    TS    23 PTAMS 0x00000000c2800000 NTAMS 0x00000000c2800000 space 1024K, 100% used [0x00000000c2800000, 0x00000000c2900000)
+AC   0  O    TS    23 PTAMS 0x00000000c2900000 NTAMS 0x00000000c2900000 space 1024K,   5% used [0x00000000c2900000, 0x00000000c2a00000)
+AC   0  F    TS     0 PTAMS 0x00000000c2a00000 NTAMS 0x00000000c2a00000 space 1024K,   0% used [0x00000000c2a00000, 0x00000000c2b00000)
+AC   0  F    TS     0 PTAMS 0x00000000c2b00000 NTAMS 0x00000000c2b00000 space 1024K,   0% used [0x00000000c2b00000, 0x00000000c2c00000)
+AC   0  F    TS     1 PTAMS 0x00000000c2c00000 NTAMS 0x00000000c2c00000 space 1024K,   0% used [0x00000000c2c00000, 0x00000000c2d00000)
+AC   0  F    TS     1 PTAMS 0x00000000c2d00000 NTAMS 0x00000000c2d00000 space 1024K,   0% used [0x00000000c2d00000, 0x00000000c2e00000)
+AC   0  F    TS    21 PTAMS 0x00000000c2e00000 NTAMS 0x00000000c2e00000 space 1024K,   0% used [0x00000000c2e00000, 0x00000000c2f00000)
+AC   0  F    TS    21 PTAMS 0x00000000c2f00000 NTAMS 0x00000000c2f00000 space 1024K,   0% used [0x00000000c2f00000, 0x00000000c3000000)
+AC   0  F    TS    21 PTAMS 0x00000000c3000000 NTAMS 0x00000000c3000000 space 1024K,   0% used [0x00000000c3000000, 0x00000000c3100000)
+AC   0  F    TS    21 PTAMS 0x00000000c3100000 NTAMS 0x00000000c3100000 space 1024K,   0% used [0x00000000c3100000, 0x00000000c3200000)
+AC   0  F    TS    19 PTAMS 0x00000000c3200000 NTAMS 0x00000000c3200000 space 1024K,   0% used [0x00000000c3200000, 0x00000000c3300000)
+AC   0  F    TS    19 PTAMS 0x00000000c3300000 NTAMS 0x00000000c3300000 space 1024K,   0% used [0x00000000c3300000, 0x00000000c3400000)
+AC   0  F    TS    21 PTAMS 0x00000000c3400000 NTAMS 0x00000000c3400000 space 1024K,   0% used [0x00000000c3400000, 0x00000000c3500000)
+AC   0  F    TS    21 PTAMS 0x00000000c3500000 NTAMS 0x00000000c3500000 space 1024K,   0% used [0x00000000c3500000, 0x00000000c3600000)
+AC   0  F    TS    19 PTAMS 0x00000000c3600000 NTAMS 0x00000000c3600000 space 1024K,   0% used [0x00000000c3600000, 0x00000000c3700000)
+AC   0  F    TS    19 PTAMS 0x00000000c3700000 NTAMS 0x00000000c3700000 space 1024K,   0% used [0x00000000c3700000, 0x00000000c3800000)
+AC   0  F    TS    21 PTAMS 0x00000000c3800000 NTAMS 0x00000000c3800000 space 1024K,   0% used [0x00000000c3800000, 0x00000000c3900000)
+AC   0  F    TS    15 PTAMS 0x00000000c3900000 NTAMS 0x00000000c3900000 space 1024K,   0% used [0x00000000c3900000, 0x00000000c3a00000)
+AC   0  F    TS    15 PTAMS 0x00000000c3a00000 NTAMS 0x00000000c3a00000 space 1024K,   0% used [0x00000000c3a00000, 0x00000000c3b00000)
+AC   0  F    TS    15 PTAMS 0x00000000c3b00000 NTAMS 0x00000000c3b00000 space 1024K,   0% used [0x00000000c3b00000, 0x00000000c3c00000)
+AC   0  F    TS    15 PTAMS 0x00000000c3c00000 NTAMS 0x00000000c3c00000 space 1024K,   0% used [0x00000000c3c00000, 0x00000000c3d00000)
+AC   0  F    TS    15 PTAMS 0x00000000c3d00000 NTAMS 0x00000000c3d00000 space 1024K,   0% used [0x00000000c3d00000, 0x00000000c3e00000)
+AC   0  F    TS    17 PTAMS 0x00000000c3e00000 NTAMS 0x00000000c3e00000 space 1024K,   0% used [0x00000000c3e00000, 0x00000000c3f00000)
+AC   0  F    TS    17 PTAMS 0x00000000c3f00000 NTAMS 0x00000000c3f00000 space 1024K,   0% used [0x00000000c3f00000, 0x00000000c4000000)
+AC   0  F    TS    17 PTAMS 0x00000000c4000000 NTAMS 0x00000000c4000000 space 1024K,   0% used [0x00000000c4000000, 0x00000000c4100000)
+AC   0  F    TS     0 PTAMS 0x00000000c4100000 NTAMS 0x00000000c4100000 space 1024K,   0% used [0x00000000c4100000, 0x00000000c4200000)
+AC   0  F    TS    13 PTAMS 0x00000000c4200000 NTAMS 0x00000000c4200000 space 1024K,   0% used [0x00000000c4200000, 0x00000000c4300000)
+AC   0  F    TS    13 PTAMS 0x00000000c4300000 NTAMS 0x00000000c4300000 space 1024K,   0% used [0x00000000c4300000, 0x00000000c4400000)
+AC   0  F    TS    13 PTAMS 0x00000000c4400000 NTAMS 0x00000000c4400000 space 1024K,   0% used [0x00000000c4400000, 0x00000000c4500000)
+AC   0  F    TS    13 PTAMS 0x00000000c4500000 NTAMS 0x00000000c4500000 space 1024K,   0% used [0x00000000c4500000, 0x00000000c4600000)
+AC   0  F    TS    13 PTAMS 0x00000000c4600000 NTAMS 0x00000000c4600000 space 1024K,   0% used [0x00000000c4600000, 0x00000000c4700000)
+AC   0  F    TS    13 PTAMS 0x00000000c4700000 NTAMS 0x00000000c4700000 space 1024K,   0% used [0x00000000c4700000, 0x00000000c4800000)
+AC   0  F    TS    13 PTAMS 0x00000000c4800000 NTAMS 0x00000000c4800000 space 1024K,   0% used [0x00000000c4800000, 0x00000000c4900000)
+AC   0  F    TS     0 PTAMS 0x00000000c4900000 NTAMS 0x00000000c4900000 space 1024K,   0% used [0x00000000c4900000, 0x00000000c4a00000)
+AC   0  F    TS     0 PTAMS 0x00000000c4a00000 NTAMS 0x00000000c4a00000 space 1024K,   0% used [0x00000000c4a00000, 0x00000000c4b00000)
+AC   0  F    TS     0 PTAMS 0x00000000c4b00000 NTAMS 0x00000000c4b00000 space 1024K,   0% used [0x00000000c4b00000, 0x00000000c4c00000)
+AC   0  F    TS     0 PTAMS 0x00000000c4c00000 NTAMS 0x00000000c4c00000 space 1024K,   0% used [0x00000000c4c00000, 0x00000000c4d00000)
+AC   0  F    TS     0 PTAMS 0x00000000c4d00000 NTAMS 0x00000000c4d00000 space 1024K,   0% used [0x00000000c4d00000, 0x00000000c4e00000)
+AC   0  F    TS     0 PTAMS 0x00000000c4e00000 NTAMS 0x00000000c4e00000 space 1024K,   0% used [0x00000000c4e00000, 0x00000000c4f00000)
+AC   0  F    TS    11 PTAMS 0x00000000c4f00000 NTAMS 0x00000000c4f00000 space 1024K,   0% used [0x00000000c4f00000, 0x00000000c5000000)
+AC   0  F    TS    11 PTAMS 0x00000000c5000000 NTAMS 0x00000000c5000000 space 1024K,   0% used [0x00000000c5000000, 0x00000000c5100000)
+AC   0  F    TS    11 PTAMS 0x00000000c5100000 NTAMS 0x00000000c5100000 space 1024K,   0% used [0x00000000c5100000, 0x00000000c5200000)
+AC   0  F    TS    11 PTAMS 0x00000000c5200000 NTAMS 0x00000000c5200000 space 1024K,   0% used [0x00000000c5200000, 0x00000000c5300000)
+AC   0  F    TS    11 PTAMS 0x00000000c5300000 NTAMS 0x00000000c5300000 space 1024K,   0% used [0x00000000c5300000, 0x00000000c5400000)
+AC   0  F    TS     0 PTAMS 0x00000000c5400000 NTAMS 0x00000000c5400000 space 1024K,   0% used [0x00000000c5400000, 0x00000000c5500000)
+AC   0  F    TS     0 PTAMS 0x00000000c5500000 NTAMS 0x00000000c5500000 space 1024K,   0% used [0x00000000c5500000, 0x00000000c5600000)
+AC   0  F    TS     0 PTAMS 0x00000000c5600000 NTAMS 0x00000000c5600000 space 1024K,   0% used [0x00000000c5600000, 0x00000000c5700000)
+AC   0  F    TS     0 PTAMS 0x00000000c5700000 NTAMS 0x00000000c5700000 space 1024K,   0% used [0x00000000c5700000, 0x00000000c5800000)
+AC   0  F    TS     0 PTAMS 0x00000000c5800000 NTAMS 0x00000000c5800000 space 1024K,   0% used [0x00000000c5800000, 0x00000000c5900000)
+AC   0  F    TS     0 PTAMS 0x00000000c5900000 NTAMS 0x00000000c5900000 space 1024K,   0% used [0x00000000c5900000, 0x00000000c5a00000)
+AC   0  F    TS     0 PTAMS 0x00000000c5a00000 NTAMS 0x00000000c5a00000 space 1024K,   0% used [0x00000000c5a00000, 0x00000000c5b00000)
+AC   0  F    TS     0 PTAMS 0x00000000c5b00000 NTAMS 0x00000000c5b00000 space 1024K,   0% used [0x00000000c5b00000, 0x00000000c5c00000)
+AC   0  F    TS     9 PTAMS 0x00000000c5c00000 NTAMS 0x00000000c5c00000 space 1024K,   0% used [0x00000000c5c00000, 0x00000000c5d00000)
+AC   0  F    TS     0 PTAMS 0x00000000c5d00000 NTAMS 0x00000000c5d00000 space 1024K,   0% used [0x00000000c5d00000, 0x00000000c5e00000)
+AC   0  F    TS     0 PTAMS 0x00000000c5e00000 NTAMS 0x00000000c5e00000 space 1024K,   0% used [0x00000000c5e00000, 0x00000000c5f00000)
+AC   0  F    TS     0 PTAMS 0x00000000c5f00000 NTAMS 0x00000000c5f00000 space 1024K,   0% used [0x00000000c5f00000, 0x00000000c6000000)
+AC   0  F    TS     0 PTAMS 0x00000000c6000000 NTAMS 0x00000000c6000000 space 1024K,   0% used [0x00000000c6000000, 0x00000000c6100000)
+AC   0  F    TS     0 PTAMS 0x00000000c6100000 NTAMS 0x00000000c6100000 space 1024K,   0% used [0x00000000c6100000, 0x00000000c6200000)
+AC   0  F    TS     0 PTAMS 0x00000000c6200000 NTAMS 0x00000000c6200000 space 1024K,   0% used [0x00000000c6200000, 0x00000000c6300000)
+AC   0  F    TS     0 PTAMS 0x00000000c6300000 NTAMS 0x00000000c6300000 space 1024K,   0% used [0x00000000c6300000, 0x00000000c6400000)
+AC   0  F    TS     7 PTAMS 0x00000000c6400000 NTAMS 0x00000000c6400000 space 1024K,   0% used [0x00000000c6400000, 0x00000000c6500000)
+AC   0  F    TS     0 PTAMS 0x00000000c6500000 NTAMS 0x00000000c6500000 space 1024K,   0% used [0x00000000c6500000, 0x00000000c6600000)
+AC   0  F    TS     0 PTAMS 0x00000000c6600000 NTAMS 0x00000000c6600000 space 1024K,   0% used [0x00000000c6600000, 0x00000000c6700000)
+AC   0  F    TS     0 PTAMS 0x00000000c6700000 NTAMS 0x00000000c6700000 space 1024K,   0% used [0x00000000c6700000, 0x00000000c6800000)
+AC   0  F    TS     0 PTAMS 0x00000000c6800000 NTAMS 0x00000000c6800000 space 1024K,   0% used [0x00000000c6800000, 0x00000000c6900000)
+AC   0  F    TS     5 PTAMS 0x00000000c6900000 NTAMS 0x00000000c6900000 space 1024K,   0% used [0x00000000c6900000, 0x00000000c6a00000)
+AC   0  F    TS     5 PTAMS 0x00000000c6a00000 NTAMS 0x00000000c6a00000 space 1024K,   0% used [0x00000000c6a00000, 0x00000000c6b00000)
+AC   0  F    TS     0 PTAMS 0x00000000c6b00000 NTAMS 0x00000000c6b00000 space 1024K,   0% used [0x00000000c6b00000, 0x00000000c6c00000)
+AC   0  F    TS     0 PTAMS 0x00000000c6c00000 NTAMS 0x00000000c6c00000 space 1024K,   0% used [0x00000000c6c00000, 0x00000000c6d00000)
+AC   0  F    TS     0 PTAMS 0x00000000c6d00000 NTAMS 0x00000000c6d00000 space 1024K,   0% used [0x00000000c6d00000, 0x00000000c6e00000)
+AC   0  F    TS     0 PTAMS 0x00000000c6e00000 NTAMS 0x00000000c6e00000 space 1024K,   0% used [0x00000000c6e00000, 0x00000000c6f00000)
+AC   0  F    TS     0 PTAMS 0x00000000c6f00000 NTAMS 0x00000000c6f00000 space 1024K,   0% used [0x00000000c6f00000, 0x00000000c7000000)
+AC   0  F    TS     0 PTAMS 0x00000000c7000000 NTAMS 0x00000000c7000000 space 1024K,   0% used [0x00000000c7000000, 0x00000000c7100000)
+AC   0  F    TS     0 PTAMS 0x00000000c7100000 NTAMS 0x00000000c7100000 space 1024K,   0% used [0x00000000c7100000, 0x00000000c7200000)
+AC   0  F    TS     0 PTAMS 0x00000000c7200000 NTAMS 0x00000000c7200000 space 1024K,   0% used [0x00000000c7200000, 0x00000000c7300000)
+AC   0  F    TS     0 PTAMS 0x00000000c7300000 NTAMS 0x00000000c7300000 space 1024K,   0% used [0x00000000c7300000, 0x00000000c7400000)
+AC   0  F    TS     0 PTAMS 0x00000000c7400000 NTAMS 0x00000000c7400000 space 1024K,   0% used [0x00000000c7400000, 0x00000000c7500000)
+AC   0  F    TS     0 PTAMS 0x00000000c7500000 NTAMS 0x00000000c7500000 space 1024K,   0% used [0x00000000c7500000, 0x00000000c7600000)
+AC   0  F    TS     0 PTAMS 0x00000000c7600000 NTAMS 0x00000000c7600000 space 1024K,   0% used [0x00000000c7600000, 0x00000000c7700000)
+AC   0  F    TS     0 PTAMS 0x00000000c7700000 NTAMS 0x00000000c7700000 space 1024K,   0% used [0x00000000c7700000, 0x00000000c7800000)
+AC   0  F    TS     0 PTAMS 0x00000000c7800000 NTAMS 0x00000000c7800000 space 1024K,   0% used [0x00000000c7800000, 0x00000000c7900000)
+AC   0  F    TS     0 PTAMS 0x00000000c7900000 NTAMS 0x00000000c7900000 space 1024K,   0% used [0x00000000c7900000, 0x00000000c7a00000)
+AC   0  S CS TS    23 PTAMS 0x00000000c7a00000 NTAMS 0x00000000c7a00000 space 1024K, 100% used [0x00000000c7a00000, 0x00000000c7b00000)
+AC   0  F    TS     0 PTAMS 0x00000000c7b00000 NTAMS 0x00000000c7b00000 space 1024K,   0% used [0x00000000c7b00000, 0x00000000c7c00000)
+
+Card table byte_map: [0x00007ffbc2aaa000,0x00007ffbc2caa000] byte_map_base: 0x00007ffbc24aa000
+
+Marking Bits (Prev, Next): (CMBitMap*) 0x00007ffbd4040ce0, (CMBitMap*) 0x00007ffbd4040c88
+ Prev Bits: [0x00007ffbc08aa000, 0x00007ffbc18aa000)
+ Next Bits: [0x00007ffbc18aa000, 0x00007ffbc28aa000)
+
+Polling page: 0x00007ffbda99f000
+
+CodeCache: size=245760Kb used=16152Kb max_used=16167Kb free=229607Kb
+ bounds [0x00007ffbc4177000, 0x00007ffbc5167000, 0x00007ffbd3177000]
+ total_blobs=5068 nmethods=4543 adapters=437
+ compilation: enabled
+
+Compilation events (10 events):
+Event: 45.233 Thread 0x00007ffbd418a800 nmethod 5379 0x00007ffbc5124ed0 code [0x00007ffbc5125040, 0x00007ffbc5125288]
+Event: 45.263 Thread 0x00007ffbd4186800 nmethod 5377 0x00007ffbc514f090 code [0x00007ffbc514f680, 0x00007ffbc5152638]
+Event: 45.263 Thread 0x00007ffbd4186800 5381       4       org.eclipse.core.runtime.Path::segment (18 bytes)
+Event: 45.263 Thread 0x00007ffbd4186800 nmethod 5381 0x00007ffbc511a250 code [0x00007ffbc511a3a0, 0x00007ffbc511a438]
+Event: 45.264 Thread 0x00007ffbd4186800 5380       4       org.eclipse.core.runtime.SubMonitor::worked (22 bytes)
+Event: 45.281 Thread 0x00007ffbd4186800 nmethod 5380 0x00007ffbc511cad0 code [0x00007ffbc511cc80, 0x00007ffbc511d108]
+Event: 45.281 Thread 0x00007ffbd4186800 5378       4       sun.nio.fs.UnixFileAttributes::isSymbolicLink (18 bytes)
+Event: 45.281 Thread 0x00007ffbd4186800 nmethod 5378 0x00007ffbc4436bd0 code [0x00007ffbc4436d20, 0x00007ffbc4436db8]
+Event: 45.297 Thread 0x00007ffbd4188800 nmethod 5376 0x00007ffbc5156b90 code [0x00007ffbc5157180, 0x00007ffbc5159f78]
+Event: 75.731 Thread 0x00007ffbd418a800 5382       1       org.eclipse.buildship.core.internal.util.progress.RateLimitingProgressMonitor::access$000 (5 bytes)
+
+GC Heap History (10 events):
+Event: 21.924 GC heap after
+Heap after GC invocations=18 (full 0):
+ garbage-first heap   total 126976K, used 41356K [0x00000000c0000000, 0x00000000c01003e0, 0x0000000100000000)
+  region size 1024K, 7 young (7168K), 7 survivors (7168K)
+ Metaspace       used 43106K, capacity 45382K, committed 45516K, reserved 1089536K
+  class space    used 4992K, capacity 5807K, committed 5836K, reserved 1048576K
+}
+Event: 31.763 GC heap before
+{Heap before GC invocations=18 (full 0):
+ garbage-first heap   total 126976K, used 97676K [0x00000000c0000000, 0x00000000c01003e0, 0x0000000100000000)
+  region size 1024K, 62 young (63488K), 7 survivors (7168K)
+ Metaspace       used 46145K, capacity 48578K, committed 48716K, reserved 1091584K
+  class space    used 5596K, capacity 6425K, committed 6476K, reserved 1048576K
+Event: 31.798 GC heap after
+Heap after GC invocations=19 (full 0):
+ garbage-first heap   total 126976K, used 44462K [0x00000000c0000000, 0x00000000c01003e0, 0x0000000100000000)
+  region size 1024K, 8 young (8192K), 8 survivors (8192K)
+ Metaspace       used 46145K, capacity 48578K, committed 48716K, reserved 1091584K
+  class space    used 5596K, capacity 6425K, committed 6476K, reserved 1048576K
+}
+Event: 33.883 GC heap before
+{Heap before GC invocations=19 (full 0):
+ garbage-first heap   total 126976K, used 104878K [0x00000000c0000000, 0x00000000c01003e0, 0x0000000100000000)
+  region size 1024K, 67 young (68608K), 8 survivors (8192K)
+ Metaspace       used 46194K, capacity 48642K, committed 48716K, reserved 1091584K
+  class space    used 5602K, capacity 6425K, committed 6476K, reserved 1048576K
+Event: 33.896 GC heap after
+Heap after GC invocations=20 (full 0):
+ garbage-first heap   total 126976K, used 41389K [0x00000000c0000000, 0x00000000c01003e0, 0x0000000100000000)
+  region size 1024K, 5 young (5120K), 5 survivors (5120K)
+ Metaspace       used 46194K, capacity 48642K, committed 48716K, reserved 1091584K
+  class space    used 5602K, capacity 6425K, committed 6476K, reserved 1048576K
+}
+Event: 35.508 GC heap before
+{Heap before GC invocations=20 (full 0):
+ garbage-first heap   total 126976K, used 107949K [0x00000000c0000000, 0x00000000c01003e0, 0x0000000100000000)
+  region size 1024K, 70 young (71680K), 5 survivors (5120K)
+ Metaspace       used 46195K, capacity 48642K, committed 48716K, reserved 1091584K
+  class space    used 5602K, capacity 6425K, committed 6476K, reserved 1048576K
+Event: 35.549 GC heap after
+Heap after GC invocations=21 (full 0):
+ garbage-first heap   total 126976K, used 39853K [0x00000000c0000000, 0x00000000c01003e0, 0x0000000100000000)
+  region size 1024K, 4 young (4096K), 4 survivors (4096K)
+ Metaspace       used 46195K, capacity 48642K, committed 48716K, reserved 1091584K
+  class space    used 5602K, capacity 6425K, committed 6476K, reserved 1048576K
+}
+Event: 45.730 GC heap before
+{Heap before GC invocations=21 (full 0):
+ garbage-first heap   total 126976K, used 108461K [0x00000000c0000000, 0x00000000c01003e0, 0x0000000100000000)
+  region size 1024K, 71 young (72704K), 4 survivors (4096K)
+ Metaspace       used 47154K, capacity 49706K, committed 49996K, reserved 1093632K
+  class space    used 5739K, capacity 6631K, committed 6732K, reserved 1048576K
+Event: 51.835 GC heap after
+Heap after GC invocations=22 (full 0):
+ garbage-first heap   total 126976K, used 43437K [0x00000000c0000000, 0x00000000c01003e0, 0x0000000100000000)
+  region size 1024K, 7 young (7168K), 7 survivors (7168K)
+ Metaspace       used 47154K, capacity 49706K, committed 49996K, reserved 1093632K
+  class space    used 5739K, capacity 6631K, committed 6732K, reserved 1048576K
+}
+Event: 76.634 GC heap before
+{Heap before GC invocations=22 (full 0):
+ garbage-first heap   total 126976K, used 44461K [0x00000000c0000000, 0x00000000c01003e0, 0x0000000100000000)
+  region size 1024K, 8 young (8192K), 7 survivors (7168K)
+ Metaspace       used 47154K, capacity 49706K, committed 49996K, reserved 1093632K
+  class space    used 5739K, capacity 6631K, committed 6732K, reserved 1048576K
+
+Deoptimization events (10 events):
+Event: 40.623 Thread 0x00007ffb44129000 Uncommon trap: reason=unstable_if action=reinterpret pc=0x00007ffbc4d8d02c method=org.eclipse.core.runtime.Path.canonicalize()Z @ 34
+Event: 40.623 Thread 0x00007ffb44129000 Uncommon trap: reason=unstable_if action=reinterpret pc=0x00007ffbc45c0228 method=org.eclipse.core.runtime.Path.append(Ljava/lang/String;)Lorg/eclipse/core/runtime/IPath; @ 61
+Event: 42.003 Thread 0x00007ffb4c001000 Uncommon trap: reason=bimorphic action=maybe_recompile pc=0x00007ffbc4808dd4 method=org.eclipse.core.internal.dtree.DeltaDataTree.getChildNodes(Lorg/eclipse/core/runtime/IPath;)[Lorg/eclipse/core/internal/dtree/AbstractDataTreeNode; @ 93
+Event: 42.058 Thread 0x00007ffb4c001000 Uncommon trap: reason=unstable_if action=reinterpret pc=0x00007ffbc4d96c74 method=org.eclipse.core.runtime.Path.canonicalize()Z @ 34
+Event: 42.095 Thread 0x00007ffb4c001000 Uncommon trap: reason=unstable_if action=reinterpret pc=0x00007ffbc479c4f0 method=org.eclipse.core.runtime.Path.canonicalize()Z @ 34
+Event: 43.600 Thread 0x00007ffb401f0800 Uncommon trap: reason=class_check action=maybe_recompile pc=0x00007ffbc42ee698 method=org.gradle.internal.dispatch.ProxyDispatchAdapter$DispatchingInvocationHandler.invoke(Ljava/lang/Object;Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object; 
+Event: 43.601 Thread 0x00007ffb401f0800 Uncommon trap: reason=unstable_if action=reinterpret pc=0x00007ffbc42c5b34 method=org.gradle.internal.event.ListenerBroadcast.getSource()Ljava/lang/Object; @ 4
+Event: 43.728 Thread 0x00007ffb401f0800 Uncommon trap: reason=class_check action=maybe_recompile pc=0x00007ffbc42ee698 method=org.gradle.internal.dispatch.ProxyDispatchAdapter$DispatchingInvocationHandler.invoke(Ljava/lang/Object;Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object; 
+Event: 43.847 Thread 0x00007ffb401f2000 Uncommon trap: reason=class_check action=maybe_recompile pc=0x00007ffbc42ee698 method=org.gradle.internal.dispatch.ProxyDispatchAdapter$DispatchingInvocationHandler.invoke(Ljava/lang/Object;Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object; 
+Event: 53.621 Thread 0x00007ffbd4149800 Uncommon trap: reason=unstable_if action=reinterpret pc=0x00007ffbc4354da8 method=java.lang.ref.Reference.tryHandlePending(Z)Z @ 20
+
+Classes redefined (0 events):
+No events
+
+Internal exceptions (10 events):
+Event: 38.052 Thread 0x00007ffb40153800 Exception <a 'java/lang/NoSuchMethodError': <clinit>> (0x00000000c679d578) thrown at [/build/openjdk-8-OqY7zN/openjdk-8-8u222-b10/src/hotspot/src/share/vm/prims/jni.cpp, line 1615]
+Event: 38.056 Thread 0x00007ffb40153800 Exception <a 'java/lang/NoSuchMethodError': <clinit>> (0x00000000c67fef20) thrown at [/build/openjdk-8-OqY7zN/openjdk-8-8u222-b10/src/hotspot/src/share/vm/prims/jni.cpp, line 1615]
+Event: 38.056 Thread 0x00007ffb40153800 Exception <a 'java/lang/NoSuchMethodError': <clinit>> (0x00000000c6609308) thrown at [/build/openjdk-8-OqY7zN/openjdk-8-8u222-b10/src/hotspot/src/share/vm/prims/jni.cpp, line 1615]
+Event: 39.315 Thread 0x00007ffb40153800 Exception <a 'java/lang/NoSuchMethodError': <clinit>> (0x00000000c63554c8) thrown at [/build/openjdk-8-OqY7zN/openjdk-8-8u222-b10/src/hotspot/src/share/vm/prims/jni.cpp, line 1615]
+Event: 39.333 Thread 0x00007ffb40153800 Exception <a 'java/lang/NoSuchMethodError': <clinit>> (0x00000000c6363a10) thrown at [/build/openjdk-8-OqY7zN/openjdk-8-8u222-b10/src/hotspot/src/share/vm/prims/jni.cpp, line 1615]
+Event: 39.349 Thread 0x00007ffb40153800 Exception <a 'java/lang/NoSuchMethodError': <clinit>> (0x00000000c6371258) thrown at [/build/openjdk-8-OqY7zN/openjdk-8-8u222-b10/src/hotspot/src/share/vm/prims/jni.cpp, line 1615]
+Event: 39.357 Thread 0x00007ffb40153800 Exception <a 'java/lang/NoSuchMethodError': <clinit>> (0x00000000c63c2a48) thrown at [/build/openjdk-8-OqY7zN/openjdk-8-8u222-b10/src/hotspot/src/share/vm/prims/jni.cpp, line 1615]
+Event: 39.360 Thread 0x00007ffb40153800 Exception <a 'java/lang/NoSuchMethodError': <clinit>> (0x00000000c63ee6b8) thrown at [/build/openjdk-8-OqY7zN/openjdk-8-8u222-b10/src/hotspot/src/share/vm/prims/jni.cpp, line 1615]
+Event: 41.900 Thread 0x00007ffb4c001000 Exception <a 'java/lang/NoSuchMethodError': java.lang.Object.lambda$identity$2(Ljava/lang/Object;)Ljava/lang/Object;> (0x00000000c55eae90) thrown at [/build/openjdk-8-OqY7zN/openjdk-8-8u222-b10/src/hotspot/src/share/vm/interpreter/linkResolver.cpp, line 6
+Event: 43.601 Thread 0x00007ffb401f0800 Implicit null exception at 0x00007ffbc42c5b10 to 0x00007ffbc42c5b23
+
+Events (10 events):
+Event: 43.851 loading class org/gradle/tooling/model/eclipse/EclipseProject done
+Event: 43.851 loading class org/gradle/tooling/model/eclipse/EclipseProject
+Event: 43.851 loading class org/gradle/tooling/model/eclipse/EclipseProject done
+Event: 45.636 Executing VM operation: G1IncCollectionPause
+Event: 52.807 Executing VM operation: G1IncCollectionPause done
+Event: 52.933 Thread 0x00007ffbd4149800 Uncommon trap: trap_request=0xffffff65 fr.pc=0x00007ffbc4354da8
+Event: 53.736 Thread 0x00007ffbd4149800 DEOPT PACKING pc=0x00007ffbc4354da8 sp=0x00007ffb9952d940
+Event: 53.768 Thread 0x00007ffbd4149800 DEOPT UNPACKING pc=0x00007ffbc41bc47a sp=0x00007ffb9952d8f8 mode 2
+Event: 67.672 Thread 0x00007ffbd42c6800 Thread exited: 0x00007ffbd42c6800
+Event: 67.782 Executing VM operation: G1IncCollectionPause
+
+
+Dynamic libraries:
+c0000000-c7c00000 rw-p 00000000 00:00 0 
+cf800000-100000000 ---p 00000000 00:00 0 
+100000000-100693000 rw-p 00000000 00:00 0 
+100693000-140000000 ---p 00000000 00:00 0 
+562c30c9b000-562c30c9c000 r-xp 00000000 08:02 7347155                    /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java
+562c30e9b000-562c30e9c000 r--p 00000000 08:02 7347155                    /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java
+562c30e9c000-562c30e9d000 rw-p 00001000 08:02 7347155                    /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java
+562c31bb3000-562c31bf5000 rw-p 00000000 00:00 0                          [heap]
+7ffb3f5f4000-7ffb3f634000 rw-p 00000000 00:00 0 
+7ffb3f634000-7ffb3f7f7000 ---p 00000000 00:00 0 
+7ffb3f7f7000-7ffb3f8f5000 rw-p 00000000 00:00 0 
+7ffb3f8f5000-7ffb3f8f8000 ---p 00000000 00:00 0 
+7ffb3f8f8000-7ffb3fbf6000 rw-p 00000000 00:00 0 
+7ffb3fbf6000-7ffb3fdf6000 rw-p 00000000 00:00 0 
+7ffb3fdf6000-7ffb3fdff000 r-xp 00000000 08:02 7347191                    /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/libmanagement.so
+7ffb3fdff000-7ffb3fffe000 ---p 00009000 08:02 7347191                    /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/libmanagement.so
+7ffb3fffe000-7ffb3ffff000 r--p 00008000 08:02 7347191                    /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/libmanagement.so
+7ffb3ffff000-7ffb40000000 rw-p 00009000 08:02 7347191                    /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/libmanagement.so
+7ffb40000000-7ffb401fb000 rw-p 00000000 00:00 0 
+7ffb401fb000-7ffb44000000 ---p 00000000 00:00 0 
+7ffb44000000-7ffb4413a000 rw-p 00000000 00:00 0 
+7ffb4413a000-7ffb48000000 ---p 00000000 00:00 0 
+7ffb48000000-7ffb48021000 rw-p 00000000 00:00 0 
+7ffb48021000-7ffb4c000000 ---p 00000000 00:00 0 
+7ffb4c000000-7ffb4c02b000 rw-p 00000000 00:00 0 
+7ffb4c02b000-7ffb50000000 ---p 00000000 00:00 0 
+7ffb50000000-7ffb50021000 rw-p 00000000 00:00 0 
+7ffb50021000-7ffb54000000 ---p 00000000 00:00 0 
+7ffb54000000-7ffb54af8000 rw-p 00000000 00:00 0 
+7ffb54af8000-7ffb58000000 ---p 00000000 00:00 0 
+7ffb58000000-7ffb58021000 rw-p 00000000 00:00 0 
+7ffb58021000-7ffb5c000000 ---p 00000000 00:00 0 
+7ffb5c049000-7ffb5c249000 rw-p 00000000 00:00 0 
+7ffb5c249000-7ffb5c24b000 r--s 00009000 08:02 11544959                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/gradle-tooling-api-builders-4.10.2.jar
+7ffb5c24b000-7ffb5c24d000 r--s 00003000 08:02 11544942                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/gradle-tooling-native-4.10.2.jar
+7ffb5c24d000-7ffb5c251000 r--s 00019000 08:02 11544944                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/gradle-testing-native-4.10.2.jar
+7ffb5c251000-7ffb5c253000 r--s 0000d000 08:02 11545052                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/jcommander-1.47.jar
+7ffb5c253000-7ffb5c25c000 r--s 00089000 08:02 11545015                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/testng-6.3.1.jar
+7ffb5c25c000-7ffb5c261000 r--s 0005a000 08:02 11545019                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/bsh-2.0b6.jar
+7ffb5c261000-7ffb5c265000 r--s 0001c000 08:02 11544964                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/gradle-testing-jvm-4.10.2.jar
+7ffb5c265000-7ffb5c267000 r--s 0000e000 08:02 11545050                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/junit-platform-commons-1.0.3.jar
+7ffb5c267000-7ffb5c268000 r--s 00001000 08:02 11545055                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/opentest4j-1.0.0.jar
+7ffb5c268000-7ffb5c26b000 r--s 00013000 08:02 11545049                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/junit-platform-engine-1.0.3.jar
+7ffb5c26b000-7ffb5c26c000 r--s 00000000 08:02 11545051                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/apiguardian-api-1.0.0.jar
+7ffb5c26c000-7ffb5c26e000 r--s 0000c000 08:02 11545020                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/junit-platform-launcher-1.0.3.jar
+7ffb5c26e000-7ffb5c26f000 r--s 00003000 08:02 11544963                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/gradle-testing-junit-platform-4.10.2.jar
+7ffb5c26f000-7ffb5c277000 r--s 00034000 08:02 11544971                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/gradle-testing-base-4.10.2.jar
+7ffb5c277000-7ffb5c27e000 r--s 00043000 08:02 11545010                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/bcpg-jdk15on-1.58.jar
+7ffb5c27e000-7ffb5c281000 r--s 00010000 08:02 11544941                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/gradle-signing-4.10.2.jar
+7ffb5c281000-7ffb5c283000 r--s 00009000 08:02 11544950                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/gradle-scala-4.10.2.jar
+7ffb5c283000-7ffb5c284000 r--s 00004000 08:02 11544982                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/gradle-resources-sftp-4.10.2.jar
+7ffb5c284000-7ffb5c28d000 r--s 0005a000 08:02 11544985                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/aws-java-sdk-kms-1.11.267.jar
+7ffb5c28d000-7ffb5c28f000 r--s 00005000 08:02 11545025                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/jmespath-java-1.11.267.jar
+7ffb5c28f000-7ffb5c2a1000 r--s 000bb000 08:02 11544984                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/aws-java-sdk-s3-1.11.267.jar
+7ffb5c2a1000-7ffb5c2ab000 r--s 00081000 08:02 11545046                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/ion-java-1.0.2.jar
+7ffb5c2ab000-7ffb5c2c0000 r--s 000bd000 08:02 11544986                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/aws-java-sdk-core-1.11.267.jar
+7ffb5c2c0000-7ffb5c2c2000 r--s 00004000 08:02 11544978                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/gradle-resources-s3-4.10.2.jar
+7ffb5c2c2000-7ffb5c2d2000 r--s 00088000 08:02 11545029                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/joda-time-2.8.2.jar
+7ffb5c2d2000-7ffb5c2e5000 r--s 00136000 08:02 11545026                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/jackson-databind-2.9.4.jar
+7ffb5c2e5000-7ffb5c2e8000 r--s 0000e000 08:02 11545028                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/jackson-annotations-2.9.4.jar
+7ffb5c2e8000-7ffb5c2ec000 r--s 0004b000 08:02 11545027                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/jackson-core-2.9.4.jar
+7ffb5c2ec000-7ffb5c2ed000 r--s 00001000 08:02 11544993                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/google-http-client-jackson2-1.23.0.jar
+7ffb5c2ed000-7ffb5c2f6000 r--s 0004f000 08:02 11544994                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/google-http-client-1.23.0.jar
+7ffb5c2f6000-7ffb5c2f9000 r--s 0000d000 08:02 11544992                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/google-oauth-client-1.23.0.jar
+7ffb5c2f9000-7ffb5c2fe000 r--s 0002c000 08:02 11544991                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/google-api-client-1.23.0.jar
+7ffb5c2fe000-7ffb5c302000 r--s 0001c000 08:02 11544990                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/google-api-services-storage-v1-rev116-1.23.0.jar
+7ffb5c302000-7ffb5c304000 r--s 00003000 08:02 11544979                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/gradle-resources-gcs-4.10.2.jar
+7ffb5c304000-7ffb5c307000 r--s 0000f000 08:02 11544977                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/gradle-reporting-4.10.2.jar
+7ffb5c307000-7ffb5c309000 r--s 00007000 08:02 11544970                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/gradle-publish-4.10.2.jar
+7ffb5c309000-7ffb5c30b000 r--s 00009000 08:02 11545001                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/commons-cli-1.2.jar
+7ffb5c30b000-7ffb5c311000 r--s 0003e000 08:02 11544958                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/gradle-plugins-4.10.2.jar
+7ffb5c311000-7ffb5c313000 r--s 0000b000 08:02 11544946                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/gradle-plugin-development-4.10.2.jar
+7ffb5c313000-7ffb5c319000 r--s 00030000 08:02 11544953                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/gradle-platform-play-4.10.2.jar
+7ffb5c319000-7ffb5c31f000 r--s 00033000 08:02 11545016                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/snakeyaml-1.6.jar
+7ffb5c31f000-7ffb5c330000 r--s 00075000 08:02 11544968                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/gradle-platform-native-4.10.2.jar
+7ffb5c330000-7ffb5c334000 r--s 0001b000 08:02 11544967                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/gradle-platform-jvm-4.10.2.jar
+7ffb5c334000-7ffb5c33b000 r--s 00029000 08:02 11544972                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/gradle-platform-base-4.10.2.jar
+7ffb5c33b000-7ffb5c366000 r--s 00247000 08:02 11545002                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/biz.aQute.bndlib-3.4.0.jar
+7ffb5c366000-7ffb5c367000 r--s 00004000 08:02 11544940                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/gradle-osgi-4.10.2.jar
+7ffb5c367000-7ffb5c36a000 r--s 0000c000 08:02 11545007                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/pmaven-groovy-0.8-20100325.jar
+7ffb5c36a000-7ffb5c36b000 r--s 00004000 08:02 11545006                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/pmaven-common-0.8-20100325.jar
+7ffb5c36b000-7ffb5c36c000 r--s 00007000 08:02 11544989                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/wagon-http-shared4-2.4.jar
+7ffb5c36c000-7ffb5c36d000 r--s 00002000 08:02 11544988                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/wagon-http-2.4.jar
+7ffb5c36d000-7ffb5c36e000 r--s 00002000 08:02 11545008                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/wagon-file-2.4.jar
+7ffb5c36e000-7ffb5c370000 r--s 00006000 08:02 11545009                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/aether-connector-wagon-1.13.1.jar
+7ffb5c370000-7ffb5c377000 r--s 0002d000 08:02 11544947                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/gradle-maven-4.10.2.jar
+7ffb5c377000-7ffb5c37a000 r--s 0000b000 08:02 11544962                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/gradle-language-scala-4.10.2.jar
+7ffb5c37a000-7ffb5c386000 r--s 0005d000 08:02 11544945                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/gradle-language-native-4.10.2.jar
+7ffb5c386000-7ffb5c388000 r--s 00005000 08:02 11544966                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/gradle-language-jvm-4.10.2.jar
+7ffb5c388000-7ffb5c390000 r--s 0003e000 08:02 11544965                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/gradle-language-java-4.10.2.jar
+7ffb5c390000-7ffb5c392000 r--s 0000b000 08:02 11544961                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/gradle-language-groovy-4.10.2.jar
+7ffb5c392000-7ffb5c399000 r--s 00035000 08:02 11545013                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/simple-4.1.21.jar
+7ffb5c399000-7ffb5c3a5000 r--s 00100000 08:02 11545011                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/rhino-1.7R3.jar
+7ffb5c3a5000-7ffb5c3a9000 r--s 00012000 08:02 11544954                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/gradle-javascript-4.10.2.jar
+7ffb5c3a9000-7ffb5c3ad000 r--s 00010000 08:02 11544956                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/gradle-jacoco-4.10.2.jar
+7ffb5c3ad000-7ffb5c3b0000 r--s 00013000 08:02 11544955                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/gradle-ivy-4.10.2.jar
+7ffb5c3b0000-7ffb5c3b1000 r--s 00002000 08:02 11544948                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/gradle-ide-play-4.10.2.jar
+7ffb5c3b1000-7ffb5c3b2000 r--s 00011000 08:02 11545017                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/dd-plist-1.20.jar
+7ffb5c3b2000-7ffb5c3b9000 r--s 00032000 08:02 11544943                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/gradle-ide-native-4.10.2.jar
+7ffb5c3b9000-7ffb5c3c3000 r--s 0005c000 08:02 11544949                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/gradle-ide-4.10.2.jar
+7ffb5c3c3000-7ffb5c3c5000 r--s 00008000 08:02 11544952                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/gradle-ear-4.10.2.jar
+7ffb5c3c5000-7ffb5c3c7000 r--s 00005000 08:02 11545000                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/jatl-0.2.2.jar
+7ffb5c3c7000-7ffb5c3ce000 r--s 0003d000 08:02 11544969                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/gradle-diagnostics-4.10.2.jar
+7ffb5c3ce000-7ffb5c3d3000 r--s 00028000 08:02 11544939                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/gradle-code-quality-4.10.2.jar
+7ffb5c3d3000-7ffb5c3d5000 r--s 0000b000 08:02 11545014                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/maven-plugin-api-3.0.4.jar
+7ffb5c3d5000-7ffb5c3d7000 r--s 0000b000 08:02 11545036                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/wagon-provider-api-2.4.jar
+7ffb5c3d7000-7ffb5c3dd000 r--s 0003f000 08:02 11545004                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/maven-compat-3.0.4.jar
+7ffb5c3dd000-7ffb5c3e1000 r--s 0001d000 08:02 11544998                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/xbean-reflect-3.4.jar
+7ffb5c3e1000-7ffb5c3e3000 r--s 00009000 08:02 11545048                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/hamcrest-core-1.3.jar
+7ffb5c3e3000-7ffb5c3eb000 r--s 00045000 08:02 11545018                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/junit-4.12.jar
+7ffb5c3eb000-7ffb5c3ed000 r--s 0000a000 08:02 11545037                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/plexus-classworlds-2.4.jar
+7ffb5c3ed000-7ffb5c3f4000 r--s 0002e000 08:02 11544997                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/plexus-container-default-1.5.5.jar
+7ffb5c3f4000-7ffb5c3fa000 r--s 00026000 08:02 11544957                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/gradle-build-init-4.10.2.jar
+7ffb5c3fa000-7ffb5c401000 r--s 0002d000 08:02 11544951                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/gradle-build-comparison-4.10.2.jar
+7ffb5c401000-7ffb5c402000 r--s 00002000 08:02 11544980                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/gradle-build-cache-http-4.10.2.jar
+7ffb5c402000-7ffb5c404000 r--s 00009000 08:02 11544938                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/gradle-antlr-4.10.2.jar
+7ffb5c404000-7ffb5c406000 r--s 00004000 08:02 11544937                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/gradle-announce-4.10.2.jar
+7ffb5c406000-7ffb5c408000 r--s 0000c000 08:02 11544973                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/gradle-plugin-use-4.10.2.jar
+7ffb5c408000-7ffb5c421000 r--s 0013a000 08:02 11545023                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/xercesImpl-2.12.0.jar
+7ffb5c421000-7ffb5c424000 r--s 0001c000 08:02 11545022                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/nekohtml-1.9.20.jar
+7ffb5c424000-7ffb5c42a000 r--s 0005b000 08:02 11545021                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/jcifs-1.3.17.jar
+7ffb5c42a000-7ffb5c42d000 r--s 0000d000 08:02 11544981                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/gradle-resources-http-4.10.2.jar
+7ffb5c42d000-7ffb5c432000 r--s 00040000 08:02 11545024                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/jsch-0.1.54.jar
+7ffb5c432000-7ffb5c455000 r--s 00223000 08:02 11544987                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/org.eclipse.jgit-4.5.3.201708160445-r.jar
+7ffb5c455000-7ffb5c45c000 r--s 00049000 08:02 11545047                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/httpcore-4.4.9.jar
+7ffb5c45c000-7ffb5c463000 r--s 0003f000 08:02 11544996                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/commons-codec-1.10.jar
+7ffb5c463000-7ffb5c471000 r--s 000ae000 08:02 11544995                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/httpclient-4.5.5.jar
+7ffb5c471000-7ffb5c473000 r--s 0000c000 08:02 11544974                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/gradle-version-control-4.10.2.jar
+7ffb5c473000-7ffb5c475000 r--s 0000d000 08:02 11544976                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/gradle-composite-builds-4.10.2.jar
+7ffb5c475000-7ffb5c477000 r--s 00006000 08:02 11545044                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/maven-repository-metadata-3.0.4.jar
+7ffb5c477000-7ffb5c479000 r--s 0000c000 08:02 11545031                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/maven-aether-provider-3.0.4.jar
+7ffb5c479000-7ffb5c47d000 r--s 00021000 08:02 11545038                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/maven-model-builder-3.0.4.jar
+7ffb5c47d000-7ffb5c47f000 r--s 00026000 08:02 11545039                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/maven-model-3.0.4.jar
+7ffb5c47f000-7ffb5c481000 r--s 0000a000 08:02 11545042                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/maven-settings-3.0.4.jar
+7ffb5c481000-7ffb5c483000 r--s 00002000 08:02 11545056                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/plexus-cipher-1.7.jar
+7ffb5c483000-7ffb5c484000 r--s 00006000 08:02 11545043                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/plexus-sec-dispatcher-1.3.jar
+7ffb5c484000-7ffb5c486000 r--s 0000d000 08:02 11545053                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/plexus-interpolation-1.14.jar
+7ffb5c486000-7ffb5c488000 r--s 00000000 08:02 11545054                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/plexus-component-annotations-1.5.5.jar
+7ffb5c488000-7ffb5c48b000 r--s 00008000 08:02 11545040                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/maven-settings-builder-3.0.4.jar
+7ffb5c48b000-7ffb5c48f000 r--s 00035000 08:02 11545045                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/plexus-utils-3.0.8.jar
+7ffb5c48f000-7ffb5c491000 r--s 0000b000 08:02 11545041                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/maven-artifact-3.0.4.jar
+7ffb5c491000-7ffb5c492000 r--s 00003000 08:02 11545033                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/aether-spi-1.13.1.jar
+7ffb5c492000-7ffb5c495000 r--s 0001d000 08:02 11545032                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/aether-impl-1.13.1.jar
+7ffb5c495000-7ffb5c499000 r--s 0001c000 08:02 11545034                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/aether-util-1.13.1.jar
+7ffb5c499000-7ffb5c49c000 r--s 00013000 08:02 11545035                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/aether-api-1.13.1.jar
+7ffb5c49c000-7ffb5c4a8000 r--s 0007d000 08:02 11545005                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/maven-core-3.0.4.jar
+7ffb5c4a8000-7ffb5c4b7000 r--s 000d9000 08:02 11545003                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/ivy-2.2.0.jar
+7ffb5c4b7000-7ffb5c4bc000 r--s 00034000 08:02 11545012                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/gson-2.7.jar
+7ffb5c4bc000-7ffb5c50f000 r--s 00373000 08:02 11545030                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/bcprov-jdk15on-1.58.jar
+7ffb5c50f000-7ffb5c511000 r--s 00012000 08:02 11544999                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/asm-util-6.2.jar
+7ffb5c511000-7ffb5c541000 r--s 0018f000 08:02 11544975                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/gradle-dependency-management-4.10.2.jar
+7ffb5c541000-7ffb5c543000 r--s 0000e000 08:02 11544983                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/plugins/gradle-workers-4.10.2.jar
+7ffb5c543000-7ffb5c548000 r-xp 00000000 08:02 11545397                   /home/fokam/.gradle/native/25/linux-amd64/libnative-platform.so
+7ffb5c548000-7ffb5c747000 ---p 00005000 08:02 11545397                   /home/fokam/.gradle/native/25/linux-amd64/libnative-platform.so
+7ffb5c747000-7ffb5c748000 rw-p 00004000 08:02 11545397                   /home/fokam/.gradle/native/25/linux-amd64/libnative-platform.so
+7ffb5c748000-7ffb5c751000 r--s 0002d000 08:02 11544916                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/xml-apis-1.4.01.jar
+7ffb5c751000-7ffb5c752000 r--s 00009000 08:02 11544905                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/slf4j-api-1.7.16.jar
+7ffb5c752000-7ffb5c754000 r--s 0000f000 08:02 11544898                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/reflectasm-1.07-shaded.jar
+7ffb5c754000-7ffb5c756000 r--s 00007000 08:02 11544934                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/objenesis-1.2.jar
+7ffb5c756000-7ffb5c757000 r--s 0000b000 08:02 11544928                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/native-platform-windows-i386-0.14.jar
+7ffb5c757000-7ffb5c759000 r--s 0000b000 08:02 11544927                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/native-platform-windows-amd64-0.14.jar
+7ffb5c759000-7ffb5c75a000 r--s 00003000 08:02 11544926                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/native-platform-osx-i386-0.14.jar
+7ffb5c75a000-7ffb5c75c000 r--s 00002000 08:02 11544925                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/native-platform-osx-amd64-0.14.jar
+7ffb5c75c000-7ffb5c75d000 r--s 00001000 08:02 11544932                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/native-platform-linux-i386-ncurses6-0.14.jar
+7ffb5c75d000-7ffb5c75e000 r--s 00001000 08:02 11544931                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/native-platform-linux-i386-ncurses5-0.14.jar
+7ffb5c75e000-7ffb5c75f000 r--s 00002000 08:02 11544924                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/native-platform-linux-i386-0.14.jar
+7ffb5c75f000-7ffb5c760000 r--s 00001000 08:02 11544930                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/native-platform-linux-amd64-ncurses6-0.14.jar
+7ffb5c760000-7ffb5c761000 r--s 00001000 08:02 11544929                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/native-platform-linux-amd64-ncurses5-0.14.jar
+7ffb5c761000-7ffb5c762000 r--s 00002000 08:02 11544923                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/native-platform-linux-amd64-0.14.jar
+7ffb5c762000-7ffb5c763000 r--s 00003000 08:02 11544922                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/native-platform-freebsd-i386-libstdcpp-0.14.jar
+7ffb5c763000-7ffb5c764000 r--s 00004000 08:02 11544921                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/native-platform-freebsd-i386-libcpp-0.14.jar
+7ffb5c764000-7ffb5c765000 r--s 00004000 08:02 11544920                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/native-platform-freebsd-amd64-libstdcpp-0.14.jar
+7ffb5c765000-7ffb5c766000 r--s 00004000 08:02 11544919                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/native-platform-freebsd-amd64-libcpp-0.14.jar
+7ffb5c766000-7ffb5c76a000 r--s 00012000 08:02 11544914                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/native-platform-0.14.jar
+7ffb5c76a000-7ffb5c76c000 r--s 00000000 08:02 11544933                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/minlog-1.2.jar
+7ffb5c76c000-7ffb5c76e000 r--s 00004000 08:02 11544904                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/log4j-over-slf4j-1.7.16.jar
+7ffb5c76e000-7ffb5c772000 r--s 00026000 08:02 11544897                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/kryo-2.20.jar
+7ffb5c772000-7ffb5c774000 r--s 00002000 08:02 11544871                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/kotlin-stdlib-jdk8-1.2.61.jar
+7ffb5c774000-7ffb5c775000 r--s 00000000 08:02 11544870                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/kotlin-stdlib-jdk7-1.2.61.jar
+7ffb5c775000-7ffb5c77b000 r--s 00015000 08:02 11544869                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/kotlin-stdlib-common-1.2.61.jar
+7ffb5c77b000-7ffb5c78b000 r--s 000db000 08:02 11544868                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/kotlin-stdlib-1.2.61.jar
+7ffb5c78b000-7ffb5c78d000 r--s 00009000 08:02 11544867                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/kotlin-script-runtime-1.2.61.jar
+7ffb5c78d000-7ffb5c78e000 r--s 00002000 08:02 11544866                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/kotlin-sam-with-receiver-compiler-plugin-1.2.61.jar
+7ffb5c78e000-7ffb5c7c3000 r--s 00241000 08:02 11544865                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/kotlin-reflect-1.2.61.jar
+7ffb5c7c3000-7ffb5c98e000 r--s 019b7000 08:02 11544864                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/kotlin-compiler-embeddable-1.2.61.jar
+7ffb5c98e000-7ffb5c990000 r--s 00000000 08:02 11544903                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/jul-to-slf4j-1.7.16.jar
+7ffb5c990000-7ffb5c992000 r--s 00006000 08:02 11544907                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/jsr305-2.0.1.jar
+7ffb5c992000-7ffb5c994000 r--s 00003000 08:02 11544902                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/jcl-over-slf4j-1.7.16.jar
+7ffb5c994000-7ffb5c995000 r--s 00000000 08:02 11544909                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/jcip-annotations-1.0.jar
+7ffb5c995000-7ffb5c996000 r--s 00000000 08:02 11544912                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/javax.inject-1.jar
+7ffb5c996000-7ffb5c999000 r--s 00023000 08:02 11544917                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/jansi-1.14.jar
+7ffb5c999000-7ffb5c9c1000 r--s 001cf000 08:02 11544906                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/guava-jdk5-17.0.jar
+7ffb5c9c1000-7ffb5ca32000 r--s 00665000 08:02 11544910                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/groovy-all-2.4.15.jar
+7ffb5ca32000-7ffb5ca34000 r--s 00006000 08:02 11544875                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/gradle-wrapper-4.10.2.jar
+7ffb5ca34000-7ffb5ca43000 r--s 0004b000 08:02 11544874                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/gradle-tooling-api-4.10.2.jar
+7ffb5ca43000-7ffb5ca44000 r--s 00000000 08:02 11544873                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/gradle-runtime-api-info-4.10.2.jar
+7ffb5ca44000-7ffb5ca49000 r--s 00015000 08:02 11544884                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/gradle-resources-4.10.2.jar
+7ffb5ca49000-7ffb5ca4b000 r--s 00006000 08:02 11544883                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/gradle-process-services-4.10.2.jar
+7ffb5ca4b000-7ffb5ca51000 r--s 00034000 08:02 11544881                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/gradle-persistent-cache-4.10.2.jar
+7ffb5ca51000-7ffb5ca55000 r--s 0000c000 08:02 11544885                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/gradle-native-4.10.2.jar
+7ffb5ca55000-7ffb5ca57000 r--s 00007000 08:02 11544886                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/gradle-model-groovy-4.10.2.jar
+7ffb5ca57000-7ffb5ca66000 r--s 00085000 08:02 11544887                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/gradle-model-core-4.10.2.jar
+7ffb5ca66000-7ffb5ca6d000 r--s 0002d000 08:02 11544889                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/gradle-messaging-4.10.2.jar
+7ffb5ca6d000-7ffb5ca75000 r--s 00035000 08:02 11544882                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/gradle-logging-4.10.2.jar
+7ffb5ca75000-7ffb5ca82000 r--s 00068000 08:02 11544872                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/gradle-launcher-4.10.2.jar
+7ffb5ca82000-7ffb5ca84000 r--s 00000000 08:02 11544863                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/gradle-kotlin-dsl-tooling-models-1.0-rc-6.jar
+7ffb5ca84000-7ffb5ca86000 r--s 00011000 08:02 11544862                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/gradle-kotlin-dsl-tooling-builders-1.0-rc-6.jar
+7ffb5ca86000-7ffb5ca88000 r--s 00005000 08:02 11544860                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/gradle-kotlin-dsl-provider-plugins-1.0-rc-6.jar
+7ffb5ca88000-7ffb5ca9c000 r--s 00109000 08:02 11544859                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/gradle-kotlin-dsl-1.0-rc-6.jar
+7ffb5ca9c000-7ffb5ca9e000 r--s 00000000 08:02 11544878                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/gradle-jvm-services-4.10.2.jar
+7ffb5ca9e000-7ffb5ca9f000 r--s 00000000 08:02 11544876                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/gradle-installation-beacon-4.10.2.jar
+7ffb5ca9f000-7ffb5caa0000 r--s 00006000 08:02 11544893                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/gradle-docs-4.10.2.jar
+7ffb5caa0000-7ffb5caad000 r--s 00037000 08:02 11544879                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/gradle-core-api-4.10.2.jar
+7ffb5caad000-7ffb5caf3000 r--s 00265000 08:02 11544877                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/gradle-core-4.10.2.jar
+7ffb5caf3000-7ffb5caf4000 r--s 00006000 08:02 11544892                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/gradle-cli-4.10.2.jar
+7ffb5caf4000-7ffb5caf5000 r--s 00003000 08:02 11544891                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/gradle-build-option-4.10.2.jar
+7ffb5caf5000-7ffb5caf9000 r--s 00013000 08:02 11544880                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/gradle-build-cache-4.10.2.jar
+7ffb5caf9000-7ffb5cafb000 r--s 00006000 08:02 11544888                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/gradle-base-services-groovy-4.10.2.jar
+7ffb5cafb000-7ffb5cb07000 r--s 00064000 08:02 11544890                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/gradle-base-services-4.10.2.jar
+7ffb5cb07000-7ffb5cb08000 r--s 0000a000 08:02 11544935                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/gradle-api-metadata-4.10.2.jar
+7ffb5cb08000-7ffb5cb0b000 r--s 0001a000 08:02 11544908                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/fastutil-7.2.1-min.jar
+7ffb5cb0b000-7ffb5cb10000 r--s 00041000 08:02 11544901                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/commons-lang-2.6.jar
+7ffb5cb10000-7ffb5cb14000 r--s 0002a000 08:02 11544900                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/commons-io-2.4.jar
+7ffb5cb14000-7ffb5cb1e000 r--s 00078000 08:02 11544915                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/commons-compress-1.14.jar
+7ffb5cb1e000-7ffb5cb2b000 r--s 00083000 08:02 11544913                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/commons-collections-3.2.2.jar
+7ffb5cb2b000-7ffb5cb2d000 r--s 0000b000 08:02 11544896                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/asm-tree-6.2.jar
+7ffb5cb2d000-7ffb5cb2f000 r--s 00012000 08:02 11544894                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/asm-commons-6.2.jar
+7ffb5cb2f000-7ffb5cb31000 r--s 0001a000 08:02 11544899                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/asm-6.2.jar
+7ffb5cb31000-7ffb5cb50000 r--s 001d9000 08:02 11544911                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/ant-1.9.11.jar
+7ffb5cb50000-7ffb5cd50000 rw-p 00000000 00:00 0 
+7ffb5cd50000-7ffb5cd53000 ---p 00000000 00:00 0 
+7ffb5cd53000-7ffb5ce51000 rw-p 00000000 00:00 0 
+7ffb5ce51000-7ffb5ce54000 ---p 00000000 00:00 0 
+7ffb5ce54000-7ffb5cf52000 rw-p 00000000 00:00 0 
+7ffb5cf52000-7ffb5cf55000 ---p 00000000 00:00 0 
+7ffb5cf55000-7ffb5d053000 rw-p 00000000 00:00 0 
+7ffb5d053000-7ffb5d083000 r--s 001cd000 08:02 12197269                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/plugins/org.gradle.toolingapi_5.4.0.v20190501-0832.jar
+7ffb5d083000-7ffb5d086000 ---p 00000000 00:00 0 
+7ffb5d086000-7ffb5d384000 rw-p 00000000 00:00 0 
+7ffb5d384000-7ffb5d385000 r--s 00007000 08:02 11544895                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/asm-analysis-6.2.jar
+7ffb5d385000-7ffb5d386000 r--s 00004000 08:02 11544918                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/ant-launcher-1.9.11.jar
+7ffb5d386000-7ffb5d389000 ---p 00000000 00:00 0 
+7ffb5d389000-7ffb5d687000 rw-p 00000000 00:00 0 
+7ffb5d687000-7ffb5d68a000 ---p 00000000 00:00 0 
+7ffb5d68a000-7ffb5d988000 rw-p 00000000 00:00 0 
+7ffb5d988000-7ffb5d98c000 r--s 0001a000 08:02 12197251                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/plugins/org.eclipse.lsp4j.jsonrpc_0.9.0.v20190826-1248.jar
+7ffb5d98c000-7ffb5d98f000 ---p 00000000 00:00 0 
+7ffb5d98f000-7ffb5da8d000 rw-p 00000000 00:00 0 
+7ffb5da8d000-7ffb5da99000 r--s 00079000 08:02 12197250                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/plugins/org.eclipse.lsp4j_0.9.0.v20190826-1248.jar
+7ffb5da99000-7ffb5da9e000 r--s 0004c000 08:02 12197204                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/plugins/org.apache.commons.lang3_3.1.0.v201403281430.jar
+7ffb5da9e000-7ffb5daa4000 r--s 0003a000 08:02 12197197                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/plugins/com.google.gson_2.8.2.v20180104-1110.jar
+7ffb5daa4000-7ffb5daa9000 r--s 002f9000 08:02 7347205                    /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/charsets.jar
+7ffb5daa9000-7ffb5daaf000 r--s 00043000 08:02 12197265                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/plugins/org.eclipse.text_3.9.0.v20190826-1019.jar
+7ffb5daaf000-7ffb5dcaf000 rw-p 00000000 00:00 0 
+7ffb5dcaf000-7ffb5dce1000 r--s 00295000 08:02 12197199                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/plugins/com.google.guava_27.1.0.v20190517-1946.jar
+7ffb5dce1000-7ffb5dce4000 ---p 00000000 00:00 0 
+7ffb5dce4000-7ffb5dde2000 rw-p 00000000 00:00 0 
+7ffb5dde2000-7ffb5dde5000 ---p 00000000 00:00 0 
+7ffb5dde5000-7ffb5e0e3000 rw-p 00000000 00:00 0 
+7ffb5e0e3000-7ffb5e113000 r--s 0025e000 08:02 12197198                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/plugins/com.google.guava_21.0.0.v20170206-1425.jar
+7ffb5e113000-7ffb5e11b000 r--s 00058000 08:02 12197396                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/52/0/.cp/velocity-1.5.jar
+7ffb5e11b000-7ffb5e11c000 r--s 00001000 08:02 12197395                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/52/0/.cp/plexus-velocity-1.1.8.jar
+7ffb5e11c000-7ffb5e11e000 r--s 0000e000 08:02 12197394                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/52/0/.cp/oro-2.0.8.jar
+7ffb5e11e000-7ffb5e121000 r--s 00023000 08:02 12197393                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/52/0/.cp/jdom-1.0.jar
+7ffb5e121000-7ffb5e123000 r--s 00005000 08:02 12197392                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/52/0/.cp/jchardet-1.0.jar
+7ffb5e123000-7ffb5e128000 r--s 00048000 08:02 12197391                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/52/0/.cp/dom4j-1.6.1.jar
+7ffb5e128000-7ffb5e12c000 r--s 0002f000 08:02 12197390                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/52/0/.cp/commons-lang-2.1.jar
+7ffb5e12c000-7ffb5e130000 r--s 00027000 08:02 12197389                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/52/0/.cp/commons-io-2.2.jar
+7ffb5e130000-7ffb5e13d000 r--s 00083000 08:02 12197388                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/52/0/.cp/commons-collections-3.2.2.jar
+7ffb5e13d000-7ffb5e13f000 r--s 00006000 08:02 12197387                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/52/0/.cp/maven-invoker-2.1.1.jar
+7ffb5e13f000-7ffb5e141000 r--s 00003000 08:02 12197386                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/52/0/.cp/archetype-registry-2.4.jar
+7ffb5e141000-7ffb5e142000 r--s 00005000 08:02 12197385                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/52/0/.cp/archetype-descriptor-2.4.jar
+7ffb5e142000-7ffb5e143000 r--s 00004000 08:02 12197384                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/52/0/.cp/archetype-catalog-2.4.jar
+7ffb5e143000-7ffb5e147000 r--s 00027000 08:02 12197383                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/52/0/.cp/archetype-common-2.4.jar
+7ffb5e147000-7ffb5e149000 r--s 001e7000 08:02 12197253                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/plugins/org.eclipse.m2e.archetype.common_1.13.0.20190716-1623.jar
+7ffb5e149000-7ffb5e14c000 r--s 00014000 08:02 12197379                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/56/0/.cp/lucene-highlighter-2.4.1.jar
+7ffb5e14c000-7ffb5e15a000 r--s 000bb000 08:02 12197378                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/56/0/.cp/lucene-core-2.4.1.jar
+7ffb5e15a000-7ffb5e15c000 r--s 00005000 08:02 12197377                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/56/0/.cp/indexer-artifact-3.1.0.jar
+7ffb5e15c000-7ffb5e161000 r--s 0002c000 08:02 12197376                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/56/0/.cp/indexer-core-3.1.0.jar
+7ffb5e161000-7ffb5e164000 r--s 00112000 08:02 12197257                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/plugins/org.eclipse.m2e.maven.indexer_1.13.0.20190716-1623.jar
+7ffb5e164000-7ffb5e167000 r--s 00019000 08:02 12197232                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/plugins/org.eclipse.equinox.security_1.3.300.v20190714-1851.jar
+7ffb5e167000-7ffb5e168000 r--s 00017000 08:02 12197216                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/plugins/org.eclipse.core.net.linux.x86_64_1.2.300.v20181130-0925.jar
+7ffb5e168000-7ffb5e16a000 r--s 00011000 08:02 12197215                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/plugins/org.eclipse.core.net_1.3.600.v20190619-1613.jar
+7ffb5e16a000-7ffb5e36a000 rw-p 00000000 00:00 0 
+7ffb5e36a000-7ffb5e376000 r--s 0006e000 08:02 12197207                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/plugins/org.eclipse.buildship.core_3.1.0.v20190501-0830.jar
+7ffb5e376000-7ffb5e576000 rw-p 00000000 00:00 0 
+7ffb5e576000-7ffb5e579000 ---p 00000000 00:00 0 
+7ffb5e579000-7ffb5e877000 rw-p 00000000 00:00 0 
+7ffb5e877000-7ffb5e87f000 r--s 0005a000 08:02 12197221                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/plugins/org.eclipse.debug.core_3.14.0.v20190812-1404.jar
+7ffb5e87f000-7ffb5e885000 r--s 00081000 08:02 12197247                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/plugins/org.eclipse.jdt.launching_3.15.0.v20190826-1639.jar
+7ffb5e885000-7ffb5e887000 r--s 00003000 08:02 12197201                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/plugins/javax.inject_1.0.0.v20091030.jar
+7ffb5e887000-7ffb5e88b000 r--s 00042000 08:02 12197372                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/57/0/.cp/jars/jansi-1.17.1.jar
+7ffb5e88b000-7ffb5e88c000 r--s 00002000 08:02 12197369                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/57/0/.cp/jars/wagon-file-3.3.2.jar
+7ffb5e88c000-7ffb5e88e000 r--s 00006000 08:02 12197371                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/57/0/.cp/jars/maven-resolver-transport-wagon-1.3.3.jar
+7ffb5e88e000-7ffb5e890000 r--s 00009000 08:02 12197370                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/57/0/.cp/jars/maven-resolver-connector-basic-1.3.3.jar
+7ffb5e890000-7ffb5e894000 r--s 00029000 08:02 12197366                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/57/0/.cp/jars/maven-resolver-impl-1.3.3.jar
+7ffb5e894000-7ffb5e896000 r--s 00015000 08:02 12197368                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/57/0/.cp/jars/okio-1.17.3.jar
+7ffb5e896000-7ffb5e89b000 r--s 00063000 08:02 12197367                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/57/0/.cp/jars/okhttp-3.14.1.jar
+7ffb5e89b000-7ffb5e89d000 r--s 0000b000 08:02 12197365                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/57/0/.cp/jars/aether-connector-okhttp-0.17.6.jar
+7ffb5e89d000-7ffb5e89f000 r--s 00001000 08:02 12197364                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/57/0/.cp/jars/plexus-build-api-0.0.7.jar
+7ffb5e89f000-7ffb5e8a2000 r--s 00008000 08:02 12197347                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/57/0/.cp/jars/cdi-api-1.0.jar
+7ffb5e8a2000-7ffb5e8a8000 r--s 0002d000 08:02 12197363                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/57/0/.cp/jars/org.eclipse.sisu.plexus-0.3.3.jar
+7ffb5e8a8000-7ffb5e8aa000 r--s 0000c000 08:02 12197362                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/57/0/.cp/jars/wagon-provider-api-3.3.2.jar
+7ffb5e8aa000-7ffb5e8ad000 r--s 00012000 08:02 12197361                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/57/0/.cp/jars/plexus-interpolation-1.25.jar
+7ffb5e8ad000-7ffb5e8b3000 r--s 00041000 08:02 12197360                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/57/0/.cp/jars/maven-compat-3.6.1.jar
+7ffb5e8b3000-7ffb5e8b5000 r--s 0000c000 08:02 12197359                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/57/0/.cp/jars/commons-cli-1.4.jar
+7ffb5e8b5000-7ffb5e8b7000 r--s 00002000 08:02 12197358                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/57/0/.cp/jars/plexus-cipher-1.7.jar
+7ffb5e8b7000-7ffb5e8b8000 r--s 00006000 08:02 12197357                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/57/0/.cp/jars/plexus-sec-dispatcher-1.4.jar
+7ffb5e8b8000-7ffb5e8b9000 r--s 00001000 08:02 12197356                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/57/0/.cp/jars/jsr250-api-1.0.jar
+7ffb5e8b9000-7ffb5e8bc000 r--s 00016000 08:02 12197355                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/57/0/.cp/jars/maven-embedder-3.6.1.jar
+7ffb5e8bc000-7ffb5e8c4000 r--s 00073000 08:02 12197354                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/57/0/.cp/jars/commons-lang3-3.8.1.jar
+7ffb5e8c4000-7ffb5e8c6000 r--s 00000000 08:02 12197353                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/57/0/.cp/jars/plexus-component-annotations-1.7.1.jar
+7ffb5e8c6000-7ffb5e8ca000 r--s 0003d000 08:02 12197351                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/57/0/.cp/jars/plexus-utils-3.2.0.jar
+7ffb5e8ca000-7ffb5e8cd000 ---p 00000000 00:00 0 
+7ffb5e8cd000-7ffb5ebcb000 rw-p 00000000 00:00 0 
+7ffb5ebcb000-7ffb5ebce000 ---p 00000000 00:00 0 
+7ffb5ebce000-7ffb5eecc000 rw-p 00000000 00:00 0 
+7ffb5eecc000-7ffb5eecf000 ---p 00000000 00:00 0 
+7ffb5eecf000-7ffb5f1cd000 rw-p 00000000 00:00 0 
+7ffb5f1cd000-7ffb5f1cf000 r--s 0000b000 08:02 12197352                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/57/0/.cp/jars/plexus-classworlds-2.6.0.jar
+7ffb5f1cf000-7ffb5f1d0000 r--s 00000000 08:02 12197350                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/57/0/.cp/jars/animal-sniffer-annotations-1.14.jar
+7ffb5f1d0000-7ffb5f1d2000 r--s 00001000 08:02 12197349                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/57/0/.cp/jars/j2objc-annotations-1.1.jar
+7ffb5f1d2000-7ffb5f1d4000 r--s 00002000 08:02 12197348                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/57/0/.cp/jars/error_prone_annotations-2.1.3.jar
+7ffb5f1d4000-7ffb5f204000 r--s 00249000 08:02 12197346                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/57/0/.cp/jars/guava-25.1-android.jar
+7ffb5f204000-7ffb5f20f000 r--s 00075000 08:02 12197342                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/57/0/.cp/jars/guice-4.2.1-no_aop.jar
+7ffb5f20f000-7ffb5f216000 r--s 00056000 08:02 12197341                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/57/0/.cp/jars/org.eclipse.sisu.inject-0.3.3.jar
+7ffb5f216000-7ffb5f21a000 r--s 0002f000 08:02 12197340                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/57/0/.cp/jars/commons-io-2.5.jar
+7ffb5f21a000-7ffb5f21d000 r--s 00026000 08:02 12197339                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/57/0/.cp/jars/maven-shared-utils-3.2.1.jar
+7ffb5f21d000-7ffb5f221000 r--s 00023000 08:02 12197338                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/57/0/.cp/jars/maven-resolver-util-1.3.3.jar
+7ffb5f221000-7ffb5f223000 r--s 00007000 08:02 12197337                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/57/0/.cp/jars/maven-resolver-spi-1.3.3.jar
+7ffb5f223000-7ffb5f228000 r--s 00020000 08:02 12197336                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/57/0/.cp/jars/maven-resolver-api-1.3.3.jar
+7ffb5f228000-7ffb5f22a000 r--s 0000f000 08:02 12197335                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/57/0/.cp/jars/maven-resolver-provider-3.6.1.jar
+7ffb5f22a000-7ffb5f22f000 r--s 00027000 08:02 12197334                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/57/0/.cp/jars/maven-model-builder-3.6.1.jar
+7ffb5f22f000-7ffb5f231000 r--s 0000a000 08:02 12197333                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/57/0/.cp/jars/maven-plugin-api-3.6.1.jar
+7ffb5f231000-7ffb5f234000 r--s 0000c000 08:02 12197332                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/57/0/.cp/jars/maven-artifact-3.6.1.jar
+7ffb5f234000-7ffb5f235000 r--s 00006000 08:02 12197331                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/57/0/.cp/jars/maven-repository-metadata-3.6.1.jar
+7ffb5f235000-7ffb5f236000 r--s 00003000 08:02 12197330                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/57/0/.cp/jars/maven-builder-support-3.6.1.jar
+7ffb5f236000-7ffb5f238000 r--s 00009000 08:02 12197329                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/57/0/.cp/jars/maven-settings-builder-3.6.1.jar
+7ffb5f238000-7ffb5f23b000 r--s 0002b000 08:02 12197327                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/57/0/.cp/jars/maven-model-3.6.1.jar
+7ffb5f23b000-7ffb5f248000 r--s 0008e000 08:02 12197326                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/57/0/.cp/jars/maven-core-3.6.1.jar
+7ffb5f248000-7ffb5f24a000 r--s 0072c000 08:02 12197258                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/plugins/org.eclipse.m2e.maven.runtime_1.13.0.20190716-1623.jar
+7ffb5f24a000-7ffb5f24c000 r--s 00007000 08:02 12197273                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/plugins/org.slf4j.api_1.7.2.v20121108-1250.jar
+7ffb5f24c000-7ffb5f257000 r--s 0008d000 08:02 12197254                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/plugins/org.eclipse.m2e.core_1.13.0.20190716-1624.jar
+7ffb5f257000-7ffb5f26a000 r--s 00346000 08:02 7347243                    /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/resources.jar
+7ffb5f26a000-7ffb5f2a7000 r--s 0066f000 08:02 12197242                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/plugins/org.eclipse.jdt.core_3.19.0.v20190903-0936.jar
+7ffb5f2a7000-7ffb5f2b8000 r--s 0011d000 08:02 12197243                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/plugins/org.eclipse.jdt.core.manipulation_1.12.100.v20190829-1537.jar
+7ffb5f2b8000-7ffb5f2bb000 ---p 00000000 00:00 0 
+7ffb5f2bb000-7ffb5f5b9000 rw-p 00000000 00:00 0 
+7ffb5f5b9000-7ffb5f5c4000 r--s 000d0000 08:02 12197218                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/plugins/org.eclipse.core.resources_3.13.500.v20190819-0800.jar
+7ffb5f5c4000-7ffb5f5c7000 ---p 00000000 00:00 0 
+7ffb5f5c7000-7ffb5f8c5000 rw-p 00000000 00:00 0 
+7ffb5f8c5000-7ffb5f8d5000 r-xp 00000000 08:02 12197282                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.equinox.launcher/org.eclipse.equinox.launcher.gtk.linux.x86_64_1.1.1100.v20190715-0945/eclipse_1801.so
+7ffb5f8d5000-7ffb5fad4000 ---p 00010000 08:02 12197282                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.equinox.launcher/org.eclipse.equinox.launcher.gtk.linux.x86_64_1.1.1100.v20190715-0945/eclipse_1801.so
+7ffb5fad4000-7ffb5fad5000 r--p 0000f000 08:02 12197282                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.equinox.launcher/org.eclipse.equinox.launcher.gtk.linux.x86_64_1.1.1100.v20190715-0945/eclipse_1801.so
+7ffb5fad5000-7ffb5fad6000 rw-p 00010000 08:02 12197282                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.equinox.launcher/org.eclipse.equinox.launcher.gtk.linux.x86_64_1.1.1100.v20190715-0945/eclipse_1801.so
+7ffb5fad6000-7ffb5fad9000 ---p 00000000 00:00 0 
+7ffb5fad9000-7ffb5fbd7000 rw-p 00000000 00:00 0 
+7ffb5fbd7000-7ffb5fbe8000 r-xp 00000000 08:02 7347194                    /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/libnio.so
+7ffb5fbe8000-7ffb5fde7000 ---p 00011000 08:02 7347194                    /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/libnio.so
+7ffb5fde7000-7ffb5fde8000 r--p 00010000 08:02 7347194                    /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/libnio.so
+7ffb5fde8000-7ffb5fde9000 rw-p 00011000 08:02 7347194                    /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/libnio.so
+7ffb5fde9000-7ffb5fdff000 r-xp 00000000 08:02 7347193                    /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/libnet.so
+7ffb5fdff000-7ffb5fffe000 ---p 00016000 08:02 7347193                    /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/libnet.so
+7ffb5fffe000-7ffb5ffff000 r--p 00015000 08:02 7347193                    /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/libnet.so
+7ffb5ffff000-7ffb60000000 rw-p 00016000 08:02 7347193                    /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/libnet.so
+7ffb60000000-7ffb60021000 rw-p 00000000 00:00 0 
+7ffb60021000-7ffb64000000 ---p 00000000 00:00 0 
+7ffb64000000-7ffb64021000 rw-p 00000000 00:00 0 
+7ffb64021000-7ffb68000000 ---p 00000000 00:00 0 
+7ffb68000000-7ffb68d27000 rw-p 00000000 00:00 0 
+7ffb68d27000-7ffb6c000000 ---p 00000000 00:00 0 
+7ffb6c000000-7ffb6d443000 rw-p 00000000 00:00 0 
+7ffb6d443000-7ffb70000000 ---p 00000000 00:00 0 
+7ffb70000000-7ffb71a3b000 rw-p 00000000 00:00 0 
+7ffb71a3b000-7ffb74000000 ---p 00000000 00:00 0 
+7ffb74000000-7ffb75ac5000 rw-p 00000000 00:00 0 
+7ffb75ac5000-7ffb78000000 ---p 00000000 00:00 0 
+7ffb78000000-7ffb78021000 rw-p 00000000 00:00 0 
+7ffb78021000-7ffb7c000000 ---p 00000000 00:00 0 
+7ffb7c000000-7ffb7c021000 rw-p 00000000 00:00 0 
+7ffb7c021000-7ffb80000000 ---p 00000000 00:00 0 
+7ffb80000000-7ffb80021000 rw-p 00000000 00:00 0 
+7ffb80021000-7ffb84000000 ---p 00000000 00:00 0 
+7ffb84000000-7ffb84021000 rw-p 00000000 00:00 0 
+7ffb84021000-7ffb88000000 ---p 00000000 00:00 0 
+7ffb88000000-7ffb8815a000 rw-p 00000000 00:00 0 
+7ffb8815a000-7ffb8c000000 ---p 00000000 00:00 0 
+7ffb8c000000-7ffb8c1a9000 rw-p 00000000 00:00 0 
+7ffb8c1a9000-7ffb90000000 ---p 00000000 00:00 0 
+7ffb90000000-7ffb90021000 rw-p 00000000 00:00 0 
+7ffb90021000-7ffb94000000 ---p 00000000 00:00 0 
+7ffb94000000-7ffb94021000 rw-p 00000000 00:00 0 
+7ffb94021000-7ffb98000000 ---p 00000000 00:00 0 
+7ffb98000000-7ffb98004000 r--s 00032000 08:02 12197240                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/plugins/org.eclipse.jdt.compiler.apt_1.3.700.v20190704-1731.jar
+7ffb98004000-7ffb9801c000 r--s 00206000 08:02 12197249                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/plugins/org.eclipse.jdt.ls.core_0.42.0.201909040928.jar
+7ffb9801c000-7ffb9801f000 ---p 00000000 00:00 0 
+7ffb9801f000-7ffb9811d000 rw-p 00000000 00:00 0 
+7ffb9811d000-7ffb98120000 ---p 00000000 00:00 0 
+7ffb98120000-7ffb9821e000 rw-p 00000000 00:00 0 
+7ffb9821e000-7ffb98221000 ---p 00000000 00:00 0 
+7ffb98221000-7ffb98257000 rw-p 00000000 00:00 0 
+7ffb98257000-7ffb98258000 ---p 00000000 00:00 0 
+7ffb98258000-7ffb98358000 rw-p 00000000 00:00 0 
+7ffb98358000-7ffb9835b000 ---p 00000000 00:00 0 
+7ffb9835b000-7ffb98459000 rw-p 00000000 00:00 0 
+7ffb98459000-7ffb9845a000 ---p 00000000 00:00 0 
+7ffb9845a000-7ffb9845d000 ---p 00000000 00:00 0 
+7ffb9845d000-7ffb9855a000 rw-p 00000000 00:00 0 
+7ffb9855a000-7ffb9855b000 ---p 00000000 00:00 0 
+7ffb9855b000-7ffb9855e000 ---p 00000000 00:00 0 
+7ffb9855e000-7ffb9865b000 rw-p 00000000 00:00 0 
+7ffb9865b000-7ffb9865c000 ---p 00000000 00:00 0 
+7ffb9865c000-7ffb9865f000 ---p 00000000 00:00 0 
+7ffb9865f000-7ffb9875c000 rw-p 00000000 00:00 0 
+7ffb9875c000-7ffb9875f000 ---p 00000000 00:00 0 
+7ffb9875f000-7ffb9885d000 rw-p 00000000 00:00 0 
+7ffb9885d000-7ffb98860000 ---p 00000000 00:00 0 
+7ffb98860000-7ffb9895e000 rw-p 00000000 00:00 0 
+7ffb9895e000-7ffb9932d000 r--p 00000000 08:02 7084673                    /usr/lib/locale/locale-archive
+7ffb9932d000-7ffb99330000 ---p 00000000 00:00 0 
+7ffb99330000-7ffb9942e000 rw-p 00000000 00:00 0 
+7ffb9942e000-7ffb99431000 ---p 00000000 00:00 0 
+7ffb99431000-7ffb9952f000 rw-p 00000000 00:00 0 
+7ffb9952f000-7ffb99530000 ---p 00000000 00:00 0 
+7ffb99530000-7ffb99630000 rw-p 00000000 00:00 0 
+7ffb99630000-7ffb99800000 r--s 03c5c000 08:02 7347244                    /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/rt.jar
+7ffb99800000-7ffb9c000000 rw-p 00000000 00:00 0 
+7ffb9c000000-7ffb9c021000 rw-p 00000000 00:00 0 
+7ffb9c021000-7ffba0000000 ---p 00000000 00:00 0 
+7ffba0000000-7ffba0021000 rw-p 00000000 00:00 0 
+7ffba0021000-7ffba4000000 ---p 00000000 00:00 0 
+7ffba4000000-7ffba4021000 rw-p 00000000 00:00 0 
+7ffba4021000-7ffba8000000 ---p 00000000 00:00 0 
+7ffba8000000-7ffba8021000 rw-p 00000000 00:00 0 
+7ffba8021000-7ffbac000000 ---p 00000000 00:00 0 
+7ffbac000000-7ffbac04f000 rw-p 00000000 00:00 0 
+7ffbac04f000-7ffbb0000000 ---p 00000000 00:00 0 
+7ffbb0000000-7ffbb0021000 rw-p 00000000 00:00 0 
+7ffbb0021000-7ffbb4000000 ---p 00000000 00:00 0 
+7ffbb4000000-7ffbb404a000 rw-p 00000000 00:00 0 
+7ffbb404a000-7ffbb8000000 ---p 00000000 00:00 0 
+7ffbb8000000-7ffbb8029000 rw-p 00000000 00:00 0 
+7ffbb8029000-7ffbbc000000 ---p 00000000 00:00 0 
+7ffbbc000000-7ffbbc044000 rw-p 00000000 00:00 0 
+7ffbbc044000-7ffbc0000000 ---p 00000000 00:00 0 
+7ffbc0000000-7ffbc0001000 r--s 0000a000 08:02 12197328                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/57/0/.cp/jars/maven-settings-3.6.1.jar
+7ffbc0001000-7ffbc0006000 r--s 0001b000 08:02 12197295                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/41/0/.cp/lib/java10api.jar
+7ffbc0006000-7ffbc0008000 r--s 00031000 08:02 12197241                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/plugins/org.eclipse.jdt.compiler.tool_1.2.600.v20190322-0450.jar
+7ffbc0008000-7ffbc000a000 r--s 00003000 08:02 11544858                   /home/fokam/.gradle/wrapper/dists/gradle-4.10.2-all/9fahxiiecdb76a5g3aw9oi8rv/gradle-4.10.2/lib/annotations-13.0.jar
+7ffbc000a000-7ffbc000c000 r--s 0000e000 08:02 12197306                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/48/0/.cp/lib/remark-1.0.0.jar
+7ffbc000c000-7ffbc0012000 r--s 00048000 08:02 12197305                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux/org.eclipse.osgi/48/0/.cp/lib/jsoup-1.9.2.jar
+7ffbc0012000-7ffbc0028000 r--s 0014f000 08:02 12197261                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/plugins/org.eclipse.osgi_3.15.0.v20190830-1434.jar
+7ffbc0028000-7ffbc0043000 r--s 001d6000 08:02 7347220                    /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/ext/nashorn.jar
+7ffbc0043000-7ffbc0162000 rw-p 00000000 00:00 0 
+7ffbc0162000-7ffbc0163000 ---p 00000000 00:00 0 
+7ffbc0163000-7ffbc06a8000 rw-p 00000000 00:00 0 
+7ffbc06a8000-7ffbc06a9000 ---p 00000000 00:00 0 
+7ffbc06a9000-7ffbc07a9000 rw-p 00000000 00:00 0 
+7ffbc07a9000-7ffbc07aa000 ---p 00000000 00:00 0 
+7ffbc07aa000-7ffbc0a9a000 rw-p 00000000 00:00 0 
+7ffbc0a9a000-7ffbc18aa000 ---p 00000000 00:00 0 
+7ffbc18aa000-7ffbc1a9a000 rw-p 00000000 00:00 0 
+7ffbc1a9a000-7ffbc28aa000 ---p 00000000 00:00 0 
+7ffbc28aa000-7ffbc28e8000 rw-p 00000000 00:00 0 
+7ffbc28e8000-7ffbc2aaa000 ---p 00000000 00:00 0 
+7ffbc2aaa000-7ffbc2ae8000 rw-p 00000000 00:00 0 
+7ffbc2ae8000-7ffbc2eaa000 ---p 00000000 00:00 0 
+7ffbc2eaa000-7ffbc2ee8000 rw-p 00000000 00:00 0 
+7ffbc2ee8000-7ffbc30aa000 ---p 00000000 00:00 0 
+7ffbc30aa000-7ffbc30ab000 ---p 00000000 00:00 0 
+7ffbc30ab000-7ffbc31ab000 rw-p 00000000 00:00 0 
+7ffbc31ab000-7ffbc31ac000 ---p 00000000 00:00 0 
+7ffbc31ac000-7ffbc32ac000 rw-p 00000000 00:00 0 
+7ffbc32ac000-7ffbc32ad000 ---p 00000000 00:00 0 
+7ffbc32ad000-7ffbc33ad000 rw-p 00000000 00:00 0 
+7ffbc33ad000-7ffbc33ae000 ---p 00000000 00:00 0 
+7ffbc33ae000-7ffbc34ae000 rw-p 00000000 00:00 0 
+7ffbc34ae000-7ffbc34af000 ---p 00000000 00:00 0 
+7ffbc34af000-7ffbc39b3000 rw-p 00000000 00:00 0 
+7ffbc39b3000-7ffbc39b4000 ---p 00000000 00:00 0 
+7ffbc39b4000-7ffbc3ab4000 rw-p 00000000 00:00 0 
+7ffbc3ab4000-7ffbc3ab5000 ---p 00000000 00:00 0 
+7ffbc3ab5000-7ffbc3bb5000 rw-p 00000000 00:00 0 
+7ffbc3bb5000-7ffbc3bb6000 ---p 00000000 00:00 0 
+7ffbc3bb6000-7ffbc3cb6000 rw-p 00000000 00:00 0 
+7ffbc3cb6000-7ffbc3cb7000 ---p 00000000 00:00 0 
+7ffbc3cb7000-7ffbc3df7000 rw-p 00000000 00:00 0 
+7ffbc3df7000-7ffbc4177000 ---p 00000000 00:00 0 
+7ffbc4177000-7ffbc5167000 rwxp 00000000 00:00 0 
+7ffbc5167000-7ffbd3177000 ---p 00000000 00:00 0 
+7ffbd3177000-7ffbd317f000 r-xp 00000000 08:02 7347201                    /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/libzip.so
+7ffbd317f000-7ffbd337e000 ---p 00008000 08:02 7347201                    /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/libzip.so
+7ffbd337e000-7ffbd337f000 r--p 00007000 08:02 7347201                    /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/libzip.so
+7ffbd337f000-7ffbd3380000 rw-p 00008000 08:02 7347201                    /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/libzip.so
+7ffbd3380000-7ffbd338b000 r-xp 00000000 08:02 11801358                   /lib/x86_64-linux-gnu/libnss_files-2.27.so
+7ffbd338b000-7ffbd358a000 ---p 0000b000 08:02 11801358                   /lib/x86_64-linux-gnu/libnss_files-2.27.so
+7ffbd358a000-7ffbd358b000 r--p 0000a000 08:02 11801358                   /lib/x86_64-linux-gnu/libnss_files-2.27.so
+7ffbd358b000-7ffbd358c000 rw-p 0000b000 08:02 11801358                   /lib/x86_64-linux-gnu/libnss_files-2.27.so
+7ffbd358c000-7ffbd3592000 rw-p 00000000 00:00 0 
+7ffbd3592000-7ffbd35a9000 r-xp 00000000 08:02 11801352                   /lib/x86_64-linux-gnu/libnsl-2.27.so
+7ffbd35a9000-7ffbd37a8000 ---p 00017000 08:02 11801352                   /lib/x86_64-linux-gnu/libnsl-2.27.so
+7ffbd37a8000-7ffbd37a9000 r--p 00016000 08:02 11801352                   /lib/x86_64-linux-gnu/libnsl-2.27.so
+7ffbd37a9000-7ffbd37aa000 rw-p 00017000 08:02 11801352                   /lib/x86_64-linux-gnu/libnsl-2.27.so
+7ffbd37aa000-7ffbd37ac000 rw-p 00000000 00:00 0 
+7ffbd37ac000-7ffbd37b7000 r-xp 00000000 08:02 11801369                   /lib/x86_64-linux-gnu/libnss_nis-2.27.so
+7ffbd37b7000-7ffbd39b6000 ---p 0000b000 08:02 11801369                   /lib/x86_64-linux-gnu/libnss_nis-2.27.so
+7ffbd39b6000-7ffbd39b7000 r--p 0000a000 08:02 11801369                   /lib/x86_64-linux-gnu/libnss_nis-2.27.so
+7ffbd39b7000-7ffbd39b8000 rw-p 0000b000 08:02 11801369                   /lib/x86_64-linux-gnu/libnss_nis-2.27.so
+7ffbd39b8000-7ffbd39c0000 r-xp 00000000 08:02 11801354                   /lib/x86_64-linux-gnu/libnss_compat-2.27.so
+7ffbd39c0000-7ffbd3bc0000 ---p 00008000 08:02 11801354                   /lib/x86_64-linux-gnu/libnss_compat-2.27.so
+7ffbd3bc0000-7ffbd3bc1000 r--p 00008000 08:02 11801354                   /lib/x86_64-linux-gnu/libnss_compat-2.27.so
+7ffbd3bc1000-7ffbd3bc2000 rw-p 00009000 08:02 11801354                   /lib/x86_64-linux-gnu/libnss_compat-2.27.so
+7ffbd3bc2000-7ffbd3bec000 r-xp 00000000 08:02 7347182                    /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/libjava.so
+7ffbd3bec000-7ffbd3deb000 ---p 0002a000 08:02 7347182                    /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/libjava.so
+7ffbd3deb000-7ffbd3dec000 r--p 00029000 08:02 7347182                    /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/libjava.so
+7ffbd3dec000-7ffbd3dee000 rw-p 0002a000 08:02 7347182                    /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/libjava.so
+7ffbd3dee000-7ffbd3dfe000 r-xp 00000000 08:02 7347200                    /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/libverify.so
+7ffbd3dfe000-7ffbd3ffd000 ---p 00010000 08:02 7347200                    /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/libverify.so
+7ffbd3ffd000-7ffbd3fff000 r--p 0000f000 08:02 7347200                    /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/libverify.so
+7ffbd3fff000-7ffbd4000000 rw-p 00011000 08:02 7347200                    /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/libverify.so
+7ffbd4000000-7ffbd449b000 rw-p 00000000 00:00 0 
+7ffbd449b000-7ffbd8000000 ---p 00000000 00:00 0 
+7ffbd8000000-7ffbd8002000 r--s 00014000 08:02 12197222                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/plugins/org.eclipse.equinox.app_1.4.300.v20190815-1535.jar
+7ffbd8002000-7ffbd8005000 r--s 00018000 08:02 12197214                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/plugins/org.eclipse.core.jobs_3.10.500.v20190620-1426.jar
+7ffbd8005000-7ffbd8008000 r--s 0001e000 08:02 12197230                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/plugins/org.eclipse.equinox.preferences_3.7.500.v20190815-1535.jar
+7ffbd8008000-7ffbd800a000 r--s 00017000 08:02 12197210                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/plugins/org.eclipse.core.contenttype_3.7.400.v20190624-1144.jar
+7ffbd800a000-7ffbd800e000 r--s 0002d000 08:02 12197231                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/plugins/org.eclipse.equinox.registry_3.8.500.v20190714-1850.jar
+7ffbd800e000-7ffbd8010000 r--s 00011000 08:02 12197219                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/plugins/org.eclipse.core.runtime_3.16.0.v20190823-1314.jar
+7ffbd8010000-7ffbd8013000 r--s 0003a000 08:02 12197262                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/plugins/org.eclipse.osgi.compatibility.state_1.1.600.v20190814-1451.jar
+7ffbd8013000-7ffbd8018000 r--s 000a3000 08:02 7347238                    /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/jsse.jar
+7ffbd8018000-7ffbd801d000 r--s 0003c000 08:02 7347222                    /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/ext/sunjce_provider.jar
+7ffbd801d000-7ffbd8027000 r--s 00116000 08:02 7347219                    /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/ext/localedata.jar
+7ffbd8027000-7ffbd8068000 rw-p 00000000 00:00 0 
+7ffbd8068000-7ffbd806f000 r-xp 00000000 08:02 11801409                   /lib/x86_64-linux-gnu/librt-2.27.so
+7ffbd806f000-7ffbd826e000 ---p 00007000 08:02 11801409                   /lib/x86_64-linux-gnu/librt-2.27.so
+7ffbd826e000-7ffbd826f000 r--p 00006000 08:02 11801409                   /lib/x86_64-linux-gnu/librt-2.27.so
+7ffbd826f000-7ffbd8270000 rw-p 00007000 08:02 11801409                   /lib/x86_64-linux-gnu/librt-2.27.so
+7ffbd8270000-7ffbd8287000 r-xp 00000000 08:02 11801172                   /lib/x86_64-linux-gnu/libgcc_s.so.1
+7ffbd8287000-7ffbd8486000 ---p 00017000 08:02 11801172                   /lib/x86_64-linux-gnu/libgcc_s.so.1
+7ffbd8486000-7ffbd8487000 r--p 00016000 08:02 11801172                   /lib/x86_64-linux-gnu/libgcc_s.so.1
+7ffbd8487000-7ffbd8488000 rw-p 00017000 08:02 11801172                   /lib/x86_64-linux-gnu/libgcc_s.so.1
+7ffbd8488000-7ffbd8625000 r-xp 00000000 08:02 11801331                   /lib/x86_64-linux-gnu/libm-2.27.so
+7ffbd8625000-7ffbd8824000 ---p 0019d000 08:02 11801331                   /lib/x86_64-linux-gnu/libm-2.27.so
+7ffbd8824000-7ffbd8825000 r--p 0019c000 08:02 11801331                   /lib/x86_64-linux-gnu/libm-2.27.so
+7ffbd8825000-7ffbd8826000 rw-p 0019d000 08:02 11801331                   /lib/x86_64-linux-gnu/libm-2.27.so
+7ffbd8826000-7ffbd899f000 r-xp 00000000 08:02 7085208                    /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.25
+7ffbd899f000-7ffbd8b9f000 ---p 00179000 08:02 7085208                    /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.25
+7ffbd8b9f000-7ffbd8ba9000 r--p 00179000 08:02 7085208                    /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.25
+7ffbd8ba9000-7ffbd8bab000 rw-p 00183000 08:02 7085208                    /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.25
+7ffbd8bab000-7ffbd8baf000 rw-p 00000000 00:00 0 
+7ffbd8baf000-7ffbd984e000 r-xp 00000000 08:02 7347204                    /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/server/libjvm.so
+7ffbd984e000-7ffbd9a4e000 ---p 00c9f000 08:02 7347204                    /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/server/libjvm.so
+7ffbd9a4e000-7ffbd9ae2000 r--p 00c9f000 08:02 7347204                    /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/server/libjvm.so
+7ffbd9ae2000-7ffbd9b0b000 rw-p 00d33000 08:02 7347204                    /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/server/libjvm.so
+7ffbd9b0b000-7ffbd9b3b000 rw-p 00000000 00:00 0 
+7ffbd9b3b000-7ffbd9b55000 r-xp 00000000 08:02 11801401                   /lib/x86_64-linux-gnu/libpthread-2.27.so
+7ffbd9b55000-7ffbd9d54000 ---p 0001a000 08:02 11801401                   /lib/x86_64-linux-gnu/libpthread-2.27.so
+7ffbd9d54000-7ffbd9d55000 r--p 00019000 08:02 11801401                   /lib/x86_64-linux-gnu/libpthread-2.27.so
+7ffbd9d55000-7ffbd9d56000 rw-p 0001a000 08:02 11801401                   /lib/x86_64-linux-gnu/libpthread-2.27.so
+7ffbd9d56000-7ffbd9d5a000 rw-p 00000000 00:00 0 
+7ffbd9d5a000-7ffbd9d5d000 r-xp 00000000 08:02 11801291                   /lib/x86_64-linux-gnu/libdl-2.27.so
+7ffbd9d5d000-7ffbd9f5c000 ---p 00003000 08:02 11801291                   /lib/x86_64-linux-gnu/libdl-2.27.so
+7ffbd9f5c000-7ffbd9f5d000 r--p 00002000 08:02 11801291                   /lib/x86_64-linux-gnu/libdl-2.27.so
+7ffbd9f5d000-7ffbd9f5e000 rw-p 00003000 08:02 11801291                   /lib/x86_64-linux-gnu/libdl-2.27.so
+7ffbd9f5e000-7ffbd9f7a000 r-xp 00000000 08:02 11801440                   /lib/x86_64-linux-gnu/libz.so.1.2.11
+7ffbd9f7a000-7ffbda179000 ---p 0001c000 08:02 11801440                   /lib/x86_64-linux-gnu/libz.so.1.2.11
+7ffbda179000-7ffbda17a000 r--p 0001b000 08:02 11801440                   /lib/x86_64-linux-gnu/libz.so.1.2.11
+7ffbda17a000-7ffbda17b000 rw-p 0001c000 08:02 11801440                   /lib/x86_64-linux-gnu/libz.so.1.2.11
+7ffbda17b000-7ffbda362000 r-xp 00000000 08:02 11801268                   /lib/x86_64-linux-gnu/libc-2.27.so
+7ffbda362000-7ffbda562000 ---p 001e7000 08:02 11801268                   /lib/x86_64-linux-gnu/libc-2.27.so
+7ffbda562000-7ffbda566000 r--p 001e7000 08:02 11801268                   /lib/x86_64-linux-gnu/libc-2.27.so
+7ffbda566000-7ffbda568000 rw-p 001eb000 08:02 11801268                   /lib/x86_64-linux-gnu/libc-2.27.so
+7ffbda568000-7ffbda56c000 rw-p 00000000 00:00 0 
+7ffbda56c000-7ffbda57a000 r-xp 00000000 08:02 7347168                    /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/jli/libjli.so
+7ffbda57a000-7ffbda779000 ---p 0000e000 08:02 7347168                    /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/jli/libjli.so
+7ffbda779000-7ffbda77a000 r--p 0000d000 08:02 7347168                    /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/jli/libjli.so
+7ffbda77a000-7ffbda77b000 rw-p 0000e000 08:02 7347168                    /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/jli/libjli.so
+7ffbda77b000-7ffbda7a2000 r-xp 00000000 08:02 11801240                   /lib/x86_64-linux-gnu/ld-2.27.so
+7ffbda7a2000-7ffbda7a4000 r--s 0001c000 08:02 12197223                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/plugins/org.eclipse.equinox.common_3.10.500.v20190815-1535.jar
+7ffbda7a4000-7ffbda7bf000 r--s 00394000 08:02 7347215                    /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/ext/cldrdata.jar
+7ffbda7bf000-7ffbda882000 rw-p 00000000 00:00 0 
+7ffbda882000-7ffbda883000 ---p 00000000 00:00 0 
+7ffbda883000-7ffbda886000 ---p 00000000 00:00 0 
+7ffbda886000-7ffbda985000 rw-p 00000000 00:00 0 
+7ffbda985000-7ffbda987000 r--s 00016000 08:02 7347236                    /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/jce.jar
+7ffbda987000-7ffbda989000 r--s 0000c000 08:02 12197226                   /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/plugins/org.eclipse.equinox.launcher_1.5.500.v20190715-1310.jar
+7ffbda989000-7ffbda98a000 r--s 0000a000 08:02 7347218                    /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/ext/jaccess.jar
+7ffbda98a000-7ffbda98b000 r--s 00010000 08:02 7347224                    /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/ext/zipfs.jar
+7ffbda98b000-7ffbda98c000 r--s 0000d000 08:02 7347221                    /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/ext/sunec.jar
+7ffbda98c000-7ffbda98e000 r--s 00001000 08:02 7347216                    /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/ext/dnsns.jar
+7ffbda98e000-7ffbda991000 r--s 00039000 08:02 7347223                    /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/ext/sunpkcs11.jar
+7ffbda991000-7ffbda993000 r--s 00007000 08:02 7477605                    /usr/share/java/java-atk-wrapper.jar
+7ffbda993000-7ffbda996000 r--s 0000f000 08:02 7347217                    /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/ext/icedtea-sound.jar
+7ffbda996000-7ffbda99e000 rw-s 00000000 08:02 11018152                   /tmp/hsperfdata_fokam/4268
+7ffbda99e000-7ffbda99f000 rw-p 00000000 00:00 0 
+7ffbda99f000-7ffbda9a0000 ---p 00000000 00:00 0 
+7ffbda9a0000-7ffbda9a2000 rw-p 00000000 00:00 0 
+7ffbda9a2000-7ffbda9a3000 r--p 00027000 08:02 11801240                   /lib/x86_64-linux-gnu/ld-2.27.so
+7ffbda9a3000-7ffbda9a4000 rw-p 00028000 08:02 11801240                   /lib/x86_64-linux-gnu/ld-2.27.so
+7ffbda9a4000-7ffbda9a5000 rw-p 00000000 00:00 0 
+7ffdf2aea000-7ffdf2b0b000 rw-p 00000000 00:00 0                          [stack]
+7ffdf2b0e000-7ffdf2b11000 r--p 00000000 00:00 0                          [vvar]
+7ffdf2b11000-7ffdf2b13000 r-xp 00000000 00:00 0                          [vdso]
+ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0                  [vsyscall]
+
+VM Arguments:
+jvm_args: -Declipse.application=org.eclipse.jdt.ls.core.id1 -Dosgi.bundles.defaultStartLevel=4 -Declipse.product=org.eclipse.jdt.ls.core.product -Dfile.encoding=utf8 -Xverify:none -Xmx1G -XX:+UseG1GC -XX:+UseStringDeduplication 
+java_command: /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/plugins/org.eclipse.equinox.launcher_1.5.500.v20190715-1310.jar -configuration /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/config_linux -data /home/fokam/.config/Code/User/workspaceStorage/6960bb108a78e0657260ca4f32edb9d7/redhat.java/jdt_ws
+java_class_path (initial): /home/fokam/.vscode/extensions/redhat.java-0.48.0/server/plugins/org.eclipse.equinox.launcher_1.5.500.v20190715-1310.jar
+Launcher Type: SUN_STANDARD
+
+Environment Variables:
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/fokam/kerler/:/usr/local/nginx/sbin:/home/fokam/Android/Sdk/tools/bin:/home/fokam/rebar3
+USERNAME=fokam
+SHELL=/bin/bash
+DISPLAY=:0
+
+Signal Handlers:
+SIGSEGV: [libjvm.so+0xab92f0], sa_mask[0]=11111111011111111101111111111110, sa_flags=SA_RESTART|SA_SIGINFO
+SIGBUS: [libjvm.so+0xab92f0], sa_mask[0]=11111111011111111101111111111110, sa_flags=SA_RESTART|SA_SIGINFO
+SIGFPE: [libjvm.so+0x8ee560], sa_mask[0]=11111111011111111101111111111110, sa_flags=SA_RESTART|SA_SIGINFO
+SIGPIPE: [libjvm.so+0x8ee560], sa_mask[0]=11111111011111111101111111111110, sa_flags=SA_RESTART|SA_SIGINFO
+SIGXFSZ: [libjvm.so+0x8ee560], sa_mask[0]=11111111011111111101111111111110, sa_flags=SA_RESTART|SA_SIGINFO
+SIGILL: [libjvm.so+0x8ee560], sa_mask[0]=11111111011111111101111111111110, sa_flags=SA_RESTART|SA_SIGINFO
+SIGUSR1: SIG_DFL, sa_mask[0]=00000000000000000000000000000000, sa_flags=none
+SIGUSR2: [libjvm.so+0x8ee410], sa_mask[0]=00000000000000000000000000000000, sa_flags=SA_RESTART|SA_SIGINFO
+SIGHUP: [libjvm.so+0x8eea80], sa_mask[0]=11111111011111111101111111111110, sa_flags=SA_RESTART|SA_SIGINFO
+SIGINT: [libjvm.so+0x8eea80], sa_mask[0]=11111111011111111101111111111110, sa_flags=SA_RESTART|SA_SIGINFO
+SIGTERM: [libjvm.so+0x8eea80], sa_mask[0]=11111111011111111101111111111110, sa_flags=SA_RESTART|SA_SIGINFO
+SIGQUIT: [libjvm.so+0x8eea80], sa_mask[0]=11111111011111111101111111111110, sa_flags=SA_RESTART|SA_SIGINFO
+
+
+---------------  S Y S T E M  ---------------
+
+OS:DISTRIB_ID=Ubuntu
+DISTRIB_RELEASE=18.04
+DISTRIB_CODENAME=bionic
+DISTRIB_DESCRIPTION="Ubuntu 18.04.3 LTS"
+
+uname:Linux 4.15.0-60-generic #67-Ubuntu SMP Thu Aug 22 16:55:30 UTC 2019 x86_64
+libc:glibc 2.27 NPTL 2.27 
+rlimit: STACK 8192k, CORE 0k, NPROC 31490, NOFILE 4096, AS infinity
+load average:40.74 46.12 47.25
+
+/proc/meminfo:
+MemTotal:        8105880 kB
+MemFree:          107288 kB
+MemAvailable:      42176 kB
+Buffers:             632 kB
+Cached:           171960 kB
+SwapCached:         2760 kB
+Active:          6552668 kB
+Inactive:         936332 kB
+Active(anon):    6535900 kB
+Inactive(anon):   914464 kB
+Active(file):      16768 kB
+Inactive(file):    21868 kB
+Unevictable:          80 kB
+Mlocked:              80 kB
+SwapTotal:       2097148 kB
+SwapFree:              0 kB
+Dirty:               228 kB
+Writeback:           200 kB
+AnonPages:       7314344 kB
+Mapped:            60148 kB
+Shmem:            133912 kB
+Slab:             200876 kB
+SReclaimable:     104624 kB
+SUnreclaim:        96252 kB
+KernelStack:       25520 kB
+PageTables:       133980 kB
+NFS_Unstable:          0 kB
+Bounce:                0 kB
+WritebackTmp:          0 kB
+CommitLimit:     6150088 kB
+Committed_AS:   20990312 kB
+VmallocTotal:   34359738367 kB
+VmallocUsed:           0 kB
+VmallocChunk:          0 kB
+HardwareCorrupted:     0 kB
+AnonHugePages:         0 kB
+ShmemHugePages:        0 kB
+ShmemPmdMapped:        0 kB
+CmaTotal:              0 kB
+CmaFree:               0 kB
+HugePages_Total:       0
+HugePages_Free:        0
+HugePages_Rsvd:        0
+HugePages_Surp:        0
+Hugepagesize:       2048 kB
+DirectMap4k:     1084868 kB
+DirectMap2M:     7241728 kB
+
+container (cgroup) information:
+container_type: cgroupv1
+cpu_cpuset_cpus: 0-3
+cpu_memory_nodes: 0
+active_processor_count: 4
+cpu_quota: -1
+cpu_period: 100000
+cpu_shares: -1
+memory_limit_in_bytes: -1
+memory_and_swap_limit_in_bytes: -2
+memory_soft_limit_in_bytes: -1
+memory_usage_in_bytes: 7670595584
+memory_max_usage_in_bytes: 625774592
+
+
+CPU:total 4 (initial active 4) (2 cores per cpu, 2 threads per core) family 6 model 42 stepping 7, cmov, cx8, fxsr, mmx, sse, sse2, sse3, ssse3, sse4.1, sse4.2, popcnt, avx, aes, clmul, ht, tsc, tscinvbit
+
+/proc/cpuinfo:
+processor	: 0
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 42
+model name	: Intel(R) Core(TM) i5-2520M CPU @ 2.50GHz
+stepping	: 7
+microcode	: 0x2f
+cpu MHz		: 2524.127
+cache size	: 3072 KB
+physical id	: 0
+siblings	: 4
+core id		: 0
+cpu cores	: 2
+apicid		: 0
+initial apicid	: 0
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 13
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic popcnt tsc_deadline_timer aes xsave avx lahf_lm epb pti ssbd ibrs ibpb stibp tpr_shadow vnmi flexpriority ept vpid xsaveopt dtherm ida arat pln pts md_clear flush_l1d
+bugs		: cpu_meltdown spectre_v1 spectre_v2 spec_store_bypass l1tf mds swapgs
+bogomips	: 4988.43
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 36 bits physical, 48 bits virtual
+power management:
+
+processor	: 1
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 42
+model name	: Intel(R) Core(TM) i5-2520M CPU @ 2.50GHz
+stepping	: 7
+microcode	: 0x2f
+cpu MHz		: 2993.079
+cache size	: 3072 KB
+physical id	: 0
+siblings	: 4
+core id		: 0
+cpu cores	: 2
+apicid		: 1
+initial apicid	: 1
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 13
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic popcnt tsc_deadline_timer aes xsave avx lahf_lm epb pti ssbd ibrs ibpb stibp tpr_shadow vnmi flexpriority ept vpid xsaveopt dtherm ida arat pln pts md_clear flush_l1d
+bugs		: cpu_meltdown spectre_v1 spectre_v2 spec_store_bypass l1tf mds swapgs
+bogomips	: 4988.43
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 36 bits physical, 48 bits virtual
+power management:
+
+processor	: 2
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 42
+model name	: Intel(R) Core(TM) i5-2520M CPU @ 2.50GHz
+stepping	: 7
+microcode	: 0x2f
+cpu MHz		: 2993.136
+cache size	: 3072 KB
+physical id	: 0
+siblings	: 4
+core id		: 1
+cpu cores	: 2
+apicid		: 2
+initial apicid	: 2
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 13
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic popcnt tsc_deadline_timer aes xsave avx lahf_lm epb pti ssbd ibrs ibpb stibp tpr_shadow vnmi flexpriority ept vpid xsaveopt dtherm ida arat pln pts md_clear flush_l1d
+bugs		: cpu_meltdown spectre_v1 spectre_v2 spec_store_bypass l1tf mds swapgs
+bogomips	: 4988.43
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 36 bits physical, 48 bits virtual
+power management:
+
+processor	: 3
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 42
+model name	: Intel(R) Core(TM) i5-2520M CPU @ 2.50GHz
+stepping	: 7
+microcode	: 0x2f
+cpu MHz		: 2982.126
+cache size	: 3072 KB
+physical id	: 0
+siblings	: 4
+core id		: 1
+cpu cores	: 2
+apicid		: 3
+initial apicid	: 3
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 13
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic popcnt tsc_deadline_timer aes xsave avx lahf_lm epb pti ssbd ibrs ibpb stibp tpr_shadow vnmi flexpriority ept vpid xsaveopt dtherm ida arat pln pts md_clear flush_l1d
+bugs		: cpu_meltdown spectre_v1 spectre_v2 spec_store_bypass l1tf mds swapgs
+bogomips	: 4988.43
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 36 bits physical, 48 bits virtual
+power management:
+
+
+
+Memory: 4k page, physical 8105880k(103072k free), swap 2097148k(0k free)
+
+vm_info: OpenJDK 64-Bit Server VM (25.222-b10) for linux-amd64 JRE (1.8.0_222-8u222-b10-1ubuntu1~18.04.1-b10), built on Jul 18 2019 18:52:48 by "buildd" with gcc 7.4.0
+
+time: Mon Sep  9 19:49:19 2019
+timezone: WAT
+elapsed time: 79 seconds (0d 0h 1m 19s)
+

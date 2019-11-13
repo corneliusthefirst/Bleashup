@@ -42,15 +42,15 @@ class InvitationDispatcher {
     InvitationPossibilities = {
         accepted_invitation(Invitation) {
             return new Promise((resolve, reject) => {
-                stores.Invitations.acceptInvitation(Invitation.invitation_id).then(() => {
+                stores.Invitations.acceptInvitation(Invitation.invitation_id,true).then(() => {
                     GState.invitationUpdated = true
                     resolve()
                 })
             })
         },
-        deneid_invitation(Invitation) {
+        denied_invitation(Invitation) {
             return new Promise((resolve, reject) => {
-                stores.Invitations.denieInvitation(Invitation.invitation_id).then(() => {
+                stores.Invitations.denieInvitation(Invitation.invitation_id,true).then(() => {
                     GState.invitationUpdated = true;
                     resolve()
                 })
@@ -76,9 +76,8 @@ class InvitationDispatcher {
                 invite.invitation = Invitation;
                 invite.host = stores.Session.SessionStore.host;
                 invite.invitee = stores.Session.SessionStore.phone;
-                requestData.seen_invitation(invite).then(JSONData => {
-                    ServerEventListener.sendRequest(JSONData).then((response) => {
-                        console.warn(response)
+                requestData.received_invitation(invite,Invitation.invitation_id).then(JSONData => {
+                    ServerEventListener.sendRequest(JSONData,Invitation.invitation_id).then((response) => {
                         Invitation.type = "received"
                         Invitation.arrival_date = moment().format("YYYY-MM-DD HH:mm")
                         stores.Invitations.addInvitations(Invitation).then(() => {

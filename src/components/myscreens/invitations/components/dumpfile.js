@@ -26,18 +26,6 @@ export default class DetailsModal extends Component {
         })
         this.profile = this.props.profile ? this.props.profile : this.profile
     }
-    /* shouldComponentUpdate(nextProps) {
-         return (this.props.profile.name !== nextProps.profile.name)
-             || (this.props.profile.image !== nextProps.profile.image)
-             || (this.props.isOpen !== nextProps.isOpen) ? true : false;
-     }
-     componentDidUpdate(PreviousProp) {
-         this.setState({
-             profile: this.props.profile.name,
-             isOpen: this.props.isOpen
-         })
- 
-     }*/
     componentWillReceiveProps(nextProps) {
         this.setState({
             profile: nextProps.profile ? nextProps.profile : this.profile,

@@ -3,7 +3,9 @@ import { observable, action } from "mobx";
 
 import { uniqBy, reject, filter, find, findIndex, sortBy } from "lodash";
 import moment from "moment";
-
+import tcpRequest from "../services/tcpRequestData";
+import request from '../services/requestObjects';
+import serverEventListener from "../services/severEventListener"
 export default class highlights {
  // constructor() {}
 
@@ -12,15 +14,17 @@ export default class highlights {
     key: "highlights", 
     data: []
   };
+  @action addHighlight(H){
+    return this.addHighlights([H])
+  }
   @action addHighlights(Highlight) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Highlights => {
-  
-        if (Highlights)
-          Highlights = uniqBy(Highlights.concat([Highlight]), "id");
-        else Highlights = [Highlight];
-        this.saveKey.data = Highlights; 
-        storage.save(this.saveKey).then(() => {     
+        if (Highlights.length !== 0)
+          Highlights = uniqBy(Highlights.concat(Highlight), 'id');
+        else Highlights = Highlight;
+        this.saveKey.data = Highlights;
+        storage.save(this.saveKey).then(() => {
           this.highlights = this.saveKey.data;
           resolve();
         });
@@ -28,41 +32,64 @@ export default class highlights {
     });
   }
 
-  @action removeHighlight(id) {
+   removeHighlight(id) {
     console.warn(id,"remove highlight 2");
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve, rejectPromise) => {
       this.readFromStore().then(Highlights => {
         console.warn("all higlights",Highlights);
-        Highlights = reject(Highlights, {id, id});
+        Highlights = reject(Highlights,{id,id});
         console.warn(Highlights,"highlight object deleted");
         this.saveKey.data = Highlights;
-        storage.save(this.saveKey.data).then(() => {
+        /*storage.save(this.saveKey.data).then(() => {
           this.highlights = this.saveKey.data;
           resolve();
-        });
+        });*/
       });
     });
   }
+  fetchHighlightsFromRemote(eventID){
+    return new Promise((resolve,reject) =>{
+      let eventid = request.EventID()
+      eventid.event_id = eventID;
+      tcpRequest.getHighlights(eventid, eventid.event_id + "highlights").then(JSONDATA => {
+        serverEventListener.sendRequest(JSONDATA, eventid.event_id + "highlights").then(Data => {
+          if (Data == 'empty') {
+            resolve([])
+          } else {
+            this.addHighlights(Data).then(() => {
+              resolve(sortBy(Data,"update_date"))
+            })
+          }
+        }).catch(error => {
+          resolve([])
+        })
+      })
+    })
+  }
   @action fetchHighlights(eventID) {
     return new Promise((resolve, reject) => {
-      if (!this.highlights) {
+      if (this.highlights.length == 0) {
         this.readFromStore().then(Highlights => {
           let result = filter(Highlights, {
             event_id: eventID
           })
-          resolve(
-            result ? result : []
-          );
+          if(result.length==0){
+            this.fetchHighlightsFromRemote(eventID).then(data =>{
+              resolve(data)
+            })
+          }else{
+            resolve(result)
+          }
         });
       } else {
-        resolve(
-          sortBy(
-            filter(this.highlights, {
-              event_id: eventID
-            })
-          ),
-          "update_date"
-        );
+       let highlights = filter(this.highlights,{event_id:eventID});
+       if(highlights.length == 0){
+         this.fetchHighlightsFromRemote(eventID).then(data =>{
+           resolve(data)
+         })
+       }else{
+         resolve(highlights)
+       }
       }
     });
   }
@@ -138,11 +165,11 @@ export default class highlights {
       });
     });
   }
-  @action updateEventHighlights(eventID, newHightlights) {
+  @action updateEventHighlights(eventID, newHighlights) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Highlights => {
         Highlights = reject(Highlights, ["event_id", eventID]);
-        Highlights = Highlights.concat(newHightlights);
+        Highlights = Highlights.concat(newHighlights);
         this.saveKey.data = sortBy(Highlights, "update_date");
         storage.save(this.saveKey).then(() => {
           this.highlights = this.saveKey.data;

@@ -47,7 +47,7 @@ this.props.parentComponent.setState({update:true});
 
 @autobind
 delete(){
-  return new Promise((resolve,reject)=>{
+  return new Promise((resolve,rejectPromise)=>{
     console.warn("deleting....")
     //remove the higlight id from event then remove the highlight from the higlights store
     if(this.props.item.event_id==""){

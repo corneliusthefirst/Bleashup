@@ -122,7 +122,7 @@ export default {
     brandLight: "#f4f4f4",
 
     //Container
-    containerBgColor: "#FFFFF6",
+    containerBgColor: "#FEFFDE",
 
     //Date Picker
     datePickerTextColor: "#000",
@@ -167,8 +167,8 @@ export default {
     iosStatusbar: "dark-content",
     toolbarDefaultBorder: platform === "ios" ? "#1FABAB" : "#1FABAB",
     get statusBarColor() {
-        return color(this.toolbarDefaultBg)
-            .darken(0.2)
+        return color("#FEFFDE")
+            .darken(0)
             .hex();
     },
     get darkenHeader() {

@@ -3,7 +3,6 @@ import {
   Content,
   Card,
   CardItem,
-  Text,
   Body,
   Container,
   Header,
@@ -12,51 +11,88 @@ import {
   Input,
   Left,
   Right,
+  Icon,
   H3,
   Spinner,
-  Button
 } from "native-base";
-import { Image } from "react-native";
-
-import { observer } from "mobx-react";
-import styles from "./styles";
-import stores from "../../../stores";
-import routerActions from "reazy-native-router-actions";
+import { Text, View, ImageBackground, PermissionsAndroid,StatusBar } from 'react-native';
 import initialRoute from "../invitations/components/initialRoute";
 import globalState from "../../../stores/globalState";
+import ServerEventListener from "../../../services/severEventListener";
+import connection from "../../../services/tcpConnect";
+import UpdatesDispatcher from "../../../services/updatesDispatcher";
+import ChatRoom from "../eventChat/ChatRoom";
+import rnFetchBlob from 'rn-fetch-blob';
+const AppDir = rnFetchBlob.fs.dirs.SDCardDir + '/Bleashup'
+const PhotoDir = AppDir + '/Photo'
+const SounDir = AppDir + '/Sound'
+const VideoDir = AppDir + '/Video'
+const OthersDir = AppDir + '/Others'
+const { fs } = rnFetchBlob
 export default class LoginHomeView extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+  }
+  async requestReadAndWritePermission(){
+   // const pers =  await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE	,{title:"Write To Storage Permission",
+  //  message:"Bleashup Wants to write to disk"})
+  //  if(pers == PermissionsAndroid.RESULT.GRANTED){
+      fs.exists(AppDir).then(status => {
+        if (!status) {
+          fs.mkdir(AppDir).then(() => {
+            fs.mkdir(PhotoDir).then(() => {
+              fs.mkdir(SounDir).then(() => {
+                fs.mkdir(VideoDir).then(() => {
+                  fs.mkdir(OthersDir).then(() => {
+                    console.warn("all dirs created")
+                  })
+                })
+              })
+            })
+          })
+        }
+      })
+   // }else{
+   //   console.warn("permission deneid")
+   // }
   }
   render() {
-    routeName = initialRoute.routeName;
-    if ((globalState.loading = true)) {
-      initialRoute.initialRoute().then(route => {
-        globalState.loading = false;
-        this.props.navigation.navigate(route);
-      });
-    }
-    globalState.loading = true;
-    return (
-      <Container>
-        <Content>
-          <Left />
-          <Header style={{ marginBottom: 450 }}>
-            <Body>
-              <Title>BleashUp </Title>
-            </Body>
-            <Right />
-          </Header>
-
-          {globalState.loading ? (
-            <Spinner color="#1FABAB" style={{ marginTop: -175 }} />
-          ) : (
-              <Text> Waiting ... </Text>
-            )}
-        </Content>
-
+    //console.disableYellowBox = true;
+    this.requestReadAndWritePermission()
+  /*return (
+     <Container>
+        <ChatRoom newMessageNumber={10} firebaseRoom={"message"}></ChatRoom>
       </Container>
-    );
+
+    )*/
+     routeName = initialRoute.routeName;
+       if ((globalState.loading = true)) {
+         initialRoute.initialRoute().then(route => {
+           if(route !== "Login"){
+             connection.init().then(socket => {
+               globalState.loading = false;
+               this.props.navigation.navigate(route);
+             })
+             setTimeout(() => this.props.navigation.navigate(route), 500)
+           }else{
+             globalState.loading = false;
+             this.props.navigation.navigate(route);
+           }
+         });
+       }
+       globalState.loading = true;
+       return (
+         <Container>
+           <StatusBar backgroundColor="#FEFFDE" barStyle="dark-content"></StatusBar>
+         <ImageBackground resizeMode={"contain"} source={require("../../../../assets/Bleashup.png")} style={{ width: "100%", height: "100%", backgroundColor: "#FEFFDE", }}>
+             {globalState.loading ? (
+               <Spinner color="#FEFFDE" style={{ color:"#FEFFDE",marginTop: "96%",marginLeft: "8%", }} />
+             ) : (
+                 <Text> Waiting ... </Text>
+               )}
+         </ImageBackground>
+         </Container>
+         
+       );
   }
 }

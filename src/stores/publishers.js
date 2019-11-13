@@ -45,11 +45,14 @@ class Publishers {
             else {
                 let eventID = requestObject.EventID()
                 eventID.event_id = EventID;
-                tcpRequest.getPublishers(eventID).then(JSONData => {
-                    serverEventListener.sendRequest(JSONData).then(Data => {
+                tcpRequest.getPublishers(eventID, EventID + "publishers").then(JSONData => {
+                    serverEventListener.sendRequest(JSONData, EventID + "publishers").then(Data => {
                         this.addPublishers(EventID, Data).then(() => {
                             resolve(Data);
                         })
+                    }).catch((error) => {
+                        serverEventListener.socket.write = undefined
+                        resolve('empty');
                     })
                 })
             }
@@ -74,8 +77,15 @@ class Publishers {
         return new Promise((resolve, reject) => {
             this.readFromStore().then(Publishers => {
                 let index = findIndex(Publishers, { event_id: EventID });
-                Publishers[index].publishers.unshift(Publisher);
-                Publishers[index].publishers = uniqBy(Publishers[index].publishers, "phone")
+                if(index < 0){
+                  this.addPublishers(EventID,[Publisher]).then(()=>{
+                      resolve()
+                  })
+                }else{
+                    if (Publishers[index].publishers.length < 1) Publishers[index].publishers = [Publisher]
+                    else Publishers[index].publishers.unshift(Publisher);
+                    Publishers[index].publishers = uniqBy(Publishers[index].publishers, "phone")
+                }
                 this.saveKey.data = Publishers;
                 storage.save(this.saveKey).then(() => {
                     this.setProperties(this.saveKey.data)
@@ -86,9 +96,11 @@ class Publishers {
     }
     addPublishers(EventID, Publishers) {
         return new Promise((resolve, reject) => {
-            this.readFromStore().then(Publishers => {
-                Publishers.unshift({ event_id: EventID, publishers: Publishers });
-                this.saveKey.data = Publishers
+            this.readFromStore().then(Publics => {
+                if (Publics.length == 0)
+                    Publics = [{ event_id: EventID, publishers: Publishers }]
+                else Publics.unshift({ event_id: EventID, publishers: Publishers });
+                this.saveKey.data = Publics
                 storage.save(this.saveKey).then(() => {
                     this.setProperties(this.saveKey.data)
                     resolve()

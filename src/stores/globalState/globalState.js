@@ -7,7 +7,10 @@ export default class globalState {
   @observable isScrolling = true;
   @observable loading = false;
   @observable error = false;
+  @observable downlading = false
   @observable newContribution = false;
+  @observable connected = true
+  @observable currentRoom = null;
   @observable success = false;
   @observable passwordError = false;
   @observable newPasswordError = false;
@@ -20,6 +23,7 @@ export default class globalState {
   @observable newVote = false;
   @observable dateError = false;
   @observable timeError = false;
+  confimResult = ()=>{}
 
   get newEvent() {
     return this.newEvent;

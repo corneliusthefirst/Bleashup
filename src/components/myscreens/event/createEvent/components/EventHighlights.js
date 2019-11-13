@@ -67,22 +67,25 @@ export default class EventHighlights extends Component {
 
         }
 
-
+ 
            //i set the current new highlight data on startUp
            stores.Highlights.readFromStore().then(Highlights =>{
+               console.warn(Highlights,"All higlights");
                let highlight = find(Highlights, { id:"newHighlightId" }); 
-               this.state.currentHighlight = highlight;
+               console.warn(highlight,"constructor higlight");
+               //this.setState({currentHighlight:highlight});
               
             });
        
-        console.warn(this.state.highlightData,"constructor");
+        console.warn(this.state.currentHighlight,"constructor");
 
        //On startUp for each highlightId in new Event i set all the highlightData
        stores.Events.readFromStore().then(Events => {
+        console.warn(Events,"All Events"); 
        let event =  find(Events, { id:"newEventId" });
    
-    forEach(event.highlights,(highlightId)=>{
-      stores.Highlights.readFromStore().then((Highlights)=>{
+       forEach(event.highlights,(highlightId)=>{
+        stores.Highlights.readFromStore().then((Highlights)=>{
            let highlight = find(Highlights, { id:highlightId });
            console.warn(highlight,"before"); 
 

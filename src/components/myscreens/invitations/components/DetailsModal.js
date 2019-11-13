@@ -2,12 +2,25 @@
 import React, { Component } from 'react'
 import Modal from 'react-native-modalbox';
 import { View, Text, TouchableOpacity, DeviceEventEmitter, Image } from 'react-native'
-import { Button, Icon, Card, CardItem, Right, Left, Spinner } from 'native-base'
+import {
+    Button,
+    Icon,
+    Card,
+    CardItem,
+    Right,
+    Left,
+    Spinner,
+    Header,
+    Content,
+    Footer,
+    Container
+} from 'native-base';
 import CacheImages from '../../../CacheImages'
 import autobind from 'autobind-decorator';
 import { TouchableHighlight, ScrollView } from 'react-native-gesture-handler';
 import ImageActivityIndicator from '../../currentevents/components/imageActivityIndicator';
 import DeckSwiperModule from './deckswiper/index';
+import MapView from '../../currentevents/components/MapView';
 
 export default class DetailsModal extends Component {
     constructor(props) {
@@ -72,114 +85,86 @@ export default class DetailsModal extends Component {
                 backdropPressToClose={false}
                 swipeToClose={false}
                 backdropOpacity={0.5}
-                animationDuration={10}
                 backButtonClose={true}
                 position='bottom'
                 coverScreen={true}
                 isOpen={this.props.isOpen}
                 onClosed={this.props.onClosed}
                 style={{
-                    height: "98%", width: "98%", flexDirection: 'column', borderRadius: 8,
+                    height: "100%", width: 410, flexDirection: 'column', borderRadius: 8,
                     backgroundColor: '#FEFFDE', marginTop: -5
                 }}
 
             >
-
-                <View style={{ margin: 5, alignItems: 'center' }}>
+                <Header>
                     <TouchableOpacity style={{}} onPress={() => this.props.onClosed()}>
-                        <Icon style={{ color: "#1FABAB", fontSize: 35 }} name="close" type="EvilIcons" />
+                        <Icon style={{ color: "#FEFFDE", fontSize: 35 ,marginTop: "20%", }} name="close" type="EvilIcons" />
                     </TouchableOpacity>
-                </View>
+                </Header>
+                <Content>
+                    <View style={{ height: "100%", }}>
+                        <DeckSwiperModule details={this.props.details} />
+                        <ScrollView nestedScrollenabled>
+                            <CardItem>
+                                <View style={{ marginLeft: "60%" }}>
+                                    <MapView location={this.props.location} ></MapView>
+                                </View>
+                            </CardItem>
+                            <CardItem>
+                                <View style={{marginTop: "20%",}}>
+                                    {this.props.isToBeJoint ? (<View>
+                                        <View style={{ marginLeft: "65%",flexDirection: 'column', }}>
+                                            <Icon name="comment" type="EvilIcons" onPress={() => this.props.navigateToChat} style={{ color: "#1FABAB" }} />
+                                            <Text style={{ marginTop: 5, color: "#1FABAB" }}>chat</Text>
+                                        </View>
+                                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: "20%" }}>
+                                            <Button onPress={this.props.join} style={{ marginLeft: 40, alignItems: 'center', width: 100, marginTop: 4, borderRadius: 5 }} success ><Text style={{ fontSize: 18, fontWeight: "500", marginLeft: 31 }}>Join</Text></Button>
+                                            <View style={{ flexDirection: 'column' }}></View>
+                                        </View></View>)
+                                        :
+                                        (this.props.accept || this.props.deny ?
+                                            <View style={{ flexDirection: 'column', alignItems: 'center',marginLeft: "50%", marginTop: 7 }}>
+                                                <Icon name="comment" type="EvilIcons" onPress={{}} style={{ color: "#1FABAB" }} />
+                                                <Text style={{ marginTop: 5, color: "#1FABAB" }}>chat</Text>
+                                            </View> :
 
-                <DeckSwiperModule details={this.props.details} />
+                                            <View style={{ flex: 10, flexDirection: 'row', margin: '5%', }}>
+                                                <View style={{ width: "35%", }}>
+                                                    <View style={{ }}>
+                                                        <Button onPress={this.props.onAccept} style={{ width: 90, borderRadius: 5, justifyContent: 'center' }} success >
+                                                            <Text>Accept</Text></Button>
+                                                </View>
+                                                </View>
+                                                <View style={{ width: "35%", }}>
+                                                    <View style={{marginLeft: "20%",}}>
+                                                        <Icon name="comment" type="EvilIcons" onPress={{}} style={{ color: "#1FABAB" }} />
+                                                        <Text style={{ marginTop: 5, color: "#1FABAB" }}>chat</Text>
+                                                    </View>
+                                                </View>
+                                                <View style={{ width: "35%", }}>
+                                                    <View style={{}}>
+                                                        <Button onPress={this.props.onDenied} style={{ width: 90, borderRadius: 5, justifyContent: 'center' }} danger ><Text>Deny</Text></Button>
+                                                </View>
+                                                    </View>
+                                            </View>
 
+                                        )
+                                    }
 
+                                </View>
+                            </CardItem>    
+                                <View style={{display: 'flex', marginTop:"25%",}} >
+                                    <Text style={{}} note>
+                                        {this.props.created_date}
+                                    </Text>
+                                    <Text style={{ fontStyle: "italic", }} note>
+                                        Organised by {this.props.event_organiser_name}
+                                    </Text>
+                                </View>
+                        </ScrollView>
 
-
-                <View style={{ flexDirection: "column", marginTop: "20%", marginLeft: "58%" }}>
-
-
-                    <TouchableOpacity>
-                        <Text ellipsizeMode="clip" numberOfLines={3} style={{ fontSize: 14, color: "#1FABAB", marginTop: 15 }}>
-                            {this.props.location}
-                        </Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity onPress={this.props.OpenLinkZoom}>
-                        <Image
-                            source={require("../../../../../Images/google-maps-alternatives-china-720x340.jpg")}
-                            style={{
-                                height: 50,
-                                width: 300,
-                                borderRadius: 15,
-                                marginLeft: -86,
-                                marginTop: 5,
-                                marginBottom: 5
-
-
-                            }}
-                            resizeMode="contain"
-                            onLoad={() => { }}
-                        />
-
-                    </TouchableOpacity>
-
-                    <TouchableOpacity onPress={this.props.OpenLink} style={{}}>
-                        <Text note> View On Map </Text>
-                    </TouchableOpacity>
-
-                </View>
-
-                {this.props.isToBeJoint ? (<View>{this.props.isJoining ? <Spinner size="small"></Spinner> : null}
-
-                    <View style={{ flexDirection: 'column', alignItems: 'center', marginTop: 7 }}>
-                        <Icon name="comment" type="EvilIcons" onPress={() => this.props.navigateToChat} style={{ color: "#1FABAB" }} />
-                        <Text style={{ marginTop: 5, color: "#1FABAB" }}>chat</Text>
                     </View>
-
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
-                        <Button onPress={this.props.join} style={{ marginLeft: 40, alignItems: 'center', width: 100, marginTop: 4, borderRadius: 5 }} success ><Text style={{ fontSize: 18, fontWeight: "500", marginLeft: 31 }}>Join</Text></Button>
-                        <View style={{ flexDirection: 'column' }}></View>
-                    </View></View>)
-                    :
-                    (this.props.accept || this.props.deny ?
-                        <View style={{ flexDirection: 'column', alignItems: 'center', marginTop: 7 }}>
-                            <Icon name="comment" type="EvilIcons" onPress={{}} style={{ color: "#1FABAB" }} />
-                            <Text style={{ marginTop: 5, color: "#1FABAB" }}>chat</Text>
-                        </View> :
-
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 15 }}>
-                            <Button onPress={this.props.onAccept} style={{ marginLeft: 40, width: 90, borderRadius: 5, justifyContent: 'center' }} success >
-                                <Text>Accept</Text></Button>
-
-                            <View style={{ flexDirection: 'column', alignItems: 'center' }}>
-                                <Icon name="comment" type="EvilIcons" onPress={{}} style={{ color: "#1FABAB" }} />
-                                <Text style={{ marginTop: 5, color: "#1FABAB" }}>chat</Text>
-                            </View>
-
-                            <Button onPress={this.props.onDenied} style={{ marginRight: 40, width: 90, borderRadius: 5, justifyContent: 'center' }} danger ><Text>Deny</Text></Button>
-                        </View>
-
-                    )
-                }
-
-                <View
-                    style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        marginTop: this.props.location.length > 19 ? 15 : this.props.location.length > 38 ? 5 : 35
-
-                    }}
-                >
-                    <Text style={{ marginLeft: 10 }} note>
-                        {this.props.created_date}
-                    </Text>
-                    <Text style={{ fontStyle: "italic", marginRight: 7 }} note>
-                        Organised by {this.props.event_organiser_name}
-                    </Text>
-                </View>
-
-
+                </Content>
             </Modal>
         ) : null
     }

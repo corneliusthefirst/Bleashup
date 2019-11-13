@@ -13,8 +13,8 @@ export default class ProfileView extends Component {
         super(props)
     }
     state = { profile: undefined, isMount: false, dataArray: undefined }
-    componentDidMount() {
-        stores.TemporalUsersStore.getUser(this.props.phone).then(user => {
+    componentWillMount() {
+        setTimeout(() => stores.TemporalUsersStore.getUser(this.props.phone).then(user => {
             this.setState({
                 profile: user,
                 isModalOpened: false,
@@ -24,35 +24,42 @@ export default class ProfileView extends Component {
                     content: user.status
                 }
             })
+        }),0)
+
+    }
+    openModal() {
+        this.setState({
+            isModalOpened: true
         })
     }
     render() {
         return this.state.isMount ? (
-            <View style={{ flexDirection: "row" }}>
+            <View style={{ flexDirection: "row", }}>
                 <TouchableOpacity onPress={() => {
                     requestAnimationFrame(() => {
-                        return this.setState({ isModalOpened: true })
+                        return this.props.showPhoto(this.state.profile.profile)
                     });
                 }}>
                     {<CacheImages thumbnails {...this.props} source={{ uri: this.state.profile.profile }} />}
                 </TouchableOpacity>
-
-                <View>
-                    <Body style={{
-                        marginTop: "7%"
-                    }}>
-                        <Text style={{
-
-                        }}>{this.state.profile.nickname}</Text>
-                        <Text style={{ marginTop: 8 }} note>{this.state.dataArray.title}</Text>
-                    </Body>
+                <View style={{ marginTop: "3%", marginLeft: "2%", display: 'flex', }}>
+                    <Text style={{
+                    }}>{this.state.profile.nickname}</Text>
+                    <Text note>{this.state.dataArray.title}</Text>
                 </View>
-                <ProfileModal
+                {/*<ProfileModal
                     isOpen={this.state.isModalOpened}
+                    hasJoin={this.props.hasJoin}
+                    isToBeJoint
+                    joined={this.props.joined}
                     parent={this}
-                    onClosed={() => this.setState({ isModalOpened: false })}
+                    onClosed={() => {
+                        this.setState({ isModalOpened: false })
+                        //this.props.onOpen()
+                    }
+                    }
                     profile={this.state.profile}
-                ></ProfileModal>
+                ></ProfileModal>*/}
             </View>
         ) : <ProfileIdicator />
     }

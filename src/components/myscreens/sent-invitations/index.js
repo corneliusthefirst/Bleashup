@@ -17,8 +17,8 @@ import CardListItem from './invitationCard';
 import ImageActivityIndicator from "../currentevents/components/imageActivityIndicator";
 import { observer } from "mobx-react";
 import stores from '../../../stores';
-import BleashupScrollView from '../../BleashupScrollView';
-import CreateEvent from '../event/createEvent/CreateEvent';
+
+import BleashupFlatList from '../../BleashupFlatList';
 
 
 @observer
@@ -34,19 +34,14 @@ class SendInvitations extends Component {
 
   }
 
-  componentDidMount() {
-    setTimeout(() => {
-      stores.Invitations.readFromStore().then(invitations => {
-        this.setState({
-          loadingInvitations: false,
-          invitations: invitations
-        });
-      })
-    }, 12)
-  }
+  
 
 
-  _keyExtractor = (item, index) => item.invitation_id;
+
+
+
+
+
 
   render() {
 
@@ -56,7 +51,7 @@ class SendInvitations extends Component {
    <Container style={{flex:1}}>
 
 
-        <BleashupScrollView
+        <BleashupFlatList
           initialRender={4}
           renderPerBatch={5}
           firstIndex={0}
@@ -70,9 +65,9 @@ class SendInvitations extends Component {
             );
           }} 
         >
-        </BleashupScrollView>
+        </BleashupFlatList>
          
-        <CreateEvent Parentprops={this.props} ></CreateEvent>
+       
       
     </Container>
 

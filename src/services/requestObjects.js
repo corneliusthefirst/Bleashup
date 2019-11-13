@@ -1,3 +1,4 @@
+import moment from "moment"
 class Request {
     constructor() { }
 
@@ -83,6 +84,8 @@ class Request {
         return {
             id: '',
             event_id: "",
+            create_at: moment().format("YYYY-MM-DD HH:mm"),
+            updated_at: moment().format("YYYY-MM-DD HH:mm"),
             creator: '',
             title: '',
             description: '',
@@ -175,8 +178,8 @@ class Request {
             likes: 0,
             event_id: "",
             title: "",
-            created_at: "",
-            updated_at: "",
+            created_at: moment().format("YYYY-MM-DD HH:mm"),
+            updated_at: moment().format("YYYY-MM-DD HH:mm"),
             period: this.Period(),
             option: [this.Option()],
             description: "",
@@ -248,8 +251,8 @@ class Request {
             id: "",
             creator: "",
             event_id: "",
-            created_at: "",
-            updated_at: "",
+            created_at: moment().format("YYYY-MM-DD HH:mm"),
+            updated_at: moment().format("YYYY-MM-DD HH:mm"),
             title: "",
             period: this.Period(),
             contribution_mean: [this.ContributionMean()],
@@ -266,8 +269,8 @@ class Request {
             id: "",
             creator: "",
             event_id: "",
-            created_at: "",
-            updated_at: "",
+            created_at: moment().format("YYYY-MM-DD HH:mm"),
+            updated_at: moment().format("YYYY-MM-DD HH:mm"),
             title: "",
             description: "",
             url: ""
@@ -292,17 +295,19 @@ class Request {
         }
     }
     Time() {
+        let time = moment().format("YYYY-MM-DD HH:mm").split(" ")[1].split(":")
         return {
-            hour: "",
-            mins: "",
-            secs: ""
+            hour: time[0],
+            mins: time[1],
+            secs: ''
         }
     }
     Date() {
+        let date = moment().format("YYYY-MM-DD HH:mm").split(" ")[0].split("-")
         return {
-            year: "",
-            month: "",
-            day: ""
+            year: date[0],
+            month: date[1],
+            day: date[2]
         }
     }
     //This means Highlight-update
@@ -318,8 +323,8 @@ class Request {
         return {
             id: "",
             host: "",
-            created_at: "",
-            updated_at: "",
+            created_at: moment().format("YYYY-MM-DD HH:mm"),
+            updated_at: moment().format("YYYY-MM-DD HH:mm"),
             creator_phone: "",
             about: this.About(),
             period: this.Period(),
