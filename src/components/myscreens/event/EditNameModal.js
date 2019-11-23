@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import { Container, Content, Form, Item, Input, Icon, Text, Label } from 'native-base';
 import Modal from "react-native-modalbox"
-export default class CreateCommiteeModal extends PureComponent {
+export default class EditNameModal extends PureComponent {
     constructor(props) {
         super(props)
         this.state = {
@@ -28,13 +28,13 @@ export default class CreateCommiteeModal extends PureComponent {
             return false
         } else if (data.length > 20) {
             this.setState({
-                nameTooLongError: true
+                nameTooLongError:true
             })
         } else {
             this.setState({
-                nameTooLongError: false,
-                showGenralNameError: false,
-                commiteeNameErrror: false
+                nameTooLongError:false,
+                showGenralNameError:false,
+                commiteeNameErrror:false
             })
             return true
         }
@@ -44,11 +44,11 @@ export default class CreateCommiteeModal extends PureComponent {
         return (
             <Modal
                 backdropPressToClose={false}
-                backdropOpacity={0.7}
+                backdropOpacity={0.4}
                 swipeToClose={false}
                 backButtonClose={true}
                 entry={"top"}
-                position={"top"}
+                position={"bottom"}
                 coverScreen={true}
                 isOpen={this.props.isOpen}
                 onClosed={() => {
@@ -63,7 +63,7 @@ export default class CreateCommiteeModal extends PureComponent {
                 onOpened={() => {
                 }}
                 style={{
-                    height: "60%",
+                    height: "55%",
                     borderBottomLeftRadius: 8,
                     borderBottomRightRadius: 8,
                     backgroundColor: "#FEFFDE",
@@ -73,11 +73,14 @@ export default class CreateCommiteeModal extends PureComponent {
             >
                 <StatusBar barStyle="dark-content"></StatusBar>
                 <View>
-                    <View><Text style={{ fontSize: 30, fontWeight: '400', marginBottom: "5%", marginLeft: "10%", }}>{"Create A Commitee"}</Text></View>
+                    <View style={{ display: 'flex', flexDirection: 'row', marginBottom: "10%", }}>
+                        <Icon style={{ color: "#0A4E52", fontSize: 35, marginRight: "5%", marginTop: "1%", }} type={"EvilIcons"} name={"pencil"}></Icon>
+                        <Text style={{ fontSize: 35, fontWeight: '400', }}> Edit Commitee Name</Text>
+                    </View>
                     <Text style={{ fontSize: 12, }}> the commitee name should not be greaterthan 20 characters</Text>
-                    {this.state.commiteeNameErrror ? <Text style={{ color: "#A91A84", fontWeight: 'bold', }} note>{"the commitee name cannot be empty"}</Text> : null}
-                    {this.state.showGenralNameError ? <Text style={{ color: "#A91A84", fontWeight: 'bold', }} note> the commitee name cannot be same as General</Text> : null}
-                    {this.state.nameTooLongError ? <Text style={{ color: "#A91A84", fontWeight: 'bold', }} note>the name is too long</Text> : null}
+                    {this.state.commiteeNameErrror ? <Text style={{ color: "red",fontWeight: 'bold', }} note>{"the commitee name cannot be empty"}</Text> : null}
+                    {this.state.showGenralNameError ? <Text style={{ color: "#A91A84", fontWeight: 'bold',}} note> the commitee name cannot be same as General</Text> : null}
+                    {this.state.nameTooLongError ? <Text style={{ color: "#A91A84", fontWeight: 'bold',}} note>the name is too long</Text>:null}
                     <Item>
                         <TextInput style={{ width: "100%" }} onChangeText={(text) => {
                             this.setState({
@@ -86,34 +89,15 @@ export default class CreateCommiteeModal extends PureComponent {
                             this.validator(text)
                         }} placeholder="Commitee Name" />
                     </Item>
-                    <Item>
+                    <View style={{ marginLeft: "90%", marginTop: "5%", }}>
                         <TouchableOpacity onPress={() => requestAnimationFrame(() => {
-                            this.setState({ publicStatus: !this.state.publicStatus })
-                        })}>
-                            <View style={{ margin: '3%',width:"100%" }}>
-                                <View style={{
-                                    display: "flex",
-                                    flexDirection: 'row',
-                                }}>
-                                    <Icon style={{ color: "#1FABAB" }} name={this.state.publicStatus ? "radio-button-checked" :
-                                        "radio-button-unchecked"} type="MaterialIcons"></Icon>
-
-                                    <Text style={{ marginLeft: "10%", marginTop: "1%", fontSize: 14, fontWeight: "bold" }}>
-                                        Tobe accessible by any participant ?
-                      </Text>
-                                </View>
-                            </View>
-                        </TouchableOpacity>
-                    </Item>
-                    <View style={{ marginLeft: "90%", marginTop: "4%", }}>
-                        <TouchableOpacity onPress={() => requestAnimationFrame(() => {
-                            if (this.validator(this.state.commiteeName)) this.props.createCommitee({ publicState: this.state.publicStatus, commiteeName: this.state.commiteeName })
+                            if (this.validator(this.state.commiteeName)) this.props.editName(this.state.commiteeName)
                         })}>
                             <Icon name="checkcircle" style={{
                                 color: "#1FABAB",
                                 fontSize: 30,
                             }} type="AntDesign"></Icon>
-                            <Label style={{ color: "#1FABAB", fontSize: 14, marginLeft: "10%", fontWeight: 'bold', }}>Next</Label>
+                            <Label style={{ color: "#1FABAB", fontSize: 14,fontWeight: 'bold',marginLeft: "15%", }}>Edit</Label>
                         </TouchableOpacity>
                     </View>
                 </View>

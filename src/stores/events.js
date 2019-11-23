@@ -830,8 +830,8 @@ export default class events {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let index = findIndex(Events, { id: EventID })
-        Events[index].commitees.length <= 0 ? Events[index].commitees = [CommiteeID] :
-          Events[index].commitees.unshift(CommiteeID)
+        !Events[index].commitee || Events[index].commitee.length <= 0 ? Events[index].commitee = [CommiteeID] :
+          Events[index].commitee.unshift(CommiteeID)
         this.saveKey.data = Events
         storage.save(this.saveKey).then(() => {
           resolve("ok")
@@ -844,7 +844,7 @@ export default class events {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let index = findIndex(Events, { id: EventID })
-        Events[index].commitees = dropWhile(Events[index].commitees, (ele) => ele === ID)
+        Events[index].commitee = dropWhile(Events[index].commitee, (ele) => ele === ID)
         this.saveKey.data = Events
         storage.save(this.saveKey).then(() => {
           resolve("ok")

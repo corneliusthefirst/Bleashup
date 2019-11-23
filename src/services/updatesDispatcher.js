@@ -6,6 +6,7 @@ import tcpRequestData from "./tcpRequestData";
 import emitter from "./eventEmiter";
 import serverEventListener from "./severEventListener"
 import { find, findIndex, drop, reject, forEach } from "lodash";
+import uuid from 'react-native-uuid';
 class UpdatesDispatcher {
   constructor() { }
   dispatchUpdates(updates) {
@@ -15,6 +16,9 @@ class UpdatesDispatcher {
   }
   dispatchUpdate(update) {
     return this.UpdatePossibilities[update.update](update);
+  }
+  infomCurrentRoom(Change, event_id) {
+    emitter.emit(`event_updated_${event_id}`, Change)
   }
   UpdatePossibilities = {
     title: update => {
@@ -362,7 +366,7 @@ class UpdatesDispatcher {
       return new Promise((resolve, reject) => {
         switch (update.addedphone) {
           case "like":
-            stores.Likes.like(update.event_id, update.updater,true).then(() => {
+            stores.Likes.like(update.event_id, update.updater, true).then(() => {
               stores.Events.likeEvent(update.event_id, true).then(() => {
                 GState.eventUpdated = true;
                 resolve();
@@ -370,7 +374,7 @@ class UpdatesDispatcher {
             });
             break;
           case "like_vote":
-            stores.Likes.like(updated.new_value, update.updater,true).then(() => {
+            stores.Likes.like(updated.new_value, update.updater, true).then(() => {
               stores.Votes.likeVote(update.new_value, true).then(() => {
                 GState.eventUpdated = true;
                 resolve();
@@ -392,7 +396,7 @@ class UpdatesDispatcher {
       return new Promise((resolve, reject) => {
         switch (update.addedphone) {
           case "unlike":
-            stores.Likes.unlike(update.new_value, update.updater,true).then(() => {
+            stores.Likes.unlike(update.new_value, update.updater, true).then(() => {
               stores.Events.unlikeEvent(update.event_id).then(() => {
                 GState.eventUpdated = true;
                 resolve();
@@ -1167,7 +1171,7 @@ class UpdatesDispatcher {
       });
     },
     added: update => {
-      return new Promise((resolve,reject) =>{
+      return new Promise((resolve, reject) => {
         let Participant = requestObjects.Participant();
         Participant.phone = update.updater;
         Participant.master = update.new_value.master;
@@ -1190,7 +1194,7 @@ class UpdatesDispatcher {
           );
         });
       })
-     
+
     },
     joint: update => {
       return new Promise((resolve, reject) => {
@@ -1325,6 +1329,7 @@ class UpdatesDispatcher {
     remind_deleted: update => {
       return new Promise((resolve, reject) => {
         let Change = {
+          updated: update.updated,
           event_id: update.event_id,
           changed: "Remind Title Updated",
           updater: update.updater,
@@ -1345,7 +1350,194 @@ class UpdatesDispatcher {
           });
         });
       });
+    },
+    add_commitee: update => {
+      return new Promise((resolve, reject) => {
+        stores.CommiteeStore.getCommitee(update.new_value).then(commitee => {
+          stores.Events.addEventCommitee(update.event_id, update.new_value).then(() => {
+            stores.TemporalUsersStore.getUser(update.updater).then(updater => {
+              let Change = {
+                id: uuid.v1(),
+                updated: update.updated,
+                event_id: update.event_id,
+                changed: "New Commitee Added",
+                updater: update.updater,
+                new_value: commitee,
+                date: update.date,
+                time: update.time,
+              };
+              stores.ChangeLogs.addChanges(Change).then(() => {
+                this.infomCurrentRoom(Change, update.event_id)
+                resolve()
+              })
+            })
+          })
+        })
+      })
+    },
+    commitee_opened: update => {
+      return new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
+          stores.CommiteeStore.changeCommiteeOpenedState(update.new_value, true).then(commitee => {
+            stores.TemporalUsersStore.getUser(update.updater).then(updater => {
+              let Change = {
+                id: uuid.v1(),
+                updated: update.updated,
+                event_id: update.event_id,
+                changed: "Commitee Opened",
+                updater: updater,
+                new_value: commitee,
+                date: update.date,
+                time: update.time,
+              }
+              stores.ChangeLogs.addChanges(Change).then(() => {
+                this.infomCurrentRoom(Change, update.event_id)
+                resolve()
+              })
+            })
+          })
+        })
+      })
+    },
+    commitee_closed: update => {
+      return new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
+          stores.CommiteeStore.changeCommiteeOpenedState(update.new_value, false).then(commitee => {
+            stores.TemporalUsersStore.getUser(update.updater).then(updater => {
+              let Change = {
+                id: uuid.v1(),
+                updated: update.updated,
+                event_id: update.event_id,
+                changed: "Commitee Closed",
+                updater: updater,
+                new_value: commitee,
+                date: update.date,
+                time: update.time,
+              }
+              stores.ChangeLogs.addChanges(Change).then(() => {
+                this.infomCurrentRoom(Change, update.event_id)
+                resolve()
+              })
+            })
+          })
+        })
+      })
+    },
+    removed_commitee: update => {
+      return new Promise((resolve, reject) => {
+        stores.CommiteeStore.removeCommitee(update.new_value).then(commitee => {
+          stores.Events.removeCommitee(update.event_id, update.new_value).then(() => {
+            stores.TemporalUsersStore.getUser(update.updater).then(updater => {
+              let Change = {
+                id: uuid.v1(),
+                updated: update.updated,
+                event_id: update.event_id,
+                changed: "Commitee Deleted",
+                updater: updater,
+                new_value: commitee,
+                date: update.date,
+                time: update.time,
+              }
+              stores.ChangeLogs.addChanges(Change).then(() => {
+                this.infomCurrentRoom(Change, update.event_id)
+                resolve()
+              })
+            })
+          })
+
+        })
+      })
+    },
+    added_commitee_member: update => {
+      return new Promise((resolve, reject) => {
+        stores.CommiteeStore.addMembers(update.new_value.id, update.new_value.phone).then(() => {
+          stores.TemporalUsersStore.getUser(update.updater).then(updater => {
+            let Change = {
+              id: uuid.v1(),
+              updated: update.updated,
+              event_id: update.event_id,
+              changed: "Added Commitee Memeber",
+              updater: updater,
+              new_value: { commitee: commitee, added: new_value.phone },
+              date: update.date,
+              time: update.time,
+            }
+            stores.ChangeLogs.addChanges(Change).then(() => {
+              this.infomCurrentRoom(Change, update.event_id)
+              resolve()
+            })
+          })
+        })
+      })
+    },
+    removed_commitee_member: update => {
+      return new Promise((resolve, reject) => {
+        stores.CommiteeStore.removeMember(update.new_value.id, update.new_value.phone).then((commitee) => {
+          stores.TemporalUsersStore.getUser(update.updater).then(updater => {
+            let Change = {
+              id: uuid.v1(),
+              updated: update.updated,
+              event_id: update.event_id,
+              changed: "Removed Commitee member",
+              updater: updater,
+              new_value: { commitee: commitee, added: new_value.phone },
+              date: update.date,
+              time: update.time,
+            }
+            stores.ChangeLogs.addChanges(Change).then(() => {
+              this.infomCurrentRoom(Change, update.event_id)
+              resolve()
+            })
+          })
+        })
+      })
+    },
+    commitee_name_updated: update => {
+      return new Promise((resolve, reject) => {
+        stores.CommiteeStore.updateCommiteeName(update.new_value.id, update.new_value.name).then(commitee => {
+          stores.TemporalUsersStore.getUser(update.updater).then(updater => {
+            let Change = {
+              id: uuid.v1(),
+              updated: update.updated,
+              event_id: update.event_id,
+              changed: "Changed Commitee Name",
+              updater: updater,
+              new_value: commitee,
+              date: update.date,
+              time: update.time,
+            }
+            stores.ChangeLogs.addChanges(Change).then(() => {
+              this.infomCurrentRoom(Change, update.event_id)
+              resolve()
+            })
+          })
+        })
+      })
+    },
+    updated_commitee_public_status: update => {
+      return new Promise((resolve, reject) => {
+        stores.CommiteeStore.updateCommiteeState(update.new_value.id, update.new_value.state).then((commitee) => {
+          stores.TempLoginStore.getUser(update.updater).then(updater => {
+            let Change = {
+              id: uuid.v1(),
+              updated: update.updated,
+              event_id: update.event_id,
+              changed: update.new_value.state ? "Published Commitee" : "Unpublished Commitee",
+              updater: updater,
+              new_value: commitee,
+              date: update.date,
+              time: update.time,
+            }
+            stores.ChangeLogs.addChanges(Change).then(() => {
+              this.infomCurrentRoom(Change, update.event_id)
+              resolve()
+            })
+          })
+
+        })
+      })
     }
+
   };
 }
 

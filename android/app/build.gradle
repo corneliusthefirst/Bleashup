@@ -140,6 +140,8 @@ dependencies {
     implementation "com.google.firebase:firebase-auth:17.0.0"
     implementation "com.google.firebase:firebase-database:17.0.0"
     implementation project(':react-native-firebase')
+    //implementation 'com.android.support:appcompat-v7:27.1.1'
+    //implementation 'com.android.support:design:27.1.1'
     implementation project(':react-native-orientation-locker')
     implementation project(':react-native-sound-recorder')
     implementation project(':react-native-document-picker')
@@ -165,6 +167,7 @@ dependencies {
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
     implementation "com.facebook.react:react-native:+"  // From node_modules
     implementation project(':react-native-exit-app')
+    implementation project(':react-native-nested-scroll-view')
     implementation project(':react-native-image-picker')
     
     

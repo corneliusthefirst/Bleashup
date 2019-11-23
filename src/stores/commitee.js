@@ -1,9 +1,15 @@
 import storage from './Storage';
 import { observable } from 'mobx';
-import { reject, findIndex } from "lodash"
+import { reject, findIndex, uniqBy, unionBy } from "lodash"
 import moment from 'moment';
+import request from '../services/requestObjects';
+import tcpRequest from '../services/tcpRequestData';
+import serverEventListener from "../services/severEventListener"
 export default class commitee {
     constructor() {
+       /* storage.remove({key:"commitees"}).then(()=>{
+
+        })*/
         this.readFromStore().then(data => {
 
         })
@@ -27,13 +33,34 @@ export default class commitee {
             })
         })
     }
+    getCommitee(id) {
+        return new Promise((resolve, reject) => {
+            this.readFromStore().then(commitees => {
+                let index = findIndex(commitees, { id: id });
+                if (index >= 0) {
+                    resolve(commitees[index])
+                } else {
+                    let getCommitee = request.get_commitee()
+                    getCommitee.id = id;
+                    tcpRequest.get_commitee(getCommitee, id).then(JSONData => {
+                        serverEventListener.sendRequest(JSONData, id).then(data => {
+                            console.warn(data)
+                            this.addCommitee(data).then(() => {
+                                resolve(data)
+                            })
+                        })
+                    })
+                }
+            })
+        })
+    }
     removeCommitee(ID) {
         return new Promise((resolve, rejec) => {
             this.readFromStore().then(commitees => {
                 commitees = reject(commitees, { id: ID })
                 this.addToStore(commitees).then(() => {
                     this.setProperties(commitees)
-                    resolve()
+                    resolve(findIndex(commitees,{id:ID}))
                 })
             })
         })
@@ -43,27 +70,29 @@ export default class commitee {
             this.readFromStore().then(commitees => {
                 let index = findIndex(commitees, { id: ID })
                 commitees[index].updated_at = moment().format()
-                commitees[index].members.unshift(member)
+                commitees[index].member = unionBy(commitees[index].member, member, "phone")
                 this.addToStore(commitees).then(() => {
                     this.setProperties(commitees)
-                    resolve()
+                    resolve(commitees[index])
                 })
             })
         })
     }
-    removeMember(ID, phone) {
+    removeMember(ID, phones) {
         return new Promise((resolve, rejec) => {
             this.readFromStore().then(commitees => {
                 let index = findIndex(commitees, { id: ID })
                 commitees[index].updated_at = moment().format()
-                commitees[index].members = reject(commitees[index].members, (ele) => ele.phone === phone);
+                commitees[index].member = reject(commitees[index].member,
+                    (ele) => findIndex(phones, (phone) => phone === ele.phone) >= 0);
                 this.addToStore(commitees).then(() => {
                     this.setProperties()
-                    resolve()
+                    resolve(commitees[index])
                 })
             })
         })
     }
+
     addMaster(ID, phone) {
         return new Promise((resolve, reject) => {
             this.readFromStore().then(commitees => {
@@ -74,6 +103,18 @@ export default class commitee {
                 this.addToStore(commitees).then(() => {
                     this.setProperties()
                     resolve()
+                })
+            })
+        })
+    }
+    changeCommiteeOpenedState(ID,newState){
+        return new Promise((resolve,reject) =>{
+            this.readFromStore().then(commitees =>{
+                let index = findIndex(commitees,{id:ID})
+                commitees[index].opened = newState
+                this.addToStore(commitees).then(() =>{
+                    this.setProperties(commitees)
+                    resolve(commitees[index]);
                 })
             })
         })
@@ -92,7 +133,7 @@ export default class commitee {
             })
         })
     }
-    updateCommiteeName(ID, phone) {
+    updateCommiteeName(ID, name) {
         return new Promise((resolve, reject) => {
             this.readFromStore().then(commitees => {
                 let index = findIndex(commitees, { id: ID })
@@ -100,7 +141,20 @@ export default class commitee {
                 commitees[index].updated_at = moment().format()
                 this.addToStore(commitees).then(() => {
                     this.setProperties()
-                    resolve()
+                    resolve(commitees[index])
+                })
+            })
+        })
+    }
+    updateCommiteeState(ID, state) {
+        return new Promise((resolve, reject) => {
+            this.readFromStore().then(commitees => {
+                let index = findIndex(commitees, { id: ID })
+                commitees[index].public_state = state
+                commitees[index].updated_at = moment().format()
+                this.addToStore(commitees).then(() => {
+                    this.setProperties()
+                    resolve(commitees[index])
                 })
             })
         })

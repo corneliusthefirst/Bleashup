@@ -326,6 +326,7 @@ class Request {
             updated_at: moment().format(),
             creator_phone: "",
             about: this.About(),
+            commitee : [],
             period: this.Period(),
             location: this.Location(),
             background: "",
@@ -426,6 +427,7 @@ class Request {
             event_id: "",
             member: [],
             name: "",
+            opened:true,
             created_at: moment().format(),
             updated_at: moment().format(),
             public_state: true
@@ -461,14 +463,14 @@ class Request {
         return {
             commitee_id : "",
             event_id: "",
-            member:this.Participant()
+            member:[this.Participant()]
         }
     }
     removeCommiteeMember(){
         return {
             commitee_id:"",
             event_id:"",
-            member_phone:""
+            member_phone:[""]
         }
     }
     updateCommiteeMemberMaster(){
@@ -477,6 +479,17 @@ class Request {
             event_id:"",
             member_phone:"",
             member_status : false
+        }
+    }
+    get_commitee(){
+        return {
+            id:""
+        }
+    }
+    COEID(){
+        return {
+            commitee_id:"",
+            event_id:"",
         }
     }
 }

@@ -11,6 +11,7 @@ import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import GState from '../../../stores/globalState';
 import FileViewer from 'react-native-file-viewer';
 import ChatStore from '../../../stores/ChatStore';
+import testForURL from '../../../services/testForURL';
 let dirs = rnFetchBlob.fs.dirs
 const { fs, config } = rnFetchBlob
 const AppDir = rnFetchBlob.fs.dirs.SDCardDir + '/Bleashup'
@@ -134,11 +135,6 @@ export default class FileAttarchementMessaege extends Component {
             console.warn(error)
         })
     }
-    testForURL(url) {
-        let test = url.includes("http://")
-        let test2 = url.includes("https://")
-        return test || test2
-    }
     componentDidMount() {
         this.room = new ChatStore(this.props.firebaseRoom)
         this.setState({
@@ -193,13 +189,13 @@ export default class FileAttarchementMessaege extends Component {
                         <AnimatedCircularProgress
                             size={40}
                             width={3}
-                            fill={this.testForURL(this.props.message.source) ? this.state.downloadState : 100}
+                            fill={testForURL(this.props.message.source) ? this.state.downloadState : 100}
                             tintColor={"#1FABAB"}
                             backgroundColor={'#F8F7EE'}>
                             {
                                 (fill) => (
                                     <View style={{ marginTop: "-2%" }}>
-                                        {this.testForURL(this.props.message.source) ?
+                                        {testForURL(this.props.message.source) ?
                                             <TouchableOpacity onPress={() => this.state.downloading ? this.cancelDownLoad(this.props.message.source) :
                                                 this.downloadFile(this.props.message.source)}>
                                                 <View>

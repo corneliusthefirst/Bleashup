@@ -44,11 +44,9 @@ export default class ParticipantList extends Component {
     _keyExtractor = (item, index) => item.phone
     render() {
         return <View>
-            <Header>
-                <Title>
-                    Participants List
-                        </Title>
-            </Header>
+            <View style={{margin: '6%',}}>
+                <Text style={{fontWeight: "bold",fontSize: 22,}}> Participants List</Text>
+            </View>
             {this.state.isloaded ? (
                 <View>
                     {this.state.isEmpty ? <Text style={{

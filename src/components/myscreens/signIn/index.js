@@ -60,11 +60,10 @@ export default class SignInView extends Component {
         this.login()
       }
     });
-  }
-  componentDidMount() {
     BackHandler.addEventListener("hardwareBackPress", this.handleBackButton);
 
   }
+
   user = null
   exiting = false
   timeout = null

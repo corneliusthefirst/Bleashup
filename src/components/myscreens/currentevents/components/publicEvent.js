@@ -76,7 +76,7 @@ class PublicEvent extends Component {
       this.props.Event.id !== nextProps.Event.id
   }
   swipperComponent = null
-  componentWillMount() {
+  componentDidMount() {
     setTimeout(() => {
       this.setState({
         isMount: true,
@@ -87,7 +87,7 @@ class PublicEvent extends Component {
           master: master,
         })
       })
-    }, 0)
+    }, 12)
   }
   swipeOutSettings(master) {
     return {

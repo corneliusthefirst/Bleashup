@@ -99,7 +99,7 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
                     showsVerticalScrollIndicator={false}
                     keyExtractor={this.props.keyExtractor}
                     data={this.renderNewData().concat(this.extractData())}
-                    renderItem={({ item }) => this.props.renderItem(item, this.props.keyExtractor(item, 1))}
+                    renderItem={({ item,index }) => this.props.renderItem(item, index)}
                     ListFooterComponent={() =>
                         this.state.currentRender >= this.props.numberOfItems-1 ? null : <CardItem style={{ width: "100%", height: 25 }} >
                             {this.state.endReached ? <Text style={{

@@ -14,6 +14,8 @@ import ChatRoom from './ChatRoom';
 import { Spinner } from 'native-base';
 import stores from '../../../stores';
 import moment from 'moment';
+import firebase from 'react-native-firebase';
+import { values } from 'lodash';
 
 
 export default class EventChat extends Component {
@@ -26,18 +28,36 @@ export default class EventChat extends Component {
       typingText: null,
       isLoadingEarlier: false,
     };
-    this.activity = this.props.navigation.getParam("Event")
+    this.activity = this.props.activity
   }
   state = {}
   activity = {}
   componentDidMount() {
     stores.LoginStore.getUser().then(user => {
-      setTimeout(() => {
-        this.setState({
-          user: user,
-          loaded: true
-        });
-      }, 100)
+      let phone = user.phone.replace("00","+")
+      firebase.database().ref(`new_message/${phone}/${this.props.roomID}/new_messages`).once('value', snapshoot => {
+        this.props.newMessageCount = snapshoot.val() === null ?
+          this.props.newMessageCount : snapshoot.val().lenght
+        if (this.props.newMessageCount > 0) {
+          firebase.database().ref(`${this.props.roomID}`).limitToLast(this.props.newMessageCount).once('value', snapshoot => {
+            setTimeout(() => {
+              this.setState({
+                user: user,
+                new_messages: values(snapshoot.val()),
+                loaded: true
+              });
+            }, 1)
+          })
+        } else {
+          setTimeout(() => {
+            this.setState({
+              user: user,
+              new_messages: [],
+              loaded: true
+            });
+          }, 12)
+        }
+      })
     })
   }
   newMessages = [/*{
@@ -178,17 +198,30 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
   }*/]
   render() {
     return (this.state.loaded ? <View style={{ backgroundColor: "#FEFFDE", }}><ChatRoom
-      roomName={"General"}
-      user={{ ...this.state.user, phone: this.state.user.phone.replace("00", "+") }}
+      roomName={this.props.roomName}
+      user={{
+        ...this.state.user,
+        phone: this.state.user.phone.replace("00", "+")
+      }}
       activity_name={this.activity.about.title}
-      newMessageNumber={1}
+      close={() => this.props.close()}
+      open={() => this.props.open()}
+      addMembers={() => this.props.addMembers()}
+      removeMembers={() => this.props.removeMembers()}
+      leave={() => this.props.leave()}
+      publish={() => this.props.publish()}
+      master={this.props.master}
+      public_state={this.props.public_state}
+      opened={this.props.opened}
+      newMessageNumber={this.props.newMessageCount}
       showContacts={this.props.showContacts}
-      showMembers={(members) => this.props.showMembers(members)}
-      firebaseRoom={`General@${this.activity.about.title}`}
-      members={[this.state.user.phone]}
+      showMembers={() => this.props.showMembers()}
+      firebaseRoom={this.props.roomID}
+      members={this.props.members}
       activity_id={this.activity.id}
-      newMessages={this.newMessages}
-      creator={this.activity.creator} ></ChatRoom></View> : <ImageBackground
+
+      newMessages={this.state.new_messages}
+      creator={this.props.creator} ></ChatRoom></View> : <ImageBackground
         resizeMode={"contain"} source={require("../../../../assets/Bleashup.png")}
         style={{ width: "100%", height: "100%", backgroundColor: "#FEFFDE", }}>
       </ImageBackground>)

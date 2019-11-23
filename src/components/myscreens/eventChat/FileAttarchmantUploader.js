@@ -80,11 +80,6 @@ export default class FileAttarchementUploader extends Component {
             console.warn(error)
         })
     }
-    testForURL(url) {
-        let test = url.includes("http://")
-        let test2 = url.includes("https://")
-        return test || test2
-    }
     componentDidMount() {
         this.room = new ChatStore(this.props.firebaseRoom)
         this.setState({

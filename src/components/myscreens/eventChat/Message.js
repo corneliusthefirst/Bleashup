@@ -11,7 +11,7 @@ import PhotoMessage from './PhotoMessage';
 import VideoMessage from './VideoMessage';
 import FileAttarchementMessaege from './FileAttarchtmentMessage';
 import AudioMessage from './AudioMessage';
-import { Left, Icon, Right, Text, Toast } from 'native-base';
+import { Left, Icon, Right, Text, Toast, Spinner } from 'native-base';
 import ReplyText from './ReplyText';
 import PhotoUploader from './PhotoUploader';
 import VideoUploader from './VideoUploader';
@@ -31,7 +31,9 @@ export default class Message extends Component {
             showTime: false,
             disabledSwipeout: true,
             openRight: true,
-            replying: false
+            time: "",
+            replying: false,
+            loaded: false
         }
     }
     chooseComponent(data, index, sender) {
@@ -75,13 +77,18 @@ export default class Message extends Component {
                 return null
         }
     }
-    componentWillMount() {
-        this.setState({
-            sender_name: this.props.message.sender.nickname,
-            sender: !(this.props.message.sender.phone == this.props.user),
-            time: moment(this.props.message.created_at).format("HH:mm"),
-            creator: (this.props.message.sender.phone == this.props.creator)
-        })
+    componentDidMount() {
+        setTimeout(() => {
+            this.setState({
+                sender_name: this.props.message.sender.nickname,
+                sender: !(this.props.message.sender.phone == this.props.user),
+                different: this.props.PreviousSenderPhone !== this.props.message.sender.phone 
+                && !(this.props.message.sender.phone == this.props.user),
+                time: moment(this.props.message.created_at).format("HH:mm"),
+                creator: (this.props.message.sender.phone == this.props.creator),
+                loaded: true
+            })
+        }, 12)
     }
     openingSwipeout() {
         this.closing++
@@ -169,6 +176,7 @@ export default class Message extends Component {
     shouldComponentUpdate(nextProps, nextState, nextContext) {
         return this.props.message.sent !== nextProps.message.sent ||
             this.props.received !== nextProps.received ||
+            this.state.loaded !== nextState.loaded ||
             this.props.message.id !== nextProps.message.id
     }
     iconStyles = {
@@ -187,11 +195,11 @@ export default class Message extends Component {
         topMostStyle = {
             marginLeft: this.state.sender ? '1%' : 0,
             marginRight: !this.state.sender ? '1%' : 0,
-            //marginTop: "1%",
+            marginTop: this.state.different ? "1.5%" : 0,
             marginBottom: "0.5%",
             alignSelf: this.state.sender ? 'flex-start' : 'flex-end',
         }
-        let color = this.state.sender ? '#E7ECEC' : '#9EEDD3'
+        let color = this.state.sender ? '#D0FEEB' : '#9EEDD3'
         GeneralMessageBoxStyle = {
             maxWidth: 300, flexDirection: 'column', minWidth: 120,
             minHeight: 10, overflow: 'hidden', borderBottomLeftRadius: 10,
@@ -206,16 +214,19 @@ export default class Message extends Component {
         }
         subNameStyle = {
             paddingBottom: 0,
-            flexDirection: "row"
+            flexDirection: "row",
+            // backgroundColor: color,
         }
-        nameTextStyle = { color: '#1EDEB6', fontSize: 13, }
-        return (this.props.message.type == 'date_separator' ? <View style={{ marginTop: '2%', marginBottom: '2%' }}>
+        nameTextStyle = { fontSize: 14, fontWeight: '100', color:"#1FABAB" }
+        return (!this.state.loaded ? <Spinner size={"small"} ></Spinner> : this.props.message.type == 'date_separator' ? <View style={{ marginTop: '2%', marginBottom: '2%', }}>
             <DateView date={this.props.message.id}></DateView></View> :
-            this.props.message.type == "new_separator" ? <View style={{ marginTop: '2%', 
-            marginBottom: '2%' }}><NewSeparator data={this.props.message.id}></NewSeparator></View>:
+            this.props.message.type == "new_separator" ? <View style={{
+                marginTop: '2%',
+                marginBottom: '2%'
+            }}><NewSeparator data={this.props.message.id}></NewSeparator></View> :
                 <View style={topMostStyle}>
-                    <Swipeout isMessage onPress={this.openingSwipeout()} 
-                    ref={'chatSwipeOut'} onOpen={() => { this.openingSwipeout() }}
+                    <Swipeout isMessage onPress={this.openingSwipeout()}
+                        ref={'chatSwipeOut'} onOpen={() => { this.openingSwipeout() }}
                         onClose={() => { this.closingSwipeout() }} autoClose={true} close={true}
                         left={[{ color: '#04FFB6', type: 'default', backgroundColor: "transparent", text: 'reply' }]}
                         style={{ backgroundColor: 'transparent', width: "100%" }}>
@@ -223,13 +234,20 @@ export default class Message extends Component {
                             <View style={GeneralMessageBoxStyle}>
                                 <View>
                                     <View style={senderNameStyle}>
-                                        <View style={subNameStyle}>{this.state.sender ? <TouchableOpacity onPress={() => {
+                                        <TouchableWithoutFeedback onPressIn={() => {
+                                            this.replying = true
+                                        }}><View style={subNameStyle}>{this.state.sender ? <TouchableOpacity onPress={() => {
                                             console.warn('humm ! you want to know that contact !')
-                                        }}><Text style={nameTextStyle}
-                                            note>{" "}{this.state.sender_name}</Text></TouchableOpacity> : null}<Right><Text note
-                                                style={{ color: this.state.sender ? null : '#1FABAB', fontSize: 13, marginRight: "2%", marginTop: "1%", }}>{this.state.time}{"    "}</Text></Right></View>
+                                        }}>{this.state.different ? <Text style={nameTextStyle}
+                                                    note>{" "}{this.state.sender_name}</Text> : <Text>{"         "}</Text>}</TouchableOpacity> : null}<Right>
+                                                    {!this.state.sender ? <Text note
+                                                        style={{
+                                                            color: this.state.sender ? null : '#1FABAB',
+                                                            fontSize: 13, marginRight: "2%", marginTop: "1%",
+                                                        }}>
+                                                        {this.state.time}{"    "}</Text> : null}</Right></View></TouchableWithoutFeedback>
                                         <View>
-                                            {this.props.message.reply ? <View style={{ backgroundColor: color,borderRadius: 10, paddingRight: "1%", marginTop: "2%", }}>
+                                            {this.props.message.reply ? <View style={{ backgroundColor: color, borderRadius: 10, paddingRight: "1%", marginTop: "2%", }}>
                                                 <ReplyText pressingIn={() => {
                                                     this.replying = true
                                                 }} openReply={(replyer) => {
@@ -249,6 +267,15 @@ export default class Message extends Component {
                                                     {this.chooseComponent(this.props.message, this.props.message.id, this.state.sender)}
                                                 </View>
                                             </TouchableWithoutFeedback>
+                                        </View>
+                                        <View>
+                                            {this.state.sender ? <Text note
+                                                style={{
+                                                    marginLeft: "5%",
+                                                    color: this.state.sender ? null : '#1FABAB',
+                                                    fontSize: 13, marginRight: "2%", marginTop: "1%",
+                                                }}>
+                                                {this.state.time}{"    "}</Text> : null}
                                         </View>
                                         <View>{!this.state.sender ? this.props.message.sent ? this.props.received ?
                                             <Icon style={this.iconStyles} type="Ionicons" name="ios-checkmark-circle">

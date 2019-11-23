@@ -84,56 +84,81 @@ export default class SWView extends Component {
     original = "#1FABAB"
     transparent = "rgba(52, 52, 52, 0.0)";
     blinkerSize = 26;
+    refreshCommitees() {
+        this.refs.Commitee.refreshCommitees()
+    }
     render() {
         return (
-            <View>
-                <ScrollView style={{ backgroundColor: "#FEFFDE", }} nestedScrollEnabled={true} showsVerticalScrollIndicator={false}
-                    onScroll={Animated.event(
-                        [{ nativeEvent: { contentOffset: { y: this.state.scrollY } } }]
-                    )}>
-                    <View style={{
-                        marginTop: HEADER_MAX_HEIGHT,
-                        height: "100%", width: "100%", backgroundColor: "#FEFFDE",
-                        display: 'flex',flexDirection: 'column',
-                    }}>
-                        <View style={{ heignt: "60%", display: "flex", flexDirection: 'row', backgroundColor: "#FEFFDE", }}>
-                            <View style={{ marginTop: "2%", width: "25%", borderWidth: 2, borderColor: this.actionColor, borderRadius: 12 }}>
-                                <ActionsView showMembers={() => this.props.showMembers()}></ActionsView>
+            <TouchableWithoutFeedback onPressIn={() => {
+                this.setState({
+                    canScroll: true
+                })
+            }}>
+                <View>
+                    <ScrollView
+                        style={{ backgroundColor: "#FEFFDE", }}
+                        //scrollEnabled={true}
+                        nestedScrollEnabled={true}
+                        showsVerticalScrollIndicator={false}
+                        onScroll={Animated.event(
+                            [{ nativeEvent: { contentOffset: { y: this.state.scrollY } } }]
+                        )}>
+                        <View style={{
+                            marginTop: HEADER_MAX_HEIGHT,
+                            height: "100%", width: "100%", backgroundColor: "#FEFFDE",
+                            display: 'flex', flexDirection: 'column',
+                        }}>
+                            <View style={{ heignt: "60%", display: "flex", flexDirection: 'row', backgroundColor: "#FEFFDE", }}>
+                                <View style={{ marginTop: "2%", width: "25%", borderWidth: 2, borderColor: this.actionColor, borderRadius: 12 }}>
+                                    <ActionsView showMembers={() => this.props.showMembers()}></ActionsView>
+                                </View>
+                                <View style={{ width: "5%", }}></View>
+                                <View style={{ width: "70%" }}>
+                                    <RouteView event_id={this.props.event.id} currentPage={this.props.currentPage}
+                                        setCurrentPage={(page) => this.props.setCurrentPage(page)}></RouteView>
+                                </View>
                             </View>
-                            <View style={{ width: "5%", }}></View>
-                            <View style={{ width: "70%" }}>
-                                <RouteView currentPage={this.props.currentPage}
-                                    setCurrentPage={(page) => this.props.setCurrentPage(page)}></RouteView>
+                            <View style={{ marginTop: "10%", height: 300, }}>
+                                <Commitee
+                                    ref="Commitee"
+                                    participant={this.props.event.participant}
+                                    creator={this.props.creator}
+                                    join={(id) => { this.props.join(id) }}
+                                    showCreateCommiteeModal={() => this.props.showCreateCommiteeModal()}
+                                    leave={(id) => { this.props.leave(id) }}
+                                    removeMember={(id, members) => { this.props.removeMember(id, members) }}
+                                    addMembers={(id, currentMembers) => { this.props.addMembers(id, currentMembers) }}
+                                    publishCommitee={(id, state) => { this.props.publishCommitee(id, state) }}
+                                    editName={(newName, id) => this.props.editName(newName, id)}
+                                    swapChats={(commitee) => { this.props.swapChats(commitee) }} phone={this.props.phone}
+                                    commitees={this.props.commitees}
+                                    event_id={this.props.event.id}></Commitee>
                             </View>
                         </View>
-                        <View style={{ marginTop: "10%", height: "100%"}}>
-                            <Commitee showSelectableMembers={() => this.props.showSelectableMembers()} event_id={this.props.event.id}></Commitee>
+                    </ScrollView>
+                    <Animated.View style={[{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        backgroundColor: "#FEFFDE",
+                        overflow: 'hidden',
+                    }, {
+                        height: this.state.scrollY.interpolate({
+                            inputRange: [0, HEADER_SCROLL_DISTANCE],
+                            outputRange: [HEADER_MAX_HEIGHT, HEADER_MIN_HEIGHT],
+                            extrapolate: 'clamp',
+                        })
+                    }]}>
+                        <View style={{
+                            height: "100%",
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                        }}><Image style={{ width: this.props.width, height: 130 }}
+                            source={{ uri: this.props.event.background }}></Image>
                         </View>
-                    </View>
-                </ScrollView>
-                <Animated.View style={[{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    backgroundColor: "#FEFFDE",
-                    overflow: 'hidden',
-                }, {
-                    height: this.state.scrollY.interpolate({
-                        inputRange: [0, HEADER_SCROLL_DISTANCE],
-                        outputRange: [HEADER_MAX_HEIGHT, HEADER_MIN_HEIGHT],
-                        extrapolate: 'clamp',
-                    })
-                }]}>
-                    <View style={{
-                        height: "100%",
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                    }}><Image style={{ width: this.props.width, height: 130 }}
-                        source={{ uri: this.props.event.background }}></Image>
-                    </View>
-                </Animated.View>
-            </View>
+                    </Animated.View>
+                </View></TouchableWithoutFeedback>
         );
     }
 }

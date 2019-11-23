@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Platform, ScrollView, BackHandler, ToastAndroid, View, StatusBar } from 'react-native';
+import { Platform, ScrollView, BackHandler, ToastAndroid, View, StatusBar, AppState, } from 'react-native';
 import {
   Container,
   Header,
@@ -31,11 +31,16 @@ import GState from '../../../stores/globalState';
 
 
 @observer
-class Home extends Component {
+class Home extends Component { 
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      appState:'active'
+    };
     this.permisssionListener()
+  }
+  state = {
+
   }
   permisssionListener() {
     firebase.messaging().hasPermission().then(status => {
@@ -58,7 +63,7 @@ class Home extends Component {
         stores.Events.loadCurrentEvent(data.activity_id).then(event => {
           //console.warn(event)
           this.props.navigation.navigate('Event', {
-            tab:"EventChat",
+            tab: "EventChat",
             Event: event,
             isOpen: true
           })
@@ -83,10 +88,15 @@ class Home extends Component {
       console.warn(notification)
     })
   }
+  componentWillMount() {
+    AppState.addEventListener('change', this._handleAppStateChange);
+    NetInfo.isConnected.addEventListener("connectionChange", this.handleConnectionChange);
+    BackHandler.addEventListener("hardwareBackPress", this.handleBackButton);
+  }
   componentDidMount() {
     emitter.on("notify", (event) => {
       {
-        if(GState.currentRoom !== event.data.room_key){
+        if (GState.currentRoom !== event.data.room_key) {
           this.props.showNotification({
             title: event.title,
             message: event.body,
@@ -94,11 +104,22 @@ class Home extends Component {
             onPress: () => this.handleNotifications(event.data)
 
           });
+        } else {
+          //let phone = stores.LoginStore.user.phone.replace("00", "+");
+         // firebase.database().ref(`new_message/${phone}/${event.data.room_key}/new_messages`).set([])
         }
       }
+      stores.LoginStore.getUser().then((user) => {
+        firebase.messaging().requestPermission().then(staus => {
+          firebase.messaging().getToken().then(token => {
+            //console.warn(token)
+            firebase.database().ref(`notifications_tokens/${user.phone.replace('00', '+')}`).set(token)
+          }).catch(error => {
+            console.warn(error)
+          })
+        })
+      })
     })
-    NetInfo.isConnected.addEventListener("connectionChange", this.handleConnectionChange);
-    BackHandler.addEventListener("hardwareBackPress", this.handleBackButton);
   }
   exiting = false
   timeout = null
@@ -106,8 +127,24 @@ class Home extends Component {
     BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton);
     this.removeNotificationDisplayedListener()
     this.removeNotificationListener()
+    AppState.removeEventListener('change', this._handleAppStateChange);
     this.removeNotificationOpenedListener()
   }
+  _handleAppStateChange = (nextAppState) => {
+    if(nextAppState !== 'active'){
+      firebase.database().ref(`current_room/${stores.LoginStore.user.phone.replace("00", "+")}`).set(null)
+    }
+    if (
+      this.state.appState.match(/inactive|background/) &&
+      nextAppState === 'active'
+    ) {
+      firebase.database().ref(`current_room/${stores.LoginStore.user.phone.replace("00","+")}`).set(GState.currentRoom)
+      console.log('App has come to the foreground!');
+    }else{
+      //firebase.database().ref(`current_room/${stores.LoginStore.user.phone.replace("00","+")}`).set(null)
+    }
+    this.setState({ appState: nextAppState });
+  };
   handleBackButton() {
     if (this.exiting) {
       clearTimeout(this.timeout)
@@ -135,17 +172,18 @@ class Home extends Component {
     return (
       <Container style={{ backgroundColor: "#FEFFDE" }}>
         <StatusBar backgroundColor="#FEFFDE" barStyle="dark-content"></StatusBar>
-        <Header style={{ backgroundColor: "#FEFFDE",}} hasTabs>
+        <Header style={{ backgroundColor: "#FEFFDE", }} hasTabs>
           <Body>
             <Title
               style={{
-                marginLeft: "10%",
-                fontWeight: "bold",
-                color:"#0A4E52",
+                marginLeft: "2%",
+                fontWeight: "500",
+                color: "#0A4E52",
+                //fontStyle: 'italic',
                 fontSize: 30,
               }}
             >
-              Bleashup
+              bleashup
                 </Title>
           </Body>
 

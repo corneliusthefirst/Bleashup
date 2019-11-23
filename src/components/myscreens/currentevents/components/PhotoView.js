@@ -12,13 +12,12 @@ export default class PhotoView extends Component {
         ismounted: true,
         isModalOpened: false
     }
-    componentWillMount() {
+    componentDidMount() {
         this.setState({
             ismounted: true,
             isModalOpened: false
-        })
+        }) 
     }
-
     render() {
         return (<View style={this.props.style}>
             <TouchableOpacity onPress={() => requestAnimationFrame(() => {

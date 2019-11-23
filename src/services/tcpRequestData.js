@@ -419,7 +419,21 @@ class tcpRequestData {
   add_member_to_commitee(data, id) {
     return this.sendData('add_member_to_commitee', data, id)
   }
-
+  get_commitee(data, id) {
+    return this.sendData('get_commitee', data, id)
+  }
+  join_commitee(data, id) {
+    return this.sendData('join_commitee', data, id)
+  }
+  leave_commitee(data, id) {
+    return this.sendData('leave_commitee', data, id)
+  }
+  open_commitee(data, id) {
+    return this.sendData('open_commitee', data, id)
+  }
+  close_commitee(data, id) {
+   return this.sendData('close_commitee', data, id);
+  }
 }
 
 const tcpRequest = new tcpRequestData();

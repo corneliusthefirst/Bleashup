@@ -16,7 +16,9 @@ import ParticipantList from "./ParticipantList";
     }
     state = {}
     componentDidMount() {
-      //  setTimeout(()=>{},20)
+       setTimeout(()=>{
+           
+       },20)
     }
     render() {
         return (
@@ -28,10 +30,14 @@ import ParticipantList from "./ParticipantList";
                 position='bottom'
                 coverScreen={true}
                 isOpen={this.props.isOpen}
-                onClosed={() =>
+                onClosed={() =>{
                     this.props.onClosed()
-
-                }
+                    this.setState({
+                        participants:[],
+                        loaded:false,
+                        event_id:null
+                    })
+                }}
                 onOpened={() => {
                     setTimeout(()=>{
                         this.setState({
