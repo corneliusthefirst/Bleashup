@@ -1349,9 +1349,7 @@ export default class ChatRoom extends Component {
                                         public={this.props.public_state}
                                         opened={this.props.opened}
                                     ></ChatroomMenu>
-                                    </View><NotificationModal close={() => {
-
-                                    }} isOpen={true}></NotificationModal></View> : null
+                                    </View></View> : null
                         }
                         {
                             // **********************New Message Indicator *****************//

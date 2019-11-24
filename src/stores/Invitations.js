@@ -24,9 +24,9 @@ export default class Invitations {
         data: [{}]
     }
     constructor() {
-        /*   storage.remove({
-               key: 'Invitations'
-           });*/
+       // storage.remove({
+       //        key: 'Invitations'
+           //});
         this.readFromStore().then(Invitations => {
             if (Invitations) {
                 this.setProperties(Invitations, true)
@@ -46,16 +46,15 @@ export default class Invitations {
                                 "sender_name": user.nickname,
                                 "sender_status": user.status,
                                 "receiver_Image": user.profile,
-                                "received_date": invitation.period.date.year + "/" +
-                                    invitation.period.date.month + "/" +
-                                    invitation.period.date.day + " at " + invitation.period.time.hour + ": " + invitation.period.time.mins + ": " + invitation.period.time.secs,
+                                "received_date": invitation.period,
                                 "created_date": event.created_at,
                                 "event_organiser_name": user.nickname,
                                 "event_description": event.about.description,
                                 "event_Image": event.background,
-                                "event_time": event.period.date.year + "/" +
+                                "event_time": event.period.date?event.period.date.year + "/" +
                                     event.period.date.month + "/" +
-                                    event.period.date.day + " at " + event.period.time.hour + ": " + event.period.time.mins + ": " + event.period.time.secs,
+                                    event.period.date.day + " at " + event.period.time.hour + ": "
+                                     + event.period.time.mins + ": " + event.period.time.secs:event.period,
                                 "event_title": event.about.title,
                                 "location": event.location.string,
                                 "invitation_status": invitation.status,

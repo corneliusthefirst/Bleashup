@@ -113,6 +113,7 @@ class Home extends Component {
         firebase.messaging().requestPermission().then(staus => {
           firebase.messaging().getToken().then(token => {
             //console.warn(token)
+            //GState.socket.close()
             firebase.database().ref(`notifications_tokens/${user.phone.replace('00', '+')}`).set(token)
           }).catch(error => {
             console.warn(error)

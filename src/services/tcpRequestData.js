@@ -7,7 +7,12 @@ class tcpRequestData {
   Presence() {
     return this.sendData("presence", requestObject.None(), "presence");
   }
-
+  clear(){
+    return this.sendData("all_updated",requestObject.None(),"all_updated")
+  }
+  get_all_update() {
+    return this.sendData("get_all_update", requestObject.None(), "get_all_update")
+  }
   UpdateCurrentEvent(phone, eventID, action, data, id) {
     let UpdateData = () => {
       if (action === "title") {

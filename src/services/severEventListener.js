@@ -15,29 +15,46 @@ class ServerEventListener {
   dispatch(data) {
     //console.error(data)
     if (data.response) {
-     // console.warn('eligible_response 1')
+      // console.warn('eligible_response 1')
       switch (data.response) {
         case "not_eligible":
-         // console.warn('eligible_response')
+          // console.warn('eligible_response')
           emitter.emit("unsuccessful_" + data.message.id, data.message.data);
+          break;
+        case "cleared":
+          console.warn("clearing.....")
+          emitter.emit("cleared", data.data);
+          break;
+        case "all_updates":
+          console.warn(data)
+          if (data.updated.length !== 0) UpdatesDispatcher.dispatchUpdates(data.updated);
+          if (data.new_events.length !== 0) {
+            InvitationDispatcher.dispatchUpdates(
+              data.new_events,
+              "invitation"
+            ).then(() => {
+            });
+          }
+          if (data.reschedules)
+            RescheduleDispatcher.dispatchReschedules(data.reschedules);
+          if (data.info)
+            InvitationDispatcher.dispatchInvitationsUpdates(data.info);
+          tcpRequest.clear().then(JSONData => {
+            emitter.once("cleared",data =>{
+              console.warn("cleared all")
+            })
+            this.socket.write(JSONData)
+          })
           break;
         case "current_events":
           emitter.emit("current-events", data.body);
           break;
-        case "news":
+        case "presence":
+          console.warn(data.reference)
           stores.Session.updateReference(data.reference).then(sessios => {
-            if (data.updated.length !== 0) UpdatesDispatcher.dispatchUpdates(data.updated);
-            if (data.new_events.length !== 0) {
-              InvitationDispatcher.dispatchUpdates(
-                data.new_events,
-                "invitation"
-              ).then(() => {
-              });
-            }
-            if (data.reschedules)
-              RescheduleDispatcher.dispatchReschedules(data.reschedules);
-            if (data.info)
-              InvitationDispatcher.dispatchInvitationsUpdates(data.info);
+            tcpRequest.get_all_update().then(JSONData => {
+              this.socket.write(JSONData)
+            })
           });
           break;
         case "event_changes":
@@ -121,6 +138,7 @@ class ServerEventListener {
   listen(socket) {
     //socket.setTimeout(10000);
     this.socket = socket
+    GState.socket = socket
     socket.on("error", error => {
       console.warn(error.toString(), "error");
       this.socket.write = undefined

@@ -3,7 +3,7 @@ import { Animated, View, Easing, TouchableWithoutFeedback } from "react-native"
 import { Icon, Spinner, Text, Toast } from "native-base"
 import Requester from '../Requester'
 import stores from "../../../../stores"
-import { indexOf, dropWhile ,uniq,find} from "lodash"
+import { indexOf, dropWhile, uniq, find } from "lodash"
 import { observer } from 'mobx-react';
 import LikerssModal from '../../../LikersModal';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -26,14 +26,14 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
         outputRange: [1, 1.15, 1.2],
 
     })
-    didILiked(Likes,id) {
+    didILiked(Likes, id) {
         return new Promise((resolve, reject) => {
-            likes  = find(Likes,{event_id:id})
-            if(likes){
+            likes = find(Likes, { event_id: id })
+            if (likes) {
                 let index = indexOf(likes.likers, stores.Session.SessionStore.phone)
                 if (index >= 0) resolve({ status: true, likes: likes })
                 else resolve({ status: false, likes: likes })
-            }else{
+            } else {
                 let index = indexOf(Likes.likers, stores.Session.SessionStore.phone)
                 if (index >= 0) resolve({ status: true, likes: Likes })
                 else resolve({ status: false, likes: Likes })
@@ -41,7 +41,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
         })
     }
     componentDidMount() {
-        stores.Likes.loadLikes(this.props.id).then(likes =>{
+        stores.Likes.loadLikes(this.props.id).then(likes => {
             this.didILiked(likes, this.props.id).then(result => {
                 this.setState({
                     likes: likes.likers.length,
@@ -107,7 +107,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
     componentWillReceiveProps(nextProps) {
         this.didILiked(stores.Likes.likes, nextProps.id).then(result => {
             this.setState({
-                likes: result.likes.likers.length,
+                likes: result.likes.likers ? result.likes.likers.length : 0,
                 liked: result.status,
                 likers: result.likes.likers,
                 loaded: true
@@ -160,14 +160,16 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
                 <View>
                     <TouchableOpacity onPress={() => this.setState({ isOpen: true })}>
                         <View style={{ marginTop: 5 }}>
-                            <Text style={{ color: this.state.liked ? "#54F5CA" :
-                             "#bfc6ea",fontSize: 14, }} note>{" "} {this.state.likes} {"liker(s)"} </Text>
+                            <Text style={{
+                                color: this.state.liked ? "#54F5CA" :
+                                    "#bfc6ea", fontSize: 14,
+                            }} note>{" "} {this.state.likes} {"liker(s)"} </Text>
                         </View>
                     </TouchableOpacity>
                 </View>
                 <View>
-                    <LikerssModal likers={this.state.likers} isOpen={this.state.isOpen} 
-                    onClosed={() => this.setState({ isOpen: false })}></LikerssModal>
+                    <LikerssModal likers={this.state.likers} isOpen={this.state.isOpen}
+                        onClosed={() => this.setState({ isOpen: false })}></LikerssModal>
                 </View>
             </View>
         ) : null

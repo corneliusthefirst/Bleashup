@@ -8,6 +8,7 @@ import Svg, { Circle, Rect } from 'react-native-svg'
 import stores from "../../../../stores";
 import DetailsModal from "../../invitations/components/DetailsModal";
 import {forEach} from "lodash"
+import moment from "moment";
 @observer export default class TitleView extends Component {
     constructor(props) {
         super(props)
@@ -70,17 +71,8 @@ import {forEach} from "lodash"
         })
     }
     writeDateTime() {
-        return "on the " + this.props.Event.period.date.year +
-            "/" +
-            this.props.Event.period.date.month +
-            "/" +
-            this.props.Event.period.date.day +
-            "  at " +
-            this.props.Event.period.time.hour +
-            ":" +
-            this.props.Event.period.time.mins +
-            ":" +
-            this.props.Event.period.time.secs
+        //console.error(this.props.Event.period)
+        return "on " + moment(this.props.Event.period).format("dddd, MMMM Do YYYY, h:mm:ss a")
     }
     render() {
        return  <View>

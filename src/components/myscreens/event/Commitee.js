@@ -48,7 +48,7 @@ export default class Commitee extends Component {
             this.setState({
                 refresh: false
             })
-        }, 200)
+        }, 100)
     }
     render() {
         return (this.state.loaded ?

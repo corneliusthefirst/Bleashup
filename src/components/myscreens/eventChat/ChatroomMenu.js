@@ -22,6 +22,17 @@ export default class ChatroomMenu extends Component {
             publi: this.props.public,
             opened: this.props.opened
         })
+        emitter.on("open-close", (newState) => {
+            console.warn("receiving closed !!")
+            this.setState({
+                opened: newState
+            })
+        })
+        emitter.on("publish-unpublish", (newState) => {
+            this.setState({
+                public: newState
+            })
+        })
     }
     componentWillReceiveProps(nextProps) {
         if (nextProps.hide) {
@@ -80,22 +91,11 @@ export default class ChatroomMenu extends Component {
                     {this.props.roomID == this.props.eventID ? null : !this.props.master ? null : <View><MenuItem textStyle={{ color: this.state.opened ? "red" : "green" }} onPress={() => {
                         this.hideMenu()
                         this.state.opened ? this.props.closeCommitee() : this.props.openCommitee()
-                        emitter.once("open-close", () => {
-                            console.warn("receiving closed !!")
-                            this.setState({
-                                opened: !this.state.opened
-                            })
-                        })
                     }}>{this.state.opened ? "Close Commitee" : "Open Commitee"}</MenuItem>
                         <MenuDivider color="#1FABAB" /></View>}
                     {!this.props.master ? null : <View><MenuItem textStyle={{ color: "green" }} onPress={() => {
                         this.hideMenu()
                         this.state.public ? this.props.publishCommitee() : this.props.publishCommitee()
-                        emitter.once("publish-unpublish", () => {
-                            this.setState({
-                                public: !this.state.public
-                            })
-                        })
                     }}>{this.props.roomID == this.props.eventID ? null : this.state.public ? "Unpublish Commitee" : "Publish Commitee"}</MenuItem>
                         <MenuDivider color="#1FABAB" /></View>}
                     {this.props.roomID == this.props.eventID ? null : <View><MenuItem textStyle={{ color: "green" }} onPress={() => {

@@ -1351,7 +1351,7 @@ class UpdatesDispatcher {
         });
       });
     },
-    add_commitee: update => {
+    new_commitee: update => {
       return new Promise((resolve, reject) => {
         stores.CommiteeStore.getCommitee(update.new_value).then(commitee => {
           stores.Events.addEventCommitee(update.event_id, update.new_value).then(() => {
@@ -1360,9 +1360,9 @@ class UpdatesDispatcher {
                 id: uuid.v1(),
                 updated: update.updated,
                 event_id: update.event_id,
-                changed: "New Commitee Added",
-                updater: update.updater,
-                new_value: commitee,
+                changed: `Added ${commitee.name} Commitee`,
+                updater: updater,
+                new_value: { data: commitee, new_value: null },
                 date: update.date,
                 time: update.time,
               };
@@ -1384,9 +1384,9 @@ class UpdatesDispatcher {
                 id: uuid.v1(),
                 updated: update.updated,
                 event_id: update.event_id,
-                changed: "Commitee Opened",
+                changed: `Reopened ${commitee.name} Commitee`,
                 updater: updater,
-                new_value: commitee,
+                new_value: { data: commitee, new_value: null },
                 date: update.date,
                 time: update.time,
               }
@@ -1408,11 +1408,10 @@ class UpdatesDispatcher {
                 id: uuid.v1(),
                 updated: update.updated,
                 event_id: update.event_id,
-                changed: "Commitee Closed",
+                changed: `Closed ${commitee.name} Commitee`,
                 updater: updater,
-                new_value: commitee,
+                new_value: {data:commitee,new_value:null},
                 date: update.date,
-                time: update.time,
               }
               stores.ChangeLogs.addChanges(Change).then(() => {
                 this.infomCurrentRoom(Change, update.event_id)
@@ -1450,15 +1449,15 @@ class UpdatesDispatcher {
     },
     added_commitee_member: update => {
       return new Promise((resolve, reject) => {
-        stores.CommiteeStore.addMembers(update.new_value.id, update.new_value.phone).then(() => {
+        stores.CommiteeStore.addMembers(update.new_value.id, update.new_value.member).then((commitee) => {
           stores.TemporalUsersStore.getUser(update.updater).then(updater => {
             let Change = {
               id: uuid.v1(),
               updated: update.updated,
               event_id: update.event_id,
-              changed: "Added Commitee Memeber",
+              changed: `Added A New Memeber(s) To ${commitee.name} Commitee`,
               updater: updater,
-              new_value: { commitee: commitee, added: new_value.phone },
+              new_value: { data: commitee, new_value: update.new_value.phone },
               date: update.date,
               time: update.time,
             }
@@ -1478,9 +1477,9 @@ class UpdatesDispatcher {
               id: uuid.v1(),
               updated: update.updated,
               event_id: update.event_id,
-              changed: "Removed Commitee member",
+              changed: `Removed A Member(s) From ${commitee.name}`,
               updater: updater,
-              new_value: { commitee: commitee, added: new_value.phone },
+              new_value: { data: commitee, new_vanue: update.new_value.phone },
               date: update.date,
               time: update.time,
             }
@@ -1494,21 +1493,23 @@ class UpdatesDispatcher {
     },
     commitee_name_updated: update => {
       return new Promise((resolve, reject) => {
-        stores.CommiteeStore.updateCommiteeName(update.new_value.id, update.new_value.name).then(commitee => {
-          stores.TemporalUsersStore.getUser(update.updater).then(updater => {
-            let Change = {
-              id: uuid.v1(),
-              updated: update.updated,
-              event_id: update.event_id,
-              changed: "Changed Commitee Name",
-              updater: updater,
-              new_value: commitee,
-              date: update.date,
-              time: update.time,
-            }
-            stores.ChangeLogs.addChanges(Change).then(() => {
-              this.infomCurrentRoom(Change, update.event_id)
-              resolve()
+        stores.CommiteeStore.getCommitee(update.new_value.id).then(oldCommitee => {
+          stores.CommiteeStore.updateCommiteeName(update.new_value.id, update.new_value.name).then(commitee => {
+            stores.TemporalUsersStore.getUser(update.updater).then(updater => {
+              let Change = {
+                id: uuid.v1(),
+                updated: update.updated,
+                event_id: update.event_id,
+                changed: `Changed The Name Of ${oldCommitee.name} Commitee To: `,
+                updater: updater,
+                new_value: { data: commitee, new_value: update.new_value.name },
+                date: update.date,
+                time: update.time,
+              }
+              stores.ChangeLogs.addChanges(Change).then(() => {
+                this.infomCurrentRoom(Change, update.event_id)
+                resolve()
+              })
             })
           })
         })
@@ -1517,14 +1518,15 @@ class UpdatesDispatcher {
     updated_commitee_public_status: update => {
       return new Promise((resolve, reject) => {
         stores.CommiteeStore.updateCommiteeState(update.new_value.id, update.new_value.state).then((commitee) => {
-          stores.TempLoginStore.getUser(update.updater).then(updater => {
+          //console.warn(update.updater)
+          stores.TemporalUsersStore.getUser(update.updater).then(updater => {
             let Change = {
               id: uuid.v1(),
               updated: update.updated,
               event_id: update.event_id,
-              changed: update.new_value.state ? "Published Commitee" : "Unpublished Commitee",
+              changed: update.new_value.state === true ? `Published ${commitee.name} Commitee` : `Unpublished ${commitee.name} Commitee`,
               updater: updater,
-              new_value: commitee,
+              new_value: { data: commitee, new_value: update.new_value.state },
               date: update.date,
               time: update.time,
             }

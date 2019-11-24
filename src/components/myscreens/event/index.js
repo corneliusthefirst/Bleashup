@@ -87,7 +87,20 @@ export default class Event extends Component {
       public_state: false,
       opened: true,
       roomMembers: this.event.participant,
-      working: false
+      working: false,
+      showNotifiation: false,
+      change: {
+        updater: {
+          nickname: "Fokam Giles",
+          status: "Here we are come with this",
+          profile: "https://images.all-free-download.com/images/graphicthumb/peacock_profile_514065.jpg"
+        },
+        changed: "The Name Of A Commitee To: ",
+        new_value: {
+          object: {},
+          new_value: "New Name"
+        }
+      }
     };
     //this.props.Event = this.props.navigation.getParam("Event");
   }
@@ -223,6 +236,36 @@ export default class Event extends Component {
   }
   master = false
   componentWillMount() {
+    emitter.on(`event_updated_${this.event.id}`, change => {
+      //console.warn(change)
+      this.setState({
+        change: change,
+        showNotifiation: true
+      })
+      if (change.changed.toLowerCase().includes("commitee")) {
+        this.refreshCommitees()
+        let commitee = change.new_value.data
+        if (commitee.id == this.state.roomID) {
+          emitter.emit("open-close", commitee.opened)
+          emitter.emit('publish-unpublish', commitee.public_state)
+          this.setState({
+            //roomID: commitee.id,
+            roomName: commitee.name,
+            //opened:commitee.opened,
+            public_state: commitee.public_state,
+            opened: commitee.opened,
+            newMessageCount: GState.currentRoomNewMessages ? GState.currentRoomNewMessages.length : 0,
+            roomMembers: commitee.member
+          })
+        }
+      }
+      setTimeout(() => {
+        this.setState({
+          change: null,
+          showNotifiation: false
+        })
+      }, 4000)
+    })
     stores.LoginStore.getUser().then(user => {
       this.user = user;
       member = find(this.event.participant, { phone: user.phone })
@@ -297,7 +340,8 @@ export default class Event extends Component {
 
       //commitee.member = uniqBy(commitee.member, "phone");
       Requester.addCommitee(commitee).then(() => {
-        this.event.commitee.unshift(commitee.id)
+        !this.event.commitee || this.event.commitee.length <= 0 ? this.event.commitee = [commitee.id] :
+          this.event.commitee.unshift(commitee.id)
         this.setState({
           newCommitee: true,
           working: false
@@ -388,8 +432,15 @@ export default class Event extends Component {
         let key = `rooms/${this.event.id}/${this.state.commitee_id}`
         Requester.addMembers(this.state.commitee_id, members, this.event.id).then((mem) => {
           firebase.database().ref(key).once('value', snapshoot => {
-            let newMembers = { ...snapshoot.val(), members: unionBy(snapshoot.val().members, members, "phone") }
-            firebase.database().ref(key).set(newMembers)
+            if (snapshoot.val()) {
+              newMembers = { ...snapshoot.val(), members: unionBy(snapshoot.val().members, members, "phone") }
+              firebase.database().ref(key).set(newMembers)
+            } else {
+              firebase.database().ref(key).set({
+                name: this.state.roomName,
+                members: unionBy(this.state.roomMembers, members, "phone")
+              })
+            }
             //this.refreshCommitees()
             this.setState({
               commitee_id: null,
@@ -463,8 +514,12 @@ export default class Event extends Component {
         let key = `rooms/${this.event.id}/${this.state.commitee_id}/members`
         Requester.removeMembers(this.state.commitee_id, mem, this.event.id).then(() => {
           firebase.database().ref(key).once("value", snapshoot => {
-            let newMembers = snapshoot.val().filter(ele => (findIndex(mem, { phone: ele.phone }) < 0))
-            firebase.database().ref(key).set(newMembers)
+            if (snapshoot.val()) {
+              let newMembers = snapshoot.val().filter(ele => (findIndex(mem, { phone: ele.phone }) < 0))
+              firebase.database().ref(key).set(newMembers)
+            } else {
+              firebase.database().ref(key).set(this.state.roomMembers.filter(ele => (findIndex(mem, { phone: ele.phone }) < 0)))
+            }
             this.setState({
               commitee_id: null,
               members: null,
@@ -540,6 +595,10 @@ export default class Event extends Component {
       GState.currentCommitee = null;
       emitter.emit("current_commitee_changed", this.previous)
     }
+    else {
+      emitter.emit("current_commitee_changed", this.previous)
+    }
+
   }
   leaveCommitee(id) {
     if (!this.state.working) {
@@ -575,7 +634,7 @@ export default class Event extends Component {
         working: true
       })
       Requester.openCommitee(id, this.event.id).then(() => {
-        emitter.emit("open-close", '')
+        emitter.emit("open-close", true)
         this.setState({
           working: false,
           opened: true
@@ -648,9 +707,26 @@ export default class Event extends Component {
         {this.state.fresh ? <Spinner size={"small"}></Spinner> :
           this.renderMenu()
         }
-        {this.state.working ? <View style={{ position: "absolute", }}>
-          <Spinner size={"small"}></Spinner>
+        {this.state.showNotifiation ? <View style={{
+          position: "absolute", width: "100%", hight: 300,
+          marginTop: "10%"
+        }}>
+          <NotificationModal change={this.state.change} onPress={() => {
+            this.setState({
+              showNotifiation: false,
+              currentPage:"ChangeLogs"
+            })
+            this.resetSelectedCommitee()
+          }} close={() => {
+            this.setState({
+              showNotifiation: false
+            })
+          }} isOpen={this.state.showNotifiation}></NotificationModal>
+          <View style={{ marginRight: "95%", width: "100%", marginBottom: "5%", }}>
+            <Spinner size={"small"}></Spinner>
+          </View>
         </View> : null}
+        {this.state.working ? <View style={{ position: "absolute", marginTop: "-8%", }}><Spinner size={"small"}></Spinner></View> : null}
         <ParticipantModal
           participants={this.state.partimembers ? uniqBy(this.state.partimembers.filter(ele => ele !== null &&
             !Array.isArray(ele)), ele => ele.phone) : []} isOpen={this.state.showMembers}

@@ -12,6 +12,7 @@ export default class globalState {
   @observable connected = true
   @observable currentRoom = null;
   @observable success = false;
+  @observable socket = null;
   @observable currentRoomNewMessages;
   @observable passwordError = false;
   @observable newPasswordError = false;

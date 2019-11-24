@@ -408,9 +408,9 @@ export default class events {
   }
   @action updateTitle(EventID, NewTitle, inform) {
     return new Promise((resolve, reject) => {
+      Events[eventIndex].about.title = NewTitle;
       this.readFromStore().then(Events => {
         let eventIndex = findIndex(Events, { id: EventID });
-        Events[eventIndex].about.title = NewTitle;
         if (inform) {
           Events[eventIndex].title_updated = true;
           Events[eventIndex].updated = true;
@@ -447,6 +447,7 @@ export default class events {
       this.readFromStore().then(Events => {
         let index = findIndex(Events, { id: EventID });
         Events[index].public = true;
+        Events[index].updated_at = moment().format("YYYY-MM-DD HH:mm");
         if (inform) Events[index].updated = true
         this.saveKey.data = Events;
         storage.save(this.saveKey).then(() => {
@@ -476,6 +477,7 @@ export default class events {
       this.readFromStore().then(Events => {
         let index = findIndex(Events, { id: EventID });
         Events[index].likes += 1;
+        Events[index].updated_at = moment().format("YYYY-MM-DD HH:mm");
         if (inform) {
           Events[index].liked_updated = true;
           Events[index].updated = true;
@@ -497,6 +499,7 @@ export default class events {
         let index = findIndex(Events, { id: EventID });
         Events[index].likes -= 1;
         Events[index].liked = false
+        Events[index].updated_at = moment().format("YYYY-MM-DD HH:mm");
         this.saveKey.data = Events;
         storage.save(this.saveKey).then(() => {
           this.setProperties(this.saveKey.data, inform);
@@ -531,6 +534,7 @@ export default class events {
         Events[index].must_contribute = dropWhile(
           Events[index].must_contribute, element => element == ContributionID
         );
+        Events[index].updated_at = moment().format("YYYY-MM-DD HH:mm");
         if (inform) {
           Events[index].must_contribute_update = true;
           Events[index].updated = true
@@ -553,6 +557,7 @@ export default class events {
           if (Events[index].votes.length !== 0)
             Events[index].votes = uniq(Events[index].votes.concat([VoteID]));
           else Events[index].votes = [VoteID]
+          Events[index].updated_at = moment().format("YYYY-MM-DD HH:mm");
           if (inform) {
             Events[index].vote_added = true;
             Events[index].updated = true
@@ -583,6 +588,7 @@ export default class events {
       this.readFromStore().then(Events => {
         let index = findIndex(Events, { id: EventID });
         Events[index].votes = dropWhile(Event.votes, element => element == VoteID);
+        Events[index].updated_at = moment().format("YYYY-MM-DD HH:mm");
         if (inform) {
           Events[index].vote_removed = true;
           Events[index].update = true;
@@ -605,6 +611,7 @@ export default class events {
               Events[index].contributions.concat([ContributionID])
             );
           else Events[index].contributions = [ContributionID]
+          Events[index].updated_at = moment().format("YYYY-MM-DD HH:mm");
           if (inform) {
             Events[index].contribution_added = true;
             Events[index].updated = true
@@ -638,6 +645,7 @@ export default class events {
           Events[index].contributions,
           element => element == ContributionID
         );
+        Events[index].updated_at = moment().format("YYYY-MM-DD HH:mm");
         if (inform) {
           Events[index].contribtion_removed = true;
           Events[index].updated = true
@@ -658,6 +666,7 @@ export default class events {
           Events[index].highlights,
           element => element == HighlightID
         );
+        Events[index].updated_at = moment().format("YYYY-MM-DD HH:mm");
         if (inform) {
           Events[index].highlight_removed = true;
           Events[index].updated = true
@@ -683,6 +692,7 @@ export default class events {
           if (inform) {
             Events[index].highlight_added = true;
             Events[index].updated = true
+            Events[index].updated_at = moment().format("YYYY-MM-DD HH:mm");
           }
           this.saveKey.data = Events;
           storage.save(this.saveKey).then(() => {
@@ -718,6 +728,7 @@ export default class events {
           if (inform) {
             Events[index].remind_added = true;
             Events[index].updated = true
+            Events[index].updated_at = moment().format("YYYY-MM-DD HH:mm");
           }
           this.saveKey.data = Events;
           storage.save(this.saveKey).then(() => {
@@ -749,6 +760,7 @@ export default class events {
         if (inform) {
           Events[index].remind_removed = true;
           Events[index].updated = true;
+          Events[index].updated_at = moment().format("YYYY-MM-DD HH:mm");
         }
         this.saveKey.data = Events;
         storage.save(this.saveKey).then(() => {
@@ -797,6 +809,7 @@ export default class events {
           id: EventID
         });
         Events[index][statusKey] = newStatus;
+        //Events[index].updated_at = moment().format("YYYY-MM-DD HH:mm");
         Events.splice(index, 1, Event);
         this.saveKey.data = Events;
         storage.save(this.saveKey).then(() => {
@@ -832,6 +845,7 @@ export default class events {
         let index = findIndex(Events, { id: EventID })
         !Events[index].commitee || Events[index].commitee.length <= 0 ? Events[index].commitee = [CommiteeID] :
           Events[index].commitee.unshift(CommiteeID)
+        Events[index].updated_at = moment().format("YYYY-MM-DD HH:mm");
         this.saveKey.data = Events
         storage.save(this.saveKey).then(() => {
           resolve("ok")
@@ -845,6 +859,7 @@ export default class events {
       this.readFromStore().then(Events => {
         let index = findIndex(Events, { id: EventID })
         Events[index].commitee = dropWhile(Events[index].commitee, (ele) => ele === ID)
+        Events[index].updated_at = moment().format("YYYY-MM-DD HH:mm");
         this.saveKey.data = Events
         storage.save(this.saveKey).then(() => {
           resolve("ok")

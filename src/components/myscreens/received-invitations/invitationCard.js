@@ -29,6 +29,7 @@ import { forEach, filter } from "lodash";
 import ImageActivityIndicator from '../currentevents/components/imageActivityIndicator';
 import { observer } from 'mobx-react';
 import Requester from "../invitations/Requester"
+import moment from 'moment';
 
 
 const defaultPlaceholderObject = {
@@ -72,6 +73,7 @@ class CardListItem extends Component {
     textcolor: "",
     loading: true,
     opening: false,
+    actioning: false,
     item: null,
     isJoining: false,
     isRequesting: false,
@@ -90,7 +92,7 @@ class CardListItem extends Component {
       status: this.props.item.status
     }
     Requester.accept(invitation).then(response => {
-      this.setState({ accept: true })
+      this.setState({ accept: true, actioning: !this.state.actioning })
     }).catch(error => {
       Toast.show({
         text: 'unable to connect to the server ',
@@ -100,17 +102,13 @@ class CardListItem extends Component {
     //;
   }
   shouldComponentUpdate(nextProps, nextState, nextContext) {
-    return nextProps.item.invitation_id !== this.props.item.invitation_id ||
-      this.state.loading !== nextState.loading ||
-      nextState.accept !== this.state.accept ||
-      nextState.deny !== this.state.deny ||
-      this.state.opening !== nextState.opening ||
-      this.state.hasJoin !== nextState.hasJoin
+    return this.state.loading !== nextState.loading ||
+      nextState.actioning !== this.state.actioning
   }
   componentWillReceiveProps(nextProps) {
     this.setState({
-      accept: nextProps.item.accept,
-      deny: nextProps.item.deny,
+      //   accept: nextProps.item.accept,
+      //   deny: nextProps.item.deny,
       received: nextProps.item.received,
       seen: nextProps.item.seen,
     })
@@ -131,7 +129,7 @@ class CardListItem extends Component {
       status: this.props.item.status
     }
     Requester.denie(invitation).then(response => {
-      this.setState({ deny: true, isRequesting: false })
+      this.setState({ deny: true, isRequesting: false, actioning: !this.state.actioning })
     }).catch(error => {
       this.setState({
         isRequesting: false
@@ -151,6 +149,7 @@ class CardListItem extends Component {
       })
     } else {
       this.setState({
+        actioning: !this.state.actioning,
         opening: true,
         isOpenDetails: true
       })
@@ -280,7 +279,7 @@ class CardListItem extends Component {
   render() {
     return this.state.loading ? <Card style={{ height: 230 }}></Card> : <View style={{ width: "100%", }}>
       <Swipeout style={{ width: "100%", backgroundColor: "#FEFFDE" }} {...this.swipeSettings}>
-        <Card style={{ height: 210 }}>
+        <Card style={{ height: this.state.accept || this.state.deny ? 200 : 230 }}>
           <CardItem>
             <Text style={{ color: "#54F5CA" }} note>
               received
@@ -288,7 +287,7 @@ class CardListItem extends Component {
           </CardItem>
           <CardItem>
             <Left>
-              <TouchableOpacity onPress={() => this.setState({ opening: true, isOpenStatus: true })} >
+              <TouchableOpacity onPress={() => this.setState({ opening: true, isOpenStatus: true, actioning: !this.state.actioning })} >
                 {this.state.loading ? null : <CacheImages small thumbnails source={{ uri: this.state.item.sender_Image }}
                 />}
               </TouchableOpacity>
@@ -310,7 +309,7 @@ class CardListItem extends Component {
 
           <CardItem cardBody>
             <Left>
-              {this.state.loading ? null : <DoublePhoto  enlargeImage={() => this.setState({ opening: true, enlargeEventImage: true })} LeftImage={this.state.item.receiver_Image}
+              {this.state.loading ? null : <DoublePhoto enlargeImage={() => this.setState({ opening: true, enlargeEventImage: true, actioning: !this.state.actioning })} LeftImage={this.state.item.receiver_Image}
                 RightImage={this.state.item.event_Image} />}
             </Left>
 
@@ -319,7 +318,7 @@ class CardListItem extends Component {
               } >
                 {this.state.loading ? null : <Text style={{ marginLeft: -40 }}
                 >{this.state.item.event_title}</Text>}
-                {this.state.loading ? null : <Text style={{ marginLeft: -40, color: 'dimgray', fontSize: 12 }}> on the {this.state.item.event_time}</Text>}
+                {this.state.loading ? null : <Text style={{ marginLeft: -40, color: 'dimgray', fontSize: 12 }}> on  {moment(this.state.item.event_time).format("dddd, MMMM Do YYYY, h:mm:ss a")}</Text>}
               </TouchableOpacity>
             </Body>
           </CardItem>
@@ -339,7 +338,7 @@ class CardListItem extends Component {
                   color: "#FF0055"
                 }}></Icon></Button>{this.state.isRequesting ? <Spinner size="small"></Spinner> : null}
                 <Item style={{ flexDirection: 'column', alignItems: 'center', borderRadius: 0, borderColor: "transparent" }}>
-                  <Icon name="comment" type="FontAwesome5" onPress={{}} style={{ color: "#1FABAB" }} />
+                  <Icon name="comment" type="FontAwesome5" style={{ color: "#1FABAB" }} />
                   <Text style={{ marginTop: 5, color: "#1FABAB" }}>chat</Text>
                 </Item>
                 <Button rounded style={{
@@ -354,9 +353,9 @@ class CardListItem extends Component {
 
           </CardItem>
 
-          <CardItem style={{ margin: 10, flexDirection: 'row', justifyContent: 'space-between' }}>
+          <CardItem style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
 
-            {this.state.loading ? null : <Text style={{ color: 'dimgray', fontSize: 13 }}>{this.state.item.received_date}</Text>}
+            {this.state.loading ? null : <Text style={{ color: 'dimgray', fontSize: 13 }}>{moment(this.state.item.received_date).format("dddd, MMMM Do YYYY, h:mm:ss a")}</Text>}
 
             {this.state.loading ? null : <Text style={{ color: 'dimgray', fontSize: 13 }}>{this.state.item.invitation_status}</Text>}
 
@@ -367,33 +366,33 @@ class CardListItem extends Component {
             profile: this.state.item.sender_Image,
             status: this.state.item.sender_status
           }} onClosed={() => {
-            this.setState({ opening: false, isOpenStatus: false })
+            this.setState({ opening: false, isOpenStatus: false, actioning: !this.state.actioning })
             this.onSeen()
           }
           } onAccept={this.onAccept} onDenied={this.onDenied} deny={this.state.deny}
             accept={this.state.accept} isJoining={this.state.isJoining} hasJoin={this.state.hasJoin}
-            joined={() => this.setState({ hasJoin: true })} />}
+            joined={() => this.setState({ hasJoin: true, actioning: !this.state.actioning })} />}
 
           {this.state.loading ? null : <PhotoModal isOpen={this.state.enlargeEventImage} image={this.state.item.event_Image} onClosed={() => {
-            this.setState({ opening: false, enlargeEventImage: false })
+            this.setState({ opening: false, enlargeEventImage: false, actioning: !this.state.actioning })
             this.onSeen()
           }
           }
             onAccept={this.onAccept} onDenied={this.onDenied} deny={this.state.deny}
             accept={this.state.accept} isJoining={this.state.isJoining} hasJoin={this.state.hasJoin}
-            joined={() => this.setState({ hasJoin: true })} />}
+            joined={() => this.setState({ hasJoin: true, actioning: !this.state.actioning })} />}
 
 
           {this.state.loading ? null : <DetailsModal isOpen={this.state.isOpenDetails} details={this.state.card} location={this.state.item.location}
             event_organiser_name={this.state.item.event_organiser_name}
             created_date={this.state.item.created_date}
             onClosed={() => {
-              this.setState({ opening: false, isOpenDetails: false })
+              this.setState({ opening: false, isOpenDetails: false, actioning: !this.state.actioning })
               this.onSeen()
             }
             } item={this.state.item}
             OpenLinkZoom={this.OpenLinkZoom} OpenLink={this.OpenLink} onAccept={this.onAccept} onDenied={this.onDenied} deny={this.state.deny}
-            accept={this.state.accept} isJoining={this.state.isJoining} hasJoin={this.state.hasJoin} joined={() => this.setState({ hasJoin: true })} />}
+            accept={this.state.accept} isJoining={this.state.isJoining} hasJoin={this.state.hasJoin} joined={() => this.setState({ hasJoin: true, actioning: !this.state.actioning })} />}
         </Card>
       </Swipeout>
     </View>

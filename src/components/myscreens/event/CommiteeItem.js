@@ -302,6 +302,7 @@ export default class CommiteeItem extends Component {
             this.state.loaded ? <View style={{
                 opacity: this.accessible ? 1 : 0.1,
                 borderBottomRightRadius: 8,
+                width:265,
                 borderTopRightRadius: 8,
                 backgroundColor: GState.currentCommitee == this.state.commitee.id ? "#54F5CA" : null,
             }}>
