@@ -14,7 +14,7 @@ export default class SwipeOutView extends Component {
         this.state = {
         }
     }
-    width = "11.25%"
+    width = "19%"
     padding = "9%"
     indicatorMargin = {
         marginLeft: "5%",
@@ -69,90 +69,50 @@ export default class SwipeOutView extends Component {
     blinkerSize = 26;
     render() {
         return (
-            <View style={{ width: "100%", backgroundColor: 'white',  borderRadius: 10, borderLeftColor: "#7DD2D2", }}>
+            <View style={{ width: "100%", borderRadius: 10, borderLeftColor: "#7DD2D2", }}>
                 <View style={{ display: 'flex', flexDirection: 'column', marginLeft: "30%", }}>
                     <View style={{ height: this.width, marginBottom: "10%", alignSelf: 'flex-start' }}>
-                        <TouchableOpacity onPress={() => {
+                        <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                             this.props.publish()
-                        }}>
-                            <Icon style={{ fontSize: 20, color: this.props.Event.public || this.props.master ? "#7DD2D2" : "#bfc6ea" }} name="megaphone" type="Entypo">
+                        })
+                        }>
+                            <Icon style={{ fontSize: 25, color: this.props.Event.public || this.props.master ? "#7DD2D2" : "#bfc6ea" }} name="megaphone" type="Entypo">
                             </Icon>
-                            <Label style={{ fontSize: 12, color: this.props.Event.public || this.props.master ? "#7DD2D2" : "#bfc6ea" }}>Publish</Label>
+                            <Label style={{ fontSize: 18, color: this.props.Event.public || this.props.master ? "#7DD2D2" : "#bfc6ea" }}>Publish</Label>
                         </TouchableOpacity>
                     </View>
                     <View style={{ height: this.width, marginBottom: "10%", alignSelf: 'flex-start' }}>
-                        {<TouchableOpacity onPress={() => {
+                        {<TouchableOpacity onPress={() => requestAnimationFrame(() => {
                             this.invite()
-                        }}>
-                            <Icon style={{ fontSize: 20, color: this.props.master ? "#7DD2D2" : "#bfc6ea" }} name="sc-telegram" type="EvilIcons">
+                        })
+                        }>
+                            <Icon style={{ fontSize: 40, color: this.props.master ? "#7DD2D2" : "#bfc6ea" }} name="sc-telegram" type="EvilIcons">
                             </Icon>
-                            <Label style={{ fontSize: 14, color: this.props.master ? "#7DD2D2" : "#bfc6ea" }}>Invite</Label>
+                            <Label style={{ fontSize: 20, color: this.props.master ? "#7DD2D2" : "#bfc6ea" }}>Invite</Label>
                         </TouchableOpacity>}
                     </View>
                     <View style={{ height: this.width, marginBottom: "10%" }}>
                         {<TouchableOpacity onPress={() => {
                             this.props.join()
                         }}>
-                            <Icon style={{ fontSize: 20, color: this.props.Event.joint ? "#7DD2D2" : "#bfc6ea" }} name="account-group"
+                            <Icon style={{ fontSize: 35, color: this.props.Event.joint ? "#7DD2D2" : "#bfc6ea" }} name="account-group"
                                 type="MaterialCommunityIcons">
                             </Icon>
                             <Label style={{
                                 color: this.props.Event.joint ? "#7DD2D2" : "#bfc6ea",
-                                fontSize: 14
+                                fontSize: 20
                             }}
                             >
-                                Join
-              </Label>
+                                {this.props.Event.joint ? "Joint" : "Join"}
+                            </Label>
                         </TouchableOpacity>}
 
                     </View>
                     <View style={{ height: this.width, marginBottom: "10%", alignSelf: 'flex-start' }}>
                         <TouchableOpacity onPress={() => {
-                            this.navigateToEventDetails()
-                        }}>
-                            <Icon style={{ fontSize: 20, color: "#1FABAB" }} name="calendar" type="EvilIcons">
-                            </Icon>
-                            {this.props.Event.updated ? (
-                                <View style={this.indicatorMargin}>
-                                    <UpdateStateIndicator size={this.blinkerSize} />
-                                </View>
-                            ) : (
-                                    <View style={this.indicatorMargin}>
-                                        <UpdateStateIndicator
-                                            size={this.blinkerSize}
-                                            color={this.transparent}
-                                        />
-                                    </View>
-                                )}
-                            <Label style={{ fontSize: 14, color: "#1FABAB" }}>Detail</Label>
-                        </TouchableOpacity>
-                    </View>
-                    <View style={{ height: this.width, marginBottom: "10%", alignSelf: 'flex-start' }}>
-                        <TouchableOpacity onPress={() => {
-                            this.navigateToEventChat()
-                        }}>
-                            <Icon style={{ fontSize: 20, color: "#1FABAB" }} name="comment" type="EvilIcons">
-                            </Icon>
-                            {this.props.Event.chat_upated ? (
-                                <View style={this.indicatorMargin}>
-                                    <UpdateStateIndicator size={this.blinkerSize} />
-                                </View>
-                            ) : (
-                                    <View style={this.indicatorMargin}>
-                                        <UpdateStateIndicator
-                                            size={this.blinkerSize}
-                                            color={this.transparent}
-                                        />
-                                    </View>
-                                )}
-                            <Label style={{ fontSize: 14, color: "#1FABAB" }}>chat</Label>
-                        </TouchableOpacity>
-                    </View>
-                    <View style={{ height: this.width, marginBottom: "10%", alignSelf: 'flex-start' }}>
-                        <TouchableOpacity onPress={() => {
                             this.navigateToLogs()
                         }}>
-                            <Icon style={{ fontSize: 20, color: "#1FABAB" }} name="exclamation" type="EvilIcons">
+                            <Icon style={{ fontSize: 30, color: "#1FABAB" }} name="clock" type="Entypo">
                             </Icon>
                             {this.props.Event.upated ? (
                                 <View style={this.indicatorMargin}>
@@ -166,10 +126,10 @@ export default class SwipeOutView extends Component {
                                         />
                                     </View>
                                 )}
-                            <Label style={{ fontSize: 14, color: "#1FABAB" }}>Logs</Label>
+                            <Label style={{ fontSize: 20, color: "#1FABAB" }}>{"History"}</Label>
                         </TouchableOpacity>
                     </View >
-                    <View style={{ height: this.width, marginBottom: "10%", alignSelf: 'flex-start' }}>
+                    {/*<View style={{ height: this.width, marginBottom: "10%", alignSelf: 'flex-start' }}>
                         <TouchableOpacity onPress={() => {
                             return this.props.hide()
                         }}>
@@ -177,14 +137,14 @@ export default class SwipeOutView extends Component {
                             </Icon>
                             <Label style={{ fontSize: 14, color: "#1FABAB" }}>Hide</Label>
                         </TouchableOpacity>
-                    </View>
+                    </View>*/}
                     <View style={{ height: this.width, marginBottom: "10%", }}>
                         <TouchableOpacity onPress={() => {
                             return this.props.delete()
                         }}>
-                            <Icon name="trash" style={{ fontSize: 20, color: "red" }} type="EvilIcons">
+                            <Icon name="trash" style={{ fontSize: 30, color: "red" }} type="EvilIcons">
                             </Icon>
-                            <Label style={{ fontSize: 14, color: "red" }} >Delete</Label>
+                            <Label style={{ fontSize: 20, color: "red" }} >Delete</Label>
                         </TouchableOpacity>
                     </View>
                 </View>

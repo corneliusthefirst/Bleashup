@@ -94,7 +94,7 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
                     canCancelContentTouches={true}
                     inverted={this.props.inverted ? this.props.inverted : false}
                     removeClippedSubviews={false}
-                    maxToRenderPerBatch={this.props.inverted ? 5 : this.state.endReached ? this.props.renderPerBatch : 3}
+                    maxToRenderPerBatch={this.props.inverted ? 5 : this.state.endReached ? 1 : 3}
                     //updateCellsBatchingPeriod={10}
                     showsVerticalScrollIndicator={false}
                     keyExtractor={this.props.keyExtractor}

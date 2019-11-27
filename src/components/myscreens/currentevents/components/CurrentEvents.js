@@ -1,6 +1,6 @@
 
 import React, { Component } from 'react';
-import { View, Dimensions,BackHandler } from 'react-native';
+import { View, Dimensions, BackHandler } from 'react-native';
 import PublicEvent from "./publicEvent.js"
 import { observer } from 'mobx-react';
 import BleashupScrollView from '../../../BleashupScrollView.js';
@@ -17,20 +17,20 @@ const screenheight = Math.round(Dimensions.get('window').height);
         super(props)
         this.state = {}
     }
-    showPhoto(url){
+    showPhoto(url) {
         this.setState({
-            showPhoto:true,
-            photo:url
+            showPhoto: true,
+            photo: url
         })
     }
     componentWillMount() {
-        Orientation.unlockAllOrientations(); 
+        Orientation.unlockAllOrientations();
         BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this))
     }
     handleBackButton() {
-        if(this.state.showPhoto){
+        if (this.state.showPhoto) {
             this.setState({
-                showPhoto:false
+                showPhoto: false
             })
             return true
         }
@@ -38,14 +38,14 @@ const screenheight = Math.round(Dimensions.get('window').height);
     componentWillUnmount() {
         BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton);
     };
-    
+
     render() {
         return (
-            <View style={{ height: "100%", backgroundColor: "#FEFFDE"}}>
+            <View style={{ height: "100%", backgroundColor: "#FEFFDE" }}>
                 <BleashupFlatList
                     keyExtractor={(item, index) => item.id}
                     dataSource={this.props.data}
-                    renderItem={(item, index) => <PublicEvent showPhoto={(url)=> this.showPhoto(url)} key={item.id}  {...this.props} Event={item} />}
+                    renderItem={(item, index) => <PublicEvent renderDelay={index < 3 ? index * 100 : 2} showPhoto={(url) => this.showPhoto(url)} key={item.id}  {...this.props} Event={item} />}
                     firstIndex={0}
                     renderPerBatch={1}
                     initialRender={3}

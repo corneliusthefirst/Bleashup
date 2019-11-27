@@ -1,38 +1,38 @@
 import React, { Component } from "react"
-import { View,TouchableOpacity } from 'react-native';
-import { Text,Left } from 'native-base';
+import { View, TouchableOpacity } from 'react-native';
+import { Text, Left } from 'native-base';
 import autobind from "autobind-decorator";
 import { observer } from "mobx-react";
 import SvgAnimatedLinearGradient from 'react-native-svg-animated-linear-gradient'
 import Svg, { Circle, Rect } from 'react-native-svg'
 import stores from "../../../../stores";
 import DetailsModal from "../../invitations/components/DetailsModal";
-import {forEach} from "lodash"
+import { forEach } from "lodash"
 import moment from "moment";
 @observer export default class TitleView extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            isDetailsModalOpened : false,
-            isJoining : false
+            isDetailsModalOpened: false,
+            isJoining: false
 
         }
     }
     componentDidMount() {
         this.formDetailModal(this.props.Event).then(details => {
-            this.formCreator().then(creator =>{
+            this.formCreator().then(creator => {
                 this.setState({
                     details: details,
-                    creator : creator,
-                    loaded :true
+                    creator: creator,
+                    loaded: true
                 })
             })
         })
     }
-    formCreator(){
-        return new Promise((resolve,reject)  =>{
-            stores.TemporalUsersStore.getUser(this.props.Event.creator_phone).then((user)=>{
-                resolve({name:user.nickname,status:user.status,image:user.profile})
+    formCreator() {
+        return new Promise((resolve, reject) => {
+            stores.TemporalUsersStore.getUser(this.props.Event.creator_phone).then((user) => {
+                resolve({ name: user.nickname, status: user.status, image: user.profile })
             })
         })
     }
@@ -59,93 +59,115 @@ import moment from "moment";
     }
     @autobind navigateToEventDetails() {
         stores.Events.isParticipant(this.props.Event.id, stores.Session.SessionStore.phone).then(status => {
-           if (status) {
+            if (status) {
                 this.props.navigation.navigate("Event", {
                     Event: this.props.Event,
                     tab: "EventDetails"
                 });
             } else {
                 this.setState({ isDetailsModalOpened: true })
-           }
+            }
             this.props.seen()
         })
     }
-    writeDateTime() {
-        //console.error(this.props.Event.period)
-        return "on " + moment(this.props.Event.period).format("dddd, MMMM Do YYYY, h:mm:ss a")
+    dateDiff(date) {
+        let statDate = moment(date)
+        let end = moment()
+        return daysDiff = Math.floor(moment.duration(end.diff(statDate)).asDays())
+    }
+    writeDateTime(date) {
+        let statDate = moment(date)
+        let end = moment()
+        let daysDiff = Math.floor(moment.duration(end.diff(statDate)).asDays())
+        if (daysDiff == 0) {
+            return "Today at " + moment(date).format("h:mm a");
+        } else if (daysDiff == 1) {
+            return "Past Since Yesterday at " + moment(date).format("h:mm a")
+        } else if (daysDiff > 1 && daysDiff < 7) {
+            return `Past Since ${Math.abs(daysDiff)} Days Ago at ` + moment(date).format("h:mm a")
+        } else if (daysDiff == 7) {
+            return "Past Since 1 Week Ago at " + moment(date).format("h:mm a")
+        } else if (daysDiff == -1) {
+            "Upcoming Tomorrow at" + moment(date).format("h:mm a");
+        }
+        else if (daysDiff < -1) {
+            `Upcoming in ${Math.abs(daysDiff)} at` + moment(date).format("h:mm a");
+        } else {
+            return `Past since ${moment(date).format("dddd, MMMM Do YYYY")} at ${moment(date).format("h:mm a")}`
+        }
     }
     render() {
-       return  <View>
-           <View style={{
+        return <View>
+            <View style={{
 
-           }}>
-               <View>
-                   <TouchableOpacity onPress={() => requestAnimationFrame(() => {
-                       this.navigateToEventDetails()
-                   }
-                   )}>
-                       <View>
-                           <Text
-                               adjustsFontSizeToFit={true}
-                               style={{
-                                   fontSize: 20,
-                                   fontWeight: "bold",
-                                   fontFamily: "Roboto",
-                               }}
-                           >
-                               {this.props.Event.about.title}{/*{" "}{this.props.Event.id}*/}
-                           </Text>
-                           <Text
-                               style={{
-                                   color: "#1FABAB",
-                                   
-                               }}
-                               note
-                           >
-                               {this.writeDateTime()}
-                           </Text>
-                       </View>
-                       <View>
-                           <Left>
-                               {this.props.Event.recursive ? <View style={
-                                   {
-                                       flexDirection: "column"
-                                   }
-                               }>
-                                   <View>
-                                       <Text style={{
-                                           color: "#54F5CA"
-                                       }} note>
-                                           {this.props.Event.recursion.type}
-                                       </Text>
-                                   </View>
+            }}>
+                <View>
+                    <TouchableOpacity onPress={() => requestAnimationFrame(() => {
+                        this.navigateToEventDetails()
+                    }
+                    )}>
+                        <View>
+                            <Text
+                                adjustsFontSizeToFit={true}
+                                style={{
+                                    fontSize: 20,
+                                    fontWeight: "bold",
+                                    fontFamily: "Roboto",
+                                }}
+                            >
+                                {this.props.Event.about.title}{/*{" "}{this.props.Event.id}*/}
+                            </Text>
+                            <Text
+                                style={{
+                                    color: this.dateDiff(this.props.Event.period) > 0 ? "gray" : "#54F5CA",
+                                    fontStyle: 'italic',
+                                }}
+                                note
+                            >
+                                {this.writeDateTime(this.props.Event.period)}
+                            </Text>
+                        </View>
+                        <View>
+                            <Left>
+                                {this.props.Event.recursive ? <View style={
+                                    {
+                                        flexDirection: "column"
+                                    }
+                                }>
+                                    <View>
+                                        <Text style={{
+                                            color: "#54F5CA"
+                                        }} note>
+                                            {this.props.Event.recursion.type}
+                                        </Text>
+                                    </View>
 
-                                   <View>
-                                       <Text note>
-                                           {this.props.Event.recursion.days}
-                                       </Text>
-                                   </View>
-                               </View> : null}
-                           </Left>
-                       </View>
-                   </TouchableOpacity>
-               </View>
-           </View>{this.state.loaded ? <DetailsModal
-               isToBeJoint={!(this.props.Event.joint)}
-               join={() => {
-                   this.props.join()
-                   this.setState({
-                       isDetailsModalOpened: false
-                   })
-               }}
-               isOpen={this.state.isDetailsModalOpened}
-               isJoining={this.state.isJoining}
-               details={this.state.details}
-               created_date={this.props.Event.created_at}
-               location={this.props.Event.location.string}
-               event_organiser_name={this.state.creator.name}
-               onClosed={() => this.setState({ isDetailsModalOpened: false })}
-           />:null}
-       </View> 
-            }
+                                    <View>
+                                        <Text note>
+                                            {this.props.Event.recursion.days}
+                                        </Text>
+                                    </View>
+                                </View> : null}
+                            </Left>
+                        </View>
+                    </TouchableOpacity>
+                </View>
+            </View>{this.state.loaded ? <DetailsModal
+                isToBeJoint={!(this.props.Event.joint)}
+                join={() => {
+                    this.props.join()
+                    this.setState({
+                        isDetailsModalOpened: false
+                    })
+                }}
+                isOpen={this.state.isDetailsModalOpened}
+                isJoining={this.state.isJoining}
+                details={this.state.details}
+                created_date={this.props.Event.created_at}
+                location={this.props.Event.location.string}
+                event_organiser_name={this.state.creator.name}
+                onClosed={() => this.setState({ isDetailsModalOpened: false })}
+            /> : null}
+        </View>
+    }
 }

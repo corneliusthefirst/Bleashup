@@ -59,10 +59,10 @@ import { observer } from "mobx-react";
                                 />
                             </View>
                         </TouchableWithoutFeedback>
-                        <View style={{ marginTop: 5 }}>
+                        {/*<View style={{ marginTop: 5 }}>
                             <Text style={{ color: this.state.participant ? "#54F5CA" : "#bfc6ea", 
                             fontSize: 15, }} note>{this.state.participant ? " Joint" :" Join"}</Text>
-                        </View>
+                                </View>*/}
                     </View>
             </View>
         )

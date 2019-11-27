@@ -35,12 +35,12 @@ import stores from "../../../../stores";
 
     };
     others = {
-        marginLeft: "5%",
-        marginTop: "-7%",
+        alignSelf: 'center',
     }
     svgStyle = {
+        alignSelf: 'center',
     }
-    width="17.75%"
+    width="25%"
     @autobind navigateToHighLights() {
         stores.Events.isParticipant(this.props.Event.id, stores.Session.SessionStore.phone).then((status) => {
             if (status) {
@@ -124,49 +124,21 @@ import stores from "../../../../stores";
             <View style={{
                 flexDirection: "row"
             }}>
-                <View
-                    style={{
-                        width: this.width
-                    }}
-                >
-                    <TouchableOpacity onPress={this.navigateToEventDetails}>
-                        <View style={this.svgStyle}>
-                            <Icon type="EvilIcons" name="calendar" style={
-                                {
-                                    color: "#1FABAB"
-                                }
-                            }></Icon>
-                            <Label style={{
-                                marginLeft: "-8%"
-                            }}>details</Label>
-                            {this.props.Event.updated ? (
-                                <View style={this.indicatorMargin}>
-                                    <UpdateStateIndicator size={this.blinkerSize} />
-                                </View>
-                            ) : (
-                                    <View style={this.indicatorMargin}>
-                                        <UpdateStateIndicator
-                                            size={this.blinkerSize}
-                                            color={this.transparent}
-                                        />
-                                    </View>
-                                )}
-                        </View>
-                    </TouchableOpacity>
-                </View>
                 <View   style={{
                     width: this.width
                 }}>
                 <TouchableOpacity onPress={this.navigateToReminds}>
                     <View style={this.svgStyle}>
-                        <Icon type="EvilIcons" name="bell" style={
+                            <Icon type="Entypo" name="bell" style={
                             {
-                                color: "#1FABAB"
+                                color: "#1FABAB",
+                                marginLeft: "30%",
                             }
                         }></Icon>
                         <Label style={{
-                            marginLeft: "-20%"
-                        }} > reminds</Label>
+                            color: "#1FABAB",
+                           // marginLeft: "-20%"
+                        }} >{"Reminds/Tasks"}</Label>
                         {this.props.Event.remind_upated ? (
                             <View style={this.indicatorMargin}>
                                 <UpdateStateIndicator size={this.blinkerSize} />
@@ -189,14 +161,16 @@ import stores from "../../../../stores";
             >
                 <TouchableOpacity onPress={this.navigateToEventChat}>
                     <View style={this.svgStyle}>
-                        <Icon name="comment" type="EvilIcons" style={
+                            <Icon name="group" type="FontAwesome" style={
                             {
-                                color: "#1FABAB"
+                                color: "#1FABAB",
+                                marginLeft: "20%",
                             }
                         }></Icon>
                         <Label style={{
-                            marginLeft: "-5%"
-                        }}>chats</Label>
+                           // marginLeft: "-5%"
+                                color: "#1FABAB"
+                        }}>Discussions</Label>
                         {this.props.Event.chat_updated ? (
                             <View style={this.indicatorMargin}>
                                 <UpdateStateIndicator size={22} />
@@ -217,45 +191,15 @@ import stores from "../../../../stores";
                     width: this.width
                 }}
             >
-                <TouchableOpacity onPress={this.navigateToHighLights}>
-                    <View style={this.svgStyle}>
-                        <Icon name="star" type="EvilIcons" style={
-                            {
-                                color: "#1FABAB"
-                            }
-                        }></Icon>
-                        <Label style={{
-                            marginLeft: "-12%"
-                        }} >highlts</Label>
-                        {this.props.Event.highlight_updated ? (
-                            <View style={this.indicatorMargin}>
-                                <UpdateStateIndicator size={this.blinkerSize} />
-                            </View>
-                        ) : (
-                                <View style={this.indicatorMargin}>
-                                    <UpdateStateIndicator
-                                        size={this.blinkerSize}
-                                        color={this.transparent}
-                                    />
-                                </View>
-                            )}
-                    </View>
-                </TouchableOpacity>
-            </View>
-
-            <View
-                style={{
-                    width: this.width
-                }}
-            >
                 <TouchableOpacity onPress={this.navigateToVotes}>
                     <View style={this.others}>
                             <Icon type="FontAwesome5" name="poll" style={
                             {
-                                color: "#1FABAB"
+                                color: "#1FABAB",
+                                marginLeft: "2%",
                             }
                         }></Icon>
-                        <Label>votes</Label>
+                            <Label style={{ color: "#1FABAB"}}>Votes</Label>
                         {this.props.Event.vote_updated ? (
                             <View style={this.indicatorMargin}>
                                 <UpdateStateIndicator size={this.blinkerSize} />
@@ -278,14 +222,15 @@ import stores from "../../../../stores";
             >
                 <TouchableOpacity onPress={this.navigateToContributions}>
                     <View style={this.others}>
-                        <Icon type="Foundation" name="dollar" style={
+                            <Icon type="MaterialIcons" name="monetization-on" style={
                             {
+                                marginLeft: "30%",
                                 color: "#1FABAB"
                             }
                         }></Icon>
                         <Label style={{
-                            marginLeft: "-17%"
-                        }}>contrbs</Label>
+                                color: "#1FABAB"
+                        }}>Contributions</Label>
                         {this.props.Event.contribution_updated ? (
                             <View style={this.indicatorMargin}>
                                 <UpdateStateIndicator size={this.blinkerSize} />

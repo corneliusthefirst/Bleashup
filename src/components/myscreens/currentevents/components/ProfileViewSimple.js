@@ -5,58 +5,40 @@ import { Body, Text, Accordion, Content, Thumbnail } from "native-base"
 import ImageActivityIndicator from '../../currentevents/components/imageActivityIndicator';
 import ProfileIdicator from "../../currentevents/components/ProfilIndicator";
 import stores from "../../../../stores";
-import ProfileModal from "./ProfileModal";
+import ProfileModal from "../../invitations/components/ProfileModal";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import testForURL from '../../../../services/testForURL';
 
-export default class ProfileView extends Component {
+export default class ProfileSimple extends Component {
     constructor(props) {
         super(props)
     }
     state = { profile: undefined, isMount: false, dataArray: undefined, hide: false }
-    componentDidMount() {
-        setTimeout(() => stores.TemporalUsersStore.getUser(this.props.phone).then(user => {
-            if (user.response == "unknown_user") {
-                this.props.hideMe ? this.props.hideMe() : null
-                this.setState({
-                    hide: true
-                })
-            } else {
-                this.setState({
-                    profile: user,
-                    isModalOpened: false,
-                    isMount: true,
-                    dataArray: {
-                        title: user.status.slice(0, 60) + " ...",
-                        content: user.status
-                    }
-                })
-            }
-        }), 0)
-    }
+
     openModal() {
         this.setState({
             isModalOpened: true
         })
     }
     render() {
-        return this.state.hide ? null : this.state.isMount ? (
+        return (
 
             <View style={{ flexDirection: "row", }}>
                 <TouchableOpacity onPress={() => {
                     requestAnimationFrame(() => {
-                        return this.props.showPhoto(this.state.profile.profile)
+                        return this.props.showPhoto(this.props.profile.profile)
                     });
                 }}>
-                    {testForURL(this.state.profile.profile) ? <CacheImages thumbnails {...this.props}
-                        source={{ uri: this.state.profile.profile }} /> :
-                        <Thumbnail source={{ uri: this.state.profile.profile }}></Thumbnail>}
+                    {testForURL(this.props.profile.profile) ? <CacheImages thumbnails {...this.props}
+                        source={{ uri: this.props.profile.profile }} /> :
+                        <Thumbnail source={{ uri: this.props.profile.profile }}></Thumbnail>}
                 </TouchableOpacity>
-                <View style={{ marginTop: "3%", marginLeft: "2%", display: 'flex',fontWeight: 'bold', }}>
+                <View style={{ marginTop: "3%", marginLeft: "2%", display: 'flex', }}>
                     <Text style={{
-                        marginBottom: "2%"
-                    }}>{this.state.profile.nickname}</Text>
-                    <Text style={{ marginLeft: "2%",fontStyle: 'italic', }} note>{this.state.dataArray.title}</Text>
+                        marginBottom: "2%",
+                        fontWeight: 'bold',
+                    }}>{this.props.profile.nickname}</Text>
+                    <Text style={{ marginLeft: "2%",fontStyle: 'italic', }} note>{!(this.props.profile.status === undefined) ? this.props.profile.status.slice(0, 50) : ""}</Text>
                 </View>
                 {/*<ProfileModal
                     isOpen={this.state.isModalOpened}
@@ -72,6 +54,6 @@ export default class ProfileView extends Component {
                     profile={this.state.profile}
                 ></ProfileModal>*/}
             </View>
-        ) : <ProfileIdicator />
+        )
     }
 }

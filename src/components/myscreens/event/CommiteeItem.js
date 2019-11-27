@@ -311,7 +311,7 @@ export default class CommiteeItem extends Component {
                         this.swappCommitee()
                     })}><View style={{ margin: '1%', width: 215, display: 'flex', flexDirection: 'column', }}>
                             <Text style={{
-                                fontWeight: 'bold', fontSize: 24,
+                                fontWeight: 'bold', fontSize: 22,color:"gray"
                             }}>{this.state.commitee.name}</Text>
                             {this.state.joint && this.state.newest_message ? <Text note>Latest Message :</Text> : null}
                             {this.state.joint && this.state.newest_message ? this.writeLatestMessage(this.state.newest_message) : null}

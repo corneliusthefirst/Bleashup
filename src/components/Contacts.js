@@ -7,6 +7,7 @@ import UserService from "../services/userHttpServices"
 import ProfileView from "./myscreens/invitations/components/ProfileView";
 import BleashupFlatList from './BleashupFlatList';
 import moment from "moment";
+import dateDisplayer from '../services/dates_displayer';
 export default class Contacts extends Component {
 
     constructor(props) {
@@ -21,29 +22,6 @@ export default class Contacts extends Component {
     }
     shouldComponentUpdate(nextProps, nextState) {
         return nextState.isOpen !== this.state.isOpen || nextState.isloaded !== this.state.isloaded ? true : false
-    }
-    dateDisplayer(date) {
-        let statDate = moment(date, "YYYY/MM/DD")
-        let end = moment()
-        let daysDiff = moment.duration(end.diff(statDate)).asDays()
-        switch (Math.floor(daysDiff)) {
-            case 0:
-                return "Today";
-            case 1:
-                return "Yesterday"
-            case 2:
-                return "3 Days Ago"
-            case 3:
-                return "4 Days Ago"
-            case 4:
-                return "5 Days Ago"
-            case 5:
-                return "6 Days Ago"
-            case 7:
-                return "1 Week Ago"
-            default:
-                return moment(date, "YYYY/MM/DD").format("YYYY/MM/DD")
-        }
     }
     componentDidMount() {
         setTimeout(() => {
@@ -89,7 +67,7 @@ export default class Contacts extends Component {
                                     marginTop: "5%",
                                 }}>
                                     <Text style={{
-                                    }} note>{this.dateDisplayer(moment(item.date).format("YYYY/MM/DD"))}{" at "}
+                                    }} note>{dateDisplayer(moment(item.date).format("YYYY/MM/DD"))}{" at "}
                                     {moment(item.date).format("HH:mm")}</Text>
                                 </View>
                             </View>

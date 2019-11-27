@@ -11,9 +11,10 @@ import stores from "../../../stores";
 import RouteView from "./RouteView";
 import ActionsView from "./ActionsView";
 import Commitee from "./Commitee";
+import moment from "moment";
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenheight = Math.round(Dimensions.get('window').height);
-const HEADER_MAX_HEIGHT = 160;
+const HEADER_MAX_HEIGHT = 140;
 const HEADER_MIN_HEIGHT = 0;
 const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
 export default class SWView extends Component {
@@ -57,6 +58,32 @@ export default class SWView extends Component {
             }
             this.props.seen()
         })
+    }
+    displayDate(date) {
+        let statDate = moment(date)
+        let end = moment()
+        let daysDiff = Math.floor(moment.duration(end.diff(statDate)).asDays())
+        if (daysDiff == 0) {
+            return "Today at " + moment(date).format("h:mm a");
+        } else if (daysDiff == 1) {
+            return "Past Since Yesterday at " + moment(date).format("h:mm a")
+        } else if (daysDiff > 1 && daysDiff < 7) {
+            return `Past Since ${Math.abs(daysDiff)} Days Ago at ` + moment(date).format("h:mm a")
+        } else if (daysDiff == 7) {
+            return "Past Since 1 Week Ago at " + moment(date).format("h:mm a")
+        } else if (daysDiff == -1) {
+            "Upcoming Tomorrow at" + moment(date).format("h:mm a");
+        }
+        else if (daysDiff < -1) {
+            `Upcoming in ${Math.abs(daysDiff)} at` + moment(date).format("h:mm a");
+        } else {
+            return `Past since ${moment(date).format("dddd, MMMM Do YYYY")} at ${moment(date).format("h:mm a")}`
+        }
+    }
+    dateDiff(date) {
+        let statDate = moment(date)
+        let end = moment()
+        return daysDiff = Math.floor(moment.duration(end.diff(statDate)).asDays())
     }
     invite() {
         this.setState({
@@ -106,15 +133,19 @@ export default class SWView extends Component {
                         <View style={{
                             marginTop: HEADER_MAX_HEIGHT,
                             height: "100%", width: "100%", backgroundColor: "#FEFFDE",
-                            display: 'flex', flexDirection: 'column',
+                            display: 'flex', flexDirection: 'column', //borderRightWidth: 1.25, borderColor: "#1FABAB",
                         }}>
-                            <View style={{ heignt: "60%", display: "flex", flexDirection: 'row', backgroundColor: "#FEFFDE", }}>
+                            <View style={{ marginLeft: "2%", backgroundColor: "#FEFFDE",width:"100%",height:44 }}><Text style={{ fontWeight: 'bold',  fontSize: 23, color:"#1FABAB"}}>{this.props.event.about.title}</Text>
+                                <Text style={{ alignSelf: 'flex-end', marginRight: "2%", fontStyle: 'italic', color: this.dateDiff(this.props.event.period) > 0 ? "gray" :"#54F5CA" }}>{this.displayDate(this.props.event.period)}</Text>
+
+                            </View>
+                            <View style={{ heignt: "60%", display: "flex", flexDirection: 'row', backgroundColor: "#FEFFDE", marginLeft: "1%", }}>
                                 <View style={{ marginTop: "2%", width: "25%", borderWidth: 2, borderColor: this.actionColor, borderRadius: 12 }}>
-                                    <ActionsView showMembers={() => this.props.showMembers()}></ActionsView>
+                                    <ActionsView ShowMyActivity={()=>this.props.ShowMyActivity()}  showMembers={() => this.props.showMembers()}></ActionsView>
                                 </View>
                                 <View style={{ width: "5%", }}></View>
                                 <View style={{ width: "70%" }}>
-                                    <RouteView event_id={this.props.event.id} currentPage={this.props.currentPage}
+                                    <RouteView refreshCommitee={() => this.refreshCommitees()} event_id={this.props.event.id} currentPage={this.props.currentPage}
                                         setCurrentPage={(page) => this.props.setCurrentPage(page)}></RouteView>
                                 </View>
                             </View>

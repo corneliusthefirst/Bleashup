@@ -10,15 +10,20 @@ import uuid from 'react-native-uuid';
 class UpdatesDispatcher {
   constructor() { }
   dispatchUpdates(updates) {
-    forEach(updates, update => {
-      this.dispatchUpdate(update).then(() => { });
-    });
+    if (updates.length <= 0) {
+      console.warn("finishing ...")
+      return "ok";
+    } else {
+      let update = updates.pop()
+      this.dispatchUpdate(update).then(() => { this.dispatchUpdates(updates) });
+    }
+
   }
   dispatchUpdate(update) {
     return this.UpdatePossibilities[update.update](update);
   }
-  infomCurrentRoom(Change, event_id) {
-    emitter.emit(`event_updated_${event_id}`, Change)
+  infomCurrentRoom(Change,commitee ,event_id) {
+    emitter.emit(`event_updated_${event_id}`, Change,commitee)
   }
   UpdatePossibilities = {
     title: update => {
@@ -1205,7 +1210,7 @@ class UpdatesDispatcher {
         Participant.status = update.new_value.status;
         let Change = {
           event_id: update.event_id,
-          changed: "New Participant by Joining",
+          changed: "Joint The Activity",
           updater: update.new_value.inviter,
           new_value: Participant,
           date: update.date,
@@ -1228,6 +1233,8 @@ class UpdatesDispatcher {
           changed: "New Remind Created",
           updater: update.updater,
           new_value: update.new_value,
+          title: "Update On Reminds",
+          id: uuid.v1(),
           date: update.date,
           time: update.time
         };
@@ -1261,6 +1268,8 @@ class UpdatesDispatcher {
           changed: "Remind Period Updated",
           updater: update.updater,
           new_value: update.new_value,
+          title: "Update On Reminds",
+          id: uuid.v1(),
           date: update.date,
           time: update.time
         };
@@ -1284,6 +1293,8 @@ class UpdatesDispatcher {
           event_id: update.event_id,
           changed: "Remind Description Updated",
           updater: update.updater,
+          title: "Update On Reminds",
+          id: uuid.v1(),
           new_value: update.new_value,
           date: update.date,
           time: update.time
@@ -1307,6 +1318,8 @@ class UpdatesDispatcher {
         let Change = {
           event_id: update.event_id,
           changed: "Remind Title Updated",
+          title: "Update On Reminds",
+          id: uuid.v1(),
           updater: update.updater,
           new_value: update.new_value,
           date: update.date,
@@ -1330,12 +1343,14 @@ class UpdatesDispatcher {
       return new Promise((resolve, reject) => {
         let Change = {
           updated: update.updated,
+          title: "Update On Reminds",
+          id: uuid.v1(),
           event_id: update.event_id,
           changed: "Remind Title Updated",
           updater: update.updater,
           new_value: update.new_value,
           date: update.date,
-          time: update.time
+          //time: update.time
         };
         stores.ChangeLogs.addChanges(Change).then(() => {
           stores.Reminds.removeRemind(update.new_value).then(() => {
@@ -1359,15 +1374,16 @@ class UpdatesDispatcher {
               let Change = {
                 id: uuid.v1(),
                 updated: update.updated,
+                title: "Update On Commitees",
                 event_id: update.event_id,
-                changed: `Added ${commitee.name} Commitee`,
+                changed: `Created ${commitee.name} Commitee`,
                 updater: updater,
-                new_value: { data: commitee, new_value: null },
+                new_value: { data: commitee.id, new_value: update.new_value },
                 date: update.date,
                 time: update.time,
               };
               stores.ChangeLogs.addChanges(Change).then(() => {
-                this.infomCurrentRoom(Change, update.event_id)
+                this.infomCurrentRoom(Change,commitee, update.event_id)
                 resolve()
               })
             })
@@ -1383,15 +1399,16 @@ class UpdatesDispatcher {
               let Change = {
                 id: uuid.v1(),
                 updated: update.updated,
+                title: "Update On Commitees",
                 event_id: update.event_id,
                 changed: `Reopened ${commitee.name} Commitee`,
                 updater: updater,
-                new_value: { data: commitee, new_value: null },
+                new_value: { data: commitee.id, new_value: null },
                 date: update.date,
                 time: update.time,
               }
               stores.ChangeLogs.addChanges(Change).then(() => {
-                this.infomCurrentRoom(Change, update.event_id)
+                this.infomCurrentRoom(Change, commitee, update.event_id)
                 resolve()
               })
             })
@@ -1407,14 +1424,15 @@ class UpdatesDispatcher {
               let Change = {
                 id: uuid.v1(),
                 updated: update.updated,
+                title: "Update On Commitees",
                 event_id: update.event_id,
                 changed: `Closed ${commitee.name} Commitee`,
                 updater: updater,
-                new_value: {data:commitee,new_value:null},
+                new_value: { data: commitee.id, new_value: null },
                 date: update.date,
               }
               stores.ChangeLogs.addChanges(Change).then(() => {
-                this.infomCurrentRoom(Change, update.event_id)
+                this.infomCurrentRoom(Change, commitee, update.event_id)
                 resolve()
               })
             })
@@ -1430,6 +1448,7 @@ class UpdatesDispatcher {
               let Change = {
                 id: uuid.v1(),
                 updated: update.updated,
+                title: "Update On Commitees",
                 event_id: update.event_id,
                 changed: "Commitee Deleted",
                 updater: updater,
@@ -1438,7 +1457,7 @@ class UpdatesDispatcher {
                 time: update.time,
               }
               stores.ChangeLogs.addChanges(Change).then(() => {
-                this.infomCurrentRoom(Change, update.event_id)
+                this.infomCurrentRoom(Change, commitee, update.event_id)
                 resolve()
               })
             })
@@ -1454,15 +1473,16 @@ class UpdatesDispatcher {
             let Change = {
               id: uuid.v1(),
               updated: update.updated,
+              title: "Update On Commitees",
               event_id: update.event_id,
               changed: `Added A New Memeber(s) To ${commitee.name} Commitee`,
               updater: updater,
-              new_value: { data: commitee, new_value: update.new_value.phone },
+              new_value: { data: commitee.id, new_value: update.new_value.member },
               date: update.date,
               time: update.time,
             }
             stores.ChangeLogs.addChanges(Change).then(() => {
-              this.infomCurrentRoom(Change, update.event_id)
+              this.infomCurrentRoom(Change, commitee, update.event_id)
               resolve()
             })
           })
@@ -1476,15 +1496,16 @@ class UpdatesDispatcher {
             let Change = {
               id: uuid.v1(),
               updated: update.updated,
+              title: "Update On Commitees",
               event_id: update.event_id,
               changed: `Removed A Member(s) From ${commitee.name}`,
               updater: updater,
-              new_value: { data: commitee, new_vanue: update.new_value.phone },
+              new_value: { data: commitee.id, new_value: update.new_value.phone },
               date: update.date,
               time: update.time,
             }
             stores.ChangeLogs.addChanges(Change).then(() => {
-              this.infomCurrentRoom(Change, update.event_id)
+              this.infomCurrentRoom(Change, commitee, update.event_id)
               resolve()
             })
           })
@@ -1499,15 +1520,16 @@ class UpdatesDispatcher {
               let Change = {
                 id: uuid.v1(),
                 updated: update.updated,
+                title: "Update On Commitees",
                 event_id: update.event_id,
                 changed: `Changed The Name Of ${oldCommitee.name} Commitee To: `,
                 updater: updater,
-                new_value: { data: commitee, new_value: update.new_value.name },
+                new_value: { data: commitee.id, new_value: update.new_value.name },
                 date: update.date,
                 time: update.time,
               }
               stores.ChangeLogs.addChanges(Change).then(() => {
-                this.infomCurrentRoom(Change, update.event_id)
+                this.infomCurrentRoom(Change, commitee, update.event_id)
                 resolve()
               })
             })
@@ -1522,16 +1544,17 @@ class UpdatesDispatcher {
           stores.TemporalUsersStore.getUser(update.updater).then(updater => {
             let Change = {
               id: uuid.v1(),
+              title: "Update On Commitees",
               updated: update.updated,
               event_id: update.event_id,
               changed: update.new_value.state === true ? `Published ${commitee.name} Commitee` : `Unpublished ${commitee.name} Commitee`,
               updater: updater,
-              new_value: { data: commitee, new_value: update.new_value.state },
+              new_value: { data: commitee.id, new_value: update.new_value.state },
               date: update.date,
               time: update.time,
             }
             stores.ChangeLogs.addChanges(Change).then(() => {
-              this.infomCurrentRoom(Change, update.event_id)
+              this.infomCurrentRoom(Change, commitee, update.event_id)
               resolve()
             })
           })

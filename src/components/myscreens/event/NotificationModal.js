@@ -56,7 +56,7 @@ export default class NotificationModal extends PureComponent {
                     })
                 }}
                 style={{
-                    height: "100%",
+                    height: "110%",
                     borderRadius: 10,
                     borderWidth: 0.2,
                     marginLeft: "16%",
@@ -72,6 +72,7 @@ export default class NotificationModal extends PureComponent {
                 }>
                     <View style={{ margin: '2%' }}>
                         <View style={{ flexDirection: 'column', }}>
+                        <View><Text style={{fontStyle: 'italic',}} note>New Update</Text></View>
                             <View style={{ flexDirection: 'row', }}>
                                 <View style={{ width: "20%" }}>
                                     <CacheImages thumbnails
@@ -97,7 +98,7 @@ export default class NotificationModal extends PureComponent {
                                 <View style={{ flexDirection: 'row', }}>
                                     <Text>{this.props.change.changed}</Text>
                                 </View>
-                                <Text style={{ fontStyle: 'italic', }}>{this.props.change.new_value.new_value}</Text>
+                                <Text style={{ fontStyle: 'italic', }}>{typeof this.props.change.new_value.new_value === "string" ? this.props.change.new_value.new_value : ""}</Text>
                             </View>
                         </View>
                     </View>

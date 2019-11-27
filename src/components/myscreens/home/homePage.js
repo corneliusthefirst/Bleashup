@@ -147,7 +147,8 @@ class Home extends Component {
     this.setState({ appState: nextAppState });
   };
   handleBackButton() {
-    if (this.exiting) {
+    //BackHandler.exitApp()
+    /*if (this.exiting) {
       clearTimeout(this.timeout)
       //this.props.navigation.back()
       return false
@@ -158,7 +159,7 @@ class Home extends Component {
         this.exiting = false
       }, 2000)
     }
-    return true;
+    return true;*/
   }
   handleConnectionChange(connect) {
     //connect ? console.warn("connected") : console.warn("not connected")
@@ -195,7 +196,7 @@ class Home extends Component {
             style={{
               padding: 15,
               paddingLeft: 100,
-              color: "#0A4E52"
+              color: "#1FABAB"
             }}
             onPress={this.settings()}
           />

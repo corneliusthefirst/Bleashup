@@ -33,6 +33,7 @@ import SwipeOutView from "./SwipeOutView";
 import emitter from "../../../../services/eventEmiter";
 import Swipeout from '../../../SwipeOut';
 import InvitationModal from './InvitationModal';
+import ProfileSimple from './ProfileViewSimple';
 
 class PublicEvent extends Component {
   constructor(props) {
@@ -52,6 +53,7 @@ class PublicEvent extends Component {
       participant: false,
       master: false,
       hiding: false,
+      openInviteModal: false,
       deleting: false,
       swipeOutSettings: null,
       hiden: false,
@@ -72,22 +74,23 @@ class PublicEvent extends Component {
       nextState.openInviteModal !== this.state.openInviteModal ||
       this.props.Event.joint !== nextProps.Event.joint ||
       this.props.Event.new !== nextProps.Event.new ||
+      this.state.master !== nextState.master ||
       this.props.Event.updated !== nextProps.Event.updated ||
       this.props.Event.id !== nextProps.Event.id
   }
   swipperComponent = null
   componentDidMount() {
     setTimeout(() => {
-      this.setState({
-        isMount: true,
-        openInviteModal: false
-      })
-      stores.Events.isMaster(this.props.Event.id, stores.Session.SessionStore.phone).then(master => {
-        this.setState({
-          master: master,
+      stores.TemporalUsersStore.getUser(this.props.Event.creator_phone).then(creator => {
+        stores.Events.isMaster(this.props.Event.id, stores.Session.SessionStore.phone).then(master => {
+          this.setState({
+            master: master,
+            creator:creator,
+            isMount: true
+          })
         })
       })
-    }, 12)
+    }, this.props.renderDelay)
   }
   swipeOutSettings(master) {
     return {
@@ -278,22 +281,15 @@ class PublicEvent extends Component {
             <Left>
               {this.state.master || this.props.Event.public ? <View>
                 {this.state.publishing ? <View style={{ height: 18 }}>
-                  <Spinner size={"small"} color="#7DD2D2"></Spinner></View> : <Icon
-                    name="megaphone"
-                    type="Entypo"
-                    style={{
-                      fontSize: 16,
-                      color: "#0A4E52"
-                    }}
-                  />}
+                  <Spinner size={"small"} color="#7DD2D2"></Spinner></View> : null}
                 <MenuListView hide={this.state.hide} event_id={this.props.Event.id} published publish={() => this.publish()}
                   showPublishers={() => this.showPublishersList()}
                 />
               </View> : null}
 
             </Left>
-            {this.props.Event.updated ? <UpdateStateIndicator /> : null}
-            <Right>
+            {/*this.props.Event.updated ? <UpdateStateIndicator /> : null*/}
+            {/* <Right>
               <View>
                 <Icon
                   name="dots-three-vertical"
@@ -304,7 +300,7 @@ class PublicEvent extends Component {
                   type="Entypo"
                 />
               </View>
-            </Right>
+                </Right>*/}
           </CardItem>
           <CardItem
             style={{
@@ -314,8 +310,8 @@ class PublicEvent extends Component {
           >
             <Left>
               <View style={{ flexDirection: "row", flex: 5 }}>
-                <ProfileView joined={() => this.join()} showPhoto={(url) => this.props.showPhoto(url)} hasJoin={this.props.Event.joint || this.state.joint}
-                  onOpen={() => this.onOpenDetaiProfileModal()} phone={(this.props.Event.creator_phone)}></ProfileView>
+                <ProfileSimple joined={() => this.join()} showPhoto={(url) => this.props.showPhoto(url)} hasJoin={this.props.Event.joint || this.state.joint}
+                  onOpen={() => this.onOpenDetaiProfileModal()} profile={(this.state.creator)}></ProfileSimple>
               </View>
             </Left>
           </CardItem>
@@ -336,10 +332,12 @@ class PublicEvent extends Component {
             cardBody
           >
             <Left>
-              {this.state.isMount ? <PhotoView showPhoto={(url) => this.props.showPhoto(url)} joined={() => this.join()} isToBeJoint hasJoin={this.props.Event.joint || this.state.joint} onOpen={() => this.onOpenPhotoModal()} style={{
-                width: "70%",
-                marginLeft: "4%"
-              }} photo={this.props.Event.background} width={170} height={125} borderRadius={10} /> : null}
+              {this.state.isMount ? <PhotoView showPhoto={(url) =>
+                this.props.showPhoto(url)} joined={() => this.join()}
+                isToBeJoint hasJoin={this.props.Event.joint || this.state.joint} onOpen={() => this.onOpenPhotoModal()} style={{
+                  width: "70%",
+                  marginLeft: "4%"
+                }} photo={this.props.Event.background} width={170} height={125} borderRadius={6} /> : null}
             </Left>
             <Right >
               {this.state.isMount ? <MapView style={{ marginRight: "11%" }}

@@ -44,8 +44,8 @@ export default class ParticipantList extends Component {
     _keyExtractor = (item, index) => item.phone
     render() {
         return <View>
-            <View style={{margin: '6%',}}>
-                <Text style={{fontWeight: "bold",fontSize: 22,}}> Participants List</Text>
+            <View style={{ margin: '6%', }}>
+                <Text style={{ fontWeight: "bold", fontSize: 22, }}>{this.props.hide ? "" : "Participants List"}</Text>
             </View>
             {this.state.isloaded ? (
                 <View>
@@ -61,7 +61,7 @@ export default class ParticipantList extends Component {
                         renderItem={(item, index) =>
                             <View style={{ display: 'flex', flexDirection: 'row', }} >
                                 <View style={{ margin: '2%', }}>
-                                    <ProfileView phone={item.phone.replace("+","00")}></ProfileView>
+                                    <ProfileView phone={item.phone.replace("+", "00")}></ProfileView>
                                 </View>
                                 <View style={{
                                     marginLeft: "40%",

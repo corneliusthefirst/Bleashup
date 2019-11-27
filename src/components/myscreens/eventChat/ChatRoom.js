@@ -47,6 +47,7 @@ import EmojiSelector from 'react-native-emoji-selector';
 import ChatroomMenu from "./ChatroomMenu";
 import uuid from 'react-native-uuid';
 import NotificationModal from "../event/NotificationModal";
+import dateDisplayer from '../../../services/dates_displayer';
 const { fs } = rnFetchBlob
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenheight = Math.round(Dimensions.get('window').height);
@@ -66,6 +67,7 @@ export default class ChatRoom extends Component {
             keyboardOpened: false,
             textValue: '',
             image: null,
+            isModalOpened: false,
             showHeader: true,
             previousMessageHeight: this.formHeight(((screenheight - 67) / screenheight)),
             previousTextHeight: this.formHeight((67 / screenheight)),
@@ -119,11 +121,10 @@ export default class ChatRoom extends Component {
                 }
             })
         } else {
-            this.setState({
-                isModalOpened: false
-            })
-            console.warn('logged in already', user)
         }
+    }
+    formPercentage(height) {
+        return height / screenWidth
     }
     messageListFactor = 0.85
     textInputFactor = 0.15
@@ -261,7 +262,7 @@ export default class ChatRoom extends Component {
             this.fireRef.endAt().limitToLast(1).on('child_added', snapshot => {
                 let message = snapshot.val()
                 message.received.unshift({ phone: this.props.user.phone, date: moment().format() })
-                message.received = uniqBy(message.received,"phone");
+                message.received = uniqBy(message.received, "phone");
                 //console.warn(message.received)
                 this.addNewMessage(message, snapshot.key)
             })
@@ -337,8 +338,8 @@ export default class ChatRoom extends Component {
         this.setState({
             showEmojiInput: false,
             keyboardOpened: true,
-            textHeight: (screenheight * (this.state.replying ? .55 + 0.11 : .56)),
-            photoHeight: (screenheight * (this.state.replying ? .45 - 0.11 : .44)),
+            textHeight: (screenheight * (this.state.replying ? this.formPercentage(580) : this.formPercentage(540))),
+            photoHeight: (screenheight * (this.state.replying ? this.formPercentage(screenheight - 580) : this.formPercentage(screenheight - 540))),
             textInputHeight: this.formHeight(this.textInputFactor + offset),
             messageListHeight: this.formHeight(this.messageListFactor - offset),
             showEmojiInputCaption: false
@@ -722,13 +723,13 @@ export default class ChatRoom extends Component {
                     this.markAsRead()
                 })
                 //  this._resetCaptionInput();
-            }).catch(error => {
-                console.warn(error)
             })
             this.setState({
                 captionText: '',
                 // showCaption: false,
             })
+        }).catch(error => {
+            console.warn(error)
         })
     }
     informMembers() {
@@ -761,11 +762,12 @@ export default class ChatRoom extends Component {
         })
         this._resetCaptionInput();
         //this._textInput.focus()
+        let offset = this.state.replying ? .1 : 0
         this.setState({
             captionText: '',
             replyContent: null,
-            //messageListHeight: this.formHeight(this.state.initialMessaListHeightFactor),
-            //textInputHeight: this.formHeight(this.inittialTextInputHeightFactor),
+            messageListHeight: this.formHeight(this.state.initialMessaListHeightFactor),
+            textInputHeight: this.formHeight(this.inittialTextInputHeightFactor),
             textHeight: (screenheight * .1) + (offset * screenheight),
             photoHeight: (screenheight * .9) - (offset * screenheight),
             replying: false,
@@ -879,8 +881,8 @@ export default class ChatRoom extends Component {
             })
             this.setState({
                 replyContent: null,
-                //messageListHeight: this.formHeight(this.state.initialMessaListHeightFactor),
-                //textInputHeight: this.formHeight(this.inittialTextInputHeightFactor),
+                messageListHeight: this.formHeight(this.state.initialMessaListHeightFactor),
+                textInputHeight: this.formHeight(this.inittialTextInputHeightFactor),
                 replying: false,
             })
         } catch (err) {
@@ -1146,7 +1148,7 @@ export default class ChatRoom extends Component {
         })
     }
     headerStyles = {
-        width: "100%", height: 40, display: 'flex', flexDirection: 'row',
+        width: "100%", height: 44, display: 'flex', flexDirection: 'row',
         backgroundColor: "transparent", position: "absolute", borderBottomWidth: 1.25, borderBottomColor: "#1FABAB",
     }
     transparent = "rgba(50, 51, 53, 0.8)";
@@ -1154,400 +1156,401 @@ export default class ChatRoom extends Component {
         return (
             <View style={{ height: "100%" }}>
                 <ImageBackground style={{ width: "100%", height: "100%" }} source={require("../../../../assets/Pure_.jpeg")}>
-                <StatusBar hidden={this.state.hideStatusBar} barStyle="dark-content" backgroundColor="#FEFFDE"></StatusBar>
-                {!this.state.loaded ? <View><ImageBackground style={{ width: "100%", height: "100%" }}
-                    resizeMode={"contain"} source={require("../../../../assets/Bleashup.png")}></ImageBackground>
-                    <Spinner color="#FEFFDE" style={{ color: "#FEFFDE", position: 'absolute', marginTop: "91%", marginLeft: "39.5%", }} />
-                </View> : <View><View style={{ width: "100%", alignSelf: 'center', }}>
-                    <View style={{ height: this.state.messageListHeight, marginBottom: "0.5%" }}>
-                        <TouchableWithoutFeedback onPressIn={() => {
-                            Keyboard.dismiss()
-                            //this.hideAndShowHeader()
-                        }}>
-                            <BleashupFlatList
-                                backgroundColor={"transparent"}
-                                firstIndex={0}
-                                ref="bleashupSectionListOut"
-                                inverted={true}
-                                renderPerBatch={5}
-                                initialRender={15}
-                                numberOfItems={this.room.messages.length}
-                                keyExtractor={(item, index) => item ? item.id : null}
-                                renderItem={(item, index) => {
-                                    return item ? <Message
-                                        PreviousSenderPhone={this.room.messages[index > 0 ? index - 1 : 0] ? this.room.messages[index > 0 ? index - 1 : 0].sender.phone : null}
-                                        showActions={(message) => this.showActions(message)}
-                                        firebaseRoom={this.props.firebaseRoom}
-                                        roomName={this.props.roomName}
-                                        sendMessage={message => this.sendTextMessage(message)}
-                                        received={item.received ? item.received.length >= this.props.members.length : false}
-                                        replaceMessageVideo={(data) => this.replaceMessageVideo(data)}
-                                        showPhoto={(photo) => this.showPhoto(photo)}
-                                        replying={(replyer, color) => this.replying(replyer, color)}
-                                        replaceMessage={(data) => this.replaceMessage(data)}
-                                        replaceAudioMessage={(data) => this.replaceAudioMessage(data)}
-                                        message={item}
+                    <StatusBar hidden={this.state.hideStatusBar} barStyle="dark-content" backgroundColor="#FEFFDE"></StatusBar>
+                    {!this.state.loaded ? <View><ImageBackground style={{ width: "100%", height: "100%" }}
+                        resizeMode={"contain"} source={require("../../../../assets/Bleashup.png")}></ImageBackground>
+                        <Spinner color="#FEFFDE" style={{ color: "#FEFFDE", position: 'absolute', marginTop: "91%", marginLeft: "39.5%", }} />
+                    </View> : <View><View style={{ width: "100%", alignSelf: 'center', }}>
+                        <View style={{ height: this.state.messageListHeight, marginBottom: "0.5%" }}>
+                            <TouchableWithoutFeedback onPressIn={() => {
+                                Keyboard.dismiss()
+                                //this.hideAndShowHeader()
+                            }}>
+                                <BleashupFlatList
+                                    backgroundColor={"transparent"}
+                                    firstIndex={0}
+                                    ref="bleashupSectionListOut"
+                                    inverted={true}
+                                    renderPerBatch={5}
+                                    initialRender={15}
+                                    numberOfItems={this.room.messages.length}
+                                    keyExtractor={(item, index) => item ? item.id : null}
+                                    renderItem={(item, index) => {
+                                        return item ? <Message
+                                            PreviousSenderPhone={this.room.messages[index > 0 ? index - 1 : 0] ? this.room.messages[index > 0 ? index - 1 : 0].sender.phone : null}
+                                            showActions={(message) => this.showActions(message)}
+                                            firebaseRoom={this.props.firebaseRoom}
+                                            roomName={this.props.roomName}
+                                            sendMessage={message => this.sendTextMessage(message)}
+                                            received={item.received ? item.received.length >= this.props.members.length : false}
+                                            replaceMessageVideo={(data) => this.replaceMessageVideo(data)}
+                                            showPhoto={(photo) => this.showPhoto(photo)}
+                                            replying={(replyer, color) => this.replying(replyer, color)}
+                                            replaceMessage={(data) => this.replaceMessage(data)}
+                                            replaceAudioMessage={(data) => this.replaceAudioMessage(data)}
+                                            message={item}
+                                            openReply={(replyer) => {
+                                                this.setState({
+                                                    replyer: replyer,
+                                                    showRepliedMessage: true
+                                                })
+                                            }}
+                                            user={this.props.user.phone} creator={this.props.creator}
+                                            replaceMessageFile={(data) => this.replaceMessageFile(data)}
+                                            playVideo={(source) => this.playVideo(source)}></Message> : null
+                                    }}
+                                    dataSource={this.room.messages}
+                                    newData={this.showMessage}
+                                    newDataLength={this.showMessage.length}
+                                //initialNewRender={this.newMessages.length-2}
+                                // newRenderPerBatch={3}
+                                >
+                                </BleashupFlatList>
+                            </TouchableWithoutFeedback>
+                        </View>
+                        {!this.props.opened ? <Text style={{ fontStyle: 'italic', marginLeft: "3%", }} note>{"This commitee has been closed by a master of the activiy"}</Text> :
+                            // ***************** KeyBoard Displayer *****************************
+                            <View style={{
+                                height: this.state.textInputHeight, backgroundColor: "#FEFFDE",
+                                borderRadius: 10, alignSelf: 'center', borderWidth: 1, borderBottomWidth: 0,
+                                borderColor: '#1FABAB', padding: '1%', maxWidth: "99.9%",
+                            }}>
+                                {
+                                    //* Reply Message caption */
+                                    this.state.replying ? <View style={{ backgroundColor: this.state.replyerBackColor, marginLeft: "-1%", }}><ReplyText
                                         openReply={(replyer) => {
                                             this.setState({
                                                 replyer: replyer,
                                                 showRepliedMessage: true
                                             })
                                         }}
-                                        user={this.props.user.phone} creator={this.props.creator}
-                                        replaceMessageFile={(data) => this.replaceMessageFile(data)}
-                                        playVideo={(source) => this.playVideo(source)}></Message> : null
-                                }}
-                                dataSource={this.room.messages}
-                                newData={this.showMessage}
-                                newDataLength={this.showMessage.length}
-                            //initialNewRender={this.newMessages.length-2}
-                            // newRenderPerBatch={3}
-                            >
-                            </BleashupFlatList>
-                        </TouchableWithoutFeedback>
-                    </View>
-                    {!this.props.opened?<Text style={{fontStyle: 'italic',marginLeft: "3%",}} note>{"This commitee has been closed by a master of the activiy"}</Text>:
-                        // ***************** KeyBoard Displayer *****************************
-                        <View style={{
-                            height: this.state.textInputHeight, backgroundColor: "#FEFFDE",
-                            borderRadius: 10, alignSelf: 'center', borderWidth: 1, borderBottomWidth: 0,
-                            borderColor: '#1FABAB', padding: '1%', maxWidth: "99.9%",
-                        }}>
-                            {
-                                //* Reply Message caption */
-                                this.state.replying ? <View style={{ backgroundColor: this.state.replyerBackColor, marginLeft: "-1%", }}><ReplyText
-                                    openReply={(replyer) => {
-                                        this.setState({
-                                            replyer: replyer,
-                                            showRepliedMessage: true
-                                        })
-                                    }}
-                                    pressingIn={() => { }}
-                                    reply={this.state.replyContent} ></ReplyText></View> : null
-                            }
-                            <View>
-                                <View style={{ display: 'flex', flexDirection: 'row', }}>
-                                    <View style={{
-                                        marginTop: "2%",
-                                        width: "33%",
-                                        display: 'flex', flexDirection: 'row',
-                                    }}><TouchableOpacity onPress={() => this.openFilePicker()}>
-                                            <Icon name={"attach-file"} type={"MaterialIcons"} style={{ color: "#0A4E52", marginRight: "1%", }}></Icon></TouchableOpacity>
-                                        <TouchableOpacity onLongPress={() => this.openPhotoSelector()} onPress={() => this.openCamera()}><Icon style={{ color: "#0A4E52", marginRight: "4%", }}
-                                            type={"Ionicons"} name={"md-photos"}></Icon></TouchableOpacity><TouchableOpacity onPress={() => this.openVideo()}>
-                                            <Icon name={"video-camera"} type={"Entypo"} style={{ color: "#0A4E52", marginRight: "4%" }}></Icon></TouchableOpacity>
-                                        <Icon onPress={() => {
-                                            this.toggleEmojiKeyboard()
-                                            this.markAsRead()
-                                        }} style={{ color: "#1FABAB" }} type="Entypo" name="emoji-flirt"></Icon>
-                                    </View>
-                                    <TextInput
-                                        value={this.state.textValue}
-                                        onChange={(event) => this._onChange(event)}
-                                        style={{
-                                            paddingLeft: 10,
-                                            fontSize: 17,
-                                            height: 50,
-                                            width: "50%",
-                                            borderColor: "#1FABAB",
-                                            backgroundColor: 'white',
-                                            borderWidth: 1,
-                                            borderRadius: 8,
-                                        }}
-                                        placeholder={'Your Message'}
-                                        placeholderTextColor='#66737C'
-                                        maxHeight={200}
-                                        multiline={this.state.keyboardOpened ? true : false}
-                                        minHeight={45}
-                                        enableScrollToCaret
-                                        ref={(r) => { this._textInput = r; }}
-                                    />
-                                    <View style={{
-                                        marginLeft: this.state.showAudioRecorder ? "5%" : "3%", marginTop: "2%", display: 'flex',
-                                        width: "17%",
-                                        flexDirection: 'row',
-                                    }}>
-                                        {
-                                            !this.state.showAudioRecorder ? <TouchableOpacity onLongPress={() => {
-                                                this.openAudioPicker()
+                                        pressingIn={() => { }}
+                                        reply={this.state.replyContent} ></ReplyText></View> : null
+                                }
+                                <View>
+                                    <View style={{ display: 'flex', flexDirection: 'row', }}>
+                                        <View style={{
+                                            marginTop: "2%",
+                                            width: "33%",
+                                            display: 'flex', flexDirection: 'row',
+                                        }}><TouchableOpacity onPress={() => this.openFilePicker()}>
+                                                <Icon name={"attach-file"} type={"MaterialIcons"} style={{ color: "#0A4E52", marginRight: "1%", }}></Icon></TouchableOpacity>
+                                            <TouchableOpacity onLongPress={() => this.openPhotoSelector()} onPress={() => this.openCamera()}><Icon style={{ color: "#0A4E52", marginRight: "4%", }}
+                                                type={"Ionicons"} name={"md-photos"}></Icon></TouchableOpacity><TouchableOpacity onPress={() => this.openVideo()}>
+                                                <Icon name={"video-camera"} type={"Entypo"} style={{ color: "#0A4E52", marginRight: "4%" }}></Icon></TouchableOpacity>
+                                            <Icon onPress={() => {
+                                                this.toggleEmojiKeyboard()
                                                 this.markAsRead()
-                                            }} onPress={() => {
-                                                this.toggleAudioRecorder()
-                                                this.markAsRead()
-                                            }}><Icon style={{
-                                                color: "#0A4E52",
-                                                marginRight: "8%",
+                                            }} style={{ color: "#1FABAB" }} type="Entypo" name="emoji-flirt"></Icon>
+                                        </View>
+                                        <TextInput
+                                            value={this.state.textValue}
+                                            onChange={(event) => this._onChange(event)}
+                                            style={{
+                                                paddingLeft: 10,
+                                                fontSize: 17,
+                                                height: 50,
+                                                width: "50%",
+                                                borderColor: "#1FABAB",
+                                                backgroundColor: 'white',
+                                                borderWidth: 1,
+                                                borderRadius: 8,
                                             }}
-                                                type={"FontAwesome5"} name={"microphone-alt"} ></Icon></TouchableOpacity> : null}
-                                        <TouchableOpacity onPress={() => {
-                                            requestAnimationFrame(() => {
-                                                return this.sendMessageText(this.state.textValue)
-                                            })
-                                        }}><Icon style={{ marginLeft: this.state.showAudioRecorder ? "23%" : "0%", color: "#1FABAB" }}
-                                            name="paper-plane" type="FontAwesome"></Icon></TouchableOpacity>
+                                            placeholder={'Your Message'}
+                                            placeholderTextColor='#66737C'
+                                            maxHeight={200}
+                                            multiline={this.state.keyboardOpened ? true : false}
+                                            minHeight={45}
+                                            enableScrollToCaret
+                                            ref={(r) => { this._textInput = r; }}
+                                        />
+                                        <View style={{
+                                            marginLeft: this.state.showAudioRecorder ? "5%" : "3%", marginTop: "2%", display: 'flex',
+                                            width: "17%",
+                                            flexDirection: 'row',
+                                        }}>
+                                            {
+                                                !this.state.showAudioRecorder ? <TouchableOpacity onLongPress={() => {
+                                                    this.openAudioPicker()
+                                                    this.markAsRead()
+                                                }} onPress={() => {
+                                                    this.toggleAudioRecorder()
+                                                    this.markAsRead()
+                                                }}><Icon style={{
+                                                    color: "#0A4E52",
+                                                    marginRight: "8%",
+                                                }}
+                                                    type={"FontAwesome5"} name={"microphone-alt"} ></Icon></TouchableOpacity> : null}
+                                            <TouchableOpacity onPress={() => {
+                                                requestAnimationFrame(() => {
+                                                    return this.sendMessageText(this.state.textValue)
+                                                })
+                                            }}><Icon style={{ marginLeft: this.state.showAudioRecorder ? "23%" : "0%", color: "#1FABAB" }}
+                                                name="paper-plane" type="FontAwesome"></Icon></TouchableOpacity>
+                                        </View>
                                     </View>
+                                    {
+
+                                        // ******************** Audio Recorder Input ************************//
+
+                                        this.state.showAudioRecorder ?
+                                            <View style={{
+                                                position: "absolute", width: 350, opacity: 0.97,
+                                                // marginTop: "1%",
+                                                backgroundColor: '#5CB99E', height: 50, display: 'flex', flexDirection: 'row',
+                                                marginLeft: 2, borderRadius: 10,
+                                            }}><Left><TouchableOpacity onPress={() => this.toggleAudioRecorder()}><Icon type={'EvilIcons'}
+                                                name={'close'} style={{ color: "#FEFFDE" }}></Icon></TouchableOpacity></Left>{this.state.recording ? <View
+                                                    style={{ marginLeft: "-40%", marginTop: "1.8%", display: 'flex', flexDirection: 'row', }}>
+                                                    <Icon type={"Entypo"} onPress={() => this.stopRecord()} name={"controller-stop"}
+                                                        style={{ color: "#FEFFDE", fontSize: 35, }}></Icon>
+                                                    <Icon type={"FontAwesome"} name={"pause"} onPress={() => this.pauseRecorder()}
+                                                        style={{ marginTop: "5%", marginLeft: "10%", color: "#FEFFDE", fontSize: 26, }}></Icon>
+                                                </View> : <View style={{ marginLeft: "-40%", marginTop: "1.8%", display: 'flex', flexDirection: 'row', }}>
+                                                        <Icon type={"Entypo"} onPress={() => this.resumAudioRecoder()}
+                                                            name={"controller-record"} style={{ color: "#FEFFDE", fontSize: 35, }}></Icon>
+                                                    </View>}
+                                                <Right><View style={{ display: 'flex', flexDirection: 'row', marginLeft: "30%", }}>
+                                                    <Text style={{ marginTop: "6%", fontSize: 22, color: "#FEFFDE" }}>
+                                                        {this.convertToHMS(this.state.recordTime)}</Text>
+                                                    <PulseIndicator color={'red'}>
+                                                    </PulseIndicator></View></Right></View> : null}
                                 </View>
                                 {
-
-                                    // ******************** Audio Recorder Input ************************//
-
-                                    this.state.showAudioRecorder ?
-                                        <View style={{
-                                            position: "absolute", width: 350, opacity: 0.97,
-                                            // marginTop: "1%",
-                                            backgroundColor: '#5CB99E', height: 50, display: 'flex', flexDirection: 'row',
-                                            marginLeft: 2, borderRadius: 10,
-                                        }}><Left><TouchableOpacity onPress={() => this.toggleAudioRecorder()}><Icon type={'EvilIcons'}
-                                            name={'close'} style={{ color: "#FEFFDE" }}></Icon></TouchableOpacity></Left>{this.state.recording ? <View
-                                                style={{ marginLeft: "-40%", marginTop: "1.8%", display: 'flex', flexDirection: 'row', }}>
-                                                <Icon type={"Entypo"} onPress={() => this.stopRecord()} name={"controller-stop"}
-                                                    style={{ color: "#FEFFDE", fontSize: 35, }}></Icon>
-                                                <Icon type={"FontAwesome"} name={"pause"} onPress={() => this.pauseRecorder()}
-                                                    style={{ marginTop: "5%", marginLeft: "10%", color: "#FEFFDE", fontSize: 26, }}></Icon>
-                                            </View> : <View style={{ marginLeft: "-40%", marginTop: "1.8%", display: 'flex', flexDirection: 'row', }}>
-                                                    <Icon type={"Entypo"} onPress={() => this.resumAudioRecoder()}
-                                                        name={"controller-record"} style={{ color: "#FEFFDE", fontSize: 35, }}></Icon>
-                                                </View>}
-                                            <Right><View style={{ display: 'flex', flexDirection: 'row', marginLeft: "30%", }}>
-                                                <Text style={{ marginTop: "6%", fontSize: 22, color: "#FEFFDE" }}>
-                                                    {this.convertToHMS(this.state.recordTime)}</Text>
-                                                <PulseIndicator color={'red'}>
-                                                </PulseIndicator></View></Right></View> : null}
+                                    // ***************** Emoji keyBoard Input ***********************//
+                                    this.state.showEmojiInput ? <View style={{ marginLeft: '-1.5%', width: "100%", height: 300 }}>
+                                        <EmojiSelector onEmojiSelected={(emoji) => this.handleEmojiSelected(emoji)}
+                                            enableSearch={false}
+                                            ref={emojiInput => this._emojiInput = emojiInput}
+                                            resetSearch={this.state.reset}
+                                            showSearchBar={false}
+                                            loggingFunction={this.verboseLoggingFunction.bind(this)}
+                                            verboseLoggingFunction={true}
+                                            filterFunctions={[this.filterFunctionByUnicode]} ></EmojiSelector>
+                                    </View> : null}
                             </View>
+                        }
+                    </View>
                             {
-                                // ***************** Emoji keyBoard Input ***********************//
-                                this.state.showEmojiInput ? <View style={{ marginLeft: '-1.5%', width: "100%", height: 300 }}>
-                                    <EmojiSelector onEmojiSelected={(emoji) => this.handleEmojiSelected(emoji)}
-                                        enableSearch={false}
-                                        ref={emojiInput => this._emojiInput = emojiInput}
-                                        resetSearch={this.state.reset}
-                                        showSearchBar={false}
-                                        loggingFunction={this.verboseLoggingFunction.bind(this)}
-                                        verboseLoggingFunction={true}
-                                        filterFunctions={[this.filterFunctionByUnicode]} ></EmojiSelector>
-                                </View> : null}
-                        </View>
-                    }
-                </View>
-                        {
-                            // **********************Header************************ //
-                            this.state.showHeader ? <View style={this.headerStyles}><View style={{ width: "90%", backgroundColor: "#FEFFDE" }}><Text
-                                style={{ fontSize: 25, fontWeight: 'bold', margin: '2%' }}>{this.props.roomName.length > 30
-                                    ? this.props.roomName.slice(0, 30) + "..." : this.props.roomName}</Text></View>
-                                <View style={{ width: "10%", backgroundColor: "#FEFFDE" }}>
-                                    <ChatroomMenu
-                                        showMembers={() => this.showMembers()}
-                                        addMembers={() => this.props.addMembers()}
-                                        closeCommitee={() => this.props.close()}
-                                        openCommitee={() => this.props.open()}
-                                        leaveCommitee={() => this.props.leave()}
-                                        removeMembers={() => this.props.removeMembers()}
-                                        publishCommitee={() => this.props.publish()}
-                                        master={this.props.master}
-                                        eventID={this.props.activity_id}
-                                        roomID={this.props.firebaseRoom}
-                                        public={this.props.public_state}
-                                        opened={this.props.opened}
-                                    ></ChatroomMenu>
+                                // **********************Header************************ //
+                                this.state.showHeader ? <View style={this.headerStyles}><View style={{ width: "90%", backgroundColor: "#FEFFDE" }}><Text
+                                    style={{ fontSize: 25, fontWeight: 'bold', margin: '2%' }}>{this.props.roomName.length > 30
+                                        ? this.props.roomName.slice(0, 30) + "..." : this.props.roomName}</Text></View>
+                                    <View style={{ width: "10%", backgroundColor: "#FEFFDE" }}>
+                                        <ChatroomMenu
+                                            showMembers={() => this.showMembers()}
+                                            addMembers={() => this.props.addMembers()}
+                                            closeCommitee={() => this.props.close()}
+                                            openCommitee={() => this.props.open()}
+                                            leaveCommitee={() => this.props.leave()}
+                                            removeMembers={() => this.props.removeMembers()}
+                                            publishCommitee={() => this.props.publish()}
+                                            master={this.props.master}
+                                            eventID={this.props.activity_id}
+                                            roomID={this.props.firebaseRoom}
+                                            public={this.props.public_state}
+                                            opened={this.props.opened}
+                                        ></ChatroomMenu>
                                     </View></View> : null
-                        }
-                        {
-                            // **********************New Message Indicator *****************//
-                            this.newMessages.length > 0 ? <View style={{
-                                position: 'absolute', height: 40,
-                                marginTop: '5%', alignSelf: 'center'
-                            }}>
-                                <View style={{ alignSelf: 'center', backgroundColor: '#FEFFDE', borderRadius: 10, margin: '2%', display: 'flex', flexDirection: 'row', }}>
-                                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: "#00BE71" }}>{this.props.newMessages.length}{" new messages"}</Text>
-                                    <Icon type="EvilIcons" style={{ color: "#00BE71", marginTop: '3%', fontSize: 19 }} name="arrow-up"></Icon>
-                                </View>
-                            </View> : null
-
-                        }
-                        {
-                            // **************Captions messages handling ***********************//
-
-                            this.state.showCaption ? <View style={{
-                                position: "absolute", width: screenWidth,
-                                height: screenheight, backgroundColor: "black", display: 'flex',
-                            }}>
-                                <View style={{ height: this.state.photoHeight, width: "100%" }}>
-                                    {this.state.image ? <ReactNativeZoomableView
-                                        maxZoom={1.5}
-                                        minZoom={0.5}
-                                        zoomStep={0.5}
-                                        initialZoom={1}
-                                        bindToBorders={true}
-                                        onZoomAfter={this.logOutZoomState}>
-                                        {this.state.imageSelected ? <Image resizeMode={"contain"}
-                                            width={screenWidth} style={{ flex: 1 }} source={{ uri: this.state.image }}></Image> : null
-                                        }</ReactNativeZoomableView> : null}
-                                </View>
-                                <KeyboardAvoidingView >
-                                    {
-                                        //* Reply Message caption */
-                                        this.state.replying ? <View style={{
-                                            backgroundColor: this.state.replyerBackColor,
-                                            marginLeft: "-1%", backgroundcolor: "#FEFFDE"
-                                        }}>
-                                            <ReplyText
-                                                openReply={(replyer) => {
-                                                    this.setState({
-                                                        replyer: replyer,
-                                                        showRepliedMessage: true
-                                                    })
-                                                }}
-                                                pressingIn={() => { }}
-                                                reply={this.state.replyContent} ></ReplyText></View> : null
-                                    }
-                                    <View style={{ heigh: this.state.textHeight, backgroundColor: "#1FABAB", width: "100%", display: 'flex', flexDirection: 'row', }}>
-                                        <Icon onPress={() => {
-                                            offset = this.state.replying ? 0.1 : 0
-                                            !this.state.showEmojiInputCaption ? Keyboard.dismiss() : this._captionTextInput.focus()
-                                            this.setState({
-                                                showEmojiInputCaption: !this.state.showEmojiInputCaption,
-                                                textHeight: screenheight * (this.state.replying ? 0.55 + 0.1 : 0.55),
-                                                photoHeight: screenheight * (this.state.replying ? 0.45 - 0.1 : 0.45)
-                                            })
-                                        }} type="Entypo" name="emoji-flirt" style={{ color: "#0A4E52", marginTop: "3%", width: "8%" }}>
-                                        </Icon><TextInput multiline enableScrollToCaret
-                                            ref={(r) => { this._captionTextInput = r; }} value={this.state.captionText} onChange={(data) => this._onChangeCaption(data)}
-                                            style={{ left: 0, right: 0, height: 59, width: "84%" }}
-                                            placeholder={'Enter your text!'} />
-                                        <Icon style={{ color: "#0A4E52", marginTop: "3%", width: "8%" }} onPress={() => this._sendCaptionMessage()} type={"FontAwesome"} name={"paper-plane"}></Icon>
+                            }
+                            {
+                                // **********************New Message Indicator *****************//
+                                this.newMessages.length > 0 ? <View style={{
+                                    position: 'absolute', height: 40,
+                                    marginTop: '5%', alignSelf: 'center'
+                                }}>
+                                    <View style={{ alignSelf: 'center', backgroundColor: '#FEFFDE', borderRadius: 10, margin: '2%', display: 'flex', flexDirection: 'row', }}>
+                                        <Text style={{ fontSize: 19, fontWeight: 'bold', color: "#00BE71" }}>{this.props.newMessages.length}{" new messages"}</Text>
+                                        <Icon type="EvilIcons" style={{ color: "#00BE71", marginTop: '3%', fontSize: 19 }} name="arrow-up"></Icon>
                                     </View>
-                                    {
-                                        //********** Caption Emoji Keyboard *******************************/
-                                        this.state.showEmojiInputCaption ? <View style={{ width: "100%", height: 300 }}>
-                                            <EmojiSelector onEmojiSelected={(emoji) => this.handleEmojieSectionCaption(emoji)}
-                                                //enableSearch={false}
-                                                ref={emojiInput => this._emojiInputCaption = emojiInput}
-                                                resetSearch={this.state.reset}
-                                                showSearchBar={false}
-                                                loggingFunction={this.verboseLoggingFunction.bind(this)}
-                                                verboseLoggingFunction={true}
-                                                filterFunctions={[this.filterFunctionByUnicode]} ></EmojiSelector>
-                                        </View> : null}
-                                </KeyboardAvoidingView>
-                            </View> : null}
-                        {
+                                </View> : null
 
-                            //******  Reply Message onClick See Reply handler View ********/
+                            }
+                            {
+                                // **************Captions messages handling ***********************//
 
-
-                            this.state.showRepliedMessage ? <View style={{
-                                height: 1000,
-                                position: "absolute", backgroundColor: this.transparent,
-                                width: "100%",
-                            }}>
-                                <View style={{ display: 'flex', flexDirection: 'row', marginTop: "3%", }}>
-                                    {this.state.replyer.sender.phone == this.sender.phone ? <TouchableOpacity onPress={() => {
-                                        this.setState({
-                                            showRepliedMessage: false
-                                        })
-                                    }}>
-                                        <Icon type="EvilIcons" style={{ margin: '7%', fontSize: 35, color: "#FEFFDE" }} name={"close"}></Icon>
-                                    </TouchableOpacity> : null}
-                                    <ScrollView style={{ top: 0, bottom: 0, height: screenheight - 60 }}>
-                                        <View style={{ display: "flex", }}>
-                                            {<Message openReply={(replyer) => {
-                                                console.warn("replying", replyer)
-                                                this.setState({
-                                                    replyer: replyer,
-                                                    showRepliedMessage: true
-                                                })
-                                            }} replying={() => { }} received={this.state.replyer.received ? this.state.replyer.received.length >= this.props.members.length : false}
-                                                showPhoto={(photo) => this.showPhoto(photo)} playVideo={(source) => this.playVideo(source)}
-                                                creator={2} user={this.sender.phone} message={find(this.room.messages, { id: this.state.replyer.id })} />}
-                                        </View>
-                                    </ScrollView>
-                                    {!(this.state.replyer.sender.phone == this.sender.phone) ? <TouchableOpacity onPress={() => {
-                                        this.setState({
-                                            showRepliedMessage: false
-                                        })
-                                    }}>
-                                        <Icon type="EvilIcons" style={{ margin: '2%', marginTop: "8%", fontSize: 35, color: "#FEFFDE" }} name={"close"}></Icon>
-                                    </TouchableOpacity> : null}
-                                </View>
-                            </View> : null}
-                        {
-                            // ******************Photo Viewer View ***********************//
-                            this.state.showPhoto ?
-                                <View style={{ height: "100%", width: "100%", position: "absolute", backgroundColor: "black", }}>
-                                    <View style={{ alignSelf: 'center', }}>
-                                        <ReactNativeZoomableView
+                                this.state.showCaption ? <View style={{
+                                    position: "absolute", width: screenWidth,
+                                    height: screenheight, backgroundColor: "black", display: 'flex',
+                                }}>
+                                    <View style={{ height: this.state.photoHeight, width: "100%" }}>
+                                        {this.state.image ? <ReactNativeZoomableView
                                             maxZoom={1.5}
                                             minZoom={0.5}
                                             zoomStep={0.5}
                                             initialZoom={1}
                                             bindToBorders={true}
                                             onZoomAfter={this.logOutZoomState}>
-                                            <Image resizeMode={"contain"} width={screenWidth} height={screenheight}
-                                                source={{ uri: this.state.photo }}></Image>
-                                        </ReactNativeZoomableView>
-                                        <Icon type="EvilIcons" onPress={() => {
-                                            this.setState({
-                                                showPhoto: false,
-                                                hideStatusBar: false
-                                            })
-                                        }} style={{ margin: '1%', position: 'absolute', fontSize: 30, color: "#FEFFDE" }} name={"close"}></Icon></View>
-                                </View> : null
-                        }
-                        {
-                            //** ####### Vidoe PLayer View ################ */
+                                            {this.state.imageSelected ? <Image resizeMode={"contain"}
+                                                width={screenWidth} style={{ flex: 1 }} source={{ uri: this.state.image }}></Image> : null
+                                            }</ReactNativeZoomableView> : null}
+                                    </View>
+                                    <KeyboardAvoidingView >
+                                        {
+                                            //* Reply Message caption */
+                                            this.state.replying ? <View style={{
+                                                backgroundColor: this.state.replyerBackColor,
+                                                marginLeft: "-1%", backgroundcolor: "#FEFFDE"
+                                            }}>
+                                                <ReplyText
+                                                    openReply={(replyer) => {
+                                                        this.setState({
+                                                            replyer: replyer,
+                                                            showRepliedMessage: true
+                                                        })
+                                                    }}
+                                                    pressingIn={() => { }}
+                                                    reply={this.state.replyContent} ></ReplyText></View> : null
+                                        }
+                                        <View style={{ heigh: this.state.textHeight, backgroundColor: "#1FABAB", width: "100%", display: 'flex', flexDirection: 'row', }}>
+                                            <Icon onPress={() => {
+                                                offset = this.state.replying ? 0.1 : 0
+                                                !this.state.showEmojiInputCaption ? Keyboard.dismiss() : this._captionTextInput.focus()
+                                                this.setState({
+                                                    showEmojiInputCaption: !this.state.showEmojiInputCaption,
+                                                    textHeight: screenheight * (this.state.replying ? 0.55 + 0.1 : 0.55),
+                                                    photoHeight: screenheight * (this.state.replying ? 0.45 - 0.1 : 0.45)
+                                                })
+                                            }} type="Entypo" name="emoji-flirt" style={{ color: "#0A4E52", marginTop: "3%", width: "8%" }}>
+                                            </Icon><TextInput multiline enableScrollToCaret
+                                                ref={(r) => { this._captionTextInput = r; }} value={this.state.captionText} onChange={(data) => this._onChangeCaption(data)}
+                                                style={{ left: 0, right: 0, height: 59, width: "84%" }}
+                                                placeholder={'Enter your text!'} />
+                                            <Icon style={{ color: "#0A4E52", marginTop: "3%", width: "8%" }} onPress={() => this._sendCaptionMessage()} type={"FontAwesome"} name={"paper-plane"}></Icon>
+                                        </View>
+                                        {
+                                            //********** Caption Emoji Keyboard *******************************/
+                                            this.state.showEmojiInputCaption ? <View style={{ width: "100%", height: 300 }}>
+                                                <EmojiSelector onEmojiSelected={(emoji) => this.handleEmojieSectionCaption(emoji)}
+                                                    //enableSearch={false}
+                                                    ref={emojiInput => this._emojiInputCaption = emojiInput}
+                                                    resetSearch={this.state.reset}
+                                                    showSearchBar={false}
+                                                    loggingFunction={this.verboseLoggingFunction.bind(this)}
+                                                    verboseLoggingFunction={true}
+                                                    filterFunctions={[this.filterFunctionByUnicode]} ></EmojiSelector>
+                                            </View> : null}
+                                    </KeyboardAvoidingView>
+                                </View> : null}
+                            {
 
-                            this.state.showVideo ? <View style={{
-                                height: this.state.fullScreen ? "100%" : this.state.keyboardOpened || this.state.showEmojiInput ||
-                                    this.state.showEmojiInputCaption ? this.state.replying ? 255 : 300 : 400,
-                                position: "absolute",
-                                width: this.state.fullScreen ? "100%" : screenWidth,
-                                backgroundColor: this.transparent,
-                                alignSelf: 'center',
-                            }}>
-                                <VideoPlayer source={{ uri: this.state.video }}   // Can be a URL or a local file.
-                                    ref={(ref) => {
-                                        this.videoPlayer = ref
-                                    }}
-                                    onBuffer={() =>
-                                        this.buffering()
-                                    }                // Callback when remote video is buffering
-                                    onError={(error) => {
-                                        console.error(error)
-                                    }}
-                                    toggleResizeModeOnFullscreen={false}
-                                    //pictureInPicture={true}
-                                    resizeMode={"contain"}
-                                    disableVolume={true}
-                                    seekColor="#1FABAB"
-                                    controlTimeout={null}
-                                    //disablePlayPause={true}
-                                    //disableFullscreen={true}
-                                    onBack={() => this.hideVideo()}
-                                    onEnterFullscreen={() => this.enterFullscreen()}
-                                    onExitFullscreen={() => this.enterFullscreen()}
-                                    fullscreenOrientation={"landscape"}
-                                    //fullscreen={true}
-                                    //controls={true}
-                                    style={{
-                                        backgroundColor: this.transparent,
-                                    }}
-                                    videoStyle={{
-                                        alignItems: 'center',
-                                        height: "100%",
-                                        width: "100%",
-                                        top: 0,
-                                        left: 0,
-                                        bottom: 0,
-                                        right: 0,
-                                    }}             // Callback when video cannot be loaded
-                                />
-                            </View> : null}
-                    </View>
-                }
-                <VerificationModal isOpened={this.state.isModalOpened}
-                    verifyCode={(code) => this.verifyNumber(code)}
+                                //******  Reply Message onClick See Reply handler View ********/
+
+
+                                this.state.showRepliedMessage ? <View style={{
+                                    height: 1000,
+                                    position: "absolute", backgroundColor: this.transparent,
+                                    width: "100%",
+                                }}>
+                                    <View style={{ display: 'flex', flexDirection: 'row', marginTop: "3%", }}>
+                                        {this.state.replyer.sender.phone == this.sender.phone ? <TouchableOpacity onPress={() => {
+                                            this.setState({
+                                                showRepliedMessage: false
+                                            })
+                                        }}>
+                                            <Icon type="EvilIcons" style={{ margin: '7%', fontSize: 35, color: "#FEFFDE" }} name={"close"}></Icon>
+                                        </TouchableOpacity> : null}
+                                        <ScrollView style={{ top: 0, bottom: 0, height: screenheight - 60 }}>
+                                            <View style={{ display: "flex", }}>
+                                                <Text style={{ color: "#FEFFDE", alignSelf: 'center', fontWeight: 'bold', }}>{dateDisplayer(moment(find(this.room.messages, { id: this.state.replyer.id })).format("YYYY/MM/DD"))}</Text>
+                                                {<Message openReply={(replyer) => {
+                                                    console.warn("replying", replyer)
+                                                    this.setState({
+                                                        replyer: replyer,
+                                                        showRepliedMessage: true
+                                                    })
+                                                }} replying={() => { }} received={this.state.replyer.received ? this.state.replyer.received.length >= this.props.members.length : false}
+                                                    showPhoto={(photo) => this.showPhoto(photo)} playVideo={(source) => this.playVideo(source)}
+                                                    creator={2} user={this.sender.phone} message={find(this.room.messages, { id: this.state.replyer.id })} />}
+                                            </View>
+                                        </ScrollView>
+                                        {!(this.state.replyer.sender.phone == this.sender.phone) ? <TouchableOpacity onPress={() => {
+                                            this.setState({
+                                                showRepliedMessage: false
+                                            })
+                                        }}>
+                                            <Icon type="EvilIcons" style={{ margin: '2%', marginTop: "8%", fontSize: 35, color: "#FEFFDE" }} name={"close"}></Icon>
+                                        </TouchableOpacity> : null}
+                                    </View>
+                                </View> : null}
+                            {
+                                // ******************Photo Viewer View ***********************//
+                                this.state.showPhoto ?
+                                    <View style={{ height: "100%", width: "100%", position: "absolute", backgroundColor: "black", }}>
+                                        <View style={{ alignSelf: 'center', }}>
+                                            <ReactNativeZoomableView
+                                                maxZoom={1.5}
+                                                minZoom={0.5}
+                                                zoomStep={0.5}
+                                                initialZoom={1}
+                                                bindToBorders={true}
+                                                onZoomAfter={this.logOutZoomState}>
+                                                <Image resizeMode={"contain"} width={screenWidth} height={screenheight}
+                                                    source={{ uri: this.state.photo }}></Image>
+                                            </ReactNativeZoomableView>
+                                            <Icon type="EvilIcons" onPress={() => {
+                                                this.setState({
+                                                    showPhoto: false,
+                                                    hideStatusBar: false
+                                                })
+                                            }} style={{ margin: '1%', position: 'absolute', fontSize: 30, color: "#FEFFDE" }} name={"close"}></Icon></View>
+                                    </View> : null
+                            }
+                            {
+                                //** ####### Vidoe PLayer View ################ */
+
+                                this.state.showVideo ? <View style={{
+                                    height: this.state.fullScreen ? "100%" : this.state.keyboardOpened || this.state.showEmojiInput ||
+                                        this.state.showEmojiInputCaption ? this.state.replying ? 255 : 300 : 400,
+                                    position: "absolute",
+                                    width: this.state.fullScreen ? "100%" : screenWidth,
+                                    backgroundColor: this.transparent,
+                                    alignSelf: 'center',
+                                }}>
+                                    <VideoPlayer source={{ uri: this.state.video }}   // Can be a URL or a local file.
+                                        ref={(ref) => {
+                                            this.videoPlayer = ref
+                                        }}
+                                        onBuffer={() =>
+                                            this.buffering()
+                                        }                // Callback when remote video is buffering
+                                        onError={(error) => {
+                                            console.error(error)
+                                        }}
+                                        toggleResizeModeOnFullscreen={false}
+                                        //pictureInPicture={true}
+                                        resizeMode={"contain"}
+                                        disableVolume={true}
+                                        seekColor="#1FABAB"
+                                        controlTimeout={null}
+                                        //disablePlayPause={true}
+                                        //disableFullscreen={true}
+                                        onBack={() => this.hideVideo()}
+                                        onEnterFullscreen={() => this.enterFullscreen()}
+                                        onExitFullscreen={() => this.enterFullscreen()}
+                                        fullscreenOrientation={"landscape"}
+                                        //fullscreen={true}
+                                        //controls={true}
+                                        style={{
+                                            backgroundColor: this.transparent,
+                                        }}
+                                        videoStyle={{
+                                            alignItems: 'center',
+                                            height: "100%",
+                                            width: "100%",
+                                            top: 0,
+                                            left: 0,
+                                            bottom: 0,
+                                            right: 0,
+                                        }}             // Callback when video cannot be loaded
+                                    />
+                                </View> : null}
+                        </View>
+                    }
+                    <VerificationModal isOpened={this.state.isModalOpened}
+                        verifyCode={(code) => this.verifyNumber(code)}
                         phone={this.props.user.phone}></VerificationModal>
-                        </ImageBackground>
+                </ImageBackground>
             </View>
 
         )

@@ -35,7 +35,8 @@ import ParticipantList from "./ParticipantList";
                     this.setState({
                         participants:[],
                         loaded:false,
-                        event_id:null
+                        event_id:null,
+                        hideTitle:false
                     })
                 }}
                 onOpened={() => {
@@ -43,7 +44,8 @@ import ParticipantList from "./ParticipantList";
                         this.setState({
                             participants: this.props.participants,
                             event_id: this.props.event_id,
-                            loaded:true
+                            loaded:true,
+                            hideTitle:this.props.hideTitle
                         })
                     },20)
                 }}
@@ -52,7 +54,7 @@ import ParticipantList from "./ParticipantList";
                     borderRadius: 8, backgroundColor: '#FEFFDE', width: "100%"
                 }}>
                 <Content>{this.state.loaded?
-                    <ParticipantList participants={this.state.participants} title={"Participants List"}
+                    <ParticipantList hide={this.state.hideTitle} participants={this.state.participants} title={"Participants List"}
                         event_id={this.state.event_id}></ParticipantList>:<Text style={{padding:"15%"}} note> loading participants</Text>}
                 </Content>
             </Modal>

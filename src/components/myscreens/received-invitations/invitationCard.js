@@ -281,7 +281,7 @@ class CardListItem extends Component {
       <Swipeout style={{ width: "100%", backgroundColor: "#FEFFDE" }} {...this.swipeSettings}>
         <Card style={{ height: this.state.accept || this.state.deny ? 200 : 230 }}>
           <CardItem>
-            <Text style={{ color: "#54F5CA" }} note>
+            <Text style={{ color: "#A91A84",fontSize: 14, }} note>
               received
         </Text>
           </CardItem>
@@ -292,11 +292,11 @@ class CardListItem extends Component {
                 />}
               </TouchableOpacity>
               <Body >
-                {this.state.loading ? null : <Text style={styles.flatlistItem} >{this.state.item.sender_name}</Text>}
+                {this.state.loading ? null : <Text style={{fontWeight: 'bold',}} >{this.state.item.sender_name}</Text>}
 
                 {this.state.loading ? null :
                   this.state.dataArray.content == "" ? <Text style={{
-                    color: 'dimgray', padding: 10,
+                    color: 'dimgray', padding: 10,fontStyle: 'italic',
                     fontSize: 16, marginTop: -10, borderWidth: 0
                   }} note>{this.state.item.sender_status}</Text> :
 
@@ -316,9 +316,10 @@ class CardListItem extends Component {
             <Body >
               <TouchableOpacity onPress={() => this.openDetails()
               } >
-                {this.state.loading ? null : <Text style={{ marginLeft: -40 }}
+                {this.state.loading ? null : <Text style={{ marginLeft: -40,fontWeight: 'bold', }}
                 >{this.state.item.event_title}</Text>}
-                {this.state.loading ? null : <Text style={{ marginLeft: -40, color: 'dimgray', fontSize: 12 }}> on  {moment(this.state.item.event_time).format("dddd, MMMM Do YYYY, h:mm:ss a")}</Text>}
+                {this.state.loading ? null : <Text style={{ marginLeft: -40, color: 'dimgray', fontSize: 12,
+                fontStyle: 'italic', }}> on  {moment(this.state.item.event_time).format("dddd, MMMM Do YYYY, h:mm:ss a")}</Text>}
               </TouchableOpacity>
             </Body>
           </CardItem>

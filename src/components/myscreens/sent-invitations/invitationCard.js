@@ -193,7 +193,7 @@ class CardListItem extends Component {
       <Swipeout style={{ width: "100%", }} {...this.swipeSettings}>
         <Card style={{ height: 220 }}>
           <CardItem>
-            <Text note>
+            <Text style={{ fontSize: 14,}} note>
               sent
         </Text>
           </CardItem>
@@ -204,7 +204,7 @@ class CardListItem extends Component {
                 />}
               </TouchableOpacity>
               <Body >
-                {this.state.loading ? null : <Text style={styles.flatlistItem} >{this.state.item.sender_name}</Text>}
+                {this.state.loading ? null : <Text style={{fontWeight: 'bold',}} >{this.state.item.sender_name}</Text>}
 
                 {this.state.loading ? null : this.state.dataArray.content == "" ? <Text style={{
                   color: 'dimgray', padding: 10,
@@ -229,9 +229,9 @@ class CardListItem extends Component {
                   tab: "EventDetails"
                 })
               }} >
-                <Text style={{ marginLeft: -40 }}
+                <Text style={{ marginLeft: -40,fontWeight: 'bolds', }}
                 >{this.state.item.event_title}</Text>
-                <Text style={{ marginLeft: -40, color: 'dimgray', fontSize: 12 }}> on the {this.state.item.created_date} at {this.state.item.event_time}</Text>
+                <Text style={{ marginLeft: -40, color: 'dimgray', fontSize: 12, fontStyle: 'italic', }}> on {moment(this.state.item.event_time).format("dddd, MMMM Do YYYY, h:mm:ss a")}</Text>
               </TouchableOpacity>}
             </Body>
           </CardItem>

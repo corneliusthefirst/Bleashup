@@ -54,7 +54,16 @@ export default class MenuListView extends Component {
                 <Menu
                     style={{ backgroundColor: "#FEFFDE" }}
                     ref={this.setMenuRef}
-                    button={<Text onPress={this.showMenu} style={{ color: "#0A4E52" }}>{this.state.published ? "Pubished" : "Publish"}</Text>}
+                    button={<View  style={{flexDirection: 'column',}}><Icon
+                        onPress={this.showMenu}
+                        name="megaphone"
+                        type="Entypo"
+                        style={{
+                            fontSize: 28,
+                            color: "#0A4E52"
+                        }}
+                    /><Text onPress={this.showMenu}
+                        style={{ color: "#0A4E52" }}>{this.state.published ? "Pubished" : "Publish"}</Text></View>}
                 >
                     <MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => this.publish()}>Publish</MenuItem>
                     {this.state.published ? <View>

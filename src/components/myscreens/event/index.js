@@ -57,6 +57,8 @@ import GState from '../../../stores/globalState';
 import firebase from 'react-native-firebase';
 import uuid from 'react-native-uuid';
 import NotificationModal from "./NotificationModal";
+import ContactListModal from "./ContactListModal";
+import ContentModal from "./ContentModal";
 const screenWidth = Math.round(Dimensions.get('window').width);
 
 var swipeoutBtns = [
@@ -89,18 +91,6 @@ export default class Event extends Component {
       roomMembers: this.event.participant,
       working: false,
       showNotifiation: false,
-      change: {
-        updater: {
-          nickname: "Fokam Giles",
-          status: "Here we are come with this",
-          profile: "https://images.all-free-download.com/images/graphicthumb/peacock_profile_514065.jpg"
-        },
-        changed: "The Name Of A Commitee To: ",
-        new_value: {
-          object: {},
-          new_value: "New Name"
-        }
-      }
     };
     //this.props.Event = this.props.navigation.getParam("Event");
   }
@@ -230,41 +220,68 @@ export default class Event extends Component {
       case "Contributions":
         return <Contributions {...this.props}></Contributions>
       case "ChangeLogs":
-        return <ChangeLogs></ChangeLogs>
+        return <ChangeLogs showMembers={(members) => {
+          this.setState({
+            showMembers: true,
+            partimembers: members,
+            hideTitle: true
+          })
+        }}
+          showContacts={(contacts) => {
+            this.setState({
+              contactList: contacts,
+              isContactListOpened: true
+            })
+          }}
+          showContent={(content => {
+            this.setState({
+              textContent: content,
+              isContentModalOpened: true
+            })
+          })}
+          isMe={this.state.isMe}
+          event_id={this.event.id}></ChangeLogs>
 
     }
   }
-  master = false
-  componentWillMount() {
-    emitter.on(`event_updated_${this.event.id}`, change => {
-      //console.warn(change)
+  handleActivityUpdates(change, newValue) {
+    if (!this.unmounted)
       this.setState({
         change: change,
         showNotifiation: true
       })
-      if (change.changed.toLowerCase().includes("commitee")) {
-        this.refreshCommitees()
-        let commitee = change.new_value.data
-        if (commitee.id == this.state.roomID) {
-          emitter.emit("open-close", commitee.opened)
-          emitter.emit('publish-unpublish', commitee.public_state)
-          this.setState({
-            //roomID: commitee.id,
-            roomName: commitee.name,
-            //opened:commitee.opened,
-            public_state: commitee.public_state,
-            opened: commitee.opened,
-            newMessageCount: GState.currentRoomNewMessages ? GState.currentRoomNewMessages.length : 0,
-            roomMembers: commitee.member
-          })
-        }
-      }
-      setTimeout(() => {
-        this.setState({
-          change: null,
-          showNotifiation: false
+    if (change.changed.toLowerCase().includes("commitee")) {
+      if (change.changed.toLowerCase().includes("created")) this.event.commitee.unshift(change.new_value.new_value)
+      this.refreshCommitees()
+      let commitee = newValue
+      if (commitee.id == this.state.roomID) {
+        emitter.emit("open-close", commitee.opened)
+        emitter.emit('publish-unpublish', commitee.public_state)
+        if (!this.unmounted) this.setState({
+          //roomID: commitee.id,
+          roomName: commitee.name,
+          //opened:commitee.opened,
+          public_state: commitee.public_state,
+          opened: commitee.opened,
+          newMessageCount: GState.currentRoomNewMessages ? GState.currentRoomNewMessages.length : 0,
+          roomMembers: commitee.member
         })
-      }, 4000)
+      }
+    }
+    if (!this.unmounted) emitter.emit('refresh-history')
+    setTimeout(() => {
+      this.setState({
+        change: null,
+        showNotifiation: false
+      })
+    }, 4000)
+  }
+  master = false
+  componentWillMount() {
+    this.unmounted = false
+    emitter.on(`event_updated_${this.event.id}`, (change, newValue) => {
+      //console.warn(change)
+      this.handleActivityUpdates(change, newValue)
     })
     stores.LoginStore.getUser().then(user => {
       this.user = user;
@@ -286,7 +303,10 @@ export default class Event extends Component {
       return true
     }
   }
+  componentDidMount() {
+  }
   componentWillUnmount() {
+    this.unmounted = true
     BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton);
 
   }
@@ -296,7 +316,7 @@ export default class Event extends Component {
   showMembers() {
     this.setState({
       showMembers: true,
-      participants: this.state.roomMembers
+      partimembers: this.event.participant
 
     })
   }
@@ -501,7 +521,8 @@ export default class Event extends Component {
 
   }
   refreshCommitees() {
-    this.refs.swipperView.refreshCommitees()
+    emitter.emit("refresh-commitee")
+    //this.refs.swipperView.refreshCommitees()
   }
   saveRemoved(mem) {
     //console.warn(mem)
@@ -680,6 +701,13 @@ export default class Event extends Component {
     }} isOpen={this.isOpen} openMenuOffset={this.currentWidth}
       menu={<View><SWView
         ref="swipperView"
+        ShowMyActivity={() => {
+          this.isOpen = false
+          this.setState({
+            currentPage: "ChangeLogs",
+            isMe: true
+          })
+        }}
         join={(id) => { this.joinCommitee(id) }}
         leave={(id) => { this.leaveCommitee(id) }}
         removeMember={(id, members) => { this.removeMembers(id, members) }}
@@ -698,7 +726,7 @@ export default class Event extends Component {
         showMembers={() => this.showMembers()}
         setCurrentPage={(page, data) => {
           this.isOpen = false
-          this.setState({ currentPage: page, })
+          this.setState({ currentPage: page, isMe:false})
         }
         } currentPage={this.state.currentPage}
         width={this.currentWidth}
@@ -714,7 +742,7 @@ export default class Event extends Component {
           <NotificationModal change={this.state.change} onPress={() => {
             this.setState({
               showNotifiation: false,
-              currentPage:"ChangeLogs"
+              currentPage: "ChangeLogs"
             })
             this.resetSelectedCommitee()
           }} close={() => {
@@ -728,12 +756,14 @@ export default class Event extends Component {
         </View> : null}
         {this.state.working ? <View style={{ position: "absolute", marginTop: "-8%", }}><Spinner size={"small"}></Spinner></View> : null}
         <ParticipantModal
+          hideTitle={this.state.hideTitle}
           participants={this.state.partimembers ? uniqBy(this.state.partimembers.filter(ele => ele !== null &&
             !Array.isArray(ele)), ele => ele.phone) : []} isOpen={this.state.showMembers}
           onClosed={() => {
             this.setState({
               showMembers: false,
-              partimembers: null
+              partimembers: null,
+              hideTitle: false
             })
           }} event_id={this.event.id}></ParticipantModal>
         <ContactsModal isOpen={this.state.contactModalOpened} onClosed={() => {
@@ -767,6 +797,22 @@ export default class Event extends Component {
         <CreateCommiteeModal isOpen={this.state.isCommiteeModalOpened} createCommitee={(data) => this.processResult(data)} close={() => this.setState({
           isCommiteeModalOpened: false
         })}></CreateCommiteeModal>
+        <ContactListModal
+          contacts={this.state.contactList}
+          isOpen={this.state.isContactListOpened}
+          onClosed={() => {
+            this.setState({
+              isContactListOpened: false,
+              contactList: []
+            })
+          }}
+        ></ContactListModal>
+        <ContentModal content={this.state.textContent} isOpen={this.state.isContentModalOpened} closed={() => {
+          this.setState({
+            isContentModalOpened: false,
+            textContent: null
+          })
+        }}></ContentModal>
       </View>
     </SideMenu>
     );

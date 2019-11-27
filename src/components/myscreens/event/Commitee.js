@@ -7,8 +7,9 @@ import stores from '../../../stores';
 import BleashupFlatList from '../../BleashupFlatList';
 import CommiteeItem from './CommiteeItem';
 import BleashupScrollView from '../../BleashupScrollView';
-import {union,uniq} from "lodash";
+import { union, uniq } from "lodash";
 import GState from '../../../stores/globalState';
+import emitter from '../../../services/eventEmiter';
 export default class Commitee extends Component {
     constructor(props) {
         super(props)
@@ -19,6 +20,9 @@ export default class Commitee extends Component {
     }
     state = {}
     componentWillMount() {
+        emitter.on('refresh-commitee', () => {
+            this.refreshCommitees()
+        })
         //console.warn(stores.CommiteeStore.commitees)
 
     }
@@ -36,6 +40,10 @@ export default class Commitee extends Component {
         opened: true,
         public_state: true,
         creator: this.props.creator
+    }
+    componentWillUnmount() {
+        emitter.off('refresh-commitee')
+
     }
     _keyExtractor(item, index) {
         return item
@@ -56,7 +64,7 @@ export default class Commitee extends Component {
                 <View style={{
                     borderTopRightRadius: 15, borderBottomRightRadius: 15,
                     backgroundColor: "#1FABAB", height: 35,
-                    width: "95%", display: 'flex', flexDirection: 'row',marginBottom: "5%",
+                    width: "95%", display: 'flex', flexDirection: 'row', marginBottom: "5%",
                 }}>
                     <Text style={{
                         marginTop: "0%", fontWeight: 'bold',
@@ -75,6 +83,7 @@ export default class Commitee extends Component {
                             keyExtractor={(item, index) => item}
                             renderItem={(item, index) =>
                                 <CommiteeItem
+                                    key={index.toString()}
                                     join={(id) => { this.props.join(id) }}
                                     commitee={item.id ? item : null}
                                     leave={(id) => { this.props.leave(id) }}
