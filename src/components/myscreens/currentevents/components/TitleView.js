@@ -2,14 +2,13 @@ import React, { Component } from "react"
 import { View, TouchableOpacity } from 'react-native';
 import { Text, Left } from 'native-base';
 import autobind from "autobind-decorator";
-import { observer } from "mobx-react";
 import SvgAnimatedLinearGradient from 'react-native-svg-animated-linear-gradient'
 import Svg, { Circle, Rect } from 'react-native-svg'
 import stores from "../../../../stores";
 import DetailsModal from "../../invitations/components/DetailsModal";
-import { forEach } from "lodash"
+import { forEach, find } from "lodash"
 import moment from "moment";
-@observer export default class TitleView extends Component {
+export default class TitleView extends Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -61,7 +60,7 @@ import moment from "moment";
         stores.Events.isParticipant(this.props.Event.id, stores.Session.SessionStore.phone).then(status => {
             if (status) {
                 this.props.navigation.navigate("Event", {
-                    Event: this.props.Event,
+                    Event: find(stores.Events.events, { id: this.props.Event.id }),
                     tab: "EventDetails"
                 });
             } else {
@@ -80,7 +79,7 @@ import moment from "moment";
         let end = moment()
         let daysDiff = Math.floor(moment.duration(end.diff(statDate)).asDays())
         if (daysDiff == 0) {
-            return "Today at " + moment(date).format("h:mm a");
+            return "Ongoing Today from " + moment(date).format("h:mm a");
         } else if (daysDiff == 1) {
             return "Past Since Yesterday at " + moment(date).format("h:mm a")
         } else if (daysDiff > 1 && daysDiff < 7) {
@@ -88,10 +87,10 @@ import moment from "moment";
         } else if (daysDiff == 7) {
             return "Past Since 1 Week Ago at " + moment(date).format("h:mm a")
         } else if (daysDiff == -1) {
-            "Upcoming Tomorrow at" + moment(date).format("h:mm a");
+            return "Upcoming Tomorrow at" + moment(date).format("h:mm a");
         }
         else if (daysDiff < -1) {
-            `Upcoming in ${Math.abs(daysDiff)} at` + moment(date).format("h:mm a");
+            return `Upcoming in ${Math.abs(daysDiff)} Days at` + moment(date).format("h:mm a");
         } else {
             return `Past since ${moment(date).format("dddd, MMMM Do YYYY")} at ${moment(date).format("h:mm a")}`
         }
@@ -119,12 +118,13 @@ import moment from "moment";
                             </Text>
                             <Text
                                 style={{
-                                    color: this.dateDiff(this.props.Event.period) > 0 ? "gray" : "#54F5CA",
+                                    color: this.props.Event.closed ? "red" : this.dateDiff(this.props.Event.period) > 0 ? "gray" : "#54F5CA",
                                     fontStyle: 'italic',
+                                    fontWeight: this.props.Event.closed ? "bold" : '400',
                                 }}
                                 note
                             >
-                                {this.writeDateTime(this.props.Event.period)}
+                                {this.props.Event.closed ? "Closed" : this.writeDateTime(this.props.Event.period)}
                             </Text>
                         </View>
                         <View>
@@ -164,7 +164,7 @@ import moment from "moment";
                 isJoining={this.state.isJoining}
                 details={this.state.details}
                 created_date={this.props.Event.created_at}
-                location={this.props.Event.location.string}
+                location={this.props.Event.location && this.props.Event.location.string ? this.props.Event.location.string : this.props.Event.location}
                 event_organiser_name={this.state.creator.name}
                 onClosed={() => this.setState({ isDetailsModalOpened: false })}
             /> : null}

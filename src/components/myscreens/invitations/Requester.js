@@ -2,6 +2,7 @@ import tcpRequest from "../../../services/tcpRequestData";
 import requestObject from "../../../services/requestObjects"
 import stores from "../../../stores";
 import serverEventListener from '../../../services/severEventListener'
+import { AddParticipant } from '../../../services/cloud_services';
 class Requester {
     seen(invitation) {
         return new Promise((resolve, reject) => {
@@ -54,7 +55,9 @@ class Requester {
                         Participant.master = invitation.status;
                         Participant.host = stores.Session.SessionStore.host
                         stores.Events.addParticipant(invitation.event_id, Participant, true).then(() => {
-                                resolve("ok")
+                            AddParticipant(invitation.event_id,[Participant]).then(() =>{
+                                resolve(Participant)
+                            })
                         })
                     })
                 }).catch(error => {

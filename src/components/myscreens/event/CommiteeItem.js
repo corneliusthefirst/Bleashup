@@ -13,6 +13,8 @@ import Image from 'react-native-scalable-image';
 import CacheImages from '../../CacheImages';
 import ChatStore from '../../../stores/ChatStore';
 import testForURL from '../../../services/testForURL';
+import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
+
 export default class CommiteeItem extends Component {
     constructor(props) {
         super(props)
@@ -70,7 +72,7 @@ export default class CommiteeItem extends Component {
             })
         }
         let phone = stores.LoginStore.user.phone.replace("00", "+");
-        firebase.database().ref(`new_message/${phone}/${this.props.id}/new_messages`).once('value', snapshoot => {
+        firebase.database().ref(`new_message/${this.props.event_id}/${phone}/${this.props.id}/new_messages`).once('value', snapshoot => {
             if (snapshoot.val()) {
                 firebase.database().ref(`${this.props.id}`).orderByKey().limitToLast(1).once('value', snapshooter => {
                     let key = Object.keys(snapshooter.val())
@@ -182,8 +184,10 @@ export default class CommiteeItem extends Component {
         }
     }
     listen() {
-        if (GState.currentCommitee == this.props.id || (this.props.commitee && GState.currentCommitee == this.props.commitee.id)) {
+        if (GState.currentCommitee == this.props.id ||
+            (this.props.commitee && GState.currentCommitee == this.props.commitee.id)) {
             emitter.once("current_commitee_changed", (newCurrent) => {
+                console.warn(GState.currentCommitee, "---------")
                 if (newCurrent == this.props.id && !GState.currentCommitee) {
                     emitter.once("current_commitee_changed", (newCurrent) => {
                         this.setState({
@@ -193,15 +197,15 @@ export default class CommiteeItem extends Component {
                 }
                 emitter.once("current_commitee_changed_by_main", room => {
                     this.setState({
-                        newThing: true
+                        newThing: !this.state.newThing
                     })
                 })
                 this.setState({
                     newThing: !this.state.newThing
                 })
             })
-        }else{
-            
+        } else {
+
         }
     }
     setActionPercentage() {
@@ -234,7 +238,7 @@ export default class CommiteeItem extends Component {
         mb = 1000 * 1000
         return (data / mb).toFixed(2).toString() + "MB";
     }
-    
+
     writeLatestMessage(message) {
         switch (message.type) {
             case "text":
@@ -248,9 +252,9 @@ export default class CommiteeItem extends Component {
                     <View style={{ display: 'flex', flexDirection: 'row', marginTop: "1%", }}>
                         <Text style={{ fontSize: 18, width: "74%" }}>{message.text ? message.text.slice(0, 15) : "  "}</Text>
                         <View style={{ alignSelf: 'flex-end', marginTop: "-8%", borderRadius: 8, }}>
-                            {testForURL(message.photo)?
-                            <CacheImages source={{ uri: message.photo }} thumbnails square small></CacheImages>:
-                            <Thumbnail style={{borderRadius: 5,}} square small source={{uri:message.photo}}></Thumbnail>}
+                            {testForURL(message.photo) ?
+                                <CacheImages source={{ uri: message.photo }} thumbnails square small></CacheImages> :
+                                <Thumbnail style={{ borderRadius: 5, }} square small source={{ uri: message.photo }}></Thumbnail>}
                         </View>
                     </View>
                 </View>
@@ -302,7 +306,7 @@ export default class CommiteeItem extends Component {
             this.state.loaded ? <View style={{
                 opacity: this.accessible ? 1 : 0.1,
                 borderBottomRightRadius: 8,
-                width:265,
+                width: 265,
                 borderTopRightRadius: 8,
                 backgroundColor: GState.currentCommitee == this.state.commitee.id ? "#54F5CA" : null,
             }}>
@@ -311,7 +315,7 @@ export default class CommiteeItem extends Component {
                         this.swappCommitee()
                     })}><View style={{ margin: '1%', width: 215, display: 'flex', flexDirection: 'column', }}>
                             <Text style={{
-                                fontWeight: 'bold', fontSize: 22,color:"gray"
+                                fontWeight: 'bold', fontSize: 18, color: GState.currentCommitee == this.state.commitee.id ? "#0A4E52" : "gray"
                             }}>{this.state.commitee.name}</Text>
                             {this.state.joint && this.state.newest_message ? <Text note>Latest Message :</Text> : null}
                             {this.state.joint && this.state.newest_message ? this.writeLatestMessage(this.state.newest_message) : null}
@@ -332,7 +336,7 @@ export default class CommiteeItem extends Component {
                                         })
                                     })
                                 }}>
-                                    <Icon style={{ fontSize: 30, color: "#0A4E52" }} name="pencil" type="EvilIcons" />
+                                    {this.props.master ? <Icon style={{ fontSize: 30, color: "#0A4E52" }} name="pencil" type="EvilIcons" /> : null}
                                 </TouchableOpacity>
                             </View> : null}
                     </View>
@@ -347,6 +351,8 @@ export default class CommiteeItem extends Component {
                         this.editName(newName)
                     }}
                 ></EditNameModal>
+                <MenuDivider color="#1FABAB" />
+
 
             </View> : <Spinner size={"small"}></Spinner>
         );

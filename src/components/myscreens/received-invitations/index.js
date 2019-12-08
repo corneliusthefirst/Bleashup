@@ -15,12 +15,8 @@ import { observable, action } from "mobx";
 import globalState from "../../../stores/globalState"
 import { observer } from "mobx-react";
 import stores from '../../../stores';
-<<<<<<< HEAD
-import BleashupFlatList from '../../BleashupFlatList';
-=======
 import BleashupScrollView from '../../BleashupScrollView';
 import CreateEvent from '../invitations/components/CreateEvent';
->>>>>>> 1e97a9d441b05a372cba36a25998ff64d917be81
 
 
 @observer
@@ -39,73 +35,16 @@ class ReceivedInvitations extends Component {
 
   componentDidMount() {
     setTimeout(() => {
-<<<<<<< HEAD
       this.setState({
         loadingInvitations: false
       });
     }, 5)
   }
-=======
-      stores.Invitations.readFromStore().then(invitations => {
-        this.setState({
-          loadingInvitations: false,
-          invitations: invitations
-        });
-      })
-    }, 12)
-  }
 
 
 
 
 
-
-
-  _keyExtractor = (item, index) => item.invitation_id;
-
-  render() {
-
-    return this.state.loadingInvitations ? (
-      <Spinner></Spinner>
-    ) : (
-      <Container style={{flex:1}}>
-        <BleashupScrollView
-          initialRender={4}
-          renderPerBatch={5}
-          firstIndex={0}
-          ref={"receivedlist"}
-          keyExtractor={this._keyExtractor}
-          dataSource={this.state.invitations}
-          renderItem={(item, index) => {
-            return (
-              <CardListItem {...this.props} item={item} key={index} parentCardList={this}>
-              </CardListItem>
-            );
-          }}
-        >
-        </BleashupScrollView>
-
-        <CreateEvent Parentprops={this.props}></CreateEvent>
-
-
-      </Container>
- 
-      );
-  }
-
-}
-
-
-export default ReceivedInvitations;
-
-
->>>>>>> 1e97a9d441b05a372cba36a25998ff64d917be81
-
-
-
-
-
-<<<<<<< HEAD
   render() {
     return this.state.loadingInvitations ? (
       <Spinner></Spinner>
@@ -130,12 +69,6 @@ export default ReceivedInvitations;
       );
   }
 }
-=======
-
-
-
-
->>>>>>> 1e97a9d441b05a372cba36a25998ff64d917be81
 
 
 

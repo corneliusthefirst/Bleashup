@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import Modal from "react-native-modalbox"
-import { Header, Left, Icon, Text, Label, Right, Title } from 'native-base';
+import { Header, Left, Icon, Text, Label, Right, Title, Thumbnail } from 'native-base';
 import {
     View,
     TouchableWithoutFeedback,
@@ -11,6 +11,7 @@ import {
 //import ProfileWithCheckBox from './myscreens/currentevents/components/PofileWithCheckbox';
 import { indexOf, reject, concat, find } from "lodash"
 import CacheImages from '../../CacheImages';
+import testForURL from '../../../services/testForURL';
 export default class NotificationModal extends PureComponent {
     constructor(props) {
         super(props)
@@ -56,10 +57,10 @@ export default class NotificationModal extends PureComponent {
                     })
                 }}
                 style={{
-                    height: "110%",
+                    height: "140%",
                     borderRadius: 10,
                     borderWidth: 0.2,
-                    marginLeft: "16%",
+                    marginLeft: "14%",
                     borderColor: "#1FABAB",
                     borderBottomRightRadius: 8,
                     backgroundColor: "#FEFFDE",
@@ -72,12 +73,12 @@ export default class NotificationModal extends PureComponent {
                 }>
                     <View style={{ margin: '2%' }}>
                         <View style={{ flexDirection: 'column', }}>
-                        <View><Text style={{fontStyle: 'italic',}} note>New Update</Text></View>
+                            <View><Text style={{ fontStyle: 'italic', }} note>New Update</Text></View>
                             <View style={{ flexDirection: 'row', }}>
-                                <View style={{ width: "20%" }}>
+                                <View style={{ width: "20%" }}>{this.props.change.updater.profile && testForURL(this.props.change.updater.profile) ?
                                     <CacheImages thumbnails
-                                        source={{ uri:this.props.change.updater.profile }}>
-                                    </CacheImages>
+                                        source={{ uri: this.props.change.updater.profile }}>
+                                    </CacheImages> : <Thumbnail small source={{ uri: this.props.change.updater.profile ? this.change.updater.profile : '' }}></Thumbnail>}
                                 </View>
                                 <View style={{ marginTop: "3%", marginLeft: "4%", flexDirection: 'column', width: "65%" }}>
                                     <Text style={{ marginBottom: "2%", fontWeight: 'bold', }}>{this.props.change.updater.nickname}</Text>

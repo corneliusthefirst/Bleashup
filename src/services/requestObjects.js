@@ -7,15 +7,27 @@ class Request {
             nothing: "this request is usually empty"
         }
     }
+    recurrent_update(){
+        return {
+            recurrent : false,
+            frequency :'daily',
+            interval : 1,
+            recurrence : 1000
+        }
+    }
     Update() {
         return {
             action: "",
             event_id: "",
             phone: "",
+            notes_update: [],
+            calendar_id : "",
+            closed : false,
+            recurrent_update:this.recurrent_update(),
             about_update: this.AboutUpdate(),
             participant_update: this.ParticipantUpdate(),
             location_update: this.LocationUpdate(),
-            period_update: this.PeriodUpdate(),
+            period_update: "",
             background_update: ""
         }
     }
@@ -321,13 +333,20 @@ class Request {
     Event() {
         return {
             id: "",
-            host: "",
+            event_host: "",
             created_at: moment().format(),
             updated_at: moment().format(),
             creator_phone: "",
+            closed:false,
+            notes:[],
+            recurrent:false,
+            frequency:'daily',
+            interval:1,
+            recurrence:1000,
+            calendar_id:null,
             about: this.About(),
             commitee : [],
-            period: this.Period(),
+            period: "",
             location: this.Location(),
             background: "",
             participant: [this.Participant()],
@@ -395,6 +414,9 @@ class Request {
             contact: "",
             host: ""
         }
+    }
+    many_contact(){
+        return [{phone:"",host:""}]
     }
     Field() {
         return {

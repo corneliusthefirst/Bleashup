@@ -48,6 +48,7 @@ import ChatroomMenu from "./ChatroomMenu";
 import uuid from 'react-native-uuid';
 import NotificationModal from "../event/NotificationModal";
 import dateDisplayer from '../../../services/dates_displayer';
+import { SendNotifications } from '../../../services/cloud_services';
 const { fs } = rnFetchBlob
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenheight = Math.round(Dimensions.get('window').height);
@@ -140,9 +141,12 @@ export default class ChatRoom extends Component {
                     firebase.database().ref(`${this.props.firebaseRoom}/${newKey}/received`).set(received)
                     if (newMessage.sender.phone == this.props.user.phone) {
                         console.warn("adding new_message")
-                        fetch(`https://us-central1-bleashup-1562173529011.cloudfunctions.net/informOthers?sender_name=${this.props.user.name}&message_key=${newKey}&message_type=${newMessage.type}&message=${newMessage.text}&room_key=${this.props.firebaseRoom}&sender_phone=${this.props.user.phone}&activity_name=${this.props.activity_name}&activity_id=${this.props.activity_id}&room_name=${this.props.roomName}`).then(response => {
+                        SendNotifications(this.props.user.name,newKey,newMessage.type,newMessage.text,this.props.firebaseRoom,this.props.user.phone,this.activity_name,this.props.activity_id,this.props.roomName).then(() =>{
                             this.setState({ newMessage: true })
                         })
+                       // fetch(`https://us-central1-bleashup-1562173529011.cloudfunctions.net/informOthers?sender_name=${this.props.user.name}&message_key=${newKey}&message_type=${newMessage.type}&message=${newMessage.text}&room_key=${this.props.firebaseRoom}&sender_phone=${this.props.user.phone}&activity_name=${this.props.activity_name}&activity_id=${this.props.activity_id}&room_name=${this.props.roomName}`).then(response => {
+                           
+                        //})
                     }
                 })
             } else {
@@ -311,7 +315,8 @@ export default class ChatRoom extends Component {
     }
     componentWillMount() {
         this.fireRef = this.getRef(this.props.firebaseRoom);
-        this.setTypingRef(this.props.firebaseRoom)
+        this.setTypingRef(this.props.firebaseRoom) 
+        firebase.database().ref(`current_room/${this.props.user.phone}`).onDisconnect().set(null)
         this.room = new ChatStore(this.props.firebaseRoom)
         this.keyboardDidShowSub = Keyboard.addListener('keyboardDidShow', this.handleKeyboardDidShow);
         this.keyboardDidHideSub = Keyboard.addListener('keyboardDidHide', this.handleKeyboardDidHide);
@@ -1208,7 +1213,7 @@ export default class ChatRoom extends Component {
                                 </BleashupFlatList>
                             </TouchableWithoutFeedback>
                         </View>
-                        {!this.props.opened ? <Text style={{ fontStyle: 'italic', marginLeft: "3%", }} note>{"This commitee has been closed by a master of the activiy"}</Text> :
+                            {!this.props.opened || !this.props.generallyMember ? <Text style={{ fontStyle: 'italic', marginLeft: "3%", }} note>{"This commitee has been closed for you"}</Text> :
                             // ***************** KeyBoard Displayer *****************************
                             <View style={{
                                 height: this.state.textInputHeight, backgroundColor: "#FEFFDE",
@@ -1334,7 +1339,7 @@ export default class ChatRoom extends Component {
                             {
                                 // **********************Header************************ //
                                 this.state.showHeader ? <View style={this.headerStyles}><View style={{ width: "90%", backgroundColor: "#FEFFDE" }}><Text
-                                    style={{ fontSize: 25, fontWeight: 'bold', margin: '2%' }}>{this.props.roomName.length > 30
+                                    style={{ fontSize: 20, fontWeight: 'bold', margin: 5 }}>{this.props.roomName.length > 30
                                         ? this.props.roomName.slice(0, 30) + "..." : this.props.roomName}</Text></View>
                                     <View style={{ width: "10%", backgroundColor: "#FEFFDE" }}>
                                         <ChatroomMenu

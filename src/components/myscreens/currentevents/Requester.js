@@ -4,6 +4,7 @@ import requestData from "../../../services/tcpRequestData"
 import serverEventListener from "../../../services/severEventListener";
 import { forEach } from "lodash"
 import moment from "moment"
+import { AddParticipant } from '../../../services/cloud_services';
 class Requester {
     constructor() {
         this.currentUserPhone = stores.Session.SessionStore.phone;
@@ -70,7 +71,7 @@ class Requester {
                 serverEventListener.sendRequest(JSONData, event_id + "publish").then(SuccessMessage => {
                     stores.Events.publishEvent(event_id, false).then(() => {
                         stores.Publishers.addPublisher(event_id,{phone:
-                            stores.Session.SessionStore.phone,period:requestObject.Period()}).then(()=>{
+                            stores.Session.SessionStore.phone,period:{date:moment().format()}}).then(()=>{
                             resolve()
                         })
                     })
@@ -94,7 +95,9 @@ class Requester {
             requestData.joinEvent(Join, EventID + "join").then((JSONData) => {
                 serverEventListener.sendRequest(JSONData, EventID + "join").then((SuccessMessage) => {
                     stores.Events.addParticipant(EventID, Participant, false).then(() => {
+                        AddParticipant(EventID,[Participant]).then(() =>{
                             resolve("ok")
+                        })
                     })
                 }).catch(error => {
                     serverEventListener.socket.write = undefined

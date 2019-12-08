@@ -35,11 +35,12 @@ export default class ReplyText extends Component {
                     {/*<View style={{ /*width: "5%" }}><Icon type="FontAwesome"
                         style={{ fontSize: 12, color: "#1FABAB" }} name="quote-left"></Icon>
             </View>*/}
-                    <View style={{/* width: "90%",*/marginLeft: "2%", 
-                    borderLeftColor: "#1FABAF", borderLeftWidth: 5,
-                    borderBottomLeftRadius: 8,borderTopLeftRadius: 8,
-                     height: 60 }}>
-                        <View style={{ marginLeft:"7%"}}>
+                    <View style={{/* width: "90%",*/marginLeft: "2%",
+                        borderLeftColor: "#1FABAF", borderLeftWidth: 5,
+                        borderBottomLeftRadius: 8, borderTopLeftRadius: 8,
+                        height: 60
+                    }}>
+                        <View style={{ marginLeft: "7%" }}>
                             <Text note style={{ marginBottom: "1%", color: "#81A8A0" }}>{this.props.reply.replyer_name}</Text>
                             {this.props.reply.audio || this.props.reply.file ? <View style={{ display: "flex", flexDirection: 'row', }}>
                                 <Icon type={this.props.reply.audio ? "MaterialIcons" : "MaterialCommunityIcons"}
@@ -62,7 +63,7 @@ export default class ReplyText extends Component {
                                         marginLeft: this.props.reply.sourcer ? 10 : null,
                                     }}>
                                         <Text style={{ color: "#81A8A0" }}>{this.props.reply.text.slice(0,
-                                            this.props.reply.sourcer ? 10 : 10)} {this.props.reply.text.length > 10 ? '...' : ''}</Text>
+                                            this.props.reply.sourcer ? 20 : 25)} {this.props.reply.text.length > 25 ? this.props.reply.text.length > 25 ? '...' : '' : ''}</Text>
                                     </View>
                                 </View>}
                         </View>

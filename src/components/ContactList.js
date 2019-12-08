@@ -1,11 +1,13 @@
 import React, { Component } from "react"
-import { List, ListItem, Body, Left, Right, Text, Header, Title,Spinner } from "native-base"
+import { List, ListItem, Body, Left, Right, Text, Header, Title, Spinner } from "native-base"
 import { View, FlatList } from "react-native"
 import ImageActivityIndicator from "./myscreens/currentevents/components/imageActivityIndicator";
 import stores from "../stores";
 import UserService from "../services/userHttpServices"
+import Menu, { MenuDivider, MenuItem } from 'react-native-material-menu';
 import ProfileView from "./myscreens/invitations/components/ProfileView";
 import BleashupFlatList from './BleashupFlatList';
+import moment from "moment";
 export default class ContactList extends Component {
 
     constructor(props) {
@@ -22,17 +24,7 @@ export default class ContactList extends Component {
         return nextState.isOpen !== this.state.isOpen || nextState.isloaded !== this.state.isloaded ? true : false
     }
     writeDateTime(period) {
-        return period.date.year +
-            "-" +
-            period.date.month +
-            "-" +
-            period.date.day +
-            "    " +
-            period.time.hour +
-            "-" +
-            period.time.mins +
-            "-" +
-            period.time.secs
+        return moment(period).format("dddd, MMMM Do YYYY, h:mm:ss a")
     }
 
     componentDidMount() {
@@ -54,12 +46,14 @@ export default class ContactList extends Component {
     }
     _keyExtractor = (item, index) => item.phone
     render() {
-        return <View>
-            <Header>
-                <Title>
-                    Publishers List
-                        </Title>
-            </Header>
+        return <View style={{}}>
+            <View style={{ width: "90%", margin: 4, height: 44, }}>
+                <View style={{ flexDirection: 'row', }}>
+                    <Text style={{
+                        fontSize: 22, fontStyle: 'italic',
+                        fontWeight: 'bold', width: "80%", marginLeft: "5%",
+                    }}>{"Publishers"}</Text>
+                </View></View>
             {this.state.isloaded ? (
                 <View>
                     {this.state.isEmpty ? <Text style={{
@@ -71,19 +65,25 @@ export default class ContactList extends Component {
                         numberOfItems={this.state.publishers.length}
                         keyExtractor={this._keyExtractor}
                         dataSource={this.state.publishers}
-                        renderItem={(item, index) =>
-                            <View style={{ display: 'flex', flexDirection: 'row', }} >
-                                <View style={{margin: '2%',}}>
-                                    <ProfileView phone={item.phone}></ProfileView>
+                        renderItem={(item, index) => {
+                            console.warn(item.period)
+                          return <View style={{ margin: 10 }}>
+                                <View>
+                                    <View style={{ display: 'flex', flexDirection: 'row', }} >
+                                        <View style={{ width: "50%" }}>
+                                            <ProfileView phone={item.phone}></ProfileView>
+                                        </View>
+                                        <View style={{
+                                            width: "50%"
+                                        }}>
+                                            <Text style={{
+                                            }} note>{this.writeDateTime(item.period.date)}</Text>
+                                        </View>
+                                    </View>
                                 </View>
-                                <View style={{
-                                    marginLeft: "40%",
-                                    marginTop: "5%",
-                                }}>
-                                    <Text style={{
-                                    }} note>{this.writeDateTime(item.period)}</Text>
-                                </View>
+                                <MenuDivider color="#1FABAB" />
                             </View>
+                        }
                         }
                     ></BleashupFlatList>}
                 </View>) : <Spinner size="small"></Spinner>}

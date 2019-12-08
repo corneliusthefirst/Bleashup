@@ -4,6 +4,7 @@ import {
 } from "react-native";
 import CurrentEvents from "./components/CurrentEvents";
 import { observer } from "mobx-react";
+import { sortBy, findIndex } from "lodash"
 import stores from "../../../stores";
 
 @observer class CurrentEventView extends Component {
@@ -19,7 +20,8 @@ import stores from "../../../stores";
   render() {
     return (
       <View>
-        <CurrentEvents data={stores.Events.events} {...this.props}></CurrentEvents>
+        <CurrentEvents data={stores.Events.events.filter(event => findIndex(event.participant,
+          { phone: stores.LoginStore.user.phone }) >= 0 && !event.hiden)} {...this.props}></CurrentEvents>
       </View>
     );
   }

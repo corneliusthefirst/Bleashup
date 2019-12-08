@@ -23,6 +23,9 @@ export default class ContactListModal extends PureComponent {
 
         }, 20)
     }
+    _keyExtractor(item) {
+        return item.phone
+    }
     render() {
         return (
             <ModalBox

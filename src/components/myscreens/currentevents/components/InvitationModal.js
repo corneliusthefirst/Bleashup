@@ -17,11 +17,11 @@ import {
   Container,
   CheckBox,
   Footer,
-  Toast
+  Toast,
+  Spinner
 } from "native-base";
 import { without, concat, indexOf, forEach, find, reject } from "lodash"
 import stores from "../../../../stores";
-import { MenuDivider } from 'react-native-material-menu'
 import ProfileView from "../../invitations/components/ProfileView";
 import { FlatList, TouchableWithoutFeedback, ScrollView } from "react-native-gesture-handler";
 import ListItem from "../../../../native-base-theme/components/ListItem";
@@ -30,7 +30,9 @@ import Request from "../Requester";
 import request from "../../../../services/requestObjects";
 import moment from "moment"
 import BleashupFlatList from '../../../BleashupFlatList';
+import Menu, { MenuDivider, MenuItem } from 'react-native-material-menu';
 import Mailer from 'react-native-mail';
+import uuid from 'react-native-uuid';
 export default class InvitationModal extends PureComponent {
   constructor(props) {
     super(props);
@@ -40,6 +42,7 @@ export default class InvitationModal extends PureComponent {
       selectedContacts: [],
       checked: [],
       check: false,
+      loading: false,
       isEmty: false,
       masterModalOpened: false,
       masterStatus: false
@@ -54,42 +57,36 @@ export default class InvitationModal extends PureComponent {
     this.setState({ refreshing: false })
   }
   invite(members, status) {
-    if (this.props.master) {
-      this.prepareInvites(members, status).then(invites => {
-        Request.invite(invites, this.props.eventID).then((response => {
-          this.setState({
-            checked: [],
-            inviting: false,
-            masterStatus: false
-          })
-          Toast.show({ type: "success", text: "invitations successfully sent !", position: "bottom", buttonText: "OK" })
-        })).catch(eror => {
-          this.setState({
-            checked: [],
-            inviting: false,
-            masterStatus: false
-          })
-          Toast.show({ type: "default", text: "could not connect to the server !", position: "bottom", buttonText: "OK" })
-        })
-      })
+    this.props.close()
+    if (members.length <= 0) {
+      Toast.show({ text: "no contacts selected to be invited" })
     } else {
-      Toast.show({ type: "default", text: "sorry! you cannont invite for event", position: "bottom", buttonText: "OK" })
+      if (this.props.master) {
+        this.prepareInvites(members, status).then(invites => {
+          Request.invite(invites, this.props.eventID).then((response => {
+            this.setState({
+              checked: [],
+              inviting: false,
+              masterStatus: false
+            })
+            Toast.show({ type: "success", text: "invitations successfully sent !", position: "bottom", buttonText: "OK" })
+          })).catch(eror => {
+            this.setState({
+              checked: [],
+              inviting: false,
+              masterStatus: false
+            })
+            Toast.show({ type: "default", text: "could not connect to the server !", position: "bottom", buttonText: "OK" })
+          })
+        })
+      } else {
+
+        Toast.show({ type: "default", text: "sorry! you cannont invite for event", position: "bottom", buttonText: "OK" })
+      }
     }
   }
   componentDidMount() {
-    setTimeout(() => {
-      stores.Contacts.getContacts(stores.Session.SessionStore.phone).then(
-        contacts => {
-          if (contacts == "empty") {
-            this.setState({
-              isEmpty: true
-            })
-          } else {
-            this.setState({ contacts: contacts });
-          }
-        }
-      );
-    }, 20)
+
   }
 
   inviteWithEmail(email, status) {
@@ -140,9 +137,9 @@ export default class InvitationModal extends PureComponent {
       invite.invitation = {
         inviter: stores.Session.SessionStore.phone,
         invitee: contact.phone,
-        invitation_id: this.props.eventID + "_" + contact.phone,
+        invitation_id: uuid.v1(),
         host: stores.Session.SessionStore.host,
-        period: request.Period(),
+        period: moment().format(),
         event_id: this.props.eventID,
         status: status,
       }
@@ -151,225 +148,102 @@ export default class InvitationModal extends PureComponent {
   }
   _keyExtractor = (item, index) => item.phone;
   render() {
-    return (!this.state.masterModalOpened ?
-      <Modal
-        backdropPressToClose={false}
-        backdropOpacity={0.7}
-        swipeToClose={false}
-        backButtonClose={true}
-        position={"top"}
-        coverScreen={true}
-        isOpen={this.props.isOpen}
-        onClosed={() => this.props.close()}
-        onOpened={() => {
-        }}
-        style={{
-          height: this.state.inviteViaEmail ? "30%" : "100%",
-          borderBottomLeftRadius: 8,
-          borderBottomRightRadius: 8,
-          backgroundColor: "#FEFFDE",
-          width: "100%"
-        }}
-      ><Header>
-          <Left>
-            <TouchableOpacity
-              onPress={() => {
-                this.setState({ inviteViaEmail: !this.state.inviteViaEmail });
-              }}
-            ><Icon
-                style={{ color: "#FEFFDE", paddingLeft: "5%" }}
-                type={"Entypo"}
-                name={this.state.inviteViaEmail ? "users" : "mail"}
-              />
-              <Label style={{ fontSize: 12, color: "#FEFFDE" }}>
-                {this.state.inviteViaEmail ? "Contacts" : "Via Mail"}
-              </Label>
-            </TouchableOpacity>
-          </Left>
-          {this.state.inviteViaEmail ? null : (this.state.checked.length == 0 ?
+    return <Modal
+      backdropPressToClose={false}
+      //swipeToClose={false}
+      backdropOpacity={0.7}
+      backButtonClose={true}
+      //entry={"top"}
+      position='bottom'
+      coverScreen={true}
+      isOpen={this.props.isOpen}
+      onClosed={() => {
+        this.props.close()
+        this.setState({
+          contacts: null,
+          check: [],
+          loading: true
+        })
+      }
+      }
+      onOpened={() => {
+        setTimeout(() => {
+          stores.Contacts.getContacts(stores.Session.SessionStore.phone).then(
+            contacts => {
+              if (contacts == "empty") {
+                this.setState({
+                  isEmpty: true,
+                  loading: false
+                })
+              } else {
+                this.setState({ contacts: contacts, loading: false });
+              }
+            }
+          );
+        }, 20)
+      }}
+      style={{
+        height: "97%",
+        borderRadius: 8, backgroundColor: '#FEFFDE', width: "100%"
+      }}
+    ><View>
+        <View style={{ margin: "2%", width: "96%", flexDirection: 'row', height: 44 }}>
+          <View style={{ width: "70%" }}>
             <Text
               style={{
-                marginTop: "4%",
-                marginLeft: "4%",
+                fontSize: 23,
+                fontStyle: 'italic',
                 fontWeight: "bold",
-                color: "#FEFFDE"
+                //color: "#1FABAB"
               }}
             >
-              Select contacts
+              Quick Invite
               </Text>
-            : <TouchableOpacity onPress={() => requestAnimationFrame(() => {
-              if (this.state.checked.length == 1) {
-                this.setState({ masterModalOpened: true })
-              } else {
-                this.props.close()
-                this.invite(this.state.checked, this.state.masterStatus)
-              }
-            })}>
-              <Icon type="EvilIcons"
-                style={{
-                  marginTop: "2%",
-                  marginLeft: "50%",
-                  fontSize: 50,
-                  //fontWeight: "bold",
-                  color: "#cdfcfc"
-                }} name="sc-telegram"></Icon>
-            </TouchableOpacity>)}
-          <Right>
-            <TouchableOpacity onPress={() => requestAnimationFrame(() => {
-              this.props.close()
-              this.setState({
-                checked: []
-              })
-            })
-            }>
-              <Icon
-                style={{ color: "#FEFFDE" }}
-                type="EvilIcons"
-                name="close"
-              />
-            </TouchableOpacity>
-          </Right>
-        </Header>
-        {this.state.inviteViaEmail ? (
-          <View>
-            <Item>
-              <Input placeholder="phone/email" />
-            </Item>
-            <Item>
-              <View style={{ margin: '3%', }}>
-                <View style={{
-                  display: "flex",
-                  flexDirection: 'row',
-                }}>
-                  <TouchableOpacity onPress={() => requestAnimationFrame(() => this.setState({ masterStatus: !this.state.masterStatus }))}>
-                    <Icon style={{ color: "#1FABAB" }} name={this.state.masterStatus ? "radio-button-checked" :
-                      "radio-button-unchecked"} type="MaterialIcons"></Icon>
-                  </TouchableOpacity>
-                  <Text style={{ marginLeft: "10%", marginTop: "1%", fontWeight: "bold" }}>
-                    MASTER
-                      </Text>
-                </View>
-              </View>
-            </Item>
-            <TouchableOpacity onPress={() => requestAnimationFrame(() => {
-              this.inviteWithEmail(this.state.checked, this.state.masterStatus)
-            })}>
-              <View style={{ marginLeft: "40%" }}>
-                <Icon name="sc-telegram" style={{
-                  color: "#1FABAB",
-                  fontSize: 50,
-                }} type="EvilIcons"></Icon>
-              </View>
-            </TouchableOpacity>
           </View>
-        ) : (
-
-            <View >
-              {this.state.isEmpty ? <Text style={{
-                margin: '10%',
-              }} note>{"sory! could not load contacts; there's no connction to the server"}</Text> : <BleashupFlatList
-                listKey={"contacts"}
-                keyExtractor={this._keyExtractor}
-                dataSource={this.state.contacts}
-                firstIndex={0}
-                renderPerBatch={7}
-                initialRender={15}
-                numberOfItems={this.state.contacts.length}
-                renderItem={(item, index) =>
-                  <View>
-                    <ProfileWithCheckBox checked={this.state.check}
-                      index={indexOf(this.state.checked, item.phone)} phone={item.phone} check={(phone) =>
-                        this.setState({
-                          checked: concat(this.state.checked, [find(this.state.contacts, { phone: phone })]),
-                          check: true
-                        })
-                      }
-                      uncheck={(phone) =>
-                        this.setState({ checked: reject(this.state.checked, { phone: phone }), check: false })
-                      }></ProfileWithCheckBox>
-                  </View>
-                }
-              /* refreshControl={
-                 <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />
-               }*/
-              ></BleashupFlatList>}
-            </View>
-          )}
-      </Modal> :
-      <Modal
-        backdropPressToClose={false}
-        backdropOpacity={0.7}
-        swipeToClose={false}
-        backButtonClose={true}
-        position={"top"}
-        coverScreen={true}
-        isOpen={this.state.MasterModalOpened}
-        onClosed={() => { this.setState({ checked: [] }); this.setState({ masterModalOpened: false }) }}
-        style={{
-          height: "35%",
-          borderRadius: 8,
-          backgroundColor: "#FEFFDE",
-          width: "100%"
-        }}
-      >
-        <View>
-          <Header>
-            <Left><Text style={{ fontWeight: "bold", color: "#FEFFDE" }}>Set MASTER</Text></Left>
-            <Right><TouchableOpacity onPress={() => requestAnimationFrame(() => {
-              this.setState({ masterModalOpened: false, masterStatus: false, checked: [] })
-            })}><Icon style={{
-              color: "#FEFFDE"
-            }} type="EvilIcons"
-              name="close"></Icon></TouchableOpacity></Right>
-          </Header>
-          <View style={{
-            display: "flex",
-          }}>
-            <View style={{ display: 'flex' }}>
-              <View style={{ margin: "2%", }}>
-                <ProfileView phone={this.state.checked.length >= 1 ? this.state.checked[0].phone : null}></ProfileView>
-              </View>
-              <View><MenuDivider></MenuDivider></View>
-              <View style={{
-                margin: '2%',
-              }}>
-                <TouchableOpacity onPress={() => requestAnimationFrame(() => this.setState({
-                  masterStatus:
-                    !this.state.masterStatus
-                }))}>
-                  <View style={{
-                    display: "flex",
-                    flexDirection: 'row',
-                  }}>
-                    <Icon style={{ color: "#1FABAB" }} name={this.state.masterStatus ? "radio-button-checked" :
-                      "radio-button-unchecked"} type="MaterialIcons"></Icon>
-                    <Text style={{ marginLeft: "10%", marginTop: "1%", fontWeight: "bold" }}>
-                      MASTER
-                      </Text>
-                  </View>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-          <View style={{
-            paddingTop: "1%",
-            paddingLeft: "50%",
-          }}>
-            <TouchableOpacity onPress={() => requestAnimationFrame(() => {
-              this.setState({
-                masterModalOpened: false
-              })
-              this.props.close()
-              this.invite(this.state.checked, this.state.masterStatus)
-            })}>
-              <Icon name="sc-telegram" style={{
-                color: "#1FABAB",
+          {this.state.checked.length > 0 ? <View style={{ width: "30%" }}><TouchableOpacity onPress={() => requestAnimationFrame(() => {
+            this.invite(this.state.checked, false)
+          })}>
+            <Icon type="EvilIcons"
+              style={{
+                marginLeft: "50%",
                 fontSize: 50,
-              }} type="EvilIcons"></Icon>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-    );
+                //fontWeight: "bold",
+                color: "#1FABAB"
+              }} name="sc-telegram"></Icon>
+          </TouchableOpacity>
+          </View> : null}
+        </View>{this.state.loading ? <Spinner size={"small"}></Spinner> :
+          <View>
+            {this.state.isEmpty ? <Text style={{
+              margin: '10%',
+            }} note>{"sory! could not load contacts; there's no connction to the server"}</Text> : <View style={{ height: "93%" }}><BleashupFlatList
+              listKey={"contacts"}
+              keyExtractor={this._keyExtractor}
+              dataSource={this.state.contacts}
+              firstIndex={0}
+              renderPerBatch={7}
+              initialRender={15}
+              numberOfItems={this.state.contacts.length}
+              renderItem={(item, index) =>
+                <View style={{ margin: 4 }}>
+                  <ProfileWithCheckBox checked={false}
+                    index={indexOf(this.state.checked, item.phone)} phone={item.phone} check={(phone) =>
+                      this.setState({
+                        checked: concat(this.state.checked, [item]),
+                      })
+                    }
+                    uncheck={(phone) =>
+                      this.setState({ checked: reject(this.state.checked, ele => ele.phone == phone) })
+                    }></ProfileWithCheckBox>
+                  <MenuDivider color="#1FABAB" />
+                </View>
+              }
+            /* refreshControl={
+               <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />
+             }*/
+            ></BleashupFlatList></View>}
+          </View>}
+      </View>
+    </Modal>
   }
 }

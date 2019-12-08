@@ -27,6 +27,7 @@ import ParticipantList from "./ParticipantList";
                 //swipeToClose={false}
                 backdropOpacity={0.7}
                 backButtonClose={true}
+                //entry={"top"}
                 position='bottom'
                 coverScreen={true}
                 isOpen={this.props.isOpen}
@@ -54,7 +55,7 @@ import ParticipantList from "./ParticipantList";
                     borderRadius: 8, backgroundColor: '#FEFFDE', width: "100%"
                 }}>
                 <Content>{this.state.loaded?
-                    <ParticipantList hide={this.state.hideTitle} participants={this.state.participants} title={"Participants List"}
+                    <ParticipantList creator={this.props.creator} hide={this.state.hideTitle} participants={this.state.participants} title={"Participants List"}
                         event_id={this.state.event_id}></ParticipantList>:<Text style={{padding:"15%"}} note> loading participants</Text>}
                 </Content>
             </Modal>

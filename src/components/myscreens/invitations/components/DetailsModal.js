@@ -83,7 +83,7 @@ export default class DetailsModal extends Component {
         return this.props.details ? (
             <Modal
                 backdropPressToClose={false}
-                swipeToClose={false}
+                swipeToClose={true}
                 backdropOpacity={0.5}
                 backButtonClose={true}
                 position='bottom'
@@ -91,18 +91,13 @@ export default class DetailsModal extends Component {
                 isOpen={this.props.isOpen}
                 onClosed={this.props.onClosed}
                 style={{
-                    height: "100%", width: 410, flexDirection: 'column', borderRadius: 8,
+                    height: "97%", width: "98%", flexDirection: 'column', borderRadius: 8,
                     backgroundColor: '#FEFFDE', marginTop: -5
                 }}
 
             >
-                <Header>
-                    <TouchableOpacity style={{}} onPress={() => this.props.onClosed()}>
-                        <Icon style={{ color: "#FEFFDE", fontSize: 35 ,marginTop: "20%", }} name="close" type="EvilIcons" />
-                    </TouchableOpacity>
-                </Header>
                 <Content>
-                    <View style={{ height: "100%", }}>
+                    <View style={{ height: "98%", }}>
                         <DeckSwiperModule details={this.props.details} />
                         <ScrollView nestedScrollenabled>
                             <CardItem>
@@ -113,20 +108,13 @@ export default class DetailsModal extends Component {
                             <CardItem>
                                 <View style={{marginTop: "20%",}}>
                                     {this.props.isToBeJoint ? (<View>
-                                        <View style={{ marginLeft: "65%",flexDirection: 'column', }}>
-                                            <Icon name="comment" type="EvilIcons" onPress={() => this.props.navigateToChat} style={{ color: "#1FABAB" }} />
-                                            <Text style={{ marginTop: 5, color: "#1FABAB" }}>chat</Text>
-                                        </View>
                                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: "20%" }}>
                                             <Button onPress={this.props.join} style={{ marginLeft: 40, alignItems: 'center', width: 100, marginTop: 4, borderRadius: 5 }} success ><Text style={{ fontSize: 18, fontWeight: "500", marginLeft: 31 }}>Join</Text></Button>
                                             <View style={{ flexDirection: 'column' }}></View>
                                         </View></View>)
                                         :
                                         (this.props.accept || this.props.deny ?
-                                            <View style={{ flexDirection: 'column', alignItems: 'center',marginLeft: "50%", marginTop: 7 }}>
-                                                <Icon name="comment" type="EvilIcons" onPress={{}} style={{ color: "#1FABAB" }} />
-                                                <Text style={{ marginTop: 5, color: "#1FABAB" }}>chat</Text>
-                                            </View> :
+                                            null :
 
                                             <View style={{ flex: 10, flexDirection: 'row', margin: '5%', }}>
                                                 <View style={{ width: "35%", }}>

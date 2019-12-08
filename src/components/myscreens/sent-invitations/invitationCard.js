@@ -26,7 +26,7 @@ import AccordionModule from "../invitations/components/Accordion";
 import DoublePhoto from "../invitations/components/doublePhoto";
 import stores from '../../../stores';
 import { filter } from 'lodash';
-
+import moment from "moment"
 
 const defaultPlaceholderObject = {
   component: ActivityIndicator,
@@ -70,12 +70,12 @@ class CardListItem extends Component {
     loading: true,
     item: null,
     isJoining: false,
-    hasJoin: false
+    hasJoin: true
   }
   data = []
   componentDidMount() {
     setTimeout(() => {
-      stores.Invitations.translateToinvitationData(this.props.item).then(data => {
+      stores.Invitations.translateToinvitationData(this.props.item, true).then(data => {
         this.data = data
         let AccordData = data.sender_status
         max_length = data.sender_status.length
@@ -96,10 +96,10 @@ class CardListItem extends Component {
           loading: false,
           item: data,
           isJoining: false,
-          hasJoin: false,
+          hasJoin: true,
         });
       })
-    }, 20)
+    }, this.props.time_delay + 20)
   }
 
   shouldComponentUpdate(nextProps, nextState, nextContext) {
@@ -193,18 +193,18 @@ class CardListItem extends Component {
       <Swipeout style={{ width: "100%", }} {...this.swipeSettings}>
         <Card style={{ height: 220 }}>
           <CardItem>
-            <Text style={{ fontSize: 14,}} note>
+            <Text style={{ fontSize: 14, }} note>
               sent
         </Text>
           </CardItem>
           <CardItem>
             <Left>
-              <TouchableOpacity onPress={() => this.setState({ opening: true, isOpenStatus: true })} >
+              <TouchableOpacity onPress={() => requestAnimationFrame(() => this.setState({ opening: true, isOpenStatus: true }))} >
                 {this.state.loading ? null : <CacheImages small thumbnails source={{ uri: this.state.item.sender_Image }}
                 />}
               </TouchableOpacity>
               <Body >
-                {this.state.loading ? null : <Text style={{fontWeight: 'bold',}} >{this.state.item.sender_name}</Text>}
+                {this.state.loading ? null : <Text style={{ fontWeight: 'bold', }} >{this.state.item.sender_name}</Text>}
 
                 {this.state.loading ? null : this.state.dataArray.content == "" ? <Text style={{
                   color: 'dimgray', padding: 10,
@@ -222,14 +222,14 @@ class CardListItem extends Component {
                 RightImage={this.state.item.event_Image} />}
             </Left>
             <Body >
-              {this.state.loading ? null : <TouchableOpacity onPress={() => {
+              {this.state.loading ? null : <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                 let event = filter(stores.Events.events, { id: this.state.event_id })
                 this.props.navigation.navigate("Event", {
                   Event: event[0],
                   tab: "EventDetails"
                 })
-              }} >
-                <Text style={{ marginLeft: -40,fontWeight: 'bolds', }}
+              })} >
+                <Text style={{ marginLeft: -40, fontWeight: 'bold', }}
                 >{this.state.item.event_title}</Text>
                 <Text style={{ marginLeft: -40, color: 'dimgray', fontSize: 12, fontStyle: 'italic', }}> on {moment(this.state.item.event_time).format("dddd, MMMM Do YYYY, h:mm:ss a")}</Text>
               </TouchableOpacity>}
@@ -239,33 +239,34 @@ class CardListItem extends Component {
           <CardItem>
             {this.state.loading ? null : this.state.sent || this.state.item.sent ? (this.state.received || this.state.item.received ? (this.state.seen || this.state.item.seen ?
               <View style={{}}>
-                <Icon name="checkcircle" type="AntDesign" onPress={{}} style={{ color: this.state.seen ? "#54F5CA" : "gray", marginLeft: 300 }} />
+                <Icon name="checkcircle" type="AntDesign" style={{ color: this.state.seen ? "#54F5CA" : "gray", marginLeft: 300 }} />
                 {this.state.accept || this.state.item.accept ? <Text style={{ color: "green" }} note>accepted</Text> : null}
                 {this.state.item.deny || this.state.deny ? <Text style={{ color: "red" }} note>denied</Text> : null}
               </View> :
               <View style={{}}>
-                <Icon name="checkcircle" type="AntDesign" onPress={{}} style={{ color: "gray", marginLeft: "90%" }} />
+                <Icon name="checkcircle" type="AntDesign" style={{ color: "gray", marginLeft: "90%" }} />
                 {this.state.accept || this.state.item.accept ? <Text style={{ color: "green" }} note>accepted</Text> : null}
                 {this.state.item.deny || this.state.deny ? <Text style={{ color: "red" }} note>denied</Text> : null}
               </View>
             )
               :
               <View style={{}}>
-                <Icon name="checkcircleo" type="AntDesign" onPress={{}} style={{ color: "gray", marginLeft: "90%" }} />
+                <Icon name="checkcircleo" type="AntDesign" style={{ color: "gray", marginLeft: "90%" }} />
               </View>) : <Text style={{ marginLeft: "90%" }} note>sending...</Text>}
           </CardItem>
 
           <CardItem style={{ margin: 10, flexDirection: 'row', justifyContent: 'space-between' }}>
-            {this.state.loading ? null : <Text style={{ color: 'dimgray', fontSize: 13 }}>{this.state.item.received_date}</Text>}
-            {this.state.loading ? null : <Text style={{ color: 'dimgray', fontSize: 13 }}>{this.state.item.invitation_status}</Text>}
+            {this.state.loading ? null : <Text style={{ color: 'dimgray', fontSize: 13 }}>{moment(this.state.item.received_date).format("dddd, MMMM Do YYYY, h:mm:ss a")}</Text>}
+            {this.state.loading ? null : <Text style={{ color: 'dimgray', fontSize: 13 }}>{this.state.item.invitation_status ? "master" : "member"}
+            </Text>}
           </CardItem>
 
-          {this.state.loading ? null : <ProfileModal isOpen={this.state.isOpenStatus} profile={{
+          {this.state.loading ? null : <ProfileModal isToBeJoint={false} isOpen={this.state.isOpenStatus} profile={{
             nickname: this.state.item.sender_name,
-            image: this.state.item.sender_Image,
+            profile: this.state.item.sender_Image,
             status: this.state.item.sender_status
-          }} onClosed={() => this.setState({ opening: false, isOpenStatus: false })} onAccept={this.onAccept} onDenied={this.onDenied} deny={this.state.deny}
-            accept={this.state.accept} isJoining={this.state.isJoining} hasJoin={this.state.hasJoin}
+          }} onClosed={() => this.setState({ opening: false, isOpenStatus: false })} onAccept={this.onAccept} onDenied={this.onDenied} deny={false}
+            accept={true} isJoining={this.state.isJoining} hasJoin={false}
             joined={() => this.setState({ hasJoin: true })} />}
 
           {this.state.loading ? null : <PhotoModal reacted isOpen={this.state.enlargeEventImage} image={this.state.item.event_Image} onClosed={() => this.setState({ opening: false, enlargeEventImage: false })}

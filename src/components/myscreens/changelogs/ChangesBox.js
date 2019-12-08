@@ -1,7 +1,8 @@
 import React, { Component } from "react"
 import { View, TouchableOpacity } from 'react-native';
 import CacheImages from '../../CacheImages';
-import { Text, Icon, Spinner } from "native-base";
+import { Text, Icon, Spinner,Thumbnail } from "native-base";
+import testForURL from '../../../services/testForURL';
 export default class ChangeBox extends Component {
     constructor(props) {
         super(props)
@@ -20,7 +21,7 @@ export default class ChangeBox extends Component {
             this.setState({
                 loaded: true
             })
-        }, 200*this.props.delayer)
+        }, 200 * this.props.delayer)
     }
     render() {
         return (!this.state.loaded ? <Spinner size={'small'}></Spinner> :
@@ -29,9 +30,10 @@ export default class ChangeBox extends Component {
                     <View style={{ flexDirection: 'column', margin: '2%', }}>
                         <View style={{ flexDirection: 'row', }}>
                             <View style={{ width: "20%" }}>
-                                <CacheImages thumbnails
-                                    source={{ uri: this.props.change.updater.profile }}>
-                                </CacheImages>
+                                 {this.props.change.updater.profile && testForURL(this.props.change.updater.profile) ?
+                                    <CacheImages thumbnails
+                                        source={{ uri: this.props.change.updater.profile }}>
+                                    </CacheImages> : <Thumbnail small source={{ uri: this.props.change.updater.profile ? this.change.updater.profile : '' }}></Thumbnail>}
                             </View>
                             <View style={{ marginTop: "3%", marginLeft: "4%", flexDirection: 'column', width: "65%" }}>
                                 <Text style={{ marginBottom: "2%", fontWeight: 'bold', }}>{this.props.change.updater.nickname}</Text>
@@ -52,7 +54,7 @@ export default class ChangeBox extends Component {
                             <View style={{ flexDirection: 'row', }}>
                                 <Text>{this.props.change.changed}</Text>
                             </View>
-                            <Text style={{ fontStyle: 'italic', }}>{typeof this.props.change.new_value.new_value === "string" ? this.props.change.new_value.new_value:""}</Text>
+                            <Text style={{ fontStyle: 'italic', }}>{typeof this.props.change.new_value.new_value === "string" ? this.props.change.new_value.new_value : ""}</Text>
                         </View>
                     </View>
                 </View>

@@ -35,8 +35,9 @@ export default class ChangeLogs extends Component {
   shouldComponentUpdate(nextProps, nextState, nextContext) {
     return this.state.newThing !== nextState.newThing ||
       this.props.isMe !== nextProps.isMe ||
-      this.state.loaded !== nextState.loaded
-  }
+      this.state.loaded !== nextState.loade||
+      this.props.activeMember !== nextProps.activeMember 
+      }
   componentWillMount() {
     emitter.on('refresh-history', () => {
       this.setState({ loaded: false })
@@ -65,13 +66,16 @@ export default class ChangeLogs extends Component {
       }, 200)
     })
   }
+
   propcessAndFoward(change) {
-    if (Array.isArray(change.new_value.new_value) && change.new_value.new_value[0].phone) {
+    if (Array.isArray(change.new_value.new_value) && change.new_value.new_value[0] && change.new_value.new_value[0].phone) {
       this.props.showMembers(change.new_value.new_value)
-    } else if (Array.isArray(change.new_value.new_value) && change.new_value.new_value[0].includes("00")) {
+    } else if (Array.isArray(change.new_value.new_value) && change.new_value.new_value[0] && change.new_value.new_value[0].includes("00")) {
       console.warn("showing contacts")
       this.props.showContacts(change.new_value.new_value)
-    } else if (typeof change.new_value.new_value === "string") {
+    } else if (typeof change.new_value.new_value === "string" || 
+    (Array.isArray(change.new_value.new_value) && typeof change.new_value.new_value[0] === "string") ||
+    typeof change.new_value.new_value === 'object') {
       this.props.showContent(change.new_value.new_value)
     } else {
 
@@ -85,12 +89,13 @@ export default class ChangeLogs extends Component {
     return (<View><Text>{item.changed}</Text></View>)
   }
   render() {
+    console.warn(this.props.forMember,"poo")
     return (!this.state.loaded ? <Spinner size={"small"}></Spinner> : <View style={{ width: "100%", height: "100%", backgroundColor: "#FEFFDE", }}>
       <View style={{ flex: 1, height: "95%", top: 0, bottom: 0, left: 0, right: 0 }}>
         <BleashupTimeLine
           circleSize={20}
           circleColor='rgb(45,156,219)'
-          lineColor='rgb(45,156,219)'
+          lineColor='#1FABAB'
           timeContainerStyle={{ minWidth: 52, marginTop: -5 }}
           timeStyle={{
             marginLeft: "4%",
@@ -106,7 +111,9 @@ export default class ChangeLogs extends Component {
           onEventPress={(data) => {
             this.propcessAndFoward(data)
           }}
-          data={this.props.isMe ? this.changes.filter(ele => ele.updater === stores.LoginStore.user.phone) : this.changes}
+          data={this.props.activeMember && this.props.activeMember !== null ? 
+            this.changes.filter(ele => ele.updater.phone === this.props.activeMember ||
+             ele.type === "date_separator") : this.changes}
         >
         </BleashupTimeLine>
       </View>

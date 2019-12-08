@@ -8,6 +8,8 @@ import io.invertase.firebase.RNFirebasePackage;
 import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
 import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage; // <-- Add this line
 import org.wonday.orientation.OrientationPackage;
+import com.calendarevents.CalendarEventsPackage;
+import com.reactcommunity.rndatetimepicker.RNDateTimePickerPackage;
 import io.invertase.firebase.auth.RNFirebaseAuthPackage; // <-- Add this line
 import com.kevinresol.react_native_sound_recorder.RNSoundRecorderPackage;
 import io.github.elyx0.reactnativedocumentpicker.DocumentPickerPackage;
@@ -48,14 +50,16 @@ public class MainApplication extends Application implements ReactApplication {
           new MainReactPackage(),
             new RNFirebasePackage(),
             new RNFirebaseAuthPackage(),
-            new RNFirebaseDatabasePackage(),
             new OrientationPackage(),
+            new RNFirebaseDatabasePackage(),
             new RNNestedScrollViewPackage(),
             new RNFirebaseNotificationsPackage(),
             new RNSoundRecorderPackage(),
             new DocumentPickerPackage(),
             new PickerPackage(),
+            new CalendarEventsPackage(),
             new RNFileViewerPackage(),
+            new RNDateTimePickerPackage(),
             new ReactVideoPackage(),
             new RNSoundPackage(),
             new RNFirebaseMessagingPackage(),

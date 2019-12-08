@@ -34,16 +34,16 @@ export default class RouteView extends Component {
     // because the selected tab has changed
     resetSelectedCommitee() {
         if (GState.currentCommitee !== null) {
-            this.previous = GState.currentCommitee
+            GState.previousCommitee = GState.currentCommitee
             GState.currentCommitee = null;
-            emitter.emit("current_commitee_changed", this.previous)
+            emitter.emit("current_commitee_changed", GState.previousCommitee)
         } else {
-            emitter.emit("current_commitee_changed", this.previous)
+            emitter.emit("current_commitee_changed", GState.previousCommitee)
         }
     }
     resetCommiteeForGeneral() {
-        GState.currentCommitee = this.previous;
-        emitter.emit("current_commitee_changed_by_main", this.previous)
+        GState.currentCommitee = GState.previousCommitee;
+        emitter.emit("current_commitee_changed_by_main", GState.previousCommitee)
         this.setState({
             newMessagesCount: 0,
             updating: !this.state.updating
@@ -67,7 +67,7 @@ export default class RouteView extends Component {
     render() {
         if (this.props.currentPage == "EventChat") GState.generalNewMessages = []
         return (
-            <Card style={{ height: 300, width: 200, }} transparent>
+            <Card style={{ height: 300, width: 200, }} transparent >
                 <CardItem style={{
                     height: this.height, backgroundColor: this.props.currentPage == "EventDetails" ? "#54F5CA" : "#FEFFDE",
                     width: "100%", borderTopLeftRadius: 12, borderTopWidth: 2, borderLeftWidth: 2, borderTopColor: "#1FABAB", borderLeftColor: "#1FABAB",
@@ -78,8 +78,8 @@ export default class RouteView extends Component {
                     }
                     )}>
                         <View style={{ display: 'flex', flexDirection: 'row' }}>
-                            <Icon type="AntDesign" style={{ color: this.original }} name="appstore1"></Icon>
-                            <Text style={{ padding: "1%", }}>Activity Details</Text>
+                            <Icon type="AntDesign" style={{ color: this.props.currentPage == "EventDetails" ? "#0A4E52" :  this.original }} name="appstore1"></Icon>
+                            <Text style={{ padding: "1%", fontWeight: this.props.currentPage == "EventDetails" ? 'bold' : '400', }}>Activity Details</Text>
                         </View>
                     </TouchableOpacity>
                 </CardItem>
@@ -90,8 +90,8 @@ export default class RouteView extends Component {
                     }
                     )}>
                         <View style={{ display: 'flex', flexDirection: 'row', }}>
-                            <Icon type="Entypo" style={{ color: this.original }} name="clock"></Icon>
-                            <Text style={{ padding: "1%", }}>History Logs</Text>
+                            <Icon type="Entypo" style={{ color: this.props.currentPage == "ChangeLogs" ? "#0A4E52" : this.original }} name="clock"></Icon>
+                            <Text style={{ padding: "1%", fontWeight: this.props.currentPage == "ChangeLogs" ? 'bold' : '400', }}>History Logs</Text>
                         </View>
                     </TouchableOpacity>
                 </CardItem>
@@ -105,8 +105,8 @@ export default class RouteView extends Component {
                     })
                     }>
                         <View style={{ display: 'flex', flexDirection: 'row' }}>
-                            <View style={{ width: "85%", display: 'flex', flexDirection: 'row', }}><Icon type="FontAwesome" style={{ color: this.original }} name="group"></Icon>
-                                <Text style={{ padding: "1%", }}>Discusion</Text></View>
+                            <View style={{ width: "85%", display: 'flex', flexDirection: 'row', }}><Icon type="FontAwesome" style={{ color: this.props.currentPage == "EventChat" ? "#0A4E52" : this.original }} name="group"></Icon>
+                                <Text style={{ padding: "1%", fontWeight: this.props.currentPage == "EventChat" ? 'bold' : '400', }}>Discusion</Text></View>
                             {GState.generalNewMessages.length > 0 ? <Badge primary><Text style={{ marginTop: "30%", }}>{GState.generalNewMessages.length}</Text></Badge> : null}
                         </View>
                     </TouchableOpacity>
@@ -117,8 +117,8 @@ export default class RouteView extends Component {
                         this.resetSelectedCommitee()
                     })}>
                         <View style={{ display: 'flex', flexDirection: 'row', }}>
-                            <Icon type="AntDesign" style={{ color: this.original }} name="star"></Icon>
-                            <Text style={{ padding: "1%" }}>HighLights</Text>
+                            <Icon type="AntDesign" style={{ color: this.props.currentPage == "Highlights" ? "#0A4E52" : this.original }} name="star"></Icon>
+                            <Text style={{ padding: "1%", fontWeight: this.props.currentPage == "Highlights" ? "bold" : '400', }}>HighLights</Text>
                         </View>
                     </TouchableOpacity>
                 </CardItem>
@@ -131,8 +131,8 @@ export default class RouteView extends Component {
                         this.resetSelectedCommitee()
                     })}>
                         <View style={{ display: 'flex', flexDirection: 'row', }}>
-                            <Icon type="Entypo" style={{ color: this.original }} name="bell"></Icon>
-                            <Text style={{ padding: "1%" }}>Reminds/Tasks</Text>
+                            <Icon type="Entypo" style={{ color: this.props.currentPage == "Reminds" ? "#0A4E52" : this.original }} name="bell"></Icon>
+                            <Text style={{ padding: "1%", fontWeight: this.props.currentPage == "Reminds" ? 'bold' : '400', }}>Reminds/Tasks</Text>
                         </View>
                     </TouchableOpacity>
                 </CardItem>
@@ -145,8 +145,8 @@ export default class RouteView extends Component {
                         this.resetSelectedCommitee()
                     })}>
                         <View style={{ display: 'flex', flexDirection: 'row', }}>
-                            <Icon type="FontAwesome5" style={{ color: this.original }} name="poll"></Icon>
-                            <Text style={{ padding: "1%", }}>Polls/Votes</Text>
+                            <Icon type="FontAwesome5" style={{ color: this.props.currentPage == "Votes" ? "#0A4E52" : this.original }} name="poll"></Icon>
+                            <Text style={{ padding: "1%", fontWeight: this.props.currentPage == "Votes" ? 'bold' : '400', }}>Polls/Votes</Text>
                         </View>
                     </TouchableOpacity>
                 </CardItem>
@@ -160,8 +160,8 @@ export default class RouteView extends Component {
                         this.resetSelectedCommitee()
                     })}>
                         <View style={{ display: 'flex', flexDirection: 'row', }}>
-                            <Icon type="MaterialIcons" style={{ color: this.original }} name="monetization-on"></Icon>
-                            <Text style={{ padding: "1%", }}>Contributions</Text>
+                            <Icon type="MaterialIcons" style={{ color: this.props.currentPage == "Contributions" ? "#0A4E52" : this.original }} name="monetization-on"></Icon>
+                            <Text style={{ padding: "1%", fontWeight: this.props.currentPage == "Contributions" ? 'bold' : '400', }}>Contributions</Text>
                         </View>
                     </TouchableWithoutFeedback>
                 </CardItem>

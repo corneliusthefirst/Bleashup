@@ -52,11 +52,13 @@ export default class ProfileView extends Component {
                         source={{ uri: this.state.profile.profile }} /> :
                         <Thumbnail source={{ uri: this.state.profile.profile }}></Thumbnail>}
                 </TouchableOpacity>
-                <View style={{ marginTop: "3%", marginLeft: "2%", display: 'flex',fontWeight: 'bold', }}>
+                <View style={{ marginTop: "3%", marginLeft: "2%", display: 'flex', fontWeight: 'bold', }}>
                     <Text style={{
-                        marginBottom: "2%"
-                    }}>{this.state.profile.nickname}</Text>
-                    <Text style={{ marginLeft: "2%",fontStyle: 'italic', }} note>{this.state.dataArray.title}</Text>
+                        marginBottom: "2%",
+                        color: "#0A4E52",
+                        fontWeight: 'bold',
+                    }}>{this.state.profile.phone === stores.LoginStore.user.phone ? "You" : this.state.profile.nickname}</Text>
+                    <Text style={{ marginLeft: "2%", fontStyle: 'italic', }} note>{this.state.dataArray.title}</Text>
                 </View>
                 {/*<ProfileModal
                     isOpen={this.state.isModalOpened}

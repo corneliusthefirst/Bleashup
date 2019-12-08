@@ -47,9 +47,9 @@ export default class DeckSwiperModule extends Component {
     } else {
 
       const descriptionData = item.event_description
-      max_length = item.event_description.length
-      descriptionStartData = descriptionData.slice(0, 500)
-      descriptionEndData = descriptionData.slice(500, max_length)
+      max_length = item.event_description ? item.event_description.length : 0
+      descriptionStartData = descriptionData && descriptionData.length > 0 ? descriptionData.slice(0, 500) : descriptionData
+      descriptionEndData = descriptionData && descriptionData.length > 0 ? descriptionData.slice(500, max_length) : descriptionData
 
 
       return (
@@ -68,11 +68,11 @@ export default class DeckSwiperModule extends Component {
   render() {
 
     return (
-      <View style={{ width: "98%", height: 400,marginTop: -40 , marginLeft: 5 }}>
+      <View style={{ width: "98%", height: 400, marginTop: -40, marginLeft: 5 }}>
         <DeckSwiper
           ref={(c) => this._deckSwiper = c}
           dataSource={this.props.details}
-          renderEmpty={() =>{}
+          renderEmpty={() => { }
           }
           renderItem={item => this.Desc(item)}
         />

@@ -6,6 +6,8 @@ import stores from "../stores";
 import UserService from "../services/userHttpServices"
 import ProfileView from "./myscreens/invitations/components/ProfileView";
 import BleashupFlatList from './BleashupFlatList';
+import Menu, { MenuDivider, MenuItem } from 'react-native-material-menu';
+
 export default class ParticipantList extends Component {
 
     constructor(props) {
@@ -22,7 +24,7 @@ export default class ParticipantList extends Component {
         return nextState.isOpen !== this.state.isOpen || nextState.isloaded !== this.state.isloaded ? true : false
     }
     writeParticant(participant) {
-        return participant.master == true ? "Master" : "Simple Member"
+        return this.props.creator === participant.phone ? "creator" : participant.master == true ? "Master" : "Simple Member"
     }
     componentDidMount() {
         setTimeout(() => {
@@ -59,17 +61,23 @@ export default class ParticipantList extends Component {
                         keyExtractor={this._keyExtractor}
                         dataSource={this.state.participants}
                         renderItem={(item, index) =>
-                            <View style={{ display: 'flex', flexDirection: 'row', }} >
-                                <View style={{ margin: '2%', }}>
-                                    <ProfileView phone={item.phone.replace("+", "00")}></ProfileView>
+                            <View style={{ margin: '3%', }}>
+                                <View style={{ display: 'flex', flexDirection: 'row', }} >
+                                    <View style={{}}>
+                                        <ProfileView phone={item.phone.replace("+", "00")}></ProfileView>
+                                    </View>
+                                    <View style={{
+                                        marginLeft: "40%",
+                                        marginTop: "5%",
+                                    }}>
+                                        <Text style={{
+                                            fontWeight: this.props.creator == item.phone ? 'bold' : 'normal',
+                                            fontStyle: this.props.creator == item.phone ? 'italic' : 'normal',
+                                            color: this.props.creator == item.phone ?"#54F5CA":"gray"
+                                        }} note>{this.writeParticant(item)}</Text>
+                                    </View>
                                 </View>
-                                <View style={{
-                                    marginLeft: "40%",
-                                    marginTop: "5%",
-                                }}>
-                                    <Text style={{
-                                    }} note>{this.writeParticant(item)}</Text>
-                                </View>
+                                <MenuDivider color="#1FABAB" />
                             </View>
                         }
                     ></BleashupFlatList>}

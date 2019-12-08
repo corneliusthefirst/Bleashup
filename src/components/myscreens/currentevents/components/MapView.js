@@ -14,11 +14,11 @@ export default class MapView extends Component {
     render() {
         return <View style={this.props.style}>
             <TouchableOpacity>
-                <Text ellipsizeMode="clip" numberOfLines={2}>
-                    {this.props.location}
+                <Text ellipsizeMode="clip" style={{ fontStyle: this.props.location ? 'normal' : 'italic', }} numberOfLines={2}>
+                    {this.props.location ? this.props.location : 'No Set Location'}
                 </Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={this.OpenLinkZoom}>
+            <TouchableOpacity onPress={this.props.location ? this.OpenLinkZoom : null}>
                 <Image
                     source={require("../../../../../Images/google-maps-alternatives-china-720x340.jpg")}
                     style={{
@@ -35,7 +35,7 @@ export default class MapView extends Component {
                     justifyContent: "space-between"
                 }}
             >
-                <TouchableOpacity onPress={this.OpenLink}>
+                <TouchableOpacity onPress={this.props.location ? this.OpenLink : null}>
                     <Text note> View On Map </Text>
                 </TouchableOpacity>
             </View>

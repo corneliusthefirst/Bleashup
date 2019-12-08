@@ -140,8 +140,10 @@ dependencies {
     implementation "com.google.firebase:firebase-auth:17.0.0"
     implementation "com.google.firebase:firebase-database:17.0.0"
     implementation project(':react-native-firebase')
+    implementation project(':react-native-datetimepicker')
     //implementation 'com.android.support:appcompat-v7:27.1.1'
     //implementation 'com.android.support:design:27.1.1'
+    implementation project(':react-native-calendar-events')
     implementation project(':react-native-orientation-locker')
     implementation project(':react-native-sound-recorder')
     implementation project(':react-native-document-picker')

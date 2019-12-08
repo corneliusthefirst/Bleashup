@@ -17,7 +17,7 @@ import ChangeBox from "./myscreens/changelogs/ChangesBox";
 const defaultCircleSize = 16;
 const defaultCircleColor = "#007AFF";
 const defaultLineWidth = 1;
-const defaultLineColor = "#1FABABs";
+const defaultLineColor = "#1FABAB";
 const defaultTimeTextColor = "black";
 const defaultDotColor = "white";
 const defaultInnerCircle = "none";
@@ -232,8 +232,9 @@ export default class BleashupTimeLine extends PureComponent {
                 <TouchableOpacity
                     disabled={this.props.onEventPress == null}
                     style={[this.props.detailContainerStyle]}
-                    onPress={() =>
+                    onPress={() => requestAnimationFrame(() => {
                         this.props.onEventPress ? this.props.onEventPress(rowData) : null
+                    })
                     }
                 >
                     <View style={styles.detail}>
@@ -252,7 +253,7 @@ export default class BleashupTimeLine extends PureComponent {
                     {rowData.title}
                 </Text>
                 <View>
-                    <ChangeBox delayer={parseInt(rowID) < 5 ? parseInt(rowID) : 1} change={rowData}></ChangeBox>
+                    <ChangeBox delayer={parseInt(rowID) < 6 ? parseInt(rowID) : 1} change={rowData}></ChangeBox>
                 </View>
             </View>
         )

@@ -7,16 +7,17 @@ class tcpRequestData {
   Presence() {
     return this.sendData("presence", requestObject.None(), "presence");
   }
-  clear(){
-    return this.sendData("all_updated",requestObject.None(),"all_updated")
+  clear() {
+    return this.sendData("all_updated", requestObject.None(), "all_updated")
   }
   get_all_update() {
     return this.sendData("get_all_update", requestObject.None(), "get_all_update")
   }
   UpdateCurrentEvent(phone, eventID, action, data, id) {
+    console.warn(data)
     let UpdateData = () => {
+      let Update = requestObject.Update();
       if (action === "title") {
-        let Update = requestObject.Update();
         Update.action = "about";
         Update.phone = phone;
         Update.event_id = eventID;
@@ -24,7 +25,6 @@ class tcpRequestData {
         Update.about_update.title = data;
         return Update;
       } else if (action == "description") {
-        let Update = requestObject.Update();
         Update.action = "about";
         Update.phone = phone;
         Update.event_id = eventID;
@@ -32,7 +32,6 @@ class tcpRequestData {
         Update.about_update.description = data;
         return Update;
       } else if (action == "string") {
-        let Update = requestObject.Update();
         Update.action = "location";
         Update.phone = phone;
         Update.event_id = eventID;
@@ -40,31 +39,19 @@ class tcpRequestData {
         Update.location_update.string = data;
         return Update;
       } else if (action == "url") {
-        let Update = requestObject.Update();
         Update.action = "location";
         Update.phone = phone;
         Update.event_id = eventID;
         Update.location_update.action = action;
         Update.location_update.url = data;
         return Update;
-      } else if (action == "time") {
-        let Update = requestObject.Update();
+      } else if (action === "period") {
         Update.action = "period";
         Update.phone = phone;
         Update.event_id = eventID;
-        Update.period_update.action = action;
-        Update.period_update.time = data;
-        return Update;
-      } else if (action == "date") {
-        let Update = requestObject.Update();
-        Update.action = "period";
-        Update.phone = phone;
-        Update.event_id = eventID;
-        Update.period_update.action = action;
-        Update.period_update.date = data;
+        Update.period_update = data;
         return Update;
       } else if (action == "add") {
-        let Update = requestObject.Update();
         Update.action = "participant";
         Update.phone = phone;
         Update.event_id = eventID;
@@ -75,7 +62,6 @@ class tcpRequestData {
         Update.participant_update.host = data.host;
         return Update;
       } else if (action == "remove") {
-        let Update = requestObject.Update();
         Update.action = "participant";
         Update.phone = phone;
         Update.event_id = eventID;
@@ -83,33 +69,62 @@ class tcpRequestData {
         Update.participant_update.phone = data.phone;
         return Update;
       } else if (action == "master") {
-        let Update = requestObject.Update();
         Update.action = "participant";
         Update.phone = phone;
         Update.event_id = eventID;
         Update.participant_update.action = action;
         Update.participant_update.phone = data.phone;
+        Update.participant_update.status = data.status;
         Update.participant_update.master = data.master;
         return Update;
       } else if (action == "host") {
-        let Update = requestObject.Update();
         Update.action = "participant";
         Update.phone = phone;
         Update.event_id = eventID;
         Update.participant_update.action = action;
         Update.participant_update.phone = data.phone;
+        Update.participant_update.status = data.status;
         Update.participant_update.host = data.host;
         return Update;
       } else if (action == "background") {
-        let Update = requestObject.Update();
-        Update.action = "background";
-        Update.phone = phone;
+        Update.action = "background"
+        Update.phone = phone
+        Update.event_id = eventID
+        Update.background = data
+        return Update
+      } else if (action === 'notes') {
+        Update.action = action
+        Update.phone = phone
+        Update.event_id = eventID
+        Update.notes_update = data
+        return Update
+      } else if (action === 'open') {
+        Update.action = "open"
+        Update.phone = phone
+        Update.event_id = eventID
+        Update.closed = data
+        return Update
+      } else if (action === 'close'){
+        Update.action = 'open';
         Update.event_id = eventID;
-        Update.background = data;
+        Update.closed = data
+        Update.phone = phone
         return Update;
+      } else if (action === 'calendar_id'){
+        Update.action = action;
+        Update.event_id = eventID;
+        Update.calendar_id = data
+        Update.phone = phone
+        return Update
+      } else if (action === 'recurrency'){
+        Update.action = action;
+        Update.event_id = eventID;
+        Update.recurrent_update = data
+        Update.phone = phone
+        return Update
       }
     };
-    return this.sendData(action, data, id);
+    return this.sendData("update", UpdateData(), id);
   }
 
   createEvent(event, id) {
@@ -177,8 +192,8 @@ class tcpRequestData {
   }
 
   //My data is requestObject.None()
-  getContacts(phone, data, id) {
-    return this.sendData("get_contacts", data, id);
+  getContacts(id) {
+    return this.sendData("get_contacts", requestObject.None(), id);
   }
 
   //My data is requestObject.Contact()
@@ -437,7 +452,10 @@ class tcpRequestData {
     return this.sendData('open_commitee', data, id)
   }
   close_commitee(data, id) {
-   return this.sendData('close_commitee', data, id);
+    return this.sendData('close_commitee', data, id);
+  }
+  add_many_contacts(data, id) {
+    return this.sendData('add_many_contacts', data, id);
   }
 }
 

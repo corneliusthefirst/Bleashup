@@ -7,9 +7,9 @@ import tcpRequest from '../services/tcpRequestData';
 import serverEventListener from "../services/severEventListener"
 export default class commitee {
     constructor() {
-       /* storage.remove({key:"commitees"}).then(()=>{
-
-        })*/
+        /* storage.remove({key:"commitees"}).then(()=>{
+ 
+         })*/
         this.readFromStore().then(data => {
 
         })
@@ -54,13 +54,29 @@ export default class commitee {
             })
         })
     }
+    replaceCommiteeParticipant(ID, participant) {
+        return new Promise((resolve, reject) => {
+            this.readFromStore().then(commitees => {
+                let commiteeIndex = findIndex(commitees, { id: ID })
+                let index = findIndex(commitees[commiteeIndex].member, { phone: participant.phone })
+                if (index >= 0) {
+                    commitees[commiteeIndex].member[index] = participant
+                    this.addToStore(commitees).then(() => {
+                        resolve(commitees[commiteeIndex])
+                    })
+                } else {
+                    resolve()
+                }
+            })
+        })
+    }
     removeCommitee(ID) {
         return new Promise((resolve, rejec) => {
             this.readFromStore().then(commitees => {
                 commitees = reject(commitees, { id: ID })
                 this.addToStore(commitees).then(() => {
                     this.setProperties(commitees)
-                    resolve(findIndex(commitees,{id:ID}))
+                    resolve(findIndex(commitees, { id: ID }))
                 })
             })
         })
@@ -107,12 +123,12 @@ export default class commitee {
             })
         })
     }
-    changeCommiteeOpenedState(ID,newState){
-        return new Promise((resolve,reject) =>{
-            this.readFromStore().then(commitees =>{
-                let index = findIndex(commitees,{id:ID})
+    changeCommiteeOpenedState(ID, newState) {
+        return new Promise((resolve, reject) => {
+            this.readFromStore().then(commitees => {
+                let index = findIndex(commitees, { id: ID })
                 commitees[index].opened = newState
-                this.addToStore(commitees).then(() =>{
+                this.addToStore(commitees).then(() => {
                     this.setProperties(commitees)
                     resolve(commitees[index]);
                 })

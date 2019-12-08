@@ -45,7 +45,7 @@ export default class CreateCommiteeModal extends PureComponent {
             <Modal
                 backdropPressToClose={false}
                 backdropOpacity={0.7}
-                swipeToClose={false}
+                //swipeToClose={false}
                 backButtonClose={true}
                 entry={"top"}
                 position={"top"}
@@ -63,7 +63,7 @@ export default class CreateCommiteeModal extends PureComponent {
                 onOpened={() => {
                 }}
                 style={{
-                    height: "60%",
+                    height: 300,
                     borderBottomLeftRadius: 8,
                     borderBottomRightRadius: 8,
                     backgroundColor: "#FEFFDE",

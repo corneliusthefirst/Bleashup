@@ -59,6 +59,14 @@ import uuid from 'react-native-uuid';
 import NotificationModal from "./NotificationModal";
 import ContactListModal from "./ContactListModal";
 import ContentModal from "./ContentModal";
+import InviteParticipantModal from "./InviteParticipantModal";
+import MamageMembersModal from "./ManageMembersModal";
+import AreYouSure from "./AreYouSureModal";
+import { RemoveParticipant } from '../../../services/cloud_services';
+import SettingsModal from "./SettingsModal";
+import CalendarSynchronisationModal from "./CalendarSynchronisationModal";
+import CalendarServe from '../../../services/CalendarService';
+import SetAlarmPatternModal from "./SetAlarmPatternModal";
 const screenWidth = Math.round(Dimensions.get('window').width);
 
 var swipeoutBtns = [
@@ -69,17 +77,9 @@ var swipeoutBtns = [
 export default class Event extends Component {
   constructor(props) {
     super(props);
-    this.props.Event = this.props.navigation.getParam("Event");
     const { initialPage } = this.props;
     this.state = {
-      Event: this.props.navigation.getParam("Event")
-        ? this.props.navigation.getParam("Event")
-        : undefined,/*{ about: { title: "Event title" }, updated: true },*/
-      initalPage: this.props.navigation.getParam("tab")
-        ? this.props.navigation.getParam("tab")
-        : "EventDetails",
-      currentPage: this.props.navigation.getParam("tab") ? this.props.navigation.getParam("tab") : "EventDetails",
-      isOpen: this.props.navigation.getParam('isOpen') ? this.props.navigation.getParam('isOpen') : false,
+      currentPage: "",
       participants: undefined,
       roomName: "Generale",
       members: [],
@@ -88,6 +88,7 @@ export default class Event extends Component {
       fresh: false,
       public_state: false,
       opened: true,
+      isManagementModalOpened: false,
       roomMembers: this.event.participant,
       working: false,
       showNotifiation: false,
@@ -173,7 +174,7 @@ export default class Event extends Component {
   @autobind goToHome() {
     this.props.navigation.navigate("Home");
   }
-  isOpen = false
+  isOpen = this.props.navigation.getParam('isOpen') ? this.props.navigation.getParam('isOpen') : false
   renderMenu(NewMessages) {
     //console.error(this.props.navigation.getParam("Event").participant)
     switch (this.state.currentPage) {
@@ -198,6 +199,7 @@ export default class Event extends Component {
           close={() => this.closeCommitee(this.state.roomID)}
           open={() => this.openCommitee(this.state.roomID)}
           master={this.master}
+          generallyMember={this.member}
           public_state={this.state.public_state}
           opened={this.state.opened}
           roomID={this.state.roomID}
@@ -239,10 +241,71 @@ export default class Event extends Component {
               isContentModalOpened: true
             })
           })}
-          isMe={this.state.isMe}
+          activeMember={this.state.activeMember}
+          forMember={this.state.forMember}
           event_id={this.event.id}></ChangeLogs>
 
     }
+  }
+  bandMember(members) {
+    if (!this.state.working) {
+      this.setState({
+        // isManagementModalOpened:false,
+        working: true
+      })
+      Requester.bandMembers(members, this.event.id).then((mem) => {
+        this.setState({
+          working: false
+        })
+        this.event.participant = reject(this.event.participant, ele => findIndex(members, { phone: ele.phone }) >= 0)
+        Toast.show({ text: "members successfully baned", type: "success", })
+        emitter.emit("parti_removed")
+        RemoveParticipant(this.event.id, mem).then(() => {
+
+        })
+      }).catch(e => {
+        this.setState({
+          working: false
+        })
+        Toast.show({ text: "Unable to process request !" })
+      })
+    }
+  }
+  changeEventMasterState(newState) {
+    if (!this.state.working) {
+      this.setState({
+        isManagementModalOpened: false,
+        working: true
+      })
+      Requester.changeEventMasterState(newState, this.event.id).then(() => {
+        this.setState({
+          working: false
+        })
+        this.event.participant = this.event.participant.map(e => e.phone == newState.phone ? newState : e)
+        Toast.show({ text: "master state successfully updated", type: "success" })
+      }).catch((e) => {
+        this.setState({
+          isManagementModalOpened: false,
+          working: false
+        })
+        Toast.show({ text: "unable to perform this action" })
+      })
+    } else {
+      this.setState({
+        isManagementModalOpened: false
+      })
+      Toast.show({ text: "App Busy !" })
+    }
+  }
+  refreshePage() {
+    this.setState({
+      fresh: true
+    })
+    setTimeout(() => {
+      this.setState({
+        fresh: false
+      })
+    }, 100)
   }
   handleActivityUpdates(change, newValue) {
     if (!this.unmounted)
@@ -267,6 +330,11 @@ export default class Event extends Component {
           roomMembers: commitee.member
         })
       }
+    } else if (change.changed.toLowerCase().includes("participant") || change.changed.toLowerCase().includes("activity")) {
+      ///this.event = newValue
+      this.event = find(stores.Events.events, { id: this.event.id })
+      this.initializeMaster()
+      this.refreshCommitees()
     }
     if (!this.unmounted) emitter.emit('refresh-history')
     setTimeout(() => {
@@ -276,6 +344,19 @@ export default class Event extends Component {
       })
     }, 4000)
   }
+  member = false
+  initializeMaster() {
+    this.user = stores.LoginStore.user;
+    stores.Events.loadCurrentEvent(this.event.id).then(e => {
+      this.event = e
+      let member = find(this.event.participant, { phone: this.user.phone })
+      this.master = member && member.master
+      this.member = member ? true : false
+      this.setState({
+        working: false
+      })
+    })
+  }
   master = false
   componentWillMount() {
     this.unmounted = false
@@ -283,17 +364,15 @@ export default class Event extends Component {
       //console.warn(change)
       this.handleActivityUpdates(change, newValue)
     })
-    stores.LoginStore.getUser().then(user => {
-      this.user = user;
-      member = find(this.event.participant, { phone: user.phone })
-      this.master = member.master
-      //this.event = this.props.navigation.getParam("Event")
-      BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this))
-    })
+    this.initializeMaster()
+    //this.event = this.props.navigation.getParam("Event")
+    BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this))
+
   }
   user = null
   event = this.props.navigation.getParam("Event")
   handleBackButton() {
+    console.warn("handling backpress from simple activity")
     if (!this.isOpen) {
       this.isOpen = true
       this.setState({
@@ -301,12 +380,29 @@ export default class Event extends Component {
         members: []
       })
       return true
+    } else {
+      return false
     }
   }
   componentDidMount() {
+    if (!this.event.calendared) {
+      this.setState({
+        isSynchronisationModalOpned: true
+      })
+    } else if (!this.event.configured) {
+      this.setState({
+        isSettingsModalOpened: true
+      })
+    }
+    this.setState({
+      currentPage: this.props.navigation.getParam("tab")
+    })
+    this.refreshePage()
   }
   componentWillUnmount() {
     this.unmounted = true
+    console.warn("unMounting")
+    GState.currentCommitee = null
     BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton);
 
   }
@@ -315,7 +411,7 @@ export default class Event extends Component {
   }
   showMembers() {
     this.setState({
-      showMembers: true,
+      isManagementModalOpened: true,
       partimembers: this.event.participant
 
     })
@@ -520,6 +616,27 @@ export default class Event extends Component {
     }, 100)
 
   }
+  invite(members) {
+    if (!this.state.working) {
+      this.setState({
+        working: true,
+        isInviteModalOpened: false
+      })
+      Requester.invite(members, this.event.id).then(() => {
+        this.setState({
+          working: false
+        })
+      }).catch(err => {
+        this.setState({
+          working: false
+        })
+        Toast.show({ message: "unable to connect to the server" })
+      })
+    } else {
+
+      Toast.show({ message: "App is busy !" })
+    }
+  }
   refreshCommitees() {
     emitter.emit("refresh-commitee")
     //this.refs.swipperView.refreshCommitees()
@@ -612,12 +729,12 @@ export default class Event extends Component {
   }
   resetSelectedCommitee() {
     if (GState.currentCommitee !== null) {
-      this.previous = GState.currentCommitee
+      GState.previousCommitee = GState.currentCommitee
       GState.currentCommitee = null;
-      emitter.emit("current_commitee_changed", this.previous)
+      emitter.emit("current_commitee_changed", GState.previousCommitee)
     }
     else {
-      emitter.emit("current_commitee_changed", this.previous)
+      emitter.emit("current_commitee_changed", GState.previousCommitee)
     }
 
   }
@@ -693,6 +810,125 @@ export default class Event extends Component {
       Toast.show({ text: "no members selected" })
     }
   }
+  inviteContacts() {
+    this.setState({
+      isInviteModalOpened: true
+    })
+  }
+  checkActivity(memberPhone) {
+    this.isOpen = false
+    this.resetSelectedCommitee()
+    this.setState({
+      currentPage: "ChangeLogs",
+      isManagementModalOpened: false,
+      activeMember: memberPhone
+    })
+    this.refreshePage()
+  }
+  openSettingsModal() {
+    this.setState({
+      isSettingsModalOpened: true
+    })
+  }
+  leaveActivity() {
+    this.isOpen = true;
+    if (!this.state.working) {
+      this.setState({
+        working: true,
+        isAreYouSureModalOpened: false
+      })
+      Requester.leaveActivity(this.event.id, this.user.phone).then(() => {
+        this.initializeMaster()
+        this.setState({
+          working: false
+        })
+        Toast.show({ text: "Activity Successfully Left", type: "success" })
+        emitter.emit(`left_${this.event.id}`) //TODO: this signal is beign listen to in the module current_events>public_events>join
+      }).catch((e) => {
+        this.setState({
+          working: false
+        })
+      })
+    } else {
+      Toast.show({ text: "App Busy " })
+    }
+  }
+  publish() {
+    if (!this.state.working) {
+      this.setState({
+        working: true
+      })
+      if (this.event.public) {
+        Requester.publish(this.event.id).then(() => {
+          this.initializeMaster()
+          this.setState({
+            working: false
+          })
+          Toast.show({ text: "Published Successfully", type: "success" })
+        })
+      } else {
+        this.setState({
+          working: false
+        })
+        Toast.show({ text: "Please First Configure The Activity As Public In The Settings", duration: 5000 })
+      }
+    } else {
+      Toast.show({ text: "App Busy " })
+    }
+  }
+  saveSettings(newSettings) {
+    if (!this.state.working) {
+      this.setState({
+        working: true,
+        isSettingsModalOpened: false
+      })
+      Requester.applyAllUpdate(this.event, newSettings).then((res) => {
+        console.warn(res)
+        if (res)
+          Toast.show({ text: 'All save completely applied !', type: 'success' })
+        this.initializeMaster()
+      }).catch((erorr) => {
+        Toast.show({ text: 'could not perform the request' })
+        this.initializeMaster()
+      })
+    } else {
+      this.initializeMaster()
+      Toast.show({ text: "App Busy" })
+    }
+  }
+  markAsConfigured() {
+    stores.Events.markAsConfigured(this.event.id).then(() => {
+      this.initializeMaster()
+    })
+  }
+  closeActivity() {
+    if (!this.state.working) {
+      this.setState({
+        working: true,
+        isAreYouSureModalOpened: false,
+        isSettingsModalOpened: false
+      })
+      Requester.updateCloseActivity(this.event, !this.event.closed).then(() => {
+        this.initializeMaster()
+      }).catch(() => {
+        Toast.show({ text: "Unable To process the request" })
+      })
+    } else {
+      Toast.show({ text: "App is Busy" })
+    }
+  }
+  addToCalendar(pattern) {
+    this.setState({
+      isSetPatternModalOpened: false,
+    })
+    console.warn("syncing")
+    CalendarServe.saveEvent(this.event, pattern).then(id => {
+      stores.Events.markAsCalendared(this.event.id, id).then(() => {
+        this.initializeMaster()
+      })
+    })
+
+  }
   render() {
     return (<SideMenu autoClosing={true} onMove={(position) => {
 
@@ -701,48 +937,58 @@ export default class Event extends Component {
     }} isOpen={this.isOpen} openMenuOffset={this.currentWidth}
       menu={<View><SWView
         ref="swipperView"
-        ShowMyActivity={() => {
-          this.isOpen = false
-          this.setState({
-            currentPage: "ChangeLogs",
-            isMe: true
-          })
-        }}
+        publish={() => this.publish()}
+        leaveActivity={() => this.member ? this.setState({
+          isAreYouSureModalOpened: true,
+          warnDescription: "Are You Sure You Want To Leave This Activity ?",
+          warnTitle: "Leave Activity",
+          callback: this.leaveActivity.bind(this)
+        })/*this.leaveActivity()*/ : Toast.show({ text: "You Are Not a  member Anymore !" })}
+        openSettingsModal={() => this.master ? this.openSettingsModal() : Toast.show({ text: "Yo cannot configure this Activity !" })}
+        ShowMyActivity={(a) => this.checkActivity(a)}
+        inviteContacts={() => this.master || this.event.public ? this.inviteContacts() : Toast.show({ text: "You cannot invite for th" })}
         join={(id) => { this.joinCommitee(id) }}
         leave={(id) => { this.leaveCommitee(id) }}
         removeMember={(id, members) => { this.removeMembers(id, members) }}
         addMembers={(id, currentMembers) => this.addCommiteeMembers(id, currentMembers)}
         publishCommitee={(id, stater) => { this.publishCommitee(id, stater) }}
-        editName={(newName, id) => this.editName(newName, id)}
+        editName={(newName, id) => this.master ? this.editName(newName, id) : Toast.show({ text: "Connot Update This Commitee" })}
         swapChats={(room) => this.swapChats(room)} phone={stores.LoginStore.user.phone}
         commitees={this.event.commitee ? this.event.commitee : []}
         showCreateCommiteeModal={() => {
-          if (!this.state.working) {
+          if (!this.state.working && this.master) {
             this.setState({
               isCommiteeModalOpened: true
             })
+          } else {
+            Toast.show({ text: "cannot Add Commitee" })
           }
         }}
         showMembers={() => this.showMembers()}
         setCurrentPage={(page, data) => {
           this.isOpen = false
-          this.setState({ currentPage: page, isMe:false})
+          this.setState({ currentPage: page, activeMember: null })
+          this.refreshePage()
         }
-        } currentPage={this.state.currentPage}
+        }
+        currentPage={this.state.currentPage}
         width={this.currentWidth}
-        event={this.event} master={true} Event={{ public: true }}></SWView></View>}>
+        event={this.event}
+        master={this.master}
+        public={this.event.public}></SWView></View>}>
       <View style={{ height: "100%", backgroundColor: "#FEFFDE" }}>
         {this.state.fresh ? <Spinner size={"small"}></Spinner> :
           this.renderMenu()
         }
         {this.state.showNotifiation ? <View style={{
-          position: "absolute", width: "100%", hight: 300,
+          position: "absolute", width: "100%", hight: 300, marginRight: "3%",
           marginTop: "10%"
         }}>
           <NotificationModal change={this.state.change} onPress={() => {
             this.setState({
               showNotifiation: false,
-              currentPage: "ChangeLogs"
+              currentPage: "ChangeLogs",
+              forMember: !this.state.forMember
             })
             this.resetSelectedCommitee()
           }} close={() => {
@@ -757,6 +1003,7 @@ export default class Event extends Component {
         {this.state.working ? <View style={{ position: "absolute", marginTop: "-8%", }}><Spinner size={"small"}></Spinner></View> : null}
         <ParticipantModal
           hideTitle={this.state.hideTitle}
+          creator={this.event.creator_phone}
           participants={this.state.partimembers ? uniqBy(this.state.partimembers.filter(ele => ele !== null &&
             !Array.isArray(ele)), ele => ele.phone) : []} isOpen={this.state.showMembers}
           onClosed={() => {
@@ -781,7 +1028,7 @@ export default class Event extends Component {
           phone={stores.LoginStore.user.phone}
           addMembers={(members) => { this.saveCommiteeMembers(members) }}
           members={this.state.members !== null && this.state.members ?
-            uniqBy(this.state.members.filter(ele => ele !== null && !Array.isArray(ele)), ele => ele.phone) : []}
+            uniqBy(this.state.members.filter(ele => ele !== null && !Array.isArray(ele) && ele.phone !== this.event.creator_phone), ele => ele.phone) : []}
           close={() => {
             this.setState({
               adding: false,
@@ -813,6 +1060,74 @@ export default class Event extends Component {
             textContent: null
           })
         }}></ContentModal>
+        <AreYouSure isOpen={this.state.isAreYouSureModalOpened}
+          title={this.state.warnTitle}
+          closed={() => {
+            this.setState({
+              isAreYouSureModalOpened: false,
+              warnDescription: null,
+              warnTitle: null,
+              callback: null
+            })
+          }}
+          callback={() => this.state.callback()}
+          ok={this.state.okButtonText}
+          message={this.state.warnDescription}></AreYouSure>
+        <InviteParticipantModal
+          invite={(members) => this.invite(members)}
+          onClosed={() => {
+            this.setState({
+              isInviteModalOpened: false
+            })
+          }} isOpen={this.state.isInviteModalOpened} participant={this.event.participant}>
+        </InviteParticipantModal>
+        <MamageMembersModal isOpen={this.state.isManagementModalOpened}
+          checkActivity={(memberPhone) => this.checkActivity(memberPhone)}
+          creator={this.event.creator_phone}
+          participants={this.event.participant} master={this.master}
+          changeMasterState={(newState) => this.changeEventMasterState(newState)}
+          bandMembers={(selected) => this.bandMember(selected)} onClosed={() => {
+            this.setState({
+              isManagementModalOpened: false
+            })
+          }}></MamageMembersModal>
+        {this.state.isSettingsModalOpened ? <SettingsModal closeActivity={() => {
+          this.event.closed ? this.closeActivity() : this.setState({
+            isSettingsModalOpened: false,
+            isAreYouSureModalOpened: true,
+            callback: () => this.closeActivity(),
+            warnDescription: "Are You Sure Yo Want To Close This Activiy ?",
+            warnTitle: "Close Activity",
+            okButtonText: "Close"
+          })
+        }} event={this.event} saveSettings={(newSettings) => {
+          this.saveSettings(newSettings)
+        }} isOpen={this.state.isSettingsModalOpened} onClosed={() => {
+          this.markAsConfigured()
+          this.setState({
+            isSettingsModalOpened: false
+          })
+        }}>
+        </SettingsModal> : null}
+        {this.state.isSynchronisationModalOpned ? <CalendarSynchronisationModal
+          closed={() => {
+            this.setState({
+              isSynchronisationModalOpned: false
+            })
+          }}
+          isOpen={this.state.isSynchronisationModalOpned}
+          callback={() => this.setState({
+            isSetPatternModalOpened: true,
+            isSynchronisationModalOpned: false
+          })}
+        ></CalendarSynchronisationModal> : null}
+        {this.state.isSetPatternModalOpened ? <SetAlarmPatternModal
+          save={pattern => this.addToCalendar(pattern)}
+          date={this.event.period} isOpen={this.state.isSetPatternModalOpened} closed={() => {
+            this.setState({
+              isSetPatternModalOpened: false
+            })
+          }}></SetAlarmPatternModal> : null}
       </View>
     </SideMenu>
     );

@@ -6,6 +6,7 @@ import tcpRequestData from "./tcpRequestData";
 import emitter from "./eventEmiter";
 import serverEventListener from "./severEventListener"
 import { find, findIndex, drop, reject, forEach } from "lodash";
+import moment from "moment"
 import uuid from 'react-native-uuid';
 class UpdatesDispatcher {
   constructor() { }
@@ -22,33 +23,42 @@ class UpdatesDispatcher {
   dispatchUpdate(update) {
     return this.UpdatePossibilities[update.update](update);
   }
-  infomCurrentRoom(Change,commitee ,event_id) {
-    emitter.emit(`event_updated_${event_id}`, Change,commitee)
+  infomCurrentRoom(Change, commitee, event_id) {
+    emitter.emit(`event_updated_${event_id}`, Change, commitee)
+  }
+  applyToAllCommitees(ids, participant, e) {
+    if (ids.length <= 0) {
+      return "done"
+    } else {
+      let id = ids.pop()
+      stores.CommiteeStore.replaceCommiteeParticipant(id, participant).then((c) => {
+        this.applyToAllCommitees(ids, participant, e)
+      })
+    }
   }
   UpdatePossibilities = {
     title: update => {
       return new Promise((resolve, reject) => {
-        stores.Events.loadCurrentEvent(update.event_id).then(Event => {
-          let Change = {
-            event_id: update.event_id,
-            changed: "New Event Title",
-            old_value: Event.about.title,
-            updater: update.updater,
-            new_value: update.new_value,
-            date: update.date,
-            time: update.time
-          };
-          stores.ChangeLogs.addChanges(Change).then(() => {
-            stores.Events.updateTitle(
-              update.event_id,
-              update.new_value,
-              true
-            ).then(() => {
+        stores.TemporalUsersStore.getUser(update.updater).then(user => {
+          stores.Events.updateTitle(update.event_id, update.new_value, true).then(() => {
+            let Change = {
+              id: uuid.v1(),
+              updated: "title",
+              event_id: update.event_id,
+              updater: user,
+              title: "Updates On Main Activity",
+              changed: "Changed The Title Of The Activity to: ",
+              new_value: { data: null, new_value: update.new_value },
+              date: update.date,
+              time: null
+            }
+            stores.ChangeLogs.addChanges(Change).then(() => {
               GState.eventUpdated = true;
+              this.infomCurrentRoom(Change, Change, update.event_id)
               resolve();
             });
-          });
-        });
+          })
+        })
       });
     },
 
@@ -104,27 +114,76 @@ class UpdatesDispatcher {
     },
     period: update => {
       return new Promise((resolve, reject) => {
-        stores.Events.loadCurrentEvent(update.event_id).then(Event => {
-          let Change = {
-            event_id: update.event_id,
-            changed: "New Event Period",
-            old_value: Event.period,
-            updater: update.updater,
-            date: update.date,
-            time: update.time
-          };
-          stores.ChangeLogs(Change).then(() => {
-            stores.Events.updatePeriod(
-              update.event_id,
-              update.new_value,
-              true
-            ).then(() => {
+        stores.TemporalUsersStore.getUser(update.updater).then((user) => {
+          stores.Events.updatePeriod(update.event_id, update.new_value, true).then(() => {
+            let Change = {
+              id: uuid.v1(),
+              title: "Updates On Main Activity",
+              updated: "period",
+              updater: user,
+              event_id: update.event_id,
+              changed: "Changed The Scheduled Time Of The Activity To: ",
+              new_value: { data: null, new_value: moment(update.new_value).format("dddd, MMMM Do YYYY, h:mm:ss a") },
+              date: update.date,
+              time: null
+            }
+            stores.ChangeLogs.addChanges(Change).then(() => {
               GState.eventUpdated = true;
+              this.infomCurrentRoom(Change, Change, update.event_id)
               resolve();
             });
-          });
-        });
+          })
+        })
       });
+
+    },
+    closed: update => {
+      return new Promise((resolve, reject) => {
+        stores.TemporalUsersStore.getUser(update.updater).then(user => {
+          stores.Events.openClose(update.event_id, update.new_value, true).then(() => {
+            let Change = {
+              id: uuid.v1(),
+              title: "Updates On Main Activity",
+              updated: "close",
+              event_id:update.event_id,
+              updater: user,
+              changed: update.new_value == false ? 'Opened' + " The Main Activity": 'Closed' + " The Main Activity",
+              new_value: { data: null, new_value: null },
+              date: update.date,
+              time: null
+            }
+            stores.ChangeLogs.addChanges(Change).then(() => {
+              GState.eventUpdated = true
+              this.infomCurrentRoom(Change, Change, update.event_id)
+              resolve("ok")
+            })
+          })
+        })
+      })
+    },
+    notes: update => {
+      return new Promise((resolve, reject) => {
+        stores.TemporalUsersStore.getUser(update.updater).then(user => {
+          stores.Events.updateNotes(update.event_id, update.new_value).then(() => {
+            let Change = {
+              id: uuid.v1(),
+              title: "Updates on Main Activity",
+              updated: "notes",
+              event_id: update.event_id,
+              changed: "Changed The Notes of the Activity",
+              updater: user,
+              new_value: { data: null, new_value: update.new_value },
+              date: update.date,
+              time: null
+            }
+            stores.ChangeLogs.addChanges(Change).then(() => {
+              this.infomCurrentRoom(Change,Change,update.event_id)
+              GState.eventUpdated = true
+              resolve('ok')
+            })
+          })
+        })
+      })
     },
     string: update => {
       return new Promise((resolve, reject) => {
@@ -157,71 +216,87 @@ class UpdatesDispatcher {
         });
       });
     },
+    calendar_id: update => {
+      return new Promise((resolve, reject) => {
+        stores.TemporalUsersStore.getUser(update.updater).then(user => {
+          stores.Events.updateCalendarID(update.event_id, update.new_value, true).then(() => {
+            let Change = {
+              id: uuid.v1(),
+              title: "Updates On Main Activity",
+              updated: "calendar_id",
+              updater: user,
+              event_id:update.event_id,
+              changed: "Changed The Calendar The Main Activity To",
+              new_value: { data: null, new_value: update.new_value },
+              date: update.date,
+              time: null
+            }
+            stores.ChangeLogs.addChanges(Change).then(() => {
+              this.infomCurrentRoom(Change, Change, update.event_id)
+              GState.eventUpdated = true
+              resolve("ok")
+            })
+          })
+        })
+      })
+    },
+    recurrency_config: update => {
+      return new Promise((resolve, reject) => {
+        stores.TemporalUsersStore.getUser(update.updater).then(user => {
+          stores.Events.updateRecurrency(update.event_id, update.new_value, true).then(() => {
+            let Change = {
+              id: uuid.v1(),
+              title: "Updates On Main Activity",
+              updated: "recurrency",
+              event_id:update.event_id,
+              updater: user,
+              changed: "Changed The Recurrency Configuration of the Activity",
+              new_value: { data: null, new_value: update.new_value },
+              date: update.date,
+              time: null
+            }
+            stores.ChangeLogs.addChanges(Change).then(() => {
+              this.infomCurrentRoom(Change, Change, update.event_id)
+              GState.eventUpdated = true
+              resolve("ok")
+            })
+          })
+        })
+      })
+    },
     published: update => {
       return new Promise((resolve, reject) => {
-        stores.Session.getSession().then(session => {
-          stores.Events.isParticipant(update.event_id, session.phone).then(
+        stores.TemporalUsersStore.getUser(update.updater).then(user => {
+          stores.Events.isParticipant(update.event_id, user.phone).then(
             status => {
               let EventID = requestObjects.EventID();
               EventID.event_id = update.event_id;
               stores.Events.loadCurrentEvent(update.event_id).then(event => {
-                if (event) {
-                  let Change = {
-                    event_id: update.event_id,
-                    changed: "Published",
-                    updater: update.updater,
-                    old_value: false,
-                    new_value: true,
-                    date: update.date,
-                    time: update.time
-                  };
-                  stores.ChangeLogs.addChanges(Change).then(() => {
-                    stores.Events.publishEvent(update.event_id, true).then(() => {
-                      let publisher = {
-                        period: {
-                          date: update.date,
-                          time: update.time
-                        },
-                        phone: update.updater
-                      }
-                      stores.Publishers.addPublisher(update.event_id, publisher).then(() => {
-                        GState.eventUpdated = true;
-                        resolve();
-                      })
+                stores.Events.publishEvent(update.event_id, true).then(() => {
+                  let publisher = {
+                    period: {
+                      date: update.date,
+                      time: update.time
+                    },
+                    phone: update.updater
+                  }
+                  stores.Publishers.addPublisher(update.event_id, publisher).then(() => {
+                    let Change = {
+                      title: "Change On Main Activity",
+                      event_id: update.event_id,
+                      changed: "Published The Activity To His/Her Contacts",
+                      updater: user,
+                      new_value: { data: null, new_value: [update.updater] },
+                      date: update.date,
+                      time: update.time
+                    };
+                    stores.ChangeLogs.addChanges(Change).then(() => {
+                      GState.eventUpdated = true;
+                      this.infomCurrentRoom(Change, update.event_id, update.event_id)
+                      resolve();
                     });
-                  });
-                } else {
-                  tcpRequestData.getCurrentEvent(EventID).then(JSONData => {
-                    serverEventListener.GetData(EventID).then((Event) => {
-                      stores.Events.addEvent(Event).then(() => {
-                        let Change = {
-                          event_id: update.event_id,
-                          changed: "Published",
-                          updater: update.updater,
-                          old_value: false,
-                          new_value: true,
-                          date: update.date,
-                          time: update.time
-                        };
-                        stores.ChangeLogs.addChanges(Change).then(() => {
-                          stores.Events.publishEvent(update.event_id, true).then(() => {
-                            let publisher = {
-                              period: {
-                                date: update.date,
-                                time: update.time
-                              },
-                              phone: update.updater
-                            }
-                            stores.Publishers.addPublisher(update.event_id, publisher).then(() => {
-                              GState.eventUpdated = true;
-                              resolve();
-                            })
-                          });
-                        });
-                      });
-                    })
-                  });
-                }
+                  })
+                });
               })
             }
           );
@@ -313,57 +388,68 @@ class UpdatesDispatcher {
     master: update => {
       return new Promise((resolve, reject) => {
         stores.Events.loadCurrentEvent(update.event_id).then(Event => {
-          let Participant = find(Event.participants, {
-            phone: update.addedphone
-          });
-          let Change = {
-            event_id: update.event_id,
-            changed: "New Event Master Status",
-            updater: update.updater,
-            old_value: Participant.master,
-            new_value: update.new_value,
-            date: update.date,
-            time: update.time
-          };
-          stores.ChangeLogs.addChanges(Change).then(() => {
-            Participant.master = update.new_value;
-            stores.Events.updateEventParticipant(
-              update.event_id,
-              Participant,
-              true
-            ).then(() => {
-              GState.eventUpdated = true;
-              resolve();
+          stores.TemporalUsersStore.getUser(update.updater).then(updater => {
+            let Participant = find(Event.participant, {
+              phone: update.addedphone
             });
-          });
+            if (Participant) {
+              let newParti = { ...Participant, master: update.new_value }
+              stores.Events.updateEventParticipant(
+                update.event_id,
+                Participant,
+                true
+              ).then((newEvent) => {
+                //console.warn(newEvent.commitee)
+                this.applyToAllCommitees(newEvent.commitee, newParti, newEvent)
+                let Change = {
+                  title: "Updates On Main Activity",
+                  event_id: update.event_id,
+                  changed: "Changed Participant(s) Master Status",
+                  updater: updater,
+                  old_value: Participant.master,
+                  new_value: { data: null, new_value: [newParti] },
+                  date: update.date,
+                  time: update.time
+                };
+                stores.ChangeLogs.addChanges(Change).then(() => {
+                  GState.eventUpdated = true;
+                  // console.warn(e.commitee)
+                  this.infomCurrentRoom(Change, newEvent, update.event_id)
+                  resolve();
+                });
+              });
+            } else {
+              console.warn('participant does not exists');
+              reject()
+            }
+          })
         });
       });
     },
     removed: update => {
       return new Promise((resolve, reject) => {
-        stores.Events.loadCurrentEvent(update.event_id).then(Event => {
-          let Participant = find(Event.participants, {
-            phone: update.addedphone
-          });
-          let Change = {
-            event_id: update.event_id,
-            changed: "Event Left",
-            updater: update.updater,
-            old_value: Participant.phone,
-            new_value: null,
-            date: update.date,
-            time: update.time
-          };
-          stores.ChangeLogs.addChanges(Change).then(() => {
-            stores.Events.removeParticipant(
-              update.event_id,
-              update.new_value,
-              true
-            ).then(() => {
+        stores.Events.removeParticipant(
+          update.event_id,
+          update.new_value,
+          true
+        ).then((Event) => {
+          stores.TemporalUsersStore.getUser(update.updater).then(user => {
+            let Change = {
+              title: "Updates on Main Activity",
+              event_id: update.event_id,
+              changed: "Removed Participant(s) From Main Activity",
+              updater: user,
+              new_value: { data: null, new_value: update.new_value },
+              date: update.date,
+              time: update.time
+            };
+            stores.ChangeLogs.addChanges(Change).then(() => {
               GState.eventUpdated = true;
+              this.infomCurrentRoom(Change, Event, update.event_id)
               resolve();
             });
           });
+
         });
       });
     },
@@ -374,6 +460,7 @@ class UpdatesDispatcher {
             stores.Likes.like(update.event_id, update.updater, true).then(() => {
               stores.Events.likeEvent(update.event_id, true).then(() => {
                 GState.eventUpdated = true;
+                emitter.emit(`liked_${update.event_id}`) //TODO this signal is beign listen to in the Module current_events>public_event>likes
                 resolve();
               });
             });
@@ -404,6 +491,7 @@ class UpdatesDispatcher {
             stores.Likes.unlike(update.new_value, update.updater, true).then(() => {
               stores.Events.unlikeEvent(update.event_id).then(() => {
                 GState.eventUpdated = true;
+                emitter.emit(`liked_${update.event_id}`) //TODO this signal is beign listen to in the Module current_events>public_event>likes
                 resolve();
               });
             });
@@ -1383,7 +1471,7 @@ class UpdatesDispatcher {
                 time: update.time,
               };
               stores.ChangeLogs.addChanges(Change).then(() => {
-                this.infomCurrentRoom(Change,commitee, update.event_id)
+                this.infomCurrentRoom(Change, commitee, update.event_id)
                 resolve()
               })
             })

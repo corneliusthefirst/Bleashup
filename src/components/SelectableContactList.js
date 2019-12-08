@@ -5,6 +5,8 @@ import { View, TouchableWithoutFeedback, TouchableHighlight, TouchableOpacity } 
 import BleashupFlatList from './BleashupFlatList';
 import ProfileWithCheckBox from './myscreens/currentevents/components/PofileWithCheckbox';
 import { indexOf, reject, concat, find } from "lodash"
+import Menu, { MenuDivider, MenuItem } from 'react-native-material-menu';
+
 export default class SelectableContactList extends PureComponent {
     constructor(props) {
         super(props)
@@ -32,8 +34,8 @@ export default class SelectableContactList extends PureComponent {
                 backdropOpacity={0.7}
                 swipeToClose={false}
                 backButtonClose={true}
-                position={"top"}
-                entry={"top"}
+                position={"bottom"}
+                //entry={"top"}
                 coverScreen={true}
                 isOpen={this.props.isOpen}
                 onClosed={() => {
@@ -54,15 +56,15 @@ export default class SelectableContactList extends PureComponent {
                     })
                 }}
                 style={{
-                    height: this.state.inviteViaEmail ? "30%" : "100%",
-                    borderBottomLeftRadius: 8,
-                    borderBottomRightRadius: 8,
+                    height: this.state.inviteViaEmail ? "30%" : "95%",
+                    borderTopLeftRadius: 8,
+                    borderTopRightRadius: 8,
                     backgroundColor: "#FEFFDE",
                     width: "100%"
                 }}
             ><View style={{ display: 'flex', flexDirection: 'row', marginTop: "4%", marginLeft: "2%", }}>
-                    <View style={{ width: "90%" }}>
-                        <Text style={{ fontWeight: '400', fontSize: 25, }}>{this.props.title} </Text>
+                    <View style={{ width: "85%" }}>
+                        <Text style={{ fontWeight: 'bold',fontStyle: 'italic', fontSize: 20, }}>{this.props.title} </Text>
                     </View>
                     <View>
                         <TouchableOpacity onPress={() => requestAnimationFrame(() => {
@@ -75,13 +77,13 @@ export default class SelectableContactList extends PureComponent {
                             })
                         })
                         }>
-                            <View>
+                            <View style={{flexDirection: 'row',}}>
                                 <Icon
                                     style={{ color: "#1FABAB", }}
                                     type="AntDesign"
                                     name="checkcircle"
                                 />
-                                <Label style={{ color: "#1FABAB", marginLeft: "10%",fontWeight: 'bold', }}>Go</Label>
+                                <Text style={{ color: "#1FABAB", fontSize: 20,fontWeight: 'bold',marginTop: "3%",marginLeft: "1%", fontStyle: 'italic',}}>Go</Text>
                             </View>
                         </TouchableOpacity>
                     </View>
@@ -100,7 +102,7 @@ export default class SelectableContactList extends PureComponent {
                         renderItem={(item, index) => {
                             // console.error(item, "pppppp")
                             return item ?
-                                <View>
+                                <View style={{margin: '2%',}}>
                                     <ProfileWithCheckBox checked={this.state.check}
                                         index={indexOf(this.state.checked, item.phone)} phone={item.phone} check={(phone) =>
                                             this.setState({
@@ -111,6 +113,7 @@ export default class SelectableContactList extends PureComponent {
                                         uncheck={(phone) =>
                                             this.setState({ checked: reject(this.state.checked, { phone: phone }), check: false })
                                         }></ProfileWithCheckBox>
+                                    <MenuDivider color="#1FABAB" />
                                 </View> : null
                         }
                         }

@@ -35,9 +35,14 @@ import { observer } from "mobx-react";
                      height: "97%",
                     borderRadius: 8, backgroundColor: '#FEFFDE', width: "100%"
                 }}>
-                <Header><Title>Likers List</Title></Header>
-                <View style={{flex: 1,}}>
+                <View>
+                <View style={{width:"95%",margin: 4,height:44,flexDirection: 'row',}}>
+                <Text style={{fontSize: 22,fontStyle: 'italic',fontWeight: 'bold',width:"80%",marginLeft: "5%",}}>{"Likers"}</Text>
+                <Text style={{marginTop: "3%",}} note>{this.props.likers?this.props.likers.length:0 }{" likers"}</Text>
+                </View>
+                <View style={{}}>
                     <Likers likers={this.props.likers}></Likers>
+                </View>
                 </View>
             </Modal>
 

@@ -120,11 +120,11 @@ class ServerEventListener {
       switch (data.status) {
         case "successful":
           if (data.data) emitter.emit("successful_" + data.id, "data", data.data);
-          if (data.message) emitter.emit("successful_" + data.message.id, data.message.data);
+          if (data.message) emitter.emit("successful_" + data.message.id, data.message);
           break;
         case "unsuccessful":
           if (data.data) emitter.emit("unsuccessful_" + data.id, "data", data.data);
-          if (data.message) emitter.emit("unsuccessful_" + data.message.id, data.message.data);
+          if (data.message) emitter.emit("unsuccessful_" + data.message.id, data.message);
           break;
       }
     }
@@ -148,6 +148,7 @@ class ServerEventListener {
     });
     socket.on("data", datar => {
       data = datar.toString()
+      console.warn(data)
       if (data.includes("_end__start_")) {
         let dataX = data.split("_end__start_")
         if (dataX[0].includes("_start_")) {

@@ -67,8 +67,10 @@ export default class Commitee extends Component {
                     width: "95%", display: 'flex', flexDirection: 'row', marginBottom: "5%",
                 }}>
                     <Text style={{
-                        marginTop: "0%", fontWeight: 'bold',
-                        marginLeft: "3%", fontSize: 28, alignSelf: 'center', width: "80%"
+                        color:"#9EEDD3",
+                        fontWeight: 'bold',
+                        fontStyle: 'italic',
+                        marginLeft: 10, fontSize: 22, alignSelf: 'center', width: "80%"
                     }}>Commitees</Text>
                     <View>
                         <TouchableOpacity onPress={() => requestAnimationFrame(() => { this.props.showCreateCommiteeModal() })}>
@@ -84,6 +86,8 @@ export default class Commitee extends Component {
                             renderItem={(item, index) =>
                                 <CommiteeItem
                                     key={index.toString()}
+                                    master={this.props.master}
+                                    event_id={this.props.event_id}
                                     join={(id) => { this.props.join(id) }}
                                     commitee={item.id ? item : null}
                                     leave={(id) => { this.props.leave(id) }}

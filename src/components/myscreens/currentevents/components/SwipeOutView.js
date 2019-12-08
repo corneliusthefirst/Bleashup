@@ -5,6 +5,7 @@ import UpdateStateIndicator from "./updateStateIndicator";
 import { List, ListItem, Icon, Label } from 'native-base';
 import InvitationModal from "./InvitationModal";
 import autobind from "autobind-decorator";
+import { findIndex } from "lodash"
 import { observer } from "mobx-react";
 import stores from "../../../../stores";
 
@@ -42,7 +43,11 @@ export default class SwipeOutView extends Component {
     @autobind navigateToLogs() {
         stores.Events.isParticipant(this.props.Event.id, stores.Session.SessionStore.phone).then(status => {
             if (status) {
-                this.props.navigation.navigate("ChangeLogs", { ...this.props })
+                this.props.navigation.navigate("Event", {
+                    ...this.props,
+                    Event: this.props.Event,
+                    tab: "ChangeLogs"
+                })
             } else {
                 this.setState({ isDetailsModalOpened: true })
             }
@@ -78,7 +83,7 @@ export default class SwipeOutView extends Component {
                         }>
                             <Icon style={{ fontSize: 25, color: this.props.Event.public || this.props.master ? "#7DD2D2" : "#bfc6ea" }} name="megaphone" type="Entypo">
                             </Icon>
-                            <Label style={{ fontSize: 18, color: this.props.Event.public || this.props.master ? "#7DD2D2" : "#bfc6ea" }}>Publish</Label>
+                            <Label style={{ fontSize: 14, color: this.props.Event.public || this.props.master ? "#7DD2D2" : "#bfc6ea", marginRight: "11%" }}>Publish</Label>
                         </TouchableOpacity>
                     </View>
                     <View style={{ height: this.width, marginBottom: "10%", alignSelf: 'flex-start' }}>
@@ -86,32 +91,34 @@ export default class SwipeOutView extends Component {
                             this.invite()
                         })
                         }>
-                            <Icon style={{ fontSize: 40, color: this.props.master ? "#7DD2D2" : "#bfc6ea" }} name="sc-telegram" type="EvilIcons">
+                            <Icon style={{ fontSize: 40, color: this.props.master || this.props.Event.public ? "#7DD2D2" : "#bfc6ea", }} name="sc-telegram" type="EvilIcons">
                             </Icon>
-                            <Label style={{ fontSize: 20, color: this.props.master ? "#7DD2D2" : "#bfc6ea" }}>Invite</Label>
+                            <Label style={{ fontSize: 14, color: this.props.master || this.props.Event.public ? "#7DD2D2" : "#bfc6ea", marginLeft: "7%", }}>Invite</Label>
                         </TouchableOpacity>}
                     </View>
                     <View style={{ height: this.width, marginBottom: "10%" }}>
                         {<TouchableOpacity onPress={() => {
                             this.props.join()
                         }}>
-                            <Icon style={{ fontSize: 35, color: this.props.Event.joint ? "#7DD2D2" : "#bfc6ea" }} name="account-group"
+                            <Icon style={{ fontSize: 35, color: findIndex(this.props.Event.participant, { phone: stores.LoginStore.user.phone }) >= 0 ? "#7DD2D2" : "#bfc6ea" }} name="account-group"
                                 type="MaterialCommunityIcons">
                             </Icon>
                             <Label style={{
-                                color: this.props.Event.joint ? "#7DD2D2" : "#bfc6ea",
-                                fontSize: 20
+                                color: findIndex(this.props.Event.participant, { phone: stores.LoginStore.user.phone }) >= 0 ? "#7DD2D2" : "#bfc6ea",
+                                fontSize: 14,
+                                marginLeft: "3%",
                             }}
                             >
-                                {this.props.Event.joint ? "Joint" : "Join"}
+                                {findIndex(this.props.Event.participant, { phone: stores.LoginStore.user.phone }) >= 0 ? "Joint" : "Join"}
                             </Label>
                         </TouchableOpacity>}
 
                     </View>
                     <View style={{ height: this.width, marginBottom: "10%", alignSelf: 'flex-start' }}>
-                        <TouchableOpacity onPress={() => {
+                        <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                             this.navigateToLogs()
-                        }}>
+                        })
+                        }>
                             <Icon style={{ fontSize: 30, color: "#1FABAB" }} name="clock" type="Entypo">
                             </Icon>
                             {this.props.Event.upated ? (
@@ -126,7 +133,7 @@ export default class SwipeOutView extends Component {
                                         />
                                     </View>
                                 )}
-                            <Label style={{ fontSize: 20, color: "#1FABAB" }}>{"History"}</Label>
+                            <Label style={{ fontSize: 14, color: "#1FABAB", marginRight: "13%", }}>{"History"}</Label>
                         </TouchableOpacity>
                     </View >
                     {/*<View style={{ height: this.width, marginBottom: "10%", alignSelf: 'flex-start' }}>
@@ -144,7 +151,7 @@ export default class SwipeOutView extends Component {
                         }}>
                             <Icon name="trash" style={{ fontSize: 30, color: "red" }} type="EvilIcons">
                             </Icon>
-                            <Label style={{ fontSize: 20, color: "red" }} >Delete</Label>
+                            <Label style={{ fontSize: 14, color: "red" }} >Delete</Label>
                         </TouchableOpacity>
                     </View>
                 </View>

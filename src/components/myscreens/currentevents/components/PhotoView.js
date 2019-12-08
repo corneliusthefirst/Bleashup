@@ -23,17 +23,17 @@ export default class PhotoView extends Component {
             <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                 this.props.video?this.props.playVideo():this.props.showPhoto(this.props.photo)
             })}>
-                <Image source={{
+                <Image source={!this.props.photo ? require('../../../../../assets/default_event_image.jpeg'):{
                     uri: this.props.photo
                 }
                 }
-                    parmenent={false}
+                    //parmenent={false}
                     style={{
                         height: this.props.height ? this.props.height : 180,
                         width: this.props.width ? this.props.width : "100%",
                         borderRadius: this.props.borderRadius ? this.props.borderRadius : 0
                     }}
-                    resizeMode="contain"
+                    //resizeMode="contain"
                     width={this.props.width}
                 ></Image>
             </TouchableOpacity>

@@ -64,7 +64,7 @@ export default class SWView extends Component {
         let end = moment()
         let daysDiff = Math.floor(moment.duration(end.diff(statDate)).asDays())
         if (daysDiff == 0) {
-            return "Today at " + moment(date).format("h:mm a");
+            return "OnGoing Today from " + moment(date).format("h:mm a");
         } else if (daysDiff == 1) {
             return "Past Since Yesterday at " + moment(date).format("h:mm a")
         } else if (daysDiff > 1 && daysDiff < 7) {
@@ -72,10 +72,10 @@ export default class SWView extends Component {
         } else if (daysDiff == 7) {
             return "Past Since 1 Week Ago at " + moment(date).format("h:mm a")
         } else if (daysDiff == -1) {
-            "Upcoming Tomorrow at" + moment(date).format("h:mm a");
+            return "Upcoming Tomorrow at" + moment(date).format("h:mm a");
         }
         else if (daysDiff < -1) {
-            `Upcoming in ${Math.abs(daysDiff)} at` + moment(date).format("h:mm a");
+            return `Upcoming in ${Math.abs(daysDiff)} Days at ` + moment(date).format("h:mm a");
         } else {
             return `Past since ${moment(date).format("dddd, MMMM Do YYYY")} at ${moment(date).format("h:mm a")}`
         }
@@ -135,13 +135,19 @@ export default class SWView extends Component {
                             height: "100%", width: "100%", backgroundColor: "#FEFFDE",
                             display: 'flex', flexDirection: 'column', //borderRightWidth: 1.25, borderColor: "#1FABAB",
                         }}>
-                            <View style={{ marginLeft: "2%", backgroundColor: "#FEFFDE",width:"100%",height:44 }}><Text style={{ fontWeight: 'bold',  fontSize: 23, color:"#1FABAB"}}>{this.props.event.about.title}</Text>
-                                <Text style={{ alignSelf: 'flex-end', marginRight: "2%", fontStyle: 'italic', color: this.dateDiff(this.props.event.period) > 0 ? "gray" :"#54F5CA" }}>{this.displayDate(this.props.event.period)}</Text>
+                            <View style={{ marginLeft: 5, backgroundColor: "#FEFFDE", width: "100%", height: 44, }}><Text style={{ fontWeight: 'bold', fontSize: 20, marginTop: 2 }}>{this.props.event.about.title}</Text>
+                                <Text style={{ alignSelf: 'flex-end', marginRight: "2%", fontStyle: 'italic',fontWeight: this.props.event.closed?"bold":"400", color: this.props.event.closed ? "red" : this.dateDiff(this.props.event.period) > 0 ? "gray" : "#54F5CA", fontSize: 14, }}>{this.props.event.closed ? "Closed" : this.displayDate(this.props.event.period)}</Text>
 
                             </View>
                             <View style={{ heignt: "60%", display: "flex", flexDirection: 'row', backgroundColor: "#FEFFDE", marginLeft: "1%", }}>
                                 <View style={{ marginTop: "2%", width: "25%", borderWidth: 2, borderColor: this.actionColor, borderRadius: 12 }}>
-                                    <ActionsView ShowMyActivity={()=>this.props.ShowMyActivity()}  showMembers={() => this.props.showMembers()}></ActionsView>
+                                    <ActionsView
+                                        publish={() => this.props.publish()}
+                                        leaveActivity={() => this.props.leaveActivity()}
+                                        inviteContacts={() => this.props.inviteContacts()}
+                                        openSettingsModal={() => this.props.openSettingsModal()}
+                                        ShowMyActivity={(a) => this.props.ShowMyActivity(a)}
+                                        showMembers={() => this.props.showMembers()}></ActionsView>
                                 </View>
                                 <View style={{ width: "5%", }}></View>
                                 <View style={{ width: "70%" }}>
@@ -151,6 +157,7 @@ export default class SWView extends Component {
                             </View>
                             <View style={{ marginTop: "10%", height: 300, }}>
                                 <Commitee
+                                    master={this.props.master}
                                     ref="Commitee"
                                     participant={this.props.event.participant}
                                     creator={this.props.creator}
@@ -185,8 +192,9 @@ export default class SWView extends Component {
                             height: "100%",
                             alignItems: 'center',
                             justifyContent: 'center',
-                        }}><Image style={{ width: this.props.width, height: 130 }}
-                            source={{ uri: this.props.event.background }}></Image>
+                        }}><TouchableOpacity onPress={() => requestAnimationFrame(() => this.props.showActivityPhotoAction())}><Image style={{ width: this.props.width, height: 130 }}
+                                source={this.props.event.bacground ? { uri: this.props.event.background } : 
+                            require('../../../../assets/default_event_image.jpeg')}></Image></TouchableOpacity>
                         </View>
                     </Animated.View>
                 </View></TouchableWithoutFeedback>

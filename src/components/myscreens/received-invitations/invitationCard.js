@@ -30,6 +30,7 @@ import ImageActivityIndicator from '../currentevents/components/imageActivityInd
 import { observer } from 'mobx-react';
 import Requester from "../invitations/Requester"
 import moment from 'moment';
+import { AddParticipant } from '../../../services/cloud_services';
 
 
 const defaultPlaceholderObject = {
@@ -91,7 +92,7 @@ class CardListItem extends Component {
       event_id: this.props.item.event_id,
       status: this.props.item.status
     }
-    Requester.accept(invitation).then(response => {
+    Requester.accept(invitation).then(Participant => {
       this.setState({ accept: true, actioning: !this.state.actioning })
     }).catch(error => {
       Toast.show({
@@ -176,7 +177,7 @@ class CardListItem extends Component {
   }
   componentDidMount() {
     setTimeout(() => {
-      stores.Invitations.translateToinvitationData(this.props.item).then(data => {
+      stores.Invitations.translateToinvitationData(this.props.item,false).then(data => {
         let AccordData = data.sender_status
         max_length = data.sender_status.length
         let dataArray = [{ title: AccordData.slice(0, 35), content: AccordData.slice(35, max_length) }]
@@ -203,7 +204,7 @@ class CardListItem extends Component {
           });
         })
       })
-    }, 20)
+    },this.props.time_delay + 20)
 
   }
   swipeSettings = {
@@ -287,7 +288,7 @@ class CardListItem extends Component {
           </CardItem>
           <CardItem>
             <Left>
-              <TouchableOpacity onPress={() => this.setState({ opening: true, isOpenStatus: true, actioning: !this.state.actioning })} >
+              <TouchableOpacity onPress={() => requestAnimationFrame(() => this.setState({ opening: true, isOpenStatus: true, actioning: !this.state.actioning }))} >
                 {this.state.loading ? null : <CacheImages small thumbnails source={{ uri: this.state.item.sender_Image }}
                 />}
               </TouchableOpacity>
@@ -314,7 +315,7 @@ class CardListItem extends Component {
             </Left>
 
             <Body >
-              <TouchableOpacity onPress={() => this.openDetails()
+              <TouchableOpacity onPress={() => requestAnimationFrame(() => this.openDetails())
               } >
                 {this.state.loading ? null : <Text style={{ marginLeft: -40,fontWeight: 'bold', }}
                 >{this.state.item.event_title}</Text>}

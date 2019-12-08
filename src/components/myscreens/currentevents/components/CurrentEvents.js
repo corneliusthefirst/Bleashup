@@ -12,7 +12,7 @@ import { Icon } from 'native-base';
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenheight = Math.round(Dimensions.get('window').height);
 
-@observer export default class CurrentEvents extends Component {
+export default class CurrentEvents extends Component {
     constructor(props) {
         super(props)
         this.state = {}
@@ -38,17 +38,21 @@ const screenheight = Math.round(Dimensions.get('window').height);
     componentWillUnmount() {
         BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton);
     };
-
+    delay = 0
+    renderPerbatch = 3
     render() {
         return (
             <View style={{ height: "100%", backgroundColor: "#FEFFDE" }}>
                 <BleashupFlatList
                     keyExtractor={(item, index) => item.id}
                     dataSource={this.props.data}
-                    renderItem={(item, index) => <PublicEvent renderDelay={index < 3 ? index * 100 : 2} showPhoto={(url) => this.showPhoto(url)} key={item.id}  {...this.props} Event={item} />}
+                    renderItem={(item, index) => {
+                        this.delay = index % this.renderPerbatch == 0 ? 0 : this.delay + 1
+                        return <PublicEvent renderDelay={this.delay * 100} showPhoto={(url) => this.showPhoto(url)} key={item.id}  {...this.props} Event={item} />
+                    }}
                     firstIndex={0}
-                    renderPerBatch={1}
-                    initialRender={3}
+                    renderPerBatch={this.renderPerbatch}
+                    initialRender={this.renderPerbatch}
                     numberOfItems={this.props.data.length}
                 >
                 </BleashupFlatList>

@@ -37,7 +37,7 @@ export default class ProfileSimple extends Component {
                     <Text style={{
                         marginBottom: "2%",
                         fontWeight: 'bold',
-                    }}>{this.props.profile.nickname}</Text>
+                    }}>{this.props.profile.phone === stores.LoginStore.user.phone?"You ": this.props.profile.nickname}</Text>
                     <Text style={{ marginLeft: "2%",fontStyle: 'italic', }} note>{!(this.props.profile.status === undefined) ? this.props.profile.status.slice(0, 50) : ""}</Text>
                 </View>
                 {/*<ProfileModal

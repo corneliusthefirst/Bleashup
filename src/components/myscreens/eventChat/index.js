@@ -35,7 +35,7 @@ export default class EventChat extends Component {
   componentDidMount() {
     stores.LoginStore.getUser().then(user => {
       let phone = user.phone.replace("00","+")
-      firebase.database().ref(`new_message/${phone}/${this.props.roomID}/new_messages`).once('value', snapshoot => {
+      firebase.database().ref(`new_message/${this.props.activity.id}/${phone}/${this.props.roomID}/new_messages`).once('value', snapshoot => {
         this.props.newMessageCount = snapshoot.val() === null ?
           this.props.newMessageCount : snapshoot.val().lenght
         if (this.props.newMessageCount > 0) {
@@ -209,6 +209,7 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
       addMembers={() => this.props.addMembers()}
       removeMembers={() => this.props.removeMembers()}
       leave={() => this.props.leave()}
+      generallyMember={this.props.generallyMember}
       publish={() => this.props.publish()}
       master={this.props.master}
       public_state={this.props.public_state}
