@@ -351,16 +351,17 @@ class Request {
             background: "",
             participant: [this.Participant()],
             likes: 0,
-            reminds: null,
+            reminds: [],
+            recursiveFrequency:"None",
             public: false,
-            votes: null,
-            highlights: null,
-            contributions: null,
-            must_contribute: null
+            votes: [],
+            highlights: [],
+            contributions: [],
+            must_contribute: []
         }
     }
     Period() {
-        return {
+        return { 
             time: this.Time(),
             date: this.Date()
         }

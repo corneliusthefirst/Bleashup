@@ -40,8 +40,8 @@ import ChangeLogs from "./components/myscreens/changelogs";
 //import EventDetail from "./components/myscreens/eventDetails";
 import EventChat from "./components/myscreens/eventDetails";
 import Reminds from "./components/myscreens/reminds";
-import CreateEventView from "./components/myscreens/invitations/components/createEvent/index"
-import EventDetailView from "./components/myscreens/invitations/components/createEvent/components/EventDetails"
+import CreateEventView from "./components/myscreens/event/createEvent/index"
+import EventDetailView from "./components/myscreens/event/createEvent/components/EventDetails"
 import SendInvitations from "./components/myscreens/sent-invitations/index";
 import MyTasksView  from './components/myscreens/MyTasks/MyTasks'
 
@@ -81,7 +81,7 @@ const AppNavigator = createStackNavigator(
     EventDetailView:{screen:EventDetailView ,navigationOptions: {gesturesEnabled: false}}
   },
   {
-    initialRouteName: "LoginHome",
+    initialRouteName: "Invitation",
     headerMode: "none"
   }
 );

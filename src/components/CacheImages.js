@@ -6,6 +6,7 @@ import { activityIndicatorStyle } from "react-native";
 import Image from 'react-native-scalable-image';
 
 import { Thumbnail } from "native-base"
+
 class CacheImages extends Component {
   constructor(props) {
     super(props)

@@ -7,14 +7,18 @@ import tcpRequest from "../services/tcpRequestData";
 import request from '../services/requestObjects';
 import serverEventListener from "../services/severEventListener"
 export default class highlights {
+ // constructor() {}
+
   @observable highlights = [];
   saveKey = {
-    key: "highlights",
+    key: "highlights", 
     data: []
   };
-  @action addHighlight(H){
+
+   @action addHighlight(H){
     return this.addHighlights([H])
   }
+ 
   @action addHighlights(Highlight) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Highlights => {
@@ -30,10 +34,13 @@ export default class highlights {
     });
   }
 
-  @action removeHighlight(id) {
-    return new Promise((resolve, reject) => {
+   removeHighlight(id) {
+    console.warn(id,"remove highlight 2");
+    return new Promise((resolve, rejectPromise) => {
       this.readFromStore().then(Highlights => {
-        Highlights = reject(Highlights, ["id", id]);
+        console.warn("all higlights",Highlights);
+        Highlights = reject(Highlights,{id,id});
+        console.warn(Highlights,"highlight object deleted");
         this.saveKey.data = Highlights;
         storage.save(this.saveKey.data).then(() => {
           this.highlights = this.saveKey.data;
@@ -136,7 +143,7 @@ export default class highlights {
       });
     });
   }
-  @action updateHighlightURL(newHightlight, inform) {
+  @action updateHighlightUrl(newHightlight, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Highlights => {
         let Highlight = find(Highlights, {
@@ -160,11 +167,27 @@ export default class highlights {
       });
     });
   }
-  @action updateEventHighlights(eventID, newHightlights) {
+
+  @action updateHighlight(newHightlight, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Highlights => {
-        Highlights = reject(Highlights, ["event_id", eventID]);
-        Highlights = Highlights.concat(newHightlights);
+        let Highlight = find(Highlights, {
+          id: newHightlight.id
+        });
+        let index = findIndex(Highlights, {
+          id: newHightlight.id
+        });
+        Highlight.url = newHightlight.url;
+        Highlight.title = newHightlight.title;
+        Highlight.description = newHightlight.description;
+        Highlight.event_id = newHightlight.event_id;
+
+        if (inform) {
+          Highlight.all_updated = true;
+          Highlight.updated = true;
+        }
+        Highlight.update_date = moment().format("YYYY-MM-DD HH:mm");
+        Highlights.splice(index, 1, Highlight);
         this.saveKey.data = sortBy(Highlights, "update_date");
         storage.save(this.saveKey).then(() => {
           this.highlights = this.saveKey.data;
@@ -173,6 +196,46 @@ export default class highlights {
       });
     });
   }
+
+  @action updateEventHighlights(eventID, newHighlights) {
+    return new Promise((resolve, reject) => {
+      this.readFromStore().then(Highlights => {
+        Highlights = reject(Highlights, ["event_id", eventID]);
+        Highlights = Highlights.concat(newHighlights);
+        this.saveKey.data = sortBy(Highlights, "update_date");
+        storage.save(this.saveKey).then(() => {
+          this.highlights = this.saveKey.data;
+          resolve();
+        });
+      });
+    });
+  }
+  
+  @action resetHighlight(newHightlight, inform) {
+    return new Promise((resolve, reject) => {
+      this.readFromStore().then(Highlights => {
+        let Highlight = find(Highlights, {
+          id: newHightlight.id
+        });
+        let index = findIndex(Highlights, {id: newHightlight.id });
+        Highlight.title = newHightlight.title;
+        Highlight.description = newHightlight.description;
+        Highlight.url = newHightlight.url;
+        if (inform) {
+          Highlight.description_updated = true;
+          Highlight.updated = true;
+        }
+        Highlight.update_date = moment().format("YYYY-MM-DD HH:mm");
+        Highlights.splice(index, 1, Highlight);
+        this.saveKey.data = sortBy(Highlights, "update_date");
+        storage.save(this.saveKey).then(() => {
+          this.highlights = this.saveKey.data;
+          resolve();
+        });
+      });
+    });
+  }
+
   readFromStore() {
     return new Promise((resolve, reject) => {
       storage

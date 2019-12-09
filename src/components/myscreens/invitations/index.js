@@ -7,8 +7,8 @@ import stores from "../../../stores";
 import { observer } from "mobx-react";
 import { sortBy } from "lodash"
 import { View } from 'react-native';
-import BleashupScrollView from "../../BleashupScrollView";
 import BleashupFlatList from '../../BleashupFlatList';
+import CreateEvent from '../event/createEvent/CreateEvent';
 
 @observer export default class InvitationView extends Component {
   constructor(props) {

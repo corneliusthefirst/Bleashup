@@ -26,6 +26,8 @@ export default class globalState {
   @observable invitationUpdated = true;
   @observable newHightlight = false;
   @observable newVote = false;
+  @observable dateError = false;
+  @observable timeError = false;
   confimResult = ()=>{}
 
   get newEvent() {
@@ -130,6 +132,21 @@ export default class globalState {
   set ageError(newValue) {
     this.ageError = newValue;
   }
+
+  get dateError() {
+    return this.dateError;
+  }
+  set dateError(newValue) {
+    this.dateError = newValue;
+  }
+
+  get timeError() {
+    return this.timeError;
+  }
+  set timeError(newValue) {
+    this.timeError = newValue;
+  }
+
 
 
   //@observable receivedData = [];

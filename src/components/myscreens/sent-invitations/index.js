@@ -17,6 +17,7 @@ import CardListItem from './invitationCard';
 import ImageActivityIndicator from "../currentevents/components/imageActivityIndicator";
 import { observer } from "mobx-react";
 import stores from '../../../stores';
+
 import BleashupFlatList from '../../BleashupFlatList';
 
 
@@ -44,7 +45,33 @@ class SendInvitations extends Component {
 
   render() {
 
-    return 
+    return this.state.loadingInvitations ? (
+      <Spinner></Spinner>
+    ) : (
+   <Container style={{flex:1}}>
+
+
+        <BleashupFlatList
+          initialRender={4}
+          renderPerBatch={5}
+          firstIndex={0}
+          ref={"sendlist"}
+          keyExtractor={this._keyExtractor}
+          dataSource={this.state.invitations}
+          renderItem={(item, index) => {
+            return (
+              <CardListItem {...this.props} item={item} key={index} parentCardList={this} Invitations={this.state.invitations}>
+              </CardListItem>
+            );
+          }} 
+        >
+        </BleashupFlatList>
+         
+       
+      
+    </Container>
+
+      );
   }
 }
 

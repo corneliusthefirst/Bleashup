@@ -16,7 +16,7 @@ export default class LoginStore {
     profile: "",
     profile_ext: "",
     password: ""
-  };
+  }; 
   @action getUser() {
     return new Promise((resolve, reject) => {
       if (this.user.phone == "" || this.user.password == "") {

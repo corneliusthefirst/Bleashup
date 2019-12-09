@@ -56,7 +56,7 @@ export default class CurrentEvents extends Component {
                     numberOfItems={this.props.data.length}
                 >
                 </BleashupFlatList>
-                {
+                { 
                     // ******************Photo Viewer View ***********************//
                     this.state.showPhoto ?
                         <View style={{ height: screenheight, width: screenWidth, position: "absolute", backgroundColor: "black", }}>
