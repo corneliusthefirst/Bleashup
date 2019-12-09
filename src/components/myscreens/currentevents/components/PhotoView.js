@@ -3,6 +3,7 @@ import CacheImages from "../../../CacheImages";
 import ImageActivityIndicator from "./imageActivityIndicator";
 import { View, TouchableOpacity } from "react-native"
 import Image from 'react-native-scalable-image';
+import { Thumbnail } from 'native-base';
 
 export default class PhotoView extends Component {
     constructor(props) {
@@ -23,19 +24,22 @@ export default class PhotoView extends Component {
             <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                 this.props.video?this.props.playVideo():this.props.showPhoto(this.props.photo)
             })}>
-                <Image source={!this.props.photo ? require('../../../../../assets/default_event_image.jpeg'):{
+                {!this.props.photo ? <Thumbnail style={{
+                    height: this.props.height ? this.props.height : 150,
+                    width: this.props.width ? this.props.width : "100%",
+                    borderRadius: this.props.borderRadius ? this.props.borderRadius : 0
+                }} square source={require('../../../../../assets/default_event_image.jpeg')}></Thumbnail>:<CacheImages thumbnails source={{
                     uri: this.props.photo
-                }
-                }
+                }}
                     //parmenent={false}
                     style={{
-                        height: this.props.height ? this.props.height : 180,
+                        height: this.props.height ? this.props.height : 150,
                         width: this.props.width ? this.props.width : "100%",
                         borderRadius: this.props.borderRadius ? this.props.borderRadius : 0
                     }}
                     //resizeMode="contain"
                     width={this.props.width}
-                ></Image>
+                ></CacheImages>}
             </TouchableOpacity>
             {/*<PhotoModal joined={this.props.joined} hasJoin={this.props.hasJoin} isToBeJoin isOpen={this.state.isModalOpened} image={this.props.photo}
                 onClosed={() => {

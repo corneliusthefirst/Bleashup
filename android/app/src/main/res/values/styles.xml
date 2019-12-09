@@ -28,8 +28,8 @@
         <item name="gallery_take_image_text_color">#1FABAB</item>
         <item name="gallery_ucrop_status_bar_color">#1FABAB</item>
         <item name="gallery_ucrop_toolbar_color">#1FABAB</item>
-        <item name="gallery_ucrop_toolbar_widget_color">#1FABAB</item>
-        <item name="gallery_ucrop_activity_widget_color">#1FABAB</item>
+        <item name="gallery_ucrop_toolbar_widget_color">#FEFEDE</item>
+        <item name="gallery_ucrop_activity_widget_color">#FEFEDE</item>
     <item name="gallery_ucrop_toolbar_title">@string/app_name</item>
     </style>
 

@@ -16,7 +16,7 @@ class CacheImages extends Component {
   componentDidMount() {
     this.setState({
       CacheableImages: imageCacheHoc(this.props.thumbnails ? Thumbnail : Image, {
-        validProtocols: ['http', 'https'],
+        validProtocols: ['http', 'https','file'],
         defaultPlaceholder: {
           component: ImageActivityIndicator,
           props: {

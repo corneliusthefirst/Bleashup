@@ -1,9 +1,9 @@
 import React, { PureComponent } from 'react';
-import { Content, Text, Button } from 'native-base';
+import { Content, Text, Button, Icon } from 'native-base';
 import { View } from "react-native"
 import Modal from "react-native-modalbox"
 
-export default class AreYouSure extends PureComponent {
+export default class PhotoInputModal extends PureComponent {
     constructor(props) {
         super(props)
         this.state = {
@@ -36,20 +36,18 @@ export default class AreYouSure extends PureComponent {
                     }, 20)
                 }}
                 style={{
-                    height: "40%",
+                    height: "50%",
                     borderRadius: 10, backgroundColor: '#FEFFDE', width: "90%"
                 }}
             >
                 <Content style={{ margin: "10%", flexDirection: 'column', }}>
                     <View style={{ width: "100%", height: 50 }}>
-                        <Text style={{ fontSize: 30, alignSelf: 'center', fontWeight: 'bold', fontStyle: 'italic', }}>{this.props.title}</Text>
+                        <Text style={{ fontSize: 30, alignSelf: 'center', fontWeight: 'bold', fontStyle: 'italic', }}>{"Select Action"}</Text>
                     </View>
-                    <View style={{ margin: '5%',  }}>
-                        <Text style={{ color: 'grey'}}>{this.props.message}</Text>
-                    </View>
-                    <View style={{ alignSelf: 'flex-end', flexDirection: 'row', }}>
-                        <Button onPress={() => this.props.closed()} style={{ width: 100, marginRight: 60, alignItems: 'center',borderRadius: 10, }} ><Text style={{marginLeft: "15%",}}>Cancel</Text></Button>
-                        <Button onPress={() => this.props.callback()} style={{ width: 100, alignItems: 'center',borderRadius: 10, }}  danger><Text style={{ marginLeft: "15%", }}>{this.props.ok ? this.props.ok : "Leave"}</Text></Button>
+                    <View style={{ margin: '5%', }}>
+                        <Button onPress={() => this.props.showActivityPhoto()} transparent><Icon type={"Entypo"} name={"eye"}></Icon><Text>View Photo</Text></Button>
+                        <Button onPress={() => this.props.openCamera()} transparent><Icon type={"MaterialIcons"} name={"insert-photo"}></Icon><Text>Select From Galery</Text></Button>
+                        <Button onPress={() => this.props.openInternet()} transparent><Icon type={"FontAwesome"} name={"google"}></Icon><Text>Download From Google</Text></Button>
                     </View>
                 </Content>
             </Modal>

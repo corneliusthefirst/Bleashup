@@ -517,26 +517,26 @@ class Request {
             tcpRequest.unpublishEvent({ event_id: event_id }, event_id + "_unpublish").then(JSONData => {
                 serverEventListener.sendRequest(JSONData, event_id + "_unpublish").then(() => {
                     stores.Events.unpublishEvent(event_id).then(() => {
-                            let Change = {
-                                id: uuid.v1(),
-                                title: "Update On The Main Activity",
-                                updated: 'publish',
-                                event_id: event_id,
-                                changed: "UnPublished The Activity",
-                                updater: stores.LoginStore.user,
-                                new_value: { data: null, new_value: true },
-                                date: moment().format(),
-                                time: null
-                            }
-                            stores.ChangeLogs.addChanges(Change).then(() => {
-                                resolve("done")
-                            })
+                        let Change = {
+                            id: uuid.v1(),
+                            title: "Update On The Main Activity",
+                            updated: 'publish',
+                            event_id: event_id,
+                            changed: "UnPublished The Activity",
+                            updater: stores.LoginStore.user,
+                            new_value: { data: null, new_value: true },
+                            date: moment().format(),
+                            time: null
+                        }
+                        stores.ChangeLogs.addChanges(Change).then(() => {
+                            resolve("done")
                         })
                     })
-                }).catch((e) => {
-                    console.warn(e)
-                    reject(e)
                 })
+            }).catch((e) => {
+                console.warn(e)
+                reject(e)
+            })
         })
     }
     update_notes(event, newNotes) {
@@ -653,7 +653,7 @@ class Request {
                                     id: uuid.v1(),
                                     title: "Updates On Main Activity",
                                     updated: "recurrency",
-                                    event_id:event.id,
+                                    event_id: event.id,
                                     updater: stores.LoginStore.user,
                                     changed: "Changed The Recurrency Configuration of the Activity",
                                     new_value: { data: null, new_value: recurrentUpdate },
@@ -685,7 +685,7 @@ class Request {
                                     id: uuid.v1(),
                                     title: "Updates On Main Activity",
                                     updated: "close",
-                                    event_id:event.id,
+                                    event_id: event.id,
                                     updater: stores.LoginStore.user,
                                     changed: !newState ? 'Opened' : 'Closed' + " The Main Activity",
                                     new_value: { data: null, new_value: null },
@@ -717,7 +717,7 @@ class Request {
                                     id: uuid.v1(),
                                     title: "Updates On Main Activity",
                                     updated: "calendar_id",
-                                    event_id:event.id,
+                                    event_id: event.id,
                                     updater: stores.LoginStore.user,
                                     changed: "Changed The Calendar The Main Activity",
                                     new_value: { data: null, new_value: null },
@@ -753,9 +753,9 @@ class Request {
                                     resolve(t1 + t2 + t3 + t4 + t5)
                                 })
                             else if (event.public !== settings.public_new && !settings.public_new)
-                            this.unpublish(event.id).then((t5) =>{
-                                resolve(t1 + t2 + t3 + t4 + t5)
-                            })
+                                this.unpublish(event.id).then((t5) => {
+                                    resolve(t1 + t2 + t3 + t4 + t5)
+                                })
                             else resolve(t1 + t2 + t3 + t4)
                         }).catch((e) => {
                             reject(e)
@@ -769,6 +769,36 @@ class Request {
             }).catch((e) => {
                 reject(e)
             })
+        })
+    }
+
+    changeBackground(event_id, background) {
+        return new Promise((resolve, reject) => {
+            tcpRequest.UpdateCurrentEvent(stores.LoginStore.user.phone, event_id,
+                'background', background, event_id + "_background").then(JSONData => {
+                    serverEventListener.sendRequest(JSONData,event_id+"_background").then(response =>{
+                        console.warn(response)
+                        stores.Events.updateBackground(event_id,background,false).then(() =>{
+                            let Change = {
+                                id: uuid.v1(),
+                                title: "Updates On Main Activity",
+                                updated: "background",
+                                event_id: event_id,
+                                updater: stores.LoginStore.user,
+                                changed: "Changed The Background Photo Of The Main Activity",
+                                new_value: { data: null, new_value: background },
+                                date: moment().format(),
+                                time: null
+                            }
+                            stores.ChangeLogs.addChanges(Change).then(() =>{
+                                resolve("ok")
+                            })
+                        })
+                    }).catch((error) =>{
+                        console.warn(error)
+                        reject(error)
+                    })
+                })
         })
     }
 }

@@ -54,7 +54,7 @@ export default class ChangeBox extends Component {
                             <View style={{ flexDirection: 'row', }}>
                                 <Text>{this.props.change.changed}</Text>
                             </View>
-                            <Text style={{ fontStyle: 'italic', }}>{typeof this.props.change.new_value.new_value === "string" ? this.props.change.new_value.new_value : ""}</Text>
+                            <Text style={{ fontStyle: 'italic', }}>{typeof this.props.change.new_value.new_value === "string" && !testForURL(this.props.change.new_value.new_value) ? this.props.change.new_value.new_value : ""}</Text>
                         </View>
                     </View>
                 </View>

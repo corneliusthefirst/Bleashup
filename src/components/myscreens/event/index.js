@@ -1,35 +1,14 @@
 import React, { Component } from "react";
 import {
-  Platform,
-  Text,
   View,
-  ScrollView,
   Dimensions,
   BackHandler,
-  ToastAndroid
-} from "react-native";
+  StatusBar
+} from 'react-native';
 import {
-  Header,
-  Title,
-  Icon,
-  Tabs,
-  Left,
-  Card,
-  CardItem,
-  Tab,
-  Button,
-  ScrollableTab,
-  Body,
-  TabHeading,
-  Right,
-  H1,
-  H3,
-  H2,
-  ListItem,
   Spinner,
   Toast,
 } from "native-base";
-import ImageActivityIndicator from "../currentevents/components/imageActivityIndicator";
 import EventDatails from "../eventDetails";
 import Remind from "../reminds";
 import Highlights from "../highlights";
@@ -37,12 +16,10 @@ import Votes from "../votes";
 import { reject } from "lodash"
 import EventChat from "../eventChat";
 import Contributions from "../contributions";
-import autobind from "autobind-decorator";
-import { TouchableHighlight, TouchableOpacity } from "react-native-gesture-handler";
-import UpdateStateIndicator from "../currentevents/components/updateStateIndicator";
 import BleashupFlatList from "../../BleashupFlatList";
 import SWView from './SWView';
 import SideMenu from 'react-native-side-menu';
+import ImagePicker from 'react-native-customized-image-picker';
 import ChangeLogs from "../changelogs";
 import ParticipantModal from "../../ParticipantModal";
 import ContactsModal from "../../ContactsModal";
@@ -67,6 +44,12 @@ import SettingsModal from "./SettingsModal";
 import CalendarSynchronisationModal from "./CalendarSynchronisationModal";
 import CalendarServe from '../../../services/CalendarService';
 import SetAlarmPatternModal from "./SetAlarmPatternModal";
+import PhotoInputModal from "./PhotoInputModal";
+import PhotoViewer from "./PhotoViewer";
+import rnFetchBlob from 'rn-fetch-blob';
+import * as config from "../../../config/bleashup-server-config.json"
+const AppDir = rnFetchBlob.fs.dirs.SDCardDir + '/Bleashup'
+
 const screenWidth = Math.round(Dimensions.get('window').width);
 
 var swipeoutBtns = [
@@ -77,6 +60,10 @@ var swipeoutBtns = [
 export default class Event extends Component {
   constructor(props) {
     super(props);
+    this.uploadURL = config.file_server.protocol +
+      "://" + config.file_server.host + ":" + config.file_server.port + "/photo/save"
+    this.baseURL = config.file_server.protocol +
+      "://" + config.file_server.host + ":" + config.file_server.port + '/photo/get/'
     const { initialPage } = this.props;
     this.state = {
       currentPage: "",
@@ -104,76 +91,10 @@ export default class Event extends Component {
     members: [],
     isOpen: false
   }
-  swipoutSetting = {
-    close: true,
-    autoClose: true,
-    sensitivity: 100,
-    left: [
-      {
-        component: <SWView master={true} Event={{ public: true }}></SWView>
-      }
-    ],
-  }
-
-  TabsNames = [
-    { name: "EventDetails" },
-    { name: "EventChat" },
-    { name: "Contributions" },
-    { name: "Votes" },
-    { name: "Highlights" },
-    { name: "Reminds" },
-  ]
-  Names = {
-    Contributions: "Contributions",
-    Votes: "Votes",
-    Highlights: "Highlights",
-    Reminds: "Reminds",
-    EventChat: "Chat",
-    EventDetails: "Details"
-  }
-
-  dropInitialRoute(initalPage) {
-    return reject(this.TabsNames, { "name": initalPage })
-  }
-
-  TabsBody = {
-    "Contributions": <Contributions {...this.state} />,
-    "Votes": <Votes {...this.state} />,
-    "Highlights": <Highlights {...this.props} />,
-    "Reminds": <Remind {...this.props} />,
-    "Chat": <EventChat {...this.props} />,
-    "Details": (<EventDatails {...this.props} />)
-  }
-
   textStyle = {
     fontSize: 15
   }
-
-  TabHeadings = {
-    Contributions: <Text style={this.textStyle}>Contributions</Text>,
-    Votes: <Text style={this.textStyle}>Votes</Text>,
-    Highlights: <Text style={this.textStyle}>Highlights</Text>,
-    Reminds: <Text style={this.textStyle}>Reminds</Text>,
-    EventChat: <Text style={this.textStyle}>Chat</Text>,
-    EventDetails: <Text style={this.textStyle}>Details</Text>
-  }
-  tabStyle = {};
-  activeTabStyle = {
-    color: "#FEFFDE",
-    fontWeight: "bold"
-  };
-  @autobind goToChangeLogs() {
-    this.props.navigation.navigate("ChangeLogs", { ...this.props })
-  }
   currentWidth = screenWidth * 2 / 3
-  blinkerSize = 35;
-  changeLogIndicatorStyle = {
-    margin: "-40%",
-    marginTop: "85%"
-  }
-  @autobind goToHome() {
-    this.props.navigation.navigate("Home");
-  }
   isOpen = this.props.navigation.getParam('isOpen') ? this.props.navigation.getParam('isOpen') : false
   renderMenu(NewMessages) {
     //console.error(this.props.navigation.getParam("Event").participant)
@@ -229,6 +150,12 @@ export default class Event extends Component {
             hideTitle: true
           })
         }}
+          openPhoto={(url) => {
+            this.setState({
+              showPhoto: true,
+              photo: url
+            })
+          }}
           showContacts={(contacts) => {
             this.setState({
               contactList: contacts,
@@ -830,6 +757,11 @@ export default class Event extends Component {
       isSettingsModalOpened: true
     })
   }
+  openPhotoSelectorModal() {
+    this.setState({
+      isSelectPhotoInputMethodModal: true
+    })
+  }
   leaveActivity() {
     this.isOpen = true;
     if (!this.state.working) {
@@ -929,6 +861,52 @@ export default class Event extends Component {
     })
 
   }
+  openCamera() {
+    this.setState({
+      isSelectPhotoInputMethodModal: false
+    })
+    ImagePicker.openPicker({
+      cropping: true,
+      isCamera: true,
+      //width:400,
+      //height:300,
+      //openCameraOnStart: true,
+      returnAfterShot: true,
+      compressQuality: 50
+    }).then(response => {
+      this.setState({
+        working: true
+      })
+      let temp = response[0].path.split('/');
+      this.task = rnFetchBlob.fetch("POST", this.uploadURL, {
+        'content-type': 'multipart/form-data',
+      }, [{
+        name: "file",
+        filename: temp[temp.length - 1],
+        type: response[0].mime,
+        size: response[0].size,
+        data: rnFetchBlob.wrap(response[0].path)
+      }])
+      this.task.then(respon => {
+        let background = this.baseURL + respon.data
+        Requester.changeBackground(this.event.id, background).then(res => {
+          console.warn(res)
+          this.initializeMaster()
+        }).catch(err => {
+          this.setState({
+            working: false
+          })
+          Toast.show({ text: "Sorry , We are Unable To Perfrom This Action" })
+        })
+      })
+      this.task.catch(error => {
+        console.warn("catching activity bacground Photo upload ", error)
+        this.setState({
+          working: false
+        })
+      })
+    })
+  }
   render() {
     return (<SideMenu autoClosing={true} onMove={(position) => {
 
@@ -938,6 +916,7 @@ export default class Event extends Component {
       menu={<View><SWView
         ref="swipperView"
         publish={() => this.publish()}
+        showActivityPhotoAction={() => this.openPhotoSelectorModal()}
         leaveActivity={() => this.member ? this.setState({
           isAreYouSureModalOpened: true,
           warnDescription: "Are You Sure You Want To Leave This Activity ?",
@@ -976,6 +955,7 @@ export default class Event extends Component {
         event={this.event}
         master={this.master}
         public={this.event.public}></SWView></View>}>
+      <StatusBar hidden={this.state.showPhotoy ? true : false} barStyle="dark-content" backgroundColor={this.state.showPhoto ? 'black' : "#FEFFDE"}></StatusBar>
       <View style={{ height: "100%", backgroundColor: "#FEFFDE" }}>
         {this.state.fresh ? <Spinner size={"small"}></Spinner> :
           this.renderMenu()
@@ -1123,11 +1103,31 @@ export default class Event extends Component {
         ></CalendarSynchronisationModal> : null}
         {this.state.isSetPatternModalOpened ? <SetAlarmPatternModal
           save={pattern => this.addToCalendar(pattern)}
-          date={this.event.period} isOpen={this.state.isSetPatternModalOpened} closed={() => {
+          date={this.event.period}
+          isOpen={this.state.isSetPatternModalOpened} closed={() => {
             this.setState({
               isSetPatternModalOpened: false
             })
           }}></SetAlarmPatternModal> : null}
+        <PhotoInputModal
+          showActivityPhoto={() => {
+            this.setState({
+              showPhoto: true,
+              isSelectPhotoInputMethodModal: false,
+              photo: this.event.background
+            })
+          }}
+          openCamera={() => this.openCamera()}
+          isOpen={this.state.isSelectPhotoInputMethodModal}
+          closed={() => this.setState({
+            isSelectPhotoInputMethodModal: false
+          })}></PhotoInputModal>
+        {this.state.showPhoto ? <PhotoViewer open={this.state.showPhoto} photo={this.state.photo} hidePhoto={() => {
+          this.setState({
+            showPhoto: false,
+            isSelectPhotoInputMethodModal: false
+          })
+        }}></PhotoViewer> : null}
       </View>
     </SideMenu>
     );

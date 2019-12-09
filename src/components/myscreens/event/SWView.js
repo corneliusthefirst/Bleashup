@@ -136,7 +136,7 @@ export default class SWView extends Component {
                             display: 'flex', flexDirection: 'column', //borderRightWidth: 1.25, borderColor: "#1FABAB",
                         }}>
                             <View style={{ marginLeft: 5, backgroundColor: "#FEFFDE", width: "100%", height: 44, }}><Text style={{ fontWeight: 'bold', fontSize: 20, marginTop: 2 }}>{this.props.event.about.title}</Text>
-                                <Text style={{ alignSelf: 'flex-end', marginRight: "2%", fontStyle: 'italic',fontWeight: this.props.event.closed?"bold":"400", color: this.props.event.closed ? "red" : this.dateDiff(this.props.event.period) > 0 ? "gray" : "#54F5CA", fontSize: 14, }}>{this.props.event.closed ? "Closed" : this.displayDate(this.props.event.period)}</Text>
+                                <Text style={{ alignSelf: 'flex-end', marginRight: "2%", fontStyle: 'italic', fontWeight: this.props.event.closed ? "bold" : "400", color: this.props.event.closed ? "red" : this.dateDiff(this.props.event.period) > 0 ? "gray" : "#54F5CA", fontSize: 14, }}>{this.props.event.closed ? "Closed" : this.displayDate(this.props.event.period)}</Text>
 
                             </View>
                             <View style={{ heignt: "60%", display: "flex", flexDirection: 'row', backgroundColor: "#FEFFDE", marginLeft: "1%", }}>
@@ -190,11 +190,13 @@ export default class SWView extends Component {
                     }]}>
                         <View style={{
                             height: "100%",
+                            width: screenWidth * 2 / 3,
                             alignItems: 'center',
                             justifyContent: 'center',
-                        }}><TouchableOpacity onPress={() => requestAnimationFrame(() => this.props.showActivityPhotoAction())}><Image style={{ width: this.props.width, height: 130 }}
-                                source={this.props.event.bacground ? { uri: this.props.event.background } : 
-                            require('../../../../assets/default_event_image.jpeg')}></Image></TouchableOpacity>
+                        }}><TouchableOpacity onPress={() => requestAnimationFrame(() => this.props.showActivityPhotoAction())}>
+                                <Image width={(screenWidth * 2 / 3) - 5} style={{ width: "100%", height: "100%" }}
+                                    source={this.props.event.background ? { uri: this.props.event.background } :
+                                        require('../../../../assets/default_event_image.jpeg')}></Image></TouchableOpacity>
                         </View>
                     </Animated.View>
                 </View></TouchableWithoutFeedback>

@@ -20,6 +20,7 @@ import Timeline from 'react-native-timeline-flatlist'
 import BleashupTimeLine from '../../BleashupTimeLine';
 import moment from "moment";
 import emitter from '../../../services/eventEmiter';
+import testForURL from '../../../services/testForURL';
 
 export default class ChangeLogs extends Component {
   constructor(props) {
@@ -73,7 +74,10 @@ export default class ChangeLogs extends Component {
     } else if (Array.isArray(change.new_value.new_value) && change.new_value.new_value[0] && change.new_value.new_value[0].includes("00")) {
       console.warn("showing contacts")
       this.props.showContacts(change.new_value.new_value)
-    } else if (typeof change.new_value.new_value === "string" || 
+    } else if(typeof change.new_value.new_value === "string" && testForURL(change.new_value.new_value)){
+      this.props.openPhoto(change.new_value.new_value)
+    }
+    else if (typeof change.new_value.new_value === "string" || 
     (Array.isArray(change.new_value.new_value) && typeof change.new_value.new_value[0] === "string") ||
     typeof change.new_value.new_value === 'object') {
       this.props.showContent(change.new_value.new_value)

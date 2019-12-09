@@ -344,7 +344,7 @@ class PublicEvent extends Component {
                 isToBeJoint hasJoin={this.props.Event.joint || this.state.joint} onOpen={() => this.onOpenPhotoModal()} style={{
                   width: "70%",
                   marginLeft: "4%"
-                }} photo={this.props.Event.background} width={170} height={125} borderRadius={6} /> : null}
+                }} photo={this.props.Event.background} width={170} height={100} borderRadius={6} /> : null}
             </Left>
             <Right >
               {this.state.isMount ? <MapView style={{ marginRight: "11%" }}
