@@ -12,7 +12,7 @@ import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-
 import autobind from "autobind-decorator";
 import CacheImages from "../../../../CacheImages";
 import Swipeout from 'react-native-swipeout';
- 
+import PhotoEnlargeModal from "../../../invitations/components/PhotoEnlargeModal";
 
 let {height, width} = Dimensions.get('window')
 
@@ -20,7 +20,7 @@ export default class HighlightCardDetail extends Component {
     constructor(props) {
         super(props)
         this.state={
-
+          enlargeImage:false
          }
     }
 
@@ -43,14 +43,17 @@ export default class HighlightCardDetail extends Component {
                <Text style={{color:'green',fontSize:20,fontWeight:"400"}}>{this.props.item.title}</Text>
             </View>
             <View>
-              <Image source={{uri:this.props.item.url}} style={{width:"92%",marginLeft:"4%",marginRight:"4%",marginBottom:"4%",borderRadius:5,height:height/3}}></Image>
+              <TouchableOpacity onPress={()=>{this.setState({enlargeImage:true})}}>
+              <Image   source={{uri:this.props.item.url}} style={{width:"92%",marginLeft:"4%",marginRight:"4%",marginBottom:"4%",borderRadius:5,height:height/3 + height/11}}></Image>
+              </TouchableOpacity>
             </View>
             <View style={{margin:"5%",fontStyle:'italic'}}>
              <Text>{this.props.item.description}</Text>
             </View>
             </View>
             </ScrollView>
-        
+            <PhotoEnlargeModal isOpen={this.state.enlargeImage} onClosed={() => this.setState({ enlargeImage: false })} photo={this.props.item.url} />
+              
             </Modal>
 
 

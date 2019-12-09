@@ -31,15 +31,7 @@ export default class EventTitle extends Component {
           defaultDate:{year:2019,month:2,day:16},
           defaultTime:new Date(),
           time:{hours:"",minutes:""},
-          inputTimeValue:"",
-          recursiveFrequency:"None", 
-          reminds: [
-            {label:"None", value: 0},
-            {label:"Daily", value: 1 },
-            {label:"Weekly", value: 2 },
-            {label:"Monthly", value: 3}
-            ],
-            radioValue:0
+          inputTimeValue:""
          }
 
          stores.Events.readFromStore().then(Events =>{
@@ -49,9 +41,9 @@ export default class EventTitle extends Component {
            this.setState({period:event.period});
 
            //set recursive frequency label and value
-           this.setState({recursiveFrequency:event.recursiveFrequency})
-           let remind =  find(this.state.reminds, { label:event.recursiveFrequency});
-           this.setState({radioValue:remind.value});
+          /* this.setState({recursiveFrequency:event.recursiveFrequency})
+             let remind =  find(this.state.reminds, { label:event.recursiveFrequency});
+             this.setState({radioValue:remind.value});*/
 
            if(event.period.time.hour!="" && event.period.time.mins!=""){
            this.setState({inputTimeValue:event.period.time.hour+" : "+event.period.time.mins});
@@ -160,7 +152,7 @@ export default class EventTitle extends Component {
                 onClosed={this.props.onClosed}
                 onClosingState={()=>{this.setState({show:false})}}
                 style={{
-                    height: height/2 + height/7, borderRadius: 15,
+                    height: height/2 - height/12 , borderRadius: 15,
                     backgroundColor:"#FEFFDE",borderColor:'black',borderWidth:1,width: "98%",
                     marginTop:"-3%"
                 }}
@@ -169,7 +161,7 @@ export default class EventTitle extends Component {
                 backdropPressToClose={false}
                 >
 
-               <View  style={{height:"27%",width:"100%",alignItems:'center',justifyContent:'center'}}>
+               <View  style={{height:"27%",width:"100%",alignItems:'center',justifyContent:'center',marginTop:"9%"}}>
                    <View>
                    <Text style={{alignSelf:'flex-start',margin:"3%",fontWeight:"400",fontSize:17}} >Event Title :</Text>
                     <Item  style={{borderColor:'black',width:"95%"}} rounded>
@@ -180,46 +172,10 @@ export default class EventTitle extends Component {
     
                 </View>
 
-                <View style={{height:"27%",width:"100%",alignItems:'center'}}>
-                  <Text style={{alignSelf:'flex-start',margin:"4%",fontWeight:"400",fontSize:17}} >Recursive Remind Frequency :</Text>
-                   <RadioForm
-                     radio_props={this.state.reminds}
-                     initial={this.state.radioValue}
-                     buttonColor={"#1FABAB"}
-                     selectedButtonColor={"green"}
-                     buttonWrapStyle={{marginRight:20}}
-                     formHorizontal={true}
-                     labelHorizontal={false}
-                     onPress={(value)=>{
 
-                      switch(value){
-                        case 1:
-                        this.setState({recursiveFrequency:"Daily"})
-                        stores.Events.updateRecursiveFrequency("newEventId",this.state.recursiveFrequency,false).then(()=>{});
-                        //this.setState({radioValue:1});
-                        break
-                        case 2:
-                          this.setState({recursiveFrequency:"Weekly"})
-                          stores.Events.updateRecursiveFrequency("newEventId",this.state.recursiveFrequency,false).then(()=>{});
-                          //this.setState({radioValue:2});
-                          break
-                        case 3:
-                          this.setState({recursiveFrequency:"Monthly"})
-                          stores.Events.updateRecursiveFrequency("newEventId",this.state.recursiveFrequency,false).then(()=>{});
-                          //this.setState({radioValue:3});
-                          break 
-                        default:
-                            this.setState({recursiveFrequency:"None"})
-                            stores.Events.updateRecursiveFrequency("newEventId",this.state.recursiveFrequency,false).then(()=>{});
-                            //this.setState({radioValue:0});
-                            break
-                        }                      
-                     }}
-                     />
 
-                </View>
-
-       <View style={{height:"37%",flexDirection:"column",justifyContent:"space-between"}}>
+       <View style={{height:"37%",marginTop:"8%",flexDirection:"column",justifyContent:"space-between"}}>
+            
             <Item rounded style={{marginLeft:"1%",marginRight:"1%"}} error={globalState.dateError}>
             <Icon
               active
@@ -291,11 +247,6 @@ export default class EventTitle extends Component {
         
         </View>
      </Item>
-     <View style={{alignSelf:'flex-end'}}>
-             <Button style={{width:"15%",borderRadius:8,marginRight:"3%",backgroundColor:'#1FABAB',justifyContent:'center',alignItems:'center'}} onPress={()=>{}}>
-              <Text style={{color:"#FEFFDE"}}>OK</Text>
-             </Button> 
-    </View>
 
     </View>
 
@@ -306,3 +257,67 @@ export default class EventTitle extends Component {
     )}
 
     }
+
+
+
+
+
+
+
+
+/**
+ *           recursiveFrequency:"None", 
+          reminds: [
+            {label:"None", value: 0},
+            {label:"Daily", value: 1 },
+            {label:"Weekly", value: 2 },
+            {label:"Monthly", value: 3}
+            ],
+            radioValue:0
+
+ *                 <View style={{height:"27%",width:"100%",alignItems:'center'}}>
+                  <Text style={{alignSelf:'flex-start',margin:"4%",fontWeight:"400",fontSize:17}} >Recursive Remind Frequency :</Text>
+                   <RadioForm
+                     radio_props={this.state.reminds}
+                     initial={this.state.radioValue}
+                     buttonColor={"#1FABAB"}
+                     selectedButtonColor={"green"}
+                     buttonWrapStyle={{marginRight:20}}
+                     formHorizontal={true}
+                     labelHorizontal={false}
+                     onPress={(value)=>{
+
+                      switch(value){
+                        case 1:
+                        this.setState({recursiveFrequency:"Daily"})
+                        stores.Events.updateRecursiveFrequency("newEventId",this.state.recursiveFrequency,false).then(()=>{});
+                        //this.setState({radioValue:1});
+                        break
+                        case 2:
+                          this.setState({recursiveFrequency:"Weekly"})
+                          stores.Events.updateRecursiveFrequency("newEventId",this.state.recursiveFrequency,false).then(()=>{});
+                          //this.setState({radioValue:2});
+                          break
+                        case 3:
+                          this.setState({recursiveFrequency:"Monthly"})
+                          stores.Events.updateRecursiveFrequency("newEventId",this.state.recursiveFrequency,false).then(()=>{});
+                          //this.setState({radioValue:3});
+                          break 
+                        default:
+                            this.setState({recursiveFrequency:"None"})
+                            stores.Events.updateRecursiveFrequency("newEventId",this.state.recursiveFrequency,false).then(()=>{});
+                            //this.setState({radioValue:0});
+                            break
+                        }                      
+                     }}
+                     />
+
+                </View>
+
+           <View style={{alignSelf:'flex-end'}}>
+             <Button style={{width:"15%",borderRadius:8,marginRight:"3%",backgroundColor:'#1FABAB',justifyContent:'center',alignItems:'center'}} onPress={()=>{}}>
+              <Text style={{color:"#FEFFDE"}}>OK</Text>
+             </Button> 
+           </View>
+
+ */

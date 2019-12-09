@@ -687,7 +687,7 @@ export default class events {
         Events[index].highlights = dropWhile(
           Events[index].highlights,
           element => element == HighlightID
-        );
+        ); 
         console.warn(Events,"event with deleted object 1");
         if (inform) {
           Events[index].highlight_removed = true;
@@ -703,6 +703,7 @@ export default class events {
   }
 
   @action addHighlight(EventID, HighlightID, inform) {
+    console.warn(HighlightID)
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let index = findIndex(Events, {
@@ -710,18 +711,21 @@ export default class events {
         });
         if (index >= 0) {
           if (Events[index].highlights.length !== 0)
-            Events[index].highlights = uniq(Events[index].highlights.unshift(HighlightID));
+            Events[index].highlights[Events[index].highlights.length] = HighlightID; 
+          
           else Events[index].highlights = [HighlightID]
           if (inform) {
             Events[index].highlight_added = true;
             Events[index].updated = true
           }
+          console.warn(Events,"having the new id");
           this.saveKey.data = Events;
           storage.save(this.saveKey).then(() => {
             this.setProperties(this.saveKey.data, inform);
             resolve();
           });
-        } else {
+        } 
+       else {
           let EID = requestObject.EventID();
           EID.event_id = EventID;
           tcpRequest.getCurrentEvent(EID, EventID).then(JSONData => {

@@ -1,11 +1,11 @@
 import React, { Component } from "react";
 import {
-  Content, Card, CardItem, Text, Body, Container, Icon, Header,
-  Form, Item, Title, Input, Left, Right, H3, H1, H2, Spinner,
+  Content, Card, CardItem, Body, Container, Icon, Header,
+  Form, Item, Title, Input, Left, Right, H3, H1, H2, Spinner,Root,
   Button, InputGroup, DatePicker, Thumbnail, Alert,Textarea,List,ListItem,Label
 } from "native-base";
  
-import { StyleSheet, View,Image,TouchableOpacity,FlatList,ScrollView, Dimensions} from 'react-native';
+import {Linking,Text,StyleSheet, View,Image,TouchableOpacity,FlatList,ScrollView, Dimensions} from 'react-native';
 import ActionButton from 'react-native-action-button';
 import Modal from 'react-native-modalbox';
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
@@ -16,11 +16,18 @@ import PhotoEnlargeModal from "../../../invitations/components/PhotoEnlargeModal
 import ImagePicker from 'react-native-image-picker';
 import  stores from '../../../../../stores/index';
 import {observer} from 'mobx-react'
+import { filter,uniqBy,head,orderBy,find,findIndex,reject,uniq,indexOf,forEach,dropWhile } from "lodash";
+import request from "../../../../../services/requestObjects";
 
-const highlightData = stores.Events.highlightData
+import EventTitle from "./EventTitle";
+import EventPhoto from "./EventPhoto";
+import EventLocation from "./EventLocation";
+import EventDescription from "./EventDescription";
+import EventHighlights from "./EventHighlights";
+import Hyperlink from 'react-native-hyperlink';
 
 
-let {height, width} = Dimensions.get('window')
+let {height, width} = Dimensions.get('window');
 
 
 @observer
@@ -31,35 +38,78 @@ export default class EventDetailView extends Component {
         this.state={
           enlargeImage:false,
           initialScrollIndex:2,
-          highlightData:highlightData ,
+          highlightData:[],
+          EventData:request.Event(),
           animateHighlight:true,
           EventDetailState:true,
           defaultDetail:"No  Event Decription !!",
-          defaultLocation:""
-
+          defaultLocation:"No event location given !",
+          username:"",
+          EventDescriptionState:false,
+          EventLocationState:false,
+          creation_date:"",
+          creation_time:"",
+          status:request.Participant()
 
         }
-       this.Props ={
-        location:"gare de grenoble",
-        //description:"Après une période de concertation publique, le chantier de modernisation de la gare SNCF de Grenoble, ainsi que la construction d'une nouvelle gare routière, ont été lancés dès l'été 20145. Ces travaux comprennent un prolongement du passage souterrain sud, une nouvelle entrée de gare côté Europole vers la place Robert-Schuman, une nouvelle zone d'accueil pour les taxis, une refonte du hall de vente et de l'espace billetterie, une nouvelle gare routière de vingt quais disposant de son propre bâtiment, dont le rez-de-chaussée sert d'espace d'attente des voyageurs et l'étage est affecté à l'exploitation et aux conducteurs.",
-       //location:"",
-        description:"",
-        date:"17/10/2018",
-        time:"12:15"
-       }
-    }
+  
+         this.initializer();
+  }
 
 
+@autobind
+initializer(){
+    let id = "43db0b10-0886-11ea-9234-771074f153d3";
+    stores.Events.loadCurrentEvent(id).then((event)=>{
+      console.warn(event,"This is the event");
+        this.setState({EventData:event});
+        //obtain higlight data
+        forEach(this.state.EventData.highlights,(highlightId)=>{
+        //console.warn(highlightId,"highlight Id"); 
+        stores.Highlights.readFromStore().then((Highlights)=>{
+        let highlight = find(Highlights, { id:highlightId });
+        //console.warn(highlight,"highlight obtained"); 
+
+        this.setState({highlightData: [ ...this.state.highlightData, highlight]}, () => { console.log(this.state.highlightData),"after" }); 
+        
+        let res = this.state.EventData.created_at.split(" ");
+        console.warn("bool",head(this.state.EventData.participant));
+        this.setState({creation_date:res[0]});
+        this.setState({creation_time:res[1]});
+        
+        console.warn(this.state.status);
+        //initialise the status
+        /*let status = find(this.state.EventData.participant, { phone:this.state.EventData.creator_phone});*/
+         this.state.status.master = true;
+         this.setState({status:this.state.status});  
+         console.warn(this.state.status);
+     });
+   });
+
+});
+
+//get user object for user nick-name
+if(this.state.EventData.creator_phone){
+   stores.TemporalUsersStore.getUser(this.state.EventData.creator_phone).then(user =>{
+        this.setState({username:user.nick_name});
+   })
+  }
+
+
+
+
+}
+  
 
 
 componentDidMount(){
   
   setInterval(() => {
-    if(this.state.animateHighlight == true){
+    if((this.state.animateHighlight == true) && (this.state.highlightData.length > 2)){
     this.flatListRef.scrollToIndex({animated: true, index: this.state.initialScrollIndex,viewOffset:0,viewPosition:0});
 
    if(this.state.initialScrollIndex >= (this.state.highlightData.length)-2){
-     this.setState({initialScrollIndex:0})
+     this.setState({initialScrollIndex:0});
    }else{
      this.setState({initialScrollIndex:this.state.initialScrollIndex + 2})
    }
@@ -79,8 +129,15 @@ back(){
   //this.props.parentComponent.setState({EventHighlightState:false})
   this.setState({EventHighlightState:false})
 
+  }  
+  
+  @autobind
+  deleteHighlight(id){
+    this.state.highlightData = reject(this.state.highlightData ,{id,id});
+    console.warn(this.state.highlightData,"highlight data state");
+    this.setState({highlightData: this.state.highlightData});
   }
-
+  
 
 
 
@@ -90,20 +147,21 @@ back(){
  _keyExtractor = (item, index) => item.id;
  _renderItem = ({item,index}) => (
    
-    <HighlightCard item={item} />
+    <HighlightCard item={item} deleteHighlight={(id)=>{this.deleteHighlight(id)}} ancien={true}/>
     
   );
 
-
+  
+  @autobind
+  updateDescription(){
+  // this.setState({EventDescriptionState:true});
+  }
 
 
     render() {
     	return(
 
-     
      <Modal
-      //isOpen={this.props.parentComponent.state.EventDetailState}
-      //onClosed={()=>{this.props.parentComponent.setState({EventDetailState:false})}}
       isOpen={this.state.EventDetailState}
       onClosed={()=>{this.setState({EventDetailState:false})}}
       style={{ height: "100%", borderRadius: 3,
@@ -112,7 +170,7 @@ back(){
       swipeToClose={false}
 
      >
-
+ 
       <View style={{height:"100%",backgroundColor:"#FEFFDE",width:"100%"}}>
         <View style={{height:"8%",width:"100%"}}>
             <Header>
@@ -130,7 +188,7 @@ back(){
           <View style={{height:"92%",width:"100%"}}>
 
            <ScrollView style={{flex:1}}>
-            <View style={{height:(height/4)+(height/8),width:"100%",borderColor:"gray",borderWidth:1}} >
+            <View style={{height:this.state.highlightData.length==0? 0:height/4 + height/14,width:"100%",borderColor:"gray",borderWidth:1}} >
               <FlatList
               style={{flex:1}}
               data={this.state.highlightData}
@@ -144,12 +202,19 @@ back(){
               />
             </View>
           
-            <View  style={{height:height/3,width:"96%",borderWidth:1,borderColor:"#1FABAB",margin:"2%"}}>
+            <View  style={{height:this.state.EventData.about.description.length>500?height/3+height/16:height/3,width:"96%",borderWidth:1,borderColor:"#1FABAB",margin:"2%"}}>
             <ScrollView nestedScrolEnabled={true}>
             <View style={{flex:1}}>
-            {this.Props.description ?
-              <Text  style={{fontStyle:'italic',fontWeight:"500",margin:"2%"}}>{this.Props.description}</Text> :
-              <Text style={{fontStyle:'italic',fontWeight:"500",margin:"2%",fontSize:30,alignSelf:'center',marginTop:(height)/8}}>{this.state.defaultDetail}</Text> }
+            {this.state.EventData.about.description ?
+             <Hyperlink onPress={(url)=>{Linking.openURL(url)}} linkStyle={{ color: '#48d1cc', fontSize: 16}}>
+              <Text  dataDetectorType={'all'} style={{fontStyle:'italic', fontSize: 16,fontWeight:"500",margin:"1%"}} delayLongPress={1500}  onLongPress={()=>{if(this.state.status.master==true){
+                this.setState({EventDescriptionState:true})
+                this.refs.description_ref.init();
+                }}}>{this.state.EventData.about.description}</Text> 
+             </Hyperlink>:
+              <Text style={{fontStyle:'italic',fontWeight:"500",margin:"1%",fontSize:30,alignSelf:'center',marginTop:(height)/8}} delayLongPress={1500}  onLongPress={()=>{
+                if(this.state.status.master==true){
+                  this.setState({EventDescriptionState:true})}}}>{this.state.defaultDetail}</Text> }
             
             </View>
             </ScrollView>
@@ -158,13 +223,16 @@ back(){
          
 
 
-{this.Props.location ?
-       <View style={{ flexDirection: "column",height:height/5,alignItems:"flex-end" ,marginRight:"3%"}}>
+        {this.state.EventData.location.string ?
+             <View style={{ flexDirection: "column",height:height/5,alignItems:"flex-end" ,marginRight:"3%"}}>
 
 
-                    <TouchableOpacity>
+                    <TouchableOpacity delayLongPress={1500}  onLongPress={()=>{if(this.state.status.master==true){
+                      this.setState({EventLocationState:true})
+                      this.refs.location_ref.init();
+                      }}} >
                         <Text ellipsizeMode="clip" numberOfLines={3} style={{ fontSize: 14, color: "#1FABAB", margin:"2%" }}>
-                            {this.Props.location}
+                            {this.state.EventData.location.string }
                         </Text>
                     </TouchableOpacity>
 
@@ -189,11 +257,19 @@ back(){
                     </TouchableOpacity>
 
               </View> :
+              <TouchableOpacity delayLongPress={1000}  onLongPress={()=>{
+                if(this.state.status.master==true){
+                  this.setState({EventLocationState:true})}}}>
               <View>
-              <Text>{this.state.defaultLocation}</Text>
-              </View> }
+              <Text  ellipsizeMode="clip" numberOfLines={3} style={{ alignSelf:'flex-end',fontSize: 14, color: "#1FABAB", margin:"2%" }}>
+                {this.state.defaultLocation}</Text>
+              </View>
+              </TouchableOpacity>  }
       
-
+           <View style={{flexDirection:"row",marginTop:this.state.EventData.location.string?"3%":"28%"}}>
+               <Text style={{alignSelf:"flex-start",fontSize:13,color:"gray"}} >on the {this.state.creation_date} at {this.state.creation_time}</Text>
+               <Text style={{alignSelf:"flex-end",fontSize:15}}  note>{this.state.username}</Text>
+           </View>
 
 
          </ScrollView>
@@ -201,15 +277,16 @@ back(){
        </View>
 
 
-
-
-
         </View> 
-
-
-             
-  </Modal>
-
+  
+      <EventDescription isOpen={this.state.EventDescriptionState} onClosed={()=>{this.setState({EventDescriptionState:false})}}
+        ref={"description_ref"} eventId={this.state.EventData.id} updateDes={true} parentComp={this}/>
+        
+       <EventLocation  isOpen={this.state.EventLocationState} onClosed={()=>{this.setState({EventLocationState:false})}}
+        ref={"location_ref"}  updateLoc={true} eventId={this.state.EventData.id} parentComp={this} />
+         
+    </Modal>
+  
     )}
 
     }

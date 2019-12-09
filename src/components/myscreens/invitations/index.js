@@ -23,13 +23,13 @@ import CreateEvent from '../event/createEvent/CreateEvent';
       this.state.loadingInvitations ? 
         <Spinner></Spinner>: 
           <BleashupFlatList
-        initialRender={6}
-        renderPerBatch={3}
-        firstIndex={0}
-        keyExtractor={this._keyExtractor}
-        dataSource={stores.Invitations.invitations}
-        numberOfItems={stores.Invitations.invitations.length}
-        renderItem={(item, index) => {
+         initialRender={6}
+         renderPerBatch={3}
+         firstIndex={0}
+         keyExtractor={this._keyExtractor}
+         dataSource={stores.Invitations.invitations}
+         numberOfItems={stores.Invitations.invitations.length}
+         renderItem={(item, index) => {
           return item.sent ? <SentInvitations {...this.props} item={item} key={index} parentCardList={this} /> : 
           <ReceivedInvitations  {...this.props} item={item} key={index}
             parentCardList={this} />
@@ -38,6 +38,7 @@ import CreateEvent from '../event/createEvent/CreateEvent';
         }}
       >
       </BleashupFlatList>}
+
       <CreateEvent Parentprops={this.props} ></CreateEvent>
     </View>
   }

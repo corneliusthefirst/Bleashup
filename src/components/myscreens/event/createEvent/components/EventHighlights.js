@@ -13,12 +13,13 @@ import autobind from "autobind-decorator";
 //import CacheImages from "../../../../CacheImages";
 import HighlightCard from "./HighlightCard"
 import PhotoEnlargeModal from "../../../invitations/components/PhotoEnlargeModal";
-import ImagePicker from 'react-native-image-picker';
+import ImagePicker from 'react-native-customized-image-picker';
 import  stores from '../../../../../stores/index';
 import {observer} from 'mobx-react'
 import moment from "moment"
-import { filter,uniqBy,orderBy,find,findIndex,reject,uniq,indexOf,forEach,dropWhile } from "lodash";
+import { head,filter,uniqBy,orderBy,find,findIndex,reject,uniq,indexOf,forEach,dropWhile } from "lodash";
 import request from "../../../../../services/requestObjects";
+import SearchImage from './SearchImage';
 
 //create an extension to toast so that it can work in my modal
 
@@ -32,7 +33,7 @@ uuid.v1({
 });
 
 
-//const highlightData = stores.Events.highlightData
+
 
 
 const options = {
@@ -41,14 +42,20 @@ const options = {
   storageOptions: {
     skipBackup: true,
     path: 'images',
+    maxWidth:600,
+    maxHeight:500,
+    noData:true,
+    allowEditing:true,
+    quality:0.8
   },
 };
 
-let {height, width} = Dimensions.get('window')
+let {height, width} = Dimensions.get('window');
+
 
 
 export default class EventHighlights extends Component {
-   
+    
     constructor(props) {
         super(props);
         this.state={ 
@@ -61,33 +68,41 @@ export default class EventHighlights extends Component {
           highlightData:[],
           animateHighlight:false,
           currentHighlight:request.Highlight(),
-          update:false
+          update:false,
+          searchImageState:false
     
 
 
         }
+      
+    }
+   
 
- 
-           //i set the current new highlight data on startUp
-           stores.Highlights.readFromStore().then(Highlights =>{
-               console.warn(Highlights,"All higlights");
-               let highlight = find(Highlights, { id:"newHighlightId" }); 
-               console.warn(highlight,"constructor higlight");
-               //this.setState({currentHighlight:highlight});
+
+
+
+
+componentDidMount(){
+    //i set the current new highlight data on startUp
+    stores.Highlights.readFromStore().then(Highlights =>{
+         // console.warn(Highlights,"All higlights");
+          let highlight = find(Highlights, { id:"newHighlightId" }); 
+         // console.warn(highlight,"constructor higlight");
+          this.setState({currentHighlight:highlight});
               
-            });
+      });
        
-        console.warn(this.state.currentHighlight,"constructor");
+        //console.warn(this.state.currentHighlight,"constructor");
 
        //On startUp for each highlightId in new Event i set all the highlightData
        stores.Events.readFromStore().then(Events => {
-        console.warn(Events,"All Events"); 
+        //console.warn(Events,"All Events"); 
        let event =  find(Events, { id:"newEventId" });
    
        forEach(event.highlights,(highlightId)=>{
         stores.Highlights.readFromStore().then((Highlights)=>{
            let highlight = find(Highlights, { id:highlightId });
-           console.warn(highlight,"before"); 
+           //console.warn(highlight,"before"); 
 
            this.setState({highlightData: [ ...this.state.highlightData, highlight]}, () => { console.log(this.state.highlightData),"after" }); 
                     
@@ -99,15 +114,7 @@ export default class EventHighlights extends Component {
   });
 
 
-      
-    }
-   
 
-
-
-
-
-componentDidMount(){
 
   setInterval(() => {
     if((this.state.animateHighlight == true) && (this.state.highlightData.length > 2)){
@@ -126,30 +133,26 @@ componentDidMount(){
 
 
 
+
+
 @autobind
 TakePhotoFromCamera(){
 
 return new Promise((resolve, reject) => {
 
-ImagePicker.launchCamera(options, (response) => {
-
-  if (response.didCancel) {
-    console.log('User cancelled image picker');
-  } else if (response.error) {
-    console.log('ImagePicker Error: ', response.error);
-  } else if (response.customButton) {
-    console.log('User tapped custom button: ', response.customButton);
-  } else { 
-      
-        resolve(response.uri);
-        this.state.currentHighlight.url = response.uri;
-        if(!this.state.update){
-        stores.Highlights.updateHighlightUrl(this.state.currentHighlight,false).then(()=>{resolve()});
-        }else{;}
-      }
-
-   })
+    ImagePicker.openCamera({
+      cropping: true
+    }).then(response => {
+        let res = head(response);
+        resolve(res.path);
+        this.state.currentHighlight.url = res.path;
+        this.setState({currentHighlight:this.state.currentHighlight});
+        if(this.state.update==false){
+        stores.Highlights.updateHighlightUrl(this.state.currentHighlight,false).then(()=>{});
+        }
+      })
  })
+
 
 }
 
@@ -157,24 +160,18 @@ ImagePicker.launchCamera(options, (response) => {
 @autobind
 TakePhotoFromLibrary(){
 return new Promise((resolve, reject) => {
-ImagePicker.launchImageLibrary(options, (response) => {
- 
-  if (response.didCancel) {
-    console.log('User cancelled image picker');
-  } else if (response.error) {
-    console.log('ImagePicker Error: ', response.error);
-  } else if (response.customButton) {
-    console.log('User tapped custom button: ', response.customButton);
-  } else {
-       resolve(response.uri )
-       this.state.currentHighlight.url = response.uri;
-       if(!this.state.update){
-       stores.Highlights.updateHighlightUrl(this.state.currentHighlight,false).then(()=>{resolve()});
-       }else{;}
-      }
-   
- })
 
+  ImagePicker.openPicker({
+    cropping: true
+  }).then(response => {
+       let res = head(response);
+       resolve(res.path);
+       this.state.currentHighlight.url = res.path;
+       this.setState({currentHighlight:this.state.currentHighlight});
+       if(this.state.update==false){
+       stores.Highlights.updateHighlightUrl(this.state.currentHighlight,false).then(()=>{});
+       }
+      })
 })
 
 }
@@ -186,19 +183,27 @@ ImagePicker.launchImageLibrary(options, (response) => {
 
 @autobind
 back(){
-  this.setState({animateHighlight:false})
-  this.props.parentComponent.setState({EventHighlightState:false})
+  this.setState({animateHighlight:false});
+  this.props.onClosed();  
+}
 
-  }
+@autobind
+resetHighlight(){
+  this.state.currentHighlight = request.Highlight();
+  this.state.currentHighlight.id = "newHighlightId";
+  this.setState({currentHighlight:this.state.currentHighlight});
+}
+
+
 
 @autobind
 onChangedTitle(value){
   //this.setState({title:value})
   this.state.currentHighlight.title = value;
   this.setState({currentHighlight:this.state.currentHighlight});
-  if(!this.state.update){
-  stores.Highlights.updateHighlightTitle(this.state.currentHighlight,false).then(()=>{resolve()});
-  }else{ ; }
+  if(this.state.update==false){
+  stores.Highlights.updateHighlightTitle(this.state.currentHighlight,false).then(()=>{});
+  }
 
 }
 @autobind
@@ -207,9 +212,9 @@ onChangedDescription(value){
   this.state.currentHighlight.description = value;
   this.setState({currentHighlight:this.state.currentHighlight});
 
-  if(!this.state.update){
-    stores.Highlights.updateHighlightDescription(this.state.currentHighlight,false).then(()=>{resolve()});
-  }else{ ; }
+  if(this.state.update==false){
+    stores.Highlights.updateHighlightDescription(this.state.currentHighlight,false).then(()=>{});
+  }
 
   
 }
@@ -239,6 +244,7 @@ if(this.state.currentHighlight.url == ""){
     let highlight = find(Highlights, { id:"newHighlightId" }); 
     newHighlight =  highlight;
     newHighlight.id = New_id;
+    newHighlight.event_id = "newEventId";   //new event id
     //console.warn(highlight);
     //add the new highlights to global highlights
     stores.LoginStore.getUser().then((user)=>{
@@ -249,21 +255,21 @@ if(this.state.currentHighlight.url == ""){
     this.state.highlightData.push(newHighlight);
     this.setState({highlightData:this.state.highlightData});
    
-    stores.Highlights.addHighlights(newHighlight ).then(()=>{resolve() });
+    stores.Highlights.addHighlights(newHighlight ).then(()=>{});
     //add the new highlight id to our newly created event for it to be accessed later when needed using this id
-    stores.Events.addHighlight("newEventId", newHighlight.id,false).then(()=>{resolve()});
+    stores.Events.addHighlight(newHighlight.event_id, newHighlight.id,false).then(()=>{});
+    stores.Events.readFromStore().then((Events)=>{console.warn(Events,"After highlight id insertion");})
+
 
      //reset the class currentHighlight state
-     this.state.currentHighlight = request.Highlight();
-     this.state.currentHighlight.id = "newHighlightId";
-     this.setState({currentHighlight:this.state.currentHighlight});
+     this.resetHighlight();
     
      //delete highlight and add a new highlight empty One
      stores.Highlights.removeHighlight("newHighlightId").then(()=>{});
-     stores.Highlights.addHighlights(this.state.currentHighlight,false).then(()=>{});
+     stores.Highlights.addHighlights(this.state.currentHighlight).then(()=>{});
      //stores.Highlights.resetHighlight(this.state.currentHighlight,false).then(()=>{});
      
-     //console.warn(this.state.currentHighlight);
+    
 
    });
   }
@@ -271,27 +277,20 @@ if(this.state.currentHighlight.url == ""){
 }
 
 @autobind
-UpdateHighlight(){
-if(this.state.update ){
+updateHighlight(){
 
-//remove the highlight having this id and add the updated one so when it fetch it is updated one
-stores.Highlights.removeHighlight(this.state.currentHighlight.id).then(()=>{});
-stores.Highlights.addHighlights(this.state.currentHighlight,false).then(()=>{});
-
-//reset back the currenthighlight and desactivate the update state
-this.state.currentHighlight = request.Highlight();
-this.state.currentHighlight.id = "newHighlightId";
-this.setState({currentHighlight:this.state.currentHighlight});
+stores.Highlights.updateHighlight(this.state.currentHighlight,false).then(()=>{});
+this.resetHighlight();
 this.setState({update:false});
 
- 
 }
 
+@autobind
+deleteHighlight(id){
+  this.state.highlightData = reject(this.state.highlightData ,{id,id});
+  console.warn(this.state.highlightData,"highlight data state");
+  this.setState({highlightData: this.state.highlightData});
 }
-
-
-
-
 
  
   getItemLayout = (data, index) => (
@@ -300,7 +299,7 @@ this.setState({update:false});
  _keyExtractor = (item, index) => item.id;
  _renderItem = ({item,index}) => (
    
-    <HighlightCard item={item} parentComponent={this} ref={"higlightcard"}/>
+    <HighlightCard  parentComponent={this} item={item} ancien={false} deleteHighlight={(id)=>{this.deleteHighlight(id)}} ref={"higlightcard"}/>
     
   );
 
@@ -336,8 +335,8 @@ this.setState({update:false});
 
           <View style={{height:"95%",width:"100%"}}>
 
-           <ScrollView>
-            <View style={{height:height/4 + height/14,width:"100%",borderColor:"gray",borderWidth:1}} >
+           <ScrollView ref={"svrollView"} >
+            <View style={{height:this.state.highlightData.length==0 ? 0:height/4 + height/14,width:"100%",borderColor:"gray",borderWidth:1}} >
               <FlatList
               style={{flex:1}}
               data={this.state.highlightData}
@@ -347,47 +346,54 @@ this.setState({update:false});
               initialScrollIndex={0}
               initialNumToRender={3}
               keyExtractor={this._keyExtractor}
-              renderItem={this._renderItem}
+              renderItem={this._renderItem}       
               />
             </View>
 
           <View style={{height:height/6,alignItems:'center'}}>
-                   <Text style={{alignSelf:'flex-start',margin:"3%",fontWeight:"400",fontSize:18}} >Highlight Name :</Text>
+                   <Text style={{alignSelf:'flex-start',margin:"3%",fontWeight:"500",fontSize:16}} >Highlight Name :</Text>
                     <Item  style={{borderColor:'black',width:"95%"}} rounded>
-                     <Input value={this.state.currentHighlight.title} placeholder='Please enter event title' keyboardType='email-address' autoCapitalize="none" returnKeyType='next' inverse last
+                     <Input value={this.state.currentHighlight.title} placeholder='Please enter highlight title' keyboardType='email-address' autoCapitalize="none" returnKeyType='next' inverse last
                       onChangeText={(value) => this.onChangedTitle(value)} />
                      </Item>
                </View>
 
-              <View style={{height:height/2}}>
+              <View style={{height:height/2 +height/12}}>
                  <View style={{flex:2,justifyContent:'space-between',alignItem:'center'}}>
 
                     <Button style={{alignSelf:'center',width:"90%",borderRadius:15,borderColor:"#1FABAB",backgroundColor:"transparent",justifyContent:'center',alignItem:'center',marginTop:"6%"}}
-                     onPress={()=>{this.TakePhotoFromCamera().then(source =>{
-                        
-                          this.state.currentHighlight.url = source;
-                          this.setState({currentHighlight:this.state.currentHighlight});
-                          stores.Highlights.updateHighlightUrl(this.state.currentHighlight,false).then(()=>{resolve()});
-                     })} }>
-                     <Text> Take Photo From Camera</Text>
+                     onPress={()=>{this.TakePhotoFromCamera().then((source) =>{})} }>
+                        <View style={{flexDirection:"row"}}>
+                           <Icon name="photo-camera" active={true} type="MaterialIcons"
+                            style={{color: "#0A4E52",alignSelf:"flex-start"}}/>
+                            <Text> Take Photo From Camera</Text>
+                        </View>
                     </Button>
 
                     <Button style={{alignSelf:'center',width:"90%",borderRadius:15,borderColor:"#1FABAB",backgroundColor:"transparent",justifyContent:'center',alignItem:'center',marginTop:"3%"}} 
-                    onPress={()=>{this.TakePhotoFromLibrary().then(source=>{    
-                      
-                      this.state.currentHighlight.url = source;
-                      this.setState({currentHighlight:this.state.currentHighlight});
-                      stores.Highlights.updateHighlightUrl(this.state.currentHighlight,false).then(()=>{resolve()});
-                         }
-                      )}}>
-                     <Text> Take Photo From Library</Text>
+                    onPress={()=>{this.TakePhotoFromLibrary().then(source=>{})}}>
+                         <View style={{flexDirection:"row"}}>
+                            <Icon name="photo" active={true} type="FontAwesome"
+                               style={{color: "#0A4E52",alignSelf:"flex-start"}}/>
+                            <Text> Take Photo From Library</Text>
+                          </View>
                     </Button>
+
+                    <Button style={{alignSelf:'center',width:"90%",borderRadius:15,borderColor:"#1FABAB",backgroundColor:"transparent",justifyContent:'center',alignItem:'center',marginTop:"3%"}} 
+                      onPress={()=>{this.setState({ searchImageState:true})}}>
+                        <View style={{flexDirection:"row"}}>
+                         <Icon name="google" active={true} type="AntDesign"
+                            style={{color: "#0A4E52",alignSelf:"flex-start",marginLeft:5}}/>
+                         <Text  style={{alignSelf:"center"}}> Download From Google</Text>
+                        </View>
+                    </Button>
+
 
                  </View>
 
-                <View style={{ flex: 4, flexDirection: 'column',justifyContent:'center',alignItem:'center',marginTop:"4%"}}>
+                <View style={{ flex: 3, flexDirection: 'column',justifyContent:'center',alignItem:'center',marginTop:"4%"}}>
                     <TouchableOpacity onPress={() => this.setState({ enlargeImage: true })} >
-                        <Image  source={this.state.currentHighlight.url?{uri:this.state.currentHighlight.url}:this.state.defaultUrl} style={{alignSelf:'center',
+                        <Image  source={this.state.currentHighlight.url!=""?{uri:this.state.currentHighlight.url}:this.state.defaultUrl} style={{alignSelf:'center',
                             height: "90%",width: "90%", borderWidth: 1, borderColor: "#1FABAB", borderRadius:100
                         }}  />
                     </TouchableOpacity>
@@ -401,8 +407,8 @@ this.setState({update:false});
                 <View  style={{height:height/2,alignItems:'flex-start',justifyContent:'center'}}>
                    <View style={{width:"100%",height:"100%"}}>
                   
-                   <Text style={{alignSelf:'flex-start',margin:"3%",fontWeight:"400",fontSize:18}} >Highlight Description :</Text>
-                   <Textarea value={this.state.currentHighlight.description}  style={{width:"94%",margin:"3%",height:"70%"}} bordered placeholder="Please enter highlight description"  onChangeText={(value) => this.onChangedDescription(value)} />
+                   <Text style={{alignSelf:'flex-start',margin:"3%",fontWeight:"500",fontSize:16}} >Highlight Description :</Text>
+                   <Textarea value={this.state.currentHighlight.description}  style={{width:"94%",margin:"3%",height:"70%",borderRadius:15,borderWidth:2,borderColor:"#9E9E9E",backgroundColor:"#f5fffa"}}  placeholder="Please enter highlight description"  onChangeText={(value) => this.onChangedDescription(value)} />
 
                    </View>
                  </View>
@@ -417,8 +423,8 @@ this.setState({update:false});
              </Button> 
             </TouchableOpacity> :
             <TouchableOpacity style={{width:"80%",alignSelf:'center'}}>
-            <Button style={{borderRadius:15,borderColor:"#1FABAB",backgroundColor:"#1FABAB",justifyContent:'center',alignItem:'center'}}
-               onPress={()=>{this.UpdateHighlight()}}>
+            <Button style={{width:"100%",borderRadius:15,borderColor:"#1FABAB",backgroundColor:"#1FABAB",justifyContent:'center',alignItem:'center'}}
+               onPress={()=>{this.updateHighlight()}}>
                <Text style={{color:"#FEFFDE"}}> Update   Highlight </Text>
             </Button> 
             </TouchableOpacity>  }
@@ -432,7 +438,7 @@ this.setState({update:false});
 
           </View>
 
-
+        <SearchImage accessLibrary={()=>{this.TakePhotoFromLibrary().then(()=>{})}} isOpen={this.state.searchImageState} onClosed={() => {this.setState({ searchImageState: false })}}  />
 
         </View> 
   </Root>          
@@ -444,3 +450,32 @@ this.setState({update:false});
     }
 
    
+  
+/*
+console.warn(this.state.currentHighlight,"this is the updated version");
+//remove the highlight having this id form stores and add the updated one so when it fetch it is updated one
+//stores.Highlights.removeHighlight(this.state.currentHighlight.id).then(()=>{});
+//stores.Highlights.addHighlights(this.state.currentHighlight,false).then(()=>{});
+
+
+let Cid  = this.state.currentHighlight.id;
+let index = findIndex(this.state.highlightData, { id:Cid});
+this.state.highlightData.splice(index,1,this.state.currentHighlight);
+this.setState({highlightData: [ ...this.state.highlightData]}, () => {}); 
+console.warn(this.state.HighlightData,"this is the updated version 2");*/
+
+/*//stores.Highlights.readFromStore().then(highlights=>{console.warn(highlights);});
+stores.Events.readFromStore().then(Events => {
+let event =  find(Events, { id:this.props.event_id});
+forEach(event.highlights,(highlightId)=>{
+stores.Highlights.readFromStore().then((Highlights)=>{
+   let highlight = find(Highlights, { id:highlightId });
+   this.setState({highlightData: [ ...this.state.highlightData, highlight]}, () => {}); 
+            
+  });
+
+ });
+
+});
+*/
+     

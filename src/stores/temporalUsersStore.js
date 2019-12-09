@@ -72,7 +72,7 @@ export default class TemporalUsersStore {
                         }
                     })
                 }
-            } else {
+            } else { 
                 this.readFromStore().then(users => {
                     let user = find(users, { phone: phone });
                     if (user) {

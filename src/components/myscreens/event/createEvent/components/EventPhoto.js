@@ -12,21 +12,14 @@ import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-
 import autobind from "autobind-decorator";
 //import CacheImages from "../../../../../CacheImages";
 import PhotoEnlargeModal from "../../../invitations/components/PhotoEnlargeModal";
-import ImagePicker from 'react-native-image-picker';
-import { filter,uniqBy,orderBy,find,findIndex,reject,uniq,indexOf,forEach,dropWhile } from "lodash";
+//import ImagePicker from 'react-native-image-picker';
+import { head,filter,uniqBy,orderBy,find,findIndex,reject,uniq,indexOf,forEach,dropWhile } from "lodash";
 import request from "../../../../../services/requestObjects";
 import  stores from '../../../../../stores/index';
+import ImagePicker from 'react-native-customized-image-picker';
+import SearchImage from './SearchImage';
 
 
-
-const options = {
-    title: 'Select Avatar',
-    //customButtons: [{ name: 'fb', title: 'Choose Photo from Facebook' }],
-    storageOptions: {
-      skipBackup: true,
-      path: 'images',
-    },
-  };
 
 let {height, width} = Dimensions.get('window');
 
@@ -36,7 +29,8 @@ export default class EventPhoto extends Component {
         this.state={
           enlargeImage:false,
           EventPhoto:"",
-          DefaultPhoto:require('../../../../../../Images/eventphoto.jpg')
+          DefaultPhoto:require('../../../../../../Images/eventphoto.jpg'),
+          searchImageState:false
         }
 
         stores.Events.readFromStore().then(Events =>{
@@ -47,65 +41,45 @@ export default class EventPhoto extends Component {
         
     }
 
-
-
-
     @autobind
     TakePhotoFromCamera(){
     
     return new Promise((resolve, reject) => {
     
-    ImagePicker.launchCamera(options, (response) => {
+      ImagePicker.openCamera({
+        cropping: true
+      }).then(response => {
+        let res = head(response);
+        this.setState({EventPhoto: res.path});
+        stores.Events.updateBackground("newEventId",res.path,false).then(()=>{});
+        resolve(res.path);
+      });
     
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.error) {
-        console.log('ImagePicker Error: ', response.error);
-      } else if (response.customButton) {
-        console.log('User tapped custom button: ', response.customButton);
-      } else {
-        
-        //const source = { uri: response.uri };
-        // You can also display the image using data:
-        // const source = { uri: 'data:image/jpeg;base64,' + response.data };
-     
-       resolve(response.uri);
-       stores.Events.updateBackground("newEventId",response.uri,false).then(()=>{});
-      }
-    
-    
-    
-      })
-    })
+
+    }) 
     
      }
     
     @autobind
     TakePhotoFromLibrary(){
     return new Promise((resolve, reject) => {
-    ImagePicker.launchImageLibrary(options, (response) => {
-     
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.error) {
-        console.log('ImagePicker Error: ', response.error);
-      } else if (response.customButton) {
-        console.log('User tapped custom button: ', response.customButton);
-      } else {
-        //const source = { uri: response.uri };
-        // You can also display the image using data:
-        // const source = { uri: 'data:image/jpeg;base64,' + response.data };
-     
-           resolve(response.uri);
-           stores.Events.updateBackground("newEventId",response.uri,false).then(()=>{});
-        }
-       
-     })
+
+    ImagePicker.openPicker({
+      cropping: true
+    }).then(response => {
+      let res = head(response);
+      this.setState({EventPhoto: res.path});
+      stores.Events.updateBackground("newEventId",res.path,false).then(()=>{});
+      resolve(res.path);
+    });
+
     
     })
     
     }
 
+
+  
 
 
 
@@ -120,7 +94,7 @@ export default class EventPhoto extends Component {
                 isOpen={this.props.isOpen}
                 onClosed={this.props.onClosed}
                 style={{
-                    height: height/2, borderRadius: 15,
+                    height: height/2 + height/12, borderRadius: 15,
                     backgroundColor:"#FEFFDE",borderColor:'black',borderWidth:1,width: "98%",flexDirection:'column',
                     marginTop:"-4%"
                 }}
@@ -128,19 +102,37 @@ export default class EventPhoto extends Component {
                 backdropPressToClose={false}
                 coverScreen={true}
                 >
-                <View style={{flex:1}}>
+         <View style={{flex:1}}>
                  <View style={{flex:2,justifyContent:'space-between',alignItem:'center'}}>
-
+                    
                     <Button style={{alignSelf:'center',width:"90%",borderRadius:15,borderColor:"#1FABAB",backgroundColor:"transparent",justifyContent:'center',alignItem:'center',marginTop:"10%"}}
-                      onPress={()=>{this.TakePhotoFromCamera().then(url =>{ this.setState({EventPhoto: url});
-                     })} }>
-                     <Text> Take Photo From Camera</Text>
+                      onPress={()=>{this.TakePhotoFromCamera().then(()=>{})}}>
+                        <View style={{flexDirection:"row"}}>
+                         <Icon name="photo-camera" active={true} type="MaterialIcons"
+                            style={{color: "#0A4E52",alignSelf:"flex-start"}}/>
+                         <Text  style={{alignSelf:"center"}}>Take Photo From Camera</Text>
+                        </View>
                     </Button>
-
+                  
+                    
+            
                     <Button style={{alignSelf:'center',width:"90%",borderRadius:15,borderColor:"#1FABAB",backgroundColor:"transparent",justifyContent:'center',alignItem:'center',marginTop:"3%"}} 
-                      onPress={()=>{this.TakePhotoFromLibrary().then(url=>{this.setState({ EventPhoto:url})}
-                     )}}>
-                     <Text> Take Photo From Library</Text>
+                      onPress={()=>{this.TakePhotoFromLibrary().then(url=>{})}}
+                     >
+                       <View style={{flexDirection:"row"}}>
+                         <Icon name="photo" active={true} type="FontAwesome"
+                            style={{color: "#0A4E52",alignSelf:"flex-start"}}/>
+                         <Text  style={{alignSelf:"center"}}>  Take Photo From Library</Text>
+                        </View>
+                    </Button>
+              
+                    <Button style={{alignSelf:'center',width:"90%",borderRadius:15,borderColor:"#1FABAB",backgroundColor:"transparent",justifyContent:'center',alignItem:'center',marginTop:"3%"}} 
+                      onPress={()=>{this.setState({ searchImageState:true})}}>
+                        <View style={{flexDirection:"row"}}>
+                         <Icon name="google" active={true} type="AntDesign"
+                            style={{color: "#0A4E52",alignSelf:"flex-start",marginLeft:5}}/>
+                         <Text  style={{alignSelf:"center"}}> Download From Google</Text>
+                        </View>
                     </Button>
 
                  </View>
@@ -154,16 +146,11 @@ export default class EventPhoto extends Component {
                     </TouchableOpacity>
                 </View>
 
-                 <View style={{flex:1,alignSelf:'flex-end'}}>
-                  <Button style={{width:"20%",borderRadius:8,marginRight:"4%",marginTop:"-3%",backgroundColor:'#1FABAB'}} onPress={()=>{ this.setState({EventPhotoState:true})}}>
-                  <Text style={{color:"#FEFFDE"}}>OK</Text>
-                  </Button>
-                 </View>
-
 
                  <PhotoEnlargeModal isOpen={this.state.enlargeImage} onClosed={() => this.setState({ enlargeImage: false })} photo={this.state.EventPhoto} />
-              
-                </View>
+                 <SearchImage accessLibrary={()=>{this.TakePhotoFromLibrary().then(()=>{})}} isOpen={this.state.searchImageState} onClosed={() => {this.setState({ searchImageState: false })}}  />
+      
+       </View>
                 </Modal>
 
 
@@ -173,4 +160,100 @@ export default class EventPhoto extends Component {
 
 
 
+
+
+/**   
+ *  <View style={{flex:1,alignSelf:'flex-end'}}>
+     <Button style={{width:"20%",borderRadius:8,marginRight:"4%",marginTop:"-3%",backgroundColor:'#1FABAB'}} onPress={()=>{ this.setState({EventPhotoState:true})}}>
+      <Text style={{color:"#FEFFDE"}}>OK</Text>
+     </Button>
+     </View> */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**  
+
+const options = {
+    title: 'Select Avatar',
+    //customButtons: [{ name: 'fb', title: 'Choose Photo from Facebook' }],
+    storageOptions: {
+      skipBackup: true,
+      path: 'images',
+      maxWidth:600,
+      maxHeight:500,
+      noData:true,
+      allowEditing:true,
+      quality:0.7
+    },
+  };
+
+        TakePhotoFromCamera(){
+    
+      return new Promise((resolve, reject) => {
+      
+      ImagePicker.launchCamera(options, (response) => {
+      
+        if (response.didCancel) {
+          console.log('User cancelled image picker');
+        } else if (response.error) {
+          console.log('ImagePicker Error: ', response.error);
+        } else if (response.customButton) {
+          console.log('User tapped custom button: ', response.customButton);
+        } else {
+          
+          //const source = { uri: response.uri };
+          // You can also display the image using data:
+          // const source = { uri: 'data:image/jpeg;base64,' + response.data };
+       
+         resolve(response.uri);
+         stores.Events.updateBackground("newEventId",response.uri,false).then(()=>{});
+        }
+      
+      
+      
+        })
+      }) 
+      
+       }
+      
+      @autobind
+      TakePhotoFromLibrary(){
+      return new Promise((resolve, reject) => {
+      ImagePicker.launchImageLibrary(options, (response) => {
+       
+        if (response.didCancel) {
+          console.log('User cancelled image picker');
+        } else if (response.error) {
+          console.log('ImagePicker Error: ', response.error);
+        } else if (response.customButton) {
+          console.log('User tapped custom button: ', response.customButton);
+        } else {
+          //const source = { uri: response.uri };
+          // You can also display the image using data:
+          // const source = { uri: 'data:image/jpeg;base64,' + response.data };
+       
+             resolve(response.uri);
+             stores.Events.updateBackground("newEventId",response.uri,false).then(()=>{});
+          }
+         
+       })
+      
+      })
+      
+      }
+
+ */
 

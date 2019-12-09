@@ -52,7 +52,7 @@ const screenheight = Math.round(Dimensions.get('window').height);
                     numberOfItems={this.props.data.length}
                 >
                 </BleashupFlatList>
-                {
+                { 
                     // ******************Photo Viewer View ***********************//
                     this.state.showPhoto ?
                         <View style={{ height: screenheight, width: screenWidth, position: "absolute", backgroundColor: "black", }}>

@@ -31,8 +31,11 @@ import com.swmansion.reanimated.ReanimatedPackage;
 import com.github.wumke.RNExitApp.RNExitAppPackage;
 import com.imagepicker.ImagePickerPackage;
 import com.reactcommunity.rndatetimepicker.RNDateTimePickerPackage;
+import com.proyecto26.inappbrowser.RNInAppBrowserPackage;
+import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import java.util.Arrays;
 import java.util.List;
+
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -65,11 +68,13 @@ public class MainApplication extends Application implements ReactApplication {
             new ReanimatedPackage(),
             new TcpSocketsModule(),
             new RNMail() ,
-             new NetInfoPackage(),
+            new NetInfoPackage(),
             new RNGestureHandlerPackage(),
             new RNFetchBlobPackage(),
             new ImagePickerPackage(),
-            new RNDateTimePickerPackage()
+            new RNDateTimePickerPackage(),
+            new RNInAppBrowserPackage(),
+            new RNDeviceInfo()
         );
     }
 

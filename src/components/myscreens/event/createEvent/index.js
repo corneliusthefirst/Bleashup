@@ -51,7 +51,7 @@ var radio_props = [
 
 export default class CreateEventView extends Component {
   constructor(props){
-    super(props)
+    super(props) 
 
     this.state = {
       EventTitleState:false,
@@ -79,7 +79,7 @@ export default class CreateEventView extends Component {
     this.props.navigation.navigate('Invitation');
 
   }
-
+ 
   @autobind
   creatEvent(){
     console.warn("im inside");
@@ -97,30 +97,41 @@ export default class CreateEventView extends Component {
       newEvent = event;
       newEvent.id = New_id;
       //gives this new id to all highlights before pushing
-      forEach(newEvent.highlights,function(highlight){
-         highlight.event_id = New_id;
-      })
+      forEach(newEvent.highlights,(highlightId)=>{
+        stores.Highlights.readFromStore().then((Highlights)=>{
+           let highlight = find(Highlights, { id:highlightId });
+           highlight.event_id =  New_id;
+           stores.Highlights.updateHighlight(hightlight,false).then(()=>{});
+                    
+       });
+
+     });
+
       newEvent.created_at = moment().format("YYYY-MM-DD HH:mm");
       stores.LoginStore.getUser().then((user)=>{
          newEvent.creator_phone = user.creator_phone;
          
       })
       console.warn(newEvent);
-      stores.Events.addEvent(newEvent).then(()=>{resolve()});
+      stores.Events.addEvent(newEvent).then(()=>{});
 
       //reset new Event object
       let reset = request.Event();
       reset.id = "newEventId";
-      this.refs.title_ref.state.title = "";
-      this.refs.photo_ref.state.EventPhoto = "";
-      this.refs.description_ref.state.description = "";
-      this.refs.location_ref.state.location = request.Location();
+      this.refs.title_ref.setState({title:""});
+      this.refs.title_ref.setState({date:""});
+      this.refs.title_ref.setState({inputTimeValue:""});
+
+      this.refs.photo_ref.setState({EventPhoto:""});
+      this.refs.description_ref.setState({description:""});
+      this.refs.location_ref.setState({location:request.Location()});
+      this.refs.highlights.setState({highlightData:[]});
+
       stores.Events.delete(reset.id).then(()=>{});
-      stores.Events.addEvent(reset).then(()=>{resolve()});
+      stores.Events.addEvent(reset).then(()=>{});
+      
 
-      //stores.Events.resetEvent("newEventId").then(()=>{resolve()});
-
-    });
+    }); 
 
     stores.Events.readFromStore().then(Events =>{
        console.warn(Events);
@@ -173,9 +184,11 @@ export default class CreateEventView extends Component {
                         break
                         case 2:
                         this.setState({EventDescriptionState:true})
+                        this.refs.description_ref.init();
                         break
                         case 3:
                          this.setState({EventLocationState:true})
+                         this.refs.location_ref.init();
                         break
                         case 4:
                          this.setState({EventHighlightState:true})
@@ -201,10 +214,10 @@ export default class CreateEventView extends Component {
                  ref={"photo_ref"} />
 
                <EventDescription isOpen={this.state.EventDescriptionState} onClosed={()=>{this.setState({EventDescriptionState:false})}}
-                 ref={"description_ref"} />
+                 ref={"description_ref"} eventId={"newEventId"} updateDes={false}/>
 
                <EventLocation  isOpen={this.state.EventLocationState} onClosed={()=>{this.setState({EventLocationState:false})}}
-                ref={"location_ref"} />
+                ref={"location_ref"}  eventId={"newEventId"} updateLoc={false}/>
 
                <EventHighlights   isOpen={this.state.EventHighlightState} onClosed={()=>{this.setState({EventHighlightState:false})}}
                 parentComponent={this} ref={"highlights"}/>

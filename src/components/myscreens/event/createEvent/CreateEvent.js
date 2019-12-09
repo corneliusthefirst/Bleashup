@@ -12,7 +12,7 @@ export default class CreateEvent extends Component {
   constructor(props){
     super(props)
   }
-
+  
 
   onClickNewEvent(){
   return new Promise((resolve, reject) => {
@@ -37,11 +37,12 @@ export default class CreateEvent extends Component {
        highlight =  request.Highlight();
        highlight.id = "newHighlightId";
        
-       stores.Highlights.addHighlights(highlight).then(()=>{
-       });
+       stores.Highlights.addHighlight(highlight).then(()=>{
+       }); 
     
      }        
      this.props.Parentprops.navigation.navigate("CreateEventView");
+     resolve();
 
     });
       
@@ -56,7 +57,7 @@ export default class CreateEvent extends Component {
   render() {
     return (
 
-   <Container style={{marginBottom:"23%"}}>
+   <Container style={{}}>
         <ActionButton buttonColor="#1CDBAB" position="center" backgroundTappable={true} btnOutRange="green">
          <ActionButton.Item buttonColor='#3498db' title="Notifications" onPress={() => {console.warn("these are log")}} size={70}>
             <Icon name="md-notifications-off" style={styles.actionButtonIcon} />

@@ -18,7 +18,7 @@ import {observer} from 'mobx-react'
 import moment from "moment"
 import { filter,uniqBy,orderBy,find,findIndex,reject,uniq,indexOf,forEach,dropWhile } from "lodash";
 import request from "../../../../../services/requestObjects";
-
+import EventHighlights from "./EventHighlights"
 import BleashupAlert from './BleashupAlert';
 
 
@@ -31,7 +31,9 @@ export default class HighlightCard extends Component {
           updating:false,
           deleting:false,
           isOpen:false,
-          check:false
+          highlight_id:this.props.item.id,
+          check:false,
+          EventHighlightState:false
          }
         
     }
@@ -39,9 +41,18 @@ export default class HighlightCard extends Component {
 
 @autobind
 update(){
-//new highlight update when event is not yet created but highlight already created
-this.props.parentComponent.state.currentHighlight = this.props.item;
-this.props.parentComponent.setState({update:true});
+  if(this.props.ancien==true){
+    this.refs.highlights.state.currentHighlight = this.props.item;
+    this.refs.highlights.setState({update:true});
+    this.setState({EventHighlightState:true}); 
+    this.refs.highlights.setState({highlightData:[]});
+  }else{
+      //new highlight update when event is not yet created but highlight already created
+      this.props.parentComponent.state.currentHighlight = this.props.item;
+      this.props.parentComponent.setState({update:true});
+      
+  }
+
 
 }
 
@@ -50,27 +61,30 @@ delete(){
   return new Promise((resolve,rejectPromise)=>{
     console.warn("deleting....")
     //remove the higlight id from event then remove the highlight from the higlights store
-    if(this.props.item.event_id==""){
+    if(this.props.item.event_id == "newEventId"){
       console.warn("inside if....")
       console.warn(this.props.item.id);
-      stores.Events.removeHighlight("newEventId",this.props.item.id,false).then(()=>{resolve()});
+      stores.Events.removeHighlight(this.props.item.event_id,this.props.item.id,false).then(()=>{});
       console.warn("inside if 2....");
     }else{
-      console.warn("inside if 3....")
-      stores.Events.removeHighlight(this.props.item.event_id,this.props.item.id,false).then(()=>{resolve()});
+      console.warn(this.props.item.event_id,"inside if 3....");
+      console.warn( this.props.item.id,"inside if 4....");
+      stores.Events.removeHighlight(this.props.item.event_id,this.props.item.id,false).then(()=>{});
     }
 
-    stores.Highlights.removeHighlight(this.props.item.id).then(()=>{resolve()});
+    stores.Highlights.removeHighlight(this.props.item.id).then(()=>{});
 
     this.setState({check:false});
-    console.warn("inside if 4....");
+    //reset higlight data
+    this.props.deleteHighlight(this.props.item.id);
+   
+    console.warn("inside if 5....");
 
   });
  
 }
 
 componentDidMount(){
-  this.decriptionCut = this.props.item.description.slice(0,25)
 }
 
 
@@ -79,17 +93,20 @@ componentDidMount(){
 
       return(
           
-          <Card style={{width:170}}>
+          <Card style={{width:width/2 - width/40}}>
 
           <TouchableOpacity onPress={() => {this.setState({isOpen:true}) }} >
            <CardItem style={{margin:5}}>
-            <Text>{this.props.item.title}</Text>
+            <Text>{this.props.item.title.length>16?this.props.item.title.slice(0,16)+"..":this.props.item.title}</Text>
            </CardItem>
            <CardItem>
-            <Image source={{uri:this.props.item.url}} style={{width:160,height:100,borderRadius:8}}></Image>
+             <View style={{width:150,height:100}}>
+            <Image source={{uri:this.props.item.url}} style={{ flex: 1, width:null,height:null,
+              borderRadius:8}}></Image>
+            </View>
            </CardItem>
            <CardItem>
-            <Text>{ this.decriptionCut}...</Text>
+            <Text>{this.props.item.description.length>25?this.props.item.description.slice(0,25)+"...":this.props.item.description}</Text>
            </CardItem>
             </TouchableOpacity>
 
@@ -118,7 +135,8 @@ componentDidMount(){
      
            <BleashupAlert   deleteFunction={this.delete} isOpen={this.state.check} onClosed={()=>{this.setState({check:false})}}/>
           
-       
+           <EventHighlights   isOpen={this.state.EventHighlightState} onClosed={()=>{this.setState({EventHighlightState:false})}}
+            parentComponent={this} ref={"highlights"}/>
          
        </Card>  
         

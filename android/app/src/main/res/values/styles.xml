@@ -26,16 +26,16 @@
         <item name="gallery_checkbox_button_tint_color">#1FABAB</item>
         <item name="gallery_checkbox_text_color">#1FABAB</item>
         <item name="gallery_page_bg">#1FABAB</item>
-    <item name="gallery_default_image">@mipmap/ic_launcher</item>
-    <item name="gallery_camera_image">@mipmap/ic_launcher</item>
+        <item name="gallery_default_image">@mipmap/ic_launcher</item>
+        <item name="gallery_camera_image">@mipmap/ic_launcher</item>
         <item name="gallery_camera_bg">#1FABAB</item>
-        <item name="gallery_take_image_text_color">#1FABAB</item>
+        <item name="gallery_take_image_text_color">#FEFFDE</item>
         <item name="gallery_ucrop_status_bar_color">#1FABAB</item>
         <item name="gallery_ucrop_toolbar_color">#1FABAB</item>
-        <item name="gallery_ucrop_toolbar_widget_color">#1FABAB</item>
+        <item name="gallery_ucrop_toolbar_widget_color">#FEFFDE</item>
         <item name="gallery_ucrop_activity_widget_color">#1FABAB</item>
     <item name="gallery_ucrop_toolbar_title">@string/app_name</item>
-    </style>
+    </style> 
 
     <style name="gallery_checkBox" parent="@android:style/Widget.CompoundButton.CheckBox">
         <item name="android:scaleX">1.5</item>

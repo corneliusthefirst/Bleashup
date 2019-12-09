@@ -137,6 +137,8 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-device-info')
+    implementation project(':react-native-inappbrowser-reborn')
     implementation "com.google.firebase:firebase-auth:17.0.0"
     implementation "com.google.firebase:firebase-database:17.0.0"
     implementation project(':react-native-firebase')
@@ -167,7 +169,7 @@ dependencies {
     implementation project(':react-native-exit-app')
     implementation project(':react-native-image-picker')
     implementation project(':react-native-datetimepicker')
-    
+
     
 }
 
