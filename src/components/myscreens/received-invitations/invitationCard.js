@@ -31,6 +31,8 @@ import { observer } from 'mobx-react';
 import Requester from "../invitations/Requester"
 import moment from 'moment';
 import { AddParticipant } from '../../../services/cloud_services';
+import testForURL from '../../../services/testForURL';
+import request from '../../../services/requestObjects';
 
 
 const defaultPlaceholderObject = {
@@ -59,9 +61,6 @@ class CardListItem extends Component {
 
 
   //Maps schedule
-  Query = { query: this.props.location };
-  OpenLink = createOpenLink(this.Query);
-  OpenLinkZoom = createOpenLink({ ...this.Query, zoom: 50 });
   isSeen = false
   state = {
     activeRowKey: null,
@@ -92,8 +91,16 @@ class CardListItem extends Component {
       event_id: this.props.item.event_id,
       status: this.props.item.status
     }
-    Requester.accept(invitation).then(Participant => {
+    Requester.accept(invitation).then(() => {
       this.setState({ accept: true, actioning: !this.state.actioning })
+      let Participant = request.Participant();
+      Participant.phone = stores.Session.SessionStore.phone;
+      Participant.status = "invited";
+      Participant.master = invitation.status;
+      Participant.host = stores.Session.SessionStore.host
+      AddParticipant(this.props.item.event_id, [Participant]).then((response) => {
+        console.warn(response)
+      })
     }).catch(error => {
       Toast.show({
         text: 'unable to connect to the server ',
@@ -149,11 +156,7 @@ class CardListItem extends Component {
         tab: "EventDetails"
       })
     } else {
-      this.setState({
-        actioning: !this.state.actioning,
-        opening: true,
-        isOpenDetails: true
-      })
+      this.props.openDetails(this.state.item.event)
     }
   }
   onSeen() {
@@ -177,34 +180,25 @@ class CardListItem extends Component {
   }
   componentDidMount() {
     setTimeout(() => {
-      stores.Invitations.translateToinvitationData(this.props.item,false).then(data => {
-        let AccordData = data.sender_status
-        max_length = data.sender_status.length
-        let dataArray = [{ title: AccordData.slice(0, 35), content: AccordData.slice(35, max_length) }]
-        this.formCard(data).then(card => {
-          //testing notifications
-          //BleashupNotification.sendNotification("my test notification", "you received a new invitation")
-          this.setState({
-            activeRowKey: null,
-            isOpenDetails: false,
-            isOpenStatus: false,
-            enlargeEventImage: false,
-            accept: this.props.item.accept,
-            deny: this.props.item.deny,
-            message: "",
-            dataArray: dataArray,
-            textcolor: "",
-            loading: false,
-            item: data,
-            event_id: this.props.item.event_id,
-            seen: false,
-            isJoining: false,
-            hasJoin: false,
-            card: card
-          });
-        })
+      stores.Invitations.translateToinvitationData(this.props.item, false).then(data => {
+        this.setState({
+          activeRowKey: null,
+          isOpenDetails: false,
+          isOpenStatus: false,
+          enlargeEventImage: false,
+          accept: this.props.item.accept,
+          deny: this.props.item.deny,
+          message: "",
+          textcolor: "",
+          loading: false,
+          item: data,
+          event_id: this.props.item.event_id,
+          seen: false,
+          isJoining: false,
+          hasJoin: false,
+        });
       })
-    },this.props.time_delay + 20)
+    }, this.props.time_delay + 20)
 
   }
   swipeSettings = {
@@ -257,70 +251,48 @@ class CardListItem extends Component {
     rowId: this.props.index,
     sectionId: 1
   }
-  formCard(item) {
-    return new Promise((resolve, reject) => {
-      let card = [];
-      let i = 0;
-      Description = { event_title: item.event_title, event_description: item.event_description }
-      card.push(Description)
-      if (item.highlight.length !== 0) {
-        forEach(item.highlight, hightlight => {
-          card.push(hightlight);
-          if (i === item.highlight.length - 1) {
-
-            resolve(card)
-          }
-          i++
-        })
-      } else {
-        resolve(card)
-      }
-    })
-  }
   render() {
     return this.state.loading ? <Card style={{ height: 230 }}></Card> : <View style={{ width: "100%", }}>
       <Swipeout style={{ width: "100%", backgroundColor: "#FEFFDE" }} {...this.swipeSettings}>
-        <Card style={{ height: this.state.accept || this.state.deny ? 200 : 230 }}>
+        <Card style={{ height: this.state.accept || this.state.deny ? 210 : 230 }}>
           <CardItem>
-            <Text style={{ color: "#A91A84",fontSize: 14, }} note>
+            <Text style={{ color: "#A91A84", fontSize: 14, }} note>
               received
         </Text>
           </CardItem>
           <CardItem>
             <Left>
-              <TouchableOpacity onPress={() => requestAnimationFrame(() => this.setState({ opening: true, isOpenStatus: true, actioning: !this.state.actioning }))} >
-                {this.state.loading ? null : <CacheImages small thumbnails source={{ uri: this.state.item.sender_Image }}
-                />}
+              <TouchableOpacity onPress={() => requestAnimationFrame(() => this.props.showPhoto(this.state.item.sender_Image))} >
+                {this.state.loading ? null : testForURL(this.state.item.sender_Image) ? <CacheImages small thumbnails source={{ uri: this.state.item.sender_Image }} /> :
+                  <Thumbnail small source={{ uri: this.state.item.sender_Image }}></Thumbnail>}
               </TouchableOpacity>
               <Body >
-                {this.state.loading ? null : <Text style={{fontWeight: 'bold',}} >{this.state.item.sender_name}</Text>}
-
-                {this.state.loading ? null :
-                  this.state.dataArray.content == "" ? <Text style={{
-                    color: 'dimgray', padding: 10,fontStyle: 'italic',
-                    fontSize: 16, marginTop: -10, borderWidth: 0
-                  }} note>{this.state.item.sender_status}</Text> :
-
-                    <AccordionModule dataArray={this.state.dataArray} />
-
-                }
+                {this.state.loading ? null : <Text style={{ fontWeight: 'bold', }} >{this.state.item.sender_name}</Text>}
+                <Text style={{
+                  color: 'dimgray', padding: 10, fontStyle: 'italic',
+                  fontSize: 16, marginTop: -10, borderWidth: 0
+                }} note>{this.state.item.sender_status && this.state.item.sender_status.length > 50 ?
+                  this.state.item.sender_status.splice(0, 50) : this.state.item.sender_status ?
+                    this.state.item.sender_status : null}</Text>
               </Body>
             </Left>
           </CardItem>
 
           <CardItem cardBody>
             <Left>
-              {this.state.loading ? null : <DoublePhoto enlargeImage={() => this.setState({ opening: true, enlargeEventImage: true, actioning: !this.state.actioning })} LeftImage={this.state.item.receiver_Image}
+              {this.state.loading ? null : <DoublePhoto showPhoto={(image) => this.props.showPhoto(image)} LeftImage={this.state.item.receiver_Image}
                 RightImage={this.state.item.event_Image} />}
             </Left>
 
             <Body >
               <TouchableOpacity onPress={() => requestAnimationFrame(() => this.openDetails())
               } >
-                {this.state.loading ? null : <Text style={{ marginLeft: -40,fontWeight: 'bold', }}
+                {this.state.loading ? null : <Text style={{ marginLeft: -40, fontWeight: 'bold', }}
                 >{this.state.item.event_title}</Text>}
-                {this.state.loading ? null : <Text style={{ marginLeft: -40, color: 'dimgray', fontSize: 12,
-                fontStyle: 'italic', }}> on  {moment(this.state.item.event_time).format("dddd, MMMM Do YYYY, h:mm:ss a")}</Text>}
+                {this.state.loading ? null : <Text style={{
+                  marginLeft: -40, color: 'dimgray', fontSize: 12,
+                  fontStyle: 'italic',
+                }}> on  {moment(this.state.item.event_time).format("dddd, MMMM Do YYYY, h:mm:ss a")}</Text>}
               </TouchableOpacity>
             </Body>
           </CardItem>
@@ -385,7 +357,7 @@ class CardListItem extends Component {
             joined={() => this.setState({ hasJoin: true, actioning: !this.state.actioning })} />}
 
 
-          {this.state.loading ? null : <DetailsModal isOpen={this.state.isOpenDetails} details={this.state.card} location={this.state.item.location}
+          {/*this.state.loading ? null : <DetailsModal isOpen={this.state.isOpenDetails} details={this.state.card} location={this.state.item.location}
             event_organiser_name={this.state.item.event_organiser_name}
             created_date={this.state.item.created_date}
             onClosed={() => {
@@ -394,7 +366,7 @@ class CardListItem extends Component {
             }
             } item={this.state.item}
             OpenLinkZoom={this.OpenLinkZoom} OpenLink={this.OpenLink} onAccept={this.onAccept} onDenied={this.onDenied} deny={this.state.deny}
-            accept={this.state.accept} isJoining={this.state.isJoining} hasJoin={this.state.hasJoin} joined={() => this.setState({ hasJoin: true, actioning: !this.state.actioning })} />}
+          accept={this.state.accept} isJoining={this.state.isJoining} hasJoin={this.state.hasJoin} joined={() => this.setState({ hasJoin: true, actioning: !this.state.actioning })} />*/}
         </Card>
       </Swipeout>
     </View>

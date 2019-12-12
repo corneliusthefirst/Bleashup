@@ -1,8 +1,9 @@
 import RNCalendarEvents from 'react-native-calendar-events';
-import { PermissionsAndroid, Platform } from 'react-native';
+import { PermissionsAndroid } from 'react-native';
 import moment from 'moment';
 import { findIndex } from 'lodash'
 import stores from '../stores';
+import GState from '../stores/globalState';
 
 const BleashupCalendarID = "Bleashup-2018-bleashurs"
 const UTCFormat = "YYYY-MM-DDTHH:mm:ss.SSS[Z]"
@@ -85,7 +86,8 @@ class CalendarService {
     translateToCalendar(Bevent, alarms) {
         console.warn(alarms, this.calendarID)
         return {
-            calendarID: this.calendarID,
+            id: Bevent.calendar_id ? Bevent.calendar_id : undefined,
+            //calendarID: this.calendarID,
             title: Bevent.about.title,
             startDate: moment(Bevent.period).utc().format(UTCFormat),
             endDate: moment(Bevent.period).add(1, 'hours').utc().format(UTCFormat),
@@ -97,20 +99,10 @@ class CalendarService {
                 interval: Bevent.interval,
                 occurrence: Bevent.occurrence,
             } : null,
-            alarms: alarms ? alarms : [{
-                date: Platform.OS === 'ios'
-                    ? moment(Bevent.period)
-                        .subtract(600, 'seconds')
-                        .toISOString() : parseInt(moment(Bevent.period).diff(moment(Bevent.period).subtract(600, 'seconds'), 'minutes'))
-            }, {
-                date: Platform.OS === 'ios'
-                    ? moment(Bevent.period)
-                        .subtract(1, 'hours')
-                        .toISOString() : parseInt(moment(Bevent.period).diff(moment(Bevent.period).subtract(1, 'hours'), 'minutes'))
-            }],
+            alarms: alarms,
             location: Bevent.location.string,
             notes: Bevent.notes,
-            description: Bevent.about.description.slice(0, 50) + "...",
+            description:  GState.DeepLinkURL + "event/" + Bevent.id
         }
     }
 

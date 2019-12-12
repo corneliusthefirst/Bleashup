@@ -1,6 +1,6 @@
 
 import React, { Component } from 'react';
-import { View, Dimensions, BackHandler } from 'react-native';
+import { View, Dimensions, BackHandler, StatusBar } from 'react-native';
 import PublicEvent from "./publicEvent.js"
 import { observer } from 'mobx-react';
 import BleashupScrollView from '../../../BleashupScrollView.js';
@@ -8,14 +8,29 @@ import BleashupFlatList from '../../../BleashupFlatList';
 import Orientation from 'react-native-orientation-locker';
 import { ReactNativeZoomableView } from '@dudigital/react-native-zoomable-view';
 import Image from 'react-native-scalable-image';
-import { Icon } from 'native-base';
+import { Icon, ActionSheet } from 'native-base';
+import ParticipantModal from '../../../ParticipantModal.js';
+import { find } from "lodash"
+import stores from '../../../../stores';
+import PublishersModal from '../../../PublishersModal.js';
+import LikerssModal from '../../../LikersModal.js';
+import InvitationModal from './InvitationModal.js';
+import DetailsModal from '../../invitations/components/DetailsModal.js';
+import PhotoViewer from '../../event/PhotoViewer.js';
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenheight = Math.round(Dimensions.get('window').height);
 
 export default class CurrentEvents extends Component {
     constructor(props) {
         super(props)
-        this.state = {}
+        this.state = {
+            participants: [],
+            event_id: null,
+            isParticipantModalOpened: false
+        }
+    }
+    state = {
+
     }
     showPhoto(url) {
         this.setState({
@@ -38,9 +53,32 @@ export default class CurrentEvents extends Component {
     componentWillUnmount() {
         BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton);
     };
+    options = ["View Paricipants", "Shared By", "Cancel"]
+    showActions(id) {
+        let participants = find(this.props.data, { id: id }).participant
+        ActionSheet.show({
+            options: this.options, title: "Select Action", cancelButtonIndex: 2,
+            modalStyle: { backgroundColor: "#FEFFDE" }, actionSheetStyle: { backgroundColor: "#FEFEDE" }
+        }, (index) => {
+            console.warn(index)
+            if (index === 0) {
+                this.setState({
+                    event_id: id,
+                    participant: participants,
+                    isParticipantModalOpened: true
+                })
+            } else if (index === 1) {
+                this.setState({
+                    isPublisherModalOpened: true,
+                    event_id: id
+                })
+            }
+        })
+    }
     delay = 0
     renderPerbatch = 3
     render() {
+        StatusBar.setHidden(false,true)
         return (
             <View style={{ height: "100%", backgroundColor: "#FEFFDE" }}>
                 <BleashupFlatList
@@ -48,7 +86,29 @@ export default class CurrentEvents extends Component {
                     dataSource={this.props.data}
                     renderItem={(item, index) => {
                         this.delay = index % this.renderPerbatch == 0 ? 0 : this.delay + 1
-                        return <PublicEvent renderDelay={this.delay * 100} showPhoto={(url) => this.showPhoto(url)} key={item.id}  {...this.props} Event={item} />
+                        return <PublicEvent
+                            showLikers={likers => {
+                                this.setState({
+                                    isLikersModalOpened: true,
+                                    likers: likers
+                                })
+                            }}
+                            quickInvite={(e) => {
+                                this.setState({
+                                    event: e.event,
+                                    master: e.master,
+                                    isInvitationModalOpened: true
+                                })
+                            }}
+                            openDetails={(event) => {
+                                this.setState({
+                                    isDetailsModalOpened: true,
+                                    event: event
+                                })
+                            }}
+                            showActions={(event_id) => this.showActions(event_id)}
+                            renderDelay={this.delay * 100}
+                            showPhoto={(url) => this.showPhoto(url)} key={item.id}  {...this.props} Event={item} />
                     }}
                     firstIndex={0}
                     renderPerBatch={this.renderPerbatch}
@@ -56,27 +116,44 @@ export default class CurrentEvents extends Component {
                     numberOfItems={this.props.data.length}
                 >
                 </BleashupFlatList>
-                { 
+                {
                     // ******************Photo Viewer View ***********************//
-                    this.state.showPhoto ?
-                        <View style={{ height: screenheight, width: screenWidth, position: "absolute", backgroundColor: "black", }}>
-                            <ReactNativeZoomableView
-                                maxZoom={1.5}
-                                minZoom={0.5}
-                                zoomStep={0.5}
-                                initialZoom={1}
-                                bindToBorders={true}
-                                onZoomAfter={this.logOutZoomState}>
-                                <Image resizeMode={"contain"} width={screenWidth} height={screenheight}
-                                    source={{ uri: this.state.photo }}></Image>
-                            </ReactNativeZoomableView>
-                            <Icon type="EvilIcons" onPress={() => {
-                                this.setState({
-                                    showPhoto: false
-                                })
-                            }} style={{ margin: '1%', position: 'absolute', fontSize: 30, color: "#FEFFDE" }} name={"close"}></Icon>
-                        </View> : null
+                    this.state.showPhoto ? <PhotoViewer photo={this.state.photo} open={this.state.showPhoto} hidePhoto={() => {
+                        this.setState({
+                            showPhoto: false
+                        })
+                    }}></PhotoViewer> : null
                 }
+                <ParticipantModal isOpen={this.state.isParticipantModalOpened} hideTitle={false} participants={this.state.participant} onClosed={() => {
+                    this.setState({
+                        isParticipantModalOpened: false
+                    })
+                }}  ></ParticipantModal>
+                <PublishersModal isOpen={this.state.isPublisherModalOpened} event_id={this.state.event_id} onClosed={() => {
+                    this.setState({
+                        isPublisherModalOpened: false
+                    })
+                }}></PublishersModal>
+                <LikerssModal likers={this.state.likers} isOpen={this.state.isLikersModalOpened} onClosed={() => this.setState({
+                    isLikersModalOpened: false
+                })}></LikerssModal>
+                {this.state.isInvitationModalOpened ? <InvitationModal
+                    isOpen={this.state.isInvitationModalOpened}
+                    public={this.state.event.public}
+                    master={this.state.master}
+                    eventID={this.state.event.id} close={() => {
+                        this.setState({
+                            isInvitationModalOpened: false
+                        })
+                    }}></InvitationModal> : null}
+                {this.state.isDetailsModalOpened ? <DetailsModal event={this.state.event}
+                    isOpen={this.state.isDetailsModalOpened}
+                    onClosed={() => {
+                        this.setState({
+                            isDetailsModalOpened: false
+                        })
+                    }}>
+                </DetailsModal> : null}
             </View>
         )
     }

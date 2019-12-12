@@ -3,7 +3,8 @@ import {
   View,
   Dimensions,
   BackHandler,
-  StatusBar
+  StatusBar,
+  Platform
 } from 'react-native';
 import {
   Spinner,
@@ -48,6 +49,7 @@ import PhotoInputModal from "./PhotoInputModal";
 import PhotoViewer from "./PhotoViewer";
 import rnFetchBlob from 'rn-fetch-blob';
 import * as config from "../../../config/bleashup-server-config.json"
+import SearchImage from "./createEvent/components/SearchImage";
 const AppDir = rnFetchBlob.fs.dirs.SDCardDir + '/Bleashup'
 
 const screenWidth = Math.round(Dimensions.get('window').width);
@@ -80,6 +82,7 @@ export default class Event extends Component {
       working: false,
       showNotifiation: false,
     };
+    this.backHandler = null
     //this.props.Event = this.props.navigation.getParam("Event");
   }
   state = {
@@ -293,8 +296,9 @@ export default class Event extends Component {
     })
     this.initializeMaster()
     //this.event = this.props.navigation.getParam("Event")
-    BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this))
-
+    if (this.backHandler)
+      this.backHandler.remove();
+   this.backHandler = BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this))
   }
   user = null
   event = this.props.navigation.getParam("Event")
@@ -308,10 +312,12 @@ export default class Event extends Component {
       })
       return true
     } else {
-      return false
+      this.props.navigation.navigate("Home")
+      return true
     }
   }
   componentDidMount() {
+    console.warn(this.event.calendar_id)
     if (!this.event.calendared) {
       this.setState({
         isSynchronisationModalOpned: true
@@ -330,7 +336,7 @@ export default class Event extends Component {
     this.unmounted = true
     console.warn("unMounting")
     GState.currentCommitee = null
-    BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton);
+    this.backHandler.remove()
 
   }
   _allowScroll(scrollEnabled) {
@@ -385,6 +391,7 @@ export default class Event extends Component {
       Requester.addCommitee(commitee).then(() => {
         !this.event.commitee || this.event.commitee.length <= 0 ? this.event.commitee = [commitee.id] :
           this.event.commitee.unshift(commitee.id)
+        console.warn('marking as not working!!')
         this.setState({
           newCommitee: true,
           working: false
@@ -774,8 +781,10 @@ export default class Event extends Component {
         this.setState({
           working: false
         })
-        Toast.show({ text: "Activity Successfully Left", type: "success" })
         emitter.emit(`left_${this.event.id}`) //TODO: this signal is beign listen to in the module current_events>public_events>join
+        RemoveParticipant(this.event_id,this.user.phone).then((response) =>{
+          console.warn(response)
+        })
       }).catch((e) => {
         this.setState({
           working: false
@@ -793,10 +802,6 @@ export default class Event extends Component {
       if (this.event.public) {
         Requester.publish(this.event.id).then(() => {
           this.initializeMaster()
-          this.setState({
-            working: false
-          })
-          Toast.show({ text: "Published Successfully", type: "success" })
         })
       } else {
         this.setState({
@@ -808,13 +813,13 @@ export default class Event extends Component {
       Toast.show({ text: "App Busy " })
     }
   }
-  saveSettings(newSettings) {
+  saveSettings(original, newSettings) {
     if (!this.state.working) {
       this.setState({
         working: true,
         isSettingsModalOpened: false
       })
-      Requester.applyAllUpdate(this.event, newSettings).then((res) => {
+      Requester.applyAllUpdate(original, newSettings).then((res) => {
         console.warn(res)
         if (res)
           Toast.show({ text: 'All save completely applied !', type: 'success' })
@@ -853,21 +858,31 @@ export default class Event extends Component {
     this.setState({
       isSetPatternModalOpened: false,
     })
-    console.warn("syncing")
-    CalendarServe.saveEvent(this.event, pattern).then(id => {
-      stores.Events.markAsCalendared(this.event.id, id).then(() => {
+    let alarms = pattern ? pattern : [{
+      date: Platform.OS === 'ios'
+        ? moment(Bevent.period)
+          .subtract(600, 'seconds')
+          .toISOString() : parseInt(moment(Bevent.period).diff(moment(Bevent.period).subtract(600, 'seconds'), 'minutes'))
+    }, {
+      date: Platform.OS === 'ios'
+        ? moment(Bevent.period)
+          .subtract(1, 'hours')
+          .toISOString() : parseInt(moment(Bevent.period).diff(moment(Bevent.period).subtract(1, 'hours'), 'minutes'))
+    }]
+    CalendarServe.saveEvent(this.event, alarms).then(id => {
+      stores.Events.markAsCalendared(this.event.id, id, alarms).then(() => {
         this.initializeMaster()
       })
     })
 
   }
-  openCamera() {
+  openCamera(notCam) {
     this.setState({
       isSelectPhotoInputMethodModal: false
     })
     ImagePicker.openPicker({
       cropping: true,
-      isCamera: true,
+      isCamera: notCam ? false : true,
       //width:400,
       //height:300,
       //openCameraOnStart: true,
@@ -908,12 +923,16 @@ export default class Event extends Component {
     })
   }
   render() {
+    StatusBar.setHidden(false, true)
     return (<SideMenu autoClosing={true} onMove={(position) => {
 
     }} bounceBackOnOverdraw={false} onChange={(position) => {
       this.isOpen = position
     }} isOpen={this.isOpen} openMenuOffset={this.currentWidth}
       menu={<View><SWView
+        navigateHome={() =>{
+          this.props.navigation.navigate("Home")
+        }}
         ref="swipperView"
         publish={() => this.publish()}
         showActivityPhotoAction={() => this.openPhotoSelectorModal()}
@@ -1080,8 +1099,8 @@ export default class Event extends Component {
             warnTitle: "Close Activity",
             okButtonText: "Close"
           })
-        }} event={this.event} saveSettings={(newSettings) => {
-          this.saveSettings(newSettings)
+        }} event={this.event} saveSettings={(original, newSettings) => {
+          this.saveSettings(original, newSettings)
         }} isOpen={this.state.isSettingsModalOpened} onClosed={() => {
           this.markAsConfigured()
           this.setState({
@@ -1111,10 +1130,18 @@ export default class Event extends Component {
           }}></SetAlarmPatternModal> : null}
         <PhotoInputModal
           showActivityPhoto={() => {
-            this.setState({
+            this.event.background ? this.setState({
               showPhoto: true,
               isSelectPhotoInputMethodModal: false,
               photo: this.event.background
+            }) : this.setState({
+              isSelectPhotoInputMethodModal: false
+            })
+          }}
+          openInternet={() => {
+            this.setState({
+              isSelectPhotoInputMethodModal: false,
+              isSearchImageModalOpened: true
             })
           }}
           openCamera={() => this.openCamera()}
@@ -1128,6 +1155,11 @@ export default class Event extends Component {
             isSelectPhotoInputMethodModal: false
           })
         }}></PhotoViewer> : null}
+        <SearchImage accessLibrary={() => this.openCamera(true)} isOpen={this.state.isSearchImageModalOpened} onClosed={() => {
+          this.setState({
+            isSearchImageModalOpened: false
+          })
+        }}></SearchImage>
       </View>
     </SideMenu>
     );

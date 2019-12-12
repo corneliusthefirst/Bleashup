@@ -118,7 +118,7 @@ export default class events {
         this.saveKey.data = Events;
         storage.save(this.saveKey).then(() => {
           this.setProperties(this.saveKey.data, false)
-          resolve("ok");
+          resolve(Events[index]);
         })
       })
     })
@@ -138,12 +138,13 @@ export default class events {
       })
     })
   }
-  @action markAsCalendared(EventID, id) {
+  @action markAsCalendared(EventID, id,alarms) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then((Events) => {
         let index = findIndex(Events, { id: EventID });
         Events[index].calendared = true
         Events[index].calendar_id = id
+        Events[index].alarms = alarms
         indexNew = findIndex(this.events, { id: EventID });
         this.saveKey.data = uniqBy(Events, "id")
         storage.save(this.saveKey).then(() => {
@@ -314,7 +315,7 @@ export default class events {
         let eventIndex = findIndex(Events, { id: EventID });
         if (eventIndex >= 0) {
           Events[eventIndex].participant[Events[eventIndex].participant.length] = Participant;
-          Events[eventIndex].participant[Events[eventIndex].participant.length] = uniqBy(Events[eventIndex].participant, "phone")
+          Events[eventIndex].participant = uniqBy(Events[eventIndex].participant, "phone")
           if (inform) {
             Events[eventIndex].participant_added = true;
             Events[eventIndex].updated = true;
@@ -384,7 +385,7 @@ export default class events {
         this.saveKey.data = Events;
         storage.save(this.saveKey).then(() => {
           this.setProperties(this.saveKey.data, inform);
-          resolve();
+          resolve(Events[eventIndex]);
         });
       });
     });
@@ -414,7 +415,7 @@ export default class events {
         Events[eventIndex].background = NewBackground;
         if (inform) {
           Events[eventIndex].background_updated = true;
-          Event[eventIndex].updated = true;
+          Events[eventIndex].updated = true;
         }
         Events[eventIndex].updated_at = moment().format();
         this.saveKey.data = Events;
@@ -441,7 +442,7 @@ export default class events {
         this.saveKey.data = Events;
         storage.save(this.saveKey).then(() => {
           this.setProperties(this.saveKey.data, inform);
-          resolve();
+          resolve(Events[index]);
         });
       })
     })
@@ -459,7 +460,7 @@ export default class events {
         this.saveKey.data = Events;
         storage.save(this.saveKey).then(() => {
           this.setProperties(this.saveKey.data, inform);
-          resolve();
+          resolve(Events[eventIndex]);
         });
       });
     });
@@ -538,7 +539,7 @@ export default class events {
         this.saveKey.data = Events;
         storage.save(this.saveKey).then(() => {
           this.setProperties(this.saveKey.data, inform);
-          resolve();
+          resolve(Events[eventIndex]);
         });
       });
     });

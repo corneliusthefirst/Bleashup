@@ -4,7 +4,6 @@ import { Icon, Spinner, Text, Toast } from "native-base"
 import Requester from '../Requester'
 import stores from "../../../../stores"
 import { indexOf, dropWhile, uniq, find } from "lodash"
-import LikerssModal from '../../../LikersModal';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import emitter from '../../../../services/eventEmiter';
 
@@ -17,7 +16,7 @@ export default class Like extends Component {
         likes: 0,
         liked: false,
         likers: [],
-        newWing:false,
+        newWing: false,
         loaded: false,
         isOpen: false
     }
@@ -29,21 +28,18 @@ export default class Like extends Component {
     })
     shouldComponentUpdate(nextProps, nextState, nextContext) {
         return this.state.loaded !== nextState.loaded ||
-            this.state.liked !== nextState.liked || 
+            this.state.liked !== nextState.liked ||
             this.state.isOpen !== nextState.isOpen ||
             this.state.newWing !== nextState.newWing
     }
-    didILiked(Likes, id) {
+    didILiked(likes, id) {
         return new Promise((resolve, reject) => {
-            likes = find(Likes, { event_id: id })
             if (likes) {
                 let index = indexOf(likes.likers, stores.Session.SessionStore.phone)
                 if (index >= 0) resolve({ status: true, likes: likes })
                 else resolve({ status: false, likes: likes })
             } else {
-                let index = indexOf(Likes.likers, stores.Session.SessionStore.phone)
-                if (index >= 0) resolve({ status: true, likes: Likes })
-                else resolve({ status: false, likes: Likes })
+                resolve({ status: false, likes: { event_id: id, likers: [], likes: 0 } })
             }
         })
     }
@@ -51,9 +47,9 @@ export default class Like extends Component {
         stores.Likes.loadLikes(this.props.id).then(likes => {
             this.didILiked(likes, this.props.id).then(result => {
                 this.setState({
-                    likes: likes.likers.length,
+                    likes: likes && likes.likers ? likes.likers.length : 0,
                     liked: result.status,
-                    likers: likes.likers,
+                    likers: likes && likes.likers ? likes.likers : [],
                     loaded: true
                 })
                 emitter.on(`liked_${this.props.id}`, () => {
@@ -62,7 +58,7 @@ export default class Like extends Component {
                             this.setState({
                                 likes: likes.likers.length,
                                 liked: result.status,
-                                newWing:!this.state.newWing,
+                                newWing: !this.state.newWing,
                                 likers: likes.likers,
                                 loaded: true
                             })
@@ -178,7 +174,7 @@ export default class Like extends Component {
 
                 </View>
                 <View>
-                    <TouchableOpacity onPress={() => this.setState({ isOpen: true })}>
+                    <TouchableOpacity onPress={() => requestAnimationFrame(() => {this.props.showLikers(this.state.likers ? this.state.likers : [])})}>
                         <View style={{ marginTop: 5 }}>
                             <Text style={{
                                 color: this.state.liked ? "#54F5CA" :
@@ -188,8 +184,6 @@ export default class Like extends Component {
                     </TouchableOpacity>
                 </View>
                 <View>
-                    <LikerssModal likers={this.state.likers} isOpen={this.state.isOpen}
-                        onClosed={() => this.setState({ isOpen: false })}></LikerssModal>
                 </View>
             </View>
         ) : null

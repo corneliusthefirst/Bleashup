@@ -173,8 +173,6 @@ dependencies {
     implementation project(':react-native-exit-app')
     implementation project(':react-native-nested-scroll-view')
     implementation project(':react-native-image-picker')
-    implementation project(':react-native-datetimepicker')
-
     
 }
 

@@ -18,45 +18,8 @@ export default class TitleView extends Component {
         }
     }
     componentDidMount() {
-        this.formDetailModal(this.props.Event).then(details => {
-            this.formCreator().then(creator => {
-                this.setState({
-                    details: details,
-                    creator: creator,
-                    loaded: true
-                })
-            })
-        })
     }
-    formCreator() {
-        return new Promise((resolve, reject) => {
-            stores.TemporalUsersStore.getUser(this.props.Event.creator_phone).then((user) => {
-                resolve({ name: user.nickname, status: user.status, image: user.profile })
-            })
-        })
-    }
-    formDetailModal(event) {
-        return new Promise((resolve, reject) => {
-            stores.Highlights.fetchHighlights(event.id).then(highlights => {
-                let card = [];
-                let i = 0;
-                Description = { event_title: event.about.title, event_description: event.about.description }
-                card.push(Description)
-                if (highlights.length !== 0) {
-                    forEach(highlights, hightlight => {
-                        card.push(hightlight);
-                        if (i === highlights.length - 1) {
-                            resolve(card)
-                        }
-                        i++
-                    })
-                } else {
-                    resolve(card)
-                }
-            })
-        })
-    }
-    @autobind navigateToEventDetails() {
+   navigateToEventDetails() {
         stores.Events.isParticipant(this.props.Event.id, stores.Session.SessionStore.phone).then(status => {
             if (status) {
                 this.props.navigation.navigate("Event", {
@@ -64,7 +27,7 @@ export default class TitleView extends Component {
                     tab: "EventDetails"
                 });
             } else {
-                this.setState({ isDetailsModalOpened: true })
+                this.props.openDetail()
             }
             this.props.seen()
         })
@@ -87,10 +50,10 @@ export default class TitleView extends Component {
         } else if (daysDiff == 7) {
             return "Past Since 1 Week Ago at " + moment(date).format("h:mm a")
         } else if (daysDiff == -1) {
-            return "Upcoming Tomorrow at" + moment(date).format("h:mm a");
+            return "Upcoming Tomorrow at " + moment(date).format("h:mm a");
         }
         else if (daysDiff < -1) {
-            return `Upcoming in ${Math.abs(daysDiff)} Days at` + moment(date).format("h:mm a");
+            return `Upcoming in ${Math.abs(daysDiff)} Days at ` + moment(date).format("h:mm a");
         } else {
             return `Past since ${moment(date).format("dddd, MMMM Do YYYY")} at ${moment(date).format("h:mm a")}`
         }
@@ -109,7 +72,7 @@ export default class TitleView extends Component {
                             <Text
                                 adjustsFontSizeToFit={true}
                                 style={{
-                                    fontSize: 20,
+                                    fontSize: 22,
                                     fontWeight: "bold",
                                     fontFamily: "Roboto",
                                 }}
@@ -118,7 +81,7 @@ export default class TitleView extends Component {
                             </Text>
                             <Text
                                 style={{
-                                    color: this.props.Event.closed ? "red" : this.dateDiff(this.props.Event.period) > 0 ? "gray" : "#54F5CA",
+                                    color: this.props.Event.closed ? "red" : this.dateDiff(this.props.Event.period) > 0 ? "gray" : "#1FABAB",
                                     fontStyle: 'italic',
                                     fontWeight: this.props.Event.closed ? "bold" : '400',
                                 }}
@@ -136,7 +99,7 @@ export default class TitleView extends Component {
                                 }>
                                     <View>
                                         <Text style={{
-                                            color: "#54F5CA"
+                                            color: "#1FABAB"
                                         }} note>
                                             {this.props.Event.recursion.type}
                                         </Text>
@@ -152,22 +115,7 @@ export default class TitleView extends Component {
                         </View>
                     </TouchableOpacity>
                 </View>
-            </View>{this.state.loaded ? <DetailsModal
-                isToBeJoint={!(this.props.Event.joint)}
-                join={() => {
-                    this.props.join()
-                    this.setState({
-                        isDetailsModalOpened: false
-                    })
-                }}
-                isOpen={this.state.isDetailsModalOpened}
-                isJoining={this.state.isJoining}
-                details={this.state.details}
-                created_date={this.props.Event.created_at}
-                location={this.props.Event.location && this.props.Event.location.string ? this.props.Event.location.string : this.props.Event.location}
-                event_organiser_name={this.state.creator.name}
-                onClosed={() => this.setState({ isDetailsModalOpened: false })}
-            /> : null}
+            </View>
         </View>
     }
 }

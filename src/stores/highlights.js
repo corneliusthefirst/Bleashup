@@ -7,8 +7,9 @@ import tcpRequest from "../services/tcpRequestData";
 import request from '../services/requestObjects';
 import serverEventListener from "../services/severEventListener"
 export default class highlights {
- // constructor() {}
+  constructor() {
 
+  }
   @observable highlights = [];
   saveKey = {
     key: "highlights", 
@@ -55,7 +56,8 @@ export default class highlights {
       eventid.event_id = eventID;
       tcpRequest.getHighlights(eventid, eventid.event_id + "highlights").then(JSONDATA => {
         serverEventListener.sendRequest(JSONDATA, eventid.event_id + "highlights").then(Data => {
-          if (Data == 'empty') {
+          console.warn(Data.data,"pppp")
+          if (Data.data === 'empty') {
             resolve([])
           } else {
             this.addHighlights(Data).then(() => {
@@ -77,6 +79,7 @@ export default class highlights {
           })
           if(result.length==0){
             this.fetchHighlightsFromRemote(eventID).then(data =>{
+              console.warn(data)
               resolve(data)
             })
           }else{

@@ -36,34 +36,32 @@ export default class Invitations {
     translateToinvitationData(invitation, sent) {
         return new Promise((resolve, reject) => {
             stores.Events.loadCurrentEvent(invitation.event_id).then(event => {
-                stores.Highlights.fetchHighlights(invitation.event_id).then((hightlights) => {
-                    stores.TemporalUsersStore.getUser(sent ? invitation.invitee : invitation.inviter).then(user => {
-                        resolve({
-                            "key": invitation.invitation_id,
-                            "sender_Image": user.profile,
-                            "event_id": event.id,
-                            "sender_name": stores.LoginStore.user.phone == user.phone ? "You " : user.nickname,
-                            "sender_status": user.status,
-                            "receiver_Image": user.profile,
-                            "received_date": invitation.period,
-                            "created_date": event.created_at,
-                            "event_organiser_name": user.nickname,
-                            "event_description": event.about.description,
-                            "event_Image": event.background,
-                            "event_time": event.period.date ? event.period.date.year + "/" +
-                                event.period.date.month + "/" +
-                                event.period.date.day + " at " + event.period.time.hour + ": "
-                                + event.period.time.mins + ": " + event.period.time.secs : event.period,
-                            "event_title": event.about.title,
-                            "location": event.location.string,
-                            "invitation_status": invitation.status,
-                            "highlight": hightlights,
-                            "accept": invitation.accept,
-                            "deny": invitation.deny,
-                            "sent": invitation.sent,
-                            "recevied": invitation.received,
-                            "seen": invitation.seen
-                        })
+                stores.TemporalUsersStore.getUser(sent ? invitation.invitee : invitation.inviter).then(user => {
+                    resolve({
+                        "key": invitation.invitation_id,
+                        "sender_Image": user.profile,
+                        "event_id": event.id,
+                        "sender_name": stores.LoginStore.user.phone == user.phone ? "You " : user.nickname,
+                        "sender_status": user.status,
+                        "receiver_Image": user.profile,
+                        "received_date": invitation.period,
+                        "created_date": event.created_at,
+                        "event_organiser_name": user.nickname,
+                        "event_description": event.about.description,
+                        "event_Image": event.background,
+                        "event_time": event.period.date ? event.period.date.year + "/" +
+                            event.period.date.month + "/" +
+                            event.period.date.day + " at " + event.period.time.hour + ": "
+                            + event.period.time.mins + ": " + event.period.time.secs : event.period,
+                        "event_title": event.about.title,
+                        "location": event.location.string,
+                        "invitation_status": invitation.status,
+                        "accept": invitation.accept,
+                        "deny": invitation.deny,
+                        "sent": invitation.sent,
+                        "recevied": invitation.received,
+                        "seen": invitation.seen,
+                        event: event,
                     })
                 })
             })

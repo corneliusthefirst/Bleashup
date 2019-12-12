@@ -6,7 +6,8 @@ import {
     Text,
     Spinner,
     Toast,
-    ActionSheet
+    ActionSheet,
+    Button
 } from 'native-base';
 import {
     View,
@@ -89,6 +90,7 @@ export default class ChatRoom extends Component {
             playing: true,
             replyContent: null
         };
+        this.BackHandler = null
     }
 
     authObserver() {
@@ -141,11 +143,11 @@ export default class ChatRoom extends Component {
                     firebase.database().ref(`${this.props.firebaseRoom}/${newKey}/received`).set(received)
                     if (newMessage.sender.phone == this.props.user.phone) {
                         console.warn("adding new_message")
-                        SendNotifications(this.props.user.name,newKey,newMessage.type,newMessage.text,this.props.firebaseRoom,this.props.user.phone,this.activity_name,this.props.activity_id,this.props.roomName).then(() =>{
+                        SendNotifications(this.props.user.name, newKey, newMessage.type, newMessage.text, this.props.firebaseRoom, this.props.user.phone, this.activity_name, this.props.activity_id, this.props.roomName).then(() => {
                             this.setState({ newMessage: true })
                         })
-                       // fetch(`https://us-central1-bleashup-1562173529011.cloudfunctions.net/informOthers?sender_name=${this.props.user.name}&message_key=${newKey}&message_type=${newMessage.type}&message=${newMessage.text}&room_key=${this.props.firebaseRoom}&sender_phone=${this.props.user.phone}&activity_name=${this.props.activity_name}&activity_id=${this.props.activity_id}&room_name=${this.props.roomName}`).then(response => {
-                           
+                        // fetch(`https://us-central1-bleashup-1562173529011.cloudfunctions.net/informOthers?sender_name=${this.props.user.name}&message_key=${newKey}&message_type=${newMessage.type}&message=${newMessage.text}&room_key=${this.props.firebaseRoom}&sender_phone=${this.props.user.phone}&activity_name=${this.props.activity_name}&activity_id=${this.props.activity_id}&room_name=${this.props.roomName}`).then(response => {
+
                         //})
                     }
                 })
@@ -315,12 +317,13 @@ export default class ChatRoom extends Component {
     }
     componentWillMount() {
         this.fireRef = this.getRef(this.props.firebaseRoom);
-        this.setTypingRef(this.props.firebaseRoom) 
+        this.setTypingRef(this.props.firebaseRoom)
         firebase.database().ref(`current_room/${this.props.user.phone}`).onDisconnect().set(null)
         this.room = new ChatStore(this.props.firebaseRoom)
         this.keyboardDidShowSub = Keyboard.addListener('keyboardDidShow', this.handleKeyboardDidShow);
         this.keyboardDidHideSub = Keyboard.addListener('keyboardDidHide', this.handleKeyboardDidHide);
-        BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this))
+        if (this.BackHandler) this.BackHandler.remove()
+        this.BackHandler = BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this))
         Orientation.lockToPortrait();
     }
     componentWillUnmount() {
@@ -333,7 +336,7 @@ export default class ChatRoom extends Component {
         SoundRecorder.stop().then(() => {
 
         })
-        BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton);
+        this.BackHandler.remove()
     }
 
     handleKeyboardDidShow = (event) => {
@@ -1005,6 +1008,16 @@ export default class ChatRoom extends Component {
         })
         this._stopRecoder()
     }
+    cancleReply(){
+        this.setState({
+            replying: false,
+            replyContent: null,
+            messageListHeight: this.state.previousMessageHeight,
+            textInputHeight: this.state.previousTextHeight,
+            textHeight: screenheight * 0.1,
+            photoHeight: screenheight * 0.9,
+        })
+    }
     pauseRecorder() {
         this.stopRecordTiming()
         SoundRecorder.pause().then(() => {
@@ -1111,7 +1124,7 @@ export default class ChatRoom extends Component {
     }
     options = ["Remove Message", "Update Message", "Seen By ...", "Cancel"]
     showActions(message) {
-        ActionSheet.show({ options: this.options, title: "Choose You Options", cancelButtonIndex: 2 }, (index) => {
+        ActionSheet.show({ options: this.options, title: "Choose You Action", cancelButtonIndex: 3 }, (index) => {
             if (index == 0) {
                 if (GState.connected) {
                     let messageRef = this.fireRef.child(message.key)
@@ -1153,7 +1166,7 @@ export default class ChatRoom extends Component {
         })
     }
     headerStyles = {
-        width: "100%", height: 44, display: 'flex', flexDirection: 'row',
+        width: "100%", height: 44, display: 'flex', flexDirection: 'row', opacity: .6,
         backgroundColor: "transparent", position: "absolute", borderBottomWidth: 1.25, borderBottomColor: "#1FABAB",
     }
     transparent = "rgba(50, 51, 53, 0.8)";
@@ -1171,12 +1184,12 @@ export default class ChatRoom extends Component {
                                 Keyboard.dismiss()
                                 //this.hideAndShowHeader()
                             }}>
-                            {
-                                this.messageList()
-                            }
+                                {
+                                    this.messageList()
+                                }
                             </TouchableWithoutFeedback>
                         </View>
-                            {!this.props.opened || !this.props.generallyMember ? <Text style={{ fontStyle: 'italic', marginLeft: "3%", }} note>{"This commitee has been closed for you"}</Text> :
+                        {!this.props.opened || !this.props.generallyMember ? <Text style={{ fontStyle: 'italic', marginLeft: "3%", }} note>{"This commitee has been closed for you"}</Text> :
                             // ***************** KeyBoard Displayer *****************************
                             this.keyboardView()
                         }
@@ -1227,8 +1240,8 @@ export default class ChatRoom extends Component {
                     replyer: replyer,
                     showRepliedMessage: true
                 });
-            } } user={this.props.user.phone} creator={this.props.creator} replaceMessageFile={(data) => this.replaceMessageFile(data)} playVideo={(source) => this.playVideo(source)}></Message> : null;
-        } } dataSource={this.room.messages} newData={this.showMessage} newDataLength={this.showMessage.length}>
+            }} user={this.props.user.phone} creator={this.props.creator} replaceMessageFile={(data) => this.replaceMessageFile(data)} playVideo={(source) => this.playVideo(source)}></Message> : null;
+        }} dataSource={this.room.messages} newData={this.showMessage} newDataLength={this.showMessage.length}>
         </BleashupFlatList>;
     }
 
@@ -1247,14 +1260,15 @@ export default class ChatRoom extends Component {
                         marginTop: "2%",
                         width: "33%",
                         display: 'flex', flexDirection: 'row',
-                    }}><TouchableOpacity onPress={() => this.openFilePicker()}>
-                            <Icon name={"attach-file"} type={"MaterialIcons"} style={{ color: "#0A4E52", marginRight: "1%", }}></Icon></TouchableOpacity>
-                        <TouchableOpacity onLongPress={() => this.openPhotoSelector()} onPress={() => this.openCamera()}><Icon style={{ color: "#0A4E52", marginRight: "4%", }} type={"Ionicons"} name={"md-photos"}></Icon></TouchableOpacity><TouchableOpacity onPress={() => this.openVideo()}>
-                            <Icon name={"video-camera"} type={"Entypo"} style={{ color: "#0A4E52", marginRight: "4%" }}></Icon></TouchableOpacity>
-                        <Icon onPress={() => {
-                            this.toggleEmojiKeyboard();
-                            this.markAsRead();
-                        } } style={{ color: "#1FABAB" }} type="Entypo" name="emoji-flirt"></Icon>
+                    }}><TouchableOpacity style={{ width: "24%", }} onPress={() => this.openFilePicker()}>
+                            <Icon name={"attach-file"} type={"MaterialIcons"} style={{ color: "#0A4E52", }}></Icon></TouchableOpacity>
+                        <TouchableOpacity style={{ width: "24%", }} onLongPress={() => this.openPhotoSelector()} onPress={() => this.openCamera()}><Icon style={{ color: "#0A4E52", marginRight: "4%", }} type={"Ionicons"} name={"md-photos"}></Icon></TouchableOpacity><TouchableOpacity onPress={() => this.openVideo()}>
+                            <Icon name={"video-camera"} type={"Entypo"} style={{ color: "#0A4E52", }}></Icon></TouchableOpacity>
+                        <TouchableOpacity style={{ width: "24%", }}>
+                            <Icon onPress={() => {
+                                this.toggleEmojiKeyboard();
+                                this.markAsRead();
+                            }} style={{ color: "#1FABAB", alignSelf: 'flex-end', }} type="Entypo" name="emoji-flirt"></Icon></TouchableOpacity>
                     </View>
                     <TextInput value={this.state.textValue} onChange={(event) => this._onChange(event)} style={{
                         paddingLeft: 10,
@@ -1265,27 +1279,27 @@ export default class ChatRoom extends Component {
                         backgroundColor: 'white',
                         borderWidth: 1,
                         borderRadius: 8,
-                    }} placeholder={'Your Message'} placeholderTextColor='#66737C' maxHeight={200} multiline={this.state.keyboardOpened ? true : false} minHeight={45} enableScrollToCaret ref={(r) => { this._textInput = r; } } />
+                    }} placeholder={'Your Message'} placeholderTextColor='#66737C' maxHeight={200} multiline={this.state.keyboardOpened ? true : false} minHeight={45} enableScrollToCaret ref={(r) => { this._textInput = r; }} />
                     <View style={{
                         marginLeft: this.state.showAudioRecorder ? "5%" : "3%", marginTop: "2%", display: 'flex',
                         width: "17%",
                         flexDirection: 'row',
                     }}>
-                        {!this.state.showAudioRecorder ? <TouchableOpacity onLongPress={() => {
+                        {!this.state.showAudioRecorder ? <TouchableOpacity style={{ width: "45%", }} onLongPress={() => {
                             this.openAudioPicker();
                             this.markAsRead();
-                        } } onPress={() => {
+                        }} onPress={() => {
                             this.toggleAudioRecorder();
                             this.markAsRead();
-                        } }><Icon style={{
+                        }}><Icon style={{
                             color: "#0A4E52",
                             marginRight: "8%",
                         }} type={"FontAwesome5"} name={"microphone-alt"}></Icon></TouchableOpacity> : null}
-                        <TouchableOpacity onPress={() => {
+                        <TouchableOpacity style={{ width: "45%", }} onPress={() => {
                             requestAnimationFrame(() => {
                                 return this.sendMessageText(this.state.textValue);
                             });
-                        } }><Icon style={{ marginLeft: this.state.showAudioRecorder ? "23%" : "0%", color: "#1FABAB" }} name="paper-plane" type="FontAwesome"></Icon></TouchableOpacity>
+                        }}><Icon style={{ marginLeft: this.state.showAudioRecorder ? "23%" : "0%", color: "#1FABAB", marginRight: "2%", }} name="paper-plane" type="FontAwesome"></Icon></TouchableOpacity>
                     </View>
                 </View>
                 {
@@ -1305,7 +1319,10 @@ export default class ChatRoom extends Component {
                 replyer: replyer,
                 showRepliedMessage: true
             });
-        } } pressingIn={() => { } } reply={this.state.replyContent}></ReplyText></View>;
+        }} pressingIn={() => { }} reply={this.state.replyContent}></ReplyText>
+            <Button onPress={() => this.cancleReply()
+            } style={{ position: "absolute", alignSelf: 'flex-end', }} transparent><Icon name={"close"} type={"EvilIcons"} style={{}}></Icon></Button>
+        </View>;
     }
 
     audioRecorder() {
@@ -1334,7 +1351,7 @@ export default class ChatRoom extends Component {
     }
 
     header() {
-        return <View style={this.headerStyles}><View style={{ width: "90%", backgroundColor: "#FEFFDE" }}><Text style={{ fontSize: 20, fontWeight: 'bold', margin: 5 }}>{this.props.roomName.length > 30
+        return <View style={this.headerStyles}><View style={{ width: "90%", backgroundColor: "#FEFFDE", }}><Text style={{ fontSize: 20, fontWeight: 'bold', margin: 5 }}>{this.props.roomName.length > 30
             ? this.props.roomName.slice(0, 30) + "..." : this.props.roomName}</Text></View>
             <View style={{ width: "10%", backgroundColor: "#FEFFDE" }}>
                 <ChatroomMenu showMembers={() => this.showMembers()} addMembers={() => this.props.addMembers()} closeCommitee={() => this.props.close()} openCommitee={() => this.props.open()} leaveCommitee={() => this.props.leave()} removeMembers={() => this.props.removeMembers()} publishCommitee={() => this.props.publish()} master={this.props.master} eventID={this.props.activity_id} roomID={this.props.firebaseRoom} public={this.props.public_state} opened={this.props.opened}></ChatroomMenu>
@@ -1374,7 +1391,7 @@ export default class ChatRoom extends Component {
                                 replyer: replyer,
                                 showRepliedMessage: true
                             });
-                        } } pressingIn={() => { } } reply={this.state.replyContent}></ReplyText></View> : null}
+                        }} pressingIn={() => { }} reply={this.state.replyContent}></ReplyText></View> : null}
                 <View style={{ heigh: this.state.textHeight, backgroundColor: "#1FABAB", width: "100%", display: 'flex', flexDirection: 'row', }}>
                     <Icon onPress={() => {
                         offset = this.state.replying ? 0.1 : 0;
@@ -1384,8 +1401,8 @@ export default class ChatRoom extends Component {
                             textHeight: screenheight * (this.state.replying ? 0.55 + 0.1 : 0.55),
                             photoHeight: screenheight * (this.state.replying ? 0.45 - 0.1 : 0.45)
                         });
-                    } } type="Entypo" name="emoji-flirt" style={{ color: "#0A4E52", marginTop: "3%", width: "8%" }}>
-                    </Icon><TextInput multiline enableScrollToCaret ref={(r) => { this._captionTextInput = r; } } value={this.state.captionText} onChange={(data) => this._onChangeCaption(data)} style={{ left: 0, right: 0, height: 59, width: "84%" }} placeholder={'Enter your text!'} />
+                    }} type="Entypo" name="emoji-flirt" style={{ color: "#0A4E52", marginTop: "3%", width: "8%" }}>
+                    </Icon><TextInput multiline enableScrollToCaret ref={(r) => { this._captionTextInput = r; }} value={this.state.captionText} onChange={(data) => this._onChangeCaption(data)} style={{ left: 0, right: 0, height: 59, width: "84%" }} placeholder={'Enter your text!'} />
                     <Icon style={{ color: "#0A4E52", marginTop: "3%", width: "8%" }} onPress={() => this._sendCaptionMessage()} type={"FontAwesome"} name={"paper-plane"}></Icon>
                 </View>
                 {
@@ -1414,26 +1431,26 @@ export default class ChatRoom extends Component {
                     this.setState({
                         showRepliedMessage: false
                     });
-                } }>
+                }}>
                     <Icon type="EvilIcons" style={{ margin: '7%', fontSize: 35, color: "#FEFFDE" }} name={"close"}></Icon>
                 </TouchableOpacity> : null}
                 <ScrollView style={{ top: 0, bottom: 0, height: screenheight - 60 }}>
                     <View style={{ display: "flex", }}>
-                        <Text style={{ color: "#FEFFDE", alignSelf: 'center', fontWeight: 'bold', }}>{dateDisplayer(moment(find(this.room.messages, { id: this.state.replyer.id })).format("YYYY/MM/DD"))}</Text>
+                        <Text style={{ color: "#FEFFDE", alignSelf: 'center', fontWeight: 'bold', }}>{dateDisplayer(moment(find(this.room.messages, { id: this.state.replyer.id }).created_at).format("YYYY/MM/DD"))}</Text>
                         {<Message openReply={(replyer) => {
                             console.warn("replying", replyer);
                             this.setState({
                                 replyer: replyer,
                                 showRepliedMessage: true
                             });
-                        } } replying={() => { } } received={this.state.replyer.received ? this.state.replyer.received.length >= this.props.members.length : false} showPhoto={(photo) => this.showPhoto(photo)} playVideo={(source) => this.playVideo(source)} creator={2} user={this.sender.phone} message={find(this.room.messages, { id: this.state.replyer.id })} />}
+                        }} replying={() => { }} received={this.state.replyer.received ? this.state.replyer.received.length >= this.props.members.length : false} showPhoto={(photo) => this.showPhoto(photo)} playVideo={(source) => this.playVideo(source)} creator={2} user={this.sender.phone} message={find(this.room.messages, { id: this.state.replyer.id })} />}
                     </View>
                 </ScrollView>
                 {!(this.state.replyer.sender.phone == this.sender.phone) ? <TouchableOpacity onPress={() => {
                     this.setState({
                         showRepliedMessage: false
                     });
-                } }>
+                }}>
                     <Icon type="EvilIcons" style={{ margin: '2%', marginTop: "8%", fontSize: 35, color: "#FEFFDE" }} name={"close"}></Icon>
                 </TouchableOpacity> : null}
             </View>
@@ -1452,10 +1469,10 @@ export default class ChatRoom extends Component {
             <VideoPlayer source={{ uri: this.state.video }} // Can be a URL or a local file.
                 ref={(ref) => {
                     this.videoPlayer = ref;
-                } } onBuffer={() => this.buffering()} // Callback when remote video is buffering
+                }} onBuffer={() => this.buffering()} // Callback when remote video is buffering
                 onError={(error) => {
                     console.error(error);
-                } } toggleResizeModeOnFullscreen={false}
+                }} toggleResizeModeOnFullscreen={false}
                 //pictureInPicture={true}
                 resizeMode={"contain"} disableVolume={true} seekColor="#1FABAB" controlTimeout={null}
                 //disablePlayPause={true}
@@ -1489,7 +1506,7 @@ export default class ChatRoom extends Component {
                         showPhoto: false,
                         hideStatusBar: false
                     });
-                } } style={{ margin: '1%', position: 'absolute', fontSize: 30, color: "#FEFFDE" }} name={"close"}></Icon></View>
+                }} style={{ margin: '1%', position: 'absolute', fontSize: 30, color: "#FEFFDE" }} name={"close"}></Icon></View>
         </View>;
     }
 }

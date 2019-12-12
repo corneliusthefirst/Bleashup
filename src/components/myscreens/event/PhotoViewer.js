@@ -9,6 +9,7 @@ import ReactNativeZoomableView from '@dudigital/react-native-zoomable-view/src/R
 import Image from 'react-native-scalable-image';
 import Modal from "react-native-modalbox"
 import { Icon } from 'native-base';
+import CacheImages from '../../CacheImages';
 export default class PhotoViewer extends Component {
     constructor(props) {
         super(props)
@@ -20,6 +21,7 @@ export default class PhotoViewer extends Component {
         
     }
     render() {
+        StatusBar.setHidden(true,true)
         return (
             <Modal
                 backdropOpacity={0.7}
@@ -58,8 +60,8 @@ export default class PhotoViewer extends Component {
                                 initialZoom={1}
                                 bindToBorders={true}
                                 onZoomAfter={this.logOutZoomState}>
-                                <Image resizeMode={"contain"} width={screenWidth} height={screenheight}
-                                    source={{ uri: this.props.photo }}></Image>
+                                <CacheImages resizeMode={"contain"} width={screenWidth} height={screenheight}
+                                    source={{ uri: this.props.photo }}></CacheImages>
                             </ReactNativeZoomableView>
                             <Icon type="EvilIcons" onPress={() => {
                                 this.props.hidePhoto()

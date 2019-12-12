@@ -1,8 +1,8 @@
 import React, { Component } from "react";
-import { View, Animated, TouchableWithoutFeedback, Dimensions } from 'react-native';
+import { View, Animated, TouchableWithoutFeedback, Dimensions, PanResponder } from 'react-native';
 import { TouchableOpacity, ScrollView } from "react-native-gesture-handler";
 import UpdateStateIndicator from "../currentevents/components/updateStateIndicator";
-import { List, Icon, Label, Card, CardItem, Text, Header, Thumbnail, Title } from 'native-base';
+import { List, Icon, Label, Card, CardItem, Text, Header, Thumbnail, Title, Button } from 'native-base';
 import Image from 'react-native-scalable-image';
 import InvitationModal from "../currentevents/components/InvitationModal";
 import autobind from "autobind-decorator";
@@ -12,6 +12,7 @@ import RouteView from "./RouteView";
 import ActionsView from "./ActionsView";
 import Commitee from "./Commitee";
 import moment from "moment";
+import CacheImages from '../../CacheImages';
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenheight = Math.round(Dimensions.get('window').height);
 const HEADER_MAX_HEIGHT = 140;
@@ -23,6 +24,46 @@ export default class SWView extends Component {
         this.state = {
             scrollY: new Animated.Value(0),
         }
+        this._panResponder = PanResponder.create({
+            // Ask to be the responder:
+            onStartShouldSetPanResponder: (evt, gestureState) => true,
+            onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
+            onMoveShouldSetPanResponder: (evt, gestureState) => true,
+            onMoveShouldSetPanResponderCapture: (evt, gestureState) => {
+                const { dx, dy } = gestureState
+                return (dx > 2 || dx < -2 || dy > 2 || dy < -2)
+            },
+
+            onPanResponderGrant: (evt, gestureState) => {
+                // The gesture has started. Show visual feedback so the user knows
+                // what is happening!
+                // gestureState.d{x,y} will be set to zero now
+            },
+            onPanResponderMove: (evt, gestureState) => {
+                if (gestureState.dx >= 70) {
+                    this.props.navigateHome()
+                }
+                const { dx, dy } = gestureState
+                return dx > 2 || dx < -2 || dy > 2 || dy < -2
+                // The most recent move distance is gestureState.move{X,Y}
+                // The accumulated gesture distance since becoming responder is
+                // gestureState.d{x,y}
+            },
+            onPanResponderTerminationRequest: (evt, gestureState) => false,
+            onPanResponderRelease: (evt, gestureState) => {
+                // The user has released all touches while this view is the
+                // responder. This typically means a gesture has succeeded
+            },
+            onPanResponderTerminate: (evt, gestureState) => {
+                // Another component has become the responder, so this gesture
+                // should be cancelled
+            },
+            onShouldBlockNativeResponder: (evt, gestureState) => {
+                // Returns whether this component should block native components from becoming the JS
+                // responder. Returns true by default. Is currently only supported on android.
+                return true;
+            },
+        });
     }
     width = "9%"
     padding = "9%"
@@ -72,7 +113,7 @@ export default class SWView extends Component {
         } else if (daysDiff == 7) {
             return "Past Since 1 Week Ago at " + moment(date).format("h:mm a")
         } else if (daysDiff == -1) {
-            return "Upcoming Tomorrow at" + moment(date).format("h:mm a");
+            return "Upcoming Tomorrow at " + moment(date).format("h:mm a");
         }
         else if (daysDiff < -1) {
             return `Upcoming in ${Math.abs(daysDiff)} Days at ` + moment(date).format("h:mm a");
@@ -135,9 +176,17 @@ export default class SWView extends Component {
                             height: "100%", width: "100%", backgroundColor: "#FEFFDE",
                             display: 'flex', flexDirection: 'column', //borderRightWidth: 1.25, borderColor: "#1FABAB",
                         }}>
-                            <View style={{ marginLeft: 5, backgroundColor: "#FEFFDE", width: "100%", height: 44, }}><Text style={{ fontWeight: 'bold', fontSize: 20, marginTop: 2 }}>{this.props.event.about.title}</Text>
-                                <Text style={{ alignSelf: 'flex-end', marginRight: "2%", fontStyle: 'italic', fontWeight: this.props.event.closed ? "bold" : "400", color: this.props.event.closed ? "red" : this.dateDiff(this.props.event.period) > 0 ? "gray" : "#54F5CA", fontSize: 14, }}>{this.props.event.closed ? "Closed" : this.displayDate(this.props.event.period)}</Text>
-
+                            <View style={{ marginLeft: 5, backgroundColor: "#FEFFDE", width: "100%", flexDirection: 'row', }}><View style={{ width: "90%" }}><Text style={{ fontWeight: 'bold', fontSize: 20, marginTop: 2 }}>{this.props.event.about.title}</Text>
+                                <Text style={{
+                                    marginRight: "2%", fontStyle: 'italic', fontWeight: this.props.event.closed ? "bold" : "400", color: this.props.event.closed ? "red" : this.dateDiff(this.props.event.period) > 0 ? "gray" : "#1FABAB", fontSize: 14,
+                                }}>{this.props.event.closed ? "Closed" : this.displayDate(this.props.event.period)}</Text>
+                            </View>
+                                <Icon onPress={() => {
+                                    this.props.navigateHome()
+                                }} style={{
+                                    alignSelf: 'flex-end', color: "#1FABAB",
+                                    marginBottom: "7%"
+                                }} name="close" type="EvilIcons"></Icon>
                             </View>
                             <View style={{ heignt: "60%", display: "flex", flexDirection: 'row', backgroundColor: "#FEFFDE", marginLeft: "1%", }}>
                                 <View style={{ marginTop: "2%", width: "25%", borderWidth: 2, borderColor: this.actionColor, borderRadius: 12 }}>
@@ -192,11 +241,11 @@ export default class SWView extends Component {
                             height: "100%",
                             width: screenWidth * 2 / 3,
                             alignItems: 'center',
+                            borderRadius: 5,
                             justifyContent: 'center',
                         }}><TouchableOpacity onPress={() => requestAnimationFrame(() => this.props.showActivityPhotoAction())}>
-                                <Image width={(screenWidth * 2 / 3) - 5} style={{ width: "100%", height: "100%" }}
-                                    source={this.props.event.background ? { uri: this.props.event.background } :
-                                        require('../../../../assets/default_event_image.jpeg')}></Image></TouchableOpacity>
+                                {this.props.event.background ? <CacheImages width={(screenWidth * 2 / 3) - 5} style={{ width: "100%", height: "100%" }}
+                                    source={{ uri: this.props.event.background }}></CacheImages> : <Image width={screenWidth * 2 / 3} style={{ width: "100%", height: "100%" }} source={require('../../../../assets/default_event_image.jpeg')}></Image>}</TouchableOpacity>
                         </View>
                     </Animated.View>
                 </View></TouchableWithoutFeedback>

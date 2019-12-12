@@ -6,6 +6,7 @@ import HomeRequest from './HomeRequester';
 import request from '../../../services/requestObjects';
 import stores from '../../../stores';
 import Mailer from 'react-native-mail';
+import CalendarServe from '../../../services/CalendarService';
 
 export default class ForeignEvent extends Component {
     constructor(props) {
@@ -58,8 +59,10 @@ export default class ForeignEvent extends Component {
         event.recurrence = e.recurrenceRule && e.recurrenceRule.duration ? e.recurrenceRule.duration : 1000
         event.notes = e.notes ? [e.notes] : event.notes
         event.location.string = e.location
+        event.calendar_id = e.id
         event.participant = [{ phone: stores.LoginStore.user.phone, master: true, status: 'creator', host: stores.Session.SessionStore.host }]
-        HomeRequest.createEvent(event).then(() => {
+        HomeRequest.createEvent(event).then((URL) => {
+            CalendarServe.saveEvent({ ...event, about: { ...event.about, description: URL } }, event.alarms).then(() => { })
             this.setState({
                 managed: true,
             })

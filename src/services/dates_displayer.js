@@ -22,6 +22,6 @@ export default function dateDisplayer(date){
         case 7:
             return "7 Days Ago"
         default:
-            return moment(date, "YYYY/MM/DD").format("dddd, MMMM Do YYYY")
+            return moment(date, "YYYY/MM/DD").format("MMMM Do YYYY")
     }
 }

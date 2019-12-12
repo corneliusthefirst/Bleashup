@@ -36,8 +36,9 @@ export default class ParticipantList extends Component {
                     });
                 })
             } else {
+                console.warn(this.props.participants)
                 this.setState({
-                    participants: this.props.participants,
+                    participants: this.props.participants ? this.props.participants : [],
                     isloaded: true
                 })
             }
@@ -46,25 +47,26 @@ export default class ParticipantList extends Component {
     _keyExtractor = (item, index) => item.phone
     render() {
         return <View>
-            <View style={{ margin: '6%', }}>
-                <Text style={{ fontWeight: "bold", fontSize: 22, }}>{this.props.hide ? "" : "Participants List"}</Text>
+            <View style={{ margin: 3, flexDirection: 'row',height:53 }}>
+                <Text style={{ fontWeight: "bold", fontSize: 22, width: "70%" }}>{this.props.hide ? "" : "Participants List"}</Text>
+                <Text style={{ marginTop: "1%", }} note>{this.state.participants?this.state.participants.filter(ele => ele.phone).length:0}{" member(s)"}</Text>
             </View>
             {this.state.isloaded ? (
                 <View>
                     {this.state.isEmpty ? <Text style={{
-                        margin: '10%',
-                    }} note>{"sory! there's no connction to the server"}</Text> : <BleashupFlatList
+                        margin: '4%',
+                    }} note>{"sory! there's no connction to the server"}</Text> : <View style={{hight:"93%"}}><BleashupFlatList
                         firstIndex={0}
                         renderPerBatch={7}
                         initialRender={15}
-                        numberOfItems={this.state.participants.length}
+                        numberOfItems={this.state.participants ? this.state.participants.length : 0}
                         keyExtractor={this._keyExtractor}
-                        dataSource={this.state.participants}
-                        renderItem={(item, index) =>
+                        dataSource={this.state.participants?this.state.participants:[]}
+                            renderItem={(item, index) => item.phone ?
                             <View style={{ margin: '3%', }}>
                                 <View style={{ display: 'flex', flexDirection: 'row', }} >
                                     <View style={{}}>
-                                        <ProfileView phone={item.phone.replace("+", "00")}></ProfileView>
+                                        <ProfileView phone={item.phone ? item.phone.replace("+", "00") : null}></ProfileView>
                                     </View>
                                     <View style={{
                                         marginLeft: "40%",
@@ -73,14 +75,14 @@ export default class ParticipantList extends Component {
                                         <Text style={{
                                             fontWeight: this.props.creator == item.phone ? 'bold' : 'normal',
                                             fontStyle: this.props.creator == item.phone ? 'italic' : 'normal',
-                                            color: this.props.creator == item.phone ?"#54F5CA":"gray"
+                                            color: this.props.creator == item.phone ? "#54F5CA" : "gray"
                                         }} note>{this.writeParticant(item)}</Text>
                                     </View>
                                 </View>
                                 <MenuDivider color="#1FABAB" />
-                            </View>
+                            </View>:null
                         }
-                    ></BleashupFlatList>}
+                    ></BleashupFlatList></View>}
                 </View>) : <Spinner size="small"></Spinner>}
         </View>
 

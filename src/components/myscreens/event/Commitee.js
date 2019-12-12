@@ -98,7 +98,6 @@ export default class Commitee extends Component {
                                     swapChats={(commitee) => { this.props.swapChats(commitee) }}
                                     phone={this.props.phone}
                                     newMessagesCount={4}
-                                    master={this.state.master}
                                     id={item.id ? item.id : item} ></CommiteeItem>
                             }
                             firstIndex={0}

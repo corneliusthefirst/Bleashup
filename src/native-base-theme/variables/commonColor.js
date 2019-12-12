@@ -173,7 +173,7 @@ export default {
     },
     get darkenHeader() {
         return color(this.tabBgColor)
-            .darken(0.03)
+            .darken(0)
             .hex();
     },
 

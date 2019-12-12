@@ -47,7 +47,7 @@ export default class PhotoInputModal extends PureComponent {
                     <View style={{ margin: '5%', }}>
                         <Button onPress={() => this.props.showActivityPhoto()} transparent><Icon type={"Entypo"} name={"eye"}></Icon><Text>View Photo</Text></Button>
                         <Button onPress={() => this.props.openCamera()} transparent><Icon type={"MaterialIcons"} name={"insert-photo"}></Icon><Text>Select From Galery</Text></Button>
-                        <Button onPress={() => this.props.openInternet()} transparent><Icon type={"FontAwesome"} name={"google"}></Icon><Text>Download From Google</Text></Button>
+                        <Button onPress={() => this.props.openInternet()} transparent><Icon type={"Foundation"} name={"web"}></Icon><Text>Download From Web</Text></Button>
                     </View>
                 </Content>
             </Modal>

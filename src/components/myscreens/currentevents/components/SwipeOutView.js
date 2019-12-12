@@ -16,7 +16,7 @@ export default class SwipeOutView extends Component {
         }
     }
     width = "19%"
-    padding = "9%"
+    padding = "8%"
     indicatorMargin = {
         marginLeft: "5%",
         marginTop: "-7%",
@@ -76,17 +76,17 @@ export default class SwipeOutView extends Component {
         return (
             <View style={{ width: "100%", borderRadius: 10, borderLeftColor: "#7DD2D2", }}>
                 <View style={{ display: 'flex', flexDirection: 'column', marginLeft: "30%", }}>
-                    <View style={{ height: this.width, marginBottom: "10%", alignSelf: 'flex-start' }}>
+                    <View style={{ height: this.width, marginBottom: "9%", alignSelf: 'flex-start' }}>
                         <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                             this.props.publish()
                         })
                         }>
                             <Icon style={{ fontSize: 25, color: this.props.Event.public || this.props.master ? "#7DD2D2" : "#bfc6ea" }} name="megaphone" type="Entypo">
                             </Icon>
-                            <Label style={{ fontSize: 14, color: this.props.Event.public || this.props.master ? "#7DD2D2" : "#bfc6ea", marginRight: "11%" }}>Publish</Label>
+                            <Label style={{ fontSize: 14, color: this.props.Event.public || this.props.master ? "#7DD2D2" : "#bfc6ea", marginRight: "11%" }}>Share</Label>
                         </TouchableOpacity>
                     </View>
-                    <View style={{ height: this.width, marginBottom: "10%", alignSelf: 'flex-start' }}>
+                    <View style={{ height: this.width, marginBottom: "9%", alignSelf: 'flex-start' }}>
                         {<TouchableOpacity onPress={() => requestAnimationFrame(() => {
                             this.invite()
                         })
@@ -96,7 +96,7 @@ export default class SwipeOutView extends Component {
                             <Label style={{ fontSize: 14, color: this.props.master || this.props.Event.public ? "#7DD2D2" : "#bfc6ea", marginLeft: "7%", }}>Invite</Label>
                         </TouchableOpacity>}
                     </View>
-                    <View style={{ height: this.width, marginBottom: "10%" }}>
+                    <View style={{ height: this.width, marginBottom: "9%" }}>
                         {<TouchableOpacity onPress={() => {
                             this.props.join()
                         }}>
@@ -114,7 +114,7 @@ export default class SwipeOutView extends Component {
                         </TouchableOpacity>}
 
                     </View>
-                    <View style={{ height: this.width, marginBottom: "10%", alignSelf: 'flex-start' }}>
+                    <View style={{ height: this.width, marginBottom: "9%", alignSelf: 'flex-start' }}>
                         <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                             this.navigateToLogs()
                         })
@@ -136,7 +136,7 @@ export default class SwipeOutView extends Component {
                             <Label style={{ fontSize: 14, color: "#1FABAB", marginRight: "13%", }}>{"History"}</Label>
                         </TouchableOpacity>
                     </View >
-                    {/*<View style={{ height: this.width, marginBottom: "10%", alignSelf: 'flex-start' }}>
+                    {/*<View style={{ height: this.width, marginBottom: "9%", alignSelf: 'flex-start' }}>
                         <TouchableOpacity onPress={() => {
                             return this.props.hide()
                         }}>
@@ -145,7 +145,7 @@ export default class SwipeOutView extends Component {
                             <Label style={{ fontSize: 14, color: "#1FABAB" }}>Hide</Label>
                         </TouchableOpacity>
                     </View>*/}
-                    <View style={{ height: this.width, marginBottom: "10%", }}>
+                    <View style={{ height: this.width, marginBottom: "9%", }}>
                         <TouchableOpacity onPress={() => {
                             return this.props.delete()
                         }}>

@@ -1,6 +1,6 @@
 import React, { Component } from "react"
 import { List, ListItem, Body, Left, Right, Text, Header, Title, Spinner } from "native-base"
-import { View, FlatList } from "react-native"
+import { View, StatusBar } from "react-native"
 import ImageActivityIndicator from "./myscreens/currentevents/components/imageActivityIndicator";
 import stores from "../stores";
 import UserService from "../services/userHttpServices"
@@ -37,7 +37,7 @@ export default class ContactList extends Component {
                     })
                 } else {
                     this.setState({
-                        publishers: publisher,
+                        publishers: publisher.data ? publisher.data : publisher,
                         isloaded: true,
                     });
                 }
@@ -46,13 +46,15 @@ export default class ContactList extends Component {
     }
     _keyExtractor = (item, index) => item.phone
     render() {
+        StatusBar.setBarStyle('dark-content', true)
         return <View style={{}}>
-            <View style={{ width: "90%", margin: 4, height: 44, }}>
+            <View style={{ width: "90%", margin: 4, height: 44, flexDirection: 'row', }}>
                 <View style={{ flexDirection: 'row', }}>
                     <Text style={{
                         fontSize: 22, fontStyle: 'italic',
                         fontWeight: 'bold', width: "80%", marginLeft: "5%",
-                    }}>{"Publishers"}</Text>
+                    }}>{"Shared By "}</Text>
+                    <Text note>{this.state.publishers.length}{" sharer(s)"}</Text>
                 </View></View>
             {this.state.isloaded ? (
                 <View>
@@ -67,14 +69,14 @@ export default class ContactList extends Component {
                         dataSource={this.state.publishers}
                         renderItem={(item, index) => {
                             console.warn(item.period)
-                          return <View style={{ margin: 10 }}>
+                            return <View style={{ margin: 10 }}>
                                 <View>
                                     <View style={{ display: 'flex', flexDirection: 'row', }} >
                                         <View style={{ width: "50%" }}>
                                             <ProfileView phone={item.phone}></ProfileView>
                                         </View>
                                         <View style={{
-                                            width: "50%"
+                                            width: "45%"
                                         }}>
                                             <Text style={{
                                             }} note>{this.writeDateTime(item.period.date)}</Text>

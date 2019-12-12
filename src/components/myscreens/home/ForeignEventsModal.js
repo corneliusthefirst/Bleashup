@@ -51,14 +51,12 @@ export default class ForeignEventsModal extends PureComponent {
                     })
                 }}
                 onOpened={() => {
-                    stores.Contacts.getContacts().then(contacts => {
                         setTimeout(() => {
                             this.setState({
                                 events: this.props.events,
                                 loaded: true,
                             })
                         }, 20)
-                    })
                 }}
                 style={{
                     height: "97%",
@@ -74,8 +72,8 @@ export default class ForeignEventsModal extends PureComponent {
                                 fontWeight: 'bold', fontStyle: 'italic',
                                 fontSize: 24,
                             }}>{"Events From Calendar"}</Text><Text note style={{
-                                fontSize: 14, fontStyle: 'italic', marginLeft: "0%",
-                            }}>{"Some Events where Found from Your Calendar Manage Them From Here"}</Text></View>
+                                fontSize: 12, fontStyle: 'italic', marginLeft: "0%",marginTop: "-1%",
+                            }}>{"Events where Found from Your Calendar; Manage Them From Here."}</Text></View>
                         <View style={{ height: "90%" }}>
                             <BleashupFlatList
                                 firstIndex={0}

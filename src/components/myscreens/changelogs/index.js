@@ -1,14 +1,7 @@
 import React, { Component } from "react";
-import { View } from "react-native";
+import { View, BackHandler } from 'react-native';
 import {
-  Container,
-  Header,
-  Body,
-  Title,
-  Left,
-  Button,
   Icon,
-  Right,
   Text,
   Spinner
 } from 'native-base';
@@ -40,6 +33,7 @@ export default class ChangeLogs extends Component {
       this.props.activeMember !== nextProps.activeMember 
       }
   componentWillMount() {
+    BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this))
     emitter.on('refresh-history', () => {
       this.setState({ loaded: false })
       stores.ChangeLogs.fetchchanges(this.props.event_id).then(changes => {
@@ -53,8 +47,12 @@ export default class ChangeLogs extends Component {
       })
     })
   }
+  handleBackButton(){
+    
+  }
   componentWillUnmount() {
     emitter.off('refresh-history')
+    BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton);
   }
   componentDidMount() {
     stores.ChangeLogs.fetchchanges(this.props.event_id).then(changes => {
@@ -122,10 +120,10 @@ export default class ChangeLogs extends Component {
         </BleashupTimeLine>
       </View>
       {this.state.hideHeader ? null : <View style={{
-        width: "100%", height: 44, position: "absolute",
+        width: "100%", height: 44, position: "absolute", opacity: .6 ,
         backgroundColor: "#FEFFDE", borderBottomWidth: 1.25, borderColor: "#1FABAB",
       }}>
-        <View style={{ flexDirection: 'row', width: "100%" }}>
+        <View style={{ flexDirection: 'row', width: "100%", }}>
           <Text style={{ alignSelf: 'flex-start', margin: '3%', fontWeight: 'bold', fontSize: 20, width: "83%" }}>{(this.props.isMe ? "Your " : "" )+ "Activities Logs"}</Text>
           <Icon style={{ alignSelf: 'flex-end', margin: '3%', }} name={"dots-three-vertical"} type="Entypo"></Icon>
         </View>

@@ -8,6 +8,7 @@ import moment from 'moment';
 import { isEqual } from "lodash"
 import Requesterer from '../currentevents/Requester';
 import { RemoveParticipant } from '../../../services/cloud_services';
+import CalendarServe from '../../../services/CalendarService';
 
 class Request {
     constructor() {
@@ -27,7 +28,7 @@ class Request {
                                 id: uuid.v1(),
                                 title: "Update On Commitees",
                                 updated: 'new_commitee',
-                                event_id: event_id,
+                                event_id: commitee.even_id,
                                 changed: `Create ${commitee.name} Commitee  `,
                                 updater: stores.LoginStore.user,
                                 new_value: { data: commitee.id, new_value: commitee.name },
@@ -423,31 +424,30 @@ class Request {
             leave.phone = [phone]
             tcpRequest.leaveEvent(leave, event_id + "_leave").then(JSONData => {
                 serverEventListener.sendRequest(JSONData, event_id + "_leave").then(() => {
+                    Toast.show({ text: "Activity Successfully Left", type: "success" })
                     stores.Events.leaveEvent(event_id).then(() => {
                         stores.Events.removeParticipant(event_id, [phone]).then(() => {
-                            RemoveParticipant(event_id, leave.phone).then(() => {
-                                let Change = {
-                                    id: uuid.v1(),
-                                    title: "Update On Main Activity",
-                                    updated: 'removed',
-                                    event_id: event_id,
-                                    changed: "Left The Activity",
-                                    updater: stores.LoginStore.user,
-                                    new_value: { data: null, new_value: [stores.LoginStore.user.phone] },
-                                    date: moment().format(),
-                                    time: null
-                                }
-                                stores.ChangeLogs.addChanges(Change).then(() => {
-                                    resolve("done")
-                                })
-                            }).catch(e => {
-                                reject(e)
+                            let Change = {
+                                id: uuid.v1(),
+                                title: "Update On Main Activity",
+                                updated: 'removed',
+                                event_id: event_id,
+                                changed: "Left The Activity",
+                                updater: stores.LoginStore.user,
+                                new_value: { data: null, new_value: [stores.LoginStore.user.phone] },
+                                date: moment().format(),
+                                time: null
+                            }
+                            stores.ChangeLogs.addChanges(Change).then(() => {
+                                resolve("done")
                             })
+                        }).catch(e => {
+                            reject(e)
                         })
-                    }).catch((e) => {
-                        console.warn(e)
-                        reject(e)
                     })
+                }).catch((e) => {
+                    console.warn(e)
+                    reject(e)
                 })
             })
         })
@@ -484,6 +484,7 @@ class Request {
         return new Promise((resolve, reject) => {
             tcpRequest.publishEvent({ event_id: event_id }, event_id + "_publish").then(JSONData => {
                 serverEventListener.sendRequest(JSONData, event_id + "_publish").then(() => {
+                    Toast.show({ text: "Published Successfully", type: "success" })
                     stores.Events.publishEvent(event_id).then(() => {
                         stores.Publishers.addPublisher(event_id, {
                             phone: stores.LoginStore.user.phone,
@@ -539,20 +540,20 @@ class Request {
             })
         })
     }
-    update_notes(event, newNotes) {
+    update_notes(even, newNotes) {
         return new Promise((resolve, reject) => {
-            let eqlty = isEqual(event.notes, newNotes)
-            console.warn(eqlty, "pppp", event.notes, newNotes)
+            let eqlty = isEqual(even.notes, newNotes)
+            console.warn(eqlty, "pppp", even.notes, newNotes)
             if (eqlty === false) {
-                tcpRequest.UpdateCurrentEvent(stores.LoginStore.user.phone, event.id, 'notes',
-                    newNotes, event.id + "_notes").then((JSONData) => {
-                        serverEventListener.sendRequest(JSONData, event.id + "_notes").then(response => {
-                            stores.Events.updateNotes(event.id, newNotes).then((res) => {
+                tcpRequest.UpdateCurrentEvent(stores.LoginStore.user.phone, even.id, 'notes',
+                    newNotes, even.id + "_notes").then((JSONData) => {
+                        serverEventListener.sendRequest(JSONData, even.id + "_notes").then(response => {
+                            stores.Events.updateNotes(even.id, newNotes).then((Eve) => {
                                 let Change = {
                                     id: uuid.v1(),
                                     title: "Updates on Main Activity",
                                     updated: "notes",
-                                    event_id: event.id,
+                                    event_id: even.id,
                                     changed: "Changed The Notes of the Activity",
                                     updater: stores.LoginStore.user,
                                     new_value: { data: null, new_value: newNotes },
@@ -560,6 +561,8 @@ class Request {
                                     time: null
                                 }
                                 stores.ChangeLogs.addChanges(Change).then(() => {
+                                    Eve.calendar_id ? CalendarServe.saveEvent(Eve, Eve.alarms).then(() => {
+                                    }) : null
                                     resolve('ok')
                                 })
                             })
@@ -579,7 +582,7 @@ class Request {
                     "period", newPeriod, event.id + "_period").then(JSONData => {
                         serverEventListener.sendRequest(JSONData, event.id + "_period").then((response) => {
                             console.warn(response)
-                            stores.Events.updatePeriod(event.id, newPeriod, false).then(() => {
+                            stores.Events.updatePeriod(event.id, newPeriod, false).then((Eve) => {
                                 let Change = {
                                     id: uuid.v1(),
                                     title: "Updates On Main Activity",
@@ -592,6 +595,8 @@ class Request {
                                     time: null
                                 }
                                 stores.ChangeLogs.addChanges(Change).then(() => {
+                                    Eve.calendar_id ? CalendarServe.saveEvent(Eve, Eve.alarms).then(() => {
+                                    }) : null
                                     resolve('ok')
                                 })
                             })
@@ -612,7 +617,7 @@ class Request {
                     'title', newTitle, event.id + "_title").then(JSONData => {
                         serverEventListener.sendRequest(JSONData, event.id + "_title").then((response) => {
                             console.warn(response)
-                            stores.Events.updateTitle(event.id, newTitle, false).then((res) => {
+                            stores.Events.updateTitle(event.id, newTitle, false).then((Eve) => {
                                 console.warn("title updated successfully ......")
                                 let Change = {
                                     id: uuid.v1(),
@@ -626,6 +631,9 @@ class Request {
                                     time: null
                                 }
                                 stores.ChangeLogs.addChanges(Change).then(() => {
+                                    Eve.calendar_id ? CalendarServe.saveEvent(Eve, Eve.alarms).then((resp) => {
+                                        console.warn(resp)
+                                    }) : null
                                     resolve("ok")
                                 })
                             })
@@ -648,7 +656,7 @@ class Request {
                     recurrentUpdate, event.id + "_recurrency").then(JSONData => {
                         serverEventListener.sendRequest(JSONData, event.id + "_recurrency").then(response => {
                             console.warn(response)
-                            stores.Events.updateRecurrency(event.id, recurrentUpdate).then(() => {
+                            stores.Events.updateRecurrency(event.id, recurrentUpdate).then((Eve) => {
                                 let Change = {
                                     id: uuid.v1(),
                                     title: "Updates On Main Activity",
@@ -661,6 +669,8 @@ class Request {
                                     time: null
                                 }
                                 stores.ChangeLogs.addChanges(Change).then(() => {
+                                    Eve.calendar_id ? CalendarServe.saveEvent(Eve, Eve.alarms).then(() => {
+                                    }) : null
                                     resolve("ok")
                                 })
                             })
@@ -687,7 +697,7 @@ class Request {
                                     updated: "close",
                                     event_id: event.id,
                                     updater: stores.LoginStore.user,
-                                    changed: !newState ? 'Opened' : 'Closed' + " The Main Activity",
+                                    changed: !newState ? 'Opened' + " The Main Activity" : 'Closed' + " The Main Activity",
                                     new_value: { data: null, new_value: null },
                                     date: moment().format(),
                                     time: null
@@ -740,14 +750,16 @@ class Request {
 
     applyAllUpdate(event, settings) {
         return new Promise((resolve, reject) => {
-            this.updateTitle(event, settings.title_new).then((t1) => {
-                this.updatePeriod(event, settings.period_new).then((t2) => {
-                    this.update_notes(event, settings.notes_new).then((t3) => {
-                        this.updateRecurrency(event, {
+            this.updateTitle(JSON.parse(event), settings.title_new).then((t1) => {
+                this.updatePeriod(JSON.parse(event), settings.period_new).then((t2) => {
+                    this.update_notes(JSON.parse(event), settings.notes_new).then((t3) => {
+                        console.warn(t3)
+                        this.updateRecurrency(JSON.parse(event), {
                             recurrent: settings.recurrent_new,
                             interval: settings.interval_new, frequency: settings.frequency_new,
                             recurrence: settings.recurrence_new
                         }).then((t4) => {
+                            event = JSON.parse(event)
                             if (event.public !== settings.public_new && settings.public_new)
                                 this.publish(event.id).then((t5) => {
                                     resolve(t1 + t2 + t3 + t4 + t5)
@@ -776,9 +788,9 @@ class Request {
         return new Promise((resolve, reject) => {
             tcpRequest.UpdateCurrentEvent(stores.LoginStore.user.phone, event_id,
                 'background', background, event_id + "_background").then(JSONData => {
-                    serverEventListener.sendRequest(JSONData,event_id+"_background").then(response =>{
+                    serverEventListener.sendRequest(JSONData, event_id + "_background").then(response => {
                         console.warn(response)
-                        stores.Events.updateBackground(event_id,background,false).then(() =>{
+                        stores.Events.updateBackground(event_id, background, false).then(() => {
                             let Change = {
                                 id: uuid.v1(),
                                 title: "Updates On Main Activity",
@@ -790,11 +802,11 @@ class Request {
                                 date: moment().format(),
                                 time: null
                             }
-                            stores.ChangeLogs.addChanges(Change).then(() =>{
+                            stores.ChangeLogs.addChanges(Change).then(() => {
                                 resolve("ok")
                             })
                         })
-                    }).catch((error) =>{
+                    }).catch((error) => {
                         console.warn(error)
                         reject(error)
                     })

@@ -12,6 +12,7 @@ import {
 import { indexOf, reject, concat, find } from "lodash"
 import CacheImages from '../../CacheImages';
 import testForURL from '../../../services/testForURL';
+import ProfileView from '../invitations/components/ProfileView';
 export default class NotificationModal extends PureComponent {
     constructor(props) {
         super(props)
@@ -75,6 +76,8 @@ export default class NotificationModal extends PureComponent {
                         <View style={{ flexDirection: 'column', }}>
                             <View><Text style={{ fontStyle: 'italic', }} note>New Update</Text></View>
                             <View style={{ flexDirection: 'row', }}>
+                                {typeof this.props.change.updater === 'string' ? <ProfileView phone={this.props.change.updater} ></ProfileView> :
+                                 <View style={{ flexDirection: 'row',}}>
                                 <View style={{ width: "20%" }}>{this.props.change.updater.profile && testForURL(this.props.change.updater.profile) ?
                                     <CacheImages thumbnails
                                         source={{ uri: this.props.change.updater.profile }}>
@@ -84,6 +87,7 @@ export default class NotificationModal extends PureComponent {
                                     <Text style={{ marginBottom: "2%", fontWeight: 'bold', }}>{this.props.change.updater.nickname}</Text>
                                     <Text style={{ marginLeft: "2%" }} note>{this.props.change.updater.status}</Text>
                                 </View>
+                                </View>}
                                 <View style={{ width: "13%" }}>
                                     <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                                         console.warn("pressing !!!")

@@ -46,17 +46,17 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
     }
 
     continueScrollTop() {
-       /* this.previousNewRender = this.state.currentNewRender
-        console.warn(this.previousNewRender, "[[[")
-        if (this.state.currentNewRender <= this.props.newData.length - 1) {
-            this.setState({
-                currentNewRender: this.previousNewRender - this.props.newRenderPerBatch
-            })
-        } else {
-            this.setState({
-                // endReached: true
-            })
-        }*/
+        /* this.previousNewRender = this.state.currentNewRender
+         console.warn(this.previousNewRender, "[[[")
+         if (this.state.currentNewRender <= this.props.newData.length - 1) {
+             this.setState({
+                 currentNewRender: this.previousNewRender - this.props.newRenderPerBatch
+             })
+         } else {
+             this.setState({
+                 // endReached: true
+             })
+         }*/
     }
     scrollToEnd() {
         this.refs.bleashupFlatlist.scrollToOffset({ animated: true, offset: 0 })
@@ -94,14 +94,14 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
                     canCancelContentTouches={true}
                     inverted={this.props.inverted ? this.props.inverted : false}
                     removeClippedSubviews={false}
-                    maxToRenderPerBatch={this.props.inverted ? 5 : this.state.endReached ? 1 : 3}
+                    maxToRenderPerBatch={this.props.renderPerBatch ? this.props.renderPerBatch : this.props.inverted ? 5 : this.state.endReached ? 1 : 3}
                     //updateCellsBatchingPeriod={10}
                     showsVerticalScrollIndicator={false}
                     keyExtractor={this.props.keyExtractor}
                     data={this.renderNewData().concat(this.extractData())}
-                    renderItem={({ item,index }) => this.props.renderItem(item, index)}
+                    renderItem={({ item, index }) => this.props.renderItem(item, index)}
                     ListFooterComponent={() =>
-                        this.state.currentRender >= this.props.numberOfItems-1 ? null : <CardItem style={{ width: "100%", height: 25 }} >
+                        this.state.currentRender >= this.props.numberOfItems - 1 ? null : <CardItem style={{ width: "100%", height: 25 }} >
                             {this.state.endReached ? <Text style={{
                                 marginLeft: "35%"
                             }}>no more data to load</Text> : <Spinner size={"small"}></Spinner>}

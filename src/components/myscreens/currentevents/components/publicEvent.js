@@ -13,14 +13,15 @@ import {
   ListItem,
   Label,
   Spinner,
-  Toast
-} from "native-base";
+  Toast,
+  Button
+} from 'native-base';
 import autobind from "autobind-decorator";
 import UpdateStateIndicator from "./updateStateIndicator";
 import stores from "../../../../stores";
 import OptionList from "./OptionList"
 import ProfileView from "../../invitations/components/ProfileView";
-import MenuListView from "./MenuListView"
+import PublishersView from "./PublishersView"
 import PhotoView from "./PhotoView";
 import MapView from "./MapView";
 import Requester from "../Requester";
@@ -96,7 +97,7 @@ class PublicEvent extends Component {
   }
   swipeOutSettings(master, joint) {
     return {
-      autoClose: true,
+      //autoClose: true,
       sensitivity: 100,
       left: [
         {
@@ -109,7 +110,7 @@ class PublicEvent extends Component {
             }
             join={() => this.join()}
             hide={() => this.hide()} {...this.props} ></SwipeOutView >,
-          autoClose: true,
+          //autoClose: true,
           backgroundColor: "transparent",
         }
       ],
@@ -128,9 +129,7 @@ class PublicEvent extends Component {
   }
 
   invite() {
-    this.setState({
-      openInviteModal: true
-    })
+    this.props.quickInvite({ event: this.props.Event, master: this.state.master })
   }
 
   publish() {
@@ -270,62 +269,41 @@ class PublicEvent extends Component {
       <Swipeout {...this.props} onOpen={() => this.openSwipeOut()} onClose={() => this.onCloseSwipeout()} style={{
         width: "100%",
         backgroundColor: this.props.Event.new ? "#cdfcfc" : null
-      }} autoClose={true} close={true}
+      }}
+      autoClose={true}
+       close={true}
         {...this.swipeOutSettings(this.state.master, this.state.joint)}>
         <Card
           style={{
             borderColor: "#1FABAB",
-            border: 100
           }
           }
           bordered
         >
           <CardItem
             style={{
-              paddingBottom: 15
+              paddingBottom: 1,
+              paddingTop: 1,
+              borderRadius: 5
             }}
           >
             <Left>
-              {this.state.master || this.props.Event.public ? <View>
-                {this.state.publishing ? <View style={{ height: 18 }}>
-                  <Spinner size={"small"} color="#7DD2D2"></Spinner></View> : null}
-                <MenuListView hide={this.state.hide} event_id={this.props.Event.id} published publish={() => this.publish()}
-                  showPublishers={() => this.showPublishersList()}
-                />
-              </View> : null}
-
-            </Left>
-            {/*this.props.Event.updated ? <UpdateStateIndicator /> : null*/}
-            {/* <Right>
-              <View>
-                <Icon
-                  name="dots-three-vertical"
-                  style={{
-                    color: "#0A4E52",
-                    fontSize: 16
-                  }}
-                  type="Entypo"
-                />
-              </View>
-                </Right>*/}
-          </CardItem>
-          <CardItem
-            style={{
-              paddingBottom: 10,
-              paddingTop: 10
-            }}
-          >
-            <Left>
-              <View style={{ flexDirection: "row", flex: 5 }}>
-                <ProfileSimple joined={() => this.join()} showPhoto={(url) => this.props.showPhoto(url)} hasJoin={this.props.Event.joint || this.state.joint}
-                  onOpen={() => this.onOpenDetaiProfileModal()} profile={(this.state.creator)}></ProfileSimple>
+              <View style={{ flexDirection: "row", }}>
+                <ProfileSimple showPhoto={(url) =>
+                  this.props.showPhoto(url)}
+                  profile={(this.state.creator)}></ProfileSimple>
               </View>
             </Left>
+            <Right>
+              <Button onPress={() => this.props.showActions(this.props.Event.id)} transparent>
+                <Icon type="Entypo" style={{fontSize: 24,}} name="dots-three-vertical"></Icon>
+              </Button>
+            </Right>
           </CardItem>
           <CardItem style={{
-            justifyContent: "center",
+            marginLeft: "4%",
           }}>
-            {this.state.isMount ? <TitleView join={() => this.join()} joint={this.state.joint} seen={() => this.markAsSeen()}
+            {this.state.isMount ? <TitleView openDetail={() => this.props.openDetails(this.props.Event)} join={() => this.join()} joint={this.state.joint} seen={() => this.markAsSeen()}
               {...this.props}></TitleView> : null}
           </CardItem>
           <CardItem
@@ -333,8 +311,8 @@ class PublicEvent extends Component {
               paddingLeft: 0,
               aspectRatio: 3 / 1,
               paddingRight: 0,
-              paddingTop: 20,
-              paddingBottom: 10
+              paddingTop: 4,
+              paddingBottom: 6
             }}
             cardBody
           >
@@ -348,8 +326,7 @@ class PublicEvent extends Component {
             </Left>
             <Right >
               {this.state.isMount ? <MapView style={{ marginRight: "11%" }}
-                location={this.props.Event.location && (this.props.Event.location.string ||
-                  this.props.Event.location.string.length == 0) ? this.props.Event.location.string : this.props.Event.location}></MapView> : null}
+                location={this.props.Event.location.string}></MapView> : null}
             </Right>
           </CardItem>
           <CardItem>
@@ -358,7 +335,7 @@ class PublicEvent extends Component {
           <Footer>
             <Left>
               {this.state.isMount ? <View style={{ flexDirection: "row" }}>
-                <Like id={this.props.Event.id} end={() => this.markAsSeen()} />
+                <Like showLikers={(likers) => this.props.showLikers(likers)} id={this.props.Event.id} end={() => this.markAsSeen()} />
               </View> : null}
             </Left>
             <Right>
@@ -366,10 +343,8 @@ class PublicEvent extends Component {
             </Right>
           </Footer>
         </Card>
-        <InvitationModal public={this.props.Event.public} master={this.state.master} eventID={this.props.Event.id} isOpen={this.state.openInviteModal}
-          close={() => this.setState({ openInviteModal: false })}></InvitationModal>
       </Swipeout>
-    </View> : <Card style={{ height: 390 }}>
+    </View> : <Card style={{ height: 320 }}>
       </Card>)
   }
 }

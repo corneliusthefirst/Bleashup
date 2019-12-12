@@ -4,6 +4,8 @@ import { Text, Icon, Toast } from "native-base"
 import stores from '../../../../stores';
 import Requester from "../Requester"
 import emitter from '../../../../services/eventEmiter';
+import { AddParticipant } from '../../../../services/cloud_services';
+import request from '../../../../services/requestObjects';
 export default class Join extends Component {
     constructor(props) {
         super(props)
@@ -22,11 +24,17 @@ export default class Join extends Component {
             }
             Requester.join(this.props.event.id, this.props.event.event_host).then((status) => {
                 this.setState({ participant: true, });
-                Toast.show({ text: "Event Successfully Joint !", type: "success", buttonText: "ok" })
-                //this.props.refreshJoint()
+                let Participant = request.Participant();
+                Participant.phone = stores.Session.SessionStore.phone;
+                Participant.status = "joint";
+                Participant.master = false;
+                Participant.host = stores.Session.SessionStore.host
+                AddParticipant(this.props.event.id,[Participant]).then((resp) =>{
+                    console.warn(resp)
+                })
             }).catch((error) => {
                 Toast.show({
-                    text: 'unable to connect to the server ',
+                    text: 'unable to Perform This Action',
                     buttonText: 'Okay'
                 })
             })

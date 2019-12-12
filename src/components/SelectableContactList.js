@@ -62,7 +62,7 @@ export default class SelectableContactList extends PureComponent {
                     backgroundColor: "#FEFFDE",
                     width: "100%"
                 }}
-            ><View style={{ display: 'flex', flexDirection: 'row', marginTop: "4%", marginLeft: "2%", }}>
+            ><View style={{ display: 'flex', flexDirection: 'row', margin: 4, marginLeft: "2%", }}>
                     <View style={{ width: "85%" }}>
                         <Text style={{ fontWeight: 'bold',fontStyle: 'italic', fontSize: 20, }}>{this.props.title} </Text>
                     </View>

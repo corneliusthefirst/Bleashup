@@ -6,23 +6,14 @@ import { TextInput, ScrollView } from 'react-native-gesture-handler';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import NumericInput from 'react-native-numeric-input'
 import moment from 'moment';
-
+import stores from '../../../stores';
+var event = null
 export default class SettingsModal extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            activityName: this.props.event.about.title,
-            activityTime: this.props.event.period,
-            date: this.props.event.period,
-            interval: this.props.event.interval ? this.props.event.interval : 1,
-            recurrent: this.props.event.recurrent ? this.props.event.recurrent : false,
-            frequency: this.props.event.frequency ? this.props.event.frequency : 'daily',
-            occurrence: this.props.event.recurrence ? this.props.event.recurrence : 100,
-            public: this.props.event.public,
-            notes: this.props.event.notes ? this.props.event.notes : [],
             mode: "time",
             show: false,
-            closed: this.props.event.closed,
             loaded: false,
             showDate: false,
             display: 'clock'
@@ -31,6 +22,7 @@ export default class SettingsModal extends Component {
     state = {
 
     }
+
     shouldComponentUpdate(nextProps, nextState, nextContext) {
         return this.state.loaded !== nextState.loaded ||
             this.state.newThing !== nextState.newThing ||
@@ -67,6 +59,25 @@ export default class SettingsModal extends Component {
             })
             return true
         }
+    }
+    componentDidMount() {
+        setTimeout(() => {
+            event = JSON.stringify(this.props.event)
+            this.setState({
+                activityName: this.props.event.about.title,
+                activityTime: this.props.event.period,
+                date: this.props.event.period,
+                interval: this.props.event.interval ? this.props.event.interval : 1,
+                recurrent: this.props.event.recurrent ? this.props.event.recurrent : false,
+                frequency: this.props.event.frequency ? this.props.event.frequency : 'daily',
+                occurrence: this.props.event.recurrence ? this.props.event.recurrence : 100,
+                public: this.props.event.public,
+                notes: this.props.event.notes ? this.props.event.notes : [],
+                mode: "time",
+                closed: this.props.event.closed,
+                loaded: true
+            })
+        }, 30)
     }
     showTimePicker() {
         this.setState({
@@ -217,11 +228,11 @@ export default class SettingsModal extends Component {
                 frequency_new: this.state.frequency,
                 notes_new: this.state.notes
             }
-            this.props.saveSettings(newConfig)
+            this.props.saveSettings(event, newConfig)
         }
     }
     componentWillMount() {
-        
+
     }
     closeActiviy() {
         this.props.closeActivity()
@@ -244,11 +255,6 @@ export default class SettingsModal extends Component {
                 }}
                 isOpen={this.props.isOpen}
                 onOpened={() => {
-                    setTimeout(() => {
-                        this.setState({
-                            loaded: true
-                        })
-                    }, 30)
                 }}
                 style={{
                     borderRadius: 8,
@@ -257,16 +263,16 @@ export default class SettingsModal extends Component {
                     backgroundColor: "#FEFFDE",
                 }}>
                 <View>
+                    <View style={{ margin: '2%', flexDirection: 'row', }}>
+                        <Text
+                            style={{ fontSize: 23, fontWeight: 'bold', fontStyle: 'italic', width: '60%', }}>Activity Settings</Text>
+                        <Button onPress={() => this.saveConfigurations()} transparent><Icon
+                            style={{ color: "#1FABAB", }}
+                            type="AntDesign"
+                            name="checkcircle"
+                        /><Text style={{ fontWeight: 'bold', fontStyle: 'italic', }} >Save</Text></Button>
+                    </View>
                     {!this.state.loaded ? <Spinner size={"small"}></Spinner> : <ScrollView showsVerticalScrollIndicator={false}>
-                        <View style={{ margin: '2%', flexDirection: 'row', }}>
-                            <Text
-                                style={{ fontSize: 23, fontWeight: 'bold', fontStyle: 'italic', width: '60%', }}>Activity Settings</Text>
-                            <Button onPress={() => this.saveConfigurations()} transparent><Icon
-                                style={{ color: "#1FABAB", }}
-                                type="AntDesign"
-                                name="checkcircle"
-                            /><Text style={{ fontWeight: 'bold', fontStyle: 'italic', }} >Save</Text></Button>
-                        </View>
                         <View style={{ marginLeft: '4%', flexDirection: 'column', }}>
                             <View>
                                 {this.state.emptyNameError ? <Text style={{ color: '#A91A84' }} note>{'name cannot be empty'}</Text> : null}
@@ -287,7 +293,7 @@ export default class SettingsModal extends Component {
                                     is24Hour={true} display={this.state.display}
                                     onChange={(e, date) => this.changeActivityTime(e, date)}></DateTimePicker> : null}
                             </Item>
-                            <Item style={{width:"100%"}}> 
+                            <Item style={{ width: "100%" }}>
                                 <Button onPress={() => this.showDatePicker()} transparent>
                                     <Text>On {moment(this.state.date).format('dddd, MMMM Do YYYY')}</Text>
                                 </Button>

@@ -27,6 +27,7 @@ import DoublePhoto from "../invitations/components/doublePhoto";
 import stores from '../../../stores';
 import { filter } from 'lodash';
 import moment from "moment"
+import testForURL from '../../../services/testForURL';
 
 const defaultPlaceholderObject = {
   component: ActivityIndicator,
@@ -76,10 +77,6 @@ class CardListItem extends Component {
   componentDidMount() {
     setTimeout(() => {
       stores.Invitations.translateToinvitationData(this.props.item, true).then(data => {
-        this.data = data
-        let AccordData = data.sender_status
-        max_length = data.sender_status.length
-        let dataArray = [{ title: AccordData.slice(0, 35), content: AccordData.slice(35, max_length) }]
         this.setState({
           activeRowKey: null,
           isOpenDetails: false,
@@ -90,7 +87,6 @@ class CardListItem extends Component {
           message: "",
           received: this.props.item.received,
           seen: this.props.item.seen,
-          dataArray: dataArray,
           textcolor: "",
           event_id: data.event_id,
           loading: false,
@@ -199,26 +195,26 @@ class CardListItem extends Component {
           </CardItem>
           <CardItem>
             <Left>
-              <TouchableOpacity onPress={() => requestAnimationFrame(() => this.setState({ opening: true, isOpenStatus: true }))} >
-                {this.state.loading ? null : <CacheImages small thumbnails source={{ uri: this.state.item.sender_Image }}
-                />}
+              <TouchableOpacity onPress={() => requestAnimationFrame(() => this.props.showPhoto(this.state.item.sender_Image))} >
+                {this.state.loading ? null : testForURL(this.state.item.sender_Image) ? <CacheImages small thumbnails source={{ uri: this.state.item.sender_Image }} /> :
+                  <Thumbnail small source={{ uri: this.state.item.sender_Image }}></Thumbnail>}
               </TouchableOpacity>
               <Body >
                 {this.state.loading ? null : <Text style={{ fontWeight: 'bold', }} >{this.state.item.sender_name}</Text>}
-
-                {this.state.loading ? null : this.state.dataArray.content == "" ? <Text style={{
-                  color: 'dimgray', padding: 10,
+                <Text style={{
+                  color: 'dimgray', padding: 10, fontStyle: 'italic',
                   fontSize: 16, marginTop: -10, borderWidth: 0
-                }} note>{this.state.item.sender_status}</Text> :
-                  <AccordionModule dataArray={this.state.dataArray} />
-
-                }
+                }} note>{this.state.item.sender_status && this.state.item.sender_status.length > 50 ?
+                  this.state.item.sender_status.splice(0, 50) : this.state.item.sender_status ?
+                    this.state.item.sender_status : null}</Text>
               </Body>
             </Left>
           </CardItem>
           <CardItem cardBody>
             <Left>
-              {this.state.loading ? null : <DoublePhoto enlargeImage={() => this.setState({ opening: true, enlargeEventImage: true })} LeftImage={this.state.item.receiver_Image}
+              {this.state.loading ? null : <DoublePhoto showPhoto={(image) => this.props.showPhoto(image)}
+                enlargeImage={() => this.setState({ opening: true, enlargeEventImage: true })} 
+                LeftImage={this.state.item.receiver_Image}
                 RightImage={this.state.item.event_Image} />}
             </Left>
             <Body >
