@@ -11,6 +11,7 @@ import {
   Body,
   TabHeading,
   Card,
+  Right,
   Toast
 } from 'native-base';
 import NetInfo from "@react-native-community/netinfo";
@@ -27,7 +28,7 @@ import CurrentEventView from '../currentevents';
 import emitter from "../../../services/eventEmiter";
 import firebase from 'react-native-firebase';
 import GState from '../../../stores/globalState';
-
+import CreateEvent from '../event/createEvent/CreateEvent';
 
 
 @observer
@@ -131,6 +132,12 @@ class Home extends Component {
   @autobind
   settings() { }
 
+ @autobind
+ setCreateButton(){
+
+ }
+
+
   render() {
     return (
       <Container style={{ backgroundColor: "#FEFFDE" }}>
@@ -147,6 +154,9 @@ class Home extends Component {
             >
               Bleashup
                 </Title>
+                <Right>
+                <CreateEvent Parentprops={this.props} ></CreateEvent>
+                </Right>
           </Body>
 
           <Icon
@@ -177,7 +187,7 @@ class Home extends Component {
               </TabHeading>
             }
           >
-            <InvitationView {...this.props} />
+            <InvitationView {...this.props} ref={"invitation_view"} />
           </Tab>
           <Tab
             tabStyle={{
@@ -193,6 +203,21 @@ class Home extends Component {
           >
             <CurrentEventView {...this.props}></CurrentEventView>
           </Tab>
+
+          <Tab
+            tabStyle={{
+              borderRadius: 0
+            }}
+            heading={
+              <TabHeading>
+                <View style={{ display: 'flex'}}>
+                  <Icon name="slack-square" type="AntDesign" onPress={this.setCreateButton} />
+                </View>
+              </TabHeading>
+            }
+          >      
+          </Tab>
+
           <Tab
             heading={
               <TabHeading>

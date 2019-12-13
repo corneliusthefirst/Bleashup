@@ -7,6 +7,7 @@ import Swipeout from "react-native-swipeout";
 import InAppBrowser from 'react-native-inappbrowser-reborn';
 import DeviceInfo from 'react-native-device-info';
 import Modal from 'react-native-modalbox';
+import autobind from "autobind-decorator";
 
 
 let {height, width} = Dimensions.get('window');
@@ -14,9 +15,7 @@ export default class SearchImage extends Component {
   constructor(props) {
     super(props)
 
-    this.state={
-        storageSizeBefore:0
-    }
+    this.state={ }
   }
 
   async openLink(url) {
@@ -63,6 +62,25 @@ export default class SearchImage extends Component {
     }
   }
 
+/*
+@autobind
+checkStorage(){
+  setInterval(() => {
+    DeviceInfo.getFreeDiskStorage().then(freeDiskStorage => {
+    if(this.state.storageSizeBefore-100>freeDiskStorage && this.state.goBack==true){
+         console.warn("storage before",this.state.storageSizeBefore)
+         console.warn("storage after",freeDiskStorage)
+         console.warn("differences",(this.state.storageSizeBefore - freeDiskStorage))
+          this.setState({goBack:true});
+    }
+  })
+  } ,1000)
+
+}*/
+
+
+
+
   render() {
     return (
    
@@ -80,65 +98,53 @@ export default class SearchImage extends Component {
                 >
                 <View style={{flexDirection:"column",flex:1,justifyContent:'space-between',alignItem:'center',margin:"3%"}}>
                   
-                
-                      <TouchableOpacity  style={{alignSelf:"flex-end",margin:"1%" }} transparent>
-                        <Icon style={{ color: "#1FABAB", fontSize: 35 }} name="cross" type="Entypo" onPress={()=>{
-                         DeviceInfo.getFreeDiskStorage().then(freeDiskStorage => {
-                            if(this.state.storageSizeBefore-100>freeDiskStorage){
-                                  this.props.accessLibrary();
-                                  this.props.onClosed();
-                            }
-                            else{ this.props.onClosed(); }
-                           }) }} />
-                       </TouchableOpacity>
+                 
+                    <TouchableOpacity  style={{alignSelf:"flex-start",marginTop:"3%" }} transparent>
+                      <Text style={{ color: "darkgreen", fontSize: 20,fontWeight:"500" }}  onPress={()=>{ this.props.onClosed() }} >Cancel</Text>
+                     </TouchableOpacity>
+
+                      <TouchableOpacity  style={{alignSelf:"flex-end",margin:"0%",marginTop:-(height/28) }} transparent>
+                      <Text style={{ color: "darkgreen", fontSize: 20,fontWeight:"500" }}  onPress={()=>{
+                            this.props.accessLibrary()
+                            this.props.onClosed() }} >Go</Text>
+                     </TouchableOpacity>  
+                  
                 
 
-                    <Text  style={{alignSelf:"flex-start",marginLeft:"5%",color: "#1FABAB",fontSize:18}}>Some suggested free sites</Text>
+                    <Text  style={{alignSelf:"center",color: "#1FABAB",fontSize:18}}>Some suggested free sites</Text>
                    
                     <Button style={{alignSelf:'center',width:"90%",borderRadius:15,borderColor:"#1FABAB",backgroundColor:"transparent",justifyContent:'center',alignItem:'center',marginTop:"10%"}}
                       onPress={()=>{
-                        DeviceInfo.getFreeDiskStorage().then(freeDiskStorage => {
-                            this.setState({storageSizeBefore:freeDiskStorage})
-                            console.warn("diskStorage",freeDiskStorage );
-                        });
                         let url = "https://www.pixabay.com"
                         this.openLink(url)
+                       
                         }}>
                          <Text  style={{alignSelf:"center"}}>Pixabay</Text>
                     </Button> 
 
                     <Button style={{alignSelf:'center',width:"90%",borderRadius:15,borderColor:"#1FABAB",backgroundColor:"transparent",justifyContent:'center',alignItem:'center',marginTop:"10%"}}
                       onPress={()=>{
-                          DeviceInfo.getFreeDiskStorage().then(freeDiskStorage => {
-                              this.setState({storageSizeBefore:freeDiskStorage})
-                          });
                           let url = "https://www.pixels.com"
                           this.openLink(url);
+                          
                           }}>
                          <Text  style={{alignSelf:"center"}}> Pixels </Text>
                     </Button>
   
                     <Button style={{alignSelf:'center',width:"90%",borderRadius:15,borderColor:"#1FABAB",backgroundColor:"transparent",justifyContent:'center',alignItem:'center',marginTop:"10%"}}
                       onPress={()=>{
-                        DeviceInfo.getFreeDiskStorage().then(freeDiskStorage => {
-                            this.setState({storageSizeBefore:freeDiskStorage})
-                        });
                         let url = "https://www.pexels.com"
                         this.openLink(url)
+                       
                         }}>
                          <Text  style={{alignSelf:"center"}}>Pexels</Text>
                     </Button>  
                     
-                    <TouchableOpacity  
-                    onPress={()=>{
-                        DeviceInfo.getFreeDiskStorage().then(freeDiskStorage => {
-                            this.setState({storageSizeBefore:freeDiskStorage})
-                        });
-                        let url = 'https://www.google.com'
-                        this.openLink(url)
-                        }}>
-                    <Text  style={{alignSelf:"flex-start",color:"darkturquoise",margin:"5%"}}>Others..</Text>
-                    </TouchableOpacity>
+                  <TouchableOpacity>
+                    <Text  style={{alignSelf:"flex-start",color:"darkturquoise",margin:"5%"}} 
+                       onPress={()=>{  let url = 'https://www.google.com'
+                                       this.openLink(url) }}>Others..</Text>
+                  </TouchableOpacity>
                     
                 </View>
              </Modal>

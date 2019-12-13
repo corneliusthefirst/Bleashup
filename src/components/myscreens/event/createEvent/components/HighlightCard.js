@@ -101,8 +101,8 @@ componentDidMount(){
            </CardItem>
            <CardItem>
              <View style={{width:150,height:100}}>
-            <Image source={{uri:this.props.item.url}} style={{ flex: 1, width:null,height:null,
-              borderRadius:8}}></Image>
+            <Thumbnail source={{uri:this.props.item.url}} style={{ flex: 1, width:null,height:null,
+              borderRadius:8}} large ></Thumbnail>
             </View>
            </CardItem>
            <CardItem>
@@ -133,10 +133,10 @@ componentDidMount(){
 
            <HighlightCardDetail isOpen={this.state.isOpen} item={this.props.item} onClosed={()=>{this.setState({isOpen:false})}}/>
      
-           <BleashupAlert   deleteFunction={this.delete} isOpen={this.state.check} onClosed={()=>{this.setState({check:false})}}/>
+           <BleashupAlert  title={"Delete Higlight"}   accept={"Yes"} refuse={"No"} message={" Are you sure you want to delete these highlight ?"} deleteFunction={this.delete} isOpen={this.state.check} onClosed={()=>{this.setState({check:false})}}/>
           
            <EventHighlights   isOpen={this.state.EventHighlightState} onClosed={()=>{this.setState({EventHighlightState:false})}}
-            parentComponent={this} ref={"highlights"}/>
+            parentComponent={this} ref={"highlights"} event_id={this.props.item.event_id} highlight_id={this.props.item.highlight_id}/>
          
        </Card>  
         

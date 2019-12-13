@@ -24,7 +24,7 @@ export default class BleashupAlert extends Component {
             isOpen={this.props.isOpen}
             onClosed={this.props.onClosed}
             style={{ height:height/4, borderRadius:10,
-            backgroundColor:"darkgray",borderColor:'black',width: "80%",flexDirection:'column'  }}
+            backgroundColor:"#FEFFDE",borderColor:'black',width: "80%",flexDirection:'column'  }}
             coverScreen={true}
             position={'center'}
             swipeToClose={false}
@@ -34,28 +34,28 @@ export default class BleashupAlert extends Component {
          
            <View style={{flex:1,justifyContent:"space-between",flexDirection:"column"}}>
               <View style={{flex:1}} >
-                <Text style={{fontSize:18,fontWeight:"500",color:"azure",alignSelf:"center"}}>
-                  Bleashup Alert
+                <Text style={{fontSize:17,fontWeight:"500",color:"#1FABAB",alignSelf:"center",marginTop:"2%",marginRight:"3%"}}>
+                  {this.props.title}
                 </Text>
               </View>
 
              <View style={{flex:4,justifyContent:"space-between",margin:"4%"}}>
                <Text>
-                  Are you sure you want to delete these highlight ?
+                 {this.props.message}
                </Text>
              </View>
 
             <View style={{flex:3,flexDirection:"row",justifyContent:"flex-end"}}>
-            <TouchableOpacity style={{width:"26%",marginRight:"5%"}}>
-            <Button style={{width:"100%",borderRadius:15,borderColor:"red",backgroundColor:"salmon",justifyContent:'center',alignItem:'center'}}
+            <TouchableOpacity style={{width:"21%",marginRight:"5%"}}>
+            <Button style={{width:"100%",borderRadius:15,borderColor:"red",backgroundColor:"#1FABAB",justifyContent:'center',alignItem:'center'}}
                onPress={this.props.onClosed}>
-               <Text style={{color:"#FEFFDE"}}>Cancel</Text>
+                    <Text style={{color:"#FEFFDE"}}>{this.props.refuse}</Text>
             </Button> 
             </TouchableOpacity>
-            <TouchableOpacity style={{width:"23%",marginRight:"4%"}}>
-            <Button style={{width:"100%",borderRadius:15,borderColor:"green",backgroundColor:"#1FABAB",justifyContent:'center',alignItem:'center'}}
+            <TouchableOpacity style={{width:"20%",marginRight:"4%"}}>
+            <Button style={{width:"100%",borderRadius:15,borderColor:"green",backgroundColor:"salmon",justifyContent:'center',alignItem:'center'}}
                onPress={this.props.deleteFunction}>
-               <Text style={{color:"#FEFFDE"}}>Okay</Text>
+                    <Text style={{color:"#FEFFDE"}}>{this.props.accept}</Text>
             </Button> 
             </TouchableOpacity>
 

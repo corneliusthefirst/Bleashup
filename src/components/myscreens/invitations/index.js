@@ -13,7 +13,7 @@ import CreateEvent from '../event/createEvent/CreateEvent';
   constructor(props){
     super(props)
     this.state = {
-
+        create:false
     }
   }
   _keyExtractor = (item, index) => item.invitation_id;
@@ -38,9 +38,9 @@ import CreateEvent from '../event/createEvent/CreateEvent';
         }}
       >
       </BleashupFlatList>}
-
-      <CreateEvent Parentprops={this.props} ></CreateEvent>
+    { this.state.create==true ? <CreateEvent Parentprops={this.props} ></CreateEvent>:<View></View>}
+     
     </View>
   }
-}
+}  
 

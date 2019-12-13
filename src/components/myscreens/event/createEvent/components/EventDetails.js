@@ -49,7 +49,8 @@ export default class EventDetailView extends Component {
           EventLocationState:false,
           creation_date:"",
           creation_time:"",
-          status:request.Participant()
+          status:request.Participant(),
+          EventHighlightState:false
 
         }
   
@@ -94,9 +95,6 @@ if(this.state.EventData.creator_phone){
         this.setState({username:user.nick_name});
    })
   }
-
-
-
 
 }
   
@@ -157,6 +155,11 @@ back(){
   // this.setState({EventDescriptionState:true});
   }
 
+  @autobind
+  newHighlight(){
+    this.setState({EventHighlightState:true})
+  }
+
 
     render() {
     	return(
@@ -172,17 +175,23 @@ back(){
      >
  
       <View style={{height:"100%",backgroundColor:"#FEFFDE",width:"100%"}}>
-        <View style={{height:"8%",width:"100%"}}>
-            <Header>
-            <Body>
-              <Title>BleashUp </Title>
-            </Body>
-            <Right>
-              <Button onPress={this.back} transparent>
-                <Icon type='Ionicons' name="md-arrow-round-back" />
-              </Button>
-            </Right>
-           </Header>
+        <View style={{height:"8%",width:"96%",justifyContent:"space-between",flexDirection:"row",backgroundColor:"#FEFFDE",alignItems:"center",marginLeft:"2%",marginRight:"2%"}}>
+           <View >
+             <TouchableOpacity>
+                <Icon  onPress={this.back} type='MaterialCommunityIcons' name="keyboard-backspace" style={{color:"#1FABAB"}} />
+             </TouchableOpacity>
+           </View>
+
+             <View >
+               <Text style={{color:"#1FABAB",fontSize:18}}>Bleashup</Text>
+             </View>
+
+              <View >           
+               <TouchableOpacity>  
+                <Icon type='AntDesign' name="pluscircle" style={{color:"#1FABAB"}} onPress={this.newHighlight} />
+               </TouchableOpacity>
+             </View>
+
          </View>
 
           <View style={{height:"92%",width:"100%"}}>
@@ -285,6 +294,9 @@ back(){
        <EventLocation  isOpen={this.state.EventLocationState} onClosed={()=>{this.setState({EventLocationState:false})}}
         ref={"location_ref"}  updateLoc={true} eventId={this.state.EventData.id} parentComp={this} />
          
+        <EventHighlights update={false}  isOpen={this.state.EventHighlightState} onClosed={()=>{this.setState({EventHighlightState:false})}}
+           parentComponent={this} ref={"highlights"} event_id={this.state.EventData.id}/>
+
     </Modal>
   
     )}

@@ -86,7 +86,7 @@ componentDidMount(){
     //i set the current new highlight data on startUp
     stores.Highlights.readFromStore().then(Highlights =>{
          // console.warn(Highlights,"All higlights");
-          let highlight = find(Highlights, { id:"newHighlightId" }); 
+          let highlight = find(Highlights, { id:this.props.highlight_id?this.props.highlight_id:"newHighlightId" }); 
          // console.warn(highlight,"constructor higlight");
           this.setState({currentHighlight:highlight});
               
@@ -97,7 +97,7 @@ componentDidMount(){
        //On startUp for each highlightId in new Event i set all the highlightData
        stores.Events.readFromStore().then(Events => {
         //console.warn(Events,"All Events"); 
-       let event =  find(Events, { id:"newEventId" });
+       let event =  find(Events, { id:this.props.event_id?this.props.event_id:"newEventId" });
    
        forEach(event.highlights,(highlightId)=>{
         stores.Highlights.readFromStore().then((Highlights)=>{
@@ -141,7 +141,8 @@ TakePhotoFromCamera(){
 return new Promise((resolve, reject) => {
 
     ImagePicker.openCamera({
-      cropping: true
+      cropping: true,
+      quality:"medium"
     }).then(response => {
         let res = head(response);
         resolve(res.path);
@@ -162,7 +163,8 @@ TakePhotoFromLibrary(){
 return new Promise((resolve, reject) => {
 
   ImagePicker.openPicker({
-    cropping: true
+    cropping: true,
+    quality:"medium"
   }).then(response => {
        let res = head(response);
        resolve(res.path);
@@ -244,7 +246,8 @@ if(this.state.currentHighlight.url == ""){
     let highlight = find(Highlights, { id:"newHighlightId" }); 
     newHighlight =  highlight;
     newHighlight.id = New_id;
-    newHighlight.event_id = "newEventId";   //new event id
+    newHighlight.event_id = this.props.event_id?this.props.event_id:"newEventId";   //new event id
+   
     //console.warn(highlight);
     //add the new highlights to global highlights
     stores.LoginStore.getUser().then((user)=>{
@@ -254,6 +257,11 @@ if(this.state.currentHighlight.url == ""){
 
     this.state.highlightData.push(newHighlight);
     this.setState({highlightData:this.state.highlightData});
+
+    if(this.props.event_id){
+      this.props.parentComponent.state.highlightData.push(newHighlight);
+      this.props.parentComponent.setState({highlightData:this.state.highlightData});
+    }
    
     stores.Highlights.addHighlights(newHighlight ).then(()=>{});
     //add the new highlight id to our newly created event for it to be accessed later when needed using this id
@@ -269,7 +277,6 @@ if(this.state.currentHighlight.url == ""){
      stores.Highlights.addHighlights(this.state.currentHighlight).then(()=>{});
      //stores.Highlights.resetHighlight(this.state.currentHighlight,false).then(()=>{});
      
-    
 
    });
   }
@@ -395,7 +402,7 @@ deleteHighlight(id){
                     <TouchableOpacity onPress={() => this.setState({ enlargeImage: true })} >
                         <Image  source={this.state.currentHighlight.url!=""?{uri:this.state.currentHighlight.url}:this.state.defaultUrl} style={{alignSelf:'center',
                             height: "90%",width: "90%", borderWidth: 1, borderColor: "#1FABAB", borderRadius:100
-                        }}  />
+                        }} />
                     </TouchableOpacity>
                 </View>
 
