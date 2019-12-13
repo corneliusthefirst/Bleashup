@@ -8,6 +8,7 @@ import rnFetchBlob from 'rn-fetch-blob';
 import GState from "../../../stores/globalState";
 import TextContent from "./TextContent";
 import ChatStore from '../../../stores/ChatStore';
+import testForURL from '../../../services/testForURL';
 const { fs, config } = rnFetchBlob
 let dirs = rnFetchBlob.fs.dirs
 const AppDir = rnFetchBlob.fs.dirs.SDCardDir + '/Bleashup'
@@ -32,15 +33,14 @@ export default class VideoMessage extends Component {
     componentDidMount() {
         this.room = new ChatStore(this.props.firebaseRoom)
         let downloadState = (this.props.message.received / this.props.message.total) * 100
-        console.warn(parseInt(downloadState))
         this.setState({
             text: this.props.message.text,
             url: this.props.message.photo,
             sender_name: this.props.message.sender.nickname,
             sender: !(this.props.message.sender.phone == this.props.user),
             time: this.props.message.created_at.split(" ")[1],
-            received: this.props.message.received,
-            loaded: this.testForURL(this.props.message.source) ? false : true,
+            received: isNaN(parseInt(this.props.message.received)) ? 0 : parseInt(this.props.message.received),
+            loaded: testForURL(this.props.message.source) ? false : true,
             ///downloadState: parseInt(downloadState) === null ? 1 : parseInt(downloadState),
             total: this.props.message.total ? parseInt(this.props.message.total).toFixed(2) : 0,
             creator: (this.props.message.sender.phone == this.props.creator)
@@ -106,7 +106,7 @@ export default class VideoMessage extends Component {
                             fs.unlink(this.tempPath)
                             fs.unlink(res.path())
                             this.props.message.source = "file://" + this.path
-                            this.setAfterSuccess(this.props.message.source, temper1, temper2)
+                            this.setAfterSuccess(this.props.message.source,this.state.total, this.state.received)
                         })
                     })
                 } else {
@@ -135,11 +135,6 @@ export default class VideoMessage extends Component {
             })
         })
     }
-    testForURL(url) {
-        let test = url.includes("http://")
-        let test2 = url.includes("https://")
-        return test || test2
-    }
     cancelDownLoad(url) {
         this.task.cancel((err, taskID) => {
             this.setState({ downloading: false })
@@ -163,7 +158,7 @@ export default class VideoMessage extends Component {
                     <Image playVideo={() => this.props.playVideo(this.props.message.source)} video style={{
                         marginTop: "2%",
                         marginLeft: "1.2%",
-                    }} borderRadius={10} source={{ uri: this.props.message.thumbnailSource }} photo={this.props.message.thumbnailSource}
+                    }} borderRadius={5} source={{ uri: this.props.message.thumbnailSource }} photo={this.props.message.thumbnailSource}
                         width={290} height={200}>
                     </Image>
                     <View style={{ position: 'absolute', marginTop: "25%", marginLeft: "45%", }}>
@@ -180,11 +175,11 @@ export default class VideoMessage extends Component {
                     </View>
                     <View style={{ alignSelf: this.state.sender ? 'flex-start' : 'flex-end', margin: '2%', }}>
                         {this.state.loaded ? <View style={{ marginTop: "-10%" }}><View><Text style={{ color: this.state.sender ? '#F8F7EE' : '#E1F8F9' }}>
-                            {this.state.total} {"Mb"}</Text></View></View> :
+                            {this.toMB(this.state.total).toFixed(2)} {"Mb"}</Text></View></View> :
                             <View style={{ marginTop: "-25%" }}>
                                 <AnimatedCircularProgress size={40}
                                     width={2}
-                                    fill={this.testForURL(this.props.message.source) ? this.state.downloadState : 100}
+                                    fill={testForURL(this.props.message.source) ? this.state.downloadState : 100}
                                     tintColor={this.state.error ? "red" : "#1FABAB"}
                                     backgroundColor={this.transparent}>
                                     {

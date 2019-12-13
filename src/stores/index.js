@@ -13,6 +13,7 @@ import ChangeLogs from "./changelogs"
 import Reminds from "./reminds"
 import Publishers from "./publishers"
 import TemporalUsersStore from "./temporalUsersStore"
+import commitee from './commitee';
 
 export default {
 
@@ -30,7 +31,8 @@ export default {
   ChangeLogs: new ChangeLogs(),
   Likes: new Likes(),
   Publishers: new Publishers(),
-  TemporalUsersStore: new TemporalUsersStore()
+  TemporalUsersStore: new TemporalUsersStore(),
+  CommiteeStore : new commitee()
 
 
 };

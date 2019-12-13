@@ -9,9 +9,10 @@ import Contacts from './Contacts';
         super(props)
         this.state = {
             isOpen: false,
+            contacts: []
         };
     }
-
+    state = {}
     componentDidMount() {
 
     }
@@ -29,12 +30,17 @@ import Contacts from './Contacts';
                     this.props.onClosed()
 
                 }
+                onOpened={() => {
+                    this.setState({
+                        contacts: this.props.contacts
+                    })
+                }}
                 style={{
                     height: "97%",
                     borderRadius: 8, backgroundColor: '#FEFFDE', width: "100%"
                 }}>
                 <Container>
-                    <Contacts contacts={this.props.contacts} title={"Seen By ..."}></Contacts>
+                    <Contacts contacts={this.state.contacts} title={"Seen By ..."}></Contacts>
                 </Container>
             </Modal>
 

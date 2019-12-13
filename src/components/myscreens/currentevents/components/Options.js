@@ -1,13 +1,13 @@
-import React,{Component} from "react"
-import { View,TouchableOpacity } from 'react-native';
-import {Icon,Label} from "native-base"
+import React, { Component } from "react"
+import { View, TouchableOpacity } from 'react-native';
+import { Icon, Label,Toast } from "native-base"
 import { observer } from 'mobx-react';
 import autobind from "autobind-decorator";
 import UpdateStateIndicator from "./updateStateIndicator";
 import stores from "../../../../stores";
 
-@observer export default class Options extends Component {
-    constructor(props){
+export default class Options extends Component {
+    constructor(props) {
         super(props)
     }
     @autobind navigateToContributions() {
@@ -35,12 +35,12 @@ import stores from "../../../../stores";
 
     };
     others = {
-        marginLeft: "5%",
-        marginTop: "-7%",
+        alignSelf: 'center',
     }
     svgStyle = {
+        alignSelf: 'center',
     }
-    width="17.75%"
+    width = "25%"
     @autobind navigateToHighLights() {
         stores.Events.isParticipant(this.props.Event.id, stores.Session.SessionStore.phone).then((status) => {
             if (status) {
@@ -119,27 +119,28 @@ import stores from "../../../../stores";
             this.props.seen()
         })
     }
-    render(){
-        return(
+    render() {
+        return (
             <View style={{
                 flexDirection: "row"
             }}>
-                <View
-                    style={{
-                        width: this.width
-                    }}
-                >
-                    <TouchableOpacity onPress={this.navigateToEventDetails}>
+                <View style={{
+                    width: this.width
+                }}>
+                    <TouchableOpacity onPress={() => requestAnimationFrame(() => this.navigateToReminds())}>
                         <View style={this.svgStyle}>
-                            <Icon type="EvilIcons" name="calendar" style={
+                            <Icon type="Entypo" name="bell" style={
                                 {
-                                    color: "#1FABAB"
+                                    color: "#1FABAB",
+                                    marginLeft: "30%",
                                 }
                             }></Icon>
                             <Label style={{
-                                marginLeft: "-8%"
-                            }}>details</Label>
-                            {this.props.Event.updated ? (
+                                color: "#1FABAB",
+                                fontSize: 12, fontStyle: 'italic',
+                                // marginLeft: "-20%"
+                            }} >{"Reminds/Tasks"}</Label>
+                            {this.props.Event.remind_upated ? (
                                 <View style={this.indicatorMargin}>
                                     <UpdateStateIndicator size={this.blinkerSize} />
                                 </View>
@@ -154,153 +155,100 @@ import stores from "../../../../stores";
                         </View>
                     </TouchableOpacity>
                 </View>
-                <View   style={{
-                    width: this.width
-                }}>
-                <TouchableOpacity onPress={this.navigateToReminds}>
-                    <View style={this.svgStyle}>
-                        <Icon type="EvilIcons" name="bell" style={
-                            {
+                <View
+                    style={{
+                        width: this.width
+                    }}
+                >
+                    <TouchableOpacity onPress={() => requestAnimationFrame(() => this.navigateToEventChat())}>
+                        <View style={this.svgStyle}>
+                            <Icon name="group" type="FontAwesome" style={
+                                {
+                                    color: "#1FABAB",
+                                    marginLeft: "20%",
+                                }
+                            }></Icon>
+                            <Label style={{
+                                // marginLeft: "-5%"
+                                fontSize: 12, fontStyle: 'italic',
                                 color: "#1FABAB"
-                            }
-                        }></Icon>
-                        <Label style={{
-                            marginLeft: "-20%"
-                        }} > reminds</Label>
-                        {this.props.Event.remind_upated ? (
-                            <View style={this.indicatorMargin}>
-                                <UpdateStateIndicator size={this.blinkerSize} />
-                            </View>
-                        ) : (
+                            }}>Discussions</Label>
+                            {this.props.Event.chat_updated ? (
                                 <View style={this.indicatorMargin}>
-                                    <UpdateStateIndicator
-                                        size={this.blinkerSize}
-                                        color={this.transparent}
-                                    />
+                                    <UpdateStateIndicator size={22} />
                                 </View>
-                            )}
-                    </View>
-                </TouchableOpacity>
-            </View>
-            <View
-                style={{
-                    width: this.width
-                }}
-            >
-                <TouchableOpacity onPress={this.navigateToEventChat}>
-                    <View style={this.svgStyle}>
-                        <Icon name="comment" type="EvilIcons" style={
-                            {
-                                color: "#1FABAB"
-                            }
-                        }></Icon>
-                        <Label style={{
-                            marginLeft: "-5%"
-                        }}>chats</Label>
-                        {this.props.Event.chat_updated ? (
-                            <View style={this.indicatorMargin}>
-                                <UpdateStateIndicator size={22} />
-                            </View>
-                        ) : (
-                                <View style={this.indicatorMargin}>
-                                    <UpdateStateIndicator
-                                        size={this.blinkerSize}
-                                        color={this.transparent}
-                                    />
-                                </View>
-                            )}
-                    </View >
-                </TouchableOpacity>
-            </View>
-            <View
-                style={{
-                    width: this.width
-                }}
-            >
-                <TouchableOpacity onPress={this.navigateToHighLights}>
-                    <View style={this.svgStyle}>
-                        <Icon name="star" type="EvilIcons" style={
-                            {
-                                color: "#1FABAB"
-                            }
-                        }></Icon>
-                        <Label style={{
-                            marginLeft: "-12%"
-                        }} >highlts</Label>
-                        {this.props.Event.highlight_updated ? (
-                            <View style={this.indicatorMargin}>
-                                <UpdateStateIndicator size={this.blinkerSize} />
-                            </View>
-                        ) : (
-                                <View style={this.indicatorMargin}>
-                                    <UpdateStateIndicator
-                                        size={this.blinkerSize}
-                                        color={this.transparent}
-                                    />
-                                </View>
-                            )}
-                    </View>
-                </TouchableOpacity>
-            </View>
-
-            <View
-                style={{
-                    width: this.width
-                }}
-            >
-                <TouchableOpacity onPress={this.navigateToVotes}>
-                    <View style={this.others}>
+                            ) : (
+                                    <View style={this.indicatorMargin}>
+                                        <UpdateStateIndicator
+                                            size={this.blinkerSize}
+                                            color={this.transparent}
+                                        />
+                                    </View>
+                                )}
+                        </View >
+                    </TouchableOpacity>
+                </View>
+                <View
+                    style={{
+                        width: this.width
+                    }}
+                >
+                    <TouchableOpacity onPress={() => requestAnimationFrame(() => this.navigateToVotes())}>
+                        <View style={this.others}>
                             <Icon type="FontAwesome5" name="poll" style={
-                            {
-                                color: "#1FABAB"
-                            }
-                        }></Icon>
-                        <Label>votes</Label>
-                        {this.props.Event.vote_updated ? (
-                            <View style={this.indicatorMargin}>
-                                <UpdateStateIndicator size={this.blinkerSize} />
-                            </View>
-                        ) : (
+                                {
+                                    color: "#1FABAB",
+                                    marginLeft: "2%",
+                                }
+                            }></Icon>
+                            <Label style={{ color: "#1FABAB", fontSize: 12, fontStyle: 'italic' }}>Votes</Label>
+                            {this.props.Event.vote_updated ? (
                                 <View style={this.indicatorMargin}>
-                                    <UpdateStateIndicator
-                                        size={this.blinkerSize}
-                                        color={this.transparent}
-                                    />
+                                    <UpdateStateIndicator size={this.blinkerSize} />
                                 </View>
-                            )}
-                    </View>
-                </TouchableOpacity>
-            </View>
-            <View
-                style={{
-                    width: this.width
-                }}
-            >
-                <TouchableOpacity onPress={this.navigateToContributions}>
-                    <View style={this.others}>
-                        <Icon type="Foundation" name="dollar" style={
-                            {
-                                color: "#1FABAB"
-                            }
-                        }></Icon>
-                        <Label style={{
-                            marginLeft: "-17%"
-                        }}>contrbs</Label>
-                        {this.props.Event.contribution_updated ? (
-                            <View style={this.indicatorMargin}>
-                                <UpdateStateIndicator size={this.blinkerSize} />
-                            </View>
-                        ) : (
+                            ) : (
+                                    <View style={this.indicatorMargin}>
+                                        <UpdateStateIndicator
+                                            size={this.blinkerSize}
+                                            color={this.transparent}
+                                        />
+                                    </View>
+                                )}
+                        </View>
+                    </TouchableOpacity>
+                </View>
+                <View
+                    style={{
+                        width: this.width
+                    }}
+                >
+                    <TouchableOpacity onPress={() => requestAnimationFrame(() => this.navigateToContributions())}>
+                        <View style={this.others}>
+                            <Icon type="MaterialIcons" name="monetization-on" style={
+                                {
+                                    marginLeft: "30%",
+                                    color: "#1FABAB"
+                                }
+                            }></Icon>
+                            <Label style={{
+                                color: "#1FABAB",
+                                fontSize: 12, fontStyle: 'italic'
+                            }}>Contributions</Label>
+                            {this.props.Event.contribution_updated ? (
                                 <View style={this.indicatorMargin}>
-                                    <UpdateStateIndicator
-                                        size={this.blinkerSize}
-                                        color={this.transparent}
-                                    />
+                                    <UpdateStateIndicator size={this.blinkerSize} />
                                 </View>
-                            )}
-                    </View>
-                </TouchableOpacity>
-            </View>
+                            ) : (
+                                    <View style={this.indicatorMargin}>
+                                        <UpdateStateIndicator
+                                            size={this.blinkerSize}
+                                            color={this.transparent}
+                                        />
+                                    </View>
+                                )}
+                        </View>
+                    </TouchableOpacity>
+                </View>
             </View>
         )
     }

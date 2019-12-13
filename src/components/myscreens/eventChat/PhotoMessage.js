@@ -29,16 +29,16 @@ export default class PhotoMessage extends Component {
     }
     render() {
         return (
-            <View style={{ padding: "4%" }}>
+            <View style={{maxHieght:300 }}>
             <TouchableWithoutFeedback onPressIn={()=>{
                 this.props.pressinIn()
             }} onPress={()=> this.props.showPhoto(this.props.message.photo)}>
                     <Image resizeMode={"contain"} hasJoin onOpen={() => { }}
-                        source={{ uri: this.props.message.photo }} style={{ alignSelf: 'center', }} width={290} borderRadius={9}>
+                        source={{ uri: this.props.message.photo }} style={{ alignSelf: 'center', maxWidth: 380,}} height={300} borderRadius={5}>
                     </Image>
             </TouchableWithoutFeedback>
                 {this.props.message.text ? 
-                    <View style={{marginLeft:"3%",marginBottom: "2%",}}>
+                    <View style={{marginBottom: "2%",maxWidth:"100%"}}>
                     <TextContent text={this.props.message.text}></TextContent>
                     </View> : null}
 

@@ -44,9 +44,9 @@ export default class contacts {
       this.readFromStore().then(contacts => {
         if (contacts.length == 0) {
           tcpRequest
-            .getContacts(phone, { phone: phone }, phone)
+            .getContacts(phone + "_contacts")
             .then(JSONData => {
-              serverEventListener.sendRequest(JSONData, phone).then(contcs => {
+              serverEventListener.sendRequest(JSONData, phone + "_contacts").then(contcs => {
                 this.saveKey.data = contcs;
                 storage.save(this.saveKey).then(() => {
                   resolve(contcs);

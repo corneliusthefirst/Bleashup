@@ -173,7 +173,7 @@ export default {
     },
     get darkenHeader() {
         return color(this.tabBgColor)
-            .darken(0.03)
+            .darken(0)
             .hex();
     },
 
@@ -237,14 +237,14 @@ export default {
     inverseSpinnerColor: "#305455",
 
     // Tab
-    tabDefaultBg: platform === "ios" ? "#1FABAB" : "#1FABAB",
-    topTabBarTextColor: platform === "ios" ? "#7DD2D2" : "#7DD2D2",
-    topTabBarActiveTextColor: platform === "ios" ? "#FEFFDE" : "#FEFFDE",
+    tabDefaultBg: platform === "ios" ? "#FEFFDE" : "#FEFFDE",
+    topTabBarTextColor: platform === "ios" ? "#9EEDD3" : "#9EEDD3",
+    topTabBarActiveTextColor: platform === "ios" ? "#1FABAB" : "#1FABAB",
     topTabBarBorderColor: platform === "ios" ? "#FEFFDE" : "#FEFFDE",
     topTabBarActiveBorderColor: platform === "ios" ? "#33BDBD" : "#1FABAB",
 
     // Tabs
-    tabBgColor: "#1FABAB",
+    tabBgColor: "#FEFFDE",
     tabFontSize: 16,
 
     // Text

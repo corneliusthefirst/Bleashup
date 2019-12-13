@@ -6,6 +6,7 @@ import { Text, Icon, Spinner } from 'native-base';
 import rnFetchBlob from 'rn-fetch-blob';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import * as config from "../../../config/bleashup-server-config.json"
+import GState from '../../../stores/globalState';
 const { fs } = rnFetchBlob
 const AppDir = rnFetchBlob.fs.dirs.SDCardDir + '/Bleashup'
 export default class PhotoUploader extends Component {
@@ -22,14 +23,19 @@ export default class PhotoUploader extends Component {
     }
     state = {}
     componentDidMount() {
-        setTimeout(() => {
-            this.uploadVideo()
-        }, 500)
+        this.uploaderPhoto()
     }
     task = null
-    uploadVideo() {
+    uploaderPhoto() {
+            if (!GState.downlading) this.uploadPhoto()
+            else setTimeout(() => {
+                this.uploaderPhoto()
+            },1000) 
+    }
+    uploadPhoto() {
+        GState.downlading = true
         this.setState({
-            uploading:true
+            uploading: true
         })
         fs.exists(this.props.message.source).then(state => {
             this.task = rnFetchBlob.fetch("POST", this.uploadURL, {
@@ -42,7 +48,7 @@ export default class PhotoUploader extends Component {
             }])
             this.task.uploadProgress((writen, total) => {
                 this.setState({
-                    uploading:true,
+                    uploading: true,
                     total: parseInt(total),
                     received: parseInt(writen),
                     uploadState: (parseInt(writen) / parseInt(total)) * 100
@@ -59,20 +65,20 @@ export default class PhotoUploader extends Component {
                     fs.writeFile(newDir.split(`file://`)[1], this.props.message.source.split(`file://`)[1], 'uri').then(() => {
                         this.setState({
                             uploadState: 100,
-                            uploading:false,
+                            uploading: false,
                             loaded: true
                         })
                         this.props.message.type = 'photo'
                         this.props.message.source = this.baseURL + response.data
                         this.props.message.photo = newDir
                         this.props.replaceMessage(this.props.message)
-
+                        GState.downlading = false
                     })
                 }
             })
             this.task.catch((error) => {
                 this.setState({
-                    uploading:false
+                    uploading: false
                 })
                 console.warn(error)
             })
@@ -111,13 +117,13 @@ export default class PhotoUploader extends Component {
                                     {
                                         (fill) => (<View>
                                             {this.state.uploading ? <TouchableWithoutFeedback onPress={() => this.cancelUpLoad(this.props.message.source)}>
-                                            <View>
-                                                <Icon type="EvilIcons" style={{ color: "#1FABAB" }} name="close">
-                                                </Icon>
-                                                 <Spinner style={{ position: 'absolute', marginTop: "-136%", marginLeft: "-15%", }}>
-                                                 </Spinner>
-                                            </View>
-                                            </TouchableWithoutFeedback> : <TouchableWithoutFeedback onPress={() => this.uploadVideo()}>
+                                                <View>
+                                                    <Icon type="EvilIcons" style={{ color: "#1FABAB" }} name="close">
+                                                    </Icon>
+                                                    <Spinner style={{ position: 'absolute', marginTop: "-136%", marginLeft: "-15%", }}>
+                                                    </Spinner>
+                                                </View>
+                                            </TouchableWithoutFeedback> : <TouchableWithoutFeedback onPress={() => this.uploadPhoto()}>
                                                     <View>
                                                         <Icon type="EvilIcons" style={{ color: "#1FABAB" }} name="arrow-up">
                                                         </Icon>

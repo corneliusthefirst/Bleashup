@@ -36,7 +36,7 @@ export default class LoginStore {
               email: data.email,
               updated_at: data.updated_at,
               password: data.password,
-              profile: data.profile,
+              profile: "https://www.whatsappprofiledpimages.com/wp-content/uploads/2019/01/Profile-Pic-Images-4-300x300.jpg", //data.profile,
               profile_ext: data.profile_ext
             };
             resolve(this.user);

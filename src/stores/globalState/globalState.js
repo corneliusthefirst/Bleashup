@@ -12,12 +12,18 @@ export default class globalState {
   @observable connected = true
   @observable currentRoom = null;
   @observable success = false;
+  @observable previousCommitee = null;
+  @observable socket = null;
+  @observable DeepLinkURL = "http://bleashup.com/"
+  @observable currentRoomNewMessages;
   @observable passwordError = false;
   @observable newPasswordError = false;
   @observable nameError = false;
   @observable newEvent = false;
   @observable emailError = false;
+  @observable generalNewMessages = []
   @observable ageError = false;
+  currentCommitee = "Generale";
   @observable invitationUpdated = true;
   @observable newHightlight = false;
   @observable newVote = false;

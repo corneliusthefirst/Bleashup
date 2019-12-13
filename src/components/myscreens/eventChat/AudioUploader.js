@@ -77,11 +77,6 @@ export default class AudioUploader extends Component {
     uploadAudio(url) {
             this.upload(url)
     }
-    testForURL(url) {
-        let test = url.includes("http://")
-        let test2 = url.includes("https://")
-        return test || test2
-    }
     initialisePlayer(source) {
         this.player = new Sound(source, '/', (error) => {
         })

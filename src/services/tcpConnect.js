@@ -16,6 +16,7 @@ class Connection {
         () => {
           ServerEventListener.listen(socket);
           stores.Session.updateSocket(socket).then(session => {
+            console.warn(session.host)
             TcpRequestData.Presence().then(JSONData => {
                 socket.write(JSONData)
                 this.socket = socket;

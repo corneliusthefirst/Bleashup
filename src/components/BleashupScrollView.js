@@ -3,6 +3,7 @@ import { FlatList, View, ScrollView } from "react-native";
 import { Spinner, CardItem, Text, List } from "native-base";
 import { observer } from "mobx-react";
 import { thisExpression } from "@babel/types";
+import NestedScrollView from "react-native-nested-scroll-view";
 
 
 const ifCloseToTop = ({ layoutMeasurement, contentOffset, contentSize }) => {
@@ -43,8 +44,8 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
     }
     render() {
         return (
-            <View style={{ flexDirection: 'column', backgroundColor: "#FEFFDE", }}>
-                <ScrollView
+            <View style={{ flexDirection: 'column', backgroundColor: "#FEFFDE",}}>
+                <NestedScrollView
                     onScrollEndDrag={({ nativeEvent }) => {
                         if (isCloseToBottom(nativeEvent)) {
                             this.continueScrollDown()
@@ -53,12 +54,11 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
                     }
                     centerContent={true}
                     ref="bleashupFlatlist"
-                    canCancelContentTouches={true}
+                    //canCancelContentTouches={true}
                     removeClippedSubviews={true}
                     //updateCellsBatchingPeriod={10}
                     showsVerticalScrollIndicator={false}
-                    keyExtractor={this.props.keyExtractor}
-                >
+                    keyExtractor={this.props.keyExtractor}>
                     {this._renderItems(this.props.dataSource.slice(this.props.firstIndex ? this.props.firstIndex : 0,
                         this.state.currentRender))}
                     {this.props.numberOfItems < this.props.initialRender ? null : <CardItem style={{ width: "100%", height: 25 }} >
@@ -66,7 +66,7 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
                             marginLeft: "35%"
                         }}>no more data to load</Text> : <Spinner size={"small"}></Spinner>}
                     </CardItem>}
-                </ScrollView>
+                </NestedScrollView>
             </View>)
     }
 }

@@ -1,71 +1,112 @@
 import React, { Component } from 'react';
-import {View} from 'react-native';
-import { Text, Content } from 'native-base';
-import { ScrollView } from 'react-native-gesture-handler';
+import { View, TouchableWithoutFeedback, PanResponder } from 'react-native';
+import { Text, Content, Icon, Spinner } from 'native-base';
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import firebase from 'react-native-firebase';
 import stores from '../../../stores';
+import BleashupFlatList from '../../BleashupFlatList';
+import CommiteeItem from './CommiteeItem';
+import BleashupScrollView from '../../BleashupScrollView';
+import { union, uniq } from "lodash";
+import GState from '../../../stores/globalState';
+import emitter from '../../../services/eventEmiter';
 export default class Commitee extends Component {
-constructor(props){
-    super(props)
-    this.state = {
-        currentRoom:"General"
+    constructor(props) {
+        super(props)
+        this.state = {
+            currentRoom: "Generale",
+            loaded: false
+        }
     }
-}
-state = {}
-componentDidMount() {
-    stores.LoginStore.getUser().then((user)=>{
-        firebase.messaging().requestPermission().then(staus =>{
-            firebase.messaging().getToken().then(token =>{
-                console.warn(token)
-                firebase.database().ref(`notifications_tokens/${user.phone.replace('00', '+')}`).set(token)
-                firebase.database().ref(`rooms/${this.props.event_id}/${this.state.currentRoom}` ).set({
-                  name: "general",
-                   description: "this is the Activity Chenneral discusssion group",
-                    members: [{phone: "+237650594616",master:true}, { phone : "+237694765457",master:false}, {phone:"+237698683806",master:true}]
-               })
-            }).catch(error =>{
-                console.warn(error)
-            })
+    state = {}
+    componentWillMount() {
+        emitter.on('refresh-commitee', () => {
+            this.refreshCommitees()
         })
-    })   
-}
-render() {
-    return (
-        <View style={{ position: 'absolute',height:400,flex: 1,}}>
-            <View style={{ borderTopRightRadius: 15, borderBottomRightRadius: 15,
-            backgroundColor: "#1FABAB", height: 30, width: "95%",}}>
-                <Text style={{ marginTop: "1.5%", alignSelf: 'center', }}>Commitees</Text>
-            </View>
-            <ScrollView contentContainerStyle={{ flexGrow: 1 }} style={{
-                    top: 0,
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    height:"95%"}}>
-    <View style={{height:"100%",margin: 5,}}>
-            <Text>Reading and writing data
-                    This document covers the basics of retrieving data and how to order and filter Firebase data.
-                    
-                    Firebase data is retrieved by attaching an asynchronous 
-                    listener to a firebase.database.Reference. The listener is 
-                triggered once for the initial state of the data and again anytime the data changes.Reading and writing data
-                    This document covers the basics of retrieving data and how to order and filter Firebase data.
-                    
-                    Firebase data is retrieved by attaching an asynchronous 
-                    listener to a firebase.database.Reference. The listener is 
-                triggered once for the initial state of the data and again anytime the data changes.Reading and writing data
-                    This document covers the basics of retrieving data and how to order and filter Firebase data.
-                    
-                    Firebase data is retrieved by attaching an asynchronous 
-                    listener to a firebase.database.Reference. The listener is 
-triggered once for the initial state of the data and again anytime the data changes.Firebase data is retrieved by attaching an asynchronous 
-                    listener to a firebase.database.Reference. The listener is 
-                triggered once for the initial state of the data and again anytime the data changes.Reading and writing data
-                    This document covers the basics of retrieving data and how to order and filter Firebase data.
-                    
-                    Firebase data is retrieved by attaching an asynchronous 
-                    listener to a firebase.database.Reference. The listener is 
-triggered once for the initial state of the data and again anytime the data changes</Text></View></ScrollView></View>
-    );
-}
+        //console.warn(stores.CommiteeStore.commitees)
+
+    }
+    componentDidMount() {
+        setTimeout(() => {
+            this.setState({
+                loaded: true
+            })
+        }, 2)
+    }
+    generalCommitee = {
+        id: this.props.event_id,
+        name: "Generale",
+        member: this.props.participant,
+        opened: true,
+        public_state: true,
+        creator: this.props.creator
+    }
+    componentWillUnmount() {
+        emitter.off('refresh-commitee')
+
+    }
+    _keyExtractor(item, index) {
+        return item
+    }
+    refreshCommitees() {
+        this.setState({
+            refresh: true
+        })
+        setTimeout(() => {
+            this.setState({
+                refresh: false
+            })
+        }, 100)
+    }
+    render() {
+        return (this.state.loaded ?
+            <View style={{ height: "100%", }}>
+                <View style={{
+                    borderTopRightRadius: 15, borderBottomRightRadius: 15,
+                    backgroundColor: "#1FABAB", height: 35,
+                    width: "95%", display: 'flex', flexDirection: 'row', marginBottom: "5%",
+                }}>
+                    <Text style={{
+                        color:"#9EEDD3",
+                        fontWeight: 'bold',
+                        fontStyle: 'italic',
+                        marginLeft: 10, fontSize: 22, alignSelf: 'center', width: "80%"
+                    }}>Commitees</Text>
+                    <View>
+                        <TouchableOpacity onPress={() => requestAnimationFrame(() => { this.props.showCreateCommiteeModal() })}>
+                            <Icon style={{ marginTop: "10%", color: "#FEFFDE" }}
+                                name="pluscircle" type="AntDesign"></Icon></TouchableOpacity>
+                    </View>
+                </View>
+                <View>{this.state.refresh ? null :
+                    <View>
+                        <BleashupScrollView
+                            dataSource={union([this.generalCommitee], uniq(this.props.commitees))}
+                            keyExtractor={(item, index) => item}
+                            renderItem={(item, index) =>
+                                <CommiteeItem
+                                    key={index.toString()}
+                                    master={this.props.master}
+                                    event_id={this.props.event_id}
+                                    join={(id) => { this.props.join(id) }}
+                                    commitee={item.id ? item : null}
+                                    leave={(id) => { this.props.leave(id) }}
+                                    removeMember={(id, members) => { this.props.removeMember(id, members) }}
+                                    addMembers={(id, currentMembers) => { this.props.addMembers(id, currentMembers) }}
+                                    publishCommitee={(id, state) => { this.props.publishCommitee(id, state) }}
+                                    editName={(newName, id) => this.props.editName(newName, id)}
+                                    swapChats={(commitee) => { this.props.swapChats(commitee) }}
+                                    phone={this.props.phone}
+                                    newMessagesCount={4}
+                                    id={item.id ? item.id : item} ></CommiteeItem>
+                            }
+                            firstIndex={0}
+                            renderPerBatch={7}
+                            initialRender={5}
+                            numberOfItems={this.props.commitees.length}
+                        /></View>}
+                </View>
+            </View> : <Spinner></Spinner>
+        );
+    }
 }

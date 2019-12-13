@@ -57,7 +57,7 @@ export default class PhotoModal extends Component {
                             <Button onPress={this.props.joined} style={{ justifyContent: 'center', marginLeft: 40, width: 100, borderRadius: 3 }} success ><Text style={{ fontWeight: "500", fontSize: 18 }}>Join</Text></Button>
                         </View>
                         <View style={{ flexDirection: 'column' }}>
-                            <Icon name="comment" type="EvilIcons" onPress={{}}
+                            <Icon name="comment" type="EvilIcons"
                                 style={{ marginRight: 40, color: "#1FABAB" }} />
                             <Text style={{ marginTop: 2, color: "#1FABAB", marginRight: 40 }}>chat</Text>
                         </View>
@@ -65,13 +65,13 @@ export default class PhotoModal extends Component {
                     :
                     (this.props.reacted ? <View style={{ flex: 2, flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                         <View style={{ marginTop: "10%" }}>
-                            <Icon name="comment" type="FontAwesome5" onPress={{}} style={{ color: "#1FABAB" }} />
+                            <Icon name="comment" type="FontAwesome5" style={{ color: "#1FABAB" }} />
                             <Text style={{ marginTop: 2, color: "#1FABAB" }}>chat</Text>
                         </View>
                     </View> : this.props.accept || this.props.deny ?
                             <View style={{ flex: 2, flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                                 <View style={{ marginTop: "10%" }}>
-                                    <Icon name="comment" type="FontAwesome5" onPress={{}} style={{ color: "#1FABAB" }} />
+                                    <Icon name="comment" type="FontAwesome5" style={{ color: "#1FABAB" }} />
                                     <Text style={{ marginTop: 2, color: "#1FABAB" }}>chat</Text>
                                 </View>
                             </View> :
@@ -81,7 +81,7 @@ export default class PhotoModal extends Component {
                                     <Button onPress={this.props.onAccept} style={{ width: 100, justifyContent: 'center', borderRadius: 2, marginLeft: 20 }} success ><Text>Accept</Text></Button>
                                 </View>
                                 <View style={{ flexDirection: 'column', alignItems: 'center' }}>
-                                    <Icon name="comment" type="FontAwesome5" onPress={{}} style={{ color: "#1FABAB" }} />
+                                    <Icon name="comment" type="FontAwesome5"  style={{ color: "#1FABAB" }} />
                                     <Text style={{ marginTop: 5, color: "#1FABAB" }}>chat</Text>
                                 </View>
                                 <View>

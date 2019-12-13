@@ -7,32 +7,54 @@ import InvitationDispatcher from "./invitationDispatcher";
 import RescheduleDispatcher from "./reschedulDispatcher";
 import tcpConnect from "./tcpConnect"
 import GState from "../stores/globalState";
-import {forEach} from "lodash"
+import { forEach } from "lodash"
 
 class ServerEventListener {
   constructor() { }
   socket = () => { }
-  dispatch(data){
+  dispatch(data) {
+    //console.error(data)
     if (data.response) {
-     // console.error(data)
+      // console.warn('eligible_response 1')
       switch (data.response) {
+        case "not_eligible":
+          // console.warn('eligible_response')
+          emitter.emit("unsuccessful_" + data.message.id, data.message.data);
+          break;
+        case "cleared":
+          console.warn("clearing.....")
+          emitter.emit("cleared", data.data);
+          break;
+        case "all_updates":
+          console.warn(data)
+          if (data.updated.length !== 0) UpdatesDispatcher.dispatchUpdates(data.updated);
+          if (data.new_events.length !== 0) {
+            InvitationDispatcher.dispatchUpdates(
+              data.new_events,
+              "invitation"
+            ).then(() => {
+            });
+          }
+          if (data.reschedules)
+            RescheduleDispatcher.dispatchReschedules(data.reschedules);
+          if (data.info)
+            InvitationDispatcher.dispatchInvitationsUpdates(data.info);
+          tcpRequest.clear().then(JSONData => {
+            emitter.once("cleared",data =>{
+              console.warn("cleared all")
+            })
+            this.socket.write(JSONData)
+          })
+          break;
         case "current_events":
           emitter.emit("current-events", data.body);
           break;
-        case "news":
+        case "presence":
+          console.warn(data.reference)
           stores.Session.updateReference(data.reference).then(sessios => {
-            if (data.updated.length !== 0) UpdatesDispatcher.dispatchUpdates(data.updated);
-            if (data.new_events.length !== 0) {
-              InvitationDispatcher.dispatchUpdates(
-                data.new_events,
-                "invitation"
-              ).then(() => {
-              });
-            }
-            if (data.reschedules)
-              RescheduleDispatcher.dispatchReschedules(data.reschedules);
-            if (data.info)
-              InvitationDispatcher.dispatchInvitationsUpdates(data.info);
+            tcpRequest.get_all_update().then(JSONData => {
+              this.socket.write(JSONData)
+            })
           });
           break;
         case "event_changes":
@@ -85,10 +107,10 @@ class ServerEventListener {
             data.event_id
           );
           break;
-          case "contacts":
-          emitter.emit("successful_"+data.body.id,data.body.data);
+        case "contacts":
+          emitter.emit("successful_" + data.body.id, data.body.data);
           break;
-          case "add_as_contact":
+        case "add_as_contact":
         /*case "event_changes":
           emitter.emit("event_changes", data.updated);
           break;*/
@@ -97,12 +119,12 @@ class ServerEventListener {
     if (data.status) {
       switch (data.status) {
         case "successful":
-          if (data.data) emitter.emit("successful_"+data.id, "data", data.data);
-          if (data.message) emitter.emit("successful_"+data.message.id, data.message.data);
+          if (data.data) emitter.emit("successful_" + data.id, "data", data.data);
+          if (data.message) emitter.emit("successful_" + data.message.id, data.message);
           break;
         case "unsuccessful":
-          if (data.data) emitter.emit("unsuccessful_"+data.id, "data", data.data);
-          if (data.message) emitter.emit("unsuccessful_"+data.message.id, data.message.data);
+          if (data.data) emitter.emit("unsuccessful_" + data.id, "data", data.data);
+          if (data.message) emitter.emit("unsuccessful_" + data.message.id, data.message);
           break;
       }
     }
@@ -116,6 +138,7 @@ class ServerEventListener {
   listen(socket) {
     //socket.setTimeout(10000);
     this.socket = socket
+    GState.socket = socket
     socket.on("error", error => {
       console.warn(error.toString(), "error");
       this.socket.write = undefined
@@ -124,27 +147,28 @@ class ServerEventListener {
       })
     });
     socket.on("data", datar => {
-     data = datar.toString()
-      if (data.includes("_end__start_")){
+      data = datar.toString()
+      console.warn(data)
+      if (data.includes("_end__start_")) {
         let dataX = data.split("_end__start_")
-        if(dataX[0].includes("_start_")){
-          this.dispatch(JSON.parse(dataX[0].replace("_start_","")))
-        }else{
+        if (dataX[0].includes("_start_")) {
+          this.dispatch(JSON.parse(dataX[0].replace("_start_", "")))
+        } else {
           this.accumulator += dataX[0]
           this.dispatch(JSON.parse(this.accumulator))
         }
-        for( i = 1; i< dataX.length ; i++){
-          if(i == dataX.length-1){
-            if(dataX[i].includes("_end_")){
-              this.dispatch(JSON.parse(dataX[i].replace("_end_","")))
-            }else{
+        for (i = 1; i < dataX.length; i++) {
+          if (i == dataX.length - 1) {
+            if (dataX[i].includes("_end_")) {
+              this.dispatch(JSON.parse(dataX[i].replace("_end_", "")))
+            } else {
               this.accumulator += dataX[i]
             }
-          }else{
+          } else {
             this.dispatch(JSON.parse(dataX[i]))
           }
         }
-      }else{
+      } else {
         if (data.includes("_start_")) {
           let dataSub = data.replace("_start_", "")
           if (dataSub.includes("_end_")) {
@@ -164,7 +188,7 @@ class ServerEventListener {
         }
 
       }
-      });
+    });
     socket.on("timeout", data => {
       this.socket = () => { }
       tcpConnect.connect().then(socket => {
@@ -197,7 +221,7 @@ class ServerEventListener {
       if (this.socket.write) {
         this.socket.write(data)
       } else {
-        this.socket = () => {}
+        this.socket = () => { }
         reject("not connected");
       }
     });
@@ -206,12 +230,13 @@ class ServerEventListener {
     return new Promise((resolve, reject) => {
       //setTimeout(()=>{
       //  reject("request timedout!")
-     // },6000)
-      emitter.once("successful_"+id, (response) => {
-          resolve(response);
+      // },6000)
+      emitter.once("successful_" + id, (response) => {
+        resolve(response);
       });
-      emitter.once("unsuccessful_"+id, (response) => {
-          reject(response);
+      emitter.once("unsuccessful_" + id, (response) => {
+        console.warn("unsuccessful, " + response)
+        reject(response);
       });
       if (this.socket.write) {
         this.socket.write(data)

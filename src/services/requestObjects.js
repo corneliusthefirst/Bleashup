@@ -7,17 +7,28 @@ class Request {
             nothing: "this request is usually empty"
         }
     }
+    recurrent_update(){
+        return {
+            recurrent : false,
+            frequency :'daily',
+            interval : 1,
+            recurrence : 1000
+        }
+    }
     Update() {
         return {
             action: "",
             event_id: "",
             phone: "",
+            notes_update: [],
+            calendar_id : "",
+            closed : false,
+            recurrent_update:this.recurrent_update(),
             about_update: this.AboutUpdate(),
             participant_update: this.ParticipantUpdate(),
             location_update: this.LocationUpdate(),
-            period_update: this.PeriodUpdate(),
-            background_update: "",
-            recursiveFrequency_update:""
+            period_update: "",
+            background_update: ""
         }
     }
     AboutUpdate() {
@@ -84,8 +95,8 @@ class Request {
         return {
             id: '',
             event_id: "",
-            create_at: moment().format("YYYY-MM-DD HH:mm"),
-            updated_at: moment().format("YYYY-MM-DD HH:mm"),
+            create_at: moment().format(),
+            updated_at: moment().format(),
             creator: '',
             title: '',
             description: '',
@@ -178,8 +189,8 @@ class Request {
             likes: 0,
             event_id: "",
             title: "",
-            created_at: moment().format("YYYY-MM-DD HH:mm"),
-            updated_at: moment().format("YYYY-MM-DD HH:mm"),
+            created_at: moment().format(),
+            updated_at: moment().format(),
             period: this.Period(),
             option: [this.Option()],
             description: "",
@@ -251,8 +262,8 @@ class Request {
             id: "",
             creator: "",
             event_id: "",
-            created_at: moment().format("YYYY-MM-DD HH:mm"),
-            updated_at: moment().format("YYYY-MM-DD HH:mm"),
+            created_at: moment().format(),
+            updated_at: moment().format(),
             title: "",
             period: this.Period(),
             contribution_mean: [this.ContributionMean()],
@@ -269,8 +280,8 @@ class Request {
             id: "",
             creator: "",
             event_id: "",
-            created_at: moment().format("YYYY-MM-DD HH:mm"),
-            updated_at: moment().format("YYYY-MM-DD HH:mm"),
+            created_at: moment().format(),
+            updated_at: moment().format(),
             title: "",
             description: "",
             url: ""
@@ -322,12 +333,20 @@ class Request {
     Event() {
         return {
             id: "",
-            host: "",
-            created_at: moment().format("YYYY-MM-DD HH:mm"),
-            updated_at: moment().format("YYYY-MM-DD HH:mm"),
+            event_host: "",
+            created_at: moment().format(),
+            updated_at: moment().format(),
             creator_phone: "",
+            closed:false,
+            notes:[],
+            recurrent:false,
+            frequency:'daily',
+            interval:1,
+            recurrence:1000,
+            calendar_id:null,
             about: this.About(),
-            period: this.Period(),
+            commitee : [],
+            period: "",
             location: this.Location(),
             background: "",
             participant: [this.Participant()],
@@ -397,6 +416,9 @@ class Request {
             host: ""
         }
     }
+    many_contact(){
+        return [{phone:"",host:""}]
+    }
     Field() {
         return {
             event_id: "",
@@ -420,6 +442,77 @@ class Request {
     None() {
         return {
             none: ""
+        }
+    }
+    Commitee() {
+        return {
+            id: "",
+            event_id: "",
+            member: [],
+            name: "",
+            opened:true,
+            created_at: moment().format(),
+            updated_at: moment().format(),
+            public_state: true
+        }
+    }
+    UpdateCommiteeName(){
+        return {
+            commitee_id:"",
+            event_id:"",
+            name:""
+        }
+    }
+    updateCommiteeState(){
+        return {
+            commitee_id:"",
+            event_id:"",
+            state:true
+        }
+    }
+    createCommitee(){
+        return {
+            event_id:"",
+            commitee:this.Commitee()
+        }
+    }
+    removeCommitee(){
+        return {
+            commitee_id:"",
+            event_id:"",
+        }
+    }
+    addCommiteeMember(){
+        return {
+            commitee_id : "",
+            event_id: "",
+            member:[this.Participant()]
+        }
+    }
+    removeCommiteeMember(){
+        return {
+            commitee_id:"",
+            event_id:"",
+            member_phone:[""]
+        }
+    }
+    updateCommiteeMemberMaster(){
+        return {
+            commitee_id:"",
+            event_id:"",
+            member_phone:"",
+            member_status : false
+        }
+    }
+    get_commitee(){
+        return {
+            id:""
+        }
+    }
+    COEID(){
+        return {
+            commitee_id:"",
+            event_id:"",
         }
     }
 }

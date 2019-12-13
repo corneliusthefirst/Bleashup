@@ -40,7 +40,8 @@ export default class likes {
             resolve(like);
           } else {
             this.getLikesFromRemote(id).then(Like => {
-              likes.push(Like);
+              likes && likes.length > 0?
+              likes.unshift(Like):likes = [Like];
               this.saveKey.data = likes
               storage.save(this.saveKey).then(() => {
                 resolve(Like)
@@ -70,7 +71,7 @@ export default class likes {
         ServerEventListener.sendRequest(DataJSON, id + "get_likes").then(Like => {
           if (Like == 'empty') Like = { event_id: id, likes: 0, likers: [] }
           Like.likers = uniq(Like.likers)
-          resolve(Like)
+          resolve(Like.data)
         }).catch(error => {
           serverEventListener.socket.write = undefined
           reject(error)
@@ -78,19 +79,19 @@ export default class likes {
       })
     })
   }
-  @action like(ID, Liker,inform) {
+  @action like(ID, Liker, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Likes => {
         if (Likes.length !== 0) {
           let likeIndex = findIndex(Likes, { event_id: ID });
           if (likeIndex >= 0) {
-            Likes[likeIndex].likers.push(Liker);
+            Likes[likeIndex].likers ? Likes[likeIndex].likers.unshift(Liker) : Likes[likeIndex].likers = [Liker];
             Likes[likeIndex].likers = uniq(Likes[likeIndex].likers)
             Likes[likeIndex].likes = Likes[likeIndex].likers.length;
             Likes = uniqBy(Likes, "event_id");
             this.saveKey.data = Likes;
             storage.save(this.saveKey).then(() => {
-             if(inform) this.setPropties(this.saveKey.data)
+              if (inform) this.setPropties(this.saveKey.data)
               resolve();
             });
           } else {
@@ -123,19 +124,19 @@ export default class likes {
       })
     })
   }
-  @action unlike(ID, phone,inform) {
+  @action unlike(ID, phone, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Likes => {
         if (Likes.length !== 0) {
           let likeIndex = findIndex(Likes, { event_id: ID });
           if (likeIndex >= 0) {
-            if (indexOf(Likes[likeIndex].likers, phone) >= 0){
+            if (indexOf(Likes[likeIndex].likers, phone) >= 0) {
               Likes[likeIndex].likers.splice(indexOf(Likes[likeIndex].likers, phone), 1);
               Likes[likeIndex].likes = Likes[likeIndex].likers.length;
               this.saveKey.data = Likes;
               storage.save(this.saveKey).then(() => {
-               if(inform)
-                 this.setPropties(this.saveKey.data)
+                if (inform)
+                  this.setPropties(this.saveKey.data)
                 resolve();
               });
             }

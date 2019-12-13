@@ -1,6 +1,6 @@
 import { observable } from 'mobx'
 import storage from './Storage'
-import { orderBy, filter, reject, findIndex } from "lodash"
+import { orderBy, filter, reject, findIndex,uniqBy } from "lodash"
 import autobind from 'autobind-decorator'
 import moment, { months } from "moment";
 class ChatStore {
@@ -8,7 +8,7 @@ class ChatStore {
 
         this.storeAccessKey.key = key
         this.saveKey.key = key
-        //storage.remove({key:key}).then(()=>{
+       // storage.remove({key:key}).then(()=>{
             
         //})
         this.readFromStore().then(value => {
@@ -19,6 +19,13 @@ class ChatStore {
     addToStore(data) {
         this.saveKey.data = data;
         return storage.save(this.saveKey)
+    }
+    loadLatestMessage(key){
+        return new Promise((resolve,reject) =>{
+            this.readFromStore().then(messages => {
+                resolve(messages[0])
+            })
+        })
     }
     addMessageToStore(newMessage) {
         return new Promise((resolve, reject) => {
@@ -253,18 +260,6 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
         key: "Chats",
         data: []
     };
-    @observable Chats = [
-        {
-            _id: 1,
-            text: 'Hello developer',
-            createdAt: new Date(),
-            user: {
-                _id: 2,
-                name: 'React Native',
-                avatar: 'https://placeimg.com/140/140/any',
-            },
-        },
-    ]
     readFromStore() {
         return new Promise((resolve, reject) => {
             storage
@@ -286,6 +281,7 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
         return new Promise((resolve, reject) => {
             this.readFromStore().then(data => {
                 let newData = messages.concat(data);
+                newData = uniqBy(newData,"id")
                 this.addToStore(newData).then(() => {
                     //this.messages = newData;
                     resolve()

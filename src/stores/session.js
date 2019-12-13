@@ -23,12 +23,13 @@ export default class Session {
         autoSync: true
       })
       .then(ses => {
+        //console.warn(ses)
         this.SessionStore = {
           socket: ses.socket,
           phone: ses.phone,
           password: ses.password,
           reference: ses.reference,
-          host: ses.host
+          host: "192.168.43.32"//ses.host
         };
       })
       .catch(error => {
@@ -165,7 +166,7 @@ export default class Session {
           if (session.password) {
             session.socket = newSocket;
             session.reference = this.SessionStore.reference
-          //  session.host = "192.168.43.32";
+            session.host = "192.168.43.32";
             storage
               .save({
                 key: "session",

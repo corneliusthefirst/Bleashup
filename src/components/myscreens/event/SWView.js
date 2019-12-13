@@ -1,8 +1,8 @@
 import React, { Component } from "react";
-import { View, Animated, TouchableWithoutFeedback } from 'react-native';
+import { View, Animated, TouchableWithoutFeedback, Dimensions, PanResponder } from 'react-native';
 import { TouchableOpacity, ScrollView } from "react-native-gesture-handler";
 import UpdateStateIndicator from "../currentevents/components/updateStateIndicator";
-import { List, Icon, Label, Card, CardItem, Text, Header, Thumbnail, Title } from 'native-base';
+import { List, Icon, Label, Card, CardItem, Text, Header, Thumbnail, Title, Button } from 'native-base';
 import Image from 'react-native-scalable-image';
 import InvitationModal from "../currentevents/components/InvitationModal";
 import autobind from "autobind-decorator";
@@ -11,7 +11,11 @@ import stores from "../../../stores";
 import RouteView from "./RouteView";
 import ActionsView from "./ActionsView";
 import Commitee from "./Commitee";
-const HEADER_MAX_HEIGHT = 160;
+import moment from "moment";
+import CacheImages from '../../CacheImages';
+const screenWidth = Math.round(Dimensions.get('window').width);
+const screenheight = Math.round(Dimensions.get('window').height);
+const HEADER_MAX_HEIGHT = 140;
 const HEADER_MIN_HEIGHT = 0;
 const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
 export default class SWView extends Component {
@@ -20,6 +24,46 @@ export default class SWView extends Component {
         this.state = {
             scrollY: new Animated.Value(0),
         }
+        this._panResponder = PanResponder.create({
+            // Ask to be the responder:
+            onStartShouldSetPanResponder: (evt, gestureState) => true,
+            onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
+            onMoveShouldSetPanResponder: (evt, gestureState) => true,
+            onMoveShouldSetPanResponderCapture: (evt, gestureState) => {
+                const { dx, dy } = gestureState
+                return (dx > 2 || dx < -2 || dy > 2 || dy < -2)
+            },
+
+            onPanResponderGrant: (evt, gestureState) => {
+                // The gesture has started. Show visual feedback so the user knows
+                // what is happening!
+                // gestureState.d{x,y} will be set to zero now
+            },
+            onPanResponderMove: (evt, gestureState) => {
+                if (gestureState.dx >= 70) {
+                    this.props.navigateHome()
+                }
+                const { dx, dy } = gestureState
+                return dx > 2 || dx < -2 || dy > 2 || dy < -2
+                // The most recent move distance is gestureState.move{X,Y}
+                // The accumulated gesture distance since becoming responder is
+                // gestureState.d{x,y}
+            },
+            onPanResponderTerminationRequest: (evt, gestureState) => false,
+            onPanResponderRelease: (evt, gestureState) => {
+                // The user has released all touches while this view is the
+                // responder. This typically means a gesture has succeeded
+            },
+            onPanResponderTerminate: (evt, gestureState) => {
+                // Another component has become the responder, so this gesture
+                // should be cancelled
+            },
+            onShouldBlockNativeResponder: (evt, gestureState) => {
+                // Returns whether this component should block native components from becoming the JS
+                // responder. Returns true by default. Is currently only supported on android.
+                return true;
+            },
+        });
     }
     width = "9%"
     padding = "9%"
@@ -56,6 +100,32 @@ export default class SWView extends Component {
             this.props.seen()
         })
     }
+    displayDate(date) {
+        let statDate = moment(date)
+        let end = moment()
+        let daysDiff = Math.floor(moment.duration(end.diff(statDate)).asDays())
+        if (daysDiff == 0) {
+            return "OnGoing Today from " + moment(date).format("h:mm a");
+        } else if (daysDiff == 1) {
+            return "Past Since Yesterday at " + moment(date).format("h:mm a")
+        } else if (daysDiff > 1 && daysDiff < 7) {
+            return `Past Since ${Math.abs(daysDiff)} Days Ago at ` + moment(date).format("h:mm a")
+        } else if (daysDiff == 7) {
+            return "Past Since 1 Week Ago at " + moment(date).format("h:mm a")
+        } else if (daysDiff == -1) {
+            return "Upcoming Tomorrow at " + moment(date).format("h:mm a");
+        }
+        else if (daysDiff < -1) {
+            return `Upcoming in ${Math.abs(daysDiff)} Days at ` + moment(date).format("h:mm a");
+        } else {
+            return `Past since ${moment(date).format("dddd, MMMM Do YYYY")} at ${moment(date).format("h:mm a")}`
+        }
+    }
+    dateDiff(date) {
+        let statDate = moment(date)
+        let end = moment()
+        return daysDiff = Math.floor(moment.duration(end.diff(statDate)).asDays())
+    }
     invite() {
         this.setState({
             openInviteModal: true
@@ -82,63 +152,103 @@ export default class SWView extends Component {
     original = "#1FABAB"
     transparent = "rgba(52, 52, 52, 0.0)";
     blinkerSize = 26;
+    refreshCommitees() {
+        this.refs.Commitee.refreshCommitees()
+    }
     render() {
         return (
-            <View>
-                <ScrollView nestedScrollEnabled={true} showsVerticalScrollIndicator={false}
-                    onScroll={Animated.event(
-                        [{ nativeEvent: { contentOffset: { y: this.state.scrollY } } }]
-                    )}>
-                    <View style={{
-                        marginTop: HEADER_MAX_HEIGHT,
-                        height: 1000, width: "100%", backgroundColor: "#FEFFDE",
-                    }}>
-                    </View>
-                </ScrollView>
-                <Animated.View style={[{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    backgroundColor: '#1FABAB',
-                    overflow: 'hidden',
-                }, {
-                    height: this.state.scrollY.interpolate({
-                        inputRange: [0, HEADER_SCROLL_DISTANCE],
-                        outputRange: [HEADER_MAX_HEIGHT, HEADER_MIN_HEIGHT],
-                        extrapolate: 'clamp',
-                    })
-                }]}>
-                    <View style={{
-                        height: "100%",
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                    }}><Image style={{ width: this.props.width, height: "100%" }}
-                        source={{ uri: this.props.event.background }}></Image>
-                    </View>
-                </Animated.View>
-                <Animated.View style={[{ display: 'flex', flexDirection: 'column', paddingTop: "-2.5%", position: "absolute" }, {
-                    marginTop: this.state.scrollY.interpolate({
-                        inputRange: [0, HEADER_SCROLL_DISTANCE],
-                        outputRange: [HEADER_MAX_HEIGHT, HEADER_MIN_HEIGHT],
-                        extrapolate: 'clamp',
-                    }),
-                }]}>
-                    <View style={{heignt:400, display: "flex", flexDirection: 'row',marginLeft: "2%", }}>
-                        <View style={{ marginTop: "2%", width: "25%", borderWidth: 2, borderColor: this.actionColor, borderRadius: 12, }}>
-                           <ActionsView showMembers={() => this.props.showMembers()}></ActionsView>
+            <TouchableWithoutFeedback onPressIn={() => {
+                this.setState({
+                    canScroll: true
+                })
+            }}>
+                <View>
+                    <ScrollView
+                        style={{ backgroundColor: "#FEFFDE", }}
+                        //scrollEnabled={true}
+                        nestedScrollEnabled={true}
+                        showsVerticalScrollIndicator={false}
+                        onScroll={Animated.event(
+                            [{ nativeEvent: { contentOffset: { y: this.state.scrollY } } }]
+                        )}>
+                        <View style={{
+                            marginTop: HEADER_MAX_HEIGHT,
+                            height: "100%", width: "100%", backgroundColor: "#FEFFDE",
+                            display: 'flex', flexDirection: 'column', //borderRightWidth: 1.25, borderColor: "#1FABAB",
+                        }}>
+                            <View style={{ marginLeft: 5, backgroundColor: "#FEFFDE", width: "100%", flexDirection: 'row', }}><View style={{ width: "90%" }}><Text style={{ fontWeight: 'bold', fontSize: 20, marginTop: 2 }}>{this.props.event.about.title}</Text>
+                                <Text style={{
+                                    marginRight: "2%", fontStyle: 'italic', fontWeight: this.props.event.closed ? "bold" : "400", color: this.props.event.closed ? "red" : this.dateDiff(this.props.event.period) > 0 ? "gray" : "#1FABAB", fontSize: 14,
+                                }}>{this.props.event.closed ? "Closed" : this.displayDate(this.props.event.period)}</Text>
+                            </View>
+                                <Icon onPress={() => {
+                                    this.props.navigateHome()
+                                }} style={{
+                                    alignSelf: 'flex-end', color: "#1FABAB",
+                                    marginBottom: "7%"
+                                }} name="close" type="EvilIcons"></Icon>
+                            </View>
+                            <View style={{ heignt: "60%", display: "flex", flexDirection: 'row', backgroundColor: "#FEFFDE", marginLeft: "1%", }}>
+                                <View style={{ marginTop: "2%", width: "25%", borderWidth: 2, borderColor: this.actionColor, borderRadius: 12 }}>
+                                    <ActionsView
+                                        publish={() => this.props.publish()}
+                                        leaveActivity={() => this.props.leaveActivity()}
+                                        inviteContacts={() => this.props.inviteContacts()}
+                                        openSettingsModal={() => this.props.openSettingsModal()}
+                                        ShowMyActivity={(a) => this.props.ShowMyActivity(a)}
+                                        showMembers={() => this.props.showMembers()}></ActionsView>
+                                </View>
+                                <View style={{ width: "5%", }}></View>
+                                <View style={{ width: "70%" }}>
+                                    <RouteView refreshCommitee={() => this.refreshCommitees()} event_id={this.props.event.id} currentPage={this.props.currentPage}
+                                        setCurrentPage={(page) => this.props.setCurrentPage(page)}></RouteView>
+                                </View>
+                            </View>
+                            <View style={{ marginTop: "10%", height: 300, }}>
+                                <Commitee
+                                    master={this.props.master}
+                                    ref="Commitee"
+                                    participant={this.props.event.participant}
+                                    creator={this.props.creator}
+                                    join={(id) => { this.props.join(id) }}
+                                    showCreateCommiteeModal={() => this.props.showCreateCommiteeModal()}
+                                    leave={(id) => { this.props.leave(id) }}
+                                    removeMember={(id, members) => { this.props.removeMember(id, members) }}
+                                    addMembers={(id, currentMembers) => { this.props.addMembers(id, currentMembers) }}
+                                    publishCommitee={(id, state) => { this.props.publishCommitee(id, state) }}
+                                    editName={(newName, id) => this.props.editName(newName, id)}
+                                    swapChats={(commitee) => { this.props.swapChats(commitee) }} phone={this.props.phone}
+                                    commitees={this.props.commitees}
+                                    event_id={this.props.event.id}></Commitee>
+                            </View>
                         </View>
-                        <View style={{ width: "5%", }}></View>
-                        <View style={{ width: "70%" }}>
-                           <RouteView currentPage={this.props.currentPage} 
-                           setCurrentPage={(page)=> this.props.setCurrentPage(page)}></RouteView>
+                    </ScrollView>
+                    <Animated.View style={[{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        backgroundColor: "#FEFFDE",
+                        overflow: 'hidden',
+                    }, {
+                        height: this.state.scrollY.interpolate({
+                            inputRange: [0, HEADER_SCROLL_DISTANCE],
+                            outputRange: [HEADER_MAX_HEIGHT, HEADER_MIN_HEIGHT],
+                            extrapolate: 'clamp',
+                        })
+                    }]}>
+                        <View style={{
+                            height: "100%",
+                            width: screenWidth * 2 / 3,
+                            alignItems: 'center',
+                            borderRadius: 5,
+                            justifyContent: 'center',
+                        }}><TouchableOpacity onPress={() => requestAnimationFrame(() => this.props.showActivityPhotoAction())}>
+                                {this.props.event.background ? <CacheImages width={(screenWidth * 2 / 3) - 5} style={{ width: "100%", height: "100%" }}
+                                    source={{ uri: this.props.event.background }}></CacheImages> : <Image width={screenWidth * 2 / 3} style={{ width: "100%", height: "100%" }} source={require('../../../../assets/default_event_image.jpeg')}></Image>}</TouchableOpacity>
                         </View>
-                    </View>
-                    <View style={{ marginTop: "10%", }}>
-                    <Commitee event_id={this.props.event.id}></Commitee>
-                    </View>
-                </Animated.View>
-            </View>
+                    </Animated.View>
+                </View></TouchableWithoutFeedback>
         );
     }
 }

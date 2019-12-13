@@ -3,9 +3,10 @@ import { View, TouchableWithoutFeedback, Animated } from 'react-native';
 import { Text, Icon, Toast } from "native-base"
 import stores from '../../../../stores';
 import Requester from "../Requester"
-import { observer } from "mobx-react";
-
-@observer export default class Join extends Component {
+import emitter from '../../../../services/eventEmiter';
+import { AddParticipant } from '../../../../services/cloud_services';
+import request from '../../../../services/requestObjects';
+export default class Join extends Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -14,19 +15,26 @@ import { observer } from "mobx-react";
         }
     }
     join() {
-        if(this.state.participant){
-            Toast.show({text:"Joint Already !", buttonText:"ok"})
-        }else{
+        if (this.state.participant) {
+            Toast.show({ text: "Joint Already !", buttonText: "ok" })
+        } else {
             if (this.props.event.new) {
                 stores.Events.markAsSeen(this.props.event.id).then(() => {
                 })
             }
             Requester.join(this.props.event.id, this.props.event.event_host).then((status) => {
                 this.setState({ participant: true, });
-                Toast.show({ text: "Event Successfully Joint !", type: "success", buttonText: "ok" })
+                let Participant = request.Participant();
+                Participant.phone = stores.Session.SessionStore.phone;
+                Participant.status = "joint";
+                Participant.master = false;
+                Participant.host = stores.Session.SessionStore.host
+                AddParticipant(this.props.event.id,[Participant]).then((resp) =>{
+                    console.warn(resp)
+                })
             }).catch((error) => {
                 Toast.show({
-                    text: 'unable to connect to the server ',
+                    text: 'unable to Perform This Action',
                     buttonText: 'Okay'
                 })
             })
@@ -35,8 +43,16 @@ import { observer } from "mobx-react";
     componentDidMount() {
         stores.Events.isParticipant(this.props.event.id, stores.Session.SessionStore.phone).then(status => {
             this.setState({
-                participant : status,
-                joint : status
+                participant: status,
+                joint: status
+            })
+            emitter.on(`left_${this.props.event.id}`, () => {
+                stores.Events.isParticipant(this.props.event.id, stores.Session.SessionStore.phone).then(status => {
+                    this.setState({
+                        participant: status,
+                        joint: status
+                    })
+                })
             })
         })
     }
@@ -46,24 +62,24 @@ import { observer } from "mobx-react";
     render() {
         return (
             <View style={{ padding: "-5%", marginLeft: "-25%" }}>
-                    <View style={{ flexDirection: "row" }}>
-                        <TouchableWithoutFeedback onPress={() => this.join()} >
-                            <View >
-                                <Icon
+                <View style={{ flexDirection: "row" }}>
+                    <TouchableWithoutFeedback onPress={() => this.join()} >
+                        <View >
+                            <Icon
                                 name="account-group"
                                 type="MaterialCommunityIcons"
-                                    style={{
-                                        color: this.state.participant ? "#54F5CA" : "#bfc6ea",
-                                        fontSize: 23
-                                    }}
-                                />
-                            </View>
-                        </TouchableWithoutFeedback>
-                        <View style={{ marginTop: 5 }}>
+                                style={{
+                                    color: this.state.participant ? "#54F5CA" : "#bfc6ea",
+                                    fontSize: 35
+                                }}
+                            />
+                        </View>
+                    </TouchableWithoutFeedback>
+                    {/*<View style={{ marginTop: 5 }}>
                             <Text style={{ color: this.state.participant ? "#54F5CA" : "#bfc6ea", 
                             fontSize: 15, }} note>{this.state.participant ? " Joint" :" Join"}</Text>
-                        </View>
-                    </View>
+                                </View>*/}
+                </View>
             </View>
         )
     }
