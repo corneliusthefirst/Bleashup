@@ -4,7 +4,6 @@ import { Content, List, ListItem, Body, Left, Right, Text, Container,Spinner } f
 import ImageActivityIndicator from "./myscreens/currentevents/components/imageActivityIndicator";
 import ContactList from "./ContactList";
 import { observer } from "mobx-react";
-import { StatusBar } from 'react-native';
 @observer export default class PublishersModal extends PureComponent {
     constructor(props) {
         super(props)
@@ -18,7 +17,6 @@ import { StatusBar } from 'react-native';
 
     }
     render() {
-        StatusBar.setBarStyle('dark-content',true)
         return (
             <Modal
                 // backdropPressToClose={false}
@@ -49,7 +47,6 @@ import { StatusBar } from 'react-native';
                     borderRadius: 8, backgroundColor: '#FEFFDE', width: "100%"
                 }}>{this.state.loaded?
                 <Container>
-                <StatusBar></StatusBar>
                     <ContactList title={"Publishers List"} event_id={this.state.event_id}></ContactList>
                 </Container>:<Spinner size={"small"}></Spinner>}
             </Modal>

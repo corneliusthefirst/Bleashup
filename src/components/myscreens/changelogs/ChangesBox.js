@@ -34,10 +34,10 @@ export default class ChangeBox extends Component {
                             {!this.props.change.updater ? null : typeof this.props.change.updater === 'string' ? <ProfileView phone={this.props.change.updater}></ProfileView> :
                                 <View style={{ flexDirection: 'row', }}>
                                     <View style={{ width: "25%" }}>
-                                        {this.props.change.updater.profile && testForURL(this.props.change.updater.profile) ?
+                                        {this.props.change.updater.profile && testForURL(this.props.change.updater.profile,true) ?
                                             <CacheImages thumbnails
                                                 source={{ uri: this.props.change.updater.profile }}>
-                                            </CacheImages> : <Thumbnail small source={{ uri: this.props.change.updater.profile ? this.change.updater.profile : '' }}></Thumbnail>}
+                                            </CacheImages> : <Thumbnail source={{ uri: this.props.change.updater.profile ? this.props.change.updater.profile : '' }}></Thumbnail>}
                                     </View>
                                     <View style={{ marginTop: "5%", marginLeft: "4%", flexDirection: 'column', width: "65%" }}>
                                         <Text style={{ marginBottom: "2%", fontWeight: 'bold', }}>{this.props.change.updater.phone === stores.LoginStore.user.phone ? "You" : this.props.change.updater.nickname}</Text>
@@ -59,7 +59,7 @@ export default class ChangeBox extends Component {
                             <View style={{ flexDirection: 'row', }}>
                                 <Text>{this.props.change.changed}</Text>
                             </View>
-                            <Text style={{ fontStyle: 'italic', }}>{typeof this.props.change.new_value.new_value === "string" && !testForURL(this.props.change.new_value.new_value) ? this.props.change.new_value.new_value : ""}</Text>
+                            <Text style={{ fontStyle: 'italic', }}>{typeof this.props.change.new_value.new_value === "string" && !testForURL(this.props.change.new_value.new_value,true) ? this.props.change.new_value.new_value : ""}</Text>
                         </View>
                     </View>}
                 </View>
