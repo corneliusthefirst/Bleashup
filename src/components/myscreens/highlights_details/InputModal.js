@@ -83,38 +83,6 @@ export default class InputModal extends Component {
     render() {
         return (
             <KeyboardAvoidingView >
-                //backdropPressToClose={false}
-                backdropOpacity={0.4}
-                swipeToClose={false}
-                backButtonClose={true}
-                entry={"top"}
-                position={"bottom"}
-                //coverScreen={true}
-                animationDuration={100}
-                isOpen={this.props.open}
-                onClosed={() => {
-                    this.props.hideInput()
-                    this.setState({
-                        message: null,
-                        title: null,
-                        callback: null,
-                    })
-                }}
-                onOpened={() => {
-                    setTimeout(() => this.setState({
-                        hidden: true,
-                    }), 100)
-
-                }}
-                style={{
-                    height: "20%",
-                    borderBottomLeftRadius: 8,
-                    borderBottomRightRadius: 8,
-                    backgroundColor: "#FEFFDE",
-                    commiteeName: "",
-                    width: "100%"
-                 }}
-            >
                 <View>
                     <View style={{  width: screenWidth, }}>
                         <View style={{ alignSelf: 'center', }}>
