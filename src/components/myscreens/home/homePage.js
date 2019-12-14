@@ -7,7 +7,9 @@ import {
   View,
   StatusBar,
   AppState,
-  Linking
+  Linking,
+  Dimensions,
+  TouchableOpacity
 } from 'react-native';
 import {
   Container,
@@ -41,12 +43,17 @@ import GState from '../../../stores/globalState';
 import CreateEvent from '../event/createEvent/CreateEvent';
 
 
-@observer
+
 import { find, forEach } from "lodash"
 import CalendarServe from '../../../services/CalendarService';
 import ForeignEventsModal from "./ForeignEventsModal";
 import DeepLinking from 'react-native-deep-linking';
 import Requester from '../event/Requester';
+
+
+let {height, width} = Dimensions.get('window');
+
+@observer
 class Home extends Component {
   constructor(props) {
     super(props);
@@ -57,7 +64,7 @@ class Home extends Component {
     this.permisssionListener()
   }
   state = {
-
+    
   }
   permisssionListener() {
     firebase.messaging().hasPermission().then(status => {
@@ -254,10 +261,20 @@ class Home extends Component {
   @autobind
   settings() { }
 
- @autobind
- setCreateButton(){
-
- }
+  /*
+  @autobind
+  setCreateButton(){
+   
+   if(this.refs.invitation_view.state.create==false){
+      this.refs.invitation_view.setState({create:true});
+      this.setState({color:"salmon"});
+      
+   }else{
+     this.refs.invitation_view.setState({create:false});
+     this.setState({color:"#1FABAB"});
+   }
+  }*/
+ 
 
 
   handleURL = ({ url }) => {
@@ -273,38 +290,18 @@ class Home extends Component {
     StatusBar.setBarStyle('dark-content', true)
     return (
       <Container style={{ backgroundColor: "#FEFFDE" }}>
-        <StatusBar ref="status" backgroundColor="#FEFFDE" barStyle="dark-content"></StatusBar>
-        <Header style={{ backgroundColor: "#FEFFDE", borderBottomWidth: 1, borderColor: "#1FABAB", }} hasTabs>
-          <Body>
-            <Title
-              style={{
-                marginLeft: "2%",
-                fontWeight: "bold",
-                fontStyle: 'normal',
-                color: "#0A4E52",
-                //fontStyle: 'italic',
-                fontSize: 25,
-              }}
-            >
-              Bleashup
-                </Title>
-                <Right>
-                <CreateEvent Parentprops={this.props} ></CreateEvent>
-                </Right>
-          </Body>
 
-          <Icon
-            name="gear"
-            active={true}
-            type="EvilIcons"
-            style={{
-              padding: 15,
-              paddingLeft: 100,
-              color: "#1FABAB"
-            }}
-            onPress={this.settings()}
-          />
-        </Header>
+        <View style={{height:"7%",width:"100%",backgroundColor:"#FEFFDE",borderBottomWidth:1,borderColor:"#1FABAB"}}>
+          <View style={{flex:1,backgroundColor:"#FEFFDE",flexDirection:"row",justifyContent:"space-between",marginLeft:"3%",marginRight:"3%"}}>
+           <Text style={{color:"#1FABAB",fontSize:21,fontWeight:"bold",alignSelf:"flex-start"}}>Bleashup</Text>
+          
+         
+          <TouchableOpacity>  
+            <Icon name="gear" active={true} type="EvilIcons" style={{ color: "#0A4E52",alignSelf:"flex-end"}} onPress={this.settings()}/>
+          </TouchableOpacity>
+        </View>
+
+      </View>
         <Tabs
           locked
           elevation={5}
@@ -330,6 +327,7 @@ class Home extends Component {
           >
             <InvitationView {...this.props} ref={"invitation_view"} />
           </Tab>
+
           <Tab
             tabStyle={{
               borderRadius: 0
@@ -343,20 +341,6 @@ class Home extends Component {
             }
           >
             <CurrentEventView {...this.props}></CurrentEventView>
-          </Tab>
-
-          <Tab
-            tabStyle={{
-              borderRadius: 0
-            }}
-            heading={
-              <TabHeading>
-                <View style={{ display: 'flex'}}>
-                  <Icon name="slack-square" type="AntDesign" onPress={this.setCreateButton} />
-                </View>
-              </TabHeading>
-            }
-          >      
           </Tab>
 
           <Tab

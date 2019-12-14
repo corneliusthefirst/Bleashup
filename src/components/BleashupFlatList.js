@@ -89,6 +89,7 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
                         }
                     }
                     }
+                    onScroll={this.props.onScroll}
                     centerContent={true}
                     ref="bleashupFlatlist"
                     canCancelContentTouches={true}

@@ -154,7 +154,7 @@ dependencies {
     implementation project(':react-native-video')
     implementation project(':rn-fetch-blob')
     implementation project(':react-native-sound')
-    implementation project(':react-native-reanimated')
+  
     implementation project(':react-native-community-netinfo')
     implementation project(':react-native-svg')
     implementation project(':@react-native-community_async-storage')
