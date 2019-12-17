@@ -19,7 +19,7 @@ export default class CreateEvent extends Component {
     
     stores.Events.readFromStore().then(Events =>{
      let event = find(Events, { id:"newEventId" });
-     console.warn(Events);
+      //console.warn(Events);
   
      if(!event){
        event =  request.Event();
@@ -40,8 +40,8 @@ export default class CreateEvent extends Component {
        stores.Highlights.addHighlight(highlight).then(()=>{
        }); 
     
-     }        
-     this.props.Parentprops.navigation.navigate("CreateEventView");
+     }    
+     this.props.navigation.navigate("CreateEventView");
      resolve();
 
     });
@@ -53,19 +53,34 @@ export default class CreateEvent extends Component {
 
  }
 
+ onClickNewRemind(){
+  
+  stores.Reminds.readFromStore().then(Reminds =>{
+    let remind = find(Reminds,{ id:"newRemindId" }); 
+    console.warn("remind it is",remind);
+    //stores.Reminds.removeRemind(remind.id).then((value)=>{console.warn("here it is",value)});
+
+    if(!remind){
+      remind =  request.remind();
+      remind.id = "newRemindId";
+      stores.Reminds.addReminds(remind).then(()=>{});
+    }
+   
+    this.props.navigation.navigate("MyTasksView");
+
+   })
+ }
 
   render() {
     return (
 
  
-        <ActionButton buttonColor="#1CDBAB" position="center" backgroundTappable={true} btnOutRange="green" size={45}>
-         <ActionButton.Item buttonColor='#3498db' title="Notifications" onPress={() => {console.warn("these are log")}} size={70}>
-            <Icon name="md-notifications-off" style={styles.actionButtonIcon} />
-          </ActionButton.Item>
-          <ActionButton.Item buttonColor='#9b59b6' title="New Event" onPress={()=>{this.onClickNewEvent().then(()=>{resolve()})}} size={60}>
+        <ActionButton buttonColor="#1CDBAB" position="right" backgroundTappable={true} btnOutRange="green" size={57}>
+
+          <ActionButton.Item buttonColor='#9b59b6' title="New Event" onPress={()=>{this.onClickNewEvent().then(()=>{})}} size={72}>
             <Icon name="md-create" style={styles.actionButtonIcon} />
           </ActionButton.Item>   
-          <ActionButton.Item buttonColor='#1abc9c' title="Tasks/Reminds" onPress={() => {this.props.Parentprops.navigation.navigate("MyTasksView")}} size={50}>
+          <ActionButton.Item buttonColor='#1abc9c' title="Tasks/Reminds" onPress={() => {this.onClickNewRemind()}} size={65}>
             <Icon name="tasks" type="FontAwesome" style={styles.actionButtonIcon} />
           </ActionButton.Item>
 

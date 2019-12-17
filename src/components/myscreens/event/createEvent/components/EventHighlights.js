@@ -352,6 +352,7 @@ deleteHighlight(id){
               getItemLayout={this.getItemLayout}
               initialScrollIndex={0}
               initialNumToRender={3}
+              maxToRenderPerBatch={4}
               keyExtractor={this._keyExtractor}
               renderItem={this._renderItem}       
               />

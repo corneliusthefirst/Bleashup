@@ -63,7 +63,7 @@ onDone(){
          </CardItem>
 
          <CardItem  carBody>
-           <Text>{this.props.item.description}</Text>
+           <Text style={{alignSelf:"center"}}>{this.props.item.description}</Text>
          </CardItem>
 
          <CardItem style={{width:"100%"}}>

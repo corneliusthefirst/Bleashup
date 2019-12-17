@@ -36,7 +36,7 @@ export default class EventDescription extends Component {
         //console.warn("this is my event id",this.state.event_id); 
         //console.warn("this is also my event id",this.props.eventId); 
         let event = find(Events, { id:this.props.eventId });
-        console.warn("this is my event",event); 
+        //console.warn("this is my event",event); 
         this.setState({description: event.about.description});
         this.setState({event_id:this.props.eventId});
         this.setState({update:this.props.updateDes?this.props.updateDes:false});
