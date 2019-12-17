@@ -92,7 +92,7 @@ class Request {
         }
     }
     remind() {
-        return {
+        return { 
             id: '',
             event_id: "",
             create_at: moment().format(),
@@ -100,7 +100,9 @@ class Request {
             creator: '',
             title: '',
             description: '',
-            period: this.Period()
+            period: this.Period(),
+            recursive_frequency:"none",
+            recurrence:0
         }
     }
 

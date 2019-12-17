@@ -15,7 +15,7 @@ import Publishers from "./publishers"
 import TemporalUsersStore from "./temporalUsersStore"
 import commitee from './commitee';
 
-export default {
+export default { 
 
   //ChatStore: new ChatStore(),
   Reminds: new Reminds(),

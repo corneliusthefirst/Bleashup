@@ -1,6 +1,6 @@
 
 import React, { Component } from 'react';
-import { View, Dimensions, BackHandler, StatusBar } from 'react-native';
+import { View, Dimensions, BackHandler, StatusBar ,LayoutAnimation} from 'react-native';
 import PublicEvent from "./publicEvent.js"
 import { observer } from 'mobx-react';
 import BleashupScrollView from '../../../BleashupScrollView.js';
@@ -17,6 +17,9 @@ import LikerssModal from '../../../LikersModal.js';
 import InvitationModal from './InvitationModal.js';
 import DetailsModal from '../../invitations/components/DetailsModal.js';
 import PhotoViewer from '../../event/PhotoViewer.js';
+import CreateEvent from '../../event/createEvent/CreateEvent';
+
+
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenheight = Math.round(Dimensions.get('window').height);
 
@@ -26,12 +29,42 @@ export default class CurrentEvents extends Component {
         this.state = {
             participants: [],
             event_id: null,
-            isParticipantModalOpened: false
+            isParticipantModalOpened: false,
+            isActionButtonVisible: true
         }
     }
-    state = {
+          state = {
 
-    }
+          }
+
+          // 2. Define a variable that will keep track of the current scroll position
+          _listViewOffset = 0
+
+          _onScroll = (event) => {
+            // Simple fade-in / fade-out animation
+            const CustomLayoutLinear = {
+              duration: 100,
+              create: { type: LayoutAnimation.Types.linear, property: LayoutAnimation.Properties.opacity },
+              update: { type: LayoutAnimation.Types.linear, property: LayoutAnimation.Properties.opacity },
+              delete: { type: LayoutAnimation.Types.linear, property: LayoutAnimation.Properties.opacity }
+            }
+            // Check if the user is scrolling up or down by confronting the new scroll position with your own one
+            const currentOffset = event.nativeEvent.contentOffset.y
+            const direction = (currentOffset > 0 && currentOffset > this._listViewOffset)
+              ? 'down'
+              : 'up'
+            // If the user is scrolling down (and the action-button is still visible) hide it
+            const isActionButtonVisible = direction === 'up'
+            if (isActionButtonVisible !== this.state.isActionButtonVisible) {
+              LayoutAnimation.configureNext(CustomLayoutLinear)
+              this.setState({ isActionButtonVisible })
+            }
+            // Update your scroll position
+            this._listViewOffset = currentOffset
+          }
+  
+          
+
     showPhoto(url) {
         this.setState({
             showPhoto: true,
@@ -75,6 +108,7 @@ export default class CurrentEvents extends Component {
             }
         })
     }
+
     delay = 0
     renderPerbatch = 3
     render() {
@@ -84,6 +118,7 @@ export default class CurrentEvents extends Component {
                 <BleashupFlatList
                     keyExtractor={(item, index) => item.id}
                     dataSource={this.props.data}
+                    onScroll={this._onScroll}
                     renderItem={(item, index) => {
                         this.delay = index % this.renderPerbatch == 0 ? 0 : this.delay + 1
                         return <PublicEvent
@@ -154,6 +189,8 @@ export default class CurrentEvents extends Component {
                         })
                     }}>
                 </DetailsModal> : null}
+
+                {this.state.isActionButtonVisible ? <CreateEvent {...this.props}  /> : null}
             </View>
         )
     }

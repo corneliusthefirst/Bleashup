@@ -66,7 +66,7 @@ export default class CreateEventView extends Component {
     }
     stores.Events.readFromStore().then(Events =>{
       let event = find(Events, { id:"newEventId" }); 
-       this.state.currentEvent = event;
+       this.setState({currentEvent:event});
        //console.warn(this.state.currentEvent );
      });
 
@@ -76,19 +76,19 @@ export default class CreateEventView extends Component {
 
   @autobind
   back() {
-    this.props.navigation.navigate('Invitation');
+    this.props.navigation.navigate('Home');
 
   }
  
   @autobind
   creatEvent(){
-    console.warn("im inside");
+    //console.warn("im inside");
     var arr = new Array(32);
     let num = Math.floor(Math.random() * 16)
     uuid.v1(null, arr,num); 
     let New_id = uuid.unparse(arr,num);
     
-    console.warn(New_id);
+    //console.warn(New_id);
   
     stores.Events.readFromStore().then(Events =>{
       let newEvent = request.Event(); 
@@ -112,7 +112,7 @@ export default class CreateEventView extends Component {
          newEvent.creator_phone = user.creator_phone;
          
       })
-      console.warn(newEvent);
+      //console.warn(newEvent);
       stores.Events.addEvent(newEvent).then(()=>{});
 
       //reset new Event object
@@ -134,7 +134,7 @@ export default class CreateEventView extends Component {
     }); 
 
     stores.Events.readFromStore().then(Events =>{
-       console.warn(Events);
+       //console.warn(Events);
     })
 
   }

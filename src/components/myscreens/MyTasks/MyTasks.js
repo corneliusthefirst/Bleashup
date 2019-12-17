@@ -23,41 +23,13 @@ const MyTasksData = stores.Reminds.MyTasksData
 export default class MyTasksView extends Component {
     constructor(props) {
         super(props)
-        this.state={
-          isActionButtonVisible: true
-
-        }
-
+        this.state={}
     }
 
-      // 2. Define a variable that will keep track of the current scroll position
-  _listViewOffset = 0
-
-  _onScroll = (event) => {
-    // Simple fade-in / fade-out animation
-    const CustomLayoutLinear = {
-      duration: 100,
-      create: { type: LayoutAnimation.Types.linear, property: LayoutAnimation.Properties.opacity },
-      update: { type: LayoutAnimation.Types.linear, property: LayoutAnimation.Properties.opacity },
-      delete: { type: LayoutAnimation.Types.linear, property: LayoutAnimation.Properties.opacity }
-    }
-    // Check if the user is scrolling up or down by confronting the new scroll position with your own one
-    const currentOffset = event.nativeEvent.contentOffset.y
-    const direction = (currentOffset > 0 && currentOffset > this._listViewOffset)
-      ? 'down'
-      : 'up'
-    // If the user is scrolling down (and the action-button is still visible) hide it
-    const isActionButtonVisible = direction === 'up'
-    if (isActionButtonVisible !== this.state.isActionButtonVisible) {
-      LayoutAnimation.configureNext(CustomLayoutLinear)
-      this.setState({ isActionButtonVisible })
-    }
-    // Update your scroll position
-    this._listViewOffset = currentOffset
-  }
-  
-
-
+@autobind
+AddRemind(){
+  this.props.navigation.navigate("LocalTasksCreation");
+}
 
 
 
@@ -84,7 +56,15 @@ _keyExtractor = (item, index) => item.id
               </Button>
             </Right>
            </Header>
-      <View style={{height:"95%"}}>
+
+           <TouchableOpacity style={{width:"90%",alignSelf:'center',marginTop:"1%",marginBottom:"1%"}}>
+            <Button style={{width:"100%",borderRadius:15,borderColor:"#1FABAB",backgroundColor:"#1FABAB",justifyContent:'center',alignItem:'center'}}
+               onPress={()=>{this.AddRemind()}}>
+               <Text style={{color:"#FEFFDE"}}> Add Local Remind / Task </Text>
+             </Button> 
+            </TouchableOpacity>
+
+      <View style={{height:"90%"}}>
         <BleashupFlatList 
           initialRender={5}
           renderPerBatch={5}
@@ -100,7 +80,7 @@ _keyExtractor = (item, index) => item.id
           }}
         >
         </BleashupFlatList >
-        {this.state.isActionButtonVisible ? <CreateEvent /> : null}
+  
 
       </View>
    </View>

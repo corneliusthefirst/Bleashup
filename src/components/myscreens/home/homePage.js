@@ -337,7 +337,7 @@ class Home extends Component {
             heading={
               <TabHeading>
                 <View style={{ display: 'flex', }}>
-                  <Icon name="ios-pulse" type="Ionicicons" style={{ fontSize: this.state.currentTab == 1 ? 45 : 15, }} />
+                  <Icon name="ios-pulse" type="Ionicons" style={{ fontSize: this.state.currentTab == 1 ? 45 : 15, }} />
                 </View>
               </TabHeading>
             }

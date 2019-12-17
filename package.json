@@ -54,6 +54,7 @@
     "react-native-inappbrowser-reborn": "^3.3.3",
     "react-native-indicators": "^0.13.0",
     "react-native-mail": "^4.0.0",
+    "react-native-material-dropdown": "^0.11.1",
     "react-native-material-menu": "^0.6.4",
     "react-native-modal-datetime-picker": "^8.0.1",
     "react-native-modalbox": "^1.7.1",

@@ -47,10 +47,10 @@ export default class EventTitle extends Component {
 
            if(event.period.time.hour!="" && event.period.time.mins!=""){
            this.setState({inputTimeValue:event.period.time.hour+" : "+event.period.time.mins});
-           console.warn(this.state.inputTimeValue,"input time value");
+           //console.warn(this.state.inputTimeValue,"input time value");
            }
            this.setState({date:event.period.date.year+"/"+event.period.date.month+"/"+event.period.date.day});
-           console.warn(this.state.date,"date");
+           //console.warn(this.state.date,"date");
           });
          
     }

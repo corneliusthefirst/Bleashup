@@ -93,7 +93,7 @@ import PhotoViewer from "../event/PhotoViewer";
             }}
           >
           </BleashupFlatList>}
-      {this.state.isActionButtonVisible ? <CreateEvent /> : null}
+      {this.state.isActionButtonVisible ? <CreateEvent {...this.props} /> : null}
 
       {this.state.isDetailsModalOpened ? <DetailsModal event={this.state.event}
         isOpen={this.state.isDetailsModalOpened}
