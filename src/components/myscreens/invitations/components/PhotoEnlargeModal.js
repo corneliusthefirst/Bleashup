@@ -23,32 +23,35 @@ export default class PhotoEnlargeModal extends Component {
                 onClosed={this.props.onClosed}
                 style={{
                     justifyContent: 'center',
-                    alignItems: 'center', height: "100%", borderRadius: 15,
+                    alignItems: 'center', height:height, borderRadius: 15,
                     backgroundColor: "black", width: "100%"
                 }}
                 position={'center'}
+                
             >
-              <View style={{flex:1,alignSelf:'stretch'}}>
-                <View style={{ flex:1,flexDirection:'column',backgroundColor: "black",justifyContent:'center',alignItems: 'center' }}>
+              <View style={{flex:1}}>
+                <View style={{height:height/4,flexDirection:'column',backgroundColor: "black",justifyContent:'center',alignItems: 'center' }}>
                     <TouchableOpacity onPress={this.props.onClosed} transparent>
                         <Icon style={{ color: "#1FABAB", fontSize: 35 }} name="cross" type="Entypo" />
                     </TouchableOpacity>
                 </View>
             {this.props.image ?
-                ( <View style={{flex:6,flexDirection:'column'}}>  
-                    <TouchableOpacity onPress={this.props.onClosed} >
-                        <Image source={{ uri: this.props.image }} style={{ width:height, height:width}}   />
-                    </TouchableOpacity>
+                ( <View style={{height:height-(2*height/6)}}>  
+                   <View style={{width:"100%",height:"100%"}}>
+                     <TouchableOpacity onPress={this.props.onClosed} >
+                        <Image source={{ uri: this.props.image }} width={width}  />
+                     </TouchableOpacity>
+                    </View>
                 </View> ):
-                (<View style={{flex:6,flexDirection:'column'}}>  
-                    <TouchableOpacity onPress={this.props.onClosed} >
-                        <Image  source={{uri:this.props.photo }} style={{ width:height, height:width}} />
-                    </TouchableOpacity>
+                (<View style={{height:height-(2*height/4)}}>  
+                    <View style={{width:"100%",height:"100%"}}>
+                        <Image  source={{uri:this.props.photo }} width={width}  />
+                    </View>
                 </View>)
 
              }
 
-                <View style={{ flex: 1, backgroundColor: "black", flexDirection: 'column' }}>
+                <View style={{height:height/4, backgroundColor: "black", flexDirection: 'column' }}>
                 </View>
                 </View>
             </Modal>

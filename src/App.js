@@ -82,7 +82,7 @@ const AppNavigator = createStackNavigator(
     EventDetailView:{screen:EventDetailView ,navigationOptions: {gesturesEnabled: false}}
   },
   {
-    initialRouteName: "HighLightsDetails",
+    initialRouteName: "LoginHome",
     headerMode: "none"
   }
 );

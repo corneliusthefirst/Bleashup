@@ -78,6 +78,7 @@ export default class Message extends Component {
         }
     }
     componentDidMount() {
+        console.warn(this.props.message.sender.phone, this.props.user, this.props.PreviousSenderPhone)
         setTimeout(() => {
             this.setState({
                 sender_name: this.props.message.sender.nickname,
@@ -93,17 +94,17 @@ export default class Message extends Component {
     slept = false
     openingSwipeout() {
         this.closing++
-        if(!this.slept){
+        if (!this.slept) {
             setTimeout(() => {
                 this.setState({
                     openRight: true
                 })
-            },1000)
+            }, 1000)
             this.slept = true
-        }else{
+        } else {
             this.setState({
                 openRight: true
-            }) 
+            })
         }
         if (this.replying) {
             if (!this.closed) {
@@ -207,7 +208,7 @@ export default class Message extends Component {
             marginRight: !this.state.sender ? '1%' : 0,
             marginTop: this.state.different ? "1.5%" : 0,
             marginBottom: "0.5%",
-            alignSelf: this.state.sender ? 'flex-start' : 'flex-end',
+            alignSelf:  this.state.sender ? 'flex-start' : 'flex-end',
         }
         let color = this.state.sender ? '#D0FEEB' : '#9EEDD3'
         GeneralMessageBoxStyle = {
@@ -215,7 +216,7 @@ export default class Message extends Component {
             minHeight: 10, overflow: 'hidden', borderBottomLeftRadius: 10,
             borderTopLeftRadius: this.state.sender ? 0 : 10,
             backgroundColor: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text) ? "transparent" : color : color,
-            borderTopRightRadius: 10, borderBottomRightRadius: this.state.sender ? 10 : 0,
+            borderTopRightRadius: 10, borderBottomRightRadius: this.state.sender ? 10 : this.props.message.reply && this.props.message.reply.type_extern ? 10 : null,
         }
         senderNameStyle = {
             maxWidth: "100%",
@@ -227,7 +228,7 @@ export default class Message extends Component {
             flexDirection: "row",
             // backgroundColor: color,
         }
-        nameTextStyle = { fontSize: 14, fontWeight: '100', color: "#1FABAB" }
+        nameTextStyle = { fontSize: 14, fontWeight: 'bold', color: "#1FABAB" }
         return (!this.state.loaded ? <Spinner size={"small"} >
         </Spinner> : this.props.message.type == 'date_separator' ? <View style={{ marginTop: '2%', marginBottom: '2%', }}>
             <DateView date={this.props.message.id}></DateView></View> :
@@ -263,7 +264,7 @@ export default class Message extends Component {
                                                         this.replying = true
                                                     }} openReply={(replyer) => {
                                                         replyer.isThisUser = !this.state.sender
-                                                        return this.props.openReply(replyer)
+                                                        this.props.message.reply && this.props.message.reply.type_extern ? null : this.props.openReply(replyer)
                                                     }} reply={this.props.message.reply}></ReplyText></View> : null}
                                                 <TouchableWithoutFeedback onPressIn={() => {
                                                     this.replying = true

@@ -19,7 +19,8 @@ import { observer } from "mobx-react";
 import stores from '../../../stores';
 
 import BleashupFlatList from '../../BleashupFlatList';
-
+import CreateEvent from '../event/createEvent/CreateEvent';
+import CurrentEventView from '../currentevents';
 
 @observer
 class SendInvitations extends Component {
@@ -34,8 +35,6 @@ class SendInvitations extends Component {
 
   }
 
-  
-
 
 
 
@@ -49,7 +48,6 @@ class SendInvitations extends Component {
       <Spinner></Spinner>
     ) : (
    <Container style={{flex:1}}>
-
 
         <BleashupFlatList
           initialRender={4}
@@ -66,8 +64,7 @@ class SendInvitations extends Component {
           }} 
         >
         </BleashupFlatList>
-         
-       
+  
       
     </Container>
 

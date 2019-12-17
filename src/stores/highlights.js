@@ -6,10 +6,12 @@ import moment from "moment";
 import tcpRequest from "../services/tcpRequestData";
 import request from '../services/requestObjects';
 import serverEventListener from "../services/severEventListener"
+import emitter from '../services/eventEmiter';
 export default class highlights {
   constructor() {
-
+    
   }
+  curentTemporalHighlight = []
   @observable highlights = [];
   saveKey = {
     key: "highlights", 
@@ -19,11 +21,28 @@ export default class highlights {
    @action addHighlight(H){
     return this.addHighlights([H])
   }
+
+  initializeGetHighlightsListener(){
+    console.warn('initializing listener')
+    emitter.on('give-highlight', (id, hid) => {
+      console.warn(id, hid)
+      if (this.curentTemporalHighlight.length <= 0 || this.curentTemporalHighlight[id].length <= 0) {
+        this.fetchHighlights(id).then(highlights => {
+          this.curentTemporalHighlight[id] = highlights
+          let h = find(this.curentTemporalHighlight[id], { id: hid })
+          emitter.emit('take-highlight', h)
+        })
+      } else {
+        let h = find(this.curentTemporalHighlight[id], { id: hid })
+        emitter.emit(`take-highlight_${id}`, h)
+      }
+    })
+  }
  
   @action addHighlights(Highlight) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Highlights => {
-        if (Highlights.length !== 0)
+        if (!Highlights || Highlights.length !== 0)
           Highlights = uniqBy(Highlights.concat(Highlight), 'id');
         else Highlights = Highlight;
         this.saveKey.data = Highlights;
@@ -52,22 +71,26 @@ export default class highlights {
   }
   fetchHighlightsFromRemote(eventID){
     return new Promise((resolve,reject) =>{
-      let eventid = request.EventID()
-      eventid.event_id = eventID;
-      tcpRequest.getHighlights(eventid, eventid.event_id + "highlights").then(JSONDATA => {
-        serverEventListener.sendRequest(JSONDATA, eventid.event_id + "highlights").then(Data => {
-          console.warn(Data.data,"pppp")
-          if (Data.data === 'empty') {
+      if(this.curentTemporalHighlight[eventID] && this.curentTemporalHighlight[eventID].length> 0 ){
+        resolve(this.curentTemporalHighlight[eventID])
+      }else{
+        let eventid = request.EventID()
+        eventid.event_id = eventID;
+        tcpRequest.getHighlights(eventid, eventid.event_id + "highlights").then(JSONDATA => {
+          serverEventListener.sendRequest(JSONDATA, eventid.event_id + "highlights").then(Data => {
+            if (Data.data === 'empty') {
+              resolve([])
+            } else {
+              this.addHighlights(Data.data).then(() => {
+                this.curentTemporalHighlight[eventID] = Data.data
+                resolve(sortBy(Data.data, "update_date"))
+              })
+            }
+          }).catch(error => {
             resolve([])
-          } else {
-            this.addHighlights(Data).then(() => {
-              resolve(sortBy(Data,"update_date"))
-            })
-          }
-        }).catch(error => {
-          resolve([])
+          })
         })
-      })
+      }
     })
   }
   @action fetchHighlights(eventID) {

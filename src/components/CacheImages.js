@@ -13,7 +13,7 @@ class CacheImages extends Component {
   }
   state = {
     CacheableImages: undefined
-  }
+  } 
   componentDidMount() {
     this.setState({
       CacheableImages: imageCacheHoc(this.props.thumbnails ? Thumbnail : Image, {

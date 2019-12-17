@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Image from "react-native-scalable-image"
-import { View, TouchableWithoutFeedback } from "react-native"
-import { Icon, Button } from 'native-base';
+import { View, TouchableWithoutFeedback,Slider } from "react-native"
+import { Icon, Button,Text,Right } from 'native-base';
 import Sound from 'react-native-sound';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import BarIndicat from '../../BarIndicat';
@@ -13,7 +13,7 @@ export default class HighlightContent extends Component {
     constructor(props) {
         super(props)
         this.state = {
-
+            currentTime:0
         }
     }
     state = {

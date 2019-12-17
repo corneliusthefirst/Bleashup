@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Vibration, Slider, } from 'react-native';
+import { View, Vibration, } from 'react-native';
 import { Title, Text } from 'native-base';
 import Swipeout from '../../SwipeOut';
 import HighlightContent from './HighlightContent';
@@ -15,6 +15,9 @@ export default class HighLight extends Component {
         }} highlight={highlight}></HighlightContent>
 
 
+    }
+    shouldComponentUpdate(nextProps, nextState, nextContext) {
+         return false
     }
     handleReply() {
         console.warn('handling reply .....')
@@ -35,10 +38,9 @@ export default class HighLight extends Component {
             if (!this.closed) {
                 this.closing++
                 this.closed = true
-                this.handleReply()
                 this.closing = 0
                 Vibration.vibrate(this.duration)
-                this.props.showInput()
+                this.props.showInput(this.props.highlight)
                 setTimeout(() => {
                     this.closed = false
                 }, 1000)
@@ -76,11 +78,11 @@ export default class HighLight extends Component {
                         alignSelf: 'center', margin: '1%',
                         backgroundColor: "#9EEDD3",
                     }}>
-                        <Text note style={{color:'#1FABABA',fontWeight: 'bold',marginLeft: '2%',}}>{moment(this.props.highlight.created_at).format('dddd, MMMM Do YYYY, h:mm:ss a')}</Text>
+                        <Text note style={{color:'#1FABAB',fontWeight: 'bold',marginLeft: '2%',}}>{moment(this.props.highlight.created_at).format('dddd, MMMM Do YYYY, h:mm:ss a')}</Text>
                         <View style={{ height: 50, opacity: 0.8, borderRadius: 8, }}>
                             <Text style={{
-                                color: this.textColor, alignSelf: 'center',
-                                margin: '3%', fontWeight: 'bold', fontSize: 19,
+                                 alignSelf: 'center',
+                                margin: '3%', fontWeight: 'bold', fontSize: 22,
                             }}>
                                 {this.props.highlight.title}
                             </Text>

@@ -57,8 +57,8 @@ export default class CreateEvent extends Component {
   render() {
     return (
 
-   <Container style={{}}>
-        <ActionButton buttonColor="#1CDBAB" position="center" backgroundTappable={true} btnOutRange="green">
+ 
+        <ActionButton buttonColor="#1CDBAB" position="center" backgroundTappable={true} btnOutRange="green" size={45}>
          <ActionButton.Item buttonColor='#3498db' title="Notifications" onPress={() => {console.warn("these are log")}} size={70}>
             <Icon name="md-notifications-off" style={styles.actionButtonIcon} />
           </ActionButton.Item>
@@ -69,10 +69,8 @@ export default class CreateEvent extends Component {
             <Icon name="tasks" type="FontAwesome" style={styles.actionButtonIcon} />
           </ActionButton.Item>
 
-        </ActionButton>
+          </ActionButton>
 
-   </Container>
-          
     );
   }
 }

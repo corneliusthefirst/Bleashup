@@ -9,7 +9,6 @@ import autobind from "autobind-decorator";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import stores from '../../../stores';
 import { findIndex } from "lodash";
-import Timeline from 'react-native-timeline-flatlist'
 import BleashupTimeLine from '../../BleashupTimeLine';
 import moment from "moment";
 import emitter from '../../../services/eventEmiter';

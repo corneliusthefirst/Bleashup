@@ -21,6 +21,7 @@ import SearchImage from './SearchImage';
 
 
 
+
 let {height, width} = Dimensions.get('window');
 
 export default class EventPhoto extends Component {
@@ -47,7 +48,8 @@ export default class EventPhoto extends Component {
     return new Promise((resolve, reject) => {
     
       ImagePicker.openCamera({
-        cropping: true
+        cropping: true,
+        quality:"medium"
       }).then(response => {
         let res = head(response);
         this.setState({EventPhoto: res.path});
@@ -58,16 +60,17 @@ export default class EventPhoto extends Component {
 
     }) 
     
-     }
-    
+  }
+
     @autobind
     TakePhotoFromLibrary(){
     return new Promise((resolve, reject) => {
 
     ImagePicker.openPicker({
-      cropping: true
+      cropping: true,
+      quality:"medium"
     }).then(response => {
-      let res = head(response);
+      let res = head(response);     
       this.setState({EventPhoto: res.path});
       stores.Events.updateBackground("newEventId",res.path,false).then(()=>{});
       resolve(res.path);
@@ -98,7 +101,7 @@ export default class EventPhoto extends Component {
                     backgroundColor:"#FEFFDE",borderColor:'black',borderWidth:1,width: "98%",flexDirection:'column',
                     marginTop:"-4%"
                 }}
-                position={'bottom'}
+                position={'bottom'} 
                 backdropPressToClose={false}
                 coverScreen={true}
                 >

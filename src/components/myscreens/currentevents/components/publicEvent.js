@@ -47,7 +47,8 @@ class PublicEvent extends Component {
       public: false,
       notPressing: false,
       publishing: false,
-      event: this.props.Event,
+      image: this.props.Event.background,
+      //event: this.props.Event,
       swipeClosed: true,
       attempt_to_puplish: false,
       public: false,
@@ -75,7 +76,7 @@ class PublicEvent extends Component {
       nextState.joint !== this.state.joint ||
       nextState.openInviteModal !== this.state.openInviteModal ||
       this.props.Event.joint !== nextProps.Event.joint ||
-      this.props.Event.new !== nextProps.Event.new ||
+      this.state.image !== nextState.image ||
       this.state.master !== nextState.master ||
       !isEqual(this.props.Event, nextProps.Event) ||
       this.state.fresh !== nextState.fresh
@@ -91,10 +92,32 @@ class PublicEvent extends Component {
             creator: creator,
             isMount: true
           })
+          stores.Highlights.fetchHighlightsFromRemote(this.props.Event.id).then(highlights => {
+            if (highlights.length > 0) {
+              this.interval = setInterval(() => {
+                let highlight = highlights[this.counter]
+                if (highlight && highlight.url) {
+                  this.setState({
+                    image: highlight.url.photo,
+                    video: highlight.url.video ? true : false,
+                    audio: highlight.url.audio ? true : false
+                  })
+                  this.counter = this.counter + 1
+                } else {
+                  this.setState({
+                    image: this.props.Event.background,
+                    video: false
+                  })
+                  this.counter = 0
+                }
+              }, 2000 + this.props.renderDelay)
+            }
+          })
         })
       })
     }, this.props.renderDelay + 20)
   }
+  counter = 0
   swipeOutSettings(master, joint) {
     return {
       //autoClose: true,
@@ -117,6 +140,7 @@ class PublicEvent extends Component {
     }
   }
   componentWillUnmount() {
+    clearInterval(this.interval)
   }
 
 
@@ -263,6 +287,10 @@ class PublicEvent extends Component {
   }
   onCloseSwipeout() {
   }
+  showPhoto(url) {
+    url === this.props.Event.background && !this.state.audio ? this.props.showPhoto(url) : 
+      this.props.navigation.navigate("HighLightsDetails", { event_id: this.props.Event.id })
+  }
   render() {
     //emitter.emit('notify', "santerss") 
     return (this.state.isMount ? <View style={{ width: "100%", }}>
@@ -270,8 +298,8 @@ class PublicEvent extends Component {
         width: "100%",
         backgroundColor: this.props.Event.new ? "#cdfcfc" : null
       }}
-      autoClose={true}
-       close={true}
+        autoClose={true}
+        //close={true}
         {...this.swipeOutSettings(this.state.master, this.state.joint)}>
         <Card
           style={{
@@ -296,7 +324,7 @@ class PublicEvent extends Component {
             </Left>
             <Right>
               <Button onPress={() => this.props.showActions(this.props.Event.id)} transparent>
-                <Icon type="Entypo" style={{fontSize: 24,}} name="dots-three-vertical"></Icon>
+                <Icon type="Entypo" style={{ fontSize: 24, }} name="dots-three-vertical"></Icon>
               </Button>
             </Right>
           </CardItem>
@@ -317,12 +345,19 @@ class PublicEvent extends Component {
             cardBody
           >
             <Left>
-              {this.state.isMount ? <PhotoView showPhoto={(url) => url ?
-                this.props.showPhoto(url) : null} joined={() => this.join()}
+              {this.state.isMount ? <View><PhotoView showPhoto={(url) => url ?
+                this.showPhoto(url) : null} joined={() => this.join()}
                 isToBeJoint hasJoin={this.props.Event.joint || this.state.joint} onOpen={() => this.onOpenPhotoModal()} style={{
                   width: "70%",
                   marginLeft: "4%"
-                }} photo={this.props.Event.background} width={170} height={100} borderRadius={6} /> : null}
+                }} photo={this.state.image} width={170} height={100} borderRadius={6} />
+                {this.state.video || this.state.audio ? <Icon onPress={() =>{
+                  this.showPhoto(this.state.image)
+                }} name={this.state.video ? "play" : "headset"} style={{
+                  fontSize: 50, color: '#1FABAB',
+                  position: 'absolute', marginTop: '18%', marginLeft: '37%',
+                }} type={this.state.video ? "EvilIcons" : "MaterialIcons"}>
+                </Icon> : null}</View> : null}
             </Left>
             <Right >
               {this.state.isMount ? <MapView style={{ marginRight: "11%" }}

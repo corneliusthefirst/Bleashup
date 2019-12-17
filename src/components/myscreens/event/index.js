@@ -75,6 +75,7 @@ export default class Event extends Component {
       roomID: this.event.id,
       newMessageCount: 0,
       fresh: false,
+      mounted:false,
       public_state: false,
       opened: true,
       isManagementModalOpened: false,
@@ -327,9 +328,11 @@ export default class Event extends Component {
         isSettingsModalOpened: true
       })
     }
-    this.setState({
-      currentPage: this.props.navigation.getParam("tab")
-    })
+      this.setState({
+        currentPage: this.props.navigation.getParam("tab"),
+        mounted: true
+      })
+
     this.refreshePage()
   }
   componentWillUnmount() {
@@ -924,7 +927,7 @@ export default class Event extends Component {
   }
   render() {
     StatusBar.setHidden(false, true)
-    return (<SideMenu autoClosing={true} onMove={(position) => {
+    return (<SideMenu style={{backgroundColor: "#FEFEDE",}} autoClosing={true} onMove={(position) => {
 
     }} bounceBackOnOverdraw={false} onChange={(position) => {
       this.isOpen = position

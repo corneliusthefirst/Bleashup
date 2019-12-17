@@ -30,7 +30,6 @@ import com.facebook.soloader.SoLoader;
 import com.chirag.RNMail.*;  // <--- import 
 import com.rnnestedscrollview.RNNestedScrollViewPackage;
 //import android.support.v7.app.AppCompatActivity;
-import com.swmansion.reanimated.ReanimatedPackage;
 import com.github.wumke.RNExitApp.RNExitAppPackage;
 import com.imagepicker.ImagePickerPackage;
 import com.proyecto26.inappbrowser.RNInAppBrowserPackage;
@@ -70,7 +69,6 @@ public class MainApplication extends Application implements ReactApplication {
             new AsyncStoragePackage(),
             new VectorIconsPackage(),
             new RNExitAppPackage(),
-            new ReanimatedPackage(),
             new TcpSocketsModule(),
             new RNMail() ,
             new NetInfoPackage(),

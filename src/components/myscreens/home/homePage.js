@@ -7,7 +7,9 @@ import {
   View,
   StatusBar,
   AppState,
-  Linking
+  Linking,
+  Dimensions,
+  TouchableOpacity
 } from 'react-native';
 import {
   Container,
@@ -20,6 +22,7 @@ import {
   Body,
   TabHeading,
   Card,
+  Right,
   Toast
 } from 'native-base';
 import NetInfo from "@react-native-community/netinfo";
@@ -37,11 +40,20 @@ import CurrentEventView from '../currentevents';
 import emitter from "../../../services/eventEmiter";
 import firebase from 'react-native-firebase';
 import GState from '../../../stores/globalState';
+import CreateEvent from '../event/createEvent/CreateEvent';
+
+
+
 import { find, forEach } from "lodash"
 import CalendarServe from '../../../services/CalendarService';
 import ForeignEventsModal from "./ForeignEventsModal";
 import DeepLinking from 'react-native-deep-linking';
 import Requester from '../event/Requester';
+
+
+let {height, width} = Dimensions.get('window');
+
+@observer
 class Home extends Component {
   constructor(props) {
     super(props);
@@ -52,7 +64,7 @@ class Home extends Component {
     this.permisssionListener()
   }
   state = {
-
+    
   }
   permisssionListener() {
     firebase.messaging().hasPermission().then(status => {
@@ -130,6 +142,7 @@ class Home extends Component {
   }
   realNew = []
   componentDidMount() {
+    stores.Highlights.initializeGetHighlightsListener()
     CalendarServe.fetchAllCalendarEvents().then(calendar => {
       let calen = groupBy(calendar, 'title')
       let idsMapper = map(calen, (value, key) => { return { title: key, ids: map(value, ele => ele.id) } })
@@ -249,6 +262,22 @@ class Home extends Component {
   @autobind
   settings() { }
 
+  /*
+  @autobind
+  setCreateButton(){
+   
+   if(this.refs.invitation_view.state.create==false){
+      this.refs.invitation_view.setState({create:true});
+      this.setState({color:"salmon"});
+      
+   }else{
+     this.refs.invitation_view.setState({create:false});
+     this.setState({color:"#1FABAB"});
+   }
+  }*/
+ 
+
+
   handleURL = ({ url }) => {
     console.warn("responding to links")
     Linking.canOpenURL(url).then(support => {
@@ -260,37 +289,21 @@ class Home extends Component {
   render() {
     StatusBar.setBackgroundColor("#FEFFDE", true)
     StatusBar.setBarStyle('dark-content', true)
+    StatusBar.setHidden(false, true)
     return (
       <Container style={{ backgroundColor: "#FEFFDE" }}>
-        <StatusBar ref="status" backgroundColor="#FEFFDE" barStyle="dark-content"></StatusBar>
-        <Header style={{ backgroundColor: "#FEFFDE", borderBottomWidth: 1, borderColor: "#1FABAB", }} hasTabs>
-          <Body>
-            <Title
-              style={{
-                marginLeft: "2%",
-                fontWeight: "bold",
-                fontStyle: 'normal',
-                color: "#0A4E52",
-                //fontStyle: 'italic',
-                fontSize: 25,
-              }}
-            >
-              Bleashup
-                </Title>
-          </Body>
 
-          <Icon
-            name="gear"
-            active={true}
-            type="EvilIcons"
-            style={{
-              padding: 15,
-              paddingLeft: 100,
-              color: "#1FABAB"
-            }}
-            onPress={this.settings()}
-          />
-        </Header>
+        <View style={{height:40,width:"100%",backgroundColor:"#FEFFDE",borderBottomWidth:1,borderColor:"#1FABAB",borderTopWidth: 1,}}>
+          <View style={{flex:1,backgroundColor:"#FEFFDE",flexDirection:"row",justifyContent:"space-between",marginLeft:"3%",marginRight:"3%"}}>
+           <Text style={{fontSize:23,fontWeight:"bold",alignSelf:"flex-start",marginTop: '1%',}}>Bleashup</Text>
+          
+         
+          <TouchableOpacity style={{marginTop: '2%',}}>  
+            <Icon name="gear" active={true} type="EvilIcons" style={{ color: "#1FABAB",alignSelf:"flex-end"}} onPress={this.settings()}/>
+          </TouchableOpacity>
+        </View>
+
+      </View>
         <Tabs
           locked
           elevation={5}
@@ -314,8 +327,9 @@ class Home extends Component {
               </TabHeading>
             }
           >
-            <InvitationView {...this.props} />
+            <InvitationView {...this.props} ref={"invitation_view"} />
           </Tab>
+
           <Tab
             tabStyle={{
               borderRadius: 0
@@ -330,6 +344,7 @@ class Home extends Component {
           >
             <CurrentEventView {...this.props}></CurrentEventView>
           </Tab>
+
           <Tab
             heading={
               <TabHeading>
