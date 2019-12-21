@@ -24,7 +24,7 @@ export default class TemporalUsersStore {
                 this.saveKey.data = users;
                 storage.save(this.saveKey).then(() => {
                     this.setPropterties(users)
-                    resolve()
+                    resolve(users)
                 })
             }).catch(() => {
                 this.saveKey.data = [user];

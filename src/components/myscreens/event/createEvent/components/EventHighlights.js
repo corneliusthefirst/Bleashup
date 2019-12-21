@@ -87,7 +87,7 @@ componentDidMount(){
     stores.Highlights.readFromStore().then(Highlights =>{
          // console.warn(Highlights,"All higlights");
           let highlight = find(Highlights, { id:this.props.highlight_id?this.props.highlight_id:"newHighlightId" }); 
-         // console.warn(highlight,"constructor higlight");
+         console.warn(highlight,"constructor higlight");
           this.setState({currentHighlight:highlight});
               
       });
@@ -109,6 +109,7 @@ componentDidMount(){
        });
 
      });
+     
 
 
   });
@@ -289,6 +290,7 @@ updateHighlight(){
 stores.Highlights.updateHighlight(this.state.currentHighlight,false).then(()=>{});
 this.resetHighlight();
 this.setState({update:false});
+this.props.onClosed();
 
 }
 
@@ -306,7 +308,7 @@ deleteHighlight(id){
  _keyExtractor = (item, index) => item.id;
  _renderItem = ({item,index}) => (
    
-    <HighlightCard  parentComponent={this} item={item} ancien={false} deleteHighlight={(id)=>{this.deleteHighlight(id)}} ref={"higlightcard"}/>
+    <HighlightCard   participant={this.props.participant}  parentComponent={this} item={item} ancien={false} deleteHighlight={(id)=>{this.deleteHighlight(id)}} ref={"higlightcard"}/>
     
   );
 
@@ -329,15 +331,11 @@ deleteHighlight(id){
      >
     <Root>
       <View style={{height:"100%",backgroundColor:"#FEFFDE",width:"100%"}}>
-            <Header>
-            <Body>
-              <Title>BleashUp </Title>
-            </Body>
-            <Right>
+            <Header style={{backgroundColor:"#FEFFDE",width:"100%",justifyContent:"flex-start",alignItems:"center"}}> 
               <Button onPress={this.back} transparent>
-                <Icon type='Ionicons' name="md-arrow-round-back" />
-              </Button>
-            </Right>
+                <Icon type='Ionicons' name="md-arrow-round-back" style={{color:"#1FABAB",marginLeft:"3%"}} />
+              </Button>   
+
            </Header>
 
           <View style={{height:"95%",width:"100%"}}>
@@ -361,7 +359,7 @@ deleteHighlight(id){
           <View style={{height:height/6,alignItems:'center'}}>
                    <Text style={{alignSelf:'flex-start',margin:"3%",fontWeight:"500",fontSize:16}} >Highlight Name :</Text>
                     <Item  style={{borderColor:'black',width:"95%"}} rounded>
-                     <Input value={this.state.currentHighlight.title} placeholder='Please enter highlight title' keyboardType='email-address' autoCapitalize="none" returnKeyType='next' inverse last
+                     <Input value={this.state.currentHighlight.title} maxLength={40}  placeholder='Please enter highlight title' keyboardType='email-address' autoCapitalize="none" returnKeyType='next' inverse last
                       onChangeText={(value) => this.onChangedTitle(value)} />
                      </Item>
                </View>
@@ -457,33 +455,5 @@ deleteHighlight(id){
 
     }
 
-   
   
-/*
-console.warn(this.state.currentHighlight,"this is the updated version");
-//remove the highlight having this id form stores and add the updated one so when it fetch it is updated one
-//stores.Highlights.removeHighlight(this.state.currentHighlight.id).then(()=>{});
-//stores.Highlights.addHighlights(this.state.currentHighlight,false).then(()=>{});
-
-
-let Cid  = this.state.currentHighlight.id;
-let index = findIndex(this.state.highlightData, { id:Cid});
-this.state.highlightData.splice(index,1,this.state.currentHighlight);
-this.setState({highlightData: [ ...this.state.highlightData]}, () => {}); 
-console.warn(this.state.HighlightData,"this is the updated version 2");*/
-
-/*//stores.Highlights.readFromStore().then(highlights=>{console.warn(highlights);});
-stores.Events.readFromStore().then(Events => {
-let event =  find(Events, { id:this.props.event_id});
-forEach(event.highlights,(highlightId)=>{
-stores.Highlights.readFromStore().then((Highlights)=>{
-   let highlight = find(Highlights, { id:highlightId });
-   this.setState({highlightData: [ ...this.state.highlightData, highlight]}, () => {}); 
-            
-  });
-
- });
-
-});
-*/
      

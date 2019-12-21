@@ -34,13 +34,19 @@ export default class EventPhoto extends Component {
           searchImageState:false
         }
 
-        stores.Events.readFromStore().then(Events =>{
-            let event = find(Events, { id:"newEventId" }); 
-            this.setState({EventPhoto:event.background})
-            
-        });
+
         
     }
+
+   componentDidMount(){
+    stores.Events.readFromStore().then(Events =>{
+      let event = find(Events, { id:"newEventId" }); 
+      this.setState({EventPhoto:event.background})
+      
+  });
+ }
+
+
 
     @autobind
     TakePhotoFromCamera(){
@@ -97,18 +103,18 @@ export default class EventPhoto extends Component {
                 isOpen={this.props.isOpen}
                 onClosed={this.props.onClosed}
                 style={{
-                    height: height/2 + height/12, borderRadius: 15,
+                    height: height/2 + height/9, borderRadius: 15,
                     backgroundColor:"#FEFFDE",borderColor:'black',borderWidth:1,width: "98%",flexDirection:'column',
-                    marginTop:"-4%"
+                    marginTop:"-8%"
                 }}
                 position={'bottom'} 
-                backdropPressToClose={false}
+                //backdropPressToClose={false}
                 coverScreen={true}
                 >
          <View style={{flex:1}}>
                  <View style={{flex:2,justifyContent:'space-between',alignItem:'center'}}>
                     
-                    <Button style={{alignSelf:'center',width:"90%",borderRadius:15,borderColor:"#1FABAB",backgroundColor:"transparent",justifyContent:'center',alignItem:'center',marginTop:"10%"}}
+                    <Button style={{alignSelf:'center',width:"90%",borderRadius:15,borderColor:"#1FABAB",backgroundColor:"transparent",justifyContent:'center',alignItem:'center',marginTop:"5%"}}
                       onPress={()=>{this.TakePhotoFromCamera().then(()=>{})}}>
                         <View style={{flexDirection:"row"}}>
                          <Icon name="photo-camera" active={true} type="MaterialIcons"

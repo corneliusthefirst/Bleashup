@@ -146,7 +146,7 @@ export default class LoginView extends Component {
                   globalState.loading = false;
                   this.props.navigation.navigate("SignIn");
                 });
-            } else {
+            } else { 
               this.temploginStore
                 .saveData(
                   this.state.value.replace(/\s/g, "").replace("+", "00"),

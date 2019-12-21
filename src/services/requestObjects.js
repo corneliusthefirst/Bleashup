@@ -100,9 +100,11 @@ class Request {
             creator: '',
             title: '',
             description: '',
-            period: this.Period(),
+            period: "",
             recursive_frequency:"none",
-            recurrence:0
+            recurrence:0,
+            status:"public",
+            members:[]
         }
     }
 
@@ -351,7 +353,7 @@ class Request {
             period: "",
             location: this.Location(),
             background: "",
-            participant: [this.Participant()],
+            participant: [],
             likes: 0,
             reminds: [],
             recursiveFrequency:"None",
@@ -374,7 +376,7 @@ class Request {
             url: ""
         }
     }
-    Participant() {
+    Participant() { 
         return {
             phone: "",
             master: false,

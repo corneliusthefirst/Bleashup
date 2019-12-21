@@ -22,7 +22,6 @@ import { createOpenLink } from "react-native-open-maps";
 import ProfileModal from '../invitations/components/ProfileModal';
 import PhotoModal from "../invitations/components/PhotoModal";
 import globalState from "../../../stores/globalState";
-import AccordionModule from "../invitations/components/Accordion";
 import DoublePhoto from "../invitations/components/doublePhoto";
 import stores from '../../../stores';
 import { filter } from 'lodash';

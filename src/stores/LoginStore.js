@@ -11,11 +11,14 @@ export default class LoginStore {
     phone: "",
     name: "",
     status: "",
-    email: "",
     age: "",
-    profile: "",
-    profile_ext: "",
-    password: ""
+    nickname: "",
+    email: "",
+    created_at: "",
+    updated_at: "",
+    password:"",
+    profile:"",
+    profile_ext:""
   }; 
   @action getUser() {
     return new Promise((resolve, reject) => {
@@ -71,7 +74,7 @@ export default class LoginStore {
           data: this.user
         })
         .then(() => {
-          resolve();
+          resolve(this.user);
         })
         .catch(error => {
           reject(error);

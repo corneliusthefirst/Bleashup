@@ -76,7 +76,7 @@ export default class EventLocation extends Component {
                 }}
                 coverScreen={true}
                 position={'bottom'}
-                backdropPressToClose={false}
+               //backdropPressToClose={false}
                 
                 >
 

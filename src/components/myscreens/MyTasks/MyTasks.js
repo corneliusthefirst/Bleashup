@@ -41,30 +41,31 @@ back() {
 
 _keyExtractor = (item, index) => item.id
 
-    render() {
+  render() {
        
-       return(
+     return(
 
       <View style={{flex:1,backgroundColor:'#FEFFDE'}}>
-          <Header>
-            <Body>
-              <Title style={{fontSize:14,fontWeight:"500"}}>Tasks/Reminds </Title>
-            </Body>
-            <Right>
-              <Button onPress={this.back} transparent>
-                <Icon type='Ionicons' name="md-arrow-round-back" />
-              </Button>
-            </Right>
-           </Header>
+        <View style={{height:"8%",width:"96%",justifyContent:"space-between",flexDirection:"row",backgroundColor:"#FEFFDE",alignItems:"center",marginLeft:"2%",marginRight:"2%"}}>
+           <View >
+             <TouchableOpacity>
+                <Icon  onPress={this.back} type='MaterialCommunityIcons' name="keyboard-backspace" style={{color:"#1FABAB"}} />
+             </TouchableOpacity>
+           </View>
 
-           <TouchableOpacity style={{width:"90%",alignSelf:'center',marginTop:"1%",marginBottom:"1%"}}>
-            <Button style={{width:"100%",borderRadius:15,borderColor:"#1FABAB",backgroundColor:"#1FABAB",justifyContent:'center',alignItem:'center'}}
-               onPress={()=>{this.AddRemind()}}>
-               <Text style={{color:"#FEFFDE"}}> Add Local Remind / Task </Text>
-             </Button> 
-            </TouchableOpacity>
+             <View >
+               <Text style={{fontSize:18}}>Tasks / Reminds</Text>
+             </View>
 
-      <View style={{height:"90%"}}>
+              <View >           
+               <TouchableOpacity>  
+                <Icon type='AntDesign' name="pluscircle" style={{color:"#1FABAB"}} onPress={this.AddRemind} />
+               </TouchableOpacity>
+             </View>
+
+         </View>
+
+      <View style={{height:"92%"}}>
         <BleashupFlatList 
           initialRender={5}
           renderPerBatch={5}

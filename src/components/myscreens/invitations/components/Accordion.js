@@ -63,7 +63,7 @@ export default class AccordionModule extends Component {
       expanded={true}
       renderHeader={this._renderHeader}
       renderContent={this._renderContent}
-      style={{ borderWidth: 0 }}
+      style={{ borderWidth:0 }}
     />
     
     );

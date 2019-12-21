@@ -5,20 +5,27 @@ import moment from "moment";
 import GState from "./globalState";
 export default class Reminds {
   @observable Reminds = {
+    id: '',
     event_id: "",
     remind_id: "",
     title: "",
     updated_at: "",
     created_at: "",
+    creator: '',
     description: "",
-    period: ""
+    period: "",
+    recursive_frequency:"none",
+    recurrence:0,
+    status:"public",
+    members:[]
   };
+  
   keyData = {
     key: "reminds",
     data: []
   };
   @action addReminds(NewRemind) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve, Reject) => {
       this.readFromStore().then(Reminds => {
         if (Reminds) Reminds = uniqBy(Reminds.concat([NewRemind]), "id");
         else Reminds = [NewRemind];
@@ -31,7 +38,7 @@ export default class Reminds {
     });
   }
   @action updateDescription(NewRemind, inform) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve, Reject) => {
       this.readFromStore().then(Reminds => {
         let Remind = find(Reminds, { id: NewRemind.remind_id });
         RemindIndex = findIndex(Reminds, { id: NewRemind.remind_id });
@@ -49,7 +56,7 @@ export default class Reminds {
     });
   }
   @action updateTitle(NewRemind, inform) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve, Reject) => {
       this.readFromStore().then(Reminds => {
         let Remind = find(Reminds, { id: NewRemind.remind_id });
         RemindIndex = findIndex(Reminds, { id: NewRemind.remind_id });
@@ -68,7 +75,7 @@ export default class Reminds {
   }
 
   @action updateRecursiveFrequency(NewRemind, inform) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve, Reject) => {
       this.readFromStore().then(Reminds => {
         let Remind = find(Reminds, { id: NewRemind.remind_id });
         RemindIndex = findIndex(Reminds, { id: NewRemind.remind_id });
@@ -87,7 +94,7 @@ export default class Reminds {
   }
 
   @action updateRecurrence(NewRemind, inform) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve, Reject) => {
       this.readFromStore().then(Reminds => {
         let Remind = find(Reminds, { id: NewRemind.remind_id });
         RemindIndex = findIndex(Reminds, { id: NewRemind.remind_id });
@@ -106,7 +113,7 @@ export default class Reminds {
   }
 
   @action updatePeriod(NewRemind, inform) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve, Reject) => {
       this.readFromStore().then(Reminds => {
         let Remind = find(Reminds, { id: NewRemind.remind_id });
         RemindIndex = findIndex(Reminds, { id: NewRemind.remind_id });

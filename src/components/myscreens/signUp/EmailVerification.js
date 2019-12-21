@@ -139,7 +139,7 @@ export default class EmailVerificationView extends Component {
        .catch(error => {
          reject(error);
        });*/
-  }
+  } 
   registerUserAndClean() {
     this.temploginStore.getUser().then(user => {
       UserServices.register(user.phone, user.password, user.name, user.birth_date).then(res => {

@@ -51,7 +51,7 @@ EStyleSheet.build({
   $rem: width > 340 ? 18 : 16
 });*/
 
-const AppNavigator = createStackNavigator(
+const AppNavigator = createStackNavigator( 
   {
     Home: { screen: Home },
     CurrentEvent: { screen: CurrentEventView },
@@ -82,7 +82,7 @@ const AppNavigator = createStackNavigator(
     LocalTasksCreation:{screen:LocalTasksCreation}
   },
   { 
-    initialRouteName: "Home",
+    initialRouteName: "EventDetailView",
     headerMode: "none"
   }
 );

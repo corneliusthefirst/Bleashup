@@ -276,8 +276,8 @@ export default class events {
       });
     });
   }
-  @action removeEvent(EventID) {
-    return new Promise((resolve, reject) => {
+  @action removeEvent(EventID,inform) {
+    return new Promise((resolve, Reject) => {
       this.readFromStore().then(Events => {
         let NewEvents = reject(Events, ["id", EventID]);
         this.saveKey.data = NewEvents;

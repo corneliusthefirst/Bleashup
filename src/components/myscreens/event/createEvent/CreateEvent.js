@@ -7,6 +7,7 @@ import Modal from 'react-native-modalbox';
 import stores from '../../../../stores/index';
 import request from '../../../../services/requestObjects';
 import { filter,uniqBy,orderBy,find,findIndex,reject,uniq,indexOf,forEach,dropWhile } from "lodash";
+import moment from "moment";
 
 export default class CreateEvent extends Component {
   constructor(props){
@@ -17,29 +18,43 @@ export default class CreateEvent extends Component {
   onClickNewEvent(){
   return new Promise((resolve, reject) => {
     
+    //stores.Events.delete("newEventId").then(()=>{});
+
     stores.Events.readFromStore().then(Events =>{
      let event = find(Events, { id:"newEventId" });
-      //console.warn(Events);
-  
+      console.warn(event);
+    
      if(!event){
-       event =  request.Event();
-       event.id = "newEventId";
-       stores.Events.addEvent(event).then(()=>{
-       });
+      event =  request.Event();
+      event.id = "newEventId";
+
+       stores.TempLoginStore.getUser().then((user)=>{
+
+        event.creator_phone = user.phone;
+        //we add the creator as first participant 
+        let Participant=request.Participant();
+        Participant.phone = user.phone;
+        Participant.master = true;
+        Participant.status = user.status;
+        stores.Events.addEvent(event).then(()=>{});
+        stores.Events.addParticipant(event.id, Participant,false).then(()=>{
+           
+        });
+      })
+
      }
+
     stores.Highlights.readFromStore().then(Highlights =>{
       
      let highlight = find(Highlights, { id:"newHighlightId" }); 
-     //let highlight1 = find(Highlights, { id:"1dad9df0-fbc4-11e9-9234-25e415964302" }); 
-     //console.warn(highlight1);
-    
+     //let highlight1 = find(Highlights, { id:"1dad9df0-fbc4-11e9-9234-25e415964302" });
+     console.warn("here is highlight",highlight);
+
      if(!highlight){
        highlight =  request.Highlight();
        highlight.id = "newHighlightId";
        
-       stores.Highlights.addHighlight(highlight).then(()=>{
-       }); 
-    
+       stores.Highlights.addHighlight(highlight).then(()=>{}); 
      }    
      this.props.navigation.navigate("CreateEventView");
      resolve();
@@ -58,7 +73,6 @@ export default class CreateEvent extends Component {
   stores.Reminds.readFromStore().then(Reminds =>{
     let remind = find(Reminds,{ id:"newRemindId" }); 
     console.warn("remind it is",remind);
-    //stores.Reminds.removeRemind(remind.id).then((value)=>{console.warn("here it is",value)});
 
     if(!remind){
       remind =  request.remind();
@@ -67,7 +81,6 @@ export default class CreateEvent extends Component {
     }
    
     this.props.navigation.navigate("MyTasksView");
-
    })
  }
 
@@ -98,3 +111,22 @@ const styles = StyleSheet.create({
     color: 'white'
   }
 });
+
+
+//stores.Reminds.removeRemind(remind.id).then((value)=>{console.warn("here it is",value)});
+/* 
+    let user = {
+      phone: "0666406835",
+      name: "cornelius",
+      status: "One step ahead the world",
+      birth_date: "21",
+      nickname: "corneliusthefirst",
+      email: "ndeffo.jugal98@gmail.com",
+      created_at : moment().format(),
+      updated_at:  moment().format(),
+      password:"cornelius",
+      profile:"",
+      profile_ext:""
+    }; 
+    stores.TempLoginStore.setUser(user).then(()=>{});
+*/

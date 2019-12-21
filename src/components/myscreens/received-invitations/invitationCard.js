@@ -22,7 +22,6 @@ import DetailsModal from "../invitations/components/DetailsModal";
 import SvgAnimatedLinearGradient from 'react-native-svg-animated-linear-gradient'
 import Svg, { Circle, Rect } from 'react-native-svg'
 import globalState from "../../../stores/globalState";
-import AccordionModule from "../invitations/components/Accordion";
 import DoublePhoto from "../invitations/components/doublePhoto";
 import stores from '../../../stores';
 import { forEach, filter } from "lodash";
