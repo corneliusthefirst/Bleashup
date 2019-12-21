@@ -94,23 +94,26 @@ class PublicEvent extends Component {
           })
           stores.Highlights.fetchHighlightsFromRemote(this.props.Event.id).then(highlights => {
             if (highlights.length > 0) {
-              this.interval = setInterval(() => {
-                let highlight = highlights[this.counter]
-                if (highlight && highlight.url) {
-                  this.setState({
-                    image: highlight.url.photo,
-                    video: highlight.url.video ? true : false,
-                    audio: highlight.url.audio ? true : false
-                  })
-                  this.counter = this.counter + 1
-                } else {
-                  this.setState({
-                    image: this.props.Event.background,
-                    video: false
-                  })
-                  this.counter = 0
-                }
-              }, 2000 + this.props.renderDelay)
+              setTimeout(() => {
+                this.interval = setInterval(() => {
+                  let highlight = highlights[this.counter]
+                  if (highlight && highlight.url) {
+                    this.setState({
+                      image: highlight.url.photo,
+                      video: highlight.url.video ? true : false,
+                      audio: highlight.url.audio ? true : false
+                    })
+                    this.counter = this.counter + 1
+                  } else {
+                    this.setState({
+                      image: this.props.Event.background,
+                      video: false
+                    })
+                    this.counter = 0
+                  }
+                }, 2000 + this.props.renderDelay)
+              }
+          ,this.props.renderDelay)
             }
           })
         })

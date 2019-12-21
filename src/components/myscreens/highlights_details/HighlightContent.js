@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Image from "react-native-scalable-image"
-import { View, TouchableWithoutFeedback,Slider } from "react-native"
-import { Icon, Button,Text,Right } from 'native-base';
+import { View, TouchableWithoutFeedback, Slider } from "react-native"
+import { Icon, Button, Text, Right } from 'native-base';
 import Sound from 'react-native-sound';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import BarIndicat from '../../BarIndicat';
@@ -13,7 +13,7 @@ export default class HighlightContent extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            currentTime:0
+            currentTime: 0
         }
     }
     state = {
@@ -43,7 +43,7 @@ export default class HighlightContent extends Component {
     }
     initialisePlayer(source) {
         console.warn(source)
-        this.player = new Sound(source,'', (error) => {
+        this.player = new Sound(source, '', (error) => {
             console.warn(error)
         })
     }
@@ -66,7 +66,7 @@ export default class HighlightContent extends Component {
             }, 1000)
         }
         this.player.play((success) => {
-            console.warn(success,'ppppp')
+            console.warn(success, 'ppppp')
             if (success) {
                 this.player.getCurrentTime((seconds) => {
                     this.props.highlight.url.duration = Math.floor(seconds)
@@ -98,7 +98,7 @@ export default class HighlightContent extends Component {
                         {this.props.highlight.url.photo || this.props.highlight.url.video ?
                             <TouchableOpacity onPress={() => requestAnimationFrame(() => this.props.highlight.url.video ? this.props.showVideo(this.props.highlight.url.video) : this.props.showPhoto(this.props.highlight.url.photo))}>
                                 <View style={{
-                                    borderRadius: 10,alignSelf: 'center', margin: '4%',
+                                    borderRadius: 10, alignSelf: 'center', margin: '4%',
                                 }}>
                                     <Image style={{
                                         width: '97%',
@@ -160,7 +160,7 @@ export default class HighlightContent extends Component {
                         }
                         {this.props.highlight.description ?
                             <View style={{ margin: '1%', }}>
-                                <TextContent color={"#FEFEDE"} text={this.props.highlight.description}></TextContent>
+                                <TextContent color={"#FEFEDE"} text={this.props.highlight.description.split(' ').length > 200 ? this.props.highlight.description.split(' ').slice(0, 300).join(' ') : this.props.highlight.description}></TextContent>
                             </View> : null
                         }
                     </View>

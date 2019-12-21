@@ -17,18 +17,18 @@ export default class PhotoView extends Component {
         this.setState({
             ismounted: true,
             isModalOpened: false
-        }) 
+        })
     }
     render() {
         return (<View style={this.props.style}>
             <TouchableOpacity onPress={() => requestAnimationFrame(() => {
-                this.props.video?this.props.playVideo():this.props.showPhoto(this.props.photo)
+                this.props.video ? this.props.playVideo() : this.props.showPhoto(this.props.photo)
             })}>
                 {!this.props.photo ? <Thumbnail style={{
                     height: this.props.height ? this.props.height : 150,
                     width: this.props.width ? this.props.width : "100%",
                     borderRadius: this.props.borderRadius ? this.props.borderRadius : 0
-                }} square source={require('../../../../../assets/default_event_image.jpeg')}></Thumbnail>:<CacheImages thumbnails source={{
+                }} square source={require('../../../../../assets/default_event_image.jpeg')}></Thumbnail> : <CacheImages thumbnails source={{
                     uri: this.props.photo
                 }}
                     //parmenent={false}

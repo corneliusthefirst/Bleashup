@@ -213,9 +213,9 @@ export default class Message extends Component {
         let color = this.state.sender ? '#D0FEEB' : '#9EEDD3'
         GeneralMessageBoxStyle = {
             maxWidth: 300, flexDirection: 'column', minWidth: 120,
-            minHeight: 10, overflow: 'hidden', borderBottomLeftRadius: 10,
-            borderTopLeftRadius: this.state.sender ? 0 : 10,
-            backgroundColor: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text) ? "transparent" : color : color,
+            minHeight: 10, overflow: 'hidden', borderBottomLeftRadius: 10,borderColor: color,
+            borderTopLeftRadius: this.state.sender ? 0 : 10,// borderWidth: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text)?.7:0:0,
+            backgroundColor: color,
             borderTopRightRadius: 10, borderBottomRightRadius: this.state.sender ? 10 : this.props.message.reply && this.props.message.reply.type_extern ? 10 : null,
         }
         senderNameStyle = {
@@ -226,6 +226,7 @@ export default class Message extends Component {
         subNameStyle = {
             paddingBottom: 0,
             flexDirection: "row",
+            backgroundColor: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text) ? color : 'transparent' : 'transparent',
             // backgroundColor: color,
         }
         nameTextStyle = { fontSize: 14, fontWeight: 'bold', color: "#1FABAB" }
@@ -259,7 +260,7 @@ export default class Message extends Component {
                                                             }}>
                                                             {this.state.time}{"    "}</Text> : null}</Right></View></TouchableWithoutFeedback>
                                             <View>
-                                                {this.props.message.reply ? <View style={{ backgroundColor: color, borderRadius: 10, paddingRight: "1%", marginTop: "2%", width: "100%" }}>
+                                                {this.props.message.reply ? <View style={{ backgroundColor: color, borderRadius: 10, paddingRight: "1%", marginTop: ".4%", width: "100%" }}>
                                                     <ReplyText pressingIn={() => {
                                                         this.replying = true
                                                     }} openReply={(replyer) => {
@@ -280,7 +281,10 @@ export default class Message extends Component {
                                                     </View>
                                                 </TouchableWithoutFeedback>
                                             </View>
-                                            <View>
+                                            <View style={{
+                                                backgroundColor: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text) ? color : 'transparent' : 'transparent',
+
+                                            }}>
                                                 {this.state.sender ? <Text note
                                                     style={{
                                                         marginLeft: "5%",
@@ -289,7 +293,9 @@ export default class Message extends Component {
                                                     }}>
                                                     {this.state.time}{"    "}</Text> : null}
                                             </View>
-                                            <View>{!this.state.sender ? this.props.message.sent ? this.props.received ?
+                                            <View style={{
+                                                backgroundColor: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text) ? color : 'transparent' : 'transparent',
+}}>{!this.state.sender ? this.props.message.sent ? this.props.received ?
                                                 <Icon style={this.iconStyles} type="Ionicons" name="ios-checkmark-circle">
                                                 </Icon> : <Icon style={this.iconStyles} type={"EvilIcons"} name="check">
                                                 </Icon> : <Icon style={{ ...this.iconStyles, color: "#FFF" }} type="MaterialCommunityIcons"

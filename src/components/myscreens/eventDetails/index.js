@@ -60,7 +60,7 @@ export default class EventDetailView extends Component {
 initializer(){
     //let id = "43db0b10-0886-11ea-9234-771074f153d3";
     //pass event id
-    stores.Events.loadCurrentEvent(this.props.event.id).then((event)=>{
+    stores.Events.loadCurrentEvent(this.props.event_id).then((event)=>{
      
         this.setState({EventData:event});
         //obtain higlight data

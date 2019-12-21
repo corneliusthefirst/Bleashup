@@ -104,7 +104,7 @@ export default class Event extends Component {
     //console.error(this.props.navigation.getParam("Event").participant)
     switch (this.state.currentPage) {
       case "EventDetails":
-        return <EventDatails {...this.props}></EventDatails>
+        return <EventDatails {...this.props} event_id={this.event.id}></EventDatails>
       case "Reminds":
         return <Remind {...this.prpos}></Remind>
       case "Votes":
