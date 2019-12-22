@@ -20,6 +20,7 @@ import moment from "moment"
 import { head,filter,uniqBy,orderBy,find,findIndex,reject,uniq,indexOf,forEach,dropWhile } from "lodash";
 import request from "../../../../../services/requestObjects";
 import SearchImage from './SearchImage';
+import  BleashupHorizontalFlatList from '../../../../BleashupHorizotalFlatList';
 
 //create an extension to toast so that it can work in my modal
 
@@ -70,9 +71,7 @@ export default class EventHighlights extends Component {
           currentHighlight:request.Highlight(),
           update:false,
           searchImageState:false
-    
-
-
+          
         }
       
     }
@@ -81,8 +80,8 @@ export default class EventHighlights extends Component {
 
 
 
-
 componentDidMount(){
+
     //i set the current new highlight data on startUp
     stores.Highlights.readFromStore().then(Highlights =>{
          // console.warn(Highlights,"All higlights");
@@ -131,9 +130,6 @@ componentDidMount(){
 
 
  }
-
-
-
 
 
 @autobind
@@ -186,7 +182,6 @@ return new Promise((resolve, reject) => {
 
 @autobind
 back(){
-  this.setState({animateHighlight:false});
   this.props.onClosed();  
 }
 
@@ -301,19 +296,22 @@ deleteHighlight(id){
   this.setState({highlightData: this.state.highlightData});
 }
 
- 
-  getItemLayout = (data, index) => (
+
+_keyExtractor = (item, index) => item.id;
+
+
+_getItemLayout = (data, index) => (
     { length: 100, offset: 100 * index, index }
   )
- _keyExtractor = (item, index) => item.id;
- _renderItem = ({item,index}) => (
-   
-    <HighlightCard   participant={this.props.participant}  parentComponent={this} item={item} ancien={false} deleteHighlight={(id)=>{this.deleteHighlight(id)}} ref={"higlightcard"}/>
-    
-  );
 
+componentWillUnmount(){
+  this.setState({animateHighlight:false});
+}
 
-
+componentWillMount(){
+  //set this on mounting
+  this.setState({animateHighlight:true});
+}
 
     render() {
     	return(
@@ -321,40 +319,50 @@ deleteHighlight(id){
    
      <Modal
       isOpen={this.props.isOpen}
-      onClosed={this.props.onClosed}
+      onClosed={()=>{
+        this.props.onClosed()
+        this.setState({animateHighlight:false})
+      }}
       style={{ height: "100%", borderRadius: 3,
       backgroundColor:"#FEFFDE",borderColor:'black',width: "99%",flexDirection:'column'  }}
       coverScreen={true}
       position={'bottom'}
       swipeToClose={false}
-      backdropPressToClose={false}
+      //backdropPressToClose={false}
      >
     <Root>
       <View style={{height:"100%",backgroundColor:"#FEFFDE",width:"100%"}}>
-            <Header style={{backgroundColor:"#FEFFDE",width:"100%",justifyContent:"flex-start",alignItems:"center"}}> 
-              <Button onPress={this.back} transparent>
-                <Icon type='Ionicons' name="md-arrow-round-back" style={{color:"#1FABAB",marginLeft:"3%"}} />
-              </Button>   
+      <View style={{height:"8%",width:"96%",flexDirection:"row",backgroundColor:"#FEFFDE",alignItems:"flex-start",marginLeft:"2%",marginRight:"2%"}}>
+           <View >
+             <TouchableOpacity>
+                <Icon  onPress={this.back} type='MaterialCommunityIcons' name="keyboard-backspace" style={{color:"#1FABAB"}} />
+             </TouchableOpacity>
+           </View>
 
-           </Header>
+         </View>
 
           <View style={{height:"95%",width:"100%"}}>
 
-           <ScrollView ref={"svrollView"} >
-            <View style={{height:this.state.highlightData.length==0 ? 0:height/4 + height/14,width:"100%",borderColor:"gray",borderWidth:1}} >
-              <FlatList
-              style={{flex:1}}
-              data={this.state.highlightData}
-              ref={(ref) => { this.flatListRef = ref }}
-              horizontal={true}
-              getItemLayout={this.getItemLayout}
-              initialScrollIndex={0}
-              initialNumToRender={3}
-              maxToRenderPerBatch={4}
-              keyExtractor={this._keyExtractor}
-              renderItem={this._renderItem}       
-              />
-            </View>
+   <ScrollView ref={"svrollView"} >
+     <View style={{height:this.state.highlightData.length==0 ? 0:height/4 + height/14,width:"100%",borderColor:"gray",borderWidth:1}} >
+         <BleashupHorizontalFlatList
+          initialRender={4}
+          renderPerBatch={5}
+          firstIndex={0}
+          refHorizontal={(ref) => { this.flatListRef = ref }}
+          keyExtractor={this._keyExtractor}
+          dataSource={this.state.highlightData}
+          parentComponent={this}
+          getItemLayout={this._getItemLayout}
+          renderItem={(item, index) => {
+            return (
+                <HighlightCard   participant={this.props.participant}  parentComponent={this} item={item} ancien={false} 
+                   deleteHighlight={(id)=>{this.deleteHighlight(id)}} ref={"higlightcard"}/>
+            );
+          }} 
+        >
+        </BleashupHorizontalFlatList>
+     </View>
 
           <View style={{height:height/6,alignItems:'center'}}>
                    <Text style={{alignSelf:'flex-start',margin:"3%",fontWeight:"500",fontSize:16}} >Highlight Name :</Text>

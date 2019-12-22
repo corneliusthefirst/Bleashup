@@ -107,12 +107,12 @@ componentDidMount(){
             </View>
            </CardItem>
            <CardItem style={{height:height/18}}>
-            <Text>{this.props.item.description.length>25?this.props.item.description.slice(0,25)+"...":this.props.item.description}</Text>
+            <Text>{this.props.item.description.length>20?this.props.item.description.slice(0,21)+"...":this.props.item.description}</Text>
            </CardItem>
             </TouchableOpacity>
 
            {this.props.participant.master &&
-                <CardItem >
+                <CardItem style={{height:height/18}}>
                 <Left>
                  <TouchableOpacity onPress={() => {return this.update()}}  style={{marginRight:"15%"}}>
     

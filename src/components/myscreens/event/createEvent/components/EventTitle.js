@@ -44,17 +44,22 @@ export default class EventTitle extends Component {
          
        if(event.period!=""){
         
-        this.setState({date:event.period});
-        this.setState({time:event.period});
-        this.setState({inputDateValue:moment(event.period).format().split("T")[0]})
-        this.setState({inputTimeValue:moment(event.period).format().split("T")[1].split("+")[0]});
+         this.setState({
+          date:event.period,
+          time:event.period,
+          inputDateValue:moment(event.period).format().split("T")[0],
+          inputTimeValue:moment(event.period).format().split("T")[1].split("+")[0]
+         });
+       }else{
+         this.setState({
+           inputDateValue:moment(this.state.defaultDate).format().split("T")[0],
+           inputTimeValue:moment(this.state.defaultTime).format().split("T")[1].split("+")[0]
+          });
        }
-
+   
+   });
       
-      
-      });
-      
-   }
+ }
 
 
    @autobind

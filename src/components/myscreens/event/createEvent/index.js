@@ -177,7 +177,7 @@ componentDidMount(){
                         break
                         case 4:
                          this.setState({EventHighlightState:true})
-                         this.refs.highlights.setState({animateHighlight:true})
+                         this.refs.highlight_ref.setState({animateHighlight:true})
                         break
                         default:
                         this.setState({EventTitleState:true})
@@ -212,7 +212,7 @@ componentDidMount(){
                 ref={"location_ref"}  eventId={"newEventId"} updateLoc={false}/>
 
                <EventHighlights   isOpen={this.state.EventHighlightState} onClosed={()=>{this.setState({EventHighlightState:false})}}
-                parentComponent={this} ref={"highlights"} participant={this.state.participant}/>
+                parentComponent={this} ref={"highlight_ref"} participant={this.state.participant}/>
 
           </View>
   

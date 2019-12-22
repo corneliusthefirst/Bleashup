@@ -45,14 +45,12 @@ export default class EventDetailView extends Component {
           username:"",
           EventDescriptionState:false,
           EventLocationState:false,
-          creation_date:"",
-          creation_time:"",
           participant:request.Participant(),
           EventHighlightState:false
 
         }
   
-         this.initializer();
+     
   }
 
 
@@ -63,9 +61,9 @@ initializer(){
     //let id = "4305a0f0-23d5-11ea-9234-6932809c090d";
     //pass event id (this.props.event_id)
     stores.Events.loadCurrentEvent(this.props.event_id).then((event)=>{
-      console.warn("here1",event)
+      //console.warn("here1",event)
       this.setState({EventData:event});
-      console.warn("event data",this.state.EventData);
+      //console.warn("event data",this.state.EventData);
 
       //obtain higlight data
       if(this.state.EventData.highlights.length > 0){
@@ -74,7 +72,7 @@ initializer(){
           stores.Highlights.readFromStore().then((Highlights)=>{
           let highlight = find(Highlights, { id:highlightId });
   
-          this.setState({highlightData: [ ...this.state.highlightData, highlight]}, () => { console.log(this.state.highlightData),"after" }); 
+          this.setState({highlightData: [ ...this.state.highlightData, highlight]}, ()=>{}); 
           
           });
        });
@@ -82,30 +80,27 @@ initializer(){
       }
       
       //set the creation_date and time
-      let res = moment(this.state.EventData.created_at).format().split("T");   
-      this.setState({creation_date:res[0]});
-      this.setState({creation_time:res[1].split("+")[0]});
-      console.warn(this.state.EventData.created_at);
-      console.warn(this.state.creation_date,"and",this.state.creation_time)
+     
+      //console.warn(this.state.EventData.created_at);
+      //console.warn(this.state.creation_date,"and",this.state.creation_time)
 
       //this.state.participant.master = true;
       //this.state.participant.master = event.participant.master;
       //search current user among participants of the event
       stores.TempLoginStore.getUser().then((user)=>{
-        console.warn("here2",user)
+        //console.warn("here2",user)
         //stores.TemporalUsersStore.addUser(user).then((users)=>{console.warn("these are users",users)});
-
         let participant = find(this.state.EventData.participant, { phone:user.phone });
         this.setState({participant:participant});
-        console.warn("participant object",this.state.participant);
+        //console.warn("participant object",this.state.participant);
 
         //get creator nick-name
         if(this.state.EventData.creator_phone !=""){
-          console.warn("here3")
+         // console.warn("here3")
           stores.TemporalUsersStore.getUser(this.state.EventData.creator_phone).then((creatorInfo) =>{
-            console.warn("here4",creatorInfo)
+           // console.warn("here4",creatorInfo)
             this.setState({username:creatorInfo.nickname});
-            console.warn("user nick name",this.state.username);
+            //console.warn("user nick name",this.state.username);
           })
         }     
 
@@ -121,6 +116,7 @@ initializer(){
 
 componentDidMount(){
 
+  this.initializer();
 
   setInterval(() => {
     if((this.state.animateHighlight == true) && (this.state.highlightData.length > 2)){
@@ -150,7 +146,7 @@ back(){
   @autobind
   deleteHighlight(id){
     this.state.highlightData = reject(this.state.highlightData ,{id,id});
-    console.warn(this.state.highlightData,"highlight data state");
+    //console.warn(this.state.highlightData,"highlight data state");
     this.setState({highlightData: this.state.highlightData});
   }
   
@@ -175,6 +171,10 @@ back(){
 
 
     render() {
+
+    let creation_date= moment(this.state.EventData.created_at).format().split("T")[0]
+    let creation_time= moment(this.state.EventData.created_at).format().split("T")[1].split("+")[0]
+
     	return(
  
       <View style={{height:"100%",backgroundColor:"#FEFFDE",width:"100%"}}>
@@ -276,7 +276,7 @@ back(){
             </ScrollView>
            
             <View style={{flexDirection:"row",position:'absolute',justifyContent:"space-between",bottom:0,margin:3,width:"98%"}}>
-               <Text style={{margin:"1%",fontSize:11,color:"gray"}} >on the {this.state.creation_date} at {this.state.creation_time}</Text>
+               <Text style={{margin:"1%",fontSize:11,color:"gray"}} >on the {creation_date} at {creation_time}</Text>
                <Text style={{margin:"1%",fontSize:11}}  note>by {this.state.username} </Text>
              </View>
         
