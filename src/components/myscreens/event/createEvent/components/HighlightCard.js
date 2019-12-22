@@ -97,12 +97,12 @@ componentDidMount(){
           <Card style={{width:width/2 - width/40}}>
 
           <TouchableOpacity onPress={() => {this.setState({isOpen:true}) }} >
-           <CardItem style={{margin:3,height:height/30}}>
+           <CardItem style={{margin:3,height:height/30}}> 
             <Text>{this.props.item.title.length>16?this.props.item.title.slice(0,16)+"..":this.props.item.title}</Text>
            </CardItem>
            <CardItem>
              <View style={{width:150,height:height/7}}>
-            <Thumbnail source={{uri:this.props.item.url}} style={{ flex: 1, width:null,height:null,
+            <Thumbnail source={{uri:this.props.item.url.photo}} style={{ flex: 1, width:null,height:null,
               borderRadius:8}} large ></Thumbnail>
             </View>
            </CardItem>

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import {View} from "react-native"
 import ModalBox from 'react-native-modalbox';
-import { Button,Content,Text } from 'native-base';
+import { Button,Content,Text, Title } from 'native-base';
 
 export default class CalendarSynchronisationModal extends Component{
     constructor(props){
@@ -24,19 +24,23 @@ export default class CalendarSynchronisationModal extends Component{
                 }}
                 style={{
                     height: "40%",
-                    borderRadius: 10, backgroundColor: '#FEFFDE', width: "90%"
+                    borderRadius: 10, backgroundColor: '#FEFFDE', width: "93%"
                 }}
              >
                 <Content showsVerticalScrollIndicator={false} style={{ margin: "10%", flexDirection: 'column', }}>
-                    <View style={{ width: "100%", height: 50 }}>
-                        <Text style={{ fontSize: 25, alignSelf: 'center', fontWeight: 'bold', fontStyle: 'italic', }}>{"Calendar Synchronisation"}</Text>
+                    <View style={{ width: "100%", height: 50,alignSelf: 'center', }}>
+                        <Title style={{ marginLeft: "1%",fontSize: 22, alignSelf: 'center', fontWeight: 'bold', fontStyle: 'italic', color:'#0A4E52' }}>{"Calendar Synchronisation"}</Title>
                     </View>
-                    <View style={{ margin: '3%', }}>
+                    <View style={{}}>
                         <Text style={{color:'gray',fontSize: 12,fontWeight: 'bold',fontStyle: 'italic',}}>{"This Activity Has Not Yet Been Added To Your Calendar ; Let's Add It To Your Calendar So That You Should Properly Reminded of IT."}</Text>
                     </View>
-                    <View style={{ alignSelf: 'flex-end', flexDirection: 'row',margin: '3%', }}>
-                        <Button onPress={() => this.props.closed()} style={{ width: 100, marginRight: 60, borderRadius: 10, alignItems: 'center', }} light><Text style={{ marginLeft: "15%", }}>Cancel</Text></Button>
-                        <Button onPress={() => this.props.callback()} style={{ width: 100, alignItems: 'center', borderRadius: 10, }} success><Text style={{ marginLeft: "15%", }}>{"Sync"}</Text></Button>
+                    <View style={{ alignSelf: 'flex-end', flexDirection: 'row',margin: '2%',width:"100%",}}>
+                        <Button onPress={() => this.props.closed()} style={{ width: 100, 
+                            marginRight: "9%", borderRadius: 10, alignItems: 'center', }} 
+                        light><Text style={{ marginLeft: "15%"}}>Cancel</Text></Button>
+                        <Button onPress={() => this.props.callback()} style={{ width: 100, 
+                            alignItems: 'center', borderRadius: 10, }} success>
+                        <Text style={{ marginLeft: "15%", }}>{"Sync"}</Text></Button>
                     </View>
                 </Content>
              </ModalBox>

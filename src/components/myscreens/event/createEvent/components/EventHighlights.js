@@ -143,7 +143,7 @@ return new Promise((resolve, reject) => {
     }).then(response => {
         let res = head(response);
         resolve(res.path);
-        this.state.currentHighlight.url = res.path;
+        this.state.currentHighlight.url.photo = res.path;
         this.setState({currentHighlight:this.state.currentHighlight});
         if(this.state.update==false){
         stores.Highlights.updateHighlightUrl(this.state.currentHighlight,false).then(()=>{});
@@ -165,7 +165,7 @@ return new Promise((resolve, reject) => {
   }).then(response => {
        let res = head(response);
        resolve(res.path);
-       this.state.currentHighlight.url = res.path;
+       this.state.currentHighlight.url.photo = res.path;
        this.setState({currentHighlight:this.state.currentHighlight});
        if(this.state.update==false){
        stores.Highlights.updateHighlightUrl(this.state.currentHighlight,false).then(()=>{});
@@ -407,13 +407,13 @@ componentWillMount(){
 
                 <View style={{ flex: 3, flexDirection: 'column',justifyContent:'center',alignItem:'center',marginTop:"4%"}}>
                     <TouchableOpacity onPress={() => this.setState({ enlargeImage: true })} >
-                        <Image  source={this.state.currentHighlight.url!=""?{uri:this.state.currentHighlight.url}:this.state.defaultUrl} style={{alignSelf:'center',
+                        <Image  source={this.state.currentHighlight.url.photo!=""?{uri:this.state.currentHighlight.url.photo}:this.state.defaultUrl} style={{alignSelf:'center',
                             height: "90%",width: "90%", borderWidth: 1, borderColor: "#1FABAB", borderRadius:100
                         }} />
                     </TouchableOpacity>
                 </View>
 
-                 <PhotoEnlargeModal isOpen={this.state.enlargeImage} onClosed={() => this.setState({ enlargeImage: false })} photo={this.state.currentHighlight.url} />
+                 <PhotoEnlargeModal isOpen={this.state.enlargeImage} onClosed={() => this.setState({ enlargeImage: false })} photo={this.state.currentHighlight.url.photo} />
               
                 </View>
 

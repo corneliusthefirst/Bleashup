@@ -785,23 +785,20 @@ export default class events {
   }
 
   @action addHighlight(EventID, HighlightID, inform) {
-    console.warn(HighlightID)
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let index = findIndex(Events, {
           id: EventID
         });
         if (index >= 0) {
-          if (Events[index].highlights.length !== 0)
-            Events[index].highlights[Events[index].highlights.length] = HighlightID; 
-          
+          if (Events[index].highlights && Events[index].highlights.length > 0)
+            Events[index].highlights.unshift(HighlightID); 
           else Events[index].highlights = [HighlightID]
           if (inform) {
             Events[index].highlight_added = true;
             Events[index].updated = true
             Events[index].updated_at = moment().format();
           }
-          console.warn(Events,"having the new id");
           this.saveKey.data = Events;
           storage.save(this.saveKey).then(() => {
             this.setProperties(this.saveKey.data, inform);

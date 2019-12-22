@@ -1,6 +1,6 @@
 import React, { Component } from "react"
 import { View, TouchableOpacity } from 'react-native';
-import { Text, Left } from 'native-base';
+import { Text, Left, Title } from 'native-base';
 import autobind from "autobind-decorator";
 import SvgAnimatedLinearGradient from 'react-native-svg-animated-linear-gradient'
 import Svg, { Circle, Rect } from 'react-native-svg'
@@ -69,18 +69,20 @@ export default class TitleView extends Component {
                     }
                     )}>
                         <View>
-                            <Text
+                            <Title
                                 adjustsFontSizeToFit={true}
                                 style={{
                                     fontSize: 22,
+                                    color:"#0A4E52",
                                     fontWeight: "bold",
                                     fontFamily: "Roboto",
                                 }}
                             >
                                 {this.props.Event.about.title}{/*{" "}{this.props.Event.id}*/}
-                            </Text>
-                            <Text
+                            </Title>
+                            <Title
                                 style={{
+                                    fontSize: 12,
                                     color: this.props.Event.closed ? "red" : this.dateDiff(this.props.Event.period) > 0 ? "gray" : "#1FABAB",
                                     fontStyle: 'italic',
                                     fontWeight: this.props.Event.closed ? "bold" : '400',
@@ -88,7 +90,7 @@ export default class TitleView extends Component {
                                 note
                             >
                                 {this.props.Event.closed ? "Closed" : this.writeDateTime(this.props.Event.period)}
-                            </Text>
+                            </Title>
                         </View>
                         <View>
                             <Left>

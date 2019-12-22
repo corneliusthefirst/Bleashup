@@ -133,7 +133,7 @@ export default class SwipeOutView extends Component {
                                         />
                                     </View>
                                 )}
-                            <Label style={{ fontSize: 14, color: "#1FABAB", marginRight: "13%", }}>{"History"}</Label>
+                            <Label style={{ fontSize: 14, color: "#1FABAB", marginRight: "13%", }}>{"Logs"}</Label>
                         </TouchableOpacity>
                     </View >
                     {/*<View style={{ height: this.width, marginBottom: "9%", alignSelf: 'flex-start' }}>

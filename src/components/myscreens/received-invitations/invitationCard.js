@@ -253,7 +253,7 @@ class CardListItem extends Component {
   render() {
     return this.state.loading ? <Card style={{ height: 230 }}></Card> : <View style={{ width: "100%", }}>
       <Swipeout style={{ width: "100%", backgroundColor: "#FEFFDE" }} {...this.swipeSettings}>
-        <Card style={{ height: this.state.accept || this.state.deny ? 210 : 230 }}>
+        <Card>
           <CardItem>
             <Text style={{ color: "#A91A84", fontSize: 14, }} note>
               received

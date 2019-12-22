@@ -75,6 +75,7 @@ export default class Event extends Component {
       roomID: this.event.id,
       newMessageCount: 0,
       fresh: false,
+      mounted:false,
       public_state: false,
       opened: true,
       isManagementModalOpened: false,
@@ -97,13 +98,13 @@ export default class Event extends Component {
   textStyle = {
     fontSize: 15
   }
-  currentWidth = screenWidth * 2 / 3
+  currentWidth = screenWidth * 2.7 / 3
   isOpen = this.props.navigation.getParam('isOpen') ? this.props.navigation.getParam('isOpen') : false
   renderMenu(NewMessages) {
     //console.error(this.props.navigation.getParam("Event").participant)
     switch (this.state.currentPage) {
       case "EventDetails":
-        return <EventDatails {...this.props}></EventDatails>
+        return <EventDatails {...this.props} Event={this.event}></EventDatails>
       case "Reminds":
         return <Remind {...this.prpos}></Remind>
       case "Votes":
@@ -327,9 +328,11 @@ export default class Event extends Component {
         isSettingsModalOpened: true
       })
     }
-    this.setState({
-      currentPage: this.props.navigation.getParam("tab")
-    })
+      this.setState({
+        currentPage: this.props.navigation.getParam("tab"),
+        mounted: true
+      })
+
     this.refreshePage()
   }
   componentWillUnmount() {
@@ -924,7 +927,7 @@ export default class Event extends Component {
   }
   render() {
     StatusBar.setHidden(false, true)
-    return (<SideMenu autoClosing={true} onMove={(position) => {
+    return (<SideMenu style={{backgroundColor: "#FEFEDE",}} autoClosing={true} onMove={(position) => {
 
     }} bounceBackOnOverdraw={false} onChange={(position) => {
       this.isOpen = position

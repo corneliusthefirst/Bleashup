@@ -37,13 +37,14 @@ import Contributions from "./components/myscreens/contributions";
 import Votes from "./components/myscreens/votes";
 import Highlights from "./components/myscreens/highlights";
 import ChangeLogs from "./components/myscreens/changelogs";
-//import EventDetail from "./components/myscreens/eventDetails";
+import EventDetail from "./components/myscreens/eventDetails";
 import EventChat from "./components/myscreens/eventDetails";
 import Reminds from "./components/myscreens/reminds";
 import CreateEventView from "./components/myscreens/event/createEvent/index"
 import EventDetailView from "./components/myscreens/eventDetails/index"
 import SendInvitations from "./components/myscreens/sent-invitations/index";
 import MyTasksView  from './components/myscreens/MyTasks/MyTasks'
+import HighLightsDetails from './components/myscreens/highlights_details';
 import LocalTasksCreation  from './components/myscreens/MyTasks/localTasksCreation'
 /*
 let {height, width} = Dimensions.get('window');
@@ -68,11 +69,12 @@ const AppNavigator = createStackNavigator(
     SignIn: { screen: SignInView },
     LoginHome: { screen: LoginHomeView },
     Event: { screen: Event },
+    HighLightsDetails:{screen:HighLightsDetails},
     Contributions: { screen: Contributions },
     Votes: { screen: Votes },
     Highlights: { screen: Highlights },
     ChangeLogs: { screen: ChangeLogs },
-   // EventDetails: { screen: EventDetail },
+    EventDetails: { screen: EventDetail },
     EventChat: { screen: EventChat },
     Reminds: { screen: Reminds },
     CreateEventView:{screen: CreateEventView},
@@ -81,8 +83,13 @@ const AppNavigator = createStackNavigator(
     EventDetailView:{screen:EventDetailView },
     LocalTasksCreation:{screen:LocalTasksCreation}
   },
+<<<<<<< HEAD
   { 
     initialRouteName: "Home",
+=======
+  {
+    initialRouteName: "LoginHome",
+>>>>>>> f6dd38afbe2795b0f30a4628dc2eba11f9c7cc04
     headerMode: "none"
   }
 );

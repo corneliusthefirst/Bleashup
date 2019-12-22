@@ -91,6 +91,7 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
                     }
                     onScroll={this.props.onScroll}
                     centerContent={true}
+                    horizontal={this.props.horizontal}
                     ref="bleashupFlatlist"
                     canCancelContentTouches={true}
                     inverted={this.props.inverted ? this.props.inverted : false}

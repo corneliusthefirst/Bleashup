@@ -176,16 +176,17 @@ export default class SWView extends Component {
                             height: "100%", width: "100%", backgroundColor: "#FEFFDE",
                             display: 'flex', flexDirection: 'column', //borderRightWidth: 1.25, borderColor: "#1FABAB",
                         }}>
-                            <View style={{ marginLeft: 5, backgroundColor: "#FEFFDE", width: "100%", flexDirection: 'row', }}><View style={{ width: "90%" }}><Text style={{ fontWeight: 'bold', fontSize: 20, marginTop: 2 }}>{this.props.event.about.title}</Text>
-                                <Text style={{
-                                    marginRight: "2%", fontStyle: 'italic', fontWeight: this.props.event.closed ? "bold" : "400", color: this.props.event.closed ? "red" : this.dateDiff(this.props.event.period) > 0 ? "gray" : "#1FABAB", fontSize: 14,
-                                }}>{this.props.event.closed ? "Closed" : this.displayDate(this.props.event.period)}</Text>
+                            <View style={{ marginLeft: 5, backgroundColor: "#FEFFDE", width: "100%", flexDirection: 'row', }}><View style={{ width: "90%" }}><Title style={{ fontWeight: 'bold', fontSize: 17, marginTop: 2, color:"#0A4E52" }}>{this.props.event.about.title}</Title>
+                                <Title style={{
+                                    marginRight: "2%", fontStyle: 'italic', fontWeight: this.props.event.closed ? "bold" : "400", 
+                                    color: this.props.event.closed ? "red" : this.dateDiff(this.props.event.period) > 0 ? "gray" : "#1FABAB", fontSize: 12,
+                                }}>{this.props.event.closed ? "Closed" : this.displayDate(this.props.event.period)}</Title>
                             </View>
                                 <Icon onPress={() => {
                                     this.props.navigateHome()
                                 }} style={{
                                     alignSelf: 'flex-end', color: "#1FABAB",
-                                    marginBottom: "7%"
+                                    marginBottom: "6%"
                                 }} name="close" type="EvilIcons"></Icon>
                             </View>
                             <View style={{ heignt: "60%", display: "flex", flexDirection: 'row', backgroundColor: "#FEFFDE", marginLeft: "1%", }}>
@@ -239,13 +240,13 @@ export default class SWView extends Component {
                     }]}>
                         <View style={{
                             height: "100%",
-                            width: screenWidth * 2 / 3,
+                            width: screenWidth * 2.7 / 3,
                             alignItems: 'center',
                             borderRadius: 5,
                             justifyContent: 'center',
                         }}><TouchableOpacity onPress={() => requestAnimationFrame(() => this.props.showActivityPhotoAction())}>
-                                {this.props.event.background ? <CacheImages width={(screenWidth * 2 / 3) - 5} style={{ width: "100%", height: "100%" }}
-                                    source={{ uri: this.props.event.background }}></CacheImages> : <Image width={screenWidth * 2 / 3} style={{ width: "100%", height: "100%" }} source={require('../../../../assets/default_event_image.jpeg')}></Image>}</TouchableOpacity>
+                                {this.props.event.background ? <CacheImages width={(screenWidth * 2.7 / 3) - 5} style={{ width: "100%", height: "100%" }}
+                                    source={{ uri: this.props.event.background }}></CacheImages> : <Image width={screenWidth * 2.7 / 3} style={{ width: "100%", height: "100%" }} source={require('../../../../assets/default_event_image.jpeg')}></Image>}</TouchableOpacity>
                         </View>
                     </Animated.View>
                 </View></TouchableWithoutFeedback>

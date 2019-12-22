@@ -9,7 +9,8 @@ import {
   AppState,
   Linking,
   Dimensions,
-  TouchableOpacity
+  TouchableOpacity,
+  Image
 } from 'react-native';
 import {
   Container,
@@ -23,7 +24,8 @@ import {
   TabHeading,
   Card,
   Right,
-  Toast
+  Toast,
+  Thumbnail
 } from 'native-base';
 import NetInfo from "@react-native-community/netinfo";
 import StatusView from "./../status/index";
@@ -51,7 +53,7 @@ import DeepLinking from 'react-native-deep-linking';
 import Requester from '../event/Requester';
 
 
-let {height, width} = Dimensions.get('window');
+let { height, width } = Dimensions.get('window');
 
 @observer
 class Home extends Component {
@@ -64,7 +66,7 @@ class Home extends Component {
     this.permisssionListener()
   }
   state = {
-    
+
   }
   permisssionListener() {
     firebase.messaging().hasPermission().then(status => {
@@ -142,6 +144,7 @@ class Home extends Component {
   }
   realNew = []
   componentDidMount() {
+    stores.Highlights.initializeGetHighlightsListener()
     CalendarServe.fetchAllCalendarEvents().then(calendar => {
       let calen = groupBy(calendar, 'title')
       let idsMapper = map(calen, (value, key) => { return { title: key, ids: map(value, ele => ele.id) } })
@@ -274,7 +277,7 @@ class Home extends Component {
      this.setState({color:"#1FABAB"});
    }
   }*/
- 
+
 
 
   handleURL = ({ url }) => {
@@ -288,20 +291,19 @@ class Home extends Component {
   render() {
     StatusBar.setBackgroundColor("#FEFFDE", true)
     StatusBar.setBarStyle('dark-content', true)
+    StatusBar.setHidden(false, true)
     return (
       <Container style={{ backgroundColor: "#FEFFDE" }}>
 
-        <View style={{height:"7%",width:"100%",backgroundColor:"#FEFFDE",borderBottomWidth:1,borderColor:"#1FABAB"}}>
-          <View style={{flex:1,backgroundColor:"#FEFFDE",flexDirection:"row",justifyContent:"space-between",marginLeft:"3%",marginRight:"3%"}}>
-           <Text style={{color:"#1FABAB",fontSize:21,fontWeight:"bold",alignSelf:"flex-start"}}>Bleashup</Text>
-          
-         
-          <TouchableOpacity>  
-            <Icon name="gear" active={true} type="EvilIcons" style={{ color: "#0A4E52",alignSelf:"flex-end"}} onPress={this.settings()}/>
-          </TouchableOpacity>
-        </View>
+        <View style={{ height: 40, width: "100%", backgroundColor: "#FEFFDE", borderBottomWidth: 1, borderColor: "#1FABAB", borderTopWidth: 1, }}>
+          <View style={{ flex: 1, backgroundColor: "#FEFFDE", flexDirection: "row", justifyContent: "space-between", marginLeft: "3%", marginRight: "3%" }}>
+            <Thumbnail small source={require("../../../../assets/ic_launcher_round.png")}></Thumbnail>
+            <TouchableOpacity style={{ marginTop: '2%', }}>
+              <Icon name="gear" active={true} type="EvilIcons" style={{ color: "#1FABAB", alignSelf: "flex-end" }} onPress={this.settings()} />
+            </TouchableOpacity>
+          </View>
 
-      </View>
+        </View>
         <Tabs
           locked
           elevation={5}
@@ -346,8 +348,8 @@ class Home extends Component {
           <Tab
             heading={
               <TabHeading>
-              <View>
-                <Icon name="ios-people" type="Ionicons" style={{ fontSize: this.state.currentTab == 2 ? 50 : 15, }} />
+                <View>
+                  <Icon name="ios-people" type="Ionicons" style={{ fontSize: this.state.currentTab == 2 ? 50 : 15, }} />
                 </View>
               </TabHeading>
             }
@@ -357,8 +359,8 @@ class Home extends Component {
           <Tab
             heading={
               <TabHeading>
-              <View>
-                <Icon name="user-alt" type="FontAwesome5" style={{ fontSize: this.state.currentTab == 3 ? 35 : 15, }} />
+                <View>
+                  <Icon name="user-alt" type="FontAwesome5" style={{ fontSize: this.state.currentTab == 3 ? 35 : 15, }} />
                 </View>
               </TabHeading>
             }

@@ -288,7 +288,11 @@ class Request {
             updated_at: moment().format(),
             title: "",
             description: "",
-            url: ""
+            url: {
+                audio:"",
+                photo:"",
+                video:""
+            }
         }
     }
     ContributionMean() {

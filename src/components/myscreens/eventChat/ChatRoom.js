@@ -267,7 +267,13 @@ export default class ChatRoom extends Component {
             }, 100)
             this.fireRef.endAt().limitToLast(1).on('child_added', snapshot => {
                 let message = snapshot.val()
-                message.received.unshift({ phone: this.props.user.phone, date: moment().format() })
+                message.received ? message.received.unshift({
+                    phone:
+                        this.props.user.phone, date: moment().format()
+                }) : message.received = [{
+                    phone:
+                        this.props.user.phone, date: moment().format()
+                }]
                 message.received = uniqBy(message.received, "phone");
                 //console.warn(message.received)
                 this.addNewMessage(message, snapshot.key)
@@ -316,6 +322,7 @@ export default class ChatRoom extends Component {
         }
     }
     componentWillMount() {
+        console.warn(this.props.firebaseRoom)
         this.fireRef = this.getRef(this.props.firebaseRoom);
         this.setTypingRef(this.props.firebaseRoom)
         firebase.database().ref(`current_room/${this.props.user.phone}`).onDisconnect().set(null)
@@ -1008,7 +1015,7 @@ export default class ChatRoom extends Component {
         })
         this._stopRecoder()
     }
-    cancleReply(){
+    cancleReply() {
         this.setState({
             replying: false,
             replyContent: null,

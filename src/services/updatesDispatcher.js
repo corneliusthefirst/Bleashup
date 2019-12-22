@@ -894,10 +894,10 @@ class UpdatesDispatcher {
           RequestObject.h_id = update.new_value;
           tcpRequestData.getHighlight(RequestObject, update.new_value + "highlight").then(JSONData => {
             serverEventListener.sendRequest(JSONData, update.new_value + "highlight").then(Highlight => {
-              stores.Highlights.addHighlight(Highlight).then(() => {
+              stores.Highlights.addHighlight(Highlight.data).then(() => {
                 stores.Events.addHighlight(
-                  Highlight.event_id,
-                  Highlight.id
+                  Highlight.data.event_id,
+                  Highlight.data.id
                 ).then(() => {
                   GState.newHightlight = true;
                   stores.Events.changeUpdatedStatus(
