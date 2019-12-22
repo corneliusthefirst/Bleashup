@@ -157,99 +157,112 @@ export default class SWView extends Component {
     }
     render() {
         return (
-            <TouchableWithoutFeedback onPressIn={() => {
-                this.setState({
-                    canScroll: true
-                })
-            }}>
-                <View>
-                    <ScrollView
-                        style={{ backgroundColor: "#FEFFDE", }}
-                        //scrollEnabled={true}
-                        nestedScrollEnabled={true}
-                        showsVerticalScrollIndicator={false}
-                        onScroll={Animated.event(
-                            [{ nativeEvent: { contentOffset: { y: this.state.scrollY } } }]
-                        )}>
+            <View style={{opacity:0.9}}>
+                <ScrollView
+                    style={{ backgroundColor: "#FEFFDE", }}
+                    //scrollEnabled={true}
+                    nestedScrollEnabled={true}
+                    showsVerticalScrollIndicator={false}
+                    onScroll={Animated.event(
+                        [{ nativeEvent: { contentOffset: { y: this.state.scrollY } } }]
+                    )}>
+                    <View style={{
+                        marginTop: HEADER_MAX_HEIGHT,
+                        height: "100%", width: "100%", backgroundColor: "#FEFFDE",
+                        display: 'flex', flexDirection: 'column', //borderRightWidth: 1.25, borderColor: "#1FABAB",
+                    }}>
                         <View style={{
-                            marginTop: HEADER_MAX_HEIGHT,
-                            height: "100%", width: "100%", backgroundColor: "#FEFFDE",
-                            display: 'flex', flexDirection: 'column', //borderRightWidth: 1.25, borderColor: "#1FABAB",
-                        }}>
-                            <View style={{ marginLeft: 5, backgroundColor: "#FEFFDE", width: "100%", flexDirection: 'row', }}><View style={{ width: "90%" }}><Title style={{ fontWeight: 'bold', fontSize: 17, marginTop: 2, color:"#0A4E52" }}>{this.props.event.about.title}</Title>
+                            marginLeft: 2, backgroundColor: "#FEFFDE", width: screenWidth * 2.7 / 3,
+                            alignItems: 'center',
+                            marginTop: 2,
+                            borderRadius: 5,
+                            justifyContent: 'center', flexDirection: 'row', shadowOpacity: 1,
+                            shadowOffset: {
+                                height: 1,
+                            },
+                            shadowRadius: 10, elevation: 6
+                        }}><View style={{ width: "90%" }}><Title style={{ fontWeight: 'bold', fontSize: 17, marginTop: 2, color: "#0A4E52" }}>{this.props.event.about.title}</Title>
                                 <Title style={{
-                                    marginRight: "2%", fontStyle: 'italic', fontWeight: this.props.event.closed ? "bold" : "400", 
+                                    marginRight: "2%", fontStyle: 'italic', fontWeight: this.props.event.closed ? "bold" : "400",
                                     color: this.props.event.closed ? "red" : this.dateDiff(this.props.event.period) > 0 ? "gray" : "#1FABAB", fontSize: 12,
                                 }}>{this.props.event.closed ? "Closed" : this.displayDate(this.props.event.period)}</Title>
                             </View>
-                                <Icon onPress={() => {
-                                    this.props.navigateHome()
-                                }} style={{
-                                    alignSelf: 'flex-end', color: "#1FABAB",
-                                    marginBottom: "6%"
-                                }} name="close" type="EvilIcons"></Icon>
+                            <Icon onPress={() => {
+                                this.props.navigateHome()
+                            }} style={{
+                                alignSelf: 'flex-end', color: "#1FABAB",
+                                marginBottom: "6%"
+                            }} name="close" type="EvilIcons"></Icon>
+                        </View>
+                        <View style={{ heignt: "60%", display: "flex", flexDirection: 'row', backgroundColor: "#FEFFDE", marginLeft: "1%", }}>
+                            <View style={{
+                                marginTop: "2%", width: "25%", shadowOpacity: .5,
+                                shadowOffset: {
+                                    height: 1,
+                                },
+                                shadowRadius: 10, elevation: 3, borderRadius: 12
+                            }}>
+                                <ActionsView
+                                    publish={() => this.props.publish()}
+                                    leaveActivity={() => this.props.leaveActivity()}
+                                    inviteContacts={() => this.props.inviteContacts()}
+                                    openSettingsModal={() => this.props.openSettingsModal()}
+                                    ShowMyActivity={(a) => this.props.ShowMyActivity(a)}
+                                    showMembers={() => this.props.showMembers()}></ActionsView>
                             </View>
-                            <View style={{ heignt: "60%", display: "flex", flexDirection: 'row', backgroundColor: "#FEFFDE", marginLeft: "1%", }}>
-                                <View style={{ marginTop: "2%", width: "25%", borderWidth: 2, borderColor: this.actionColor, borderRadius: 12 }}>
-                                    <ActionsView
-                                        publish={() => this.props.publish()}
-                                        leaveActivity={() => this.props.leaveActivity()}
-                                        inviteContacts={() => this.props.inviteContacts()}
-                                        openSettingsModal={() => this.props.openSettingsModal()}
-                                        ShowMyActivity={(a) => this.props.ShowMyActivity(a)}
-                                        showMembers={() => this.props.showMembers()}></ActionsView>
-                                </View>
-                                <View style={{ width: "5%", }}></View>
-                                <View style={{ width: "70%" }}>
-                                    <RouteView refreshCommitee={() => this.refreshCommitees()} event_id={this.props.event.id} currentPage={this.props.currentPage}
-                                        setCurrentPage={(page) => this.props.setCurrentPage(page)}></RouteView>
-                                </View>
-                            </View>
-                            <View style={{ marginTop: "10%", height: 300, }}>
-                                <Commitee
-                                    master={this.props.master}
-                                    ref="Commitee"
-                                    participant={this.props.event.participant}
-                                    creator={this.props.creator}
-                                    join={(id) => { this.props.join(id) }}
-                                    showCreateCommiteeModal={() => this.props.showCreateCommiteeModal()}
-                                    leave={(id) => { this.props.leave(id) }}
-                                    removeMember={(id, members) => { this.props.removeMember(id, members) }}
-                                    addMembers={(id, currentMembers) => { this.props.addMembers(id, currentMembers) }}
-                                    publishCommitee={(id, state) => { this.props.publishCommitee(id, state) }}
-                                    editName={(newName, id) => this.props.editName(newName, id)}
-                                    swapChats={(commitee) => { this.props.swapChats(commitee) }} phone={this.props.phone}
-                                    commitees={this.props.commitees}
-                                    event_id={this.props.event.id}></Commitee>
+                            <View style={{ width: "5%", }}></View>
+                            <View style={{
+                                width: "70%",
+                            }}>
+                                <RouteView refreshCommitee={() => this.refreshCommitees()} event_id={this.props.event.id} currentPage={this.props.currentPage}
+                                    setCurrentPage={(page) => this.props.setCurrentPage(page)}></RouteView>
                             </View>
                         </View>
-                    </ScrollView>
-                    <Animated.View style={[{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        backgroundColor: "#FEFFDE",
-                        overflow: 'hidden',
-                    }, {
-                        height: this.state.scrollY.interpolate({
-                            inputRange: [0, HEADER_SCROLL_DISTANCE],
-                            outputRange: [HEADER_MAX_HEIGHT, HEADER_MIN_HEIGHT],
-                            extrapolate: 'clamp',
-                        })
-                    }]}>
-                        <View style={{
-                            height: "100%",
-                            width: screenWidth * 2.7 / 3,
-                            alignItems: 'center',
-                            borderRadius: 5,
-                            justifyContent: 'center',
-                        }}><TouchableOpacity onPress={() => requestAnimationFrame(() => this.props.showActivityPhotoAction())}>
-                                {this.props.event.background ? <CacheImages width={(screenWidth * 2.7 / 3) - 5} style={{ width: "100%", height: "100%" }}
-                                    source={{ uri: this.props.event.background }}></CacheImages> : <Image width={screenWidth * 2.7 / 3} style={{ width: "100%", height: "100%" }} source={require('../../../../assets/default_event_image.jpeg')}></Image>}</TouchableOpacity>
+                        <View style={{ marginTop: "10%", height: 300, }}>
+                            <Commitee
+                                master={this.props.master}
+                                ref="Commitee"
+                                participant={this.props.event.participant}
+                                creator={this.props.creator}
+                                join={(id) => { this.props.join(id) }}
+                                showCreateCommiteeModal={() => this.props.showCreateCommiteeModal()}
+                                leave={(id) => { this.props.leave(id) }}
+                                removeMember={(id, members) => { this.props.removeMember(id, members) }}
+                                addMembers={(id, currentMembers) => { this.props.addMembers(id, currentMembers) }}
+                                publishCommitee={(id, state) => { this.props.publishCommitee(id, state) }}
+                                editName={(newName, id) => this.props.editName(newName, id)}
+                                swapChats={(commitee) => { this.props.swapChats(commitee) }} phone={this.props.phone}
+                                commitees={this.props.commitees}
+                                event_id={this.props.event.id}></Commitee>
                         </View>
-                    </Animated.View>
-                </View></TouchableWithoutFeedback>
+                    </View>
+                </ScrollView>
+                <Animated.View style={[{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    backgroundColor: "#FEFFDE",
+                    overflow: 'hidden',
+                }, {
+                    height: this.state.scrollY.interpolate({
+                        inputRange: [0, HEADER_SCROLL_DISTANCE],
+                        outputRange: [HEADER_MAX_HEIGHT, HEADER_MIN_HEIGHT],
+                        extrapolate: 'clamp',
+                    })
+                }]}>
+                    <View style={{
+                        height: "100%",
+                        width: screenWidth * 2.7 / 3,
+                        alignItems: 'center',
+                        borderRadius: 5,
+                        justifyContent: 'center',
+                    }}><TouchableOpacity onPress={() => requestAnimationFrame(() => this.props.showActivityPhotoAction())}>
+                            {this.props.event.background ? <CacheImages width={(screenWidth * 2.7 / 3) - 5} style={{ width: "100%", height: "100%" }}
+                                source={{ uri: this.props.event.background }}></CacheImages> : <Image width={screenWidth * 2.7 / 3} style={{ width: "100%", height: "100%" }} source={require('../../../../assets/default_event_image.jpeg')}></Image>}</TouchableOpacity>
+                    </View>
+                </Animated.View>
+            </View>
         );
     }
 }

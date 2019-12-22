@@ -7,6 +7,7 @@ import emitter from '../../../services/eventEmiter';
 import firebase from 'react-native-firebase';
 import stores from '../../../stores';
 import { Badge } from "native-base"
+import { MenuDivider } from 'react-native-material-menu';
 export default class RouteView extends Component {
     constructor(props) {
         super(props)
@@ -67,51 +68,69 @@ export default class RouteView extends Component {
     render() {
         if (this.props.currentPage == "EventChat") GState.generalNewMessages = []
         return (
-            <Card style={{ height: 300, width: 200, }} transparent >
+            <Card style={{ height: 300, width:"100%",marginTop: "20%", }} transparent >
                 <CardItem style={{
                     height: this.height, backgroundColor: this.props.currentPage == "EventDetails" ? "#54F5CA" : "#FEFFDE",
-                    width: "100%", borderTopLeftRadius: 12, borderTopWidth: 2, borderLeftWidth: 2, borderTopColor: "#1FABAB", borderLeftColor: "#1FABAB",
+                    width: "100%", borderTopLeftRadius: 12, shadowOpacity: 1,
+                    shadowOffset: {
+                        height: 1,
+                    },
+                    shadowRadius: 10, elevation: 6
                 }}>
                     <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                         this.props.setCurrentPage("EventDetails")
                         this.resetSelectedCommitee()
                     }
                     )}>
-                        <View style={{ display: 'flex', flexDirection: 'row' }}>
+                        <View style={{ display: 'flex', flexDirection: 'row', width: "100%"}}>
                             <Icon type="AntDesign" style={{ color: this.props.currentPage == "EventDetails" ? "#0A4E52" :  this.original }} name="appstore1"></Icon>
-                            <Text style={{ padding: "1%", fontWeight: this.props.currentPage == "EventDetails" ? 'bold' : '400', }}>Activity Details</Text>
+                            <Text style={{ padding: "1%", fontWeight: this.props.currentPage == "EventDetails" ? 'bold' : '400', width: "100%" }}>Activity Details</Text>
                         </View>
                     </TouchableOpacity>
                 </CardItem>
-                <CardItem style={{ height: this.height, backgroundColor: this.props.currentPage == "ChangeLogs" ? "#54F5CA" : "#FEFFDE", borderLeftColor: "#1FABAB", borderLeftWidth: 2, }}>
+                <CardItem style={{
+                    height: this.height, backgroundColor: this.props.currentPage == "ChangeLogs" ? "#54F5CA" : "#FEFFDE", shadowOpacity: 1,
+                    shadowOffset: {
+                        height: 1,
+                    },
+                    shadowRadius: 10, elevation: 6 }}>
                     <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                         this.props.setCurrentPage("ChangeLogs")
                         this.resetSelectedCommitee()
                     }
                     )}>
-                        <View style={{ display: 'flex', flexDirection: 'row', }}>
+                        <View style={{ display: 'flex', flexDirection: 'row', width: "100%"}}>
                             <Icon type="Entypo" style={{ color: this.props.currentPage == "ChangeLogs" ? "#0A4E52" : this.original }} name="clock"></Icon>
-                            <Text style={{ padding: "1%", fontWeight: this.props.currentPage == "ChangeLogs" ? 'bold' : '400', }}>History Logs</Text>
+                            <Text style={{ padding: "1%", fontWeight: this.props.currentPage == "ChangeLogs" ? 'bold' : '400', width: "100%"}}>History Logs</Text>
                         </View>
                     </TouchableOpacity>
                 </CardItem>
-                <CardItem style={{
+               <CardItem style={{
                     height: this.height, backgroundColor: this.props.currentPage == "EventChat" ? "#54F5CA" : "#FEFFDE",
-                    borderLeftColor: "#1FABAB", borderLeftWidth: 2,
+                    shadowOpacity: 1,
+                    shadowOffset: {
+                        height: 1,
+                    },
+                    shadowRadius: 10, elevation: 6
                 }}>
                     <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                         this.props.setCurrentPage("EventChat")
                         this.resetCommiteeForGeneral()
                     })
                     }>
-                        <View style={{ display: 'flex', flexDirection: 'row' }}>
+                        <View style={{ display: 'flex', flexDirection: 'row', width: "100%"}}>
                             <View style={{ width: "85%", display: 'flex', flexDirection: 'row', }}><Icon type="FontAwesome" style={{ color: this.props.currentPage == "EventChat" ? "#0A4E52" : this.original }} name="group"></Icon>
-                                <Text style={{ padding: "1%", fontWeight: this.props.currentPage == "EventChat" ? 'bold' : '400', }}>Discusion</Text></View>
-                            {GState.generalNewMessages.length > 0 ? <Badge primary><Text style={{ marginTop: "30%", }}>{GState.generalNewMessages.length}</Text></Badge> : null}
+                                <Text style={{ padding: "1%", fontWeight: this.props.currentPage == "EventChat" ? 'bold' : '400', width: "100%" }}>Discusion</Text></View>
+                            {GState.generalNewMessages.length > 0 ? <Badge primary><Text style={{ marginTop: "30%", }}>{GState.generalNewMessages.length}</Text></Badge> : <View></View>}
                         </View>
                     </TouchableOpacity>
                 </CardItem>
-                <CardItem style={{ height: this.height, backgroundColor: this.props.currentPage == "Highlights" ? "#54F5CA" : "#FEFFDE", borderLeftColor: "#1FABAB", borderLeftWidth: 2, }}>
+                {/*<CardItem style={{
+                    height: this.height, backgroundColor: this.props.currentPage == "Highlights" ? "#54F5CA" : "#FEFFDE", shadowOpacity: 1,
+                    shadowOffset: {
+                        height: 1,
+                    },
+                    shadowRadius: 10, elevation: 6 }}>
                     <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                         this.props.setCurrentPage("Highlights")
                         this.resetSelectedCommitee()
@@ -121,47 +140,58 @@ export default class RouteView extends Component {
                             <Text style={{ padding: "1%", fontWeight: this.props.currentPage == "Highlights" ? "bold" : '400', }}>HighLights</Text>
                         </View>
                     </TouchableOpacity>
-                </CardItem>
+                </CardItem>*/}
                 <CardItem style={{
                     height: this.height, backgroundColor: this.props.currentPage == "Reminds" ? "#54F5CA" : "#FEFFDE",
-                    borderLeftColor: "#1FABAB", borderLeftWidth: 2
+                    shadowOpacity: 1,
+                    shadowOffset: {
+                        height: 1,
+                    },
+                    shadowRadius: 10, elevation: 6
                 }} >
                     <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                         this.props.setCurrentPage("Reminds")
                         this.resetSelectedCommitee()
                     })}>
-                        <View style={{ display: 'flex', flexDirection: 'row', }}>
+                        <View style={{ display: 'flex', flexDirection: 'row', width:"100%"}}>
                             <Icon type="Entypo" style={{ color: this.props.currentPage == "Reminds" ? "#0A4E52" : this.original }} name="bell"></Icon>
-                            <Text style={{ padding: "1%", fontWeight: this.props.currentPage == "Reminds" ? 'bold' : '400', }}>Reminds/Tasks</Text>
+                            <Text style={{ padding: "1%", fontWeight: this.props.currentPage == "Reminds" ? 'bold' : '400', width: "100%" }}>Reminds/Tasks</Text>
                         </View>
                     </TouchableOpacity>
                 </CardItem>
                 <CardItem style={{
-                    height: this.height, borderLeftColor: "#1FABAB", borderLeftWidth: 2,
+                    height: this.height, shadowOpacity: 1,
+                    shadowOffset: {
+                        height: 1,
+                    },
+                    shadowRadius: 10, elevation: 6,
                     backgroundColor: this.props.currentPage == "Votes" ? "#54F5CA" : "#FEFFDE", width: "100%"
                 }}>
                     <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                         this.props.setCurrentPage("Votes")
                         this.resetSelectedCommitee()
                     })}>
-                        <View style={{ display: 'flex', flexDirection: 'row', }}>
+                        <View style={{ display: 'flex', flexDirection: 'row', width: "100%"}}>
                             <Icon type="FontAwesome5" style={{ color: this.props.currentPage == "Votes" ? "#0A4E52" : this.original }} name="poll"></Icon>
-                            <Text style={{ padding: "1%", fontWeight: this.props.currentPage == "Votes" ? 'bold' : '400', }}>Polls/Votes</Text>
+                            <Text style={{ padding: "1%", fontWeight: this.props.currentPage == "Votes" ? 'bold' : '400', width: "100%"}}>Polls/Votes</Text>
                         </View>
                     </TouchableOpacity>
                 </CardItem>
                 <CardItem style={{
                     height: this.height, backgroundColor: this.props.currentPage == "Contributions" ? "#54F5CA" : "#FEFFDE",
-                    borderBottomColor: "#1FABAB", borderBottomWidth: 2, borderBottomLeftRadius: 12, borderLeftColor: "#1FABAB",
-                    borderLeftWidth: 2,
+                    shadowOpacity: 1,
+                    shadowOffset: {
+                        height: 1,
+                    },
+                    shadowRadius: 10, elevation: 6, borderBottomLeftRadius: 12, 
                 }}>
                     <TouchableWithoutFeedback onPress={() => requestAnimationFrame(() => {
                         this.props.setCurrentPage("Contributions")
                         this.resetSelectedCommitee()
                     })}>
-                        <View style={{ display: 'flex', flexDirection: 'row', }}>
+                        <View style={{ display: 'flex', flexDirection: 'row', width: "100%" }}>
                             <Icon type="MaterialIcons" style={{ color: this.props.currentPage == "Contributions" ? "#0A4E52" : this.original }} name="monetization-on"></Icon>
-                            <Text style={{ padding: "1%", fontWeight: this.props.currentPage == "Contributions" ? 'bold' : '400', }}>Contributions</Text>
+                            <Text style={{ padding: "1%", fontWeight: this.props.currentPage == "Contributions" ? 'bold' : '400', width: "100%"}}>Contributions</Text>
                         </View>
                     </TouchableWithoutFeedback>
                 </CardItem>

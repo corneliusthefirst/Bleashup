@@ -120,7 +120,11 @@ export default class ChangeLogs extends Component {
       </View>
       {this.state.hideHeader ? null : <View style={{
         width: "100%", height: 44, position: "absolute", opacity: .6 ,
-        backgroundColor: "#FEFFDE", borderBottomWidth: 1.25, borderColor: "#1FABAB",
+        backgroundColor: "#FEFFDE", shadowOpacity: 1,
+        shadowOffset: {
+          height: 1,
+        },
+        shadowRadius: 10, elevation: 6,
       }}>
         <View style={{ flexDirection: 'row', width: "100%", }}>
           <Text style={{ alignSelf: 'flex-start', margin: '3%', fontWeight: 'bold', fontSize: 20, width: "83%" }}>{(this.props.isMe ? "Your " : "" )+ "Activities Logs"}</Text>

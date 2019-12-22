@@ -295,7 +295,12 @@ class Home extends Component {
     return (
       <Container style={{ backgroundColor: "#FEFFDE" }}>
 
-        <View style={{ height: 40, width: "100%", backgroundColor: "#FEFFDE", borderBottomWidth: 1, borderColor: "#1FABAB", borderTopWidth: 1, }}>
+        <View style={{
+          height: 40, width: "100%", backgroundColor: "#FEFFDE", shadowOpacity: 1,
+          shadowOffset: {
+            height: 1,
+          },
+          shadowRadius: 10, elevation:6 }}>
           <View style={{ flex: 1, backgroundColor: "#FEFFDE", flexDirection: "row", justifyContent: "space-between", marginLeft: "3%", marginRight: "3%" }}>
             <Thumbnail small source={require("../../../../assets/ic_launcher_round.png")}></Thumbnail>
             <TouchableOpacity style={{ marginTop: '2%', }}>
@@ -306,8 +311,13 @@ class Home extends Component {
         </View>
         <Tabs
           locked
-          elevation={5}
-          tabContainerStyle={{ height: 45, backgroundColor: "#FEFFDE", borderTopWidth: 1, borderColor: "#1FABAB", borderRadius: 4, }}
+          elevation={10}
+          tabContainerStyle={{
+            shadowColor: '#1FABAB',
+            shadowOffset: { width: 0, height: 30 },
+            shadowOpacity: 3,
+            shadowRadius: 10,
+            elevation: 20, height: 45, backgroundColor: "#FEFFDE", borderRadius: 4, }}
           tabBarPosition="bottom"
           tabBarUnderlineStyle={{
             backgroundColor: "transparent"

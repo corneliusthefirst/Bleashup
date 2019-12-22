@@ -43,7 +43,7 @@ export default class EditNameModal extends PureComponent {
     render() {
         return (
             <Modal
-                backdropPressToClose={false}
+                backdropPressToClose={true}
                 backdropOpacity={0.4}
                 swipeToClose={false}
                 backButtonClose={true}

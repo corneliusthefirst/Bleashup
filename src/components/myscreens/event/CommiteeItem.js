@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Text, Badge, Icon, Label, Spinner, Toast, Thumbnail } from 'native-base';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import stores from '../../../stores';
-import { View } from 'react-native';
+import { View, TouchableWithoutFeedback } from 'react-native';
 import { find } from "lodash"
 import EditNameModal from './EditNameModal';
 import emitter from '../../../services/eventEmiter';
@@ -306,20 +306,21 @@ export default class CommiteeItem extends Component {
             this.state.loaded ? <View style={{
                 opacity: this.accessible ? 1 : 0.1,
                 borderBottomRightRadius: 8,
-                width: 265,
+                width: "90%",
                 borderTopRightRadius: 8,
                 backgroundColor: GState.currentCommitee == this.state.commitee.id ? "#54F5CA" : null,
             }}>
-                <View style={{ display: 'flex', hieght: 100, width: 250, flexDirection: "row", marginBottom: "2%", }}>
-                    <TouchableOpacity onPress={() => requestAnimationFrame(() => {
-                        this.swappCommitee()
-                    })}><View style={{ margin: '1%', width: 215, display: 'flex', flexDirection: 'column', }}>
+                <TouchableOpacity onPress={() => requestAnimationFrame(() => {
+                    this.swappCommitee()
+                })}>
+                <View style={{ display: 'flex', hieght: 100, width: "100%", flexDirection: "row", marginBottom: "2%", }}>
+                   <View style={{ margin: '1%', width: "90%", display: 'flex', flexDirection: 'column', }}>
                             <Text style={{
                                 fontWeight: 'bold', fontSize: 18, color: GState.currentCommitee == this.state.commitee.id ? "#0A4E52" : "gray"
                             }}>{this.state.commitee.name}</Text>
                             {this.state.joint && this.state.newest_message ? <Text note>Latest Message :</Text> : null}
                             {this.state.joint && this.state.newest_message ? this.writeLatestMessage(this.state.newest_message) : null}
-                        </View></TouchableOpacity>
+                        </View>
                     <View style={{ display: 'flex', flexDirection: 'row', marginTop: "6%", }}>
                         {this.state.joint && this.state.commitee.new_messages ? this.state.commitee.new_messages.length > 0 ? <Badge primary>
                             <Text style={{ marginTop: "30%", }}>
@@ -328,7 +329,7 @@ export default class CommiteeItem extends Component {
                         </Badge> : null : null}
                         {this.state.commitee.name.toLowerCase() === "Generale".toLowerCase() ? null : this.state.master ?
                             <View style={{ marginTop: "-5%", marginRight: "15%", }}>
-                                <TouchableOpacity onPress={() => {
+                                <TouchableWithoutFeedback onPress={() => {
                                     requestAnimationFrame(() => {
                                         this.setState({
                                             isEditNameModelOpened: true,
@@ -336,11 +337,12 @@ export default class CommiteeItem extends Component {
                                         })
                                     })
                                 }}>
-                                    {this.props.master ? <Icon style={{ fontSize: 30, color: "#0A4E52" }} name="pencil" type="EvilIcons" /> : null}
-                                </TouchableOpacity>
+                                        <View>{this.props.master ? <Icon style={{ fontSize: 30, color: "#0A4E52" }} name="pencil" type="EvilIcons" /> : null}</View>
+                                </TouchableWithoutFeedback>
                             </View> : null}
                     </View>
                 </View>
+                </TouchableOpacity>
                 <EditNameModal isOpen={this.state.isEditNameModelOpened} close={() => {
                     this.setState({
                         isEditNameModelOpened: false,
