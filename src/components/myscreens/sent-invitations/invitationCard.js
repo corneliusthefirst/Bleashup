@@ -22,7 +22,6 @@ import { createOpenLink } from "react-native-open-maps";
 import ProfileModal from '../invitations/components/ProfileModal';
 import PhotoModal from "../invitations/components/PhotoModal";
 import globalState from "../../../stores/globalState";
-import AccordionModule from "../invitations/components/Accordion";
 import DoublePhoto from "../invitations/components/doublePhoto";
 import stores from '../../../stores';
 import { filter } from 'lodash';
@@ -187,7 +186,7 @@ class CardListItem extends Component {
   render() {
     return (this.state.loading ? <Card style={{ height: 220 }}></Card> : <View style={{ width: "100%", }}>
       <Swipeout style={{ width: "100%", }} {...this.swipeSettings}>
-        <Card style={{ height: 220 }}>
+        <Card >
           <CardItem>
             <Text style={{ fontSize: 14, }} note>
               sent
@@ -225,9 +224,9 @@ class CardListItem extends Component {
                   tab: "EventDetails"
                 })
               })} >
-                <Text style={{ marginLeft: -40, fontWeight: 'bold', }}
-                >{this.state.item.event_title}</Text>
-                <Text style={{ marginLeft: -40, color: 'dimgray', fontSize: 12, fontStyle: 'italic', }}> on {moment(this.state.item.event_time).format("dddd, MMMM Do YYYY, h:mm:ss a")}</Text>
+                <Title style={{ marginLeft: -40, fontWeight: 'bold', color:"#0A4E52" }}
+                >{this.state.item.event_title}</Title>
+                <Title style={{ marginLeft: -40, color: 'dimgray', fontSize: 12, color:"#0A4E52", fontStyle: 'italic', }}> on {moment(this.state.item.event_time).format("dddd, MMMM Do YYYY, h:mm:ss a")}</Title>
               </TouchableOpacity>}
             </Body>
           </CardItem>

@@ -52,7 +52,7 @@ EStyleSheet.build({
   $rem: width > 340 ? 18 : 16
 });*/
 
-const AppNavigator = createStackNavigator(
+const AppNavigator = createStackNavigator( 
   {
     Home: { screen: Home },
     CurrentEvent: { screen: CurrentEventView },

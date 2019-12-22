@@ -98,13 +98,13 @@ export default class Event extends Component {
   textStyle = {
     fontSize: 15
   }
-  currentWidth = screenWidth * 2 / 3
+  currentWidth = screenWidth * 2.7 / 3
   isOpen = this.props.navigation.getParam('isOpen') ? this.props.navigation.getParam('isOpen') : false
   renderMenu(NewMessages) {
     //console.error(this.props.navigation.getParam("Event").participant)
     switch (this.state.currentPage) {
       case "EventDetails":
-        return <EventDatails {...this.props} event_id={this.event.id}></EventDatails>
+        return <EventDatails {...this.props} Event={this.event}></EventDatails>
       case "Reminds":
         return <Remind {...this.prpos}></Remind>
       case "Votes":

@@ -69,16 +69,16 @@ export default class EventDescription extends Component {
     	return(
 
            
-            <Modal
+             <Modal
                 isOpen={this.props.isOpen}
                 onClosed={this.props.onClosed}
                 style={{
                     height: height/2+height/30, borderRadius: 15,marginTop:"-3%",
                     backgroundColor:"#FEFFDE",borderColor:'black',borderWidth:1,width: "98%",
                 }}
-                position={'bottom'}
-                backdropPressToClose={false}
                 coverScreen={true}
+                position={'bottom'}
+                //backdropPressToClose={false}
                 >
            
                  <View  style={{flex:1,flexDirection:"column"}}>

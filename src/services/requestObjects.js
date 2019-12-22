@@ -100,9 +100,11 @@ class Request {
             creator: '',
             title: '',
             description: '',
-            period: this.Period(),
+            period: "",
             recursive_frequency:"none",
-            recurrence:0
+            recurrence:0,
+            status:"public",
+            members:[]
         }
     }
 
@@ -286,7 +288,11 @@ class Request {
             updated_at: moment().format(),
             title: "",
             description: "",
-            url: ""
+            url: {
+                audio:"",
+                photo:"",
+                video:""
+            }
         }
     }
     ContributionMean() {
@@ -351,7 +357,7 @@ class Request {
             period: "",
             location: this.Location(),
             background: "",
-            participant: [this.Participant()],
+            participant: [],
             likes: 0,
             reminds: [],
             recursiveFrequency:"None",
@@ -374,7 +380,7 @@ class Request {
             url: ""
         }
     }
-    Participant() {
+    Participant() { 
         return {
             phone: "",
             master: false,

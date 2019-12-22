@@ -80,7 +80,7 @@ class PublicEvent extends Component {
       this.state.master !== nextState.master ||
       !isEqual(this.props.Event, nextProps.Event) ||
       this.state.fresh !== nextState.fresh
-  }
+  } 
   swipperComponent = null
   componentDidMount() {
     setTimeout(() => {

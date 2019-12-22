@@ -44,7 +44,7 @@ export default class HighlightCardDetail extends Component {
             </View>
             <View>
               <TouchableOpacity onPress={()=>{this.setState({enlargeImage:true})}}>
-              <Image   source={{uri:this.props.item.url}} style={{width:"92%",marginLeft:"4%",marginRight:"4%",marginBottom:"4%",borderRadius:5,height:height/3 + height/11}}></Image>
+              <Image   source={{uri:this.props.item.url.photo}} style={{width:"92%",marginLeft:"4%",marginRight:"4%",marginBottom:"4%",borderRadius:5,height:height/3 + height/11}}></Image>
               </TouchableOpacity>
             </View>
             <View style={{margin:"5%",fontStyle:'italic'}}>
@@ -52,7 +52,7 @@ export default class HighlightCardDetail extends Component {
             </View>
             </View>
             </ScrollView>
-            <PhotoEnlargeModal isOpen={this.state.enlargeImage} onClosed={() => this.setState({ enlargeImage: false })} photo={this.props.item.url} />
+            <PhotoEnlargeModal isOpen={this.state.enlargeImage} onClosed={() => this.setState({ enlargeImage: false })} photo={this.props.item.url.photo} />
               
             </Modal>
 

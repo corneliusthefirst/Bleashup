@@ -22,7 +22,6 @@ import DetailsModal from "../invitations/components/DetailsModal";
 import SvgAnimatedLinearGradient from 'react-native-svg-animated-linear-gradient'
 import Svg, { Circle, Rect } from 'react-native-svg'
 import globalState from "../../../stores/globalState";
-import AccordionModule from "../invitations/components/Accordion";
 import DoublePhoto from "../invitations/components/doublePhoto";
 import stores from '../../../stores';
 import { forEach, filter } from "lodash";
@@ -254,7 +253,7 @@ class CardListItem extends Component {
   render() {
     return this.state.loading ? <Card style={{ height: 230 }}></Card> : <View style={{ width: "100%", }}>
       <Swipeout style={{ width: "100%", backgroundColor: "#FEFFDE" }} {...this.swipeSettings}>
-        <Card style={{ height: this.state.accept || this.state.deny ? 210 : 230 }}>
+        <Card>
           <CardItem>
             <Text style={{ color: "#A91A84", fontSize: 14, }} note>
               received

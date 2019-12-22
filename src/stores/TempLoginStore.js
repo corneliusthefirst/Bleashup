@@ -13,13 +13,14 @@ export default class TempLoginStore {
     phone: "",
     name: "",
     status: "",
+    nickname: "",
+    birth_date: "",
     created_at: "",
-    updated_at: "",
     email: "",
-    age: "",
+    updated_at: "",
+    password: "",
     profile: "",
-    profile_ext: "",
-    password: ""
+    profile_ext: ""
   };
 
   //Please check this commented code

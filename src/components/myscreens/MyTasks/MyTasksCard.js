@@ -34,23 +34,6 @@ onDone(){
 }
 
 
-    /*
-       <CardItem>
-         <Left>
-           <TouchableOpacity onPress={() => this.setState({ isOpenTasks: true })} >
-             <CacheImages small thumbnails source={{ uri: this.props.item.sender_Image }}
-             />
-           </TouchableOpacity>
-            <Body>
-                  <Text>{this.props.item.name}</Text>
-            </Body>
-         </Left>
-         <Right>
-           {this.props.item.EventName != null ? <Text>{this.props.item.EventName}</Text>:<Text>("")</Text>}
-         </Right>
-       </CardItem>
-    */
-
     render() {
        
        return(
@@ -58,7 +41,7 @@ onDone(){
 
          <CardItem>
            <Left/>
-           <Text style={{color:'#1FABAB',fontWeight:"500"}}>{this.props.item.title}</Text>
+           <Text style={{fontWeight:"500"}}>{this.props.item.title}</Text>
            <Right/>
          </CardItem>
 
@@ -76,7 +59,7 @@ onDone(){
     
                <Button  style={{borderWidth: 2,borderRadius:10,borderColor: "#049F61",width:"21%",alignItems:'center',justifyContent:'center',marginLeft:"76%"}}
                 onPress={() => this.onDone()} transparent >
-               <Text style={{fontWeight:"500"}}>Done</Text>
+               <Text style={{fontWeight:"500",color:"black"}}>Done</Text>
               </Button>
         
 

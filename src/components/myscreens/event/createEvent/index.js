@@ -5,7 +5,7 @@ import {
   Button, InputGroup, DatePicker, Thumbnail, Alert
 } from "native-base";
 
-import { StyleSheet, View,Image,TouchableOpacity} from 'react-native';
+import {StyleSheet, View,Image,TouchableOpacity, Dimensions} from 'react-native';
 import ActionButton from 'react-native-action-button';
 import Modal from 'react-native-modalbox';
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
@@ -17,7 +17,7 @@ import EventPhoto from "./components/EventPhoto"
 import EventLocation from "./components/EventLocation"
 import EventDescription from "./components/EventDescription"
 import EventHighlights from "./components/EventHighlights"
-import { filter,uniqBy,orderBy,find,findIndex,reject,uniq,indexOf,forEach,dropWhile } from "lodash";
+import { head,filter,uniqBy,orderBy,find,findIndex,reject,uniq,indexOf,forEach,dropWhile } from "lodash";
 import request from "../../../../services/requestObjects";
 import  stores from '../../../../stores/index';
 
@@ -39,15 +39,7 @@ var radio_props = [
  
 ];
 
-
-
-
-
-
-
-
-
-
+let {height, width} = Dimensions.get('window');
 
 export default class CreateEventView extends Component {
   constructor(props){
@@ -60,19 +52,22 @@ export default class CreateEventView extends Component {
       EventLocationState:false,
       EventHighlightState:false,
       colorWhenChoosed:"#1FABAB",
-      currentEvent:request.Event()
-
+      currentEvent:request.Event(),
+      participant:null
 
     }
-    stores.Events.readFromStore().then(Events =>{
-      let event = find(Events, { id:"newEventId" }); 
-       this.setState({currentEvent:event});
-       //console.warn(this.state.currentEvent );
-     });
-
 
   }
 
+componentDidMount(){
+  stores.Events.readFromStore().then(Events =>{
+    let event = find(Events, { id:"newEventId" }); 
+     this.setState({currentEvent:event});
+     this.setState({participant:head(event.participant)})
+     console.warn(this.state.currentEvent );
+   });
+
+}
 
   @autobind
   back() {
@@ -101,73 +96,63 @@ export default class CreateEventView extends Component {
         stores.Highlights.readFromStore().then((Highlights)=>{
            let highlight = find(Highlights, { id:highlightId });
            highlight.event_id =  New_id;
-           stores.Highlights.updateHighlight(hightlight,false).then(()=>{});
+           stores.Highlights.updateHighlight(highlight,false).then(()=>{});
                     
-       });
+       })
 
      });
 
       newEvent.created_at = moment().format("YYYY-MM-DD HH:mm");
-      stores.LoginStore.getUser().then((user)=>{
-         newEvent.creator_phone = user.creator_phone;
-         
-      })
-      //console.warn(newEvent);
-      stores.Events.addEvent(newEvent).then(()=>{});
 
-      //reset new Event object
-      let reset = request.Event();
-      reset.id = "newEventId";
-      this.refs.title_ref.setState({title:""});
-      this.refs.title_ref.setState({date:""});
-      this.refs.title_ref.setState({inputTimeValue:""});
+  
+          console.warn("the event is",newEvent);
+          stores.Events.addEvent(newEvent).then(()=>{});
+    
+          //reset new Event object
+          let reset = request.Event();
+          reset.id = "newEventId";
+          this.refs.title_ref.setState({title:""});
+          this.refs.title_ref.setState({date:""});
+          this.refs.title_ref.setState({inputTimeValue:""});
+          this.refs.title_ref.setState({inputDateValue:""});
+    
+          this.refs.photo_ref.setState({EventPhoto:""});
+          this.refs.description_ref.setState({description:""});
+          this.refs.location_ref.setState({location:request.Location()});
+          this.refs.highlights.setState({highlightData:[]});
+    
+          stores.Events.delete(reset.id).then(()=>{});
+          stores.Events.addEvent(reset).then(()=>{});
+  
+          stores.Events.readFromStore().then(Events =>{
+            console.warn(Events);
+          })
 
-      this.refs.photo_ref.setState({EventPhoto:""});
-      this.refs.description_ref.setState({description:""});
-      this.refs.location_ref.setState({location:request.Location()});
-      this.refs.highlights.setState({highlightData:[]});
-
-      stores.Events.delete(reset.id).then(()=>{});
-      stores.Events.addEvent(reset).then(()=>{});
-      
-
-    }); 
-
-    stores.Events.readFromStore().then(Events =>{
-       //console.warn(Events);
-    })
-
+   })
   }
 
   render() {
-
-
-    return (
+     return(
  
-
-            <View style={{flex:1,backgroundColor:"#FEFFDE"}}>
-            <Header>
-            <Body>
-              <Title>BleashUp </Title>
-            </Body>
-            <Right>
+        <View style={{height:height,backgroundColor:"#FEFFDE"}}>
+          
+            <Header style={{backgroundColor:"#FEFFDE",width:"100%",justifyContent:"flex-start"}}> 
               <Button onPress={this.back} transparent>
-                <Icon type='Ionicons' name="md-arrow-round-back" />
-              </Button>
-            </Right>
+                <Icon type='Ionicons' name="md-arrow-round-back" style={{color:"#1FABAB",marginLeft:"3%"}} />
+              </Button>   
            </Header>
 
 
-                <View style={{ margin:"5%", alignItems: 'center' }}>
-                  <Text style={{fontSize:18,fontWeight:"500",color:'#1FABAB'}}>Create New Event</Text>
-                </View>
+         <View style={{ margin:"5%", alignItems: 'center' }}>
+            <Text style={{fontSize:18,fontWeight:"500",color:'#1FABAB'}}>Create New Event</Text>
+         </View>
 
    
 
                 <View style={{marginLeft:"5%"}}>
                   <RadioForm
                      radio_props={radio_props}
-                     //initial={0}
+                     initial={0}
                      buttonColor={"#1FABAB"}
                      selectedButtonColor={"#1FABAB"}
                      labelStyle={{color:"#0A4E52"}}
@@ -195,8 +180,8 @@ export default class CreateEventView extends Component {
                          this.refs.highlights.setState({animateHighlight:true})
                         break
                         default:
-                        this.setState({EventTitleState:false})
-                        ;
+                        this.setState({EventTitleState:true})
+                        
 
                        }
                     }}
@@ -205,6 +190,13 @@ export default class CreateEventView extends Component {
                 </View>
 
  
+                <View style={{alignSelf:'flex-end'}}>
+                  <TouchableOpacity style={{width:"35%",marginRight:"2%"}} >
+                  <Button style={{width:"100%",borderRadius:8,backgroundColor:'#1FABAB'}} onPress={()=>{this.creatEvent()}}>
+                  <Text>Create Event</Text>
+                  </Button>
+                  </TouchableOpacity>
+                  </View>
               
                <EventTitle isOpen={this.state.EventTitleState} onClosed={()=>{
                  this.setState({EventTitleState:false}); }} ref={"title_ref"}  />
@@ -220,23 +212,13 @@ export default class CreateEventView extends Component {
                 ref={"location_ref"}  eventId={"newEventId"} updateLoc={false}/>
 
                <EventHighlights   isOpen={this.state.EventHighlightState} onClosed={()=>{this.setState({EventHighlightState:false})}}
-                parentComponent={this} ref={"highlights"}/>
+                parentComponent={this} ref={"highlights"} participant={this.state.participant}/>
 
-
-                  <View style={{alignSelf:'flex-end'}}>
-                  <TouchableOpacity style={{width:"35%",marginRight:"2%"}} >
-                  <Button style={{width:"100%",borderRadius:8,backgroundColor:'#1FABAB'}} onPress={()=>{this.creatEvent()}}>
-                  <Text>Create Event</Text>
-                  </Button>
-                  </TouchableOpacity>
-                  </View>
-
-
-              </View>
-
+          </View>
+  
           
-    );
-  }
+    )}
+
 }
 
 
