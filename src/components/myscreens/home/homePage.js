@@ -300,7 +300,7 @@ class Home extends Component {
           shadowOffset: {
             height: 1,
           },
-          shadowRadius: 10, elevation:6,margin: '1%',alignSelf: 'center', }}>
+          shadowRadius: 10, elevation:6,alignSelf: 'center', marginLeft: "1%",marginRight: "1%", }}>
           <View style={{ flex: 1, backgroundColor: "#FEFFDE", flexDirection: "row", justifyContent: "space-between", marginLeft: "3%", marginRight: "3%" }}>
             <Thumbnail small source={require("../../../../assets/ic_launcher_round.png")}></Thumbnail>
             <TouchableOpacity style={{ marginTop: '2%', }}>
