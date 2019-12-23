@@ -84,7 +84,7 @@ const AppNavigator = createStackNavigator(
     LocalTasksCreation:{screen:LocalTasksCreation}
   },
   { 
-    initialRouteName: "Home",
+    initialRouteName: "LoginHome",
     headerMode: "none"
   }
 );

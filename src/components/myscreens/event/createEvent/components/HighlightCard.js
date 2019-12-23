@@ -19,6 +19,8 @@ import { filter,uniqBy,orderBy,find,findIndex,reject,uniq,indexOf,forEach,dropWh
 import request from "../../../../../services/requestObjects";
 import EventHighlights from "./EventHighlights"
 import BleashupAlert from './BleashupAlert';
+import testForURL from '../../../../../services/testForURL';
+import CacheImages from '../../../../CacheImages';
 
 
 let {height, width} = Dimensions.get('window')
@@ -100,9 +102,9 @@ componentDidMount(){
             <Text>{this.props.item.title.length>16?this.props.item.title.slice(0,16)+"..":this.props.item.title}</Text>
            </CardItem>
            <CardItem>
-             <View style={{width:150,height:height/7}}>
-            <Thumbnail source={{uri:this.props.item.url.photo}} style={{ flex: 1, width:null,height:null,
-              borderRadius:8}} large ></Thumbnail>
+             <View style={{width:"100%",height:height/7}}>
+                {testForURL(this.props.item.url.photo) ? <CacheImages thumbnails square style={{ width: "100%", height: height / 7,borderRadius: 8,}} source={{ uri: this.props.item.url.photo}}></CacheImages>:<Thumbnail source={{uri:this.props.item.url.photo}} style={{ flex: 1, width:null,height:null,
+              borderRadius:8}} large ></Thumbnail>}
             </View>
            </CardItem>
            <CardItem style={{height:height/18}}>

@@ -1,6 +1,6 @@
 
 import React, { Component } from 'react';
-import { View, Dimensions, BackHandler, StatusBar ,LayoutAnimation} from 'react-native';
+import { View, Dimensions, BackHandler, StatusBar, LayoutAnimation } from 'react-native';
 import PublicEvent from "./publicEvent.js"
 import { observer } from 'mobx-react';
 import BleashupScrollView from '../../../BleashupScrollView.js';
@@ -31,40 +31,40 @@ export default class CurrentEvents extends Component {
             event_id: null,
             isParticipantModalOpened: false,
             isActionButtonVisible: true,
-            newData:[]
+            newData: []
         }
     }
-          state = {
+    state = {
 
-          }
+    }
 
-          // 2. Define a variable that will keep track of the current scroll position
-          _listViewOffset = 0
+    // 2. Define a variable that will keep track of the current scroll position
+    _listViewOffset = 0
 
-          _onScroll = (event) => {
-            // Simple fade-in / fade-out animation
-            const CustomLayoutLinear = {
-              duration: 100,
-              create: { type: LayoutAnimation.Types.linear, property: LayoutAnimation.Properties.opacity },
-              update: { type: LayoutAnimation.Types.linear, property: LayoutAnimation.Properties.opacity },
-              delete: { type: LayoutAnimation.Types.linear, property: LayoutAnimation.Properties.opacity }
-            }
-            // Check if the user is scrolling up or down by confronting the new scroll position with your own one
-            const currentOffset = event.nativeEvent.contentOffset.y
-            const direction = (currentOffset > 0 && currentOffset > this._listViewOffset)
-              ? 'down'
-              : 'up'
-            // If the user is scrolling down (and the action-button is still visible) hide it
-            const isActionButtonVisible = direction === 'up'
-            if (isActionButtonVisible !== this.state.isActionButtonVisible) {
-              LayoutAnimation.configureNext(CustomLayoutLinear)
-              this.setState({ isActionButtonVisible })
-            }
-            // Update your scroll position
-            this._listViewOffset = currentOffset
-          }
-  
-          
+    _onScroll = (event) => {
+        // Simple fade-in / fade-out animation
+        const CustomLayoutLinear = {
+            duration: 100,
+            create: { type: LayoutAnimation.Types.linear, property: LayoutAnimation.Properties.opacity },
+            update: { type: LayoutAnimation.Types.linear, property: LayoutAnimation.Properties.opacity },
+            delete: { type: LayoutAnimation.Types.linear, property: LayoutAnimation.Properties.opacity }
+        }
+        // Check if the user is scrolling up or down by confronting the new scroll position with your own one
+        const currentOffset = event.nativeEvent.contentOffset.y
+        const direction = (currentOffset > 0 && currentOffset > this._listViewOffset)
+            ? 'down'
+            : 'up'
+        // If the user is scrolling down (and the action-button is still visible) hide it
+        const isActionButtonVisible = direction === 'up'
+        if (isActionButtonVisible !== this.state.isActionButtonVisible) {
+            LayoutAnimation.configureNext(CustomLayoutLinear)
+            this.setState({ isActionButtonVisible })
+        }
+        // Update your scroll position
+        this._listViewOffset = currentOffset
+    }
+
+
 
     showPhoto(url) {
         this.setState({
@@ -112,47 +112,47 @@ export default class CurrentEvents extends Component {
 
     delay = 0
     renderPerbatch = 3
-componentDidMount(){
-    let id1="cc28b850-2555-11ea-9234-4fbde55a1fd4";
-    //let id1="e761ac10-252f-11ea-9234-dd23f4cef77f"
-    let id2="71e57d50-252e-11ea-9234-dd23f4cef77f"
+    componentDidMount() {
+        //  let id1="cc28b850-2555-11ea-9234-4fbde55a1fd4";
+        //let id1="e761ac10-252f-11ea-9234-dd23f4cef77f"
+        // let id2="71e57d50-252e-11ea-9234-dd23f4cef77f"
 
-    //let id1="69e364e0-256b-11ea-9234-df4ca56abe45";
-    //let id2="e7b468b0-256b-11ea-9234-df4ca56abe45"
-    stores.Events.readFromStore().then((Events)=>{
-        let event1 = find(Events, { id:id1 });
-        let event2 = find(Events, { id:id2 });
-        this.state.newData.push(event1);
-        this.state.newData.push(event2);
-        this.setState({newData:this.state.newData});
+        //let id1="69e364e0-256b-11ea-9234-df4ca56abe45";
+        //let id2="e7b468b0-256b-11ea-9234-df4ca56abe45"
+        //  stores.Events.readFromStore().then((Events)=>{
+        //    let event1 = find(Events, { id:id1 });
+        //      let event2 = find(Events, { id:id2 });
+        //    this.state.newData.push(event1);
+        //    this.state.newData.push(event2);
+        //    this.setState({newData:this.state.newData});
 
-     /*   stores.Highlights.readFromStore().then((Highlights)=>{
-            //console.warn("all highlights",Highlights)
-            //console.warn("second event",event2)
-            //console.warn("first event",event1)
-            let h1 = find(Highlights, { id:event1.highlights[0] });
-            let h2 = find(Highlights, { id:event1.highlights[1] });
-            console.warn("highlight 1",h1)
-            console.warn("highlight 2",h2)
-        
-
-        })*/
+        /*   stores.Highlights.readFromStore().then((Highlights)=>{
+               //console.warn("all highlights",Highlights)
+               //console.warn("second event",event2)
+               //console.warn("first event",event1)
+               let h1 = find(Highlights, { id:event1.highlights[0] });
+               let h2 = find(Highlights, { id:event1.highlights[1] });
+               console.warn("highlight 1",h1)
+               console.warn("highlight 2",h2)
+           
+   
+           })*/
         //console.warn("all highlights",this.state.newData)
 
-    })
+        //  })
 
-}
+    }
 
     render() {
-        
-        StatusBar.setHidden(false,true)
+
+        StatusBar.setHidden(false, true)
 
 
         return (
             <View style={{ height: "100%", backgroundColor: "#FEFFDE" }}>
                 <BleashupFlatList
                     keyExtractor={(item, index) => item.id}
-                    dataSource={this.state.newData}
+                    dataSource={this.props.data}
                     onScroll={this._onScroll}
                     renderItem={(item, index) => {
                         this.delay = index % this.renderPerbatch == 0 ? 0 : this.delay + 1
@@ -225,7 +225,7 @@ componentDidMount(){
                     }}>
                 </DetailsModal> : null}
 
-                {this.state.isActionButtonVisible ? <CreateEvent {...this.props}  /> : null}
+                {this.state.isActionButtonVisible ? <CreateEvent {...this.props} /> : null}
             </View>
         )
     }

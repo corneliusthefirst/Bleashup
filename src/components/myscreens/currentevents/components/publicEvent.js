@@ -85,9 +85,7 @@ class PublicEvent extends Component {
   componentDidMount() {
     setTimeout(() => {
       stores.TemporalUsersStore.getUser(this.props.Event.creator_phone).then(creator => {
-        console.warn("here 1",creator)
         stores.Events.isMaster(this.props.Event.id, stores.LoginStore.user.phone).then(master => {
-          console.warn("here 2",master)
           this.setState({
             master: master,
             joint: findIndex(this.props.Event.participant, { phone: stores.LoginStore.user.phone }) > 0 ? true : false,
@@ -95,9 +93,7 @@ class PublicEvent extends Component {
             isMount: true
           })
           stores.Highlights.fetchHighlightsFromRemote(this.props.Event.id).then(highlights => {
-            console.warn("here3",highlights)
             if (highlights.length > 0) {
-              console.warn("here 4")
               setTimeout(() => {
                 this.interval = setInterval(() => {
                   let highlight = highlights[this.counter]

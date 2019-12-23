@@ -78,7 +78,7 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
     extractData() {
         let temporaryResult = []
         let possibleFilter = []
-        return this.props.dataSource.slice(this.previousData.length, this.state.currentRender)
+        return this.props.dataSource.slice(this.previousData.length, this.props.dataSource.length-1)
 
     }
     renderNewData() {
@@ -117,7 +117,7 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
                     removeClippedSubviews={false}
                     maxToRenderPerBatch={this.props.renderPerBatch ? this.props.renderPerBatch : this.props.inverted ? 5 : this.state.endReached ? 1 : 3}
                     //updateCellsBatchingPeriod={10}
-                    showsVerticalScrollIndicator={false}
+                    showsHorizontalScrollIndicator={false}
                     keyExtractor={this.props.keyExtractor}
                     getItemLayout={this.props.getItemLayout}
                     data={this.renderNewData().concat(this.extractData())}

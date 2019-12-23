@@ -332,7 +332,7 @@ class Home extends Component {
             alignSelf: 'center',
             margin: '2%',
             shadowRadius: 2,
-            elevation: 20, margin: "1%", height: 45, backgroundColor: "#FEFFDE", borderRadius: 4, }}
+            elevation: 20, margin: "1%", height: 45, backgroundColor: "#1FABAB", borderRadius: 4, }}
           tabBarPosition="bottom"
           tabBarUnderlineStyle={{
             backgroundColor: "transparent"
@@ -350,7 +350,7 @@ class Home extends Component {
             heading={
               <TabHeading>
                 <View style={{ display: 'flex', }}>
-                  <Icon name="ios-pulse" type="Ionicons" style={{ fontSize: this.state.currentTab == 0 ? 45 : 15, }} />
+                  <Icon name="ios-pulse" type="Ionicons" style={{ fontSize: this.state.currentTab == 0 ? 40 : 15, }} />
                 </View>
               </TabHeading>
             }

@@ -69,8 +69,8 @@ import PhotoViewer from "../event/PhotoViewer";
           <BleashupFlatList
             initialRender={this.renderPerBatch}
             renderPerBatch={this.renderPerBatch}
-            firstIndex={0}
             //onScroll={this._onScroll}
+            firstIndex={0}
             keyExtractor={this._keyExtractor}
             dataSource={sortBy(stores.Invitations.invitations, "period")}
             numberOfItems={stores.Invitations.invitations.length}
