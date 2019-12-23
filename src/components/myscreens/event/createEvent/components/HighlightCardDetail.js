@@ -10,7 +10,6 @@ import ActionButton from 'react-native-action-button';
 import Modal from 'react-native-modalbox';
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 import autobind from "autobind-decorator";
-import CacheImages from "../../../../CacheImages";
 import Swipeout from 'react-native-swipeout';
 import PhotoEnlargeModal from "../../../invitations/components/PhotoEnlargeModal";
 

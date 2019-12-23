@@ -68,13 +68,13 @@ export default class TitleView extends Component {
                         this.navigateToEventDetails()
                     }
                     )}>
-                        <View>
+                        <View style={{flexDirection:"column",alignItems:"flex-start"}}>
                             <Title
                                 adjustsFontSizeToFit={true}
                                 style={{
-                                    fontSize: 22,
+                                    fontSize: 20,
                                     color:"#0A4E52",
-                                    fontWeight: "bold",
+                                    fontWeight: "500",
                                     fontFamily: "Roboto",
                                 }}
                             >

@@ -37,9 +37,12 @@ export default class EventDescription extends Component {
         //console.warn("this is also my event id",this.props.eventId); 
         let event = find(Events, { id:this.props.eventId });
         //console.warn("this is my event",event); 
-        this.setState({description: event.about.description});
-        this.setState({event_id:this.props.eventId});
-        this.setState({update:this.props.updateDes?this.props.updateDes:false});
+         this.setState({
+          description: event.about.description,
+          event_id:this.props.eventId,
+          update:this.props.updateDes?this.props.updateDes:false
+         });
+  
        });
     }
 
@@ -57,8 +60,10 @@ export default class EventDescription extends Component {
       stores.Events.updateDescription(this.state.event_id,this.state.description ,false).then(()=>{});
       this.props.parentComp.state.EventData.about.description = this.state.description;
       this.props.parentComp.setState({EventData:this.props.parentComp.state.EventData});
-      this.setState({description:""});
-      this.setState({update:false});
+      this.setState({
+        description:"",
+        update:false
+      });
       this.props.onClosed();
     }
  

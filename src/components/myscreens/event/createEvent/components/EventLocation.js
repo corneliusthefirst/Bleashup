@@ -32,10 +32,12 @@ export default class EventLocation extends Component {
   init(){
     stores.Events.readFromStore().then(Events =>{
       let event = find(Events, { id:this.props.eventId });
-      this.setState({update:this.props.updateLoc?this.props.updateLoc:false});
       this.state.location.string= event.location.string;
-      this.setState({location:this.state.location});
-      this.setState({event_id:this.props.eventId});
+      this.setState({
+        update:this.props.updateLoc?this.props.updateLoc:false,
+        location:this.state.location,
+        event_id:this.props.eventId
+      });
     });
   }
 

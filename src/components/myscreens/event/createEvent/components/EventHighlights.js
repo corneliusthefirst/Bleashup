@@ -20,6 +20,7 @@ import moment from "moment"
 import { head,filter,uniqBy,orderBy,find,findIndex,reject,uniq,indexOf,forEach,dropWhile } from "lodash";
 import request from "../../../../../services/requestObjects";
 import SearchImage from './SearchImage';
+import  BleashupHorizontalFlatList from '../../../../BleashupHorizotalFlatList';
 
 //create an extension to toast so that it can work in my modal
 
@@ -69,10 +70,10 @@ export default class EventHighlights extends Component {
           animateHighlight:false,
           currentHighlight:request.Highlight(),
           update:false,
-          searchImageState:false
-    
-
-
+          searchImageState:false,
+          participant:null,
+          isMounted:false
+          
         }
       
     }
@@ -81,59 +82,39 @@ export default class EventHighlights extends Component {
 
 
 
-
 componentDidMount(){
+  setTimeout(()=>{
     //i set the current new highlight data on startUp
     stores.Highlights.readFromStore().then(Highlights =>{
-         // console.warn(Highlights,"All higlights");
-          let highlight = find(Highlights, { id:this.props.highlight_id?this.props.highlight_id:"newHighlightId" }); 
-         console.warn(highlight,"constructor higlight");
-          this.setState({currentHighlight:highlight});
-              
-      });
-       
-        //console.warn(this.state.currentHighlight,"constructor");
-
-       //On startUp for each highlightId in new Event i set all the highlightData
-       stores.Events.readFromStore().then(Events => {
-        //console.warn(Events,"All Events"); 
-       let event =  find(Events, { id:this.props.event_id?this.props.event_id:"newEventId" });
-   
-       forEach(event.highlights,(highlightId)=>{
-        stores.Highlights.readFromStore().then((Highlights)=>{
-           let highlight = find(Highlights, { id:highlightId });
-           //console.warn(highlight,"before"); 
-
-           this.setState({highlightData: [ ...this.state.highlightData, highlight]}, () => { console.log(this.state.highlightData),"after" }); 
-                    
-       });
-
-     });
-     
+      //console.warn(Highlights,"All higlights");
+       let highlight = find(Highlights, { id:this.props.highlight_id?this.props.highlight_id:"newHighlightId" }); 
+       console.warn(highlight,"constructor higlight");
+       this.setState({currentHighlight:highlight});     
+   });
+    
+    //On startUp for each highlightId in new Event i set all the highlightData
+    let event_id=this.props.event_id?this.props.event_id:"newEventId";
+    stores.Highlights.fetchHighlights(event_id).then(Highlights => {
+       this.setState({highlightData:Highlights})
+    })
 
 
-  });
+setInterval(() => {
+ if((this.state.animateHighlight == true) && (this.state.highlightData.length > 2)){
+ this.highlight_flatlistRef.scrollToIndex({animated: true, index: this.state.initialScrollIndex,viewOffset:0,viewPosition:0});
 
-
-
-
-  setInterval(() => {
-    if((this.state.animateHighlight == true) && (this.state.highlightData.length > 2)){
-    this.flatListRef.scrollToIndex({animated: true, index: this.state.initialScrollIndex,viewOffset:0,viewPosition:0});
-
-   if(this.state.initialScrollIndex >= (this.state.highlightData.length)-2){
-     this.setState({initialScrollIndex:0})
-   }else{
-     this.setState({initialScrollIndex:this.state.initialScrollIndex + 2})
-   }
-    }
-  } ,4000) 
-
-
+if(this.state.initialScrollIndex >= (this.state.highlightData.length)-2){
+  this.setState({initialScrollIndex:0})
+}else{
+  this.setState({initialScrollIndex:this.state.initialScrollIndex + 2})
+}
  }
+} ,4000) 
+this.setState({isMounted:true});
 
-
-
+},400)
+ 
+ }
 
 
 @autobind
@@ -186,7 +167,7 @@ return new Promise((resolve, reject) => {
 
 @autobind
 back(){
-  this.setState({animateHighlight:false});
+  this.setState({animateHighlight:false})
   this.props.onClosed();  
 }
 
@@ -244,7 +225,9 @@ if(this.state.currentHighlight.url.photo == ""){
 
   stores.Highlights.readFromStore().then(Highlights =>{ 
     let newHighlight = request.Highlight();
+    console.warn("here5",newHighlight);
     let highlight = find(Highlights, { id:"newHighlightId" }); 
+    console.warn("here4",highlight)
     newHighlight =  highlight;
     newHighlight.id = New_id;
     newHighlight.event_id = this.props.event_id?this.props.event_id:"newEventId";   //new event id
@@ -255,20 +238,18 @@ if(this.state.currentHighlight.url.photo == ""){
       newHighlight.creator = user.name;
       newHighlight.created_at = moment().format("YYYY-MM-DD HH:mm");
     })
-
-    this.state.highlightData.push(newHighlight);
-    this.setState({highlightData:this.state.highlightData});
-
+    console.warn("here1")
+       this.setState({highlightData: [ ...this.state.highlightData, newHighlight]}, () => { console.log("after",this.state.highlightData)}); 
+    console.warn("here2")
     if(this.props.event_id){
-      this.props.parentComponent.state.highlightData.push(newHighlight);
-      this.props.parentComponent.setState({highlightData:this.state.highlightData});
+      this.props.parentComponent.setState({highlightData: [ ...this.props.parentComponent.state.highlightData, newHighlight]}, () => { console.log("after",this.props.parentComponent.state.highlightData)}); 
+      console.warn("here3")
     }
    
     stores.Highlights.addHighlights(newHighlight ).then(()=>{});
     //add the new highlight id to our newly created event for it to be accessed later when needed using this id
     stores.Events.addHighlight(newHighlight.event_id, newHighlight.id,false).then(()=>{});
     stores.Events.readFromStore().then((Events)=>{console.warn(Events,"After highlight id insertion");})
-
 
      //reset the class currentHighlight state
      this.resetHighlight();
@@ -277,8 +258,6 @@ if(this.state.currentHighlight.url.photo == ""){
      stores.Highlights.removeHighlight("newHighlightId").then(()=>{});
      stores.Highlights.addHighlights(this.state.currentHighlight).then(()=>{});
      //stores.Highlights.resetHighlight(this.state.currentHighlight,false).then(()=>{});
-     
-
    });
   }
 
@@ -301,60 +280,65 @@ deleteHighlight(id){
   this.setState({highlightData: this.state.highlightData});
 }
 
- 
-  getItemLayout = (data, index) => (
+
+_keyExtractor = (item, index) => item.id;
+
+
+_getItemLayout = (data, index) => (
     { length: 100, offset: 100 * index, index }
   )
- _keyExtractor = (item, index) => item.id;
- _renderItem = ({item,index}) => (
-   
-    <HighlightCard   participant={this.props.participant}  parentComponent={this} item={item} ancien={false} deleteHighlight={(id)=>{this.deleteHighlight(id)}} ref={"higlightcard"}/>
-    
-  );
-
 
 
 
     render() {
-    	return(
+    	return this.state.isMounted ?(
 
-   
      <Modal
       isOpen={this.props.isOpen}
-      onClosed={this.props.onClosed}
+      onClosed={()=>{
+        this.props.onClosed()
+        this.setState({animateHighlight:false})
+      }}
       style={{ height: "100%", borderRadius: 3,
       backgroundColor:"#FEFFDE",borderColor:'black',width: "99%",flexDirection:'column'  }}
       coverScreen={true}
       position={'bottom'}
       swipeToClose={false}
-      backdropPressToClose={false}
+      //backdropPressToClose={false}
      >
     <Root>
       <View style={{height:"100%",backgroundColor:"#FEFFDE",width:"100%"}}>
-            <Header style={{backgroundColor:"#FEFFDE",width:"100%",justifyContent:"flex-start",alignItems:"center"}}> 
-              <Button onPress={this.back} transparent>
-                <Icon type='Ionicons' name="md-arrow-round-back" style={{color:"#1FABAB",marginLeft:"3%"}} />
-              </Button>   
+      <View style={{height:"8%",width:"96%",flexDirection:"row",backgroundColor:"#FEFFDE",alignItems:"flex-start",marginLeft:"2%",marginRight:"2%"}}>
+           <View >
+             <TouchableOpacity>
+                <Icon  onPress={this.back} type='MaterialCommunityIcons' name="keyboard-backspace" style={{color:"#1FABAB"}} />
+             </TouchableOpacity>
+           </View>
 
-           </Header>
+         </View>
 
           <View style={{height:"95%",width:"100%"}}>
 
-           <ScrollView ref={"svrollView"} >
-            <View style={{height:this.state.highlightData.length==0 ? 0:height/4 + height/14,width:"100%",borderColor:"gray",borderWidth:1}} >
-              <FlatList
-              style={{flex:1}}
-              data={this.state.highlightData}
-              ref={(ref) => { this.flatListRef = ref }}
-              horizontal={true}
-              getItemLayout={this.getItemLayout}
-              initialScrollIndex={0}
-              initialNumToRender={3}
-              maxToRenderPerBatch={4}
-              keyExtractor={this._keyExtractor}
-              renderItem={this._renderItem}       
-              />
-            </View>
+   <ScrollView ref={"svrollView"} >
+     <View style={{height:this.state.highlightData.length==0 ? 0:height/4 + height/14,width:"100%",borderColor:"gray",borderWidth:1}} >
+         <BleashupHorizontalFlatList
+          initialRender={4}
+          renderPerBatch={5}
+          firstIndex={0}
+          refHorizontal={(ref) => { this.highlight_flatlistRef = ref }}
+          keyExtractor={this._keyExtractor}
+          dataSource={this.state.highlightData}
+          parentComponent={this}
+          getItemLayout={this._getItemLayout}
+          renderItem={(item, index) => {
+            return (
+                <HighlightCard   participant={this.props.participant}  parentComponent={this} item={item} ancien={false} 
+                   deleteHighlight={(id)=>{this.deleteHighlight(id)}} ref={"higlightcard"}/>
+            );
+          }} 
+        >
+        </BleashupHorizontalFlatList>
+     </View>
 
           <View style={{height:height/6,alignItems:'center'}}>
                    <Text style={{alignSelf:'flex-start',margin:"3%",fontWeight:"500",fontSize:16}} >Highlight Name :</Text>
@@ -451,7 +435,8 @@ deleteHighlight(id){
 
 </Modal>
 
-    )}
+    ): <Spinner size={"small"} style={{alignSelf:"center"}}></Spinner> 
+  }
 
     }
 

@@ -16,19 +16,34 @@ export default class CreateEvent extends Component {
   
 
   onClickNewEvent(){
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve, rejectPromise) => {
     
-    //stores.Events.delete("newEventId").then(()=>{});
+    //stores.Events.delete("newEventId").then(()=>{console.warn("event deleted")});
+   
 
     stores.Events.readFromStore().then(Events =>{
      let event = find(Events, { id:"newEventId" });
-      console.warn(event);
-    
+      console.warn(Events);
+    /*  let user = {
+        phone: "0666406835",
+        name: "cornelius",
+        status: "One step ahead the world",
+        age: "21",
+        nickname: "corneliusthefirst",
+        email: "ndeffo.jugal98@gmail.com",
+        created_at: "",
+        updated_at: "",
+        password:"jugal98",
+        profile:"",
+        profile_ext:""
+      }; 
+      stores.LoginStore.setUser(user).then(()=>{console.warn("user added")})*/
+   
      if(!event){
       event =  request.Event();
       event.id = "newEventId";
 
-       stores.TempLoginStore.getUser().then((user)=>{
+       stores.LoginStore.getUser().then((user)=>{
 
         event.creator_phone = user.phone;
         //we add the creator as first participant 
@@ -37,18 +52,18 @@ export default class CreateEvent extends Component {
         Participant.master = true;
         Participant.status = user.status;
         stores.Events.addEvent(event).then(()=>{});
-        stores.Events.addParticipant(event.id, Participant,false).then(()=>{
-           
-        });
+        stores.Events.addParticipant(event.id, Participant,false).then(()=>{})
+
       })
 
      }
 
+    //stores.Highlights.removeHighlight("newHighlightId").then(()=>{console.warn("highlight removed")})   
     stores.Highlights.readFromStore().then(Highlights =>{
       
      let highlight = find(Highlights, { id:"newHighlightId" }); 
      //let highlight1 = find(Highlights, { id:"1dad9df0-fbc4-11e9-9234-25e415964302" });
-     console.warn("here is highlight",highlight);
+     //console.warn("here is highlight",highlight);
 
      if(!highlight){
        highlight =  request.Highlight();

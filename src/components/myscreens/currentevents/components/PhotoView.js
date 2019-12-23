@@ -28,9 +28,8 @@ export default class PhotoView extends Component {
                     height: this.props.height ? this.props.height : 150,
                     width: this.props.width ? this.props.width : "100%",
                     borderRadius: this.props.borderRadius ? this.props.borderRadius : 0
-                }} square source={require('../../../../../assets/default_event_image.jpeg')}></Thumbnail> : <CacheImages thumbnails source={{
-                    uri: this.props.photo
-                }}
+                }} square source={require('../../../../../assets/default_event_image.jpeg')}></Thumbnail> :
+                <CacheImages thumbnails source={{uri: this.props.photo}}
                     //parmenent={false}
                     style={{
                         height: this.props.height ? this.props.height : 150,
@@ -39,7 +38,8 @@ export default class PhotoView extends Component {
                     }}
                     //resizeMode="contain"
                     width={this.props.width}
-                ></CacheImages>}
+                ></CacheImages>
+                }
             </TouchableOpacity>
             {/*<PhotoModal joined={this.props.joined} hasJoin={this.props.hasJoin} isToBeJoin isOpen={this.state.isModalOpened} image={this.props.photo}
                 onClosed={() => {

@@ -10,7 +10,6 @@ import ActionButton from 'react-native-action-button';
 import Modal from 'react-native-modalbox';
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 import autobind from "autobind-decorator";
-import CacheImages from "../../../../CacheImages";
 import Swipeout from 'react-native-swipeout';
 import HighlightCardDetail from "./HighlightCardDetail";
 import  stores from '../../../../../stores/index';
@@ -97,7 +96,7 @@ componentDidMount(){
           <Card style={{width:width/2 - width/40}}>
 
           <TouchableOpacity onPress={() => {this.setState({isOpen:true}) }} >
-           <CardItem style={{margin:3,height:height/30}}>
+           <CardItem style={{margin:3,height:height/30}}> 
             <Text>{this.props.item.title.length>16?this.props.item.title.slice(0,16)+"..":this.props.item.title}</Text>
            </CardItem>
            <CardItem>
@@ -107,12 +106,12 @@ componentDidMount(){
             </View>
            </CardItem>
            <CardItem style={{height:height/18}}>
-            <Text>{this.props.item.description.length>25?this.props.item.description.slice(0,25)+"...":this.props.item.description}</Text>
+            <Text>{this.props.item.description.length>18?this.props.item.description.slice(0,18)+"...":this.props.item.description}</Text>
            </CardItem>
             </TouchableOpacity>
 
            {this.props.participant.master &&
-                <CardItem >
+                <CardItem style={{height:height/18}}>
                 <Left>
                  <TouchableOpacity onPress={() => {return this.update()}}  style={{marginRight:"15%"}}>
     
@@ -140,7 +139,7 @@ componentDidMount(){
          
           {this.props.ancien==true &&
            <EventHighlights   isOpen={this.state.EventHighlightState} onClosed={()=>{this.setState({EventHighlightState:false})}}
-           parentComponent={this} ref={"highlights"} event_id={this.props.item.event_id} highlight_id={this.props.item.highlight_id}/>
+           parentComponent={this} ref={"highlights"} participant={this.props.participant} event_id={this.props.item.event_id} highlight_id={this.props.item.highlight_id}/>
           }
 
        </Card>  
