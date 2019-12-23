@@ -296,7 +296,7 @@ class Home extends Component {
       <Container style={{ backgroundColor: "#FEFFDE" }}>
 
         <View style={{
-          height: 40, width: "98%", backgroundColor: "#FEFFDE", shadowOpacity: 1,
+          height: 40, width: "98%", backgroundColor: "#FEFFDE", shadowOpacity: 1,borderBottomRightRadius: 5,borderBottomLeftRadius: 5,
           shadowOffset: {
             height: 1,
           },
