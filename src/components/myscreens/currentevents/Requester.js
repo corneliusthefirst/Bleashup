@@ -68,6 +68,7 @@ class Requester {
             eventID.event_id = event_id;
             requestData.publishEvent(eventID, event_id + "publish").then(JSONData => {
                 serverEventListener.sendRequest(JSONData, event_id + "publish").then(SuccessMessage => {
+                    Toast.show({ type: "success", text: "successfully published to your contacts", buttonText: "ok" })
                     stores.Events.publishEvent(event_id, false).then(() => {
                         stores.Publishers.addPublisher(event_id, {
                             phone:

@@ -166,7 +166,7 @@ class PublicEvent extends Component {
           publishing: false,
           public: true
         })
-        Toast.show({ type: "success", text: "successfully published to your contacts", buttonText: "ok" })
+        
       }).catch(error => {
         this.setState({
           publishing: false

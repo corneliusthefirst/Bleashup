@@ -549,8 +549,8 @@ export default class events {
       this.readFromStore().then(Events => {
         let index = findIndex(Events, { id: EventID });
         Events[index].public = true;
-        Events[index].updated_at = moment().format();
-        if (inform) Events[index].updated = true
+        //Events[index].updated_at = moment().format();
+       // if (inform) Events[index].updated = true
         this.saveKey.data = Events;
         storage.save(this.saveKey).then(() => {
           this.setProperties(this.saveKey.data, inform);
