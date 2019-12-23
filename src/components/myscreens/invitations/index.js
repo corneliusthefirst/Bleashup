@@ -6,7 +6,7 @@ import { Spinner } from "native-base";
 import stores from "../../../stores";
 import { observer } from "mobx-react";
 import { sortBy } from "lodash"
-import { View ,StatusBar,LayoutAnimation} from 'react-native';
+import { View ,StatusBar,LayoutAnimation,BackHandler} from 'react-native';
 import BleashupFlatList from '../../BleashupFlatList';
 import CreateEvent from '../event/createEvent/CreateEvent';
 import DetailsModal from "./components/DetailsModal";
@@ -16,7 +16,7 @@ import PhotoViewer from "../event/PhotoViewer";
   constructor(props) {
     super(props)
     this.state = {
-      isActionButtonVisible: true
+      isActionButtonVisible: false
     }
   }
   renderPerBatch = 6
@@ -48,8 +48,16 @@ import PhotoViewer from "../event/PhotoViewer";
         // Update your scroll position
         this._listViewOffset = currentOffset
       }
-  
-      
+      handleBackButton(){
+        this.props.navigation.navigate('Home')
+        return true
+      }
+      componentWillMount() {
+        BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this));
+      }
+      componentWillUnmount() {
+        BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton.bind(this));
+      }
 
   _keyExtractor = (item, index) => item.invitation_id;
   render() {
@@ -62,7 +70,7 @@ import PhotoViewer from "../event/PhotoViewer";
             initialRender={this.renderPerBatch}
             renderPerBatch={this.renderPerBatch}
             firstIndex={0}
-            onScroll={this._onScroll}
+            //onScroll={this._onScroll}
             keyExtractor={this._keyExtractor}
             dataSource={sortBy(stores.Invitations.invitations, "period")}
             numberOfItems={stores.Invitations.invitations.length}
