@@ -64,7 +64,7 @@ componentDidMount(){
     let event = find(Events, { id:"newEventId" }); 
      this.setState({currentEvent:event});
      this.setState({participant:head(event.participant)})
-     console.warn(this.state.currentEvent );
+     console.warn("participant",this.state.participant,this.state.currentEvent );
    });
 
 }
@@ -103,6 +103,9 @@ componentDidMount(){
      });
 
       newEvent.created_at = moment().format("YYYY-MM-DD HH:mm");
+      if(newEvent.period == ""){
+        newEvent.period = moment().format();
+      }
 
   
           console.warn("the event is",newEvent);
@@ -111,6 +114,9 @@ componentDidMount(){
           //reset new Event object
           let reset = request.Event();
           reset.id = "newEventId";
+          //deault to the phone user
+          reset.participant.push(head(newEvent.participant));
+
           this.refs.title_ref.setState({title:""});
           this.refs.title_ref.setState({date:""});
           this.refs.title_ref.setState({inputTimeValue:""});
@@ -119,7 +125,7 @@ componentDidMount(){
           this.refs.photo_ref.setState({EventPhoto:""});
           this.refs.description_ref.setState({description:""});
           this.refs.location_ref.setState({location:request.Location()});
-          this.refs.highlights.setState({highlightData:[]});
+          this.refs.highlight_ref.setState({highlightData:[]});
     
           stores.Events.delete(reset.id).then(()=>{});
           stores.Events.addEvent(reset).then(()=>{});

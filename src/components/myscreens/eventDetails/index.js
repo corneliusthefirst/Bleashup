@@ -25,6 +25,7 @@ import EventDescription from "../event/createEvent/components/EventDescription";
 import EventHighlights from "../event/createEvent/components/EventHighlights";
 import Hyperlink from 'react-native-hyperlink';
 import moment from 'moment';
+import  BleashupHorizontalFlatList from '../../BleashupHorizotalFlatList';
 
 let { height, width } = Dimensions.get('window');
 
@@ -39,7 +40,7 @@ export default class EventDetailView extends Component {
       highlightData: [],
       EventData: request.Event(),
       isMounted: false,
-      animateHighlight: true,
+      animateHighlight:false,
       defaultDetail: "No  Event Decription !!",
       defaultLocation: "No event location given !",
       username: "",
@@ -57,6 +58,7 @@ export default class EventDetailView extends Component {
 
   @autobind
   initializer() {
+
     stores.Highlights.fetchHighlights(this.props.Event.id).then(Highlights => {
       let res = moment(this.props.Event.created_at).format().split("T");
       let participant = find(this.props.Event.participant, { phone: stores.LoginStore.user.phone });
@@ -68,7 +70,7 @@ export default class EventDetailView extends Component {
             isMounted: true,
             username: creatorInfo.nickname,
             creation_time: res[1] ? res[1].split("+")[0] : null,
-            EventData: this.props.Event,
+            EventData: this.props.Event, 
             participant: participant
           })
         })
@@ -80,12 +82,12 @@ export default class EventDetailView extends Component {
 
 
   componentDidMount() {
-
+    this.setState({animateHighlight:true});
     this.initializer();
 
     setInterval(() => {
       if ((this.state.animateHighlight == true) && (this.state.highlightData.length > 2)) {
-        this.flatListRef.scrollToIndex({ animated: true, index: this.state.initialScrollIndex, viewOffset: 0, viewPosition: 0 });
+        this.detail_flatlistRef.scrollToIndex({ animated: true, index: this.state.initialScrollIndex, viewOffset: 0, viewPosition: 0 });
 
         if (this.state.initialScrollIndex >= (this.state.highlightData.length) - 2) {
           this.setState({ initialScrollIndex: 0 });
@@ -98,7 +100,10 @@ export default class EventDetailView extends Component {
 
   }
 
-
+  componentWillUnmount(){
+    this.state.animateHighlight = false;
+  }
+  
 
 
 
@@ -118,22 +123,24 @@ export default class EventDetailView extends Component {
 
 
 
-  getItemLayout = (data, index) => (
+  _getItemLayout = (data, index) => (
     { length: 100, offset: 100 * index, index }
   )
   _keyExtractor = (item, index) => item.id;
+
+  /*
   _renderItem = ({ item, index }) => (
 
     <HighlightCard item={item} deleteHighlight={(id) => { this.deleteHighlight(id) }} ancien={true} participant={this.state.participant} />
 
-  );
+  );*/
 
 
   @autobind
   newHighlight() {
     this.setState({ EventHighlightState: true })
-  }
-
+    this.refs.highlights.setState({animateHighlight:true})
+  }  
 
 
   render() {
@@ -149,12 +156,12 @@ export default class EventDetailView extends Component {
           borderBottomWidth: 0.7,
           borderColor: '#1FABAB',
         }}>
-          <View style={{ width: "80%" }}>
+          <View style={{marginLeft:"4%"}}>
             <Title style={{ color: "#0A4E52", fontWeight: 'bold', }}>{this.props.Event.about.title}</Title>
           </View>
           <View >
             <TouchableOpacity style={{}}>
-              <Icon type='AntDesign' name="pluscircle" style={{ color: "#1FABAB", fontSize: 25, alignSelf: 'center', marginRight: "1%", }} onPress={this.newHighlight} />
+              <Icon type='AntDesign' name="pluscircle" style={{ color: "#1FABAB", fontSize: 25, alignSelf: 'center', marginRight: "5%", }} onPress={this.newHighlight} />
             </TouchableOpacity>
           </View>
 
@@ -162,19 +169,23 @@ export default class EventDetailView extends Component {
 
         <View style={{ height: "92%", flexDirection: "column", width: "100%" }} >
           <View style={{ height: this.state.highlightData.length == 0 ? 0 : height / 4 + height / 14, width: "100%" }} >
-            {<FlatList
-              style={{ flex: 1 }}
-              showsHorizontalScrollIndicator={false}
-              data={this.state.highlightData}
-              ref={(ref) => { this.flatListRef = ref }}
-              horizontal={true}
-              getItemLayout={this.getItemLayout}
-              initialScrollIndex={0}
-              initialNumToRender={30}
-              maxToRenderPerBatch={10}
-              keyExtractor={this._keyExtractor}
-              renderItem={this._renderItem}
-            />}
+          <BleashupHorizontalFlatList
+          initialRender={4}
+          renderPerBatch={5}
+          firstIndex={0}
+          refHorizontal={(ref) => { this.detail_flatlistRef = ref }}
+          keyExtractor={this._keyExtractor}
+          dataSource={this.state.highlightData}
+          parentComponent={this}
+          getItemLayout={this._getItemLayout}
+          renderItem={(item, index) => {
+            return (
+                <HighlightCard   participant={this.state.participant}  parentComponent={this} item={item} ancien={true} 
+                   deleteHighlight={(id)=>{this.deleteHighlight(id)}} ref={"higlightcard"}/>
+            );
+          }} 
+        >
+        </BleashupHorizontalFlatList>
           </View>
 
           <View style={{ height: !(this.state.highlightData && this.state.highlightData.length) > 0 ? "70%" : this.props.Event.about.description.length > 500 ? height / 3 + height / 16 : height / 3, width: "96%", borderWidth: 1, borderRadius: 8, borderColor: "#1FABAB", margin: "2%" }}>
@@ -265,7 +276,7 @@ export default class EventDetailView extends Component {
           ref={"location_ref"} updateLoc={true} eventId={this.props.Event.id} parentComp={this} />
 
         <EventHighlights update={false} isOpen={this.state.EventHighlightState} onClosed={() => { this.setState({ EventHighlightState: false }) }}
-          parentComponent={this} ref={"highlights"} event_id={this.props.Event.id} />
+           participant={this.state.participant} parentComponent={this} ref={"highlights"} event_id={this.props.Event.id} />
 
       </View>
 

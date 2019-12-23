@@ -62,7 +62,7 @@ export default class highlights {
         Highlights = reject(Highlights,{id,id});
         console.warn(Highlights,"highlight object deleted");
         this.saveKey.data = Highlights;
-        storage.save(this.saveKey.data).then(() => {
+        storage.save(this.saveKey).then(() => {
           this.highlights = this.saveKey.data;
           resolve();
         });

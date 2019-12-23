@@ -70,7 +70,9 @@ export default class EventHighlights extends Component {
           animateHighlight:false,
           currentHighlight:request.Highlight(),
           update:false,
-          searchImageState:false
+          searchImageState:false,
+          participant:null,
+          isMounted:false
           
         }
       
@@ -81,54 +83,37 @@ export default class EventHighlights extends Component {
 
 
 componentDidMount(){
-
+  setTimeout(()=>{
     //i set the current new highlight data on startUp
     stores.Highlights.readFromStore().then(Highlights =>{
-         // console.warn(Highlights,"All higlights");
-          let highlight = find(Highlights, { id:this.props.highlight_id?this.props.highlight_id:"newHighlightId" }); 
-         console.warn(highlight,"constructor higlight");
-          this.setState({currentHighlight:highlight});
-              
-      });
-       
-        //console.warn(this.state.currentHighlight,"constructor");
-
-       //On startUp for each highlightId in new Event i set all the highlightData
-       stores.Events.readFromStore().then(Events => {
-        //console.warn(Events,"All Events"); 
-       let event =  find(Events, { id:this.props.event_id?this.props.event_id:"newEventId" });
-   
-       forEach(event.highlights,(highlightId)=>{
-        stores.Highlights.readFromStore().then((Highlights)=>{
-           let highlight = find(Highlights, { id:highlightId });
-           //console.warn(highlight,"before"); 
-
-           this.setState({highlightData: [ ...this.state.highlightData, highlight]}, () => { console.log(this.state.highlightData),"after" }); 
-                    
-       });
-
-     });
-     
+      //console.warn(Highlights,"All higlights");
+       let highlight = find(Highlights, { id:this.props.highlight_id?this.props.highlight_id:"newHighlightId" }); 
+       console.warn(highlight,"constructor higlight");
+       this.setState({currentHighlight:highlight});     
+   });
+    
+    //On startUp for each highlightId in new Event i set all the highlightData
+    let event_id=this.props.event_id?this.props.event_id:"newEventId";
+    stores.Highlights.fetchHighlights(event_id).then(Highlights => {
+       this.setState({highlightData:Highlights})
+    })
 
 
-  });
+setInterval(() => {
+ if((this.state.animateHighlight == true) && (this.state.highlightData.length > 2)){
+ this.highlight_flatlistRef.scrollToIndex({animated: true, index: this.state.initialScrollIndex,viewOffset:0,viewPosition:0});
 
+if(this.state.initialScrollIndex >= (this.state.highlightData.length)-2){
+  this.setState({initialScrollIndex:0})
+}else{
+  this.setState({initialScrollIndex:this.state.initialScrollIndex + 2})
+}
+ }
+} ,4000) 
+this.setState({isMounted:true});
 
-
-
-  setInterval(() => {
-    if((this.state.animateHighlight == true) && (this.state.highlightData.length > 2)){
-    this.flatListRef.scrollToIndex({animated: true, index: this.state.initialScrollIndex,viewOffset:0,viewPosition:0});
-
-   if(this.state.initialScrollIndex >= (this.state.highlightData.length)-2){
-     this.setState({initialScrollIndex:0})
-   }else{
-     this.setState({initialScrollIndex:this.state.initialScrollIndex + 2})
-   }
-    }
-  } ,4000) 
-
-
+},400)
+ 
  }
 
 
@@ -182,6 +167,7 @@ return new Promise((resolve, reject) => {
 
 @autobind
 back(){
+  this.setState({animateHighlight:false})
   this.props.onClosed();  
 }
 
@@ -239,7 +225,9 @@ if(this.state.currentHighlight.url == ""){
 
   stores.Highlights.readFromStore().then(Highlights =>{ 
     let newHighlight = request.Highlight();
+    console.warn("here5",newHighlight);
     let highlight = find(Highlights, { id:"newHighlightId" }); 
+    console.warn("here4",highlight)
     newHighlight =  highlight;
     newHighlight.id = New_id;
     newHighlight.event_id = this.props.event_id?this.props.event_id:"newEventId";   //new event id
@@ -250,20 +238,18 @@ if(this.state.currentHighlight.url == ""){
       newHighlight.creator = user.name;
       newHighlight.created_at = moment().format("YYYY-MM-DD HH:mm");
     })
-
-    this.state.highlightData.push(newHighlight);
-    this.setState({highlightData:this.state.highlightData});
-
+    console.warn("here1")
+       this.setState({highlightData: [ ...this.state.highlightData, newHighlight]}, () => { console.log("after",this.state.highlightData)}); 
+    console.warn("here2")
     if(this.props.event_id){
-      this.props.parentComponent.state.highlightData.push(newHighlight);
-      this.props.parentComponent.setState({highlightData:this.state.highlightData});
+      this.props.parentComponent.setState({highlightData: [ ...this.props.parentComponent.state.highlightData, newHighlight]}, () => { console.log("after",this.props.parentComponent.state.highlightData)}); 
+      console.warn("here3")
     }
    
     stores.Highlights.addHighlights(newHighlight ).then(()=>{});
     //add the new highlight id to our newly created event for it to be accessed later when needed using this id
     stores.Events.addHighlight(newHighlight.event_id, newHighlight.id,false).then(()=>{});
     stores.Events.readFromStore().then((Events)=>{console.warn(Events,"After highlight id insertion");})
-
 
      //reset the class currentHighlight state
      this.resetHighlight();
@@ -272,8 +258,6 @@ if(this.state.currentHighlight.url == ""){
      stores.Highlights.removeHighlight("newHighlightId").then(()=>{});
      stores.Highlights.addHighlights(this.state.currentHighlight).then(()=>{});
      //stores.Highlights.resetHighlight(this.state.currentHighlight,false).then(()=>{});
-     
-
    });
   }
 
@@ -304,19 +288,11 @@ _getItemLayout = (data, index) => (
     { length: 100, offset: 100 * index, index }
   )
 
-componentWillUnmount(){
-  this.setState({animateHighlight:false});
-}
 
-componentWillMount(){
-  //set this on mounting
-  this.setState({animateHighlight:true});
-}
 
     render() {
-    	return(
+    	return this.state.isMounted ?(
 
-   
      <Modal
       isOpen={this.props.isOpen}
       onClosed={()=>{
@@ -349,7 +325,7 @@ componentWillMount(){
           initialRender={4}
           renderPerBatch={5}
           firstIndex={0}
-          refHorizontal={(ref) => { this.flatListRef = ref }}
+          refHorizontal={(ref) => { this.highlight_flatlistRef = ref }}
           keyExtractor={this._keyExtractor}
           dataSource={this.state.highlightData}
           parentComponent={this}
@@ -459,7 +435,8 @@ componentWillMount(){
 
 </Modal>
 
-    )}
+    ): <Spinner size={"small"} style={{alignSelf:"center"}}></Spinner> 
+  }
 
     }
 

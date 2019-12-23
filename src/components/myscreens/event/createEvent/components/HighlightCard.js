@@ -10,7 +10,6 @@ import ActionButton from 'react-native-action-button';
 import Modal from 'react-native-modalbox';
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 import autobind from "autobind-decorator";
-import CacheImages from "../../../../CacheImages";
 import Swipeout from 'react-native-swipeout';
 import HighlightCardDetail from "./HighlightCardDetail";
 import  stores from '../../../../../stores/index';
@@ -107,7 +106,7 @@ componentDidMount(){
             </View>
            </CardItem>
            <CardItem style={{height:height/18}}>
-            <Text>{this.props.item.description.length>20?this.props.item.description.slice(0,21)+"...":this.props.item.description}</Text>
+            <Text>{this.props.item.description.length>18?this.props.item.description.slice(0,18)+"...":this.props.item.description}</Text>
            </CardItem>
             </TouchableOpacity>
 
@@ -140,7 +139,7 @@ componentDidMount(){
          
           {this.props.ancien==true &&
            <EventHighlights   isOpen={this.state.EventHighlightState} onClosed={()=>{this.setState({EventHighlightState:false})}}
-           parentComponent={this} ref={"highlights"} event_id={this.props.item.event_id} highlight_id={this.props.item.highlight_id}/>
+           parentComponent={this} ref={"highlights"} participant={this.props.participant} event_id={this.props.item.event_id} highlight_id={this.props.item.highlight_id}/>
           }
 
        </Card>  
