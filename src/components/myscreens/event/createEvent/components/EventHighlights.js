@@ -205,7 +205,7 @@ onChangedDescription(value){
 
 @autobind
 AddHighlight(){
-if(this.state.currentHighlight.url == ""){
+if(this.state.currentHighlight.url.photo == ""){
   
   Toast.show({
       text: "Highlight must have atleast an image !",

@@ -34,7 +34,7 @@ export default class CalendarSynchronisationModal extends Component{
                     <View style={{}}>
                         <Text style={{color:'gray',fontSize: 12,fontWeight: 'bold',fontStyle: 'italic',}}>{"This Activity Has Not Yet Been Added To Your Calendar ; Let's Add It To Your Calendar So That You Should Properly Reminded of IT."}</Text>
                     </View>
-                    <View style={{ alignSelf: 'flex-end', flexDirection: 'row',margin: '2%',width:"100%",}}>
+                    <View style={{ alignSelf: 'center', flexDirection: 'row',margin: '6%',width:"100%",}}>
                         <Button onPress={() => this.props.closed()} style={{ width: 100, 
                             marginRight: "9%", borderRadius: 10, alignItems: 'center', }} 
                         light><Text style={{ marginLeft: "15%"}}>Cancel</Text></Button>

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, TouchableWithoutFeedback, PanResponder } from 'react-native';
-import { Text, Content, Icon, Spinner } from 'native-base';
+import { Text, Content, Icon, Spinner,Title } from 'native-base';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import firebase from 'react-native-firebase';
 import stores from '../../../stores';
@@ -62,16 +62,21 @@ export default class Commitee extends Component {
         return (this.state.loaded ?
             <View style={{ height: "100%", }}>
                 <View style={{
-                    borderTopRightRadius: 15, borderBottomRightRadius: 15,
+                    borderTopRightRadius: 10, borderBottomRightRadius: 10,
                     backgroundColor: "#1FABAB", height: 35,
-                    width: "95%", display: 'flex', flexDirection: 'row', marginBottom: "5%",
+                    width: "95%", display: 'flex', flexDirection: 'row', marginBottom: "5%", shadowOpacity: 1,
+                    shadowOffset: {
+                        height: 1,
+                    },
+                    shadowRadius: 10, elevation: 6
                 }}>
-                    <Text style={{
+                    <Title style={{
                         color:"#9EEDD3",
                         fontWeight: 'bold',
                         fontStyle: 'italic',
-                        marginLeft: 10, fontSize: 22, alignSelf: 'center', width: "80%"
-                    }}>Commitees</Text>
+                        marginLeft: 10, fontSize: 22, alignSelf: 'center', width: "80%",
+                        marginBottom: "3%",
+                    }}>Commitees</Title>
                     <View>
                         <TouchableOpacity onPress={() => requestAnimationFrame(() => { this.props.showCreateCommiteeModal() })}>
                             <Icon style={{ marginTop: "10%", color: "#FEFFDE" }}

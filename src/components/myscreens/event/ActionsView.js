@@ -23,11 +23,11 @@ export default class ActionsView extends Component {
     }
     render() {
         return (
-            <View style={{ height: 333, display: 'flex', flexDirection: 'column', }}>
+            <View style={{ height: 333, display: 'flex', flexDirection: 'column',marginTop: "6%", }}>
                 <View style={{ height: this.actionHeight }}>
                     <TouchableOpacity onPress={() => requestAnimationFrame(() => this.props.publish())}>
                         <Icon style={{ marginLeft: "30%", color: this.actionColor, fontSize: this.fontSize, }} type="Entypo" name="megaphone"></Icon>
-                        <Label style={{ marginLeft: "22%", fontSize: this.textSize, color: this.actionColor }}>Publish</Label>
+                        <Label style={{ marginLeft: "25%", fontSize: this.textSize, color: this.actionColor }}>Publish</Label>
                     </TouchableOpacity>
                 </View>
                 <View style={{ height: this.actionHeight }}>
@@ -39,7 +39,7 @@ export default class ActionsView extends Component {
                 <View style={{ height: this.actionHeight }}>
                     <TouchableOpacity onPress={() => requestAnimationFrame(() => this.props.showMembers())}>
                         <Icon style={{ marginLeft: "30%", color: this.actionColor, fontSize: this.fontSize, }} type="FontAwesome" name="users"></Icon>
-                        <Label style={{ marginLeft: "16%", fontSize: this.textSize, color: this.actionColor }}>Members</Label>
+                        <Label style={{ marginLeft: "22%", fontSize: this.textSize, color: this.actionColor }}>Members</Label>
                     </TouchableOpacity>
                 </View>
                 <View style={{ height: this.actionHeight }}>
@@ -59,7 +59,7 @@ export default class ActionsView extends Component {
                 <View style={{ height: this.actionHeight }}>
                     <TouchableOpacity  onPress={()=>requestAnimationFrame(()=> this.props.openSettingsModal())}>
                         <Icon style={{ marginLeft: "30%", color: this.actionColor, fontSize: this.fontSize, }} type="Entypo" name="cog"></Icon>
-                        <Label style={{ marginLeft: "20%", fontSize: this.textSize, color: this.actionColor }}>Settings</Label>
+                        <Label style={{ marginLeft: "25%", fontSize: this.textSize, color: this.actionColor }}>Settings</Label>
                     </TouchableOpacity>
                 </View>
             </View>

@@ -295,7 +295,12 @@ class Home extends Component {
     return (
       <Container style={{ backgroundColor: "#FEFFDE" }}>
 
-        <View style={{ height: 40, width: "100%", backgroundColor: "#FEFFDE", borderBottomWidth: 1, borderColor: "#1FABAB", borderTopWidth: 1, }}>
+        <View style={{
+          height: 40, width: "98%", backgroundColor: "#FEFFDE", shadowOpacity: 1,borderBottomRightRadius: 5,borderBottomLeftRadius: 5,
+          shadowOffset: {
+            height: 1,
+          },
+          shadowRadius: 10, elevation:6,alignSelf: 'center', marginLeft: "1%",marginRight: "1%", }}>
           <View style={{ flex: 1, backgroundColor: "#FEFFDE", flexDirection: "row", justifyContent: "space-between", marginLeft: "3%", marginRight: "3%" }}>
             <Thumbnail small source={require("../../../../assets/ic_launcher_round.png")}></Thumbnail>
             <TouchableOpacity style={{ marginTop: '2%', }}>
@@ -306,8 +311,17 @@ class Home extends Component {
         </View>
         <Tabs
           locked
-          elevation={5}
-          tabContainerStyle={{ height: 45, backgroundColor: "#FEFFDE", borderTopWidth: 1, borderColor: "#1FABAB", borderRadius: 4, }}
+          elevation={10}
+          tabContainerStyle={{
+            borderWidth: 1,
+            borderRadius: 8,
+            borderColor: '#ddd',
+            borderBottomWidth: 0,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.8,
+            shadowRadius: 2,
+            elevation: 20, margin: "1%", height: 45, backgroundColor: "#FEFFDE", borderRadius: 4, }}
           tabBarPosition="bottom"
           tabBarUnderlineStyle={{
             backgroundColor: "transparent"

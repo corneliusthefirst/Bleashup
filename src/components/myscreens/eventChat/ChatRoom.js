@@ -1174,7 +1174,11 @@ export default class ChatRoom extends Component {
     }
     headerStyles = {
         width: "100%", height: 44, display: 'flex', flexDirection: 'row', opacity: .6,
-        backgroundColor: "transparent", position: "absolute", borderBottomWidth: 1.25, borderBottomColor: "#1FABAB",
+        backgroundColor: "transparent", position: "absolute", shadowOpacity: 1,
+        shadowOffset: {
+            height: 1,
+        },
+        shadowRadius: 10, elevation: 6
     }
     transparent = "rgba(50, 51, 53, 0.8)";
     render() {
@@ -1184,7 +1188,7 @@ export default class ChatRoom extends Component {
                     <StatusBar hidden={this.state.hideStatusBar} barStyle="dark-content" backgroundColor="#FEFFDE"></StatusBar>
                     {!this.state.loaded ? <View><ImageBackground style={{ width: "100%", height: "100%" }}
                         resizeMode={"contain"} source={require("../../../../assets/Bleashup.png")}></ImageBackground>
-                        <Spinner color="#FEFFDE" style={{ color: "#FEFFDE", position: 'absolute', marginTop: "91%", marginLeft: "39.5%", }} />
+                        <Spinner color="#FEFFDE" style={{ color: "#FEFFDE", position: 'absolute', marginTop: "90%", marginLeft: "39%", }} />
                     </View> : <View><View style={{ width: "100%", alignSelf: 'center', }}>
                         <View style={{ height: this.state.messageListHeight, marginBottom: "0.5%" }}>
                             <TouchableWithoutFeedback onPressIn={() => {
@@ -1255,8 +1259,8 @@ export default class ChatRoom extends Component {
     keyboardView() {
         return <View style={{
             height: this.state.textInputHeight, backgroundColor: "#FEFFDE",
-            borderRadius: 10, alignSelf: 'center', borderWidth: 1, borderBottomWidth: 0,
-            borderColor: '#1FABAB', padding: '1%', maxWidth: "99.9%",
+            borderRadius: 8, alignSelf: 'center',  borderBottomWidth: 0,
+             padding: '1%', maxWidth: "99.9%",
         }}>
             {
                 //* Reply Message caption */
@@ -1380,7 +1384,7 @@ export default class ChatRoom extends Component {
     captionMessageHandler() {
         return <View style={{
             position: "absolute", width: screenWidth,
-            height: screenheight, backgroundColor: "black", display: 'flex',
+            height: screenheight, backgroundColor: "black", display: 'flex',width:"100%",height:"100%"
         }}>
             <View style={{ height: this.state.photoHeight, width: "100%" }}>
                 {this.state.image ? <ReactNativeZoomableView maxZoom={1.5} minZoom={0.5} zoomStep={0.5} initialZoom={1} bindToBorders={true} onZoomAfter={this.logOutZoomState}>

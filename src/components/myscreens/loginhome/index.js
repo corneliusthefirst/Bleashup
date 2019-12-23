@@ -86,7 +86,7 @@ export default class LoginHomeView extends Component {
            <StatusBar backgroundColor="#FEFFDE" barStyle="dark-content"></StatusBar>
          <ImageBackground resizeMode={"contain"} source={require("../../../../assets/Bleashup.png")} style={{ width: "100%", height: "100%", backgroundColor: "#FEFFDE", }}>
              {globalState.loading ? (
-               <Spinner color="#FEFFDE" style={{ color:"#FEFFDE",marginTop: "96%",marginLeft: "8%", }} />
+               <Spinner color="#FEFFDE" style={{ color:"#FEFFDE",marginTop: "95.5%",marginLeft: "8%", }} />
              ) : (
                  <Text> Waiting ... </Text>
                )}

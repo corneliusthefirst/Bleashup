@@ -157,12 +157,21 @@ export default class SWView extends Component {
     }
     render() {
         return (
-            <TouchableWithoutFeedback onPressIn={() => {
-                this.setState({
-                    canScroll: true
-                })
-            }}>
-                <View>
+            <View style={{
+                opacity: 0.9,
+                backgroundColor: "#FEFFDE",
+                width:"100%",
+                height:screenheight
+            }}><View style={{
+                borderWidth: 1,
+                borderRadius: 2,
+                borderColor: '#ddd',
+                borderBottomWidth: 0,
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.8,
+                shadowRadius: 2,
+                elevation: 5,margin: "1%",}}>
                     <ScrollView
                         style={{ backgroundColor: "#FEFFDE", }}
                         //scrollEnabled={true}
@@ -176,12 +185,22 @@ export default class SWView extends Component {
                             height: "100%", width: "100%", backgroundColor: "#FEFFDE",
                             display: 'flex', flexDirection: 'column', //borderRightWidth: 1.25, borderColor: "#1FABAB",
                         }}>
-                            <View style={{ marginLeft: 5, backgroundColor: "#FEFFDE", width: "100%", flexDirection: 'row', }}><View style={{ width: "90%" }}><Title style={{ fontWeight: 'bold', fontSize: 17, marginTop: 2, color:"#0A4E52" }}>{this.props.event.about.title}</Title>
-                                <Title style={{
-                                    marginRight: "2%", fontStyle: 'italic', fontWeight: this.props.event.closed ? "bold" : "400", 
-                                    color: this.props.event.closed ? "red" : this.dateDiff(this.props.event.period) > 0 ? "gray" : "#1FABAB", fontSize: 12,
-                                }}>{this.props.event.closed ? "Closed" : this.displayDate(this.props.event.period)}</Title>
-                            </View>
+                            <View style={{
+                                backgroundColor: "#FEFFDE", width: screenWidth * 2.7 / 3,
+                                alignItems: 'center',
+                                marginTop: 2,
+                                borderRadius: 5,
+                                justifyContent: 'center', flexDirection: 'row', shadowOpacity: 1,
+                                shadowOffset: {
+                                    height: 1,
+                                },
+                                shadowRadius: 10, elevation: 6
+                            }}><View style={{ width: "90%" }}><Title style={{ fontWeight: 'bold', fontSize: 17, marginTop: 2, color: "#0A4E52" }}>{this.props.event.about.title}</Title>
+                                    <Title style={{
+                                        marginRight: "2%", fontStyle: 'italic', fontWeight: this.props.event.closed ? "bold" : "400",
+                                        color: this.props.event.closed ? "red" : this.dateDiff(this.props.event.period) > 0 ? "gray" : "#1FABAB", fontSize: 12,
+                                    }}>{this.props.event.closed ? "Closed" : this.displayDate(this.props.event.period)}</Title>
+                                </View>
                                 <Icon onPress={() => {
                                     this.props.navigateHome()
                                 }} style={{
@@ -190,7 +209,13 @@ export default class SWView extends Component {
                                 }} name="close" type="EvilIcons"></Icon>
                             </View>
                             <View style={{ heignt: "60%", display: "flex", flexDirection: 'row', backgroundColor: "#FEFFDE", marginLeft: "1%", }}>
-                                <View style={{ marginTop: "2%", width: "25%", borderWidth: 2, borderColor: this.actionColor, borderRadius: 12 }}>
+                                <View style={{
+                                    marginTop: "2%", width: "25%", shadowOpacity: .5,
+                                    shadowOffset: {
+                                        height: 1,
+                                    },
+                                    shadowRadius: 10, elevation: 3, borderRadius: 12
+                                }}>
                                     <ActionsView
                                         publish={() => this.props.publish()}
                                         leaveActivity={() => this.props.leaveActivity()}
@@ -200,7 +225,9 @@ export default class SWView extends Component {
                                         showMembers={() => this.props.showMembers()}></ActionsView>
                                 </View>
                                 <View style={{ width: "5%", }}></View>
-                                <View style={{ width: "70%" }}>
+                                <View style={{
+                                    width: "70%",
+                                }}>
                                     <RouteView refreshCommitee={() => this.refreshCommitees()} event_id={this.props.event.id} currentPage={this.props.currentPage}
                                         setCurrentPage={(page) => this.props.setCurrentPage(page)}></RouteView>
                                 </View>
@@ -249,7 +276,8 @@ export default class SWView extends Component {
                                     source={{ uri: this.props.event.background }}></CacheImages> : <Image width={screenWidth * 2.7 / 3} style={{ width: "100%", height: "100%" }} source={require('../../../../assets/default_event_image.jpeg')}></Image>}</TouchableOpacity>
                         </View>
                     </Animated.View>
-                </View></TouchableWithoutFeedback>
+                </View>
+            </View>
         );
     }
 }
