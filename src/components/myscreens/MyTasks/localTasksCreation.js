@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import {
   Content, Card, CardItem, Text, Body, Container, Icon, Header,
-  Form, Item, Title, Input, Left, Right, H3, H1, H2, Spinner,
+  Form, Item, Title, Input, Left, Right, H3, H1, H2, Spinner,Toast,
   Button, InputGroup, DatePicker, Thumbnail, Alert,Textarea
 } from "native-base";
 
@@ -15,6 +15,14 @@ import stores from '../../../stores/index';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Dropdown } from 'react-native-material-dropdown';
 import moment from "moment";
+
+var uuid = require('react-native-uuid');
+uuid.v1({
+  node: [0x01, 0x23, 0x45, 0x67, 0x89, 0xab],
+  clockseq: 0x1234,
+  msecs: new Date().getTime(),
+  nsecs: Math.floor(Math.random() * 5678)+50
+});
 
 let data = [{
   value: 'none',
@@ -35,28 +43,32 @@ export default class LocalTasksCreation extends Component {
         show: false,
         title:"",
         description:"",
-        currentRemind:request.remind(),
-        date:new Date(),
-        time:new Date(),
+        currentRemind:request.Remind(),
+        date:"",
+        time:"",
         defaultDate:new Date(),
         defaultTime:new Date(),
+        update:this.props.navigation.state.params.update_remind?this.props.navigation.state.params.update_remind:false,
         inputTimeValue:"",
         inputDateValue:"",
-        isDateTimePickerVisible: false,
-        recurrence:""
+        isDateTimePickerVisible: false
+        //recurrence:""
       }
 
     }
    
 
     componentDidMount(){
+        console.warn("update state",this.props.navigation.state.params.update_remind)
+        console.warn("update state 2",this.state.update)
+
         stores.Reminds.readFromStore().then(Reminds =>{
-            console.warn("reminds are",Reminds);
-            let remind = find(Reminds, { id:"newRemindId" });
-            console.warn("remind is",remind );
+            //console.warn("reminds are",Reminds);
+            let remind = find(Reminds, { id:this.props.navigation.state.params.remind_id?this.props.navigation.state.params.remind_id:"newRemindId" });
+            //console.warn("remind is",remind );
     
               this.setState({currentRemind:remind});
-              this.setState({recurrence:this.state.currentRemind.recurrence.toString()});
+             // this.setState({recurrence:this.state.currentRemind.recurrence.toString()});
              
               
               if(remind.period!=""){
@@ -64,11 +76,8 @@ export default class LocalTasksCreation extends Component {
                 this.setState({time:remind.period});
                 this.setState({inputDateValue:moment(remind.period).format().split("T")[0]})
                 this.setState({inputTimeValue:moment(remind.period).format().split("T")[1].split("+")[0]});
-                console.warn(this.state.time,this.state.date ,"date and time value");
-                console.warn(this.state.inputTimeValue,this.state.inputDateValue ,"dateinput and timeinput value");
-               }else{
-                this.setState({inputDateValue:moment(this.state.defaultDate).format().split("T")[0]})
-                this.setState({inputTimeValue:moment(this.state.defaultTime).format().split("T")[1].split("+")[0]});
+                //console.warn(this.state.time,this.state.date ,"date and time value");
+                //console.warn(this.state.inputTimeValue,this.state.inputDateValue ,"dateinput and timeinput value");
                }
 
         })
@@ -104,37 +113,58 @@ export default class LocalTasksCreation extends Component {
          this.setState({ isDateTimePickerVisible: false });
       
          this.setState({date:date});
+         if(this.state.time==""){
          let period = moment(this.state.date).format().split("T")[0] + "T" +
-         moment(this.state.time).format().split("T")[1]
-         
-        console.warn("period",period);
+         moment().format().split("T")[1]
         this.setState({inputDateValue:moment(period).format().split("T")[0]})
-      
         let newRemind = {remind_id:this.state.currentRemind.id,period:period}
-        stores.Reminds.updatePeriod(newRemind,false).then(()=>{});
-       }
+          if(this.state.update==false){
+           stores.Reminds.updatePeriod(newRemind,false).then(()=>{});
+          }
+
+         }else{
+          let period = moment(this.state.date).format().split("T")[0] + "T" +
+          moment(this.state.time).format().split("T")[1]
+         this.setState({inputDateValue:moment(period).format().split("T")[0]})
+         let newRemind = {remind_id:this.state.currentRemind.id,period:period}
+       
+          if(this.state.update==false){
+           stores.Reminds.updatePeriod(newRemind,false).then(()=>{});
+          }
+        }
      }
+    }
  
      @autobind
      setTime(event, date){
        if (date !== undefined) {
  
-         console.warn("time",date);
-         console.warn("time2",moment(date).format().split("T")[1]);
+         //console.warn("time",date);
+         //console.warn("time2",moment(date).format().split("T")[1]);
          //deactivate the clock before setting the obtain time
          this.setState({show:false});
-        
          //set time
          this.setState({time:date});
-       
-         let period = moment(this.state.date).format().split("T")[0] + "T" +
+
+         if(this.state.date==""){
+         let period = moment().format().split("T")[0] + "T" +
          moment(this.state.time).format().split("T")[1];
  
-         console.warn("period 2",period);
          this.setState({inputTimeValue:moment(period).format().split("T")[1].split("+")[0]});
-    
          let newRemind = {remind_id:this.state.currentRemind.id,period:period}
+         if(this.state.update==false){
          stores.Reminds.updatePeriod(newRemind,false).then(()=>{});
+         }
+         }else{
+          let period = moment(this.state.date).format().split("T")[0] + "T" +
+          moment(this.state.time).format().split("T")[1];
+  
+          this.setState({inputTimeValue:moment(period).format().split("T")[1].split("+")[0]});
+          let newRemind = {remind_id:this.state.currentRemind.id,period:period}
+          if(this.state.update==false){
+          stores.Reminds.updatePeriod(newRemind,false).then(()=>{});
+          }
+         }
      
        }
  
@@ -142,10 +172,13 @@ export default class LocalTasksCreation extends Component {
   
       @autobind
       onChangedTitle(value) { 
+        console.warn("here is the update state",this.state.update)
         this.state.currentRemind.title = value;
         this.setState({currentRemind:this.state.currentRemind});
         let NewRemind={remind_id:this.state.currentRemind.id,title:this.state.currentRemind.title}
+       /* if(this.state.update==false){
         stores.Reminds.updateTitle(NewRemind,false).then(()=>{});
+        }*/
       }
      
       @autobind
@@ -153,7 +186,9 @@ export default class LocalTasksCreation extends Component {
         this.state.currentRemind.description = value;
         this.setState({currentRemind:this.state.currentRemind});
         let NewRemind={remind_id:this.state.currentRemind.id,description:this.state.currentRemind.description}
+        if(this.state.update==false){
         stores.Reminds.updateDescription(NewRemind,false).then(()=>{});
+        }
       } 
   
 
@@ -166,23 +201,103 @@ export default class LocalTasksCreation extends Component {
     this.state.currentRemind.recursive_frequency = value;
     this.setState({currentRemind:this.state.currentRemind});
     let NewRemind={remind_id:this.state.currentRemind.id,recursive_frequency:this.state.currentRemind.recursive_frequency}
+    if(this.state.update==false){
     stores.Reminds.updateRecursiveFrequency(NewRemind,false).then(()=>{});
-  } 
+    }
+  }
+
+  /* 
   @autobind
   onChangedRecurrence(value){
     this.setState({recurrence:value});
     this.state.currentRemind.recurrence = parseInt(value);
     this.setState({currentRemind:this.state.currentRemind});
     let NewRemind={remind_id:this.state.currentRemind.id,recurrence:this.state.currentRemind.recurrence}
+     if(!this.state.update){
     stores.Reminds.updateRecurrence(NewRemind,false).then(()=>{});
-  } 
+     }
+  } */
   
-
   @autobind
-  AddNewRemind(){
-
+  resetRemind(){
+    this.state.currentRemind = request.Remind();
+    this.state.currentRemind.id = "newRemindId";
+    this.setState({
+      currentRemind:this.state.currentRemind,
+      inputDateValue:"",
+      inputTimeValue:""
+    });
   }
+
+  
+  @autobind
+  addNewRemind(){
+
+    if(this.state.date == "" || this.state.time==""){
+  
+      Toast.show({
+          text: "Remind date or time cannot be empty !",
+          buttonText: "Okay",
+          duration:6000,
+          buttonTextStyle: { color: "#008000" },
+          buttonStyle: { backgroundColor: "#5cb85c" },
+          textStyle:{color:"salmon",fontSize:15}
+        })
     
+      }
+      else{
+
+        var arr = new Array(32);
+        let num = Math.floor(Math.random() * 16)
+        uuid.v1(null, arr,num); 
+        let New_id = uuid.unparse(arr,num);
+    
+        stores.Reminds.readFromStore().then((Reminds)=>{
+          let newRemind = request.Remind();
+          let remind = find(Reminds, { id:"newRemindId" }); 
+          newRemind =  remind;
+          newRemind.id = New_id;
+         
+          stores.LoginStore.getUser().then((user)=>{
+            newRemind.creator = user.name;
+            newRemind.event_id = user.phone; //user phone is use to uniquely identify locals
+            newRemind.created_at = moment().format("YYYY-MM-DD HH:mm");
+          })
+           this.props.navigation.state.params.updateData(newRemind);
+         
+           //add new remind
+           stores.Reminds.addReminds(newRemind).then(()=>{});
+    
+          //reset remind both in store and on screen
+           this.resetRemind();
+           stores.Reminds.removeRemind("newRemindId").then(()=>{});
+           stores.Reminds.addReminds(this.state.currentRemind).then(()=>{});
+    
+          stores.Reminds.readFromStore().then((reminds)=>{
+             console.warn("reminds are",reminds);
+          })
+        })
+    
+      }
+  
+  }
+   
+  @autobind
+  updateRemind(){
+   let newRemind={
+      remind_id:this.state.currentRemind.id,
+      title:this.state.currentRemind.title,
+      description:this.state.currentRemind.description,
+      recursive_frequency:this.state.currentRemind.recursive_frequency,
+      period:this.state.currentRemind.period,
+
+    }
+    this.setState({update:false});
+    console.warn("here is the updates",newRemind);
+    //navigate back to myTasks with updated data
+
+   // stores.Reminds.updateAll(newRemind,true).then(()=>{});
+  }
 
     render(){
         return(
@@ -207,7 +322,7 @@ export default class LocalTasksCreation extends Component {
                 <View style={{height:height/8,alignItems:'center'}}>
                    <Text style={{alignSelf:'flex-start',margin:"3%",fontWeight:"500",fontSize:16}} >Title :</Text>
                     <Item  style={{borderColor:'black',width:"95%"}} rounded>
-                     <Input value={this.state.currentRemind.title} maxLength={40}  placeholder='Please enter task title' keyboardType='email-address' autoCapitalize="none" returnKeyType='next' inverse last
+                     <Input  maxLength={40} value={this.state.currentRemind.title} maxLength={40}  placeholder='Please enter task title' keyboardType='email-address' returnKeyType='next' inverse last
                       onChangeText={(value) => this.onChangedTitle(value)} />
                      </Item>
                </View>
@@ -271,13 +386,13 @@ export default class LocalTasksCreation extends Component {
      containerStyle={{borderWidth:1,borderColor:"gray",borderRadius:6,justifyContent:"center",paddingLeft:2}}
       />
    </View>
-     <View style={{height:height/18,width:width/2-width/28,alignItems:'center',marginTop:-26}}>
+    {/*} <View style={{height:height/18,width:width/2-width/28,alignItems:'center',marginTop:-26}}>
         <Text style={{alignSelf:'flex-start',margin:"3%",marginLeft:"6%",fontWeight:"400",fontSize:15,color:"#1FABAB"}} >recurrence :</Text>
            <Item  style={{borderColor:'black',width:"95%",borderRadius:5}} rounded>
             <Input keyboardType = 'numeric'  value={this.state.recurrence} maxLength={3} placeholder='number of repetions'  maxLength={3}  returnKeyType='next' inverse last
             onChangeText={(value) => this.onChangedRecurrence(value)} />
        </Item>
-     </View>
+          </View>*/}
  </View>
 
     </View>
@@ -292,13 +407,20 @@ export default class LocalTasksCreation extends Component {
 
           </View>
         </View>
-
+       { this.state.update == false?
         <TouchableOpacity style={{width:"90%",alignSelf:'center',marginTop:"1%",marginBottom:"1%"}}>
             <Button style={{width:"100%",borderRadius:15,borderColor:"#1FABAB",backgroundColor:"#1FABAB",justifyContent:'center',alignItem:'center'}}
-               onPress={()=>{this.AddNewRemind()}}>
+               onPress={()=>{this.addNewRemind()}}>
                <Text style={{color:"#FEFFDE"}}> Add Local Remind </Text>
              </Button> 
-        </TouchableOpacity>
+        </TouchableOpacity>:
+                <TouchableOpacity style={{width:"90%",alignSelf:'center',marginTop:"1%",marginBottom:"1%"}}>
+                <Button style={{width:"100%",borderRadius:15,borderColor:"#1FABAB",backgroundColor:"#1FABAB",justifyContent:'center',alignItem:'center'}}
+                   onPress={()=>{this.updateRemind()}}>
+                   <Text style={{color:"#FEFFDE"}}> Update Local Remind </Text>
+                 </Button> 
+            </TouchableOpacity>
+        }
 
     </ScrollView>
  </View>

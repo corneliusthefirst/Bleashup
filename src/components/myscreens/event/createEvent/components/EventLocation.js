@@ -72,8 +72,9 @@ export default class EventLocation extends Component {
                 isOpen={this.props.isOpen}
                 onClosed={this.props.onClosed}
                 style={{
-                    height: height/4+height/24, borderRadius: 15,
-                    backgroundColor:"#FEFFDE",borderColor:'black',borderWidth:1,width: "98%",flexDirection:'column'
+                    height: height/4, borderRadius: 15,
+                    backgroundColor:"#FEFFDE",borderColor:'black',borderWidth:1,width: "98%",
+                    flexDirection:'column',marginTop:"-3%"
                   
                 }}
                 coverScreen={true}
@@ -94,14 +95,14 @@ export default class EventLocation extends Component {
 
               <TouchableWithoutFeedback  onPress={() => Keyboard.dismiss()}>      
                {this.state.update?     
-                  <View style={{height:"20%",marginTop:"5%"}}>
+                  <View style={{height:"20%",marginTop:"3%"}}>
                    <TouchableOpacity style={{width:width/4,height:height/18,alignSelf:"flex-end",marginRight:"2%"}} >
                    <Button style={{borderRadius:8,borderWidth:1,marginRight:"2%",backgroundColor:"#FEFFDE",borderColor:'#1FABAB',alignSelf:'flex-end',width:width/4,height:height/18,justifyContent:"center"}} onPress={()=>{this.updateLocation()}}>
                    <Text style={{color:"#1FABAB"}}>Update</Text>
                    </Button> 
                    </TouchableOpacity>
                    </View> 
-                  : <View style={{height:"10%",marginTop:"5%"}}></View>}
+                  : <View style={{height:"10%",marginTop:"3%"}}></View>}
               </TouchableWithoutFeedback> 
 
                 </View>

@@ -13,6 +13,7 @@ import autobind from "autobind-decorator";
 import ImagePicker from 'react-native-image-picker';
 import moment from "moment";
 import EventTitle from "./components/EventTitle"
+import EventPeriod from "./components/EventPeriod"
 import EventPhoto from "./components/EventPhoto"
 import EventLocation from "./components/EventLocation"
 import EventDescription from "./components/EventDescription"
@@ -31,11 +32,12 @@ uuid.v1({
 
 
 var radio_props = [
-  {label: 'Event title', value: 0 },
-  {label: 'Add Event Photo', value: 1 },
-  {label: 'Add Event Description', value: 2},
-  {label: 'Add Location', value: 3},
-  {label: 'Add Hightlights', value: 4 },
+  {label: 'Add Activity title', value: 0 },
+  {label: 'Add Activity period', value: 1 },
+  {label: 'Add Activity Photo', value: 2 },
+  {label: 'Add Activity Description', value: 3},
+  {label: 'Add Activity Location', value: 4},
+  {label: 'Add Activity Hightlights', value: 5 }
  
 ];
 
@@ -47,6 +49,7 @@ export default class CreateEventView extends Component {
 
     this.state = {
       EventTitleState:false,
+      EventPeriodState:false,
       EventPhotoState:false,
       EventDescriptionState:false,
       EventLocationState:false,
@@ -114,8 +117,19 @@ componentDidMount(){
           //reset new Event object
           let reset = request.Event();
           reset.id = "newEventId";
-          //deault to the phone user
-          reset.participant.push(head(newEvent.participant));
+          //default to the phone user
+          stores.LoginStore.getUser().then((user)=>{
+            stores.Events.delete(reset.id).then(()=>{});
+            reset.creator_phone = user.phone;
+            //we add the creator as first participant 
+            let Participant=request.Participant();
+            Participant.phone = user.phone;
+            Participant.master = true;
+            Participant.status = user.status;
+            stores.Events.addEvent(reset).then(()=>{});
+            stores.Events.addParticipant(reset.id, Participant,false).then(()=>{})
+    
+          })
 
           this.refs.title_ref.setState({title:""});
           this.refs.title_ref.setState({date:""});
@@ -126,10 +140,7 @@ componentDidMount(){
           this.refs.description_ref.setState({description:""});
           this.refs.location_ref.setState({location:request.Location()});
           this.refs.highlight_ref.setState({highlightData:[]});
-    
-          stores.Events.delete(reset.id).then(()=>{});
-          stores.Events.addEvent(reset).then(()=>{});
-  
+          
           stores.Events.readFromStore().then(Events =>{
             console.warn(Events);
           })
@@ -171,17 +182,20 @@ componentDidMount(){
                         this.setState({EventTitleState:true})
                         break
                         case 1:
+                          this.setState({EventPeriodState:true})
+                          break
+                        case 2:
                         this.setState({EventPhotoState:true})
                         break
-                        case 2:
+                        case 3:
                         this.setState({EventDescriptionState:true})
                         this.refs.description_ref.init();
                         break
-                        case 3:
+                        case 4:
                          this.setState({EventLocationState:true})
                          this.refs.location_ref.init();
                         break
-                        case 4:
+                        case 5:
                          this.setState({EventHighlightState:true})
                          this.refs.highlight_ref.setState({animateHighlight:true})
                         break
@@ -206,6 +220,10 @@ componentDidMount(){
               
                <EventTitle isOpen={this.state.EventTitleState} onClosed={()=>{
                  this.setState({EventTitleState:false}); }} ref={"title_ref"}  />
+              
+              <EventPeriod isOpen={this.state.EventPeriodState} onClosed={()=>{
+                 this.setState({EventPeriodState:false}); }} ref={"period_ref"}  />
+    
     
 
                <EventPhoto  isOpen={this.state.EventPhotoState} onClosed={()=>{this.setState({EventPhotoState:false})}}

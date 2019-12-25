@@ -49,7 +49,8 @@ export default class EventDetailView extends Component {
       creation_date: "",
       creation_time: "",
       participant: request.Participant(),
-      EventHighlightState: false
+      EventHighlightState: false,
+      updateTitleState:false
 
     }
 
@@ -121,8 +122,6 @@ export default class EventDetailView extends Component {
   }
 
 
-
-
   _getItemLayout = (data, index) => (
     { length: 100, offset: 100 * index, index }
   )
@@ -160,7 +159,14 @@ export default class EventDetailView extends Component {
           alignItems: "center",
         }}>
           <View style={{marginLeft:"4%"}}>
+            <TouchableOpacity delayLongPress={1000} onLongPress={() => {
+                if (this.state.participant.master == true) {
+                  this.setState({ updateTitleState: true })
+                  this.refs.title_ref.init();
+                }
+              }} >
             <Title style={{ color: "#0A4E52", fontWeight: 'bold', }}>{this.props.Event.about.title}</Title>
+            </TouchableOpacity>
           </View>
           <View >
             <TouchableOpacity style={{}}>
@@ -270,7 +276,9 @@ export default class EventDetailView extends Component {
 
 
 
-
+        <EventTitle isOpen={this.state.updateTitleState} onClosed={()=>{this.setState({updateTitleState:false})}} 
+          ref={"title_ref"} eventId={this.props.Event.id} updateTitle={true} parentComp={this}/>
+                               
 
         <EventDescription isOpen={this.state.EventDescriptionState} onClosed={() => { this.setState({ EventDescriptionState: false }) }}
           ref={"description_ref"} eventId={this.props.Event.id} updateDes={true} parentComp={this} />
