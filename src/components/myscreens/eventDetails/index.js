@@ -10,7 +10,7 @@ import ActionButton from 'react-native-action-button';
 import RadioForm, { RadioButton, RadioButtonInput, RadioButtonLabel } from 'react-native-simple-radio-button';
 import autobind from "autobind-decorator";
 import CacheImages from "../../CacheImages";
-import HighlightCard from "../event/createEvent/components/HighlightCard"
+import DetailHighlightCard from "../event/createEvent/components/DetailHighlightCard"
 import PhotoEnlargeModal from "../invitations/components/PhotoEnlargeModal";
 import ImagePicker from 'react-native-image-picker';
 import stores from '../../../stores/index';
@@ -127,18 +127,11 @@ export default class EventDetailView extends Component {
   )
   _keyExtractor = (item, index) => item.id;
 
-  /*
-  _renderItem = ({ item, index }) => (
-
-    <HighlightCard item={item} deleteHighlight={(id) => { this.deleteHighlight(id) }} ancien={true} participant={this.state.participant} />
-
-  );*/
-
+ 
 
   @autobind
   newHighlight() {
     this.setState({ EventHighlightState: true })
-    this.refs.highlights.setState({animateHighlight:true})
   }  
 
 
@@ -189,7 +182,7 @@ export default class EventDetailView extends Component {
           getItemLayout={this._getItemLayout}
           renderItem={(item, index) => {
             return (
-                <HighlightCard   participant={this.state.participant}  parentComponent={this} item={item} ancien={true} 
+                <DetailHighlightCard   participant={this.state.participant}  parentComponent={this} item={item} ancien={true} 
                    deleteHighlight={(id)=>{this.deleteHighlight(id)}} ref={"higlightcard"}/>
             );
           }} 

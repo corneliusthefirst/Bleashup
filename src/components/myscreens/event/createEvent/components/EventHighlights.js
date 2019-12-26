@@ -70,6 +70,7 @@ export default class EventHighlights extends Component {
           animateHighlight:false,
           currentHighlight:request.Highlight(),
           update:false,
+          audioState:false,
           searchImageState:false,
           participant:null,
           isMounted:false
@@ -93,10 +94,14 @@ componentDidMount(){
    });
     
     //On startUp for each highlightId in new Event i set all the highlightData
-    let event_id=this.props.event_id?this.props.event_id:"newEventId";
-    stores.Highlights.fetchHighlights(event_id).then(Highlights => {
-       this.setState({highlightData:Highlights})
-    })
+   
+    if(!this.props.event_id){
+      let event_id="newEventId";
+      stores.Highlights.fetchHighlights(event_id).then(Highlights => {
+        this.setState({highlightData:Highlights})
+     })
+    }
+
 
 
 setInterval(() => {
@@ -110,11 +115,12 @@ if(this.state.initialScrollIndex >= (this.state.highlightData.length)-2){
 }
  }
 } ,4000) 
+
 this.setState({isMounted:true});
 
-},400)
+ },400)
  
- }
+}
 
 
 @autobind
@@ -205,78 +211,64 @@ onChangedDescription(value){
 
 @autobind
 AddHighlight(){
-if(this.state.currentHighlight.url.photo == ""){
-  
-  Toast.show({
-      text: "Highlight must have atleast an image !",
-      buttonText: "Okay",
-      duration:6000,
-      buttonTextStyle: { color: "#008000" },
-      buttonStyle: { backgroundColor: "#5cb85c" },
-      textStyle:{color:"salmon",fontSize:15}
-    })
 
-  }else{
   var arr = new Array(32);
   let num = Math.floor(Math.random() * 16)
   uuid.v1(null, arr,num); 
   let New_id = uuid.unparse(arr,num);
-  //console.warn(id);
 
   stores.Highlights.readFromStore().then(Highlights =>{ 
     let newHighlight = request.Highlight();
-    console.warn("here5",newHighlight);
     let highlight = find(Highlights, { id:"newHighlightId" }); 
-    console.warn("here4",highlight)
     newHighlight =  highlight;
     newHighlight.id = New_id;
     newHighlight.event_id = this.props.event_id?this.props.event_id:"newEventId";   //new event id
-   
-    //console.warn(highlight);
+
     //add the new highlights to global highlights
     stores.LoginStore.getUser().then((user)=>{
       newHighlight.creator = user.name;
       newHighlight.created_at = moment().format("YYYY-MM-DD HH:mm");
     })
-    console.warn("here1")
-       this.setState({highlightData: [ ...this.state.highlightData, newHighlight]}, () => { console.log("after",this.state.highlightData)}); 
-    console.warn("here2")
+    if(!this.props.event_id){
+      this.setState({highlightData: [ ...this.state.highlightData, newHighlight]}, () => { console.log("after",this.state.highlightData)}); 
+     }
     if(this.props.event_id){
       this.props.parentComponent.setState({highlightData: [ ...this.props.parentComponent.state.highlightData, newHighlight]}, () => { console.log("after",this.props.parentComponent.state.highlightData)}); 
-      console.warn("here3")
+      
     }
    
     stores.Highlights.addHighlights(newHighlight ).then(()=>{});
     //add the new highlight id to our newly created event for it to be accessed later when needed using this id
     stores.Events.addHighlight(newHighlight.event_id, newHighlight.id,false).then(()=>{});
     stores.Events.readFromStore().then((Events)=>{console.warn(Events,"After highlight id insertion");})
-
      //reset the class currentHighlight state
      this.resetHighlight();
-    
      //delete highlight and add a new highlight empty One
      stores.Highlights.removeHighlight("newHighlightId").then(()=>{});
      stores.Highlights.addHighlights(this.state.currentHighlight).then(()=>{});
      //stores.Highlights.resetHighlight(this.state.currentHighlight,false).then(()=>{});
    });
-  }
 
+   if(this.props.event_id){
+        this.props.onClosed();
+    }
+  
 }
 
 @autobind
 updateHighlight(){
-
 stores.Highlights.updateHighlight(this.state.currentHighlight,false).then(()=>{});
 this.resetHighlight();
 this.setState({update:false});
-this.props.onClosed();
+if(this.props.highlight_id){
+  this.props.onClosed();
+}
 
 }
 
 @autobind
 deleteHighlight(id){
   this.state.highlightData = reject(this.state.highlightData ,{id,id});
-  console.warn(this.state.highlightData,"highlight data state");
   this.setState({highlightData: this.state.highlightData});
 }
 
@@ -299,23 +291,25 @@ _getItemLayout = (data, index) => (
         this.props.onClosed()
         this.setState({animateHighlight:false})
       }}
-      style={{ height: "100%", borderRadius: 3,
-      backgroundColor:"#FEFFDE",borderColor:'black',width: "99%",flexDirection:'column'  }}
+      style={{ height:this.props.event_id?"68%":"100%", borderRadius: 3,
+      backgroundColor:"#FEFFDE",borderColor:'black',width: "99%",flexDirection:'column'}}
       coverScreen={true}
       position={'bottom'}
       swipeToClose={false}
-      //backdropPressToClose={false}
      >
     <Root>
       <View style={{height:"100%",backgroundColor:"#FEFFDE",width:"100%"}}>
-      <View style={{height:"8%",width:"96%",flexDirection:"row",backgroundColor:"#FEFFDE",alignItems:"flex-start",marginLeft:"2%",marginRight:"2%"}}>
-           <View >
+     
+     {!this.props.event_id &&
+         <View style={{height:"8%",width:"96%",backgroundColor:"#FEFFDE",marginLeft:"2%",marginRight:"2%"}}>
+           <View style={{flex:1,flexDirection:"row",alignItems:"center"}}>
              <TouchableOpacity>
                 <Icon  onPress={this.back} type='MaterialCommunityIcons' name="keyboard-backspace" style={{color:"#1FABAB"}} />
              </TouchableOpacity>
+             <Text style={{marginLeft:"27%",fontWeight:"500"}}>New Highlight</Text>
            </View>
-
          </View>
+     } 
 
           <View style={{height:"95%",width:"100%"}}>
 
@@ -341,50 +335,73 @@ _getItemLayout = (data, index) => (
      </View>
 
           <View style={{height:height/6,alignItems:'center'}}>
-                   <Text style={{alignSelf:'flex-start',margin:"3%",fontWeight:"500",fontSize:16}} >Highlight Name :</Text>
+                   <Text style={{alignSelf:'flex-start',margin:"3%",fontWeight:"500",fontSize:16}} >Title :</Text>
                     <Item  style={{borderColor:'black',width:"95%"}} rounded>
-                     <Input value={this.state.currentHighlight.title} maxLength={40}  placeholder='Please enter highlight title' keyboardType='email-address' autoCapitalize="none" returnKeyType='next' inverse last
+                     <Input value={this.state.currentHighlight.title} maxLength={40}  placeholder='Please enter title' keyboardType='email-address' autoCapitalize="none" returnKeyType='next' inverse last
                       onChangeText={(value) => this.onChangedTitle(value)} />
                      </Item>
                </View>
 
-              <View style={{height:height/2 +height/12}}>
-                 <View style={{flex:2,justifyContent:'space-between',alignItem:'center'}}>
 
-                    <Button style={{alignSelf:'center',width:"90%",borderRadius:15,borderColor:"#1FABAB",backgroundColor:"transparent",justifyContent:'center',alignItem:'center',marginTop:"6%"}}
+                 <View style={{height:height/10,flexDirection:"row",justifyContent:'space-between',alignItem:'center',marginBottom:"2%"}}>
+
+                    <TouchableOpacity style={{width:"18%",backgroundColor:"transparent",justifyContent:'center',alignItem:'center',marginLeft:"7%"}}
                      onPress={()=>{this.TakePhotoFromCamera().then((source) =>{})} }>
-                        <View style={{flexDirection:"row"}}>
+                        <View style={{flexDirection:"column"}}>
                            <Icon name="photo-camera" active={true} type="MaterialIcons"
                             style={{color: "#0A4E52",alignSelf:"flex-start"}}/>
-                            <Text> Take Photo From Camera</Text>
+                            <Text style={{fontSize:10}}>Photo</Text>
                         </View>
-                    </Button>
+                    </TouchableOpacity>
 
-                    <Button style={{alignSelf:'center',width:"90%",borderRadius:15,borderColor:"#1FABAB",backgroundColor:"transparent",justifyContent:'center',alignItem:'center',marginTop:"3%"}} 
+                    <TouchableOpacity style={{width:"18%",backgroundColor:"transparent",justifyContent:'center',alignItem:'center'}} 
                     onPress={()=>{this.TakePhotoFromLibrary().then(source=>{})}}>
-                         <View style={{flexDirection:"row"}}>
+                         <View style={{flexDirection:"column"}}>
                             <Icon name="photo" active={true} type="FontAwesome"
                                style={{color: "#0A4E52",alignSelf:"flex-start"}}/>
-                            <Text> Take Photo From Library</Text>
+                            <Text style={{fontSize:10}}>Library</Text>
                           </View>
-                    </Button>
+                    </TouchableOpacity>
 
-                    <Button style={{alignSelf:'center',width:"90%",borderRadius:15,borderColor:"#1FABAB",backgroundColor:"transparent",justifyContent:'center',alignItem:'center',marginTop:"3%"}} 
+                    <TouchableOpacity style={{width:"18%",backgroundColor:"transparent",justifyContent:'center',alignItem:'center'}} 
                       onPress={()=>{this.setState({ searchImageState:true})}}>
-                        <View style={{flexDirection:"row"}}>
+                        <View style={{flexDirection:"column"}}>
                          <Icon name="google" active={true} type="AntDesign"
-                            style={{color: "#0A4E52",alignSelf:"flex-start",marginLeft:5}}/>
-                         <Text  style={{alignSelf:"center"}}> Download From Google</Text>
+                            style={{color: "#0A4E52",alignSelf:"flex-start"}}/>
+                         <Text  style={{fontSize:10}}> Online</Text>
                         </View>
-                    </Button>
+                    </TouchableOpacity>
 
+                    <TouchableOpacity style={{width:"18%",backgroundColor:"transparent",justifyContent:'center',alignItem:'center'}} 
+                    onPress={()=>{this.TakePhotoFromLibrary().then(source=>{})}}>
+                         <View style={{flexDirection:"column"}}>
+                            <Icon name="video" active={true} type="Entypo"
+                               style={{color: "#0A4E52",alignSelf:"flex-start"}}/>
+                            <Text style={{fontSize:10}}>Videos</Text>
+                          </View>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={{width:"18%",backgroundColor:"transparent",justifyContent:'center',alignItem:'center'}} 
+                      onPress={()=>{this.setState({ searchImageState:true})}}>
+                        <View style={{flexDirection:"column"}}>
+                         <Icon name="z-wave" active={true} type="MaterialCommunityIcons"
+                            style={{color: "#0A4E52",alignSelf:"flex-start"}}/>
+                         <Text  style={{fontSize:10}}> Audio</Text>
+                        </View>
+                    </TouchableOpacity>
 
                  </View>
+ 
 
-                <View style={{ flex: 3, flexDirection: 'column',justifyContent:'center',alignItem:'center',marginTop:"4%"}}>
+            {this.state.audioState &&
+            <View style={{height:height/9,backgroundColor:"yellow",marginBottom:"5%"}}></View>}
+
+              <View style={{height:height/4}}>
+
+                <View style={{ flex: 1, flexDirection: 'column',justifyContent:'center',alignItem:'center'}}>
                     <TouchableOpacity onPress={() => this.setState({ enlargeImage: true })} >
                         <Image  source={this.state.currentHighlight.url.photo!=""?{uri:this.state.currentHighlight.url.photo}:this.state.defaultUrl} style={{alignSelf:'center',
-                            height: "90%",width: "90%", borderWidth: 1, borderColor: "#1FABAB", borderRadius:100
+                            height: "100%",width: "90%", borderWidth: 1, borderColor: "#1FABAB", borderRadius:100
                         }} />
                     </TouchableOpacity>
                 </View>
@@ -393,12 +410,12 @@ _getItemLayout = (data, index) => (
               
                 </View>
 
-
+             
                 <View  style={{height:height/2,alignItems:'flex-start',justifyContent:'center'}}>
                    <View style={{width:"100%",height:"100%"}}>
                   
-                   <Text style={{alignSelf:'flex-start',margin:"3%",fontWeight:"500",fontSize:16}} >Highlight Description :</Text>
-                   <Textarea value={this.state.currentHighlight.description}  style={{width:"94%",margin:"3%",height:"70%",borderRadius:15,borderWidth:2,borderColor:"#9E9E9E",backgroundColor:"#f5fffa"}}  placeholder="Please enter highlight description"  onChangeText={(value) => this.onChangedDescription(value)} />
+                   <Text style={{alignSelf:'flex-start',margin:"3%",fontWeight:"500",fontSize:16}} >Description :</Text>
+                   <Textarea value={this.state.currentHighlight.description}  style={{width:"94%",margin:"3%",height:"70%",borderRadius:15,borderWidth:2,borderColor:"#9E9E9E",backgroundColor:"#f5fffa"}}  placeholder="Please enter description"  onChangeText={(value) => this.onChangedDescription(value)} />
 
                    </View>
                  </View>
@@ -409,7 +426,7 @@ _getItemLayout = (data, index) => (
           <TouchableOpacity style={{width:"80%",alignSelf:'center'}}>
             <Button style={{width:"100%",borderRadius:15,borderColor:"#1FABAB",backgroundColor:"#1FABAB",justifyContent:'center',alignItem:'center'}}
                onPress={()=>{this.AddHighlight()}}>
-               <Text style={{color:"#FEFFDE"}}> Add   Highlight </Text>
+               <Text style={{color:"#FEFFDE"}}> Add New Highlight </Text>
              </Button> 
             </TouchableOpacity> :
             <TouchableOpacity style={{width:"80%",alignSelf:'center'}}>
