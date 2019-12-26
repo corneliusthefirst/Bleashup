@@ -2,10 +2,10 @@ import React, { Component } from "react";
 import {
   Content, Card, CardItem, Text, Body, Container, Icon, Header,
   Form, Item, Title, Input, Left, Right, H3, H1, H2, Spinner,
-  Button, InputGroup, DatePicker, Thumbnail, Alert
+  Button, InputGroup, Thumbnail, Alert
 } from "native-base";
 
-import { StyleSheet, View,Image,TouchableOpacity,Dimensions} from 'react-native';
+import { StyleSheet, View,Image,TouchableOpacity,TouchableWithoutFeedback,Dimensions,Keyboard} from 'react-native';
 import ActionButton from 'react-native-action-button';
 import Modal from 'react-native-modalbox';
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
@@ -13,8 +13,7 @@ import autobind from "autobind-decorator";
 import { filter,uniqBy,orderBy,find,findIndex,reject,uniq,indexOf,forEach,dropWhile } from "lodash";
 import request from "../../../../../services/requestObjects";
 import  stores from '../../../../../stores/index';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import moment from 'moment';
+
 
 let {height, width} = Dimensions.get('window')
 
@@ -22,19 +21,25 @@ export default class EventTitle extends Component {
     constructor(props) {
       super(props)
       this.state={
-          show: false,
           title:"",
-          date:new Date(),
-          time:new Date(),
-          defaultDate:new Date(),
-          defaultTime:new Date(),
-          inputTimeValue:"",
-          inputDateValue:"",
-          isDateTimePickerVisible: false
+          update:false,
+          event_id:""
          }
          
     }
 
+    @autobind
+    init(){
+      stores.Events.readFromStore().then(Events =>{
+        let event = find(Events, { id:this.props.eventId });
+        this.state.title= event.about.title;
+        this.setState({
+          update:this.props.updateTitle?this.props.updateTitle:false,
+          title:this.state.title,
+          event_id:this.props.eventId
+        });
+      });
+    }
 
    componentDidMount(){
     stores.Events.readFromStore().then(Events =>{
@@ -42,21 +47,6 @@ export default class EventTitle extends Component {
 
           this.setState({title:event.about.title});
          
-       if(event.period!=""){
-        
-         this.setState({
-          date:event.period,
-          time:event.period,
-          inputDateValue:moment(event.period).format().split("T")[0],
-          inputTimeValue:moment(event.period).format().split("T")[1].split("+")[0]
-         });
-       }else{
-         this.setState({
-           inputDateValue:moment(this.state.defaultDate).format().split("T")[0],
-           inputTimeValue:moment(this.state.defaultTime).format().split("T")[1].split("+")[0]
-          });
-       }
-   
    });
       
  }
@@ -65,59 +55,21 @@ export default class EventTitle extends Component {
    @autobind
    onChangedTitle(value) { 
      this.setState({title:value});
+     if(!this.state.update){
      stores.Events.updateTitle("newEventId",value,false).then(()=>{});
+     }
    }
    
    @autobind
-   show(mode){
-      this.setState({
-        show: true,
-        mode,
-      });
-    }
-  
-    @autobind
-    timepicker(){
-      this.show('time');
-  
-    }
+   updateTitle(){
+     stores.Events.updateTitle(this.state.event_id,this.state.title,false).then(()=>{});
+     this.setState({update:false});
+     this.props.parentComp.state.EventData.title = this.state.title;
+     this.props.parentComp.setState({EventData:this.props.parentComp.state.EventData});
+     this.setState({title:""});
+     this.props.onClosed();
+   }
 
-    //for date
-    @autobind
-    showDateTimePicker(){
-      this.setState({ isDateTimePickerVisible: true });
-    };
-
-    @autobind
-    handleDatePicked(event,date){
-      if (date !== undefined) {
-
-        //deactivate the date picker before setting the obtain time
-        this.setState({ isDateTimePickerVisible: false });
-     
-        this.setState({date:date});
-        let period = moment(this.state.date).format().split("T")[0] + "T" +
-        moment(this.state.time).format().split("T")[1]
-        this.setState({inputDateValue:moment(period).format().split("T")[0]})      
-        stores.Events.updatePeriod("newEventId",period,false).then(()=>{});
-      }
-    }
-
-    @autobind
-    setTime(event, date){
-      if (date !== undefined) {
-        //deactivate the clock before setting the obtain time
-        this.setState({show:false});
-        //set time
-        this.setState({time:date});
-        let period = moment(this.state.date).format().split("T")[0] + "T" +
-        moment(this.state.time).format().split("T")[1];
-        this.setState({inputTimeValue:moment(period).format().split("T")[1].split("+")[0]});
-        stores.Events.updatePeriod("newEventId",period,false).then(()=>{});
-    
-      }
-
-    }
 
 
     render() {
@@ -127,79 +79,39 @@ export default class EventTitle extends Component {
                 onClosed={this.props.onClosed}
                 onClosingState={()=>{this.setState({show:false})}}
                 style={{
-                    height: height/2 - height/12 , borderRadius: 15,
+                    height: height/4  , borderRadius: 15,
                     backgroundColor:"#FEFFDE",borderColor:'black',borderWidth:1,width: "98%",
                     marginTop:"-3%"
                 }}
                 coverScreen={true}
                 position={'bottom'}
-                //backdropPressToClose={false}
                 >
 
-               <View  style={{height:"27%",width:"100%",alignItems:'center',justifyContent:'center',marginTop:"9%"}}>
+          <View  style={{height:"100%",width:"100%",justifyContent:'center'}}>
                    <View>
-                   <Text style={{alignSelf:'flex-start',margin:"3%",fontWeight:"400",fontSize:17}} >Event Title :</Text>
-                    <Item  style={{borderColor:'black',width:"95%"}} rounded>
-                     <Input placeholder='Please enter event title' maxLength={40} keyboardType='email-address' autoCapitalize="none" returnKeyType='next' inverse last
-                      value={this.state.title} onChangeText={(value) => this.onChangedTitle(value)} />
+                   <Text style={{alignSelf:'flex-start',margin:"3%",fontWeight:"400",fontSize:18}} >Activity Title:</Text>
+                    <Item  style={{borderColor:'black',width:"95%",alignSelf:'center'}} rounded>
+                     <Input  maxLength={40} placeholder='Please enter event title' keyboardType='email-address' autoCapitalize="none" returnKeyType='next' inverse last
+                       value={this.state.title} onChangeText={(value) => this.onChangedTitle(value)} />
                      </Item>
                     </View>
-    
-                </View>
+
+              <TouchableWithoutFeedback  onPress={() => Keyboard.dismiss()}>      
+               {this.state.update &&   
+                  <View style={{height:"20%",marginTop:"3%"}}>
+                   <TouchableOpacity style={{width:width/4,height:height/18,alignSelf:"flex-end",marginRight:"2%"}} >
+                   <Button style={{borderRadius:8,borderWidth:1,marginRight:"2%",backgroundColor:"#FEFFDE",borderColor:'#1FABAB',alignSelf:'flex-end',width:width/4,height:height/18,justifyContent:"center"}} onPress={()=>{this.updateTitle()}}>
+                   <Text style={{color:"#1FABAB"}}>Update</Text>
+                   </Button> 
+                   </TouchableOpacity>
+                   </View> 
+                }
+              </TouchableWithoutFeedback> 
+
+           </View>
 
 
-
-       <View style={{height:"37%",marginTop:"8%",flexDirection:"column",justifyContent:"space-between"}}>
-            
-            <Item rounded style={{flexDirection:"row",height:height/17,marginLeft:"1%",marginRight:"1%"}} >
-            <View style={{width:"12%"}} >
-            <TouchableOpacity  onPress={this.showDateTimePicker}>     
-            <Icon
-              active
-              type="MaterialIcons"
-              name="date-range"
-              style={{ color: "#1FABAB" }}
-            />
-            </TouchableOpacity>
-            </View>
-            <View>
-              <Input editable={false} placeholder="select date of event" value={this.state.inputDateValue} style={{color:"#696969"}}/>
-            </View>
-
-            {this.state.isDateTimePickerVisible && <DateTimePicker
-            mode="date"
-            minimumDate={this.state.defaultDate}
-            value={this.state.defaultDate}
-            onChange={this.handleDatePicked}
-            />
-            }
-
-          </Item>
-        
-      <Item rounded style={{flexDirection:"row",height:height/17,marginLeft:"1%",marginRight:"1%"}}  >
-       <View style={{width:"12%"}} >
-        <TouchableOpacity  onPress={this.timepicker}>
-          <Icon
-              active
-              type="Ionicons"
-              name="ios-clock"
-              style={{ color: "#1FABAB"}}
-            />
-        </TouchableOpacity>
-        </View>
-        <View>
-        <Input editable={false} placeholder="select event time" value={this.state.inputTimeValue} style={{color:"#696969"}}/>
-        </View>
-            
-      {this.state.show && <DateTimePicker  mode="time" value={this.state.defaultTime}  display="default" onChange={this.setTime}/>}
-       
-     </Item>
-
-    </View>
-
-
-
- </Modal>
+      </Modal>
 
     )}
 

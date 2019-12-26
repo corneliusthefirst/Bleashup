@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import {
- Card, CardItem, Text, Body, Icon, Item, Input, Left, Right, Spinner,
-  Button, Thumbnail,Label
-} from "native-base";
+  Card, CardItem, Text, Body, Icon, Item, Input, Left, Right, Spinner,
+   Button, Thumbnail,Label
+ } from "native-base";
 
 import { StyleSheet, View,Image,TouchableOpacity,FlatList,ScrollView,Dimensions} from 'react-native';
 import ActionButton from 'react-native-action-button';
@@ -13,24 +13,25 @@ import Swipeout from 'react-native-swipeout';
 import HighlightCardDetail from "./HighlightCardDetail";
 import  stores from '../../../../../stores/index';
 import {observer} from 'mobx-react'
-import moment from "moment";
+import moment from "moment"
 import { filter,uniqBy,orderBy,find,findIndex,reject,uniq,indexOf,forEach,dropWhile } from "lodash";
 import request from "../../../../../services/requestObjects";
+import EventHighlights from "./EventHighlights"
 import BleashupAlert from './BleashupAlert';
-import testForURL from '../../../../../services/testForURL';
-import CacheImages from '../../../../CacheImages';
 
 
 let {height, width} = Dimensions.get('window')
 
-export default class HighlightCard extends Component {
+export default class DetailHighlightCard extends Component {
     constructor(props) {
         super(props)
         this.state={
           updating:false,
           deleting:false,
           isOpen:false,
+          highlight_id:this.props.item.id,
           check:false,
+          EventHighlightState:false,
           master:this.props.participant.master==false?this.props.participant.master:true
          }
         
@@ -39,15 +40,14 @@ export default class HighlightCard extends Component {
 
 @autobind
 update(){
-      //new highlight update when event is not yet created but highlight already created
-      this.props.parentComponent.state.currentHighlight = this.props.item;
-      this.props.parentComponent.setState({update:true});
+    this.refs.highlights.state.currentHighlight = this.props.item;
+    this.refs.highlights.setState({update:true});
+    this.setState({EventHighlightState:true}); 
 }
 
 @autobind
 delete(){
   return new Promise((resolve,rejectPromise)=>{
-
     if(this.props.item.event_id == "newEventId"){
       stores.Events.removeHighlight(this.props.item.event_id,this.props.item.id,false).then(()=>{});
     }else{
@@ -55,7 +55,6 @@ delete(){
     }
     stores.Highlights.removeHighlight(this.props.item.id).then(()=>{});
     this.setState({check:false});
-    //reset higlight data
     this.props.deleteHighlight(this.props.item.id);
   });
  
@@ -77,9 +76,9 @@ componentDidMount(){
             <Text>{this.props.item.title.length>16?this.props.item.title.slice(0,16)+"..":this.props.item.title}</Text>
            </CardItem>
            <CardItem>
-             <View style={{width:"100%",height:height/7}}>
-                {testForURL(this.props.item.url.photo) ? <CacheImages thumbnails square style={{ width: "100%", height: height / 7,borderRadius: 8,}} source={{ uri: this.props.item.url.photo}}></CacheImages>:<Thumbnail source={{uri:this.props.item.url.photo}} style={{ flex: 1, width:null,height:null,
-              borderRadius:8}} large ></Thumbnail>}
+             <View style={{width:width/2-width/16,height:height/7}}>
+            <Thumbnail source={{uri:this.props.item.url.photo}} style={{ flex: 1, width:null,height:null,
+              borderRadius:8}} large ></Thumbnail>
             </View>
            </CardItem>
            <CardItem style={{height:height/18}}>
@@ -109,11 +108,11 @@ componentDidMount(){
                  </Right>
                </CardItem> }
       
-
            <HighlightCardDetail isOpen={this.state.isOpen} item={this.props.item} onClosed={()=>{this.setState({isOpen:false})}}/>
-     
            <BleashupAlert  title={"Delete Higlight"}   accept={"Yes"} refuse={"No"} message={" Are you sure you want to delete these highlight ?"} deleteFunction={this.delete} isOpen={this.state.check} onClosed={()=>{this.setState({check:false})}}/>
-     
+           <EventHighlights   isOpen={this.state.EventHighlightState} onClosed={()=>{this.setState({EventHighlightState:false})}}
+           parentComponent={this} ref={"highlights"} participant={this.props.participant} event_id={this.props.item.event_id} highlight_id={this.props.item.id}/>
+          
        </Card>  
         
     )}

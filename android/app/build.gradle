@@ -93,6 +93,10 @@ def enableSeparateBuildPerCPUArchitecture = false
  */
 def enableProguardInReleaseBuilds = false
 android {
+     packagingOptions {
+      // Make sure libjsc.so does not packed in APK
+      exclude "**/libjsc.so"
+    }
     compileSdkVersion rootProject.ext.compileSdkVersion
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -143,6 +147,7 @@ dependencies {
     implementation "com.google.firebase:firebase-database:17.0.0"
     implementation project(':react-native-firebase')
     implementation project(':react-native-datetimepicker')
+    implementation "org.webkit:android-jsc:r241213"
     //implementation 'com.android.support:appcompat-v7:27.1.1'
     //implementation 'com.android.support:design:27.1.1'
     implementation project(':react-native-calendar-events')
@@ -154,7 +159,7 @@ dependencies {
     implementation project(':react-native-video')
     implementation project(':rn-fetch-blob')
     implementation project(':react-native-sound')
-  
+    implementation 'org.chromium:v8-android:+'
     implementation project(':react-native-community-netinfo')
     implementation project(':react-native-svg')
     implementation project(':@react-native-community_async-storage')
@@ -191,7 +196,6 @@ googlePlayServicesVersion   = "12.0.1"
 supportLibVersion           = "27.0.0"
  }
 
- 
 preBuild.doFirst { ant.replaceregexp(match:'android.support.v4.util.Pools;', replace:'androidx.core.util.Pools;', flags:'g', byline:true) { fileset(dir: '../../node_modules/react-native-gesture-handler/android/src/main/java/com/swmansion/gesturehandler/react/', includes: '*.java') }
 }
 //preBuild.doFirst { ant.replaceregexp(match:'android.support.annotation.Nullable;', replace:'androidx.annotation.Nullable;', flags:'g', byline:true) { fileset(dir: '../../node_modules/react-native-tcp/android/src/main/java/com/peel/react/', includes: '*.java') }

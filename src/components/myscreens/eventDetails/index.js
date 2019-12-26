@@ -10,7 +10,7 @@ import ActionButton from 'react-native-action-button';
 import RadioForm, { RadioButton, RadioButtonInput, RadioButtonLabel } from 'react-native-simple-radio-button';
 import autobind from "autobind-decorator";
 import CacheImages from "../../CacheImages";
-import HighlightCard from "../event/createEvent/components/HighlightCard"
+import DetailHighlightCard from "../event/createEvent/components/DetailHighlightCard"
 import PhotoEnlargeModal from "../invitations/components/PhotoEnlargeModal";
 import ImagePicker from 'react-native-image-picker';
 import stores from '../../../stores/index';
@@ -26,6 +26,7 @@ import EventHighlights from "../event/createEvent/components/EventHighlights";
 import Hyperlink from 'react-native-hyperlink';
 import moment from 'moment';
 import  BleashupHorizontalFlatList from '../../BleashupHorizotalFlatList';
+import testForURL from '../../../services/testForURL';
 
 let { height, width } = Dimensions.get('window');
 
@@ -49,7 +50,8 @@ export default class EventDetailView extends Component {
       creation_date: "",
       creation_time: "",
       participant: request.Participant(),
-      EventHighlightState: false
+      EventHighlightState: false,
+      updateTitleState:false
 
     }
 
@@ -127,18 +129,11 @@ interval = 4000
   )
   _keyExtractor = (item, index) => item.id;
 
-  /*
-  _renderItem = ({ item, index }) => (
-
-    <HighlightCard item={item} deleteHighlight={(id) => { this.deleteHighlight(id) }} ancien={true} participant={this.state.participant} />
-
-  );*/
-
+ 
 
   @autobind
   newHighlight() {
     this.setState({ EventHighlightState: true })
-    this.refs.highlights.setState({animateHighlight:true})
   }  
 
 
@@ -159,7 +154,14 @@ interval = 4000
           alignItems: "center",
         }}>
           <View style={{marginLeft:"4%"}}>
+            <TouchableOpacity delayLongPress={1000} onLongPress={() => {
+                if (this.state.participant.master == true) {
+                  this.setState({ updateTitleState: true })
+                  this.refs.title_ref.init();
+                }
+              }} >
             <Title style={{ color: "#0A4E52", fontWeight: 'bold', }}>{this.props.Event.about.title}</Title>
+            </TouchableOpacity>
           </View>
           <View >
             <TouchableOpacity style={{}}>
@@ -182,7 +184,7 @@ interval = 4000
           getItemLayout={this._getItemLayout}
           renderItem={(item, index) => {
             return (
-                <HighlightCard   participant={this.state.participant}  parentComponent={this} item={item} ancien={true} 
+                <DetailHighlightCard   participant={this.state.participant}  parentComponent={this} item={item} ancien={true} 
                    deleteHighlight={(id)=>{this.deleteHighlight(id)}} ref={"higlightcard"}/>
             );
           }} 
@@ -266,6 +268,13 @@ interval = 4000
 
 
         </View>
+
+
+
+        <EventTitle isOpen={this.state.updateTitleState} onClosed={()=>{this.setState({updateTitleState:false})}} 
+          ref={"title_ref"} eventId={this.props.Event.id} updateTitle={true} parentComp={this}/>
+                               
+
         <EventDescription isOpen={this.state.EventDescriptionState} onClosed={() => { this.setState({ EventDescriptionState: false }) }}
           ref={"description_ref"} eventId={this.props.Event.id} updateDes={true} parentComp={this} />
 

@@ -23,22 +23,8 @@ export default class CreateEvent extends Component {
 
     stores.Events.readFromStore().then(Events =>{
      let event = find(Events, { id:"newEventId" });
-      console.warn(Events);
-    /*  let user = {
-        phone: "0666406835",
-        name: "cornelius",
-        status: "One step ahead the world",
-        age: "21",
-        nickname: "corneliusthefirst",
-        email: "ndeffo.jugal98@gmail.com",
-        created_at: "",
-        updated_at: "",
-        password:"jugal98",
-        profile:"",
-        profile_ext:""
-      }; 
-      stores.LoginStore.setUser(user).then(()=>{console.warn("user added")})*/
-   
+      console.warn(event);
+
      if(!event){
       event =  request.Event();
       event.id = "newEventId";
@@ -84,19 +70,27 @@ export default class CreateEvent extends Component {
  }
 
  onClickNewRemind(){
-  
+ /* stores.Reminds.removeRemind("newRemindId").then((R1)=>{
+    console.warn("first deleted",R1)
+  });*/
+ 
+
   stores.Reminds.readFromStore().then(Reminds =>{
+    console.warn("remind are",Reminds);
     let remind = find(Reminds,{ id:"newRemindId" }); 
     console.warn("remind it is",remind);
 
     if(!remind){
-      remind =  request.remind();
+      console.warn("here")
+      remind =  request.Remind();
       remind.id = "newRemindId";
       stores.Reminds.addReminds(remind).then(()=>{});
     }
    
     this.props.navigation.navigate("MyTasksView");
    })
+
+  
  }
 
   render() {
@@ -130,18 +124,18 @@ const styles = StyleSheet.create({
 
 //stores.Reminds.removeRemind(remind.id).then((value)=>{console.warn("here it is",value)});
 /* 
-    let user = {
-      phone: "0666406835",
-      name: "cornelius",
-      status: "One step ahead the world",
-      birth_date: "21",
-      nickname: "corneliusthefirst",
-      email: "ndeffo.jugal98@gmail.com",
-      created_at : moment().format(),
-      updated_at:  moment().format(),
-      password:"cornelius",
-      profile:"",
-      profile_ext:""
-    }; 
-    stores.TempLoginStore.setUser(user).then(()=>{});
-*/
+     /*  let user = {
+        phone: "0666406835",
+        name: "cornelius",
+        status: "One step ahead the world",
+        age: "21",
+        nickname: "corneliusthefirst",
+        email: "ndeffo.jugal98@gmail.com",
+        created_at: "",
+        updated_at: "",
+        password:"jugal98",
+        profile:"",
+        profile_ext:""
+      }; 
+      stores.LoginStore.setUser(user).then(()=>{console.warn("user added")})*/
+   
