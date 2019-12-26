@@ -266,11 +266,6 @@ interval = 4000
 
 
         </View>
-
-
-
-
-
         <EventDescription isOpen={this.state.EventDescriptionState} onClosed={() => { this.setState({ EventDescriptionState: false }) }}
           ref={"description_ref"} eventId={this.props.Event.id} updateDes={true} parentComp={this} />
 
