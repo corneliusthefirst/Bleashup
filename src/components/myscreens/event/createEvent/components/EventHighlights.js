@@ -291,14 +291,14 @@ _getItemLayout = (data, index) => (
         this.props.onClosed()
         this.setState({animateHighlight:false})
       }}
-      style={{ height:this.props.event_id?"68%":"100%", borderRadius: 3,
-      backgroundColor:"#FEFFDE",borderColor:'black',width: "99%",flexDirection:'column'}}
+      style={{ height:this.props.event_id?"68%":"100%",width: "100%", borderRadius:10,
+      backgroundColor:"#FEFFDE",borderColor:'black',flexDirection:'column'}}
       coverScreen={true}
       position={'bottom'}
       swipeToClose={false}
      >
     <Root>
-      <View style={{height:"100%",backgroundColor:"#FEFFDE",width:"100%"}}>
+      <View style={{height:"100%",backgroundColor:"#FEFFDE",width:"100%",borderRadius:10}}>
      
      {!this.props.event_id &&
          <View style={{height:"8%",width:"96%",backgroundColor:"#FEFFDE",marginLeft:"2%",marginRight:"2%"}}>
@@ -334,8 +334,8 @@ _getItemLayout = (data, index) => (
         </BleashupHorizontalFlatList>
      </View>
 
-          <View style={{height:height/6,alignItems:'center'}}>
-                   <Text style={{alignSelf:'flex-start',margin:"3%",fontWeight:"500",fontSize:16}} >Title :</Text>
+          <View style={{height:height/13,alignItems:'center',marginTop:"2%"}}>
+                  {/* <Text style={{alignSelf:'flex-start',margin:"3%",fontWeight:"500",fontSize:16}} >Title :</Text>*/}
                     <Item  style={{borderColor:'black',width:"95%"}} rounded>
                      <Input value={this.state.currentHighlight.title} maxLength={40}  placeholder='Please enter title' keyboardType='email-address' autoCapitalize="none" returnKeyType='next' inverse last
                       onChangeText={(value) => this.onChangedTitle(value)} />
@@ -343,65 +343,67 @@ _getItemLayout = (data, index) => (
                </View>
 
 
-                 <View style={{height:height/10,flexDirection:"row",justifyContent:'space-between',alignItem:'center',marginBottom:"2%"}}>
+                 <View style={{height:height/9,flexDirection:"row",justifyContent:'space-between',alignItem:'center',marginBottom:"2%"}}>
 
                     <TouchableOpacity style={{width:"18%",backgroundColor:"transparent",justifyContent:'center',alignItem:'center',marginLeft:"7%"}}
                      onPress={()=>{this.TakePhotoFromCamera().then((source) =>{})} }>
                         <View style={{flexDirection:"column"}}>
                            <Icon name="photo-camera" active={true} type="MaterialIcons"
                             style={{color: "#0A4E52",alignSelf:"flex-start"}}/>
-                            <Text style={{fontSize:10}}>Photo</Text>
+                            <Text style={{fontSize:10,marginBottom:6}}>Photo</Text>
                         </View>
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={{width:"18%",backgroundColor:"transparent",justifyContent:'center',alignItem:'center'}} 
+                 {/* <TouchableOpacity style={{width:"18%",backgroundColor:"transparent",justifyContent:'center',alignItem:'center'}} 
                     onPress={()=>{this.TakePhotoFromLibrary().then(source=>{})}}>
                          <View style={{flexDirection:"column"}}>
                             <Icon name="photo" active={true} type="FontAwesome"
                                style={{color: "#0A4E52",alignSelf:"flex-start"}}/>
                             <Text style={{fontSize:10}}>Library</Text>
                           </View>
-                    </TouchableOpacity>
+                    </TouchableOpacity>*/}
 
-                    <TouchableOpacity style={{width:"18%",backgroundColor:"transparent",justifyContent:'center',alignItem:'center'}} 
-                      onPress={()=>{this.setState({ searchImageState:true})}}>
-                        <View style={{flexDirection:"column"}}>
-                         <Icon name="google" active={true} type="AntDesign"
-                            style={{color: "#0A4E52",alignSelf:"flex-start"}}/>
-                         <Text  style={{fontSize:10}}> Online</Text>
-                        </View>
-                    </TouchableOpacity>
 
                     <TouchableOpacity style={{width:"18%",backgroundColor:"transparent",justifyContent:'center',alignItem:'center'}} 
                     onPress={()=>{this.TakePhotoFromLibrary().then(source=>{})}}>
                          <View style={{flexDirection:"column"}}>
                             <Icon name="video" active={true} type="Entypo"
                                style={{color: "#0A4E52",alignSelf:"flex-start"}}/>
-                            <Text style={{fontSize:10}}>Videos</Text>
+                            <Text style={{fontSize:10,marginBottom:6}}>Videos</Text>
                           </View>
                     </TouchableOpacity>
 
                     <TouchableOpacity style={{width:"18%",backgroundColor:"transparent",justifyContent:'center',alignItem:'center'}} 
                       onPress={()=>{this.setState({ searchImageState:true})}}>
                         <View style={{flexDirection:"column"}}>
-                         <Icon name="z-wave" active={true} type="MaterialCommunityIcons"
+                         <Icon name="microphone" active={true} type="FontAwesome"
                             style={{color: "#0A4E52",alignSelf:"flex-start"}}/>
-                         <Text  style={{fontSize:10}}> Audio</Text>
+                         <Text  style={{fontSize:10,marginBottom:6}}>Audio</Text>
+                        </View>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={{width:"18%",backgroundColor:"transparent",justifyContent:'center',alignItem:'center'}} 
+                      onPress={()=>{this.setState({ searchImageState:true})}}>
+                        <View style={{flexDirection:"column"}}>
+                         <Icon name="web" active={true} type="MaterialCommunityIcons"
+                            style={{color:"#0A4E52",alignSelf:"flex-start",marginLeft:7}}/>
+                         <Text  style={{fontSize:10,marginBottom:6}}>Download</Text>
                         </View>
                     </TouchableOpacity>
 
                  </View>
  
 
+
             {this.state.audioState &&
             <View style={{height:height/9,backgroundColor:"yellow",marginBottom:"5%"}}></View>}
 
-              <View style={{height:height/4}}>
+              <View style={{height:height/4 - height/18}}>
 
                 <View style={{ flex: 1, flexDirection: 'column',justifyContent:'center',alignItem:'center'}}>
                     <TouchableOpacity onPress={() => this.setState({ enlargeImage: true })} >
                         <Image  source={this.state.currentHighlight.url.photo!=""?{uri:this.state.currentHighlight.url.photo}:this.state.defaultUrl} style={{alignSelf:'center',
-                            height: "100%",width: "90%", borderWidth: 1, borderColor: "#1FABAB", borderRadius:100
+                            height: "100%",width: "95%", borderWidth: 1, borderColor: "#1FABAB", borderRadius:100
                         }} />
                     </TouchableOpacity>
                 </View>
@@ -411,28 +413,28 @@ _getItemLayout = (data, index) => (
                 </View>
 
              
-                <View  style={{height:height/2,alignItems:'flex-start',justifyContent:'center'}}>
+                <View  style={{height:height/3 ,alignItems:'flex-start',justifyContent:'center'}}>
                    <View style={{width:"100%",height:"100%"}}>
                   
-                   <Text style={{alignSelf:'flex-start',margin:"3%",fontWeight:"500",fontSize:16}} >Description :</Text>
-                   <Textarea value={this.state.currentHighlight.description}  style={{width:"94%",margin:"3%",height:"70%",borderRadius:15,borderWidth:2,borderColor:"#9E9E9E",backgroundColor:"#f5fffa"}}  placeholder="Please enter description"  onChangeText={(value) => this.onChangedDescription(value)} />
+                  {/* <Text style={{alignSelf:'flex-start',margin:"3%",fontWeight:"500",fontSize:16}} >Description :</Text>*/}
+                   <Textarea value={this.state.currentHighlight.description}  style={{width:"94%",margin:"3%",height:"80%",borderRadius:15,borderWidth:2,borderColor:"#9E9E9E",backgroundColor:"#f5fffa"}}  placeholder="Please enter description"  onChangeText={(value) => this.onChangedDescription(value)} />
 
                    </View>
                  </View>
             
                 
-                 <View style={{height:height/8,justifyContent:'space-between',alignItem:'center'}}>
+              <View style={{height:height/8,justifyContent:'space-between',alignItem:'center'}}>
           {!this.state.update?
-          <TouchableOpacity style={{width:"80%",alignSelf:'center'}}>
+          <TouchableOpacity style={{width:"85%",alignSelf:'center'}}>
             <Button style={{width:"100%",borderRadius:15,borderColor:"#1FABAB",backgroundColor:"#1FABAB",justifyContent:'center',alignItem:'center'}}
                onPress={()=>{this.AddHighlight()}}>
-               <Text style={{color:"#FEFFDE"}}> Add New Highlight </Text>
+               <Text style={{color:"#FEFFDE"}}> Add Highlight</Text>
              </Button> 
             </TouchableOpacity> :
-            <TouchableOpacity style={{width:"80%",alignSelf:'center'}}>
+            <TouchableOpacity style={{width:"25%",alignSelf:'center'}}>
             <Button style={{width:"100%",borderRadius:15,borderColor:"#1FABAB",backgroundColor:"#1FABAB",justifyContent:'center',alignItem:'center'}}
                onPress={()=>{this.updateHighlight()}}>
-               <Text style={{color:"#FEFFDE"}}> Update   Highlight </Text>
+               <Text style={{color:"#FEFFDE"}}> Update</Text>
             </Button> 
             </TouchableOpacity>  }
             

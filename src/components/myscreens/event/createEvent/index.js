@@ -197,7 +197,7 @@ componentDidMount(){
                         break
                         case 5:
                          this.setState({EventHighlightState:true})
-                         this.refs.highlight_ref.setState({animateHighlight:true})
+                         //this.refs.highlight_ref.setState({animateHighlight:true})
                         break
                         default:
                         this.setState({EventTitleState:true})
