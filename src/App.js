@@ -39,13 +39,14 @@ import Highlights from "./components/myscreens/highlights";
 import ChangeLogs from "./components/myscreens/changelogs";
 import EventDetail from "./components/myscreens/eventDetails";
 import EventChat from "./components/myscreens/eventDetails";
-import Reminds from "./components/myscreens/reminds";
+import Reminds from "./components/myscreens/reminds/index";
 import CreateEventView from "./components/myscreens/event/createEvent/index"
 import EventDetailView from "./components/myscreens/eventDetails/index"
 import SendInvitations from "./components/myscreens/sent-invitations/index";
 import MyTasksView  from './components/myscreens/MyTasks/MyTasks'
 import HighLightsDetails from './components/myscreens/highlights_details';
 import LocalTasksCreation  from './components/myscreens/MyTasks/localTasksCreation'
+import TasksCreation  from './components/myscreens/reminds/TasksCreation'
 /*
 let {height, width} = Dimensions.get('window');
 EStyleSheet.build({
@@ -81,10 +82,11 @@ const AppNavigator = createStackNavigator(
     SendInvitations:{screen:SendInvitations},
     MyTasksView:{screen:MyTasksView},
     EventDetailView:{screen:EventDetailView },
-    LocalTasksCreation:{screen:LocalTasksCreation}
+    LocalTasksCreation:{screen:LocalTasksCreation},
+    TasksCreation:{screen:TasksCreation}
   },
   { 
-    initialRouteName: "Home",
+    initialRouteName: "Reminds",
     headerMode: "none"
   }
 );

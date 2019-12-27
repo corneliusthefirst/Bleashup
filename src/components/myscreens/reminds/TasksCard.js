@@ -17,7 +17,7 @@ import moment from 'moment';
 let {height, width} = Dimensions.get('window')
 
 @observer
-export default class MyTasksCard extends Component {
+export default class EventTasksCard extends Component {
     constructor(props) {
         super(props)
         this.state={
@@ -65,7 +65,7 @@ onDone(){
 
 @autobind
 update(){
-  this.props.navigation.navigate("LocalTasksCreation",{remind_id:this.props.item.id,update_remind:true,updateCardData:this.updateCardData})
+  this.props.navigation.navigate("TasksCreation",{remind_id:this.props.item.id,update_remind:true,updateCardData:this.updateCardData})
 }
 
 

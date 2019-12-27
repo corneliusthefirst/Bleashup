@@ -6,10 +6,8 @@ import {
 } from "native-base";
 
 import { StyleSheet, View,Image,TouchableOpacity,Dimensions,ScrollView} from 'react-native';
-import Modal from 'react-native-modalbox';
-import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 import autobind from "autobind-decorator";
-import { filter,uniqBy,orderBy,find,findIndex,reject,uniq,indexOf,forEach,dropWhile } from "lodash";
+import {filter,find,findIndex} from "lodash";
 import request from "../../../services/requestObjects";
 import stores from '../../../stores/index';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -36,7 +34,7 @@ let data = [{
 
 let {height, width} = Dimensions.get('window')
 
-export default class LocalTasksCreation extends Component {
+export default class TasksCreation extends Component {
     constructor(props) {
       super(props)
       this.state={
@@ -59,7 +57,7 @@ export default class LocalTasksCreation extends Component {
    
 
     componentDidMount(){
-        //console.warn("update state",this.props.navigation.state.params.update_remind)
+       // console.warn("update state",this.props.navigation.state.params.update_remind)
         //console.warn("update state 2",this.state.update)
 
         stores.Reminds.readFromStore().then(Reminds =>{
@@ -208,7 +206,7 @@ export default class LocalTasksCreation extends Component {
 
   @autobind
    back() {
-    this.props.navigation.navigate('MyTasksView');
+    this.props.navigation.navigate('Reminds');
    }
   @autobind
   setRecursiveFrequency(value){

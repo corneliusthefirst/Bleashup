@@ -19,7 +19,7 @@ import LocalTasksCreation from './localTasksCreation';
 import { find, findIndex, uniqBy, reject,filter } from "lodash";
 
 //const MyTasksData = stores.Reminds.MyTasksData
-
+ 
 
 @observer
 export default class MyTasksView extends Component {
