@@ -69,6 +69,7 @@ export default class highlights {
       });
     });
   }
+  
   fetchHighlightsFromRemote(eventID){
     return new Promise((resolve,reject) =>{
       if(this.curentTemporalHighlight[eventID] && this.curentTemporalHighlight[eventID].length> 0 ){
@@ -121,6 +122,8 @@ export default class highlights {
       }
     });
   }
+
+
   @action updateHighlightTitle(newHightlight, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Highlights => {

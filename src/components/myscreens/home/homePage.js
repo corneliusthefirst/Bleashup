@@ -55,7 +55,7 @@ import Requester from '../event/Requester';
 
 let { height, width } = Dimensions.get('window');
 
-@observer
+
 class Home extends Component {
   constructor(props) {
     super(props);
@@ -288,30 +288,39 @@ class Home extends Component {
       }
     })
   }
+  navigateToInvitations(){
+    this.props.navigation.navigate("Invitation")
+  }
   render() {
     StatusBar.setBackgroundColor("#FEFFDE", true)
     StatusBar.setBarStyle('dark-content', true)
     StatusBar.setHidden(false, true)
     return (
       <Container style={{ backgroundColor: "#FEFFDE" }}>
-
         <View style={{
-          height: 40, width: "98%", backgroundColor: "#FEFFDE", shadowOpacity: 1,borderBottomRightRadius: 5,borderBottomLeftRadius: 5,
+          height: 40, width: "98%",
+           backgroundColor: "#FEFFDE", 
+           shadowOpacity: 1,
+           borderBottomRightRadius: 5,
+           borderBottomLeftRadius: 5,
           shadowOffset: {
             height: 1,
           },
           shadowRadius: 10, elevation:6,alignSelf: 'center', marginLeft: "1%",marginRight: "1%", }}>
-          <View style={{ flex: 1, backgroundColor: "#FEFFDE", flexDirection: "row", justifyContent: "space-between", marginLeft: "3%", marginRight: "3%" }}>
+          <View style={{ flex: 1, backgroundColor: "#FEFFDE", flexDirection: "row", 
+          justifyContent: "space-between", marginLeft: "3%", marginRight: "3%" }}>
             <Thumbnail small source={require("../../../../assets/ic_launcher_round.png")}></Thumbnail>
             <TouchableOpacity style={{ marginTop: '2%', }}>
-              <Icon name="gear" active={true} type="EvilIcons" style={{ color: "#1FABAB", alignSelf: "flex-end" }} onPress={this.settings()} />
-            </TouchableOpacity>
+              <View style={{ alignSelf: "flex-end" ,display: 'flex',flexDirection: 'row',}}>
+                <Icon name="sc-telegram" active={true} type="EvilIcons" style={{ color: "#1FABAB", }} onPress={() => this.navigateToInvitations()} />
+                <Icon name="gear" active={true} type="EvilIcons" style={{ color: "#1FABAB", }} onPress={() => this.settings()} />
+            </View>
+              </TouchableOpacity>
           </View>
 
         </View>
         <Tabs
-          locked
-          elevation={10}
+        locked
           tabContainerStyle={{
             borderWidth: 1,
             borderRadius: 8,
@@ -320,8 +329,10 @@ class Home extends Component {
             shadowColor: '#000',
             shadowOffset: { width: 0, height: 2 },
             shadowOpacity: 0.8,
+            alignSelf: 'center',
+            margin: '2%',
             shadowRadius: 2,
-            elevation: 20, margin: "1%", height: 45, backgroundColor: "#FEFFDE", borderRadius: 4, }}
+            elevation: 20, margin: "1%", height: 45, backgroundColor: "#1FABAB", borderRadius: 4, }}
           tabBarPosition="bottom"
           tabBarUnderlineStyle={{
             backgroundColor: "transparent"
@@ -333,25 +344,13 @@ class Home extends Component {
           }}
         >
           <Tab
-            heading={
-              <TabHeading>
-                <View>
-                  <Icon name="sc-telegram" type="EvilIcons" style={{ fontSize: this.state.currentTab == 0 ? 60 : 20, }} />
-                </View>
-              </TabHeading>
-            }
-          >
-            <InvitationView {...this.props} ref={"invitation_view"} />
-          </Tab>
-
-          <Tab
             tabStyle={{
               borderRadius: 0
             }}
             heading={
               <TabHeading>
                 <View style={{ display: 'flex', }}>
-                  <Icon name="ios-pulse" type="Ionicons" style={{ fontSize: this.state.currentTab == 1 ? 45 : 15, }} />
+                  <Icon name="ios-pulse" type="Ionicons" style={{ fontSize: this.state.currentTab == 0 ? 40 : 15, }} />
                 </View>
               </TabHeading>
             }
@@ -363,7 +362,7 @@ class Home extends Component {
             heading={
               <TabHeading>
                 <View>
-                  <Icon name="ios-people" type="Ionicons" style={{ fontSize: this.state.currentTab == 2 ? 50 : 15, }} />
+                  <Icon name="ios-people" type="Ionicons" style={{ fontSize: this.state.currentTab == 1 ? 50 : 15, }} />
                 </View>
               </TabHeading>
             }
@@ -374,7 +373,7 @@ class Home extends Component {
             heading={
               <TabHeading>
                 <View>
-                  <Icon name="user-alt" type="FontAwesome5" style={{ fontSize: this.state.currentTab == 3 ? 35 : 15, }} />
+                  <Icon name="user-alt" type="FontAwesome5" style={{ fontSize: this.state.currentTab == 2 ? 35 : 15, }} />
                 </View>
               </TabHeading>
             }

@@ -13,6 +13,8 @@ import PhotoEnlargeModal from "../invitations/components/PhotoEnlargeModal";
 import  stores from '../../../stores/index';
 import {observer} from 'mobx-react'
 import moment from 'moment';
+import LocalTasksCreation from './localTasksCreation'
+import AccordionModule from '../invitations/components/Accordion'
 
 let {height, width} = Dimensions.get('window')
 
@@ -27,7 +29,11 @@ export default class MyTasksCard extends Component {
           created_time:"",
           period_date:"",
           period_time:"",
-          cardData:this.props.item
+          cardData:this.props.item,
+          accordData:{title:"",content:""},
+          RemindCreationState:false,
+          long:false
+
         }
 
     }
@@ -41,6 +47,15 @@ updateCardData(newRemind){
    period_date:  period[0] ? period[0] : null,
    period_time:  period[1] ? period[1].split("+")[0] : null
  })
+    //setting description data
+    if(this.state.cardData.description.length>103){
+      this.setState({long:true})
+      }
+     this.state.accordData.title = this.state.cardData.description.slice(0,103)
+     this.state.accordData.content = this.state.cardData.description.slice(103,this.state.cardData.description.length)
+     this.setState({accordData:this.state.accordData})
+
+     
 }
 
 componentDidMount(){
@@ -54,6 +69,14 @@ componentDidMount(){
     period_time:  period[1] ? period[1].split("+")[0] : null
   })
 
+    //setting description data
+    if(this.state.cardData.description.length>103){
+      this.setState({long:true})
+  }
+  this.state.accordData.title = this.state.cardData.description.slice(0,103)
+  this.state.accordData.content = this.state.cardData.description.slice(103,this.state.cardData.description.length)
+  this.setState({accordData:this.state.accordData})
+
 }
  
 @autobind
@@ -65,7 +88,8 @@ onDone(){
 
 @autobind
 update(){
-  this.props.navigation.navigate("LocalTasksCreation",{remind_id:this.props.item.id,update_remind:true,updateCardData:this.updateCardData})
+  this.refs.task_creation.init();
+  this.setState({RemindCreationState:true})
 }
 
 
@@ -87,7 +111,7 @@ update(){
 
 
          <CardItem  carBody>
-           <Text style={{alignSelf:"center"}}>{this.state.cardData.description}</Text>
+         <AccordionModule dataArray={[this.state.accordData]} long={this.state.long}></AccordionModule>
          </CardItem>
 
          <CardItem style={{width:"100%"}}>
@@ -112,6 +136,11 @@ update(){
          </CardItem>
           {/*<PhotoEnlargeModal isOpen={this.state.isOpenTasks} 
             onClosed={() => this.setState({ isOpenTasks: false })} photo={this.props.image} />*/}
+        
+        <LocalTasksCreation  ref={"task_creation"} isOpen={this.state.RemindCreationState} onClosed={()=>{this.setState({RemindCreationState:false})}} 
+           parentComp={this}  remind_id={this.props.item.id} update={true} 
+           updateCardData={this.updateCardData} ></LocalTasksCreation>
+ 
          </Card>
         </TouchableOpacity>
 

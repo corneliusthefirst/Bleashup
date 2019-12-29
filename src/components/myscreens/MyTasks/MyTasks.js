@@ -26,7 +26,8 @@ export default class MyTasksView extends Component {
     constructor(props) {
         super(props)
         this.state={
-          localRemindData:[]
+          localRemindData:[],
+          RemindCreationState:false
         }
     }
 
@@ -48,7 +49,8 @@ componentDidMount(){
 
 @autobind
 AddRemind(){
-  this.props.navigation.navigate("LocalTasksCreation",{localRemindData:this.state.localRemindData,updateData:this.updateData});
+  //this.props.navigation.navigate("LocalLocalTasksCreation",{localRemindData:this.state.localRemindData,updateData:this.updateData});
+  this.setState({RemindCreationState:true})
 }
 
 
@@ -104,6 +106,8 @@ _keyExtractor = (item, index) => item.id
   
 
       </View>
+      <LocalTasksCreation  isOpen={this.state.RemindCreationState} onClosed={()=>{this.setState({RemindCreationState:false})}} parentComp={this} 
+        localRemindData={this.state.localRemindData}></LocalTasksCreation>
  
    </View>
 

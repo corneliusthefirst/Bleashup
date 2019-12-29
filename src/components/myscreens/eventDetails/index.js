@@ -74,35 +74,34 @@ export default class EventDetailView extends Component {
             EventData: this.props.Event, 
             participant: participant
           })
+
+          this.intervalID = setInterval(() => {
+            if ((this.state.animateHighlight == true) && (this.state.highlightData.length > this.incrementer)) {
+              this.detail_flatlistRef.scrollToIndex({ animated: true, index: this.initialScrollIndexer, viewOffset: 0, viewPosition: 0 });
+
+              if (this.initialScrollIndexer >= (this.state.highlightData.length) - this.incrementer) {
+                this.initialScrollIndexer = 0
+              } else {
+                this.initialScrollIndexer = this.initialScrollIndexer + this.incrementer
+              }
+            }
+          }, this.interval)
         })
       }
     })
 
   }
-
-
-
+initialScrollIndexer = 2
+incrementer = 2
+interval = 4000
   componentDidMount() {
     this.setState({animateHighlight:true});
     this.initializer();
-
-    setInterval(() => {
-      if ((this.state.animateHighlight == true) && (this.state.highlightData.length > 2)) {
-        this.detail_flatlistRef.scrollToIndex({ animated: true, index: this.state.initialScrollIndex, viewOffset: 0, viewPosition: 0 });
-
-        if (this.state.initialScrollIndex >= (this.state.highlightData.length) - 2) {
-          this.setState({ initialScrollIndex: 0 });
-        } else {
-          this.setState({ initialScrollIndex: this.state.initialScrollIndex + 2 })
-        }
-      }
-    }, 4000)
-    console.warn(this.props.Event)
-
   }
 
   componentWillUnmount(){
-    this.state.animateHighlight = false;
+    this.animateHighlight = false;
+    clearInterval(this.intervalID)
   }
   
 
@@ -122,6 +121,8 @@ export default class EventDetailView extends Component {
   }
 
 
+
+  width = width / 2 - width / 40
   _getItemLayout = (data, index) => (
     { length: 100, offset: 100 * index, index }
   )

@@ -25,6 +25,7 @@ export default class Reminds {
     key: "reminds",
     data: []
   };
+  
   @action addReminds(NewRemind) {
     return new Promise((resolve, Reject) => {
       this.readFromStore().then(Reminds => {
@@ -56,6 +57,7 @@ export default class Reminds {
       });
     });
   }
+
   @action updateTitle(NewRemind, inform) {
     return new Promise((resolve, Reject) => {
       this.readFromStore().then(Reminds => {
@@ -74,6 +76,25 @@ export default class Reminds {
       });
     });
   }
+  @action updateStatus(NewRemind, inform) {
+    return new Promise((resolve, Reject) => {
+      this.readFromStore().then(Reminds => {
+        let Remind = find(Reminds, { id: NewRemind.remind_id });
+        RemindIndex = findIndex(Reminds, { id: NewRemind.remind_id });
+        Remind.status = NewRemind.status;
+        Remind.updated_at = moment().format("YYYY-MM-DD HH:mm");
+        Remind.description_updated = inform;
+        Remind.updated = inform;
+        Reminds.splice(RemindIndex, 1, Remind);
+        this.keyData.data = Reminds;
+        storage.save(this.keyData).then(() => {
+          GState.eventUpdated = true;
+          resolve();
+        });
+      });
+    });
+  }
+
   @action updateIsDoneState(NewRemind, inform) {
     return new Promise((resolve, Reject) => {
       this.readFromStore().then(Reminds => {
@@ -102,6 +123,8 @@ export default class Reminds {
         Remind.description = NewRemind.description;
         Remind.recursive_frequency = NewRemind.recursive_frequency;
         Remind.period = NewRemind.period;
+        Remind.status = NewRemind.status;
+        Remind.members = NewRemind.members;
         Remind.updated_at = moment().format("YYYY-MM-DD HH:mm");
         Remind.description_updated = inform;
         Remind.updated = inform;
@@ -172,6 +195,26 @@ export default class Reminds {
       });
     });
   }
+
+  @action updateMembers(NewRemind, inform) {
+    return new Promise((resolve, Reject) => {
+      this.readFromStore().then(Reminds => {
+        let Remind = find(Reminds, { id: NewRemind.remind_id });
+        RemindIndex = findIndex(Reminds, { id: NewRemind.remind_id });
+        Remind.members = NewRemind.members;
+        Remind.updated_at = moment().format("YYYY-MM-DD HH:mm");
+        Remind.members_updated = inform;
+        Remind.updated = inform;
+        Reminds.splice(RemindIndex, 1, Remind);
+        this.keyData.data = Reminds;
+        storage.save(this.keyData).then(() => {
+          GState.eventUpdated = true;
+          resolve();
+        });
+      });
+    });
+  }
+
   @action removeRemind(RemindId) {
     return new Promise((resolve, RejectPromise) => {
       this.readFromStore().then(Reminds => {

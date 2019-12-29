@@ -12,7 +12,7 @@ import PhotoEnlargeModal from "../invitations/components/PhotoEnlargeModal";
 import  stores from '../../../stores/index';
 import {observer} from 'mobx-react'
 import BleashupFlatList from '../../BleashupFlatList';
-import LocalTasksCreation from './TasksCreation';
+import TasksCreation from './TasksCreation';
 import { find, findIndex, uniqBy, reject,filter } from "lodash";
 
 //const MyTasksData = stores.Reminds.MyTasksData
@@ -23,9 +23,12 @@ export default class Reminds extends Component {
     constructor(props) {
         super(props)
         this.state={
-          eventRemindData:[]
+          eventRemindData:[],
+          event_id:"71e57d50-252e-11ea-9234-dd23f4cef77f",
+          RemindCreationState:false
         }
     }
+//manual event_id
 
 
 updateData = newremind => {
@@ -34,18 +37,19 @@ updateData = newremind => {
 }
 
 componentDidMount(){
-  stores.LoginStore.getUser().then((user)=>{
+
+  
    stores.Reminds.readFromStore().then((Reminds)=>{
-    let reminds = filter(Reminds,{event_id:user.phone});
+    let reminds = filter(Reminds,{event_id:this.state.event_id});
     this.setState({eventRemindData:reminds});
-    //console.warn("ok",reminds)
+    console.warn("ok",reminds)
    })
- })
 }
 
 @autobind
 AddRemind(){
-  this.props.navigation.navigate("TasksCreation",{eventRemindData:this.state.eventRemindData,updateData:this.updateData});
+  //this.props.navigation.navigate("TasksCreation",{eventRemindData:this.state.eventRemindData,updateData:this.updateData,event_id:this.state.event_id});
+  this.setState({RemindCreationState:true})
 }
 
 
@@ -88,6 +92,7 @@ _keyExtractor = (item, index) => item.id
           renderPerBatch={5}
           onScroll={this._onScroll}
           firstIndex={0}
+          showVerticalScrollIndicator={false}
           keyExtractor={this._keyExtractor}
           dataSource={this.state.eventRemindData}
           renderItem={(item, index) => {
@@ -101,6 +106,8 @@ _keyExtractor = (item, index) => item.id
   
 
       </View>
+
+      <TasksCreation event_id={this.state.event_id} isOpen={this.state.RemindCreationState} onClosed={()=>{this.setState({RemindCreationState:false})}} parentComp={this}  eventRemindData={this.state.eventRemindData}></TasksCreation>
  
    </View>
 

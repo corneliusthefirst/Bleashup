@@ -13,6 +13,9 @@ import PhotoEnlargeModal from "../invitations/components/PhotoEnlargeModal";
 import  stores from '../../../stores/index';
 import {observer} from 'mobx-react'
 import moment from 'moment';
+import { head, filter, uniqBy, find } from "lodash";
+import AccordionModule from '../invitations/components/Accordion';
+import TasksCreation from './TasksCreation';
 
 let {height, width} = Dimensions.get('window')
 
@@ -27,7 +30,12 @@ export default class EventTasksCard extends Component {
           created_time:"",
           period_date:"",
           period_time:"",
-          cardData:this.props.item
+          cardData:this.props.item,
+          assignToMe:false,
+          userphone:"",
+          accordData:{title:"",content:""},
+          RemindCreationState:false,
+          long:false
         }
 
     }
@@ -41,9 +49,27 @@ updateCardData(newRemind){
    period_date:  period[0] ? period[0] : null,
    period_time:  period[1] ? period[1].split("+")[0] : null
  })
+   //console.warn("updated data")
+   //setting description data
+   if(this.state.cardData.description.length>103){
+    this.setState({long:true})
+    }
+   this.state.accordData.title = this.state.cardData.description.slice(0,103)
+   this.state.accordData.content = this.state.cardData.description.slice(103,this.state.cardData.description.length)
+   this.setState({accordData:this.state.accordData})
+
 }
 
 componentDidMount(){
+  stores.LoginStore.getUser().then((user)=>{
+     //console.warn("member is 1",this.state.cardData.members)
+     let member = find(this.state.cardData.members,{phone:user.phone})
+     //console.warn("member is",member)
+     if(!member){
+       this.setState({assignToMe:true});
+       this.setState({userphone:user.phone});
+     }
+  })
   let res = moment(this.state.cardData.created_at).format().split("T");
   let period = moment(this.state.cardData.period).format().split("T");
   //console.warn("res is",res);
@@ -54,6 +80,13 @@ componentDidMount(){
     period_time:  period[1] ? period[1].split("+")[0] : null
   })
 
+  //setting description data
+  if(this.state.cardData.description.length>103){
+      this.setState({long:true})
+  }
+  this.state.accordData.title = this.state.cardData.description.slice(0,103)
+  this.state.accordData.content = this.state.cardData.description.slice(103,this.state.cardData.description.length)
+  this.setState({accordData:this.state.accordData})
 }
  
 @autobind
@@ -65,9 +98,21 @@ onDone(){
 
 @autobind
 update(){
-  this.props.navigation.navigate("TasksCreation",{remind_id:this.props.item.id,update_remind:true,updateCardData:this.updateCardData})
+  //this.props.navigation.navigate("TasksCreation",{remind_id:this.props.item.id,update_remind:true,updateCardData:this.updateCardData})
+  this.refs.task_creation.init();
+  this.setState({RemindCreationState:true})
 }
 
+@autobind
+assignToMe(){
+  stores.Events.getPaticipants(this.state.cardData.event_id).then((participants)=>{
+  let currentParticipant = find(participants,{phone:this.state.userphone})
+  this.state.cardData.members.push( currentParticipant )
+  this.setState({cardData:this.state.cardData})
+  let newRemind = {remind_id:this.state.cardData.id,members:this.state.cardData.members}
+  stores.Reminds.updateMembers(newRemind,true).then(()=>{});
+  })
+}
 
     render() {
        
@@ -87,31 +132,41 @@ update(){
 
 
          <CardItem  carBody>
-           <Text style={{alignSelf:"center"}}>{this.state.cardData.description}</Text>
+           <AccordionModule dataArray={[this.state.accordData]} long={this.state.long}></AccordionModule>
          </CardItem>
 
          <CardItem style={{width:"100%"}}>
-
-          {this.state.isDone ?
+         {this.state.assignToMe?
+            <Button  style={{borderWidth: 2,borderRadius:10,borderColor: "#1FABAB",width:"32%",alignItems:'center',justifyContent:'center',marginLeft:"67%"}}
+               onPress={() => this.assignToMe()} transparent >
+               <Text style={{fontWeight:"500",color:"#696969",fontSize:11}}>Assign To Me</Text>
+             </Button>
+             :
+            (this.state.isDone ?
       
-             <Icon type="AntDesign" name="check" style={{ color: "#049F61",marginLeft:"90%"}} name="check"></Icon>
+              <Icon type="AntDesign" name="check" style={{ color: "#049F61",marginLeft:"90%"}} name="check"></Icon>
+             :
+             <Button  style={{borderWidth: 2,marginTop:5,borderRadius:10,borderColor: "#1FABAB",width:"21%",alignItems:'center',justifyContent:'center',marginLeft:"78%"}}
+               onPress={() => this.onDone()} transparent >
+               <Text style={{fontWeight:"500",color:"#696969",fontSize:12}}>Done</Text>
+             </Button>
+                   
+           
+                     )
+            
+            }
           
-            :
-    
-               <Button  style={{borderWidth: 2,borderRadius:10,borderColor: "#1FABAB",width:"21%",alignItems:'center',justifyContent:'center',marginLeft:"78%"}}
-                onPress={() => this.onDone()} transparent >
-               <Text style={{fontWeight:"500",color:"#696969"}}>Done</Text>
-              </Button>
-        
 
-          }
          </CardItem>
 
          <CardItem>
           <Text style={{fontWeight:"500",fontSize:12}} note>Created on the {this.state.created_date} at {this.state.created_time}</Text>
          </CardItem>
-          {/*<PhotoEnlargeModal isOpen={this.state.isOpenTasks} 
-            onClosed={() => this.setState({ isOpenTasks: false })} photo={this.props.image} />*/}
+
+         <TasksCreation  ref={"task_creation"} isOpen={this.state.RemindCreationState} onClosed={()=>{this.setState({RemindCreationState:false})}} 
+           parentComp={this}  remind_id={this.props.item.id} update={true} 
+           updateCardData={this.updateCardData}></TasksCreation>
+ 
          </Card>
         </TouchableOpacity>
 
