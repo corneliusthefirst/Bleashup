@@ -354,7 +354,7 @@ class PublicEvent extends Component {
                   width: "70%",
                   marginLeft: "4%"
                 }} photo={this.state.image} width={170} height={100} borderRadius={6} />
-                {this.state.video || this.state.audio ? <Icon onPress={() =>{
+                {this.state.video || this.state.audio ? <Icon onPress={() => {
                   this.showPhoto(this.state.image)
                 }} name={this.state.video ? "play" : "headset"} style={{
                   fontSize: 50, color: '#1FABAB',

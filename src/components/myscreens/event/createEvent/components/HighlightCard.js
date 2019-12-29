@@ -99,7 +99,7 @@ componentDidMount(){
 
           <TouchableOpacity onPress={() => {this.setState({isOpen:true}) }} >
            <CardItem style={{margin:3,height:height/30}}> 
-            <Text>{this.props.item.title.length>16?this.props.item.title.slice(0,16)+"..":this.props.item.title}</Text>
+              <Title style={{ fontSize: 14, color:"#0A4E52",fontWeight: 'bold',}}>{this.props.item.title}/*>16?this.props.item.title.slice(0,16)+"..":this.props.item.title*/}</Title>
            </CardItem>
            <CardItem>
              <View style={{width:"100%",height:height/7}}>

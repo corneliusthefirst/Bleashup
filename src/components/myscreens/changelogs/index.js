@@ -13,6 +13,7 @@ import BleashupTimeLine from '../../BleashupTimeLine';
 import moment from "moment";
 import emitter from '../../../services/eventEmiter';
 import testForURL from '../../../services/testForURL';
+import shadower from "../../shadower";
 
 export default class ChangeLogs extends Component {
   constructor(props) {
@@ -120,11 +121,7 @@ export default class ChangeLogs extends Component {
       </View>
       {this.state.hideHeader ? null : <View style={{
         width: "100%", height: 44, position: "absolute", opacity: .6 ,
-        backgroundColor: "#FEFFDE", shadowOpacity: 1,
-        shadowOffset: {
-          height: 1,
-        },
-        shadowRadius: 10, elevation: 6,
+        backgroundColor: "#FEFFDE", ...shadower(6)
       }}>
         <View style={{ flexDirection: 'row', width: "100%", }}>
           <Text style={{ alignSelf: 'flex-start', margin: '3%', fontWeight: 'bold', fontSize: 20, width: "83%" }}>{(this.props.isMe ? "Your " : "" )+ "Activities Logs"}</Text>

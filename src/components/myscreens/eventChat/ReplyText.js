@@ -4,21 +4,11 @@ import { Text, Icon } from "native-base"
 import Image from 'react-native-scalable-image';
 import CacheImages from "../../CacheImages";
 import moment from "moment";
+import converToHMS from '../highlights_details/convertToHMS';
+import shadower from "../../shadower";
 export default class ReplyText extends Component {
     constructor(props) {
         super(props)
-    }
-    convertToHMS(secs) {
-        var sec_num = parseInt(secs, 10)
-        var hours = Math.floor(sec_num / 3600)
-        var minutes = Math.floor(sec_num / 60) % 60
-        var seconds = sec_num % 60
-
-        return [hours, minutes, seconds]
-            .map(v => v < 10 ? "0" + v : v)
-            .filter((v, i) => v !== "00" || i > 0)
-            .join(":")
-
     }
     render() {
         return (
@@ -27,14 +17,16 @@ export default class ReplyText extends Component {
                 onPress={() => this.props.openReply(this.props.reply)}>
                 <View style={{
                     display: 'flex', flexDirection: 'row', borderBottomWidth: 0,
-                    backgroundColor: "rgba(34, 0, 0, 0.1)", marginLeft: "1%",
+                    marginLeft: "1%", ...shadower(2), //backgroundColor: "rgba(34, 0, 0, 0.1)",
                     marginBottom: "1%", padding: "3%",
                     height: 75,
-                    borderRadius: 9, borderWidth: 1, borderColor: "#1FABAF",
+                    borderRadius: 9,
                 }}>
-                    {/*<View style={{ /*width: "5%" }}><Icon type="FontAwesome"
+                    {
+                    /*<View style={{ /*width: "5%" }}><Icon type="FontAwesome"
                         style={{ fontSize: 12, color: "#1FABAB" }} name="quote-left"></Icon>
-            </View>*/}
+                    </View>*/
+                    }
                     <View style={{/* width: "90%",*/marginLeft: "2%",
                         borderLeftColor: "#1FABAF", borderLeftWidth: 5,
                         borderBottomLeftRadius: 8, borderTopLeftRadius: 8,
@@ -53,8 +45,8 @@ export default class ReplyText extends Component {
                                 <Icon type={this.props.reply.audio ? "MaterialIcons" : "MaterialCommunityIcons"}
                                     name={this.props.reply.audio ? "audiotrack" : "file-document-box"} style={{ marginRight: "30%", color: "#1FABAF" }}></Icon>
                                 <View style={{ marginTop: this.props.reply.audio ? "2%" : "0%" }}>{this.props.reply.audio ?
-                                    <Text>{this.convertToHMS(this.props.reply.type_extern === "HighLights" ? this.props.reply.url.duration : this.props.reply.duration)}</Text> :
-                                    <Text style={{ fontSize: 30, }}>{this.props.reply.typer.toUpperCase()}</Text>}</View>
+                                    <Text>{converToHMS(this.props.reply.type_extern === "HighLights" ? this.props.reply.url.duration : this.props.reply.duration)}</Text> :
+                                    <Text style={{ fontSize: 30, }}>{"."}{this.props.reply.typer.toUpperCase()}</Text>}</View>
                             </View> : <View style={{ display: 'flex', flexDirection: 'row', }}>
                                     <View style={{ /*width: this.props.reply.sourcer ? "20%" : "0%",*/ marginRight: "1%", }}>
                                         {this.props.reply.sourcer ? <View><Image width={100} height={40} thumbnails square style={{

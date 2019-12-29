@@ -26,6 +26,7 @@ import EventHighlights from "../event/createEvent/components/EventHighlights";
 import Hyperlink from 'react-native-hyperlink';
 import moment from 'moment';
 import  BleashupHorizontalFlatList from '../../BleashupHorizotalFlatList';
+import shadower from "../../shadower";
 
 let { height, width } = Dimensions.get('window');
 
@@ -147,18 +148,14 @@ interval = 4000
       !this.state.isMounted ? <Spinner size={'small'}></Spinner> : <View style={{ height: "100%", backgroundColor: "#FEFFDE", width: "100%" }}>
         <View style={{
           height: 44,
-          shadowOpacity: 1,
-          shadowOffset: {
-            height: 1,
-          },
-          shadowRadius: 10, elevation: 6,
+          ...shadower(6),
           width: "100%",
           justifyContent: "space-between",
           flexDirection: "row",
           backgroundColor: "#FEFFDE",
           alignItems: "center",
         }}>
-          <View style={{marginLeft:"4%"}}>
+          <View style={{ marginLeft: "4%", ...shadower(6),}}>
             <Title style={{ color: "#0A4E52", fontWeight: 'bold', }}>{this.props.Event.about.title}</Title>
           </View>
           <View >

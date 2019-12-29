@@ -47,10 +47,9 @@ import CalendarServe from '../../../services/CalendarService';
 import SetAlarmPatternModal from "./SetAlarmPatternModal";
 import PhotoInputModal from "./PhotoInputModal";
 import PhotoViewer from "./PhotoViewer";
-import rnFetchBlob from 'rn-fetch-blob';
-import * as config from "../../../config/bleashup-server-config.json"
 import SearchImage from "./createEvent/components/SearchImage";
-const AppDir = rnFetchBlob.fs.dirs.SDCardDir + '/Bleashup'
+import FileExachange from '../../../services/FileExchange';
+import Pickers from '../../../services/Picker';
 
 const screenWidth = Math.round(Dimensions.get('window').width);
 
@@ -62,10 +61,6 @@ var swipeoutBtns = [
 export default class Event extends Component {
   constructor(props) {
     super(props);
-    this.uploadURL = config.file_server.protocol +
-      "://" + config.file_server.host + ":" + config.file_server.port + "/photo/save"
-    this.baseURL = config.file_server.protocol +
-      "://" + config.file_server.host + ":" + config.file_server.port + '/photo/get/'
     const { initialPage } = this.props;
     this.state = {
       currentPage: "",
@@ -337,6 +332,7 @@ export default class Event extends Component {
   }
   componentWillUnmount() {
     this.unmounted = true
+    Pickers.CleanAll()
     console.warn("unMounting")
     GState.currentCommitee = null
     this.backHandler.remove()
@@ -883,31 +879,12 @@ export default class Event extends Component {
     this.setState({
       isSelectPhotoInputMethodModal: false
     })
-    ImagePicker.openPicker({
-      cropping: true,
-      isCamera: notCam ? false : true,
-      //width:400,
-      //height:300,
-      //openCameraOnStart: true,
-      returnAfterShot: true,
-      compressQuality: 50
-    }).then(response => {
+    Pickers.SnapPhoto(true).then(snap => {
       this.setState({
         working: true
       })
-      let temp = response[0].path.split('/');
-      this.task = rnFetchBlob.fetch("POST", this.uploadURL, {
-        'content-type': 'multipart/form-data',
-      }, [{
-        name: "file",
-        filename: temp[temp.length - 1],
-        type: response[0].mime,
-        size: response[0].size,
-        data: rnFetchBlob.wrap(response[0].path)
-      }])
-      this.task.then(respon => {
-        let background = this.baseURL + respon.data
-        Requester.changeBackground(this.event.id, background).then(res => {
+      let exchanger = new FileExachange(snap.source,'/Photo/',0,0,null,(newDir,path,filename) => {
+        Requester.changeBackground(this.event.id, path).then(res => {
           console.warn(res)
           this.initializeMaster()
         }).catch(err => {
@@ -916,13 +893,13 @@ export default class Event extends Component {
           })
           Toast.show({ text: "Sorry , We are Unable To Perfrom This Action" })
         })
-      })
-      this.task.catch(error => {
-        console.warn("catching activity bacground Photo upload ", error)
-        this.setState({
-          working: false
-        })
-      })
+      },null,(error) =>{
+          console.warn("catching activity bacground Photo upload ", error)
+          this.setState({
+            working: false
+          })
+      },snap.content_type,snap.filename,'/photo',false)
+      exchanger.upload(0,0)   
     })
   }
   render() {

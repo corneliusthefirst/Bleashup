@@ -3,71 +3,60 @@ import React, { Component } from 'react';
 import { View, TouchableOpacity, TouchableWithoutFeedback, PermissionsAndroid } from "react-native"
 import Image from "react-native-scalable-image"
 import { Text, Icon, Spinner } from 'native-base';
-import rnFetchBlob from 'rn-fetch-blob';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
-import * as config from "../../../config/bleashup-server-config.json"
-const { fs } = rnFetchBlob
-const AppDir = rnFetchBlob.fs.dirs.SDCardDir + '/Bleashup/'
+import FileExachange from '../../../services/FileExchange';
+
 export default class VideoUploader extends Component {
     constructor(props) {
         super(props)
-        this.uploadURL = config.file_server.protocol +
-            "://" + config.file_server.host + ":" + config.file_server.port + "/video/save"
-        this.baseURL = config.file_server.protocol +
-            "://" + config.file_server.host + ":" + config.file_server.port + '/video/get/'
-        this.state = {
+         this.state = {
             received: 0, total: 0,
-            uploading:true,
-            uploadState: 0
+            uploading: true,
+            uploadState: 1
         }
     }
-    state = {uploading:true}
+    state = { uploading: true }
     componentDidMount() {
+        this.exchanger = new FileExachange(this.props.message.source, '/Video/',
+            this.props.message.total ? this.props.message.total : 0,
+            this.props.message.received ? this.props.message.received : 0,
+            this.progress.bind(this), this.onSuccess.bind(this), null,
+            this.onError.bind(this), this.props.message.content_type,
+            this.props.message.filename, '/video')
         setTimeout(() => {
             this.uploadVideo()
         }, 500)
     }
     task = null
     uploadVideo() {
-        fs.exists(this.props.message.source).then(state => {
-            this.task = rnFetchBlob.fetch("POST", this.uploadURL, {
-                'content-type': 'multipart/form-data',
-            }, [{
-                name: "file",
-                filename: this.props.message.filename,
-                type: this.props.message.content_type,
-                data: rnFetchBlob.wrap(this.props.message.source)
-            }])
-            this.task.uploadProgress((writen, total) => {
-                this.setState({
-                    total: parseInt(total),
-                    uploading:true,
-                    received: parseInt(writen),
-                    uploadState: (parseInt(writen) / parseInt(total)) * 100
-                })
-            })
-            this.task.then(response => {
-                if (response.data) {
-                    newDir = `file://` + AppDir +"Video/"+ response.data
-                    fs.writeFile(newDir.split(`file://`)[1], this.props.message.source.split(`file://`)[1], 'uri').then(() => {
-                        this.setState({
-                            uploadState: 100,
-                            loaded: true,
-                            uploading:false
-                        })
-                        this.props.message.type = 'video'
-                        this.props.message.source = newDir
-                        this.props.message.thumbnailSource = this.baseURL + response.data.split('.')[0] + '_thumbnail.jpeg'
-                        this.props.message.temp = this.baseURL + response.data
-                        this.props.message.received = 0
-                        this.props.message.file_name = response.data
-                        this.props.replaceMessage(this.props.message)
-                    })
-                }
-            })
-            this.task.catch((error) => {
-                console.warn(error)
-            })
+       this.exchanger.upload(this.state.writen,this.state.total)
+    }
+    onSuccess(newDir, path, filename, baseUrl) {
+        this.setState({
+            uploadState: 100,
+            loaded: true,
+            uploading: false
+        })
+        this.props.message.type = 'video'
+        this.props.message.source = newDir
+        this.props.message.thumbnailSource = baseUrl + filename.split('.')[0] + '_thumbnail.jpeg'
+        this.props.message.temp = path
+        this.props.message.received = 0
+        this.props.message.file_name = filename
+        this.props.replaceMessage(this.props.message)
+    }
+    progress(writen, total) {
+        this.setState({
+            total: parseInt(total),
+            uploading: true,
+            received: parseInt(writen),
+            uploadState: (parseInt(writen) / parseInt(total)) * 100
+        })
+    }
+    onError(error) {
+        console.warn(error)
+        this.setState({
+            uploading: false
         })
     }
     toMB(data) {
@@ -75,7 +64,7 @@ export default class VideoUploader extends Component {
         return data / mb
     }
     cancelUpLoad() {
-        this.task.cancel((err, taskID) => {
+        this.exchanger.task.cancel((err, taskID) => {
         })
     }
     render() {
@@ -120,7 +109,7 @@ export default class VideoUploader extends Component {
                                             {this.state.uploading ? <TouchableWithoutFeedback onPress={() => this.cancelUpLoad(this.props.message.source)}>
                                                 <View><Icon type="EvilIcons" style={{ color: "#1FABAB" }} name="close">
                                                 </Icon>
-                                                 <Spinner style={{ position: 'absolute', marginTop: "-136%", marginLeft: "-15%", }}></Spinner>
+                                                    <Spinner style={{ position: 'absolute', marginTop: "-136%", marginLeft: "-15%", }}></Spinner>
                                                 </View>
                                             </TouchableWithoutFeedback> : <TouchableWithoutFeedback onPress={() => this.uploadVideo()}>
                                                     <View>

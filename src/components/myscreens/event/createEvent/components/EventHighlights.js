@@ -17,12 +17,14 @@ import ImagePicker from 'react-native-customized-image-picker';
 import stores from '../../../../../stores/index';
 import { observer } from 'mobx-react'
 import moment from "moment"
-import { head, filter, uniqBy, orderBy, find, findIndex, reject, uniq, indexOf, forEach, dropWhile } from "lodash";
+import { find, reject, } from "lodash";
 import request from "../../../../../services/requestObjects";
 import SearchImage from './SearchImage';
 import BleashupHorizontalFlatList from '../../../../BleashupHorizotalFlatList';
-import testForURL from '../../../../../services/testForURL';
-
+import testForURL from '../../../../../services/testForURL'
+import SimpleAudioPlayer from "../../../highlights_details/SimpleAudioPlayer";
+import Pickers from '../../../../../services/Picker';
+import FileExachange from '../../../../../services/FileExchange';
 
 //create an extension to toast so that it can work in my modal
 
@@ -127,24 +129,23 @@ export default class EventHighlights extends Component {
 
   @autobind
   TakePhotoFromCamera() {
-
-    return new Promise((resolve, reject) => {
-
-      ImagePicker.openCamera({
-        cropping: true,
-        quality: "medium"
-      }).then(response => {
-        let res = head(response);
-        resolve(res.path);
-        this.state.currentHighlight.url.photo = res.path;
-        this.setState({ currentHighlight: this.state.currentHighlight });
-        if (this.state.update == false) {
-          stores.Highlights.updateHighlightUrl(this.state.currentHighlight, false).then(() => { });
-        }
-      })
+    Pickers.SnapPhoto(true).then(snap => {
+      let exchanger = new FileExachange(snap.source,
+        '/Photo/', 0, 0, (writen, total) => {
+          console.warn('writen: ', writen)
+        }, (newDir, path, filename) => {
+          this.setState({ currentHighlight: {...this.state.currentHighlight,
+            url:{...this.state.currentHighlight.url,
+              photo:path}} });
+          if (this.state.update == false) {
+            stores.Highlights.updateHighlightUrl(this.state.currentHighlight, false).then(() => { });
+          }
+        }, null, (error) => {
+          console.warn(error)
+          Toast.show({ text: "Unable to Upload Photo!" })
+        }, snap.content_type, snap.filename, '/photo')
+      exchanger.upload()
     })
-
-
   }
 
 
@@ -267,7 +268,9 @@ export default class EventHighlights extends Component {
     }
 
   }
+  choseAction(url) {
 
+  }
   @autobind
   deleteHighlight(id) {
     this.state.highlightData = reject(this.state.highlightData, { id, id });
@@ -343,7 +346,7 @@ export default class EventHighlights extends Component {
                 </View>
                 <View style={{ flexDirection: "row", justifyContent: 'space-between', alignItem: 'center', marginBottom: "2%" }}>
                   <TouchableOpacity style={{ width: "15%", justifyContent: 'center', alignItem: 'center', marginLeft: "7%" }}
-                    onPress={() => { this.TakePhotoFromCamera().then((source) => { }) }}>
+                    onPress={() => { this.TakePhotoFromCamera() }}>
                     <View style={{ flexDirection: "column" }}>
                       <Icon name="photo-camera" active={true} type="MaterialIcons"
                         style={{ color: "#0A4E52", alignSelf: "flex-start" }} />
@@ -384,8 +387,10 @@ export default class EventHighlights extends Component {
                     </View>
                   </TouchableOpacity>
                 </View>
-                {this.state.audioState &&
-                  <View style={{ height: height / 9, backgroundColor: "yellow", elevation: 10, marginBottom: "5%" }}></View>}
+                {this.state.currentHighlight.url.audio &&
+                  <View style={{ height: height / 9, backgroundColor: "yellow", elevation: 10, marginBottom: "5%" }}>
+                    <SimpleAudioPlayer uri={this.state.currentHighlight.url}></SimpleAudioPlayer>
+                  </View>}
                 <View style={{ height: height / 4 - height / 18, width: "90%", alignSelf: 'center', }}>
                   <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItem: 'center' }}>
                     <TouchableOpacity onPress={() => this.setState({ enlargeImage: true })} >
@@ -404,6 +409,13 @@ export default class EventHighlights extends Component {
                               height: "100%", width: "100%", borderColor: "#1FABAB", borderRadius: 100
                             }}></Thumbnail>}
                     </TouchableOpacity>
+                    {/*this.state.currentHighlight.url.video || this.state.currentHighlight.url.audio ? */<View style={{ position: 'absolute', marginTop: '15%', marginLeft: '36%', opacity: .9 }}>
+                      <Icon onPress={() => {
+                        this.choseAction(this.state.currentHighlight.url)
+                      }} name={this.state.currentHighlight.url.video ? "play" : "headset"} style={{
+                        fontSize: 50, color: '#FEFFDE', alignSelf: 'center'
+                      }} type={this.state.currentHighlight.url.video ? "EvilIcons" : "MaterialIcons"}>
+                      </Icon></View>/* : null*/}
                   </View>
                   <PhotoEnlargeModal isOpen={this.state.enlargeImage} onClosed={() => this.setState({ enlargeImage: false })} photo={this.state.currentHighlight.url.photo} />
                 </View>

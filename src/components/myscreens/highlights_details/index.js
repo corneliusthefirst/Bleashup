@@ -12,6 +12,7 @@ import stores from '../../../stores';
 import firebase from 'react-native-firebase';
 import uuid from 'react-native-uuid';
 import ChatStore from '../../../stores/ChatStore';
+import shadower from '../../shadower';
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenheight = Math.round(Dimensions.get('window').height);
 export default class HighLightsDetails extends Component {
@@ -322,7 +323,7 @@ export default class HighLightsDetails extends Component {
                 </View>
 
                 <View style={{
-                    position: 'absolute', backgroundColor: '#FEFEDE', width: '30%', borderWidth: 1, borderLeftWidth: 1, borderColor: '#1FABAB',
+                    position: 'absolute', backgroundColor: '#FEFEDE', width: '30%', ...shadower(6),
                     height: 30, opacity: 0.7, alignSelf: 'flex-end', marginTop: '1%', borderBottomLeftRadius: 8, borderTopLeftRadius: 8, borderRightWidth: 0,
                 }}>
                     <Text style={{ fontSize: 18, fontStyle: 'italic', marginTop: "2%", alignSelf: 'flex-start', marginLeft: '5%', }}>{"Highlights"} </Text>
