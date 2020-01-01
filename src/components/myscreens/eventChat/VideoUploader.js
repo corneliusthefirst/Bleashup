@@ -5,11 +5,12 @@ import Image from "react-native-scalable-image"
 import { Text, Icon, Spinner } from 'native-base';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import FileExachange from '../../../services/FileExchange';
+import Pickers from '../../../services/Picker';
 
 export default class VideoUploader extends Component {
     constructor(props) {
         super(props)
-         this.state = {
+        this.state = {
             received: 0, total: 0,
             uploading: true,
             uploadState: 1
@@ -17,19 +18,32 @@ export default class VideoUploader extends Component {
     }
     state = { uploading: true }
     componentDidMount() {
-        this.exchanger = new FileExachange(this.props.message.source, '/Video/',
-            this.props.message.total ? this.props.message.total : 0,
-            this.props.message.received ? this.props.message.received : 0,
-            this.progress.bind(this), this.onSuccess.bind(this), null,
-            this.onError.bind(this), this.props.message.content_type,
-            this.props.message.filename, '/video')
         setTimeout(() => {
             this.uploadVideo()
         }, 500)
     }
     task = null
     uploadVideo() {
-       this.exchanger.upload(this.state.writen,this.state.total)
+        this.setState({
+            compressing: true
+        })
+        Pickers.CompressVideo({
+            source: this.props.message.source,
+            filename: this.props.message.filename,
+            size: this.props.message.total,
+            content_type: this.props.message.content_type
+        }).then(res => {
+            this.setState({
+                compressing: false
+            })
+            this.exchanger = new FileExachange(res.source, '/Video/',
+                res.size,
+                this.props.message.received ? this.props.message.received : 0,
+                this.progress.bind(this), this.onSuccess.bind(this), null,
+                this.onError.bind(this), res.content_type,
+                res.filename, '/video')
+            this.exchanger.upload(this.state.writen, this.state.total)
+        })
     }
     onSuccess(newDir, path, filename, baseUrl) {
         this.setState({
@@ -41,6 +55,7 @@ export default class VideoUploader extends Component {
         this.props.message.source = newDir
         this.props.message.thumbnailSource = baseUrl + filename.split('.')[0] + '_thumbnail.jpeg'
         this.props.message.temp = path
+        this.props.message.total = this.state.total
         this.props.message.received = 0
         this.props.message.file_name = filename
         this.props.replaceMessage(this.props.message)
@@ -64,7 +79,8 @@ export default class VideoUploader extends Component {
         return data / mb
     }
     cancelUpLoad() {
-        this.exchanger.task.cancel((err, taskID) => {
+        Pickers.CancleCompression()
+        this.exchanger.task && this.exchanger.task.cancel((err, taskID) => {
         })
     }
     render() {
@@ -121,8 +137,8 @@ export default class VideoUploader extends Component {
                                         </View>)
                                     }
                                 </AnimatedCircularProgress>
-                                <View style={{ marginTop: "15%", }}><Text style={{ color: '#0A4E52' }} note>{"("}{this.toMB(this.state.received).toFixed(1)}{"/"}
-                                    {this.toMB(this.state.total).toFixed(1)}{")Mb"}</Text></View></View>}</View>
+                                {this.state.compressing ? <Text note>{"compressing ..."}</Text> : <View style={{ marginTop: "15%", }}><Text style={{ color: '#0A4E52' }} note>{"("}{this.toMB(this.state.received).toFixed(1)}{"/"}
+                                    {this.toMB(this.state.total).toFixed(1)}{")Mb"}</Text></View>}</View>}</View>
                 </View>
                 <View>
                     {this.props.message.text ? <Text style={{ margin: '3%', }}>{this.props.message.text}</Text> : null}

@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 
-import { View, Slider, TouchableOpacity  } from "react-native"
+import { View, Slider, TouchableOpacity } from "react-native"
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import Sound from 'react-native-sound';
 import BarIndicat from '../../BarIndicat';
 import { BarIndicator } from "react-native-indicators"
 import converToHMS from './convertToHMS';
-import {Text,Icon,Right} from "native-base"
+import { Text, Icon, Right } from "native-base"
 
 
 export default class SimpleAudioPlayer extends Component {
@@ -20,9 +20,31 @@ export default class SimpleAudioPlayer extends Component {
 
     }
 
+
     player = null
-    componentWillMount() {
-        this.props.url.audio ? this.initialisePlayer(this.props.url.audio) : null
+    componentDidMount(){
+        this.initialisePlayer(this.props.url.audio).then((state) => {
+
+        })
+    }
+    componentWillUnmount(){
+        this.player && this.player.stop()
+    }
+    shouldComponentUpdate(nextProps, nextState, nextContext) {
+         return this.state.currentPosition !== nextState.currentPosition || 
+         this.props.url.audio !== nextProps.url.audio || 
+         this.state.playing !== nextState.playing
+    }
+    static getDerivedStateFromProps(nextProps, prevState) {
+        return null
+    }
+    componentDidUpdate(prevProps, prevState) {
+        if (prevProps.url.audio !== this.props.url.audio) {
+            this.initialisePlayer(this.props.url.audio).then(state => {
+                this.play(this.props.url)
+            })
+        }
+
     }
     pause() {
         this.setState({
@@ -31,23 +53,26 @@ export default class SimpleAudioPlayer extends Component {
         this.player.pause()
     }
     initialisePlayer(source) {
-        console.warn(source)
-        this.player = new Sound(source, '', (error) => {
-            console.warn(error)
+        return new Promise((resolve, reject) => {
+            this.player ? this.player.stop() : null
+            this.player = new Sound(source, '', (error) => {
+                console.warn(error)
+                resolve(error)
+            })
         })
     }
-    plays() {
+    play(url) {
         this.setState({
             playing: true
         })
-        if (this.props.url.duration) {
+        if (url.duration) {
             let refreshID = setInterval(() => {
                 this.player.getCurrentTime(time => {
                     if (this.previousTime == time) clearInterval(refreshID)
                     else {
                         this.previousTime = time
                         this.setState({
-                            currentPosition: time / this.props.url.duration,
+                            currentPosition: time / url.duration,
                             currentTime: time
                         })
                     }
@@ -58,26 +83,35 @@ export default class SimpleAudioPlayer extends Component {
             console.warn(success, 'ppppp')
             if (success) {
                 this.player.getCurrentTime((seconds) => {
-                    this.props.url.duration = Math.floor(seconds)
+                    url.duration = Math.floor(seconds)
                     this.setState({
                         playing: false,
-                        currentPosition: seconds / this.props.url.duration,
+                        currentPosition: seconds / url.duration,
                         currentTime: seconds
-                    })
-                    this.room.addurl.duration(seconds).then(status => {
-                        //this.player.release()
                     })
                 })
             }
         })
     }
+    plays() {
+        this.play(this.props.url)
+    }
 
     render() {
+        console.warn('rendering audio')
+        textStyle = {
+            width: "80%", margin: '2%', marginTop: "5%", display: 'flex', alignSelf: 'center',
+            flexDirection: 'column',
+        }
+        textStyleD = {
+            width: "80%", margin: '4%', paddingLeft: '10%', paddingRight: '20%', marginTop: "5%", display: 'flex', alignSelf: 'center',
+            flexDirection: 'column',
+        }
         return (
             <View>
                 <View style={{ disply: 'flex', flexDirection: 'row', minWidth: 283, maxWidth: "86%", minHeight: 50, }}>
                     {this.props.url.duration ? <View style={textStyle}>
-                        <View><Slider value={this.state.currentPosition} onValueChange={(value) => {
+                        <View><Slider value={isNaN(this.state.currentPosition) ? 0 : this.state.currentPosition} onValueChange={(value) => {
                             this.player.setCurrentTime(value * this.props.url.duration)
                             this.setState({
                                 currentPosition: value,

@@ -33,7 +33,7 @@ export default class EventChat extends Component {
   state = {}
   activity = {}
   componentDidMount() {
-    stores.LoginStore.getUser().then(user => {
+    let user = stores.LoginStore.user
       let phone = user.phone.replace("00","+")
       firebase.database().ref(`new_message/${this.props.activity.id}/${phone}/${this.props.roomID}/new_messages`).once('value', snapshoot => {
         this.props.newMessageCount = snapshoot.val() === null ?
@@ -58,7 +58,6 @@ export default class EventChat extends Component {
           }, 12)
         }
       })
-    })
   }
   newMessages = [/*{
     id: Math.random().toString(),

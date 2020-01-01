@@ -26,10 +26,11 @@ export default class AudioMessage extends Component {
         }
     }
     componentWillUnmount(){
-        this.player.stop()
+       this.player && this.player.stop()
         clearInterval(this.downloadID)
     }
     componentDidMount() {
+        console.warn(this.props.message.source)
         this.setState({
             duration: null,
             currentPosition: 0,
@@ -132,6 +133,7 @@ export default class AudioMessage extends Component {
     }
     initialisePlayer(source) {
         this.player = new Sound(source, '/', (error) => {
+            console.warn(error,"error")
         })
     }
     player = null

@@ -81,7 +81,7 @@ export default class RouteView extends Component {
                     )}>
                         <View style={{ display: 'flex', flexDirection: 'row', width: "100%"}}>
                             <Icon type="AntDesign" style={{ color: this.props.currentPage == "EventDetails" ? "#0A4E52" :  this.original }} name="appstore1"></Icon>
-                            <Text style={{ padding: "1%", color: this.props.currentPage == "EventDetails" ? "#0A4E52":"gray", fontWeight: this.props.currentPage == "EventDetails" ? 'bold' : 'bold', width: "100%" }}>Activity Details</Text>
+                            <Text style={{ padding: "1%", color: this.props.currentPage == "EventDetails" ? "#0A4E52":"gray", width: "100%" }}>Activity Details</Text>
                         </View>
                     </TouchableOpacity>
                 </CardItem>
@@ -94,7 +94,7 @@ export default class RouteView extends Component {
                     )}>
                         <View style={{ display: 'flex', flexDirection: 'row', width: "100%"}}>
                             <Icon type="Entypo" style={{ color: this.props.currentPage == "ChangeLogs" ? "#0A4E52" : this.original }} name="clock"></Icon>
-                            <Text style={{ padding: "1%", color: this.props.currentPage == "ChangeLogs" ? "#0A4E52" : "gray", fontWeight: this.props.currentPage == "ChangeLogs" ? 'bold' : 'bold', width: "100%"}}>History Logs</Text>
+                            <Text style={{ padding: "1%", color: this.props.currentPage == "ChangeLogs" ? "#0A4E52" : "gray", width: "100%"}}>History Logs</Text>
                         </View>
                     </TouchableOpacity>
                 </CardItem>
@@ -109,7 +109,7 @@ export default class RouteView extends Component {
                     }>
                         <View style={{ display: 'flex', flexDirection: 'row', width: "100%"}}>
                             <View style={{ width: "85%", display: 'flex', flexDirection: 'row', }}><Icon type="FontAwesome" style={{ color: this.props.currentPage == "EventChat" ? "#0A4E52" : this.original }} name="group"></Icon>
-                                <Text style={{ padding: "1%", color: this.props.currentPage == "EventChat" ? "#0A4E52" : "gray", fontWeight: this.props.currentPage == "EventChat" ? 'bold' : 'bold', width: "100%" }}>Discusion</Text></View>
+                                <Text style={{ padding: "1%", color: this.props.currentPage == "EventChat" ? "#0A4E52" : "gray", width: "100%" }}>Discusion</Text></View>
                             {GState.generalNewMessages.length > 0 ? <Badge primary><Text style={{ marginTop: "30%", }}>{GState.generalNewMessages.length}</Text></Badge> : <View></View>}
                         </View>
                     </TouchableOpacity>
@@ -140,7 +140,7 @@ export default class RouteView extends Component {
                     })}>
                         <View style={{ display: 'flex', flexDirection: 'row', width:"100%"}}>
                             <Icon type="Entypo" style={{ color: this.props.currentPage == "Reminds" ? "#0A4E52" : this.original }} name="bell"></Icon>
-                            <Text style={{ padding: "1%", color: this.props.currentPage == "Reminds" ? "#0A4E52" : "gray", fontWeight: this.props.currentPage == "Reminds" ? 'bold' : 'bold', width: "100%" }}>Reminds/Tasks</Text>
+                            <Text style={{ padding: "1%", color: this.props.currentPage == "Reminds" ? "#0A4E52" : "gray", width: "100%" }}>Reminds/Tasks</Text>
                         </View>
                     </TouchableOpacity>
                 </CardItem>
@@ -154,7 +154,7 @@ export default class RouteView extends Component {
                     })}>
                         <View style={{ display: 'flex', flexDirection: 'row', width: "100%"}}>
                             <Icon type="FontAwesome5" style={{ color: this.props.currentPage == "Votes" ? "#0A4E52" : this.original }} name="poll"></Icon>
-                            <Text style={{ padding: "1%", color: this.props.currentPage == "Votes" ? "#0A4E52" : "gray", fontWeight: this.props.currentPage == "Votes" ? 'bold' : 'bold', width: "100%"}}>Polls/Votes</Text>
+                            <Text style={{ padding: "1%", color: this.props.currentPage == "Votes" ? "#0A4E52" : "gray", width: "100%"}}>Polls/Votes</Text>
                         </View>
                     </TouchableOpacity>
                 </CardItem>
@@ -168,7 +168,7 @@ export default class RouteView extends Component {
                     })}>
                         <View style={{ display: 'flex', flexDirection: 'row', width: "100%" }}>
                             <Icon type="MaterialIcons" style={{ color: this.props.currentPage == "Contributions" ? "#0A4E52" : this.original }} name="monetization-on"></Icon>
-                            <Text style={{ padding: "1%", color: this.props.currentPage == "Contributions" ? "#0A4E52" : "gray", fontWeight: this.props.currentPage == "Contributions" ? 'bold' : 'bold', width: "100%"}}>Contributions</Text>
+                            <Text style={{ padding: "1%", color: this.props.currentPage == "Contributions" ? "#0A4E52" : "gray", width: "100%"}}>Contributions</Text>
                         </View>
                     </TouchableWithoutFeedback>
                 </CardItem>

@@ -123,10 +123,10 @@ export default class FileExachange {
                     temp1 = Math.floor(temper1)
                     temp2 = Math.floor(temper2)
                     temp3 = Math.ceil(temper2)
-                    newDir = `file://` + AppDir + this.base + response.data
-                    !this.store ? fs.writeFile(newDir.split(`file://`)[1], this.url.split(`file://`)[1], 'uri').then(() => {
+                    let newDir = `file://` + AppDir + this.base + response.data
+                    !this.store ? fs.writeFile(newDir.split(`file://`)[1], this.url.split(`file://`)[1], 'uri').then((status) => {
                         this.successFunc ? this.successFunc(newDir, this.baseURL + response.data, response.data, this.baseURL) : null
-                    }) : this.successFunc(newDir, this.baseURL + response.data, response.data, this.baseURL)
+                    }) : this.successFunc(this.url, this.baseURL + response.data, response.data, this.baseURL)
                 }
             })
             this.task.catch((error) => {
@@ -141,8 +141,8 @@ export default class FileExachange {
         this.deleteURL = configs.file_server.protocol +
             "://" + configs.file_server.host + ":" +
             configs.file_server.port + '/delete/' + filename
-        rnFetchBlob.fetch('POST',this.deleteURL).then(res => {
-            console.warn(response)
+        rnFetchBlob.fetch('POST', this.deleteURL).then(res => {
+            console.warn(res)
         })
     }
 

@@ -12,6 +12,8 @@ import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import GState from '../../../stores/globalState';
 import FileExachange from '../../../services/FileExchange';
 import converToHMS from '../highlights_details/convertToHMS';
+import { LogLevel, RNFFmpeg } from 'react-native-ffmpeg';
+
 
 export default class AudioUploader extends Component {
     constructor(props) {
@@ -19,7 +21,7 @@ export default class AudioUploader extends Component {
         this.state = {
             duration: 0,
             currentPosition: 0,
-            loaded:false,
+            loaded: false,
             currentTime: 0,
             uploadState: 0,
             downloading: true
@@ -27,43 +29,51 @@ export default class AudioUploader extends Component {
     }
 
     upload(url) {
-        this.exchanger.upload(this.state.received,this.state.total)
+        this.exchanger.upload(this.state.received, this.state.total)
     }
-    progress(writen,total){
+    progress(writen, total) {
         this.setState({
             total: parseInt(total),
             received: parseInt(writen),
             uploadState: (parseInt(writen) / parseInt(total)) * 100
         })
     }
-    onError(error){
+    onError(error) {
         GState.downlading = false
         this.setState({
-            downloading:false
+            downloading: false
         })
         console.warn(error)
     }
-    onSuccess(newDir,path,filename){
+    onSuccess(newDir, path, filename) {
         GState.downlading = false
         this.setState({
             uploadState: 100,
             loaded: true,
-            downloading:false
+            downloading: false
         })
-        this.initialisePlayer(newDir)
+        this.initialisePlayer(newDir.replace('file://', ''))
         this.props.message.type = 'audio'
-        this.props.message.source = newDir
+        this.props.message.source = newDir.replace("file://", "")
         this.props.message.temp = path
         this.props.message.received = 0
         this.props.message.file_name = filename
-        this.props.replaceMessage(this.props.message)
+        if (this.props.message.duration) {
+            this.props.replaceMessage(this.props.message)
+        } else {
+            RNFFmpeg.getMediaInformation(path).then(info => {
+                this.props.message.duration = Math.ceil(info.duration/1000)
+                this.props.replaceMessage(this.props.message)
+            })
+        }
     }
     downloadID = null
     uploadAudio(url) {
-            this.upload(url)
+        this.upload(url)
     }
     initialisePlayer(source) {
         this.player = new Sound(source, '/', (error) => {
+            console.warn(error)
         })
     }
     player = null
@@ -79,10 +89,12 @@ export default class AudioUploader extends Component {
             time: this.props.message.created_at.split(" ")[1],
             creator: (this.props.message.sender.phone == this.props.creator)
         })
-        this.exchanger = new FileExachange(this.props.message.source,"/Sound/",
-        this.state.total,this.state.received,this.progress.bind(this),this.onSuccess.bind(this),null,this.onError.bind(this),
-        this.props.message.content_type,
-        this.props.message.file_name,"/sound")
+        this.exchanger = new FileExachange(this.props.message.source, "/Sound/",
+            this.state.total, this.state.received, this.progress.bind(this),
+            this.onSuccess.bind(this), null,
+            this.onError.bind(this),
+            this.props.message.content_type,
+            this.props.message.file_name, "/sound")
         this.uploadAudio(this.props.message.source)
     }
     pause() {
@@ -120,7 +132,7 @@ export default class AudioUploader extends Component {
                         currentPosition: seconds / this.props.message.duration,
                         currentTime: seconds
                     })
-                    this.props.room.addDuration(this.props.message.id,seconds).then(status => {
+                    this.props.room.addDuration(this.props.message.id, seconds).then(status => {
                         //this.player.release()
                     })
                 })
@@ -140,8 +152,8 @@ export default class AudioUploader extends Component {
     cancelUpLoad(url) {
         this.exchanger.task.cancel((err, taskID) => {
         })
-        this.props.room.SetCancledState(this.props.message.id).then(()=>{
-            
+        this.props.room.SetCancledState(this.props.message.id).then(() => {
+
         })
         GState.downlading = false
         this.setState({

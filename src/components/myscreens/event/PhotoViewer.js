@@ -20,6 +20,9 @@ export default class PhotoViewer extends Component {
     state = {
         
     }
+    componentWillUnmount(){
+        StatusBar.setHidden(false, false)
+    }
     render() {
         StatusBar.setHidden(true,true)
         return (
@@ -32,6 +35,7 @@ export default class PhotoViewer extends Component {
                 isOpen={this.props.open}
                 onClosed={() => {
                     this.props.hidePhoto()
+                    StatusBar.setHidden(false, false)
                     this.setState({
                         message: null,
                         title: null,

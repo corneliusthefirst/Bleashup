@@ -25,9 +25,9 @@ import EventDescription from "../event/createEvent/components/EventDescription";
 import EventHighlights from "../event/createEvent/components/EventHighlights";
 import Hyperlink from 'react-native-hyperlink';
 import moment from 'moment';
-import  BleashupHorizontalFlatList from '../../BleashupHorizotalFlatList';
+import BleashupHorizontalFlatList from '../../BleashupHorizotalFlatList';
 import shadower from "../../shadower";
-
+import VideoViewer from "../highlights_details/VideoModal";
 let { height, width } = Dimensions.get('window');
 
 @observer
@@ -41,7 +41,7 @@ export default class EventDetailView extends Component {
       highlightData: [],
       EventData: request.Event(),
       isMounted: false,
-      animateHighlight:false,
+      animateHighlight: false,
       defaultDetail: "No  Event Decription !!",
       defaultLocation: "No event location given !",
       username: "",
@@ -55,11 +55,12 @@ export default class EventDetailView extends Component {
     }
 
   }
+  state = {
 
+  }
 
   @autobind
   initializer() {
-
     stores.Highlights.fetchHighlights(this.props.Event.id).then(Highlights => {
       let res = moment(this.props.Event.created_at).format().split("T");
       let participant = find(this.props.Event.participant, { phone: stores.LoginStore.user.phone });
@@ -71,12 +72,12 @@ export default class EventDetailView extends Component {
             isMounted: true,
             username: creatorInfo.nickname,
             creation_time: res[1] ? res[1].split("+")[0] : null,
-            EventData: this.props.Event, 
+            EventData: this.props.Event,
             participant: participant
           })
 
           this.intervalID = setInterval(() => {
-            if ((this.state.animateHighlight == true) && (this.state.highlightData.length > this.incrementer)) {
+            if ((this.state.animateHighlight == true || this.state.showTimmer !== true) && (this.state.highlightData.length > this.incrementer)) {
               this.detail_flatlistRef.scrollToIndex({ animated: true, index: this.initialScrollIndexer, viewOffset: 0, viewPosition: 0 });
 
               if (this.initialScrollIndexer >= (this.state.highlightData.length) - this.incrementer) {
@@ -91,19 +92,19 @@ export default class EventDetailView extends Component {
     })
 
   }
-initialScrollIndexer = 2
-incrementer = 2
-interval = 4000
+  initialScrollIndexer = 2
+  incrementer = 2
+  interval = 4000
   componentDidMount() {
-    this.setState({animateHighlight:true});
+    this.setState({ animateHighlight: true });
     this.initializer();
   }
 
-  componentWillUnmount(){
+  componentWillUnmount() {
     this.animateHighlight = false;
     clearInterval(this.intervalID)
   }
-  
+
 
 
 
@@ -139,143 +140,159 @@ interval = 4000
   @autobind
   newHighlight() {
     this.setState({ EventHighlightState: true })
-    this.refs.highlights.setState({animateHighlight:true})
-  }  
+    this.refs.highlights.setState({ animateHighlight: true })
+  }
 
 
   render() {
     return (
       !this.state.isMounted ? <Spinner size={'small'}></Spinner> : <View style={{ height: "100%", backgroundColor: "#FEFFDE", width: "100%" }}>
-        <View style={{
-          height: 44,
-          ...shadower(6),
-          width: "100%",
-          justifyContent: "space-between",
-          flexDirection: "row",
-          backgroundColor: "#FEFFDE",
-          alignItems: "center",
-        }}>
-          <View style={{ marginLeft: "4%", ...shadower(6),}}>
-            <Title style={{ color: "#0A4E52", fontWeight: 'bold', }}>{this.props.Event.about.title}</Title>
-          </View>
-          <View >
-            <TouchableOpacity style={{}}>
-              <Icon type='AntDesign' name="pluscircle" style={{ color: "#1FABAB", fontSize: 25, alignSelf: 'center', marginRight: "5%", }} onPress={this.newHighlight} />
-            </TouchableOpacity>
-          </View>
+        <View>
+          <View style={{
+            height: 44,
+            ...shadower(6),
+            width: "100%",
+            justifyContent: "space-between",
+            flexDirection: "row",
+            backgroundColor: "#FEFFDE",
+            alignItems: "center",
+          }}>
+            <View style={{ marginLeft: "4%", ...shadower(6), }}>
+              <Title style={{ color: "#0A4E52", fontWeight: 'bold', }}>{this.props.Event.about.title}</Title>
+            </View>
+            <View >
+              <TouchableOpacity style={{}}>
+                <Icon type='AntDesign' name="pluscircle" style={{ color: "#1FABAB", fontSize: 25, alignSelf: 'center', marginRight: "5%", }} onPress={this.newHighlight} />
+              </TouchableOpacity>
+            </View>
 
-        </View>
-
-        <View style={{ height: "92%", flexDirection: "column", width: "100%" }} >
-          <View style={{ height: this.state.highlightData.length == 0 ? 0 : height / 4 + height / 14, width: "100%" }} >
-          <BleashupHorizontalFlatList
-          initialRender={4}
-          renderPerBatch={5}
-          firstIndex={0}
-          refHorizontal={(ref) => { this.detail_flatlistRef = ref }}
-          keyExtractor={this._keyExtractor}
-          dataSource={this.state.highlightData}
-          parentComponent={this}
-          getItemLayout={this._getItemLayout}
-          renderItem={(item, index) => {
-            return (
-                <HighlightCard   participant={this.state.participant}  parentComponent={this} item={item} ancien={true} 
-                   deleteHighlight={(id)=>{this.deleteHighlight(id)}} ref={"higlightcard"}/>
-            );
-          }} 
-        >
-        </BleashupHorizontalFlatList>
           </View>
 
-          <View style={{ height: !(this.state.highlightData && this.state.highlightData.length) > 0 ? "70%" : this.props.Event.about.description.length > 500 ? height / 3 + height / 16 : height / 3, width: "96%", borderWidth: 1, borderRadius: 8, borderColor: "#1FABAB", margin: "2%" }}>
-            <ScrollView showsVerticalScrollIndicator={false}
-              nestedScrolEnabled={true}>
-              <View style={{ flex: 1 }}>
-                {this.props.Event.about.description != "" ?
-                  <Hyperlink onPress={(url) => { Linking.openURL(url) }} linkStyle={{ color: '#48d1cc', fontSize: 16 }}>
-                    <Text dataDetectorType={'all'} style={{ fontSize: 16, fontWeight: "500", margin: "1%" }} delayLongPress={800} onLongPress={() => {
-                      if (this.state.participant.master == true) {
-                        this.setState({ EventDescriptionState: true })
-                        this.refs.description_ref.init();
-                      }
-                    }}>{this.props.Event.about.description}</Text>
-                  </Hyperlink> :
-                  <Text style={{ fontWeight: "500", margin: "1%", fontSize: 30, alignSelf: 'center', marginTop: (height) / 8 }} delayLongPress={800} onLongPress={() => {
-                    if (this.state.participant.master == true) { this.setState({ EventDescriptionState: true }) }
-                  }}>{this.state.defaultDetail}</Text>}
-              </View>
-            </ScrollView>
-          </View>
+          <View style={{ height: "92%", flexDirection: "column", width: "100%" }} >
+            <View style={{ height: this.state.highlightData.length == 0 ? 0 : height / 4 + height / 14, width: "100%" }} >
+              <BleashupHorizontalFlatList
+                initialRender={4}
+                renderPerBatch={5}
+                firstIndex={0}
+                refHorizontal={(ref) => { this.detail_flatlistRef = ref }}
+                keyExtractor={this._keyExtractor}
+                dataSource={this.state.highlightData}
+                parentComponent={this}
+                getItemLayout={this._getItemLayout}
+                renderItem={(item, index) => {
+                  return (
+                    <HighlightCard participant={this.state.participant} parentComponent={this} item={item} ancien={true}
+                      deleteHighlight={(id) => { this.deleteHighlight(id) }} ref={"higlightcard"} />
+                  );
+                }}
+              >
+              </BleashupHorizontalFlatList>
+            </View>
+
+            <View style={{ height: !(this.state.highlightData && this.state.highlightData.length) > 0 ? "70%" : this.props.Event.about.description.length > 500 ? height / 3 + height / 16 : height / 3, width: "96%", borderWidth: 1, borderRadius: 8, borderColor: "#1FABAB", margin: "2%" }}>
+              <ScrollView showsVerticalScrollIndicator={false}
+                nestedScrolEnabled={true}>
+                <View style={{ flex: 1 }}>
+                  {this.props.Event.about.description != "" ?
+                    <Hyperlink onPress={(url) => { Linking.openURL(url) }} linkStyle={{ color: '#48d1cc', fontSize: 16 }}>
+                      <Text dataDetectorType={'all'} style={{ fontSize: 16, fontWeight: "500", margin: "1%" }} delayLongPress={800} onLongPress={() => {
+                        if (this.state.participant.master == true) {
+                          this.setState({ EventDescriptionState: true })
+                          this.refs.description_ref.init();
+                        }
+                      }}>{this.props.Event.about.description}</Text>
+                    </Hyperlink> :
+                    <Text style={{ fontWeight: "500", margin: "1%", fontSize: 30, alignSelf: 'center', marginTop: (height) / 8 }} delayLongPress={800} onLongPress={() => {
+                      if (this.state.participant.master == true) { this.setState({ EventDescriptionState: true }) }
+                    }}>{this.state.defaultDetail}</Text>}
+                </View>
+              </ScrollView>
+            </View>
 
 
 
 
-          {this.props.Event.location.string != "" ?
-            <View style={{ flexDirection: "column", height: height / 5, alignItems: "flex-end", marginRight: "3%", marginBottom: "5%", }}>
+            {this.props.Event.location.string != "" ?
+              <View style={{ flexDirection: "column", height: height / 5, alignItems: "flex-end", marginRight: "3%", marginBottom: "5%", }}>
 
 
-              <TouchableOpacity delayLongPress={800} onLongPress={() => {
+                <TouchableOpacity delayLongPress={800} onLongPress={() => {
+                  if (this.state.participant.master == true) {
+                    this.setState({ EventLocationState: true })
+                    this.refs.location_ref.init();
+                  }
+                }} >
+                  <Text ellipsizeMode="clip" numberOfLines={3} style={{ fontSize: 14, color: "#1FABAB", margin: "1%" }}>
+                    {this.props.Event.location.string}
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity onPress={this.props.OpenLinkZoom}>
+                  <Image
+                    source={require("../../../../Images/google-maps-alternatives-china-720x340.jpg")}
+                    style={{
+                      height: height / 24,
+                      width: width / 4,
+                      borderRadius: 10,
+
+
+                    }}
+                    resizeMode="contain"
+                    onLoad={() => { }}
+                  />
+
+                </TouchableOpacity>
+
+                <TouchableOpacity onPress={this.props.OpenLink} style={{ margin: "1%" }}>
+                  <Text note> View On Map </Text>
+                </TouchableOpacity>
+
+              </View> :
+              <TouchableOpacity delayLongPress={1000} onLongPress={() => {
                 if (this.state.participant.master == true) {
                   this.setState({ EventLocationState: true })
-                  this.refs.location_ref.init();
                 }
-              }} >
-                <Text ellipsizeMode="clip" numberOfLines={3} style={{ fontSize: 14, color: "#1FABAB", margin: "1%" }}>
-                  {this.props.Event.location.string}
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity onPress={this.props.OpenLinkZoom}>
-                <Image
-                  source={require("../../../../Images/google-maps-alternatives-china-720x340.jpg")}
-                  style={{
-                    height: height / 10,
-                    width: width / 3,
-                    borderRadius: 15,
+              }}>
+                <View>
+                  <Text ellipsizeMode="clip" numberOfLines={3} style={{ alignSelf: 'flex-end', fontSize: 14, color: "#1FABAB", margin: "2%" }}>
+                    {this.state.defaultLocation}</Text>
+                </View>
+              </TouchableOpacity>}
+            <View style={{ flexDirection: "row", position: 'absolute', justifyContent: "space-between", bottom: 0, margin: 3, width: "98%" }}>
+              <Text style={{ margin: "1%", fontSize: 11, color: "gray" }} >on the {this.state.creation_date} at {this.state.creation_time}</Text>
+              <Text style={{ margin: "1%", fontSize: 11 ,fontStyle: 'normal',}} note>by {this.state.username} </Text>
+            </View>
 
 
-                  }}
-                  resizeMode="contain"
-                  onLoad={() => { }}
-                />
-
-              </TouchableOpacity>
-
-              <TouchableOpacity onPress={this.props.OpenLink} style={{ margin: "1%" }}>
-                <Text note> View On Map </Text>
-              </TouchableOpacity>
-
-            </View> :
-            <TouchableOpacity delayLongPress={1000} onLongPress={() => {
-              if (this.state.participant.master == true) {
-                this.setState({ EventLocationState: true })
-              }
-            }}>
-              <View>
-                <Text ellipsizeMode="clip" numberOfLines={3} style={{ alignSelf: 'flex-end', fontSize: 14, color: "#1FABAB", margin: "2%" }}>
-                  {this.state.defaultLocation}</Text>
-              </View>
-            </TouchableOpacity>}
-          <View style={{ flexDirection: "row", position: 'absolute', justifyContent: "space-between", bottom: 0, margin: 3, width: "98%" }}>
-            <Text style={{ margin: "1%", fontSize: 11, color: "gray" }} >on the {this.state.creation_date} at {this.state.creation_time}</Text>
-            <Text style={{ margin: "1%", fontSize: 11 }} note>by {this.state.username} </Text>
           </View>
+          <EventDescription isOpen={this.state.EventDescriptionState} onClosed={() => { this.setState({ EventDescriptionState: false }) }}
+            ref={"description_ref"} eventId={this.props.Event.id} updateDes={true} parentComp={this} />
 
-
+          <EventLocation isOpen={this.state.EventLocationState} onClosed={() => { this.setState({ EventLocationState: false }) }}
+            ref={"location_ref"} updateLoc={true} eventId={this.props.Event.id} parentComp={this} />
+          {this.state.showVideo ? <VideoViewer open={this.state.showVideo} hideVideo={() => {
+            this.setState({
+              showVideo: false,
+              EventHighlightState: true
+            })
+          }} video={this.state.video}
+          ></VideoViewer> : null}
+          <EventHighlights showTrimer={(source) => {
+            this.setState({
+              EventHighlightState: false,
+              showTimmer: true,
+              source: source
+            })
+          }} playVideo={(vid) => {
+            this.setState({
+              showVideo: true,
+              video: vid,
+              EventHighlightState: false
+            })
+          }} update={false} isOpen={this.state.EventHighlightState} onClosed={() => { this.setState({ EventHighlightState: false }) }}
+            participant={this.state.participant} parentComponent={this} ref={"highlights"} event_id={this.props.Event.id} />
         </View>
-        <EventDescription isOpen={this.state.EventDescriptionState} onClosed={() => { this.setState({ EventDescriptionState: false }) }}
-          ref={"description_ref"} eventId={this.props.Event.id} updateDes={true} parentComp={this} />
-
-        <EventLocation isOpen={this.state.EventLocationState} onClosed={() => { this.setState({ EventLocationState: false }) }}
-          ref={"location_ref"} updateLoc={true} eventId={this.props.Event.id} parentComp={this} />
-
-        <EventHighlights update={false} isOpen={this.state.EventHighlightState} onClosed={() => { this.setState({ EventHighlightState: false }) }}
-           participant={this.state.participant} parentComponent={this} ref={"highlights"} event_id={this.props.Event.id} />
-
       </View>
-
-
-
     )
   }
 

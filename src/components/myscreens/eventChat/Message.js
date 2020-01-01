@@ -72,7 +72,7 @@ export default class Message extends Component {
                 return <FileAttarchementUploader room={this.props.room}  index={index} message={data}
                     replaceMessage={(data) => this.props.replaceMessageFile(data)}></FileAttarchementUploader>
             case "audio_uploader":
-                return <AudioUploader  message={data} index={data.id}
+                return <AudioUploader room={this.props.room}  message={data} index={data.id}
                     replaceMessage={(data) => this.props.replaceAudioMessage(data)}></AudioUploader>
             default:
                 return null

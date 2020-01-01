@@ -2,6 +2,7 @@
 import ImagePicker from 'react-native-customized-image-picker';
 import DocumentPicker from 'react-native-document-picker';
 import FileViewer from 'react-native-file-viewer';
+import { LogLevel, RNFFmpeg } from 'react-native-ffmpeg';
 
 class Picker {
     constructor() {
@@ -20,6 +21,7 @@ class Picker {
                 // returnAfterShot:true,
                 compressQuality: 50
             }).then(response => {
+                this.uploaded = true
                 //console.warn("opening camera")
                 let temp = response[0].path.split('/');
                 resolve({
@@ -31,7 +33,42 @@ class Picker {
             })
         })
     }
-
+    CompressVideo(response) {
+        return new Promise((resolve, reject) => {
+            let size = 0
+            let file = response.source.split('/')
+            let temp = file[file.length - 1].split('.')
+            let temp2 = file.pop()
+            let ext = temp.pop()
+            let nameString = temp.join('.')
+            let fileinfo = {
+                name: nameString,
+                ext: ext,
+                url: response.source,
+                base: file.join('/'),
+            }
+            fileinfo.response = fileinfo.base +
+                "/" + fileinfo.name +
+                "_wb_compress." + fileinfo.ext
+            RNFFmpeg.executeWithArguments(['-i',
+                fileinfo.url.replace('file://', ''), "-c:v", "mpeg4",
+                fileinfo.response.replace('file://', '')]).then((result) => {
+                    this.uploaded = true
+                    //console.warn("opening camera")
+                    let temp = response.source.split('/');
+                    RNFFmpeg.resetStatistics();
+                    resolve({
+                        source: fileinfo.response,
+                        filename: response.filename,
+                        content_type: response.content_type,
+                        size: size,
+                    })
+                })
+        })
+    }
+    CancleCompression(){
+        RNFFmpeg.cancel()
+    }
     SnapVideo() {
         return new Promise((resolve, reject) => {
             ImagePicker.openPicker({
@@ -64,11 +101,12 @@ class Picker {
                 compressQuality: 50,
                 multipleShot: false,
                 multiple: true,
-                maxSize:20,
-                spanCount:3,
+                maxSize: 20,
+                spanCount: 3,
                 title: "Select Photos",
                 imageLoader: "PICASSO"
             }).then(resps => {
+                this.uploaded = true
                 resolve(resps.map(ele => {
                     return {
                         filename: ele.path.split("/")[ele.path.split('/').length - 1],
@@ -109,17 +147,19 @@ class Picker {
             }
         }
     }
-openFile(source){
-    FileViewer.open(source).then(() => {
+    openFile(source) {
+        FileViewer.open(source).then(() => {
 
-    }).catch((e) => {
-        console.warn(e)
-    })
-}
-    CleanAll(){
-        ImagePicker.clean().then(() => {
-
+        }).catch((e) => {
+            console.warn(e)
         })
+    }
+    CleanAll() {
+        if (this.uploaded) {
+            ImagePicker.clean().then(() => {
+                this.uploaded = false
+            })
+        }
     }
 }
 

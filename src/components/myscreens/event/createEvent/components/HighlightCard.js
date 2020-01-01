@@ -108,7 +108,7 @@ componentDidMount(){
             </View>
            </CardItem>
            <CardItem style={{height:height/18}}>
-            <Text>{this.props.item.description.length>18?this.props.item.description.slice(0,18)+"...":this.props.item.description}</Text>
+              <Text ellipsizeMode='tail' style={{fontSize: 12,}} numberOfLines={2}>{this.props.item.description}</Text>
            </CardItem>
             </TouchableOpacity>
 

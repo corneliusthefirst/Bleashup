@@ -6,6 +6,7 @@ import {
     Text,
     Spinner,
     Toast,
+    Title,
     ActionSheet,
     Button
 } from 'native-base';
@@ -49,6 +50,9 @@ import dateDisplayer from '../../../services/dates_displayer';
 import { SendNotifications } from '../../../services/cloud_services';
 import shadower from '../../shadower';
 import Pickers from '../../../services/Picker';
+import rnFetchBlob from 'rn-fetch-blob';
+let dirs = rnFetchBlob.fs.dirs
+
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenheight = Math.round(Dimensions.get('window').height);
 export default class ChatRoom extends Component {
@@ -320,7 +324,6 @@ export default class ChatRoom extends Component {
         }
     }
     componentWillMount() {
-        Pickers.CleanAll()
         this.fireRef = this.getRef(this.props.firebaseRoom);
         this.setTypingRef(this.props.firebaseRoom)
         firebase.database().ref(`current_room/${this.props.user.phone}`).onDisconnect().set(null)
@@ -332,6 +335,7 @@ export default class ChatRoom extends Component {
         Orientation.lockToPortrait();
     }
     componentWillUnmount() {
+        Pickers.CleanAll()
         this.fireRef.off()
         this.typingRef.off()
         this.keyboardDidShowSub.remove();
@@ -916,7 +920,7 @@ export default class ChatRoom extends Component {
             return false;
         }
     }
-    filename = "/test.mp3"
+    filename = dirs.DocumentDir + "/test.mp3"
     _onChangeCaption(event) {
         this.setTyingState(this.sender)
         this.setState({
@@ -1308,8 +1312,7 @@ export default class ChatRoom extends Component {
     }
 
     header() {
-        return <View style={this.headerStyles}><View style={{ width: "90%", backgroundColor: "#FEFFDE", }}><Text style={{ fontSize: 20, fontWeight: 'bold', margin: 5 }}>{this.props.roomName.length > 30
-            ? this.props.roomName.slice(0, 30) + "..." : this.props.roomName}</Text></View>
+        return <View style={this.headerStyles}><View style={{ width: "90%", backgroundColor: "#FEFFDE", }}><Title style={{ fontSize: 20, fontWeight: 'bold', margin: "1%", alignSelf: 'flex-start', marginLeft: "4%" }}>{this.props.roomName}</Title></View>
             <View style={{ width: "10%", backgroundColor: "#FEFFDE" }}>
                 <ChatroomMenu showMembers={() => this.showMembers()} addMembers={() => this.props.addMembers()} closeCommitee={() => this.props.close()} openCommitee={() => this.props.open()} leaveCommitee={() => this.props.leave()} removeMembers={() => this.props.removeMembers()} publishCommitee={() => this.props.publish()} master={this.props.master} eventID={this.props.activity_id} roomID={this.props.firebaseRoom} public={this.props.public_state} opened={this.props.opened}></ChatroomMenu>
             </View></View>;
