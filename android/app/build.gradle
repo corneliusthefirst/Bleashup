@@ -112,6 +112,9 @@ android {
         pickFirst 'lib/arm64-v8a/libavcodec.so'
         pickFirst 'lib/armeabi-v7a/libavutil.so'
         pickFirst 'lib/x86/libavformat.so'
+        exclude "**/libjsc.so"
+        //pickFirst '**/libjsc.so'
+        //pickFirst '**/libc++_shared.so'
         pickFirst 'lib/armeabi-v7a/libavcodec.so'
         pickFirst 'lib/arm64-v8a/libavutil.so'
     }
@@ -159,6 +162,8 @@ android {
 }
 
 dependencies {
+   // Make sure to put android-jsc at the the first
+    implementation "org.webkit:android-jsc:r241213"
     implementation project(':react-native-ffmpeg')
     implementation project(':react-native-device-info')
     implementation project(':react-native-inappbrowser-reborn')
@@ -171,6 +176,8 @@ dependencies {
     //implementation 'com.android.support:design:27.1.1'
     implementation project(':react-native-calendar-events')
     implementation project(':react-native-orientation-locker')
+   // Add v8-android - prebuilt libv8android.so into APK 
+    implementation 'org.chromium:v8-android:+'
     implementation project(':react-native-sound-recorder')
     implementation project(':react-native-document-picker')
     implementation project(':react-native-customized-image-picker')

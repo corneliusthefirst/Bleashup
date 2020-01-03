@@ -21,6 +21,7 @@
     "buffer": "^5.4.3",
     "create-react-class": "^15.6.3",
     "frisbee": "^3.0.2",
+    "jsc-android": "^241213.1.0",
     "json-circular-stringify": "0.0.1",
     "mobx": "^5.9.4",
     "mobx-react": "^6.0.0",
@@ -80,6 +81,7 @@
     "react-native-tcp": "^3.3.0",
     "react-native-textarea": "^1.0.3",
     "react-native-uuid": "^1.4.9",
+    "react-native-v8": "^0.60.0-patch.2",
     "react-native-vector-icons": "^6.6.0",
     "react-native-video": "^5.0.2",
     "react-native-video-processing": "^1.20.0",
@@ -89,7 +91,8 @@
     "reazy-native-router-actions": "0.0.2",
     "rn-fetch-blob": "^0.10.15",
     "tiny-emitter": "^2.1.0",
-    "uniqid": "^5.1.0"
+    "uniqid": "^5.1.0",
+    "v8-android-nointl": "^7.8.2"
   },
   "devDependencies": {
     "@babel/core": "7.3.4",

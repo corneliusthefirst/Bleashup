@@ -99,7 +99,7 @@ componentDidMount(){
 
           <TouchableOpacity onPress={() => {this.setState({isOpen:true}) }} >
            <CardItem style={{margin:3,height:height/30}}> 
-              <Title style={{ fontSize: 14, color:"#0A4E52",fontWeight: 'bold',}}>{this.props.item.title}/*>16?this.props.item.title.slice(0,16)+"..":this.props.item.title*/}</Title>
+              <Title style={{ fontSize: 14, color:"#0A4E52",fontWeight: 'bold',}}>{this.props.item.title}</Title>
            </CardItem>
            <CardItem>
              <View style={{width:"100%",height:height/7}}>
@@ -108,11 +108,11 @@ componentDidMount(){
             </View>
            </CardItem>
            <CardItem style={{height:height/18}}>
-              <Text ellipsizeMode='tail' style={{fontSize: 12,}} numberOfLines={2}>{this.props.item.description}</Text>
+              <Text ellipsizeMode='tail' style={{fontSize: 12,}} note numberOfLines={2}>{this.props.item.description}</Text>
            </CardItem>
             </TouchableOpacity>
 
-           {this.props.participant.master &&
+           {this.props.master &&
                 <CardItem style={{height:height/18}}>
                 <Left>
                  <TouchableOpacity onPress={() => {return this.update()}}  style={{marginRight:"15%"}}>

@@ -160,11 +160,11 @@ export default class EventDetailView extends Component {
             <View style={{ marginLeft: "4%", ...shadower(6), }}>
               <Title style={{ color: "#0A4E52", fontWeight: 'bold', }}>{this.props.Event.about.title}</Title>
             </View>
-            <View >
-              <TouchableOpacity style={{}}>
-                <Icon type='AntDesign' name="pluscircle" style={{ color: "#1FABAB", fontSize: 25, alignSelf: 'center', marginRight: "5%", }} onPress={this.newHighlight} />
+           {this.props.master? <View >
+              <TouchableOpacity onPress={() => requestAnimationFrame(() => this.newHighlight())} style={{}}>
+                <Icon type='AntDesign' name="pluscircle" style={{ color: "#1FABAB", fontSize: 25, alignSelf: 'center', marginRight: "5%", }} />
               </TouchableOpacity>
-            </View>
+            </View>:null}
 
           </View>
 
@@ -181,7 +181,7 @@ export default class EventDetailView extends Component {
                 getItemLayout={this._getItemLayout}
                 renderItem={(item, index) => {
                   return (
-                    <HighlightCard participant={this.state.participant} parentComponent={this} item={item} ancien={true}
+                    <HighlightCard master={this.props.master} participant={this.state.participant} parentComponent={this} item={item} ancien={true}
                       deleteHighlight={(id) => { this.deleteHighlight(id) }} ref={"higlightcard"} />
                   );
                 }}
