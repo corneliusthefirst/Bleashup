@@ -1,10 +1,117 @@
-import React,{Component} from 'react';
+import React, { Component } from "react";
+import {
+  Content, Card, CardItem, Text, Body, Container, Icon, Header,
+  Item, Title, Input, Left, Right, Spinner,
+  Button,Textarea,Label
+} from "native-base";
+ 
+import { StyleSheet, View,Image,TouchableOpacity, Dimensions} from 'react-native';
+import autobind from "autobind-decorator";
+import TasksCard from "./TasksCard"
+import PhotoEnlargeModal from "../invitations/components/PhotoEnlargeModal";
+import  stores from '../../../stores/index';
+import {observer} from 'mobx-react'
+import BleashupFlatList from '../../BleashupFlatList';
+import TasksCreation from './TasksCreation';
+import { find, findIndex, uniqBy, reject,filter } from "lodash";
 
-export default class Reminds extends Component{
-    constructor(props){
+//const MyTasksData = stores.Reminds.MyTasksData
+ 
+
+@observer
+export default class Reminds extends Component {
+    constructor(props) {
         super(props)
+        this.state={
+          eventRemindData:[],
+          event_id:"71e57d50-252e-11ea-9234-dd23f4cef77f",
+          RemindCreationState:false
+        }
     }
-    render(){
-        return null
-    }
+//manual event_id
+
+
+updateData = newremind => {
+  //console.warn("come back value",newremind)
+  this.setState({eventRemindData:[ ...this.state.eventRemindData, newremind]});
 }
+
+componentDidMount(){
+
+  
+   stores.Reminds.readFromStore().then((Reminds)=>{
+    let reminds = filter(Reminds,{event_id:this.state.event_id});
+    this.setState({eventRemindData:reminds});
+    console.warn("ok",reminds)
+   })
+}
+
+@autobind
+AddRemind(){
+  //this.props.navigation.navigate("TasksCreation",{eventRemindData:this.state.eventRemindData,updateData:this.updateData,event_id:this.state.event_id});
+  this.setState({RemindCreationState:true})
+}
+
+
+
+@autobind
+back() {
+  this.props.navigation.navigate('Home');
+
+}
+
+_keyExtractor = (item, index) => item.id
+
+  render() {
+       
+     return(
+
+      <View style={{flex:1,backgroundColor:'#FEFFDE'}}>
+        <View style={{height:"8%",width:"96%",justifyContent:"space-between",flexDirection:"row",backgroundColor:"#FEFFDE",alignItems:"center",marginLeft:"2%",marginRight:"2%"}}>
+           <View >
+             <TouchableOpacity>
+                <Icon  onPress={this.back} type='MaterialCommunityIcons' name="keyboard-backspace" style={{color:"#1FABAB"}} />
+             </TouchableOpacity>
+           </View>
+
+             <View >
+               <Text style={{fontSize:18}}>Tasks / Reminds</Text>
+             </View>
+
+              <View >           
+               <TouchableOpacity>  
+                <Icon type='AntDesign' name="pluscircle" style={{color:"#1FABAB"}} onPress={this.AddRemind} />
+               </TouchableOpacity>
+             </View>
+
+         </View>
+
+      <View style={{height:"92%"}}>
+        <BleashupFlatList 
+          initialRender={5}
+          renderPerBatch={5}
+          onScroll={this._onScroll}
+          firstIndex={0}
+          showVerticalScrollIndicator={false}
+          keyExtractor={this._keyExtractor}
+          dataSource={this.state.eventRemindData}
+          renderItem={(item, index) => {
+            return (
+              <TasksCard {...this.props} item={item} key={index} parentCardList={this}>
+              </TasksCard>
+            );
+          }}
+        >
+        </BleashupFlatList >
+  
+
+      </View>
+
+      <TasksCreation event_id={this.state.event_id} isOpen={this.state.RemindCreationState} onClosed={()=>{this.setState({RemindCreationState:false})}} parentComp={this}  eventRemindData={this.state.eventRemindData}></TasksCreation>
+ 
+   </View>
+
+   
+   )}
+
+ }

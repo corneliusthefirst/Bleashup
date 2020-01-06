@@ -91,20 +91,21 @@ class Request {
             url: ""
         }
     }
-    remind() {
+    Remind() {
         return { 
             id: '',
             event_id: "",
-            create_at: moment().format(),
+            created_at: moment().format(),
             updated_at: moment().format(),
             creator: '',
             title: '',
             description: '',
             period: "",
             recursive_frequency:"none",
-            recurrence:0,
+            recurrence:1000,
             status:"public",
-            members:[]
+            members:[],
+            isDone:false
         }
     }
 

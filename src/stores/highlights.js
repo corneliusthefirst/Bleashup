@@ -133,6 +133,8 @@ export default class highlights {
       }
     });
   }
+
+
   @action updateHighlightTitle(newHightlight, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Highlights => {

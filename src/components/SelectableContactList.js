@@ -37,7 +37,7 @@ export default class SelectableContactList extends PureComponent {
                 position={"bottom"}
                 //entry={"top"}
                 coverScreen={true}
-                isOpen={this.props.isOpen}
+                isOpen={this.props.isOpen} 
                 onClosed={() => {
                     this.setState({
                         members: [],
@@ -71,11 +71,9 @@ export default class SelectableContactList extends PureComponent {
                             this.props.removing ? this.props.saveRemoved(this.state.checked) :
                                 this.props.adding ? this.props.addMembers(this.state.checked) :
                                     this.props.takecheckedResult(this.state.checked)
-                            this.setState({
-                                checked: [],
-
-                            })
-                        })
+                            this.setState({ checked: []})
+                            this.props.close();
+                          })
                         }>
                             <View style={{flexDirection: 'row',}}>
                                 <Text style={{ color: "#1FABAB", fontSize: 20, fontWeight: 'bold', marginTop: "3%", marginLeft: "1%", fontStyle: 'italic', }}>Go</Text>

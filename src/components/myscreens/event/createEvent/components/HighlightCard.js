@@ -28,9 +28,7 @@ export default class HighlightCard extends Component {
           updating:false,
           deleting:false,
           isOpen:false,
-          highlight_id:this.props.item.id,
           check:false,
-          EventHighlightState:false,
           master:this.props.participant.master==false?this.props.participant.master:true
          }
         
@@ -39,19 +37,9 @@ export default class HighlightCard extends Component {
 
 @autobind
 update(){
-  if(this.props.ancien==true){
-    this.refs.highlights.state.currentHighlight = this.props.item;
-    this.refs.highlights.setState({update:true});
-    this.setState({EventHighlightState:true}); 
-    this.refs.highlights.setState({highlightData:[]});
-  }else{
       //new highlight update when event is not yet created but highlight already created
       this.props.parentComponent.state.currentHighlight = this.props.item;
       this.props.parentComponent.setState({update:true});
-      
-  }
-
-
 }
 shouldComponentUpdate(nextProps, nextState, nextContext) {
    return this.state.mounted !== nextState.mounted || !isEqual(this.props.item,nextProps.item)
@@ -59,27 +47,16 @@ shouldComponentUpdate(nextProps, nextState, nextContext) {
 @autobind
 delete(){
   return new Promise((resolve,rejectPromise)=>{
-    //console.warn("deleting....")
-    //remove the higlight id from event then remove the highlight from the higlights store
+
     if(this.props.item.event_id == "newEventId"){
-      //console.warn("inside if....")
-      //console.warn(this.props.item.id);
       stores.Events.removeHighlight(this.props.item.event_id,this.props.item.id,false).then(()=>{});
-      //console.warn("inside if 2....");
     }else{
-      //console.warn(this.props.item.event_id,"inside if 3....");
-      //console.warn( this.props.item.id,"inside if 4....");
       stores.Events.removeHighlight(this.props.item.event_id,this.props.item.id,false).then(()=>{});
     }
-
     stores.Highlights.removeHighlight(this.props.item.id).then(()=>{});
-
     this.setState({check:false});
     //reset higlight data
     this.props.deleteHighlight(this.props.item.id);
-   
-    //console.warn("inside if 5....");
-
   });
  
 }

@@ -110,7 +110,7 @@ export default class Event extends Component {
           })
         }} {...this.props} Event={this.event}></EventDatails>
       case "Reminds":
-        return <Remind {...this.prpos}></Remind>
+        return <Remind {...this.props}></Remind>
       case "Votes":
         return <Votes {...this.props}></Votes>
       case "Highlights":

@@ -826,7 +826,7 @@ export default class events {
     });
   }
   @action addRemind(EventID, RemindID, inform) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve, rejectPromise) => {
       this.readFromStore().then(Events => {
         let index = findIndex(Events, {
           id: EventID

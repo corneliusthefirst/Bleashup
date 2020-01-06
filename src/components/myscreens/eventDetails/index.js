@@ -8,7 +8,6 @@ import ActionButton from 'react-native-action-button';
 import RadioForm, { RadioButton, RadioButtonInput, RadioButtonLabel } from 'react-native-simple-radio-button';
 import autobind from "autobind-decorator";
 import CacheImages from "../../CacheImages";
-import HighlightCard from "../event/createEvent/components/HighlightCard"
 import PhotoEnlargeModal from "../invitations/components/PhotoEnlargeModal";
 import ImagePicker from 'react-native-image-picker';
 import stores from '../../../stores/index';
@@ -23,7 +22,6 @@ import EventDescription from "../event/createEvent/components/EventDescription";
 import EventHighlights from "../event/createEvent/components/EventHighlights";
 import Hyperlink from 'react-native-hyperlink';
 import moment from 'moment';
-import BleashupHorizontalFlatList from '../../BleashupHorizotalFlatList';
 import shadower from "../../shadower";
 import VideoViewer from "../highlights_details/VideoModal";
 import BleashupFlatList from '../../BleashupFlatList';
@@ -32,6 +30,7 @@ import HighlightCardDetail from '../event/createEvent/components/HighlightCardDe
 import BleashupAlert from '../event/createEvent/components/BleashupAlert';
 import emitter from '../../../services/eventEmiter';
 import PhotoViewer from "../event/PhotoViewer";
+import HighlightCard from "../event/createEvent/components/HighlightCard"
 let { height, width } = Dimensions.get('window');
 
 @observer
@@ -57,7 +56,8 @@ export default class EventDetailView extends Component {
       creation_date: "",
       creation_time: "",
       participant: request.Participant(),
-      EventHighlightState: false
+      EventHighlightState: false,
+      updateTitleState:false
 
     }
 

@@ -6,33 +6,36 @@ import {
   DatePicker, CheckBox, List, Accordion, DeckSwiper
 } from "native-base";
 import {
-  Platform, StyleSheet, Image, TextInput, FlatList, TouchableOpacity,
-  ActivityIndicator, View, Alert, BackHandler, ToastAndroid
+  Platform, View,Dimensions
 } from 'react-native';
 
 
-
+let {height, width} = Dimensions.get('window')
 export default class AccordionModule extends Component {
   constructor(props) {
     super(props);
   }
 
+   @autobind
   _renderHeader(item, expanded) {
     return (
       <View style={{
         flexDirection: "row",
-        padding: 5,
-        justifyContent: "space-between",
-        alignItems: "center",
-        backgroundColor: "#FEFFDE"
+        //padding: 5,
+       // justifyContent: "space-between",
+        //backgroundColor: "green"
       }}  >
-        <Text style={{ fontWeight: "400", fontStyle: "italic" }} note>
+        <Text style={{ fontWeight: "400",fontSize:14, fontStyle: "italic" }} note>
           {item.title}
         </Text>
-        {expanded
-          ? <Icon style={{ fontSize: 18 }} name="arrow-up" type="EvilIcons" />
-          : <Icon style={{ fontSize: 18 }} name="arrow-down" type="EvilIcons"/>}
-
+        {
+          this.props.long &&
+          (expanded
+            ? <View style={{alignSelf:"flex-end" }}><Icon style={{alignSelf:"flex-end",fontSize: 18 }} name="arrow-up" type="EvilIcons" /></View>
+            : <Icon style={{alignSelf:"flex-end",fontSize: 18 }} name="arrow-down" type="EvilIcons"/>)
+  
+        }
+   
       </View>
     );
   }
@@ -45,6 +48,7 @@ export default class AccordionModule extends Component {
           paddingLeft: 10,
           paddingBottom: 10,
           fontStyle: "italic",
+          fontSize:14
         }}
         note
       >
@@ -63,7 +67,7 @@ export default class AccordionModule extends Component {
       expanded={true}
       renderHeader={this._renderHeader}
       renderContent={this._renderContent}
-      style={{ borderWidth:0 }}
+      style={{ borderWidth:0,width:width-width/8 }}
     />
     
     );
