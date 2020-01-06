@@ -53,6 +53,7 @@ export default class SimpleAudioPlayer extends Component {
         this.player.pause()
     }
     initialisePlayer(source) {
+        console.warn(source)
         return new Promise((resolve, reject) => {
             this.player ? this.player.stop() : null
             this.player = new Sound(source, '', (error) => {

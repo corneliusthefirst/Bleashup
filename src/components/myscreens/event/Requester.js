@@ -813,6 +813,241 @@ class Request {
                 })
         })
     }
+    createHighlight(newHighlight) {
+        return new Promise((resolve, reject) => {
+            tcpRequest.addHighlight(newHighlight, newHighlight.id).then(JSONData => {
+                serverEventListener.sendRequest(JSONData, newHighlight.id).then(response => {
+                    console.warn(response)
+                    stores.Events.addHighlight(newHighlight.event_id, newHighlight.id).then(res => {
+                        stores.Highlights.addHighlight(newHighlight).then(res => {
+                            let Change = {
+                                id: uuid.v1(),
+                                title: "Updates On Main Activity",
+                                updated: "add_highlight",
+                                event_id: newHighlight.event_id,
+                                updater: stores.LoginStore.user,
+                                changed: "Added A New Post To The Activity",
+                                new_value: { data: null, new_value: newHighlight },
+                                date: moment().format(),
+                                time: null
+                            }
+                            stores.ChangeLogs.addChanges(Change).then(res => {
+                                resolve("ok")
+                            })
+                        })
+                    })
+                }).catch((error) => {
+                    Toast.show({ text: 'Unable to perform this action', position: 'top' })
+                    reject(error)
+                })
+            })
+        })
+    }
+    updateHighlightTitle(newTitle, highlightID, eventID) {
+        return new Promise((resolve, reject) => {
+            let higlightTitle = request.HUpdate();
+            higlightTitle.action = 'title'
+            higlightTitle.event_id = eventID
+            higlightTitle.h_id = highlightID
+            higlightTitle.new_data = newTitle
+            tcpRequest.updateHighlight(higlightTitle, highlightID).then(JSONData => {
+                serverEventListener.sendRequest(JSONData, highlightID).then(response => {
+                    stores.Highlights.updateHighlightTitle({
+                        id: highlightID,
+                        title: newTitle
+                    }, false).then((HighlightJS) => {
+                        Highlight = JSON.parse(HighlightJS)
+                        let Change = {
+                            id: uuid.v1(),
+                            title: `Update On ${Highlight.title} Post`,
+                            updated: "highlight_title",
+                            event_id: eventID,
+                            updater: stores.LoginStore.user,
+                            changed: `Changed The Title of ${Highlight.title} Post to ...`,
+                            new_value: { data: null, new_value: newTitle },
+                            date: moment().format(),
+                            time: null
+                        }
+                        stores.ChangeLogs.addChanges(Change).then(res => {
+                            resolve("ok")
+                        })
+                    })
+                }).catch((error) => {
+                    console.warn(error)
+                    reject(error)
+                })
+            })
+        })
+    }
+    updateHighlightDescription(newDescription, highlightID, eventID) {
+        return new Promise((resolve, reject) => {
+            let higlightTitle = request.HUpdate();
+            higlightTitle.action = 'description'
+            higlightTitle.event_id = eventID
+            higlightTitle.h_id = highlightID
+            higlightTitle.new_data = newDescription
+            tcpRequest.updateHighlight(higlightTitle, highlightID).then(JSONData => {
+                serverEventListener.sendRequest(JSONData, highlightID).then(response => {
+                    stores.Highlights.updateHighlightDescription({
+                        id: higlightTitle.h_id,
+                        description: higlightTitle.new_data
+                    }, false).then((Highlight) => {
+                        let Change = {
+                            id: uuid.v1(),
+                            title: `Update On ${Highlight.title} Post`,
+                            updated: "highlight_decription",
+                            event_id: eventID,
+                            updater: stores.LoginStore.user,
+                            changed: `Changed The Content of ${Highlight.title} Post To`,
+                            new_value: { data: null, new_value: newDescription },
+                            date: moment().format(),
+                            time: null
+                        }
+                        stores.ChangeLogs.addChanges(Change).then(res => {
+                            resolve("ok")
+                        })
+                    })
+                }).catch((error) => {
+                    console.warn(error)
+                    reject(error)
+                })
+            })
+        })
+    }
+    updateHighlightURL(newURL, highlightID, eventID) {
+        return new Promise((resolve, reject) => {
+            let newHighlightURL = request.HUpdate()
+            newHighlightURL.h_id = highlightID
+            newHighlightURL.event_id = eventID
+            newHighlightURL.action = 'url'
+            newHighlightURL.new_data = newURL
+            tcpRequest.updateHighlight(newHighlightURL, highlightID).then(JSONData => {
+                serverEventListener.sendRequest(JSONData, highlightID).then(response => {
+                    stores.Highlights.updateHighlightUrl({
+                        id: newHighlightURL.h_id,
+                        url: newHighlightURL.new_data
+                    }, false).then((Highlight) => {
+                        let Change = {
+                            id: uuid.v1(),
+                            title: `Update On ${Highlight.title} Post`,
+                            updated: "highlight_url",
+                            event_id: eventID,
+                            updater: stores.LoginStore.user,
+                            changed: `Changed The Media Specifications of ${Highlight.title} Post`,
+                            new_value: { data: null, new_value: newURL },
+                            date: moment().format(),
+                            time: null
+                        }
+                        stores.ChangeLogs.addChanges(Change).then(res => {
+                            resolve("ok")
+                        })
+                    })
+                }).catch((error) => {
+                    console.warn(error)
+                    reject(error)
+                })
+            })
+        })
+    }
+    updateCount = 0
+    updatedhighlight = null
+    applyAllHighlightsUpdate(newHighlight, highlight) {
+        return new Promise((resolve, reject) => {
+            if (newHighlight.title !== JSON.parse(highlight).title) {
+                this.updateHighlightTitle(newHighlight.title,
+                    newHighlight.id,
+                    newHighlight.event_id).then(() => {
+                        this.updatedhighlight = this.updatedhighlight + "sucess"
+                        this.updateCount = this.updateCount + 1
+                        if (this.updateCount === 3) {
+                            resolve(this.updatedhighlight)
+                            this.updateCount = 0
+                            this.updatedhighlight = null
+                        }
+                    })
+            } else {
+                this.updateCount = this.updateCount + 1
+                if (this.updateCount === 3) {
+                    resolve(this.updatedhighlight)
+                    this.updateCount = 0
+                    this.updatedhighlight = null
+                }
+            }
+            if (newHighlight.description !== JSON.parse(highlight).description) {
+                this.updateHighlightDescription(newHighlight.description,
+                    newHighlight.id,
+                    newHighlight.event_id).then(() => {
+                        this.updatedhighlight = this.updatedhighlight + "sucess"
+                        this.updateCount = this.updateCount + 1
+                        if (this.updateCount === 3) {
+                            resolve(this.updatedhighlight)
+                            this.updateCount = 0
+                            this.updatedhighlight = null
+                        }
+                    })
+            } else {
+                this.updateCount = this.updateCount + 1
+                if (this.updateCount === 3) {
+                    resolve(this.updatedhighlight)
+                    this.updateCount = 0
+                    this.updatedhighlight = null
+                }
+            }
+            if (!isEqual(newHighlight.url, JSON.parse(highlight).url)) {
+                this.updateHighlightURL(newHighlight.url,
+                    newHighlight.id,
+                    newHighlight.event_id).then(() => {
+                        this.updatedhighlight = this.updatedhighlight + "sucess"
+                        this.updateCount = this.updateCount + 1
+                        if (this.updateCount === 3) {
+                            resolve(this.updatedhighlight)
+                            this.updateCount = 0
+                            this.updatedhighlight = null
+                        }
+                    })
+            } else {
+                this.updateCount = this.updateCount + 1
+                if (this.updateCount === 3) {
+                    resolve(this.updatedhighlight)
+                    this.updateCount = 0
+                    this.updatedhighlight = null
+                }
+            }
+        })
+    }
+    deleteHighlight(highlightID, eventID) {
+        return new Promise((resolve, reject) => {
+            let HEID = request.HEID()
+            HEID.event_id = eventID;
+            HEID.h_id = highlightID
+            tcpRequest.deleteHighlight(HEID, highlightID).then(JSONData => {
+                serverEventListener.sendRequest(JSONData, highlightID).then(response => {
+                    stores.Highlights.removeHighlight(highlightID).then((Highlight) => {
+                        stores.Events.removeHighlight(eventID, highlightID).then(res => {
+                            let Change = {
+                                id: uuid.v1(),
+                                title: `Update On Main Activity`,
+                                updated: "highlight_delete",
+                                event_id: eventID,
+                                updater: stores.LoginStore.user,
+                                changed: `Deleted ${Highlight.title} Post`,
+                                new_value: { data: null, new_value: Highlight },
+                                date: moment().format(),
+                                time: null
+                            }
+                            stores.ChangeLogs.addChanges(Change).then(res => {
+                                resolve("ok")
+                            })
+                        })
+                    })
+                }).catch((error) => {
+                    console.warn(error)
+                    Toast.show({text:"Un Able To PErform Request"})
+                    reject(error)
+                })
+            })
+        })
+    }
 }
 
 const Requester = new Request()

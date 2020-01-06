@@ -1,26 +1,22 @@
 import React, { Component } from "react";
 import {
-  Content, Card, CardItem, Text, Body, Container, Icon, Header,
-  Form, Item, Title, Input, Left, Right, H3, H1, H2, Spinner,
-  Button, InputGroup, DatePicker, Thumbnail, Alert,Textarea,List,ListItem,Label
+   Card, CardItem, Text,  Icon, Label,
+   Title, Input, Left, Right,
+  Button, Thumbnail, 
 } from "native-base";
 
-import { StyleSheet, View,Image,TouchableOpacity,FlatList,ScrollView,Dimensions} from 'react-native';
-import ActionButton from 'react-native-action-button';
+import {  View,TouchableOpacity,Dimensions} from 'react-native';
 import Modal from 'react-native-modalbox';
-import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 import autobind from "autobind-decorator";
 import Swipeout from 'react-native-swipeout';
-import HighlightCardDetail from "./HighlightCardDetail";
-import  stores from '../../../../../stores/index';
-import {observer} from 'mobx-react'
+//import HighlightCardDetail from "./HighlightCardDetail";
 import moment from "moment"
-import { filter,uniqBy,orderBy,find,findIndex,reject,uniq,indexOf,forEach,dropWhile } from "lodash";
-import request from "../../../../../services/requestObjects";
-import EventHighlights from "./EventHighlights"
+import {isEqual } from "lodash";
+//import EventHighlights from "./EventHighlights"
 import BleashupAlert from './BleashupAlert';
 import testForURL from '../../../../../services/testForURL';
 import CacheImages from '../../../../CacheImages';
+import shadower from "../../../../shadower";
 
 
 let {height, width} = Dimensions.get('window')
@@ -57,7 +53,9 @@ update(){
 
 
 }
-
+shouldComponentUpdate(nextProps, nextState, nextContext) {
+   return this.state.mounted !== nextState.mounted || !isEqual(this.props.item,nextProps.item)
+}
 @autobind
 delete(){
   return new Promise((resolve,rejectPromise)=>{
@@ -87,35 +85,47 @@ delete(){
 }
 
 componentDidMount(){
+  setTimeout(() => {
+    this.setState({
+      mounted:true
+    })
+  },100)
 }
-
 
 
     render() {
 
       return(
           
-          <Card style={{width:width/2 - width/40}}>
+          this.state.mounted?<Card style={{width:width/2 - width/40}}>
 
-          <TouchableOpacity onPress={() => {this.setState({isOpen:true}) }} >
+          <TouchableOpacity onPress={() => requestAnimationFrame(() => this.props.showItem(this.props.item)) } >
            <CardItem style={{margin:3,height:height/30}}> 
-              <Title style={{ fontSize: 14, color:"#0A4E52",fontWeight: 'bold',}}>{this.props.item.title}/*>16?this.props.item.title.slice(0,16)+"..":this.props.item.title*/}</Title>
+              <Title style={{ fontSize: 14, color:"#0A4E52",fontWeight: 'bold',}}>{this.props.item.title?this.props.item.title:""}</Title>
            </CardItem>
-           <CardItem>
-             <View style={{width:"100%",height:height/7}}>
-                {testForURL(this.props.item.url.photo) ? <CacheImages thumbnails square style={{ width: "100%", height: height / 7,borderRadius: 8,}} source={{ uri: this.props.item.url.photo}}></CacheImages>:<Thumbnail source={{uri:this.props.item.url.photo}} style={{ flex: 1, width:null,height:null,
+            <CardItem style={{ width: "90%",backgroundColor: 'transparent', borderRadius: 8, ...shadower(7), alignSelf: 'center',}}>
+             <View style={{width:"100%",height:height/7,}}>
+                {this.props.item.url && testForURL(this.props.item.url.photo) ? <CacheImages thumbnails square style={{ width: "106%",alignSelf: 'center', height: height / 7,borderRadius: 8,}} source={{ uri: this.props.item.url.photo}}></CacheImages>:
+                <Thumbnail source={{uri:this.props.item.url.photo}} style={{ flex: 1, width:null,height:null,
               borderRadius:8}} large ></Thumbnail>}
+                {this.props.item.url && (this.props.item.url.video || this.props.item.url.audio) ? <Icon onPress={() => {
+                  this.props.showItem(this.props.item)
+                }} name={this.props.item.url.video ? "play" : "headset"} style={{
+                  fontSize: 50, color: '#1FABAB',
+                  position: 'absolute', marginTop: '18%', marginLeft: '35%',
+                }} type={this.props.item.url.video ? "EvilIcons" : "MaterialIcons"}>
+                </Icon> : null}
             </View>
            </CardItem>
            <CardItem style={{height:height/18}}>
-              <Text ellipsizeMode='tail' style={{fontSize: 12,}} numberOfLines={2}>{this.props.item.description}</Text>
+              <Text ellipsizeMode='tail' style={{fontSize: 12,}} numberOfLines={2}>{this.props.item.description?this.props.item.description:null}</Text>
            </CardItem>
             </TouchableOpacity>
 
            {this.props.participant.master &&
                 <CardItem style={{height:height/18}}>
                 <Left>
-                 <TouchableOpacity onPress={() => {return this.update()}}  style={{marginRight:"15%"}}>
+                 <TouchableOpacity onPress={() => requestAnimationFrame(() => this.props.update(this.props.item.id))}  style={{marginRight:"15%"}}>
     
                     {this.state.updating ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : 
                     <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="update" type="MaterialCommunityIcons">
@@ -124,7 +134,7 @@ componentDidMount(){
                   </TouchableOpacity>
                  </Left>
                  <Right>
-                   <TouchableOpacity onPress={() => {this.setState({check:true})}} style={{marginRight:"15%"}}>
+                   <TouchableOpacity onPress={() =>  requestAnimationFrame(() => this.props.deleteHighlight(this.props.item) )} style={{marginRight:"15%"}}>
     
                     {this.state.deleting ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : 
                     <Icon name="trash" style={{ fontSize: 16, color: "red" }} type="EvilIcons">
@@ -135,16 +145,18 @@ componentDidMount(){
                </CardItem> }
       
 
-           <HighlightCardDetail isOpen={this.state.isOpen} item={this.props.item} onClosed={()=>{this.setState({isOpen:false})}}/>
+           {/*<HighlightCardDetail isOpen={this.state.isOpen} item={this.props.item} onClosed={()=>{this.setState({isOpen:false})}}/>*/}
      
-           <BleashupAlert  title={"Delete Higlight"}   accept={"Yes"} refuse={"No"} message={" Are you sure you want to delete these highlight ?"} deleteFunction={this.delete} isOpen={this.state.check} onClosed={()=>{this.setState({check:false})}}/>
+           {/*<BleashupAlert  title={"Delete Higlight"}   accept={"Yes"} refuse={"No"} message={" Are you sure you want to delete these highlight ?"} deleteFunction={this.delete} isOpen={this.state.check} onClosed={()=>{this.setState({check:false})}}/>*/}
          
-          {this.props.ancien==true &&
+          {
+            /*this.props.ancien==true &&
            <EventHighlights   isOpen={this.state.EventHighlightState} onClosed={()=>{this.setState({EventHighlightState:false})}}
            parentComponent={this} ref={"highlights"} participant={this.props.participant} event_id={this.props.item.event_id} highlight_id={this.props.item.highlight_id}/>
-          }
+          */
+         }
 
-       </Card>  
+        </Card> : <Card style={{ width: width / 2 - width / 44,height:height/3.5}}></Card>
         
     )}
 

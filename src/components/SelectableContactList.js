@@ -78,12 +78,12 @@ export default class SelectableContactList extends PureComponent {
                         })
                         }>
                             <View style={{flexDirection: 'row',}}>
+                                <Text style={{ color: "#1FABAB", fontSize: 20, fontWeight: 'bold', marginTop: "3%", marginLeft: "1%", fontStyle: 'italic', }}>Go</Text>
                                 <Icon
                                     style={{ color: "#1FABAB", }}
                                     type="AntDesign"
-                                    name="checkcircle"
+                                    name="doubleright"
                                 />
-                                <Text style={{ color: "#1FABAB", fontSize: 20,fontWeight: 'bold',marginTop: "3%",marginLeft: "1%", fontStyle: 'italic',}}>Go</Text>
                             </View>
                         </TouchableOpacity>
                     </View>

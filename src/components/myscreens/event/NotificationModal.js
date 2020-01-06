@@ -58,7 +58,7 @@ export default class NotificationModal extends PureComponent {
                     })
                 }}
                 style={{
-                    height: "140%",
+                    height: "125%",
                     borderRadius: 10,
                     borderWidth: 0.2,
                     marginLeft: "14%",
@@ -74,21 +74,23 @@ export default class NotificationModal extends PureComponent {
                 }>
                     <View style={{ margin: '2%' }}>
                         <View style={{ flexDirection: 'column', }}>
-                            <View><Text style={{ fontStyle: 'italic', }} note>New Update</Text></View>
+                            <View style={{margin: '2%',}}><Text style={{ fontStyle: 'italic', }} note>New Update</Text></View>
                             <View style={{ flexDirection: 'row', }}>
-                                {typeof this.props.change.updater === 'string' ? <ProfileView phone={this.props.change.updater} ></ProfileView> :
-                                 <View style={{ flexDirection: 'row',}}>
-                                <View style={{ width: "20%" }}>{this.props.change.updater.profile && testForURL(this.props.change.updater.profile) ?
-                                    <CacheImages thumbnails
-                                        source={{ uri: this.props.change.updater.profile }}>
-                                    </CacheImages> : <Thumbnail small source={{ uri: this.props.change.updater.profile ? this.change.updater.profile : '' }}></Thumbnail>}
+                                <View style={{ width: '90%' }}>
+                                    {typeof this.props.change.updater === 'string' ? <ProfileView phone={this.props.change.updater} ></ProfileView> :
+                                        <View style={{ flexDirection: 'row', }}>
+                                            <View style={{ width: "20%" }}>{this.props.change.updater.profile && testForURL(this.props.change.updater.profile) ?
+                                                <CacheImages thumbnails
+                                                    source={{ uri: this.props.change.updater.profile }}>
+                                                </CacheImages> : <Thumbnail small source={{ uri: this.props.change.updater.profile ? this.change.updater.profile : '' }}></Thumbnail>}
+                                            </View>
+                                            <View style={{ marginTop: "3%", marginLeft: "4%", flexDirection: 'column', width: "65%" }}>
+                                                <Text style={{ marginBottom: "2%", fontWeight: 'bold', }}>{this.props.change.updater.nickname}</Text>
+                                                <Text style={{ marginLeft: "2%" }} note>{this.props.change.updater.status}</Text>
+                                            </View>
+                                        </View>}
                                 </View>
-                                <View style={{ marginTop: "3%", marginLeft: "4%", flexDirection: 'column', width: "65%" }}>
-                                    <Text style={{ marginBottom: "2%", fontWeight: 'bold', }}>{this.props.change.updater.nickname}</Text>
-                                    <Text style={{ marginLeft: "2%" }} note>{this.props.change.updater.status}</Text>
-                                </View>
-                                </View>}
-                                <View style={{ width: "13%" }}>
+                                <View style={{ width: "10%" }}>
                                     <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                                         console.warn("pressing !!!")
                                         this.props.close()
@@ -100,10 +102,10 @@ export default class NotificationModal extends PureComponent {
                             <View style={{
                                 flexDirection: 'column',
                             }}>
-                                <View style={{ flexDirection: 'row', }}>
-                                    <Text>{this.props.change.changed}</Text>
+                                <View style={{ flexDirection: 'row',marginBottom: '1%', }}>
+                                    <Text ellipsizeMode='tail' numberOfLines={1} style={{ fontWeight: 'bold', }}>{this.props.change.changed}</Text>
                                 </View>
-                                <Text style={{ fontStyle: 'italic', }}>{typeof this.props.change.new_value.new_value === "string" ? this.props.change.new_value.new_value : ""}</Text>
+                                <Text ellipsizeMode='tail' style={{ fontSize: 12, fontStyle: 'italic', }} numberOfLines={1}>{typeof this.props.change.new_value.new_value === "string" ? this.props.change.new_value.new_value : ""}</Text>
                             </View>
                         </View>
                     </View>

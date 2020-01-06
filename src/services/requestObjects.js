@@ -281,7 +281,7 @@ class Request {
     }
     Highlight() {
         return {
-            id: "",
+            id: "newHighlightId",
             creator: "",
             event_id: "",
             created_at: moment().format(),
@@ -291,7 +291,8 @@ class Request {
             url: {
                 audio:"",
                 photo:"",
-                video:""
+                video:"",
+                duration:""
             }
         }
     }

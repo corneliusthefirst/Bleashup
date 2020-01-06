@@ -36,6 +36,7 @@ import Swipeout from '../../../SwipeOut';
 import { findIndex, isEqual } from "lodash"
 import InvitationModal from './InvitationModal';
 import ProfileSimple from './ProfileViewSimple';
+import shadower from "../../../shadower";
 
 class PublicEvent extends Component {
   constructor(props) {
@@ -91,30 +92,6 @@ class PublicEvent extends Component {
             joint: findIndex(this.props.Event.participant, { phone: stores.LoginStore.user.phone }) > 0 ? true : false,
             creator: creator,
             isMount: true
-          })
-          stores.Highlights.fetchHighlightsFromRemote(this.props.Event.id).then(highlights => {
-            if (highlights.length > 0) {
-              setTimeout(() => {
-                this.interval = setInterval(() => {
-                  let highlight = highlights[this.counter]
-                  if (highlight && highlight.url) {
-                    this.setState({
-                      image: highlight.url.photo,
-                      video: highlight.url.video ? true : false,
-                      audio: highlight.url.audio ? true : false
-                    })
-                    this.counter = this.counter + 1
-                  } else {
-                    this.setState({
-                      image: this.props.Event.background,
-                      video: false
-                    })
-                    this.counter = 0
-                  }
-                }, 2000 + this.props.renderDelay)
-              }
-          ,this.props.renderDelay)
-            }
           })
         })
       })
@@ -348,19 +325,13 @@ class PublicEvent extends Component {
             cardBody
           >
             <Left>
-              {this.state.isMount ? <View><PhotoView showPhoto={(url) => url ?
+              {this.state.isMount ? <View><PhotoView navigation={this.props.navigation} renderDelay={this.props.renderDelay} showPhoto={(url) => url ?
                 this.showPhoto(url) : null} joined={() => this.join()}
                 isToBeJoint hasJoin={this.props.Event.joint || this.state.joint} onOpen={() => this.onOpenPhotoModal()} style={{
                   width: "70%",
                   marginLeft: "4%"
-                }} photo={this.state.image} width={170} height={100} borderRadius={6} />
-                {this.state.video || this.state.audio ? <Icon onPress={() => {
-                  this.showPhoto(this.state.image)
-                }} name={this.state.video ? "play" : "headset"} style={{
-                  fontSize: 50, color: '#1FABAB',
-                  position: 'absolute', marginTop: '18%', marginLeft: '37%',
-                }} type={this.state.video ? "EvilIcons" : "MaterialIcons"}>
-                </Icon> : null}</View> : null}
+                }} photo={this.state.image} event_id={this.props.Event.id} width={170} height={100} borderRadius={6} />
+                </View> : null}
             </Left>
             <Right >
               {this.state.isMount ? <MapView style={{ marginRight: "11%" }}

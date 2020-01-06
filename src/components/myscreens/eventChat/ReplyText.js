@@ -66,8 +66,8 @@ export default class ReplyText extends Component {
                                     <View style={{ /*width: this.props.reply.sourcer ? "79%" : "100%",*/ alignSelf: 'center',
                                         marginLeft: this.props.reply.sourcer ? 10 : null,
                                     }}>
-                                        {this.props.reply.title ? <Text style={{ fontWeight: 'bold', fontSize: 12, color: "#A91A84" }}>{this.props.reply.title.length > 26 ? this.props.reply.title.slice(0, 26) + " ..." : this.props.reply.title}</Text> : <Text style={{ color: "#81A8A0" }}>{this.props.reply.text.slice(0,
-                                            this.props.reply.sourcer ? 20 : 25)} {this.props.reply.text.length > 25 ? this.props.reply.text.length > 25 ? '...' : '' : ''}</Text>}
+                                        {this.props.reply.title ? <Text style={{ fontWeight: 'bold', fontSize: 12, color: "#A91A84" }}>{this.props.reply.title.length > 26 ? this.props.reply.title.slice(0, 26) + " ..." : this.props.reply.title}</Text> : this.props.reply.text ? <Text style={{ color: "#81A8A0" }}>{this.props.reply.text.slice(0,
+                                            this.props.reply.sourcer ? 20 : 25)} {this.props.reply.text.length > 25 ? this.props.reply.text.length > 25 ? '...' : '' : ''}</Text> : null}
                                     </View>
                                 </View>}
                         </View>

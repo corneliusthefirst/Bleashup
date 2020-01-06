@@ -103,6 +103,7 @@ export default class CommiteeItem extends Component {
             commitee: { ...this.state.commitee, name: this.previousName },
             newThing: !this.state.newThing
         })
+        this.swap()
     }
     publish() {
         this.props.publishCommitee(this.state.commitee.id, !this.state.commitee.public_state)
@@ -157,6 +158,7 @@ export default class CommiteeItem extends Component {
             newThing: !this.state.newThing
         })
         this.props.editName(newName, this.state.commitee.id)
+        this.swap()
         emitter.once("edit-failed", () => {
             this.revertName()
         })
@@ -344,7 +346,7 @@ export default class CommiteeItem extends Component {
                     </View>
                 </View>
                 </TouchableOpacity>
-                <EditNameModal isOpen={this.state.isEditNameModelOpened} close={() => {
+                {this.state.isEditNameModelOpened?<EditNameModal value={this.state.commitee.name} isOpen={this.state.isEditNameModelOpened} close={() => {
                     this.setState({
                         isEditNameModelOpened: false,
                         newThing: !this.state.newThing
@@ -353,7 +355,7 @@ export default class CommiteeItem extends Component {
                     editName={(newName) => {
                         this.editName(newName)
                     }}
-                ></EditNameModal>
+                ></EditNameModal>:null}
                 <MenuDivider color="#1FABAB" />
 
 

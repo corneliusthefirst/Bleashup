@@ -12,6 +12,10 @@ import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-
 import autobind from "autobind-decorator";
 import Swipeout from 'react-native-swipeout';
 import PhotoEnlargeModal from "../../../invitations/components/PhotoEnlargeModal";
+import CacheImages from '../../../../CacheImages';
+import testForURL from '../../../../../services/testForURL';
+import shadower from "../../../../shadower";
+import HighLight from "../../../highlights_details/Highlight";
 
 let {height, width} = Dimensions.get('window')
 
@@ -26,32 +30,39 @@ export default class HighlightCardDetail extends Component {
     render(){
       return(
      <Modal
+                backButtonClose={true}
                 isOpen={this.props.isOpen}
                 onClosed={this.props.onClosed}
+                position={'bottom'}
+                swipeToClose={true}
                 style={{
-                    height:height,borderRadius: 3,margin:2,
-                    backgroundColor:"#FEFFDE",borderColor:'black',borderWidth:1,width: "99%",flexDirection:'column'
+                    height:"90%",alignSelf: 'center',
+                    backgroundColor:"#FEFFDE",borderTopLeftRadius: 8,borderTopRightRadius: 8,width: "100%",flexDirection:'column'
                 }}
 
                 coverScreen={true}
             >
            
-            <ScrollView>
-            <View style={{flex:1}}>
-            <View style={{alignItems:'center',justifyContent:'center',height:height/7}}>
-               <Text style={{color:'green',fontSize:20,fontWeight:"400"}}>{this.props.item.title}</Text>
+          <ScrollView showsVerticalScrollIndicator={false} >
+            <View style={{flex:1,...shadower(6)}}>
+            <HighLight showPhoto={(url) => this.props.showPhoto(url)} modal={true} showVideo={(url) => this.props.showVideo(url)} background={"#FEFFDE"} highlight={this.props.item} disableSwipper={true}></HighLight>
+            {/*<View style={{alignItems:'center',justifyContent:'center',height:height/7}}>
+               <Title style={{color:'#1FABAB',fontSize:23,fontWeight:"bold"}}>{this.props.item.title}</Title>
             </View>
             <View>
-              <TouchableOpacity onPress={()=>{this.setState({enlargeImage:true})}}>
-              <Image   source={{uri:this.props.item.url.photo}} style={{width:"92%",marginLeft:"4%",marginRight:"4%",marginBottom:"4%",borderRadius:5,height:height/3 + height/11}}></Image>
+                <TouchableOpacity style={{ ...shadower(5) }} onPress={()=>{this.setState({enlargeImage:true})}}>
+              {testForURL(this.props.item.url.photo)?<CacheImages thumbnails square source={{uri:this.props.item.url.photo}} style={{width:"92%",marginLeft:"4%",marginRight:"4%",marginBottom:"4%",borderRadius:5,height:height/3 + height/11}}>
+                  </CacheImages> : <Thumbnail square large source={{ uri: this.props.item.url.photo }} style={{ width: "92%", marginLeft: "4%", marginRight: "4%", marginBottom: "4%", borderRadius: 5, height: height / 3 + height / 11 }}></Thumbnail>}
               </TouchableOpacity>
             </View>
             <View style={{margin:"5%",fontStyle:'italic'}}>
              <Text>{this.props.item.description}</Text>
-            </View>
+              </View>*/}
             </View>
             </ScrollView>
-            <PhotoEnlargeModal isOpen={this.state.enlargeImage} onClosed={() => this.setState({ enlargeImage: false })} photo={this.props.item.url.photo} />
+            {this.state.enlargeImage && this.props.item.url && this.props.item.url.photo?<PhotoEnlargeModal isOpen={this.state.enlargeImage} 
+            onClosed={() => this.setState({ enlargeImage: false })}
+             photo={this.props.item.url.photo} />:null}
               
             </Modal>
 

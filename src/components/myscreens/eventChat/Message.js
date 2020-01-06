@@ -230,9 +230,16 @@ export default class Message extends Component {
             backgroundColor: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text) ? color : 'transparent' : 'transparent',
             // backgroundColor: color,
         }
+        placeholderStyle = {
+            ...topMostStyle, height: 100, backgroundColor: color, borderBottomLeftRadius: 10, borderColor: color,
+            borderTopLeftRadius: this.state.sender ? 0 : 10,// borderWidth: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text)?.7:0:0,
+            backgroundColor: color,
+            borderTopRightRadius: 10,
+
+            width: 200
+        }
         nameTextStyle = { fontSize: 14, fontWeight: 'bold', color: "#1FABAB" }
-        return (!this.state.loaded ? <Spinner size={"small"} >
-        </Spinner> : this.props.message.type == 'date_separator' ? <View style={{ marginTop: '2%', marginBottom: '2%', }}>
+        return (!this.state.loaded ? <View style={placeholderStyle}></View> : this.props.message.type == 'date_separator' ? <View style={{ marginTop: '2%', marginBottom: '2%', }}>
             <DateView date={this.props.message.id}></DateView></View> :
                 this.props.message.type == "new_separator" ? <View style={{
                     marginTop: '2%',

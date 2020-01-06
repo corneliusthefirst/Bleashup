@@ -25,16 +25,17 @@ export default class ChangeBox extends Component {
             })
         }, 200 * this.props.delayer)
     }
+    containerStyle = { margin: '2%', borderRadius: 6, backgroundColor: "#9EEDD3", }
     render() {
-        return (!this.state.loaded ? <Spinner size={'small'}></Spinner> :
+        return (!this.state.loaded ? <View style={{ ...this.containerStyle, width: '95%', height: 120 }}></View> :
             <View>
-                <View style={{ margin: '2%', borderRadius: 6, backgroundColor: "#9EEDD3", }}>
+                <View style={this.containerStyle}>
                     {!this.props.change ? null : <View style={{ flexDirection: 'column', margin: '2%', }}>
                         <View style={{ flexDirection: 'row', }}>
                             {!this.props.change.updater ? null : typeof this.props.change.updater === 'string' ? <ProfileView phone={this.props.change.updater}></ProfileView> :
                                 <View style={{ flexDirection: 'row', }}>
                                     <View style={{ width: "25%" }}>
-                                        {this.props.change.updater.profile && testForURL(this.props.change.updater.profile,true) ?
+                                        {this.props.change.updater.profile && testForURL(this.props.change.updater.profile, true) ?
                                             <CacheImages thumbnails
                                                 source={{ uri: this.props.change.updater.profile }}>
                                             </CacheImages> : <Thumbnail source={{ uri: this.props.change.updater.profile ? this.props.change.updater.profile : '' }}></Thumbnail>}
@@ -57,9 +58,9 @@ export default class ChangeBox extends Component {
                             flexDirection: 'column',
                         }}>
                             <View style={{ flexDirection: 'row', }}>
-                                <Text>{this.props.change.changed}</Text>
+                                <Text ellipsizeMode='tail' style={{ fontSize: 16, fontWeight: 'bold', }} numberOfLines={2}>{this.props.change.changed}</Text>
                             </View>
-                            <Text style={{ fontStyle: 'italic', }}>{typeof this.props.change.new_value.new_value === "string" && !testForURL(this.props.change.new_value.new_value,true) ? this.props.change.new_value.new_value : ""}</Text>
+                            <Text ellipsizeMode='tail' style={{ fontSize: 12, }} numberOfLines={1} style={{ fontStyle: 'italic', }}>{typeof this.props.change.new_value.new_value === "string" && !testForURL(this.props.change.new_value.new_value, true) ? this.props.change.new_value.new_value : ""}</Text>
                         </View>
                     </View>}
                 </View>

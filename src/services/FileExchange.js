@@ -135,14 +135,22 @@ export default class FileExachange {
         })
     }
 
-    deleteFile(source) {
+    deleteFile(source,notCallSuccss) {
         let temp = source.split('/')
         let filename = temp[temp.length - 1];
-        this.deleteURL = configs.file_server.protocol +
-            "://" + configs.file_server.host + ":" +
-            configs.file_server.port + '/delete/' + filename
-        rnFetchBlob.fetch('POST', this.deleteURL).then(res => {
-            console.warn(res)
+        return new Promise((resolve,reject) => {
+            this.deleteURL = configs.file_server.protocol +
+                "://" + configs.file_server.host + ":" +
+                configs.file_server.port + '/delete/' + filename
+            rnFetchBlob.fetch('POST', this.deleteURL).then(res => {
+                console.warn(res)
+                this.successFunc && !notCallSuccss ? this.successFunc() : null
+                resolve()
+            }).catch(error => {
+                console.warn(error)
+                this.errorHandlerFunc ? this.errorHandlerFunc() : null
+                reject()
+            })
         })
     }
 

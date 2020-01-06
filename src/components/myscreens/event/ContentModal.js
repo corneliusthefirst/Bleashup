@@ -30,6 +30,8 @@ export default class ContentModal extends PureComponent {
                 backdropOpacity={0.7}
                 backButtonClose={true}
                 position='center'
+                backButtonClose={true}
+                swipeToClose={true}
                 coverScreen={true}
                 isOpen={this.props.isOpen}
                 onClosed={() => {
