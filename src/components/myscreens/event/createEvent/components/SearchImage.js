@@ -19,7 +19,7 @@ export default class SearchImage extends Component {
   }
 
   async openLink(url) {
-    this.props.openPicker && this.props.openPicker()
+    this.props.openPicker ? this.props.openPicker() : this.props.accessLibrary()
     try {
       
       if (await InAppBrowser.isAvailable()) {

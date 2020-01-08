@@ -575,6 +575,66 @@ class Request {
             }
         })
     }
+    updateDescription(eventID, newDescription) {
+        return new Promise((resolve, reject) => {
+            tcpRequest.UpdateCurrentEvent(stores.LoginStore.user.phone, eventID,
+                'description', newDescription, eventID + "_description").then(JSONData => {
+                    serverEventListener.sendRequest(JSONData, eventID + "_description").then((response) => {
+                        console.warn(response)
+                        stores.Events.updateDescription(eventID, newDescription, false).then(() => {
+                            let Change = {
+                                id: uuid.v1(),
+                                title: "Updates On Main Activity",
+                                updated: "description",
+                                updater: stores.LoginStore.user,
+                                event_id: eventID,
+                                changed: newDescription ? "Changed The Description Of The Activity To: " : "Removed The Description Of The Activity",
+                                new_value: { data: null, new_value: newDescription },
+                                date: moment().format(),
+                                time: null
+                            }
+                            stores.ChangeLogs.addChanges(Change).then(() => {
+                                resolve('ok')
+                            })
+                        })
+                    }).catch((e) => {
+                        console.warn(e)
+                        Toast.show({ text: "Unable To Perform Request" })
+                        reject(e)
+                    })
+                })
+        })
+    }
+    updateLocation(eventID, newLocation) {
+        return new Promise((resolve, reject) => {
+            tcpRequest.UpdateCurrentEvent(stores.LoginStore.user.phone, eventID, 'string',
+                newLocation, eventID + '_location').then(JSONData => {
+                    serverEventListener.sendRequest(JSONData, eventID + '_location').then((response) => {
+                        console.warn(response)
+                        stores.Events.updateLocation(eventID, newLocation).then(() => {
+                            let Change = {
+                                id: uuid.v1(),
+                                title: "Updates On Main Activity",
+                                updated: "location",
+                                updater: stores.LoginStore.user,
+                                event_id: eventID,
+                                changed: newLocation ? "Changed The Location Of The Activity To: " : "Removed The Location Of The Activity",
+                                new_value: { data: null, new_value: newLocation },
+                                date: moment().format(),
+                                time: null
+                            }
+                            stores.ChangeLogs.addChanges(Change).then(() => {
+                                resolve('ok')
+                            })
+                        })
+                    }).catch((e) => {
+                        console.warn(error)
+                        Toast.show({ text: "Unable To Perform Request" })
+                        reject(e)
+                    })
+                })
+        })
+    }
     updatePeriod(event, newPeriod) {
         return new Promise((resolve, reject) => {
             if (event.period !== newPeriod) {
@@ -589,8 +649,8 @@ class Request {
                                     updated: "period",
                                     updater: stores.LoginStore.user,
                                     event_id: event.id,
-                                    changed: "Changed The Scheduled Time Of The Activity To: ",
-                                    new_value: { data: null, new_value: moment(newPeriod).format("dddd, MMMM Do YYYY, h:mm:ss a") },
+                                    changed: newPeriod ? "Changed The Scheduled Time Of The Activity To: " : "Removed The Date Of The Activity",
+                                    new_value: { data: null, new_value: newPeriod ? moment(newPeriod).format("dddd, MMMM Do YYYY, h:mm:ss a") : null },
                                     date: moment().format(),
                                     time: null
                                 }
@@ -797,7 +857,7 @@ class Request {
                                 updated: "background",
                                 event_id: event_id,
                                 updater: stores.LoginStore.user,
-                                changed: "Changed The Background Photo Of The Main Activity",
+                                changed: background ? "Changed The Background Photo Of The Main Activity" : "Removed The Background Photo Of The Activity",
                                 new_value: { data: null, new_value: background },
                                 date: moment().format(),
                                 time: null
@@ -863,7 +923,8 @@ class Request {
                             updated: "highlight_title",
                             event_id: eventID,
                             updater: stores.LoginStore.user,
-                            changed: `Changed The Title of ${Highlight.title} Post to ...`,
+                            changed: newTitle ? `Changed The Title of ${Highlight.title} Post to ...` :
+                                `Removed The Title of ${Highlight.title} Post`,
                             new_value: { data: null, new_value: newTitle },
                             date: moment().format(),
                             time: null
@@ -898,7 +959,7 @@ class Request {
                             updated: "highlight_decription",
                             event_id: eventID,
                             updater: stores.LoginStore.user,
-                            changed: `Changed The Content of ${Highlight.title} Post To`,
+                            changed: newDescription ? `Changed The Content of ${Highlight.title} Post To` : `Removed The Content of ${Highlight.title} Post`,
                             new_value: { data: null, new_value: newDescription },
                             date: moment().format(),
                             time: null
@@ -1042,7 +1103,7 @@ class Request {
                     })
                 }).catch((error) => {
                     console.warn(error)
-                    Toast.show({text:"Un Able To PErform Request"})
+                    Toast.show({ text: "Un Able To PErform Request" })
                     reject(error)
                 })
             })

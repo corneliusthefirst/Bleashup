@@ -73,7 +73,8 @@ class UpdatesDispatcher {
             updated: "background",
             event_id: update.event_id,
             updater: update.updater,
-            changed: "Changed The Background Photo Of The Main Activity",
+            changed: update.new_value ? "Changed The Background Photo Of The Main Activity" :
+              "Removed The Activity Background Photo",
             new_value: { data: null, new_value: update.new_value },
             date: update.date,
             time: update.time
@@ -89,29 +90,27 @@ class UpdatesDispatcher {
 
     description: update => {
       return new Promise((resolve, reject) => {
-        stores.Events.loadCurrentEvent(update.event_id).then(Event => {
+        stores.Events.updateDescription(
+          update.event_id,
+          update.new_value,
+          true
+        ).then((Eve) => {
           let Change = {
-            event_id: update.event_id,
-            changed: "New Event Description",
+            id: uuid.v1(),
+            title: "Updates On Main Activity",
+            updated: "description",
             updater: update.updater,
-            old_value: Event.about.description,
+            event_id: update.event_id,
+            changed: update.new_value ? "Changed The Description Of The Activity To: " : "Removed The Description Of The Activity",
+            new_value: { data: null, new_value: update.new_value },
             date: update.data,
-            time: update.time
-          };
+            time: null
+          }
           stores.ChangeLogs.addChanges(Change).then(() => {
-            stores.Events.updateDescription(
-              update.event_id,
-              update.new_value,
-              true
-            ).then((Eve) => {
-              Eve.calendar_id ? CalendarServe.saveEvent(Eve, Eve.alarms).then(() => {
-
-              }) : null
-              GState.eventUpdated = true;
-              this.infomCurrentRoom(Change, Eve, update.event_id)
-              resolve();
-            });
-          });
+            this.infomCurrentRoom(Change, Eve, update.event_id)
+            GState.eventUpdated = true;
+            resolve('ok')
+          })
         });
       });
     },
@@ -124,8 +123,8 @@ class UpdatesDispatcher {
             updated: "period",
             updater: update.updater,
             event_id: update.event_id,
-            changed: "Changed The Scheduled Time Of The Activity To: ",
-            new_value: { data: null, new_value: moment(update.new_value).format("dddd, MMMM Do YYYY, h:mm:ss a") },
+            changed: update.new_value ? "Changed The Scheduled Time Of The Activity To: " : "Removed The Date Of The Activity",
+            new_value: { data: null, new_value: update.new_value ? moment(update.new_value).format("dddd, MMMM Do YYYY, h:mm:ss a") : null },
             date: update.date,
             time: null
           }
@@ -190,34 +189,29 @@ class UpdatesDispatcher {
     },
     string: update => {
       return new Promise((resolve, reject) => {
-        stores.Events.loadCurrentEvent(update.event_id).then(Event => {
-          let Change = {
-            event_id: update.event_id,
-            changed: "New Event Location",
-            updater: update.updater,
-            old_value: Event.location,
-            new_value: {
-              string: update.new_value,
-              url: Event.location.url
-            },
-            date: update.date,
-            time: update.time
-          };
-          stores.ChangeLogs.addChanges(Change).then(() => {
             stores.Events.updateLocation(
               update.event_id,
-              {
-                string: update.new_value,
-                url: Event.location.url
-              },
+               update.new_value,
               true
-            ).then(() => {
-              GState.eventUpdated = true;
-              resolve();
+            ).then((Eve) => {
+              let Change = {
+                id: uuid.v1(),
+                title: "Updates On Main Activity",
+                updated: "location",
+                updater: update.updater,
+                event_id: update.event_id,
+                changed: update.new_value ? "Changed The Location Of The Activity To: " : "Removed The Location Of The Activity",
+                new_value: { data: null, new_value: update.new_value },
+                date: update.date,
+                time: null
+              }
+              stores.ChangeLogs.addChanges(Change).then(() => {
+                this.infomCurrentRoom(Change, Eve, update.event_id)
+                GState.eventUpdated = true;
+                resolve('ok')
+              })
             });
           });
-        });
-      });
     },
     calendar_id: update => {
       return new Promise((resolve, reject) => {
@@ -929,7 +923,8 @@ class UpdatesDispatcher {
             updated: "highlight_decription",
             event_id: update.event_id,
             updater: update.updater,
-            changed: `Changed The Content of ${Highlight.title} Post To`,
+            changed: update.new_value.new_description ? `Changed The Content of ${Highlight.title} Post` :
+              `Removed The Content of ${Highlight.title}`,
             new_value: { data: null, new_value: update.new_value.new_description },
             date: moment().format(),
             time: null
@@ -992,7 +987,7 @@ class UpdatesDispatcher {
             updated: "highlight_title",
             event_id: update.event_id,
             updater: update.updater,
-            changed: `Changed The Title of ${Highlight.title} Post to ...`,
+            changed: update.new_value.new_title ? `Changed The Title of ${Highlight.title} Post to ...` : `Removed The Title of ${Highlight.title} Post`,
             new_value: { data: null, new_value: update.new_value.new_title },
             date: moment().format(),
             time: null
@@ -1007,28 +1002,28 @@ class UpdatesDispatcher {
     },
     highlight_deleted: update => {
       return new Promise((resolve, reject) => {
-          stores.Highlights.removeHighlight(update.new_value).then((Highlight) => {
-            stores.Events.removeHighlight(
-              update.event_id,
-              update.new_value
-            ).then(() => {
-              let Change = {
-                id: uuid.v1(),
-                title: `Update On Main Activity`,
-                updated: "highlight_delete",
-                event_id: update.event_id,
-                updater: update.updater,
-                changed: `Deleted ${Highlight.title} Post`,
-                new_value: { data: null, new_value: Highlight },
-                date: moment().format(),
-                time: null
-              }
-              stores.ChangeLogs.addChanges(Change).then(res => {
-                this.infomCurrentRoom(Change, Highlight, update.event_id)
-                GState.eventUpdated = true;
-                resolve("ok")
-              })
-            });
+        stores.Highlights.removeHighlight(update.new_value).then((Highlight) => {
+          stores.Events.removeHighlight(
+            update.event_id,
+            update.new_value
+          ).then(() => {
+            let Change = {
+              id: uuid.v1(),
+              title: `Update On Main Activity`,
+              updated: "highlight_delete",
+              event_id: update.event_id,
+              updater: update.updater,
+              changed: `Deleted ${Highlight.title} Post`,
+              new_value: { data: null, new_value: Highlight },
+              date: moment().format(),
+              time: null
+            }
+            stores.ChangeLogs.addChanges(Change).then(res => {
+              this.infomCurrentRoom(Change, Highlight, update.event_id)
+              GState.eventUpdated = true;
+              resolve("ok")
+            })
+          });
         });
       });
     },

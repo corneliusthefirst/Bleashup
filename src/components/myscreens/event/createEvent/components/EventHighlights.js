@@ -93,64 +93,67 @@ export default class EventHighlights extends Component {
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.highlight_id !== this.props.highlight_id) {
       setTimeout(() => {
-        //i set the current new highlight data on startUp
         stores.Highlights.readFromStore().then(Highlights => {
-          //console.warn(Highlights,"All higlights");
-          let highlight = find(Highlights,
-            {
-              id: this.props.highlight_id ?
-                this.props.highlight_id : "newHighlightId"
-            });
-          this.previoushighlight = JSON.stringify(highlight)
-          this.setState({
-            newing: !this.state.newing,
-            currentHighlight: highlight ? highlight :
-              request.Highlight(), update:
-              this.props.highlight_id ? true : false
+          let highlight = find(Highlights, {
+            id: this.props.highlight_id ?
+              this.props.highlight_id : "newHighlightId"
           });
+          this.previoushighlight = highlight
+          if (!this.props.event_id) {
+            let event_id = "newEventId";
+            stores.Highlights.fetchHighlights(event_id).then(Highlights => {
+              this.setState({
+                newing: !this.state.newing, highlightData: Highlights,
+                isMounted: true, currentHighlight:
+                  highlight ? highlight : request.Highlight(), update:
+                  this.props.highlight_id ? true : false
+              })
+            })
+          } else {
+            this.setState({
+              newing: !this.state.newing, isMounted: true,
+              currentHighlight: highlight ? highlight :
+                request.Highlight(), update:
+                this.props.highlight_id ? true : false
+            })
+          }
         });
-        //On startUp for each highlightId in new Event i set all the highlightData
-        if (!this.props.event_id) {
-          let event_id = "newEventId";
-          stores.Highlights.fetchHighlights(event_id).then(Highlights => {
-            this.setState({ newing: !this.state.newing, highlightData: Highlights, })
-          })
-        }
-        setInterval(() => {
+        /*setInterval(() => {
           if ((this.state.animateHighlight == true) && (this.state.highlightData.length > 2)) {
             this.highlight_flatlistRef.scrollToIndex({ animated: true, index: this.state.initialScrollIndex, viewOffset: 0, viewPosition: 0 });
-
+  
             if (this.state.initialScrollIndex >= (this.state.highlightData.length) - 2) {
               this.setState({ newing: !this.state.newing, initialScrollIndex: 0 })
             } else {
               this.setState({ newing: !this.state.newing, initialScrollIndex: this.state.initialScrollIndex + 2 })
             }
           }
-        }, 4000)
-
-        this.setState({ newing: !this.state.newing, isMounted: true });
-
-      }, 400)
+        }, 4000)*/
+      }, 100)
     }
   }
 
   componentDidMount() {
     setTimeout(() => {
-      //i set the current new highlight data on startUp
       stores.Highlights.readFromStore().then(Highlights => {
-        //console.warn(Highlights,"All higlights");
-        let highlight = find(Highlights, { id: this.props.highlight_id ? this.props.highlight_id : "newHighlightId" });
-        console.warn(highlight, "constructor higlight");
-        this.setState({ newing: !this.state.newing, currentHighlight: highlight ? highlight : request.Highlight(), });
+        let highlight = find(Highlights, { id: this.props.highlight_id ? 
+          this.props.highlight_id : "newHighlightId" });
+        if (!this.props.event_id) {
+          let event_id = "newEventId";
+          stores.Highlights.fetchHighlights(event_id).then(Highlights => {
+            this.setState({ newing: !this.state.newing, highlightData: Highlights, 
+              isMounted: true, currentHighlight:
+                highlight ? highlight : request.Highlight(), update:
+                this.props.highlight_id ? true : false})
+          })
+        } else {
+          this.setState({ newing: !this.state.newing, isMounted: true,
+             currentHighlight: highlight ? highlight :
+              request.Highlight(), update:
+              this.props.highlight_id ? true : false })
+        }
       });
-      //On startUp for each highlightId in new Event i set all the highlightData
-      if (!this.props.event_id) {
-        let event_id = "newEventId";
-        stores.Highlights.fetchHighlights(event_id).then(Highlights => {
-          this.setState({ newing: !this.state.newing, highlightData: Highlights })
-        })
-      }
-      setInterval(() => {
+      /*setInterval(() => {
         if ((this.state.animateHighlight == true) && (this.state.highlightData.length > 2)) {
           this.highlight_flatlistRef.scrollToIndex({ animated: true, index: this.state.initialScrollIndex, viewOffset: 0, viewPosition: 0 });
 
@@ -160,11 +163,8 @@ export default class EventHighlights extends Component {
             this.setState({ newing: !this.state.newing, initialScrollIndex: this.state.initialScrollIndex + 2 })
           }
         }
-      }, 4000)
-
-      this.setState({ newing: !this.state.newing, isMounted: true });
-
-    }, 400)
+      }, 4000)*/
+    }, 100)
 
   }
 
@@ -529,7 +529,7 @@ export default class EventHighlights extends Component {
                 <View style={{ height: height / 14, alignItems: 'center', margin: '2%', }}>
                   {!this.state.currentHighlight ? console.error(this.state.currentHighlight, this.rendering) : null /* <Text style={{alignSelf:'flex-start',margin:"3%",fontWeight:"500",fontSize:16}} >Title :</Text>*/}
                   <Item style={{ borderColor: '#1FABAB', width: "95%", margin: '2%', height: height / 17 }} rounded>
-                    <TextInput style={{ width: "100%", height: "100%", margin: '2%', marginBottom: '5%', }} value={this.state.currentHighlight.title ? this.state.currentHighlight.title : ""} maxLength={40} placeholder='Highlight Title' keyboardType='email-address' autoCapitalize="none" returnKeyType='next' inverse last
+                    <TextInput style={{ width: "100%", height: "100%", margin: '2%', marginBottom: '5%', }} value={this.state.currentHighlight.title ? this.state.currentHighlight.title : ""} maxLength={40} placeholder='Post Title' keyboardType='email-address' autoCapitalize="none" returnKeyType='next' inverse last
                       onChangeText={(value) => this.onChangedTitle(value)} />
                   </Item>
                 </View>
@@ -637,7 +637,7 @@ export default class EventHighlights extends Component {
                         borderColor: "#1FABAB",
                         backgroundColor: "#f5fffa"
                       }}
-                      placeholder="Highlight Description"
+                      placeholder="Post Content"
                       style={{
                         textAlignVertical: 'top',  // hack android
                         height: "100%",

@@ -51,6 +51,7 @@ import { SendNotifications } from '../../../services/cloud_services';
 import shadower from '../../shadower';
 import Pickers from '../../../services/Picker';
 import rnFetchBlob from 'rn-fetch-blob';
+import converToHMS from '../highlights_details/convertToHMS';
 let dirs = rnFetchBlob.fs.dirs
 
 const screenWidth = Math.round(Dimensions.get('window').width);
@@ -987,18 +988,6 @@ export default class ChatRoom extends Component {
             })
         })
     }
-    convertToHMS(secs) {
-        var sec_num = parseInt(secs, 10)
-        var hours = Math.floor(sec_num / 3600)
-        var minutes = Math.floor(sec_num / 60) % 60
-        var seconds = sec_num % 60
-
-        return [hours, minutes, seconds]
-            .map(v => v < 10 ? "0" + v : v)
-            .filter((v, i) => v !== "00" || i > 0)
-            .join(":")
-
-    }
     resumAudioRecoder() {
         this.startRecordTiming()
         SoundRecorder.resume().then(() => {
@@ -1193,16 +1182,18 @@ export default class ChatRoom extends Component {
 
         )
     }
-
+    delay = 1
     messageList() {
-        return <BleashupFlatList backgroundColor={"transparent"} firstIndex={0} ref="bleashupSectionListOut" inverted={true} renderPerBatch={5} initialRender={15} numberOfItems={this.room.messages.length} keyExtractor={(item, index) => item ? item.id : null} renderItem={(item, index) => {
-            return item ? <Message room={this.room} PreviousSenderPhone={this.room.messages[index > 0 ? index - 1 : 0] ? this.room.messages[index > 0 ? index - 1 : 0].sender.phone : null} showActions={(message) => this.showActions(message)} firebaseRoom={this.props.firebaseRoom} roomName={this.props.roomName} sendMessage={message => this.sendTextMessage(message)} received={item.received ? item.received.length >= this.props.members.length : false} replaceMessageVideo={(data) => this.replaceMessageVideo(data)} showPhoto={(photo) => this.showPhoto(photo)} replying={(replyer, color) => this.replying(replyer, color)} replaceMessage={(data) => this.replaceMessage(data)} replaceAudioMessage={(data) => this.replaceAudioMessage(data)} message={item} openReply={(replyer) => {
-                this.setState({
-                    replyer: replyer,
-                    showRepliedMessage: true
-                });
-            }} user={this.props.user.phone} creator={this.props.creator} replaceMessageFile={(data) => this.replaceMessageFile(data)} playVideo={(source) => this.playVideo(source)}></Message> : null;
-        }} dataSource={this.room.messages} newData={this.showMessage} newDataLength={this.showMessage.length}>
+        return <BleashupFlatList backgroundColor={"transparent"} firstIndex={0} ref="bleashupSectionListOut" inverted={true} renderPerBatch={20} initialRender={20} numberOfItems={this.room.messages.length} keyExtractor={(item, index) => item ? item.id : null}
+            renderItem={(item, index) => {
+                this.delay = this.delay >= 20 ? 0 : this.delay + 1
+                return item ? <Message delay={this.delay} room={this.room} PreviousSenderPhone={this.room.messages[index > 0 ? index - 1 : 0] ? this.room.messages[index > 0 ? index - 1 : 0].sender.phone : null} showActions={(message) => this.showActions(message)} firebaseRoom={this.props.firebaseRoom} roomName={this.props.roomName} sendMessage={message => this.sendTextMessage(message)} received={item.received ? item.received.length >= this.props.members.length : false} replaceMessageVideo={(data) => this.replaceMessageVideo(data)} showPhoto={(photo) => this.showPhoto(photo)} replying={(replyer, color) => this.replying(replyer, color)} replaceMessage={(data) => this.replaceMessage(data)} replaceAudioMessage={(data) => this.replaceAudioMessage(data)} message={item} openReply={(replyer) => {
+                    this.setState({
+                        replyer: replyer,
+                        showRepliedMessage: true
+                    });
+                }} user={this.props.user.phone} creator={this.props.creator} replaceMessageFile={(data) => this.replaceMessageFile(data)} playVideo={(source) => this.playVideo(source)}></Message> : null;
+            }} dataSource={this.room.messages} newData={this.showMessage} newDataLength={this.showMessage.length}>
         </BleashupFlatList>;
     }
 
@@ -1300,7 +1291,7 @@ export default class ChatRoom extends Component {
             </View>}
             <Right><View style={{ display: 'flex', flexDirection: 'row', marginLeft: "30%", }}>
                 <Text style={{ marginTop: "6%", fontSize: 22, color: "#FEFFDE" }}>
-                    {this.convertToHMS(this.state.recordTime)}</Text>
+                    {converToHMS(this.state.recordTime)}</Text>
                 <PulseIndicator color={'red'}>
                 </PulseIndicator></View></Right></View>;
     }

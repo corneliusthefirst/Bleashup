@@ -104,11 +104,16 @@ export default class Event extends Component {
           this.setState({
             working: true
           })
-        }} stopLoader={() => {
-          this.setState({
-            working: false
-          })
-        }} {...this.props} Event={this.event}></EventDatails>
+        }} updateLocation={(loc) => this.updateActivityLocation(loc)}
+          updateDesc={(newDes) => {
+            this.updateActivityDescription(newDes)
+          }}
+          master={this.master}
+          stopLoader={() => {
+            this.setState({
+              working: false
+            })
+          }} {...this.props} Event={this.event}></EventDatails>
       case "Reminds":
         return <Remind {...this.props}></Remind>
       case "Votes":
@@ -158,10 +163,10 @@ export default class Event extends Component {
             hideTitle: true
           })
         }}
-          showHighlightDetails={(H)=>{
+          showHighlightDetails={(H) => {
             this.setState({
-              highlight:H,
-              isHighlightDetailModalOpened:true
+              highlight: H,
+              isHighlightDetailModalOpened: true
             })
           }}
           openPhoto={(url) => {
@@ -276,7 +281,7 @@ export default class Event extends Component {
       this.event = find(stores.Events.events, { id: this.event.id })
       this.initializeMaster()
       this.refreshCommitees()
-    } 
+    }
     if (change.changed.toLowerCase().includes('post')) {
       console.warn('including posts')
       emitter.emit('refresh-highlights')
@@ -333,7 +338,7 @@ export default class Event extends Component {
   }
   componentDidMount() {
     console.warn(this.event.calendar_id)
-    if (!this.event.calendared) {
+    if (!this.event.calendared && this.event.period) {
       this.setState({
         isSynchronisationModalOpned: true
       })
@@ -348,6 +353,30 @@ export default class Event extends Component {
     })
 
     this.refreshePage()
+  }
+  updateActivityLocation(newLocation) {
+    this.setState({
+      working: true
+    })
+    Requester.updateLocation(this.event.id, newLocation).then(() => {
+      this.initializeMaster()
+    }).catch(() => {
+      this.setState({
+        working: false
+      })
+    })
+  }
+  updateActivityDescription(newDesciption) {
+    this.setState({
+      working: true
+    })
+    Requester.updateDescription(this.event.id, newDesciption).then(() => {
+      this.initializeMaster()
+    }).catch(() => {
+      this.setState({
+        working: false
+      })
+    })
   }
   componentWillUnmount() {
     this.unmounted = true
@@ -872,6 +901,19 @@ export default class Event extends Component {
       Toast.show({ text: "App is Busy" })
     }
   }
+  removeActivityPhoto() {
+    this.setState({
+      working: true,
+      isAreYouSureModalOpened: false
+    })
+    Requester.changeBackground(this.event.id, '').then((res) => {
+      this.initializeMaster()
+    }).catch(() => {
+      this.setState({
+        working: false
+      })
+    })
+  }
   addToCalendar(pattern) {
     this.setState({
       isSetPatternModalOpened: false,
@@ -1128,6 +1170,17 @@ export default class Event extends Component {
             })
           }}></SetAlarmPatternModal> : null}
         <PhotoInputModal
+          removePhoto={() => {
+            this.setState({
+              isAreYouSureModalOpened: true,
+              isSelectPhotoInputMethodModal: false,
+              warnTitle: "Remove Photo",
+              warnDescription: "Are You Sure You Want To Remove This Photo",
+              callback: this.removeActivityPhoto.bind(this),
+              okButtonText: "Remove"
+            })
+          }}
+          photo={this.event.background}
           showActivityPhoto={() => {
             this.event.background ? this.setState({
               showPhoto: true,
@@ -1159,14 +1212,14 @@ export default class Event extends Component {
             isSearchImageModalOpened: false
           })
         }}></SearchImage>
-        {this.state.isHighlightDetailModalOpened?<HighlightCardDetail
+        {this.state.isHighlightDetailModalOpened ? <HighlightCardDetail
           isOpen={this.state.isHighlightDetailModalOpened}
-          item={this.state.highlight} 
-          onClosed={()=>{
-          this.setState({
-            isHighlightDetailModalOpened:false
-          })
-        }}></HighlightCardDetail>:null}
+          item={this.state.highlight}
+          onClosed={() => {
+            this.setState({
+              isHighlightDetailModalOpened: false
+            })
+          }}></HighlightCardDetail> : null}
       </View>
     </SideMenu>
     );

@@ -31,6 +31,8 @@ import BleashupAlert from '../event/createEvent/components/BleashupAlert';
 import emitter from '../../../services/eventEmiter';
 import PhotoViewer from "../event/PhotoViewer";
 import HighlightCard from "../event/createEvent/components/HighlightCard"
+import MapView from "../currentevents/components/MapView";
+import ProfileModal from "../invitations/components/ProfileModal";
 let { height, width } = Dimensions.get('window');
 
 @observer
@@ -48,8 +50,8 @@ export default class EventDetailView extends Component {
       update: false,
       highlight_id: null,
       animateHighlight: false,
-      defaultDetail: "No  Event Decription !!",
-      defaultLocation: "No event location given !",
+      defaultDetail: "No Description Provided !!",
+      defaultLocation: "no location given !",
       username: "",
       EventDescriptionState: false,
       EventLocationState: false,
@@ -57,7 +59,7 @@ export default class EventDetailView extends Component {
       creation_time: "",
       participant: request.Participant(),
       EventHighlightState: false,
-      updateTitleState:false
+      updateTitleState: false
 
     }
 
@@ -71,16 +73,18 @@ export default class EventDetailView extends Component {
     stores.Highlights.fetchHighlights(this.props.Event.id).then(Highlights => {
       let res = moment(this.props.Event.created_at).format().split("T");
       let participant = find(this.props.Event.participant, { phone: stores.LoginStore.user.phone });
-      if (this.props.Event.creator_phone != "") {
+      this.setState({
+        highlightData: Highlights,
+        creation_date: res[0] ? res[0] : null,
+        isMounted: true,
+        EventData: this.props.Event,
+        participant: participant
+      })
+      if (this.props.Event.creator_phone) {
         stores.TemporalUsersStore.getUser(this.props.Event.creator_phone).then((creatorInfo) => {
           this.setState({
-            highlightData: Highlights,
-            creation_date: res[0] ? res[0] : null,
-            isMounted: true,
+            creatorInfo:creatorInfo,
             username: creatorInfo.nickname,
-            creation_time: res[1] ? res[1].split("+")[0] : null,
-            EventData: this.props.Event,
-            participant: participant
           })
 
           /*this.intervalID = setInterval(() => {
@@ -94,6 +98,11 @@ export default class EventDetailView extends Component {
               }
             }
           }, this.interval)*/
+        }).catch(() => {
+          this.setState({
+            //username: creatorInfo.nickname,
+            EventData: this.props.Event,
+          })
         })
       }
     })
@@ -151,7 +160,7 @@ export default class EventDetailView extends Component {
       //console.warn("inside if....")
       //console.warn(this.props.item.id);
       stores.Events.removeHighlight(item.event_id, item.id, false).then(() => {
-        stores.Highlights.removeHighlight(item.id).then(() => { 
+        stores.Highlights.removeHighlight(item.id).then(() => {
           this.state.highlightData = reject(this.state.highlightData, { id: item.id });
           this.setState({ highlightData: this.state.highlightData });
           this.props.stopLoader()
@@ -159,12 +168,12 @@ export default class EventDetailView extends Component {
       });
       //console.warn("inside if 2....");
     } else {
-      Requester.deleteHighlight(item.id,item.event_id).then(() => {
+      Requester.deleteHighlight(item.id, item.event_id).then(() => {
         this.props.stopLoader()
         this.state.highlightData = reject(this.state.highlightData, { id: item.id });
         this.setState({ highlightData: this.state.highlightData });
       }).catch((error) => {
-
+        this.props.stopLoader()
       })
     }
     //console.warn("inside if 5....");
@@ -207,7 +216,12 @@ export default class EventDetailView extends Component {
   deleteHighlightHighlight(highlights) {
 
   }
-
+  showCreator() {
+    this.state.creatorInfo ? this.setState({
+      showProfileModal: true,
+      profile: this.state.creatorInfo
+    }) : null
+  }
   render() {
     return (
       !this.state.isMounted ? <Spinner size={'small'}></Spinner> : <View style={{ height: "100%", backgroundColor: "#FEFFDE", width: "100%" }}>
@@ -281,6 +295,11 @@ export default class EventDetailView extends Component {
               borderRadius: 8,
               borderColor: "#1FABAB", margin: "2%", borderWidth: 1,
             }}>
+              {this.props.master ? <Icon name={"pencil"} type={"EvilIcons"} onPress={() => {
+                this.setState({
+                  EventDescriptionState: true
+                })
+              }} style={{ alignSelf: 'flex-end', }}></Icon> : null}
               <ScrollView showsVerticalScrollIndicator={false}
                 nestedScrolEnabled={true}>
                 <View style={{ flex: 1 }}>
@@ -305,67 +324,54 @@ export default class EventDetailView extends Component {
 
             {this.props.Event.location.string != "" ?
               <View style={{ flexDirection: "column", height: height / 5, alignItems: "flex-end", marginRight: "3%", marginBottom: "5%", }}>
-
-
-                <TouchableOpacity delayLongPress={800} onLongPress={() => {
-                  if (this.state.participant.master == true) {
-                    this.setState({ EventLocationState: true })
-                    this.refs.location_ref.init();
-                  }
-                }} >
-                  <Text ellipsizeMode="clip" numberOfLines={3} style={{ fontSize: 14, color: "#1FABAB", margin: "1%" }}>
-                    {this.props.Event.location.string}
-                  </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity onPress={this.props.OpenLinkZoom}>
-                  <Image
-                    source={require("../../../../Images/google-maps-alternatives-china-720x340.jpg")}
-                    style={{
-                      height: height / 24,
-                      width: width / 4,
-                      borderRadius: 10,
-
-
-                    }}
-                    resizeMode="contain"
-                    onLoad={() => { }}
-                  />
-
-                </TouchableOpacity>
-
-                <TouchableOpacity onPress={this.props.OpenLink} style={{ margin: "1%" }}>
-                  <Text note> View On Map </Text>
-                </TouchableOpacity>
-
+                {this.props.master ? <Icon name={"pencil"} type={"EvilIcons"} onPress={() => {
+                  this.setState({
+                    EventLocationState: true
+                  })
+                }} style={{ alignSelf: 'flex-end', }}></Icon> : null}
+                <MapView location={this.props.Event.location.string}></MapView>
               </View> :
               <TouchableOpacity delayLongPress={1000} onLongPress={() => {
                 if (this.state.participant.master == true) {
                   this.setState({ EventLocationState: true })
                 }
               }}>
+                {this.props.master ? <Icon name={"pencil"} type={"EvilIcons"} onPress={() => {
+                  this.setState({
+                    EventLocationState: true
+                  })
+                }} style={{ alignSelf: 'flex-end', }}></Icon> : null}
                 <View>
                   <Text ellipsizeMode="clip" numberOfLines={3} style={{ alignSelf: 'flex-end', fontSize: 14, color: "#1FABAB", margin: "2%" }}>
                     {this.state.defaultLocation}</Text>
                 </View>
               </TouchableOpacity>}
-            <View style={{ flexDirection: "row", position: 'absolute', justifyContent: "space-between", bottom: 0, margin: 3, width: "98%" }}>
-              <Text style={{ margin: "1%", fontSize: 11, color: "gray" }} >on the {this.state.creation_date} at {this.state.creation_time}</Text>
-              <Text style={{ margin: "1%", fontSize: 11, fontStyle: 'normal', }} note>by {this.state.username} </Text>
+            <View style={{ flexDirection: "column", position: 'absolute', justifyContent: "space-between", bottom: 0, margin: 3, width: "98%" }}>
+              <TouchableOpacity onPress={() => {
+                this.showCreator()
+              }}>
+                <Text style={{ fontWeight: 'bold', fontSize: 11, margin: 1, }} note>Created </Text>
+                {this.state.username?<Text style={{ margin: "1%", fontSize: 11, fontStyle: 'normal', }} note>by {this.state.username} </Text>:null}
+                <Text style={{ margin: "1%", fontSize: 11, color: "gray" }} >{"On "}{moment(this.props.Event.created_at).format("dddd, MMMM Do YYYY, h:mm:ss a")}</Text>
+              </TouchableOpacity>
             </View>
 
 
           </View>
-          <EventDescription isOpen={this.state.EventDescriptionState} onClosed={() => { this.setState({ EventDescriptionState: false }) }}
-            ref={"description_ref"} eventId={this.props.Event.id} updateDes={true} parentComp={this} />
+          {this.state.EventDescriptionState ? <EventDescription updateDesc={(newDesc) => {
+            this.props.updateDesc(newDesc)
+          }} event={this.props.Event} isOpen={this.state.EventDescriptionState} onClosed={() => { this.setState({ EventDescriptionState: false }) }}
+            ref={"description_ref"} eventId={this.props.Event.id} updateDes={true} parentComp={this} /> : null}
 
-          <EventLocation isOpen={this.state.EventLocationState} onClosed={() => { this.setState({ EventLocationState: false }) }}
-            ref={"location_ref"} updateLoc={true} eventId={this.props.Event.id} parentComp={this} />
+          {this.state.EventLocationState ? <EventLocation updateLocation={(newLoc) => {
+            this.props.updateLocation(newLoc)
+          }} event={this.props.Event} isOpen={this.state.EventLocationState} onClosed={() => { this.setState({ EventLocationState: false }) }}
+            ref={"location_ref"} updateLoc={true} eventId={this.props.Event.id} parentComp={this} /> : null}
           {this.state.showVideo ? <VideoViewer open={this.state.showVideo} hideVideo={() => {
             this.setState({
               showVideo: false,
-              EventHighlightState: this.wasEventHiglightOpened?true:false,
-              isHighlightDetailsModalOpened:this.wasDetailOpened?true:false
+              EventHighlightState: this.wasEventHiglightOpened ? true : false,
+              isHighlightDetailsModalOpened: this.wasDetailOpened ? true : false
             })
             this.wasEventHiglightOpened = false;
             this.wasDetailOpened = false
@@ -399,11 +405,11 @@ export default class EventDetailView extends Component {
             update={(newHighlight, previousHighlight) => this.updateHighlight(newHighlight, previousHighlight)}
             participant={this.state.participant} parentComponent={this} ref={"highlights"} event_id={this.props.Event.id} />
           {this.state.isHighlightDetailsModalOpened ? <HighlightCardDetail showVideo={(video) => {
-            this.wasDetailOpened=true
+            this.wasDetailOpened = true
             this.setState({
-              showVideo:true,
-              video:video,
-              isHighlightDetailsModalOpened:false
+              showVideo: true,
+              video: video,
+              isHighlightDetailsModalOpened: false
             })
           }} showPhoto={(photo) => {
             this.setState({
@@ -421,6 +427,11 @@ export default class EventDetailView extends Component {
               isHighlightDetailsModalOpened: true
             })
           }}></PhotoViewer> : null}
+          {this.state.showProfileModal ? <ProfileModal profile={this.state.profile} isOpen={this.state.showProfileModal} onClosed={() => {
+            this.setState({
+              showProfileModal: false
+            })
+          }}></ProfileModal> : null}
         </View>
       </View>
     )

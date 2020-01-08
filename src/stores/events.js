@@ -73,9 +73,10 @@ export default class events {
     }
   }
   @action delete(EventID) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve, rejec) => {
       this.readFromStore().then(Events => {
-        Events = dropWhile(Events, element => element.id == EventID)
+        Events = reject(Events, { id: EventID })
+        EventID === "newEventId" ? Events.unshift(request.Event()) : null
         this.saveKey.data = Events;
         storage.save(this.saveKey).then(() => {
           this.setProperties(this.saveKey.data, false);
@@ -394,7 +395,7 @@ export default class events {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let eventIndex = findIndex(Events, { id: EventID });
-        Events[eventIndex].location = NewLocation;
+        Events[eventIndex].location = { string: NewLocation };
         if (inform) {
           Events[eventIndex].location_updated = true;
           Events[eventIndex].updated = true
@@ -403,7 +404,7 @@ export default class events {
         this.saveKey.data = Events;
         storage.save(this.saveKey).then(() => {
           this.setProperties(this.saveKey.data, inform);
-          resolve();
+          resolve(Events[eventIndex]);
         });
       });
     });

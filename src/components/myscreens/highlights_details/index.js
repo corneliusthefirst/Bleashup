@@ -323,22 +323,22 @@ export default class HighLightsDetails extends Component {
                 </View>
 
                 <View style={{
-                    position: 'absolute', backgroundColor: '#FEFEDE', width: '10%', ...shadower(8),
-                    height: 30, opacity: 0.7, alignSelf: 'flex-end', marginTop: '2%', 
+                    position: 'absolute', backgroundColor: '#FEFEDE', width: '15%', ...shadower(8),
+                    height: 30, opacity: 0.7, alignSelf: 'flex-end', marginTop: '2%',
                     borderBottomLeftRadius: 8, borderTopLeftRadius: 8, borderRightWidth: 0,
                     flexDirection: 'row',
-                }}>
-                    <Icon onPress={()=>{
-                        this.props.navigation.navigate('Home')
-                    }} name="doubleright" style={{ marginLeft:'8%', color: '#1FABAB',marginBottom: '7%',alignSelf: 'center', }} type={"AntDesign"}></Icon>
+                }}> 
+                    <Text style={{ fontSize: 18, fontStyle: 'italic', marginBottom: "13%", fontWeight: 'bold', alignSelf: 'flex-end', marginLeft: '7%', width: '100%' }}>{"Posts"} </Text>
                 </View>
                 <View style={{
-                    position: 'absolute', backgroundColor: '#FEFEDE', width: '15%', ...shadower(8),
+                    position: 'absolute', backgroundColor: '#FEFEDE', width: '10%', ...shadower(8),
                     height: 30, opacity: 0.7, alignSelf: 'flex-start', marginTop: '2%',
                     borderBottomRightRadius: 8, borderTopRightRadius: 8, borderRightWidth: 0,
                     flexDirection: 'row',
                 }}>
-                    <Text style={{ fontSize: 18, fontStyle: 'italic', marginTop: "8%", fontWeight: 'bold', alignSelf: 'flex-start', marginLeft: '15%', width: '68%' }}>{"Posts"} </Text>
+                    <Icon onPress={() => {
+                        this.props.navigation.navigate('Home')
+                    }} name="doubleleft" style={{ marginLeft: '8%', color: '#0A4E52', marginBottom: '7%', alignSelf: 'center', }} type={"AntDesign"}></Icon>
                 </View>
                 <PhotoViewer photo={this.state.photo} open={this.state.showPhoto} hidePhoto={() => {
                     this.setState({

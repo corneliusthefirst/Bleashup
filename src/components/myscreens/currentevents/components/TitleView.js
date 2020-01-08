@@ -19,7 +19,7 @@ export default class TitleView extends Component {
     }
     componentDidMount() {
     }
-   navigateToEventDetails() {
+    navigateToEventDetails() {
         stores.Events.isParticipant(this.props.Event.id, stores.Session.SessionStore.phone).then(status => {
             if (status) {
                 this.props.navigation.navigate("Event", {
@@ -68,19 +68,19 @@ export default class TitleView extends Component {
                         this.navigateToEventDetails()
                     }
                     )}>
-                        <View style={{flexDirection:"column",alignItems:"flex-start"}}>
+                        <View style={{ flexDirection: "column", alignItems: "flex-start" }}>
                             <Title
                                 adjustsFontSizeToFit={true}
                                 style={{
                                     fontSize: 20,
-                                    color:"#0A4E52",
+                                    color: "#0A4E52",
                                     fontWeight: "500",
                                     fontFamily: "Roboto",
                                 }}
                             >
                                 {this.props.Event.about.title}{/*{" "}{this.props.Event.id}*/}
                             </Title>
-                            <Title
+                            {this.props.Event.period ? <Title
                                 style={{
                                     fontSize: 12,
                                     color: this.props.Event.closed ? "red" : this.dateDiff(this.props.Event.period) > 0 ? "gray" : "#1FABAB",
@@ -90,7 +90,7 @@ export default class TitleView extends Component {
                                 note
                             >
                                 {this.props.Event.closed ? "Closed" : this.writeDateTime(this.props.Event.period)}
-                            </Title>
+                            </Title> : null}
                         </View>
                         <View>
                             <Left>

@@ -56,7 +56,7 @@ export default class Message extends Component {
                     //this.props.hideAndshow()
                 }} index={index} sender={sender} message={data}></AudioMessage>
             case "video":
-                return <VideoMessage room={this.props.room}  index={index} sender={sender}
+                return <VideoMessage room={this.props.room} index={index} sender={sender}
                     playVideo={(video) => { this.props.playVideo(video) }} message={data}></VideoMessage>
             case "attachement":
                 return <FileAttarchementMessaege room={this.props.room} sender={sender} index={index} message={data}></FileAttarchementMessaege>;
@@ -69,10 +69,10 @@ export default class Message extends Component {
                     this.props.replaceMessageVideo(data)} message={data} playVideo={(video) => this.props.playVideo(video)}
                     index={index} sender={false}></VideoUploader>;
             case "attachement_upload":
-                return <FileAttarchementUploader room={this.props.room}  index={index} message={data}
+                return <FileAttarchementUploader room={this.props.room} index={index} message={data}
                     replaceMessage={(data) => this.props.replaceMessageFile(data)}></FileAttarchementUploader>
             case "audio_uploader":
-                return <AudioUploader room={this.props.room}  message={data} index={data.id}
+                return <AudioUploader room={this.props.room} message={data} index={data.id}
                     replaceMessage={(data) => this.props.replaceAudioMessage(data)}></AudioUploader>
             default:
                 return null
@@ -90,7 +90,7 @@ export default class Message extends Component {
                 creator: (this.props.message.sender.phone == this.props.creator),
                 loaded: true
             })
-        }, 12)
+        }, 50*this.props.delay)
     }
     slept = false
     openingSwipeout() {
@@ -209,12 +209,12 @@ export default class Message extends Component {
             marginRight: !this.state.sender ? '1%' : 0,
             marginTop: this.state.different ? "1.5%" : 0,
             marginBottom: "0.5%",
-            alignSelf:  this.state.sender ? 'flex-start' : 'flex-end',
+            alignSelf: this.state.sender ? 'flex-start' : 'flex-end',
         }
         let color = this.state.sender ? '#D0FEEB' : '#9EEDD3'
         GeneralMessageBoxStyle = {
             maxWidth: 300, flexDirection: 'column', minWidth: 120,
-            minHeight: 10, overflow: 'hidden', borderBottomLeftRadius: 10,borderColor: color,
+            minHeight: 10, overflow: 'hidden', borderBottomLeftRadius: 10, borderColor: color,
             borderTopLeftRadius: this.state.sender ? 0 : 10,// borderWidth: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text)?.7:0:0,
             backgroundColor: color,
             borderTopRightRadius: 10, borderBottomRightRadius: this.state.sender ? 10 : this.props.message.reply && this.props.message.reply.type_extern ? 10 : null,
@@ -239,81 +239,81 @@ export default class Message extends Component {
             width: 200
         }
         nameTextStyle = { fontSize: 14, fontWeight: 'bold', color: "#1FABAB" }
-        return (!this.state.loaded ? <View style={placeholderStyle}></View> : this.props.message.type == 'date_separator' ? <View style={{ marginTop: '2%', marginBottom: '2%', }}>
+        return (this.props.message.type == 'date_separator' ? <View style={{ marginTop: '2%', marginBottom: '2%', }}>
             <DateView date={this.props.message.id}></DateView></View> :
-                this.props.message.type == "new_separator" ? <View style={{
-                    marginTop: '2%',
-                    marginBottom: '2%'
-                }}><NewSeparator data={this.props.message.id}></NewSeparator></View> :
-                    <View style={topMostStyle}>
-                        <Swipeout isMessage onPress={this.openingSwipeout()}
-                            ref={'chatSwipeOut'} onOpen={() => { this.openingSwipeout() }}
-                            onClose={() => { this.closingSwipeout() }} autoClose={true} close={true}
-                            left={[{ color: '#04FFB6', type: 'default', backgroundColor: "transparent", text: 'reply' }]}
-                            style={{ backgroundColor: 'transparent', width: "100%" }}>
-                            <View>
-                                <View style={GeneralMessageBoxStyle}>
-                                    <View>
-                                        <View style={senderNameStyle}>
+            this.props.message.type == "new_separator" ? <View style={{
+                marginTop: '2%',
+                marginBottom: '2%'
+            }}><NewSeparator data={this.props.message.id}></NewSeparator></View> :
+                !this.state.loaded ? <View style={placeholderStyle}></View> : <View style={topMostStyle}>
+                    <Swipeout isMessage onPress={this.openingSwipeout()}
+                        ref={'chatSwipeOut'} onOpen={() => { this.openingSwipeout() }}
+                        onClose={() => { this.closingSwipeout() }} autoClose={true} close={true}
+                        left={[{ color: '#04FFB6', type: 'default', backgroundColor: "transparent", text: 'reply' }]}
+                        style={{ backgroundColor: 'transparent', width: "100%" }}>
+                        <View>
+                            <View style={GeneralMessageBoxStyle}>
+                                <View>
+                                    <View style={senderNameStyle}>
+                                        <TouchableWithoutFeedback onPressIn={() => {
+                                            this.replying = true
+                                        }}><View style={subNameStyle}>{this.state.sender ? <TouchableOpacity onPress={() => {
+                                            console.warn('humm ! you want to know that contact !')
+                                        }}>{this.state.different ? <Text style={nameTextStyle}
+                                            note>{" "}{this.state.sender_name}</Text> : <Text>{"         "}</Text>}</TouchableOpacity> : null}<Right>
+                                                    {!this.state.sender ? <Text note
+                                                        style={{
+                                                            color: this.state.sender ? null : '#1FABAB',
+                                                            fontSize: 13, marginRight: "2%", marginTop: "1%",
+                                                        }}>
+                                                        {this.state.time}{"    "}</Text> : null}</Right></View></TouchableWithoutFeedback>
+                                        <View>
+                                            {this.props.message.reply ? <View style={{ borderRadius: 10, paddingRight: "1%", marginTop: ".4%", width: "100%" }}>
+                                                <ReplyText pressingIn={() => {
+                                                    this.replying = true
+                                                }} openReply={(replyer) => {
+                                                    replyer.isThisUser = !this.state.sender
+                                                    this.props.message.reply && this.props.message.reply.type_extern ? null : this.props.openReply(replyer)
+                                                }} reply={this.props.message.reply}></ReplyText></View> : null}
                                             <TouchableWithoutFeedback onPressIn={() => {
                                                 this.replying = true
-                                            }}><View style={subNameStyle}>{this.state.sender ? <TouchableOpacity onPress={() => {
-                                                console.warn('humm ! you want to know that contact !')
-                                            }}>{this.state.different ? <Text style={nameTextStyle}
-                                                note>{" "}{this.state.sender_name}</Text> : <Text>{"         "}</Text>}</TouchableOpacity> : null}<Right>
-                                                        {!this.state.sender ? <Text note
-                                                            style={{
-                                                                color: this.state.sender ? null : '#1FABAB',
-                                                                fontSize: 13, marginRight: "2%", marginTop: "1%",
-                                                            }}>
-                                                            {this.state.time}{"    "}</Text> : null}</Right></View></TouchableWithoutFeedback>
-                                            <View>
-                                                {this.props.message.reply ? <View style={{ borderRadius: 10, paddingRight: "1%", marginTop: ".4%", width: "100%" }}>
-                                                    <ReplyText pressingIn={() => {
-                                                        this.replying = true
-                                                    }} openReply={(replyer) => {
-                                                        replyer.isThisUser = !this.state.sender
-                                                        this.props.message.reply && this.props.message.reply.type_extern ? null : this.props.openReply(replyer)
-                                                    }} reply={this.props.message.reply}></ReplyText></View> : null}
-                                                <TouchableWithoutFeedback onPressIn={() => {
-                                                    this.replying = true
-                                                }} onPress={() => {
-                                                    this.replying = false
-                                                }} onLongPress={() => {
-                                                    this.replying = false
-                                                    this.props.showActions(this.props.message)
-                                                    Vibration.vibrate(this.longPressDuration)
-                                                }} >
-                                                    <View>
-                                                        {this.chooseComponent(this.props.message, this.props.message.id, this.state.sender)}
-                                                    </View>
-                                                </TouchableWithoutFeedback>
-                                            </View>
-                                            <View style={{
-                                                backgroundColor: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text) ? color : 'transparent' : 'transparent',
-
-                                            }}>
-                                                {this.state.sender ? <Text note
-                                                    style={{
-                                                        marginLeft: "5%",
-                                                        color: this.state.sender ? null : '#1FABAB',
-                                                        fontSize: 13, marginRight: "2%", marginTop: "1%",
-                                                    }}>
-                                                    {this.state.time}{"    "}</Text> : null}
-                                            </View>
-                                            <View style={{
-                                                backgroundColor: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text) ? color : 'transparent' : 'transparent',
-}}>{!this.state.sender ? this.props.message.sent ? this.props.received ?
-                                                <Icon style={this.iconStyles} type="Ionicons" name="ios-checkmark-circle">
-                                                </Icon> : <Icon style={this.iconStyles} type={"EvilIcons"} name="check">
-                                                </Icon> : <Icon style={{ ...this.iconStyles, color: "#FFF" }} type="MaterialCommunityIcons"
-                                                    name="progress-check"></Icon> : null}</View>
+                                            }} onPress={() => {
+                                                this.replying = false
+                                            }} onLongPress={() => {
+                                                this.replying = false
+                                                this.props.showActions(this.props.message)
+                                                Vibration.vibrate(this.longPressDuration)
+                                            }} >
+                                                <View>
+                                                    {this.chooseComponent(this.props.message, this.props.message.id, this.state.sender)}
+                                                </View>
+                                            </TouchableWithoutFeedback>
                                         </View>
+                                        <View style={{
+                                            backgroundColor: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text) ? color : 'transparent' : 'transparent',
+
+                                        }}>
+                                            {this.state.sender ? <Text note
+                                                style={{
+                                                    marginLeft: "5%",
+                                                    color: this.state.sender ? null : '#1FABAB',
+                                                    fontSize: 13, marginRight: "2%", marginTop: "1%",
+                                                }}>
+                                                {this.state.time}{"    "}</Text> : null}
+                                        </View>
+                                        <View style={{
+                                            backgroundColor: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text) ? color : 'transparent' : 'transparent',
+                                        }}>{!this.state.sender ? this.props.message.sent ? this.props.received ?
+                                            <Icon style={this.iconStyles} type="Ionicons" name="ios-checkmark-circle">
+                                            </Icon> : <Icon style={this.iconStyles} type={"EvilIcons"} name="check">
+                                            </Icon> : <Icon style={{ ...this.iconStyles, color: "#FFF" }} type="MaterialCommunityIcons"
+                                                name="progress-check"></Icon> : null}</View>
                                     </View>
                                 </View>
                             </View>
-                        </Swipeout>
-                    </View>
+                        </View>
+                    </Swipeout>
+                </View>
         )
     }
 }

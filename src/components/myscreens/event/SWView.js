@@ -189,10 +189,10 @@ export default class SWView extends Component {
                                 borderRadius: 5,
                                 justifyContent: 'center', flexDirection: 'row', ...shadower(6)
                             }}><View style={{ width: "90%" }}><Title style={{ fontWeight: 'bold', fontSize: 17, marginTop: 2, color: "#0A4E52" }}>{this.props.event.about.title}</Title>
-                                    <Title style={{
+                                    {this.props.event.period?<Title style={{
                                         marginRight: "2%", fontStyle: 'italic', fontWeight: this.props.event.closed ? "bold" : "400",
                                         color: this.props.event.closed ? "red" : this.dateDiff(this.props.event.period) > 0 ? "gray" : "#1FABAB", fontSize: 12,
-                                    }}>{this.props.event.closed ? "Closed" : this.displayDate(this.props.event.period)}</Title>
+                                    }}>{this.props.event.closed ? "Closed" : this.displayDate(this.props.event.period)}</Title>:null}
                                 </View>
                                 <Icon onPress={() => {
                                     this.props.navigateHome()

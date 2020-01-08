@@ -1,16 +1,12 @@
 import React, { Component } from "react";
 import {
-  Content, Card, CardItem, Text, Body, Container, Icon, Header,
-  Form, Item, Title, Input, Left, Right, H3, H1, H2, Spinner,
-  Button, InputGroup, DatePicker, Thumbnail, Alert
+  Text, Icon,
+  Button,Item,Input
 } from "native-base";
 
-import { StyleSheet, View,Image,TouchableOpacity,TouchableWithoutFeedback,Dimensions,Keyboard} from 'react-native';
-import ActionButton from 'react-native-action-button';
+import { View,TouchableOpacity,TouchableWithoutFeedback,Dimensions,Keyboard} from 'react-native';
 import Modal from 'react-native-modalbox';
-import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 import autobind from "autobind-decorator";
-import { filter,uniqBy,orderBy,find,findIndex,reject,uniq,indexOf,forEach,dropWhile } from "lodash";
 import request from "../../../../../services/requestObjects";
 import  stores from '../../../../../stores/index';
 
@@ -30,36 +26,41 @@ export default class EventLocation extends Component {
 
   @autobind
   init(){
-    stores.Events.readFromStore().then(Events =>{
-      let event = find(Events, { id:this.props.eventId });
-      this.state.location.string= event.location.string;
       this.setState({
         update:this.props.updateLoc?this.props.updateLoc:false,
-        location:this.state.location,
-        event_id:this.props.eventId
+        location: this.props.event.location,
+        event_id:this.props.event.id
       });
-    });
   }
-
+  componentDidMount(){
+    this.init()
+  }
+  componentDidUpdate(prevProps,prevState){
+    if(this.props.event.location.string !== prevProps.event.location.string){
+     this.init()
+    }
+  }
 
   @autobind
     onChangedLocation(value) {
-      
-      this.state.location.string = value;
-      this.setState({location:this.state.location});
+      this.setState({location:{...this.state.location,string:value}});
       if(!this.state.update){
-        stores.Events.updateLocation(this.state.event_id,this.state.location,false).then(()=>{});
+        console.warn(value)
+        stores.Events.updateLocation(this.state.event_id,value,false).then(()=>{
+
+        });
       }
      
    }
 
    @autobind
    updateLocation(){
-     stores.Events.updateLocation(this.state.event_id,this.state.location,false).then(()=>{});
+     this.state.location.string !== this.props.event.location.string ? this.props.updateLocation(this.state.location.string) : null
+     /*stores.Events.updateLocation(this.state.event_id,this.state.location,false).then(()=>{});
      this.setState({update:false});
      this.props.parentComp.state.EventData.location.string = this.state.location.string;
      this.props.parentComp.setState({EventData:this.props.parentComp.state.EventData});
-     this.setState({location:request.Location()});
+     this.setState({location:request.Location()});*/
      this.props.onClosed();
    }
 
@@ -70,13 +71,14 @@ export default class EventLocation extends Component {
 
                 <Modal
                 isOpen={this.props.isOpen}
-                onClosed={this.props.onClosed}
+                onClosed={() => this.props.onClosed(this.state.location)}
                 style={{
                     height: height/4, borderRadius: 15,
                     backgroundColor:"#FEFFDE",borderColor:'black',borderWidth:1,width: "98%",
                     flexDirection:'column',marginTop:"-3%"
                   
                 }}
+                backButtonClose={true} 
                 coverScreen={true}
                 position={'bottom'}
                //backdropPressToClose={false}
@@ -86,10 +88,13 @@ export default class EventLocation extends Component {
 
                <View  style={{height:"100%",width:"100%",justifyContent:'center'}}>
                    <View>
-                   <Text style={{alignSelf:'flex-start',margin:"3%",fontWeight:"400",fontSize:18}} >Event Location:</Text>
+                   <Text style={{alignSelf:'flex-start',margin:"3%",fontWeight:"500",fontSize:18}} >Activity Location </Text>
                     <Item  style={{borderColor:'black',width:"95%",alignSelf:'center'}} rounded>
-                     <Input placeholder='Please enter event Location' keyboardType='email-address' autoCapitalize="none" returnKeyType='next' inverse last
-                       value={this.state.location.string} onChangeText={(value) => this.onChangedLocation(value)} />
+                     <Input placeholder='Activity Location' 
+                     keyboardType='email-address' autoCapitalize="none"
+                      returnKeyType='next' inverse last
+                       value={this.state.location.string} 
+                       onChangeText={(value) => this.onChangedLocation(value)} />
                      </Item>
                     </View>
 

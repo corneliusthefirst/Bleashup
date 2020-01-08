@@ -48,7 +48,6 @@ class PublicEvent extends Component {
       public: false,
       notPressing: false,
       publishing: false,
-      image: this.props.Event.background,
       //event: this.props.Event,
       swipeClosed: true,
       attempt_to_puplish: false,
@@ -77,7 +76,6 @@ class PublicEvent extends Component {
       nextState.joint !== this.state.joint ||
       nextState.openInviteModal !== this.state.openInviteModal ||
       this.props.Event.joint !== nextProps.Event.joint ||
-      this.state.image !== nextState.image ||
       this.state.master !== nextState.master ||
       !isEqual(this.props.Event, nextProps.Event) ||
       this.state.fresh !== nextState.fresh
@@ -330,11 +328,11 @@ class PublicEvent extends Component {
                 isToBeJoint hasJoin={this.props.Event.joint || this.state.joint} onOpen={() => this.onOpenPhotoModal()} style={{
                   width: "70%",
                   marginLeft: "4%"
-                }} photo={this.state.image} event_id={this.props.Event.id} width={170} height={100} borderRadius={6} />
+                }} photo={this.props.Event.background} event_id={this.props.Event.id} width={170} height={100} borderRadius={6} />
                 </View> : null}
             </Left>
             <Right >
-              {this.state.isMount ? <MapView style={{ marginRight: "11%" }}
+              {this.state.isMount && this.props.Event.location.string ? <MapView style={{ marginRight: "11%" }}
                 location={this.props.Event.location.string}></MapView> : null}
             </Right>
           </CardItem>

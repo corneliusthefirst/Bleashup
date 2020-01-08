@@ -50,6 +50,15 @@ export default class PhotoView extends Component {
             }
         })
     }
+    componentDidUpdate(previousProps,previousState){
+        if(this.props.photo !== previousProps.photo){
+            if(this.highlights.length <= 0 ){
+                this.setState({
+                    image:this.props.photo
+                })
+            }
+        }
+    }
     componentWillMount() {
         emitter.on('refresh-highlights', () => {
             console.warn('receiving refresh highlights message')
