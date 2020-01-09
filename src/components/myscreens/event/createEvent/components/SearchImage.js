@@ -19,6 +19,7 @@ export default class SearchImage extends Component {
   }
 
   async openLink(url) {
+    this.props.openPicker ? this.props.openPicker() : this.props.accessLibrary()
     try {
       
       if (await InAppBrowser.isAvailable()) {
@@ -53,8 +54,8 @@ export default class SearchImage extends Component {
             'my-custom-header': 'my custom header value'
           }
         })
-
-        //Alert.alert(JSON.stringify(result))
+        this.props.onClosed()
+        console.warn(result)
       }
       else Linking.openURL(url)
     } catch (error) {
@@ -88,29 +89,31 @@ checkStorage(){
           isOpen={this.props.isOpen}
           onClosed={this.props.onClosed}
           style={{
-           height: height/2 , borderRadius: 15,
-           backgroundColor:"#FEFFDE",borderColor:'black',borderWidth:1,width: "96%",flexDirection:'column',marginRight:"2%"
+           height: height/2 , borderBottomLeftRadius: 15,borderBottomRightRadius: 15,
+           backgroundColor:"#FEFFDE",borderColor:'black',width: "96%",flexDirection:'column',marginRight:"2%"
           }}
-                position={'center'}
-                backdropPressToClose={false}
-                swipeToClose={false}
+                position={'top'}
+                //backdropPressToClose={false}
+                //swipeToClose={false}
+                entry={'top'}
                 coverScreen={true}
                 >
                 <View style={{flexDirection:"column",flex:1,justifyContent:'space-between',alignItem:'center',margin:"3%"}}>
-                  
-                 
-                    <TouchableOpacity  style={{alignSelf:"flex-start",marginTop:"3%" }} transparent>
-                      <Text style={{ color: "darkgreen", fontSize: 20,fontWeight:"500" }}  onPress={()=>{ this.props.onClosed() }} >Cancel</Text>
-                     </TouchableOpacity>
+                 <View style={{flexDirection: 'row',}}>
+            <TouchableOpacity style={{ alignSelf: "flex-start", width:"100%" }} transparent>
+              <Icon style={{ fontSize: 20, fontWeight: "500" }} name={'close'} type={'EvilIcons'} onPress={() => { this.props.onClosed() }} ></Icon>
+            </TouchableOpacity>
 
-                      <TouchableOpacity  style={{alignSelf:"flex-end",margin:"0%",marginTop:-(height/28) }} transparent>
-                      <Text style={{ color: "darkgreen", fontSize: 20,fontWeight:"500" }}  onPress={()=>{
-                            this.props.accessLibrary()
-                            this.props.onClosed() }} >Go</Text>
-                     </TouchableOpacity>  
-                  
-                
+            {/*<TouchableOpacity style={{ alignSelf: "flex-end", margin: "0%", }}>
+              <Text style={{ color: "darkgreen", fontSize: 20, fontWeight: "500" }} onPress={() => {
+                this.props.accessLibrary()
+                this.props.onClosed()
+              }} >Go</Text>
+            </TouchableOpacity>*/}
 
+
+
+                 </View>
                     <Text  style={{alignSelf:"center",color: "#1FABAB",fontSize:18}}>Some suggested free sites</Text>
                    
                     <Button style={{alignSelf:'center',width:"90%",borderRadius:15,borderColor:"#1FABAB",backgroundColor:"transparent",justifyContent:'center',alignItem:'center',marginTop:"10%"}}

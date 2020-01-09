@@ -2,7 +2,8 @@ package com.bleashup.bleashup;
 
 import android.app.Application;
 import com.horcrux.svg.SvgPackage;
-import com.facebook.react.ReactApplication; 
+import com.facebook.react.ReactApplication;
+import com.arthenica.reactnative.RNFFmpegPackage; 
 import io.invertase.firebase.database.RNFirebaseDatabasePackage;
 import io.invertase.firebase.RNFirebasePackage;
 import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
@@ -14,6 +15,7 @@ import io.invertase.firebase.auth.RNFirebaseAuthPackage; // <-- Add this line
 import com.kevinresol.react_native_sound_recorder.RNSoundRecorderPackage;
 import io.github.elyx0.reactnativedocumentpicker.DocumentPickerPackage;
 import com.mg.app.PickerPackage;
+import com.shahenlibrary.RNVideoProcessingPackage;
 import com.vinzscam.reactnativefileviewer.RNFileViewerPackage;
 import com.brentvatne.react.ReactVideoPackage;
 import com.zmxv.RNSound.RNSoundPackage;
@@ -50,9 +52,11 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
             new MainReactPackage(),
+            new RNFFmpegPackage(),
             new RNFirebasePackage(),
             new RNFirebaseAuthPackage(),
             new OrientationPackage(),
+            new RNVideoProcessingPackage(),
             new RNFirebaseDatabasePackage(),
             new RNNestedScrollViewPackage(),
             new RNFirebaseNotificationsPackage(),

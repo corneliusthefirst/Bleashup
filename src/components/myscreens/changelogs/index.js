@@ -13,6 +13,7 @@ import BleashupTimeLine from '../../BleashupTimeLine';
 import moment from "moment";
 import emitter from '../../../services/eventEmiter';
 import testForURL from '../../../services/testForURL';
+import shadower from "../../shadower";
 
 export default class ChangeLogs extends Component {
   constructor(props) {
@@ -28,15 +29,15 @@ export default class ChangeLogs extends Component {
   shouldComponentUpdate(nextProps, nextState, nextContext) {
     return this.state.newThing !== nextState.newThing ||
       this.props.isMe !== nextProps.isMe ||
-      this.state.loaded !== nextState.loade||
-      this.props.activeMember !== nextProps.activeMember 
-      }
+      this.state.loaded !== nextState.loade ||
+      this.props.activeMember !== nextProps.activeMember
+  }
   componentWillMount() {
     BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this))
     emitter.on('refresh-history', () => {
       this.setState({ loaded: false })
       stores.ChangeLogs.fetchchanges(this.props.event_id).then(changes => {
-        this.changes =  changes
+        this.changes = changes
         setTimeout(() => {
           this.setState({
             newThing: !this.state.newThing,
@@ -46,8 +47,8 @@ export default class ChangeLogs extends Component {
       })
     })
   }
-  handleBackButton(){
-    
+  handleBackButton() {
+
   }
   componentWillUnmount() {
     emitter.off('refresh-history')
@@ -55,7 +56,7 @@ export default class ChangeLogs extends Component {
   }
   componentDidMount() {
     stores.ChangeLogs.fetchchanges(this.props.event_id).then(changes => {
-      this.changes =  changes
+      this.changes = changes
       setTimeout(() => {
         this.setState({
           newThing: !this.state.newThing,
@@ -66,17 +67,28 @@ export default class ChangeLogs extends Component {
   }
 
   propcessAndFoward(change) {
-    if (Array.isArray(change.new_value.new_value) && change.new_value.new_value[0] && change.new_value.new_value[0].phone) {
+    if (change.updated === "add_highlight") {
+      this.props.showHighlightDetails(change.new_value.new_value)
+    } else if (change.updated === "highlight_delete"){
+      this.props.showHighlightDetails(change.new_value.new_value)
+    } else if (change.updated === "highlight_url"){
+      this.props.showHighlightDetails({
+        title:change.changed,
+        description:null,
+        url:change.new_value.new_value,
+        created_at:change.date
+      })
+    } else if (Array.isArray(change.new_value.new_value) && change.new_value.new_value[0] && change.new_value.new_value[0].phone) {
       this.props.showMembers(change.new_value.new_value)
     } else if (Array.isArray(change.new_value.new_value) && change.new_value.new_value[0] && change.new_value.new_value[0].includes("00")) {
       console.warn("showing contacts")
       this.props.showContacts(change.new_value.new_value)
-    } else if(typeof change.new_value.new_value === "string" && testForURL(change.new_value.new_value)){
+    } else if (typeof change.new_value.new_value === "string" && testForURL(change.new_value.new_value)) {
       this.props.openPhoto(change.new_value.new_value)
     }
-    else if (typeof change.new_value.new_value === "string" || 
-    (Array.isArray(change.new_value.new_value) && typeof change.new_value.new_value[0] === "string") ||
-    typeof change.new_value.new_value === 'object') {
+    else if (typeof change.new_value.new_value === "string" ||
+      (Array.isArray(change.new_value.new_value) && typeof change.new_value.new_value[0] === "string") ||
+      typeof change.new_value.new_value === 'object') {
       this.props.showContent(change.new_value.new_value)
     } else {
 
@@ -90,7 +102,7 @@ export default class ChangeLogs extends Component {
     return (<View><Text>{item.changed}</Text></View>)
   }
   render() {
-    console.warn(this.props.forMember,"poo")
+    console.warn(this.props.forMember, "poo")
     return (!this.state.loaded ? <Spinner size={"small"}></Spinner> : <View style={{ width: "100%", height: "100%", backgroundColor: "#FEFFDE", }}>
       <View style={{ flex: 1, height: "95%", top: 0, bottom: 0, left: 0, right: 0 }}>
         <BleashupTimeLine
@@ -112,22 +124,18 @@ export default class ChangeLogs extends Component {
           onEventPress={(data) => {
             this.propcessAndFoward(data)
           }}
-          data={this.props.activeMember && this.props.activeMember !== null ? 
+          data={this.props.activeMember && this.props.activeMember !== null ?
             this.changes.filter(ele => ele.updater.phone === this.props.activeMember ||
-             ele.type === "date_separator") : this.changes}
+              ele.type === "date_separator") : this.changes}
         >
         </BleashupTimeLine>
       </View>
       {this.state.hideHeader ? null : <View style={{
-        width: "100%", height: 44, position: "absolute", opacity: .6 ,
-        backgroundColor: "#FEFFDE", shadowOpacity: 1,
-        shadowOffset: {
-          height: 1,
-        },
-        shadowRadius: 10, elevation: 6,
+        width: "100%", height: 44, position: "absolute", opacity: .6,
+        backgroundColor: "#FEFFDE", ...shadower(6)
       }}>
         <View style={{ flexDirection: 'row', width: "100%", }}>
-          <Text style={{ alignSelf: 'flex-start', margin: '3%', fontWeight: 'bold', fontSize: 20, width: "83%" }}>{(this.props.isMe ? "Your " : "" )+ "Activities Logs"}</Text>
+          <Text style={{ alignSelf: 'flex-start', margin: '3%', fontWeight: 'bold', fontSize: 20, width: "83%" }}>{(this.props.isMe ? "Your " : "") + "Activities Logs"}</Text>
           <Icon style={{ alignSelf: 'flex-end', margin: '3%', }} name={"dots-three-vertical"} type="Entypo"></Icon>
         </View>
       </View>}

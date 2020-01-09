@@ -49,7 +49,7 @@ export default class events {
   saveKey = {
     key: "Events",
     data: []
-  }; 
+  };
   @action addEvent(NewEvent) {
     if (NewEvent == 'no_such_key') {
       resolve()
@@ -73,9 +73,10 @@ export default class events {
     }
   }
   @action delete(EventID) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve, rejec) => {
       this.readFromStore().then(Events => {
-        Events = dropWhile(Events, element => element.id == EventID)
+        Events = reject(Events, { id: EventID })
+        EventID === "newEventId" ? Events.unshift(request.Event()) : null
         this.saveKey.data = Events;
         storage.save(this.saveKey).then(() => {
           this.setProperties(this.saveKey.data, false);
@@ -138,7 +139,7 @@ export default class events {
       })
     })
   }
-  @action markAsCalendared(EventID, id,alarms) {
+  @action markAsCalendared(EventID, id, alarms) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then((Events) => {
         let index = findIndex(Events, { id: EventID });
@@ -276,7 +277,7 @@ export default class events {
       });
     });
   }
-  @action removeEvent(EventID,inform) {
+  @action removeEvent(EventID, inform) {
     return new Promise((resolve, Reject) => {
       this.readFromStore().then(Events => {
         let NewEvents = reject(Events, ["id", EventID]);
@@ -394,7 +395,7 @@ export default class events {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let eventIndex = findIndex(Events, { id: EventID });
-        Events[eventIndex].location = NewLocation;
+        Events[eventIndex].location = { string: NewLocation };
         if (inform) {
           Events[eventIndex].location_updated = true;
           Events[eventIndex].updated = true
@@ -403,7 +404,7 @@ export default class events {
         this.saveKey.data = Events;
         storage.save(this.saveKey).then(() => {
           this.setProperties(this.saveKey.data, inform);
-          resolve();
+          resolve(Events[eventIndex]);
         });
       });
     });
@@ -503,20 +504,20 @@ export default class events {
   }
 
   @action updateRecursiveFrequency(EventID, recursiveFrequency, inform) {
-    console.warn(recursiveFrequency,"recurfreq");
+    console.warn(recursiveFrequency, "recurfreq");
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let Event = find(Events, { id: EventID });
         let eventIndex = findIndex(Events, { id: EventID });
-       console.warn(Event,"Event");
-        Event.recursiveFrequency =  recursiveFrequency;
+        console.warn(Event, "Event");
+        Event.recursiveFrequency = recursiveFrequency;
         if (inform) {
           Event.recursiveFrequency_updated = true;
           Event.updated = true;
         }
-        
+
         Event.updated_at = moment().format("YYYY-MM-DD HH:mm");
-        Events.splice(eventIndex,1, Event);
+        Events.splice(eventIndex, 1, Event);
         this.saveKey.data = Events;
         storage.save(this.saveKey).then(() => {
           this.setProperties(this.saveKey.data, inform);
@@ -550,7 +551,7 @@ export default class events {
         let index = findIndex(Events, { id: EventID });
         Events[index].public = true;
         //Events[index].updated_at = moment().format();
-       // if (inform) Events[index].updated = true
+        // if (inform) Events[index].updated = true
         this.saveKey.data = Events;
         storage.save(this.saveKey).then(() => {
           this.setProperties(this.saveKey.data, inform);
@@ -759,18 +760,18 @@ export default class events {
       });
     });
   }
-  
+
   removeHighlight(EventID, HighlightID, inform) {
-    console.warn(HighlightID,"remove highlight 1");
+    console.warn(HighlightID, "remove highlight 1");
     return new Promise((resolve, rejectPromise) => {
       this.readFromStore().then(Events => {
         let index = findIndex(Events, { id: EventID });
-        console.warn(index,"index1");
+        console.warn(index, "index1");
         Events[index].highlights = dropWhile(
           Events[index].highlights,
           element => element == HighlightID
-        ); 
-        console.warn(Events,"event with deleted object 1");
+        );
+        console.warn(Events, "event with deleted object 1");
         if (inform) {
           Events[index].highlight_removed = true;
           Events[index].updated = true
@@ -792,7 +793,7 @@ export default class events {
         });
         if (index >= 0) {
           if (Events[index].highlights && Events[index].highlights.length > 0)
-            Events[index].highlights.unshift(HighlightID); 
+            Events[index].highlights.unshift(HighlightID);
           else Events[index].highlights = [HighlightID]
           if (inform) {
             Events[index].highlight_added = true;
@@ -804,18 +805,22 @@ export default class events {
             this.setProperties(this.saveKey.data, inform);
             resolve();
           });
-        } 
-       else {
+        }
+        else {
           let EID = requestObject.EventID();
           EID.event_id = EventID;
           tcpRequest.getCurrentEvent(EID, EventID).then(JSONData => {
             serverEventListener.get_data(JSONData).then(E => {
-              this.addEvent(E).then(() => {
-                this.addHighlight(EventID, HighlightID, true).then(() => {
-                  resolve()
-                })
-              });
-            }); 
+              if (E) {
+                this.addEvent(E).then(() => {
+                  this.addHighlight(EventID, HighlightID, true).then(() => {
+                    resolve()
+                  })
+                });
+              } else {
+                reject()
+              }
+            });
           });
         }
       });
@@ -979,7 +984,7 @@ export default class events {
       this.readFromStore().then(Events => {
         let Event = find(Events, { id: EventID });
         let eventIndex = findIndex(Events, { id: EventID });
-        Event=request.Event();
+        Event = request.Event();
         Event.id = EventID;
 
         Event.updated_at = moment().format("YYYY-MM-DD HH:mm");
@@ -1007,73 +1012,73 @@ export default class events {
 
 
 
-@observable highlightData =[
-{
-  id: "1",
-  creator: "",
-  event_id: "",
-  created_at: "",
-  updated_at: "",
-  title: "maitre gims",
-  description: "ajjsg agsgsagj sahaskkh akdajaj asjaslfjal ashs",
-  url: "https://upload.wikimedia.org/wikipedia/commons/b/bf/Cornish_cream_tea_2.jpg"
-},
-{
-  id: "2",
-  creator: "",
-  event_id: "",
-  created_at: "",
-  updated_at: "",
-  title: "cornelius",
-  description: "ajjsg agsgsagj sahaskkh akdajaj asjaslfjal ashs",
-  url:"https://cdn.stocksnap.io/img-thumbs/960w/KUGIZHT2VX.jpg"
-},
-{
-  id: "3",
-  creator: "",
-  event_id: "",
-  created_at: "",
-  updated_at: "",
-  title: "giles",
-  description: "ajjsg agsgsagj sahaskkh akdajaj asjaslfjal ashs",
-  url:"https://cdn.stocksnap.io/img-thumbs/960w/KUGIZHT2VX.jpg"
+  @observable highlightData = [
+    {
+      id: "1",
+      creator: "",
+      event_id: "",
+      created_at: "",
+      updated_at: "",
+      title: "maitre gims",
+      description: "ajjsg agsgsagj sahaskkh akdajaj asjaslfjal ashs",
+      url: "https://upload.wikimedia.org/wikipedia/commons/b/bf/Cornish_cream_tea_2.jpg"
+    },
+    {
+      id: "2",
+      creator: "",
+      event_id: "",
+      created_at: "",
+      updated_at: "",
+      title: "cornelius",
+      description: "ajjsg agsgsagj sahaskkh akdajaj asjaslfjal ashs",
+      url: "https://cdn.stocksnap.io/img-thumbs/960w/KUGIZHT2VX.jpg"
+    },
+    {
+      id: "3",
+      creator: "",
+      event_id: "",
+      created_at: "",
+      updated_at: "",
+      title: "giles",
+      description: "ajjsg agsgsagj sahaskkh akdajaj asjaslfjal ashs",
+      url: "https://cdn.stocksnap.io/img-thumbs/960w/KUGIZHT2VX.jpg"
 
-},
-{
-  id: "4",
-  creator: "",
-  event_id: "",
-  created_at: "",
-  updated_at: "",
-  title: "Jugal",
-  description: "ajjsg agsgsagj sahaskkh akdajaj asjaslfjal ashs",
-  url: "https://cdn.stocksnap.io/img-thumbs/960w/KUGIZHT2VX.jpg"
-},
-{
-  id: "5",
-  creator: "",
-  event_id: "",
-  created_at: "",
-  updated_at: "",
-  title: "Santers",
-  description: "ajjsg agsgsagj sahaskkh akdajaj asjaslfjal ashs",
-  url:"https://cdn.stocksnap.io/img-thumbs/960w/KUGIZHT2VX.jpg"
-},
-{
-  id: "6",
-  creator: "",
-  event_id: "",
-  created_at: "",
-  updated_at: "",
-  title: "Hken",
-  description: "ajjsg agsgsagj sahaskkh akdajaj asjaslfjal ashs",
-  url:"https://cdn.stocksnap.io/img-thumbs/960w/KUGIZHT2VX.jpg"
+    },
+    {
+      id: "4",
+      creator: "",
+      event_id: "",
+      created_at: "",
+      updated_at: "",
+      title: "Jugal",
+      description: "ajjsg agsgsagj sahaskkh akdajaj asjaslfjal ashs",
+      url: "https://cdn.stocksnap.io/img-thumbs/960w/KUGIZHT2VX.jpg"
+    },
+    {
+      id: "5",
+      creator: "",
+      event_id: "",
+      created_at: "",
+      updated_at: "",
+      title: "Santers",
+      description: "ajjsg agsgsagj sahaskkh akdajaj asjaslfjal ashs",
+      url: "https://cdn.stocksnap.io/img-thumbs/960w/KUGIZHT2VX.jpg"
+    },
+    {
+      id: "6",
+      creator: "",
+      event_id: "",
+      created_at: "",
+      updated_at: "",
+      title: "Hken",
+      description: "ajjsg agsgsagj sahaskkh akdajaj asjaslfjal ashs",
+      url: "https://cdn.stocksnap.io/img-thumbs/960w/KUGIZHT2VX.jpg"
 
     }
 
-]
- 
-@observable NewHighlightData = []
+  ]
+
+  @observable NewHighlightData = []
 
 
 

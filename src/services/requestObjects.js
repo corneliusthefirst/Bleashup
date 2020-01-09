@@ -1,4 +1,5 @@
 import moment from "moment"
+import  stores  from '../stores';
 class Request {
     constructor() { }
 
@@ -282,7 +283,7 @@ class Request {
     }
     Highlight() {
         return {
-            id: "",
+            id: "newHighlightId",
             creator: "",
             event_id: "",
             created_at: moment().format(),
@@ -292,7 +293,8 @@ class Request {
             url: {
                 audio:"",
                 photo:"",
-                video:""
+                video:"",
+                duration:""
             }
         }
     }
@@ -341,11 +343,11 @@ class Request {
     }
     Event() {
         return {
-            id: "",
-            event_host: "",
+            id: "newEventId",
+            event_host: stores.Session.SessionStore.host,
             created_at: moment().format(),
             updated_at: moment().format(),
-            creator_phone: "",
+            creator_phone: stores.LoginStore.user.phone,
             closed:false,
             notes:[],
             recurrent:false,
@@ -355,10 +357,13 @@ class Request {
             calendar_id:null,
             about: this.About(),
             commitee : [],
-            period: "",
+            period: null,
             location: this.Location(),
             background: "",
-            participant: [],
+            participant: [{phone:stores.LoginStore.user.phone,
+                master:true,
+                status:'creator',
+            host:stores.Session.SessionStore.host}],
             likes: 0,
             reminds: [],
             recursiveFrequency:"None",

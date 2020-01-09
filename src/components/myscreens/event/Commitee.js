@@ -10,6 +10,7 @@ import BleashupScrollView from '../../BleashupScrollView';
 import { union, uniq } from "lodash";
 import GState from '../../../stores/globalState';
 import emitter from '../../../services/eventEmiter';
+import shadower from '../../shadower';
 export default class Commitee extends Component {
     constructor(props) {
         super(props)
@@ -64,11 +65,8 @@ export default class Commitee extends Component {
                 <View style={{
                     borderTopRightRadius: 10, borderBottomRightRadius: 10,
                     backgroundColor: "#1FABAB", height: 35,
-                    width: "95%", display: 'flex', flexDirection: 'row', marginBottom: "5%", shadowOpacity: 1,
-                    shadowOffset: {
-                        height: 1,
-                    },
-                    shadowRadius: 10, elevation: 6
+                    width: "95%", display: 'flex', flexDirection: 'row', marginBottom: "5%", 
+                   ...shadower(6)
                 }}>
                     <Title style={{
                         color:"#9EEDD3",

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import moment from "moment"
 import { View, StatusBar, Dimensions, BackHandler, Keyboard } from 'react-native';
-import { Text, Title, Spinner, Toast } from 'native-base';
+import { Text, Title, Spinner, Toast, Icon } from 'native-base';
 import BleashupSectionList from '../../BleashupSectionList';
 import BleashupFlatList from '../../BleashupFlatList';
 import HighLight from './Highlight';
@@ -12,6 +12,7 @@ import stores from '../../../stores';
 import firebase from 'react-native-firebase';
 import uuid from 'react-native-uuid';
 import ChatStore from '../../../stores/ChatStore';
+import shadower from '../../shadower';
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenheight = Math.round(Dimensions.get('window').height);
 export default class HighLightsDetails extends Component {
@@ -53,7 +54,7 @@ export default class HighLightsDetails extends Component {
         return true
     }
     componentDidMount() {
-        stores.Highlights.fetchHighlightsFromRemote(this.event_id).then(highlights => {
+        stores.Highlights.fetchHighlights(this.event_id).then(highlights => {
             this.setState({
                 mounted: true,
                 highlights: highlights
@@ -322,10 +323,22 @@ export default class HighLightsDetails extends Component {
                 </View>
 
                 <View style={{
-                    position: 'absolute', backgroundColor: '#FEFEDE', width: '30%', borderWidth: 1, borderLeftWidth: 1, borderColor: '#1FABAB',
-                    height: 30, opacity: 0.7, alignSelf: 'flex-end', marginTop: '1%', borderBottomLeftRadius: 8, borderTopLeftRadius: 8, borderRightWidth: 0,
+                    position: 'absolute', backgroundColor: '#FEFEDE', width: '15%', ...shadower(8),
+                    height: 30, opacity: 0.7, alignSelf: 'flex-end', marginTop: '2%',
+                    borderBottomLeftRadius: 8, borderTopLeftRadius: 8, borderRightWidth: 0,
+                    flexDirection: 'row',
+                }}> 
+                    <Text style={{ fontSize: 18, fontStyle: 'italic', marginBottom: "13%", fontWeight: 'bold', alignSelf: 'flex-end', marginLeft: '7%', width: '100%' }}>{"Posts"} </Text>
+                </View>
+                <View style={{
+                    position: 'absolute', backgroundColor: '#FEFEDE', width: '10%', ...shadower(8),
+                    height: 30, opacity: 0.7, alignSelf: 'flex-start', marginTop: '2%',
+                    borderBottomRightRadius: 8, borderTopRightRadius: 8, borderRightWidth: 0,
+                    flexDirection: 'row',
                 }}>
-                    <Text style={{ fontSize: 18, fontStyle: 'italic', marginTop: "2%", alignSelf: 'flex-start', marginLeft: '5%', }}>{"Highlights"} </Text>
+                    <Icon onPress={() => {
+                        this.props.navigation.navigate('Home')
+                    }} name="doubleleft" style={{ marginLeft: '8%', color: '#0A4E52', marginBottom: '7%', alignSelf: 'center', }} type={"AntDesign"}></Icon>
                 </View>
                 <PhotoViewer photo={this.state.photo} open={this.state.showPhoto} hidePhoto={() => {
                     this.setState({

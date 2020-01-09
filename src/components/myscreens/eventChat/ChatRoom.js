@@ -6,6 +6,7 @@ import {
     Text,
     Spinner,
     Toast,
+    Title,
     ActionSheet,
     Button
 } from 'native-base';
@@ -27,16 +28,13 @@ import SoundRecorder from 'react-native-sound-recorder';
 import VideoPlayer from "./VideoController"
 import Image from 'react-native-scalable-image';
 import Orientation from 'react-native-orientation-locker';
-import DocumentPicker from 'react-native-document-picker';
 import ReactNativeZoomableView from '@dudigital/react-native-zoomable-view/src/ReactNativeZoomableView';
-import ImagePicker from 'react-native-customized-image-picker';
 import BleashupFlatList from '../../BleashupFlatList';
 import Message from "./Message";
 import { find, orderBy, reject, findIndex, map, uniqBy } from "lodash"
 import moment from "moment";
 import { PulseIndicator } from 'react-native-indicators';
 import Sound from 'react-native-sound';
-import rnFetchBlob from 'rn-fetch-blob';
 import ReplyText from "./ReplyText";
 import firebase from 'react-native-firebase'
 import ChatStore from '../../../stores/ChatStore';
@@ -50,7 +48,12 @@ import uuid from 'react-native-uuid';
 import NotificationModal from "../event/NotificationModal";
 import dateDisplayer from '../../../services/dates_displayer';
 import { SendNotifications } from '../../../services/cloud_services';
-const { fs } = rnFetchBlob
+import shadower from '../../shadower';
+import Pickers from '../../../services/Picker';
+import rnFetchBlob from 'rn-fetch-blob';
+import converToHMS from '../highlights_details/convertToHMS';
+let dirs = rnFetchBlob.fs.dirs
+
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenheight = Math.round(Dimensions.get('window').height);
 export default class ChatRoom extends Component {
@@ -322,7 +325,6 @@ export default class ChatRoom extends Component {
         }
     }
     componentWillMount() {
-        console.warn(this.props.firebaseRoom)
         this.fireRef = this.getRef(this.props.firebaseRoom);
         this.setTypingRef(this.props.firebaseRoom)
         firebase.database().ref(`current_room/${this.props.user.phone}`).onDisconnect().set(null)
@@ -334,6 +336,7 @@ export default class ChatRoom extends Component {
         Orientation.lockToPortrait();
     }
     componentWillUnmount() {
+        Pickers.CleanAll()
         this.fireRef.off()
         this.typingRef.off()
         this.keyboardDidShowSub.remove();
@@ -381,7 +384,38 @@ export default class ChatRoom extends Component {
     }
 
     handleBackButton() {
-        if (this.state.showVideo) {
+        if (this.state.showEmojiInput) {
+            this._textInput.focus()
+            this.setState({
+                showEmojiInput: false
+            })
+            return true
+        } else if (this.state.showRepliedMessage) {
+            this.setState({
+                showRepliedMessage: false
+            })
+            return true
+        } else if (this.state.replying) {
+            this.setState({
+                replying: false,
+                replyContent: null,
+                messageListHeight: this.state.previousMessageHeight,
+                textInputHeight: this.state.previousTextHeight,
+                textHeight: screenheight * 0.1,
+                photoHeight: screenheight * 0.9,
+            })
+            return true
+        } else if (this.state.showAudioRecorder) {
+            this.stopRecordTiming()
+            SoundRecorder.stop().then(() => {
+                this.setState({
+                    recordTime: 0,
+                    recording: false,
+                    showAudioRecorder: false
+                })
+            })
+            return true
+        } else if (this.state.showVideo) {
             this.setState({
                 showVideo: false,
                 showCaption: false,
@@ -396,17 +430,6 @@ export default class ChatRoom extends Component {
                 hideStatusBar: false
             })
             return true
-        } else if (this.state.showRepliedMessage) {
-            this.setState({
-                showRepliedMessage: false
-            })
-            return true
-        } else if (this.state.showEmojiInput) {
-            this._textInput.focus()
-            this.setState({
-                showEmojiInput: false
-            })
-            return true
         } else if (this.state.showEmojiInputCaption) {
             this._captionTextInput.focus()
             this.setState({
@@ -417,26 +440,6 @@ export default class ChatRoom extends Component {
             Keyboard.dismiss()
             this.setState({
                 showCaption: false
-            })
-            return true
-        } else if (this.state.showAudioRecorder) {
-            this.stopRecordTiming()
-            SoundRecorder.stop().then(() => {
-                this.setState({
-                    recordTime: 0,
-                    recording: false,
-                    showAudioRecorder: false
-                })
-            })
-            return true
-        } else if (this.state.replying) {
-            this.setState({
-                replying: false,
-                replyContent: null,
-                messageListHeight: this.state.previousMessageHeight,
-                textInputHeight: this.state.previousTextHeight,
-                textHeight: screenheight * 0.1,
-                photoHeight: screenheight * 0.9,
             })
             return true
         } else {
@@ -650,50 +653,30 @@ export default class ChatRoom extends Component {
     }
     openCamera() {
         Keyboard.dismiss();
-        ImagePicker.openPicker({
-            cropping: false,
-            isCamera: true,
-            //openCameraOnStart: true,
-            returnAfterShot: true,
-            // returnAfterShot:true,
-            compressQuality: 50
-        }).then(response => {
-            //console.warn("opening camera")
-            let temp = response[0].path.split('/');
+        Pickers.SnapPhoto().then(snap => {
             this.setState({
-                image: response[0].path,
-                base64: response[0].data,
+                image: snap.source,
+                //base64: response[0].data,
                 showCaption: true,
                 imageSelected: true,
-                filename: temp[temp.length - 1],
-                content_type: response[0].mime,
-                size: response[0].size
+                filename: snap.filename,
+                content_type: snap.content_type,
+                size: snap.size
             })
             this.markAsRead()
         })
     }
     openVideo() {
         Keyboard.dismiss();
-        ImagePicker.openPicker({
-            cropping: false,
-            includeBase64: false,
-            isVideo: true,
-            isCamera: true,
-            title: "Take A Video",
-            // returnAfterShot:true,
-            compressQuality: 50
-        }).then(response => {
-            //console.warn(response)
-            let temp = response[0].path.split('/');
+        Pickers.SnapVideo().then(snap => {
             this.setState({
-                video: response[0].path,
-                //base64: response[0].data,
+                video: snap.source,
                 showCaption: true,
                 showVideo: true,
                 imageSelected: false,
-                filename: temp[temp.length - 1],
-                content_type: response[0].mime,
-                size: response[0].size
+                filename: snap.filename,
+                content_type: snap.content_type,
+                size: snap.size
             })
             this.markAsRead()
         })
@@ -705,19 +688,12 @@ export default class ChatRoom extends Component {
     openPhotoSelector() {
         Keyboard.dismiss()
         this.scrollToEnd()
-        ImagePicker.openPicker({
-            cropping: false,
-            includeBase64: false,
-            compressQuality: 50,
-            multipleShot: false,
-            multiple: true,
-            imageLoader: "PICASSO"
-        }).then((response) => {
+        Pickers.TakeManyPhotos().then(response => {
             response.map(res => {
                 message = {
                     id: uuid.v1(),
                     type: "photo" + "_upload",
-                    source: res.path,
+                    source: res.source,
                     sender: this.sender,
                     //user: this.user,
                     creator: this.creator,
@@ -725,8 +701,8 @@ export default class ChatRoom extends Component {
                     total: res.size,
                     send: 0,
                     // data: this.state.base64,
-                    content_type: res.mime,
-                    filename: res.path.split("/")[res.path.split('/').length - 1],
+                    content_type: res.content_type,
+                    filename: res.filename,
                     text: this.state.captionText
                 }
                 this.room.messages.unshift(message)
@@ -850,63 +826,42 @@ export default class ChatRoom extends Component {
 
     }
     async openAudioPicker() {
-        try {
-            const res = await DocumentPicker.pick({
-                type: [DocumentPicker.types.audio]
-            });
-            let temp = this.filename
-            this.filename = res.uri
-            this.duration = 0
-            this.sendAudioMessge()
-            this.filename = temp
-        } catch (err) {
-            if (DocumentPicker.isCancel(err)) {
-                // User cancelled the picker, exit any dialogs or menus and move on
-            } else {
-                throw err;
-            }
-        }
+        const res = await Pickers.TakeAudio()
+        let temp = this.filename
+        this.filename = res.uri
+        this.duration = 0
+        this.sendAudioMessge()
+        this.filename = temp
     }
     async openFilePicker() {
-        try {
-            const res = await DocumentPicker.pick({
-                type: [DocumentPicker.types.allFiles],
-            });
-            res.uri.replace('content://', 'file://')
-            this.scrollToEnd()
-            message = {
-                id: uuid.v1(),
-                source: res.uri,
-                file_name: res.name,
-                reply: this.state.replyContent,
-                sender: this.sender,
-                //user: this.user,
-                creator: 2,
-                type: "attachement_upload",
-                received: 0,
-                total: res.size,
-                created_at: moment().format(),
-            }
-            this.room.messages.unshift(message)
-            this.room.addMessageToStore(message).then((data) => {
-                this.setState({
-                    newMessage: true
-                })
-                this.initialzeFlatList()
-            })
-            this.setState({
-                replyContent: null,
-                messageListHeight: this.formHeight(this.state.initialMessaListHeightFactor),
-                textInputHeight: this.formHeight(this.inittialTextInputHeightFactor),
-                replying: false,
-            })
-        } catch (err) {
-            if (DocumentPicker.isCancel(err)) {
-                // User cancelled the picker, exit any dialogs or menus and move on
-            } else {
-                throw err;
-            }
+        const res = await Pickers.TakeFile()
+        this.scrollToEnd()
+        message = {
+            id: uuid.v1(),
+            source: res.uri,
+            file_name: res.name,
+            reply: this.state.replyContent,
+            sender: this.sender,
+            //user: this.user,
+            creator: 2,
+            type: "attachement_upload",
+            received: 0,
+            total: res.size,
+            created_at: moment().format(),
         }
+        this.room.messages.unshift(message)
+        this.room.addMessageToStore(message).then((data) => {
+            this.setState({
+                newMessage: true
+            })
+            this.initialzeFlatList()
+        })
+        this.setState({
+            replyContent: null,
+            messageListHeight: this.formHeight(this.state.initialMessaListHeightFactor),
+            textInputHeight: this.formHeight(this.inittialTextInputHeightFactor),
+            replying: false,
+        })
     }
     duration = 0
     _stopRecoder() {
@@ -966,7 +921,7 @@ export default class ChatRoom extends Component {
             return false;
         }
     }
-    filename = fs.dirs.DocumentDir + "/test.mp3"
+    filename = dirs.DocumentDir + "/test.mp3"
     _onChangeCaption(event) {
         this.setTyingState(this.sender)
         this.setState({
@@ -1032,18 +987,6 @@ export default class ChatRoom extends Component {
                 recording: false,
             })
         })
-    }
-    convertToHMS(secs) {
-        var sec_num = parseInt(secs, 10)
-        var hours = Math.floor(sec_num / 3600)
-        var minutes = Math.floor(sec_num / 60) % 60
-        var seconds = sec_num % 60
-
-        return [hours, minutes, seconds]
-            .map(v => v < 10 ? "0" + v : v)
-            .filter((v, i) => v !== "00" || i > 0)
-            .join(":")
-
     }
     resumAudioRecoder() {
         this.startRecordTiming()
@@ -1174,11 +1117,7 @@ export default class ChatRoom extends Component {
     }
     headerStyles = {
         width: "100%", height: 44, display: 'flex', flexDirection: 'row', opacity: .6,
-        backgroundColor: "transparent", position: "absolute", shadowOpacity: 1,
-        shadowOffset: {
-            height: 1,
-        },
-        shadowRadius: 10, elevation: 6
+        backgroundColor: "transparent", position: "absolute", ...shadower(8)
     }
     transparent = "rgba(50, 51, 53, 0.8)";
     render() {
@@ -1243,24 +1182,26 @@ export default class ChatRoom extends Component {
 
         )
     }
-
+    delay = 1
     messageList() {
-        return <BleashupFlatList backgroundColor={"transparent"} firstIndex={0} ref="bleashupSectionListOut" inverted={true} renderPerBatch={5} initialRender={15} numberOfItems={this.room.messages.length} keyExtractor={(item, index) => item ? item.id : null} renderItem={(item, index) => {
-            return item ? <Message PreviousSenderPhone={this.room.messages[index > 0 ? index - 1 : 0] ? this.room.messages[index > 0 ? index - 1 : 0].sender.phone : null} showActions={(message) => this.showActions(message)} firebaseRoom={this.props.firebaseRoom} roomName={this.props.roomName} sendMessage={message => this.sendTextMessage(message)} received={item.received ? item.received.length >= this.props.members.length : false} replaceMessageVideo={(data) => this.replaceMessageVideo(data)} showPhoto={(photo) => this.showPhoto(photo)} replying={(replyer, color) => this.replying(replyer, color)} replaceMessage={(data) => this.replaceMessage(data)} replaceAudioMessage={(data) => this.replaceAudioMessage(data)} message={item} openReply={(replyer) => {
-                this.setState({
-                    replyer: replyer,
-                    showRepliedMessage: true
-                });
-            }} user={this.props.user.phone} creator={this.props.creator} replaceMessageFile={(data) => this.replaceMessageFile(data)} playVideo={(source) => this.playVideo(source)}></Message> : null;
-        }} dataSource={this.room.messages} newData={this.showMessage} newDataLength={this.showMessage.length}>
+        return <BleashupFlatList backgroundColor={"transparent"} firstIndex={0} ref="bleashupSectionListOut" inverted={true} renderPerBatch={20} initialRender={20} numberOfItems={this.room.messages.length} keyExtractor={(item, index) => item ? item.id : null}
+            renderItem={(item, index) => {
+                this.delay = this.delay >= 20 ? 0 : this.delay + 1
+                return item ? <Message delay={this.delay} room={this.room} PreviousSenderPhone={this.room.messages[index > 0 ? index - 1 : 0] ? this.room.messages[index > 0 ? index - 1 : 0].sender.phone : null} showActions={(message) => this.showActions(message)} firebaseRoom={this.props.firebaseRoom} roomName={this.props.roomName} sendMessage={message => this.sendTextMessage(message)} received={item.received ? item.received.length >= this.props.members.length : false} replaceMessageVideo={(data) => this.replaceMessageVideo(data)} showPhoto={(photo) => this.showPhoto(photo)} replying={(replyer, color) => this.replying(replyer, color)} replaceMessage={(data) => this.replaceMessage(data)} replaceAudioMessage={(data) => this.replaceAudioMessage(data)} message={item} openReply={(replyer) => {
+                    this.setState({
+                        replyer: replyer,
+                        showRepliedMessage: true
+                    });
+                }} user={this.props.user.phone} creator={this.props.creator} replaceMessageFile={(data) => this.replaceMessageFile(data)} playVideo={(source) => this.playVideo(source)}></Message> : null;
+            }} dataSource={this.room.messages} newData={this.showMessage} newDataLength={this.showMessage.length}>
         </BleashupFlatList>;
     }
 
     keyboardView() {
         return <View style={{
             height: this.state.textInputHeight, backgroundColor: "#FEFFDE",
-            borderRadius: 8, alignSelf: 'center',  borderBottomWidth: 0,
-             padding: '1%', maxWidth: "99.9%",
+            borderRadius: 8, alignSelf: 'center', borderBottomWidth: 0,
+            padding: '1%', maxWidth: "99.9%",
         }}>
             {
                 //* Reply Message caption */
@@ -1350,7 +1291,7 @@ export default class ChatRoom extends Component {
             </View>}
             <Right><View style={{ display: 'flex', flexDirection: 'row', marginLeft: "30%", }}>
                 <Text style={{ marginTop: "6%", fontSize: 22, color: "#FEFFDE" }}>
-                    {this.convertToHMS(this.state.recordTime)}</Text>
+                    {converToHMS(this.state.recordTime)}</Text>
                 <PulseIndicator color={'red'}>
                 </PulseIndicator></View></Right></View>;
     }
@@ -1362,8 +1303,7 @@ export default class ChatRoom extends Component {
     }
 
     header() {
-        return <View style={this.headerStyles}><View style={{ width: "90%", backgroundColor: "#FEFFDE", }}><Text style={{ fontSize: 20, fontWeight: 'bold', margin: 5 }}>{this.props.roomName.length > 30
-            ? this.props.roomName.slice(0, 30) + "..." : this.props.roomName}</Text></View>
+        return <View style={this.headerStyles}><View style={{ width: "90%", backgroundColor: "#FEFFDE", }}><Title style={{ fontSize: 20, fontWeight: 'bold', margin: "1%", alignSelf: 'flex-start', marginLeft: "4%" }}>{this.props.roomName}</Title></View>
             <View style={{ width: "10%", backgroundColor: "#FEFFDE" }}>
                 <ChatroomMenu showMembers={() => this.showMembers()} addMembers={() => this.props.addMembers()} closeCommitee={() => this.props.close()} openCommitee={() => this.props.open()} leaveCommitee={() => this.props.leave()} removeMembers={() => this.props.removeMembers()} publishCommitee={() => this.props.publish()} master={this.props.master} eventID={this.props.activity_id} roomID={this.props.firebaseRoom} public={this.props.public_state} opened={this.props.opened}></ChatroomMenu>
             </View></View>;
@@ -1384,7 +1324,7 @@ export default class ChatRoom extends Component {
     captionMessageHandler() {
         return <View style={{
             position: "absolute", width: screenWidth,
-            height: screenheight, backgroundColor: "black", display: 'flex',width:"100%",height:"100%"
+            height: screenheight, backgroundColor: "black", display: 'flex', width: "100%", height: "100%"
         }}>
             <View style={{ height: this.state.photoHeight, width: "100%" }}>
                 {this.state.image ? <ReactNativeZoomableView maxZoom={1.5} minZoom={0.5} zoomStep={0.5} initialZoom={1} bindToBorders={true} onZoomAfter={this.logOutZoomState}>

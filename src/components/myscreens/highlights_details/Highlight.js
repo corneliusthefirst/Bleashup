@@ -10,14 +10,14 @@ export default class HighLight extends Component {
         super(props)
     }
     renderContent(highlight) {
-        return <HighlightContent showVideo={(url) => this.props.showVideo(url)} showPhoto={(uri) => this.props.showPhoto(uri)} PressingIn={() => {
+        return <HighlightContent modal={this.props.modal} showVideo={(url) => this.props.showVideo(url)} showPhoto={(uri) => this.props.showPhoto(uri)} PressingIn={() => {
             this.replying = true
         }} highlight={highlight}></HighlightContent>
 
 
     }
     shouldComponentUpdate(nextProps, nextState, nextContext) {
-         return false
+        return false
     }
     handleReply() {
         console.warn('handling reply .....')
@@ -67,7 +67,8 @@ export default class HighLight extends Component {
         return (
             <View style={{
             }}>
-                <Swipeout 
+                <Swipeout
+                    disabled={this.props.disableSwipper ? this.props.disableSwipper : false}
                     ref={'chatSwipeOut'} onOpen={() => { this.openingSwipeout() }}
                     onClose={() => { this.closingSwipeout() }} autoClose={true} close={true}
                     left={[{ color: '#04FFB6', type: 'default', backgroundColor: "transparent", text: 'react' }]}
@@ -76,12 +77,11 @@ export default class HighLight extends Component {
                         maxWidth: "90%", minWidth: 120,
                         minHeight: 10, overflow: 'hidden', borderRadius: 10,
                         alignSelf: 'center', margin: '1%',
-                        backgroundColor: "#9EEDD3",
+                        backgroundColor: this.props.background ? this.props.background : "#9EEDD3",
                     }}>
-                        <Text note style={{color:'#1FABAB',fontWeight: 'bold',marginLeft: '2%',}}>{moment(this.props.highlight.created_at).format('dddd, MMMM Do YYYY, h:mm:ss a')}</Text>
                         <View style={{ height: 50, opacity: 0.8, borderRadius: 8, }}>
                             <Text style={{
-                                 alignSelf: 'center',
+                                alignSelf: 'center',
                                 margin: '3%', fontWeight: 'bold', fontSize: 22,
                             }}>
                                 {this.props.highlight.title}
@@ -90,6 +90,7 @@ export default class HighLight extends Component {
                         <View>
                             {this.renderContent(this.props.highlight)}
                         </View>
+                        <Text note style={{ color: '#1FABAB', fontWeight: 'bold', marginLeft: '2%', }}>{moment(this.props.highlight.created_at).format('dddd, MMMM Do YYYY, h:mm:ss a')}</Text>
                     </View>
                 </Swipeout>
             </View>

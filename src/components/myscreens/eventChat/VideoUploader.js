@@ -3,25 +3,20 @@ import React, { Component } from 'react';
 import { View, TouchableOpacity, TouchableWithoutFeedback, PermissionsAndroid } from "react-native"
 import Image from "react-native-scalable-image"
 import { Text, Icon, Spinner } from 'native-base';
-import rnFetchBlob from 'rn-fetch-blob';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
-import * as config from "../../../config/bleashup-server-config.json"
-const { fs } = rnFetchBlob
-const AppDir = rnFetchBlob.fs.dirs.SDCardDir + '/Bleashup/'
+import FileExachange from '../../../services/FileExchange';
+import Pickers from '../../../services/Picker';
+
 export default class VideoUploader extends Component {
     constructor(props) {
         super(props)
-        this.uploadURL = config.file_server.protocol +
-            "://" + config.file_server.host + ":" + config.file_server.port + "/video/save"
-        this.baseURL = config.file_server.protocol +
-            "://" + config.file_server.host + ":" + config.file_server.port + '/video/get/'
         this.state = {
             received: 0, total: 0,
-            uploading:true,
-            uploadState: 0
+            uploading: true,
+            uploadState: 1
         }
     }
-    state = {uploading:true}
+    state = { uploading: true }
     componentDidMount() {
         setTimeout(() => {
             this.uploadVideo()
@@ -29,45 +24,54 @@ export default class VideoUploader extends Component {
     }
     task = null
     uploadVideo() {
-        fs.exists(this.props.message.source).then(state => {
-            this.task = rnFetchBlob.fetch("POST", this.uploadURL, {
-                'content-type': 'multipart/form-data',
-            }, [{
-                name: "file",
-                filename: this.props.message.filename,
-                type: this.props.message.content_type,
-                data: rnFetchBlob.wrap(this.props.message.source)
-            }])
-            this.task.uploadProgress((writen, total) => {
-                this.setState({
-                    total: parseInt(total),
-                    uploading:true,
-                    received: parseInt(writen),
-                    uploadState: (parseInt(writen) / parseInt(total)) * 100
-                })
+        this.setState({
+            compressing: true
+        })
+        Pickers.CompressVideo({
+            source: this.props.message.source,
+            filename: this.props.message.filename,
+            size: this.props.message.total,
+            content_type: this.props.message.content_type
+        }).then(res => {
+            this.setState({
+                compressing: false
             })
-            this.task.then(response => {
-                if (response.data) {
-                    newDir = `file://` + AppDir +"Video/"+ response.data
-                    fs.writeFile(newDir.split(`file://`)[1], this.props.message.source.split(`file://`)[1], 'uri').then(() => {
-                        this.setState({
-                            uploadState: 100,
-                            loaded: true,
-                            uploading:false
-                        })
-                        this.props.message.type = 'video'
-                        this.props.message.source = newDir
-                        this.props.message.thumbnailSource = this.baseURL + response.data.split('.')[0] + '_thumbnail.jpeg'
-                        this.props.message.temp = this.baseURL + response.data
-                        this.props.message.received = 0
-                        this.props.message.file_name = response.data
-                        this.props.replaceMessage(this.props.message)
-                    })
-                }
-            })
-            this.task.catch((error) => {
-                console.warn(error)
-            })
+            this.exchanger = new FileExachange(res.source, '/Video/',
+                res.size,
+                this.props.message.received ? this.props.message.received : 0,
+                this.progress.bind(this), this.onSuccess.bind(this), null,
+                this.onError.bind(this), res.content_type,
+                res.filename, '/video')
+            this.exchanger.upload(this.state.writen, this.state.total)
+        })
+    }
+    onSuccess(newDir, path, filename, baseUrl) {
+        this.setState({
+            uploadState: 100,
+            loaded: true,
+            uploading: false
+        })
+        this.props.message.type = 'video'
+        this.props.message.source = newDir
+        this.props.message.thumbnailSource = baseUrl + filename.split('.')[0] + '_thumbnail.jpeg'
+        this.props.message.temp = path
+        this.props.message.total = this.state.total
+        this.props.message.received = 0
+        this.props.message.file_name = filename
+        this.props.replaceMessage(this.props.message)
+    }
+    progress(writen, total) {
+        this.setState({
+            total: parseInt(total),
+            uploading: true,
+            received: parseInt(writen),
+            uploadState: (parseInt(writen) / parseInt(total)) * 100
+        })
+    }
+    onError(error) {
+        console.warn(error)
+        this.setState({
+            uploading: false
         })
     }
     toMB(data) {
@@ -75,7 +79,8 @@ export default class VideoUploader extends Component {
         return data / mb
     }
     cancelUpLoad() {
-        this.task.cancel((err, taskID) => {
+        Pickers.CancleCompression()
+        this.exchanger.task && this.exchanger.task.cancel((err, taskID) => {
         })
     }
     render() {
@@ -120,7 +125,7 @@ export default class VideoUploader extends Component {
                                             {this.state.uploading ? <TouchableWithoutFeedback onPress={() => this.cancelUpLoad(this.props.message.source)}>
                                                 <View><Icon type="EvilIcons" style={{ color: "#1FABAB" }} name="close">
                                                 </Icon>
-                                                 <Spinner style={{ position: 'absolute', marginTop: "-136%", marginLeft: "-15%", }}></Spinner>
+                                                    <Spinner style={{ position: 'absolute', marginTop: "-136%", marginLeft: "-15%", }}></Spinner>
                                                 </View>
                                             </TouchableWithoutFeedback> : <TouchableWithoutFeedback onPress={() => this.uploadVideo()}>
                                                     <View>
@@ -132,8 +137,8 @@ export default class VideoUploader extends Component {
                                         </View>)
                                     }
                                 </AnimatedCircularProgress>
-                                <View style={{ marginTop: "15%", }}><Text style={{ color: '#0A4E52' }} note>{"("}{this.toMB(this.state.received).toFixed(1)}{"/"}
-                                    {this.toMB(this.state.total).toFixed(1)}{")Mb"}</Text></View></View>}</View>
+                                {this.state.compressing ? <Text note>{"compressing ..."}</Text> : <View style={{ marginTop: "15%", }}><Text style={{ color: '#0A4E52' }} note>{"("}{this.toMB(this.state.received).toFixed(1)}{"/"}
+                                    {this.toMB(this.state.total).toFixed(1)}{")Mb"}</Text></View>}</View>}</View>
                 </View>
                 <View>
                     {this.props.message.text ? <Text style={{ margin: '3%', }}>{this.props.message.text}</Text> : null}

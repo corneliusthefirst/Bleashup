@@ -46,8 +46,8 @@ export default class ActionsView extends Component {
                     <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                         this.props.ShowMyActivity(stores.LoginStore.user.phone)
                     })}>
-                        <Icon style={{ marginLeft: "30%", color: this.actionColor, fontSize: this.fontSize, }} type="FontAwesome" name="user"></Icon>
-                        <Label style={{ marginLeft: "34%", fontSize: this.textSize, color: this.actionColor }}>Me</Label>
+                        <Icon style={{ marginLeft: "35%", color: this.actionColor, fontSize: this.fontSize, }} type="FontAwesome" name="user"></Icon>
+                        <Label style={{ marginLeft: "38%", fontSize: this.textSize, color: this.actionColor }}>Me</Label>
                     </TouchableOpacity>
                 </View>
                 <View style={{ height: this.actionHeight }}>

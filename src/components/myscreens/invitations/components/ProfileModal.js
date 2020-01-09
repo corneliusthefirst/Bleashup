@@ -4,6 +4,7 @@ import { View, Text, TouchableOpacity } from 'react-native'
 import { Button, Icon } from 'native-base'
 import CacheImages from '../../../CacheImages';
 import PhotoEnlargeModal from './PhotoEnlargeModal';
+import PhotoViewer from '../../event/PhotoViewer';
 
 
 export default class ProfileModal extends Component {
@@ -24,10 +25,10 @@ export default class ProfileModal extends Component {
                 isOpen={this.props.isOpen}
                 onClosed={this.props.onClosed}
                 style={{
-                    backgroundColor: this.transparent,
-                    height: "97%", borderRadius: 15, width: 410
+                    backgroundColor: "#FEFFDE",
+                    height: "80%", borderTopLeftRadius: 8, borderTopRightRadius: 8, width: "100%"
                 }}
-                position={'center'}
+                position={'bottom'}
             >
                 <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                     <TouchableOpacity style={{}} onPress={this.props.onClosed} transparent>
@@ -36,7 +37,7 @@ export default class ProfileModal extends Component {
                 </View>
 
                 <View style={{ flex: 1, flexDirection: 'row', marginLeft: 3, alignItems: 'flex-start' }}>
-                    <Text style={{ fontSize: 18, fontWeight: '600', color: '#ffebcd' }}>{this.props.profile.nickname}</Text>
+                    <Text style={{ fontSize: 18, fontWeight: '500',}}>{this.props.profile.nickname}</Text>
                 </View>
 
                 <View style={{ flex: 5, flexDirection: 'column' }}>
@@ -47,12 +48,9 @@ export default class ProfileModal extends Component {
                 </View>
 
                 <View style={{ flex: 1, justifyContent: 'flex-start', marginTop: 10, marginLeft: 3 }}>
-                    <Text style={{ fontSize: 17, fontWeight: '600', color: "#ffebcd" }} >{this.props.profile.status}</Text>
+                    <Text style={{ fontSize: 17, fontWeight: '400',  }} >{this.props.profile.status}</Text>
                 </View>
-
-
-
-                {this.props.isToBeJoint ? (this.props.hasJoin ?
+                {/*this.props.isToBeJoint ? (this.props.hasJoin ?
                     <View style={{ flex: 1, flexDirection: 'column', alignItems: 'center', marginTop: 4 }}>
                         <Icon name="comment" type="EvilIcons" style={{ color: "#1FABAB" }} />
                         <Text style={{ marginTop: 5, color: "#1FABAB" }}>chat</Text>
@@ -86,9 +84,9 @@ export default class ProfileModal extends Component {
                         </View>
 
                     )
-                }
+                    */}
 
-                <PhotoEnlargeModal isOpen={this.state.enlargeImage} onClosed={() => this.setState({ enlargeImage: false })} image={this.props.profile.profile} />
+                {this.state.enlargeImage?<PhotoViewer open={this.state.enlargeImage} hidePhoto={() => this.setState({ enlargeImage: false })} photo={this.props.profile.profile} />:null}
 
             </Modal>
         ) : null

@@ -47,10 +47,10 @@ import CalendarServe from '../../../services/CalendarService';
 import SetAlarmPatternModal from "./SetAlarmPatternModal";
 import PhotoInputModal from "./PhotoInputModal";
 import PhotoViewer from "./PhotoViewer";
-import rnFetchBlob from 'rn-fetch-blob';
-import * as config from "../../../config/bleashup-server-config.json"
 import SearchImage from "./createEvent/components/SearchImage";
-const AppDir = rnFetchBlob.fs.dirs.SDCardDir + '/Bleashup'
+import FileExachange from '../../../services/FileExchange';
+import Pickers from '../../../services/Picker';
+import HighlightCardDetail from './createEvent/components/HighlightCardDetail';
 
 const screenWidth = Math.round(Dimensions.get('window').width);
 
@@ -62,10 +62,6 @@ var swipeoutBtns = [
 export default class Event extends Component {
   constructor(props) {
     super(props);
-    this.uploadURL = config.file_server.protocol +
-      "://" + config.file_server.host + ":" + config.file_server.port + "/photo/save"
-    this.baseURL = config.file_server.protocol +
-      "://" + config.file_server.host + ":" + config.file_server.port + '/photo/get/'
     const { initialPage } = this.props;
     this.state = {
       currentPage: "",
@@ -75,7 +71,7 @@ export default class Event extends Component {
       roomID: this.event.id,
       newMessageCount: 0,
       fresh: false,
-      mounted:false,
+      mounted: false,
       public_state: false,
       opened: true,
       isManagementModalOpened: false,
@@ -104,7 +100,20 @@ export default class Event extends Component {
     //console.error(this.props.navigation.getParam("Event").participant)
     switch (this.state.currentPage) {
       case "EventDetails":
-        return <EventDatails {...this.props} Event={this.event}></EventDatails>
+        return <EventDatails startLoader={() => {
+          this.setState({
+            working: true
+          })
+        }} updateLocation={(loc) => this.updateActivityLocation(loc)}
+          updateDesc={(newDes) => {
+            this.updateActivityDescription(newDes)
+          }}
+          master={this.master}
+          stopLoader={() => {
+            this.setState({
+              working: false
+            })
+          }} {...this.props} Event={this.event}></EventDatails>
       case "Reminds":
         return <Remind {...this.props}></Remind>
       case "Votes":
@@ -154,6 +163,12 @@ export default class Event extends Component {
             hideTitle: true
           })
         }}
+          showHighlightDetails={(H) => {
+            this.setState({
+              highlight: H,
+              isHighlightDetailModalOpened: true
+            })
+          }}
           openPhoto={(url) => {
             this.setState({
               showPhoto: true,
@@ -261,11 +276,15 @@ export default class Event extends Component {
           roomMembers: commitee.member
         })
       }
-    } else if (change.changed.toLowerCase().includes("participant") || change.changed.toLowerCase().includes("activity")) {
+    } else if ((change.changed.toLowerCase().includes("participant") || change.changed.toLowerCase().includes("activity"))) {
       ///this.event = newValue
       this.event = find(stores.Events.events, { id: this.event.id })
       this.initializeMaster()
       this.refreshCommitees()
+    }
+    if (change.changed.toLowerCase().includes('post')) {
+      console.warn('including posts')
+      emitter.emit('refresh-highlights')
     }
     if (!this.unmounted) emitter.emit('refresh-history')
     setTimeout(() => {
@@ -299,7 +318,7 @@ export default class Event extends Component {
     //this.event = this.props.navigation.getParam("Event")
     if (this.backHandler)
       this.backHandler.remove();
-   this.backHandler = BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this))
+    this.backHandler = BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this))
   }
   user = null
   event = this.props.navigation.getParam("Event")
@@ -319,7 +338,7 @@ export default class Event extends Component {
   }
   componentDidMount() {
     console.warn(this.event.calendar_id)
-    if (!this.event.calendared) {
+    if (!this.event.calendared && this.event.period) {
       this.setState({
         isSynchronisationModalOpned: true
       })
@@ -328,15 +347,40 @@ export default class Event extends Component {
         isSettingsModalOpened: true
       })
     }
-      this.setState({
-        currentPage: this.props.navigation.getParam("tab"),
-        mounted: true
-      })
+    this.setState({
+      currentPage: this.props.navigation.getParam("tab"),
+      mounted: true
+    })
 
     this.refreshePage()
   }
+  updateActivityLocation(newLocation) {
+    this.setState({
+      working: true
+    })
+    Requester.updateLocation(this.event.id, newLocation).then(() => {
+      this.initializeMaster()
+    }).catch(() => {
+      this.setState({
+        working: false
+      })
+    })
+  }
+  updateActivityDescription(newDesciption) {
+    this.setState({
+      working: true
+    })
+    Requester.updateDescription(this.event.id, newDesciption).then(() => {
+      this.initializeMaster()
+    }).catch(() => {
+      this.setState({
+        working: false
+      })
+    })
+  }
   componentWillUnmount() {
     this.unmounted = true
+    Pickers.CleanAll()
     console.warn("unMounting")
     GState.currentCommitee = null
     this.backHandler.remove()
@@ -785,7 +829,7 @@ export default class Event extends Component {
           working: false
         })
         emitter.emit(`left_${this.event.id}`) //TODO: this signal is beign listen to in the module current_events>public_events>join
-        RemoveParticipant(this.event_id,this.user.phone).then((response) =>{
+        RemoveParticipant(this.event_id, this.user.phone).then((response) => {
           console.warn(response)
         })
       }).catch((e) => {
@@ -857,6 +901,19 @@ export default class Event extends Component {
       Toast.show({ text: "App is Busy" })
     }
   }
+  removeActivityPhoto() {
+    this.setState({
+      working: true,
+      isAreYouSureModalOpened: false
+    })
+    Requester.changeBackground(this.event.id, '').then((res) => {
+      this.initializeMaster()
+    }).catch(() => {
+      this.setState({
+        working: false
+      })
+    })
+  }
   addToCalendar(pattern) {
     this.setState({
       isSetPatternModalOpened: false,
@@ -883,31 +940,12 @@ export default class Event extends Component {
     this.setState({
       isSelectPhotoInputMethodModal: false
     })
-    ImagePicker.openPicker({
-      cropping: true,
-      isCamera: notCam ? false : true,
-      //width:400,
-      //height:300,
-      //openCameraOnStart: true,
-      returnAfterShot: true,
-      compressQuality: 50
-    }).then(response => {
+    Pickers.SnapPhoto(true).then(snap => {
       this.setState({
         working: true
       })
-      let temp = response[0].path.split('/');
-      this.task = rnFetchBlob.fetch("POST", this.uploadURL, {
-        'content-type': 'multipart/form-data',
-      }, [{
-        name: "file",
-        filename: temp[temp.length - 1],
-        type: response[0].mime,
-        size: response[0].size,
-        data: rnFetchBlob.wrap(response[0].path)
-      }])
-      this.task.then(respon => {
-        let background = this.baseURL + respon.data
-        Requester.changeBackground(this.event.id, background).then(res => {
+      let exchanger = new FileExachange(snap.source, '/Photo/', 0, 0, null, (newDir, path, filename) => {
+        Requester.changeBackground(this.event.id, path).then(res => {
           console.warn(res)
           this.initializeMaster()
         }).catch(err => {
@@ -916,24 +954,24 @@ export default class Event extends Component {
           })
           Toast.show({ text: "Sorry , We are Unable To Perfrom This Action" })
         })
-      })
-      this.task.catch(error => {
+      }, null, (error) => {
         console.warn("catching activity bacground Photo upload ", error)
         this.setState({
           working: false
         })
-      })
+      }, snap.content_type, snap.filename, '/photo', false)
+      exchanger.upload(0, 0)
     })
   }
   render() {
     StatusBar.setHidden(false, true)
-    return (<SideMenu style={{backgroundColor: "#FEFEDE",}} autoClosing={true} onMove={(position) => {
+    return (<SideMenu style={{ backgroundColor: "#FEFEDE", }} autoClosing={true} onMove={(position) => {
 
     }} bounceBackOnOverdraw={false} onChange={(position) => {
       this.isOpen = position
     }} isOpen={this.isOpen} openMenuOffset={this.currentWidth}
       menu={<View><SWView
-        navigateHome={() =>{
+        navigateHome={() => {
           this.props.navigation.navigate("Home")
         }}
         ref="swipperView"
@@ -984,7 +1022,7 @@ export default class Event extends Component {
         }
         {this.state.showNotifiation ? <View style={{
           position: "absolute", width: "100%", hight: 300, marginRight: "3%",
-          marginTop: "10%"
+          marginTop: "12%"
         }}>
           <NotificationModal change={this.state.change} onPress={() => {
             this.setState({
@@ -1132,6 +1170,17 @@ export default class Event extends Component {
             })
           }}></SetAlarmPatternModal> : null}
         <PhotoInputModal
+          removePhoto={() => {
+            this.setState({
+              isAreYouSureModalOpened: true,
+              isSelectPhotoInputMethodModal: false,
+              warnTitle: "Remove Photo",
+              warnDescription: "Are You Sure You Want To Remove This Photo",
+              callback: this.removeActivityPhoto.bind(this),
+              okButtonText: "Remove"
+            })
+          }}
+          photo={this.event.background}
           showActivityPhoto={() => {
             this.event.background ? this.setState({
               showPhoto: true,
@@ -1163,6 +1212,14 @@ export default class Event extends Component {
             isSearchImageModalOpened: false
           })
         }}></SearchImage>
+        {this.state.isHighlightDetailModalOpened ? <HighlightCardDetail
+          isOpen={this.state.isHighlightDetailModalOpened}
+          item={this.state.highlight}
+          onClosed={() => {
+            this.setState({
+              isHighlightDetailModalOpened: false
+            })
+          }}></HighlightCardDetail> : null}
       </View>
     </SideMenu>
     );

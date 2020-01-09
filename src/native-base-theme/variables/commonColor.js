@@ -259,8 +259,8 @@ export default {
     titleFontfamily: platform === "ios" ? "System" : "Roboto_medium",
     titleFontSize: platform === "ios" ? 17 : 19,
     subTitleFontSize: platform === "ios" ? 11 : 14,
-    subtitleColor: platform === "ios" ? "#000" : "#FEFFDE",
-    titleFontColor: platform === "ios" ? "#000" : "#FEFFDE",
+    subtitleColor: platform === "ios" ? "#000" : "#0A4E52",
+    titleFontColor: platform === "ios" ? "#000" : "#0A4E52",
 
     // Other
     borderRadiusBase: platform === "ios" ? 5 : 2,

@@ -19,7 +19,7 @@ export default class ChatroomMenu extends Component {
     }
     componentDidMount() {
         this.setState({
-            publi: this.props.public,
+            public: this.props.public,
             opened: this.props.opened
         })
         emitter.on("open-close", (newState) => {

@@ -13,6 +13,7 @@ import ActionsView from "./ActionsView";
 import Commitee from "./Commitee";
 import moment from "moment";
 import CacheImages from '../../CacheImages';
+import shadower from "../../shadower";
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenheight = Math.round(Dimensions.get('window').height);
 const HEADER_MAX_HEIGHT = 140;
@@ -167,11 +168,7 @@ export default class SWView extends Component {
                 borderRadius: 2,
                 borderColor: '#ddd',
                 borderBottomWidth: 0,
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.8,
-                shadowRadius: 2,
-                elevation: 5,margin: "1%",}}>
+                ...shadower(5),margin: "1%",}}>
                     <ScrollView
                         style={{ backgroundColor: "#FEFFDE", }}
                         //scrollEnabled={true}
@@ -190,16 +187,12 @@ export default class SWView extends Component {
                                 alignItems: 'center',
                                 marginTop: 2,
                                 borderRadius: 5,
-                                justifyContent: 'center', flexDirection: 'row', shadowOpacity: 1,
-                                shadowOffset: {
-                                    height: 1,
-                                },
-                                shadowRadius: 10, elevation: 6
+                                justifyContent: 'center', flexDirection: 'row', ...shadower(6)
                             }}><View style={{ width: "90%" }}><Title style={{ fontWeight: 'bold', fontSize: 17, marginTop: 2, color: "#0A4E52" }}>{this.props.event.about.title}</Title>
-                                    <Title style={{
+                                    {this.props.event.period?<Title style={{
                                         marginRight: "2%", fontStyle: 'italic', fontWeight: this.props.event.closed ? "bold" : "400",
                                         color: this.props.event.closed ? "red" : this.dateDiff(this.props.event.period) > 0 ? "gray" : "#1FABAB", fontSize: 12,
-                                    }}>{this.props.event.closed ? "Closed" : this.displayDate(this.props.event.period)}</Title>
+                                    }}>{this.props.event.closed ? "Closed" : this.displayDate(this.props.event.period)}</Title>:null}
                                 </View>
                                 <Icon onPress={() => {
                                     this.props.navigateHome()
@@ -210,11 +203,7 @@ export default class SWView extends Component {
                             </View>
                             <View style={{ heignt: "60%", display: "flex", flexDirection: 'row', backgroundColor: "#FEFFDE", marginLeft: "1%", }}>
                                 <View style={{
-                                    marginTop: "2%", width: "25%", shadowOpacity: .5,
-                                    shadowOffset: {
-                                        height: 1,
-                                    },
-                                    shadowRadius: 10, elevation: 3, borderRadius: 12
+                                    marginTop: "2%", width: "25%", ...shadower(3), borderRadius: 12
                                 }}>
                                     <ActionsView
                                         publish={() => this.props.publish()}
