@@ -252,9 +252,9 @@ export default class EventHighlights extends Component {
     });
 
     if (this.props.event_id) {
-      this.props.onClosed();
+        this.props.onClosed();
     }
-
+ 
   }
 
   @autobind
