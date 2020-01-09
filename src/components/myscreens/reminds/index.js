@@ -1,19 +1,19 @@
 import React, { Component } from "react";
 import {
-  Content, Card, CardItem, Text, Body, Container, Icon, Header,
-  Item, Title, Input, Left, Right, Spinner,
-  Button,Textarea,Label
+    Icon,
+  Item, Title, Spinner,
+  Button,
 } from "native-base";
  
 import { StyleSheet, View,Image,TouchableOpacity, Dimensions} from 'react-native';
 import autobind from "autobind-decorator";
 import TasksCard from "./TasksCard"
-import PhotoEnlargeModal from "../invitations/components/PhotoEnlargeModal";
 import  stores from '../../../stores/index';
 import {observer} from 'mobx-react'
 import BleashupFlatList from '../../BleashupFlatList';
 import TasksCreation from './TasksCreation';
 import { find, findIndex, uniqBy, reject,filter } from "lodash";
+import shadower from '../../shadower';
 
 //const MyTasksData = stores.Reminds.MyTasksData
  
@@ -24,7 +24,7 @@ export default class Reminds extends Component {
         super(props)
         this.state={
           eventRemindData:[],
-          event_id:"71e57d50-252e-11ea-9234-dd23f4cef77f",
+          event_id:this.props.event_id,
           RemindCreationState:false
         }
     }
@@ -40,7 +40,7 @@ componentDidMount(){
 
   
    stores.Reminds.readFromStore().then((Reminds)=>{
-    let reminds = filter(Reminds,{event_id:this.state.event_id});
+    let reminds = filter(Reminds,{event_id:this.props.event_id});
     this.setState({eventRemindData:reminds});
     console.warn("ok",reminds)
    })
@@ -67,32 +67,25 @@ _keyExtractor = (item, index) => item.id
      return(
 
       <View style={{flex:1,backgroundColor:'#FEFFDE'}}>
-        <View style={{height:"8%",width:"96%",justifyContent:"space-between",flexDirection:"row",backgroundColor:"#FEFFDE",alignItems:"center",marginLeft:"2%",marginRight:"2%"}}>
-           <View >
-             <TouchableOpacity>
-                <Icon  onPress={this.back} type='MaterialCommunityIcons' name="keyboard-backspace" style={{color:"#1FABAB"}} />
-             </TouchableOpacity>
-           </View>
-
-             <View >
-               <Text style={{fontSize:18}}>Tasks / Reminds</Text>
+        <View style={{height:44,width:"100%",padding: "2%", justifyContent:"space-between",flexDirection:"row",backgroundColor:"#FEFFDE",alignItems:"center", ...shadower()}}>
+             <View>
+               <Title style={{fontSize:20 ,fontWeight: 'bold',}}>Tasks / Reminds</Title>
              </View>
 
-              <View >           
+              <View>           
                <TouchableOpacity>  
                 <Icon type='AntDesign' name="pluscircle" style={{color:"#1FABAB"}} onPress={this.AddRemind} />
                </TouchableOpacity>
              </View>
 
          </View>
-
-      <View style={{height:"92%"}}>
+      <View>
         <BleashupFlatList 
           initialRender={5}
           renderPerBatch={5}
-          onScroll={this._onScroll}
+          //onScroll={this._onScroll}
           firstIndex={0}
-          showVerticalScrollIndicator={false}
+          //showVerticalScrollIndicator={false}
           keyExtractor={this._keyExtractor}
           dataSource={this.state.eventRemindData}
           renderItem={(item, index) => {
@@ -101,6 +94,7 @@ _keyExtractor = (item, index) => item.id
               </TasksCard>
             );
           }}
+          numberOfItems={this.state.eventRemindData.length}
         >
         </BleashupFlatList >
   

@@ -115,7 +115,7 @@ export default class Event extends Component {
             })
           }} {...this.props} Event={this.event}></EventDatails>
       case "Reminds":
-        return <Remind {...this.props}></Remind>
+        return <Remind event_id={this.event.id} {...this.props}></Remind>
       case "Votes":
         return <Votes {...this.props}></Votes>
       case "Highlights":

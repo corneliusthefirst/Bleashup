@@ -226,7 +226,8 @@ class CardListItem extends Component {
               })} >
                 <Title style={{ marginLeft: -40, fontWeight: 'bold', color:"#0A4E52" }}
                 >{this.state.item.event_title}</Title>
-                <Title style={{ marginLeft: -40, color: 'dimgray', fontSize: 12, color:"#0A4E52", fontStyle: 'italic', }}> on {moment(this.state.item.event_time).format("dddd, MMMM Do YYYY, h:mm:ss a")}</Title>
+                {this.state.item.event_time?<Title style={{ marginLeft: -40, color: 'dimgray', fontSize: 12, color:"#0A4E52", fontStyle: 
+                'italic', }}> on {moment(this.state.item.event_time).format("dddd, MMMM Do YYYY, h:mm:ss a")}</Title>:null}
               </TouchableOpacity>}
             </Body>
           </CardItem>

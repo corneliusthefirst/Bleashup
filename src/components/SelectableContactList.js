@@ -30,9 +30,9 @@ export default class SelectableContactList extends PureComponent {
     render() {
         return (
             <Modal
-                backdropPressToClose={false}
-                backdropOpacity={0.7}
-                swipeToClose={false}
+                backdropPressToClose={true}
+                backdropOpacity={0.5}
+                swipeToClose={true}
                 backButtonClose={true}
                 position={"bottom"}
                 //entry={"top"}
@@ -56,7 +56,7 @@ export default class SelectableContactList extends PureComponent {
                     })
                 }}
                 style={{
-                    height: this.state.inviteViaEmail ? "30%" : "95%",
+                    height: this.state.inviteViaEmail ? "30%" : "90%",
                     borderTopLeftRadius: 8,
                     borderTopRightRadius: 8,
                     backgroundColor: "#FEFFDE",

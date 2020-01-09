@@ -1103,7 +1103,7 @@ class Request {
                     })
                 }).catch((error) => {
                     console.warn(error)
-                    Toast.show({ text: "Un Able To PErform Request" })
+                    Toast.show({ text: "Unable To Perform Request" })
                     reject(error)
                 })
             })

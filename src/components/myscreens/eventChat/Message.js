@@ -90,7 +90,7 @@ export default class Message extends Component {
                 creator: (this.props.message.sender.phone == this.props.creator),
                 loaded: true
             })
-        }, 50*this.props.delay)
+        }, 50 * this.props.delay)
     }
     slept = false
     openingSwipeout() {
@@ -249,7 +249,12 @@ export default class Message extends Component {
                     <Swipeout isMessage onPress={this.openingSwipeout()}
                         ref={'chatSwipeOut'} onOpen={() => { this.openingSwipeout() }}
                         onClose={() => { this.closingSwipeout() }} autoClose={true} close={true}
-                        left={[{ color: '#04FFB6', type: 'default', backgroundColor: "transparent", text: 'reply' }]}
+                        left={[{
+                            color: 'black', type: 'default', backgroundColor: "transparent", text: 'reply', onPress: () => {
+                                Vibration.vibrate(this.duration)
+                                this.handleReply()
+                            }
+                        }]}
                         style={{ backgroundColor: 'transparent', width: "100%" }}>
                         <View>
                             <View style={GeneralMessageBoxStyle}>

@@ -94,11 +94,11 @@ class Request {
     }
     Remind() {
         return { 
-            id: '',
+            id: 'newRemindId',
             event_id: "",
             created_at: moment().format(),
             updated_at: moment().format(),
-            creator: '',
+            creator: stores.LoginStore.user.phone,
             title: '',
             description: '',
             period: "",
