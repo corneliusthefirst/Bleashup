@@ -8,7 +8,6 @@ import {
 import {StyleSheet, View,Image,TouchableOpacity, Dimensions} from 'react-native';
 import ActionButton from 'react-native-action-button';
 import Modal from 'react-native-modalbox';
-import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 import autobind from "autobind-decorator";
 import ImagePicker from 'react-native-image-picker';
 import moment from "moment";
@@ -31,16 +30,6 @@ uuid.v1({
   nsecs: Math.floor(Math.random() * 5678)+50
 });
 
-
-var radio_props = [
-  {label: 'Add Activity title', value: 0 },
-  {label: 'Add Activity period', value: 1 },
-  {label: 'Add Activity Photo', value: 2 },
-  {label: 'Add Activity Description', value: 3},
-  {label: 'Add Activity Location', value: 4},
-  {label: 'Add Activity Hightlights', value: 5 }
- 
-];
 
 let {height, width} = Dimensions.get('window');
 
@@ -97,16 +86,7 @@ componentDidMount(){
         newEvent.id = New_id;
       CreateRequest.createEvent(newEvent).then((res) => {
         console.warn(res)
-        //gives this new id to all highlights before pushing
-        /*forEach(newEvent.highlights, (highlightId) => {
-          stores.Highlights.readFromStore().then((Highlights) => {
-            let highlight = find(Highlights, { id: highlightId });
-            highlight.event_id = New_id;
-            stores.Highlights.updateHighlight(highlight, false).then(() => { });
 
-          })
-
-        });*/
         //reset new Event object
         stores.Events.delete("newEventId").then(() => {
             this.setState({
@@ -188,53 +168,6 @@ componentDidMount(){
                "radio-button-unchecked"} type={type = "MaterialIcons"}></Icon>
              <Text>{"Activity Location"}</Text>
            </Button>
-           {/*<Button transparent onPress={() => {
-             this.setState({ EventHighlightState: true })
-           }}>
-            <Icon name={this.state.currentEvent.highlights.length>0 ? "radio-button-checked" :
-               "radio-button-unchecked"} type={type = "MaterialIcons"}></Icon>
-             <Text>{"Activity Posts"}</Text>
-          </Button>*/}
-                  {/*<RadioForm
-                     radio_props={radio_props}
-                     initial={0}
-                     buttonColor={"#1FABAB"}
-                     selectedButtonColor={"#1FABAB"}
-                     labelStyle={{color:"#0A4E52"}}
-                    
-
-                     onPress={(value) => {
-
-                      switch(value){
-                        case 0:
-                        this.setState({EventTitleState:true})
-                        break
-                        case 1:
-                          this.setState({EventPeriodState:true})
-                          break
-                        case 2:
-                        this.setState({EventPhotoState:true})
-                        break
-                        case 3:
-                        this.setState({EventDescriptionState:true})
-                        this.refs.description_ref.init();
-                        break
-                        case 4:
-                         this.setState({EventLocationState:true})
-                         this.refs.location_ref.init();
-                        break
-                        case 5:
-                         this.setState({EventHighlightState:true})
-                         //this.refs.highlight_ref.setState({animateHighlight:true})
-                        break
-                        default:
-                        this.setState({EventTitleState:true})
-                        
-
-                       }
-                    }}
-
-                  />*/}
                 </View>
 
  

@@ -85,7 +85,12 @@ export default class PhotoView extends Component {
                     width: this.props.width ? this.props.width : "100%",
                     borderRadius: this.props.borderRadius ? this.props.borderRadius : 0
                 }} square source={require('../../../../../assets/default_event_image.jpeg')}></Thumbnail> :
-                    <CacheImages thumbnails square source={{ uri: this.state.image }}
+                <Thumbnail style={{
+                    height: this.props.height ? this.props.height : 150,
+                    width: this.props.width ? this.props.width : "100%",
+                    borderRadius: this.props.borderRadius ? this.props.borderRadius : 0
+                }} square source={{ uri: this.state.image }}></Thumbnail>     
+                /* <CacheImages thumbnails square source={{ uri: this.state.image }}
                         //parmenent={false}
                         style={{
                             height: this.props.height ? this.props.height : 150,
@@ -94,7 +99,7 @@ export default class PhotoView extends Component {
                         }}
                         //resizeMode="contain"
                         width={this.props.width}
-                    ></CacheImages>
+                    ></CacheImages>*/
                 }
                 {this.state.video || this.state.audio ? <Icon onPress={() => {
                     this.showPhoto(this.state.image)
