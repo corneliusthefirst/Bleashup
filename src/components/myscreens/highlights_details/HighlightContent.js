@@ -8,6 +8,7 @@ import converToHMS from './convertToHMS';
 import SimpleAudioPlayer from './SimpleAudioPlayer';
 import shadower from '../../shadower';
 import CacheImages from '../../CacheImages';
+import testForURL from '../../../services/testForURL';
 
 export default class HighlightContent extends Component {
     constructor(props) {
@@ -38,7 +39,9 @@ export default class HighlightContent extends Component {
                                 <SimpleAudioPlayer url={this.props.highlight.url}></SimpleAudioPlayer>
                             </View> : null
                         }
-                        {this.props.highlight.url && (this.props.highlight.url.photo || this.props.highlight.url.video) ?
+                        {this.props.highlight.url && 
+                            (this.props.highlight.url.photo && testForURL(this.props.highlight.url.photo) || 
+                            this.props.highlight.url.video && testForURL(this.props.highlight.url.video)) ?
                             this.props.modal ? <TouchableWithoutFeedback onPress={() => requestAnimationFrame(() => this.props.highlight.url.video ? this.props.showVideo(this.props.highlight.url.video) : this.props.showPhoto(this.props.highlight.url.photo))}>
                                 <View style={{
                                     borderRadius: 10, alignSelf: 'center', margin: '4%', ...shadower()
@@ -50,7 +53,9 @@ export default class HighlightContent extends Component {
                                     }} source={{ uri: this.props.highlight.url.photo ? this.props.highlight.url.photo : this.props.highlight.url.video }} width={360}></CacheImages>
                                     {this.props.highlight.url.video ?
                                         <View style={{ position: 'absolute', marginTop: "25%", marginLeft: '43%', }}>
-                                            <Button transparent>
+                                            <Button onPress={() => {
+                                                this.props.showVideo(this.props.highlight.url.video)
+                                            }} transparent>
                                                 <Icon style={{ fontSize: 50, }} type={'EvilIcons'} name={'play'}></Icon>
                                             </Button>
                                         </View> : null

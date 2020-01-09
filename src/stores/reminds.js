@@ -3,6 +3,7 @@ import { find, findIndex, uniqBy, reject } from "lodash";
 import storage from "./Storage";
 import moment from "moment";
 import GState from "./globalState";
+import request from '../services/requestObjects';
 export default class Reminds {
   @observable Reminds = {
     id: '',
@@ -29,7 +30,7 @@ export default class Reminds {
   @action addReminds(NewRemind) {
     return new Promise((resolve, Reject) => {
       this.readFromStore().then(Reminds => {
-        if (Reminds) Reminds = uniqBy(Reminds.concat([NewRemind]), "id");
+        if (Reminds) Reminds = uniqBy([NewRemind].concat(Reminds), "id");
         else Reminds = [NewRemind];
         this.keyData.data = Reminds;
         storage.save(this.keyData).then(() => {
@@ -45,7 +46,7 @@ export default class Reminds {
         let Remind = find(Reminds, { id: NewRemind.remind_id });
         RemindIndex = findIndex(Reminds, { id: NewRemind.remind_id });
         Remind.description = NewRemind.description;
-        Remind.updated_at = moment().format("YYYY-MM-DD HH:mm");
+        Remind.updated_at = moment().format();
         Remind.description_updated = inform;
         Remind.updated = inform;
         Reminds.splice(RemindIndex, 1, Remind);
@@ -64,7 +65,7 @@ export default class Reminds {
         let Remind = find(Reminds, { id: NewRemind.remind_id });
         RemindIndex = findIndex(Reminds, { id: NewRemind.remind_id });
         Remind.title = NewRemind.title;
-        Remind.updated_at = moment().format("YYYY-MM-DD HH:mm");
+        Remind.updated_at = moment().format();
         Remind.description_updated = inform;
         Remind.updated = inform;
         Reminds.splice(RemindIndex, 1, Remind);
@@ -82,7 +83,7 @@ export default class Reminds {
         let Remind = find(Reminds, { id: NewRemind.remind_id });
         RemindIndex = findIndex(Reminds, { id: NewRemind.remind_id });
         Remind.status = NewRemind.status;
-        Remind.updated_at = moment().format("YYYY-MM-DD HH:mm");
+        Remind.updated_at = moment().format();
         Remind.description_updated = inform;
         Remind.updated = inform;
         Reminds.splice(RemindIndex, 1, Remind);
@@ -101,7 +102,7 @@ export default class Reminds {
         let Remind = find(Reminds, { id: NewRemind.remind_id });
         RemindIndex = findIndex(Reminds, { id: NewRemind.remind_id });
         Remind.isDone = NewRemind.isDone;
-        Remind.updated_at = moment().format("YYYY-MM-DD HH:mm");
+        Remind.updated_at = moment().format();
         Remind.description_updated = inform;
         Remind.updated = inform;
         Reminds.splice(RemindIndex, 1, Remind);
@@ -125,7 +126,7 @@ export default class Reminds {
         Remind.period = NewRemind.period;
         Remind.status = NewRemind.status;
         Remind.members = NewRemind.members;
-        Remind.updated_at = moment().format("YYYY-MM-DD HH:mm");
+        Remind.updated_at = moment().format();
         Remind.description_updated = inform;
         Remind.updated = inform;
         Reminds.splice(RemindIndex, 1, Remind);
@@ -145,7 +146,7 @@ export default class Reminds {
         let Remind = find(Reminds, { id: NewRemind.remind_id });
         RemindIndex = findIndex(Reminds, { id: NewRemind.remind_id });
         Remind.recursive_frequency = NewRemind.recursive_frequency;
-        Remind.updated_at = moment().format("YYYY-MM-DD HH:mm");
+        Remind.updated_at = moment().format();
         Remind.description_updated = inform;
         Remind.updated = inform;
         Reminds.splice(RemindIndex, 1, Remind);
@@ -164,7 +165,7 @@ export default class Reminds {
         let Remind = find(Reminds, { id: NewRemind.remind_id });
         RemindIndex = findIndex(Reminds, { id: NewRemind.remind_id });
         Remind.recurrence = NewRemind.recurrence;
-        Remind.updated_at = moment().format("YYYY-MM-DD HH:mm");
+        Remind.updated_at = moment().format();
         Remind.description_updated = inform;
         Remind.updated = inform;
         Reminds.splice(RemindIndex, 1, Remind);
@@ -183,7 +184,7 @@ export default class Reminds {
         let Remind = find(Reminds, { id: NewRemind.remind_id });
         RemindIndex = findIndex(Reminds, { id: NewRemind.remind_id });
         Remind.period = NewRemind.period;
-        Remind.updated_at = moment().format("YYYY-MM-DD HH:mm");
+        Remind.updated_at = moment().format();
         Remind.description_updated = inform;
         Remind.updated = inform;
         Reminds.splice(RemindIndex, 1, Remind);
@@ -202,7 +203,7 @@ export default class Reminds {
         let Remind = find(Reminds, { id: NewRemind.remind_id });
         RemindIndex = findIndex(Reminds, { id: NewRemind.remind_id });
         Remind.members = NewRemind.members;
-        Remind.updated_at = moment().format("YYYY-MM-DD HH:mm");
+        Remind.updated_at = moment().format();
         Remind.members_updated = inform;
         Remind.updated = inform;
         Reminds.splice(RemindIndex, 1, Remind);
@@ -219,6 +220,7 @@ export default class Reminds {
     return new Promise((resolve, RejectPromise) => {
       this.readFromStore().then(Reminds => {
         Reminds = reject(Reminds, ["id", RemindId]);
+        RemindId === "newRemindId" ? Reminds.unshift(request.Remind()) : null
         this.keyData.data = Reminds;
         storage.save(this.keyData).then(() => {
           this.Reminds = this.keyData.data;

@@ -111,7 +111,7 @@ componentDidUpdate(prevProps,prevState){
                     marginTop:"-8%"
                 }}
                 position={'bottom'}
-                backButtonClose={true} 
+                backButtonClose={true}
                 //backdropPressToClose={false}
                 coverScreen={true}
                 >

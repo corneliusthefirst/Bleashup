@@ -1186,7 +1186,7 @@ export default class ChatRoom extends Component {
     messageList() {
         return <BleashupFlatList backgroundColor={"transparent"} firstIndex={0} ref="bleashupSectionListOut" inverted={true} renderPerBatch={20} initialRender={20} numberOfItems={this.room.messages.length} keyExtractor={(item, index) => item ? item.id : null}
             renderItem={(item, index) => {
-                this.delay = this.delay >= 20 ? 0 : this.delay + 1
+                this.delay = this.delay >= 20 || !item.sent ? 0 : this.delay + 1
                 return item ? <Message delay={this.delay} room={this.room} PreviousSenderPhone={this.room.messages[index > 0 ? index - 1 : 0] ? this.room.messages[index > 0 ? index - 1 : 0].sender.phone : null} showActions={(message) => this.showActions(message)} firebaseRoom={this.props.firebaseRoom} roomName={this.props.roomName} sendMessage={message => this.sendTextMessage(message)} received={item.received ? item.received.length >= this.props.members.length : false} replaceMessageVideo={(data) => this.replaceMessageVideo(data)} showPhoto={(photo) => this.showPhoto(photo)} replying={(replyer, color) => this.replying(replyer, color)} replaceMessage={(data) => this.replaceMessage(data)} replaceAudioMessage={(data) => this.replaceAudioMessage(data)} message={item} openReply={(replyer) => {
                     this.setState({
                         replyer: replyer,

@@ -117,80 +117,27 @@ export default class TasksCreation extends Component {
      @autobind
      handleDatePicked(event,date){
        if (date !== undefined) {
-         //this.setState({date:value});
-         //console.warn("date",date);
-         //console.warn("date2",moment(date).format().split("T")[0]);
-         //deactivate the date picker before setting the obtain time
-         this.setState({ isDateTimePickerVisible: false });
-      
-         this.setState({date:date});
-         if(this.state.time==""){
-         let period = moment(this.state.date).format().split("T")[0] + "T" +
-         moment().format().split("T")[1]
-
-         this.state.currentRemind.period = period;
-         this.setState({currentRemind:this.state.currentRemind})
-
-         this.setState({inputDateValue:moment(period).format().split("T")[0]})
-         let newRemind = {remind_id:this.state.currentRemind.id,period:period}
-         if(!this.props.update){
-            stores.Reminds.updatePeriod(newRemind,false).then(()=>{});
-          }
-
-         }else{
-          let period = moment(this.state.date).format().split("T")[0] + "T" +
-          moment(this.state.time).format().split("T")[1]
-
-          this.state.currentRemind.period = period;
-          this.setState({currentRemind:this.state.currentRemind})
-
-          this.setState({inputDateValue:moment(period).format().split("T")[0]})
-          let newRemind = {remind_id:this.state.currentRemind.id,period:period}
-       
-          if(!this.props.update){
-           stores.Reminds.updatePeriod(newRemind,false).then(()=>{});
-          }
-        }
-     }
+         let newDate = moment(date).format().split("T")[0]
+         let currentTime = this.state.date ?
+           moment(this.state.date).format().split("T")[1] :
+           moment().startOf("day").add(moment.duration(1, 'hours')).toISOString().split("T")[1]
+         let dateTime = newDate + "T" + currentTime
+         //deactivate the date picker before setting the obtain time     
+         this.setState({ date: dateTime, isDateTimePickerVisible: false });
+         stores.Reminds.updatePeriod("newRemindId", dateTime, false).then(() => { });
+       }
     }
  
      @autobind
      setTime(event, date){
        if (date !== undefined) {
- 
-         //console.warn("time",date);
-         //console.warn("time2",moment(date).format().split("T")[1]);
-         //deactivate the clock before setting the obtain time
-         this.setState({show:false});
-         //set time
-         this.setState({time:date});
-
-         if(this.state.date==""){
-         let period = moment().format().split("T")[0] + "T" +
-         moment(this.state.time).format().split("T")[1];
-
-         this.state.currentRemind.period = period;
-         this.setState({currentRemind:this.state.currentRemind})
- 
-         this.setState({inputTimeValue:moment(period).format().split("T")[1].split("+")[0]});
-         let newRemind = {remind_id:this.state.currentRemind.id,period:period}
-         if(!this.props.update){
-         stores.Reminds.updatePeriod(newRemind,false).then(()=>{});
-         }
-         }else{
-          let period = moment(this.state.date).format().split("T")[0] + "T" +
-          moment(this.state.time).format().split("T")[1];
-
-          this.state.currentRemind.period = period;
-          this.setState({currentRemind:this.state.currentRemind})
-  
-          this.setState({inputTimeValue:moment(period).format().split("T")[1].split("+")[0]});
-          let newRemind = {remind_id:this.state.currentRemind.id,period:period}
-          if(!this.props.update){
-          stores.Reminds.updatePeriod(newRemind,false).then(()=>{});
-          }
-         }
-     
+         let time = moment(date).format().split("T")[1]
+         let newDate = this.state.date ?
+           moment(this.state.date).format().split("T")[0] :
+           moment().format().split("T")[0]
+         let dateTime = newDate + "T" + time
+         this.setState({ show: false, date: dateTime });
+         stores.Reminds.updatePeriod("newRemindId", dateTime, false).then(() => { });
        }
  
      }
@@ -315,11 +262,10 @@ export default class TasksCreation extends Component {
             newRemind.members = this.state.currentMembers;
             this.setState({currentRemind:this.state.currentRemind})
           }
-
-          stores.LoginStore.getUser().then((user)=>{
+            let user = stores.LoginStore.user
             newRemind.creator = user.name;
             newRemind.event_id = this.props.event_id; //user phone is use to uniquely identify locals
-            newRemind.created_at = moment().format("YYYY-MM-DD HH:mm");
+            newRemind.created_at = moment().format();
           })
            this.props.parentComp.updateData(newRemind);
          
@@ -329,12 +275,6 @@ export default class TasksCreation extends Component {
           //reset remind both in store and on screen
            this.resetRemind();
            stores.Reminds.removeRemind("newRemindId").then(()=>{});
-           stores.Reminds.addReminds(this.state.currentRemind).then(()=>{});
-    
-          stores.Reminds.readFromStore().then((reminds)=>{
-             console.warn("reminds are",reminds);
-          })
-        })
     
       }
   
@@ -376,12 +316,13 @@ export default class TasksCreation extends Component {
           isOpen={this.props.isOpen}
           onClosed={() => {this.props.onClosed()}}
           style={{
-            height:"82%", width: "95%", borderRadius: 10,
+            height:"80%", width: "98%", borderTopLeftRadius: 8,borderTopRightRadius: 8,
             backgroundColor: "#FEFFDE", borderColor: 'black', flexDirection: 'column'
           }}
           coverScreen={true}
-          position={'center'}
-          swipeToClose={false}
+          backButtonClose={true}
+          position={'bottom'}
+          swipeToClose={true}
         >
      <View style={{height:"100%",backgroundColor:"#FEFFDE",width:"100%", borderRadius: 10}}>
          
@@ -403,7 +344,7 @@ export default class TasksCreation extends Component {
                 <View style={{height:height/8,alignItems:'center',marginBottom:"-7%"}}>
                   {/*<Text style={{alignSelf:'flex-start',margin:"3%",fontWeight:"500",fontSize:16}} >Title :</Text>*/}
                     <Item  style={{borderColor:'black',width:"95%",marginTop:"3%"}} rounded>
-                     <TextInput  maxLength={40} value={this.state.currentRemind.title} maxLength={40}  placeholder='Please enter task title' keyboardType='email-address' returnKeyType='next' inverse last
+                     <TextInput style={{marginLeft: '2%',}}  maxLength={40} value={this.state.currentRemind.title} maxLength={40}  placeholder='Task Title' keyboardType='email-address' returnKeyType='next' inverse last
                       onChangeText={(value) => this.onChangedTitle(value)} />
                      </Item>
                </View>
@@ -422,7 +363,7 @@ export default class TasksCreation extends Component {
             </TouchableOpacity>
             </View>
             <View>
-              <Input editable={false} placeholder="select date of event" value={this.state.inputDateValue} style={{color:"#696969"}}/>
+                      <Input editable={false} placeholder="select date of event" value={moment(this.state.date).format("dddd, MMMM Do YYYY")} style={{color:"#696969"}}/>
             </View>
 
             {this.state.isDateTimePickerVisible && <DateTimePicker
@@ -447,7 +388,7 @@ export default class TasksCreation extends Component {
         </TouchableOpacity>
         </View>
         <View>
-        <Input editable={false} placeholder="select event time" value={this.state.inputTimeValue} style={{color:"#696969"}}/>
+                      <Input editable={false} placeholder="select event time" value={moment(this.state.date).format('hh:mm:s a')} style={{color:"#696969"}}/>
         </View>
             
       {this.state.show && <DateTimePicker  mode="time" value={this.state.defaultTime}  display="default" onChange={this.setTime}/>}
@@ -486,12 +427,9 @@ export default class TasksCreation extends Component {
  </View>
 
     </View>
-
-
-
          <View  style={{height:height/3+height/26,alignItems:'flex-start',justifyContent:'center'}}>
             <View style={{width:"100%",height:"100%"}}> 
-             <Text style={{alignSelf:'flex-start',margin:"3%",fontWeight:"500",fontSize:16}} >Description :</Text>
+             <Text style={{alignSelf:'flex-start',margin:"3%",fontWeight:"500",fontSize:16}} >Description</Text>
              <Textarea 
              value={this.state.currentRemind.description}
              containerStyle={{
@@ -501,7 +439,7 @@ export default class TasksCreation extends Component {
               borderColor: "#9E9E9E",
               backgroundColor: "#f5fffa"
             }}
-            placeholder="Highlight Description"
+            placeholder="Task / Remind Description"
             style={{
               textAlignVertical: 'top',  // hack android
               height: "100%",
@@ -515,9 +453,9 @@ export default class TasksCreation extends Component {
         </View>
        { !this.props.update?
         <TouchableOpacity style={{width:"20%",alignSelf:'center',marginBottom:"3%",marginLeft:"68%",marginTop:"-8%"}}>
-            <Button style={{width:"100%",borderRadius:15,borderColor:"#1FABAB",backgroundColor:"#1FABAB",justifyContent:'center',alignItem:'center'}}
-               onPress={()=>{this.addNewRemind()}}>
-               <Text style={{color:"#FEFFDE"}}> Add </Text>
+            <Button 
+               onPress={()=>{this.addNewRemind()}} rounded>
+               <Text style={{color:"#FEFFDE"}}> Create </Text>
              </Button> 
         </TouchableOpacity>:
                 <TouchableOpacity style={{width:"22%",marginBottom:"1%",marginLeft:"72%",marginTop:"-8%"}}>

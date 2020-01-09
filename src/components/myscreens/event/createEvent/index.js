@@ -1,16 +1,11 @@
 import React, { Component } from "react";
 import {
-  Content, Card, CardItem, Text, Body, Container, Icon, Header,
-  Form, Item, Title, Input, Left, Right, H3, H1, H2, Spinner,
-  Button, InputGroup, DatePicker, Thumbnail, Alert, Toast
+  Text,  Icon, Header, Title, Spinner,
+  Button,  Toast
 } from "native-base";
 
 import {StyleSheet, View,Image,TouchableOpacity, Dimensions} from 'react-native';
-import ActionButton from 'react-native-action-button';
-import Modal from 'react-native-modalbox';
-import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 import autobind from "autobind-decorator";
-import ImagePicker from 'react-native-image-picker';
 import moment from "moment";
 import EventTitle from "./components/EventTitle"
 import EventPeriod from "./components/EventPeriod"
@@ -18,7 +13,7 @@ import EventPhoto from "./components/EventPhoto"
 import EventLocation from "./components/EventLocation"
 import EventDescription from "./components/EventDescription"
 import EventHighlights from "./components/EventHighlights"
-import { head,filter,uniqBy,orderBy,find,findIndex,reject,uniq,indexOf,forEach,dropWhile } from "lodash";
+import { head,find,} from "lodash";
 import request from "../../../../services/requestObjects";
 import  stores from '../../../../stores/index';
 import CreateRequest from './CreateRequester';
@@ -86,15 +81,15 @@ componentDidMount(){
       this.setState({
         creating:true
       })
-      var arr = new Array(32);
+      /*var arr = new Array(32);
       let num = Math.floor(Math.random() * 16)
       uuid.v1(null, arr, num);
-      let New_id = uuid.unparse(arr, num);
+      let New_id = uuid.unparse(arr, num);*/
         let event = this.state.currentEvent
         event.created_at = moment().format()
         event.updated_at = moment().format()
         let newEvent = event;
-        newEvent.id = New_id;
+        newEvent.id = uuid.v1();
       CreateRequest.createEvent(newEvent).then((res) => {
         console.warn(res)
         //gives this new id to all highlights before pushing
