@@ -288,7 +288,7 @@ class CardListItem extends Component {
               } >
                 {this.state.loading ? null : <Text style={{ marginLeft: -40, fontWeight: 'bold', }}
                 >{this.state.item.event_title}</Text>}
-                {this.state.loading ? null : <Text style={{
+                {this.state.loading && this.state.item.event_time ? null : <Text style={{
                   marginLeft: -40, color: 'dimgray', fontSize: 12,
                   fontStyle: 'italic',
                 }}> on  {moment(this.state.item.event_time).format("dddd, MMMM Do YYYY, h:mm:ss a")}</Text>}

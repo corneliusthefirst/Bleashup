@@ -63,6 +63,10 @@ export default class HighLight extends Component {
             this.replying = false
         }
     }
+    quickMention() {
+        Vibration.vibrate(this.duration)
+        this.props.showInput(this.props.highlight)
+    }
     closingSwipeout() {
         /* if (this.replying) {
               if(!this.closed){
@@ -92,7 +96,14 @@ export default class HighLight extends Component {
                     disabled={this.props.disableSwipper ? this.props.disableSwipper : false}
                     ref={'chatSwipeOut'} onOpen={() => { this.openingSwipeout() }}
                     onClose={() => { this.closingSwipeout() }} autoClose={true} close={true}
-                    left={[{ color: '#04FFB6', type: 'default', backgroundColor: "transparent", text: 'react' }]}
+                    left={[{
+                        color: '#04FFB6', type: 'default', backgroundColor: "transparent", text: 'react',
+                        onPress:
+                            () => {
+                                this.quickMention()
+                            }
+
+                    }]}
                     style={{ backgroundColor: 'transparent', width: "100%" }}>
                     <View style={{
                         maxWidth: "90%", minWidth: 120,
