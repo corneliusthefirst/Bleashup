@@ -54,8 +54,7 @@ export default class HighLight extends Component {
                 this.closing++
                 this.closed = true
                 this.closing = 0
-                Vibration.vibrate(this.duration)
-                this.props.showInput(this.props.highlight)
+                this.quickMention()
                 setTimeout(() => {
                     this.closed = false
                 }, 1000)
