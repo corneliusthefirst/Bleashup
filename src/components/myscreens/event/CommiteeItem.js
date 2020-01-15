@@ -15,6 +15,7 @@ import ChatStore from '../../../stores/ChatStore';
 import testForURL from '../../../services/testForURL';
 import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
 import { Title } from 'native-base';
+import shadower from '../../shadower';
 
 export default class CommiteeItem extends Component {
     constructor(props) {
@@ -307,16 +308,20 @@ export default class CommiteeItem extends Component {
         this.accessible = this.state.joint || this.state.public
         return (
             this.state.loaded ? <View style={{
-                opacity: this.accessible ? 1 : 0.1,
+                opacity: this.accessible ? 1 : 0.7,
                 borderBottomRightRadius: 8,
                 width: "90%",
+                ...shadower(3),
+                marginBottom: '1%',
+                marginTop: '1%',
+                padding: '2%',
                 borderTopRightRadius: 8,
-                backgroundColor: GState.currentCommitee == this.state.commitee.id ? "#54F5CA" : null,
+                backgroundColor: GState.currentCommitee == this.state.commitee.id ? "#54F5CA" : "#FEFFDE",
             }}>
                 <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                     this.swappCommitee()
                 })}>
-                <View style={{ display: 'flex', hieght: 100, width: "100%", flexDirection: "row", marginBottom: "2%", }}>
+                    <View style={{ display: 'flex', hieght: 100, width: "100%", flexDirection: "row", marginBottom: "2%", }}>
                    <View style={{ margin: '1%', width: "70%", display: 'flex', flexDirection: 'column', }}>
                             <Text style={{
                                 fontWeight: 'bold', fontSize: 18, color: GState.currentCommitee == this.state.commitee.id ? "#0A4E52" : "gray"
@@ -356,7 +361,8 @@ export default class CommiteeItem extends Component {
                         this.editName(newName)
                     }}
                 ></EditNameModal>:null}
-                <MenuDivider color="#1FABAB" />
+               {//<MenuDivider color="#1FABAB" />
+            }
 
 
             </View> : <Spinner size={"small"}></Spinner>

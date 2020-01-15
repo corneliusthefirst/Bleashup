@@ -54,10 +54,9 @@ import ParticipantList from "./ParticipantList";
                     height: "97%",
                     borderRadius: 8, backgroundColor: '#FEFFDE', width: "100%"
                 }}>
-                <Content>{this.state.loaded?
+                {this.state.loaded?
                     <ParticipantList creator={this.props.creator} hide={this.state.hideTitle} participants={this.state.participants} title={"Participants List"}
                         event_id={this.state.event_id}></ParticipantList>:<Text style={{padding:"15%"}} note> loading participants</Text>}
-                </Content>
             </Modal>
 
         );

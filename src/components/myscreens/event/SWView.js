@@ -161,16 +161,19 @@ export default class SWView extends Component {
             <View style={{
                 opacity: 0.9,
                 backgroundColor: "#FEFFDE",
-                width:"100%",
-                height:screenheight
+                width: "100%",
+                height: screenheight
             }}><View style={{
                 borderWidth: 1,
                 borderRadius: 2,
                 borderColor: '#ddd',
                 borderBottomWidth: 0,
-                ...shadower(5),margin: "1%",}}>
+                ...shadower(7), margin: "1%",
+            }}>
                     <ScrollView
-                        style={{ backgroundColor: "#FEFFDE", }}
+                        style={{
+                             backgroundColor: "#FEFFDE", 
+                        }}
                         //scrollEnabled={true}
                         nestedScrollEnabled={true}
                         showsVerticalScrollIndicator={false}
@@ -179,20 +182,22 @@ export default class SWView extends Component {
                         )}>
                         <View style={{
                             marginTop: HEADER_MAX_HEIGHT,
-                            height: "100%", width: "100%", backgroundColor: "#FEFFDE",
+                            height: "100%", width: "100%",
+                            backgroundColor: "#FEFFDE",
                             display: 'flex', flexDirection: 'column', //borderRightWidth: 1.25, borderColor: "#1FABAB",
                         }}>
                             <View style={{
-                                backgroundColor: "#FEFFDE", width: screenWidth * 2.7 / 3,
+                                backgroundColor: "#FEFFDE",
+                                width: screenWidth * 2.7 / 3,
                                 alignItems: 'center',
                                 marginTop: 2,
                                 borderRadius: 5,
-                                justifyContent: 'center', flexDirection: 'row', ...shadower(6)
+                                justifyContent: 'center', flexDirection: 'row', ...shadower(3)
                             }}><View style={{ width: "90%" }}><Title style={{ fontWeight: 'bold', fontSize: 17, marginTop: 2, color: "#0A4E52" }}>{this.props.event.about.title}</Title>
-                                    {this.props.event.period?<Title style={{
+                                    {this.props.event.period ? <Title style={{
                                         marginRight: "2%", fontStyle: 'italic', fontWeight: this.props.event.closed ? "bold" : "400",
                                         color: this.props.event.closed ? "red" : this.dateDiff(this.props.event.period) > 0 ? "gray" : "#1FABAB", fontSize: 12,
-                                    }}>{this.props.event.closed ? "Closed" : this.displayDate(this.props.event.period)}</Title>:null}
+                                    }}>{this.props.event.closed ? "Closed" : this.displayDate(this.props.event.period)}</Title> : null}
                                 </View>
                                 <Icon onPress={() => {
                                     this.props.navigateHome()
@@ -201,9 +206,17 @@ export default class SWView extends Component {
                                     marginBottom: "6%"
                                 }} name="close" type="EvilIcons"></Icon>
                             </View>
-                            <View style={{ heignt: "60%", display: "flex", flexDirection: 'row', backgroundColor: "#FEFFDE", marginLeft: "1%", }}>
+                            <View style={{
+                                heignt: "60%", display: "flex", flexDirection: 'row',
+                                backgroundColor: "#FEFFDE", 
+                                marginLeft: "1%",
+                            }}>
                                 <View style={{
-                                    marginTop: "2%", width: "25%", ...shadower(3), borderRadius: 12
+                                    marginTop: "5%", 
+                                    padding: '2%',
+                                    width: "25%", ...shadower(3),
+                                    backgroundColor: '#FEFFDE', 
+                                    borderRadius: 12
                                 }}>
                                     <ActionsView
                                         publish={() => this.props.publish()}

@@ -378,6 +378,8 @@ export default class events {
       this.readFromStore().then(Events => {
         let eventIndex = findIndex(Events, { id: EventID });
         Events[eventIndex].period = NewPeriod;
+        if(!NewPeriod || (NewPeriod && !NewPeriod.includes("T"))) 
+        Events[eventIndex].calendared = false
         if (inform) {
           Events[eventIndex].period_updated = true;
           Events[eventIndex].updated = true;
@@ -833,8 +835,8 @@ export default class events {
           id: EventID
         });
         if (index >= 0) {
-          if (Events[index].reminds.length !== 0)
-            Events[index].reminds = uniq(Event.reminds.concat([RemindID]));
+          if (Events[index].reminds && Events[index].reminds.length !== 0)
+            Events[index].reminds = uniq(Events[index].reminds.concat([RemindID]));
           else Events[index].reminds = [RemindID];
           if (inform) {
             Events[index].remind_added = true;

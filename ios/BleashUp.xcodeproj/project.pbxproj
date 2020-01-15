@@ -76,6 +76,7 @@
 		39D4638B37C243C8A186E2C0 /* libRNDeviceInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BFCABFD066FC46A1BB4F43A6 /* libRNDeviceInfo.a */; };
 		ECBB6DA63D454D0289D9325D /* libRNDeviceInfo-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E12E14223D0B45C2B3390799 /* libRNDeviceInfo-tvOS.a */; };
 		4E71F1248B15447C8F5AC706 /* libReactNativeFFmpeg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 536589BEB0F74FA5824690C5 /* libReactNativeFFmpeg.a */; };
+		F0B2DDD87FFB4FE5BC3D25BF /* libRNCalendarReminders.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D4D58DB66763446FB97EA1F3 /* libRNCalendarReminders.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -451,6 +452,8 @@
 		E12E14223D0B45C2B3390799 /* libRNDeviceInfo-tvOS.a */ = {isa = PBXFileReference; name = "libRNDeviceInfo-tvOS.a"; path = "libRNDeviceInfo-tvOS.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 		F41AD761CA3C42739F428F68 /* ReactNativeFFmpeg.xcodeproj */ = {isa = PBXFileReference; name = "ReactNativeFFmpeg.xcodeproj"; path = "../node_modules/react-native-ffmpeg/ios/ReactNativeFFmpeg.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		536589BEB0F74FA5824690C5 /* libReactNativeFFmpeg.a */ = {isa = PBXFileReference; name = "libReactNativeFFmpeg.a"; path = "libReactNativeFFmpeg.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		F9B80749BBD54C54852B9F9C /* RNCalendarReminders.xcodeproj */ = {isa = PBXFileReference; name = "RNCalendarReminders.xcodeproj"; path = "../node_modules/react-native-calendar-reminders/RNCalendarReminders.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		D4D58DB66763446FB97EA1F3 /* libRNCalendarReminders.a */ = {isa = PBXFileReference; name = "libRNCalendarReminders.a"; path = "libRNCalendarReminders.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -511,6 +514,7 @@
 				C2B7C0A6D744417DAC35ECA7 /* libRNInAppBrowser.a in Frameworks */,
 				39D4638B37C243C8A186E2C0 /* libRNDeviceInfo.a in Frameworks */,
 				4E71F1248B15447C8F5AC706 /* libReactNativeFFmpeg.a in Frameworks */,
+				F0B2DDD87FFB4FE5BC3D25BF /* libRNCalendarReminders.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -736,6 +740,7 @@
 				5DFAB99949724A50BC1B4C6D /* RNInAppBrowser.xcodeproj */,
 				66962077AD174B79B1519B31 /* RNDeviceInfo.xcodeproj */,
 				F41AD761CA3C42739F428F68 /* ReactNativeFFmpeg.xcodeproj */,
+				F9B80749BBD54C54852B9F9C /* RNCalendarReminders.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1400,6 +1405,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1433,6 +1439,7 @@
 					"$(SRCROOT)/../node_modules/react-native-inappbrowser-reborn/ios",
 					"$(SRCROOT)/../node_modules/react-native-device-info/ios/RNDeviceInfo",
 					"$(SRCROOT)/../node_modules/react-native-ffmpeg/ios",
+					"$(SRCROOT)/../node_modules/react-native-calendar-reminders",
 				);
 			};
 			name = Debug;
@@ -1491,6 +1498,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1524,6 +1532,7 @@
 					"$(SRCROOT)/../node_modules/react-native-inappbrowser-reborn/ios",
 					"$(SRCROOT)/../node_modules/react-native-device-info/ios/RNDeviceInfo",
 					"$(SRCROOT)/../node_modules/react-native-ffmpeg/ios",
+					"$(SRCROOT)/../node_modules/react-native-calendar-reminders",
 				);
 			};
 			name = Release;
@@ -1576,6 +1585,7 @@
 					"$(SRCROOT)/../node_modules/react-native-inappbrowser-reborn/ios",
 					"$(SRCROOT)/../node_modules/react-native-device-info/ios/RNDeviceInfo",
 					"$(SRCROOT)/../node_modules/react-native-ffmpeg/ios",
+					"$(SRCROOT)/../node_modules/react-native-calendar-reminders",
 				);
 			};
 			name = Debug;
@@ -1627,6 +1637,7 @@
 					"$(SRCROOT)/../node_modules/react-native-inappbrowser-reborn/ios",
 					"$(SRCROOT)/../node_modules/react-native-device-info/ios/RNDeviceInfo",
 					"$(SRCROOT)/../node_modules/react-native-ffmpeg/ios",
+					"$(SRCROOT)/../node_modules/react-native-calendar-reminders",
 				);
 			};
 			name = Release;
@@ -1693,6 +1704,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1726,6 +1738,7 @@
 					"$(SRCROOT)/../node_modules/react-native-inappbrowser-reborn/ios",
 					"$(SRCROOT)/../node_modules/react-native-device-info/ios/RNDeviceInfo",
 					"$(SRCROOT)/../node_modules/react-native-ffmpeg/ios",
+					"$(SRCROOT)/../node_modules/react-native-calendar-reminders",
 				);
 			};
 			name = Debug;
@@ -1792,6 +1805,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1825,6 +1839,7 @@
 					"$(SRCROOT)/../node_modules/react-native-inappbrowser-reborn/ios",
 					"$(SRCROOT)/../node_modules/react-native-device-info/ios/RNDeviceInfo",
 					"$(SRCROOT)/../node_modules/react-native-ffmpeg/ios",
+					"$(SRCROOT)/../node_modules/react-native-calendar-reminders",
 				);
 			};
 			name = Release;
@@ -1890,6 +1905,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1923,6 +1939,7 @@
 					"$(SRCROOT)/../node_modules/react-native-inappbrowser-reborn/ios",
 					"$(SRCROOT)/../node_modules/react-native-device-info/ios/RNDeviceInfo",
 					"$(SRCROOT)/../node_modules/react-native-ffmpeg/ios",
+					"$(SRCROOT)/../node_modules/react-native-calendar-reminders",
 				);
 			};
 			name = Debug;
@@ -1988,6 +2005,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2021,6 +2039,7 @@
 					"$(SRCROOT)/../node_modules/react-native-inappbrowser-reborn/ios",
 					"$(SRCROOT)/../node_modules/react-native-device-info/ios/RNDeviceInfo",
 					"$(SRCROOT)/../node_modules/react-native-ffmpeg/ios",
+					"$(SRCROOT)/../node_modules/react-native-calendar-reminders",
 				);
 			};
 			name = Release;

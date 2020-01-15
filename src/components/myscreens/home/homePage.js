@@ -145,6 +145,7 @@ class Home extends Component {
   }
   realNew = []
   componentDidMount() {
+    //CalendarServe.saveEvent().then(() => {})
     stores.Highlights.initializeGetHighlightsListener()
     CalendarServe.fetchAllCalendarEvents().then(calendar => {
       let calen = groupBy(calendar, 'title')

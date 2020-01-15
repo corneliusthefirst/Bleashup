@@ -216,7 +216,7 @@ export default class Message extends Component {
             maxWidth: 300, flexDirection: 'column', minWidth: 120,
             minHeight: 10, overflow: 'hidden', borderBottomLeftRadius: 10, borderColor: color,
             borderTopLeftRadius: this.state.sender ? 0 : 10,// borderWidth: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text)?.7:0:0,
-            backgroundColor: color,
+            backgroundColor: color,...shadower(3),
             borderTopRightRadius: 10, borderBottomRightRadius: this.state.sender ? 10 : this.props.message.reply && this.props.message.reply.type_extern ? 10 : null,
         }
         senderNameStyle = {

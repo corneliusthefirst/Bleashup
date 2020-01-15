@@ -19,7 +19,7 @@ import BleashupFlatList from './BleashupFlatList';
         isloaded: false,
         likers: []
     }
-    navigateToChat(){
+    navigateToChat() {
         console.warn('navigating to chats')
     }
     componentDidMount() {
@@ -30,6 +30,7 @@ import BleashupFlatList from './BleashupFlatList';
             });
         }, 0)
     }
+    delay = 0
     _keyExtractor = (item, index) => item
     render() {
         return this.state.isloaded ? (
@@ -40,17 +41,20 @@ import BleashupFlatList from './BleashupFlatList';
                 numberOfItems={this.props.likers.length}
                 keyExtractor={this._keyExtractor}
                 dataSource={this.props.likers}
-                renderItem={(item, index) =>
-                    <View>
-                    <View style={{ display: 'flex', flexDirection: 'row',width:"100%" }}>
-                        <View style={{ margin: '2%',width:"70%" }}><TouchableOpacity ><ProfileView phone={item}></ProfileView>
-                        </TouchableOpacity></View>
-                        <Button onPress={() => this.navigateToChat()} transparent><Icon type="EvilIcons" style={{ fontSize: 23,color:'black' }}
-                            name="comment"></Icon></Button>
-                    </View>
-                    <MenuDivider color="#1FABAB" />
-                    </View>
-                }
+                renderItem={(item, index) => {
+                    this.delay = this.delay >= 15 ? 0 : this.delay + 1
+                    return (<View>
+                        <View style={{ display: 'flex', flexDirection: 'row', width: "100%" }}>
+                            <View style={{ margin: '2%', width: "70%" }}><ProfileView delay={this.delay} phone={item}></ProfileView>
+                            </View>
+                            <Button style={{ flexDirection: 'column', }} onPress={() => this.navigateToChat()} transparent>
+                                <Icon type="MaterialIcons"
+                                    name="chat-bubble">
+                                </Icon><Text>Chat</Text></Button>
+                        </View>
+                        <MenuDivider color="#1FABAB" />
+                    </View>)
+                }}
             >
             </BleashupFlatList>
 

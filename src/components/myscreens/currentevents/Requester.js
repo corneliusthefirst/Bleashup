@@ -85,8 +85,8 @@ class Requester {
                                 date: moment().format(),
                             }
                             stores.ChangeLogs.addChanges(Change).then(() => {
-                                resolve()
                             })
+                            resolve()
                         })
                     })
                 }).catch(error => {
@@ -120,8 +120,8 @@ class Requester {
                             date: moment().format(),
                         }
                         stores.ChangeLogs.addChanges(Change).then(() => {
-                            resolve("ok")
                         })
+                        resolve("ok")
                     })
                 }).catch(error => {
                     reject(error)

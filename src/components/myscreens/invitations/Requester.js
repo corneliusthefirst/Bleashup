@@ -68,7 +68,6 @@ class Requester {
                                 time: null
                             }
                             stores.ChangeLogs.addChanges(Change).then(res => {
-                                resolve("ok")
                             })
                                 resolve()
                         })

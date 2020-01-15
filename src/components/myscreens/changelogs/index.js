@@ -86,6 +86,9 @@ export default class ChangeLogs extends Component {
     } else if (typeof change.new_value.new_value === "string" && testForURL(change.new_value.new_value)) {
       this.props.openPhoto(change.new_value.new_value)
     }
+    else if (typeof change.new_value.new_value === 'object' && change.new_value.new_value[0].includes("00")){
+      this.props.showContacts(change.new_value.new_value)
+    }
     else if (typeof change.new_value.new_value === "string" ||
       (Array.isArray(change.new_value.new_value) && typeof change.new_value.new_value[0] === "string") ||
       typeof change.new_value.new_value === 'object') {

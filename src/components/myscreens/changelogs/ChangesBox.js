@@ -5,6 +5,7 @@ import { Text, Icon, Spinner, Thumbnail } from "native-base";
 import testForURL from '../../../services/testForURL';
 import ProfileView from "../invitations/components/ProfileView";
 import stores from '../../../stores';
+import shadower from "../../shadower";
 export default class ChangeBox extends Component {
     constructor(props) {
         super(props)
@@ -25,14 +26,14 @@ export default class ChangeBox extends Component {
             })
         }, 200 * this.props.delayer)
     }
-    containerStyle = { margin: '2%', borderRadius: 6, backgroundColor: "#9EEDD3", }
+    containerStyle = { margin: '2%', borderRadius: 6, backgroundColor: "#9EEDD3",...shadower(4) }
     render() {
         return (!this.state.loaded ? <View style={{ ...this.containerStyle, width: '95%', height: 120 }}></View> :
             <View>
                 <View style={this.containerStyle}>
                     {!this.props.change ? null : <View style={{ flexDirection: 'column', margin: '2%', }}>
                         <View style={{ flexDirection: 'row', }}>
-                            {!this.props.change.updater ? null : typeof this.props.change.updater === 'string' ? <ProfileView phone={this.props.change.updater}></ProfileView> :
+                            {!this.props.change.updater ? null : typeof this.props.change.updater === 'string' ? <ProfileView delay={this.props.delayer} phone={this.props.change.updater}></ProfileView> :
                                 <View style={{ flexDirection: 'row', }}>
                                     <View style={{ width: "25%" }}>
                                         {this.props.change.updater.profile && testForURL(this.props.change.updater.profile, true) ?

@@ -38,13 +38,14 @@ export default class Contacts extends Component {
             }
         }, 3)
     }
+    delay = 0
     _keyExtractor = (item, index) => item.phone
     render() {
         return <View>
             <Header>
                 <Title>
                     {this.props.title}
-                        </Title>
+                </Title>
             </Header>
             {this.state.isloaded ? (
                 <View>
@@ -57,10 +58,11 @@ export default class Contacts extends Component {
                         numberOfItems={this.state.contacts.length}
                         keyExtractor={this._keyExtractor}
                         dataSource={this.state.contacts}
-                        renderItem={(item, index) =>
-                            <View style={{ display: 'flex', flexDirection: 'row', }} >
+                        renderItem={(item, index) => {
+                            this.delay = this.delay >= 15 ? 0 : this.delay + 1
+                            return <View style={{ display: 'flex', flexDirection: 'row', }} >
                                 <View style={{ margin: '2%', }}>
-                                    <ProfileView phone={item.phone}></ProfileView>
+                                    <ProfileView delay={this.delay} phone={item.phone}></ProfileView>
                                 </View>
                                 <View style={{
                                     marginLeft: "40%",
@@ -68,10 +70,10 @@ export default class Contacts extends Component {
                                 }}>
                                     <Text style={{
                                     }} note>{dateDisplayer(moment(item.date).format("YYYY/MM/DD"))}{" at "}
-                                    {moment(item.date).format("HH:mm")}</Text>
+                                        {moment(item.date).format("HH:mm")}</Text>
                                 </View>
                             </View>
-                        }
+                        }}
                     ></BleashupFlatList>}
                 </View>) : <Spinner size="small"></Spinner>}
         </View>

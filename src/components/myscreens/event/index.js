@@ -115,7 +115,19 @@ export default class Event extends Component {
             })
           }} {...this.props} Event={this.event}></EventDatails>
       case "Reminds":
-        return <Remind event_id={this.event.id} {...this.props}></Remind>
+        return <Remind startLoader={() => {
+          this.setState({
+            working: true
+          })
+        }} stopLoader={() => {
+          this.setState({
+            working: false
+          })
+        }}
+          master={this.master}
+          working={this.state.working}
+          event={this.event}
+          event_id={this.event.id} {...this.props}></Remind>
       case "Votes":
         return <Votes {...this.props}></Votes>
       case "Highlights":
@@ -286,6 +298,11 @@ export default class Event extends Component {
       console.warn('including posts')
       emitter.emit('refresh-highlights')
     }
+    if(change.changed.toLowerCase().includes('remind') || 
+    change.title.toLowerCase().includes('remind')){
+      console.warn('includes reminds')
+      emitter.emit('remind-updated')
+    }
     if (!this.unmounted) emitter.emit('refresh-history')
     setTimeout(() => {
       this.setState({
@@ -335,7 +352,7 @@ export default class Event extends Component {
       this.props.navigation.navigate("Home")
       return true
     }
-  }
+  } 
   componentDidMount() {
     console.warn(this.event.calendar_id)
     if (!this.event.calendared && this.event.period) {
@@ -355,28 +372,36 @@ export default class Event extends Component {
     this.refreshePage()
   }
   updateActivityLocation(newLocation) {
-    this.setState({
-      working: true
-    })
-    Requester.updateLocation(this.event.id, newLocation).then(() => {
-      this.initializeMaster()
-    }).catch(() => {
+    if (!this.state.working) {
       this.setState({
-        working: false
+        working: true
       })
-    })
+      Requester.updateLocation(this.event.id, newLocation).then(() => {
+        this.initializeMaster()
+      }).catch(() => {
+        this.setState({
+          working: false
+        })
+      })
+    } else {
+      Toast.show({ text: 'App is Busy' })
+    }
   }
   updateActivityDescription(newDesciption) {
-    this.setState({
-      working: true
-    })
-    Requester.updateDescription(this.event.id, newDesciption).then(() => {
-      this.initializeMaster()
-    }).catch(() => {
+    if (!this.state.working) {
       this.setState({
-        working: false
+        working: true
       })
-    })
+      Requester.updateDescription(this.event.id, newDesciption).then(() => {
+        this.initializeMaster()
+      }).catch(() => {
+        this.setState({
+          working: false
+        })
+      })
+    } else {
+      Toast.show({ text: 'App is Busy' })
+    }
   }
   componentWillUnmount() {
     this.unmounted = true
@@ -869,7 +894,7 @@ export default class Event extends Component {
       Requester.applyAllUpdate(original, newSettings).then((res) => {
         console.warn(res)
         if (res)
-          Toast.show({ text: 'All save completely applied !', type: 'success' })
+          //Toast.show({ text: 'All save completely applied !', type: 'success' })
         this.initializeMaster()
       }).catch((erorr) => {
         Toast.show({ text: 'could not perform the request' })
@@ -1006,8 +1031,8 @@ export default class Event extends Component {
         showMembers={() => this.showMembers()}
         setCurrentPage={(page, data) => {
           this.isOpen = false
-          this.setState({ currentPage: page, activeMember: null })
-          this.refreshePage()
+          this.setState({ currentPage: page, activeMember: null, fresh: false })
+          //this.refreshePage()
         }
         }
         currentPage={this.state.currentPage}
@@ -1015,8 +1040,10 @@ export default class Event extends Component {
         event={this.event}
         master={this.master}
         public={this.event.public}></SWView></View>}>
-      <StatusBar hidden={this.state.showPhotoy ? true : false} barStyle="dark-content" backgroundColor={this.state.showPhoto ? 'black' : "#FEFFDE"}></StatusBar>
-      <View style={{ height: "100%", backgroundColor: "#FEFFDE" }}>
+      <StatusBar hidden={this.state.showPhoto ? true : false} barStyle="dark-content" backgroundColor={this.state.showPhoto ? 'black' : "#FEFFDE"}></StatusBar>
+      <View style={{ height: "100%", 
+      backgroundColor: "#FEFFDE" 
+    }}>
         {this.state.fresh ? <Spinner size={"small"}></Spinner> :
           this.renderMenu()
         }
@@ -1041,7 +1068,7 @@ export default class Event extends Component {
           </View>
         </View> : null}
         {this.state.working ? <View style={{ position: "absolute", marginTop: "-8%", }}><Spinner size={"small"}></Spinner></View> : null}
-        <ParticipantModal
+        {!this.state.showMembers ? null : <ParticipantModal
           hideTitle={this.state.hideTitle}
           creator={this.event.creator_phone}
           participants={this.state.partimembers ? uniqBy(this.state.partimembers.filter(ele => ele !== null &&
@@ -1052,14 +1079,14 @@ export default class Event extends Component {
               partimembers: null,
               hideTitle: false
             })
-          }} event_id={this.event.id}></ParticipantModal>
-        <ContactsModal isOpen={this.state.contactModalOpened} onClosed={() => {
+          }} event_id={this.event.id}></ParticipantModal>}
+        {!this.state.isContentModalOpened ? null : <ContactsModal isOpen={this.state.contactModalOpened} onClosed={() => {
           this.setState({
             contactModalOpened: false,
             conctacts: []
           })
-        }} contacts={this.state.contacts}></ContactsModal>
-        <SelectableContactList
+        }} contacts={this.state.contacts}></ContactsModal>}
+        {!this.state.isSelectableListOpened ? null : <SelectableContactList
           removing={this.state.removing}
           notcheckall={this.state.notcheckall}
           saveRemoved={(mem) => this.saveRemoved(mem)}
@@ -1080,11 +1107,11 @@ export default class Event extends Component {
           }}
           isOpen={this.state.isSelectableListOpened}
           takecheckedResult={(data) => this.createCommitee(data)}>
-        </SelectableContactList>
-        <CreateCommiteeModal isOpen={this.state.isCommiteeModalOpened} createCommitee={(data) => this.processResult(data)} close={() => this.setState({
+        </SelectableContactList>}
+        {!this.state.isCommiteeModalOpened ? null : <CreateCommiteeModal isOpen={this.state.isCommiteeModalOpened} createCommitee={(data) => this.processResult(data)} close={() => this.setState({
           isCommiteeModalOpened: false
-        })}></CreateCommiteeModal>
-        <ContactListModal
+        })}></CreateCommiteeModal>}
+        {!this.state.isContactListOpened ? null : <ContactListModal
           contacts={this.state.contactList}
           isOpen={this.state.isContactListOpened}
           onClosed={() => {
@@ -1093,14 +1120,14 @@ export default class Event extends Component {
               contactList: []
             })
           }}
-        ></ContactListModal>
-        <ContentModal content={this.state.textContent} isOpen={this.state.isContentModalOpened} closed={() => {
+        ></ContactListModal>}
+        {!this.state.isContentModalOpened ? null : <ContentModal content={this.state.textContent} isOpen={this.state.isContentModalOpened} closed={() => {
           this.setState({
             isContentModalOpened: false,
             textContent: null
           })
-        }}></ContentModal>
-        <AreYouSure isOpen={this.state.isAreYouSureModalOpened}
+        }}></ContentModal>}
+        {!this.state.isAreYouSureModalOpened ? null : <AreYouSure isOpen={this.state.isAreYouSureModalOpened}
           title={this.state.warnTitle}
           closed={() => {
             this.setState({
@@ -1112,16 +1139,16 @@ export default class Event extends Component {
           }}
           callback={() => this.state.callback()}
           ok={this.state.okButtonText}
-          message={this.state.warnDescription}></AreYouSure>
-        <InviteParticipantModal
+          message={this.state.warnDescription}></AreYouSure>}
+        {!this.state.isInviteModalOpened ? null : <InviteParticipantModal
           invite={(members) => this.invite(members)}
           onClosed={() => {
             this.setState({
               isInviteModalOpened: false
             })
           }} isOpen={this.state.isInviteModalOpened} participant={this.event.participant}>
-        </InviteParticipantModal>
-        <MamageMembersModal isOpen={this.state.isManagementModalOpened}
+        </InviteParticipantModal>}
+        {!this.state.isManagementModalOpened ? null : <MamageMembersModal isOpen={this.state.isManagementModalOpened}
           checkActivity={(memberPhone) => this.checkActivity(memberPhone)}
           creator={this.event.creator_phone}
           participants={this.event.participant} master={this.master}
@@ -1130,7 +1157,7 @@ export default class Event extends Component {
             this.setState({
               isManagementModalOpened: false
             })
-          }}></MamageMembersModal>
+          }}></MamageMembersModal>}
         {this.state.isSettingsModalOpened ? <SettingsModal closeActivity={() => {
           this.event.closed ? this.closeActivity() : this.setState({
             isSettingsModalOpened: false,
@@ -1169,7 +1196,7 @@ export default class Event extends Component {
               isSetPatternModalOpened: false
             })
           }}></SetAlarmPatternModal> : null}
-        <PhotoInputModal
+        {!this.state.isSelectPhotoInputMethodModal ? null : <PhotoInputModal
           removePhoto={() => {
             this.setState({
               isAreYouSureModalOpened: true,
@@ -1200,18 +1227,18 @@ export default class Event extends Component {
           isOpen={this.state.isSelectPhotoInputMethodModal}
           closed={() => this.setState({
             isSelectPhotoInputMethodModal: false
-          })}></PhotoInputModal>
+          })}></PhotoInputModal>}
         {this.state.showPhoto ? <PhotoViewer open={this.state.showPhoto} photo={this.state.photo} hidePhoto={() => {
           this.setState({
             showPhoto: false,
             isSelectPhotoInputMethodModal: false
           })
         }}></PhotoViewer> : null}
-        <SearchImage accessLibrary={() => this.openCamera(true)} isOpen={this.state.isSearchImageModalOpened} onClosed={() => {
+        {!this.state.isSearchImageModalOpened ? null : <SearchImage accessLibrary={() => this.openCamera(true)} isOpen={this.state.isSearchImageModalOpened} onClosed={() => {
           this.setState({
             isSearchImageModalOpened: false
           })
-        }}></SearchImage>
+        }}></SearchImage>}
         {this.state.isHighlightDetailModalOpened ? <HighlightCardDetail
           isOpen={this.state.isHighlightDetailModalOpened}
           item={this.state.highlight}

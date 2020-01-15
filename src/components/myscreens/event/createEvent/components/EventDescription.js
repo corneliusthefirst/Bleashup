@@ -4,8 +4,7 @@ import {
   Button,
 } from "native-base";
 import Textarea from 'react-native-textarea';
-import {Linking,StyleSheet, View,Image,TouchableOpacity,TouchableWithoutFeedback, Dimensions,TextInput, Keyboard} from 'react-native';
-import ActionButton from 'react-native-action-button';
+import {Linking,StyleSheet, View,Image,TouchableOpacity,TouchableWithoutFeedback, Dimensions, Keyboard} from 'react-native';
 import Modal from 'react-native-modalbox';
 import autobind from "autobind-decorator";
 import  stores from '../../../../../stores/index';

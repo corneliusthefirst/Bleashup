@@ -98,7 +98,7 @@ export default class EventHighlights extends Component {
             id: this.props.highlight_id ?
               this.props.highlight_id : "newHighlightId"
           });
-          this.previoushighlight = highlight
+          this.previoushighlight = JSON.stringify(highlight)
           if (!this.props.event_id) {
             let event_id = "newEventId";
             stores.Highlights.fetchHighlights(event_id).then(Highlights => {

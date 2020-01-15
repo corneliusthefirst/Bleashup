@@ -32,7 +32,7 @@ import emitter from '../../../services/eventEmiter';
 import PhotoViewer from "../event/PhotoViewer";
 import HighlightCard from "../event/createEvent/components/HighlightCard"
 import MapView from "../currentevents/components/MapView";
-import ProfileModal from "../invitations/components/ProfileModal";
+import Creator from "../reminds/Creator";
 let { height, width } = Dimensions.get('window');
 
 @observer
@@ -70,43 +70,18 @@ export default class EventDetailView extends Component {
 
   @autobind
   initializer() {
+    let participant = find(this.props.Event.participant, { phone: stores.LoginStore.user.phone });
     stores.Highlights.fetchHighlights(this.props.Event.id).then(Highlights => {
-      let res = moment(this.props.Event.created_at).format().split("T");
-      let participant = find(this.props.Event.participant, { phone: stores.LoginStore.user.phone });
+      console.warn(this.props.Event.id)
+      //let res = moment(this.props.Event.created_at).format().split("T");
       this.setState({
         highlightData: Highlights,
-        creation_date: res[0] ? res[0] : null,
+        creation_date: this.props.Event.created_at,
         isMounted: true,
         EventData: this.props.Event,
         participant: participant
       })
-      if (this.props.Event.creator_phone) {
-        stores.TemporalUsersStore.getUser(this.props.Event.creator_phone).then((creatorInfo) => {
-          this.setState({
-            creatorInfo:creatorInfo,
-            username: creatorInfo.nickname,
-          })
-
-          /*this.intervalID = setInterval(() => {
-            if ((this.state.animateHighlight == true || this.state.showTimmer !== true) && (this.state.highlightData.length > this.incrementer)) {
-              this.detail_flatlistRef.scrollToIndex({ animated: true, index: this.initialScrollIndexer, viewOffset: 0, viewPosition: 0 });
-
-              if (this.initialScrollIndexer >= (this.state.highlightData.length) - this.incrementer) {
-                this.initialScrollIndexer = 0
-              } else {
-                this.initialScrollIndexer = this.initialScrollIndexer + this.incrementer
-              }
-            }
-          }, this.interval)*/
-        }).catch(() => {
-          this.setState({
-            //username: creatorInfo.nickname,
-            EventData: this.props.Event,
-          })
-        })
-      }
     })
-
   }
   initialScrollIndexer = 2
   incrementer = 2
@@ -126,7 +101,7 @@ export default class EventDetailView extends Component {
     emitter.off('refresh-highlights')
   }
   componentDidMount() {
-    this.setState({ animateHighlight: true });
+    //this.setState({ animateHighlight: true });
     this.initializer();
   }
 
@@ -152,31 +127,35 @@ export default class EventDetailView extends Component {
 
   @autobind
   deleteHighlight(item) {
-    this.props.startLoader()
-    this.setState({ isAreYouSureModalOpened: false });
-    //console.warn("deleting....")
-    //remove the higlight id from event then remove the highlight from the higlights store
-    if (item.event_id == "newEventId") {
-      //console.warn("inside if....")
-      //console.warn(this.props.item.id);
-      stores.Events.removeHighlight(item.event_id, item.id, false).then(() => {
-        stores.Highlights.removeHighlight(item.id).then(() => {
+    if (!this.props.working) {
+      this.props.startLoader()
+      this.setState({ isAreYouSureModalOpened: false });
+      //console.warn("deleting....")
+      //remove the higlight id from event then remove the highlight from the higlights store
+      if (item.event_id == "newEventId") {
+        //console.warn("inside if....")
+        //console.warn(this.props.item.id);
+        stores.Events.removeHighlight(item.event_id, item.id, false).then(() => {
+          stores.Highlights.removeHighlight(item.id).then(() => {
+            this.state.highlightData = reject(this.state.highlightData, { id: item.id });
+            this.setState({ highlightData: this.state.highlightData });
+            this.props.stopLoader()
+          });
+        });
+        //console.warn("inside if 2....");
+      } else {
+        Requester.deleteHighlight(item.id, item.event_id).then(() => {
+          this.props.stopLoader()
           this.state.highlightData = reject(this.state.highlightData, { id: item.id });
           this.setState({ highlightData: this.state.highlightData });
+        }).catch((error) => {
           this.props.stopLoader()
-        });
-      });
-      //console.warn("inside if 2....");
-    } else {
-      Requester.deleteHighlight(item.id, item.event_id).then(() => {
-        this.props.stopLoader()
-        this.state.highlightData = reject(this.state.highlightData, { id: item.id });
-        this.setState({ highlightData: this.state.highlightData });
-      }).catch((error) => {
-        this.props.stopLoader()
-      })
+        })
+      }
+      //console.warn("inside if 5....");
+    }else{
+      Toast.show({text:'App is Busy'})
     }
-    //console.warn("inside if 5....");
   }
 
 
@@ -195,17 +174,23 @@ export default class EventDetailView extends Component {
   );*/
 
   updateHighlight(newHighlight, previousHighlight) {
-    this.props.startLoader()
-    Requester.applyAllHighlightsUpdate(newHighlight,
-      previousHighlight).then((response) => {
-        if (response) {
-          Toast.show({ text: 'aupdate was successful', type: 'success' })
-          this.setState({
-            highlightData: [newHighlight].concat(this.state.highlightData.filter(ele => ele.id !== newHighlight.id))
-          })
-        }
-        this.props.stopLoader()
-      })
+    if(!this.props.working){
+      this.props.startLoader()
+      Requester.applyAllHighlightsUpdate(newHighlight,
+        previousHighlight).then((response) => {
+          if (response) {
+            //Toast.show({ text: 'aupdate was successful', type: 'success' })
+            let index = findIndex(this.state.highlightData,{id:newHighlight.id})
+            this.state.highlightData[index] = newHighlight
+            this.setState({
+              highlightData: this.state.highlightData
+            })
+          }
+          this.props.stopLoader()
+        })
+    }else{
+      Toast.show({text:'App is Busy'})
+    }
 
   }
   @autobind
@@ -347,13 +332,7 @@ export default class EventDetailView extends Component {
                 </View>
               </TouchableOpacity>}
             <View style={{ flexDirection: "column", position: 'absolute', justifyContent: "space-between", bottom: 0, margin: 3, width: "98%" }}>
-              <TouchableOpacity onPress={() => {
-                this.showCreator()
-              }}>
-                <Text style={{ fontWeight: 'bold', fontSize: 11, margin: 1, }} note>Created </Text>
-                {this.state.username?<Text style={{ margin: "1%", fontSize: 11, fontStyle: 'normal', }} note>by {this.state.username} </Text>:null}
-                <Text style={{ margin: "1%", fontSize: 11, color: "gray" }} >{"On "}{moment(this.props.Event.created_at).format("dddd, MMMM Do YYYY, h:mm:ss a")}</Text>
-              </TouchableOpacity>
+              <Creator color={null} creator={this.props.Event.creator_phone} created_at={this.props.Event.created_at}></Creator>
             </View>
 
 
@@ -427,11 +406,6 @@ export default class EventDetailView extends Component {
               isHighlightDetailsModalOpened: true
             })
           }}></PhotoViewer> : null}
-          {this.state.showProfileModal ? <ProfileModal profile={this.state.profile} isOpen={this.state.showProfileModal} onClosed={() => {
-            this.setState({
-              showProfileModal: false
-            })
-          }}></ProfileModal> : null}
         </View>
       </View>
     )

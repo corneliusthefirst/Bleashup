@@ -52,6 +52,7 @@ export default class MamageMembersModal extends PureComponent {
     _keyExtractor(item) {
         return item.phone
     }
+    delay = 0
     render() {
         return (
             <Modal
@@ -111,16 +112,17 @@ export default class MamageMembersModal extends PureComponent {
                             numberOfItems={this.state.contacts.length}
                             keyExtractor={this._keyExtractor}
                             dataSource={this.state.contacts}
-                            renderItem={(item, index) =>
-                                <SelectableProfileWithOptions toggleMaster={(member) => this.toggleMaster(member)}
+                            renderItem={(item, index) =>{
+                                this.delay = this.delay >= 15?0:this.delay + 1
+                               return (<SelectableProfileWithOptions delay={this.delay} toggleMaster={(member) => this.toggleMaster(member)}
                                     selected={member => { this.addMember(member) }}
                                     changeMasterState={(newState) => this.props.changeMasterState(newState) }
                                     checkActivity={(memberPhone) => this.props.checkActivity(memberPhone)}
                                     creator={this.props.creator}
                                     mainMaster={this.props.master}
                                     unselected={(member) => this.remove(member)}
-                                    key={index} contact={item}></SelectableProfileWithOptions>
-                            }
+                                    key={index} contact={item}></SelectableProfileWithOptions>)
+                            }}
                         >
                         </BleashupFlatList></View></View> : <Spinner size={"small"}></Spinner>}
                 </View>

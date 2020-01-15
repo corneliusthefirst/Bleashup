@@ -88,6 +88,7 @@ componentDidMount(){
         let event = this.state.currentEvent
         event.created_at = moment().format()
         event.updated_at = moment().format()
+        event.recurrence = moment(event.period).add(1,"hours").format()
         let newEvent = event;
         newEvent.id = uuid.v1();
       CreateRequest.createEvent(newEvent).then((res) => {

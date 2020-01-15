@@ -58,9 +58,9 @@ export default class NotificationModal extends PureComponent {
                     })
                 }}
                 style={{
-                    height: "125%",
+                    height: "128%",
                     borderRadius: 10,
-                    borderWidth: 0.2,
+                    borderWidth: 1.5,
                     marginLeft: "14%",
                     borderColor: "#1FABAB",
                     borderBottomRightRadius: 8,
@@ -102,7 +102,7 @@ export default class NotificationModal extends PureComponent {
                             <View style={{
                                 flexDirection: 'column',
                             }}>
-                                <View style={{ flexDirection: 'row',marginBottom: '1%', }}>
+                                <View style={{ flexDirection: 'row',marginBottom: "2%", }}>
                                     <Text ellipsizeMode='tail' numberOfLines={1} style={{ fontWeight: 'bold', }}>{this.props.change.changed}</Text>
                                 </View>
                                 <Text ellipsizeMode='tail' style={{ fontSize: 12, fontStyle: 'italic', }} numberOfLines={1}>{typeof this.props.change.new_value.new_value === "string" ? this.props.change.new_value.new_value : ""}</Text>

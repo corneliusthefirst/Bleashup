@@ -52,12 +52,12 @@ class UpdatesDispatcher {
             date: update.date,
             time: null
           }
+          this.infomCurrentRoom(Change, Eve, update.event_id)
           stores.ChangeLogs.addChanges(Change).then(() => {
             Eve.calendar_id ? CalendarServe.saveEvent(Eve, Eve.alarms).then(() => {
 
             }) : null
             GState.eventUpdated = true;
-            this.infomCurrentRoom(Change, Eve, update.event_id)
             resolve();
           });
         })
@@ -79,8 +79,8 @@ class UpdatesDispatcher {
             date: update.date,
             time: update.time
           };
+          this.infomCurrentRoom(Change, Change, update.event_id)
           stores.ChangeLogs.addChanges(Change).then(() => {
-            this.infomCurrentRoom(Change, Change, update.event_id)
             GState.eventUpdated = true;
             resolve();
           });
@@ -106,8 +106,8 @@ class UpdatesDispatcher {
             date: update.data,
             time: null
           }
+          this.infomCurrentRoom(Change, Eve, update.event_id)
           stores.ChangeLogs.addChanges(Change).then(() => {
-            this.infomCurrentRoom(Change, Eve, update.event_id)
             GState.eventUpdated = true;
             resolve('ok')
           })
@@ -128,12 +128,12 @@ class UpdatesDispatcher {
             date: update.date,
             time: null
           }
+          this.infomCurrentRoom(Change, Eve, update.event_id)
           stores.ChangeLogs.addChanges(Change).then(() => {
             Eve.calendar_id ? CalendarServe.saveEvent(Eve, Eve.alarms).then(() => {
 
             }) : null
             GState.eventUpdated = true;
-            this.infomCurrentRoom(Change, Eve, update.event_id)
             resolve();
           });
         })
@@ -154,9 +154,9 @@ class UpdatesDispatcher {
             date: update.date,
             time: null
           }
+          this.infomCurrentRoom(Change, Change, update.event_id)
           stores.ChangeLogs.addChanges(Change).then(() => {
             GState.eventUpdated = true
-            this.infomCurrentRoom(Change, Change, update.event_id)
             resolve("ok")
           })
         })
@@ -176,11 +176,11 @@ class UpdatesDispatcher {
             date: update.date,
             time: null
           }
+          this.infomCurrentRoom(Change, Eve, update.event_id)
           stores.ChangeLogs.addChanges(Change).then(() => {
             Eve.calendar_id ? CalendarServe.saveEvent(Eve, Eve.alarms).then(() => {
 
             }) : null
-            this.infomCurrentRoom(Change, Eve, update.event_id)
             GState.eventUpdated = true
             resolve('ok')
           })
@@ -189,29 +189,29 @@ class UpdatesDispatcher {
     },
     string: update => {
       return new Promise((resolve, reject) => {
-            stores.Events.updateLocation(
-              update.event_id,
-               update.new_value,
-              true
-            ).then((Eve) => {
-              let Change = {
-                id: uuid.v1(),
-                title: "Updates On Main Activity",
-                updated: "location",
-                updater: update.updater,
-                event_id: update.event_id,
-                changed: update.new_value ? "Changed The Location Of The Activity To: " : "Removed The Location Of The Activity",
-                new_value: { data: null, new_value: update.new_value },
-                date: update.date,
-                time: null
-              }
-              stores.ChangeLogs.addChanges(Change).then(() => {
-                this.infomCurrentRoom(Change, Eve, update.event_id)
-                GState.eventUpdated = true;
-                resolve('ok')
-              })
-            });
-          });
+        stores.Events.updateLocation(
+          update.event_id,
+          update.new_value,
+          true
+        ).then((Eve) => {
+          let Change = {
+            id: uuid.v1(),
+            title: "Updates On Main Activity",
+            updated: "location",
+            updater: update.updater,
+            event_id: update.event_id,
+            changed: update.new_value ? "Changed The Location Of The Activity To: " : "Removed The Location Of The Activity",
+            new_value: { data: null, new_value: update.new_value },
+            date: update.date,
+            time: null
+          }
+          this.infomCurrentRoom(Change, Eve, update.event_id)
+          stores.ChangeLogs.addChanges(Change).then(() => {
+            GState.eventUpdated = true;
+            resolve('ok')
+          })
+        });
+      });
     },
     calendar_id: update => {
       return new Promise((resolve, reject) => {
@@ -227,8 +227,8 @@ class UpdatesDispatcher {
             date: update.date,
             time: null
           }
+          this.infomCurrentRoom(Change, Change, update.event_id)
           stores.ChangeLogs.addChanges(Change).then(() => {
-            this.infomCurrentRoom(Change, Change, update.event_id)
             GState.eventUpdated = true
             resolve("ok")
           })
@@ -249,11 +249,11 @@ class UpdatesDispatcher {
             date: update.date,
             time: null
           }
+          this.infomCurrentRoom(Change, Eve, update.event_id)
           stores.ChangeLogs.addChanges(Change).then(() => {
             Eve.calendar_id ? CalendarServe.saveEvent(Eve, Eve.alarms).then(() => {
 
             }) : null
-            this.infomCurrentRoom(Change, Eve, update.event_id)
             GState.eventUpdated = true
             resolve("ok")
           })
@@ -285,9 +285,9 @@ class UpdatesDispatcher {
                     date: update.date,
                     time: update.time
                   };
+                  this.infomCurrentRoom(Change, update.event_id, update.event_id)
                   stores.ChangeLogs.addChanges(Change).then(() => {
                     GState.eventUpdated = true;
-                    this.infomCurrentRoom(Change, update.event_id, update.event_id)
                     resolve();
                   });
                 })
@@ -317,10 +317,10 @@ class UpdatesDispatcher {
                   date: update.date,
                   time: update.time
                 };
-                stores.ChangeLogs.addChanges(Change).then(() => {
                   stores.Events.unpublishEvent(update.event_id, true).then(
                     () => {
                       this.infomCurrentRoom(Change, Change, update.event_id)
+                      stores.ChangeLogs.addChanges(Change).then(() => {
                       GState.eventUpdated = true;
                       resolve();
                     }
@@ -406,10 +406,10 @@ class UpdatesDispatcher {
                 date: update.date,
                 time: update.time
               };
+              this.infomCurrentRoom(Change, newEvent, update.event_id)
               stores.ChangeLogs.addChanges(Change).then(() => {
                 GState.eventUpdated = true;
                 // console.warn(e.commitee)
-                this.infomCurrentRoom(Change, newEvent, update.event_id)
                 resolve();
               });
             });
@@ -436,9 +436,9 @@ class UpdatesDispatcher {
             date: update.date,
             time: update.time
           };
+          this.infomCurrentRoom(Change, Event, update.event_id)
           stores.ChangeLogs.addChanges(Change).then(() => {
             GState.eventUpdated = true;
-            this.infomCurrentRoom(Change, Event, update.event_id)
             resolve();
           });
         });
@@ -895,10 +895,10 @@ class UpdatesDispatcher {
                   date: moment().format(),
                   time: null
                 }
+                this.infomCurrentRoom(Change, Highlight, update.event_id)
                 stores.ChangeLogs.addChanges(Change).then(res => {
                   GState.newHightlight = true;
                   GState.eventUpdated = true;
-                  this.infomCurrentRoom(Change, Highlight, update.event_id)
                   resolve("ok")
                 })
               });
@@ -929,8 +929,8 @@ class UpdatesDispatcher {
             date: moment().format(),
             time: null
           }
+          this.infomCurrentRoom(Change, Highlight, update.event_id)
           stores.ChangeLogs.addChanges(Change).then(res => {
-            this.infomCurrentRoom(Change, Highlight, update.event_id)
             GState.eventUpdated = true;
             resolve("ok")
           })
@@ -963,8 +963,8 @@ class UpdatesDispatcher {
             date: moment().format(),
             time: null
           }
+          this.infomCurrentRoom(Change, Highlight, update.event_id)
           stores.ChangeLogs.addChanges(Change).then(res => {
-            this.infomCurrentRoom(Change, Highlight, update.event_id)
             GState.eventUpdated = true;
             resolve("ok")
           })
@@ -992,8 +992,8 @@ class UpdatesDispatcher {
             date: moment().format(),
             time: null
           }
+          this.infomCurrentRoom(Change, Highlight, update.event_id)
           stores.ChangeLogs.addChanges(Change).then(res => {
-            this.infomCurrentRoom(Change, Highlight, update.event_id)
             GState.eventUpdated = true;
             resolve("ok")
           })
@@ -1018,8 +1018,8 @@ class UpdatesDispatcher {
               date: moment().format(),
               time: null
             }
+            this.infomCurrentRoom(Change, Highlight, update.event_id)
             stores.ChangeLogs.addChanges(Change).then(res => {
-              this.infomCurrentRoom(Change, Highlight, update.event_id)
               GState.eventUpdated = true;
               resolve("ok")
             })
@@ -1334,33 +1334,29 @@ class UpdatesDispatcher {
     },
     remind_added: update => {
       return new Promise((resolve, reject) => {
-        let Change = {
-          event_id: update.event_id,
-          changed: "New Remind Created",
-          updater: update.updater,
-          new_value: update.new_value,
-          title: "Update On Reminds",
-          id: uuid.v1(),
-          date: update.date,
-          time: update.time
-        };
-        stores.ChangeLogs.addChanges(Change).then(() => {
-          let RemindID = requestObjects.RemindID();
-          RemindID.remind_id = update.new_value;
-          tcpRequestData.getRemind(RemindID).then(JSONData => {
-            Getter.get_data(JSONData).then(Remind => {
-              stores.Reminds.addReminds(Remind).then(() => {
-                stores.Events.addRemind(update.event_id, Remind.id).then(() => {
-                  stores.Events.changeUpdatedStatus(
-                    update.event_id,
-                    "remind_updated",
-                    true
-                  ).then(() => {
-                    GState.newRemind = true;
-                    GState.eventUpdated = true;
-                    resolve();
-                  });
-                });
+        let RemindID = requestObjects.RemindID();
+        RemindID.remind_id = update.new_value;
+        tcpRequestData.getRemind(RemindID).then(JSONData => {
+          serverEventListener.sendRequest(JSONData).then(Remind => {
+            stores.Reminds.addReminds(Remind.data).then(() => {
+              stores.Events.addRemind(update.event_id, Remind.id).then(() => {
+                let Change = {
+                  id: uuid.v1(),
+                  title: "Updates On Main Activity",
+                  updated: "added_remind",
+                  updater: update.updater,
+                  event_id: update.event_id,
+                  changed: "Added A New Remind / Task ",
+                  new_value: { data: update.new_value, new_value: Remind.data.title },
+                  date: moment().format(),
+                  time: null
+                }
+                this.infomCurrentRoom(Change, Remind.data, update.event_id)
+                stores.ChangeLogs.addChanges(Change).then(() => {
+                  GState.newRemind = true;
+                  GState.eventUpdated = true;
+                  resolve('ok')
+                })
               });
             });
           });
@@ -1369,108 +1365,262 @@ class UpdatesDispatcher {
     },
     remind_period_updated: update => {
       return new Promise((resolve, reject) => {
-        let Change = {
-          event_id: update.event_id,
-          changed: "Remind Period Updated",
-          updater: update.updater,
-          new_value: update.new_value,
-          title: "Update On Reminds",
-          id: uuid.v1(),
-          date: update.date,
-          time: update.time
-        };
-        stores.ChangeLogs.addChanges(Change).then(() => {
-          stores.Reminds.updatePeriod(update.new_value, true).then(() => {
-            stores.Events.changeUpdatedStatus(
-              update.event_id,
-              "remind_updated",
-              true
-            ).then(() => {
-              GState.eventUpdated = true;
-              resolve();
-            });
-          });
+        stores.Reminds.updatePeriod(update.new_value, true).then((oldRemind) => {
+          let Change = {
+            id: uuid.v1(),
+            title: `Updates On ${oldRemind.title} Remind / Task`,
+            updated: `remind_period_updated`,
+            updater: update.updater,
+            event_id: update.event_id,
+            changed: "Changed Date/Time Of The Remind / Task To ",
+            new_value: { data: update.new_value.remind_id, new_value: update.new_value.period },
+            date: moment().format(),
+            time: null
+          }
+          this.infomCurrentRoom(Change, oldRemind, update.event_id)
+          stores.ChangeLogs.addChanges(Change).then(() => {
+            GState.eventUpdated = true;
+            resolve('ok')
+          })
         });
       });
     },
     remind_description_updated: update => {
       return new Promise((resolve, reject) => {
-        let Change = {
-          event_id: update.event_id,
-          changed: "Remind Description Updated",
-          updater: update.updater,
-          title: "Update On Reminds",
-          id: uuid.v1(),
-          new_value: update.new_value,
-          date: update.date,
-          time: update.time
-        };
-        stores.ChangeLogs.addChanges(Change).then(() => {
-          stores.Reminds.updateDescription(update.new_value, true).then(() => {
-            stores.Events.changeUpdatedStatus(
-              update.event_id,
-              "remind_updated",
-              true
-            ).then(() => {
-              GState.eventUpdated = true;
-              resolve();
-            });
-          });
+        stores.Reminds.updateDescription(update.new_value, true).then((oldRemind) => {
+          let Change = {
+            id: uuid.v1(),
+            title: `Updates On ${oldRemind.title} Remind / Task`,
+            updated: `remind_description_updated`,
+            updater: update.updater,
+            event_id: update.event_id,
+            changed: "Changed The Description To ",
+            new_value: {
+              data: update.new_value.remind_id,
+              new_value: update.new_value.description
+            },
+            date: moment().format(),
+            time: null
+          }
+          this.infomCurrentRoom(Change, oldRemind, update.event_id)
+          stores.ChangeLogs.addChanges(Change).then(() => {
+            GState.eventUpdated = true;
+            resolve('ok')
+          })
         });
       });
     },
     remind_title_updated: update => {
       return new Promise((resolve, reject) => {
-        let Change = {
-          event_id: update.event_id,
-          changed: "Remind Title Updated",
-          title: "Update On Reminds",
-          id: uuid.v1(),
-          updater: update.updater,
-          new_value: update.new_value,
-          date: update.date,
-          time: update.time
-        };
-        stores.ChangeLogs.addChanges(Change).then(() => {
-          stores.Reminds.updateTitle(update.new_value, true).then(() => {
-            stores.Events.changeUpdatedStatus(
-              update.event_id,
-              "remind_updated",
-              true
-            ).then(() => {
-              GState.eventUpdated = true;
-              resolve();
-            });
-          });
+        stores.Reminds.updateTitle(update.new_value, true).then((oldRemind) => {
+          let Change = {
+            id: uuid.v1(),
+            title: `Updates On ${oldRemind.title} Remind / Task`,
+            updated: `remind_title_updated`,
+            updater: update.updater,
+            event_id: update.event_id,
+            changed: "Changed The Title To ",
+            new_value: {
+              data: update.new_value.remind_id,
+              new_value: update.new_value.title
+            },
+            date: moment().format(),
+            time: null
+          }
+          this.infomCurrentRoom(Change, oldRemind, update.event_id)
+          stores.ChangeLogs.addChanges(Change).then(() => {
+            GState.eventUpdated = true;
+            resolve('ok')
+          })
         });
       });
     },
     remind_deleted: update => {
       return new Promise((resolve, reject) => {
-        let Change = {
-          updated: update.updated,
-          title: "Update On Reminds",
-          id: uuid.v1(),
-          event_id: update.event_id,
-          changed: "Remind Title Updated",
-          updater: update.updater,
-          new_value: update.new_value,
-          date: update.date,
-          //time: update.time
-        };
-        stores.ChangeLogs.addChanges(Change).then(() => {
-          stores.Reminds.removeRemind(update.new_value).then(() => {
-            stores.Events.changeUpdatedStatus(
-              update.event_id,
-              "remind_updated",
-              true
-            ).then(() => {
-              GState.eventUpdated = true;
-              resolve();
-            });
+        stores.Reminds.removeRemind(update.new_value,true).then((oldRemind) => {
+          let Change = {
+            id: uuid.v1(),
+            title: `Updates On ${oldRemind.title} Remind / Task`,
+            updated: `delete_remind`,
+            updater: update.updater,
+            event_id: update.event_id,
+            changed: "Removed The Remind / Task ",
+            new_value: { data: update.new_value, new_value: oldRemind },
+            date: moment().format(),
+            time: null
+          }
+          this.infomCurrentRoom(Change, oldRemind, update.event_id)
+          stores.ChangeLogs.addChanges(Change).then(() => {
+            GState.eventUpdated = true;
+            resolve('ok')
+          })
+        });
+      });
+    },
+    remind_public_state: update => {
+      return new Promise((resolve, reject) => {
+        stores.Reminds.updateStatus(update.new_value,true).then((oldRemind) => {
+          let Change = {
+            id: uuid.v1(),
+            title: `Updates On ${oldRemind.title} Remind / Task`,
+            updated: `remind_public_state_updated`,
+            updater: update.updater,
+            event_id: update.event_id,
+            changed: "Changed Status Of The Remind / Task To",
+            new_value: { data: update.new_value.remind_id, 
+              new_value: update.new_value.status },
+            date: moment().format(),
+            time: null
+          }
+          this.infomCurrentRoom(Change, oldRemind, update.event_id)
+          stores.ChangeLogs.addChanges(Change).then(() => {
+            GState.eventUpdated = true;
+            resolve('ok')
+          })
+        });
+      });
+    },
+    remind_recurrence: update => {
+      return new Promise((resolve, reject) => {
+        stores.Reminds.updateRecurrence(update.new_value,true).then((oldRemind) => {
+          let Change = {
+            id: uuid.v1(),
+            title: `Updates On ${oldRemind.title} Remind / Task`,
+            updated: `remind_reurrence_config_updated`,
+            updater: update.updater,
+            event_id: update.event_id,
+            changed: "Changed The Recurrency configuration",
+            new_value: { data: update.new_value.remind_id, 
+              new_value: update.new_value.recurrence },
+            date: moment().format(),
+            time: null
+          }
+          this.infomCurrentRoom(Change, oldRemind, update.event_id)
+          stores.ChangeLogs.addChanges(Change).then(() => {
+            GState.eventUpdated = true;
+            resolve('ok')
           });
         });
       });
+    },
+    members_added_to_remind : update => {
+      return new Promise((resolve,reject) => {
+        stores.Reminds.addMembers(update.new_value,true).then(oldRemind => {
+          let Change = {
+            id: uuid.v1(),
+            title: `Updates On ${oldRemind.title} Remind / Task`,
+            updated: `remind_member_added`,
+            updater: update.updater,
+            event_id: update.event_id,
+            changed: "Assigned The Remind / Task To ",
+            new_value: { data: update.new_value.remind_id,
+               new_value: update.new_value.members },
+            date: moment().format(),
+            time: null
+          }
+          this.infomCurrentRoom(Change, oldRemind, update.event_id)
+          stores.ChangeLogs.addChanges(Change).then(() => {
+            GState.eventUpdated = true;
+            resolve('ok')
+          });
+        });
+      });
+    },
+    members_removed_from_remind : update => {
+      return new Promise((resolve,reject) => {
+        stores.Reminds.removeMember(update.new_value,true).then(oldRemind => {
+          let Change = {
+            id: uuid.v1(),
+            title: `Updates On ${oldRemind.title} Remind / Task`,
+            updated: `remind_member_removed`,
+            updater: update.updater,
+            event_id: update.event_id,
+            changed: "Removed Members From The Remind / Task ",
+            new_value: { data: update.new_value.remind_id, new_value: 
+              update.new_value.members.map(ele =>{return {phone:ele}}) },
+            date: moment().format(),
+            time: null
+          }
+          this.infomCurrentRoom(Change, oldRemind, update.event_id)
+          stores.ChangeLogs.addChanges(Change).then(() => {
+            GState.eventUpdated = true;
+            resolve('ok')
+          })
+        })
+      })
+    },
+    mark_as_done:update => {
+      return new Promise((resolve,reject) => {
+        stores.Reminds.makeAsDone(update.new_value,true).then(oldRemind => {
+          let Change = {
+            id: uuid.v1(),
+            title: `Updates On ${oldRemind.title} Remind / Task`,
+            updated: `remind_marked_as_done`,
+            updater: update.updater,
+            event_id: update.event_id,
+            changed: "Mark The Remind / Task As Done",
+            new_value: { data: update.new_value.remind_id,
+               new_value: update.new_value.donners },
+            date: moment().format(),
+            time: null
+          }
+          this.infomCurrentRoom(Change, oldRemind, update.event_id)
+          stores.ChangeLogs.addChanges(Change).then(() => {
+            GState.eventUpdated = true;
+            resolve('ok')
+          })
+        })
+      })
+    },
+    confirmed: update => {
+      return new Promise((resolve,reject) => {
+        stores.Reminds.confirm(update.new_value, true).then(oldRemind => {
+          let Change = {
+            id: uuid.v1(),
+            title: `Updates On ${oldRemind.title} Remind / Task`,
+            updated: `remind_confirmed`,
+            updater: update.updater,
+            event_id: update.event_id,
+            changed: "Confirmed The Task Completion Of ",
+            new_value: {
+              data: update.new_value.remind_id,
+              new_value: update.new_value.confirmed
+            },
+            date: moment().format(),
+            time: null
+          }
+          this.infomCurrentRoom(Change, oldRemind, update.event_id)
+          stores.ChangeLogs.addChanges(Change).then(() => {
+            GState.eventUpdated = true;
+            resolve('ok')
+          })
+        })
+      })
+    },
+    must_report: update => {
+      return new Promise((resolve, reject) => {
+        stores.Reminds.updateRequestReportOnComplete(update.new_value, true).then(oldRemind => {
+          let Change = {
+            id: uuid.v1(),
+            title: `Updates On ${oldRemind.title} Remind / Task`,
+            updated: `remind_confirmed`,
+            updater: update.updater,
+            event_id: update.event_id,
+            changed: "Changed The Must Report Status Of The Remind ",
+            new_value: {
+              data: update.new_value.remind_id,
+              new_value: update.new_value.must_report
+            },
+            date: moment().format(),
+            time: null
+          }
+          this.infomCurrentRoom(Change, oldRemind, update.event_id)
+          stores.ChangeLogs.addChanges(Change).then(() => {
+            GState.eventUpdated = true;
+            resolve('ok')
+          })
+        })
+      })
     },
     new_commitee: update => {
       return new Promise((resolve, reject) => {
@@ -1487,8 +1637,8 @@ class UpdatesDispatcher {
               date: update.date,
               time: update.time,
             };
+            this.infomCurrentRoom(Change, commitee, update.event_id)
             stores.ChangeLogs.addChanges(Change).then(() => {
-              this.infomCurrentRoom(Change, commitee, update.event_id)
               resolve()
             })
           })
@@ -1510,8 +1660,8 @@ class UpdatesDispatcher {
               date: update.date,
               time: update.time,
             }
+            this.infomCurrentRoom(Change, commitee, update.event_id)
             stores.ChangeLogs.addChanges(Change).then(() => {
-              this.infomCurrentRoom(Change, commitee, update.event_id)
               resolve()
             })
           })
@@ -1532,8 +1682,8 @@ class UpdatesDispatcher {
               new_value: { data: commitee.id, new_value: null },
               date: update.date,
             }
+            this.infomCurrentRoom(Change, commitee, update.event_id)
             stores.ChangeLogs.addChanges(Change).then(() => {
-              this.infomCurrentRoom(Change, commitee, update.event_id)
               resolve()
             })
           })
@@ -1555,8 +1705,8 @@ class UpdatesDispatcher {
               date: update.date,
               time: update.time,
             }
+            this.infomCurrentRoom(Change, commitee, update.event_id)
             stores.ChangeLogs.addChanges(Change).then(() => {
-              this.infomCurrentRoom(Change, commitee, update.event_id)
               resolve()
             })
           })
@@ -1578,8 +1728,8 @@ class UpdatesDispatcher {
             date: update.date,
             time: update.time,
           }
+          this.infomCurrentRoom(Change, commitee, update.event_id)
           stores.ChangeLogs.addChanges(Change).then(() => {
-            this.infomCurrentRoom(Change, commitee, update.event_id)
             resolve()
           })
         })
@@ -1599,8 +1749,8 @@ class UpdatesDispatcher {
             date: update.date,
             time: update.time,
           }
+          this.infomCurrentRoom(Change, commitee, update.event_id)
           stores.ChangeLogs.addChanges(Change).then(() => {
-            this.infomCurrentRoom(Change, commitee, update.event_id)
             resolve()
           })
         })
@@ -1621,8 +1771,8 @@ class UpdatesDispatcher {
               date: update.date,
               time: update.time,
             }
+            this.infomCurrentRoom(Change, commitee, update.event_id)
             stores.ChangeLogs.addChanges(Change).then(() => {
-              this.infomCurrentRoom(Change, commitee, update.event_id)
               resolve()
             })
           })
@@ -1644,8 +1794,8 @@ class UpdatesDispatcher {
             date: update.date,
             time: update.time,
           }
+          this.infomCurrentRoom(Change, commitee, update.event_id)
           stores.ChangeLogs.addChanges(Change).then(() => {
-            this.infomCurrentRoom(Change, commitee, update.event_id)
             resolve()
           })
 

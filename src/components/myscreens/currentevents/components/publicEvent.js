@@ -271,7 +271,7 @@ class PublicEvent extends Component {
   }
   render() {
     //emitter.emit('notify', "santerss") 
-    return (this.state.isMount ? <View style={{ width: "100%", }}>
+    return (this.state.isMount ? <View style={{ width: "100%", padding: '1%',alignSelf: 'center',}}>
       <Swipeout {...this.props} onOpen={() => this.openSwipeOut()} onClose={() => this.onCloseSwipeout()} style={{
         width: "100%",
         backgroundColor: this.props.Event.new ? "#cdfcfc" : null
@@ -280,10 +280,9 @@ class PublicEvent extends Component {
         //close={true}
         {...this.swipeOutSettings(this.state.master, this.state.joint)}>
         <Card
-          style={{
-            borderColor: "#1FABAB",
-          }
-          }
+        style={{
+          margin: '3%',
+        }}
           bordered
         >
           <CardItem

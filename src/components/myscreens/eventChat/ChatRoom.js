@@ -1201,13 +1201,13 @@ export default class ChatRoom extends Component {
         return <View style={{
             height: this.state.textInputHeight, backgroundColor: "#FEFFDE",
             borderRadius: 8, alignSelf: 'center', borderBottomWidth: 0,
-            padding: '1%', maxWidth: "99.9%",
+            padding: '1%', maxWidth: "99.9%",...shadower(6)
         }}>
             {
                 //* Reply Message caption */
                 this.state.replying ? this.replyMessageCaption() : null}
             <View>
-                <View style={{ display: 'flex', flexDirection: 'row', }}>
+                <View style={{ display: 'flex', flexDirection: 'row', ...shadower(6) }}>
                     <View style={{
                         marginTop: "2%",
                         width: "33%",

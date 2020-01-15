@@ -24,8 +24,9 @@ class CreateRequester {
                             time: null
                         }
                         stores.ChangeLogs.addChanges(Change).then(res => {
-                            resolve("ok")
+                            
                         })
+                        resolve(newEvent)
                     })
                 }).catch(() => {
                     Toast.show({text:'Unable To Perform Network Request'})

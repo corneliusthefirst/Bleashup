@@ -101,11 +101,17 @@ class Request {
             creator: stores.LoginStore.user.phone,
             title: '',
             description: '',
+            must_report:false,
+            confirmed: [],
             period: "",
-            recursive_frequency:"none",
-            recurrence:1000,
+            recursive_frequency:{
+                interval:1,
+                frequency:'yearly',
+                recurrence:null
+            },
             status:"public",
             members:[],
+            donners:[],
             isDone:false
         }
     }
@@ -115,7 +121,7 @@ class Request {
             remind_id: ''
         }
     }
-
+    
     RemindUdate() {
         return {
             action: "",
@@ -350,10 +356,10 @@ class Request {
             creator_phone: stores.LoginStore.user.phone,
             closed:false,
             notes:[],
-            recurrent:false,
-            frequency:'daily',
+            recurrent:true,
+            frequency:'yearly',
             interval:1,
-            recurrence:1000,
+            recurrence:moment().format(),
             calendar_id:null,
             about: this.About(),
             commitee : [],

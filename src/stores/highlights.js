@@ -116,6 +116,8 @@ export default class highlights {
           if (result.length == 0) {
             this.fetchHighlightsFromRemote(eventID).then(data => {
               resolve(data)
+            }).catch(() => {
+              resolve([])
             })
           } else {
             resolve(uniqBy(sortBy(result, ['created_at'], ['desc']), 'id'))

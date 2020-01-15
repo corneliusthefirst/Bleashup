@@ -1,0 +1,43 @@
+//TODO: A;l Of These Issues below needs to be resovle by the completion of the feature reminds/tasks
+
+[ ] Handle the error that occurs when one onpens the post list view from the changing image lists from on the public event card.
+        - I don't yet know what causes the error but what i know is that it happens rarely .
+        - While waiting to solve it i can only investigate.
+
+[*] Handle the error of the Activity details page ever loading sometimes.
+    - Sometimes, The spinner(loader) spines for ever. i don't yet know what causes it .
+        i will only investigate while waiting to solve it .
+
+
+[ ] Handle The of the backPress sometimes not working .
+    - This is due to some Modals which are listening to backPress, once opened will not 
+        unregister its handle even when closed because it's not unmounted onClosed.
+
+
+[ ] Handle Proper Date display on the Activity menu Public event card and invitation
+     card in case the activity is a recursive one.
+
+[*] Check if the user is a master before performing an update onLongPress on the Acivity Details page.
+
+[ ] implement a restore after deleting
+
+[ ] Check that A Post has atleat one of the inputs fields before accepting creation on the Activiy Details page.
+
+[ ] Add A BackPress handle on Create Activity page and on the mytask page.
+
+[ ] On the likes module if the likes has never been initialized in the store, It will alway fetch likes 
+    on Mount . But one The Likes is initialised in the store . it will never fetch again.
+    From Then Likes will be updatable only through updatesDispatcher. 
+
+    - This is a Good Practise in case the user is a member of the activity. since being a member
+    implies having subscribed to all incomming updates on that activity. 
+
+    - But in the case it a public Activity and the user has not yet joint, once it fetches the likes and 
+        initialises the store for the first time, it will never fetch again and hence the likes of the
+        likes for that activity on that device will remain outdated if any update occurs. 
+
+    - This is highly problematic. 
+
+    A solution needs to implemented to handle this . 
+    The same applies for sharers.
+

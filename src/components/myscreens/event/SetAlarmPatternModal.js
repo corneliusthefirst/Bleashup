@@ -54,8 +54,18 @@ export default class SetAlarmPatternModal extends Component {
         text: "10 Minuts Before"
     }, {
         id: '6',
+        autoselected: true,
+        date: moment(this.props.date).subtract(60 * 5, 'seconds'),
+        text: "5 Minuts Before"
+    }, {
+        id: '7',
+        autoselected: true,
+        date: moment(this.props.date).subtract(60 * 2, 'seconds'),
+        text: "2 Minuts Before"
+    }, {
+        id: '8',
         date: moment(this.props.date).utc().format(UTCFormat),
-        text: "At Start Time"
+        text: "On Time"
     }]
     save() {
         this.props.save(this.state.selected.map(ele => {
@@ -65,6 +75,7 @@ export default class SetAlarmPatternModal extends Component {
                         .toISOString() : moment(this.props.date).diff(ele.date, 'minutes'))
             }
         }))
+        this.props.closed()
     }
     _keyExtractor = (item, index) => { return item ? item.id : null };
     render() {
@@ -86,10 +97,10 @@ export default class SetAlarmPatternModal extends Component {
                 }}
             >
                 <View style={{ width: "100%", height: 50, flexDirection: 'row', }}>
-                    <Text style={{ fontSize: 25, alignSelf: 'flex-start', fontWeight: 'bold', fontStyle: 'italic', width: "80%" }}>{"Set Alarm Pattern"}</Text>
+                    <Text style={{ fontSize: 23, alignSelf: 'flex-start', fontWeight: 'bold', fontStyle: 'italic', width: "76%",margin: '2%',padding: '1%', }}>{"Set Alarm Pattern"}</Text>
                     <Button onPress={() => this.save()} style={{ alignSelf: 'flex-end', }} transparent><Text style={{ fontSize: 30, fontWeight: 'bold', }}>SET</Text></Button>
                 </View>
-                <View style={{ margin: '3%', height: "90%" }}>
+                <View style={{ margin: '3%', height: "85%" }}>
                     <View style={{ hieght: "" }}>
                         <BleashupFlatList
                             listKey={"contacts"}

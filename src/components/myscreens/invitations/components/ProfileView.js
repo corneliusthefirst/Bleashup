@@ -1,7 +1,7 @@
 import React, { Component } from "react"
 import CacheImages from '../../../CacheImages';
 import { View } from "react-native";
-import { Body, Text, Accordion, Content, Thumbnail } from "native-base"
+import { Body, Text, Accordion, Content, Thumbnail, Button } from "native-base"
 import ImageActivityIndicator from '../../currentevents/components/imageActivityIndicator';
 import ProfileIdicator from "../../currentevents/components/ProfilIndicator";
 import stores from "../../../../stores";
@@ -32,7 +32,7 @@ export default class ProfileView extends Component {
                     }
                 })
             }
-        }), 0)
+        }), 20 * this.props.delay ? this.props.delay : 2)
     }
     openModal() {
         this.setState({
@@ -42,16 +42,18 @@ export default class ProfileView extends Component {
     render() {
         return this.state.hide ? null : this.state.isMount ? (
 
-            <View style={{ flexDirection: "row", }}>
-                <TouchableOpacity onPress={() => {
+            <View style={{ flexDirection: "row",margin: '1%', }}>
+                <Button onPress={() => {
                     requestAnimationFrame(() => {
-                        return this.props.showPhoto(this.state.profile.profile)
+                        this.setState({
+                            isModalOpened:true
+                        })
                     });
-                }}>
+                }} transparent>
                     {testForURL(this.state.profile.profile) ? <CacheImages thumbnails {...this.props}
                         source={{ uri: this.state.profile.profile }} /> :
                         <Thumbnail source={{ uri: this.state.profile.profile }}></Thumbnail>}
-                </TouchableOpacity>
+                </Button>
                 <View style={{ marginTop: "3%", marginLeft: "2%", display: 'flex', fontWeight: 'bold', }}>
                     <Text style={{
                         marginBottom: "2%",
@@ -60,19 +62,18 @@ export default class ProfileView extends Component {
                     }}>{this.state.profile.phone === stores.LoginStore.user.phone ? "You" : this.state.profile.nickname}</Text>
                     <Text style={{ marginLeft: "2%", fontStyle: 'italic', }} note>{this.state.dataArray.title}</Text>
                 </View>
-                {/*<ProfileModal
+                {this.state.isModalOpened ? <ProfileModal
                     isOpen={this.state.isModalOpened}
                     hasJoin={this.props.hasJoin}
                     isToBeJoint
                     joined={this.props.joined}
-                    parent={this}
                     onClosed={() => {
                         this.setState({ isModalOpened: false })
                         //this.props.onOpen()
                     }
                     }
                     profile={this.state.profile}
-                ></ProfileModal>*/}
+                ></ProfileModal> : null}
             </View>
         ) : <ProfileIdicator />
     }

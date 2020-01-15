@@ -66,7 +66,7 @@ export default class Commitee extends Component {
                     borderTopRightRadius: 10, borderBottomRightRadius: 10,
                     backgroundColor: "#1FABAB", height: 35,
                     width: "95%", display: 'flex', flexDirection: 'row', marginBottom: "5%", 
-                   ...shadower(6)
+                   ...shadower(3)
                 }}>
                     <Title style={{
                         color:"#9EEDD3",
@@ -82,8 +82,9 @@ export default class Commitee extends Component {
                     </View>
                 </View>
                 <View>{this.state.refresh ? null :
-                    <View>
+                    <View style={{height:'97%'}}>
                         <BleashupScrollView
+                        //backgroundColor={'white'}
                             dataSource={union([this.generalCommitee], uniq(this.props.commitees))}
                             keyExtractor={(item, index) => item}
                             renderItem={(item, index) =>
