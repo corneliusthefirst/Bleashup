@@ -38,6 +38,9 @@
 
     - This is highly problematic. 
 
+    []  When a remind is added or deleted the whole list refreshes in the remind tab in the event page 
+
+
     A solution needs to implemented to handle this . 
     The same applies for sharers.
 
