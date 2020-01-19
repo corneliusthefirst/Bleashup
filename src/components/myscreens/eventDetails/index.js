@@ -263,6 +263,7 @@ export default class EventDetailView extends Component {
                             replyer.url.photo : replyer.url.photo ?
                               replyer.url.photo : replyer.url.audio ?
                                 replyer.url.audio : null,
+                          title : `${replyer.title} : \n ${replyer.description}`,
                           replyer_phone: stores.LoginStore.user.phone,
                           replyer_name: stores.LoginStore.user.name,
                           type_extern: 'HighLights',

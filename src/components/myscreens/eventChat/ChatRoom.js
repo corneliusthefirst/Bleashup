@@ -1284,7 +1284,7 @@ export default class ChatRoom extends Component {
     }
 
     replyMessageCaption() {
-        return <View style={{ backgroundColor: this.state.replyerBackColor, marginLeft: "-1%", }}><ReplyText openReply={(replyer) => {
+        return <View style={{ backgroundColor: this.state.replyerBackColor, alignSelf: 'center',margin: 1,}}><ReplyText openReply={(replyer) => {
             this.setState({
                 replyer: replyer,
                 showRepliedMessage: true
@@ -1353,7 +1353,7 @@ export default class ChatRoom extends Component {
                     //* Reply Message caption */
                     this.state.replying ? <View style={{
                         backgroundColor: this.state.replyerBackColor,
-                        marginLeft: "-1%", backgroundcolor: "#FEFFDE",
+                        marginLeft: "-1%", backgroundcolor: "#FEFFDE",margin: '1%',
                     }}>
                         <ReplyText openReply={(replyer) => {
                             this.setState({

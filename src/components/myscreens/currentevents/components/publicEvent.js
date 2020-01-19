@@ -79,17 +79,21 @@ class PublicEvent extends Component {
       this.state.master !== nextState.master ||
       !isEqual(this.props.Event, nextProps.Event) ||
       this.state.fresh !== nextState.fresh
-  } 
+  }
   swipperComponent = null
   componentDidMount() {
-   setTimeout(() => {
+    setTimeout(() => {
+      this.setState({
+        isMount: true,
+      })
+    }, this.props.renderDelay + 20)
+    setTimeout(() => {
       stores.TemporalUsersStore.getUser(this.props.Event.creator_phone).then(creator => {
         stores.Events.isMaster(this.props.Event.id, stores.LoginStore.user.phone).then(master => {
           this.setState({
             master: master,
             joint: findIndex(this.props.Event.participant, { phone: stores.LoginStore.user.phone }) > 0 ? true : false,
             creator: creator,
-            isMount: true
           })
         })
       })
@@ -137,7 +141,7 @@ class PublicEvent extends Component {
           publishing: false,
           public: true
         })
-        
+
       }).catch(error => {
         this.setState({
           publishing: false
@@ -262,23 +266,23 @@ class PublicEvent extends Component {
   onCloseSwipeout() {
   }
   showPhoto(url) {
-    url === this.props.Event.background && !this.state.audio ? this.props.showPhoto(url) : 
+    url === this.props.Event.background && !this.state.audio ? this.props.showPhoto(url) :
       this.props.navigation.navigate("HighLightsDetails", { event_id: this.props.Event.id })
   }
   render() {
     //emitter.emit('notify', "santerss") 
-    return (this.state.isMount ? <View style={{ width: "100%", padding: '1%',alignSelf: 'center',}}>
+    return (this.state.isMount ? <View style={{ width: "100%", padding: '1%', alignSelf: 'center', }}>
       <Swipeout {...this.props} onOpen={() => this.openSwipeOut()} onClose={() => this.onCloseSwipeout()} style={{
-        width: "100%",...shadower(3),
+        width: "100%", ...shadower(3),
         backgroundColor: this.props.Event.new ? "#cdfcfc" : null
       }}
         autoClose={true}
         //close={true}
         {...this.swipeOutSettings(this.state.master, this.state.joint)}>
         <Card
-        style={{
-          margin: '1%',
-        }}
+          style={{
+            margin: '1%',
+          }}
           bordered
         >
           <CardItem
@@ -289,11 +293,11 @@ class PublicEvent extends Component {
             }}
           >
             <Left>
-              <View style={{ flexDirection: "row", }}>
+              {this.state.creator ? <View style={{ flexDirection: "row", }}>
                 <ProfileSimple showPhoto={(url) =>
                   this.props.showPhoto(url)}
                   profile={(this.state.creator)}></ProfileSimple>
-              </View>
+              </View> : null}
             </Left>
             <Right>
               <Button onPress={() => this.props.showActions(this.props.Event.id)} transparent>
@@ -324,7 +328,7 @@ class PublicEvent extends Component {
                   width: "70%",
                   marginLeft: "4%"
                 }} photo={this.props.Event.background} event_id={this.props.Event.id} width={170} height={100} borderRadius={6} />
-                </View> : null}
+              </View> : null}
             </Left>
             <Right >
               {this.state.isMount && this.props.Event.location.string ? <MapView style={{ marginRight: "11%" }}
@@ -346,7 +350,7 @@ class PublicEvent extends Component {
           </Footer>
         </Card>
       </Swipeout>
-    </View> : <Card style={{ height: 315,padding:'1%',margin:'1%',alignSelf:'center',width:'97%' }}>
+    </View> : <Card style={{ height: 315, padding: '1%', margin: '1%', alignSelf: 'center', width: '97%' }}>
       </Card>)
   }
 }

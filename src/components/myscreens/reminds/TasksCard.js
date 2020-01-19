@@ -128,9 +128,6 @@ export default class EventTasksCard extends Component {
                 <Title style={{ fontWeight: "500", marginLeft: -1, fontSize: 17, color: "#696969" }}>{this.props.item.title}</Title>
               </Left>
             </CardItem>
-
-
-
             <CardItem carBody>
               <AccordionModule dataArray={[this.accordData]} long={this.long}></AccordionModule>
             </CardItem>
@@ -146,12 +143,17 @@ export default class EventTasksCard extends Component {
                 (this.props.item.donners &&
                   findIndex(this.props.item.donners, { phone: stores.LoginStore.user.phone }) >= 0 ?
                   status ?
-                    <Icon type="MaterialCommunityIcons" name="check-all" style={{ color: "#54F5CA", marginLeft: "90%" }}></Icon>
-                    : <Icon type="AntDesign" name="check" style={{ color: "#1FABAB", marginLeft: "90%" }}></Icon>
+                    <Icon type="MaterialCommunityIcons" name="check-all" 
+                    style={{ color: "#54F5CA", marginLeft: "90%" }}></Icon>
+                    : <Icon type="AntDesign" name="check" style={{ color: "#1FABAB", 
+                    marginLeft: "90%" }}></Icon>
                   :
-                  <Button style={{ borderWidth: 2, marginTop: 5, borderRadius: 10, borderColor: "#1FABAB", width: "21%", alignItems: 'center', justifyContent: 'center', marginLeft: "78%" }}
+                  <Button style={{ borderWidth: 2, marginTop: 5, borderRadius: 10, borderColor: "#1FABAB",
+                   width: "21%", alignItems: 'center', justifyContent: 'center', 
+                   marginLeft: "78%" }}
                     onPress={() => this.onDone()} transparent >
-                    <Text style={{ fontWeight: "500", color: "#696969", fontSize: 12 }}>Done ?</Text>
+                    <Text style={{ fontWeight: "500", color: "#696969", 
+                    fontSize: 12 }}>{"Done"}</Text>
                   </Button>
 
 

@@ -273,7 +273,7 @@ export default class Message extends Component {
                                                         }}>
                                                         {this.state.time}{"    "}</Text> : null}</Right></View></TouchableWithoutFeedback>
                                         <View>
-                                            {this.props.message.reply ? <View style={{ borderRadius: 10, paddingRight: "1%", marginTop: ".4%", width: "100%" }}>
+                                            {this.props.message.reply ? <View style={{ borderRadius: 10, padding: '1%', marginTop: ".4%", width: "100%" }}>
                                                 <ReplyText pressingIn={() => {
                                                     this.replying = true
                                                 }} openReply={(replyer) => {

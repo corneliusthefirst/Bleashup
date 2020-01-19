@@ -292,7 +292,7 @@ export default class Reminds extends Component {
                       replyer_phone: stores.LoginStore.user.phone,
                       replyer_name: stores.LoginStore.user.name,
                       type_extern: 'Reminds ',
-                      title: itemer.title + '\n' + itemer.description
+                      title: itemer.title + ':\n' + itemer.description
                     })
                   }}
                   master={this.props.master}
