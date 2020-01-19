@@ -14,6 +14,7 @@ import moment from "moment";
 import emitter from '../../../services/eventEmiter';
 import testForURL from '../../../services/testForURL';
 import shadower from "../../shadower";
+import TasksCreation from "../reminds/TasksCreation";
 
 export default class ChangeLogs extends Component {
   constructor(props) {
@@ -78,19 +79,36 @@ export default class ChangeLogs extends Component {
         url:change.new_value.new_value,
         created_at:change.date
       })
-    } else if (Array.isArray(change.new_value.new_value) && change.new_value.new_value[0] && change.new_value.new_value[0].phone) {
+    }else if(change.title.toLowerCase().includes("remind")){
+        this.setState({
+          isShowRemindConfigurationModal:true,
+          current_event_id:change.event_id,
+          current_remind_id:change.new_value.data
+        })
+
+    } else if (Array.isArray(change.new_value.new_value) && 
+    change.new_value.new_value[0] && 
+    change.new_value.new_value[0].phone) {
       this.props.showMembers(change.new_value.new_value)
-    } else if (Array.isArray(change.new_value.new_value) && change.new_value.new_value[0] && change.new_value.new_value[0].includes("00")) {
+    } else if (Array.isArray(change.new_value.new_value) && 
+    change.new_value.new_value[0] &&
+     change.new_value.new_value[0].includes("00")) {
       console.warn("showing contacts")
       this.props.showContacts(change.new_value.new_value)
-    } else if (typeof change.new_value.new_value === "string" && testForURL(change.new_value.new_value)) {
+    } else if (typeof change.new_value.new_value === "string" && 
+    testForURL(change.new_value.new_value)) {
       this.props.openPhoto(change.new_value.new_value)
     }
-    else if (typeof change.new_value.new_value === 'object' && change.new_value.new_value[0].includes("00")){
+    else if (change.new_value && 
+      change.new_value.new_value &&
+       change.new_value.new_value[0] && 
+       typeof change.new_value.new_value === 'object' &&
+        change.new_value.new_value[0].includes("00")){
       this.props.showContacts(change.new_value.new_value)
     }
     else if (typeof change.new_value.new_value === "string" ||
-      (Array.isArray(change.new_value.new_value) && typeof change.new_value.new_value[0] === "string") ||
+      (Array.isArray(change.new_value.new_value) && 
+      typeof change.new_value.new_value[0] === "string") ||
       typeof change.new_value.new_value === 'object') {
       this.props.showContent(change.new_value.new_value)
     } else {
@@ -110,6 +128,9 @@ export default class ChangeLogs extends Component {
       <View style={{ flex: 1, height: "95%", top: 0, bottom: 0, left: 0, right: 0 }}>
         <BleashupTimeLine
           circleSize={20}
+          master={this.props.master}
+          mention={(data) => this.props.mention(data)}
+          restore={(data) => this.props.restore(data)}
           circleColor='rgb(45,156,219)'
           lineColor='#1FABAB'
           timeContainerStyle={{ minWidth: 52, marginTop: -5 }}
@@ -133,6 +154,18 @@ export default class ChangeLogs extends Component {
         >
         </BleashupTimeLine>
       </View>
+      {this.isShowRemindConfigurationModal?<TasksCreation 
+        remind_id={this.state.current_remind_id} 
+        event_id={this.state.current_event_id} 
+        isOpen={this.isShowRemindConfigurationModal}
+        onClosed={() => {
+          this.setState({
+            isShowRemindConfigurationModal:false,
+            current_event_id:null,
+            current_remind_id:null
+          })
+        }}
+        ></TasksCreation>:null}
       {this.state.hideHeader ? null : <View style={{
         width: "100%", height: 44, position: "absolute", opacity: .6,
         backgroundColor: "#FEFFDE", ...shadower(6)

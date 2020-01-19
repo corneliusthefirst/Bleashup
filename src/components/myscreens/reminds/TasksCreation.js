@@ -108,6 +108,10 @@ export default class TasksCreation extends Component {
       //deactivate the date picker before setting the obtain time     
       this.setState({ date: dateTime, isDateTimePickerVisible: false });
       this.props.update ? null : stores.Reminds.updatePeriod({ remind_id: "newRemindId", period: dateTime }, false).then(() => { });
+    }else{
+      this.setState({
+        isDateTimePickerVisible:false
+      })
     }
   }
 
@@ -121,6 +125,10 @@ export default class TasksCreation extends Component {
       let dateTime = newDate + "T" + time
       this.setState({ show: false, date: dateTime });
       this.props.update ? null : stores.Reminds.updatePeriod({ remind_id: "newRemindId", period: dateTime }, false).then(() => { });
+    }else{
+      this.setState({
+        show:false
+      })
     }
 
   }
@@ -147,7 +155,7 @@ export default class TasksCreation extends Component {
   }
 
 
-  @autobind
+
   onChangedStatus() {
     if (this.state.currentRemind.status == "public") {
       this.state.currentRemind.status = "private";
@@ -195,7 +203,7 @@ export default class TasksCreation extends Component {
       this.setState({
         currentRemind: {
           ...this.state.currentRemind,
-          recursive_frequency: newRemind.recursive_frequency
+          recursive_frequency: NewRemind.recursive_frequency
         }
       })
     }
@@ -365,8 +373,8 @@ export default class TasksCreation extends Component {
       })
     }
   }
-  writeInterval() {
-    switch (this.state.currentRemind.recursive_frequency.frequency.toLowerCase()) {
+  writeInterval(remind) {
+    switch (remind.recursive_frequency.frequency && remind.recursive_frequency.frequency.toLowerCase()) {
       case 'daily':
         return '   day(s)';
       case 'weekly':
@@ -379,8 +387,8 @@ export default class TasksCreation extends Component {
         return ''
     }
   }
-  computeMax() {
-    switch (this.state.currentRemind.recursive_frequency.frequency.toLowerCase()) {
+  computeMax(remind) {
+    switch (remind.recursive_frequency.frequency && remind.recursive_frequency.frequency.toLowerCase()) {
       case 'daily':
         return 365;
       case 'weekly':
@@ -390,7 +398,7 @@ export default class TasksCreation extends Component {
       case 'yearly':
         return 2;
       default:
-        return 1
+        return ""
     }
   }
   setRecurrencyState() {
@@ -430,7 +438,7 @@ export default class TasksCreation extends Component {
          </View>*/}
 
           <ScrollView ref={"scrollView"} showsVerticalScrollIndicator={false}>
-            <View style={{ height: height / 8, alignItems: 'center' }}>
+            <View pointerEvents={this.props.master ? null : 'none'} style={{ height: height / 8, alignItems: 'center' }}>
               {/*<Text style={{alignSelf:'flex-start',margin:"3%",fontWeight:"500",fontSize:16}} >Title :</Text>*/}
               <Item style={{ borderColor: 'black', width: "95%", marginTop: "3%" }} rounded>
                 <TextInput style={{ marginLeft: '2%', width: '100%' }} maxLength={40} value={this.state.currentRemind.title} maxLength={40} placeholder='New Remind / Task Title' keyboardType='email-address' returnKeyType='next' inverse last
@@ -438,8 +446,7 @@ export default class TasksCreation extends Component {
               </Item>
             </View>
 
-            <View style={{ flexDirection: "column", justifyContent: "space-between" }}>
-
+            <View pointerEvents={this.props.master ? null : 'none'} style={{ flexDirection: "column", justifyContent: "space-between" }}>
               <Item rounded style={{ flexDirection: "row", height: height / 17, margin: '2%' }} >
                 <View style={{ width: "12%" }} >
                   <TouchableOpacity onPress={this.showDateTimePicker}>
@@ -510,7 +517,7 @@ export default class TasksCreation extends Component {
                       containerStyle={{ borderWidth: 0, borderColor: "gray", borderRadius: 6, justifyContent: "center", padding: "2%", height: 43 }}
                     />
                   </View>
-                  <View>
+                  <View >
                     <Item style={{ width: "100%", marginLeft: '3%', padding: '1%' }}>
                       <View style={{ flexDirection: 'column', }}>
                         <Text style={{ fontWeight: 'bold', }}>Interval</Text>
@@ -521,7 +528,7 @@ export default class TasksCreation extends Component {
                             totalWidth={70}
                             rounded
                             borderColor={'#FEFFDE'}
-                            maxValue={this.computeMax()}
+                            maxValue={this.computeMax(this.state.currentRemind)}
                             initValue={this.state.currentRemind.recursive_frequency.interval ? this.state.currentRemind.recursive_frequency.interval : 1}
                             reachMaxIncIconStyle={{ color: 'red' }}
                             reachMinDecIconStyle={{ color: 'red' }}
@@ -532,7 +539,7 @@ export default class TasksCreation extends Component {
                             leftButtonBackgroundColor='#1FABAB'
                             totalHeight={30}
                           ></NumericInput>
-                          <Text style={{ marginTop: 3, }}>{this.writeInterval()}</Text>
+                          <Text style={{ marginTop: 3, }}>{this.writeInterval(this.state.currentRemind)}</Text>
                         </View>
                       </View>
                     </Item>
@@ -540,7 +547,7 @@ export default class TasksCreation extends Component {
                       <Label>
                         Ends
                     </Label>
-                      <Button style={{ width: "90%" }} onPress={() => this.showEndatePiker()} transparent>
+                      <Button style={{ width: "90%" }} onPress={() => this.props.marster && this.showEndatePiker()} transparent>
                         <Text>{this.state.date && this.state.currentRemind.recursive_frequency.recurrence ? `On ${moment(this.state.currentRemind.recursive_frequency.recurrence).format('dddd, MMMM Do YYYY')}` : "Select Recurrence Stop Date"}</Text>
                       </Button>
                       {this.state.showEndatePiker ? <DateTimePicker value={new Date()}
@@ -554,24 +561,24 @@ export default class TasksCreation extends Component {
                 <Item>
                   <View style={{ width: '60%' }}>
                     {this.state.currentRemind.status == "public" ?
-                      <Button onPress={this.onChangedStatus} transparent>
+                      <Button onPress={() => this.onChangedStatus()} transparent>
                         <Icon name="md-radio-button-on" //active={true}  type="Ionicons" style={{ color: "#0A4E52", alignSelf: "center", marginTop: "1%" }} 
                         />
                         <Text>Public</Text>
                       </Button> :
-                      <Button onPress={this.onChangedStatus} transparent>
+                      <Button onPress={() => this.onChangedStatus()} transparent>
                         <Icon name="md-radio-button-on" //active={true} type="Ionicons" style={{ color: "#0A4E52", alignSelf: "center" }} 
                         />
                         <Text>Private</Text>
                       </Button>}
                   </View>
                   {this.state.currentRemind.status == "private" && !this.props.update ?
-                    <Button onPress={() => { this.setState({ selectMemberState: true }) }} transparent>
+                    <Button onPress={() => { this.props.marster && this.setState({ selectMemberState: true }) }} transparent>
                       <Icon name="ios-people" type="Ionicons" style={{ fontSize: 25 }} />
                       <Text>Members</Text>
                     </Button> : null}
                 </Item>
-                <Item>
+                <Item pointerEvents={this.props.master ? null : 'none'}>
                   <Button onPress={() => this.updateRequestReportOnComplete()}
                     transparent>
                     <Icon name={
@@ -584,9 +591,10 @@ export default class TasksCreation extends Component {
               </View>
             </View>
             <View style={{ height: height / 3 + height / 26, alignItems: 'flex-start', justifyContent: 'center' }}>
-              <View style={{ width: "100%", height: "100%" }}>
+              <View pointerEvents={!this.props.master ? "none" : null} style={{ width: "100%", height: "100%" }}>
                 <Text style={{ alignSelf: 'flex-start', margin: "3%", fontWeight: "500", fontSize: 16 }} >Description</Text>
                 <Textarea
+                  disabled={!this.props.master}
                   value={this.state.currentRemind.description}
                   containerStyle={{
                     width: "94%", margin: "1%",
@@ -607,19 +615,18 @@ export default class TasksCreation extends Component {
 
               </View>
             </View>
-            {!this.props.update ?
+            {this.props.master ? !this.props.update ?
               <TouchableOpacity style={{ width: "20%", alignSelf: 'center', marginBottom: "3%", marginLeft: "68%", marginTop: "-8%" }}>
                 <Button
                   onPress={() => { this.addNewRemind() }} rounded>
                   <Text style={{ color: "#FEFFDE" }}> Create </Text>
                 </Button>
-              </TouchableOpacity> :
-              <TouchableOpacity style={{ width: "22%", marginBottom: "1%", marginLeft: "72%", marginTop: "-8%" }}>
+              </TouchableOpacity> : <TouchableOpacity style={{ width: "22%", marginBottom: "1%", marginLeft: "72%", marginTop: "-8%" }}>
                 <Button style={{ width: "100%", borderRadius: 15, borderColor: "#1FABAB", backgroundColor: "#1FABAB", justifyContent: 'center', alignItem: 'center' }}
                   onPress={() => { this.updateRemind() }}>
                   <Text style={{ color: "#FEFFDE", fontSize: 12 }}> Update </Text>
                 </Button>
-              </TouchableOpacity>
+              </TouchableOpacity> : null
             }
 
           </ScrollView>

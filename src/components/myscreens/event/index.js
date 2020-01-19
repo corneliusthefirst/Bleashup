@@ -51,6 +51,7 @@ import SearchImage from "./createEvent/components/SearchImage";
 import FileExachange from '../../../services/FileExchange';
 import Pickers from '../../../services/Picker';
 import HighlightCardDetail from './createEvent/components/HighlightCardDetail';
+import RemindRequest from '../reminds/Requester';
 
 const screenWidth = Math.round(Dimensions.get('window').width);
 
@@ -104,7 +105,9 @@ export default class Event extends Component {
           this.setState({
             working: true
           })
-        }} updateLocation={(loc) => this.updateActivityLocation(loc)}
+        }}
+        mention={(data) => this.mention(data)}
+        updateLocation={(loc) => this.updateActivityLocation(loc)}
           updateDesc={(newDes) => {
             this.updateActivityDescription(newDes)
           }}
@@ -124,6 +127,7 @@ export default class Event extends Component {
             working: false
           })
         }}
+        mention={(item) => this.mention(item)}
           master={this.master}
           working={this.state.working}
           event={this.event}
@@ -175,6 +179,9 @@ export default class Event extends Component {
             hideTitle: true
           })
         }}
+          mention={(data) => this.mention(data)}
+          restore={(data) => this.restore(data)}
+          master={this.master}
           showHighlightDetails={(H) => {
             this.setState({
               highlight: H,
@@ -298,8 +305,8 @@ export default class Event extends Component {
       console.warn('including posts')
       emitter.emit('refresh-highlights')
     }
-    if(change.changed.toLowerCase().includes('remind') || 
-    change.title.toLowerCase().includes('remind')){
+    if (change.changed.toLowerCase().includes('remind') ||
+      change.title.toLowerCase().includes('remind')) {
       console.warn('includes reminds')
       emitter.emit('remind-updated')
     }
@@ -323,6 +330,70 @@ export default class Event extends Component {
         working: false
       })
     })
+  }
+  generalCommitee (event) {
+   return{
+     id: event.id,
+     name: "Generale",
+     member: event.participant,
+     opened: true,
+     public_state: true,
+     creator: event.creator_phone
+   } 
+  }
+  mention(data) {
+    GState.reply = data
+    this.swapChats(this.generalCommitee(this.event))
+  }
+  startLoader() {
+    this.setState({
+      working: true
+    })
+  }
+  stopLoader() {
+    this.setState({
+      working: false
+    })
+  }
+  restore(data) {
+   //console.warn(data)
+    if (!this.state.woking) {
+      switch (data.updated) {
+        case "highlight_delete":
+          this.startLoader()
+          stores.Highlights.fetchHighlights(this.event.id).then(highs => {
+            if (findIndex(highs, { id: data.new_value.new_value.id }) < 0) {
+              Requester.restoreHighlight(data.new_value.new_value).then(() => {
+                this.stopLoader()
+                Toast.show({ text: 'restoration was successful', type: 'success' })
+              }).catch(() => {
+                this.stopLoader()
+              })
+            } else {
+              this.stopLoader()
+              Toast.show({ text: 'restored already', })
+            }
+          })
+          break;
+        case "delete_remind":
+          this.startLoader()
+          stores.Reminds.loadReminds(this.event.id).then(reminds => {
+            if (findIndex(reminds, { id: data.new_value.new_value.id }) < 0) {
+              RemindRequest.restoreRemind(data.new_value.new_value).then(() => {
+                this.stopLoader()
+                Toast.show({ text: 'restoration was successful', type: 'success' })
+              }).catch(() => {
+                this.stopLoader()
+              })
+            }else{
+              this.stopLoader()
+              Toast.show({ text: 'restored already', })
+            }
+          })
+      }
+    } else {
+      Toast.show({ text: 'App is Busy ' })
+    }
   }
   master = false
   componentWillMount() {
@@ -352,7 +423,7 @@ export default class Event extends Component {
       this.props.navigation.navigate("Home")
       return true
     }
-  } 
+  }
   componentDidMount() {
     console.warn(this.event.calendar_id)
     if (!this.event.calendared && this.event.period) {
@@ -892,10 +963,11 @@ export default class Event extends Component {
         isSettingsModalOpened: false
       })
       Requester.applyAllUpdate(original, newSettings).then((res) => {
-        console.warn(res)
+       // console.warn(res)
         if (res)
           //Toast.show({ text: 'All save completely applied !', type: 'success' })
-        this.initializeMaster()
+          this.initializeMaster()
+        else this.stopLoader()
       }).catch((erorr) => {
         Toast.show({ text: 'could not perform the request' })
         this.initializeMaster()
@@ -943,7 +1015,7 @@ export default class Event extends Component {
     this.setState({
       isSetPatternModalOpened: false,
     })
-    let alarms = pattern ? pattern : [{
+    let alarms = pattern && pattern.length > 0 ? pattern : [{
       date: Platform.OS === 'ios'
         ? moment(Bevent.period)
           .subtract(600, 'seconds')
@@ -987,8 +1059,9 @@ export default class Event extends Component {
       }, snap.content_type, snap.filename, '/photo', false)
       exchanger.upload(0, 0)
     })
-  }
+  } 
   render() {
+    console.warn(this.event.calendar_id)
     StatusBar.setHidden(false, true)
     return (<SideMenu style={{ backgroundColor: "#FEFEDE", }} autoClosing={true} onMove={(position) => {
 
@@ -1008,7 +1081,7 @@ export default class Event extends Component {
           warnTitle: "Leave Activity",
           callback: this.leaveActivity.bind(this)
         })/*this.leaveActivity()*/ : Toast.show({ text: "You Are Not a  member Anymore !" })}
-        openSettingsModal={() => this.master ? this.openSettingsModal() : Toast.show({ text: "Yo cannot configure this Activity !" })}
+        openSettingsModal={() => this.openSettingsModal()}
         ShowMyActivity={(a) => this.checkActivity(a)}
         inviteContacts={() => this.master || this.event.public ? this.inviteContacts() : Toast.show({ text: "You cannot invite for th" })}
         join={(id) => { this.joinCommitee(id) }}
@@ -1041,9 +1114,10 @@ export default class Event extends Component {
         master={this.master}
         public={this.event.public}></SWView></View>}>
       <StatusBar hidden={this.state.showPhoto ? true : false} barStyle="dark-content" backgroundColor={this.state.showPhoto ? 'black' : "#FEFFDE"}></StatusBar>
-      <View style={{ height: "100%", 
-      backgroundColor: "#FEFFDE" 
-    }}>
+      <View style={{
+        height: "100%",
+        backgroundColor: "#FEFFDE"
+      }}>
         {this.state.fresh ? <Spinner size={"small"}></Spinner> :
           this.renderMenu()
         }
@@ -1167,14 +1241,16 @@ export default class Event extends Component {
             warnTitle: "Close Activity",
             okButtonText: "Close"
           })
-        }} event={this.event} saveSettings={(original, newSettings) => {
-          this.saveSettings(original, newSettings)
-        }} isOpen={this.state.isSettingsModalOpened} onClosed={() => {
-          this.markAsConfigured()
-          this.setState({
-            isSettingsModalOpened: false
-          })
-        }}>
+        }}
+          master={this.master}
+          event={this.event} saveSettings={(original, newSettings) => {
+            this.saveSettings(original, newSettings)
+          }} isOpen={this.state.isSettingsModalOpened} onClosed={() => {
+            this.markAsConfigured()
+            this.setState({
+              isSettingsModalOpened: false
+            })
+          }}>
         </SettingsModal> : null}
         {this.state.isSynchronisationModalOpned ? <CalendarSynchronisationModal
           closed={() => {

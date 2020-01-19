@@ -47,15 +47,20 @@ export default class RemindsMenu extends Component {
                         marginTop: '10%'
                     }} onPress={this.showMenu} name="dots-three-vertical" type="Entypo"></Icon>}
                 >
-                    {this.props.master?<MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
+                    <MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
+                        this.hideMenu()
+                        this.props.mention()
+                    }
+                    }>{"Mention"}</MenuItem> 
+                    <View><MenuDivider color="#1FABAB" /><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
                         this.hideMenu()
                         return this.props.updateRemind()
-                    }
-                    }>{"Update Configs"}</MenuItem>:null}
-                    <View>{this.props.master?<MenuDivider color="#1FABAB" />:null}<MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
+                    }}>{"Configs"}</MenuItem>
+                        <MenuDivider color="#1FABAB" /></View>
+                    <View><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
                         this.hideMenu()
                         this.props.showMembers()
-                    }}>{"View Concernee"}</MenuItem>
+                    }}>{"Concernees"}</MenuItem>
                         <MenuDivider color="#1FABAB" /></View>
                     {this.props.master?<View><MenuDivider color="#1FABAB" /><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
                         this.hideMenu()
@@ -76,8 +81,13 @@ export default class RemindsMenu extends Component {
                     <View><MenuItem textStyle={{ color: "green" }} onPress={() => {
                         this.hideMenu()
                         this.props.viewConfirmed()
-                    }}>{"View Confirmed"}</MenuItem>
+                    }}>{"Confirmed By ..."}</MenuItem>
                         <MenuDivider color="#1FABAB" /></View>
+                    {this.props.master?<View><MenuItem textStyle={{ color: "red" }} onPress={() => {
+                        this.hideMenu()
+                        this.props.deleteRemind()
+                    }}>{"Delete"}</MenuItem>
+                        <MenuDivider color="#1FABAB" /></View>:null}
                 </Menu>
             </View>
         ) : <ImageActivityIndicator />;

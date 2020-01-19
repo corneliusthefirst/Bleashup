@@ -37,9 +37,9 @@ export default class ReplyText extends Component {
                             <View style={{ flexDirection: 'row', marginTop: '-2%', }}>
                                 <Text note style={{ marginBottom: "1%", color: "#81A8A0" }}>{this.props.reply.replyer_name}</Text>
                                 {this.props.reply.type_extern ? <View style={{ flexDirection: 'row', }}>
-                                    <Icon type={"Entypo"} name={'dot-single'} style={{ color: '#1FABAB', marginTop: '-9%' }}></Icon>
-                                    <Text note style={{ fontWeight: 'bold', fontStyle: 'italic', }}>{` ${this.props.reply.type_extern}`}</Text>
-                                </View> : null}
+                                    {/*<Icon type={"Entypo"} name={'dot-single'} style={{ color: '#1FABAB',  }}></Icon>*/}
+                                    <Text note style={{ fontWeight: 'bold', fontStyle: 'italic', }}>{`:  ${this.props.reply.type_extern}`}</Text>
+                </View> : null}
                             </View>
                             {this.props.reply.type_extern && this.props.reply.audio ? <Text style={{ fontWeight: 'bold', fontSize: 12, color: "#A91A84" }}>{this.props.reply.title.length > 26 ? this.props.reply.title.slice(0, 26) + " ..." : this.props.reply.title}</Text> : null}
                             {this.props.reply.audio || this.props.reply.file ? <View style={{ display: "flex", flexDirection: 'row', }}>
@@ -66,7 +66,7 @@ export default class ReplyText extends Component {
                                     <View style={{ /*width: this.props.reply.sourcer ? "79%" : "100%",*/ alignSelf: 'center',
                                         marginLeft: this.props.reply.sourcer ? 10 : null,
                                     }}>
-                                        {this.props.reply.title ? <Text style={{ fontWeight: 'bold', fontSize: 12, color: "#A91A84" }}>{this.props.reply.title.length > 26 ? this.props.reply.title.slice(0, 26) + " ..." : this.props.reply.title}</Text> : this.props.reply.text ? <Text style={{ color: "#81A8A0" }}>{this.props.reply.text.slice(0,
+                                        {this.props.reply.title ? <Text style={{ fontWeight: 'bold', fontSize: 12, color: "#A91A84" }}>{this.props.reply.title.length > 30 ? this.props.reply.title.slice(0, 30) + " ..." : this.props.reply.title}</Text> : this.props.reply.text ? <Text style={{ color: "#81A8A0" }}>{this.props.reply.text.slice(0,
                                             this.props.reply.sourcer ? 20 : 25)} {this.props.reply.text.length > 25 ? this.props.reply.text.length > 25 ? '...' : '' : ''}</Text> : null}
                                     </View>
                                 </View>}

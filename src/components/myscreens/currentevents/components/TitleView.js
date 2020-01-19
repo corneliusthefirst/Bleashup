@@ -32,30 +32,45 @@ export default class TitleView extends Component {
             this.props.seen()
         })
     }
-    dateDiff(date) {
-        let statDate = moment(date)
-        let end = moment()
+    writeInterval(frequency) {
+        switch (frequency) {
+            case 'daily':
+                return '   day(s)';
+            case 'weekly':
+                return '   week(s)';
+            case 'monthly':
+                return '   month(s)';
+            case 'yearly':
+                return '   year(s)';
+            default:
+                return ''
+        }
+    }
+    dateDiff(event) {
+        let statDate = moment(event.period)
+        let end = moment(event.recurrence?event.recurrence:null)
         return daysDiff = Math.floor(moment.duration(end.diff(statDate)).asDays())
     }
-    writeDateTime(date) {
+    writeDateTime(event) {
+        let date = event.period
         let statDate = moment(date)
-        let end = moment()
+        let end = moment(typeof event.recurrence === "string" ? event.recurrence : null)
         let daysDiff = Math.floor(moment.duration(end.diff(statDate)).asDays())
         if (daysDiff == 0) {
-            return "Ongoing Today from " + moment(date).format("h:mm a");
+            return "Started Today At " + moment(date).format("h:mm a");
         } else if (daysDiff == 1) {
-            return "Past Since Yesterday at " + moment(date).format("h:mm a")
+            return "Past Yesterday at " + moment(date).format("h:mm a")
         } else if (daysDiff > 1 && daysDiff < 7) {
-            return `Past Since ${Math.abs(daysDiff)} Days Ago at ` + moment(date).format("h:mm a")
+            return `Past ${Math.abs(daysDiff)} Days Ago at ` + moment(date).format("h:mm a")
         } else if (daysDiff == 7) {
-            return "Past Since 1 Week Ago at " + moment(date).format("h:mm a")
+            return "Past 1 Week Ago at " + moment(date).format("h:mm a")
         } else if (daysDiff == -1) {
-            return "Upcoming Tomorrow at " + moment(date).format("h:mm a");
+            return "Starting Tomorrow at " + moment(date).format("h:mm a");
         }
         else if (daysDiff < -1) {
-            return `Upcoming in ${Math.abs(daysDiff)} Days at ` + moment(date).format("h:mm a");
+            return `Starting in ${Math.abs(daysDiff)} Days at ` + moment(date).format("h:mm a");
         } else {
-            return `Past since ${moment(date).format("dddd, MMMM Do YYYY")} at ${moment(date).format("h:mm a")}`
+            return `Past on ${moment(date).format("dddd, MMMM Do YYYY")} at ${moment(date).format("h:mm a")}`
         }
     }
     render() {
@@ -83,18 +98,18 @@ export default class TitleView extends Component {
                             {this.props.Event.period ? <Title
                                 style={{
                                     fontSize: 12,
-                                    color: this.props.Event.closed ? "red" : this.dateDiff(this.props.Event.period) > 0 ? "gray" : "#1FABAB",
+                                    color: this.props.Event.closed ? "red" : this.dateDiff(this.props.Event) > 0 ? "gray" : "#1FABAB",
                                     fontStyle: 'italic',
                                     fontWeight: this.props.Event.closed ? "bold" : '400',
                                 }}
                                 note
                             >
-                                {this.props.Event.closed ? "Closed" : this.writeDateTime(this.props.Event.period)}
+                                {this.props.Event.closed ? "Closed" : this.writeDateTime(this.props.Event)}
                             </Title> : null}
                         </View>
                         <View>
                             <Left>
-                                {this.props.Event.recursive ? <View style={
+                                {this.props.Event.interval > 1 && this.props.Event.frequency !== 'yearly' && this.dateDiff(this.props.Event) < 0? <View style={
                                     {
                                         flexDirection: "column"
                                     }
@@ -103,13 +118,7 @@ export default class TitleView extends Component {
                                         <Text style={{
                                             color: "#1FABAB"
                                         }} note>
-                                            {this.props.Event.recursion.type}
-                                        </Text>
-                                    </View>
-
-                                    <View>
-                                        <Text note>
-                                            {this.props.Event.recursion.days}
+                                            {`after every ${this.props.Event.interval > 1 ? this.props.Event.interval : null} ${this.writeInterval(this.props.Event.frequency)} till ${moment(this.props.Event.recurrence ? this.props.Event.recurrence : null).format("dddd, MMMM Do YYYY")}`}
                                         </Text>
                                     </View>
                                 </View> : null}

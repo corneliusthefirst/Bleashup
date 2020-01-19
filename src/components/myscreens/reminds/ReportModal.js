@@ -43,7 +43,7 @@ export default class RemindReportContent extends PureComponent {
                     <View style={{margin: '2%',height:'5%',flexDirection: 'row',}}>
                         <View style={{width:'80%'}}>
                         </View>
-                        <View>
+                        {this.props.master?<View>
                             <Button style={{flexDirection: 'column',}} onPress={() => {
                                 this.props.confirm()
                                 this.props.closed()
@@ -51,7 +51,7 @@ export default class RemindReportContent extends PureComponent {
                                 <Icon type="AntDesign" name="checkcircle"></Icon>
                                 <Text>Confirm</Text>
                             </Button>
-                        </View>
+                        </View>:null}
                     </View>
                     <ScrollView style={{ margin: "5%", height: "80%" }}>
                         <Text>{this.props.report}</Text>

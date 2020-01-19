@@ -16,7 +16,7 @@ export default class SettingsModal extends Component {
             show: false,
             loaded: false,
             showDate: false,
-            recurrent:false,
+            recurrent: false,
             recurrence: this.props.event.period ? this.props.event.period : moment().format(),
             display: 'clock'
         }
@@ -311,15 +311,15 @@ export default class SettingsModal extends Component {
                     width: "100%",
                     backgroundColor: "#FEFFDE",
                 }}>
-                {!this.state.loaded?<Spinner size={'small'}></Spinner>:<View>
+                {!this.state.loaded ? <Spinner size={'small'}></Spinner> : <View>
                     <View style={{ margin: '2%', flexDirection: 'row', }}>
                         <Text
                             style={{ fontSize: 23, fontWeight: 'bold', fontStyle: 'italic', width: '60%', }}>Activity Settings</Text>
-                        <Button onPress={() => this.saveConfigurations()} transparent><Icon
+                        {this.props.master ? <Button onPress={() => this.saveConfigurations()} transparent><Icon
                             style={{ color: "#1FABAB", }}
                             type="AntDesign"
                             name="checkcircle"
-                        /><Text style={{ fontWeight: 'bold', fontStyle: 'italic', }} >Save</Text></Button>
+                        /><Text style={{ fontWeight: 'bold', fontStyle: 'italic', }} >Save</Text></Button> : null}
                     </View>
                     {!this.state.loaded ? <Spinner size={"small"}></Spinner> : <ScrollView style={{ height: '90%' }} showsVerticalScrollIndicator={false}>
                         <View style={{ marginLeft: '4%', flexDirection: 'column', }}>
@@ -360,12 +360,12 @@ export default class SettingsModal extends Component {
                             </Item>
                             <Item style={{ width: "100%" }}>
                                 <Button onPress={() => this.setRecurrencyState()}
-                                 transparent>
+                                    transparent>
                                     <Icon name={
                                         this.state.recurrent ? "radio-button-checked" :
                                             "radio-button-unchecked"
                                     } type={"MaterialIcons"}></Icon>
-                                    <Text style={{fontWeight: 'bold',}}>Recurrence Configurations</Text>
+                                    <Text style={{ fontWeight: 'bold', }}>Recurrence Configurations</Text>
                                 </Button>
                             </Item>
 
@@ -411,7 +411,7 @@ export default class SettingsModal extends Component {
                                                 </Button>
                                             </Item>
                                         </View>
-                                        <Item style={{ width: "100%",margin:'1%' }}>
+                                        <Item style={{ width: "100%", margin: '1%' }}>
                                             <View style={{ flexDirection: 'column', }}>
                                                 <Text style={{ fontWeight: 'bold', }}>Interval</Text>
                                                 <View style={{ marginLeft: '5%', flexDirection: 'row', }}>
@@ -443,10 +443,10 @@ export default class SettingsModal extends Component {
                                             <Button style={{ width: "90%" }} onPress={() => this.showEndatePiker()} transparent>
                                                 <Text>{this.state.date ? `On ${moment(this.state.recurrence).format('dddd, MMMM Do YYYY')}` : "Select Activity End Date"}</Text>
                                             </Button>
-                                            {this.state.showEndatePiker?<DateTimePicker value={new Date()}
+                                            {this.state.showEndatePiker ? <DateTimePicker value={new Date()}
                                                 display={this.state.display}
                                                 mode={this.state.mode}
-                                                onChange={(e, date) => this.changeEndDate(e, date)}></DateTimePicker>:null}
+                                                onChange={(e, date) => this.changeEndDate(e, date)}></DateTimePicker> : null}
                                         </Item>
                                     </View>
                                 </View> : null}

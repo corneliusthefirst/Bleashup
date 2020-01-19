@@ -376,6 +376,9 @@ class tcpRequestData {
   deleteHighlight(data, id) {
     return this.sendData("delete_highlight", data, id);
   }
+  restoreHighlight(data, id) {
+    return this.sendData("restore_highlight", data, id);
+  }
   udateContribution(data, id) {
     return this.sendData("update_contribution", data, id);
   }

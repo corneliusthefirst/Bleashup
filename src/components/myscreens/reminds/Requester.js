@@ -6,6 +6,8 @@ import { Toast } from 'native-base';
 import request from '../../../services/requestObjects';
 import { isEqual } from 'lodash';
 import moment from 'moment';
+import { findIndex } from 'lodash';
+import CalendarServe from '../../../services/CalendarService';
 class Requester {
     CreateRemind(Remind) {
         return new Promise((resolve, reject) => {
@@ -186,6 +188,10 @@ class Requester {
                                 time: null
                             }
                             stores.ChangeLogs.addChanges(Change).then(() => {
+                                oldRemind.calendar_id ? CalendarServe.saveEvent({ ...oldRemind, recursive_frequency: newConfigs },
+                                    oldRemind.alams, 'reminds').then(() => {
+
+                                    }) : null
                             })
                             resolve('ok')
                         })
@@ -297,6 +303,10 @@ class Requester {
                                 time: null
                             }
                             stores.ChangeLogs.addChanges(Change).then(() => {
+                                oldRemind.calendar_id ? CalendarServe.saveEvent({ ...oldRemind, period: newPeriod },
+                                    oldRemind.alams, 'reminds').then(() => {
+
+                                    }) : null
                             })
                             resolve('ok')
                         })
@@ -311,33 +321,39 @@ class Requester {
             }
         })
     }
-    addMembers(newMembers, remindID, eventID) {
+    addMembers(remind, alarms) {
         return new Promise((resolve, reject) => {
             let newRemindName = request.RemindUdate()
             newRemindName.action = 'add_members'
-            newRemindName.data = newMembers
-            newRemindName.event_id = eventID
-            newRemindName.remind_id = remindID
-            tcpRequest.updateRemind(newRemindName, remindID + '_add_members').then(JSONData => {
-                EventListener.sendRequest(JSONData, remindID + '_add_members').then(response => {
+            newRemindName.data = remind.members
+            newRemindName.event_id = remind.event_id
+            newRemindName.remind_id = remind.id
+            tcpRequest.updateRemind(newRemindName, remind.id + '_add_members').then(JSONData => {
+                EventListener.sendRequest(JSONData, remind.id + '_add_members').then(response => {
                     stores.Reminds.addMembers({
-                        members: newMembers,
-                        remind_id: remindID
+                        members: remind.members,
+                        remind_id: remind.id
                     }, true).then(oldRemind => {
                         let Change = {
                             id: uuid.v1(),
                             title: `Updates On ${oldRemind.title} Remind / Task`,
                             updated: `remind_member_added`,
                             updater: stores.LoginStore.user,
-                            event_id: eventID,
+                            event_id: remind.event_id,
                             changed: "Assigned The Remind / Task To ",
-                            new_value: { data: remindID, new_value: newMembers },
+                            new_value: { data: remind.id, new_value: remind.members },
                             date: moment().format(),
                             time: null
                         }
                         stores.ChangeLogs.addChanges(Change).then(() => {
+                            if (findIndex(remind.members, { phone: stores.LoginStore.user.phone }) >= 0) {
+                                CalendarServe.saveEvent(remind, alarms, 'reminds').then(calendar_id => {
+                                    stores.Reminds.updateCalendarID({ remind_id: remind.id, calendar_id: calendar_id }, alarms).then(() => {
+                                        resolve('ok')
+                                    })
+                                })
+                            }
                         })
-                        resolve('ok')
                     })
                 }).catch(error => {
                     Toast.show({ text: 'Unable to perform network request' })
@@ -369,14 +385,21 @@ class Requester {
                                     updated: `remind_member_removed`,
                                     updater: stores.LoginStore.user,
                                     event_id: eventID,
-                                    changed: "Removed Members From The Remind / Task ",
-                                    new_value: { data: remindID, new_value: members.map(ele => {return {phone:ele}}) },
+                                    changed: "Unassigned This Task / Remind From ",
+                                    new_value: { data: remindID, new_value: members.map(ele => { return { phone: ele } }) },
                                     date: moment().format(),
                                     time: null
                                 }
                                 stores.ChangeLogs.addChanges(Change).then(() => {
+                                    if (oldRemind.calendar_id && findIndex(members, ele => ele === stores.LoginStore.user.phone) >= 0) {
+                                        CalendarServe.saveEvent({ ...oldRemind, period: null }, null, 'reminds').then(() => {
+                                            stores.Reminds.updateCalendarID({ remind_id: oldRemind.id, calendar_id: undefined }).then(() => {
+                                                console.warn("calendar_id successfully removed")
+                                                resolve('ok')
+                                            })
+                                        })
+                                    }
                                 })
-                                resolve('ok')
                             })
                         }).catch(error => {
                             Toast.show({ text: 'Unable to perform network request' })
@@ -424,7 +447,7 @@ class Requester {
         })
 
     }
-    markAsDone(member, remind, alams,calendar_id) {
+    markAsDone(member, remind, alams, calendar_id) {
         return new Promise((resolve, reject) => {
             let newRemindName = request.RemindUdate()
             newRemindName.action = 'mark_as_done'
@@ -449,7 +472,14 @@ class Requester {
                             time: null
                         }
                         stores.ChangeLogs.addChanges(Change).then(() => {
-
+                            if (oldRemind.calendar_id) {
+                                CalendarServe.saveEvent({ ...oldRemind, period: null }, null, 'reminds').then(() => {
+                                    stores.Reminds.updateCalendarID({ remind_id: oldRemind.id, calendar_id: undefined }).then(() => {
+                                        console.warn("calendar_id successfully removed")
+                                        resolve('ok')
+                                    })
+                                })
+                            }
                         })
                         resolve('ok')
                     })
@@ -467,20 +497,69 @@ class Requester {
             tcpRequest.updateRemind(newRemindName, remindID + '_delete').then(JSONData => {
                 EventListener.sendRequest(JSONData, remindID + '_delete').then(response => {
                     stores.Reminds.removeRemind(remindID).then((oldRemind) => {
-                        let Change = {
-                            id: uuid.v1(),
-                            title: `Updates On ${oldRemind.title} Remind / Task`,
-                            updated: `delete_remind`,
-                            updater: stores.LoginStore.user,
-                            event_id: eventID,
-                            changed: "Removed The Remind / Task ",
-                            new_value: { data: remindID, new_value: oldRemind },
-                            date: moment().format(),
-                            time: null
-                        }
-                        stores.ChangeLogs.addChanges(Change).then(() => {
+                        stores.Events.removeRemind(eventID, remindID, false).then(() => {
+                            let Change = {
+                                id: uuid.v1(),
+                                title: `Updates On ${oldRemind.title} Remind / Task`,
+                                updated: `delete_remind`,
+                                updater: stores.LoginStore.user,
+                                event_id: eventID,
+                                changed: "Removed The Remind / Task ",
+                                new_value: { data: remindID, new_value: oldRemind },
+                                date: moment().format(),
+                                time: null
+                            }
+                            stores.ChangeLogs.addChanges(Change).then(() => {
+                                if (oldRemind.calendar_id && findIndex(oldRemind.members,
+                                    { phone: stores.LoginStore.user.phone }) >= 0) {
+                                    CalendarServe.saveEvent({ ...oldRemind, period: null }, null, 'reminds').then(() => {
+                                        stores.Reminds.updateCalendarID({ remind_id: oldRemind.id, calendar_id: undefined }).then(() => {
+                                            console.warn("calendar_id successfully removed")
+                                        })
+                                    })
+                                }
+                            })
+                            resolve('ok')
                         })
-                        resolve('ok')
+                    })
+                })
+            })
+        })
+    }
+    restoreRemind(remind) {
+        return new Promise((resolve, reject) => {
+            let newRemindName = request.RemindUdate()
+            newRemindName.action = 'restore'
+            newRemindName.data = { ...remind, alams: undefined }
+            newRemindName.event_id = remind.event_id
+            newRemindName.remind_id = remind.id
+            tcpRequest.updateRemind(newRemindName, remind.id + '_restore').then((JSONData) => {
+                EventListener.sendRequest(JSONData, remind.id + '_restore').then(response => {
+                    stores.Reminds.addReminds(remind).then(() => {
+                        stores.Events.addRemind(remind.event_id, remind.id).then(() => {
+                            let Change = {
+                                id: uuid.v1(),
+                                title: `Updates On ${remind.title} Remind / Task`,
+                                updated: `restored_remind`,
+                                updater: stores.LoginStore.user,
+                                event_id: remind.event_id,
+                                changed: "Restored The Remind / Task ",
+                                new_value: { data: remind.id, new_value:remind },
+                                date: moment().format(),
+                                time: null
+                            }
+                            stores.ChangeLogs.addChanges(Change).then(() => {
+                                if (findIndex(remind.members, { phone: stores.LoginStore.user.phone }) >= 0) {
+                                    CalendarServe.saveEvent(remind, remind.alams, 'reminds').then(calendar_id => {
+                                        stores.Reminds.updateCalendarID({ remind_id: remind.id, 
+                                            calendar_id: calendar_id }, remind.alams).then(() => {
+
+                                        })
+                                    })
+                                }
+                            })
+                            resolve('ok')
+                        })
                     })
                 })
             })

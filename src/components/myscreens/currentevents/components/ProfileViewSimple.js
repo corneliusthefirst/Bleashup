@@ -29,7 +29,7 @@ export default class ProfileSimple extends Component {
                         return this.props.showPhoto(this.props.profile.profile)
                     });
                 }}>
-                    {testForURL(this.props.profile.profile) ? <CacheImages small thumbnails {...this.props}
+                    {this.props.profile.profile && testForURL(this.props.profile.profile) ? <CacheImages small thumbnails {...this.props}
                         source={{ uri: this.props.profile.profile }} /> :
                         <Thumbnail source={{ uri: this.props.profile.profile }}></Thumbnail>}
                 </TouchableOpacity>

@@ -657,10 +657,11 @@ class Request {
                                     time: null
                                 }
                                 stores.ChangeLogs.addChanges(Change).then(() => {
-                                    Eve.calendar_id && event.period ? CalendarServe.saveEvent(Eve, Eve.alarms).then(() => {
-                                    }) : null
+                                    event.period  ? CalendarServe.saveEvent({...event,period:newPeriod}, 
+                                        Eve.alarms).then(() => {
+                                        resolve('ok')
+                                    }) : resolve('ok')
                                 })
-                                resolve('ok')
 
                             })
                         }).catch((e) => {
@@ -819,7 +820,7 @@ class Request {
                         console.warn(t3)
                         this.updateRecurrency(JSON.parse(event), {
                             recurrent: settings.recurrent_new,
-                            interval: settings.interval_new, 
+                            interval: settings.interval_new,
                             frequency: settings.frequency_new,
                             recurrence: settings.recurrence_new
                         }).then((t4) => {
@@ -1077,6 +1078,36 @@ class Request {
                             stores.ChangeLogs.addChanges(Change).then(res => {
                             })
                             resolve("ok")
+                        })
+                    })
+                }).catch((error) => {
+                    console.warn(error)
+                    Toast.show({ text: "Unable To Perform Request" })
+                    reject(error)
+                })
+            })
+        })
+    }
+    restoreHighlight(highlight){
+        return new Promise((resolve,reject) => {
+            tcpRequest.restoreHighlight(highlight,highlight.id + '_highlight').then(JSONData => {
+                serverEventListener.sendRequest(JSONData,highlight.id+'_highlight').then(response => {
+                    stores.Highlights.addHighlight(highlight).then(() => {
+                        stores.Events.addHighlight(highlight.event_id,highlight.id,false).then(() => {
+                            let Change = {
+                                id: uuid.v1(),
+                                title: `Update On Main Activity`,
+                                updated: "highlight_restored",
+                                event_id: highlight.event_id,
+                                updater: stores.LoginStore.user,
+                                changed: `Restored ${highlight.title} Post`,
+                                new_value: { data: null, new_value: highlight },
+                                date: moment().format(),
+                                time: null
+                            }
+                            stores.ChangeLogs.addChanges(Change).then(res => {
+                            })
+                            resolve()
                         })
                     })
                 }).catch((error) => {

@@ -20,6 +20,7 @@ import AddReport from "./AddReportModal";
 import SelectableContactList from "../../SelectableContactList";
 import ContactListModal from "../event/ContactListModal";
 import ContactsReportModal from "./ContactsReportModal";
+import AreYouSure from "../event/AreYouSureModal";
 //const MyTasksData = stores.Reminds.MyTasksData
 
 export default class Reminds extends Component {
@@ -45,7 +46,7 @@ export default class Reminds extends Component {
       adding: true,
       removing: false,
       notcheckAll: false,
-      contacts: this.props.event.participant.filter(e => findIndex(currentMembers, { phone: e.phone }) < 0)
+      contacts: this.props.event.participant.filter(e => findIndex(currentMembers, { phone: e.phone }) < 0 && e.phone !== stores.LoginStore.user.phone)
     })
   }
   saveAddMembers(members) {
@@ -53,18 +54,17 @@ export default class Reminds extends Component {
       Toast.show({ text: 'App is Busy' })
     } else {
       this.props.startLoader()
-      RemindRequest.addMembers(members,
-        this.state.currentTask.id, this.state.currentTask.event_id).then(() => {
-          this.props.stopLoader()
-          this.refrehReminds()
-        }).catch((error) => {
-          this.props.stopLoader()
-        })
+      RemindRequest.addMembers({ ...this.state.currentTask, members: members }).then(() => {
+        this.props.stopLoader()
+        this.refrehReminds()
+      }).catch((error) => {
+        this.props.stopLoader()
+      })
     }
   }
   updateData = newremind => {
-    //console.warn("come back value",newremind)
-    this.setState({ eventRemindData: [newremind].concat(this.state.eventRemindData) });
+    this.state.eventRemindData.unshift(newremind)
+    this.setState({ eventRemindData: this.state.eventRemindData });
   }
 
   componentDidMount() {
@@ -227,19 +227,33 @@ export default class Reminds extends Component {
     }
 
   }
+  deleteRemind() {
+    if (!this.props.working) {
+      this.props.startLoader()
+      RemindRequest.deleteRemind(this.state.currentTask.id, this.state.currentTask.event_id).then(() => {
+        this.refrehReminds()
+        this.props.stopLoader()
+      }).catch(() => {
+        this.props.stopLoader()
+      })
+    } else {
+      Toast.show({ text: 'App is Busy' })
+    }
+  }
   saveAlarms(alarms) {
     if (this.props.working) {
       Toast.show({ text: 'App is Busy' })
     } else {
       this.props.startLoader()
-      RemindRequest.addMembers([find(this.props.event.participant,
-        { phone: stores.LoginStore.user.phone })],
-        this.state.currentTask.id, this.state.currentTask.event_id).then(() => {
-          this.props.stopLoader()
-          this.refrehReminds()
-        }).catch((error) => {
-          this.props.stopLoader()
-        })
+      RemindRequest.addMembers({
+        ...this.state.currentTask, members: [find(this.props.event.participant,
+          { phone: stores.LoginStore.user.phone })]
+      }, alarms).then(() => {
+        this.props.stopLoader()
+        this.refrehReminds()
+      }).catch((error) => {
+        this.props.stopLoader()
+      })
     }
   }
   _keyExtractor = (item, index) => item.id
@@ -272,6 +286,15 @@ export default class Reminds extends Component {
               this.delay = index >= 5 ? 0 : this.delay + 1
               return (
                 <TasksCard
+                  mention={itemer => {
+                    console.warn(itemer)
+                    this.props.mention({
+                      replyer_phone: stores.LoginStore.user.phone,
+                      replyer_name: stores.LoginStore.user.name,
+                      type_extern: 'Reminds ',
+                      title: itemer.title + '\n' + itemer.description
+                    })
+                  }}
                   master={this.props.master}
                   markAsDone={(item) => this.markAsDone(item)}
                   assignToMe={(item) => this.assignToMe(item)}
@@ -303,14 +326,20 @@ export default class Reminds extends Component {
                     this.setState({
                       isSelectableContactsModalOpened: true,
                       currentTask: item,
-                      contacts: currentMembers,
+                      contacts: currentMembers.filter(ele => findIndex(item.donners, { phone: ele.phone }) < 0),
                       adding: false,
                       removing: true,
                       notcheckAll: true,
                     })
                   }}
                   updateRemind={(item) => this.updateRemind(item)}
-                  update={(data) => this.updateRemind(data)} {...this.props}
+                  update={(data) => this.updateRemind(data)}
+                  deleteRemind={(item) => {
+                    this.setState({
+                      currentTask: item,
+                      isAreYouModalOpened: true,
+                    })
+                  }}
                   item={item} key={index}>
                 </TasksCard>
               );
@@ -322,7 +351,10 @@ export default class Reminds extends Component {
 
         </View>
 
-        <TasksCreation event_id={this.props.event_id} update={this.state.update}
+        <TasksCreation
+          master={this.props.master}
+          event_id={this.props.event_id}
+          update={this.state.update}
           remind_id={this.state.remind_id}
           updateRemind={(data) => this.sendUpdate(data)}
           isOpen={this.state.RemindCreationState}
@@ -373,6 +405,7 @@ export default class Reminds extends Component {
           contacts={this.state.contacts.map(ele => ele.phone)}></ContactListModal> : null}
         {this.state.iscontactReportModalOpened ? <ContactsReportModal
           must_report={this.state.currentTask.must_report}
+          master={this.props.master}
           confirm={(user) => this.confirm(user)}
           isOpen={this.state.iscontactReportModalOpened}
           members={this.state.contacts}
@@ -381,6 +414,17 @@ export default class Reminds extends Component {
               iscontactReportModalOpened: false
             })
           }}></ContactsReportModal> : null}
+        {this.state.isAreYouModalOpened ? <AreYouSure isOpen={this.state.isAreYouModalOpened}
+          title={'Delete Modal'} closed={() => {
+            this.setState({
+              isAreYouModalOpened: false
+            })
+          }}
+          ok={"Delete"}
+          callback={() => {
+            this.deleteRemind()
+          }}
+          message={"Are You Sure You Want To Delete This Remind?"}></AreYouSure> : null}
       </View>
 
 

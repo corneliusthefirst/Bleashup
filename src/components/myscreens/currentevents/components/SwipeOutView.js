@@ -8,6 +8,7 @@ import autobind from "autobind-decorator";
 import { findIndex } from "lodash"
 import { observer } from "mobx-react";
 import stores from "../../../../stores";
+import shadower from "../../../shadower";
 
 export default class SwipeOutView extends Component {
     constructor(props) {
@@ -74,7 +75,7 @@ export default class SwipeOutView extends Component {
     blinkerSize = 26;
     render() {
         return (
-            <View style={{ width: "100%", borderRadius: 10, borderLeftColor: "#7DD2D2", }}>
+            <View style={{ width: "98%", borderRadius: 4,...shadower(2) ,height:'99.5%',padding: '1%',backgroundColor: 'white',}}>
                 <View style={{ display: 'flex', flexDirection: 'column', marginLeft: "30%", }}>
                     <View style={{ height: this.width, marginBottom: "9%", alignSelf: 'flex-start' }}>
                         <TouchableOpacity onPress={() => requestAnimationFrame(() => {

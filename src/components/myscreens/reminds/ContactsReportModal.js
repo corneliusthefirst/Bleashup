@@ -86,7 +86,7 @@ export default class ContactsReportModal extends PureComponent {
                         >
                         </BleashupFlatList>
                     </View>
-                    <RemindReportContent isOpen={this.state.isReportModalOpened}
+                    <RemindReportContent master={this.props.master} isOpen={this.state.isReportModalOpened}
                         report={this.state.currentReport}
                         user={this.state.currentUser}
                         closed={() => {

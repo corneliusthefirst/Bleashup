@@ -17,6 +17,7 @@ import BleashupAlert from './BleashupAlert';
 import testForURL from '../../../../../services/testForURL';
 import CacheImages from '../../../../CacheImages';
 import shadower from "../../../../shadower";
+import PostMenu from "./PostMenu";
 
 
 let {height, width} = Dimensions.get('window')
@@ -75,11 +76,13 @@ componentDidMount(){
       return(
           
           this.state.mounted?<Card style={{width:width/2 - width/40}}>
-
-          <TouchableOpacity onPress={() => requestAnimationFrame(() => this.props.showItem(this.props.item)) } >
-           <CardItem style={{margin:3,height:height/30}}> 
-              <Title style={{ fontSize: 14, color:"#0A4E52",fontWeight: 'bold',}}>{this.props.item.title?this.props.item.title:""}</Title>
+           <CardItem style={{margin:3,height:height/30,}}> 
+              <Left style={{width:'95%'}}><Title style={{
+                fontSize: 14, color: "#0A4E52", fontWeight: 'bold',
+              }}>{this.props.item.title ? this.props.item.title : ""}</Title></Left>
+              <Right><PostMenu mention={() => this.props.mention(this.props.item)} delete={() => this.props.deleteHighlight(this.props.item)} update={()=> this.props.update(this.props.item.id)} master={this.props.participant.master}></PostMenu></Right>
            </CardItem>
+          <TouchableOpacity onPress={() => requestAnimationFrame(() => this.props.showItem(this.props.item))} >
             <CardItem style={{ width: "90%",backgroundColor: 'transparent', borderRadius: 8, ...shadower(7), alignSelf: 'center',}}>
              <View style={{width:"100%",height:height/7,}}>
                 {this.props.item.url && this.props.item.url.photo && testForURL(this.props.item.url.photo) ? <CacheImages thumbnails square style={{ width: "106%",alignSelf: 'center', height: height / 7,borderRadius: 8,}} source={{ uri: this.props.item.url.photo}}></CacheImages>:
@@ -99,7 +102,7 @@ componentDidMount(){
            </CardItem>
             </TouchableOpacity>
 
-           {this.props.participant.master &&
+           {/*this.props.participant.master &&
                 <CardItem style={{height:height/18}}>
                 <Left>
                  <TouchableOpacity onPress={() => requestAnimationFrame(() => this.props.update(this.props.item.id))}  style={{marginRight:"15%"}}>
@@ -119,7 +122,7 @@ componentDidMount(){
                     <Label style={{ fontSize: 12, color: "red" }} >Delete</Label>
                   </TouchableOpacity>
                  </Right>
-               </CardItem> }
+           </CardItem> }
       
 
            {/*<HighlightCardDetail isOpen={this.state.isOpen} item={this.props.item} onClosed={()=>{this.setState({isOpen:false})}}/>*/}
@@ -133,7 +136,7 @@ componentDidMount(){
           */
          }
 
-        </Card> : <Card style={{ width: width / 2 - width / 44,height:height/3.5}}></Card>
+        </Card> : <Card style={{ width: width / 2 - width / 44,height:height/4}}></Card>
         
     )}
 

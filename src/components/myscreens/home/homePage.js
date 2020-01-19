@@ -151,7 +151,7 @@ class Home extends Component {
       let calen = groupBy(calendar, 'title')
       let idsMapper = map(calen, (value, key) => { return { title: key, ids: map(value, ele => ele.id) } })
       calen = map(calen, (value, key) => { return { ...value[0], key: key } })
-      calen = reject(calen, ele => findIndex(stores.Events.events, e => e.about && ele.title === e.about.title) >= 0)
+      calen = reject(calen, ele => findIndex(stores.Events.events, e => e.about && ele.title === e.about.title) >= 0 || ele.title.includes('reminder'))
       if (calen.length > 0) {
         let i = 0
         forEach(calen, element => {

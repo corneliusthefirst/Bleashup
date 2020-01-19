@@ -97,7 +97,7 @@ export default class EventTasksCard extends Component {
       this.props.item.description.length)
     this.long = this.props.item.description.length > 103
     return !this.state.mounted ? <Card style={{
-      width: '98%', height: 100,
+      width: '98%', height: 200,
       marginLeft: "2%", marginRight: "2%",
     }}>
     </Card> : (
@@ -109,6 +109,7 @@ export default class EventTasksCard extends Component {
               <Right style={{ alignSelf: 'flex-end', }}>
                 <RemindsMenu
                   master={this.props.master}
+                  mention={() => this.props.mention(this.props.item)}
                   updateRemind={() => this.props.updateRemind(this.props.item)}
                   showMembers={() => this.props.showMembers(this.props.item.members)}
                   addMembers={() => { this.props.addMembers(this.props.item.members, this.props.item) }}
@@ -116,6 +117,7 @@ export default class EventTasksCard extends Component {
                     ele.phone === stores.LoginStore.user.phone), this.props.item)}
                   viewDoneBy={() => this.props.showDonners(this.props.item.donners, this.props.item)}
                   viewConfirmed={() => this.props.showConfirmed(this.props.item.confirmed, this.props.item)}
+                  deleteRemind={() => this.props.deleteRemind(this.props.item)}
                 ></RemindsMenu>
 
               </Right>

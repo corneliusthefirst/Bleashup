@@ -232,7 +232,7 @@ export default class EventDetailView extends Component {
           </View>
 
           <View style={{ height: "92%", flexDirection: "column", width: "100%" }} >
-            <View style={{ height: this.state.highlightData.length == 0 ? 0 : height / 4 + height / 14, width: "100%" }} >
+            <View style={{ height: this.state.highlightData.length == 0 ? 0 : "30%", width: "100%" }} >
               {this.state.refresh ? <BleashupFlatList
                 initialRender={4}
                 showsHorizontalScrollIndicator={false}
@@ -253,6 +253,21 @@ export default class EventDetailView extends Component {
                         highlight_id: hid
                       })
                     }}
+                      mention={(replyer) => {
+                        this.props.mention({
+                          video: replyer.url.video ? true : false,
+                          audio: !replyer.url.video && replyer.url.audio ? true : false,
+                          video: replyer.url.video ? true : false,
+                          photo: !replyer.url.video && replyer.url.photo ? true : false,
+                          sourcer: replyer.url.video ?
+                            replyer.url.photo : replyer.url.photo ?
+                              replyer.url.photo : replyer.url.audio ?
+                                replyer.url.audio : null,
+                          replyer_phone: stores.LoginStore.user.phone,
+                          replyer_name: stores.LoginStore.user.name,
+                          type_extern: 'HighLights',
+                        })
+                      }}
                       deleteHighlight={(item) => {
                         this.setState({
                           current_highlight: item,

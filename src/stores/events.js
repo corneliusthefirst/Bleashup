@@ -377,9 +377,11 @@ export default class events {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let eventIndex = findIndex(Events, { id: EventID });
+        let cid = JSON.stringify({ cal_id:Events[eventIndex].calendar_id})
         Events[eventIndex].period = NewPeriod;
-        if(!NewPeriod || (NewPeriod && !NewPeriod.includes("T"))) 
-        Events[eventIndex].calendared = false
+        if (!NewPeriod || (NewPeriod && !NewPeriod.includes("T")))
+          Events[eventIndex].calendared = false
+          Events[eventIndex].calendar_id = null
         if (inform) {
           Events[eventIndex].period_updated = true;
           Events[eventIndex].updated = true;
@@ -388,7 +390,7 @@ export default class events {
         this.saveKey.data = Events;
         storage.save(this.saveKey).then(() => {
           this.setProperties(this.saveKey.data, inform);
-          resolve(Events[eventIndex]);
+          resolve(Events[eventIndex],cid);
         });
       });
     });
@@ -490,9 +492,8 @@ export default class events {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let eventIndex = findIndex(Events, { id: EventID });
-        Events[eventIndex].calendar_id = newID;
+        Events[eventIndex].calendar_id = newID ? newID : null;
         if (inform) {
-          Events[eventIndex].title_updated = true;
           Events[eventIndex].updated = true;
         }
         Events[eventIndex].updated_at = moment().format();
@@ -869,7 +870,8 @@ export default class events {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let index = findIndex(Events, { id: EventID });
-        Events[index].reminds = dropWhile(Event.reminds, element => element !== RemindID);
+        Events[index].reminds = dropWhile(Events[index].reminds,
+           element => element !== RemindID);
         if (inform) {
           Events[index].remind_removed = true;
           Events[index].updated = true;

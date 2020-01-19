@@ -89,7 +89,26 @@ export default class Reminds {
       });
     });
   }
-
+  @action updateCalendarID(NewRemind, alarms, inform) {
+    console.warn(NewRemind.calendar_id)
+    return new Promise((resolve, Reject) => {
+      this.readFromStore().then(Reminds => {
+        RemindIndex = findIndex(Reminds, { id: NewRemind.remind_id });
+        Reminds[RemindIndex].calendar_id = !NewRemind.calendar_id ? null : NewRemind.calendar_id;
+        Reminds[RemindIndex].alarms = Reminds[RemindIndex].alarms ? Reminds[RemindIndex].alarms : alarms
+        Reminds[RemindIndex].updated_at = moment().format();
+        Reminds[RemindIndex].description_updated = inform;
+        Reminds[RemindIndex].updated = inform;
+        this.keyData.data = Reminds;
+        storage.save(this.keyData).then(() => {
+          GState.eventUpdated = true;
+          resolve(
+            Reminds[RemindIndex]
+          );
+        });
+      });
+    });
+  }
   @action updateTitle(NewRemind, inform) {
     return new Promise((resolve, Reject) => {
       this.readFromStore().then(Reminds => {
@@ -173,8 +192,8 @@ export default class Reminds {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Reminds => {
         let index = findIndex(Reminds, { id: Remind.remind_id })
-        console.warn(Reminds[index].members.length, Remind.members)
-        Reminds[index].members.length > 0 ? Reminds[index].members = Array.isArray(Remind.members) ?
+        ///console.warn(Reminds[index].members.length, Remind.members)
+       Reminds[index].members && Reminds[index].members.length > 0 ? Reminds[index].members = Array.isArray(Remind.members) ?
           Remind.members.concat(Reminds[index].members) :
           [Remind.members].concat(Reminds[index].members) :
           Reminds[index].members = Array.isArray(Remind.members) ?
@@ -223,7 +242,7 @@ export default class Reminds {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Reminds => {
         let index = findIndex(Reminds, { id: Remind.remind_id })
-        Reminds[index].donners.length > 0 ?
+       Reminds[index].donners && Reminds[index].donners.length > 0 ?
           Reminds[index].donners = Array.isArray(Remind.donners) ?
             Remind.donners.concat(Reminds[index].donners) :
             [Remind.donners].concat(Reminds[index].donners) :
@@ -243,7 +262,7 @@ export default class Reminds {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Reminds => {
         let index = findIndex(Reminds, { id: Remind.remind_id })
-        Reminds[index].confirmed.length > 0 ? Reminds[index].confirmed =
+       Reminds[index].confirm && Reminds[index].confirmed.length > 0 ? Reminds[index].confirmed =
           Array.isArray(Remind.confirmed) ?
             [Remind.confirmed].concat(Reminds[index].confirmed) :
             Remind.donners.concat(Reminds[index].confirmed) :

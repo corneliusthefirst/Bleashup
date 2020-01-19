@@ -11,6 +11,7 @@ export default class globalState {
   @observable newContribution = false;
   @observable connected = true
   @observable currentRoom = null;
+  @observable reply = null
   @observable success = false;
   @observable previousCommitee = null;
   @observable socket = null;

@@ -257,7 +257,10 @@ export default class BleashupTimeLine extends PureComponent {
                     {rowData.title}
                 </Text>
                 <View>
-                    <ChangeBox delayer={delay} change={rowData}></ChangeBox>
+                    <ChangeBox master={this.props.master} 
+                    restore={(data) => this.props.restore(data)}
+                     mention={(data) => this.props.mention(data)} 
+                     delayer={delay} change={rowData}></ChangeBox>
                 </View>
             </View>
         )

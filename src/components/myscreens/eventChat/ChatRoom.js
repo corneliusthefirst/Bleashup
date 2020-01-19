@@ -260,9 +260,12 @@ export default class ChatRoom extends Component {
                 created_at: "2014-03-30 12:32",
             }] : []
             setTimeout(() => {
-                this.setState({
-                    loaded: true
-                })
+                GState.reply ? this.replying(GState.reply, null) :
+                    this.setState({
+                        loaded: true,
+                        // replyContent: GState.reply ? GState.reply : null,
+                        //replying: GState.reply ? true : false
+                    })
                 if (this.props.newMessages.length > 0) {
                     this.room.insertBulkMessages(this.newMessages).then(() => {
                     })
@@ -336,6 +339,7 @@ export default class ChatRoom extends Component {
         Orientation.lockToPortrait();
     }
     componentWillUnmount() {
+        GState.reply = null
         Pickers.CleanAll()
         this.fireRef.off()
         this.typingRef.off()
@@ -1061,6 +1065,7 @@ export default class ChatRoom extends Component {
     replying(replyer, color) {
         offset = this.state.replying ? 0.2 : 0
         this.setState({
+            loaded: true,
             replying: true,
             replyContent: replyer,
             replyerBackColor: color,
@@ -1187,12 +1192,25 @@ export default class ChatRoom extends Component {
         return <BleashupFlatList backgroundColor={"transparent"} firstIndex={0} ref="bleashupSectionListOut" inverted={true} renderPerBatch={20} initialRender={20} numberOfItems={this.room.messages.length} keyExtractor={(item, index) => item ? item.id : null}
             renderItem={(item, index) => {
                 this.delay = this.delay >= 20 || !item.sent ? 0 : this.delay + 1
-                return item ? <Message delay={this.delay} room={this.room} PreviousSenderPhone={this.room.messages[index > 0 ? index - 1 : 0] ? this.room.messages[index > 0 ? index - 1 : 0].sender.phone : null} showActions={(message) => this.showActions(message)} firebaseRoom={this.props.firebaseRoom} roomName={this.props.roomName} sendMessage={message => this.sendTextMessage(message)} received={item.received ? item.received.length >= this.props.members.length : false} replaceMessageVideo={(data) => this.replaceMessageVideo(data)} showPhoto={(photo) => this.showPhoto(photo)} replying={(replyer, color) => this.replying(replyer, color)} replaceMessage={(data) => this.replaceMessage(data)} replaceAudioMessage={(data) => this.replaceAudioMessage(data)} message={item} openReply={(replyer) => {
-                    this.setState({
-                        replyer: replyer,
-                        showRepliedMessage: true
-                    });
-                }} user={this.props.user.phone} creator={this.props.creator} replaceMessageFile={(data) => this.replaceMessageFile(data)} playVideo={(source) => this.playVideo(source)}></Message> : null;
+                return item ? <Message delay={this.delay} room={this.room}
+                    PreviousSenderPhone={this.room.messages[index > 0 ? index - 1 : 0] ?
+                        this.room.messages[index > 0 ? index - 1 : 0].sender.phone : null}
+                    showActions={(message) => this.showActions(message)}
+                    firebaseRoom={this.props.firebaseRoom}
+                    roomName={this.props.roomName}
+                    sendMessage={message => this.sendTextMessage(message)}
+                    received={item.received ? item.received.length >= this.props.members.length :
+                        false} replaceMessageVideo={(data) => this.replaceMessageVideo(data)}
+                    showPhoto={(photo) => this.showPhoto(photo)}
+                    replying={(replyer, color) => this.replying(replyer, color)}
+                    replaceMessage={(data) => this.replaceMessage(data)}
+                    replaceAudioMessage={(data) => this.replaceAudioMessage(data)}
+                    message={item} openReply={(replyer) => {
+                        this.setState({
+                            replyer: replyer,
+                            showRepliedMessage: true
+                        });
+                    }} user={this.props.user.phone} creator={this.props.creator} replaceMessageFile={(data) => this.replaceMessageFile(data)} playVideo={(source) => this.playVideo(source)}></Message> : null;
             }} dataSource={this.room.messages} newData={this.showMessage} newDataLength={this.showMessage.length}>
         </BleashupFlatList>;
     }
@@ -1201,13 +1219,13 @@ export default class ChatRoom extends Component {
         return <View style={{
             height: this.state.textInputHeight, backgroundColor: "#FEFFDE",
             borderRadius: 8, alignSelf: 'center', borderBottomWidth: 0,
-            padding: '1%', maxWidth: "99.9%",...shadower(6)
+            padding: '1%', maxWidth: "99.9%",
         }}>
             {
                 //* Reply Message caption */
                 this.state.replying ? this.replyMessageCaption() : null}
             <View>
-                <View style={{ display: 'flex', flexDirection: 'row', ...shadower(6) }}>
+                <View style={{ display: 'flex', flexDirection: 'row', }}>
                     <View style={{
                         marginTop: "2%",
                         width: "33%",
@@ -1335,7 +1353,7 @@ export default class ChatRoom extends Component {
                     //* Reply Message caption */
                     this.state.replying ? <View style={{
                         backgroundColor: this.state.replyerBackColor,
-                        marginLeft: "-1%", backgroundcolor: "#FEFFDE"
+                        marginLeft: "-1%", backgroundcolor: "#FEFFDE",
                     }}>
                         <ReplyText openReply={(replyer) => {
                             this.setState({
@@ -1343,7 +1361,7 @@ export default class ChatRoom extends Component {
                                 showRepliedMessage: true
                             });
                         }} pressingIn={() => { }} reply={this.state.replyContent}></ReplyText></View> : null}
-                <View style={{ heigh: this.state.textHeight, backgroundColor: "#1FABAB", width: "100%", display: 'flex', flexDirection: 'row', }}>
+                <View style={{ heigh: this.state.textHeight, backgroundColor: "#1FABAB", width: "100%", display: 'flex', flexDirection: 'row' }}>
                     <Icon onPress={() => {
                         offset = this.state.replying ? 0.1 : 0;
                         !this.state.showEmojiInputCaption ? Keyboard.dismiss() : this._captionTextInput.focus();

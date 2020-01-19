@@ -101,12 +101,13 @@ export default class SWView extends Component {
             this.props.seen()
         })
     }
-    displayDate(date) {
+    displayDate(event) {
+        date = event.period
         let statDate = moment(date)
-        let end = moment()
+        let end = moment(typeof event.recurrence === "string" ? event.recurrence : null)
         let daysDiff = Math.floor(moment.duration(end.diff(statDate)).asDays())
         if (daysDiff == 0) {
-            return "OnGoing Today from " + moment(date).format("h:mm a");
+            return "Started Today from " + moment(date).format("h:mm a");
         } else if (daysDiff == 1) {
             return "Past Since Yesterday at " + moment(date).format("h:mm a")
         } else if (daysDiff > 1 && daysDiff < 7) {
@@ -122,9 +123,9 @@ export default class SWView extends Component {
             return `Past since ${moment(date).format("dddd, MMMM Do YYYY")} at ${moment(date).format("h:mm a")}`
         }
     }
-    dateDiff(date) {
-        let statDate = moment(date)
-        let end = moment()
+    dateDiff(event) {
+        let statDate = moment(event.period)
+        let end = moment(typeof event.recurrence === "string" ? event.recurrence : null)
         return daysDiff = Math.floor(moment.duration(end.diff(statDate)).asDays())
     }
     invite() {
@@ -172,7 +173,7 @@ export default class SWView extends Component {
             }}>
                     <ScrollView
                         style={{
-                             backgroundColor: "#FEFFDE", 
+                            backgroundColor: "#FEFFDE",
                         }}
                         //scrollEnabled={true}
                         nestedScrollEnabled={true}
@@ -196,8 +197,8 @@ export default class SWView extends Component {
                             }}><View style={{ width: "90%" }}><Title style={{ fontWeight: 'bold', fontSize: 17, marginTop: 2, color: "#0A4E52" }}>{this.props.event.about.title}</Title>
                                     {this.props.event.period ? <Title style={{
                                         marginRight: "2%", fontStyle: 'italic', fontWeight: this.props.event.closed ? "bold" : "400",
-                                        color: this.props.event.closed ? "red" : this.dateDiff(this.props.event.period) > 0 ? "gray" : "#1FABAB", fontSize: 12,
-                                    }}>{this.props.event.closed ? "Closed" : this.displayDate(this.props.event.period)}</Title> : null}
+                                        color: this.props.event.closed ? "red" : this.dateDiff(this.props.event) > 0 ? "gray" : "#1FABAB", fontSize: 12,
+                                    }}>{this.props.event.closed ? "Closed" : this.displayDate(this.props.event)}</Title> : null}
                                 </View>
                                 <Icon onPress={() => {
                                     this.props.navigateHome()
@@ -208,14 +209,14 @@ export default class SWView extends Component {
                             </View>
                             <View style={{
                                 heignt: "60%", display: "flex", flexDirection: 'row',
-                                backgroundColor: "#FEFFDE", 
+                                backgroundColor: "#FEFFDE",
                                 marginLeft: "1%",
                             }}>
                                 <View style={{
-                                    marginTop: "5%", 
+                                    marginTop: "5%",
                                     padding: '2%',
                                     width: "25%", ...shadower(3),
-                                    backgroundColor: '#FEFFDE', 
+                                    backgroundColor: '#FEFFDE',
                                     borderRadius: 12
                                 }}>
                                     <ActionsView

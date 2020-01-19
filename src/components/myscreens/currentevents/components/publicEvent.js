@@ -82,7 +82,7 @@ class PublicEvent extends Component {
   } 
   swipperComponent = null
   componentDidMount() {
-    setTimeout(() => {
+   setTimeout(() => {
       stores.TemporalUsersStore.getUser(this.props.Event.creator_phone).then(creator => {
         stores.Events.isMaster(this.props.Event.id, stores.LoginStore.user.phone).then(master => {
           this.setState({
@@ -117,10 +117,6 @@ class PublicEvent extends Component {
       ],
     }
   }
-  componentWillUnmount() {
-    clearInterval(this.interval)
-  }
-
 
   showPublishersList() {
     this.setState({
@@ -273,7 +269,7 @@ class PublicEvent extends Component {
     //emitter.emit('notify', "santerss") 
     return (this.state.isMount ? <View style={{ width: "100%", padding: '1%',alignSelf: 'center',}}>
       <Swipeout {...this.props} onOpen={() => this.openSwipeOut()} onClose={() => this.onCloseSwipeout()} style={{
-        width: "100%",
+        width: "100%",...shadower(3),
         backgroundColor: this.props.Event.new ? "#cdfcfc" : null
       }}
         autoClose={true}
@@ -281,7 +277,7 @@ class PublicEvent extends Component {
         {...this.swipeOutSettings(this.state.master, this.state.joint)}>
         <Card
         style={{
-          margin: '3%',
+          margin: '1%',
         }}
           bordered
         >
@@ -350,7 +346,7 @@ class PublicEvent extends Component {
           </Footer>
         </Card>
       </Swipeout>
-    </View> : <Card style={{ height: 320 }}>
+    </View> : <Card style={{ height: 315,padding:'1%',margin:'1%',alignSelf:'center',width:'97%' }}>
       </Card>)
   }
 }
