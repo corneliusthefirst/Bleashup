@@ -388,7 +388,7 @@ export default class Reminds extends Component {
             this.saveAddMembers(members)
           }}
           saveRemoved={(members) => this.saveRemoved(members)}
-          members={this.state.contacts}
+          members={this.state.contacts?this.state.contacts:[]}
           notcheckall={this.state.notcheckAll}
           isOpen={this.state.isSelectableContactsModalOpened} close={() => {
             this.setState({
@@ -402,7 +402,7 @@ export default class Reminds extends Component {
               isContactsModalOpened: false
             })
           }}
-          contacts={this.state.contacts.map(ele => ele.phone)}></ContactListModal> : null}
+          contacts={this.state.contacts ? this.state.contacts.map(ele => ele.phone) : []}></ContactListModal> : null}
         {this.state.iscontactReportModalOpened ? <ContactsReportModal
           must_report={this.state.currentTask.must_report}
           master={this.props.master}
