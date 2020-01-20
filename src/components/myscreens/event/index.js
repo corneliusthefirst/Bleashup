@@ -106,8 +106,8 @@ export default class Event extends Component {
             working: true
           })
         }}
-        mention={(data) => this.mention(data)}
-        updateLocation={(loc) => this.updateActivityLocation(loc)}
+          mention={(data) => this.mention(data)}
+          updateLocation={(loc) => this.updateActivityLocation(loc)}
           updateDesc={(newDes) => {
             this.updateActivityDescription(newDes)
           }}
@@ -127,7 +127,7 @@ export default class Event extends Component {
             working: false
           })
         }}
-        mention={(item) => this.mention(item)}
+          mention={(item) => this.mention(item)}
           master={this.master}
           working={this.state.working}
           event={this.event}
@@ -331,18 +331,20 @@ export default class Event extends Component {
       })
     })
   }
-  generalCommitee (event) {
-   return{
-     id: event.id,
-     name: "Generale",
-     member: event.participant,
-     opened: true,
-     public_state: true,
-     creator: event.creator_phone
-   } 
+  generalCommitee(event) {
+    return {
+      id: event.id,
+      name: "Generale",
+      member: event.participant,
+      opened: true,
+      public_state: true,
+      creator: event.creator_phone
+    }
   }
   mention(data) {
     GState.reply = data
+    GState.currentCommitee = this.event.id
+    emitter.emit('mentioning')
     this.swapChats(this.generalCommitee(this.event))
   }
   startLoader() {
@@ -356,7 +358,7 @@ export default class Event extends Component {
     })
   }
   restore(data) {
-   //console.warn(data)
+    //console.warn(data)
     if (!this.state.woking) {
       switch (data.updated) {
         case "highlight_delete":
@@ -385,7 +387,7 @@ export default class Event extends Component {
               }).catch(() => {
                 this.stopLoader()
               })
-            }else{
+            } else {
               this.stopLoader()
               Toast.show({ text: 'restored already', })
             }
@@ -674,7 +676,6 @@ export default class Event extends Component {
     }
   }
   swapChats(commitee) {
-    //console.warn(commitee.member, "oooo")
     this.isOpen = false
     this.setState({
       roomID: commitee.id,
@@ -963,7 +964,7 @@ export default class Event extends Component {
         isSettingsModalOpened: false
       })
       Requester.applyAllUpdate(original, newSettings).then((res) => {
-       // console.warn(res)
+        // console.warn(res)
         if (res)
           //Toast.show({ text: 'All save completely applied !', type: 'success' })
           this.initializeMaster()
@@ -1059,7 +1060,7 @@ export default class Event extends Component {
       }, snap.content_type, snap.filename, '/photo', false)
       exchanger.upload(0, 0)
     })
-  } 
+  }
   render() {
     console.warn(this.event.calendar_id)
     StatusBar.setHidden(false, true)

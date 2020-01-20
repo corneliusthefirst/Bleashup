@@ -52,6 +52,9 @@ export default class RouteView extends Component {
         })
     }
     componentDidMount() {
+        emitter.on('mentioning',() => {
+            this.resetCommiteeForGeneral()
+        })
         let phone = stores.LoginStore.user.phone.replace("00", "+");
         firebase.database().ref(`new_message/${phone}/${this.props.event_id}/new_messages`).once('value', snapshoot => {
             GState.generalNewMessages = snapshoot.val() !== null ? snapshoot.val() : []
