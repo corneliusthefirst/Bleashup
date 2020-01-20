@@ -62,7 +62,7 @@ export default class ChangeBox extends Component {
                                     master={this.props.master}
                                     change={this.props.change}
                                     mention={() => this.props.mention({
-                                        title: this.props.change.changed,
+                                        title: `${this.props.change.changed}`,
                                         type_extern: this.props.change.title,
                                         photo: true,
                                         sourcer: this.state.changer.profile,

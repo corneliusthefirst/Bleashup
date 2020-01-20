@@ -1284,7 +1284,7 @@ export default class ChatRoom extends Component {
     }
 
     replyMessageCaption() {
-        return <View style={{ backgroundColor: this.state.replyerBackColor, alignSelf: 'center',margin: 1,}}><ReplyText openReply={(replyer) => {
+        return <View style={{ backgroundColor: this.state.replyerBackColor, alignSelf: 'center',width:'98%'}}><ReplyText compose={true} openReply={(replyer) => {
             this.setState({
                 replyer: replyer,
                 showRepliedMessage: true

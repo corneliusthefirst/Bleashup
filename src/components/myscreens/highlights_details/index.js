@@ -146,6 +146,7 @@ export default class HighLightsDetails extends Component {
                                         replyer.url.audio : null,
                             replyer_phone: stores.LoginStore.user.phone,
                             replyer_name: stores.LoginStore.user.name,
+                            title : `${replyer.title}: \n ${replyer.description}`,
                             type_extern: 'HighLights',
                         }
                         this.setState({
