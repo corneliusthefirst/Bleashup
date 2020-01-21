@@ -128,7 +128,7 @@ export default class Reminds extends Component {
     console.warn('receiving updated remind message')
     stores.Reminds.loadReminds(this.props.event_id, true).then((Reminds) => {
       console.warn(Reminds)
-      this.setState({ eventRemindData: JSON.parse(Reminds), mounted: true });
+      this.setState({ eventRemindData: JSON.parse(Reminds) });
     })
   }
 

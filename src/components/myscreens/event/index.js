@@ -52,6 +52,7 @@ import FileExachange from '../../../services/FileExchange';
 import Pickers from '../../../services/Picker';
 import HighlightCardDetail from './createEvent/components/HighlightCardDetail';
 import RemindRequest from '../reminds/Requester';
+import TasksCreation from "../reminds/TasksCreation";
 
 const screenWidth = Math.round(Dimensions.get('window').width);
 
@@ -179,6 +180,19 @@ export default class Event extends Component {
             hideTitle: true
           })
         }}
+          showRemind={(remind) => {
+            this.setState({
+              isremindConfigurationModal: true,
+              remind: remind
+            })
+          }}
+          showRemindID={(id) => {
+            this.setState({
+              remind_id:id,
+              isremindConfigurationModal:true,
+              remind:null
+            })
+          }}
           mention={(data) => this.mention(data)}
           restore={(data) => this.restore(data)}
           master={this.master}
@@ -1324,6 +1338,11 @@ export default class Event extends Component {
               isHighlightDetailModalOpened: false
             })
           }}></HighlightCardDetail> : null}
+        {this.state.isremindConfigurationModal ? <TasksCreation isOpen={this.state.isremindConfigurationModal} onClosed={() => {
+          this.setState({
+            isremindConfigurationModal: false
+          })
+        }} event={this.event} remind_id={this.state.remind_id} remind={this.state.remind}></TasksCreation> : null}
       </View>
     </SideMenu>
     );

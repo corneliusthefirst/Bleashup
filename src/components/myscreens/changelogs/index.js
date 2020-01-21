@@ -70,7 +70,11 @@ export default class ChangeLogs extends Component {
   propcessAndFoward(change) {
     if (change.updated === "add_highlight") {
       this.props.showHighlightDetails(change.new_value.new_value)
-    } else if (change.updated === "highlight_delete"){
+    } else if (change.updated === "restored_remind" || change.updated === "delete_remind"){
+      this.props.showRemind(change.new_value.new_value)
+    } else if (change.updated === 'added_remind'){
+      this.props.showRemindID(change.new_value.data)
+    } else if (change.updated === "highlight_delete" || change.updated == 'highlight_restored'){
       this.props.showHighlightDetails(change.new_value.new_value)
     } else if (change.updated === "highlight_url"){
       this.props.showHighlightDetails({

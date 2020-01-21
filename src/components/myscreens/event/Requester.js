@@ -656,11 +656,12 @@ class Request {
                                     date: moment().format(),
                                     time: null
                                 }
-                                stores.ChangeLogs.addChanges(Change).then(() => {
-                                    event.period  ? CalendarServe.saveEvent({...event,period:newPeriod}, 
-                                        Eve.alarms).then(() => {
+                                event.period ? CalendarServe.saveEvent({ ...event, period: newPeriod },
+                                    Eve.alarms).then(() => {
                                         resolve('ok')
                                     }) : resolve('ok')
+                                stores.ChangeLogs.addChanges(Change).then(() => {
+                                   
                                 })
 
                             })
@@ -732,11 +733,12 @@ class Request {
                                     date: moment().format(),
                                     time: null
                                 }
-                                stores.ChangeLogs.addChanges(Change).then(() => {
-                                    Eve.calendar_id ? CalendarServe.saveEvent(Eve, Eve.alarms).then(() => {
-                                    }) : null
-                                })
-                                resolve("ok")
+                                Eve.calendar_id ? CalendarServe.saveEvent(Eve, Eve.alarms).then(() => {
+                                    stores.ChangeLogs.addChanges(Change).then(() => {
+
+                                    })
+                                    resolve("ok")
+                                }) : resolve("ok")
                             })
                         }).catch((e) => {
                             reject(e)

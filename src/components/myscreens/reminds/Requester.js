@@ -187,13 +187,15 @@ class Requester {
                                 date: moment().format(),
                                 time: null
                             }
-                            stores.ChangeLogs.addChanges(Change).then(() => {
-                                oldRemind.calendar_id ? CalendarServe.saveEvent({ ...oldRemind, recursive_frequency: newConfigs },
-                                    oldRemind.alams, 'reminds').then(() => {
+                            oldRemind.calendar_id ? CalendarServe.saveEvent({ ...oldRemind, recursive_frequency: newConfigs },
+                                oldRemind.alams, 'reminds').then(() => {
 
-                                    }) : null
-                            })
+                                }) : null
+
                             resolve('ok')
+                            stores.ChangeLogs.addChanges(Change).then(() => {
+
+                            })
                         })
                     }).catch(error => {
                         Toast.show({ text: 'Unable to perform network request' })
@@ -302,14 +304,16 @@ class Requester {
                                 date: moment().format(),
                                 time: null
                             }
-                            stores.ChangeLogs.addChanges(Change).then(() => {
-                                oldRemind.calendar_id ? CalendarServe.saveEvent({ ...oldRemind, period: newPeriod },
-                                    oldRemind.alams, 'reminds').then(() => {
+                            oldRemind.calendar_id ? CalendarServe.saveEvent({ ...oldRemind, period: newPeriod },
+                                oldRemind.alams, 'reminds').then(() => {
 
-                                    }) : null
-                            })
+                                }) : null
                             resolve('ok')
+                            stores.ChangeLogs.addChanges(Change).then(() => {
+
+                            })
                         })
+
                     }).catch(error => {
                         Toast.show({ text: 'Unable to perform network request' })
                         console.warn(error)
@@ -345,15 +349,16 @@ class Requester {
                             date: moment().format(),
                             time: null
                         }
-                        stores.ChangeLogs.addChanges(Change).then(() => {
-                            if (findIndex(remind.members, { phone: stores.LoginStore.user.phone }) >= 0) {
-                                CalendarServe.saveEvent(remind, alarms, 'reminds').then(calendar_id => {
-                                    stores.Reminds.updateCalendarID({ remind_id: remind.id, calendar_id: calendar_id }, alarms).then(() => {
-                                        resolve('ok')
-                                    })
+                        if (findIndex(remind.members, { phone: stores.LoginStore.user.phone }) >= 0) {
+                            CalendarServe.saveEvent(remind, alarms, 'reminds').then(calendar_id => {
+                                stores.Reminds.updateCalendarID({ remind_id: remind.id, calendar_id: calendar_id }, alarms).then(() => {
                                 })
-                            }
+                            })
+                        }
+                        stores.ChangeLogs.addChanges(Change).then(() => {
+                            
                         })
+                        resolve('ok')
                     })
                 }).catch(error => {
                     Toast.show({ text: 'Unable to perform network request' })
@@ -390,15 +395,16 @@ class Requester {
                                     date: moment().format(),
                                     time: null
                                 }
-                                stores.ChangeLogs.addChanges(Change).then(() => {
-                                    if (oldRemind.calendar_id && findIndex(members, ele => ele === stores.LoginStore.user.phone) >= 0) {
-                                        CalendarServe.saveEvent({ ...oldRemind, period: null }, null, 'reminds').then(() => {
-                                            stores.Reminds.updateCalendarID({ remind_id: oldRemind.id, calendar_id: undefined }).then(() => {
-                                                console.warn("calendar_id successfully removed")
-                                                resolve('ok')
-                                            })
+                                if (oldRemind.calendar_id && findIndex(members, ele => ele === stores.LoginStore.user.phone) >= 0) {
+                                    CalendarServe.saveEvent({ ...oldRemind, period: null }, null, 'reminds').then(() => {
+                                        stores.Reminds.updateCalendarID({ remind_id: oldRemind.id, calendar_id: undefined }).then(() => {
+                                            console.warn("calendar_id successfully removed")
                                         })
-                                    }
+                                    })
+                                }
+                                resolve('ok')
+                                stores.ChangeLogs.addChanges(Change).then(() => {
+                                    
                                 })
                             })
                         }).catch(error => {
@@ -471,15 +477,16 @@ class Requester {
                             date: moment().format(),
                             time: null
                         }
-                        stores.ChangeLogs.addChanges(Change).then(() => {
-                            if (oldRemind.calendar_id) {
-                                CalendarServe.saveEvent({ ...oldRemind, period: null }, null, 'reminds').then(() => {
-                                    stores.Reminds.updateCalendarID({ remind_id: oldRemind.id, calendar_id: undefined }).then(() => {
-                                        console.warn("calendar_id successfully removed")
-                                        resolve('ok')
-                                    })
+                        if (oldRemind.calendar_id) {
+                            CalendarServe.saveEvent({ ...oldRemind, period: null }, null, 'reminds').then(() => {
+                                stores.Reminds.updateCalendarID({ remind_id: oldRemind.id, calendar_id: undefined }).then(() => {
+                                    console.warn("calendar_id successfully removed")
                                 })
-                            }
+                            })
+                        }
+                        resolve('ok')
+                        stores.ChangeLogs.addChanges(Change).then(() => {
+                            
                         })
                         resolve('ok')
                     })
@@ -509,15 +516,16 @@ class Requester {
                                 date: moment().format(),
                                 time: null
                             }
-                            stores.ChangeLogs.addChanges(Change).then(() => {
-                                if (oldRemind.calendar_id && findIndex(oldRemind.members,
-                                    { phone: stores.LoginStore.user.phone }) >= 0) {
-                                    CalendarServe.saveEvent({ ...oldRemind, period: null }, null, 'reminds').then(() => {
-                                        stores.Reminds.updateCalendarID({ remind_id: oldRemind.id, calendar_id: undefined }).then(() => {
-                                            console.warn("calendar_id successfully removed")
-                                        })
+                            if (oldRemind.calendar_id && findIndex(oldRemind.members,
+                                { phone: stores.LoginStore.user.phone }) >= 0) {
+                                CalendarServe.saveEvent({ ...oldRemind, period: null }, null, 'reminds').then(() => {
+                                    stores.Reminds.updateCalendarID({ remind_id: oldRemind.id, calendar_id: undefined }).then(() => {
+                                        console.warn("calendar_id successfully removed")
                                     })
-                                }
+                                })
+                            }
+                            stores.ChangeLogs.addChanges(Change).then(() => {
+                               
                             })
                             resolve('ok')
                         })
@@ -544,19 +552,22 @@ class Requester {
                                 updater: stores.LoginStore.user,
                                 event_id: remind.event_id,
                                 changed: "Restored The Remind / Task ",
-                                new_value: { data: remind.id, new_value:remind },
+                                new_value: { data: remind.id, new_value: remind },
                                 date: moment().format(),
                                 time: null
                             }
-                            stores.ChangeLogs.addChanges(Change).then(() => {
-                                if (findIndex(remind.members, { phone: stores.LoginStore.user.phone }) >= 0) {
-                                    CalendarServe.saveEvent(remind, remind.alams, 'reminds').then(calendar_id => {
-                                        stores.Reminds.updateCalendarID({ remind_id: remind.id, 
-                                            calendar_id: calendar_id }, remind.alams).then(() => {
+                            if (findIndex(remind.members, { phone: stores.LoginStore.user.phone }) >= 0) {
+                                CalendarServe.saveEvent(remind, remind.alams, 'reminds').then(calendar_id => {
+                                    stores.Reminds.updateCalendarID({
+                                        remind_id: remind.id,
+                                        calendar_id: calendar_id
+                                    }, remind.alams).then(() => {
 
-                                        })
                                     })
-                                }
+                                })
+                            }
+                            stores.ChangeLogs.addChanges(Change).then(() => {
+                               
                             })
                             resolve('ok')
                         })

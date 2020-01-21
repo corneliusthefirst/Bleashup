@@ -52,6 +52,7 @@ export default class EventDescription extends Component {
 
     @autobind
     updateDescription(){
+      this.props.onClosed();
       this.state.description !== this.props.event.about.description ? this.props.updateDesc(this.state.description) : null
       /*stores.Events.updateDescription(this.state.event_id,this.state.description ,false).then(()=>{});
       this.props.parentComp.state.EventData.about.description = this.state.description;
@@ -60,7 +61,6 @@ export default class EventDescription extends Component {
         description:"",
         update:false
       });*/
-      this.props.onClosed();
     }
  
      

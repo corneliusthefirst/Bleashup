@@ -56,13 +56,13 @@ export default class Reminds {
           tcpRequest.getReminds(getRemind, event_id + '_get_reminds').then(JSONData => {
             EventListener.sendRequest(JSONData, event_id + "_get_reminds").then(response => {
               if (!response.data || response.data === 'empty') {
-                resolve([])
+                resolve(fresh?JSON.stringify([]):[])
               }
               this.addReminds(response.data).then(() => {
                 resolve(fresh ? JSON.stringify(response.data) : response.data)
               })
             }).catch(() => {
-              resolve([])
+              resolve(fresh?JSON.stringify([]):[])
             })
           })
         }

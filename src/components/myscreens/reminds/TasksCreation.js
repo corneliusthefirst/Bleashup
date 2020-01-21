@@ -57,7 +57,17 @@ export default class TasksCreation extends Component {
   @autobind
   init() {
     //stores.Reminds.removeRemind("newRemindId").then()
-    stores.Reminds.readFromStore().then(Reminds => {
+    this.props.remind? setTimeout(() => {
+      let remind = this.props.remind
+      this.setState({
+        currentRemind: remind,
+        mounted: true,
+        members: this.props.event.participant,
+        currentMembers: remind && remind.members ? remind.members : [],
+        date: remind && remind.period ? moment(remind.period).format() : moment().format(),
+        title: remind && remind.period ? moment(remind.period).format() : moment().format()
+      });
+    }): stores.Reminds.readFromStore().then(Reminds => {
       //console.warn("reminds are",Reminds);
       let remind = find(Reminds, { id: this.props.remind_id ? this.props.remind_id : "newRemindId" });
       this.setState({

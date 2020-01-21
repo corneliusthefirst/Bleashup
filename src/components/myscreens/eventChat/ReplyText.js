@@ -31,7 +31,8 @@ export default class ReplyText extends Component {
                     <View style={{/* width: "90%",*/
                         borderLeftColor: "#1FABAF", borderLeftWidth: 5,
                         borderBottomLeftRadius: 8, borderTopLeftRadius: 8,
-                        height: "100%", padding: '1%', marginTop: '-.5%', marginLeft: '-.5%',
+                        height: "100%", padding: '1%', width: this.props.compose ? '100%' : null,
+                         marginTop: '-.5%', marginLeft: '-.5%',
                     }}>
                         <View style={{ marginLeft: "2%" }}>
                             <View style={{ flexDirection: 'row', }}>
@@ -46,7 +47,7 @@ export default class ReplyText extends Component {
                                 <Icon type={this.props.reply.audio ? "MaterialIcons" : "MaterialCommunityIcons"}
                                     name={this.props.reply.audio ? "audiotrack" : "file-document-box"} style={{ marginRight: "30%", color: "#1FABAF" }}></Icon>
                                 <View style={{ marginTop: this.props.reply.audio ? "2%" : "0%" }}>{this.props.reply.audio ?
-                                    <Text>{converToHMS(this.props.reply.type_extern === "HighLights" ? this.props.reply.url.duration : this.props.reply.duration)}</Text> :
+                                    <Text>{(this.props.reply.url && this.props.reply.url.duration) || this.props.reply.duration? converToHMS(this.props.reply.type_extern === "HighLights" ? this.props.reply.url.duration : this.props.reply.duration):null}</Text> :
                                     <Text style={{ fontSize: 30, }}>{"."}{this.props.reply.typer.toUpperCase()}</Text>}</View>
                             </View> : <View style={{ display: 'flex', flexDirection: 'row', }}>
                                     <View style={{ /*width: this.props.reply.sourcer ? "20%" : "0%",*/ marginRight: "1%", }}>
