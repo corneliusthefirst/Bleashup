@@ -10,7 +10,7 @@ import emitter from '../services/eventEmiter';
 export default class highlights {
   constructor() {
 
-  }
+  } 
   curentTemporalHighlight = []
   @observable highlights = [];
   saveKey = {

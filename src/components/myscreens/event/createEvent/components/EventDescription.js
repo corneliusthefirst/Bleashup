@@ -75,7 +75,7 @@ export default class EventDescription extends Component {
                 isOpen={this.props.isOpen}
                 onClosed={() => this.props.onClosed(this.state.description)}
                 style={{
-                    height: height/2+height/30, borderRadius: 15,marginTop:"-3%",
+                    height: height/2, borderRadius: 15,marginTop:"-3%",
                     backgroundColor:"#FEFFDE",borderColor:'black',borderWidth:1,width: "98%",
                 }}
                 coverScreen={true}
@@ -94,14 +94,17 @@ export default class EventDescription extends Component {
             <View style={{ height: "70%" }}>
               <Textarea containerStyle={{
                 width: "95%", margin: "1%",
-                height: height / 3,
+                height: height / 3+height/30,
                 borderRadius: 10, borderWidth: 1,
                 borderColor: "#1FABAB",alignSelf: 'center',
                 backgroundColor: "#f5fffa"
-              }} maxLength={1000} style={{
+              }} maxLength={1000}
+               style={{
                 margin: 1,
+                textAlignVertical: 'top',  // hack android
                 backgroundColor: "#f5fffa",
-                height: "95%", width: "98%"
+                height: "95%",
+                width: "98%"
               }}
                 placeholder="Activity Description" value={this.state.description} keyboardType="default"
                 onChangeText={(value) => this.onChangedEventDescription(value)} />

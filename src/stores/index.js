@@ -14,6 +14,8 @@ import Reminds from "./reminds"
 import Publishers from "./publishers"
 import TemporalUsersStore from "./temporalUsersStore"
 import commitee from './commitee';
+import  StoriesStore from './StoriesStore';
+import  StatusStore from './StatusStore';
 
 export default { 
 
@@ -32,7 +34,9 @@ export default {
   Likes: new Likes(),
   Publishers: new Publishers(),
   TemporalUsersStore: new TemporalUsersStore(),
-  CommiteeStore : new commitee()
+  CommiteeStore : new commitee(),
+  StoriesStore: new   StoriesStore(),
+  StatusStore : new StatusStore()
 
 
 };

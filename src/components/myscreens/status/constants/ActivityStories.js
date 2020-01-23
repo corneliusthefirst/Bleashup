@@ -1,161 +1,12 @@
-import React, { Component } from "react";
-import GState from "../../../stores/globalState";
-import autobind from "autobind-decorator";
-import {Item,Title,Input,Left,Right,Button,Icon} from "native-base";
-
-import { Image,StyleSheet,Text, TouchableOpacity, View,Dimensions,ScrollView } from "react-native";
-import { observer, extendObservable, inject } from "mobx-react";
-import stores from "../../../stores";
-//import Story from 'react-native-story' 
-import StatusListModule from './StatusList';
-import ActivityStories from './constants/ActivityStories';
-import ContactStories from './constants/ContactStories';
-import ContactSeenStories from './constants/ContactSeenStories';
-import { find, findIndex, uniqBy, reject,filter,forEach } from "lodash";
-
-let { height, width } = Dimensions.get('window');
-@observer
-export default class StatusView extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      ActivityStories:[]
-    }
-  }
- 
-   addNewStory = ()=>{
-   }
-
-  fetch(stats){
-    return new Promise((resolve,reject)=>{
-      var i=0;
-      forEach(stats,(stat)=>{
-        stores.StoriesStore.fetchStories(stat.id).then((stories)=>{
-          stat.stories = stories;
-          if(i == stats.length - 1){
-                console.warn("these are the stories",stats);
-                resolve(stats);
-          }
-          i++;
-        })  
-      })
-    })
-  }
-
-  componentWillMount(){
-
-    /*
-    stores.StoriesStore.addStories(stories).then(()=>{
-      stores.StoriesStore.readFromStore().then((stories)=>{
-        console.warn("these are the stories",stories)
-      })
-    });*/
-    
-    setTimeout(() => {
-    stores.StatusStore.readFromStore().then((Stats)=>{
-      let stats = filter(Stats,function(o) { return o.event_id });
-      
-      this.fetch(stats).then((rstats)=>{
-        this.setState({ActivityStories:stats});
-      })
-      
-    })
-  },100);
-
-  }
-
-  render() {
-   // console.warn("these are the stories",this.state.ActivityStories);
-    return(
-      <View style={{flex:1,backgroundColor:"#FEFFDE"}}>
-         <TouchableOpacity onPress={() => this.addNewStory()} style={{}}>
-           <View style={{flexDirection:"row",height:height/10,marginLeft:"-1%",alignItems:"center"}}>
-         {stores.TempLoginStore.user.profile?
-            <Image
-              style={styles.circle}
-              source={{ uri: stores.TempLoginStore.user.profile }}
-            />:
-            <Icon name="user" type="EvilIcons" style={{fontSize:90}}/>  
-          }
-            <View style={{flexDirection:"column"}}>
-            <Text style={{color:"black",fontSize:15,fontWeight:"500"}}>My Status</Text>
-            <Text style={{fontSize:13}} note>Tap to add status update</Text> 
-            </View>
-
-          </View>
-          </TouchableOpacity>
-          <View style={{backgroundColor:"#dcdcdc",width:"100%"}}>
-            <Text style={{fontSize:14,marginLeft:"3%",marginTop:"1%",marginBottom:"1%"}}>Activities status</Text>
-          </View>
-          <View style={{height:height/8,backgroundColor:"green"}}>
-            <StatusListModule {... this.props} horizontal={true} data={this.state.ActivityStories} />
-          </View>
-
-        <ScrollView>
-          <View style={{backgroundColor:"#dcdcdc",width:"100%"}}>
-            <Text style={{fontSize:14,marginLeft:"3%",marginTop:"1%",marginBottom:"1%"}}>Recent updates</Text>
-          </View>
-          <View style={{backgroundColor:"green"}}>
-            <StatusListModule {... this.props} horizontal={false} data={ContactStories} />
-          </View>
-
-          <View style={{backgroundColor:"#dcdcdc",width:"100%"}}>
-            <Text style={{fontSize:14,marginLeft:"3%",marginTop:"1%",marginBottom:"1%"}}>Viewed updates</Text>
-          </View>
-          <View style={{backgroundColor:"green"}}>
-            <StatusListModule {... this.props} horizontal={false} data={ContactSeenStories} />
-          </View> 
-
-        </ScrollView>
-    
-      </View>
-     
-    )
-  }
-}
- 
-
-
-
-const styles = StyleSheet.create({
-  circle: {
-    width: 66,
-    margin: 4,
-    height: 66,
-    borderRadius: 33,
-  },
-});
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/**    stories=[
+const ActivityStories = [
+  {
+    id:"100004",
+    event_id:"5535335",
+    title: 'Pune Dairies',
+    profile: 'https://avatars0.githubusercontent.com/u/16208872?s=460&v=4',
+    stories: [
       {
         id: "102201",
-        stat_id:"100004",
         url: 'https://images.unsplash.com/photo-1532579853048-ec5f8f15f88d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60',
         text:{string:"",background:"",fontStyle:""},
         created_at:"Yesterday at 10:20 PM",
@@ -166,7 +17,6 @@ const styles = StyleSheet.create({
       },
       {
         id: "102202",
-        stat_id:"100004",
         url: '',
         text:{string:"Minuit et des poussières, l'heure est venue d'aller retrouver les bras de Morphée. Fabien Magnenou reprendra les commandes de ce live demain, à 6 heures. Bonne nuit à toutes et à tous !",background:"yellow",fontStyle:"italic"},
         created_at:"Yesterday at 10:20 PM",
@@ -177,7 +27,6 @@ const styles = StyleSheet.create({
       },
       {
         id: "102203",
-        stat_id:"100004",
         url: '',
         text:{string:"L'heure est venue à tous !",background:"blue",fontStyle:"italic"},
         created_at:"Yesterday at 15:20 PM",
@@ -189,7 +38,6 @@ const styles = StyleSheet.create({
 
       {
         id: "102204",
-        stat_id:"100004",
         url:  '/storage/emulated/0/WhatsApp/Media/WhatsApp Video/VID-20200101-WA0006.mp4',
         text:{string:"",background:"",fontStyle:""},
         created_at:"Today at 11:20 AM",
@@ -197,10 +45,19 @@ const styles = StyleSheet.create({
         duration: 21,
         isSeen:false,
         
-      },
+      }
+
+    ]
+  },
+
+  {
+    id:"100005",
+    event_id:"5535335682",
+    profile: 'https://avatars2.githubusercontent.com/u/45196619?s=460&v=4',
+    title: 'My Gallery',
+    stories: [
       {
         id: "102205",
-        stat_id:"100005",
         url: 'https://images.unsplash.com/photo-1500099817043-86d46000d58f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60',
         text:{string:"",background:"",fontStyle:""},
         created_at:"Yesterday at 10:20 PM",
@@ -211,7 +68,6 @@ const styles = StyleSheet.create({
       },
       { 
         id: "102206",
-        stat_id:"100005",
         url: 'https://images.unsplash.com/photo-1476292026003-1df8db2694b8?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60',
         text:{string:"",background:"",fontStyle:""},
         created_at:"Yesterday at 10:20 PM",
@@ -222,7 +78,6 @@ const styles = StyleSheet.create({
       },
       {
         id: "102207",
-        stat_id:"100005",
         url: 'https://images.unsplash.com/photo-1498982261566-1c28c9cf4c02?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60',
         text:{string:"",background:"",fontStyle:""},
         created_at:"Yesterday at 10:20 PM",
@@ -231,9 +86,16 @@ const styles = StyleSheet.create({
         isSeen: false,
         
       },
+    ],
+  },
+  {
+    id:"100006",
+    event_id:"55355368235",
+    profile: 'https://s3.amazonaws.com/media.eremedia.com/uploads/2012/05/15181015/stevejobs.jpg',
+    title: ' Beach Moves',
+    stories: [
       {
         id: "102208",
-        stat_id:"100006",
         url: 'https://images.unsplash.com/photo-1515578706925-0dc1a7bfc8cb?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60',
         text:{string:"",background:"",fontStyle:""},
         created_at:"Yesterday at 10:20 PM",
@@ -244,7 +106,6 @@ const styles = StyleSheet.create({
       },
       {
         id: "102209",
-        stat_id:"100006",
         url: 'https://images.unsplash.com/photo-1496287437689-3c24997cca99?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60',
         text:{string:"",background:"",fontStyle:""},
         created_at:"Yesterday at 10:20 PM",
@@ -255,7 +116,6 @@ const styles = StyleSheet.create({
       },
       {
         id: "102210",
-        stat_id:"100006",
         url: 'https://images.unsplash.com/photo-1514870262631-55de0332faf6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60',
         text:{string:"",background:"",fontStyle:""},
         created_at:"Yesterday at 10:20 PM",
@@ -264,9 +124,17 @@ const styles = StyleSheet.create({
         isSeen: false,
         
       },
+
+    ],
+  },
+  {
+    id:"100007",
+    event_id:"553679635335",
+    profile: 'https://images.unsplash.com/profile-1531581190171-0cf831d86212?dpr=2&auto=format&fit=crop&w=150&h=150&q=60&crop=faces&bg=fff',
+    title: 'Beauties @Beach',
+    stories: [
       {
         id: "102211",
-        stat_id:"100007",
         url: 'https://images.unsplash.com/photo-1512101176959-c557f3516787?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60',
         text:{string:"",background:"",fontStyle:""},
         created_at:"Yesterday at 10:20 PM",
@@ -277,7 +145,6 @@ const styles = StyleSheet.create({
       },
       {
         id: "102212",
-        stat_id:"100007",
         url: 'https://images.unsplash.com/photo-1478397453044-17bb5f994100?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60',
         text:{string:"",background:"",fontStyle:""},
         created_at:"Yesterday at 10:20 PM",
@@ -288,7 +155,6 @@ const styles = StyleSheet.create({
       },
       {
         id: "102213",
-        stat_id:"100007",
         url: 'https://images.unsplash.com/photo-1505118380757-91f5f5632de0?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=581&q=80',
         text:{string:"",background:"",fontStyle:""},
         created_at:"Yesterday at 10:20 PM",
@@ -297,9 +163,16 @@ const styles = StyleSheet.create({
         isSeen: false,
         
       },
+    ],
+  },
+  {
+    id:"100008",
+    event_id:"55335405305",
+    profile:'https://images.unsplash.com/photo-1500099817043-86d46000d58f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60',
+    title: 'My Epic photos',
+    stories: [
       {
         id: "102214",
-        stat_id:"100008",
         url:  'https://avatars2.githubusercontent.com/u/45196619?s=460&v=4',
         text:{string:"",background:"",fontStyle:""},
         created_at:"Yesterday at 10:20 PM",
@@ -310,7 +183,6 @@ const styles = StyleSheet.create({
       },
       { 
         id: "102215",
-        stat_id:"100008",
         url: 'https://images.unsplash.com/photo-1476292026003-1df8db2694b8?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60',
         text:{string:"",background:"",fontStyle:""},
         created_at:"Yesterday at 10:20 PM",
@@ -321,7 +193,6 @@ const styles = StyleSheet.create({
       },
       {
         id: "102216",
-        stat_id:"100008",
         url: 'https://images.unsplash.com/photo-1498982261566-1c28c9cf4c02?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60',
         text:{string:"",background:"",fontStyle:""},
         created_at:"Yesterday at 10:20 PM",
@@ -330,9 +201,16 @@ const styles = StyleSheet.create({
         isSeen:false,
         
       },
+    ],
+  },
+  {
+    id:"100009",
+    event_id:"5536910335",
+    profile: 'https://images.unsplash.com/photo-1514870262631-55de0332faf6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60',
+    title: 'Overwatch Bank',
+    stories: [
       {
         id: "102217",
-        stat_id:"100009",
         url: 'https://images.unsplash.com/photo-1515578706925-0dc1a7bfc8cb?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60',
         text:{string:"",background:"",fontStyle:""},
         created_at:"Yesterday at 10:20 PM",
@@ -343,7 +221,6 @@ const styles = StyleSheet.create({
       },
       {
         id: "102218",
-        stat_id:"100009",
         url: 'https://images.unsplash.com/photo-1496287437689-3c24997cca99?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60',
         text:{string:"",background:"",fontStyle:""},
         created_at:"Yesterday at 10:20 PM",
@@ -354,7 +231,6 @@ const styles = StyleSheet.create({
       },
       {
         id: "102219",
-        stat_id:"100009",
         url: '',
         text:{string:"",background:"",fontStyle:""},
         created_at:"Yesterday at 10:20 PM",
@@ -363,4 +239,9 @@ const styles = StyleSheet.create({
         isSeen:false,
         
       },
-    ]; */
+
+    ],
+  }
+];
+
+export default ActivityStories;

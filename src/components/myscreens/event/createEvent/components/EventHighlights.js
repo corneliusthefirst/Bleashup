@@ -581,11 +581,11 @@ export default class EventHighlights extends Component {
                   <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItem: 'center', }}>
                     <TouchableOpacity onPress={() => this.setState({ newing: !this.state.newing, enlargeImage: true })} >
                       {this.state.currentHighlight.url && this.state.currentHighlight.url.photo && testForURL(this.state.currentHighlight.url.photo) ?
-                        <CacheImages thumbnails source={{ uri: this.state.currentHighlight.url.photo }} style={{
+                        {/*<CacheImages thumbnails source={{ uri: this.state.currentHighlight.url.photo }} style={{
                           alignSelf: 'center',
                           height: "100%", width: "100%",
                           borderColor: "#1FABAB", borderRadius: this.state.currentHighlight.url.photo || this.state.currentHighlight.url.video ? 10 : 100,
-                        }} /> : <Thumbnail square
+                        }} />*/} : <Thumbnail square
                           source={this.state.currentHighlight.url &&
                             this.state.currentHighlight.url.photo ? {
                               uri:

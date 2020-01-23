@@ -118,7 +118,7 @@ export default class EventDetailView extends Component {
         highlightData: Higs
       })
     })
-  }
+  } 
   componentWillMount() {
     emitter.on('refresh-highlights', this.handleRefresh.bind(this))
   }

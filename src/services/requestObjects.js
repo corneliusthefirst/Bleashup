@@ -361,9 +361,7 @@ class Request {
             location: this.Location(),
             background: "",
             participant: [{phone:stores.LoginStore.user.phone,
-                master:true,
-                status:'creator',
-            host:stores.Session.SessionStore.host}],
+            master:true,status:'creator',host:stores.Session.SessionStore.host}],
             likes: 0,
             reminds: [],
             recursiveFrequency:"None",
@@ -416,6 +414,11 @@ class Request {
     EventID() {
         return {
             event_id: ""
+        }
+    }
+    StatID() {
+        return {
+            story_id: ""
         }
     }
     EventIDHost() {
@@ -529,6 +532,44 @@ class Request {
             event_id:"",
         }
     }
+    ContactStat(){
+      return{
+          id:"",
+          phone:"",
+          username:"",
+          profile:"",
+          updated_at:"",
+          stories:[]
+      }
+    }
+    EventStat(){
+        return {
+            id:"",
+            event_id:"",
+            title:"",
+            profile:"",
+            updated_at:"",
+            stories:[]
+        }
+    }
+
+    Story(){
+        return {
+            id:"",
+            stat_id:"",
+            creator:"",
+            url:"",
+            text:{string:"",background:"",fontStyle:""},
+            created_at:"",
+            type:"",
+            duration:"",
+            isSeen: false,
+            views:0
+            
+        }
+    }
+
+
 }
 const request = new Request()
 
