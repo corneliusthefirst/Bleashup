@@ -1076,7 +1076,8 @@ export default class Event extends Component {
     })
   }
   render() {
-    console.warn(this.event.calendar_id)
+    //console.error(this.event.id)
+    //console.warn(this.event.calendar_id)
     StatusBar.setHidden(false, true)
     return (<SideMenu style={{ backgroundColor: "#FEFEDE", }} autoClosing={true} onMove={(position) => {
 
@@ -1324,6 +1325,10 @@ export default class Event extends Component {
             showPhoto: false,
             isSelectPhotoInputMethodModal: false
           })
+          // doing this because if the profile picture is being clicked from the 
+          // the changeBox Component , the onPress function of the BleashupTimline Compoent is automatically 
+          // triggered . so this is an attempt to restore the blocking done when that photo is being pressed
+          GState.ShowingPhoto = false
         }}></PhotoViewer> : null}
         {!this.state.isSearchImageModalOpened ? null : <SearchImage accessLibrary={() => this.openCamera(true)} isOpen={this.state.isSearchImageModalOpened} onClosed={() => {
           this.setState({

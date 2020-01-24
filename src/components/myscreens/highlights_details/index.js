@@ -32,7 +32,7 @@ export default class HighLightsDetails extends Component {
         this.room = new ChatStore(this.event_id)
         this.keyboardDidShowSub = Keyboard.addListener('keyboardDidShow', this.handleKeyboardDidShow.bind(this));
         this.keyboardDidHideSub = Keyboard.addListener('keyboardDidHide', this.handleKeyboardDidHide.bind(this));
-        BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this));
+        this.BackHandler = BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this));
 
     }
     handleKeyboardDidShow() {
@@ -64,7 +64,7 @@ export default class HighLightsDetails extends Component {
     componentWillUnmount() {
         this.keyboardDidShowSub.remove();
         this.keyboardDidHideSub.remove();
-        BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton.bind(this));
+        this.BackHandler.remove()
     }
     formHeightPercent(height) {
         return `${(height / screenheight * 100).toString()}%`

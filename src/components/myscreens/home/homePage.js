@@ -52,6 +52,7 @@ import ForeignEventsModal from "./ForeignEventsModal";
 import DeepLinking from 'react-native-deep-linking';
 import Requester from '../event/Requester';
 import shadower from "../../shadower";
+import TabModal from "./TabModal";
 
 
 let { height, width } = Dimensions.get('window');
@@ -62,6 +63,7 @@ class Home extends Component {
     super(props);
     this.state = {
       appState: 'active',
+      isTabModalOpened:true,
       currentTab: 0
     };
     this.permisssionListener()
@@ -382,6 +384,11 @@ class Home extends Component {
           })
         }} events={this.state.foreignEvents}>
         </ForeignEventsModal> : null}
+        <TabModal isOpen={this.state.isTabModalOpened} closed={() => {
+          this.setState({
+            isTabModalOpened:false
+          })
+        }}></TabModal>
       </Container>
     );
   }

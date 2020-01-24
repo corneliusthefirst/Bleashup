@@ -7,6 +7,7 @@ import stores from '../../../stores';
 import shadower from "../../shadower";
 import ChangeBoxMenu from "./ChangeBoxMenu";
 import ProfileSimple from "../currentevents/components/ProfileViewSimple";
+import GState from '../../../stores/globalState/index';
 export default class ChangeBox extends Component {
     constructor(props) {
         super(props)
@@ -42,6 +43,7 @@ export default class ChangeBox extends Component {
                     {!this.props.change ? null : <View style={{ flexDirection: 'column', margin: '2%', }}>
                         <View style={{ flexDirection: 'row', }}>
                             <View style={{ width: '93%' }}><ProfileSimple showPhoto={(url) => {
+                                GState.ShowingPhoto = true
                                 this.props.showPhoto(url)
                             }} delay={this.props.delayer}
                                 profile={this.state.changer}></ProfileSimple>

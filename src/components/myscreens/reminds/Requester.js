@@ -23,7 +23,7 @@ class Requester {
                                         updated: "added_remind",
                                         updater: stores.LoginStore.user,
                                         event_id: Remind.event_id,
-                                        changed: `Added  ${Remind.title} Remind / Task `,
+                                        changed: `Added  ${Remind.title} Remind `,
                                         new_value: { data: Remind.id, new_value: Remind.title },
                                         date: moment().format(),
                                         time: null
@@ -56,7 +56,7 @@ class Requester {
                                 stores.Reminds.updateTitle({ remind_id: remindID, title: newName }, true).then((oldRemind) => {
                                     let Change = {
                                         id: uuid.v1(),
-                                        title: `Updates On ${oldRemind.title} Remind / Task`,
+                                        title: `Updates On ${oldRemind.title} Remind`,
                                         updated: `remind_title_updated`,
                                         updater: stores.LoginStore.user,
                                         event_id: eventID,
@@ -97,7 +97,7 @@ class Requester {
                         }, true).then((oldRemind) => {
                             let Change = {
                                 id: uuid.v1(),
-                                title: `Updates On ${oldRemind.title} Remind / Task`,
+                                title: `Updates On ${oldRemind.title} Remind`,
                                 updated: `remind_description_updated`,
                                 updater: stores.LoginStore.user,
                                 event_id: eventID,
@@ -138,11 +138,11 @@ class Requester {
                     }, true).then((oldRemind) => {
                         let Change = {
                             id: uuid.v1(),
-                            title: `Updates On ${oldRemind.title} Remind / Task`,
+                            title: `Updates On ${oldRemind.title} Remind`,
                             updated: `remind_confirmed`,
                             updater: stores.LoginStore.user,
                             event_id: eventID,
-                            changed: "Confirmed The Task Completion Of ",
+                            changed: "Confirmed The Task Completion Of ...",
                             new_value: { data: remindID, new_value: Member },
                             date: moment().format(),
                             time: null
@@ -178,11 +178,11 @@ class Requester {
                         }, remindID).then((oldRemind) => {
                             let Change = {
                                 id: uuid.v1(),
-                                title: `Updates On ${oldRemind.title} Remind / Task`,
+                                title: `Updates On ${oldRemind.title} Remind`,
                                 updated: `remind_reurrence_config_updated`,
                                 updater: stores.LoginStore.user,
                                 event_id: eventID,
-                                changed: "Changed The Recurrency configuration",
+                                changed: "Changed The Recurrency configurations",
                                 new_value: { data: remindID, new_value: newConfigs },
                                 date: moment().format(),
                                 time: null
@@ -221,11 +221,11 @@ class Requester {
                         stores.Reminds.updateStatus({ remind_id: remindID, status: newState }, true).then(oldRemind => {
                             let Change = {
                                 id: uuid.v1(),
-                                title: `Updates On ${oldRemind.title} Remind / Task`,
+                                title: `Updates On ${oldRemind.title} Remind`,
                                 updated: `remind_public_state_updated`,
                                 updater: stores.LoginStore.user,
                                 event_id: eventID,
-                                changed: "Changed State Of The Remind / Task To",
+                                changed: "Changed The State Of The Remind To",
                                 new_value: { data: remindID, new_value: newState },
                                 date: moment().format(),
                                 time: null
@@ -258,7 +258,7 @@ class Requester {
                         stores.Reminds.updateRequestReportOnComplete({ remind_id: remindID, must_report: newMustReport }, false).then(oldRemind => {
                             let Change = {
                                 id: uuid.v1(),
-                                title: `Updates On ${oldRemind.title} Remind / Task`,
+                                title: `Updates On ${oldRemind.title} Remind`,
                                 updated: `remind_period_updated`,
                                 updater: stores.LoginStore.user,
                                 event_id: eventID,
@@ -295,11 +295,11 @@ class Requester {
                         stores.Reminds.updatePeriod({ remind_id: remindID, period: newPeriod }, true).then(oldRemind => {
                             let Change = {
                                 id: uuid.v1(),
-                                title: `Updates On ${oldRemind.title} Remind / Task`,
+                                title: `Updates On ${oldRemind.title} Remind`,
                                 updated: `remind_period_updated`,
                                 updater: stores.LoginStore.user,
                                 event_id: eventID,
-                                changed: "Changed Date/Time Of The Remind / Task To ",
+                                changed: "Changed Date/Time Of The Remind To ",
                                 new_value: { data: remindID, new_value: newPeriod },
                                 date: moment().format(),
                                 time: null
@@ -340,11 +340,11 @@ class Requester {
                     }, true).then(oldRemind => {
                         let Change = {
                             id: uuid.v1(),
-                            title: `Updates On ${oldRemind.title} Remind / Task`,
+                            title: `Updates On ${oldRemind.title} Remind`,
                             updated: `remind_member_added`,
                             updater: stores.LoginStore.user,
                             event_id: remind.event_id,
-                            changed: "Assigned The Remind / Task To ",
+                            changed: "Assigned The Remind To ...",
                             new_value: { data: remind.id, new_value: remind.members },
                             date: moment().format(),
                             time: null
@@ -386,7 +386,7 @@ class Requester {
                             }, true).then(oldRemind => {
                                 let Change = {
                                     id: uuid.v1(),
-                                    title: `Updates On ${oldRemind.title} Remind / Task`,
+                                    title: `Updates On ${oldRemind.title} Remind`,
                                     updated: `remind_member_removed`,
                                     updater: stores.LoginStore.user,
                                     event_id: eventID,
@@ -468,11 +468,11 @@ class Requester {
                     }, true).then(oldRemind => {
                         let Change = {
                             id: uuid.v1(),
-                            title: `Updates On ${oldRemind.title} Remind / Task`,
+                            title: `Updates On ${oldRemind.title} Remind`,
                             updated: `remind_marked_as_done`,
                             updater: stores.LoginStore.user,
                             event_id: remind.event_id,
-                            changed: "Marked The Remind / Task As Done",
+                            changed: "Marked The Remind As Done",
                             new_value: { data: remind.id, new_value: member },
                             date: moment().format(),
                             time: null
@@ -507,11 +507,11 @@ class Requester {
                         stores.Events.removeRemind(eventID, remindID, false).then(() => {
                             let Change = {
                                 id: uuid.v1(),
-                                title: `Updates On ${oldRemind.title} Remind / Task`,
+                                title: `Updates On ${oldRemind.title} Remind`,
                                 updated: `delete_remind`,
                                 updater: stores.LoginStore.user,
                                 event_id: eventID,
-                                changed: "Removed The Remind / Task ",
+                                changed: "Removed The Remind ",
                                 new_value: { data: remindID, new_value: oldRemind },
                                 date: moment().format(),
                                 time: null
@@ -547,11 +547,11 @@ class Requester {
                         stores.Events.addRemind(remind.event_id, remind.id).then(() => {
                             let Change = {
                                 id: uuid.v1(),
-                                title: `Updates On ${remind.title} Remind / Task`,
+                                title: `Updates On ${remind.title} Remind`,
                                 updated: `restored_remind`,
                                 updater: stores.LoginStore.user,
                                 event_id: remind.event_id,
-                                changed: "Restored The Remind / Task ",
+                                changed: "Restored The Remind ",
                                 new_value: { data: remind.id, new_value: remind },
                                 date: moment().format(),
                                 time: null

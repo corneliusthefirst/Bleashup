@@ -110,7 +110,7 @@ export default class SwipeOutView extends Component {
                                 marginLeft: "3%",
                             }}
                             >
-                                {findIndex(this.props.Event.participant, { phone: stores.LoginStore.user.phone }) >= 0 ? "Joint" : "Join"}
+                                {findIndex(this.props.Event.participant, { phone: stores.LoginStore.user.phone }) >= 0 ? "Joined" : "Join"}
                             </Label>
                         </TouchableOpacity>}
 

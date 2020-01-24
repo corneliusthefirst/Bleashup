@@ -143,7 +143,7 @@ export default class RouteView extends Component {
                     })}>
                         <View style={{ display: 'flex', flexDirection: 'row', width:"100%"}}>
                             <Icon type="Entypo" style={{ color: this.props.currentPage == "Reminds" ? "#0A4E52" : this.original }} name="bell"></Icon>
-                            <Text style={{ padding: "1%", color: this.props.currentPage == "Reminds" ? "#0A4E52" : "gray", width: "100%" }}>Reminds/Tasks</Text>
+                            <Text style={{ padding: "1%", color: this.props.currentPage == "Reminds" ? "#0A4E52" : "gray", width: "100%" }}>Reminds</Text>
                         </View>
                     </TouchableOpacity>
                 </CardItem>

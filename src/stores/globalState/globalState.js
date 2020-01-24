@@ -6,6 +6,7 @@ export default class globalState {
   @observable eventUpdated = false;
   @observable isScrolling = true;
   @observable loading = false;
+  ShowingPhoto = false
   @observable error = false;
   @observable downlading = false
   @observable newContribution = false;

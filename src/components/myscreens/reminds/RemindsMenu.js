@@ -55,7 +55,7 @@ export default class RemindsMenu extends Component {
                     <View><MenuDivider color="#1FABAB" /><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
                         this.hideMenu()
                         return this.props.updateRemind()
-                    }}>{"Configs"}</MenuItem>
+                    }}>{"View Configs"}</MenuItem>
                         <MenuDivider color="#1FABAB" /></View>
                     <View><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
                         this.hideMenu()

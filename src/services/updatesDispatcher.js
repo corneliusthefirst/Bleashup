@@ -1037,7 +1037,7 @@ class UpdatesDispatcher {
               updated: "highlight_restored",
               event_id: update.event_id,
               updater: update.updater,
-              changed: `Deleted ${update.new_value.title} Post`,
+              changed: `Restored ${update.new_value.title} Post`,
               new_value: { data: null, new_value: update.new_value },
               date:update.date,
               time: null
@@ -1370,7 +1370,7 @@ class UpdatesDispatcher {
                   updated: "added_remind",
                   updater: update.updater,
                   event_id: update.event_id,
-                  changed: "Added A New Remind / Task ",
+                  changed: "Added A New Remind ",
                   new_value: { data: update.new_value, new_value: Remind.data.title },
                   date:update.date,
                   time: null
@@ -1392,11 +1392,11 @@ class UpdatesDispatcher {
         stores.Reminds.updatePeriod(update.new_value, true).then((oldRemind) => {
           let Change = {
             id: uuid.v1(),
-            title: `Updates On ${oldRemind.title} Remind / Task`,
+            title: `Updates On ${oldRemind.title} Remind`,
             updated: `remind_period_updated`,
             updater: update.updater,
             event_id: update.event_id,
-            changed: "Changed Date/Time Of The Remind / Task To ",
+            changed: "Changed Date/Time Of The Remind To ",
             new_value: { data: update.new_value.remind_id, new_value: update.new_value.period },
             date:update.date,
             time: null
@@ -1421,7 +1421,7 @@ class UpdatesDispatcher {
         stores.Reminds.updateDescription(update.new_value, true).then((oldRemind) => {
           let Change = {
             id: uuid.v1(),
-            title: `Updates On ${oldRemind.title} Remind / Task`,
+            title: `Updates On ${oldRemind.title} Remind`,
             updated: `remind_description_updated`,
             updater: update.updater,
             event_id: update.event_id,
@@ -1446,7 +1446,7 @@ class UpdatesDispatcher {
         stores.Reminds.updateTitle(update.new_value, true).then((oldRemind) => {
           let Change = {
             id: uuid.v1(),
-            title: `Updates On ${oldRemind.title} Remind / Task`,
+            title: `Updates On ${oldRemind.title} Remind`,
             updated: `remind_title_updated`,
             updater: update.updater,
             event_id: update.event_id,
@@ -1471,11 +1471,11 @@ class UpdatesDispatcher {
         stores.Reminds.removeRemind(update.new_value, true).then((oldRemind) => {
           let Change = {
             id: uuid.v1(),
-            title: `Updates On ${oldRemind.title} Remind / Task`,
+            title: `Updates On ${oldRemind.title} Remind`,
             updated: `delete_remind`,
             updater: update.updater,
             event_id: update.event_id,
-            changed: "Removed The Remind / Task ",
+            changed: "Removed The Remind ",
             new_value: { data: update.new_value, new_value: oldRemind },
             date:update.date,
             time: null
@@ -1504,11 +1504,11 @@ class UpdatesDispatcher {
             update.new_value.remind.event_id, true).then(() => {
               let Change = {
                 id: uuid.v1(),
-                title: `Updates On ${update.new_value.remind.title} Remind / Task`,
+                title: `Updates On ${update.new_value.remind.title} Remind`,
                 updated: `restored_remind`,
                 updater: update.updater,
                 event_id: update.event_id,
-                changed: "Restored The Remind / Task ",
+                changed: "Restored The Remind ",
                 new_value: { data: update.new_value.remind.id, new_value: null },
                 date:update.date,
                 time: null
@@ -1535,11 +1535,11 @@ class UpdatesDispatcher {
         stores.Reminds.updateStatus(update.new_value, true).then((oldRemind) => {
           let Change = {
             id: uuid.v1(),
-            title: `Updates On ${oldRemind.title} Remind / Task`,
+            title: `Updates On ${oldRemind.title} Remind`,
             updated: `remind_public_state_updated`,
             updater: update.updater,
             event_id: update.event_id,
-            changed: "Changed Status Of The Remind / Task To",
+            changed: "Changed Status Of The Remind To",
             new_value: {
               data: update.new_value.remind_id,
               new_value: update.new_value.status
@@ -1560,7 +1560,7 @@ class UpdatesDispatcher {
         stores.Reminds.updateRecurrence(update.new_value, true).then((oldRemind) => {
           let Change = {
             id: uuid.v1(),
-            title: `Updates On ${oldRemind.title} Remind / Task`,
+            title: `Updates On ${oldRemind.title} Remind`,
             updated: `remind_reurrence_config_updated`,
             updater: update.updater,
             event_id: update.event_id,
@@ -1591,11 +1591,11 @@ class UpdatesDispatcher {
         stores.Reminds.addMembers(update.new_value, true).then(oldRemind => {
           let Change = {
             id: uuid.v1(),
-            title: `Updates On ${oldRemind.title} Remind / Task`,
+            title: `Updates On ${oldRemind.title} Remind`,
             updated: `remind_member_added`,
             updater: update.updater,
             event_id: update.event_id,
-            changed: "Assigned The Remind / Task To ",
+            changed: "Assigned The Remind To ",
             new_value: {
               data: update.new_value.remind_id,
               new_value: update.new_value.members
@@ -1622,7 +1622,7 @@ class UpdatesDispatcher {
         stores.Reminds.removeMember(update.new_value, true).then(oldRemind => {
           let Change = {
             id: uuid.v1(),
-            title: `Updates On ${oldRemind.title} Remind / Task`,
+            title: `Updates On ${oldRemind.title} Remind`,
             updated: `remind_member_removed`,
             updater: update.updater,
             event_id: update.event_id,
@@ -1654,11 +1654,11 @@ class UpdatesDispatcher {
         stores.Reminds.makeAsDone(update.new_value, true).then(oldRemind => {
           let Change = {
             id: uuid.v1(),
-            title: `Updates On ${oldRemind.title} Remind / Task`,
+            title: `Updates On ${oldRemind.title} Remind`,
             updated: `remind_marked_as_done`,
             updater: update.updater,
             event_id: update.event_id,
-            changed: "Mark The Remind / Task As Done",
+            changed: "Mark The Remind As Done",
             new_value: {
               data: update.new_value.remind_id,
               new_value: update.new_value.donners
@@ -1679,7 +1679,7 @@ class UpdatesDispatcher {
         stores.Reminds.confirm(update.new_value, true).then(oldRemind => {
           let Change = {
             id: uuid.v1(),
-            title: `Updates On ${oldRemind.title} Remind / Task`,
+            title: `Updates On ${oldRemind.title} Remind`,
             updated: `remind_confirmed`,
             updater: update.updater,
             event_id: update.event_id,
@@ -1704,7 +1704,7 @@ class UpdatesDispatcher {
         stores.Reminds.updateRequestReportOnComplete(update.new_value, true).then(oldRemind => {
           let Change = {
             id: uuid.v1(),
-            title: `Updates On ${oldRemind.title} Remind / Task`,
+            title: `Updates On ${oldRemind.title} Remind`,
             updated: `remind_confirmed`,
             updater: update.updater,
             event_id: update.event_id,

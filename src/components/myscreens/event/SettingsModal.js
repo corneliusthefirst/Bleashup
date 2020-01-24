@@ -70,7 +70,7 @@ export default class SettingsModal extends Component {
                 activityTime: this.props.event.period,
                 date: this.props.event.period,
                 interval: this.props.event.interval ? this.props.event.interval : 1,
-                //recurrent: this.props.event.recurrent ? this.props.event.recurrent : false,
+                recurrent: this.props.event.interval !== 1 && this.props.event.frequency !== 'yearly',
                 frequency: this.props.event.frequency ? this.props.event.frequency : 'daily',
                 recurrence: this.props.event.recurrence ? this.props.event.recurrence : moment().format(),
                 public: this.props.event.public,

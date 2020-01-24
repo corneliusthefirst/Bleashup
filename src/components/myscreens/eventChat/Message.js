@@ -216,7 +216,7 @@ export default class Message extends Component {
             maxWidth: 300, flexDirection: 'column', minWidth: 120,
             minHeight: 10, overflow: 'hidden', borderBottomLeftRadius: 10, borderColor: color,
             borderTopLeftRadius: this.state.sender ? 0 : 10,// borderWidth: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text)?.7:0:0,
-            backgroundColor: color,...shadower(3),
+            backgroundColor: color, ...shadower(3),
             borderTopRightRadius: 10, borderBottomRightRadius: this.state.sender ? 10 : this.props.message.reply && this.props.message.reply.type_extern ? 10 : null,
         }
         senderNameStyle = {
@@ -260,9 +260,18 @@ export default class Message extends Component {
                             <View style={GeneralMessageBoxStyle}>
                                 <View>
                                     <View style={senderNameStyle}>
-                                        <TouchableWithoutFeedback onPressIn={() => {
+                                        <TouchableWithoutFeedback onLongPress={() => {
+                                            this.replying = false
+                                            this.props.showActions(this.props.message)
+                                            Vibration.vibrate(this.longPressDuration)
+                                        }} onPressIn={() => {
                                             this.replying = true
-                                        }}><View style={subNameStyle}>{this.state.sender ? <TouchableOpacity onPress={() => {
+                                        }}><View style={subNameStyle}>{this.state.sender ?
+                                             <TouchableOpacity onLongPress={() => {
+                                            this.replying = false
+                                            this.props.showActions(this.props.message)
+                                            Vibration.vibrate(this.longPressDuration)
+                                        }} onPress={() => {
                                             console.warn('humm ! you want to know that contact !')
                                         }}>{this.state.different ? <Text style={nameTextStyle}
                                             note>{" "}{this.state.sender_name}</Text> : <Text>{"         "}</Text>}</TouchableOpacity> : null}<Right>

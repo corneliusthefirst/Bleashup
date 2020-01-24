@@ -62,6 +62,7 @@ export default class TasksCreation extends Component {
       this.setState({
         currentRemind: remind,
         mounted: true,
+        recurrent : remind.recursive_frequency.interval !== 1 && remind.recursive_frequency.frequency !== 'yearly',
         members: this.props.event.participant,
         currentMembers: remind && remind.members ? remind.members : [],
         date: remind && remind.period ? moment(remind.period).format() : moment().format(),
@@ -73,6 +74,7 @@ export default class TasksCreation extends Component {
       this.setState({
         currentRemind: remind,
         mounted: true,
+        recurrent: remind.recursive_frequency.interval !== 1 && remind.recursive_frequency.frequency !== 'yearly',
         members: this.props.event.participant,
         currentMembers: remind && remind.members ? remind.members : [],
         date: remind && remind.period ? moment(remind.period).format() : moment().format(),
@@ -451,7 +453,7 @@ export default class TasksCreation extends Component {
             <View pointerEvents={this.props.master ? null : 'none'} style={{ height: height / 8, alignItems: 'center' }}>
               {/*<Text style={{alignSelf:'flex-start',margin:"3%",fontWeight:"500",fontSize:16}} >Title :</Text>*/}
               <Item style={{ borderColor: 'black', width: "95%", marginTop: "3%" }} rounded>
-                <TextInput style={{ marginLeft: '2%', width: '100%' }} maxLength={40} value={this.state.currentRemind.title} maxLength={40} placeholder='New Remind / Task Title' keyboardType='email-address' returnKeyType='next' inverse last
+                <TextInput style={{ marginLeft: '2%', width: '100%' }} maxLength={40} value={this.state.currentRemind.title} maxLength={40} placeholder='New Remind Title' keyboardType='email-address' returnKeyType='next' inverse last
                   onChangeText={(value) => this.onChangedTitle(value)} />
               </Item>
             </View>
@@ -557,7 +559,7 @@ export default class TasksCreation extends Component {
                       <Label>
                         Ends
                     </Label>
-                      <Button style={{ width: "90%" }} onPress={() => this.props.marster && this.showEndatePiker()} transparent>
+                      <Button style={{ width: "90%" }} onPress={() => this.showEndatePiker()} transparent>
                         <Text>{this.state.date && this.state.currentRemind.recursive_frequency.recurrence ? `On ${moment(this.state.currentRemind.recursive_frequency.recurrence).format('dddd, MMMM Do YYYY')}` : "Select Recurrence Stop Date"}</Text>
                       </Button>
                       {this.state.showEndatePiker ? <DateTimePicker value={new Date()}
@@ -583,7 +585,7 @@ export default class TasksCreation extends Component {
                       </Button>}
                   </View>
                   {this.state.currentRemind.status == "private" && !this.props.update ?
-                    <Button onPress={() => { this.props.marster && this.setState({ selectMemberState: true }) }} transparent>
+                    <Button onPress={() => {  this.setState({ selectMemberState: true }) }} transparent>
                       <Icon name="ios-people" type="Ionicons" style={{ fontSize: 25 }} />
                       <Text>Members</Text>
                     </Button> : null}

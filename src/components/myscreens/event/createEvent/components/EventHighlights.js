@@ -136,21 +136,27 @@ export default class EventHighlights extends Component {
   componentDidMount() {
     setTimeout(() => {
       stores.Highlights.readFromStore().then(Highlights => {
-        let highlight = find(Highlights, { id: this.props.highlight_id ? 
-          this.props.highlight_id : "newHighlightId" });
+        let highlight = find(Highlights, {
+          id: this.props.highlight_id ?
+            this.props.highlight_id : "newHighlightId"
+        });
         if (!this.props.event_id) {
           let event_id = "newEventId";
           stores.Highlights.fetchHighlights(event_id).then(Highlights => {
-            this.setState({ newing: !this.state.newing, highlightData: Highlights, 
+            this.setState({
+              newing: !this.state.newing, highlightData: Highlights,
               isMounted: true, currentHighlight:
                 highlight ? highlight : request.Highlight(), update:
-                this.props.highlight_id ? true : false})
+                this.props.highlight_id ? true : false
+            })
           })
         } else {
-          this.setState({ newing: !this.state.newing, isMounted: true,
-             currentHighlight: highlight ? highlight :
+          this.setState({
+            newing: !this.state.newing, isMounted: true,
+            currentHighlight: highlight ? highlight :
               request.Highlight(), update:
-              this.props.highlight_id ? true : false })
+              this.props.highlight_id ? true : false
+          })
         }
       });
       /*setInterval(() => {
@@ -203,10 +209,11 @@ export default class EventHighlights extends Component {
             uploading: false
           })
         }, snap.content_type, snap.filename, '/photo')
-      this.state.currentHighlight.url.photo ||
+      !this.state.update ? this.state.currentHighlight.url.photo ||
         this.state.currentHighlight.url.video ?
         exchanger.deleteFile(this.state.currentHighlight.url.video ?
-          this.state.currentHighlight.url.video : this.state.currentHighlight.url.photo) : null, true
+          this.state.currentHighlight.url.video :
+          this.state.currentHighlight.url.photo) : null : null, true
       exchanger.upload()
     })
   }
@@ -246,12 +253,12 @@ export default class EventHighlights extends Component {
           Toast.show({ text: "Unable To Upload Video", position: "top" })
           console.warn(error)
         }, snap.content_type, snap.filename, '/video')
-        this.state.currentHighlight.url.video ||
+        !this.state.update ? this.state.currentHighlight.url.video ||
           this.state.currentHighlight.url.photo ?
           exchanger.deleteFile(
             this.state.currentHighlight.url.video ?
               this.state.currentHighlight.url.video :
-              this.state.currentHighlight.url.photo) : null, true
+              this.state.currentHighlight.url.photo) : null : null, true
         exchanger.upload()
       })
     })
@@ -341,7 +348,7 @@ export default class EventHighlights extends Component {
             creating: false
           })
         });
-      }).catch(() =>{
+      }).catch(() => {
         this.props.stopLoader()
       })
     }

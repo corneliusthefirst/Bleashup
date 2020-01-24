@@ -39,19 +39,23 @@ export default class HighlightContent extends Component {
                                 <SimpleAudioPlayer url={this.props.highlight.url}></SimpleAudioPlayer>
                             </View> : null
                         }
-                        {this.props.highlight.url && 
-                            (this.props.highlight.url.photo && testForURL(this.props.highlight.url.photo) || 
-                            this.props.highlight.url.video && testForURL(this.props.highlight.url.video)) ?
-                            this.props.modal ? <TouchableWithoutFeedback onPress={() => requestAnimationFrame(() => this.props.highlight.url.video ? this.props.showVideo(this.props.highlight.url.video) : this.props.showPhoto(this.props.highlight.url.photo))}>
+                        {this.props.highlight.url &&
+                            (this.props.highlight.url.photo && testForURL(this.props.highlight.url.photo) ||
+                                this.props.highlight.url.video && testForURL(this.props.highlight.url.video)) ?
+                            this.props.modal ? <TouchableWithoutFeedback onPress={() =>
+                                requestAnimationFrame(() => this.props.highlight.url.video ?
+                                    this.props.showVideo(this.props.highlight.url.video) :
+                                    this.props.showPhoto(this.props.highlight.url.photo))}>
                                 <View style={{
                                     borderRadius: 10, alignSelf: 'center', margin: '4%', ...shadower()
                                 }}>
-                                    <CacheImages thumbnails square style={{
+                                    {this.props.highlight.url.photo && testForURL(this.props.highlight.url.photo) ? <CacheImages thumbnails square style={{
                                         width: '97%',
                                         height: 300,
                                         borderRadius: 8,
-                                    }} source={{ uri: this.props.highlight.url.photo ? this.props.highlight.url.photo : this.props.highlight.url.video }} width={360}></CacheImages>
-                                    {this.props.highlight.url.video ?
+                                    }} source={{ uri: this.props.highlight.url.photo }} width={360}>
+                                    </CacheImages> : null}
+                                    {this.props.highlight.url.video && testForURL(this.props.highlight.url.video)  ?
                                         <View style={{ position: 'absolute', marginTop: "25%", marginLeft: '43%', }}>
                                             <Button onPress={() => {
                                                 this.props.showVideo(this.props.highlight.url.video)

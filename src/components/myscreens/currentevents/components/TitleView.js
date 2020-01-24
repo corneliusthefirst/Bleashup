@@ -35,13 +35,13 @@ export default class TitleView extends Component {
     writeInterval(frequency) {
         switch (frequency) {
             case 'daily':
-                return '   day(s)';
+                return 'day(s)';
             case 'weekly':
-                return '   week(s)';
+                return 'week(s)';
             case 'monthly':
-                return '   month(s)';
+                return 'month(s)';
             case 'yearly':
-                return '   year(s)';
+                return 'year(s)';
             default:
                 return ''
         }
@@ -107,7 +107,7 @@ export default class TitleView extends Component {
                                 {this.props.Event.closed ? "Closed" : this.writeDateTime(this.props.Event)}
                             </Title> : null}
                         </View>
-                        <View>
+                        <View style={{marginLeft: '-5.5%',}}>
                             <Left>
                                 {this.props.Event.interval > 1 && this.props.Event.frequency !== 'yearly' && this.dateDiff(this.props.Event) < 0? <View style={
                                     {
@@ -116,7 +116,8 @@ export default class TitleView extends Component {
                                 }>
                                     <View>
                                         <Text style={{
-                                            color: "#1FABAB"
+                                            //color: "#1FABAB"
+                                            fontStyle: 'italic',
                                         }} note>
                                             {`after every ${this.props.Event.interval > 1 ? this.props.Event.interval : null} ${this.writeInterval(this.props.Event.frequency)} till ${moment(this.props.Event.recurrence ? this.props.Event.recurrence : null).format("dddd, MMMM Do YYYY")}`}
                                         </Text>
