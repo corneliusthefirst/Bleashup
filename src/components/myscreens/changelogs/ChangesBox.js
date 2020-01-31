@@ -35,14 +35,14 @@ export default class ChangeBox extends Component {
                 })
         }, 200 * this.props.delayer)
     }
-    containerStyle = { margin: '2%', borderRadius: 6, backgroundColor: "#9EEDD3", ...shadower(4) }
+    containerStyle = { margin: '2%', borderRadius: 6, backgroundColor: "#9EEDD3", ...shadower(4),height:110 }
     render() {
-        return (!this.state.loaded ? <View style={{ ...this.containerStyle, width: '95%', height: 120 }}></View> :
+        return (!this.state.loaded ? <View style={{ ...this.containerStyle, width: '95%', height: 110 }}></View> :
             <View>
                 <View style={this.containerStyle}>
                     {!this.props.change ? null : <View style={{ flexDirection: 'column', margin: '2%', }}>
-                        <View style={{ flexDirection: 'row', }}>
-                            <View style={{ width: '93%' }}><ProfileSimple showPhoto={(url) => {
+                        <View style={{ flexDirection: 'row', height: '45%'}}>
+                            <View style={{ width: '93%', height: '100%' }}><ProfileSimple showPhoto={(url) => {
                                 GState.ShowingPhoto = true
                                 this.props.showPhoto(url)
                             }} delay={this.props.delayer}

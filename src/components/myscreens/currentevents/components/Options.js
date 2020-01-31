@@ -40,7 +40,7 @@ export default class Options extends Component {
     svgStyle = {
         alignSelf: 'center',
     }
-    width = "25%"
+    width = "50%"
     @autobind navigateToHighLights() {
         stores.Events.isParticipant(this.props.Event.id, stores.Session.SessionStore.phone).then((status) => {
             if (status) {
@@ -122,7 +122,8 @@ export default class Options extends Component {
     render() {
         return (
             <View style={{
-                flexDirection: "row"
+                flexDirection: "row",
+                width:'100%'
             }}>
                 <View style={{
                     width: this.width
@@ -138,8 +139,9 @@ export default class Options extends Component {
                             <Label style={{
                                 color: "#1FABAB",
                                 fontSize: 12, fontStyle: 'italic',
+                                alignSelf: 'center',
                                 // marginLeft: "-20%"
-                            }} >{"Reminds/Tasks"}</Label>
+                            }} >{"Reminds"}</Label>
                             {this.props.Event.remind_upated ? (
                                 <View style={this.indicatorMargin}>
                                     <UpdateStateIndicator size={this.blinkerSize} />
@@ -171,6 +173,7 @@ export default class Options extends Component {
                             <Label style={{
                                 // marginLeft: "-5%"
                                 fontSize: 12, fontStyle: 'italic',
+                                alignSelf:'center',
                                 color: "#1FABAB"
                             }}>Discussions</Label>
                             {this.props.Event.chat_updated ? (
@@ -188,7 +191,7 @@ export default class Options extends Component {
                         </View >
                     </TouchableOpacity>
                 </View>
-                <View
+                {/*<View
                     style={{
                         width: this.width
                     }}
@@ -249,6 +252,7 @@ export default class Options extends Component {
                         </View>
                     </TouchableOpacity>
                 </View>
+                            */}
             </View>
         )
     }

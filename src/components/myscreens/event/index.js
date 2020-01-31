@@ -166,8 +166,8 @@ export default class Event extends Component {
           }} {...this.props}
           showContacts={(conctacts) => {
             this.setState({
-              contactModalOpened: true,
-              contacts: conctacts
+              isContactListOpened: true,
+              contactList: conctacts
             })
           }}></EventChat>
       case "Contributions":
@@ -1170,12 +1170,12 @@ export default class Event extends Component {
               hideTitle: false
             })
           }} event_id={this.event.id}></ParticipantModal>}
-        {!this.state.isContentModalOpened ? null : <ContactsModal isOpen={this.state.contactModalOpened} onClosed={() => {
+        {/*!this.state.contactModalOpened ? null : <ContactListModal isOpen={this.state.contactModalOpened} onClosed={() => {
           this.setState({
             contactModalOpened: false,
             conctacts: []
           })
-        }} contacts={this.state.contacts}></ContactsModal>}
+        }} contacts={this.state.contacts}></ContactListModal>*/}
         {!this.state.isSelectableListOpened ? null : <SelectableContactList
           removing={this.state.removing}
           notcheckall={this.state.notcheckall}

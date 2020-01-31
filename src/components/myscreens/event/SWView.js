@@ -237,7 +237,8 @@ export default class SWView extends Component {
                             }}>
                                 <View style={{
                                     marginTop: "5%",
-                                    padding: '2%',
+                                    padding: '1%',
+                                    height:300,
                                     width: "25%", ...shadower(3),
                                     backgroundColor: '#FEFFDE',
                                     borderRadius: 12
@@ -258,7 +259,7 @@ export default class SWView extends Component {
                                         setCurrentPage={(page) => this.props.setCurrentPage(page)}></RouteView>
                                 </View>
                             </View>
-                            <View style={{ marginTop: "10%", height: 300, }}>
+                            <View style={{height: 320,marginTop: "-10%", }}>
                                 <Commitee
                                     master={this.props.master}
                                     ref="Commitee"

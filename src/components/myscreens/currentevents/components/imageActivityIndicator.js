@@ -8,7 +8,7 @@ export default class ImageActivityIndicator extends Component {
     return (<SvgAnimatedLinearGradient primaryColor="#cdfcfc"
       secondaryColor="#FEFFDE" width={this.props.width ? this.props.width : 60}
       height={this.props.height ? this.props.height : 80}>
-      {this.props.rect ? <Spinner size={"small"}></Spinner>:<Circle cx="30" cy="30" r="30" />}
+      {this.props.rect ? <Spinner size={"small"}></Spinner>:<Circle cx="20" cy="20" r="20" />}
     </SvgAnimatedLinearGradient>);
   }
 }

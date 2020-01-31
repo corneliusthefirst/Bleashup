@@ -77,7 +77,11 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
     }
     render() {
         return (
-            <View style={{ flexDirection: 'column', backgroundColor: this.props.backgroundColor ? this.props.backgroundColor : "#FEFFDE", }}>
+            <View style={{ flexDirection: 'column', 
+            backgroundColor: this.props.backgroundColor ? 
+            this.props.backgroundColor : "#FEFFDE",
+            ...this.props.style
+         }}>
                 <FlatList
                     onScrollEndDrag={({ nativeEvent }) => {
                         if (isCloseToBottom(nativeEvent)) {

@@ -82,9 +82,13 @@ export default class Commitee extends Component {
                     </View>
                 </View>
                 <View>{this.state.refresh ? null :
-                    <View style={{height:'97%'}}>
+                    <View style={{height:'97%',}}>
                         <BleashupScrollView
-                        //backgroundColor={'white'}
+                        backgroundColor={'#feffde'}
+                        style={{
+                            width: '98%', borderBottomRightRadius: 8,borderTopRightRadius: 8,margin: '1%', ...shadower(3),
+                            height:256
+                        }}
                             dataSource={union([this.generalCommitee], uniq(this.props.commitees))}
                             keyExtractor={(item, index) => item}
                             renderItem={(item, index) =>

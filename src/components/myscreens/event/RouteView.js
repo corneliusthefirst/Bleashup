@@ -72,7 +72,7 @@ export default class RouteView extends Component {
     render() {
         if (this.props.currentPage == "EventChat") GState.generalNewMessages = []
         return (
-            <Card style={{ height: 300, width:"100%",marginTop: "20%", }} transparent >
+            <Card style={{ height: 300, width:"100%",marginTop: "30%"}} transparent >
                 <CardItem style={{
                     height: this.height, backgroundColor: this.props.currentPage == "EventDetails" ? "#54F5CA" : "#FEFFDE",
                     width: "100%", borderTopLeftRadius: 12, ...shadower(3)
@@ -134,7 +134,9 @@ export default class RouteView extends Component {
                     </TouchableOpacity>
                 </CardItem>*/}
                 <CardItem style={{
-                    height: this.height, backgroundColor: this.props.currentPage == "Reminds" ? "#54F5CA" : "#FEFFDE",
+                    height: this.height,
+                    borderBottomLeftRadius: 12,
+                    backgroundColor: this.props.currentPage == "Reminds" ? "#54F5CA" : "#FEFFDE",
                     ...shadower(3)
                 }} >
                     <TouchableOpacity onPress={() => requestAnimationFrame(() => {
@@ -147,7 +149,7 @@ export default class RouteView extends Component {
                         </View>
                     </TouchableOpacity>
                 </CardItem>
-                <CardItem style={{
+                {/*<CardItem style={{
                     height: this.height, ...shadower(3),
                     backgroundColor: this.props.currentPage == "Votes" ? "#54F5CA" : "#FEFFDE", width: "100%"
                 }}>
@@ -160,8 +162,8 @@ export default class RouteView extends Component {
                             <Text style={{ padding: "1%", color: this.props.currentPage == "Votes" ? "#0A4E52" : "gray", width: "100%"}}>Polls/Votes</Text>
                         </View>
                     </TouchableOpacity>
-                </CardItem>
-                <CardItem style={{
+                </CardItem>*/}
+                {/*<CardItem style={{
                     height: this.height, backgroundColor: this.props.currentPage == "Contributions" ? "#54F5CA" : "#FEFFDE",
                     ...shadower(3), borderBottomLeftRadius: 12, 
                 }}>
@@ -174,7 +176,7 @@ export default class RouteView extends Component {
                             <Text style={{ padding: "1%", color: this.props.currentPage == "Contributions" ? "#0A4E52" : "gray", width: "100%"}}>Contributions</Text>
                         </View>
                     </TouchableWithoutFeedback>
-                </CardItem>
+                </CardItem>*/}
             </Card>
         )
     }

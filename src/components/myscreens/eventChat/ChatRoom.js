@@ -1094,8 +1094,8 @@ export default class ChatRoom extends Component {
                 }
             } else if (index == 2) {
                 firebase.database().ref(`${this.props.firebaseRoom}/${message.key}/received`).once('value', snapshot => {
-                    //console.warn(snapshot)
-                    snapshot.val() !== null ? this.props.showContacts(snapshot.val().map(ele => { return { ...ele, phone: ele.phone.replace("+", "00") } })) :
+                    console.warn(snapshot)
+                    snapshot.val() !== null ? this.props.showContacts(snapshot.val().map(ele => { return  ele.phone.replace("+", "00") })) :
                         this.props.showContacts(message.received.map(ele => { return { ...ele, phone: ele.phone.replace("+", "00") } }))
                 })
             }
@@ -1405,14 +1405,24 @@ export default class ChatRoom extends Component {
                 </TouchableOpacity> : null}
                 <ScrollView style={{ top: 0, bottom: 0, height: screenheight - 60 }}>
                     <View style={{ display: "flex", }}>
-                        <Text style={{ color: "#FEFFDE", alignSelf: 'center', fontWeight: 'bold', }}>{dateDisplayer(moment(find(this.room.messages, { id: this.state.replyer.id }).created_at).format("YYYY/MM/DD"))}</Text>
+                        <Text style={{ color: "#FEFFDE", alignSelf: 'center', 
+                        fontWeight: 'bold', }}>{dateDisplayer(moment(find(this.room.messages, 
+                            { id: this.state.replyer.id }).created_at).format("YYYY/MM/DD"))}</Text>
                         {<Message openReply={(replyer) => {
                             console.warn("replying", replyer);
                             this.setState({
                                 replyer: replyer,
                                 showRepliedMessage: true
                             });
-                        }} replying={() => { }} received={this.state.replyer.received ? this.state.replyer.received.length >= this.props.members.length : false} showPhoto={(photo) => this.showPhoto(photo)} playVideo={(source) => this.playVideo(source)} creator={2} user={this.sender.phone} message={find(this.room.messages, { id: this.state.replyer.id })} />}
+                        }} replying={() => { }} 
+                        received={this.state.replyer.received ? 
+                            this.state.replyer.received.length >= 
+                            this.props.members.length : false} 
+                            showPhoto={(photo) => this.showPhoto(photo)} 
+                            playVideo={(source) => this.playVideo(source)} 
+                            creator={2} user={this.sender.phone} 
+                            message={find(this.room.messages, 
+                                { id: this.state.replyer.id })} />}
                     </View>
                 </ScrollView>
                 {!(this.state.replyer.sender.phone == this.sender.phone) ? <TouchableOpacity onPress={() => {

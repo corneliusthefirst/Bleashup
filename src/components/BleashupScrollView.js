@@ -47,6 +47,7 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
             <View style={{
                 flexDirection: 'column',
                 backgroundColor: this.props.backgroundColor ? this.props.backgroundColor : "#FEFFDE",
+                ...this.props.style
             }}>
                 <NestedScrollView
                     onScrollEndDrag={({ nativeEvent }) => {
