@@ -4,7 +4,8 @@ import {
   Button,
 } from "native-base";
 import Textarea from 'react-native-textarea';
-import {Linking,StyleSheet, View,Image,TouchableOpacity,TouchableWithoutFeedback, Dimensions, Keyboard} from 'react-native';
+import {View,TouchableOpacity,
+  TouchableWithoutFeedback, Dimensions, Keyboard} from 'react-native';
 import Modal from 'react-native-modalbox';
 import autobind from "autobind-decorator";
 import  stores from '../../../../../stores/index';
@@ -36,10 +37,25 @@ export default class EventDescription extends Component {
     componentDidMount(){
       this.init()
     }
+  componentWillMount() {
+    this.keyboardDidShowSub = Keyboard.addListener('keyboardDidShow', this.handleKeyboardDidShow.bind(this));
+    this.keyboardDidHideSub = Keyboard.addListener('keyboardDidHide', this.handleKeyboardDidHide.bind(this));
+  }
+  handleKeyboardDidShow(){
+    this.keyboardDissmissed = false
+  }
+  handleKeyboardDidHide() {
+    console.warn("hidding keyboard !!")
+    this.keyboardDissmissed = true
+  }
     componentDidUpdate(prevProps,prevState){
       if(this.props.event.about.description !== prevProps.event.about.description){
         this.init()
       }
+    }
+    componentWillUnmount(){
+      this.keyboardDidHideSub.remove();
+      this.keyboardDidShowSub.remove()
     }
     @autobind
     onChangedEventDescription(value) {
@@ -49,18 +65,23 @@ export default class EventDescription extends Component {
         stores.Events.updateDescription(this.state.event_id,value ,false).then(()=>{});
       }
     }
-
+    keyboardDissmissed = false
     @autobind
     updateDescription(){
-      this.props.onClosed();
-      this.state.description !== this.props.event.about.description ? this.props.updateDesc(this.state.description) : null
-      /*stores.Events.updateDescription(this.state.event_id,this.state.description ,false).then(()=>{});
-      this.props.parentComp.state.EventData.about.description = this.state.description;
-      this.props.parentComp.setState({EventData:this.props.parentComp.state.EventData});
-      this.setState({
-        description:"",
-        update:false
-      });*/
+      if(!this.keyboardDissmissed){
+        this.keyboardDissmissed = true
+        Keyboard.dismiss()
+      }else{
+        this.state.description !== this.props.event.about.description ? this.props.updateDesc(this.state.description) : null
+        /*stores.Events.updateDescription(this.state.event_id,this.state.description ,false).then(()=>{});
+        this.props.parentComp.state.EventData.about.description = this.state.description;
+        this.props.parentComp.setState({EventData:this.props.parentComp.state.EventData});
+        this.setState({
+          description:"",
+          update:false
+        });*/
+        this.props.onClosed();
+      }
     }
  
      
@@ -74,7 +95,7 @@ export default class EventDescription extends Component {
                 isOpen={this.props.isOpen}
                 onClosed={() => this.props.onClosed(this.state.description)}
                 style={{
-                    height: height/2+height/30, borderRadius: 15,marginTop:"-3%",
+                    height: height/2-height/25, borderRadius: 15,marginTop:"-3%",
                     backgroundColor:"#FEFFDE",borderColor:'black',borderWidth:1,width: "98%",
                 }}
                 coverScreen={true}
@@ -85,15 +106,15 @@ export default class EventDescription extends Component {
            
                  <View  style={{flex:1,flexDirection:"column"}}>
 
-                   <View style={{height:"10%"}}>
+                   <View style={{height:"10%",margin: '1%',}}>
                     <Text style={{alignSelf:'flex-start',marginLeft:"1%",marginTop:"4%",
                     fontWeight:"500",fontSize:18}} >Activity Description </Text>              
                    </View>
 
-            <View style={{ height: "70%" }}>
+            <View style={{ height: "65%" }}>
               <Textarea containerStyle={{
                 width: "95%", margin: "1%",
-                height: height / 3,
+                height: height / 3.6,
                 borderRadius: 10, borderWidth: 1,
                 borderColor: "#1FABAB",alignSelf: 'center',
                 backgroundColor: "#f5fffa"

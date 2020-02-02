@@ -25,6 +25,9 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
     renderPerBatch = 3
     previousNewRender = 0
     previousRendered = 0
+    componentDidMount(){
+        console.warn("BleashupFlatlist remounting")
+    }
     _renderItems(array) {
         return array.map((element) => {
             return this.props.renderItem(element, this.props.keyExtractor(element, 1))

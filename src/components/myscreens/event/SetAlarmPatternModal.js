@@ -83,7 +83,7 @@ export default class SetAlarmPatternModal extends Component {
             <ModalBox
                 backdropOpacity={0.7}
                 backButtonClose={true}
-                backdropPressToClose={false}
+                backdropPressToClose={true}
                 //swipeToClose={false}
                 position='center'
                 coverScreen={true}

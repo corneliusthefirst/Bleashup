@@ -79,7 +79,7 @@ export default class CreateCommiteeModal extends PureComponent {
                     {this.state.showGenralNameError ? <Text style={{ color: "#A91A84", fontWeight: 'bold', }} note> the commitee name cannot be same as General</Text> : null}
                     {this.state.nameTooLongError ? <Text style={{ color: "#A91A84", fontWeight: 'bold', }} note>the name is too long</Text> : null}
                     <Item>
-                        <TextInput style={{ width: "100%" }} onChangeText={(text) => {
+                        <TextInput maxLength={20} style={{ width: "100%" }} onChangeText={(text) => {
                             this.setState({
                                 commiteeName: text
                             })

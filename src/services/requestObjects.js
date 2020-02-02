@@ -103,7 +103,7 @@ class Request {
             description: '',
             must_report:false,
             confirmed: [],
-            period: "",
+            period: moment().format(),
             recursive_frequency:{
                 interval:1,
                 frequency:'yearly',

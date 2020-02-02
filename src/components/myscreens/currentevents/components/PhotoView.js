@@ -25,6 +25,7 @@ export default class PhotoView extends Component {
             isModalOpened: false
         })
         stores.Highlights.fetchHighlightsFromRemote(this.props.event_id).then(highlights => {
+            console.warn(highlights.length,"lllll")
             this.highlights = highlights
             if (this.highlights.length > 0) {
                 setTimeout(() => {

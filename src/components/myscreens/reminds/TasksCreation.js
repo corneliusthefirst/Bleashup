@@ -18,13 +18,15 @@ import SelectableContactList from '../../SelectableContactList';
 import NumericInput from 'react-native-numeric-input'
 import Modal from 'react-native-modalbox';
 import uuid from 'react-native-uuid';
-let data = [{
-  value: 'Yearly',
-}, {
-  value: 'Monthly',
-}, {
+let data = [ {
   value: 'Daily',
-}];
+},{
+  value:'Weekly'
+  }, {
+    value: 'Monthly',
+  }, {
+    value: 'Yearly',
+  }];
 
 let { height, width } = Dimensions.get('window')
 
@@ -453,7 +455,7 @@ export default class TasksCreation extends Component {
             <View pointerEvents={this.props.master ? null : 'none'} style={{ height: height / 8, alignItems: 'center' }}>
               {/*<Text style={{alignSelf:'flex-start',margin:"3%",fontWeight:"500",fontSize:16}} >Title :</Text>*/}
               <Item style={{ borderColor: 'black', width: "95%", marginTop: "3%" }} rounded>
-                <TextInput style={{ marginLeft: '2%', width: '100%' }} maxLength={40} value={this.state.currentRemind.title} maxLength={40} placeholder='New Remind Title' keyboardType='email-address' returnKeyType='next' inverse last
+                <TextInput maxLength={20} style={{ marginLeft: '2%', width: '100%' }} maxLength={40} value={this.state.currentRemind.title} maxLength={40} placeholder='New Remind Title' keyboardType='email-address' returnKeyType='next' inverse last
                   onChangeText={(value) => this.onChangedTitle(value)} />
               </Item>
             </View>

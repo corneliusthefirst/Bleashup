@@ -76,8 +76,8 @@ export default class SwipeOutView extends Component {
     render() {
         return (
             <View style={{ width: "98%", borderRadius: 4,...shadower(2) ,height:'99.5%',padding: '1%',backgroundColor: 'white',}}>
-                <View style={{ display: 'flex', flexDirection: 'column', marginLeft: "30%", }}>
-                    <View style={{ height: this.width, marginBottom: "9%", alignSelf: 'flex-start' }}>
+                <View style={{ display: 'flex', flexDirection: 'column', marginLeft: "20%", }}>
+                    <View style={{ height: this.width, marginBottom: "9%", alignSelf: 'flex-start',marginLeft: "10%", }}>
                         <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                             this.props.publish()
                         })

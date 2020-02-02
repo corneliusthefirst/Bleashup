@@ -24,7 +24,7 @@ export default class HighLight extends Component {
 
     }
     componentDidMount() {
-       
+
     }
     shouldComponentUpdate(nextProps, nextState, nextContext) {
         return false
@@ -119,7 +119,7 @@ export default class HighLight extends Component {
                         <View>
                         </View>
                         <View style={{ flexDirection: "column", justifyContent: "space-between", bottom: 0, margin: 3, width: "98%" }}>
-                            <Creator creator={this.props.highlight.creator} created_at={this.props.highlight.created_at} color={"#9EEDD3"}></Creator>
+                            <Creator creator={this.props.highlight.creator} created_at={this.props.highlight.created_at} color={this.props.color ? this.props.color : "#9EEDD3"}></Creator>
                         </View>
                     </View>
                 </Swipeout>

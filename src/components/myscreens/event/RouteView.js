@@ -84,20 +84,7 @@ export default class RouteView extends Component {
                     )}>
                         <View style={{ display: 'flex', flexDirection: 'row', width: "100%"}}>
                             <Icon type="AntDesign" style={{ color: this.props.currentPage == "EventDetails" ? "#0A4E52" :  this.original }} name="appstore1"></Icon>
-                            <Text style={{ padding: "1%", color: this.props.currentPage == "EventDetails" ? "#0A4E52":"gray", width: "100%" }}>Activity Details</Text>
-                        </View>
-                    </TouchableOpacity>
-                </CardItem>
-                <CardItem style={{
-                    height: this.height, backgroundColor: this.props.currentPage == "ChangeLogs" ? "#54F5CA" : "#FEFFDE", ...shadower(3) }}>
-                    <TouchableOpacity onPress={() => requestAnimationFrame(() => {
-                        this.props.setCurrentPage("ChangeLogs")
-                        this.resetSelectedCommitee()
-                    }
-                    )}>
-                        <View style={{ display: 'flex', flexDirection: 'row', width: "100%"}}>
-                            <Icon type="Entypo" style={{ color: this.props.currentPage == "ChangeLogs" ? "#0A4E52" : this.original }} name="clock"></Icon>
-                            <Text style={{ padding: "1%", color: this.props.currentPage == "ChangeLogs" ? "#0A4E52" : "gray", width: "100%"}}>History Logs</Text>
+                            <Text style={{ padding: "1%", color: this.props.currentPage == "EventDetails" ? "#0A4E52":"gray", width: "100%" }}>Details</Text>
                         </View>
                     </TouchableOpacity>
                 </CardItem>
@@ -135,7 +122,6 @@ export default class RouteView extends Component {
                 </CardItem>*/}
                 <CardItem style={{
                     height: this.height,
-                    borderBottomLeftRadius: 12,
                     backgroundColor: this.props.currentPage == "Reminds" ? "#54F5CA" : "#FEFFDE",
                     ...shadower(3)
                 }} >
@@ -146,6 +132,20 @@ export default class RouteView extends Component {
                         <View style={{ display: 'flex', flexDirection: 'row', width:"100%"}}>
                             <Icon type="Entypo" style={{ color: this.props.currentPage == "Reminds" ? "#0A4E52" : this.original }} name="bell"></Icon>
                             <Text style={{ padding: "1%", color: this.props.currentPage == "Reminds" ? "#0A4E52" : "gray", width: "100%" }}>Reminds</Text>
+                        </View>
+                    </TouchableOpacity>
+                </CardItem>
+                <CardItem style={{
+                    height: this.height,  borderBottomLeftRadius: 12, backgroundColor: this.props.currentPage == "ChangeLogs" ? "#54F5CA" : "#FEFFDE", ...shadower(3)
+                }}>
+                    <TouchableOpacity onPress={() => requestAnimationFrame(() => {
+                        this.props.setCurrentPage("ChangeLogs")
+                        this.resetSelectedCommitee()
+                    }
+                    )}>
+                        <View style={{ display: 'flex', flexDirection: 'row', width: "100%" }}>
+                            <Icon type="Entypo" style={{ color: this.props.currentPage == "ChangeLogs" ? "#0A4E52" : this.original }} name="clock"></Icon>
+                            <Text style={{ padding: "1%", color: this.props.currentPage == "ChangeLogs" ? "#0A4E52" : "gray", width: "100%" }}>{"Logs"}</Text>
                         </View>
                     </TouchableOpacity>
                 </CardItem>

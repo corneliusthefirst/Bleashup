@@ -49,7 +49,7 @@ export default class Reminds {
       this.readFromStore().then(Reminds => {
         ActReminds = Reminds.filter(ele => ele.event_id === event_id)
         if (ActReminds && ActReminds.length > 0) {
-          resolve(fresh ? JSON.stringify(ActReminds) : ActReminds)
+          resolve(ActReminds)
         } else {
           let getRemind = request.EventID()
           getRemind.event_id = event_id

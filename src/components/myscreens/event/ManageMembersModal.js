@@ -56,7 +56,7 @@ export default class MamageMembersModal extends PureComponent {
     render() {
         return (
             <Modal
-                backdropPressToClose={false}
+                //backdropPressToClose={false}
                 //swipeToClose={false}
                 backdropOpacity={0.7}
                 backButtonClose={true}

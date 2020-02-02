@@ -507,11 +507,11 @@ class Requester {
                         stores.Events.removeRemind(eventID, remindID, false).then(() => {
                             let Change = {
                                 id: uuid.v1(),
-                                title: `Updates On ${oldRemind.title} Remind`,
+                                title: `Removed ${oldRemind.title} Remind`,
                                 updated: `delete_remind`,
                                 updater: stores.LoginStore.user,
                                 event_id: eventID,
-                                changed: "Removed The Remind ",
+                                changed: `Deleted ${oldRemind.title} Remind`,
                                 new_value: { data: remindID, new_value: oldRemind },
                                 date: moment().format(),
                                 time: null
@@ -551,7 +551,7 @@ class Requester {
                                 updated: `restored_remind`,
                                 updater: stores.LoginStore.user,
                                 event_id: remind.event_id,
-                                changed: "Restored The Remind ",
+                                changed: `Restored  ${remind.title} Remind`,
                                 new_value: { data: remind.id, new_value: remind },
                                 date: moment().format(),
                                 time: null

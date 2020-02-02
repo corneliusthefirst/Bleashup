@@ -26,6 +26,7 @@ export default class EventTasksCard extends Component {
       created_time: "",
       period_date: "",
       newing: false,
+      showAll:false,
       period_time: "",
       mounted: false,
       cardData: this.props.item,
@@ -37,9 +38,8 @@ export default class EventTasksCard extends Component {
     }
 
   }
-  previousTask = JSON.stringify(this.props.item)
   componentDidMount() {
-    this.previousTask = JSON.stringify(this.props.item)
+    console.warn("rendering reminds")
     setTimeout(() => {
       this.state.accordData.title = this.props.item.description.slice(0, 103)
       this.state.accordData.content = this.props.item.description.slice(103, this.props.item.description.length)
@@ -59,7 +59,9 @@ export default class EventTasksCard extends Component {
 
   @autobind
   assignToMe() {
-    console.warn("assigning to meee", findIndex(this.props.item.members, { phone: stores.LoginStore.user.phone }) < 0, this.props.item.members, stores.LoginStore.user.phone);
+    console.warn("assigning to meee", findIndex(this.props.item.members,
+       { phone: stores.LoginStore.user.phone }) < 0,
+        this.props.item.members, stores.LoginStore.user.phone);
     this.props.assignToMe(this.props.item)
     /*stores.Events.getPaticipants(this.props.item.event_id).then((participants)=>{
     let currentParticipant = find(participants,{phone:this.state.userphone})
@@ -70,17 +72,18 @@ export default class EventTasksCard extends Component {
     })*/
   }
   shouldComponentUpdate(nextProps, nextState, nextContext) {
-    return !isEqual(JSON.parse(this.previousTask), nextProps.item) ||
-      this.state.mounted !== nextState.mounted ||
+    return this.state.mounted !== nextState.mounted ||
+      !isEqual(this.props.item, nextProps.item) ||
       this.state.newing !== nextState.newing
   }
   componentDidUpdate(prevProps, prevState) {
-    this.previousTask = JSON.stringify(this.props.item)
-    if (prevProps.item.description !== this.props.item.description) {
+    /*if (prevProps.item.description !== this.props.item.description) {
       console.warn("updating description")
       this.setState({ accordData: this.state.accordData, newing: !this.state.newing })
-
-    }
+    }*/
+  }
+  componentWillUnmount(){
+    console.warn("umounting reminds")
   }
   saveAll(alarms) {
     this.props.assignToMe(this.props.item, alarms)
@@ -101,12 +104,12 @@ export default class EventTasksCard extends Component {
       marginLeft: "2%", marginRight: "2%",
     }}>
     </Card> : (
-        <TouchableOpacity delayLongPress={1000} onLongPress={this.update}>
           <Card style={{ marginLeft: "2%", marginRight: "2%", }}>
             <CardItem>
-              <Left><Text style={{ fontWeight: "500", fontSize: 11, color: "#1FABAB", alignSelf: 'flex-end', }} note>{`Due on ${moment(this.props.item.period).format('dddd, MMMM Do YYYY, h:mm:ss a')}`}</Text>
-              </Left>
-              <Right style={{ alignSelf: 'flex-end', }}>
+            <View style={{ flexDirection: 'row', }}><TouchableOpacity onPress={() => {
+              this.props.updateRemind(this.props.item)
+            }} style={{width:'98%'}}><Text style={{ width: '100%', fontWeight: "500", fontSize: 14, color: "#1FABAB", alignSelf: 'flex-end', }} 
+              note>{`Due on ${moment(this.props.item.recursive_frequency.recurrence).format('dddd, MMMM Do YYYY, h:mm:ss a')}  (view configs)`}</Text></TouchableOpacity>
                 <RemindsMenu
                   master={this.props.master}
                   mention={() => this.props.mention(this.props.item)}
@@ -119,20 +122,26 @@ export default class EventTasksCard extends Component {
                   viewConfirmed={() => this.props.showConfirmed(this.props.item.confirmed, this.props.item)}
                   deleteRemind={() => this.props.deleteRemind(this.props.item)}
                 ></RemindsMenu>
-
-              </Right>
+                    </View>
             </CardItem>
 
             <CardItem>
               <Left>
-                <Title style={{ fontWeight: "500", marginLeft: -1, fontSize: 17, color: "#696969" }}>{this.props.item.title}</Title>
+                <Title style={{ fontWeight: "500", marginLeft: -1, fontSize: 20, color: "#696969" }}>{this.props.item.title}</Title>
               </Left>
             </CardItem>
             <CardItem carBody>
-              <AccordionModule dataArray={[this.accordData]} long={this.long}></AccordionModule>
+            <TouchableOpacity onPress={() => {
+              this.setState({
+                showAll:!this.state.showAll,
+                newing : !this.state.newing
+              })
+            }}>
+            <Text note style={{fontSize: 12,}} ellipsizeMode ={!this.state.showAll?'tail':null} numberOfLines={this.state.showAll?null:5}>{this.props.item.description}</Text>
+            </TouchableOpacity>
             </CardItem>
 
-            <CardItem style={{ width: "100%" }}>
+            <CardItem style={{ width: "100%",marginTop: '2%', }}>
               {findIndex(this.props.item.members, { phone: stores.LoginStore.user.phone }) < 0 ?
                 this.props.item.status == 'private' ? null :
                   <Button style={{ borderWidth: 2, borderRadius: 10, borderColor: "#1FABAB", width: "32%", alignItems: 'center', justifyContent: 'center', marginLeft: "67%" }}
@@ -168,8 +177,6 @@ export default class EventTasksCard extends Component {
               <Creator creator={this.props.item.creator} created_at={this.props.item.created_at}></Creator>
             </CardItem>
           </Card>
-        </TouchableOpacity>
-
 
       )
   }

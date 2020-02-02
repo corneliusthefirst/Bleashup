@@ -244,7 +244,7 @@ export default class SettingsModal extends Component {
             let period = this.state.date
             let newConfig = {
                 period_new: period,
-                title_new: this.state.activityName,
+                title_new: this.state.activityName?this.state.activityName:null,
                 public_new: this.state.public,
                 interval_new: this.state.interval,
                 recurrent_new: this.props.event.recurrent,
@@ -327,7 +327,8 @@ export default class SettingsModal extends Component {
                                 {this.state.emptyNameError ? <Text style={{ color: '#A91A84' }} note>{'name cannot be empty'}</Text> : null}
                                 {this.state.tooLongNameError ? <Text style={{ color: '#A91A84' }} note>{'name is too long; the name should not be morethan 30 characters'}</Text> : null}
                                 <Item style={{ width: '100%' }}>
-                                    <TextInput
+                                    <TextInput 
+                                        maxLength={20}
                                         style={{ width: '100%', fontSize: 18, fontWeight: 'bold', }}
                                         onChangeText={e => this.changeActivityName(e)}
                                         value={this.state.activityName} placeholder={"Activity Name"}>

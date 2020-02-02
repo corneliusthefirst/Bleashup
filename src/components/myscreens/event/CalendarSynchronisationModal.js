@@ -14,7 +14,7 @@ export default class CalendarSynchronisationModal extends Component{
              <ModalBox
                 backdropOpacity={0.7}
                 backButtonClose={true}
-                backdropPressToClose={false}
+                //backdropPressToClose={false}
                 //swipeToClose={false}
                 position='center'
                 coverScreen={true}

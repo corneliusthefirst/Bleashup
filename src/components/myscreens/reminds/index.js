@@ -11,7 +11,7 @@ import TasksCard from "./TasksCard"
 import stores from '../../../stores/index';
 import BleashupFlatList from '../../BleashupFlatList';
 import TasksCreation from './TasksCreation';
-import { find, findIndex, uniqBy, reject, filter } from "lodash";
+import { find, findIndex, uniqBy, reject, filter ,concat} from "lodash";
 import shadower from '../../shadower';
 import RemindRequest from './Requester';
 import emitter from '../../../services/eventEmiter';
@@ -21,6 +21,7 @@ import SelectableContactList from "../../SelectableContactList";
 import ContactListModal from "../event/ContactListModal";
 import ContactsReportModal from "./ContactsReportModal";
 import AreYouSure from "../event/AreYouSureModal";
+import BleashupScrollView from '../../BleashupScrollView';
 //const MyTasksData = stores.Reminds.MyTasksData
 
 export default class Reminds extends Component {
@@ -62,9 +63,10 @@ export default class Reminds extends Component {
       })
     }
   }
-  updateData = newremind => {
-    this.state.eventRemindData.unshift(newremind)
-    this.setState({ eventRemindData: this.state.eventRemindData });
+  updateData(newremind){
+    //this.state.eventRemindData.unshift(newremind)
+    this.setState({ 
+      eventRemindData: [newremind,...this.state.eventRemindData]});
   }
 
   componentDidMount() {
@@ -127,8 +129,8 @@ export default class Reminds extends Component {
   refrehReminds() {
     console.warn('receiving updated remind message')
     stores.Reminds.loadReminds(this.props.event_id, true).then((Reminds) => {
-      console.warn(Reminds)
-      this.setState({ eventRemindData: JSON.parse(Reminds) });
+      //console.warn(Reminds)
+      this.setState({ eventRemindData: Reminds });
     })
   }
 
@@ -152,7 +154,7 @@ export default class Reminds extends Component {
       this.props.startLoader()
       RemindRequest.CreateRemind(newRemind).then(() => {
         this.updateData(newRemind)
-        this.props.stopLoader()
+     this.props.stopLoader()
       }).catch(() => {
         this.props.stopLoader()
       })
@@ -274,9 +276,9 @@ export default class Reminds extends Component {
 
         </View>
         <View style={{ height: "93%" }}>
-          <BleashupFlatList
-            initialRender={5}
-            renderPerBatch={5}
+          <BleashupScrollView
+            initialRender={7}
+            renderPerBatch={7}
             //onScroll={this._onScroll}
             firstIndex={0}
             //showVerticalScrollIndicator={false}
@@ -287,7 +289,6 @@ export default class Reminds extends Component {
               return (
                 <TasksCard
                   mention={itemer => {
-                    console.warn(itemer)
                     this.props.mention({
                       replyer_phone: stores.LoginStore.user.phone,
                       replyer_name: stores.LoginStore.user.name,
@@ -346,7 +347,7 @@ export default class Reminds extends Component {
             }}
             numberOfItems={this.state.eventRemindData.length}
           >
-          </BleashupFlatList >
+          </BleashupScrollView>
 
 
         </View>
@@ -415,7 +416,7 @@ export default class Reminds extends Component {
             })
           }}></ContactsReportModal> : null}
         {this.state.isAreYouModalOpened ? <AreYouSure isOpen={this.state.isAreYouModalOpened}
-          title={'Delete Modal'} closed={() => {
+          title={'Delete Remind'} closed={() => {
             this.setState({
               isAreYouModalOpened: false
             })

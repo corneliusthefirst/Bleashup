@@ -369,7 +369,7 @@ class Home extends Component {
             heading={
               <TabHeading>
                 <View>
-                  <Icon name="user-alt" type="FontAwesome5" style={{ fontSize: this.state.currentTab == 2 ? 30 : 15, }} />
+                  <Icon name="user-alt" type="FontAwesome5" style={{ fontSize: this.state.currentTab == 2 ? 30 : 10, }} />
                 </View>
               </TabHeading>
             }

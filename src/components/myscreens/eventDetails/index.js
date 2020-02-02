@@ -4,14 +4,13 @@ import {
 } from "native-base";
 
 import { Linking, StyleSheet, View, Image, TouchableOpacity, FlatList, ScrollView, Dimensions } from 'react-native';
-import ActionButton from 'react-native-action-button';
 import RadioForm, { RadioButton, RadioButtonInput, RadioButtonLabel } from 'react-native-simple-radio-button';
 import autobind from "autobind-decorator";
 import CacheImages from "../../CacheImages";
 import PhotoEnlargeModal from "../invitations/components/PhotoEnlargeModal";
 import ImagePicker from 'react-native-image-picker';
 import stores from '../../../stores/index';
-import { observer } from 'mobx-react'
+//import { observer } from 'mobx-react'
 import { filter, uniqBy, concat, head, orderBy, find, findIndex, reject, uniq, indexOf, forEach, dropWhile } from "lodash";
 import request from "../../../services/requestObjects";
 
@@ -35,7 +34,7 @@ import MapView from "../currentevents/components/MapView";
 import Creator from "../reminds/Creator";
 let { height, width } = Dimensions.get('window');
 
-@observer
+//@observer
 export default class EventDetailView extends Component {
 
   constructor(props) {
@@ -348,7 +347,7 @@ export default class EventDetailView extends Component {
                 </View>
               </TouchableOpacity>}
             <View style={{ flexDirection: "column", position: 'absolute', justifyContent: "space-between", bottom: 0, margin: 3, width: "98%" }}>
-              <Creator color={null} creator={this.props.Event.creator_phone} created_at={this.props.Event.created_at}></Creator>
+              <Creator color={"#FEFFDE"} creator={this.props.Event.creator_phone} created_at={this.props.Event.created_at}></Creator>
             </View>
 
 
@@ -399,7 +398,7 @@ export default class EventDetailView extends Component {
             }}
             update={(newHighlight, previousHighlight) => this.updateHighlight(newHighlight, previousHighlight)}
             participant={this.state.participant} parentComponent={this} ref={"highlights"} event_id={this.props.Event.id} />
-          {this.state.isHighlightDetailsModalOpened ? <HighlightCardDetail showVideo={(video) => {
+          {this.state.isHighlightDetailsModalOpened ? <HighlightCardDetail color={"#FEFFDE"} showVideo={(video) => {
             this.wasDetailOpened = true
             this.setState({
               showVideo: true,

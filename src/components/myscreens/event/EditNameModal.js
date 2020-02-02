@@ -51,7 +51,7 @@ export default class EditNameModal extends PureComponent {
             <Modal
                 backdropPressToClose={true}
                 backdropOpacity={0.4}
-                swipeToClose={false}
+                //swipeToClose={false}
                 backButtonClose={true}
                 entry={"top"}
                 position={"bottom"}
@@ -90,7 +90,7 @@ export default class EditNameModal extends PureComponent {
                     {this.state.updatedNameError ? <Text style={{ color: "#A91A84", fontWeight: 'bold', }} note>updated name cannot be same as current commitee name.</Text> : null}
 
                     <Item>
-                        <TextInput style={{ width: "100%" }} value={this.state.commiteeName} onChangeText={(text) => {
+                        <TextInput maxLength={20} style={{ width: "100%" }} value={this.state.commiteeName} onChangeText={(text) => {
                             this.setState({
                                 commiteeName: text
                             })

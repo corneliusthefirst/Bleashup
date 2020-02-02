@@ -31,7 +31,7 @@ export default class PhotoViewer extends Component {
                 backButtonClose={true}
                 position='center'
                 coverScreen={true}
-                animationDuration={0}
+                //animationDuration={0}
                 isOpen={this.props.open}
                 onClosed={() => {
                     this.props.hidePhoto()
