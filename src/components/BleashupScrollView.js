@@ -12,7 +12,7 @@ const ifCloseToTop = ({ layoutMeasurement, contentOffset, contentSize }) => {
 const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
     const paddingToBottom = 20;
     return layoutMeasurement.height + contentOffset.y >=
-        ((contentSize.height - paddingToBottom) * (0.95));
+        ((contentSize.height - paddingToBottom) * (0.70));
 };
 @observer export default class BleashupScrollView extends Component {
     constructor(props) {
