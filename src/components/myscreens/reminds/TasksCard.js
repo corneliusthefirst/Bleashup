@@ -106,11 +106,12 @@ export default class EventTasksCard extends Component {
     </Card> : (
           <Card style={{ marginLeft: "2%", marginRight: "2%", }}>
             <CardItem>
-            <View style={{ flexDirection: 'row', }}><TouchableOpacity onPress={() => {
+            <View style={{ flexDirection: 'row', }}><TouchableOpacity onPress={() =>requestAnimationFrame(() =>{
               this.props.updateRemind(this.props.item)
-            }} style={{width:'98%'}}><Text style={{ width: '100%', fontWeight: "500", fontSize: 14, color: "#1FABAB", alignSelf: 'flex-end', }} 
+            })
+            } style={{width:'97%'}}><Text style={{ width: '100%', fontWeight: "500", fontSize: 14, color: "#1FABAB", alignSelf: 'flex-end', }} 
               note>{`Due on ${moment(this.props.item.recursive_frequency.recurrence).format('dddd, MMMM Do YYYY, h:mm:ss a')}  (view configs)`}</Text></TouchableOpacity>
-                <RemindsMenu
+              <RemindsMenu
                   master={this.props.master}
                   mention={() => this.props.mention(this.props.item)}
                   updateRemind={() => this.props.updateRemind(this.props.item)}

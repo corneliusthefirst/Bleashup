@@ -277,8 +277,8 @@ export default class Reminds extends Component {
         </View>
         <View style={{ height: "93%" }}>
           <BleashupScrollView
-            initialRender={7}
-            renderPerBatch={7}
+            initialRender={5}
+            renderPerBatch={5}
             //onScroll={this._onScroll}
             firstIndex={0}
             //showVerticalScrollIndicator={false}
