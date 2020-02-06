@@ -159,7 +159,7 @@ export default class CommiteeItem extends Component {
             newThing: !this.state.newThing
         })
         this.props.editName(newName, this.state.commitee.id)
-        this.swap()
+        //this.swap()
         emitter.once("edit-failed", () => {
             this.revertName()
         })
@@ -319,6 +319,7 @@ export default class CommiteeItem extends Component {
                 backgroundColor: GState.currentCommitee == this.state.commitee.id ? "#54F5CA" : "#FEFFDE",
             }}>
                 <TouchableOpacity onPress={() => requestAnimationFrame(() => {
+                    if(GState.editingCommiteeName === false)
                     this.swappCommitee()
                 })}>
                     <View style={{ display: 'flex', hieght: 100, width: "100%", flexDirection: "row", marginBottom: "2%", }}>
@@ -338,11 +339,15 @@ export default class CommiteeItem extends Component {
                         {this.state.commitee.name.toLowerCase() === "Generale".toLowerCase() ? null : this.state.master ?
                             <View style={{ marginTop: "-5%", marginRight: "15%", }}>
                                 <TouchableWithoutFeedback onPress={() => {
+                                        GState.editingCommiteeName = true
                                     requestAnimationFrame(() => {
                                         this.setState({
                                             isEditNameModelOpened: true,
                                             newThing: !this.state.newThing
                                         })
+                                        setTimeout(() => {
+                                            GState.editingCommiteeName = false
+                                        },300)
                                     })
                                 }}>
                                         <View>{this.props.master ? <Icon style={{ fontSize: 30, color: "#0A4E52" }} name="pencil" type="EvilIcons" /> : null}</View>
