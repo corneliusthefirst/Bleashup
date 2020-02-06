@@ -96,6 +96,28 @@ export default class Event extends Component {
   textStyle = {
     fontSize: 15
   }
+  showRemindID(id) {
+    this.setState({
+      remind_id: id,
+      isremindConfigurationModal: true,
+      remind: null
+    })
+  }
+  showHighlightID(id) {
+    stores.Highlights.loadHighlight(id).then(High => {
+      High ? this.setState({
+        isHighlightDetailModalOpened: true,
+        highlight: High
+
+      }) : null
+    })
+  }
+  showHighlightDetails(H) {
+    this.setState({
+      highlight: H,
+      isHighlightDetailModalOpened: true
+    })
+  }
   currentWidth = screenWidth * 2.7 / 3
   isOpen = this.props.navigation.getParam('isOpen') ? this.props.navigation.getParam('isOpen') : false
   renderMenu(NewMessages) {
@@ -150,6 +172,15 @@ export default class Event extends Component {
           close={() => this.closeCommitee(this.state.roomID)}
           open={() => this.openCommitee(this.state.roomID)}
           master={this.master}
+          handleReplyExtern={(reply) => {
+            if (reply.type_extern.toLowerCase().includes('reminds')) {
+              reply.id ? this.showRemindID(reply.id) : null
+            } else if (reply.type_extern.toLowerCase().includes('highlights')) {
+              reply.id ? this.showHighlightID(reply.id) : null
+            } else {
+              reply.id ? emitter.emit('show-this-change', reply.id) : null
+            }
+          }}
           generallyMember={this.member}
           public_state={this.state.public_state}
           opened={this.state.opened}
@@ -186,22 +217,11 @@ export default class Event extends Component {
               remind: remind
             })
           }}
-          showRemindID={(id) => {
-            this.setState({
-              remind_id:id,
-              isremindConfigurationModal:true,
-              remind:null
-            })
-          }}
+          showRemindID={(id) => this.showRemindID(id)}
           mention={(data) => this.mention(data)}
           restore={(data) => this.restore(data)}
           master={this.master}
-          showHighlightDetails={(H) => {
-            this.setState({
-              highlight: H,
-              isHighlightDetailModalOpened: true
-            })
-          }}
+          showHighlightDetails={(H) => this.showHighlightDetails(H)}
           openPhoto={(url) => {
             this.setState({
               showPhoto: true,
@@ -314,10 +334,6 @@ export default class Event extends Component {
       this.event = find(stores.Events.events, { id: this.event.id })
       this.initializeMaster()
       this.refreshCommitees()
-    }
-    if (change.changed.toLowerCase().includes('post')) {
-      console.warn('including posts')
-      emitter.emit('refresh-highlights')
     }
     if (change.changed.toLowerCase().includes('remind') ||
       change.title.toLowerCase().includes('remind')) {
@@ -1129,7 +1145,7 @@ export default class Event extends Component {
         event={this.event}
         master={this.master}
         public={this.event.public}></SWView></View>}>
-      <StatusBar hidden={this.state.showPhoto ? true : false} barStyle="dark-content" backgroundColor={this.state.showPhoto ? 'black' : "#FEFFDE"}></StatusBar>
+      <StatusBar animated={true} hidden={this.state.showPhoto ? true : false} barStyle="dark-content" backgroundColor={this.state.showPhoto ? 'black' : "#FEFFDE"}></StatusBar>
       <View style={{
         height: "100%",
         backgroundColor: "#FEFFDE"
@@ -1323,8 +1339,14 @@ export default class Event extends Component {
         {this.state.showPhoto ? <PhotoViewer open={this.state.showPhoto} photo={this.state.photo} hidePhoto={() => {
           this.setState({
             showPhoto: false,
-            isSelectPhotoInputMethodModal: false
+            isSelectPhotoInputMethodModal: false,
+            woking:true
           })
+          setTimeout(() => {
+            this.setState({
+              working:false
+            })
+          },2000)
           // doing this because if the profile picture is being clicked from the 
           // the changeBox Component , the onPress function of the BleashupTimline Compoent is automatically 
           // triggered . so this is an attempt to restore the blocking done when that photo is being pressed

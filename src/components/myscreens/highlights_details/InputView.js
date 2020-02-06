@@ -49,10 +49,7 @@ export default class InputView extends Component {
     replyMessageCaption() {
         return <View style={{ backgroundColor: '#FEFEDE', marginLeft: "-1%", }}>
             <ReplyText openReply={(replyer) => {
-                this.setState({
-                    replyer: replyer,
-                    showRepliedMessage: true
-                });
+               
             }} pressingIn={() => { }} reply={this.props.replyer}></ReplyText>
             <Button onPress={() => this.cancleReply()
             } style={{ position: "absolute", alignSelf: 'flex-end', }} transparent><Icon name={"close"} type={"EvilIcons"} style={{}}></Icon></Button>

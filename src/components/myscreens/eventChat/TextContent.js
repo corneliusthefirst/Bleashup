@@ -7,7 +7,8 @@ export default class TextContent extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            splicer: 500
+            splicer: 500,
+            notShowingAll:true
         }
     }
     fontSizeFormular() {
@@ -18,14 +19,16 @@ export default class TextContent extends Component {
         return imoji && imoji.length == 1 && message.length == imoji[0].length
     }
     render() {
+        //console.warn(this.props.text.length,this.props.text)
         return (
-            <TouchableWithoutFeedback onPress={() => this.setState({
-                splicer: this.state.splicer == this.props.text.length
-                    ? 500 : this.props.text.length
-            })}>
+            <TouchableOpacity onPress={() => 
+                this.setState({
+                    notShowingAll:!this.state.notShowingAll
+                })
+            }>
                 <View>
                     <Hyperlink linkStyle={{ color: '#2980b9', }} linkDefault={ true }>
-                    <Text style={{
+                    <Text ellipsizeMode={this.state.notShowingAll?'tail':null} numberOfLines={this.state.notShowingAll?7:null} style={{
                         justifyContent: 'center',
                         marginLeft: "2%",
                         fontSize: this.fontSizeFormular(),
@@ -36,7 +39,7 @@ export default class TextContent extends Component {
                     </Text>
                     </Hyperlink>
                 </View>
-            </TouchableWithoutFeedback>
+            </TouchableOpacity>
         )
     }
 }

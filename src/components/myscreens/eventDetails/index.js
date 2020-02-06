@@ -94,10 +94,10 @@ export default class EventDetailView extends Component {
     })
   }
   componentWillMount() {
-    emitter.on('refresh-highlights', this.handleRefresh.bind(this))
+    emitter.on(`refresh-highlights_${this.props.Event.id}`, this.handleRefresh.bind(this))
   }
   componentWillUnmount() {
-    emitter.off('refresh-highlights')
+    emitter.off(`refresh-highlights_${this.props.Event.id}`)
   }
   componentDidMount() {
     //this.setState({ animateHighlight: true });
@@ -112,7 +112,7 @@ export default class EventDetailView extends Component {
     this.setState({
       highlightData: [newHighlight].concat(this.state.highlightData)
     })
-
+    this.sendUpdateHighlight()
   }
 
 
@@ -147,6 +147,7 @@ export default class EventDetailView extends Component {
           this.props.stopLoader()
           this.state.highlightData = reject(this.state.highlightData, { id: item.id });
           this.setState({ highlightData: this.state.highlightData });
+          this.sendUpdateHighlight()
         }).catch((error) => {
           this.props.stopLoader()
         })
@@ -186,11 +187,14 @@ export default class EventDetailView extends Component {
             })
           }
           this.props.stopLoader()
+          this.sendUpdateHighlight()
         })
     }else{
       Toast.show({text:'App is Busy'})
     }
-
+  }
+  sendUpdateHighlight(){
+    emitter.emit(`refresh-highlights_${this.props.Event.id}`)
   }
   @autobind
   newHighlight() {
@@ -254,6 +258,7 @@ export default class EventDetailView extends Component {
                     }}
                       mention={(replyer) => {
                         this.props.mention({
+                          id:replyer.id,
                           video: replyer.url.video ? true : false,
                           audio: !replyer.url.video && replyer.url.audio ? true : false,
                           video: replyer.url.video ? true : false,
@@ -265,7 +270,7 @@ export default class EventDetailView extends Component {
                           title : `${replyer.title} : \n ${replyer.description}`,
                           replyer_phone: stores.LoginStore.user.phone,
                           replyer_name: stores.LoginStore.user.name,
-                          type_extern: 'HighLights',
+                          type_extern: 'HighLights ',
                         })
                       }}
                       deleteHighlight={(item) => {

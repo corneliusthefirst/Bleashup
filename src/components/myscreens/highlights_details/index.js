@@ -136,7 +136,8 @@ export default class HighLightsDetails extends Component {
                     highlight={item}
                     showInput={(replyer) => {
                         let reply = {
-                            ...replyer, video: replyer.url.video ? true : false,
+                            id:replyer.id,
+                            video: replyer.url.video ? true : false,
                             audio: !replyer.url.video && replyer.url.audio ? true : false,
                             video: replyer.url.video ? true : false,
                             photo: !replyer.url.video && replyer.url.photo ? true : false,
@@ -147,7 +148,7 @@ export default class HighLightsDetails extends Component {
                             replyer_phone: stores.LoginStore.user.phone,
                             replyer_name: stores.LoginStore.user.name,
                             title : `${replyer.title}: \n ${replyer.description}`,
-                            type_extern: 'HighLights',
+                            type_extern: 'HighLights ',
                         }
                         this.setState({
                             replyer: reply,

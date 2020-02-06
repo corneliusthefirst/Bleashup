@@ -287,7 +287,7 @@ export default class Message extends Component {
                                                     this.replying = true
                                                 }} openReply={(replyer) => {
                                                     replyer.isThisUser = !this.state.sender
-                                                    this.props.message.reply && this.props.message.reply.type_extern ? null : this.props.openReply(replyer)
+                                                    this.props.message.reply && this.props.message.reply.type_extern ? this.props.handleReplyExtern(this.props.message.reply) : this.props.openReply(replyer)
                                                 }} reply={this.props.message.reply}></ReplyText></View> : null}
                                             <TouchableWithoutFeedback onPressIn={() => {
                                                 this.replying = true

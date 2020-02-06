@@ -366,6 +366,28 @@ export default class Reminds {
       });
     });
   }
+  loadRemind(id){
+    return new Promise((resolve,reject) => {
+      this.readFromStore().then(Rems => {
+        let rem = find(Rems,{id:id})
+        if(rem){
+          resolve(rem)
+        }else{
+          let RemindID = request.RemindID();
+          RemindID.remind_id = id;
+          tcpRequest.getRemind(RemindID).then(JSONData => {
+            EventListener.sendRequest(JSONData).then(Remind => {
+              this.addReminds(Remind.data).then(() => {
+                resolve(Remind.data)
+              })
+            }).catch(() => {
+              resolve()
+            })
+          })
+        }
+      })
+    })
+  }
   readFromStore() {
     return new Promise((resolve, rejevt) => {
       storage

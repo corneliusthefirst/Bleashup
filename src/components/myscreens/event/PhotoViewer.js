@@ -54,7 +54,7 @@ export default class PhotoViewer extends Component {
                 }}
             >
                 <View>
-                    <StatusBar  barStyle="dark-content" backgroundColor="black"></StatusBar>
+                    <StatusBar animated={true}   barStyle="dark-content" backgroundColor="black"></StatusBar>
                     <View style={{ height: screenheight, width: screenWidth, backgroundColor: "black", }}>
                         <View style={{ alignSelf: 'center', }}>
                             <ReactNativeZoomableView

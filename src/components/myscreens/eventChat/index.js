@@ -202,6 +202,9 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
         ...this.state.user,
         phone: this.state.user.phone.replace("00", "+")
       }}
+      handleReplyExtern={(reply) => {
+        this.props.handleReplyExtern(reply)
+      }}
       activity_name={this.activity.about.title}
       close={() => this.props.close()}
       open={() => this.props.open()}

@@ -71,7 +71,7 @@ export default class CreateCommiteeModal extends PureComponent {
                     width: "100%"
                 }}
             >
-                <StatusBar barStyle="dark-content"></StatusBar>
+                <StatusBar animated={true} barStyle="dark-content"></StatusBar>
                 <View>
                     <View><Text style={{ fontSize: 30, fontWeight: '400', marginBottom: "5%", marginLeft: "10%", }}>{"Create A Commitee"}</Text></View>
                     <Text style={{ fontSize: 12, }}> the commitee name should not be greaterthan 20 characters</Text>

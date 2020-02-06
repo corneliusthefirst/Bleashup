@@ -19,16 +19,10 @@ export default class PhotoView extends Component {
         ismounted: true,
         isModalOpened: false
     }
-    componentDidMount() {
-        this.setState({
-            ismounted: true,
-            isModalOpened: false
-        })
+    initializeIterator(){
         stores.Highlights.fetchHighlightsFromRemote(this.props.event_id).then(highlights => {
-            console.warn(highlights.length,"lllll")
             this.highlights = highlights
             if (this.highlights.length > 0) {
-                setTimeout(() => {
                     this.interval = setInterval(() => {
                         let highlight = this.highlights[this.counter]
                         if (highlight && highlight.url) {
@@ -47,9 +41,15 @@ export default class PhotoView extends Component {
                             this.counter = 0
                         }
                     }, 3000 + this.props.renderDelay)
-                })
             }
         })
+    }
+    componentDidMount() {
+        this.setState({
+            ismounted: true,
+            isModalOpened: false
+        })
+        this.initializeIterator()
     }
     componentDidUpdate(previousProps,previousState){
         if(this.props.photo !== previousProps.photo){
@@ -61,7 +61,7 @@ export default class PhotoView extends Component {
         }
     }
     componentWillMount() {
-        emitter.on('refresh-highlights', () => {
+        emitter.on(`refresh-highlights_${this.props.event_id}`, () => {
             console.warn('receiving refresh highlights message')
             stores.Highlights.fetchHighlights(this.props.event_id).then(Higs => {
                 this.highlights = Higs
@@ -69,7 +69,7 @@ export default class PhotoView extends Component {
         })
     }
     componentWillUnmount() {
-        emitter.off('refresh-highlights')
+        emitter.off(`refresh-highlights_${this.props.event_id}`)
         clearInterval(this.interval)
     }
     showPhoto(url) {

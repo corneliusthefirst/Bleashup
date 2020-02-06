@@ -26,6 +26,9 @@ class UpdatesDispatcher {
   }
   infomCurrentRoom(Change, commitee, event_id) {
     emitter.emit(`event_updated_${event_id}`, Change, commitee)
+    if (Change.changed.toLowerCase().includes('post')) {
+      emitter.emit(`refresh-highlights_${event_id}`)
+    }
   }
   applyToAllCommitees(ids, participant, e) {
     if (ids.length <= 0) {

@@ -290,6 +290,7 @@ export default class Reminds extends Component {
                 <TasksCard
                   mention={itemer => {
                     this.props.mention({
+                      id : itemer.id,
                       replyer_phone: stores.LoginStore.user.phone,
                       replyer_name: stores.LoginStore.user.name,
                       type_extern: 'Reminds ',

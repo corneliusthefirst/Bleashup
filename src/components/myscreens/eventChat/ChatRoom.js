@@ -1129,7 +1129,7 @@ export default class ChatRoom extends Component {
         return (
             <View style={{ height: "100%" }}>
                 <ImageBackground style={{ width: "100%", height: "100%" }} source={require("../../../../assets/Pure_.jpeg")}>
-                    <StatusBar hidden={this.state.hideStatusBar} barStyle="dark-content" backgroundColor="#FEFFDE"></StatusBar>
+                    <StatusBar animated={true}  hidden={this.state.hideStatusBar} barStyle="dark-content" backgroundColor="#FEFFDE"></StatusBar>
                     {!this.state.loaded ? <View><ImageBackground style={{ width: "100%", height: "100%" }}
                         resizeMode={"contain"} source={require("../../../../assets/Bleashup.png")}></ImageBackground>
                         <Spinner color="#FEFFDE" style={{ color: "#FEFFDE", position: 'absolute', marginTop: "90%", marginLeft: "39%", }} />
@@ -1205,6 +1205,9 @@ export default class ChatRoom extends Component {
                     replying={(replyer, color) => this.replying(replyer, color)}
                     replaceMessage={(data) => this.replaceMessage(data)}
                     replaceAudioMessage={(data) => this.replaceAudioMessage(data)}
+                    handleReplyExtern={(reply) => {
+                        this.props.handleReplyExtern(reply)
+                    }}
                     message={item} openReply={(replyer) => {
                         this.setState({
                             replyer: replyer,
@@ -1285,11 +1288,13 @@ export default class ChatRoom extends Component {
 
     replyMessageCaption() {
         return <View style={{ backgroundColor: this.state.replyerBackColor, alignSelf: 'center',width:'98%'}}><ReplyText compose={true} openReply={(replyer) => {
-            this.setState({
+            replyer.type_extern ?
+                this.props.handleReplyExtern(replyer): this.setState({
                 replyer: replyer,
                 showRepliedMessage: true
             });
-        }} pressingIn={() => { }} reply={this.state.replyContent}></ReplyText>
+        }} 
+         pressingIn={() => { }} reply={this.state.replyContent}></ReplyText>
             <Button onPress={() => this.cancleReply()
             } style={{ position: "absolute", alignSelf: 'flex-end', }} transparent><Icon name={"close"} type={"EvilIcons"} style={{}}></Icon></Button>
         </View>;

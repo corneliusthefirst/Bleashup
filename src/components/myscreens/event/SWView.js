@@ -177,11 +177,12 @@ export default class SWView extends Component {
                 opacity: 0.9,
                 backgroundColor: "#FEFFDE",
                 width: "100%",
-                height: screenheight
+                height: "100%"
             }}><View style={{
                 borderWidth: 1,
                 borderRadius: 2,
                 borderColor: '#ddd',
+                height:'100%',
                 borderBottomWidth: 0,
                 ...shadower(7), margin: "1%",
             }}>
@@ -259,7 +260,7 @@ export default class SWView extends Component {
                                         setCurrentPage={(page) => this.props.setCurrentPage(page)}></RouteView>
                                 </View>
                             </View>
-                            <View style={{height: 320,marginTop: "-10%", }}>
+                            <View style={{height: 315,marginTop: "-10%", }}>
                                 <Commitee
                                     master={this.props.master}
                                     ref="Commitee"

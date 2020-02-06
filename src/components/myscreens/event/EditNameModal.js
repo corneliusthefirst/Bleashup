@@ -77,7 +77,7 @@ export default class EditNameModal extends PureComponent {
                     width: "100%"
                 }}
             >
-                <StatusBar barStyle="dark-content"></StatusBar>
+                <StatusBar animated={true}  barStyle="dark-content"></StatusBar>
                 <View>
                     <View style={{ display: 'flex', flexDirection: 'row', marginBottom: "10%", }}>
                         <Icon style={{ color: "#0A4E52", fontSize: 35, marginRight: "5%", marginTop: "1%", }} type={"EvilIcons"} name={"pencil"}></Icon>

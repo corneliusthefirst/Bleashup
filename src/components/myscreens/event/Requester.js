@@ -95,9 +95,9 @@ class Request {
                             title: "Update On Commitees",
                             updated: 'published_commitee',
                             event_id: event_id,
-                            changed: `Published ${commitee.name} Commitee`,
+                            changed: `${state === true ?'Published':'Unpublished'} ${commitee.name} Commitee`,
                             updater: stores.LoginStore.user,
-                            new_value: { data: commitee.id, new_value: "published" },
+                            new_value: { data: commitee.id, new_value: state === true ? 'Published' : 'Unpublished' },
                             date: moment().format(),
                             time: null
                         }
@@ -1032,7 +1032,6 @@ class Request {
     updateCount = 0
     updatedhighlight = null
     applyAllHighlightsUpdate(newHighlight, highlight) {
-        console.warn(highlight)
         return new Promise((resolve, reject) => {
             this.updateHighlightTitle(newHighlight.title, JSON.parse(highlight).title,
                 newHighlight.id,

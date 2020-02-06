@@ -54,8 +54,6 @@ export default class SearchImage extends Component {
             'my-custom-header': 'my custom header value'
           }
         })
-        this.props.onClosed()
-        console.warn(result)
       }
       else Linking.openURL(url)
     } catch (error) {
@@ -118,6 +116,7 @@ checkStorage(){
                    
                     <Button style={{alignSelf:'center',width:"90%",borderRadius:15,borderColor:"#1FABAB",backgroundColor:"transparent",justifyContent:'center',alignItem:'center',marginTop:"10%"}}
                       onPress={()=>{
+                        this.props.onClosed()
                         let url = "https://www.pixabay.com"
                         this.openLink(url)
                        
@@ -127,6 +126,7 @@ checkStorage(){
 
                     <Button style={{alignSelf:'center',width:"90%",borderRadius:15,borderColor:"#1FABAB",backgroundColor:"transparent",justifyContent:'center',alignItem:'center',marginTop:"10%"}}
                       onPress={()=>{
+                        this.props.onClosed()
                           let url = "https://www.pixels.com"
                           this.openLink(url);
                           
@@ -136,6 +136,7 @@ checkStorage(){
   
                     <Button style={{alignSelf:'center',width:"90%",borderRadius:15,borderColor:"#1FABAB",backgroundColor:"transparent",justifyContent:'center',alignItem:'center',marginTop:"10%"}}
                       onPress={()=>{
+                        this.props.onClosed()
                         let url = "https://www.pexels.com"
                         this.openLink(url)
                        
@@ -145,8 +146,10 @@ checkStorage(){
                     
                   <TouchableOpacity>
                     <Text  style={{alignSelf:"flex-start",color:"darkturquoise",margin:"5%"}} 
-                       onPress={()=>{  let url = 'https://www.google.com'
-                                       this.openLink(url) }}>Others..</Text>
+                       onPress={()=>{  
+                         this.props.onClosed() 
+                        let url = 'https://www.google.com'
+                        this.openLink(url) }}>Others..</Text>
                   </TouchableOpacity>
                     
                 </View>
