@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 import {
-  Content, Card, CardItem, Text, Body, Container, Icon, Header,
-  Form, Item, Title, Input, Left, Right, H3, H1, H2, Spinner,
-  Button, InputGroup, DatePicker, Thumbnail, Alert,Textarea,List,ListItem,Label
+  Button,Text
 } from "native-base";
 
 import { StyleSheet, View,Image,TouchableOpacity,FlatList,ScrollView,Dimensions} from 'react-native';
@@ -45,6 +43,11 @@ export default class HighlightCardDetail extends Component {
            
           <ScrollView showsVerticalScrollIndicator={false} >
             <View style={{flex:1,...shadower(6)}}>
+              {this.props.shouldRestore ? <View style={{ width: '95%', alignItems: 'flex-end',margin: '2%', }}><Button 
+              style={{alignSelf:'flex-end',margin:'2%',marginRight: '2%'}} onPress={() => {
+                this.props.onClosed()
+                this.props.restore(this.props.item)
+              }} rounded><Text>{"Restore"}</Text></Button></View> : null}
             <HighLight color={this.props.color} showPhoto={(url) => this.props.showPhoto(url)} modal={true} showVideo={(url) => this.props.showVideo(url)} background={"#FEFFDE"} highlight={this.props.item} disableSwipper={true}></HighLight>
             {/*<View style={{alignItems:'center',justifyContent:'center',height:height/7}}>
                <Title style={{color:'#1FABAB',fontSize:23,fontWeight:"bold"}}>{this.props.item.title}</Title>
@@ -60,10 +63,6 @@ export default class HighlightCardDetail extends Component {
               </View>*/}
             </View>
             </ScrollView>
-            {this.state.enlargeImage && this.props.item.url && this.props.item.url.photo?<PhotoEnlargeModal isOpen={this.state.enlargeImage} 
-            onClosed={() => this.setState({ enlargeImage: false })}
-             photo={this.props.item.url.photo} />:null}
-              
             </Modal>
 
 

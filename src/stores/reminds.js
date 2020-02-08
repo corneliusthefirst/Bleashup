@@ -45,11 +45,13 @@ export default class Reminds {
     });
   }
   loadReminds(event_id, fresh) {
+    let sorter = (a, b) => (a.created_at > b.created_at ? -1 : 
+      a.created_at < b.created_at ? 1 : 0)
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Reminds => {
         ActReminds = Reminds.filter(ele => ele.event_id === event_id)
         if (ActReminds && ActReminds.length > 0) {
-          resolve(ActReminds)
+          resolve(fresh? JSON.stringify(ActReminds.sort(sorter)):ActReminds.sort(sorter))
         } else {
           let getRemind = request.EventID()
           getRemind.event_id = event_id
@@ -59,7 +61,7 @@ export default class Reminds {
                 resolve(fresh?JSON.stringify([]):[])
               }
               this.addReminds(response.data).then(() => {
-                resolve(fresh ? JSON.stringify(response.data) : response.data)
+                resolve(fresh ? JSON.stringify(response.data.sort(sorter)) : response.data.sort(sorter))
               })
             }).catch(() => {
               resolve(fresh?JSON.stringify([]):[])

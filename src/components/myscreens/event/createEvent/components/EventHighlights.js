@@ -536,12 +536,16 @@ export default class EventHighlights extends Component {
                 <View style={{ height: height / 14, alignItems: 'center', margin: '2%', }}>
                   <Item style={{ borderColor: '#1FABAB', width: "95%", margin: '2%', height: height / 17 }} rounded>
                     <TextInput maxLength={20} style={{ width: "100%", height: "100%", margin: '2%', marginBottom: '5%', }} value={this.state.currentHighlight.title ? this.state.currentHighlight.title : ""} maxLength={40} placeholder='Post Title' keyboardType='email-address' autoCapitalize="none" returnKeyType='next' inverse last
-                      onChangeText={(value) => this.onChangedTitle(value)} />
+                      onChangeText={(value) => requestAnimationFrame(() => {
+                        this.onChangedTitle(value)
+                      })} />
                   </Item>
                 </View>
                 <View style={{ flexDirection: "row", justifyContent: 'space-between', alignItem: 'center', marginBottom: "2%", ...shadower(6) }}>
                   <TouchableOpacity style={{ width: "15%", justifyContent: 'center', alignItem: 'center', marginLeft: "7%" }}
-                    onPress={() => { this.TakePhotoFromCamera() }}>
+                    onPress={() => requestAnimationFrame(() => {
+                      this.TakePhotoFromCamera()
+                    })}>
                     <View style={{ flexDirection: "column" }}>
                       <Icon name="photo-camera" active={true} type="MaterialIcons"
                         style={{ color: "#0A4E52", alignSelf: "flex-start" }} />
@@ -549,7 +553,7 @@ export default class EventHighlights extends Component {
                     </View>
                   </TouchableOpacity>
                   <TouchableOpacity style={{ width: "15%", backgroundColor: "transparent", justifyContent: 'center', alignItem: 'center' }}
-                    onPress={() => { this.TakePhotoFromLibrary() }}>
+                    onPress={() => requestAnimationFrame(() => { this.TakePhotoFromLibrary() })}>
                     <View style={{ flexDirection: "column" }}>
                       <Icon name="video" active={true} type="Entypo"
                         style={{ color: "#0A4E52", alignSelf: "flex-start" }} />
@@ -557,7 +561,9 @@ export default class EventHighlights extends Component {
                     </View>
                   </TouchableOpacity>
                   <TouchableOpacity style={{ width: "15%", backgroundColor: "transparent", justifyContent: 'center', alignItem: 'center' }}
-                    onPress={() => this.takeAudio()}>
+                    onPress={() => requestAnimationFrame(() => {
+                      this.takeAudio()
+                    })}>
                     <View style={{ flexDirection: "column" }}>
                       <Icon name="microphone" active={true} type="FontAwesome"
                         style={{ color: "#0A4E52", alignSelf: "flex-start" }} />
@@ -650,7 +656,7 @@ export default class EventHighlights extends Component {
                         fontSize: 14,
                         color: '#333',
                       }}
-                      maxLength={1000}
+                      maxLength={3000}
                       onChangeText={(value) => this.onChangedDescription(value)} />
                   </View>
                 </View>
@@ -677,12 +683,16 @@ export default class EventHighlights extends Component {
           </View>
           <SearchImage openPicker={() => {
             this.TakePhotoFromCamera()
-          }} isOpen={this.state.searchImageState} onClosed={() => {
-            this.setState({
-              newing: !this.state.newing,
-              searchImageState: false
-            })
-          }} />
+          }}
+            h_modal={true}
+            isOpen={this.state.searchImageState}
+            onClosed={(mother) => {
+              this.setState({
+                newing: !this.state.newing,
+                searchImageState: false
+              })
+              mother ? this.props.closeTeporary() : null
+            }} />
         </View>
       </Modal>
 

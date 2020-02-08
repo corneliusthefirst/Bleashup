@@ -67,62 +67,6 @@ export default class ChangeLogs extends Component {
       }, 200)
     })
   }
-
-  propcessAndFoward(change) {
-    if(!GState.ShowingPhoto){
-       console.warn(change)
-      if (change.updated === "add_highlight") {
-        this.props.showHighlightDetails(change.new_value.new_value)
-      } else if (change.updated === "restored_remind" || change.updated === "delete_remind") {
-        this.props.showRemind(change.new_value.new_value)
-      } else if (change.updated === 'added_remind') {
-        this.props.showRemindID(change.new_value.data)
-      } else if (change.updated === "highlight_delete" || change.updated == 'highlight_restored') {
-        this.props.showHighlightDetails(change.new_value.new_value)
-      } else if (change.updated === "highlight_url") {
-        this.props.showHighlightDetails({
-          title: change.changed,
-          description: null,
-          url: change.new_value.new_value,
-          created_at: change.date
-        })
-      } else if (Array.isArray(change.new_value.new_value) &&
-        change.new_value.new_value[0] &&
-        change.new_value.new_value[0].phone) {
-        this.props.showMembers(change.new_value.new_value)
-      } else if (Array.isArray(change.new_value.new_value) &&
-        change.new_value.new_value[0] &&
-        change.new_value.new_value[0].includes("00")) {
-        console.warn("showing contacts")
-        this.props.showContacts(change.new_value.new_value)
-      } else if (typeof change.new_value.new_value === "string" &&
-        testForURL(change.new_value.new_value)) {
-        this.props.openPhoto(change.new_value.new_value)
-      }
-      else if (change.new_value &&
-        change.new_value.new_value &&
-        change.new_value.new_value[0] &&
-        typeof change.new_value.new_value === 'object' &&
-        change.new_value.new_value[0].includes("00")) {
-        this.props.showContacts(change.new_value.new_value)
-      }
-      else if (typeof change.new_value.new_value === "string" ||
-        (Array.isArray(change.new_value.new_value) &&
-          typeof change.new_value.new_value[0] === "string") ||
-        typeof change.new_value.new_value === 'object') {
-        this.props.showContent(change.new_value.new_value)
-      } else if (change.title.toLowerCase().includes("remind")) {
-        this.setState({
-          isShowRemindConfigurationModal: true,
-          current_event_id: change.event_id,
-          current_remind_id: change.new_value.data
-        })
-
-      } else {
-
-      }
-    }
-  }
   @autobind goBack() {
     this.props.navigation.goBack()
   }
@@ -155,7 +99,7 @@ export default class ChangeLogs extends Component {
           }}
           descriptionStyle={{ color: 'gray' }}
           onEventPress={(data) => {
-            this.propcessAndFoward(data)
+            this.props.propcessAndFoward(data)
           }}
           data={this.props.activeMember && this.props.activeMember !== null ?
             this.changes.filter(ele => ele.updater.phone === this.props.activeMember ||
@@ -163,24 +107,12 @@ export default class ChangeLogs extends Component {
         >
         </BleashupTimeLine>
       </View>
-      {this.isShowRemindConfigurationModal?<TasksCreation 
-        remind_id={this.state.current_remind_id} 
-        event_id={this.state.current_event_id} 
-        isOpen={this.isShowRemindConfigurationModal}
-        onClosed={() => {
-          this.setState({
-            isShowRemindConfigurationModal:false,
-            current_event_id:null,
-            current_remind_id:null
-          })
-        }}
-        ></TasksCreation>:null}
       {this.state.hideHeader ? null : <View style={{
-        width: "100%", height: 44, position: "absolute", opacity: .6,alignSelf: 'center',
+        width: "100%", height: 44, position: "absolute", opacity: .6, alignSelf: 'center',
         backgroundColor: "#FEFFDE", ...shadower(6)
       }}>
         <View style={{ flexDirection: 'row', width: "100%", }}>
-          <Text style={{ alignSelf: 'flex-start', margin: '3%', fontWeight: 'bold', fontSize: 20, width: "83%" }}>{(this.props.isMe ? "Your " : "") + "Activities Logs"}</Text>
+          <Text style={{ alignSelf: 'flex-start', margin: '3%', fontWeight: 'bold', fontSize: 20, width: "83%" }}>{(this.props.forMember ? this.props.forMember : (this.props.isMe ? "Your " : "")) + " Activity Logs"}</Text>
           <Icon style={{ alignSelf: 'flex-end', margin: '3%', }} name={"dots-three-vertical"} type="Entypo"></Icon>
         </View>
       </View>}

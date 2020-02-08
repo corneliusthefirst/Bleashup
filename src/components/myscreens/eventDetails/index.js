@@ -269,8 +269,8 @@ export default class EventDetailView extends Component {
                                 replyer.url.audio : null,
                           title : `${replyer.title} : \n ${replyer.description}`,
                           replyer_phone: stores.LoginStore.user.phone,
-                          replyer_name: stores.LoginStore.user.name,
-                          type_extern: 'HighLights ',
+                          //replyer_name: stores.LoginStore.user.name,
+                          type_extern: 'Posts',
                         })
                       }}
                       deleteHighlight={(item) => {
@@ -310,7 +310,7 @@ export default class EventDetailView extends Component {
                 <View style={{ flex: 1 }}>
                   {this.props.Event.about.description != "" ?
                     <Hyperlink onPress={(url) => { Linking.openURL(url) }} linkStyle={{ color: '#48d1cc', fontSize: 16 }}>
-                      <Text dataDetectorType={'all'} style={{ fontSize: 16, fontWeight: "500", margin: "1%" }} delayLongPress={800} onLongPress={() => {
+                      <Text dataDetectorType={'all'} style={{ fontSize: 16, fontWeight: "500", margin: "1%",color:'darkGray' }} delayLongPress={800} onLongPress={() => {
                         if (this.state.participant.master == true) {
                           this.setState({ EventDescriptionState: true })
                           this.refs.description_ref.init();
@@ -382,7 +382,18 @@ export default class EventDetailView extends Component {
               showTimmer: true,
               source: source
             })
-          }} startLoader={() => {
+          }}
+            closeTeporary={() => {
+              this.setState({
+                EventHighlightState:false,
+              })
+              setTimeout(() => {
+                this.setState({
+                  EventHighlightState:true
+                })
+              },600)
+            }}
+           startLoader={() => {
             this.props.startLoader()
           }} stopLoader={() => {
             this.props.stopLoader()
@@ -416,7 +427,9 @@ export default class EventDetailView extends Component {
               isHighlightDetailsModalOpened: false,
               photo: photo
             })
-          }} isOpen={this.state.isHighlightDetailsModalOpened} item={this.state.highlightItem} onClosed={() => { this.setState({ isHighlightDetailsModalOpened: false }) }} /> : null}
+          }} isOpen={this.state.isHighlightDetailsModalOpened}
+           item={this.state.highlightItem} 
+           onClosed={() => { this.setState({ isHighlightDetailsModalOpened: false }) }} /> : null}
           {this.state.isAreYouSureModalOpened ? <BleashupAlert title={"Delete Higlight"} accept={"Yes"} refuse={"No"} message={" Are you sure you want to delete these highlight ?"}
             deleteFunction={() => this.deleteHighlight(this.state.current_highlight)}
             isOpen={this.state.isAreYouSureModalOpened} onClosed={() => { this.setState({ isAreYouSureModalOpened: false }) }} /> : null}

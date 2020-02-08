@@ -177,7 +177,7 @@ export default class VideoMessage extends Component {
                                     {this.toMB(this.state.total).toFixed(1)}{")Mb"}</Text></View></View>}</View>
                 </View>
                 {this.props.message.text ? <View style={{ marginTop: "-5%", padding: "2%" }}>
-                    <TextContent text={this.props.message.text}></TextContent>
+                    <TextContent pressingIn={() => this.props.pressingIn()} text={this.props.message.text}></TextContent>
                 </View> : null}
             </View>
         );

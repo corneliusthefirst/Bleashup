@@ -113,7 +113,7 @@ export default class EventTasksCard extends Component {
               note>{`Due on ${moment(this.props.item.recursive_frequency.recurrence).format('dddd, MMMM Do YYYY, h:mm:ss a')}  (view configs)`}</Text></TouchableOpacity>
               <RemindsMenu
                   master={this.props.master}
-                  mention={() => this.props.mention(this.props.item)}
+                  mention={() => this.props.mention({...this.props.item,creator:this.state.creator})}
                   updateRemind={() => this.props.updateRemind(this.props.item)}
                   showMembers={() => this.props.showMembers(this.props.item.members)}
                   addMembers={() => { this.props.addMembers(this.props.item.members, this.props.item) }}
@@ -175,7 +175,12 @@ export default class EventTasksCard extends Component {
             </CardItem>
 
             <CardItem>
-              <Creator creator={this.props.item.creator} created_at={this.props.item.created_at}></Creator>
+              <Creator giveCreator={(creator) => {
+                this.setState({
+                  creator:creator,
+                  newing:!this.state.newing
+                })
+              }} creator={this.props.item.creator} created_at={this.props.item.created_at}></Creator>
             </CardItem>
           </Card>
 

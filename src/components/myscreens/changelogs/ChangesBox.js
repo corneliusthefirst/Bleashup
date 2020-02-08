@@ -33,7 +33,7 @@ export default class ChangeBox extends Component {
                     loaded: true,
                     changer: this.props.change.updater
                 })
-        }, 200 * this.props.delayer)
+        }, 60 * this.props.delayer)
     }
     containerStyle = { margin: '2%', borderRadius: 6, backgroundColor: "#9EEDD3", ...shadower(4),height:110 }
     render() {
@@ -59,7 +59,7 @@ export default class ChangeBox extends Component {
                                         <Text style={{ marginLeft: "2%" }} note>{this.props.change.updater.status}</Text>
                                     </View>
                                         </View>*/}</View>
-                            <View style={{ alignSelf: 'flex-start', marginTop: "-5%", marginRight: "3%", }}>
+                            <View style={{ alignSelf: 'flex-start', marginTop: "-5%", marginRight: "3%",width:'7%' }}>
                                 {!this.props.replying ? <ChangeBoxMenu
                                     master={this.props.master}
                                     change={this.props.change}
@@ -67,9 +67,12 @@ export default class ChangeBox extends Component {
                                         id:this.props.change.id,
                                         title: `${this.props.change.changed}`,
                                         type_extern: this.props.change.title,
+                                        new_value:this.props.change.new_value,
+                                        updated:this.props.change.updated,
                                         photo: true,
+                                        change_date:this.props.change.date,
                                         sourcer: this.state.changer.profile,
-                                        replyer_phone: this.state.changer.phone.replace("00","+"),
+                                        replyer_phone: this.state.changer.phone,
                                         replyer_name: this.state.changer.nickname
 
                                     })}
@@ -89,11 +92,11 @@ export default class ChangeBox extends Component {
                             flexDirection: 'column',
                         }}>
                             <View style={{ flexDirection: 'row', }}>
-                                <Text ellipsizeMode='tail' style={{ fontSize: 16, fontWeight: 'bold', }} 
+                                <Text ellipsizeMode='tail' style={{ fontSize: 16, fontWeight: 'bold',color:'darkGray' }} 
                                 numberOfLines={2}>{this.props.change.changed}</Text>
                             </View>
-                            <Text ellipsizeMode='tail' style={{ fontSize: 12, }} 
-                            numberOfLines={1} style={{ fontStyle: 'italic', }}>{typeof this.props.change.new_value.new_value === "string" 
+                            <Text ellipsizeMode='tail' style={{ fontSize: 14, color: 'darkGray', fontStyle: 'italic',}} 
+                            numberOfLines={1}>{typeof this.props.change.new_value.new_value === "string" 
                             && !testForURL(this.props.change.new_value.new_value, true) ? this.props.change.new_value.new_value : ""}</Text>
                         </View>
                     </View>}

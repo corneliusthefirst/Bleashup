@@ -31,6 +31,7 @@ export default class ProfileView extends Component {
                         content: user.status
                     }
                 })
+                this.props.setContact(user)
             }
         }), 20 * this.props.delay ? this.props.delay : 2)
     }

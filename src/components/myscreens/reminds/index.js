@@ -128,7 +128,7 @@ export default class Reminds extends Component {
   }
   refrehReminds() {
     console.warn('receiving updated remind message')
-    stores.Reminds.loadReminds(this.props.event_id, true).then((Reminds) => {
+    stores.Reminds.loadReminds(this.props.event_id).then((Reminds) => {
       //console.warn(Reminds)
       this.setState({ eventRemindData: Reminds });
     })
@@ -291,10 +291,10 @@ export default class Reminds extends Component {
                   mention={itemer => {
                     this.props.mention({
                       id : itemer.id,
-                      replyer_phone: stores.LoginStore.user.phone,
-                      replyer_name: stores.LoginStore.user.name,
+                      replyer_phone: itemer.creator.phone,
+                      //replyer_name: itemer.creator.nickname,
                       type_extern: 'Reminds ',
-                      title: itemer.title + ':\n' + itemer.description
+                      title: itemer.title + ': \n' + itemer.description
                     })
                   }}
                   master={this.props.master}

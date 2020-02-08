@@ -1192,7 +1192,9 @@ export default class ChatRoom extends Component {
         return <BleashupFlatList backgroundColor={"transparent"} firstIndex={0} ref="bleashupSectionListOut" inverted={true} renderPerBatch={20} initialRender={20} numberOfItems={this.room.messages.length} keyExtractor={(item, index) => item ? item.id : null}
             renderItem={(item, index) => {
                 this.delay = this.delay >= 20 || !item.sent ? 0 : this.delay + 1
-                return item ? <Message delay={this.delay} room={this.room}
+                return item ? <Message showProfile={(pro) => this.props.showProfile(pro)
+                
+                 } delay={this.delay} room={this.room}
                     PreviousSenderPhone={this.room.messages[index > 0 ? index - 1 : 0] ?
                         this.room.messages[index > 0 ? index - 1 : 0].sender.phone : null}
                     showActions={(message) => this.showActions(message)}
@@ -1258,7 +1260,7 @@ export default class ChatRoom extends Component {
                         width: "17%",
                         flexDirection: 'row',
                     }}>
-                        {!this.state.showAudioRecorder ? <TouchableOpacity style={{ width: "45%", }} onLongPress={() => {
+                        {!this.state.showAudioRecorder ? <TouchableOpacity style={{ width: "40%", }} onLongPress={() => {
                             this.openAudioPicker();
                             this.markAsRead();
                         }} onPress={() => {
@@ -1272,7 +1274,7 @@ export default class ChatRoom extends Component {
                             requestAnimationFrame(() => {
                                 return this.sendMessageText(this.state.textValue);
                             });
-                        }}><Icon style={{ marginLeft: this.state.showAudioRecorder ? "23%" : "0%", color: "#1FABAB", marginRight: "2%", }} name="paper-plane" type="FontAwesome"></Icon></TouchableOpacity>
+                        }}><Icon style={{alignSelf:'flex-end',width:this.state.showAudioRecorder?'100%':null, color: "#1FABAB", }} name="paper-plane" type="FontAwesome"></Icon></TouchableOpacity>
                     </View>
                 </View>
                 {
@@ -1294,7 +1296,7 @@ export default class ChatRoom extends Component {
                 showRepliedMessage: true
             });
         }} 
-         pressingIn={() => { }} reply={this.state.replyContent}></ReplyText>
+            pressingIn={() => { }} showProfile={(pro) => this.props.showProfile(pro)} reply={this.state.replyContent}></ReplyText>
             <Button onPress={() => this.cancleReply()
             } style={{ position: "absolute", alignSelf: 'flex-end', }} transparent><Icon name={"close"} type={"EvilIcons"} style={{}}></Icon></Button>
         </View>;
@@ -1365,6 +1367,8 @@ export default class ChatRoom extends Component {
                                 replyer: replyer,
                                 showRepliedMessage: true
                             });
+                        }} showProfile={(prop) => {
+                            this.showProfile(pro)
                         }} pressingIn={() => { }} reply={this.state.replyContent}></ReplyText></View> : null}
                 <View style={{ heigh: this.state.textHeight, backgroundColor: "#1FABAB", width: "100%", display: 'flex', flexDirection: 'row' }}>
                     <Icon onPress={() => {
@@ -1419,7 +1423,11 @@ export default class ChatRoom extends Component {
                                 replyer: replyer,
                                 showRepliedMessage: true
                             });
-                        }} replying={() => { }} 
+                        }}
+                        handleReplyExtern={(reply) => {
+                                this.props.handleReplyExtern(reply)
+                        }}
+                        showProfile={(pro) => this.props.showProfile(pro)} replying={() => { }} 
                         received={this.state.replyer.received ? 
                             this.state.replyer.received.length >= 
                             this.props.members.length : false} 

@@ -38,7 +38,7 @@ import NotificationModal from "./NotificationModal";
 import ContactListModal from "./ContactListModal";
 import ContentModal from "./ContentModal";
 import InviteParticipantModal from "./InviteParticipantModal";
-import MamageMembersModal from "./ManageMembersModal";
+import ManageMembersModal from "./ManageMembersModal";
 import AreYouSure from "./AreYouSureModal";
 import { RemoveParticipant } from '../../../services/cloud_services';
 import SettingsModal from "./SettingsModal";
@@ -53,6 +53,8 @@ import Pickers from '../../../services/Picker';
 import HighlightCardDetail from './createEvent/components/HighlightCardDetail';
 import RemindRequest from '../reminds/Requester';
 import TasksCreation from "../reminds/TasksCreation";
+import testForURL from '../../../services/testForURL';
+import ProfileModal from "../invitations/components/ProfileModal";
 
 const screenWidth = Math.round(Dimensions.get('window').width);
 
@@ -112,9 +114,10 @@ export default class Event extends Component {
       }) : null
     })
   }
-  showHighlightDetails(H) {
+  showHighlightDetails(H, restoring) {
     this.setState({
       highlight: H,
+      shouldRestore: restoring,
       isHighlightDetailModalOpened: true
     })
   }
@@ -163,6 +166,7 @@ export default class Event extends Component {
         return <EventChat
           activity={this.event}
           //activity_name={this.event.about.title}
+          showProfile={(pro) => this.showProfile(pro)}
           roomName={this.state.roomName}
           members={this.state.roomMembers}
           addMembers={() => this.addCommiteeMembers(this.state.roomID, this.state.roomMembers)}
@@ -175,10 +179,10 @@ export default class Event extends Component {
           handleReplyExtern={(reply) => {
             if (reply.type_extern.toLowerCase().includes('reminds')) {
               reply.id ? this.showRemindID(reply.id) : null
-            } else if (reply.type_extern.toLowerCase().includes('highlights')) {
+            } else if (reply.type_extern.toLowerCase().includes('posts')) {
               reply.id ? this.showHighlightID(reply.id) : null
             } else {
-              reply.id ? emitter.emit('show-this-change', reply.id) : null
+              reply.id ? this.showChanges(reply) : null
             }
           }}
           generallyMember={this.member}
@@ -204,47 +208,118 @@ export default class Event extends Component {
       case "Contributions":
         return <Contributions {...this.props}></Contributions>
       case "ChangeLogs":
-        return <ChangeLogs showMembers={(members) => {
-          this.setState({
-            showMembers: true,
-            partimembers: members,
-            hideTitle: true
-          })
-        }}
-          showRemind={(remind) => {
-            this.setState({
-              isremindConfigurationModal: true,
-              remind: remind
-            })
-          }}
-          showRemindID={(id) => this.showRemindID(id)}
+        return <ChangeLogs
+          propcessAndFoward={(change) => this.propcessAndFoward(change)}
           mention={(data) => this.mention(data)}
           restore={(data) => this.restore(data)}
           master={this.master}
-          showHighlightDetails={(H) => this.showHighlightDetails(H)}
-          openPhoto={(url) => {
-            this.setState({
-              showPhoto: true,
-              photo: url
-            })
-          }}
-          showContacts={(contacts) => {
-            this.setState({
-              contactList: contacts,
-              isContactListOpened: true
-            })
-          }}
-          showContent={(content => {
-            this.setState({
-              textContent: content,
-              isContentModalOpened: true
-            })
-          })}
+          isM={this.state.isMe}
           activeMember={this.state.activeMember}
           forMember={this.state.forMember}
           event_id={this.event.id}></ChangeLogs>
 
     }
+  }
+  showProfile(pro) {
+    stores.TemporalUsersStore.getUser(pro).then(profile => {
+      this.setState({
+        isProfileModalOpened: true,
+        profile: profile
+      })
+    })
+  }
+  showChanges(data) {
+    let change = {
+      //id:data.id,
+      changed: data.title,
+      updated: data.updated,
+      title: data.type_extern,
+      //changer : data.replyer_phone,
+      new_value: data.new_value
+    }
+    this.propcessAndFoward(change)
+  }
+  propcessAndFoward(change) {
+    if (!GState.ShowingPhoto) {
+      if (change.updated === "add_highlight") {
+        this.showHighlightDetails(change.new_value.new_value)
+      } else if (change.updated === "restored_remind" || change.updated === "delete_remind") {
+        this.showRemind(change.new_value.new_value, change.updated === "delete_remind" ? true : false)
+      } else if (change.updated === 'added_remind') {
+        this.showRemindID(change.new_value.data)
+      } else if (change.updated === "highlight_delete" || change.updated == 'highlight_restored') {
+        this.showHighlightDetails(change.new_value.new_value, change.updated == 'highlight_delete' ? true : false)
+      } else if (change.updated === "highlight_url") {
+        this.showHighlightDetails({
+          title: change.changed,
+          description: null,
+          url: change.new_value.new_value,
+          created_at: change.date
+        })
+      } else if (Array.isArray(change.new_value.new_value) &&
+        change.new_value.new_value[0] &&
+        change.new_value.new_value[0].phone) {
+        this.showMember(change.new_value.new_value)
+      } else if (Array.isArray(change.new_value.new_value) &&
+        change.new_value.new_value[0] &&
+        change.new_value.new_value[0].includes("00")) {
+        console.warn("showing contacts")
+        this.showContacts(change.new_value.new_value)
+      } else if (typeof change.new_value.new_value === "string" &&
+        testForURL(change.new_value.new_value)) {
+        this.openPhoto(change.new_value.new_value)
+      }
+      else if (change.new_value &&
+        change.new_value.new_value &&
+        change.new_value.new_value[0] &&
+        typeof change.new_value.new_value === 'object' &&
+        change.new_value.new_value[0].includes("00")) {
+        this.showContacts(change.new_value.new_value)
+      }
+      else if (typeof change.new_value.new_value === "string" ||
+        (Array.isArray(change.new_value.new_value) &&
+          typeof change.new_value.new_value[0] === "string") ||
+        typeof change.new_value.new_value === 'object') {
+        this.showContent(change.new_value.new_value)
+      } else if (change.title.toLowerCase().includes("remind")) {
+        this.showRemindID(change.new_value.data)
+
+      } else {
+
+      }
+    }
+  }
+  showMember(members) {
+    this.setState({
+      showMembers: true,
+      partimembers: members,
+      hideTitle: true
+    })
+  }
+  showRemind(remind, restoring) {
+    this.setState({
+      isremindConfigurationModal: true,
+      remind: remind,
+      shouldRestore: restoring
+    })
+  }
+  openPhoto(url) {
+    this.setState({
+      showPhoto: true,
+      photo: url
+    })
+  }
+  showContent(content) {
+    this.setState({
+      textContent: content,
+      isContentModalOpened: true
+    })
+  }
+  showContacts(contacts) {
+    this.setState({
+      contactList: contacts,
+      isContactListOpened: true
+    })
   }
   bandMember(members) {
     if (!this.state.working) {
@@ -387,41 +462,47 @@ export default class Event extends Component {
       working: false
     })
   }
+  restoreHighlight(data) {
+    this.startLoader()
+    stores.Highlights.fetchHighlights(this.event.id).then(highs => {
+      if (findIndex(highs, { id: data.new_value.new_value.id }) < 0) {
+        Requester.restoreHighlight(data.new_value.new_value).then(() => {
+          this.stopLoader()
+          Toast.show({ text: 'restoration was successful', type: 'success' })
+        }).catch(() => {
+          this.stopLoader()
+        })
+      } else {
+        this.stopLoader()
+        Toast.show({ text: 'restored already', })
+      }
+    })
+  }
+  restoreRemind(data) {
+    this.startLoader()
+    stores.Reminds.loadReminds(this.event.id).then(reminds => {
+      if (findIndex(reminds, { id: data.new_value.new_value.id }) < 0) {
+        RemindRequest.restoreRemind(data.new_value.new_value).then(() => {
+          this.stopLoader()
+          Toast.show({ text: 'restoration was successful', type: 'success' })
+        }).catch(() => {
+          this.stopLoader()
+        })
+      } else {
+        this.stopLoader()
+        Toast.show({ text: 'restored already', })
+      }
+    })
+  }
   restore(data) {
-    //console.warn(data)
     if (!this.state.woking) {
       switch (data.updated) {
         case "highlight_delete":
-          this.startLoader()
-          stores.Highlights.fetchHighlights(this.event.id).then(highs => {
-            if (findIndex(highs, { id: data.new_value.new_value.id }) < 0) {
-              Requester.restoreHighlight(data.new_value.new_value).then(() => {
-                this.stopLoader()
-                Toast.show({ text: 'restoration was successful', type: 'success' })
-              }).catch(() => {
-                this.stopLoader()
-              })
-            } else {
-              this.stopLoader()
-              Toast.show({ text: 'restored already', })
-            }
-          })
+          this.restoreHighlight(data)
           break;
         case "delete_remind":
-          this.startLoader()
-          stores.Reminds.loadReminds(this.event.id).then(reminds => {
-            if (findIndex(reminds, { id: data.new_value.new_value.id }) < 0) {
-              RemindRequest.restoreRemind(data.new_value.new_value).then(() => {
-                this.stopLoader()
-                Toast.show({ text: 'restoration was successful', type: 'success' })
-              }).catch(() => {
-                this.stopLoader()
-              })
-            } else {
-              this.stopLoader()
-              Toast.show({ text: 'restored already', })
-            }
-          })
+          this.restoreRemind(data)
+          break;
       }
     } else {
       Toast.show({ text: 'App is Busy ' })
@@ -923,13 +1004,15 @@ export default class Event extends Component {
       isInviteModalOpened: true
     })
   }
-  checkActivity(memberPhone) {
+  checkActivity(member) {
     this.isOpen = false
     this.resetSelectedCommitee()
     this.setState({
       currentPage: "ChangeLogs",
+      isMe: member.phone === stores.LoginStore.user.phone ? true : false,
       isManagementModalOpened: false,
-      activeMember: memberPhone
+      activeMember: member.phone,
+      forMember: member.nickname
     })
     this.refreshePage()
   }
@@ -1091,6 +1174,13 @@ export default class Event extends Component {
       exchanger.upload(0, 0)
     })
   }
+  showPhoto(photo) {
+    this.setState({
+      showPhoto: true,
+      isSelectPhotoInputMethodModal: false,
+      photo: photo
+    })
+  }
   render() {
     //console.error(this.event.id)
     //console.warn(this.event.calendar_id)
@@ -1106,7 +1196,7 @@ export default class Event extends Component {
         }}
         ref="swipperView"
         publish={() => this.publish()}
-        showActivityPhotoAction={() => this.openPhotoSelectorModal()}
+        showActivityPhotoAction={() => this.master ? this.openPhotoSelectorModal() : this.showPhoto(this.event.background)}
         leaveActivity={() => this.member ? this.setState({
           isAreYouSureModalOpened: true,
           warnDescription: "Are You Sure You Want To Leave This Activity ?",
@@ -1114,7 +1204,7 @@ export default class Event extends Component {
           callback: this.leaveActivity.bind(this)
         })/*this.leaveActivity()*/ : Toast.show({ text: "You Are Not a  member Anymore !" })}
         openSettingsModal={() => this.openSettingsModal()}
-        ShowMyActivity={(a) => this.checkActivity(a)}
+        ShowMyActivity={(a) => this.checkActivity({ phone: stores.LoginStore.user.phone })}
         inviteContacts={() => this.master || this.event.public ? this.inviteContacts() : Toast.show({ text: "You cannot invite for th" })}
         join={(id) => { this.joinCommitee(id) }}
         leave={(id) => { this.leaveCommitee(id) }}
@@ -1136,8 +1226,13 @@ export default class Event extends Component {
         showMembers={() => this.showMembers()}
         setCurrentPage={(page, data) => {
           this.isOpen = false
-          this.setState({ currentPage: page, activeMember: null, fresh: false })
-          //this.refreshePage()
+          this.setState({
+            currentPage: page,
+            activeMember: null,
+            fresh: false,
+            isMe: false,
+            forMember: null
+          })
         }
         }
         currentPage={this.state.currentPage}
@@ -1145,7 +1240,6 @@ export default class Event extends Component {
         event={this.event}
         master={this.master}
         public={this.event.public}></SWView></View>}>
-      <StatusBar animated={true} hidden={this.state.showPhoto ? true : false} barStyle="dark-content" backgroundColor={this.state.showPhoto ? 'black' : "#FEFFDE"}></StatusBar>
       <View style={{
         height: "100%",
         backgroundColor: "#FEFFDE"
@@ -1254,8 +1348,8 @@ export default class Event extends Component {
             })
           }} isOpen={this.state.isInviteModalOpened} participant={this.event.participant}>
         </InviteParticipantModal>}
-        {!this.state.isManagementModalOpened ? null : <MamageMembersModal isOpen={this.state.isManagementModalOpened}
-          checkActivity={(memberPhone) => this.checkActivity(memberPhone)}
+        {!this.state.isManagementModalOpened ? null : <ManageMembersModal isOpen={this.state.isManagementModalOpened}
+          checkActivity={(member) => this.checkActivity(member)}
           creator={this.event.creator_phone}
           participants={this.event.participant} master={this.master}
           changeMasterState={(newState) => this.changeEventMasterState(newState)}
@@ -1263,7 +1357,7 @@ export default class Event extends Component {
             this.setState({
               isManagementModalOpened: false
             })
-          }}></MamageMembersModal>}
+          }}></ManageMembersModal>}
         {this.state.isSettingsModalOpened ? <SettingsModal closeActivity={() => {
           this.event.closed ? this.closeActivity() : this.setState({
             isSettingsModalOpened: false,
@@ -1317,11 +1411,7 @@ export default class Event extends Component {
           }}
           photo={this.event.background}
           showActivityPhoto={() => {
-            this.event.background ? this.setState({
-              showPhoto: true,
-              isSelectPhotoInputMethodModal: false,
-              photo: this.event.background
-            }) : this.setState({
+            this.event.background ? this.showPhoto(this.event.background) : this.setState({
               isSelectPhotoInputMethodModal: false
             })
           }}
@@ -1340,13 +1430,13 @@ export default class Event extends Component {
           this.setState({
             showPhoto: false,
             isSelectPhotoInputMethodModal: false,
-            woking:true
+            woking: true
           })
           setTimeout(() => {
             this.setState({
-              working:false
+              working: false
             })
-          },2000)
+          }, 2000)
           // doing this because if the profile picture is being clicked from the 
           // the changeBox Component , the onPress function of the BleashupTimline Compoent is automatically 
           // triggered . so this is an attempt to restore the blocking done when that photo is being pressed
@@ -1358,18 +1448,30 @@ export default class Event extends Component {
           })
         }}></SearchImage>}
         {this.state.isHighlightDetailModalOpened ? <HighlightCardDetail
+          shouldRestore={this.state.shouldRestore}
+          showPhoto={(url) => this.showPhoto(url)}
+          showVideo={(url) => showVideo(url)}
+          restore={(item) => this.restoreHighlight({ new_value: { new_value: item } })}
           isOpen={this.state.isHighlightDetailModalOpened}
           item={this.state.highlight}
           onClosed={() => {
             this.setState({
-              isHighlightDetailModalOpened: false
+              isHighlightDetailModalOpened: false,
+              shouldRestore: false
             })
           }}></HighlightCardDetail> : null}
-        {this.state.isremindConfigurationModal ? <TasksCreation isOpen={this.state.isremindConfigurationModal} onClosed={() => {
+        {this.state.isremindConfigurationModal ? <TasksCreation shouldRestore={this.state.shouldRestore}
+          restore={(item) => this.restoreRemind({ new_value: { new_value: item } })} isOpen={this.state.isremindConfigurationModal} onClosed={() => {
+            this.setState({
+              isremindConfigurationModal: false,
+              shouldRestore: false
+            })
+          }} event={this.event} remind_id={this.state.remind_id} remind={this.state.remind}></TasksCreation> : null}
+        {this.state.isProfileModalOpened ? <ProfileModal profile={this.state.profile} isOpen={this.state.isProfileModalOpened} onClosed={() => {
           this.setState({
-            isremindConfigurationModal: false
+            isProfileModalOpened: false
           })
-        }} event={this.event} remind_id={this.state.remind_id} remind={this.state.remind}></TasksCreation> : null}
+        }}></ProfileModal> : null}
       </View>
     </SideMenu>
     );

@@ -41,12 +41,14 @@ export default class Message extends Component {
         //console.warn(data.type)
         switch (data.type) {
             case "text":
-                return <TextMessage firebaseRoom={this.props.firebaseRoom} user={2} sender={sender} index={index} creator={2} message={data}></TextMessage>
+                return <TextMessage pressingIn={() => {
+                    this.replying = true
+                }} firebaseRoom={this.props.firebaseRoom} user={2} sender={sender} index={index} creator={2} message={data}></TextMessage>
             case "text_sender":
                 return <TextMessageSnder sendMessage={(message) => this.props.sendMessage(message)} firebaseRoom={this.props.firebaseRoom}
                     user={2} sender={sender} index={index} creator={3} message={data}></TextMessageSnder>
             case "photo":
-                return <PhotoMessage pressinIn={() => {
+                return <PhotoMessage pressingIn={() => {
                     this.replying = true;
                     // this.props.hideAndshow()
                 }} firebaseRoom={this.props.firebaseRoom} showPhoto={(url) => this.props.showPhoto(url)} user={2} sender={sender} index={index} creator={2} message={data}></PhotoMessage>
@@ -56,7 +58,9 @@ export default class Message extends Component {
                     //this.props.hideAndshow()
                 }} index={index} sender={sender} message={data}></AudioMessage>
             case "video":
-                return <VideoMessage room={this.props.room} index={index} sender={sender}
+                return <VideoMessage pressingIn={() =>{
+                    this.replying = true
+                }} room={this.props.room} index={index} sender={sender}
                     playVideo={(video) => { this.props.playVideo(video) }} message={data}></VideoMessage>
             case "attachement":
                 return <FileAttarchementMessaege room={this.props.room} sender={sender} index={index} message={data}></FileAttarchementMessaege>;
@@ -272,7 +276,7 @@ export default class Message extends Component {
                                             this.props.showActions(this.props.message)
                                             Vibration.vibrate(this.longPressDuration)
                                         }} onPress={() => {
-                                            console.warn('humm ! you want to know that contact !')
+                                            this.props.showProfile(this.message.sender.phone)
                                         }}>{this.state.different ? <Text style={nameTextStyle}
                                             note>{" "}{this.state.sender_name}</Text> : <Text>{"         "}</Text>}</TouchableOpacity> : null}<Right>
                                                     {!this.state.sender ? <Text note
@@ -283,7 +287,7 @@ export default class Message extends Component {
                                                         {this.state.time}{"    "}</Text> : null}</Right></View></TouchableWithoutFeedback>
                                         <View>
                                             {this.props.message.reply ? <View style={{ borderRadius: 10, padding: '1%', marginTop: ".4%", width: "100%" }}>
-                                                <ReplyText pressingIn={() => {
+                                                <ReplyText showProfile={(pro) => this.props.showProfile(pro)} pressingIn={() => {
                                                     this.replying = true
                                                 }} openReply={(replyer) => {
                                                     replyer.isThisUser = !this.state.sender

@@ -18,15 +18,15 @@ import SelectableContactList from '../../SelectableContactList';
 import NumericInput from 'react-native-numeric-input'
 import Modal from 'react-native-modalbox';
 import uuid from 'react-native-uuid';
-let data = [ {
+let data = [{
   value: 'Daily',
-},{
-  value:'Weekly'
-  }, {
-    value: 'Monthly',
-  }, {
-    value: 'Yearly',
-  }];
+}, {
+  value: 'Weekly'
+}, {
+  value: 'Monthly',
+}, {
+  value: 'Yearly',
+}];
 
 let { height, width } = Dimensions.get('window')
 
@@ -59,29 +59,29 @@ export default class TasksCreation extends Component {
   @autobind
   init() {
     //stores.Reminds.removeRemind("newRemindId").then()
-    this.props.remind? setTimeout(() => {
+    this.props.remind ? setTimeout(() => {
       let remind = this.props.remind
       this.setState({
         currentRemind: remind,
         mounted: true,
-        recurrent : remind.recursive_frequency.interval !== 1 && remind.recursive_frequency.frequency !== 'yearly',
+        recurrent: remind.recursive_frequency.interval !== 1 && remind.recursive_frequency.frequency !== 'yearly',
         members: this.props.event.participant,
         currentMembers: remind && remind.members ? remind.members : [],
         date: remind && remind.period ? moment(remind.period).format() : moment().format(),
         title: remind && remind.period ? moment(remind.period).format() : moment().format()
       });
-    }) : stores.Reminds.loadRemind(this.props.remind_id ? 
+    }) : stores.Reminds.loadRemind(this.props.remind_id ?
       this.props.remind_id : "newRemindId").then(remind => {
-      this.setState({
-        currentRemind: remind,
-        mounted: true,
-        recurrent: !(remind.recursive_frequency.interval === 1 && remind.recursive_frequency.frequency === 'yearly'),
-        members: this.props.event.participant,
-        currentMembers: remind && remind.members ? remind.members : [],
-        date: remind && remind.period ? moment(remind.period).format() : moment().format(),
-        title: remind && remind.period ? moment(remind.period).format() : moment().format()
-      });
-    })
+        this.setState({
+          currentRemind: remind,
+          mounted: true,
+          recurrent: !(remind.recursive_frequency.interval === 1 && remind.recursive_frequency.frequency === 'yearly'),
+          members: this.props.event.participant,
+          currentMembers: remind && remind.members ? remind.members : [],
+          date: remind && remind.period ? moment(remind.period).format() : moment().format(),
+          title: remind && remind.period ? moment(remind.period).format() : moment().format()
+        });
+      })
 
 
   }
@@ -121,9 +121,9 @@ export default class TasksCreation extends Component {
       //deactivate the date picker before setting the obtain time     
       this.setState({ date: dateTime, isDateTimePickerVisible: false });
       this.props.update ? null : stores.Reminds.updatePeriod({ remind_id: "newRemindId", period: dateTime }, false).then(() => { });
-    }else{
+    } else {
       this.setState({
-        isDateTimePickerVisible:false
+        isDateTimePickerVisible: false
       })
     }
   }
@@ -138,9 +138,9 @@ export default class TasksCreation extends Component {
       let dateTime = newDate + "T" + time
       this.setState({ show: false, date: dateTime });
       this.props.update ? null : stores.Reminds.updatePeriod({ remind_id: "newRemindId", period: dateTime }, false).then(() => { });
-    }else{
+    } else {
       this.setState({
-        show:false
+        show: false
       })
     }
 
@@ -451,6 +451,10 @@ export default class TasksCreation extends Component {
          </View>*/}
 
           <ScrollView ref={"scrollView"} showsVerticalScrollIndicator={false}>
+            {this.props.shouldRestore ? <View style={{ width: '95%', alignItems: 'flex-end', }}><Button style={{ alignSelf: 'flex-end', margin: '2%', marginRight: '2%', }} onPress={() => {
+              this.props.onClosed()
+              this.props.restore(this.props.remind)
+            }} rounded><Text>{"Restore"}</Text></Button></View> : null}
             <View pointerEvents={this.props.master ? null : 'none'} style={{ height: height / 8, alignItems: 'center' }}>
               {/*<Text style={{alignSelf:'flex-start',margin:"3%",fontWeight:"500",fontSize:16}} >Title :</Text>*/}
               <Item style={{ borderColor: 'black', width: "95%", marginTop: "3%" }} rounded>
@@ -459,9 +463,9 @@ export default class TasksCreation extends Component {
               </Item>
             </View>
 
-            <View pointerEvents={this.props.master ? null : 'none'} style={{ flexDirection: "column", justifyContent: "space-between" }}>
+            <View style={{ flexDirection: "column", justifyContent: "space-between" }}>
               <Item rounded style={{ flexDirection: "row", height: height / 17, margin: '2%' }} >
-                <View style={{ width: "12%" }} >
+                <View pointerEvents={this.props.master ? null : 'none'} style={{ width: "12%" }} >
                   <TouchableOpacity onPress={this.showDateTimePicker}>
                     <Icon
                       active
@@ -471,7 +475,7 @@ export default class TasksCreation extends Component {
                     />
                   </TouchableOpacity>
                 </View>
-                <View>
+                <View pointerEvents={this.props.master ? null : 'none'}>
                   <Input editable={false} placeholder="select date of event" value={moment(this.state.date).format("dddd, MMMM Do YYYY")} style={{ color: "#696969" }} />
                 </View>
 
@@ -486,7 +490,7 @@ export default class TasksCreation extends Component {
               </Item>
 
               <Item rounded style={{ flexDirection: "row", height: height / 17, marginLeft: "1%", marginRight: "1%" }}  >
-                <View style={{ width: "12%" }} >
+                <View pointerEvents={this.props.master ? null : 'none'} style={{ width: "12%" }} >
                   <TouchableOpacity onPress={this.timepicker}>
                     <Icon
                       active
@@ -496,17 +500,15 @@ export default class TasksCreation extends Component {
                     />
                   </TouchableOpacity>
                 </View>
-                <View>
+                <View pointerEvents={this.props.master ? null : 'none'} >
                   <Input editable={false} placeholder="select event time" value={moment(this.state.date).format('hh:mm:s a')} style={{ color: "#696969" }} />
                 </View>
 
                 {this.state.show && <DateTimePicker mode="time" value={this.state.defaultTime} display="default" onChange={this.setTime} />}
 
               </Item>
-              <Item>
-              </Item>
               <Item style={{ width: "100%" }}>
-                <Button onPress={() => this.setRecurrencyState()}
+                <Button pointerEvents={this.props.master ? null : 'none'} onPress={() => this.setRecurrencyState()}
                   transparent>
                   <Icon name={
                     this.state.recurrent ? "radio-button-checked" :
@@ -517,7 +519,7 @@ export default class TasksCreation extends Component {
               </Item>
               {this.state.recurrent ?
                 <Item style={{ marginLeft: '4%' }}><View style={{ width: "95%", flexDirection: "column", justifyContent: "space-between", marginTop: "1%" }}>
-                  <View style={{ margin: "2%", width: "100%", height: 45 }}>
+                  <View pointerEvents={this.props.master ? null : 'none'} style={{ margin: "2%", width: "100%", height: 45 }}>
                     <Dropdown label='Frequency'
                       data={data}
                       baseColor={"#1FABAB"}
@@ -531,8 +533,8 @@ export default class TasksCreation extends Component {
                     />
                   </View>
                   <View >
-                    <Item style={{ width: "100%", marginLeft: '3%', padding: '1%' }}>
-                      <View style={{ flexDirection: 'column', }}>
+                    <Item pointerEvents={this.props.master ? null : 'none'} style={{ width: "100%", marginLeft: '3%', padding: '1%' }}>
+                      <View pointerEvents={this.props.master ? null : 'none'} style={{ flexDirection: 'column', }}>
                         <Text style={{ fontWeight: 'bold', }}>Interval</Text>
                         <View style={{ marginLeft: '5%', flexDirection: 'row', }}>
                           <Text style={{ fontStyle: 'italic', marginTop: 3, }}>Every  </Text>
@@ -556,11 +558,11 @@ export default class TasksCreation extends Component {
                         </View>
                       </View>
                     </Item>
-                    <Item style={{ marginLeft: '4%' }}>
+                    <Item pointerEvents={this.props.master ? null : 'none'} style={{ marginLeft: '4%' }}>
                       <Label>
                         Ends
                     </Label>
-                      <Button style={{ width: "90%" }} onPress={() => this.showEndatePiker()} transparent>
+                      <Button pointerEvents={this.props.master ? null : 'none'} style={{ width: "90%" }} onPress={() => this.showEndatePiker()} transparent>
                         <Text>{this.state.date && this.state.currentRemind.recursive_frequency.recurrence ? `On ${moment(this.state.currentRemind.recursive_frequency.recurrence).format('dddd, MMMM Do YYYY')}` : "Select Recurrence Stop Date"}</Text>
                       </Button>
                       {this.state.showEndatePiker ? <DateTimePicker value={new Date()}
@@ -572,7 +574,7 @@ export default class TasksCreation extends Component {
                 </View></Item> : null}
               <View>
                 <Item>
-                  <View style={{ width: '60%' }}>
+                  <View pointerEvents={this.props.master ? null : 'none'} style={{ width: '60%' }}>
                     {this.state.currentRemind.status == "public" ?
                       <Button onPress={() => this.onChangedStatus()} transparent>
                         <Icon name="md-radio-button-on" //active={true}  type="Ionicons" style={{ color: "#0A4E52", alignSelf: "center", marginTop: "1%" }} 
@@ -586,13 +588,13 @@ export default class TasksCreation extends Component {
                       </Button>}
                   </View>
                   {this.state.currentRemind.status == "private" && !this.props.update ?
-                    <Button onPress={() => {  this.setState({ selectMemberState: true }) }} transparent>
+                    <Button pointerEvents={this.props.master ? null : 'none'} onPress={() => { this.setState({ selectMemberState: true }) }} transparent>
                       <Icon name="ios-people" type="Ionicons" style={{ fontSize: 25 }} />
                       <Text>Members</Text>
                     </Button> : null}
                 </Item>
                 <Item pointerEvents={this.props.master ? null : 'none'}>
-                  <Button onPress={() => this.updateRequestReportOnComplete()}
+                  <Button pointerEvents={this.props.master ? null : 'none'} onPress={() => this.updateRequestReportOnComplete()}
                     transparent>
                     <Icon name={
                       this.state.currentRemind.must_report ? "radio-button-checked" :
@@ -603,7 +605,7 @@ export default class TasksCreation extends Component {
                 </Item>
               </View>
             </View>
-            <View style={{ height: height / 3 + height / 26, alignItems: 'flex-start', justifyContent: 'center' }}>
+            <View style={{ height: (height / (this.props.master ? 3 : 1.5)) + (height / 26), alignItems: 'flex-start', justifyContent: 'center' }}>
               <View pointerEvents={!this.props.master ? "none" : null} style={{ width: "100%", height: "100%" }}>
                 <Text style={{ alignSelf: 'flex-start', margin: "3%", fontWeight: "500", fontSize: 16 }} >Description</Text>
                 <Textarea
@@ -611,7 +613,7 @@ export default class TasksCreation extends Component {
                   value={this.state.currentRemind.description}
                   containerStyle={{
                     width: "94%", margin: "1%",
-                    height: height / 4,
+                    height: '65%',
                     borderRadius: 15, borderWidth: 1,
                     borderColor: "#9E9E9E",
                     backgroundColor: "#f5fffa"

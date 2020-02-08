@@ -88,7 +88,7 @@ export default class HighlightContent extends Component {
                         }
                         {this.props.highlight.description ?
                             <View style={{ margin: '1%', }}>
-                                <TextContent color={"#FEFEDE"} text={this.props.highlight.description.split(' ').length > 200 ? this.props.highlight.description.split(' ').slice(0, 300).join(' ') : this.props.highlight.description}></TextContent>
+                                <TextContent color={"#FEFEDE"} text={this.props.highlight.description}></TextContent>
                             </View> : null
                         }
                     </View>

@@ -24,6 +24,7 @@ export default class Creator extends Component {
                     mounted: true,
                     creator: creator
                 })
+               this.props.giveCreator?this.props.giveCreator(creator):null
             })
         },10)
     }

@@ -9,7 +9,7 @@ import SelectableContactsMaster from "./SelectableContactsMaster";
 import SelectableProfileWithOptions from './SelectableProfileWithOption';
 import emitter from '../../../services/eventEmiter';
 import CacheImages from '../../CacheImages';
-export default class MamageMembersModal extends PureComponent {
+export default class ManageMembersModal extends PureComponent {
     constructor(props) {
         super(props)
         this.state = {
@@ -85,7 +85,7 @@ export default class MamageMembersModal extends PureComponent {
                                 loaded: true,
                                 hideTitle: this.props.hideTitle
                             })
-                        }, 20)
+                        }, 10)
                     })
                 }}
                 style={{
@@ -117,7 +117,7 @@ export default class MamageMembersModal extends PureComponent {
                                return (<SelectableProfileWithOptions delay={this.delay} toggleMaster={(member) => this.toggleMaster(member)}
                                     selected={member => { this.addMember(member) }}
                                     changeMasterState={(newState) => this.props.changeMasterState(newState) }
-                                    checkActivity={(memberPhone) => this.props.checkActivity(memberPhone)}
+                                    checkActivity={(member) => this.props.checkActivity(member)}
                                     creator={this.props.creator}
                                     mainMaster={this.props.master}
                                     unselected={(member) => this.remove(member)}

@@ -148,7 +148,7 @@ export default class HighLightsDetails extends Component {
                             replyer_phone: stores.LoginStore.user.phone,
                             replyer_name: stores.LoginStore.user.name,
                             title : `${replyer.title}: \n ${replyer.description}`,
-                            type_extern: 'HighLights ',
+                            type_extern: 'Posts',
                         }
                         this.setState({
                             replyer: reply,
