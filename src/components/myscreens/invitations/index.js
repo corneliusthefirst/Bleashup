@@ -57,10 +57,10 @@ import shadower from "../../shadower";
         return true
       }
       componentWillMount() {
-        BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this));
+       this.BackPressHandler =  BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this));
       }
       componentWillUnmount() {
-        BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton.bind(this));
+        this.BackPressHandler.remove()
       }
 
   _keyExtractor = (item, index) => item.invitation_id;
