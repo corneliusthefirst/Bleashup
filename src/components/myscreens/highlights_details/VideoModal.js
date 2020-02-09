@@ -42,11 +42,11 @@ export default class VideoViewer extends Component {
 
     }
     componentWillUnmount(){
-        StatusBar.setHidden(false, false)
+        //StatusBar.setHidden(false, false)
     }
     transparent = "rgba(50, 51, 53, 0.8)";
     render() {
-        StatusBar.setHidden(true, true)
+       // StatusBar.setHidden(true, true)
         return (
             <Modal
              //backdropPressToClose={false}
@@ -61,7 +61,7 @@ export default class VideoViewer extends Component {
                 onClosed={() => {
                     Orientation.lockToPortrait()
                     this.props.hideVideo()
-                    StatusBar.setHidden(false, false)
+                    //StatusBar.setHidden(false, false)
                     this.setState({
                         message: null,
                         fullScreen:true,
@@ -81,6 +81,7 @@ export default class VideoViewer extends Component {
                 }}
             >
                 <View>
+                    <StatusBar animated={true} barStyle="light-content" backgroundColor="black"></StatusBar>
                     <View style={{ height: screenheight, width: screenWidth,  }}>
                         <View style={{
                                 height: this.state.fullScreen ? '100%' : 400,

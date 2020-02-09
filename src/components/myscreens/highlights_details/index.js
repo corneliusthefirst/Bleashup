@@ -292,7 +292,7 @@ export default class HighLightsDetails extends Component {
                     width: "100%",
                     backgroundColor: '#3D3D1F',
                     opacity: 0.9
-                }}>
+                }}><StatusBar animated={true} barStyle="light-content" backgroundColor="#3D3D1F"></StatusBar>
                     {!this.state.mounted ? <Spinner size={'small'}></Spinner> :
                         this.messageList()
                     }
@@ -342,16 +342,16 @@ export default class HighLightsDetails extends Component {
                         this.props.navigation.navigate('Home')
                     }} name="doubleleft" style={{ marginLeft: '8%', color: '#0A4E52', marginBottom: '7%', alignSelf: 'center', }} type={"AntDesign"}></Icon>
                 </View>
-                <PhotoViewer photo={this.state.photo} open={this.state.showPhoto} hidePhoto={() => {
+                {this.state.showPhoto?<PhotoViewer photo={this.state.photo} open={this.state.showPhoto} hidePhoto={() => {
                     this.setState({
                         showPhoto: false
                     })
-                }}></PhotoViewer>
-                <VideoViewer video={this.state.video} open={this.state.showVideo} hideVideo={() => {
+                }}></PhotoViewer>:null}
+                {this.state.showVideo?<VideoViewer video={this.state.video} open={this.state.showVideo} hideVideo={() => {
                     this.setState({
                         showVideo: false
                     })
-                }}></VideoViewer>
+                }}></VideoViewer>:null}
             </View>
         );
     }
