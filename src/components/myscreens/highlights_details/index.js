@@ -55,8 +55,11 @@ export default class HighLightsDetails extends Component {
             messageListHeight: !this.state.showImojiInput ? this.formHeightPercent(screenheight - 140) : this.formHeightPercent(screenheight - 350)
         });
     }
+    goback(){
+        this.props.navigation.goBack()
+    }
     handleBackButton() {
-        this.props.navigation.navigate('Home')
+        this.goback()
         StatusBar.setHidden(false, true)
         return true
     }
@@ -223,7 +226,7 @@ export default class HighLightsDetails extends Component {
                     flexDirection: 'row',
                 }}>
                     <Icon onPress={() => {
-                        this.props.navigation.navigate('Home')
+                        this.goback()
                     }} name="doubleleft" style={{ marginLeft: '8%', color: '#0A4E52', marginBottom: '7%', alignSelf: 'center', }} type={"AntDesign"}></Icon>
                 </View>
                 {this.state.showPhoto?<PhotoViewer photo={this.state.photo} open={this.state.showPhoto} hidePhoto={() => {
