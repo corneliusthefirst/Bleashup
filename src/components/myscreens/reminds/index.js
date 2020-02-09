@@ -38,7 +38,7 @@ export default class Reminds extends Component {
     console.warn("running remind index con")
   }
   //manual event_id
-
+  state={}
   addMembers(currentMembers, item) {
     console.warn("pressing add contacts")
     this.setState({
@@ -99,6 +99,7 @@ export default class Reminds extends Component {
 
   @autobind
   AddRemind() {
+    console.warn("opening remind")
     //this.props.navigation.navigate("TasksCreation",{eventRemindData:this.state.eventRemindData,updateData:this.updateData,event_id:this.state.event_id});
     this.setState({
       RemindCreationState: true,
@@ -365,7 +366,7 @@ export default class Reminds extends Component {
           onClosed={() => {
             this.setState({
               RemindCreationState: false, update: false,
-              remind_id: null
+              remind_id: null,remind:null
             })
           }}
           event={this.props.event}
