@@ -535,10 +535,12 @@ export default class EventHighlights extends Component {
                 </View> : null}
                 <View style={{ height: height / 14, alignItems: 'center', margin: '2%', }}>
                   <Item style={{ borderColor: '#1FABAB', width: "95%", margin: '2%', height: height / 17 }} rounded>
-                    <TextInput maxLength={20} style={{ width: "100%", height: "100%", margin: '2%', marginBottom: '5%', }} value={this.state.currentHighlight.title ? this.state.currentHighlight.title : ""} maxLength={40} placeholder='Post Title' keyboardType='email-address' autoCapitalize="none" returnKeyType='next' inverse last
-                      onChangeText={(value) => requestAnimationFrame(() => {
+                    <TextInput maxLength={20} style={{ width: "100%", height: "100%", margin: '2%', marginBottom: '5%', }} 
+                    value={this.state.currentHighlight.title ? this.state.currentHighlight.title : ""} 
+                    maxLength={40} placeholder='Post Title' keyboardType='email-address' autoCapitalize="none" returnKeyType='next' inverse last
+                      onChangeText={(value) => 
                         this.onChangedTitle(value)
-                      })} />
+                      } />
                   </Item>
                 </View>
                 <View style={{ flexDirection: "row", justifyContent: 'space-between', alignItem: 'center', marginBottom: "2%", ...shadower(6) }}>

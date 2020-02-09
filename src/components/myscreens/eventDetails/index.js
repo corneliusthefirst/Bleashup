@@ -25,7 +25,6 @@ import shadower from "../../shadower";
 import VideoViewer from "../highlights_details/VideoModal";
 import BleashupFlatList from '../../BleashupFlatList';
 import Requester from '../event/Requester';
-import HighlightCardDetail from '../event/createEvent/components/HighlightCardDetail';
 import BleashupAlert from '../event/createEvent/components/BleashupAlert';
 import emitter from '../../../services/eventEmiter';
 import PhotoViewer from "../event/PhotoViewer";
@@ -280,10 +279,7 @@ export default class EventDetailView extends Component {
                         })
                       }}
                       showItem={(item) => {
-                        this.setState({
-                          highlightItem: item,
-                          isHighlightDetailsModalOpened: true
-                        })
+                       this.props.showHighlight(item)
                       }} participant={this.state.participant} parentComponent={this} item={item} ancien={true}
                       ref={"higlightcard"} />
                   );
@@ -414,22 +410,6 @@ export default class EventDetailView extends Component {
             }}
             update={(newHighlight, previousHighlight) => this.updateHighlight(newHighlight, previousHighlight)}
             participant={this.state.participant} parentComponent={this} ref={"highlights"} event_id={this.props.Event.id} />
-          {this.state.isHighlightDetailsModalOpened ? <HighlightCardDetail color={"#FEFFDE"} showVideo={(video) => {
-            this.wasDetailOpened = true
-            this.setState({
-              showVideo: true,
-              video: video,
-              isHighlightDetailsModalOpened: false
-            })
-          }} showPhoto={(photo) => {
-            this.setState({
-              showPhoto: true,
-              isHighlightDetailsModalOpened: false,
-              photo: photo
-            })
-          }} isOpen={this.state.isHighlightDetailsModalOpened}
-           item={this.state.highlightItem} 
-           onClosed={() => { this.setState({ isHighlightDetailsModalOpened: false }) }} /> : null}
           {this.state.isAreYouSureModalOpened ? <BleashupAlert title={"Delete Higlight"} accept={"Yes"} refuse={"No"} message={" Are you sure you want to delete these highlight ?"}
             deleteFunction={() => this.deleteHighlight(this.state.current_highlight)}
             isOpen={this.state.isAreYouSureModalOpened} onClosed={() => { this.setState({ isAreYouSureModalOpened: false }) }} /> : null}

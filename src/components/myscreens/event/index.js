@@ -55,6 +55,7 @@ import RemindRequest from '../reminds/Requester';
 import TasksCreation from "../reminds/TasksCreation";
 import testForURL from '../../../services/testForURL';
 import ProfileModal from "../invitations/components/ProfileModal";
+import VideoViewer from '../highlights_details/VideoModal';
 
 const screenWidth = Math.round(Dimensions.get('window').width);
 
@@ -142,7 +143,10 @@ export default class Event extends Component {
             this.setState({
               working: false
             })
-          }} {...this.props} Event={this.event}></EventDatails>
+          }} {...this.props}
+          showVideo={(url) => this.showVideo(url)}
+          showHighlight={(h) => this.showHighlightDetails(h)}
+          Event={this.event}></EventDatails>
       case "Reminds":
         return <Remind startLoader={() => {
           this.setState({
@@ -212,6 +216,7 @@ export default class Event extends Component {
           propcessAndFoward={(change) => this.propcessAndFoward(change)}
           mention={(data) => this.mention(data)}
           restore={(data) => this.restore(data)}
+          openPhoto={(url) => this.openPhoto(url)}
           master={this.master}
           isM={this.state.isMe}
           activeMember={this.state.activeMember}
@@ -1181,6 +1186,13 @@ export default class Event extends Component {
       photo: photo
     })
   }
+  showVideo(url) {
+    this.setState({
+      video: url,
+      showVideoModal: true,
+      isHighlightDetailModalOpened: false
+    })
+  }
   render() {
     //console.error(this.event.id)
     //console.warn(this.event.calendar_id)
@@ -1450,7 +1462,7 @@ export default class Event extends Component {
         {this.state.isHighlightDetailModalOpened ? <HighlightCardDetail
           shouldRestore={this.state.shouldRestore}
           showPhoto={(url) => this.showPhoto(url)}
-          showVideo={(url) => showVideo(url)}
+          showVideo={(url) => this.showVideo(url)}
           restore={(item) => this.restoreHighlight({ new_value: { new_value: item } })}
           isOpen={this.state.isHighlightDetailModalOpened}
           item={this.state.highlight}
@@ -1472,6 +1484,12 @@ export default class Event extends Component {
             isProfileModalOpened: false
           })
         }}></ProfileModal> : null}
+        {this.state.showVideoModal ? <VideoViewer video={this.state.video} open={this.state.showVideoModal} hideVideo={() => {
+          this.setState({
+            showVideoModal: false,
+            isHighlightDetailModalOpened: true
+          })
+        }}></VideoViewer> : null}
       </View>
     </SideMenu>
     );
