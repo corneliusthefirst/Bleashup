@@ -54,7 +54,7 @@ export default class ContactListModal extends PureComponent {
                             loaded: true,
                             //hideTitle: this.props.hideTitle
                         })
-                    }, 20)
+                    }, 100)
                 }}
                 style={{
                     height: "97%",

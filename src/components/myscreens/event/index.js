@@ -170,6 +170,8 @@ export default class Event extends Component {
         return <EventChat
           activity={this.event}
           //activity_name={this.event.about.title}
+          showLoader={() => this.startLoader()}
+          stopLoader={() => this.stopLoader()}
           showProfile={(pro) => this.showProfile(pro)}
           roomName={this.state.roomName}
           members={this.state.roomMembers}

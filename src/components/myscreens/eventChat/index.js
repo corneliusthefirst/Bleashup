@@ -205,6 +205,8 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
       handleReplyExtern={(reply) => {
         this.props.handleReplyExtern(reply)
       }}
+      showLoader={this.props.showLoader}
+      stopLoader={this.props.stopLoader}
       showProfile={(pro) => this.props.showProfile(pro)}
       activity_name={this.activity.about.title}
       close={() => this.props.close()}

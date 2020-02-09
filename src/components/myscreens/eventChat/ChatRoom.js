@@ -1111,7 +1111,9 @@ export default class ChatRoom extends Component {
         }), 5000)
     }
     showMembers() {
+        this.props.showLoader()
         firebase.database().ref(`rooms/${this.props.activity_id}/${this.props.firebaseRoom}`).once('value', snapshot => {
+            this.props.stopLoader()
             if (snapshot.val()) {
                 this.props.showMembers(snapshot.val().members)
             } else {

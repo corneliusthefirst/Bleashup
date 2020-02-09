@@ -31,7 +31,7 @@ export default class ProfileView extends Component {
                         content: user.status
                     }
                 })
-                this.props.setContact(user)
+                this.props.setContact ? this.props.setContact(user) : null
             }
         }), 20 * this.props.delay ? this.props.delay : 2)
     }
@@ -43,11 +43,11 @@ export default class ProfileView extends Component {
     render() {
         return this.state.hide ? null : this.state.isMount ? (
 
-            <View style={{ flexDirection: "row",margin: '1%', }}>
+            <View style={{ flexDirection: "row", margin: '1%', }}>
                 <Button onPress={() => {
                     requestAnimationFrame(() => {
                         this.setState({
-                            isModalOpened:true
+                            isModalOpened: true
                         })
                     });
                 }} transparent>
