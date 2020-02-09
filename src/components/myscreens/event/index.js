@@ -17,7 +17,6 @@ import Votes from "../votes";
 import { reject } from "lodash"
 import EventChat from "../eventChat";
 import Contributions from "../contributions";
-import BleashupFlatList from "../../BleashupFlatList";
 import SWView from './SWView';
 import SideMenu from 'react-native-side-menu';
 import ImagePicker from 'react-native-customized-image-picker';

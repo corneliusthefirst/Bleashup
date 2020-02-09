@@ -15,7 +15,6 @@ import io.invertase.firebase.auth.RNFirebaseAuthPackage; // <-- Add this line
 import com.kevinresol.react_native_sound_recorder.RNSoundRecorderPackage;
 import io.github.elyx0.reactnativedocumentpicker.DocumentPickerPackage;
 import com.mg.app.PickerPackage;
-import com.shahenlibrary.RNVideoProcessingPackage;
 import com.vinzscam.reactnativefileviewer.RNFileViewerPackage;
 import com.brentvatne.react.ReactVideoPackage;
 import com.zmxv.RNSound.RNSoundPackage;
@@ -56,7 +55,6 @@ public class MainApplication extends Application implements ReactApplication {
             new RNFirebasePackage(),
             new RNFirebaseAuthPackage(),
             new OrientationPackage(),
-            new RNVideoProcessingPackage(),
             new RNFirebaseDatabasePackage(),
             new RNNestedScrollViewPackage(),
             new RNFirebaseNotificationsPackage(),
