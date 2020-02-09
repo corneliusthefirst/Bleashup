@@ -271,7 +271,9 @@ export default class Reminds extends Component {
           </View>
 
           <View>
-            <Icon type='AntDesign' name="pluscircle" style={{ color: "#1FABAB" }} onPress={() => this.AddRemind()} />
+            <TouchableOpacity onPress={() => requestAnimationFrame(() => this.AddRemind() )}>
+            <Icon type='AntDesign' name="pluscircle" style={{ color: "#1FABAB" }} />
+            </TouchableOpacity>
           </View>
 
         </View>

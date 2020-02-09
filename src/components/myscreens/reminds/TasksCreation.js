@@ -18,6 +18,7 @@ import SelectableContactList from '../../SelectableContactList';
 import NumericInput from 'react-native-numeric-input'
 import Modal from 'react-native-modalbox';
 import uuid from 'react-native-uuid';
+import emitter from '../../../services/eventEmiter';
 let data = [{
   value: 'Daily',
 }, {
@@ -310,6 +311,9 @@ export default class TasksCreation extends Component {
       })
     }
     else {
+      this.setState({
+        creating: true
+      })
       let newRemind = request.Remind();
       newRemind = this.state.currentRemind;
       newRemind.id = uuid.v1();
@@ -325,8 +329,18 @@ export default class TasksCreation extends Component {
       newRemind.members = newRemind.status === 'private' ? this.state.currentMembers : []
       this.props.onClosed()
       this.props.createRemind(newRemind)
-      this.resetRemind();
-      stores.Reminds.removeRemind("newRemindId").then(() => { });
+      emitter.once('success-creation', () => {
+        this.resetRemind();
+        stores.Reminds.removeRemind("newRemindId").then(() => { });
+        this.setState({
+          creating: false
+        })
+      })
+      emitter.once('error-in-creation', () => {
+        this.setState({
+          creating: false
+        })
+      })
 
     }
 
@@ -630,18 +644,18 @@ export default class TasksCreation extends Component {
 
               </View>
             </View>
-            {this.props.master ? !this.props.update ?
-              <TouchableOpacity style={{ width: "20%", alignSelf: 'center', marginBottom: "3%", marginLeft: "68%", marginTop: "-8%" }}>
+            {!this.state.creating ? this.props.master ? !this.props.update ?
+              <View style={{ width: "20%", alignSelf: 'center', marginBottom: "3%", marginLeft: "68%", marginTop: "-8%" }}>
                 <Button
                   onPress={() => { this.addNewRemind() }} rounded>
                   <Text style={{ color: "#FEFFDE" }}> Create </Text>
                 </Button>
-              </TouchableOpacity> : <TouchableOpacity style={{ width: "22%", marginBottom: "1%", marginLeft: "72%", marginTop: "-8%" }}>
+              </View> : <View style={{ width: "22%", marginBottom: "1%", marginLeft: "72%", marginTop: "-8%" }}>
                 <Button style={{ width: "100%", borderRadius: 15, borderColor: "#1FABAB", backgroundColor: "#1FABAB", justifyContent: 'center', alignItem: 'center' }}
                   onPress={() => { this.updateRemind() }}>
                   <Text style={{ color: "#FEFFDE", fontSize: 12 }}> Update </Text>
                 </Button>
-              </TouchableOpacity> : null
+              </View> : null : <Spinner></Spinner>
             }
 
           </ScrollView>

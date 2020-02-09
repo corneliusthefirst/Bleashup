@@ -350,6 +350,9 @@ export default class EventHighlights extends Component {
         });
       }).catch(() => {
         this.props.stopLoader()
+        this.setState({
+          creating: false
+        })
       })
     }
   }
@@ -668,17 +671,17 @@ export default class EventHighlights extends Component {
                   alignItem: 'center'
                 }}>
                   {!this.state.update ? this.state.creating ? <Spinner></Spinner> :
-                    <TouchableOpacity style={{ alignSelf: 'flex-end', elevaation: 10 }}>
+                    <View style={{ alignSelf: 'flex-end', }}>
                       <Button onPress={() => { this.AddHighlight() }} rounded>
                         <Text style={{ color: "#FEFFDE", fontWeight: 'bold', }}>{"Ok!"}</Text>
                       </Button>
-                    </TouchableOpacity> :
-                    <TouchableOpacity style={{ alignSelf: 'flex-end' }}>
+                    </View> :
+                    <View style={{ alignSelf: 'flex-end' }}>
                       <Button
                         onPress={() => { this.updateHighlight() }} rounded>
                         <Text style={{ color: "#FEFFDE", fontWeight: 'bold', }}>{"Update"}</Text>
                       </Button>
-                    </TouchableOpacity>}
+                    </View>}
                 </View>
               </View>
             </ScrollView>

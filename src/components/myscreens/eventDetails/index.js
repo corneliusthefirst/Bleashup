@@ -226,8 +226,8 @@ export default class EventDetailView extends Component {
               <Title style={{ color: "#0A4E52", fontWeight: 'bold', }}>{this.props.Event.about.title}</Title>
             </View>
             <View >
-              <TouchableOpacity style={{}}>
-                <Icon type='AntDesign' name="pluscircle" style={{ color: "#1FABAB", fontSize: 25, alignSelf: 'center', marginRight: "5%", }} onPress={this.newHighlight} />
+              <TouchableOpacity onPress={() => requestAnimationFrame(() => this.newHighlight())} style={{}}>
+                <Icon type='AntDesign' name="pluscircle" style={{ color: "#1FABAB", fontSize: 25, alignSelf: 'center', marginRight: "5%", }} />
               </TouchableOpacity>
             </View>
 
