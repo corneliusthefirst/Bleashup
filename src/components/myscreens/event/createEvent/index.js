@@ -258,7 +258,17 @@ componentDidMount(){
     
     
 
-         <EventPhoto event={this.state.currentEvent}  isOpen={this.state.EventPhotoState} onClosed={(background)=>{
+         <EventPhoto closeTemporarily={() => {
+           this.setState({
+             EventPhotoState: false,
+           })
+           setTimeout(() => {
+             this.setState({
+               EventPhotoState: true
+             })
+           }, 600)
+         }}
+          event={this.state.currentEvent}  isOpen={this.state.EventPhotoState} onClosed={(background)=>{
            this.setState({
              EventPhotoState:false,
              currentEvent:{...this.state.currentEvent,

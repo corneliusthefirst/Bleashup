@@ -165,7 +165,10 @@ componentDidUpdate(prevProps,prevState){
                  {this.state.enlargeImage?<PhotoViewer open={this.state.enlargeImage} 
                  hidePhoto={() => this.setState({ enlargeImage: false })}
                   photo={this.state.EventPhoto} />:null}
-                 <SearchImage accessLibrary={()=>{this.TakePhotoFromCamera()}} isOpen={this.state.searchImageState} onClosed={() => {this.setState({ searchImageState: false })}}  />
+                 <SearchImage h_modal={true}  accessLibrary={()=>{this.TakePhotoFromCamera()}} isOpen={this.state.searchImageState} onClosed={(mother) => {
+                   this.setState({ searchImageState: false })
+                   mother?this.props.closeTemporarily() : null
+                  }}  />
       
        </View>
                 </Modal>
