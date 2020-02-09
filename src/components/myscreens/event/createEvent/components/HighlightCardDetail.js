@@ -48,7 +48,7 @@ export default class HighlightCardDetail extends Component {
                 this.props.onClosed()
                 this.props.restore(this.props.item)
               }} rounded><Text>{"Restore"}</Text></Button></View> : null}
-            <HighLight color={this.props.color} showPhoto={(url) => this.props.showPhoto(url)} modal={true} showVideo={(url) => this.props.showVideo(url)} background={"#FEFFDE"} highlight={this.props.item} disableSwipper={true}></HighLight>
+            <HighLight color={"#FEFFDE"} showPhoto={(url) => this.props.showPhoto(url)} modal={true} showVideo={(url) => this.props.showVideo(url)} background={"#FEFFDE"} highlight={this.props.item} disableSwipper={true}></HighLight>
             {/*<View style={{alignItems:'center',justifyContent:'center',height:height/7}}>
                <Title style={{color:'#1FABAB',fontSize:23,fontWeight:"bold"}}>{this.props.item.title}</Title>
             </View>
