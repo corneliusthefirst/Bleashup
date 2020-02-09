@@ -85,8 +85,9 @@ export default class NotificationModal extends PureComponent {
                                                 </CacheImages> : <Thumbnail small source={{ uri: this.props.change.updater.profile ? this.change.updater.profile : '' }}></Thumbnail>}
                                             </View>
                                             <View style={{ marginTop: "3%", marginLeft: "4%", flexDirection: 'column', width: "65%" }}>
-                                                <Text style={{ marginBottom: "2%", fontWeight: 'bold', }}>{this.props.change.updater.nickname}</Text>
-                                                <Text style={{ marginLeft: "2%" }} note>{this.props.change.updater.status}</Text>
+                                                <Text ellipsizeMode={'tail'} numberOfLines={1} style={{ marginBottom: "2%", fontWeight: 'bold', }}>{this.props.change.updater.nickname}</Text>
+                                                {this.props.change.updater.status && this.props.change.updater.status !== 'undefined'?<Text ellipsizeMode={'tail'} 
+                                                numberOfLines={1} style={{ marginLeft: "2%" }} note>{this.props.change.updater.status}</Text>:null}
                                             </View>
                                         </View>}
                                 </View>

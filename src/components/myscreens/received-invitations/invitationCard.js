@@ -260,19 +260,19 @@ class CardListItem extends Component {
         </Text>
           </CardItem>
           <CardItem>
-            <Left>
+            <Left style={{ margin: '2%' }}>
               <TouchableOpacity onPress={() => requestAnimationFrame(() => this.props.showPhoto(this.state.item.sender_Image))} >
                 {this.state.loading ? null : testForURL(this.state.item.sender_Image) ? <CacheImages small thumbnails source={{ uri: this.state.item.sender_Image }} /> :
                   <Thumbnail small source={{ uri: this.state.item.sender_Image }}></Thumbnail>}
               </TouchableOpacity>
-              <Body >
-                {this.state.loading ? null : <Text style={{ fontWeight: 'bold', }} >{this.state.item.sender_name}</Text>}
-                <Text style={{
+              <Body>
+              <View style={{flexDirection: 'row',alignSelf: 'flex-start',}}>
+                {this.state.loading ? null : <Text style={{ fontWeight: 'bold',alignSelf: 'flex-start', }} ellipsizeMode={'tail'} numberOfLines={1}  >{this.state.item.sender_name}</Text>}
+                {this.state.item.status && this.state.item.status !== 'undefined'?<Text ellipsizeMode={'tail'} numberOfLines={1}  style={{
                   color: 'dimgray', padding: 10, fontStyle: 'italic',
                   fontSize: 16, marginTop: -10, borderWidth: 0
-                }} note>{this.state.item.sender_status && this.state.item.sender_status.length > 50 ?
-                  this.state.item.sender_status.splice(0, 50) : this.state.item.sender_status ?
-                    this.state.item.sender_status : null}</Text>
+                }} note>{this.state.item.sender_status}</Text>:null}
+                </View>
               </Body>
             </Left>
           </CardItem>
@@ -284,14 +284,15 @@ class CardListItem extends Component {
             </Left>
 
             <Body >
-              <TouchableOpacity onPress={() => requestAnimationFrame(() => this.openDetails())
+              <TouchableOpacity style={{ alignSelf: 'flex-start', marginLeft: '-30%',marginTop: '8%',}} onPress={() => requestAnimationFrame(() => this.openDetails())
               } >
-                {this.state.loading ? null : <Text style={{ marginLeft: -40, fontWeight: 'bold', }}
-                >{this.state.item.event_title}</Text>}
-                {this.state.loading && this.state.item.event_time ? null : <Text style={{
-                  marginLeft: -40, color: 'dimgray', fontSize: 12,
+                {this.state.loading ? null : <Title style={{ fontWeight: 'bold', alignSelf: 'flex-start' }}
+                >{this.state.item.event_title}</Title>}
+                {this.state.loading || !this.state.item.event_time ? null : <Text style={{
+                  alignSelf: 'flex-start',
+                  color: 'dimgray', fontSize: 12,
                   fontStyle: 'italic',
-                }}> on  {moment(this.state.item.event_time).format("dddd, MMMM Do YYYY, h:mm:ss a")}</Text>}
+                }}> {`starts on ${moment(this.state.item.event_time).format("dddd, MMMM Do YYYY, h:mm:ss a")}`}</Text>}
               </TouchableOpacity>
             </Body>
           </CardItem>

@@ -540,7 +540,7 @@ export default class Event extends Component {
       })
       return true
     } else {
-      this.props.navigation.navigate("Home")
+      this.goback()
       return true
     }
   }
@@ -1195,6 +1195,9 @@ export default class Event extends Component {
       isHighlightDetailModalOpened: false
     })
   }
+  goback() {
+    this.props.navigation.goBack()
+  }
   render() {
     //console.error(this.event.id)
     //console.warn(this.event.calendar_id)
@@ -1206,7 +1209,7 @@ export default class Event extends Component {
     }} isOpen={this.isOpen} openMenuOffset={this.currentWidth}
       menu={<View><SWView
         navigateHome={() => {
-          this.props.navigation.navigate("Home")
+          this.goback()
         }}
         ref="swipperView"
         publish={() => this.publish()}

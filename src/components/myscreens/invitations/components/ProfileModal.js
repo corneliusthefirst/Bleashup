@@ -31,7 +31,7 @@ export default class ProfileModal extends Component {
                 }}
                 position={'bottom'}
             >
-                <View style={{ margin: '3%',height:'95%' ,width:'95%' }}>
+                <View style={{ margin: '3%', height: '95%', width: '95%' }}>
                     <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                         <TouchableOpacity style={{}} onPress={this.props.onClosed} transparent>
                             <Icon style={{ color: "#1FABAB", fontSize: 35 }} name="close" type="EvilIcons" />
@@ -42,7 +42,7 @@ export default class ProfileModal extends Component {
                         <Text style={{ fontSize: 18, fontWeight: '500', }}>{this.props.profile.nickname}</Text>
                     </View>
 
-                    <View style={{ flex: 5, flexDirection: 'column',padding: 2,...shadower(),backgroundColor: 'transparent', }}>
+                    <View style={{ flex: 5, flexDirection: 'column', padding: 2, ...shadower(), backgroundColor: 'transparent', }}>
                         <TouchableOpacity onPress={() => { this.setState({ enlargeImage: true }) }} >
                             <CacheImages thumbnails source={{ uri: this.props.profile.profile }}
                                 square style={{ height: "100%", width: "100%", borderColor: "#1FABAB", borderRadius: 8, }} />
@@ -50,7 +50,7 @@ export default class ProfileModal extends Component {
                     </View>
 
                     <View style={{ flex: 1, justifyContent: 'flex-start', marginTop: 10, marginLeft: 3 }}>
-                        <Text style={{ fontSize: 17, fontWeight: '400', }} >{this.props.profile.status}</Text>
+                        {this.props.profile.status && this.props.profile.status !== 'undefined' ? <Text style={{ fontSize: 17, fontWeight: '400', }} >{this.props.profile.status}</Text> : null}
                     </View>
                     {/*this.props.isToBeJoint ? (this.props.hasJoin ?
                     <View style={{ flex: 1, flexDirection: 'column', alignItems: 'center', marginTop: 4 }}>

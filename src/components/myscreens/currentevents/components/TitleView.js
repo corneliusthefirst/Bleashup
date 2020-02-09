@@ -59,18 +59,18 @@ export default class TitleView extends Component {
         if (daysDiff == 0) {
             return "Started Today At " + moment(date).format("h:mm a");
         } else if (daysDiff == 1) {
-            return "Past Yesterday at " + moment(date).format("h:mm a")
+            return "Ended Yesterday at " + moment(date).format("h:mm a")
         } else if (daysDiff > 1 && daysDiff < 7) {
-            return `Past ${Math.abs(daysDiff)} Days Ago at ` + moment(date).format("h:mm a")
+            return `Ended ${Math.abs(daysDiff)} Days Ago at ` + moment(date).format("h:mm a")
         } else if (daysDiff == 7) {
-            return "Past 1 Week Ago at " + moment(date).format("h:mm a")
+            return "Ended 1 Week Ago at " + moment(date).format("h:mm a")
         } else if (daysDiff == -1) {
             return "Starting Tomorrow at " + moment(date).format("h:mm a");
         }
         else if (daysDiff < -1) {
             return `Starting in ${Math.abs(daysDiff)} Days at ` + moment(date).format("h:mm a");
         } else {
-            return `Past on ${moment(date).format("dddd, MMMM Do YYYY")} at ${moment(date).format("h:mm a")}`
+            return `Ended on ${moment(date).format("dddd, MMMM Do YYYY")} at ${moment(date).format("h:mm a")}`
         }
     }
     render() {

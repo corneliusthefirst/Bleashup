@@ -221,13 +221,9 @@ export default class Invitations {
         })
     }
     @action setProperties(Events, inform) {
+        let sorter = (a, b) => (a.arrival_date > b.arrival_date ? -1 :
+            a.arrival_date < b.arrival_date ? 1 : 0)
         if (inform) Events = orderBy(Events, ["arrival_date"], ["desc"]);
-        this.SendInvitations = filter(Events, {
-            type: "sent"
-        });
-        this.ReceivedInvitations = filter(Events, {
-            type: "received"
-        });
-        this.invitations = Events
+        this.invitations = Events.sort(sorter)
     }
 }

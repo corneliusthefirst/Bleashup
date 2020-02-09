@@ -56,12 +56,12 @@ export default class ProfileView extends Component {
                         <Thumbnail source={{ uri: this.state.profile.profile }}></Thumbnail>}
                 </Button>
                 <View style={{ marginTop: "3%", marginLeft: "2%", display: 'flex', fontWeight: 'bold', }}>
-                    <Text style={{
+                    <Text ellipsizeMode={'tail'} numberOfLines={1} style={{
                         marginBottom: "2%",
                         color: "#0A4E52",
                         fontWeight: 'bold',
                     }}>{this.state.profile.phone === stores.LoginStore.user.phone ? "You" : this.state.profile.nickname}</Text>
-                    <Text style={{ marginLeft: "2%", fontStyle: 'italic', }} note>{this.state.dataArray.title}</Text>
+                    {this.state.dataArray.content == 'undefined' || !this.state.dataArray.content ? null : <Text ellipsizeMode={'tail'} numberOfLines={1} style={{ marginLeft: "2%", fontStyle: 'italic', }} note>{this.state.dataArray.title}</Text>}
                 </View>
                 {this.state.isModalOpened ? <ProfileModal
                     isOpen={this.state.isModalOpened}

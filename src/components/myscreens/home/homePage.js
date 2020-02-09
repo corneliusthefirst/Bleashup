@@ -63,7 +63,7 @@ class Home extends Component {
     super(props);
     this.state = {
       appState: 'active',
-      isTabModalOpened:true,
+      isTabModalOpened: true,
       currentTab: 0
     };
     this.permisssionListener()
@@ -292,7 +292,7 @@ class Home extends Component {
       }
     })
   }
-  navigateToInvitations(){
+  navigateToInvitations() {
     this.props.navigation.navigate("Invitation")
   }
   render() {
@@ -303,24 +303,27 @@ class Home extends Component {
       <Container style={{ backgroundColor: "#FEFFDE" }}>
         <View style={{
           height: 40, width: "98%",
-           backgroundColor: "#FEFFDE", 
-           borderBottomRightRadius: 5,
-           borderBottomLeftRadius: 5,
-         ...shadower(6),alignSelf: 'center', marginLeft: "1%",marginRight: "1%", }}>
-          <View style={{ flex: 1, backgroundColor: "#FEFFDE", flexDirection: "row", 
-          justifyContent: "space-between", marginLeft: "3%", marginRight: "3%" }}>
+          backgroundColor: "#FEFFDE",
+          borderBottomRightRadius: 5,
+          borderBottomLeftRadius: 5,
+          ...shadower(6), alignSelf: 'center', marginLeft: "1%", marginRight: "1%",
+        }}>
+          <View style={{
+            flex: 1, backgroundColor: "#FEFFDE", flexDirection: "row",
+            justifyContent: "space-between", marginLeft: "3%", marginRight: "3%"
+          }}>
             <Thumbnail small source={require("../../../../assets/ic_launcher_round.png")}></Thumbnail>
-            <TouchableOpacity style={{ marginTop: '2%', }}>
-              <View style={{ alignSelf: "flex-end" ,display: 'flex',flexDirection: 'row',}}>
+            <View style={{ marginTop: '2%', }}>
+              <View style={{ alignSelf: "flex-end", display: 'flex', flexDirection: 'row', }}>
                 <Icon name="sc-telegram" active={true} type="EvilIcons" style={{ color: "#1FABAB", }} onPress={() => this.navigateToInvitations()} />
                 <Icon name="gear" active={true} type="EvilIcons" style={{ color: "#1FABAB", }} onPress={() => this.settings()} />
+              </View>
             </View>
-              </TouchableOpacity>
           </View>
 
         </View>
         <Tabs
-        locked
+          locked
           tabContainerStyle={{
             borderWidth: 1,
             borderRadius: 8,
@@ -328,7 +331,8 @@ class Home extends Component {
             borderBottomWidth: 0,
             alignSelf: 'center',
             ...shadower(20),
-             margin: "1%", height: 45, backgroundColor: "#1FABAB", borderRadius: 4, }}
+            margin: "1%", height: 45, backgroundColor: "#1FABAB", borderRadius: 4,
+          }}
           tabBarPosition="bottom"
           tabBarUnderlineStyle={{
             backgroundColor: "transparent"
@@ -386,7 +390,7 @@ class Home extends Component {
         </ForeignEventsModal> : null}
         <TabModal isOpen={this.state.isTabModalOpened} closed={() => {
           this.setState({
-            isTabModalOpened:false
+            isTabModalOpened: false
           })
         }}></TabModal>
       </Container>
