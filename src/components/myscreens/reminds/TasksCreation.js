@@ -74,9 +74,9 @@ export default class TasksCreation extends Component {
     }) : stores.Reminds.loadRemind(this.props.remind_id ?
       this.props.remind_id : "newRemindId").then(remind => {
         this.setState({
-          currentRemind: remind?remind:request.Remind(),
+          currentRemind: remind ? remind : request.Remind(),
           mounted: true,
-          recurrent: remind &&  !(remind.recursive_frequency.interval === 1 && remind.recursive_frequency.frequency === 'yearly'),
+          recurrent: remind && !(remind.recursive_frequency.interval === 1 && remind.recursive_frequency.frequency === 'yearly'),
           members: this.props.event.participant,
           currentMembers: remind && remind.members ? remind.members : [],
           date: remind && remind.period ? moment(remind.period).format() : moment().format(),
@@ -237,10 +237,8 @@ export default class TasksCreation extends Component {
 
   @autobind
   resetRemind() {
-    this.state.currentRemind = request.Remind();
-    this.state.currentRemind.id = "newRemindId";
     this.setState({
-      currentRemind: this.state.currentRemind,
+      currentRemind: request.Remind(),
 
     });
   }
@@ -298,49 +296,53 @@ export default class TasksCreation extends Component {
 
   @autobind
   addNewRemind() {
-
-    if (!this.state.date || !this.state.currentRemind.title) {
-      this.props.onClosed()
-      Toast.show({
-        text: "Remind Must Have Atleat a Title and Data/Time",
-        buttonText: "Okay",
-        duration: 6000,
-        buttonTextStyle: { color: "#008000" },
-        buttonStyle: { backgroundColor: "#5cb85c" },
-        textStyle: { fontSize: 15 }
-      })
-    }
-    else {
-      this.setState({
-        creating: true
-      })
-      let newRemind = request.Remind();
-      newRemind = this.state.currentRemind;
-      newRemind.id = uuid.v1();
-      newRemind.donners = []
-      newRemind.period = this.state.date
-      let user = stores.LoginStore.user
-      newRemind.creator = user.phone;
-      newRemind.recursive_frequency.recurrence = this.state.currentRemind.recursive_frequency.recurrence ?
-        this.state.currentRemind.recursive_frequency.recurrence : this.state.currentRemind.period
-      newRemind.event_id = this.props.event_id; //user phone is use to uniquely identify locals
-      newRemind.created_at = moment().format();
-      console.warn(this.state.currentMembers)
-      newRemind.members = newRemind.status === 'private' ? this.state.currentMembers : []
-      this.props.onClosed()
-      this.props.createRemind(newRemind)
-      emitter.once('success-creation', () => {
-        this.resetRemind();
-        stores.Reminds.removeRemind("newRemindId").then(() => { });
-        this.setState({
-          creating: false
+    if (!this.props.working) {
+      if (!this.state.date || !this.state.currentRemind.title) {
+        this.props.onClosed()
+        Toast.show({
+          text: "Remind Must Have Atleat a Title and Data/Time",
+          buttonText: "Okay",
+          duration: 6000,
+          buttonTextStyle: { color: "#008000" },
+          buttonStyle: { backgroundColor: "#5cb85c" },
+          textStyle: { fontSize: 15 }
         })
-      })
-      emitter.once('error-in-creation', () => {
+      }
+      else {
         this.setState({
-          creating: false
+          creating: true
         })
-      })
+        let newRemind = request.Remind();
+        newRemind = this.state.currentRemind;
+        newRemind.id = uuid.v1();
+        newRemind.donners = []
+        newRemind.period = this.state.date
+        let user = stores.LoginStore.user
+        newRemind.creator = user.phone;
+        newRemind.recursive_frequency.recurrence = this.state.currentRemind.recursive_frequency.recurrence ?
+          this.state.currentRemind.recursive_frequency.recurrence : this.state.currentRemind.period
+        newRemind.event_id = this.props.event_id; //user phone is use to uniquely identify locals
+        newRemind.created_at = moment().format();
+        newRemind.members = this.state.currentMembers
+        this.props.onClosed()
+        this.props.startLoader()
+        this.props.RemindRequest.CreateRemind(newRemind).then(() => {
+          this.resetRemind();
+          stores.Reminds.removeRemind("newRemindId").then(() => { });
+          this.setState({
+            creating: false
+          })
+          this.props.updateData(newRemind)
+          this.props.stopLoader()
+        }).catch(() => {
+          this.props.stopLoader()
+          this.setState({
+            creating: false
+          })
+        })
+      }
+    } else {
+      Toast.show({ text: 'App is Busy' })
 
     }
 
@@ -480,7 +482,7 @@ export default class TasksCreation extends Component {
             <View style={{ flexDirection: "column", justifyContent: "space-between" }}>
               <Item rounded style={{ flexDirection: "row", height: height / 17, margin: '2%' }} >
                 <View pointerEvents={this.props.master ? null : 'none'} style={{ width: "12%" }} >
-                  <TouchableOpacity onPress={this.showDateTimePicker}>
+                  <TouchableOpacity onPress={() => requestAnimationFrame(this.showDateTimePicker)}>
                     <Icon
                       active
                       type="MaterialIcons"
@@ -505,7 +507,7 @@ export default class TasksCreation extends Component {
 
               <Item rounded style={{ flexDirection: "row", height: height / 17, marginLeft: "1%", marginRight: "1%" }}  >
                 <View pointerEvents={this.props.master ? null : 'none'} style={{ width: "12%" }} >
-                  <TouchableOpacity onPress={this.timepicker}>
+                  <TouchableOpacity onPress={() => requestAnimationFrame(this.timepicker)}>
                     <Icon
                       active
                       type="Ionicons"

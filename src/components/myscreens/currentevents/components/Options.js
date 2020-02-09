@@ -133,14 +133,13 @@ export default class Options extends Component {
                             <Icon type="Entypo" name="bell" style={
                                 {
                                     color: "#1FABAB",
-                                    marginLeft: "30%",
+                                    alignSelf:'center'
                                 }
                             }></Icon>
                             <Label style={{
                                 color: "#1FABAB",
                                 fontSize: 12, fontStyle: 'italic',
                                 alignSelf: 'center',
-                                // marginLeft: "-20%"
                             }} >{"Reminds"}</Label>
                             {this.props.Event.remind_upated ? (
                                 <View style={this.indicatorMargin}>
@@ -167,7 +166,7 @@ export default class Options extends Component {
                             <Icon name="group" type="FontAwesome" style={
                                 {
                                     color: "#1FABAB",
-                                    marginLeft: "20%",
+                                    alignSelf: 'center',
                                 }
                             }></Icon>
                             <Label style={{

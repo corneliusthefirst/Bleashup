@@ -30,6 +30,7 @@ export default class Reminds {
   };
 
   @action addReminds(NewRemind) {
+    console.warn(NewRemind,"p")
     return new Promise((resolve, Reject) => {
       this.readFromStore().then(Reminds => {
         if (Reminds && Reminds.length > 0) Reminds = uniqBy(Array.isArray(NewRemind) ?
@@ -45,26 +46,26 @@ export default class Reminds {
     });
   }
   loadReminds(event_id, fresh) {
-    let sorter = (a, b) => (a.created_at > b.created_at ? -1 : 
+    let sorter = (a, b) => (a.created_at > b.created_at ? -1 :
       a.created_at < b.created_at ? 1 : 0)
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Reminds => {
         ActReminds = Reminds.filter(ele => ele.event_id === event_id)
         if (ActReminds && ActReminds.length > 0) {
-          resolve(fresh? JSON.stringify(ActReminds.sort(sorter)):ActReminds.sort(sorter))
+          resolve(fresh ? JSON.stringify(ActReminds.sort(sorter)) : ActReminds.sort(sorter))
         } else {
           let getRemind = request.EventID()
           getRemind.event_id = event_id
           tcpRequest.getReminds(getRemind, event_id + '_get_reminds').then(JSONData => {
             EventListener.sendRequest(JSONData, event_id + "_get_reminds").then(response => {
               if (!response.data || response.data === 'empty') {
-                resolve(fresh?JSON.stringify([]):[])
+                resolve(fresh ? JSON.stringify([]) : [])
               }
               this.addReminds(response.data).then(() => {
                 resolve(fresh ? JSON.stringify(response.data.sort(sorter)) : response.data.sort(sorter))
               })
             }).catch(() => {
-              resolve(fresh?JSON.stringify([]):[])
+              resolve(fresh ? JSON.stringify([]) : [])
             })
           })
         }
@@ -195,7 +196,7 @@ export default class Reminds {
       this.readFromStore().then(Reminds => {
         let index = findIndex(Reminds, { id: Remind.remind_id })
         ///console.warn(Reminds[index].members.length, Remind.members)
-       Reminds[index].members && Reminds[index].members.length > 0 ? Reminds[index].members = Array.isArray(Remind.members) ?
+        Reminds[index].members && Reminds[index].members.length > 0 ? Reminds[index].members = Array.isArray(Remind.members) ?
           Remind.members.concat(Reminds[index].members) :
           [Remind.members].concat(Reminds[index].members) :
           Reminds[index].members = Array.isArray(Remind.members) ?
@@ -244,7 +245,7 @@ export default class Reminds {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Reminds => {
         let index = findIndex(Reminds, { id: Remind.remind_id })
-       Reminds[index].donners && Reminds[index].donners.length > 0 ?
+        Reminds[index].donners && Reminds[index].donners.length > 0 ?
           Reminds[index].donners = Array.isArray(Remind.donners) ?
             Remind.donners.concat(Reminds[index].donners) :
             [Remind.donners].concat(Reminds[index].donners) :
@@ -264,7 +265,7 @@ export default class Reminds {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Reminds => {
         let index = findIndex(Reminds, { id: Remind.remind_id })
-       Reminds[index].confirm && Reminds[index].confirmed.length > 0 ? Reminds[index].confirmed =
+        Reminds[index].confirm && Reminds[index].confirmed.length > 0 ? Reminds[index].confirmed =
           Array.isArray(Remind.confirmed) ?
             [Remind.confirmed].concat(Reminds[index].confirmed) :
             Remind.donners.concat(Reminds[index].confirmed) :
@@ -355,6 +356,7 @@ export default class Reminds {
   }
 
   @action removeRemind(RemindId) {
+    console.warn("removing remind", RemindId)
     return new Promise((resolve, RejectPromise) => {
       this.readFromStore().then(Reminds => {
         let OldRemind = find(Reminds, { id: RemindId })
@@ -368,20 +370,25 @@ export default class Reminds {
       });
     });
   }
-  loadRemind(id){
-    return new Promise((resolve,reject) => {
+  loadRemind(id) {
+    console.warn("loading remind")
+    return new Promise((resolve, reject) => {
       this.readFromStore().then(Rems => {
-        let rem = find(Rems,{id:id})
-        if(rem){
+        let rem = find(Rems, { id: id })
+        if (rem) {
           resolve(rem)
-        }else{
+        } else {
           let RemindID = request.RemindID();
           RemindID.remind_id = id;
-          tcpRequest.getRemind(RemindID).then(JSONData => {
-            EventListener.sendRequest(JSONData).then(Remind => {
-              this.addReminds(Remind.data).then(() => {
-                resolve(Remind.data)
-              })
+          tcpRequest.getRemind(RemindID, id + "_get_remind").then(JSONData => {
+            EventListener.sendRequest(JSONData, id + "_get_remind").then(Remind => {
+              if(Remind.data !== 'empty'){
+                this.addReminds(Remind.data).then(() => {
+                  resolve(Remind.data)
+                })
+              }else{
+                resolve()
+              }
             }).catch(() => {
               resolve()
             })

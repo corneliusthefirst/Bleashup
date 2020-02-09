@@ -882,30 +882,37 @@ class UpdatesDispatcher {
         RequestObject.h_id = update.new_value;
         tcpRequestData.getHighlight(RequestObject, update.new_value + "highlight").then(JSONData => {
           serverEventListener.sendRequest(JSONData, update.new_value + "highlight").then(Highlight => {
-            stores.Highlights.addHighlight(Highlight.data).then(() => {
-              stores.Events.addHighlight(
-                Highlight.data.event_id,
-                Highlight.data.id
-              ).then(() => {
-                let Change = {
-                  id: uuid.v1(),
-                  title: "Updates On Main Activity",
-                  updated: "add_highlight",
-                  event_id: update.event_id,
-                  updater: update.updater,
-                  changed: "Added A New Post To The Activity",
-                  new_value: { data: null, new_value: Highlight.data },
-                  date:update.date,
-                  time: null
-                }
-                this.infomCurrentRoom(Change, Highlight, update.event_id)
-                stores.ChangeLogs.addChanges(Change).then(res => {
-                  GState.newHightlight = true;
-                  GState.eventUpdated = true;
-                  resolve("ok")
-                })
+            if (Highlight.data !== 'empty' && Highlight.data) {
+              stores.Highlights.addHighlight(Highlight.data).then(() => {
+                stores.Events.addHighlight(
+                  Highlight.data.event_id,
+                  Highlight.data.id
+                ).then(() => {
+                  let Change = {
+                    id: uuid.v1(),
+                    title: "Updates On Main Activity",
+                    updated: "add_highlight",
+                    event_id: update.event_id,
+                    updater: update.updater,
+                    changed: "Added A New Post To The Activity",
+                    new_value: { data: null, new_value: Highlight.data },
+                    date: update.date,
+                    time: null
+                  }
+                  this.infomCurrentRoom(Change, Highlight, update.event_id)
+                  stores.ChangeLogs.addChanges(Change).then(res => {
+                    GState.newHightlight = true;
+                    GState.eventUpdated = true;
+                    resolve("ok")
+                  })
+                });
               });
-            });
+            } else {
+              //!! heyyy case that highlight doesn't exists please think of handling this.
+              //!! a case where this scenario can occur is when the user add a highlight and imediately deletes it 
+              //!! such that when offline users will received their updates,they will be receiving of and 
+              //!! that doesn't exists. 
+            }
           });
         });
       });
@@ -929,7 +936,7 @@ class UpdatesDispatcher {
             changed: update.new_value.new_description ? `Changed The Content of ${Highlight.title} Post` :
               `Removed The Content of ${Highlight.title}`,
             new_value: { data: null, new_value: update.new_value.new_description },
-            date:update.date,
+            date: update.date,
             time: null
           }
           this.infomCurrentRoom(Change, Highlight, update.event_id)
@@ -963,7 +970,7 @@ class UpdatesDispatcher {
             updater: update.updater,
             changed: `Changed The Media specifications of ${Highlight.title} Post`,
             new_value: { data: null, new_value: update.new_value.new_url },
-            date:update.date,
+            date: update.date,
             time: null
           }
           this.infomCurrentRoom(Change, Highlight, update.event_id)
@@ -992,7 +999,7 @@ class UpdatesDispatcher {
             updater: update.updater,
             changed: update.new_value.new_title ? `Changed The Title of ${Highlight.title} Post to ...` : `Removed The Title of ${Highlight.title} Post`,
             new_value: { data: null, new_value: update.new_value.new_title },
-            date:update.date,
+            date: update.date,
             time: null
           }
           this.infomCurrentRoom(Change, Highlight, update.event_id)
@@ -1018,7 +1025,7 @@ class UpdatesDispatcher {
               updater: update.updater,
               changed: `Deleted ${Highlight.title} Post`,
               new_value: { data: null, new_value: Highlight },
-              date:update.date,
+              date: update.date,
               time: null
             }
             this.infomCurrentRoom(Change, Highlight, update.event_id)
@@ -1031,9 +1038,9 @@ class UpdatesDispatcher {
       });
     },
     restored_highlight: update => {
-      return new Promise((resolve,reject) => {
+      return new Promise((resolve, reject) => {
         stores.Highlights.addHighlight(update.new_value).then(() => {
-          stores.Events.addHighlight(update.event_id,update.new_value.id).then(() => {
+          stores.Events.addHighlight(update.event_id, update.new_value.id).then(() => {
             let Change = {
               id: uuid.v1(),
               title: `Update On Main Activity`,
@@ -1042,7 +1049,7 @@ class UpdatesDispatcher {
               updater: update.updater,
               changed: `Restored ${update.new_value.title} Post`,
               new_value: { data: null, new_value: update.new_value },
-              date:update.date,
+              date: update.date,
               time: null
             }
             this.infomCurrentRoom(Change, update.new_value, update.event_id)
@@ -1363,28 +1370,35 @@ class UpdatesDispatcher {
       return new Promise((resolve, reject) => {
         let RemindID = requestObjects.RemindID();
         RemindID.remind_id = update.new_value;
-        tcpRequestData.getRemind(RemindID).then(JSONData => {
-          serverEventListener.sendRequest(JSONData).then(Remind => {
+        tcpRequestData.getRemind(RemindID, update.new_value + "reminder").then(JSONData => {
+          serverEventListener.sendRequest(JSONData, update.new_value + "reminder").then(Remind => {
             stores.Reminds.addReminds(Remind.data).then(() => {
-              stores.Events.addRemind(update.event_id, Remind.id).then(() => {
-                let Change = {
-                  id: uuid.v1(),
-                  title: "Updates On Main Activity",
-                  updated: "added_remind",
-                  updater: update.updater,
-                  event_id: update.event_id,
-                  changed: "Added A New Remind ",
-                  new_value: { data: update.new_value, new_value: Remind.data.title },
-                  date:update.date,
-                  time: null
-                }
-                this.infomCurrentRoom(Change, Remind.data, update.event_id)
-                stores.ChangeLogs.addChanges(Change).then(() => {
-                  GState.newRemind = true;
-                  GState.eventUpdated = true;
-                  resolve('ok')
-                })
-              });
+              if (Remind.data && Remind.data !== 'empty') {
+                stores.Events.addRemind(update.event_id, Remind.id).then(() => {
+                  let Change = {
+                    id: uuid.v1(),
+                    title: "Updates On Main Activity",
+                    updated: "added_remind",
+                    updater: update.updater,
+                    event_id: update.event_id,
+                    changed: "Added A New Remind ",
+                    new_value: { data: update.new_value, new_value: Remind.data.title },
+                    date: update.date,
+                    time: null
+                  }
+                  this.infomCurrentRoom(Change, Remind.data, update.event_id)
+                  stores.ChangeLogs.addChanges(Change).then(() => {
+                    GState.newRemind = true;
+                    GState.eventUpdated = true;
+                    resolve('ok')
+                  })
+                });
+              } else {
+                //!! heyyy case that remind doesn't exists please think of handling this.
+                //!! a case where this scenario can occur is when the user add a remind and imediately deletes it 
+                //!! such that when offline users will received their updates,they will be receiving of and 
+                //!! that doesn't exists. 
+              }
             });
           });
         });
@@ -1401,7 +1415,7 @@ class UpdatesDispatcher {
             event_id: update.event_id,
             changed: "Changed Date/Time Of The Remind To ",
             new_value: { data: update.new_value.remind_id, new_value: update.new_value.period },
-            date:update.date,
+            date: update.date,
             time: null
           }
           this.infomCurrentRoom(Change, oldRemind, update.event_id)
@@ -1433,7 +1447,7 @@ class UpdatesDispatcher {
               data: update.new_value.remind_id,
               new_value: update.new_value.description
             },
-            date:update.date,
+            date: update.date,
             time: null
           }
           this.infomCurrentRoom(Change, oldRemind, update.event_id)
@@ -1458,7 +1472,7 @@ class UpdatesDispatcher {
               data: update.new_value.remind_id,
               new_value: update.new_value.title
             },
-            date:update.date,
+            date: update.date,
             time: null
           }
           this.infomCurrentRoom(Change, oldRemind, update.event_id)
@@ -1480,7 +1494,7 @@ class UpdatesDispatcher {
             event_id: update.event_id,
             changed: "Removed The Remind ",
             new_value: { data: update.new_value, new_value: oldRemind },
-            date:update.date,
+            date: update.date,
             time: null
           }
           this.infomCurrentRoom(Change, oldRemind, update.event_id)
@@ -1513,17 +1527,19 @@ class UpdatesDispatcher {
                 event_id: update.event_id,
                 changed: "Restored The Remind ",
                 new_value: { data: update.new_value.remind.id, new_value: null },
-                date:update.date,
+                date: update.date,
                 time: null
               }
               this.infomCurrentRoom(Change, update.new_value.remind,
-                 update.event_id)
+                update.event_id)
               stores.ChangeLogs.addChanges(Change).then(() => {
-                if (findIndex(update.new_value.remind.members, 
+                if (findIndex(update.new_value.remind.members,
                   { phone: stores.LoginStore.user.phone }) >= 0) {
                   CalendarServe.saveEvent(remind, null, 'reminds').then(calendar_id => {
-                    stores.Reminds.updateCalendarID({ remind_id: update.new_value.remind.id, 
-                      calendar_id: calendar_id }, null).then(() => {
+                    stores.Reminds.updateCalendarID({
+                      remind_id: update.new_value.remind.id,
+                      calendar_id: calendar_id
+                    }, null).then(() => {
                       resolve()
                     })
                   })
@@ -1547,7 +1563,7 @@ class UpdatesDispatcher {
               data: update.new_value.remind_id,
               new_value: update.new_value.status
             },
-            date:update.date,
+            date: update.date,
             time: null
           }
           this.infomCurrentRoom(Change, oldRemind, update.event_id)
@@ -1572,7 +1588,7 @@ class UpdatesDispatcher {
               data: update.new_value.remind_id,
               new_value: update.new_value.recurrence
             },
-            date:update.date,
+            date: update.date,
             time: null
           }
           this.infomCurrentRoom(Change, oldRemind, update.event_id)
@@ -1603,7 +1619,7 @@ class UpdatesDispatcher {
               data: update.new_value.remind_id,
               new_value: update.new_value.members
             },
-            date:update.date,
+            date: update.date,
             time: null
           }
           this.infomCurrentRoom(Change, oldRemind, update.event_id)
@@ -1634,7 +1650,7 @@ class UpdatesDispatcher {
               data: update.new_value.remind_id, new_value:
                 update.new_value.members.map(ele => { return { phone: ele } })
             },
-            date:update.date,
+            date: update.date,
             time: null
           }
           this.infomCurrentRoom(Change, oldRemind, update.event_id)
@@ -1666,7 +1682,7 @@ class UpdatesDispatcher {
               data: update.new_value.remind_id,
               new_value: update.new_value.donners
             },
-            date:update.date,
+            date: update.date,
             time: null
           }
           this.infomCurrentRoom(Change, oldRemind, update.event_id)
@@ -1691,7 +1707,7 @@ class UpdatesDispatcher {
               data: update.new_value.remind_id,
               new_value: update.new_value.confirmed
             },
-            date:update.date,
+            date: update.date,
             time: null
           }
           this.infomCurrentRoom(Change, oldRemind, update.event_id)
@@ -1716,7 +1732,7 @@ class UpdatesDispatcher {
               data: update.new_value.remind_id,
               new_value: update.new_value.must_report
             },
-            date:update.date,
+            date: update.date,
             time: null
           }
           this.infomCurrentRoom(Change, oldRemind, update.event_id)

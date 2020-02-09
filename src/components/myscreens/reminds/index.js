@@ -150,19 +150,6 @@ export default class Reminds extends Component {
     this.props.navigation.navigate('Home');
 
   }
-  createRemind(newRemind) {
-    if (!this.props.working) {
-      this.props.startLoader()
-      RemindRequest.CreateRemind(newRemind).then(() => {
-        this.updateData(newRemind)
-     this.props.stopLoader()
-      }).catch(() => {
-        this.props.stopLoader()
-      })
-    } else {
-      Toast.show({ text: 'App is Busy' })
-    }
-  }
   assignToMe(item) {
     console.warn(item)
     this.setState({
@@ -268,7 +255,7 @@ export default class Reminds extends Component {
       <View style={{ flex: 1, backgroundColor: '#FEFFDE' }}>
         <View style={{ height: "6%", width: "100%", padding: "2%", justifyContent: "space-between", flexDirection: "row", backgroundColor: "#FEFFDE", alignItems: "center", ...shadower() }}>
           <View>
-            <Title style={{ fontSize: 20, fontWeight: 'bold', }}>Tasks / Reminds</Title>
+            <Title style={{ fontSize: 20, fontWeight: 'bold', }}>{"Reminds"}</Title>
           </View>
 
           <View>
@@ -360,7 +347,9 @@ export default class Reminds extends Component {
           master={this.props.master}
           event_id={this.props.event_id}
           update={this.state.update}
+          RemindRequest={RemindRequest}
           remind_id={this.state.remind_id}
+          updateData={(newRem) => this.updateData(newRem)}
           updateRemind={(data) => this.sendUpdate(data)}
           isOpen={this.state.RemindCreationState}
           onClosed={() => {
@@ -369,10 +358,10 @@ export default class Reminds extends Component {
               remind_id: null,remind:null
             })
           }}
+          working={this.props.working}
+          stopLoader={this.props.stopLoader}
+          startLoader={this.props.startLoader}
           event={this.props.event}
-          createRemind={(newRemind) => {
-            this.createRemind(newRemind)
-          }}
           eventRemindData={this.state.eventRemindData}></TasksCreation>
         {this.state.isSelectAlarmPatternModalOpened ? <SetAlarmPatternModal save={(alarms) => this.saveAlarms(alarms)} isOpen={this.state.isSelectAlarmPatternModalOpened} closed={() => {
           this.setState({

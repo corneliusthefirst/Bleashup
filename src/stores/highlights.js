@@ -110,7 +110,7 @@ export default class highlights {
   }
   @action fetchHighlights(eventID) {
     let sorter = (a, b) => (a.created_at > b.created_at ? -1 :
-       a.created_at < b.created_at ? 1 : 0)
+      a.created_at < b.created_at ? 1 : 0)
     return new Promise((resolve, reject) => {
       if (this.highlights.length == 0) {
         this.readFromStore().then(Highlights => {
@@ -258,9 +258,13 @@ export default class highlights {
           RequestObject.h_id = id;
           tcpRequest.getHighlight(RequestObject, update.new_value + "highlight").then(JSONData => {
             serverEventListener.sendRequest(JSONData, update.new_value + "highlight").then(Highlight => {
-              this.addHighlight(Highlight.data).then(() => {
-                resolve(Highlight.data)
-              })
+              if (Highlight.data && Highlight.data !== 'empty') {
+                this.addHighlight(Highlight.data).then(() => {
+                  resolve(Highlight.data)
+                })
+              }else{
+                resolve()
+              }
             }).catch((e) => {
               resolve()
             })
