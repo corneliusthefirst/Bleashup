@@ -52,7 +52,8 @@ export default class InputView extends Component {
                
             }} pressingIn={() => { }} reply={this.props.replyer}></ReplyText>
             <Button onPress={() => this.cancleReply()
-            } style={{ position: "absolute", alignSelf: 'flex-end', }} transparent><Icon name={"close"} type={"EvilIcons"} style={{}}></Icon></Button>
+            } style={{ position: "absolute", alignSelf: 'flex-end', }} transparent>
+            <Icon name={"close"} type={"EvilIcons"} style={{}}></Icon></Button>
         </View>;
     }
     toggleEmojiKeyboard() {
@@ -72,7 +73,9 @@ export default class InputView extends Component {
                         }}>
                             {
                                 //* Reply Message caption */
-                                this.props.replyer.replyer_name ? this.replyMessageCaption() : null
+                                //this.props.replyer.replyer_name ? 
+                                this.replyMessageCaption() 
+                               // : null
                             }
                             <View>
                                 <View style={{ display: 'flex', flexDirection: 'row', }}>

@@ -37,7 +37,14 @@ export default class HighLightsDetails extends Component {
     }
     handleKeyboardDidShow() {
         this.setState({
-            showImojiInput: false
+            showImojiInput: false,
+            inputsHeight: //!this.state.showImojiInput ? 
+            this.formHeightPercent(245)
+            // : this.formHeightPercent(350)
+            ,
+            messageListHeight: //!this.state.showImojiInput ? 
+            this.formHeightPercent(screenheight - 245)
+            // : this.formHeightPercent(screenheight - 350)
         })
     }
 
@@ -146,7 +153,7 @@ export default class HighLightsDetails extends Component {
                                     replyer.url.photo : replyer.url.audio ?
                                         replyer.url.audio : null,
                             replyer_phone: stores.LoginStore.user.phone,
-                            replyer_name: stores.LoginStore.user.name,
+                            //replyer_name: stores.LoginStore.user.name,
                             title : `${replyer.title}: \n ${replyer.description}`,
                             type_extern: 'Posts',
                         }
