@@ -4,7 +4,7 @@ import {
   Button,  Toast
 } from "native-base";
 
-import {StyleSheet, View,Image,TouchableOpacity, Dimensions} from 'react-native';
+import {StyleSheet, View,Image,TouchableOpacity, Dimensions,BackHandler} from 'react-native';
 import autobind from "autobind-decorator";
 import moment from "moment";
 import EventTitle from "./components/EventTitle"
@@ -56,6 +56,17 @@ export default class CreateEventView extends Component {
 
     }
 
+  }
+  componentWillMount(){
+    this.BackHandler = BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this));
+
+  }
+  handleBackButton() {
+    this.props.navigation.navigate('Home')
+    return true
+  }
+  componentWillUnmount(){
+    this.BackHandler.remove()
   }
 
 componentDidMount(){
