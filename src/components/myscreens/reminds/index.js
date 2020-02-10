@@ -11,7 +11,7 @@ import TasksCard from "./TasksCard"
 import stores from '../../../stores/index';
 import BleashupFlatList from '../../BleashupFlatList';
 import TasksCreation from './TasksCreation';
-import { find, findIndex, uniqBy, reject, filter ,concat} from "lodash";
+import { find, findIndex, uniqBy, reject, filter, concat,uniq } from "lodash";
 import shadower from '../../shadower';
 import RemindRequest from './Requester';
 import emitter from '../../../services/eventEmiter';
@@ -38,7 +38,7 @@ export default class Reminds extends Component {
     console.warn("running remind index con")
   }
   //manual event_id
-  state={}
+  state = {}
   addMembers(currentMembers, item) {
     console.warn("pressing add contacts")
     this.setState({
@@ -54,19 +54,25 @@ export default class Reminds extends Component {
     if (this.props.working) {
       Toast.show({ text: 'App is Busy' })
     } else {
-      this.props.startLoader()
-      RemindRequest.addMembers({ ...this.state.currentTask, members: members }).then(() => {
-        this.props.stopLoader()
-        this.refrehReminds()
-      }).catch((error) => {
-        this.props.stopLoader()
-      })
+      let newMembers = members.filter(ele => findIndex(this.state.currentTask.members, { phone: ele.phone }) < 0)
+      if (newMembers.length > 0) {
+        this.props.startLoader()
+        RemindRequest.addMembers({ ...this.state.currentTask, members: newMembers }).then(() => {
+          this.props.stopLoader()
+          this.refrehReminds()
+        }).catch((error) => {
+          this.props.stopLoader()
+        })
+      } else {
+        Toast.show({ text: 'member already exists' })
+      }
     }
   }
-  updateData(newremind){
+  updateData(newremind) {
     //this.state.eventRemindData.unshift(newremind)
-    this.setState({ 
-      eventRemindData: [newremind,...this.state.eventRemindData]});
+    this.setState({
+      eventRemindData: [newremind, ...this.state.eventRemindData]
+    });
   }
 
   componentDidMount() {
@@ -259,8 +265,8 @@ export default class Reminds extends Component {
           </View>
 
           <View>
-            <TouchableOpacity onPress={() => requestAnimationFrame(() => this.AddRemind() )}>
-            <Icon type='AntDesign' name="pluscircle" style={{ color: "#1FABAB" }} />
+            <TouchableOpacity onPress={() => requestAnimationFrame(() => this.AddRemind())}>
+              <Icon type='AntDesign' name="pluscircle" style={{ color: "#1FABAB" }} />
             </TouchableOpacity>
           </View>
 
@@ -280,7 +286,7 @@ export default class Reminds extends Component {
                 <TasksCard
                   mention={itemer => {
                     this.props.mention({
-                      id : itemer.id,
+                      id: itemer.id,
                       replyer_phone: itemer.creator.phone,
                       //replyer_name: itemer.creator.nickname,
                       type_extern: 'Reminds ',
@@ -355,7 +361,7 @@ export default class Reminds extends Component {
           onClosed={() => {
             this.setState({
               RemindCreationState: false, update: false,
-              remind_id: null,remind:null
+              remind_id: null, remind: null
             })
           }}
           working={this.props.working}
@@ -382,7 +388,7 @@ export default class Reminds extends Component {
             this.saveAddMembers(members)
           }}
           saveRemoved={(members) => this.saveRemoved(members)}
-          members={this.state.contacts?this.state.contacts:[]}
+          members={uniqBy(this.state.contacts ? this.state.contacts : [],['phone'])}
           notcheckall={this.state.notcheckAll}
           isOpen={this.state.isSelectableContactsModalOpened} close={() => {
             this.setState({
@@ -396,7 +402,7 @@ export default class Reminds extends Component {
               isContactsModalOpened: false
             })
           }}
-          contacts={this.state.contacts ? this.state.contacts.map(ele => ele.phone) : []}></ContactListModal> : null}
+          contacts={uniq(this.state.contacts ? this.state.contacts.map(ele => ele.phone) : [])}></ContactListModal> : null}
         {this.state.iscontactReportModalOpened ? <ContactsReportModal
           must_report={this.state.currentTask.must_report}
           master={this.props.master}
