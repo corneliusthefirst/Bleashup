@@ -71,12 +71,14 @@ export default class EventTasksCard extends Component {
     stores.Reminds.updateMembers(newRemind,true).then(()=>{});
     })*/
   }
+  previousItem = null
   shouldComponentUpdate(nextProps, nextState, nextContext) {
     return this.state.mounted !== nextState.mounted ||
-      !isEqual(this.props.item, nextProps.item) ||
+      !isEqual(JSON.parse(this.previousItem), nextProps.item) ||
       this.state.newing !== nextState.newing
   }
   componentDidUpdate(prevProps, prevState) {
+    this.previousItem = JSON.stringify(prevProps.item)
     /*if (prevProps.item.description !== this.props.item.description) {
       console.warn("updating description")
       this.setState({ accordData: this.state.accordData, newing: !this.state.newing })
