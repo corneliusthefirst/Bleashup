@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 //import { StyleSheet,Button,Text, TouchableOpacity , View } from 'react-native';
 import autobind from "autobind-decorator";
-import RNExitApp from "react-native-exit-app";
 import { Image, TouchableOpacity, BackHandler } from "react-native";
 import Modal from 'react-native-modalbox';
 import { observer } from "mobx-react";

@@ -26,12 +26,9 @@ import {
 } from "native-base";
 //import { Button,View } from "react-native";
 
-import { AsyncStorage } from "react-native";
 import { observer } from "mobx-react";
 import styles from "./styles";
 import stores from "../../../stores";
-import routerActions from "reazy-native-router-actions";
-import { functionDeclaration } from "@babel/types";
 import globalState from "../../../stores/globalState";
 
 @observer

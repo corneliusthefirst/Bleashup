@@ -2,8 +2,6 @@ import React, { Component } from "react"
 import { View, TouchableOpacity } from 'react-native';
 import { Text, Left, Title } from 'native-base';
 import autobind from "autobind-decorator";
-import SvgAnimatedLinearGradient from 'react-native-svg-animated-linear-gradient'
-import Svg, { Circle, Rect } from 'react-native-svg'
 import stores from "../../../../stores";
 import DetailsModal from "../../invitations/components/DetailsModal";
 import { forEach, find } from "lodash"

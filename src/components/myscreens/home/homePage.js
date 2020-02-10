@@ -35,7 +35,6 @@ import SettingView from "./../settings/index";
 import { observer } from "mobx-react";
 import autobind from "autobind-decorator";
 import { groupBy, map, findIndex, reject } from "lodash"
-import RNExitApp from "react-native-exit-app";
 import { withInAppNotification } from 'react-native-in-app-notification';
 import stores from "../../../stores";
 import CurrentEventView from '../currentevents';

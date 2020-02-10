@@ -1,5 +1,4 @@
 import RNCalendarEvents from 'react-native-calendar-events';
-import RNCalendarReminders from 'react-native-calendar-reminders';
 import { PermissionsAndroid, Platform } from 'react-native';
 import moment from 'moment';
 import { findIndex } from 'lodash'
@@ -14,11 +13,6 @@ class CalendarService {
             if (status === 'authorized') {
                 RNCalendarEvents.findCalendars().then(calendars => {
                     let index = findIndex(calendars, { title: this.calendarTitle })
-                    RNCalendarReminders.authorizeEventStore().then(status => {
-                        console.warn(status, "ppppppp")
-                    }).catch(e => {
-                        console.warn(e)
-                    })
                     if (index < 0) {
                         console.warn('creating calendar')
                         this.createBleashupCalendar()

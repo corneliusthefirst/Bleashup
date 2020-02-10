@@ -13,8 +13,6 @@ import {
 
 import Swipeout from 'react-native-swipeout';
 import Modal from 'react-native-modalbox';
-import SvgAnimatedLinearGradient from 'react-native-svg-animated-linear-gradient'
-import Svg, { Circle, Rect } from 'react-native-svg'
 import styles from './style';
 import CacheImages from "../../CacheImages";
 import Exstyles from './style';

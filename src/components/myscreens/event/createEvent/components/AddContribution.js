@@ -8,7 +8,6 @@ import {
 import { StyleSheet, View,Image,TouchableOpacity} from 'react-native';
 import ActionButton from 'react-native-action-button';
 import Modal from 'react-native-modalbox';
-import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 import autobind from "autobind-decorator";
 
 

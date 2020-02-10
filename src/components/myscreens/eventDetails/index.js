@@ -4,7 +4,6 @@ import {
 } from "native-base";
 
 import { Linking, StyleSheet, View, Image, TouchableOpacity, FlatList, ScrollView, Dimensions } from 'react-native';
-import RadioForm, { RadioButton, RadioButtonInput, RadioButtonLabel } from 'react-native-simple-radio-button';
 import autobind from "autobind-decorator";
 import CacheImages from "../../CacheImages";
 import PhotoEnlargeModal from "../invitations/components/PhotoEnlargeModal";

@@ -19,8 +19,6 @@ import { createOpenLink } from "react-native-open-maps";
 import ProfileModal from '../invitations/components/ProfileModal';
 import PhotoModal from "../invitations/components/PhotoModal";
 import DetailsModal from "../invitations/components/DetailsModal";
-import SvgAnimatedLinearGradient from 'react-native-svg-animated-linear-gradient'
-import Svg, { Circle, Rect } from 'react-native-svg'
 import globalState from "../../../stores/globalState";
 import DoublePhoto from "../invitations/components/doublePhoto";
 import stores from '../../../stores';

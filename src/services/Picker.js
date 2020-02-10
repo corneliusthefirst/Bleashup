@@ -1,5 +1,5 @@
 
-import ImagePicker from 'react-native-customized-image-picker';
+import ImagePicker from 'react-native-image-crop-picker';
 import DocumentPicker from 'react-native-document-picker';
 import FileViewer from 'react-native-file-viewer';
 import { LogLevel, RNFFmpeg } from 'react-native-ffmpeg';
@@ -13,7 +13,8 @@ class Picker {
         return new Promise((resolve, reject) => {
             ImagePicker.openPicker({
                 cropping: crop ? true : false,
-                isCamera: true,
+                isCamera: "photo",
+                mediaType: "photo",
                 //openCameraOnStart: true,
                 includeBase64: false,
                 returnAfterShot: true,
@@ -23,12 +24,12 @@ class Picker {
             }).then(response => {
                 this.uploaded = true
                 //console.warn("opening camera")
-                let temp = response[0].path.split('/');
+                let temp = response.path.split('/');
                 resolve({
-                    source: response[0].path,
+                    source: response.path,
                     filename: temp[temp.length - 1],
-                    content_type: response[0].mime,
-                    size: response[0].size
+                    content_type: response.mime,
+                    size: response.size
                 })
             })
         })
@@ -73,8 +74,8 @@ class Picker {
         return new Promise((resolve, reject) => {
             ImagePicker.openPicker({
                 cropping: false,
-                isCamera: true,
-                isVideo: true,
+                //isCamera: true,
+                mediaType: "video",
                 //openCameraOnStart: true,
                 includeBase64: false,
                 returnAfterShot: true,
@@ -82,13 +83,13 @@ class Picker {
                 // returnAfterShot:true,
                 compressQuality: 50
             }).then(response => {
-                //console.warn("opening camera")
-                let temp = response[0].path.split('/');
+                console.warn(response);
+                let temp = response.path.split('/');
                 resolve({
-                    source: response[0].path,
+                    source: response.path,
                     filename: temp[temp.length - 1],
-                    content_type: response[0].mime,
-                    size: response[0].size
+                    content_type: response.mime,
+                    size: response.size
                 })
             })
         })
@@ -99,6 +100,7 @@ class Picker {
                 cropping: false,
                 includeBase64: false,
                 compressQuality: 50,
+                mediaType: "photo",
                 multipleShot: false,
                 multiple: true,
                 maxSize: 20,

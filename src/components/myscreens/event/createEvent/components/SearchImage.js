@@ -5,7 +5,6 @@ import { View, Linking, Alert, Dimensions, ScrollView } from "react-native"
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Swipeout from "react-native-swipeout";
 import InAppBrowser from 'react-native-inappbrowser-reborn';
-import DeviceInfo from 'react-native-device-info';
 import Modal from 'react-native-modalbox';
 import autobind from "autobind-decorator";
 

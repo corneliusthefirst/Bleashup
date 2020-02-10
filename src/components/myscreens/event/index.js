@@ -19,7 +19,6 @@ import EventChat from "../eventChat";
 import Contributions from "../contributions";
 import SWView from './SWView';
 import SideMenu from 'react-native-side-menu';
-import ImagePicker from 'react-native-customized-image-picker';
 import ChangeLogs from "../changelogs";
 import ParticipantModal from "../../ParticipantModal";
 import ContactsModal from "../../ContactsModal";
