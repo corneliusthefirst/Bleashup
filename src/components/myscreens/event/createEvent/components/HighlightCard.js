@@ -95,7 +95,7 @@ export default class HighlightCard extends Component {
               {this.props.item.url && (this.props.item.url.video || this.props.item.url.audio) ? <Icon onPress={() => {
                 this.props.showItem(this.props.item)
               }} name={this.props.item.url.video ? "play" : "headset"} style={{
-                fontSize: 50, color: '#1FABAB',
+                fontSize: 50, color: '#FEFFDE',
                 position: 'absolute', marginTop: '18%', marginLeft: '35%',
               }} type={this.props.item.url.video ? "EvilIcons" : "MaterialIcons"}>
               </Icon> : null}

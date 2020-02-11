@@ -100,7 +100,7 @@ export default class PhotoView extends Component {
                 {this.state.video || this.state.audio ? <Icon onPress={() => {
                     this.showPhoto(this.state.image)
                 }} name={this.state.video ? "play" : "headset"} style={{
-                    fontSize: 50, color: '#1FABAB',
+                    fontSize: 50, color: '#FEFFDE',
                     position: 'absolute', marginTop: '18%', marginLeft: '50%',
                 }} type={this.state.video ? "EvilIcons" : "MaterialIcons"}>
                 </Icon> : null}
