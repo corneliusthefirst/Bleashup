@@ -41,9 +41,9 @@ export default class EventTasksCard extends Component {
   componentDidMount() {
     console.warn("rendering reminds")
     setTimeout(() => {
-      this.state.accordData.title = this.props.item.description.slice(0, 103)
-      this.state.accordData.content = this.props.item.description.slice(103, this.props.item.description.length)
-      this.setState({ accordData: this.state.accordData, long: this.props.item.description.length > 103, mounted: true })
+          this.setState({ 
+         mounted: true 
+      })
     }, 20 + 20 * this.props.delay)
   }
 

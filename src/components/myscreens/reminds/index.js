@@ -11,7 +11,7 @@ import TasksCard from "./TasksCard"
 import stores from '../../../stores/index';
 import BleashupFlatList from '../../BleashupFlatList';
 import TasksCreation from './TasksCreation';
-import { find, findIndex, uniqBy, reject, filter, concat,uniq } from "lodash";
+import { find, findIndex, uniqBy, reject, filter, concat, uniq } from "lodash";
 import shadower from '../../shadower';
 import RemindRequest from './Requester';
 import emitter from '../../../services/eventEmiter';
@@ -272,79 +272,81 @@ export default class Reminds extends Component {
 
         </View>
         <View style={{ height: "93%" }}>
-          <BleashupScrollView
+          <BleashupFlatList
             initialRender={5}
             renderPerBatch={5}
             //onScroll={this._onScroll}
             firstIndex={0}
             //showVerticalScrollIndicator={false}
-            keyExtractor={this._keyExtractor}
+            keyExtractor={(item, index) => index.toString()}
             dataSource={this.state.eventRemindData}
             renderItem={(item, index) => {
               this.delay = index >= 5 ? 0 : this.delay + 1
               return (
-                <TasksCard
-                  mention={itemer => {
-                    this.props.mention({
-                      id: itemer.id,
-                      replyer_phone: itemer.creator.phone,
-                      //replyer_name: itemer.creator.nickname,
-                      type_extern: 'Reminds ',
-                      title: itemer.title + ': \n' + itemer.description
-                    })
-                  }}
-                  master={this.props.master}
-                  markAsDone={(item) => this.markAsDone(item)}
-                  assignToMe={(item) => this.assignToMe(item)}
-                  calendar_id={this.props.event.calendar_id}
-                  delay={this.delay}
-                  addMembers={(currentMembers, item) =>
-                    this.addMembers(currentMembers, item)}
-                  showMembers={(members) => {
-                    this.setState({
-                      contacts: members,
-                      isContactsModalOpened: true
-                    })
-                  }}
-                  showDonners={(members, iteme) => {
-                    this.setState({
-                      iscontactReportModalOpened: true,
-                      currentTask: item,
-                      contacts: members
-                    })
-                  }}
-                  showConfirmed={(members, item) => {
-                    this.setState({
-                      isContactsModalOpened: true,
-                      contacts: members
-                    })
-                  }}
-                  removeMembers={(currentMembers, item) => {
-                    console.warn("executing remove configs")
-                    this.setState({
-                      isSelectableContactsModalOpened: true,
-                      currentTask: item,
-                      contacts: currentMembers.filter(ele => findIndex(item.donners, { phone: ele.phone }) < 0),
-                      adding: false,
-                      removing: true,
-                      notcheckAll: true,
-                    })
-                  }}
-                  updateRemind={(item) => this.updateRemind(item)}
-                  update={(data) => this.updateRemind(data)}
-                  deleteRemind={(item) => {
-                    this.setState({
-                      currentTask: item,
-                      isAreYouModalOpened: true,
-                    })
-                  }}
-                  item={item} key={index}>
-                </TasksCard>
+                <View key={index}>
+                  <TasksCard
+                    mention={itemer => {
+                      this.props.mention({
+                        id: itemer.id,
+                        replyer_phone: itemer.creator.phone,
+                        //replyer_name: itemer.creator.nickname,
+                        type_extern: 'Reminds ',
+                        title: itemer.title + ': \n' + itemer.description
+                      })
+                    }}
+                    master={this.props.master}
+                    markAsDone={(item) => this.markAsDone(item)}
+                    assignToMe={(item) => this.assignToMe(item)}
+                    calendar_id={this.props.event.calendar_id}
+                    delay={this.delay}
+                    addMembers={(currentMembers, item) =>
+                      this.addMembers(currentMembers, item)}
+                    showMembers={(members) => {
+                      this.setState({
+                        contacts: members,
+                        isContactsModalOpened: true
+                      })
+                    }}
+                    showDonners={(members, iteme) => {
+                      this.setState({
+                        iscontactReportModalOpened: true,
+                        currentTask: item,
+                        contacts: members
+                      })
+                    }}
+                    showConfirmed={(members, item) => {
+                      this.setState({
+                        isContactsModalOpened: true,
+                        contacts: members
+                      })
+                    }}
+                    removeMembers={(currentMembers, item) => {
+                      console.warn("executing remove configs")
+                      this.setState({
+                        isSelectableContactsModalOpened: true,
+                        currentTask: item,
+                        contacts: currentMembers.filter(ele => findIndex(item.donners, { phone: ele.phone }) < 0),
+                        adding: false,
+                        removing: true,
+                        notcheckAll: true,
+                      })
+                    }}
+                    updateRemind={(item) => this.updateRemind(item)}
+                    update={(data) => this.updateRemind(data)}
+                    deleteRemind={(item) => {
+                      this.setState({
+                        currentTask: item,
+                        isAreYouModalOpened: true,
+                      })
+                    }}
+                    item={item} key={index}>
+                  </TasksCard>
+                </View>
               );
             }}
             numberOfItems={this.state.eventRemindData.length}
           >
-          </BleashupScrollView>
+          </BleashupFlatList>
 
 
         </View>
@@ -388,7 +390,7 @@ export default class Reminds extends Component {
             this.saveAddMembers(members)
           }}
           saveRemoved={(members) => this.saveRemoved(members)}
-          members={uniqBy(this.state.contacts ? this.state.contacts : [],['phone'])}
+          members={uniqBy(this.state.contacts ? this.state.contacts : [], ['phone'])}
           notcheckall={this.state.notcheckAll}
           isOpen={this.state.isSelectableContactsModalOpened} close={() => {
             this.setState({

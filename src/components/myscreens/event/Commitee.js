@@ -86,7 +86,7 @@ export default class Commitee extends Component {
                 </View>
                 <View>{this.state.refresh ? null :
                     <View style={{height:'97%',}}>
-                        <BleashupScrollView
+                        <BleashupFlatList
                         backgroundColor={'#feffde'}
                         style={{
                             width: '98%', borderBottomRightRadius: 8,borderTopRightRadius: 8,margin: '1%', ...shadower(3),

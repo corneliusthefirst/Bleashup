@@ -8,8 +8,6 @@ project(':react-native-ffmpeg').projectDir = new File(rootProject.projectDir, '.
 include ':react-native-inappbrowser-reborn'
 project(':react-native-inappbrowser-reborn').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-inappbrowser-reborn/android')
 include ':react-native-firebase'
-include ':react-native-nested-scroll-view'
-project(':react-native-nested-scroll-view').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-nested-scroll-view/android')
 project(':react-native-firebase').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-firebase/android')
 include ':react-native-orientation-locker'
 project(':react-native-orientation-locker').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-orientation-locker/android')

@@ -29,7 +29,6 @@ import com.RNFetchBlob.RNFetchBlobPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
 import com.chirag.RNMail.*;  // <--- import 
-import com.rnnestedscrollview.RNNestedScrollViewPackage;
 //import android.support.v7.app.AppCompatActivity;
 import com.imagepicker.ImagePickerPackage;
 import com.proyecto26.inappbrowser.RNInAppBrowserPackage;
@@ -55,7 +54,6 @@ public class MainApplication extends Application implements ReactApplication {
             new RNFirebaseAuthPackage(),
             new OrientationPackage(),
             new RNFirebaseDatabasePackage(),
-            new RNNestedScrollViewPackage(),
             new RNFirebaseNotificationsPackage(),
             new RNSoundRecorderPackage(),
             new DocumentPickerPackage(),

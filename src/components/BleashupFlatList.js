@@ -94,6 +94,7 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
                         }
                     }
                     }
+                    nestedScrollEnabled={true}
                     horizontal={this.props.horizontal?this.props.horizontal:false}
                     onScroll={this.props.onScroll}
                     centerContent={true}

@@ -2,8 +2,6 @@ import React, { Component } from "react"
 import { FlatList, View, ScrollView } from "react-native";
 import { Spinner, CardItem, Text, List } from "native-base";
 import { observer } from "mobx-react";
-import { thisExpression } from "@babel/types";
-import NestedScrollView from "react-native-nested-scroll-view";
 
 
 const ifCloseToTop = ({ layoutMeasurement, contentOffset, contentSize }) => {
@@ -49,7 +47,7 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
                 backgroundColor: this.props.backgroundColor ? this.props.backgroundColor : "#FEFFDE",
                 ...this.props.style
             }}>
-                <NestedScrollView
+                <ScrollView
                     onScrollEndDrag={({ nativeEvent }) => {
                         if (isCloseToBottom(nativeEvent)) {
                             this.continueScrollDown()
@@ -70,7 +68,7 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
                             marginLeft: "35%"
                         }}>no more data to load</Text> : <Spinner size={"small"}></Spinner>}
                     </CardItem>}
-                </NestedScrollView>
+                </ScrollView>
             </View>)
     }
 }
