@@ -10,6 +10,7 @@ import Image from 'react-native-scalable-image';
 import Modal from "react-native-modalbox"
 import { Icon } from 'native-base';
 import CacheImages from '../../CacheImages';
+import StatusBarWhiter from './StatusBarWhiter';
 export default class PhotoViewer extends Component {
     constructor(props) {
         super(props)
@@ -52,7 +53,7 @@ export default class PhotoViewer extends Component {
                 }}
             >
                 <View>
-                    <StatusBar animated={true}   barStyle="dark-content" backgroundColor="black"></StatusBar>
+                    <StatusBarWhiter></StatusBarWhiter>
                     <View style={{ height: screenheight, width: screenWidth, backgroundColor: "black", }}>
                         <View style={{ alignSelf: 'center', }}>
                             <ReactNativeZoomableView
