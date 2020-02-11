@@ -60,7 +60,7 @@ export default class HighlightContent extends Component {
                                             <Button onPress={() => {
                                                 this.props.showVideo(this.props.highlight.url.video)
                                             }} transparent>
-                                                <Icon style={{ fontSize: 50, }} type={'EvilIcons'} name={'play'}></Icon>
+                                                <Icon style={{ fontSize: 50,color:'#FEFFDE' }} type={'EvilIcons'} name={'play'}></Icon>
                                             </Button>
                                         </View> : null
                                     }
@@ -79,7 +79,7 @@ export default class HighlightContent extends Component {
                                                 <Button onPress={() => {
                                                     this.props.highlight.url.video ? this.props.showVideo(this.props.highlight.url.video) : this.props.showPhoto(this.props.highlight.url.photo)
                                                 }} transparent>
-                                                    <Icon style={{ fontSize: 50, }} type={'EvilIcons'} name={'play'}></Icon>
+                                                    <Icon style={{ fontSize: 50,color:'#FEFFDE' }} type={'EvilIcons'} name={'play'}></Icon>
                                                 </Button>
                                             </View> : null
                                         }

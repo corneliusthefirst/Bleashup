@@ -88,6 +88,10 @@ export default class EventPeriod extends Component {
       //deactivate the date picker before setting the obtain time     
       this.setState({ date: dateTime, isDateTimePickerVisible: false });
       stores.Events.updatePeriod("newEventId", dateTime, false).then(() => { });
+    }else{
+      this.setState({
+        isDateTimePickerVisible:false
+      })
     }
   }
     resetPeriod(){
@@ -116,6 +120,10 @@ export default class EventPeriod extends Component {
         let dateTime = newDate + "T"+time
         this.setState({ show: false, date: dateTime});
         stores.Events.updatePeriod("newEventId", dateTime, false).then(() => { });
+      }else{
+        this.setState({
+          show:false
+        })
       }
 
     }

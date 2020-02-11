@@ -293,6 +293,7 @@ export default class SettingsModal extends Component {
                 entry={'bottom'}
                 position={'bottom'}
                 backdropOpacity={0.7}
+                backButtonClose={true}
                 onClosed={() => {
                     this.props.onClosed()
                     this.setState({
