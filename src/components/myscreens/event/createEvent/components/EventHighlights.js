@@ -306,9 +306,6 @@ export default class EventHighlights extends Component {
 
   @autobind
   AddHighlight() {
-    this.setState({
-      creating: true
-    })
     var arr = new Array(32);
     let num = Math.floor(Math.random() * 16)
     uuid.v1(null, arr, num);
@@ -337,6 +334,9 @@ export default class EventHighlights extends Component {
       this.props.startLoader()
       this.props.onClosed()
       if(newHighlight.title || newHighlight.url.audio || newHighlight.url.photo || newHighlight.url.video){
+        this.setState({
+          creating: true
+        })
         Requester.createHighlight(newHighlight).then(() => {
           this.props.reinitializeHighlightsList(newHighlight)
           this.resetHighlight();
