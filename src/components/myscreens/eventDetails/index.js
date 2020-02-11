@@ -361,23 +361,7 @@ export default class EventDetailView extends Component {
             this.props.updateLocation(newLoc)
           }} event={this.props.Event} isOpen={this.state.EventLocationState} onClosed={() => { this.setState({ EventLocationState: false }) }}
             ref={"location_ref"} updateLoc={true} eventId={this.props.Event.id} parentComp={this} /> : null}
-          {this.state.showVideo ? <VideoViewer open={this.state.showVideo} hideVideo={() => {
-            this.setState({
-              showVideo: false,
-              EventHighlightState: this.wasEventHiglightOpened ? true : false,
-              isHighlightDetailsModalOpened: this.wasDetailOpened ? true : false
-            })
-            this.wasEventHiglightOpened = false;
-            this.wasDetailOpened = false
-          }} video={this.state.video}
-          ></VideoViewer> : null}
-          <EventHighlights showTrimer={(source) => {
-            this.setState({
-              EventHighlightState: false,
-              showTimmer: true,
-              source: source
-            })
-          }}
+          <EventHighlights 
             closeTeporary={() => {
               this.setState({
                 EventHighlightState:false,
@@ -405,19 +389,33 @@ export default class EventDetailView extends Component {
             reinitializeHighlightsList={(newHighlight) => {
               this.reinitializeHighlightsList(newHighlight)
             }} isOpen={this.state.EventHighlightState} onClosed={() => {
-              this.setState({ EventHighlightState: false, update: false, highlight_id: null })
+              this.setState({ EventHighlightState: false, update: false,
+                 //highlight_id: null 
+                })
             }}
             update={(newHighlight, previousHighlight) => this.updateHighlight(newHighlight, previousHighlight)}
             participant={this.state.participant} parentComponent={this} ref={"highlights"} event_id={this.props.Event.id} />
-          {this.state.isAreYouSureModalOpened ? <BleashupAlert title={"Delete Higlight"} accept={"Yes"} refuse={"No"} message={" Are you sure you want to delete these highlight ?"}
+          
+            {this.state.isAreYouSureModalOpened ? <BleashupAlert title={"Delete Higlight"} accept={"Yes"} refuse={"No"} message={" Are you sure you want to delete these highlight ?"}
             deleteFunction={() => this.deleteHighlight(this.state.current_highlight)}
             isOpen={this.state.isAreYouSureModalOpened} onClosed={() => { this.setState({ isAreYouSureModalOpened: false }) }} /> : null}
-          {this.state.showPhoto ? <PhotoViewer photo={this.state.photo} open={this.state.showPhoto} hidePhoto={() => {
+         
+            {this.state.showPhoto ? <PhotoViewer photo={this.state.photo} open={this.state.showPhoto} hidePhoto={() => {
             this.setState({
               showPhoto: false,
               isHighlightDetailsModalOpened: true
             })
           }}></PhotoViewer> : null}
+          {this.state.showVideo ? <VideoViewer open={this.state.showVideo} hideVideo={() => {
+            this.setState({
+              showVideo: false,
+              EventHighlightState: this.wasEventHiglightOpened ? true : false,
+              isHighlightDetailsModalOpened: this.wasDetailOpened ? true : false,
+            })
+            this.wasEventHiglightOpened = false;
+            this.wasDetailOpened = false
+          }} video={this.state.video}
+          ></VideoViewer> : null}
         </View>
       </View>
     )

@@ -68,13 +68,16 @@ export default class Commitee extends Component {
                     width: "95%", display: 'flex', flexDirection: 'row', marginBottom: "5%", 
                    ...shadower(3)
                 }}>
-                    <Title style={{
-                        color:"#9EEDD3",
-                        fontWeight: 'bold',
-                        fontStyle: 'italic',
-                        marginLeft: 10, fontSize: 22, alignSelf: 'center', width: "80%",
-                        marginBottom: "3%",
-                    }}>Commitees</Title>
+                <View style={{ width: "80%",}}>
+                        <Title style={{
+                            color: "#9EEDD3",
+                            fontWeight: 'bold',
+                            alignSelf: 'flex-start',
+                            fontStyle: 'italic',
+                            marginLeft: 10, fontSize: 22,
+                            marginBottom: "3%",
+                        }}>Commitees</Title>
+                </View>
                     <View>
                         <TouchableOpacity onPress={() => requestAnimationFrame(() => { this.props.showCreateCommiteeModal() })}>
                             <Icon style={{ marginTop: "10%", color: "#FEFFDE" }}

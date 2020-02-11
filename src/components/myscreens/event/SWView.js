@@ -205,12 +205,14 @@ export default class SWView extends Component {
                             <View style={{
                                 backgroundColor: "#FEFFDE",
                                 width: screenWidth * 2.7 / 3,
-                                alignItems: 'center',
+                                alignItems: 'flex-start',
                                 marginTop: 2,
                                 borderRadius: 5,
-                                justifyContent: 'center', flexDirection: 'row', ...shadower(3)
-                            }}><View style={{ width: "90%" }}><Title style={{ fontWeight: 'bold', fontSize: 17, marginTop: 2, color: "#0A4E52" }}>{this.props.event.about.title}</Title>
+                                paddingLeft: '2.5%',
+                                justifyContent: 'flex-start', flexDirection: 'row', ...shadower(3)
+                            }}><View style={{ width: "90%" }}><Title style={{ fontWeight: 'bold', fontSize: 17, marginTop: 2, color: "#0A4E52",alignSelf: 'flex-start', }}>{this.props.event.about.title}</Title>
                                     {this.props.event.period ? <Title style={{
+                                        alignSelf: 'flex-start',
                                         marginRight: "2%", fontStyle: 'italic', fontWeight: this.props.event.closed ? "bold" : "400",
                                         color: this.props.event.closed ? "red" : this.dateDiff(this.props.event) > 0 ? "gray" : "#1FABAB", fontSize: 12,
                                     }}>{this.props.event.closed ? "Closed" : this.displayDate(this.props.event)}</Title> : null}
