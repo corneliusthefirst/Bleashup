@@ -9,7 +9,7 @@
         i will only investigate while waiting to solve it .
 
 
-[ ] Handle The of the backPress sometimes not working .
+[*] Handle The of the backPress sometimes not working .
     - This is due to some Modals which are listening to backPress, once opened will not 
         unregister its handle even when closed because it's not unmounted onClosed.
 
@@ -19,11 +19,11 @@
 
 [*] Check if the user is a master before performing an update onLongPress on the Acivity Details page.
 
-[ ] implement a restore after deleting
+[*] implement a restore after deleting
 
-[ ] Check that A Post has atleat one of the inputs fields before accepting creation on the Activiy Details page.
+[*] Check that A Post has atleat one of the inputs fields before accepting creation on the Activiy Details page.
 
-[ ] Add A BackPress handle on Create Activity page and on the mytask page.
+[*] Add A BackPress handle on Create Activity page and on the mytask page.
 
 [ ] On the likes module if the likes has never been initialized in the store, It will alway fetch likes 
     on Mount . But one The Likes is initialised in the store . it will never fetch again.
@@ -38,7 +38,7 @@
 
     - This is highly problematic. 
 
-    []  When a remind is added or deleted the whole list refreshes in the remind tab in the event page 
+    [*]  When a remind is added or deleted the whole list refreshes in the remind tab in the event page 
 
 
     A solution needs to implemented to handle this . 

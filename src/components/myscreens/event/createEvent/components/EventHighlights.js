@@ -309,7 +309,6 @@ export default class EventHighlights extends Component {
     this.setState({
       creating: true
     })
-    this.props.startLoader()
     var arr = new Array(32);
     let num = Math.floor(Math.random() * 16)
     uuid.v1(null, arr, num);
@@ -335,22 +334,28 @@ export default class EventHighlights extends Component {
         })
       })
     } else {
+      this.props.startLoader()
       this.props.onClosed()
-      Requester.createHighlight(newHighlight).then(() => {
-        this.props.reinitializeHighlightsList(newHighlight)
-        this.resetHighlight();
-        stores.Highlights.removeHighlight("newHighlightId").then(() => {
+      if(newHighlight.title || newHighlight.url.audio || newHighlight.url.photo || newHighlight.url.video){
+        Requester.createHighlight(newHighlight).then(() => {
+          this.props.reinitializeHighlightsList(newHighlight)
+          this.resetHighlight();
+          stores.Highlights.removeHighlight("newHighlightId").then(() => {
+            this.props.stopLoader()
+            this.setState({
+              creating: false
+            })
+          });
+        }).catch(() => {
           this.props.stopLoader()
           this.setState({
             creating: false
           })
-        });
-      }).catch(() => {
-        this.props.stopLoader()
-        this.setState({
-          creating: false
         })
-      })
+      }else{
+        Toast.show({text:'Post Must include at least a media or title',duration:5000,buttonText:'ok'})
+        this.props.stopLoader()
+      }
     }
   }
 
