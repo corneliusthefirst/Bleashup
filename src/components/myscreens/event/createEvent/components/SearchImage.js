@@ -18,7 +18,6 @@ export default class SearchImage extends Component {
   }
 
   async openLink(url) {
-    this.props.openPicker ? this.props.openPicker() : this.props.accessLibrary()
     try {
 
       if (await InAppBrowser.isAvailable()) {
@@ -77,7 +76,19 @@ export default class SearchImage extends Component {
   }*/
 
 
+open(url){
+  this.props.onClosed(true)
+  if (this.props.h_modal) {
+    setTimeout(() => {
+      this.props.openPicker ? this.props.openPicker() : this.props.accessLibrary()
+      this.openLink(url)
+    }, 250)
+  } else {
+    this.props.openPicker ? this.props.openPicker() : this.props.accessLibrary()
+    this.openLink(url)
+  }
 
+}
 
   render() {
     return (
@@ -115,26 +126,14 @@ export default class SearchImage extends Component {
 
           <Button style={{ alignSelf: 'center', width: "90%", borderRadius: 15, borderColor: "#1FABAB", backgroundColor: "transparent", justifyContent: 'center', alignItem: 'center', marginTop: "10%" }}
             onPress={() => {
-              this.props.onClosed(true)
-              if (this.props.h_modal) {
-                setTimeout(() => {
-                  let url = "https://www.pixabay.com"
-                  this.openLink(url)
-                }, 250)
-              } else {
-                let url = "https://www.pixabay.com"
-                this.openLink(url)
-              }
-
+              this.open("https://www.pixabay.com")
             }}>
             <Text style={{ alignSelf: "center" }}>Pixabay</Text>
           </Button>
 
           <Button style={{ alignSelf: 'center', width: "90%", borderRadius: 15, borderColor: "#1FABAB", backgroundColor: "transparent", justifyContent: 'center', alignItem: 'center', marginTop: "10%" }}
             onPress={() => {
-              this.props.onClosed()
-              let url = "https://www.pixels.com"
-              this.openLink(url);
+               this.open("https://www.pixels.com")
 
             }}>
             <Text style={{ alignSelf: "center" }}> Pixels </Text>
@@ -142,9 +141,7 @@ export default class SearchImage extends Component {
 
           <Button style={{ alignSelf: 'center', width: "90%", borderRadius: 15, borderColor: "#1FABAB", backgroundColor: "transparent", justifyContent: 'center', alignItem: 'center', marginTop: "10%" }}
             onPress={() => {
-              this.props.onClosed()
-              let url = "https://www.pexels.com"
-              this.openLink(url)
+               this.open("https://www.pexels.com")
 
             }}>
             <Text style={{ alignSelf: "center" }}>Pexels</Text>
@@ -153,9 +150,7 @@ export default class SearchImage extends Component {
           <TouchableOpacity>
             <Text style={{ alignSelf: "flex-start", color: "darkturquoise", margin: "5%" }}
               onPress={() => {
-                this.props.onClosed()
-                let url = 'https://www.google.com'
-                this.openLink(url)
+                this.open('https://www.google.com')
               }}>Others..</Text>
           </TouchableOpacity>
 

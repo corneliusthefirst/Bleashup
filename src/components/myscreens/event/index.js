@@ -1457,7 +1457,7 @@ export default class Event extends Component {
           // triggered . so this is an attempt to restore the blocking done when that photo is being pressed
           GState.ShowingPhoto = false
         }}></PhotoViewer> : null}
-        {!this.state.isSearchImageModalOpened ? null : <SearchImage accessLibrary={() => this.openCamera(true)} isOpen={this.state.isSearchImageModalOpened} onClosed={() => {
+        {!this.state.isSearchImageModalOpened ? null : <SearchImage accessLibrary={() => setTimeout(() => this.openCamera(true),400)} isOpen={this.state.isSearchImageModalOpened} onClosed={() => {
           this.setState({
             isSearchImageModalOpened: false
           })
