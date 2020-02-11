@@ -115,7 +115,7 @@ export default class SwipeOutView extends Component {
                         </TouchableOpacity>}
 
                     </View>
-                    <View style={{ height: this.width, marginBottom: "9%", alignSelf: 'flex-start' }}>
+                    <View style={{ height: this.width, marginBottom: "9%", alignSelf: 'flex-start',marginLeft: '10%', }}>
                         <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                             this.navigateToLogs()
                         })
@@ -146,7 +146,7 @@ export default class SwipeOutView extends Component {
                             <Label style={{ fontSize: 14, color: "#1FABAB" }}>Hide</Label>
                         </TouchableOpacity>
                     </View>*/}
-                    <View style={{ height: this.width, marginBottom: "9%", }}>
+                    <View style={{ height: this.width, marginBottom: "9%", marginLeft: '10%' }}>
                         <TouchableOpacity onPress={() => {
                             return this.props.delete()
                         }}>
