@@ -390,7 +390,7 @@ export default class EventDetailView extends Component {
               this.reinitializeHighlightsList(newHighlight)
             }} isOpen={this.state.EventHighlightState} onClosed={() => {
               this.setState({ EventHighlightState: false, update: false,
-                 //highlight_id: null 
+                 highlight_id: null 
                 })
             }}
             update={(newHighlight, previousHighlight) => this.updateHighlight(newHighlight, previousHighlight)}

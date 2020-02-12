@@ -451,7 +451,7 @@ export default class TasksCreation extends Component {
         swipeToClose={true}
       >
         <View style={{ height: "100%", backgroundColor: "#FEFFDE", width: "100%", borderRadius: 10 }}>
-
+        <View style={{height:'98%',marginTop: '3%',}}>
 
           {/*   <View style={{height:"8%",width:"96%",flexDirection:"row",backgroundColor:"#FEFFDE",alignItems:"center",marginLeft:"2%",marginRight:"2%"}}>
            <View >
@@ -662,12 +662,15 @@ export default class TasksCreation extends Component {
 
           </ScrollView>
 
-          < SelectableContactList isOpen={this.state.selectMemberState} close={() => { this.setState({ selectMemberState: false }) }}
+          <SelectableContactList isOpen={this.state.selectMemberState} close={() => { this.setState({ selectMemberState: false }) }}
             members={this.state.members} notcheckall={true} takecheckedResult={this.takecheckedResult}>
           </SelectableContactList>
-
         </View>
-      </Modal >
+          <View style={{ position: 'absolute', }}>
+            <Text style={{ margin: '7%', }} note>{!this.props.master?"remind configs":this.props.update ? "update remind" : "add remind"}</Text>
+          </View>
+        </View>
+      </Modal>
     );
   }
 }

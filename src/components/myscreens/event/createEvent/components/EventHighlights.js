@@ -502,8 +502,8 @@ export default class EventHighlights extends Component {
         position={'bottom'}
         swipeToClose={false}
       >
-        <View style={{ height: "100%", width: "100%" }}>
-          {!this.props.event_id ?
+        <View>
+          <View style={{ height: "98%", width: "100%", marginTop: '3%', }}>{!this.props.event_id ?
             <View style={{ height: "8%", width: "96%", marginLeft: "2%", marginRight: "2%" }}>
               <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
                 <TouchableOpacity>
@@ -700,6 +700,10 @@ export default class EventHighlights extends Component {
               })
               mother ? this.props.closeTeporary() : null
             }} />
+        </View>
+          <View style={{ position: 'absolute' }}>
+            <Text style={{ margin: '7%', }} note>{this.props.updateState ? "update post" : "add post"}</Text>
+          </View>
         </View>
       </Modal>
 
