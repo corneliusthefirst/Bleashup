@@ -8,6 +8,7 @@ import autobind from "autobind-decorator";
 import { findIndex } from "lodash"
 import { observer } from "mobx-react";
 import stores from "../../../../stores";
+import shadower from "../../../shadower";
 
 export default class SwipeOutView extends Component {
     constructor(props) {
@@ -74,9 +75,9 @@ export default class SwipeOutView extends Component {
     blinkerSize = 26;
     render() {
         return (
-            <View style={{ width: "100%", borderRadius: 10, borderLeftColor: "#7DD2D2", }}>
-                <View style={{ display: 'flex', flexDirection: 'column', marginLeft: "30%", }}>
-                    <View style={{ height: this.width, marginBottom: "9%", alignSelf: 'flex-start' }}>
+            <View style={{ width: "98%", borderRadius: 4,...shadower(2) ,height:'99.5%',padding: '1%',backgroundColor: 'white',}}>
+                <View style={{ display: 'flex', flexDirection: 'column', marginLeft: "20%", }}>
+                    <View style={{ height: this.width, marginBottom: "9%", alignSelf: 'flex-start',marginLeft: "10%", }}>
                         <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                             this.props.publish()
                         })
@@ -109,12 +110,12 @@ export default class SwipeOutView extends Component {
                                 marginLeft: "3%",
                             }}
                             >
-                                {findIndex(this.props.Event.participant, { phone: stores.LoginStore.user.phone }) >= 0 ? "Joint" : "Join"}
+                                {findIndex(this.props.Event.participant, { phone: stores.LoginStore.user.phone }) >= 0 ? "Joined" : "Join"}
                             </Label>
                         </TouchableOpacity>}
 
                     </View>
-                    <View style={{ height: this.width, marginBottom: "9%", alignSelf: 'flex-start' }}>
+                    <View style={{ height: this.width, marginBottom: "9%", alignSelf: 'flex-start',marginLeft: '10%', }}>
                         <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                             this.navigateToLogs()
                         })
@@ -145,7 +146,7 @@ export default class SwipeOutView extends Component {
                             <Label style={{ fontSize: 14, color: "#1FABAB" }}>Hide</Label>
                         </TouchableOpacity>
                     </View>*/}
-                    <View style={{ height: this.width, marginBottom: "9%", }}>
+                    <View style={{ height: this.width, marginBottom: "9%", marginLeft: '10%' }}>
                         <TouchableOpacity onPress={() => {
                             return this.props.delete()
                         }}>

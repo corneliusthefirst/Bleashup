@@ -14,6 +14,8 @@ import CacheImages from '../../CacheImages';
 import ChatStore from '../../../stores/ChatStore';
 import testForURL from '../../../services/testForURL';
 import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
+import { Title } from 'native-base';
+import shadower from '../../shadower';
 
 export default class CommiteeItem extends Component {
     constructor(props) {
@@ -102,6 +104,7 @@ export default class CommiteeItem extends Component {
             commitee: { ...this.state.commitee, name: this.previousName },
             newThing: !this.state.newThing
         })
+        this.swap()
     }
     publish() {
         this.props.publishCommitee(this.state.commitee.id, !this.state.commitee.public_state)
@@ -156,6 +159,7 @@ export default class CommiteeItem extends Component {
             newThing: !this.state.newThing
         })
         this.props.editName(newName, this.state.commitee.id)
+        //this.swap()
         emitter.once("edit-failed", () => {
             this.revertName()
         })
@@ -243,12 +247,12 @@ export default class CommiteeItem extends Component {
         switch (message.type) {
             case "text":
                 return <View style={{ display: 'flex', flexDirection: 'row', }}>
-                    <Text style={{ fontWeight: "bold", fontSize: 20, }}>{this.formNickName(message.sender)}{" :"}</Text>
+                    <Title style={{ fontWeight: "bold", fontSize: 20, color:"#0A4E52" }}>{this.formNickName(message.sender)}{" :"}</Title>
                     <Text style={{ fontSize: 18, marginTop: "1%", }}>{message.text.slice(0, 15)}</Text>
                 </View>
             case "photo":
                 return <View style={{ display: 'flex', flexDirection: 'row', }}>
-                    <Text style={{ fontWeight: "bold", fontSize: 20, }}>{this.formNickName(message.sender)}{" :"}</Text>
+                    <Title style={{ fontWeight: "bold", fontSize: 20, color:"#0A4E52" }}>{this.formNickName(message.sender)}{" :"}</Title>
                     <View style={{ display: 'flex', flexDirection: 'row', marginTop: "1%", }}>
                         <Text style={{ fontSize: 18, width: "74%" }}>{message.text ? message.text.slice(0, 15) : "  "}</Text>
                         <View style={{ alignSelf: 'flex-end', marginTop: "-8%", borderRadius: 8, }}>
@@ -260,7 +264,7 @@ export default class CommiteeItem extends Component {
                 </View>
             case "audio":
                 return <View style={{ display: 'flex', flexDirection: 'row', }}>
-                    <Text style={{ fontWeight: "bold", fontSize: 20, }}>{this.formNickName(message.sender)}{" :"}</Text>
+                    <Title style={{ fontWeight: "bold", fontSize: 20, color:"#0A4E52" }}>{this.formNickName(message.sender)}{" :"}</Title>
                     <View style={{ display: 'flex', flexDirection: 'row' }}>
                         <Text style={{ fontSize: 18, marginLeft: "3%", marginTop: "1%", width: "70%" }}>{message.text ?
                             message.text.slice(0, 15) + message.text.length < 15 ? "..." : "" :
@@ -273,7 +277,7 @@ export default class CommiteeItem extends Component {
                 </View>
             case "video":
                 return <View style={{ display: 'flex', flexDirection: 'row', }}>
-                    <Text style={{ fontWeight: "bold", fontSize: 20, }}>{this.formNickName(message.sender)}{" :"}</Text>
+                    <Title style={{ fontWeight: "bold", fontSize: 20, color:"#0A4E52" }}>{this.formNickName(message.sender)}{" :"}</Title>
                     <View style={{ display: 'flex', flexDirection: 'row', marginTop: "1%", }}>
                         <Text style={{ fontSize: 18, marginLeft: "3%", width: "70%" }}>{message.text ?
                             message.text.slice(0, 15) : message.duration ? message.duration : message.total ? this.toMB(message.total) : ""}</Text>
@@ -284,7 +288,7 @@ export default class CommiteeItem extends Component {
                 </View>
             case "attachement":
                 return <View style={{ display: 'flex', flexDirection: 'row', }}>
-                    <Text style={{ fontWeight: "bold", fontSize: 20, }}>{this.formNickName(message.sender)}{" :"}</Text>
+                    <Title style={{ fontWeight: "bold", fontSize: 20, color:"#0A4E52" }}>{this.formNickName(message.sender)}{" :"}</Title>
                     <View style={{ display: 'flex', flexDirection: 'row', }}>
                         <Text style={{ fontSize: 20, marginLeft: "3%", alignSelf: 'flex-start', fontWeight: 'bold', width: "70%" }}>{message.file_name.split(".")
                         [message.file_name.split(".").length - 1].toUpperCase()}</Text>
@@ -304,17 +308,22 @@ export default class CommiteeItem extends Component {
         this.accessible = this.state.joint || this.state.public
         return (
             this.state.loaded ? <View style={{
-                opacity: this.accessible ? 1 : 0.1,
+                opacity: this.accessible ? 1 : 0.7,
                 borderBottomRightRadius: 8,
                 width: "90%",
+                ...shadower(3),
+                marginBottom: '1%',
+                marginTop: '1%',
+                padding: '2%',
                 borderTopRightRadius: 8,
-                backgroundColor: GState.currentCommitee == this.state.commitee.id ? "#54F5CA" : null,
+                backgroundColor: GState.currentCommitee == this.state.commitee.id ? "#54F5CA" : "#FEFFDE",
             }}>
                 <TouchableOpacity onPress={() => requestAnimationFrame(() => {
+                    if(GState.editingCommiteeName === false)
                     this.swappCommitee()
                 })}>
-                <View style={{ display: 'flex', hieght: 100, width: "100%", flexDirection: "row", marginBottom: "2%", }}>
-                   <View style={{ margin: '1%', width: "90%", display: 'flex', flexDirection: 'column', }}>
+                    <View style={{ display: 'flex', hieght: 100, width: "100%", flexDirection: "row", marginBottom: "2%", }}>
+                   <View style={{ margin: '1%', width: "70%", display: 'flex', flexDirection: 'column', }}>
                             <Text style={{
                                 fontWeight: 'bold', fontSize: 18, color: GState.currentCommitee == this.state.commitee.id ? "#0A4E52" : "gray"
                             }}>{this.state.commitee.name}</Text>
@@ -330,11 +339,15 @@ export default class CommiteeItem extends Component {
                         {this.state.commitee.name.toLowerCase() === "Generale".toLowerCase() ? null : this.state.master ?
                             <View style={{ marginTop: "-5%", marginRight: "15%", }}>
                                 <TouchableWithoutFeedback onPress={() => {
+                                        GState.editingCommiteeName = true
                                     requestAnimationFrame(() => {
                                         this.setState({
                                             isEditNameModelOpened: true,
                                             newThing: !this.state.newThing
                                         })
+                                        setTimeout(() => {
+                                            GState.editingCommiteeName = false
+                                        },300)
                                     })
                                 }}>
                                         <View>{this.props.master ? <Icon style={{ fontSize: 30, color: "#0A4E52" }} name="pencil" type="EvilIcons" /> : null}</View>
@@ -343,7 +356,7 @@ export default class CommiteeItem extends Component {
                     </View>
                 </View>
                 </TouchableOpacity>
-                <EditNameModal isOpen={this.state.isEditNameModelOpened} close={() => {
+                {this.state.isEditNameModelOpened?<EditNameModal value={this.state.commitee.name} isOpen={this.state.isEditNameModelOpened} close={() => {
                     this.setState({
                         isEditNameModelOpened: false,
                         newThing: !this.state.newThing
@@ -352,8 +365,9 @@ export default class CommiteeItem extends Component {
                     editName={(newName) => {
                         this.editName(newName)
                     }}
-                ></EditNameModal>
-                <MenuDivider color="#1FABAB" />
+                ></EditNameModal>:null}
+               {//<MenuDivider color="#1FABAB" />
+            }
 
 
             </View> : <Spinner size={"small"}></Spinner>

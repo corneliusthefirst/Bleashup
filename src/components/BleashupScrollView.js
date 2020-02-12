@@ -2,8 +2,6 @@ import React, { Component } from "react"
 import { FlatList, View, ScrollView } from "react-native";
 import { Spinner, CardItem, Text, List } from "native-base";
 import { observer } from "mobx-react";
-import { thisExpression } from "@babel/types";
-import NestedScrollView from "react-native-nested-scroll-view";
 
 
 const ifCloseToTop = ({ layoutMeasurement, contentOffset, contentSize }) => {
@@ -12,7 +10,7 @@ const ifCloseToTop = ({ layoutMeasurement, contentOffset, contentSize }) => {
 const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
     const paddingToBottom = 20;
     return layoutMeasurement.height + contentOffset.y >=
-        ((contentSize.height - paddingToBottom) * (0.95));
+        ((contentSize.height - paddingToBottom) * (0.70));
 };
 @observer export default class BleashupScrollView extends Component {
     constructor(props) {
@@ -44,8 +42,12 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
     }
     render() {
         return (
-            <View style={{ flexDirection: 'column', backgroundColor: "#FEFFDE",}}>
-                <NestedScrollView
+            <View style={{
+                flexDirection: 'column',
+                backgroundColor: this.props.backgroundColor ? this.props.backgroundColor : "#FEFFDE",
+                ...this.props.style
+            }}>
+                <ScrollView
                     onScrollEndDrag={({ nativeEvent }) => {
                         if (isCloseToBottom(nativeEvent)) {
                             this.continueScrollDown()
@@ -66,7 +68,7 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
                             marginLeft: "35%"
                         }}>no more data to load</Text> : <Spinner size={"small"}></Spinner>}
                     </CardItem>}
-                </NestedScrollView>
+                </ScrollView>
             </View>)
     }
 }

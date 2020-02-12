@@ -49,10 +49,7 @@ export default class Invitations {
                         "event_organiser_name": user.nickname,
                         "event_description": event.about.description,
                         "event_Image": event.background,
-                        "event_time": event.period.date ? event.period.date.year + "/" +
-                            event.period.date.month + "/" +
-                            event.period.date.day + " at " + event.period.time.hour + ": "
-                            + event.period.time.mins + ": " + event.period.time.secs : event.period,
+                        "event_time": event.period,
                         "event_title": event.about.title,
                         "location": event.location.string,
                         "invitation_status": invitation.status,
@@ -224,13 +221,9 @@ export default class Invitations {
         })
     }
     @action setProperties(Events, inform) {
+        let sorter = (a, b) => (a.arrival_date > b.arrival_date ? -1 :
+            a.arrival_date < b.arrival_date ? 1 : 0)
         if (inform) Events = orderBy(Events, ["arrival_date"], ["desc"]);
-        this.SendInvitations = filter(Events, {
-            type: "sent"
-        });
-        this.ReceivedInvitations = filter(Events, {
-            type: "received"
-        });
-        this.invitations = Events
+        this.invitations = Events.sort(sorter)
     }
 }

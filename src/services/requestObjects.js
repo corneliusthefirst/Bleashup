@@ -1,4 +1,5 @@
 import moment from "moment"
+import  stores  from '../stores';
 class Request {
     constructor() { }
 
@@ -93,18 +94,24 @@ class Request {
     }
     Remind() {
         return { 
-            id: '',
+            id: 'newRemindId',
             event_id: "",
             created_at: moment().format(),
             updated_at: moment().format(),
-            creator: '',
+            creator: stores.LoginStore.user.phone,
             title: '',
             description: '',
-            period: "",
-            recursive_frequency:"none",
-            recurrence:1000,
+            must_report:false,
+            confirmed: [],
+            period: moment().format(),
+            recursive_frequency:{
+                interval:1,
+                frequency:'yearly',
+                recurrence:null
+            },
             status:"public",
             members:[],
+            donners:[],
             isDone:false
         }
     }
@@ -114,7 +121,7 @@ class Request {
             remind_id: ''
         }
     }
-
+    
     RemindUdate() {
         return {
             action: "",
@@ -282,7 +289,7 @@ class Request {
     }
     Highlight() {
         return {
-            id: "",
+            id: "newHighlightId",
             creator: "",
             event_id: "",
             created_at: moment().format(),
@@ -292,7 +299,8 @@ class Request {
             url: {
                 audio:"",
                 photo:"",
-                video:""
+                video:"",
+                duration:""
             }
         }
     }
@@ -341,24 +349,27 @@ class Request {
     }
     Event() {
         return {
-            id: "",
-            event_host: "",
+            id: "newEventId",
+            event_host: stores.Session.SessionStore.host,
             created_at: moment().format(),
             updated_at: moment().format(),
-            creator_phone: "",
+            creator_phone: stores.LoginStore.user.phone,
             closed:false,
             notes:[],
-            recurrent:false,
-            frequency:'daily',
+            recurrent:true,
+            frequency:'yearly',
             interval:1,
-            recurrence:1000,
+            recurrence:moment().format(),
             calendar_id:null,
             about: this.About(),
             commitee : [],
-            period: "",
+            period: null,
             location: this.Location(),
             background: "",
-            participant: [],
+            participant: [{phone:stores.LoginStore.user.phone,
+                master:true,
+                status:'creator',
+            host:stores.Session.SessionStore.host}],
             likes: 0,
             reminds: [],
             recursiveFrequency:"None",

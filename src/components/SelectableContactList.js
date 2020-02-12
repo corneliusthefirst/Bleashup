@@ -27,12 +27,13 @@ export default class SelectableContactList extends PureComponent {
             , 200)
     }
     _keyExtractor = (item, index) => { return item ? item.phone : null };
+    delay = 0
     render() {
         return (
             <Modal
-                backdropPressToClose={false}
-                backdropOpacity={0.7}
-                swipeToClose={false}
+                backdropPressToClose={true}
+                backdropOpacity={0.5}
+                swipeToClose={true}
                 backButtonClose={true}
                 position={"bottom"}
                 //entry={"top"}
@@ -42,7 +43,7 @@ export default class SelectableContactList extends PureComponent {
                     this.setState({
                         members: [],
                         checked: [],
-                        check:true
+                        check: true
                     })
                     this.props.close()
                 }}
@@ -56,7 +57,7 @@ export default class SelectableContactList extends PureComponent {
                     })
                 }}
                 style={{
-                    height: this.state.inviteViaEmail ? "30%" : "95%",
+                    height: this.state.inviteViaEmail ? "30%" : "90%",
                     borderTopLeftRadius: 8,
                     borderTopRightRadius: 8,
                     backgroundColor: "#FEFFDE",
@@ -64,26 +65,24 @@ export default class SelectableContactList extends PureComponent {
                 }}
             ><View style={{ display: 'flex', flexDirection: 'row', margin: 4, marginLeft: "2%", }}>
                     <View style={{ width: "85%" }}>
-                        <Text style={{ fontWeight: 'bold',fontStyle: 'italic', fontSize: 20, }}>{this.props.title} </Text>
+                        <Text style={{ fontWeight: 'bold', fontStyle: 'italic', fontSize: 20, }}>{this.props.title} </Text>
                     </View>
                     <View>
                         <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                             this.props.removing ? this.props.saveRemoved(this.state.checked) :
                                 this.props.adding ? this.props.addMembers(this.state.checked) :
                                     this.props.takecheckedResult(this.state.checked)
-                            this.setState({
-                                checked: [],
-
-                            })
+                            this.setState({ checked: [] })
+                            this.props.close();
                         })
                         }>
-                            <View style={{flexDirection: 'row',}}>
+                            <View style={{ flexDirection: 'row', }}>
+                                <Text style={{ color: "#1FABAB", fontSize: 20, fontWeight: 'bold', marginTop: "3%", marginLeft: "1%", fontStyle: 'italic', }}>Go</Text>
                                 <Icon
                                     style={{ color: "#1FABAB", }}
                                     type="AntDesign"
-                                    name="checkcircle"
+                                    name="doubleright"
                                 />
-                                <Text style={{ color: "#1FABAB", fontSize: 20,fontWeight: 'bold',marginTop: "3%",marginLeft: "1%", fontStyle: 'italic',}}>Go</Text>
                             </View>
                         </TouchableOpacity>
                     </View>
@@ -101,9 +100,10 @@ export default class SelectableContactList extends PureComponent {
                         numberOfItems={this.state.members.length}
                         renderItem={(item, index) => {
                             // console.error(item, "pppppp")
+                            this.delay = this.delay >= 15 ? 0 : this.delay + 1
                             return item ?
-                                <View style={{margin: '2%',}}>
-                                    <ProfileWithCheckBox checked={this.state.check}
+                                <View style={{ margin: '2%', }}>
+                                    <ProfileWithCheckBox delay={this.delay} checked={this.state.check}
                                         index={indexOf(this.state.checked, item.phone)} phone={item.phone} check={(phone) =>
                                             this.setState({
                                                 checked: concat(this.state.checked, [find(this.state.members, { phone: phone })]),

@@ -41,10 +41,11 @@ export default class InviteParticipantModal extends PureComponent {
     _keyExtractor(item) {
         return item.phone
     }
+    delay = 0
     render() {
         return (
             <Modal
-                backdropPressToClose={false}
+                //backdropPressToClose={false}
                 //swipeToClose={false}
                 backdropOpacity={0.7}
                 backButtonClose={true}
@@ -105,12 +106,13 @@ export default class InviteParticipantModal extends PureComponent {
                             numberOfItems={this.state.contacts.length}
                             keyExtractor={this._keyExtractor}
                             dataSource={this.state.contacts}
-                            renderItem={(item, index) =>
-                                <SelectableContactsMaster toggleMaster={(member) => this.toggleMaster(member)}
+                            renderItem={(item, index) => {
+                                this.delay = this.delay >= 15 ? 0: this.delay + 1
+                               return (<SelectableContactsMaster delay={this.delay} toggleMaster={(member) => this.toggleMaster(member)}
                                     selected={member => { this.addMember(member) }}
                                     unselected={(member) => this.remove(member)}
-                                    key={index} contact={item}></SelectableContactsMaster>
-                            }
+                                    key={index} contact={item}></SelectableContactsMaster>)
+                            }}
                         >
                         </BleashupFlatList></View></View> : <Spinner size={"small"}></Spinner>}
                 </View>

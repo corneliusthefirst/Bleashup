@@ -21,7 +21,7 @@ export default class changelogs {
             this.readFromStore().then(Changes => {
                 Changes = Changes.length == 0 ? [] : Changes
                 let date = moment(Newchange.date).format("YYYY/MM/DD");
-                let index = findIndex(Changes, { id: date })
+                let index = findIndex(Changes, { id: date,event_id: Newchange.event_id })
                 if (index < 0){
                     Changes.unshift({...Newchange,id:date,type:"date_separator"})
                 }

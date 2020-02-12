@@ -1,16 +1,11 @@
 import React, { Component } from "react";
 import {
-  Content, Card, CardItem, Text, Body, Container, Icon, Header,
-  Form, Item, Title, Input, Left, Right, H3, H1, H2, Spinner,
-  Button, InputGroup, DatePicker, Thumbnail, Alert
+  Text,  Icon, Header, Title, Spinner,
+  Button,  Toast
 } from "native-base";
 
-import {StyleSheet, View,Image,TouchableOpacity, Dimensions} from 'react-native';
-import ActionButton from 'react-native-action-button';
-import Modal from 'react-native-modalbox';
-import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
+import {StyleSheet, View,Image,TouchableOpacity, Dimensions,BackHandler} from 'react-native';
 import autobind from "autobind-decorator";
-import ImagePicker from 'react-native-image-picker';
 import moment from "moment";
 import EventTitle from "./components/EventTitle"
 import EventPeriod from "./components/EventPeriod"
@@ -18,9 +13,10 @@ import EventPhoto from "./components/EventPhoto"
 import EventLocation from "./components/EventLocation"
 import EventDescription from "./components/EventDescription"
 import EventHighlights from "./components/EventHighlights"
-import { head,filter,uniqBy,orderBy,find,findIndex,reject,uniq,indexOf,forEach,dropWhile } from "lodash";
+import { head,find,} from "lodash";
 import request from "../../../../services/requestObjects";
 import  stores from '../../../../stores/index';
+import CreateRequest from './CreateRequester';
 
 var uuid = require('react-native-uuid');
 uuid.v1({
@@ -61,12 +57,22 @@ export default class CreateEventView extends Component {
     }
 
   }
+  componentWillMount(){
+    this.BackHandler = BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this));
+
+  }
+  handleBackButton() {
+    this.props.navigation.navigate('Home')
+    return true
+  }
+  componentWillUnmount(){
+    this.BackHandler.remove()
+  }
 
 componentDidMount(){
   stores.Events.readFromStore().then(Events =>{
     let event = find(Events, { id:"newEventId" }); 
-     this.setState({currentEvent:event});
-     this.setState({participant:head(event.participant)})
+    this.setState({ participant: head(event.participant), currentEvent: event})
      console.warn("participant",this.state.participant,this.state.currentEvent );
    });
 
@@ -80,72 +86,63 @@ componentDidMount(){
  
   @autobind
   creatEvent(){
-    //console.warn("im inside");
-    var arr = new Array(32);
-    let num = Math.floor(Math.random() * 16)
-    uuid.v1(null, arr,num); 
-    let New_id = uuid.unparse(arr,num);
-    
-    //console.warn(New_id);
-  
-    stores.Events.readFromStore().then(Events =>{
-      let newEvent = request.Event(); 
-      let event = find(Events, { id:"newEventId" }); 
-      
-      newEvent = event;
-      newEvent.id = New_id;
-      //gives this new id to all highlights before pushing
-      forEach(newEvent.highlights,(highlightId)=>{
-        stores.Highlights.readFromStore().then((Highlights)=>{
-           let highlight = find(Highlights, { id:highlightId });
-           highlight.event_id =  New_id;
-           stores.Highlights.updateHighlight(highlight,false).then(()=>{});
-                    
-       })
+    if(!this.state.currentEvent.about.title){
+      Toast.show({text:"An Activity must have a name",duration:5000})
+    }else{
+      this.setState({
+        creating:true
+      })
+      /*var arr = new Array(32);
+      let num = Math.floor(Math.random() * 16)
+      uuid.v1(null, arr, num);
+      let New_id = uuid.unparse(arr, num);*/
+        let event = this.state.currentEvent
+        event.created_at = moment().format()
+        event.updated_at = moment().format()
+        event.recurrence = moment(event.period).add(1,"hours").format()
+        let newEvent = event;
+        newEvent.id = uuid.v1();
+      CreateRequest.createEvent(newEvent).then((res) => {
+        console.warn(res)
+        //gives this new id to all highlights before pushing
+        /*forEach(newEvent.highlights, (highlightId) => {
+          stores.Highlights.readFromStore().then((Highlights) => {
+            let highlight = find(Highlights, { id: highlightId });
+            highlight.event_id = New_id;
+            stores.Highlights.updateHighlight(highlight, false).then(() => { });
 
-     });
-
-      newEvent.created_at = moment().format("YYYY-MM-DD HH:mm");
-      if(newEvent.period == ""){
-        newEvent.period = moment().format();
-      }
-
-  
-          console.warn("the event is",newEvent);
-          stores.Events.addEvent(newEvent).then(()=>{});
-    
-          //reset new Event object
-          let reset = request.Event();
-          reset.id = "newEventId";
-          //default to the phone user
-          stores.LoginStore.getUser().then((user)=>{
-            stores.Events.delete(reset.id).then(()=>{});
-            reset.creator_phone = user.phone;
-            //we add the creator as first participant 
-            let Participant=request.Participant();
-            Participant.phone = user.phone;
-            Participant.master = true;
-            Participant.status = user.status;
-            stores.Events.addEvent(reset).then(()=>{});
-            stores.Events.addParticipant(reset.id, Participant,false).then(()=>{})
-    
           })
 
-          this.refs.title_ref.setState({title:""});
-          this.refs.title_ref.setState({date:""});
-          this.refs.title_ref.setState({inputTimeValue:""});
-          this.refs.title_ref.setState({inputDateValue:""});
-    
-          this.refs.photo_ref.setState({EventPhoto:""});
-          this.refs.description_ref.setState({description:""});
-          this.refs.location_ref.setState({location:request.Location()});
-          this.refs.highlight_ref.setState({highlightData:[]});
-          
-          stores.Events.readFromStore().then(Events =>{
-            console.warn(Events);
-          })
+        });*/
+        //reset new Event object
+        stores.Events.delete("newEventId").then(() => {
+            this.setState({
+              currentEvent:request.Event(),
+              creating:false
+            })
+            this.back()
+        });
+      /* this.refs.title_ref.setState({ title: "" });
+       this.refs.title_ref.setState({ date: "" });
+       this.refs.title_ref.setState({ inputTimeValue: "" });
+       this.refs.title_ref.setState({ inputDateValue: "" });
 
-   })
+       this.refs.photo_ref.setState({ EventPhoto: "" });
+       this.refs.description_ref.setState({ description: "" });
+       this.refs.location_ref.setState({ location: request.Location() });
+       this.refs.highlight_ref.setState({ highlightData: [] });
+
+       stores.Events.readFromStore().then(Events => {
+         console.warn(Events);
+       })*/
+
+     // })
+      }).catch(() => {
+        this.setState({
+          creating:false
+        })
+      })
+    }
   }
 
   render() {
@@ -156,18 +153,56 @@ componentDidMount(){
             <Header style={{backgroundColor:"#FEFFDE",width:"100%",justifyContent:"flex-start"}}> 
               <Button onPress={this.back} transparent>
                 <Icon type='Ionicons' name="md-arrow-round-back" style={{color:"#1FABAB",marginLeft:"3%"}} />
-              </Button>   
+              </Button> 
+           <View style={{ margin: "5%", alignItems: 'center' }}>
+             <Title style={{ fontSize: 18, fontWeight: "500", }}>New Activity</Title>
+           </View>  
            </Header>
+                <View style={{margin:"5%",flexDirection: 'column',}}>
+                <Button transparent onPress={() => {
+               this.setState({ EventTitleState: true })
 
-
-         <View style={{ margin:"5%", alignItems: 'center' }}>
-            <Text style={{fontSize:18,fontWeight:"500",color:'#1FABAB'}}>Create New Event</Text>
-         </View>
-
-   
-
-                <View style={{marginLeft:"5%"}}>
-                  <RadioForm
+                }}>
+             <Icon name={this.state.currentEvent.about.title ? "radio-button-checked" : 
+             "radio-button-unchecked"} type={type = "MaterialIcons"}></Icon>
+             <Text>{"Activity Name"}</Text>
+                </Button>
+           <Button transparent onPress={() => {
+             this.setState({ EventPeriodState: true })
+           }}>
+             <Icon name={this.state.currentEvent.period ? "radio-button-checked" :
+               "radio-button-unchecked"} type={type = "MaterialIcons"}></Icon>
+             <Text>{"Activity Period"}</Text>
+           </Button>
+           <Button transparent onPress={() => {
+             this.setState({ EventDescriptionState: true })
+           }}>
+             <Icon name={this.state.currentEvent.about.description ? "radio-button-checked" :
+               "radio-button-unchecked"} type={type = "MaterialIcons"}></Icon>
+             <Text>{"Activity Description"}</Text>
+           </Button>
+           <Button transparent onPress={() => {
+             this.setState({ EventPhotoState: true })
+           }}>
+             <Icon name={this.state.currentEvent.background ? "radio-button-checked" :
+               "radio-button-unchecked"} type={type = "MaterialIcons"}></Icon>
+             <Text>{"Activity Photo"}</Text>
+           </Button>
+           <Button transparent onPress={() => {
+             this.setState({ EventLocationState: true })
+           }}>
+             <Icon name={this.state.currentEvent.location.string ? "radio-button-checked" :
+               "radio-button-unchecked"} type={type = "MaterialIcons"}></Icon>
+             <Text>{"Activity Location"}</Text>
+           </Button>
+           {/*<Button transparent onPress={() => {
+             this.setState({ EventHighlightState: true })
+           }}>
+            <Icon name={this.state.currentEvent.highlights.length>0 ? "radio-button-checked" :
+               "radio-button-unchecked"} type={type = "MaterialIcons"}></Icon>
+             <Text>{"Activity Posts"}</Text>
+          </Button>*/}
+                  {/*<RadioForm
                      radio_props={radio_props}
                      initial={0}
                      buttonColor={"#1FABAB"}
@@ -206,36 +241,75 @@ componentDidMount(){
                        }
                     }}
 
-                    />
+                  />*/}
                 </View>
 
  
-                <View style={{alignSelf:'flex-end'}}>
-                  <TouchableOpacity style={{width:"35%",marginRight:"2%"}} >
-                  <Button style={{width:"100%",borderRadius:8,backgroundColor:'#1FABAB'}} onPress={()=>{this.creatEvent()}}>
-                  <Text>Create Event</Text>
-                  </Button>
-                  </TouchableOpacity>
-                  </View>
+         <View style={{ alignSelf: 'flex-end' }}>
+           <TouchableOpacity style={{ width: "35%", marginRight: "2%" }} >
+            {this.state.creating?<Spinner></Spinner>:<Button onPress={() => { this.creatEvent() }} rounded>
+               <Text style={{ color: '#FEFFDE', fontWeight: 'bold', }}>Create</Text>
+             </Button>}
+           </TouchableOpacity>
+         </View>
               
-               <EventTitle isOpen={this.state.EventTitleState} onClosed={()=>{
-                 this.setState({EventTitleState:false}); }} ref={"title_ref"}  />
+          <EventTitle event={this.state.currentEvent} isOpen={this.state.EventTitleState} onClosed={(title)=>{
+                 this.setState({
+                   EventTitleState:false,
+                   currentEvent:{...this.state.currentEvent,
+                    about:{...this.state.currentEvent.about,title:title}}
+                  }); }} ref={"title_ref"}  />
               
-              <EventPeriod isOpen={this.state.EventPeriodState} onClosed={()=>{
-                 this.setState({EventPeriodState:false}); }} ref={"period_ref"}  />
+         <EventPeriod event={this.state.currentEvent} isOpen={this.state.EventPeriodState} onClosed={(period) => {
+           this.setState({
+             EventPeriodState: false,
+             currentEvent: { ...this.state.currentEvent, period: period }
+           });
+         }} ref={"period_ref"} />
     
     
 
-               <EventPhoto  isOpen={this.state.EventPhotoState} onClosed={()=>{this.setState({EventPhotoState:false})}}
+         <EventPhoto closeTemporarily={() => {
+           this.setState({
+             EventPhotoState: false,
+           })
+           setTimeout(() => {
+             this.setState({
+               EventPhotoState: true
+             })
+           }, 600)
+         }}
+          event={this.state.currentEvent}  isOpen={this.state.EventPhotoState} onClosed={(background)=>{
+           this.setState({
+             EventPhotoState:false,
+             currentEvent:{...this.state.currentEvent,
+              background:background}
+            }
+            )}}
                  ref={"photo_ref"} />
 
-               <EventDescription isOpen={this.state.EventDescriptionState} onClosed={()=>{this.setState({EventDescriptionState:false})}}
-                 ref={"description_ref"} eventId={"newEventId"} updateDes={false}/>
+         <EventDescription event={this.state.currentEvent} isOpen={this.state.EventDescriptionState}
+           onClosed={(dec) => {
+             this.setState({
+               EventDescriptionState: false,
+               currentEvent: {
+                 ...this.state.currentEvent,
+                 about: {...this.state.currentEvent.about,
+                 description: dec }
+               }
+             })
+           }}
+           ref={"description_ref"} eventId={"newEventId"} updateDes={false} />
 
-               <EventLocation  isOpen={this.state.EventLocationState} onClosed={()=>{this.setState({EventLocationState:false})}}
+         <EventLocation event={this.state.currentEvent}  isOpen={this.state.EventLocationState} onClosed={(locat)=>{
+           this.setState({
+             EventLocationState:false,
+             currentEvent:{...this.state.currentEvent,
+              location:locat}
+            })}}
                 ref={"location_ref"}  eventId={"newEventId"} updateLoc={false}/>
 
-               <EventHighlights   isOpen={this.state.EventHighlightState} onClosed={()=>{this.setState({EventHighlightState:false})}}
+         <EventHighlights   isOpen={this.state.EventHighlightState} onClosed={()=>{this.setState({EventHighlightState:false})}}
                 parentComponent={this} ref={"highlight_ref"} participant={this.state.participant}/>
 
           </View>

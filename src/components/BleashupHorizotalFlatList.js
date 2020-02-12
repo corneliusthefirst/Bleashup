@@ -107,12 +107,13 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
                             this.continueScrollTop()
                         }
                     }
-                    }
+                    }initialRender={5}
                     onScroll={this.props.onScroll}
                     centerContent={true}
                     ref={this.props.refHorizontal}
                     canCancelContentTouches={true}
                     horizontal={true}
+                    renderPerBatch={5}
                     inverted={this.props.inverted ? this.props.inverted : false}
                     removeClippedSubviews={false}
                     maxToRenderPerBatch={this.props.renderPerBatch ? this.props.renderPerBatch : this.props.inverted ? 5 : this.state.endReached ? 1 : 3}
@@ -122,7 +123,6 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
                     getItemLayout={this.props.getItemLayout}
                     data={this.renderNewData().concat(this.extractData())}
                     renderItem={({ item, index }) => this.props.renderItem(item, index)}
-
                 >
                 </FlatList> : <Spinner size={"small"}></Spinner> }
             </View>

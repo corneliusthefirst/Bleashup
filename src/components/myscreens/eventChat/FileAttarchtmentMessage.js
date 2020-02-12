@@ -4,17 +4,14 @@ import React, { Component } from 'react';
 import {
     StyleSheet, Text, TouchableOpacity, View, ScrollView, Alert, Vibration, Platform
 } from 'react-native';
-import rnFetchBlob from 'rn-fetch-blob';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import { Icon, Right, Spinner, Toast } from 'native-base';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import GState from '../../../stores/globalState';
-import FileViewer from 'react-native-file-viewer';
-import ChatStore from '../../../stores/ChatStore';
 import testForURL from '../../../services/testForURL';
-let dirs = rnFetchBlob.fs.dirs
-const { fs, config } = rnFetchBlob
-const AppDir = rnFetchBlob.fs.dirs.SDCardDir + '/Bleashup'
+import FileExachange from '../../../services/FileExchange';
+import Pickers from '../../../services/Picker';
+
 export default class FileAttarchementMessaege extends Component {
     constructor(props) {
         super(props);
@@ -23,13 +20,14 @@ export default class FileAttarchementMessaege extends Component {
             currentPosition: 0,
             currentTime: 0,
             downloadState: 0,
-            loaded: true
+            loaded: false
         }
     }
     setAfterSuccess(path) {
+        GState.downlading = false
         this.props.message.source = Platform.OS === 'android' ? path + "/" : '' + path
-        this.room.addStaticFilePath(this.props.message.source, this.props.message.id).then(() => {
-            this.room.addAudioSizeProperties(this.props.message.id, this.props.message.total,
+        this.props.room.addStaticFilePath(this.props.message.source, this.props.message.id).then(() => {
+            this.props.room.addAudioSizeProperties(this.props.message.id, this.props.message.total,
                 this.props.message.received, this.props.message.duration).then(() => {
                     this.setState({
                         loaded: true,
@@ -38,88 +36,18 @@ export default class FileAttarchementMessaege extends Component {
                 })
         })
     }
-    DetemineRange(path) {
-        return new Promise((resolve, reject) => {
-            fs.exists(path).then(ext => {
-                if (ext) {
-                    console.warn("exists")
-                    fs.stat(path).then(stat => resolve(stat.size))
-                } else {
-                    resolve(0)
-                }
-            })
-        })
-    }
     room = null
-    path = AppDir + '/Others/' + this.props.message.file_name
+    path = '/Others/' + this.props.message.file_name
     duration = 10
     pattern = [1000, 0, 0]
     downloadID = null
-    tempPath = this.path + '.download'
     download(url) {
         clearInterval(this.downloadID)
         this.setState({
             downloading: true
         })
         GState.downlading = true
-        this.DetemineRange(this.tempPath).then(size => {
-            this.task = rnFetchBlob.config({
-                fileCache: true
-            }).fetch('GET', url, {
-                Range: `bytes=${size}-`,
-                From: `${size}`
-            })
-            this.task.progress((received, total) => {
-                let newReceived = parseInt(size) + parseInt(received);
-                let newTotal = this.props.message.total > 0 ? this.props.message.total : total
-                newTotal = parseInt(newTotal)
-                this.setState({
-                    downloadState: (newReceived / newTotal) * 100,
-                    total: newTotal, received: newReceived
-                })
-            })
-            this.task.catch(error => {
-                GState.downlading = false
-                console.warn(error)
-                this.setState({
-                    downloading: false,
-                    error: true
-                })
-            })
-            this.task.then((res) => {
-                GState.downlading = false
-                temp1 = this.state.received / 1000
-                temp2 = this.state.total / 1000
-                temper1 = temp2 / 1000
-                temper2 = temp1 / 1000
-                temp1 = Math.floor(temper1)
-                temp2 = Math.floor(temper2)
-                temp3 = Math.ceil(temper2)
-                if (temp1 == temp2 || temp1 == temp3) {
-                    this.props.message.duration = Math.floor(res.info().headers.Duration)
-                    fs.appendFile(this.tempPath, res.path(), 'uri').then(() => {
-                        fs.unlink(this.path)
-                        fs.appendFile(this.path, this.tempPath, 'uri').then(() => {
-                            fs.unlink(this.tempPath)
-                            fs.unlink(res.path())
-                            this.props.message.received = this.state.received
-                            this.props.message.total = this.state.total
-                            this.setAfterSuccess(this.path, temper1, temper2)
-                        })
-                    })
-                } else {
-                    fs.appendFile(this.tempPath, res.path(), 'uri').then(() => {
-                        fs.unlink(res.path())
-                        this.props.message.received = this.state.received
-                        this.props.message.total = this.state.total
-                        this.room.addAudioSizeProperties(this.props.message.id,
-                            this.state.total, this.state.received).then(() => {
-
-                            })
-                    })
-                }
-            })
-        })
+        this.exchanger.download(this.state.received, this.state.total)
     }
     downloadFile(url) {
         this.downloadID = setInterval(() => {
@@ -129,14 +57,9 @@ export default class FileAttarchementMessaege extends Component {
 
     }
     openFile() {
-        FileViewer.open(this.props.message.source).then(() => {
-
-        }).catch((error) => {
-            console.warn(error)
-        })
+        Pickers.openFile(this.props.message.source)
     }
     componentDidMount() {
-        this.room = new ChatStore(this.props.firebaseRoom)
         this.setState({
             duration: null,
             currentPosition: 0,
@@ -148,21 +71,59 @@ export default class FileAttarchementMessaege extends Component {
             time: this.props.message.created_at.split(" ")[1],
             creator: (this.props.message.sender.phone == this.props.creator)
         })
+        this.exchanger = new FileExachange(this.props.message.source,
+            this.path, this.state.total,
+            this.state.received,
+            this.progress.bind(this),
+            this.success.bind(this), this.onFailed.bind(this),
+            this.onError.bind(this))
     }
     task = null
     previousTime = 0
     cancelDownLoad(url) {
-        this.task.cancel((err, taskID) => {
+        this.exchanger.task.cancel((err, taskID) => {
             this.setState({ downloading: false })
         })
-        this.room.SetCancledState(this.props.message.id)
-        this.setState({
-            downloading: false
-        })
+        this.props.room.SetCancledState(this.props.message.id)
     }
     toMB(data) {
         mb = 1000 * 1000
         return data / mb
+    }
+    progress(received, total) {
+        let newTotal = this.state.total && this.state.total > 0 && this.state.total > total ? this.state.total : total
+        newTotal = parseInt(newTotal)
+        this.setState({
+            downloadState: (received / newTotal) * 100,
+            total: newTotal, received: received
+        })
+    }
+    success(path, total, received) {
+        this.props.message.received = this.state.receive
+       // this.props.message.source = path
+        this.props.message.total = this.state.total
+        this.setAfterSuccess(path, total * 1000 * 1000, received * 1000 * 1000)
+    }
+    onFailed(received, total) {
+        console.warn("failing")
+        GState.downlading = false
+        this.props.message.received = received
+        this.props.message.total = total
+        this.props.room.addAudioSizeProperties(this.props.message.id,
+            total, received).then(() => {
+                console.warn("setting failed state")
+                this.setState({
+                    downloading: false
+                })
+            })
+    }
+    onError(error) {
+        GState.downlading = false
+        console.warn(error)
+        this.setState({
+            downloading: false,
+            error: true
+        })
     }
     render() {
         textStyle = {
@@ -214,8 +175,8 @@ export default class FileAttarchementMessaege extends Component {
                                 )
                             }
                         </AnimatedCircularProgress><View>
-                            {this.state.loaded ? <Text>{this.toMB(this.state.total).toFixed(1)}{"Mb"}</Text> :
-                                <Text style={{ fontSize: 10 }} note>{"("}{this.toMB(this.state.received).toFixed(1)}{"/"}
+                            {!testForURL(this.props.message.source) ? <Text>{this.toMB(this.state.total).toFixed(1)}{"Mb"}</Text> :
+                                <Text style={{ fontSize: 10 }} note>{"("}{this.toMB(isNaN(this.state.received)?0:this.state.received).toFixed(1)}{"/"}
                                     {this.toMB(this.state.total).toFixed(1)}{")Mb"}</Text>}</View></View>
                 </View>
             </View>

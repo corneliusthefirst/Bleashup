@@ -10,6 +10,7 @@ import BleashupScrollView from '../../BleashupScrollView';
 import { union, uniq } from "lodash";
 import GState from '../../../stores/globalState';
 import emitter from '../../../services/eventEmiter';
+import shadower from '../../shadower';
 export default class Commitee extends Component {
     constructor(props) {
         super(props)
@@ -64,19 +65,19 @@ export default class Commitee extends Component {
                 <View style={{
                     borderTopRightRadius: 10, borderBottomRightRadius: 10,
                     backgroundColor: "#1FABAB", height: 35,
-                    width: "95%", display: 'flex', flexDirection: 'row', marginBottom: "5%", shadowOpacity: 1,
-                    shadowOffset: {
-                        height: 1,
-                    },
-                    shadowRadius: 10, elevation: 6
+                    width: "95%", display: 'flex', flexDirection: 'row', marginBottom: "5%", 
+                   ...shadower(3)
                 }}>
-                    <Title style={{
-                        color:"#9EEDD3",
-                        fontWeight: 'bold',
-                        fontStyle: 'italic',
-                        marginLeft: 10, fontSize: 22, alignSelf: 'center', width: "80%",
-                        marginBottom: "3%",
-                    }}>Commitees</Title>
+                <View style={{ width: "80%",}}>
+                        <Title style={{
+                            color: "#9EEDD3",
+                            fontWeight: 'bold',
+                            alignSelf: 'flex-start',
+                            fontStyle: 'italic',
+                            marginLeft: 10, fontSize: 22,
+                            marginBottom: "3%",
+                        }}>Commitees</Title>
+                </View>
                     <View>
                         <TouchableOpacity onPress={() => requestAnimationFrame(() => { this.props.showCreateCommiteeModal() })}>
                             <Icon style={{ marginTop: "10%", color: "#FEFFDE" }}
@@ -84,8 +85,13 @@ export default class Commitee extends Component {
                     </View>
                 </View>
                 <View>{this.state.refresh ? null :
-                    <View>
-                        <BleashupScrollView
+                    <View style={{height:'97%',}}>
+                        <BleashupFlatList
+                        backgroundColor={'#feffde'}
+                        style={{
+                            width: '98%', borderBottomRightRadius: 8,borderTopRightRadius: 8,margin: '1%', ...shadower(3),
+                            height:256
+                        }}
                             dataSource={union([this.generalCommitee], uniq(this.props.commitees))}
                             keyExtractor={(item, index) => item}
                             renderItem={(item, index) =>

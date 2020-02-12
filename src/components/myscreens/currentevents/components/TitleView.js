@@ -1,9 +1,7 @@
 import React, { Component } from "react"
-import { View, TouchableOpacity } from 'react-native';
-import { Text, Left, Title } from 'native-base';
+import { View, TouchableOpacity, Text} from 'react-native';
+import {  Left, Title } from 'native-base';
 import autobind from "autobind-decorator";
-import SvgAnimatedLinearGradient from 'react-native-svg-animated-linear-gradient'
-import Svg, { Circle, Rect } from 'react-native-svg'
 import stores from "../../../../stores";
 import DetailsModal from "../../invitations/components/DetailsModal";
 import { forEach, find } from "lodash"
@@ -19,7 +17,7 @@ export default class TitleView extends Component {
     }
     componentDidMount() {
     }
-   navigateToEventDetails() {
+    navigateToEventDetails() {
         stores.Events.isParticipant(this.props.Event.id, stores.Session.SessionStore.phone).then(status => {
             if (status) {
                 this.props.navigation.navigate("Event", {
@@ -32,30 +30,45 @@ export default class TitleView extends Component {
             this.props.seen()
         })
     }
-    dateDiff(date) {
-        let statDate = moment(date)
-        let end = moment()
+    writeInterval(frequency) {
+        switch (frequency) {
+            case 'daily':
+                return 'day(s)';
+            case 'weekly':
+                return 'week(s)';
+            case 'monthly':
+                return 'month(s)';
+            case 'yearly':
+                return 'year(s)';
+            default:
+                return ''
+        }
+    }
+    dateDiff(event) {
+        let statDate = moment(event.period)
+        let end = moment(event.recurrence?event.recurrence:null)
         return daysDiff = Math.floor(moment.duration(end.diff(statDate)).asDays())
     }
-    writeDateTime(date) {
+    writeDateTime(event) {
+        let date = event.period
         let statDate = moment(date)
-        let end = moment()
+        let end = moment(typeof event.recurrence === "string" ? event.recurrence : null)
         let daysDiff = Math.floor(moment.duration(end.diff(statDate)).asDays())
         if (daysDiff == 0) {
-            return "Ongoing Today from " + moment(date).format("h:mm a");
+            return "Started Today At " + moment(date).format("h:mm a");
         } else if (daysDiff == 1) {
-            return "Past Since Yesterday at " + moment(date).format("h:mm a")
+            return "Ended Yesterday at " + moment(date).format("h:mm a")
         } else if (daysDiff > 1 && daysDiff < 7) {
-            return `Past Since ${Math.abs(daysDiff)} Days Ago at ` + moment(date).format("h:mm a")
+            return `Ended ${Math.abs(daysDiff)} Days Ago at ` + moment(date).format("h:mm a")
         } else if (daysDiff == 7) {
-            return "Past Since 1 Week Ago at " + moment(date).format("h:mm a")
+            return "Ended 1 Week Ago at " + moment(date).format("h:mm a")
         } else if (daysDiff == -1) {
-            return "Upcoming Tomorrow at " + moment(date).format("h:mm a");
+            return "Starting Tomorrow at " + moment(date).format("h:mm a");
         }
         else if (daysDiff < -1) {
-            return `Upcoming in ${Math.abs(daysDiff)} Days at ` + moment(date).format("h:mm a");
+            return `Starting in ${Math.abs(daysDiff)} Days at ` + moment(date).format("h:mm a");
         } else {
-            return `Past since ${moment(date).format("dddd, MMMM Do YYYY")} at ${moment(date).format("h:mm a")}`
+            return `Ended on ${moment(date).format("dddd, MMMM Do YYYY")} at ${moment(date).format("h:mm a")}`
         }
     }
     render() {
@@ -68,48 +81,45 @@ export default class TitleView extends Component {
                         this.navigateToEventDetails()
                     }
                     )}>
-                        <View style={{flexDirection:"column",alignItems:"flex-start"}}>
-                            <Title
+                        <View style={{ flexDirection: "column", alignItems: "flex-start" }}>
+                            <Text
                                 adjustsFontSizeToFit={true}
+                                ellipsizeMode={'tail'}
+                                numberOfLines={1}
                                 style={{
                                     fontSize: 20,
-                                    color:"#0A4E52",
                                     fontWeight: "500",
+                                    color: "#696969",
                                     fontFamily: "Roboto",
                                 }}
                             >
                                 {this.props.Event.about.title}{/*{" "}{this.props.Event.id}*/}
-                            </Title>
-                            <Title
+                            </Text>
+                            {this.props.Event.period ? <Title
                                 style={{
                                     fontSize: 12,
-                                    color: this.props.Event.closed ? "red" : this.dateDiff(this.props.Event.period) > 0 ? "gray" : "#1FABAB",
+                                    color: this.props.Event.closed ? "red" : this.dateDiff(this.props.Event) > 0 ? "gray" : "#1FABAB",
                                     fontStyle: 'italic',
                                     fontWeight: this.props.Event.closed ? "bold" : '400',
                                 }}
                                 note
                             >
-                                {this.props.Event.closed ? "Closed" : this.writeDateTime(this.props.Event.period)}
-                            </Title>
+                                {this.props.Event.closed ? "Closed" : this.writeDateTime(this.props.Event)}
+                            </Title> : null}
                         </View>
-                        <View>
+                        <View style={{}}>
                             <Left>
-                                {this.props.Event.recursive ? <View style={
+                                {this.props.Event.interval > 1 && this.props.Event.frequency !== 'yearly' && this.dateDiff(this.props.Event) < 0? <View style={
                                     {
                                         flexDirection: "column"
                                     }
                                 }>
                                     <View>
-                                        <Text style={{
-                                            color: "#1FABAB"
+                                        <Text ellipsizeMode={'tail'} numberOfLines={1} style={{
+                                            color: "#696969",
+                                            fontStyle: 'italic',
                                         }} note>
-                                            {this.props.Event.recursion.type}
-                                        </Text>
-                                    </View>
-
-                                    <View>
-                                        <Text note>
-                                            {this.props.Event.recursion.days}
+                                            {`after every ${this.props.Event.interval > 1 ? this.props.Event.interval : null} ${this.writeInterval(this.props.Event.frequency)} till ${moment(this.props.Event.recurrence ? this.props.Event.recurrence : null).format("dddd, MMMM Do YYYY")}`}
                                         </Text>
                                     </View>
                                 </View> : null}

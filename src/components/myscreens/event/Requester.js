@@ -36,9 +36,9 @@ class Request {
                                 time: null
                             }
                             stores.ChangeLogs.addChanges(Change).then(() => {
-                                Toast.show({ text: "commitee successfully added !", type: "success" })
-                                resolve()
+                                //Toast.show({ text: "commitee successfully added !", type: "success" })
                             })
+                            resolve()
                         })
                     })
                 }).catch(error => {
@@ -70,9 +70,9 @@ class Request {
                             time: null
                         }
                         stores.ChangeLogs.addChanges(Change).then(() => {
-                            Toast.show({ text: "update went successfully !", type: "success" })
-                            resolve()
+                            //Toast.show({ text: "update went successfully !", type: "success" }) 
                         })
+                        resolve()
                     })
                 }).catch(error => {
                     Toast.show({ text: "Unable to perform the name editing action" })
@@ -95,16 +95,16 @@ class Request {
                             title: "Update On Commitees",
                             updated: 'published_commitee',
                             event_id: event_id,
-                            changed: `Published ${commitee.name} Commitee`,
+                            changed: `${state === true ?'Published':'Unpublished'} ${commitee.name} Commitee`,
                             updater: stores.LoginStore.user,
-                            new_value: { data: commitee.id, new_value: "published" },
+                            new_value: { data: commitee.id, new_value: state === true ? 'Published' : 'Unpublished' },
                             date: moment().format(),
                             time: null
                         }
                         stores.ChangeLogs.addChanges(Change).then(() => {
-                            Toast.show({ text: "Commitee accessibility was successfully !", type: "success" })
-                            resolve()
+                            //Toast.show({ text: "Commitee accessibility was successfully !", type: "success" })
                         })
+                        resolve()
                     })
                 }).catch((error) => {
                     Toast.show({ text: "Unable to perform the publish action" })
@@ -134,9 +134,9 @@ class Request {
                             time: null
                         }
                         stores.ChangeLogs.addChanges(Change).then(() => {
-                            Toast.show({ text: "members where successfully added !", type: "success" })
-                            resolve(members)
+                            //Toast.show({ text: "members where successfully added !", type: "success" })
                         })
+                        resolve(members)
                     })
                 }).catch((error) => {
                     Toast.show({ text: "Unable to perform the add action" })
@@ -166,8 +166,8 @@ class Request {
                         }
                         stores.ChangeLogs.addChanges(Change).then(() => {
                             Toast.show({ text: "The commitee was successfully opened !", type: "success" })
-                            resolve()
                         })
+                        resolve()
                     })
                 }).catch((error) => {
                     Toast.show({ text: "Unable to perform the open action" })
@@ -196,9 +196,9 @@ class Request {
                             time: null
                         }
                         stores.ChangeLogs.addChanges(Change).then(() => {
-                            Toast.show({ text: "The commitee was successfully opened !", type: "success" })
-                            resolve()
+                            //Toast.show({ text: "The commitee was successfully opened !", type: "success" })
                         })
+                        resolve()
                     })
                 }).catch((error) => {
                     Toast.show({ text: "Unable to perform the close action" })
@@ -229,9 +229,9 @@ class Request {
                             time: null
                         }
                         stores.ChangeLogs.addChanges(Change).then(() => {
-                            Toast.show({ text: "members where successfully removed !", type: "success" })
-                            resolve()
+                            //Toast.show({ text: "members where successfully removed !", type: "success" })
                         })
+                        resolve()
                     })
                 }).catch((error) => {
                     Toast.show({ text: "Unable to perform the remove action" })
@@ -261,9 +261,9 @@ class Request {
                             time: null
                         }
                         stores.ChangeLogs.addChanges(Change).then(() => {
-                            Toast.show({ text: "commitee successfully joint !", type: "success" })
-                            resolve()
+                            //Toast.show({ text: "commitee successfully joint !", type: "success" })
                         })
+                        resolve()
                     })
                 }).catch((error) => {
                     Toast.show({ text: "Unable to perform the join action" })
@@ -294,9 +294,9 @@ class Request {
                             time: null
                         }
                         stores.ChangeLogs.addChanges(Change).then(() => {
-                            Toast.show({ text: "commitee successfully left !!", type: "success" })
-                            resolve()
+                            //Toast.show({ text: "commitee successfully left !!", type: "success" })
                         })
+                        resolve()
                     })
                 }).catch((error) => {
                     Toast.show({ text: "Unable to perform the leave action" })
@@ -406,8 +406,8 @@ class Request {
                                 time: null
                             }
                             stores.ChangeLogs.addChanges(Change).then(() => {
-                                resolve(mem)
                             })
+                            resolve(mem)
                         })
                     }).catch(e => {
                         console.warn(e)
@@ -439,8 +439,9 @@ class Request {
                                 time: null
                             }
                             stores.ChangeLogs.addChanges(Change).then(() => {
-                                resolve("done")
+
                             })
+                            resolve("done")
                         }).catch(e => {
                             reject(e)
                         })
@@ -470,8 +471,8 @@ class Request {
                                 time: null
                             }
                             stores.ChangeLogs.addChanges(Change).then(() => {
-                                resolve("done")
                             })
+                            resolve("done")
                         })
                     }).catch((e) => {
                         console.warn(e)
@@ -502,8 +503,8 @@ class Request {
                                 time: null
                             }
                             stores.ChangeLogs.addChanges(Change).then(() => {
-                                resolve("done")
                             })
+                            resolve("done")
                         })
                     })
                 }).catch((e) => {
@@ -530,8 +531,9 @@ class Request {
                             time: null
                         }
                         stores.ChangeLogs.addChanges(Change).then(() => {
-                            resolve("done")
+
                         })
+                        resolve("done")
                     })
                 })
             }).catch((e) => {
@@ -563,8 +565,8 @@ class Request {
                                 stores.ChangeLogs.addChanges(Change).then(() => {
                                     Eve.calendar_id ? CalendarServe.saveEvent(Eve, Eve.alarms).then(() => {
                                     }) : null
-                                    resolve('ok')
                                 })
+                                resolve('ok')
                             })
                         }).catch((e) => {
                             reject(e)
@@ -573,6 +575,66 @@ class Request {
             } else {
                 resolve()
             }
+        })
+    }
+    updateDescription(eventID, newDescription) {
+        return new Promise((resolve, reject) => {
+            tcpRequest.UpdateCurrentEvent(stores.LoginStore.user.phone, eventID,
+                'description', newDescription, eventID + "_description").then(JSONData => {
+                    serverEventListener.sendRequest(JSONData, eventID + "_description").then((response) => {
+                        console.warn(response)
+                        stores.Events.updateDescription(eventID, newDescription, false).then(() => {
+                            let Change = {
+                                id: uuid.v1(),
+                                title: "Updates On Main Activity",
+                                updated: "description",
+                                updater: stores.LoginStore.user,
+                                event_id: eventID,
+                                changed: newDescription ? "Changed The Description Of The Activity To: " : "Removed The Description Of The Activity",
+                                new_value: { data: null, new_value: newDescription },
+                                date: moment().format(),
+                                time: null
+                            }
+                            stores.ChangeLogs.addChanges(Change).then(() => {
+                            })
+                            resolve('ok')
+                        })
+                    }).catch((e) => {
+                        console.warn(e)
+                        Toast.show({ text: "Unable To Perform Request" })
+                        reject(e)
+                    })
+                })
+        })
+    }
+    updateLocation(eventID, newLocation) {
+        return new Promise((resolve, reject) => {
+            tcpRequest.UpdateCurrentEvent(stores.LoginStore.user.phone, eventID, 'string',
+                newLocation, eventID + '_location').then(JSONData => {
+                    serverEventListener.sendRequest(JSONData, eventID + '_location').then((response) => {
+                        console.warn(response)
+                        stores.Events.updateLocation(eventID, newLocation).then(() => {
+                            let Change = {
+                                id: uuid.v1(),
+                                title: "Updates On Main Activity",
+                                updated: "location",
+                                updater: stores.LoginStore.user,
+                                event_id: eventID,
+                                changed: newLocation ? "Changed The Location Of The Activity To: " : "Removed The Location Of The Activity",
+                                new_value: { data: null, new_value: newLocation },
+                                date: moment().format(),
+                                time: null
+                            }
+                            stores.ChangeLogs.addChanges(Change).then(() => {
+                            })
+                            resolve('ok')
+                        })
+                    }).catch((e) => {
+                        console.warn(error)
+                        Toast.show({ text: "Unable To Perform Request" })
+                        reject(e)
+                    })
+                })
         })
     }
     updatePeriod(event, newPeriod) {
@@ -589,16 +651,19 @@ class Request {
                                     updated: "period",
                                     updater: stores.LoginStore.user,
                                     event_id: event.id,
-                                    changed: "Changed The Scheduled Time Of The Activity To: ",
-                                    new_value: { data: null, new_value: moment(newPeriod).format("dddd, MMMM Do YYYY, h:mm:ss a") },
+                                    changed: newPeriod ? "Changed The Scheduled Time Of The Activity To: " : "Removed The Date Of The Activity",
+                                    new_value: { data: null, new_value: newPeriod ? moment(newPeriod).format("dddd, MMMM Do YYYY, h:mm:ss a") : null },
                                     date: moment().format(),
                                     time: null
                                 }
+                                event.period ? CalendarServe.saveEvent({ ...event, period: newPeriod },
+                                    Eve.alarms).then(() => {
+                                        resolve('ok')
+                                    }) : resolve('ok')
                                 stores.ChangeLogs.addChanges(Change).then(() => {
-                                    Eve.calendar_id ? CalendarServe.saveEvent(Eve, Eve.alarms).then(() => {
-                                    }) : null
-                                    resolve('ok')
+                                   
                                 })
+
                             })
                         }).catch((e) => {
                             reject(e)
@@ -634,8 +699,8 @@ class Request {
                                     Eve.calendar_id ? CalendarServe.saveEvent(Eve, Eve.alarms).then((resp) => {
                                         console.warn(resp)
                                     }) : null
-                                    resolve("ok")
                                 })
+                                resolve("ok")
                             })
                         }).catch((e) => {
                             reject(e)
@@ -668,11 +733,12 @@ class Request {
                                     date: moment().format(),
                                     time: null
                                 }
-                                stores.ChangeLogs.addChanges(Change).then(() => {
-                                    Eve.calendar_id ? CalendarServe.saveEvent(Eve, Eve.alarms).then(() => {
-                                    }) : null
+                                Eve.calendar_id ? CalendarServe.saveEvent(Eve, Eve.alarms).then(() => {
+                                    stores.ChangeLogs.addChanges(Change).then(() => {
+
+                                    })
                                     resolve("ok")
-                                })
+                                }) : resolve("ok")
                             })
                         }).catch((e) => {
                             reject(e)
@@ -703,8 +769,8 @@ class Request {
                                     time: null
                                 }
                                 stores.ChangeLogs.addChanges(Change).then(() => {
-                                    resolve("ok")
                                 })
+                                resolve("ok")
                             })
                         }).catch((e) => {
                             reject(e)
@@ -735,8 +801,8 @@ class Request {
                                     time: null
                                 }
                                 stores.ChangeLogs.addChanges(Change).then(() => {
-                                    resolve("ok")
                                 })
+                                resolve("ok")
                             })
                         }).catch((e) => {
                             reject(e)
@@ -756,7 +822,8 @@ class Request {
                         console.warn(t3)
                         this.updateRecurrency(JSON.parse(event), {
                             recurrent: settings.recurrent_new,
-                            interval: settings.interval_new, frequency: settings.frequency_new,
+                            interval: settings.interval_new,
+                            frequency: settings.frequency_new,
                             recurrence: settings.recurrence_new
                         }).then((t4) => {
                             event = JSON.parse(event)
@@ -797,20 +864,259 @@ class Request {
                                 updated: "background",
                                 event_id: event_id,
                                 updater: stores.LoginStore.user,
-                                changed: "Changed The Background Photo Of The Main Activity",
+                                changed: background ? "Changed The Background Photo Of The Main Activity" : "Removed The Background Photo Of The Activity",
                                 new_value: { data: null, new_value: background },
                                 date: moment().format(),
                                 time: null
                             }
                             stores.ChangeLogs.addChanges(Change).then(() => {
-                                resolve("ok")
                             })
+                            resolve("ok")
                         })
                     }).catch((error) => {
                         console.warn(error)
                         reject(error)
                     })
                 })
+        })
+    }
+    createHighlight(newHighlight) {
+        return new Promise((resolve, reject) => {
+            tcpRequest.addHighlight(newHighlight, newHighlight.id).then(JSONData => {
+                serverEventListener.sendRequest(JSONData, newHighlight.id).then(response => {
+                    console.warn(response)
+                    stores.Events.addHighlight(newHighlight.event_id, newHighlight.id).then(res => {
+                        stores.Highlights.addHighlight(newHighlight).then(res => {
+                            let Change = {
+                                id: uuid.v1(),
+                                title: "Updates On Main Activity",
+                                updated: "add_highlight",
+                                event_id: newHighlight.event_id,
+                                updater: stores.LoginStore.user,
+                                changed: "Added A New Post To The Activity",
+                                new_value: { data: null, new_value: newHighlight },
+                                date: moment().format(),
+                                time: null
+                            }
+                            stores.ChangeLogs.addChanges(Change).then(res => {
+                            })
+                            resolve("ok")
+                        })
+                    })
+                }).catch((error) => {
+                    Toast.show({ text: 'Unable to perform this action', position: 'top' })
+                    reject(error)
+                })
+            })
+        })
+    }
+    updateHighlightTitle(newTitle, oldTitle, highlightID, eventID) {
+        return new Promise((resolve, reject) => {
+            if (newTitle !== oldTitle) {
+                let higlightTitle = request.HUpdate();
+                higlightTitle.action = 'title'
+                higlightTitle.event_id = eventID
+                higlightTitle.h_id = highlightID
+                higlightTitle.new_data = newTitle
+                tcpRequest.updateHighlight(higlightTitle, highlightID).then(JSONData => {
+                    serverEventListener.sendRequest(JSONData, highlightID).then(response => {
+                        stores.Highlights.updateHighlightTitle({
+                            id: highlightID,
+                            title: newTitle
+                        }, false).then((HighlightJS) => {
+                            Highlight = JSON.parse(HighlightJS)
+                            let Change = {
+                                id: uuid.v1(),
+                                title: `Update On ${Highlight.title} Post`,
+                                updated: "highlight_title",
+                                event_id: eventID,
+                                updater: stores.LoginStore.user,
+                                changed: newTitle ? `Changed The Title of ${Highlight.title} Post to ...` :
+                                    `Removed The Title of ${Highlight.title} Post`,
+                                new_value: { data: null, new_value: newTitle },
+                                date: moment().format(),
+                                time: null
+                            }
+                            stores.ChangeLogs.addChanges(Change).then(res => {
+                            })
+                            resolve("ok")
+                        })
+                    }).catch((error) => {
+                        console.warn(error)
+                        reject(error)
+                    })
+                })
+            } else {
+                resolve()
+            }
+        })
+    }
+    updateHighlightDescription(newDescription, oldDes, highlightID, eventID) {
+        return new Promise((resolve, reject) => {
+            if (oldDes !== newDescription) {
+                let higlightTitle = request.HUpdate();
+                higlightTitle.action = 'description'
+                higlightTitle.event_id = eventID
+                higlightTitle.h_id = highlightID
+                higlightTitle.new_data = newDescription
+                tcpRequest.updateHighlight(higlightTitle, highlightID).then(JSONData => {
+                    serverEventListener.sendRequest(JSONData, highlightID).then(response => {
+                        stores.Highlights.updateHighlightDescription({
+                            id: higlightTitle.h_id,
+                            description: higlightTitle.new_data
+                        }, false).then((Highlight) => {
+                            let Change = {
+                                id: uuid.v1(),
+                                title: `Update On ${Highlight.title} Post`,
+                                updated: "highlight_decription",
+                                event_id: eventID,
+                                updater: stores.LoginStore.user,
+                                changed: newDescription ? `Changed The Content of ${Highlight.title} Post To` : `Removed The Content of ${Highlight.title} Post`,
+                                new_value: { data: null, new_value: newDescription },
+                                date: moment().format(),
+                                time: null
+                            }
+                            stores.ChangeLogs.addChanges(Change).then(res => {
+                            })
+                            resolve("ok")
+                        })
+                    }).catch((error) => {
+                        console.warn(error)
+                        reject(error)
+                    })
+                })
+            } else {
+                resolve()
+            }
+        })
+    }
+    updateHighlightURL(newURL, oldURL, highlightID, eventID) {
+        return new Promise((resolve, reject) => {
+            if (!isEqual(newURL, oldURL)) {
+                let newHighlightURL = request.HUpdate()
+                newHighlightURL.h_id = highlightID
+                newHighlightURL.event_id = eventID
+                newHighlightURL.action = 'url'
+                newHighlightURL.new_data = newURL
+                tcpRequest.updateHighlight(newHighlightURL, highlightID).then(JSONData => {
+                    serverEventListener.sendRequest(JSONData, highlightID).then(response => {
+                        stores.Highlights.updateHighlightUrl({
+                            id: newHighlightURL.h_id,
+                            url: newHighlightURL.new_data
+                        }, false).then((Highlight) => {
+                            let Change = {
+                                id: uuid.v1(),
+                                title: `Update On ${Highlight.title} Post`,
+                                updated: "highlight_url",
+                                event_id: eventID,
+                                updater: stores.LoginStore.user,
+                                changed: `Changed The Media Specifications of ${Highlight.title} Post`,
+                                new_value: { data: null, new_value: newURL },
+                                date: moment().format(),
+                                time: null
+                            }
+                            stores.ChangeLogs.addChanges(Change).then(res => {
+                            })
+                            resolve("ok")
+                        })
+                    }).catch((error) => {
+                        console.warn(error)
+                        reject(error)
+                    })
+                })
+            } else {
+                resolve()
+            }
+        })
+    }
+    updateCount = 0
+    updatedhighlight = null
+    applyAllHighlightsUpdate(newHighlight, highlight) {
+        return new Promise((resolve, reject) => {
+            this.updateHighlightTitle(newHighlight.title, JSON.parse(highlight).title,
+                newHighlight.id,
+                newHighlight.event_id).then((t1) => {
+                    this.updateHighlightDescription(newHighlight.description,
+                        JSON.parse(highlight).description,
+                        newHighlight.id,
+                        newHighlight.event_id).then((t2) => {
+                            this.updateHighlightURL(newHighlight.url,
+                                JSON.parse(highlight).url,
+                                newHighlight.id,
+                                newHighlight.event_id).then((t3) => {
+                                    resolve(t1 + t2 + t3)
+                                }).catch(r => {
+                                    reject(r)
+                                })
+                        }).catch(r => {
+                            reject(r)
+                        }).catch(r => {
+                            reject(r)
+                        })
+                })
+        })
+    }
+    deleteHighlight(highlightID, eventID) {
+        return new Promise((resolve, reject) => {
+            let HEID = request.HEID()
+            HEID.event_id = eventID;
+            HEID.h_id = highlightID
+            tcpRequest.deleteHighlight(HEID, highlightID).then(JSONData => {
+                serverEventListener.sendRequest(JSONData, highlightID).then(response => {
+                    stores.Highlights.removeHighlight(highlightID).then((Highlight) => {
+                        stores.Events.removeHighlight(eventID, highlightID).then(res => {
+                            let Change = {
+                                id: uuid.v1(),
+                                title: `Update On Main Activity`,
+                                updated: "highlight_delete",
+                                event_id: eventID,
+                                updater: stores.LoginStore.user,
+                                changed: `Deleted ${Highlight.title} Post`,
+                                new_value: { data: null, new_value: Highlight },
+                                date: moment().format(),
+                                time: null
+                            }
+                            stores.ChangeLogs.addChanges(Change).then(res => {
+                            })
+                            resolve("ok")
+                        })
+                    })
+                }).catch((error) => {
+                    console.warn(error)
+                    Toast.show({ text: "Unable To Perform Request" })
+                    reject(error)
+                })
+            })
+        })
+    }
+    restoreHighlight(highlight){
+        return new Promise((resolve,reject) => {
+            tcpRequest.restoreHighlight(highlight,highlight.id + '_highlight').then(JSONData => {
+                serverEventListener.sendRequest(JSONData,highlight.id+'_highlight').then(response => {
+                    stores.Highlights.addHighlight(highlight).then(() => {
+                        stores.Events.addHighlight(highlight.event_id,highlight.id,false).then(() => {
+                            let Change = {
+                                id: uuid.v1(),
+                                title: `Update On Main Activity`,
+                                updated: "highlight_restored",
+                                event_id: highlight.event_id,
+                                updater: stores.LoginStore.user,
+                                changed: `Restored ${highlight.title} Post`,
+                                new_value: { data: null, new_value: highlight },
+                                date: moment().format(),
+                                time: null
+                            }
+                            stores.ChangeLogs.addChanges(Change).then(res => {
+                            })
+                            resolve()
+                        })
+                    })
+                }).catch((error) => {
+                    console.warn(error)
+                    Toast.show({ text: "Unable To Perform Request" })
+                    reject(error)
+                })
+            })
         })
     }
 }

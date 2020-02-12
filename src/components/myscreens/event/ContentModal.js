@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import { Content, Text, Item, View } from 'native-base';
 import { map } from "lodash"
 import Modal from "react-native-modalbox"
+import { Icon } from 'native-base';
 
 export default class ContentModal extends PureComponent {
     constructor(props) {
@@ -30,6 +31,8 @@ export default class ContentModal extends PureComponent {
                 backdropOpacity={0.7}
                 backButtonClose={true}
                 position='center'
+                backButtonClose={true}
+                swipeToClose={false}
                 coverScreen={true}
                 isOpen={this.props.isOpen}
                 onClosed={() => {
@@ -50,6 +53,9 @@ export default class ContentModal extends PureComponent {
                     borderRadius: 8, backgroundColor: '#FEFFDE', width: "90%"
                 }}
             >
+            <View><Icon name={"close"} onPress={() => {
+                this.props.closed()
+            }} type={"EvilIcons"}></Icon></View>
                 <Content style={{ margin: "5%" }}>
                     {typeof this.state.content === 'object' ? 
                     this.renderObject(this.state.content) : Array.isArray(this.state.content) ? 

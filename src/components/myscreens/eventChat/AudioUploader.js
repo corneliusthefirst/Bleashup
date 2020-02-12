@@ -5,28 +5,23 @@ import {
     StyleSheet, Text, TouchableOpacity, View, ScrollView, Alert, Slider, Vibration, Platform
 } from 'react-native';
 import Sound from 'react-native-sound';
-import rnFetchBlob from 'rn-fetch-blob';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import { Icon, Right, Spinner, Toast } from 'native-base';
 import stores from '../../../stores';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import GState from '../../../stores/globalState';
-import * as config from "../../../config/bleashup-server-config.json"
-import ChatStore from '../../../stores/ChatStore';
-let dirs = rnFetchBlob.fs.dirs
-const { fs } = rnFetchBlob
-const AppDir = rnFetchBlob.fs.dirs.SDCardDir + '/Bleashup'
+import FileExachange from '../../../services/FileExchange';
+import converToHMS from '../highlights_details/convertToHMS';
+import { LogLevel, RNFFmpeg } from 'react-native-ffmpeg';
+
+
 export default class AudioUploader extends Component {
     constructor(props) {
         super(props);
-        this.uploadURL = config.file_server.protocol +
-            "://" + config.file_server.host + ":" + config.file_server.port + "/sound/save"
-        this.baseURL = config.file_server.protocol +
-            "://" + config.file_server.host + ":" + config.file_server.port + '/sound/get/'
         this.state = {
             duration: 0,
             currentPosition: 0,
-            loaded:false,
+            loaded: false,
             currentTime: 0,
             uploadState: 0,
             downloading: true
@@ -34,56 +29,55 @@ export default class AudioUploader extends Component {
     }
 
     upload(url) {
-        fs.exists(this.props.message.source).then(state => {
-            this.task = rnFetchBlob.fetch("POST", this.uploadURL, {
-                'content-type': 'multipart/form-data',
-            }, [{
-                name: "file",
-                filename: this.props.message.file_name,
-                type: this.props.message.content_type,
-                data: rnFetchBlob.wrap(this.props.message.source)
-            }])
-            this.task.uploadProgress((writen, total) => {
-                this.setState({
-                    total: parseInt(total),
-                    received: parseInt(writen),
-                    uploadState: (parseInt(writen) / parseInt(total)) * 100
-                })
-            })
-            this.task.then(response => {
-                if (response.data) {
-                    newDir = AppDir + "/Sound/" + response.data
-                    fs.writeFile(newDir, this.props.message.source.split(`file://`)[1], 'uri').then(() => {
-                        this.setState({
-                            uploadState: 100,
-                            loaded: true
-                        })
-                        this.initialisePlayer(newDir)
-                        this.props.message.type = 'audio'
-                        this.props.message.source = newDir
-                        this.props.message.temp = this.baseURL + response.data
-                        this.props.message.received = 0
-                        this.props.message.file_name = response.data
-                        this.props.replaceMessage(this.props.message)
-                    })
-                }
-            })
-            this.task.catch((error) => {
-                console.warn(error)
-            })
+        this.exchanger.upload(this.state.received, this.state.total)
+    }
+    progress(writen, total) {
+        this.setState({
+            total: parseInt(total),
+            received: parseInt(writen),
+            uploadState: (parseInt(writen) / parseInt(total)) * 100
         })
+    }
+    onError(error) {
+        GState.downlading = false
+        this.setState({
+            downloading: false
+        })
+        console.warn(error)
+    }
+    onSuccess(newDir, path, filename) {
+        GState.downlading = false
+        this.setState({
+            uploadState: 100,
+            loaded: true,
+            downloading: false
+        })
+        this.initialisePlayer(newDir.replace('file://', ''))
+        this.props.message.type = 'audio'
+        this.props.message.source = newDir.replace("file://", "")
+        this.props.message.temp = path
+        this.props.message.received = 0
+        this.props.message.file_name = filename
+        if (this.props.message.duration) {
+            this.props.replaceMessage(this.props.message)
+        } else {
+            RNFFmpeg.getMediaInformation(path).then(info => {
+                this.props.message.duration = Math.ceil(info.duration/1000)
+                this.props.replaceMessage(this.props.message)
+            })
+        }
     }
     downloadID = null
     uploadAudio(url) {
-            this.upload(url)
+        this.upload(url)
     }
     initialisePlayer(source) {
         this.player = new Sound(source, '/', (error) => {
+            console.warn(error)
         })
     }
     player = null
     componentDidMount() {
-        this.room = new ChatStore(this.props.firebaseRoom)
         this.setState({
             duration: this.props.message.duration,
             currentPosition: 0,
@@ -95,6 +89,12 @@ export default class AudioUploader extends Component {
             time: this.props.message.created_at.split(" ")[1],
             creator: (this.props.message.sender.phone == this.props.creator)
         })
+        this.exchanger = new FileExachange(this.props.message.source, "/Sound/",
+            this.state.total, this.state.received, this.progress.bind(this),
+            this.onSuccess.bind(this), null,
+            this.onError.bind(this),
+            this.props.message.content_type,
+            this.props.message.file_name, "/sound")
         this.uploadAudio(this.props.message.source)
     }
     pause() {
@@ -132,24 +132,12 @@ export default class AudioUploader extends Component {
                         currentPosition: seconds / this.props.message.duration,
                         currentTime: seconds
                     })
-                    this.room.addDuration(this.props.message.id,seconds).then(status => {
+                    this.props.room.addDuration(this.props.message.id, seconds).then(status => {
                         //this.player.release()
                     })
                 })
             }
         })
-    }
-    convertToHMS(secs) {
-        var sec_num = parseInt(secs, 10)
-        var hours = Math.floor(sec_num / 3600)
-        var minutes = Math.floor(sec_num / 60) % 60
-        var seconds = sec_num % 60
-
-        return [hours, minutes, seconds]
-            .map(v => v < 10 ? "0" + v : v)
-            .filter((v, i) => v !== "00" || i > 0)
-            .join(":")
-
     }
     showProgress() {
         if (this.props.message.duration) {
@@ -162,11 +150,12 @@ export default class AudioUploader extends Component {
         }
     }
     cancelUpLoad(url) {
-        this.task.cancel((err, taskID) => {
+        this.exchanger.task.cancel((err, taskID) => {
         })
-        this.room.SetCancledState(this.props.message.id).then(()=>{
-            
+        this.props.room.SetCancledState(this.props.message.id).then(() => {
+
         })
+        GState.downlading = false
         this.setState({
             downloading: false
         })
@@ -187,8 +176,8 @@ export default class AudioUploader extends Component {
                         })
                     }}></Slider>
                         <View style={{ display: 'flex', flexDirection: 'row', alignContent: 'space-between', }}>
-                            <Text>{this.convertToHMS(Math.floor(this.state.currentTime))}</Text>
-                            <Right><Text>{this.convertToHMS(this.props.message.duration)}</Text></Right>
+                            <Text>{converToHMS(Math.floor(this.state.currentTime))}</Text>
+                            <Right><Text>{converToHMS(this.props.message.duration)}</Text></Right>
                         </View>
                     </View>
                 </View>

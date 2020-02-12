@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import { Content, Text, Button, Icon } from 'native-base';
 import { View } from "react-native"
 import Modal from "react-native-modalbox"
+import AreYouSure from './AreYouSureModal';
 
 export default class PhotoInputModal extends PureComponent {
     constructor(props) {
@@ -18,7 +19,7 @@ export default class PhotoInputModal extends PureComponent {
                 backButtonClose={true}
                 position='center'
                 coverScreen={true}
-                animationDuration={0}
+                //animationDuration={0}
                 isOpen={this.props.isOpen}
                 onClosed={() => {
                     this.props.closed()
@@ -48,6 +49,10 @@ export default class PhotoInputModal extends PureComponent {
                         <Button onPress={() => this.props.showActivityPhoto()} transparent><Icon type={"Entypo"} name={"eye"}></Icon><Text>View Photo</Text></Button>
                         <Button onPress={() => this.props.openCamera()} transparent><Icon type={"MaterialIcons"} name={"insert-photo"}></Icon><Text>Select From Galery</Text></Button>
                         <Button onPress={() => this.props.openInternet()} transparent><Icon type={"Foundation"} name={"web"}></Icon><Text>Download From Web</Text></Button>
+                        {this.props.photo ? <Button danger onPress={() => this.props.removePhoto()}
+                            transparent><Icon style={{ color: 'red' }}
+                                name="trash" transparent type="EvilIcons"></Icon><Text
+                                    style={{ color: 'red' }}>Remove Photo</Text></Button> : null}
                     </View>
                 </Content>
             </Modal>

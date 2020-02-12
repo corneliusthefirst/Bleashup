@@ -376,6 +376,9 @@ class tcpRequestData {
   deleteHighlight(data, id) {
     return this.sendData("delete_highlight", data, id);
   }
+  restoreHighlight(data, id) {
+    return this.sendData("restore_highlight", data, id);
+  }
   udateContribution(data, id) {
     return this.sendData("update_contribution", data, id);
   }
@@ -406,8 +409,8 @@ class tcpRequestData {
   addRemind(data, id) {
     return this.sendData("add_remind", data, id);
   }
-  getReminds(data) {
-    return this.sendData("get_reminds", data);
+  getReminds(data,id) {
+    return this.sendData("get_reminds", data,id);
   }
   getRemind(data, id) {
     return this.sendData("get_remind", data, id);

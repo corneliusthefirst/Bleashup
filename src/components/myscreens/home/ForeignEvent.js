@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View } from 'react-native';
-import { Card, CardItem, Text, Button, Icon } from 'native-base';
+import { Card, CardItem, Text, Button, Icon, Spinner } from 'native-base';
 import moment from 'moment';
 import HomeRequest from './HomeRequester';
 import request from '../../../services/requestObjects';
@@ -47,24 +47,29 @@ export default class ForeignEvent extends Component {
     componentDidMount() {
     }
     manageHere() {
+        this.setState({
+            managing: true
+        })
         let event = request.Event()
         let e = this.props.event
         event.about.title = e.title
         event.about.description = e.description
         event.creator_phone = stores.LoginStore.user.phone
         event.period = e.startDate
-        event.recurrent = e.recurrenceRule && e.recurrenceRule.interval ? true : false
+        event.recurrent = e.recurrence ? true : false
         event.interval = e.recurrenceRule && e.recurrenceRule.interval ? e.recurrenceRule.interval : 1
         event.frequency = e.recurrenceRule && e.recurrenceRule.frequency ? e.recurrenceRule.frequency : "daily"
-        event.recurrence = e.recurrenceRule && e.recurrenceRule.duration ? e.recurrenceRule.duration : 1000
+        event.recurrence = e.recurrenceRule && e.recurrenceRule.endDate ? e.recurrenceRule.endDate : moment().format()
         event.notes = e.notes ? [e.notes] : event.notes
         event.location.string = e.location
         event.calendar_id = e.id
+        console.warn(event)
         event.participant = [{ phone: stores.LoginStore.user.phone, master: true, status: 'creator', host: stores.Session.SessionStore.host }]
         HomeRequest.createEvent(event).then((URL) => {
             CalendarServe.saveEvent({ ...event, about: { ...event.about, description: URL } }, event.alarms).then(() => { })
             this.setState({
                 managed: true,
+                managing: false
             })
             this.props.event.attendees.length > 0 ? this.inviteConcernee() : null
         })
@@ -91,7 +96,7 @@ export default class ForeignEvent extends Component {
                             </Button> : null}
                     </View>
                     <View>{
-                        !this.state.managed ?
+                        !this.state.managed ? this.state.managing ? <Spinner></Spinner> :
                             <Button onPress={() => this.manageHere()} transparent>
                                 <Text style={{ fontSize: 23, fontWeight: 'bold', fontStyle: 'italic' }}>
                                     {"Manage Here"}

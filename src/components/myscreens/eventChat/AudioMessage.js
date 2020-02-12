@@ -5,18 +5,15 @@ import {
     StyleSheet, Text, TouchableOpacity, View, ScrollView, Alert, Slider, Vibration, Platform
 } from 'react-native';
 import Sound from 'react-native-sound';
-import rnFetchBlob from 'rn-fetch-blob';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import { Icon, Right, Spinner, Toast } from 'native-base';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import GState from '../../../stores/globalState';
 import BarIndicat from '../../BarIndicat';
 import { BarIndicator } from "react-native-indicators"
-import ChatStore from '../../../stores/ChatStore';
 import testForURL from '../../../services/testForURL';
-let dirs = rnFetchBlob.fs.dirs
-const { fs, config } = rnFetchBlob
-const AppDir = rnFetchBlob.fs.dirs.SDCardDir + '/Bleashup'
+import converToHMS from '../highlights_details/convertToHMS';
+import FileExachange from '../../../services/FileExchange';
 export default class AudioMessage extends Component {
     constructor(props) {
         super(props);
@@ -28,111 +25,12 @@ export default class AudioMessage extends Component {
             downloading: true
         }
     }
-    setAfterSuccess(path) {
-        this.props.message.source = Platform.OS === 'android' ? path + "/" : '' + path
-        this.room.addStaticFilePath(this.props.message.source, this.props.message.id).then(() => {
-            this.room.addAudioSizeProperties(this.props.message.id, this.state.total,
-                this.state.received, this.props.message.duration).then(() => {
-                    this.initialisePlayer(this.props.message.source)
-                    this.setState({
-                        loaded: true
-                    })
-                })
-        })
-    }
-    DetemineRange(path) {
-        return new Promise((resolve, reject) => {
-            fs.exists(path).then(ext => {
-                if (ext) {
-                    //   console.warn("exists")
-                    fs.stat(path).then(stat => resolve(stat.size))
-                } else {
-                    resolve(0)
-                }
-            })
-        })
-    }
-    path = AppDir + '/Sound/' + this.props.message.file_name
-    duration = 10
-    pattern = [1000, 0, 0]
-    tempPath = this.path + '.download'
-    download(url) {
+    componentWillUnmount(){
+       this.player && this.player.stop()
         clearInterval(this.downloadID)
-        GState.downlading = true
-        this.setState({
-            downloading: true
-        })
-        this.DetemineRange(this.tempPath).then(size => {
-            this.task = rnFetchBlob.config({
-                fileCache: true
-            }).fetch('GET', url, {
-                Range: `bytes=${size}-`,
-                From: `${size}`
-            })
-            this.task.progress((received, total) => {
-                let newReceived = parseInt(size) + parseInt(received);
-                let newTotal = this.props.message.total > 0 ? this.props.message.total : total
-                newTotal = parseInt(newTotal)
-                this.setState({
-                    downloadState: (newReceived / newTotal) * 100,
-                    total: newTotal, received: newReceived
-                })
-            })
-            this.task.catch(error => {
-                GState.downlading = false
-                console.warn(error)
-                this.setState({
-                    downloading: false,
-                    error: true
-                })
-            })
-            this.task.then((res) => {
-                temp1 = this.state.received / 1000
-                temp2 = this.state.total / 1000
-                temper1 = temp2 / 1000
-                temper2 = temp1 / 1000
-                temp1 = Math.floor(temper1)
-                temp2 = Math.floor(temper2)
-                temp3 = Math.ceil(temper2)
-                GState.downlading = false
-                if (temp1 == temp2 || temp1 == temp3) {
-                    this.props.message.duration = Math.floor(res.info().headers.Duration)
-                    fs.appendFile(this.tempPath, res.path(), 'uri').then(() => {
-                        fs.unlink(this.path)
-                        fs.appendFile(this.path, this.tempPath, 'uri').then(() => {
-                            fs.unlink(this.tempPath)
-                            fs.unlink(res.path())
-                            //this.props.message.source = "file://" + this.path
-                            this.setAfterSuccess(this.path, temper1, temper2)
-                        })
-                    })
-                } else {
-                    fs.appendFile(this.tempPath, res.path(), 'uri').then(() => {
-                        fs.unlink(res.path())
-                        this.props.message.received = this.state.received
-                        this.props.message.total = this.state.total
-                        this.room.addAudioSizeProperties(this.props.message.id, this.state.total,
-                            this.state.received, this.props.message.duration).then(() => {
-                                this.setState({})
-                            })
-                    })
-                }
-            })
-        })
     }
-    downloadID = null
-    downloadAudio(url) {
-        this.downloadID = setInterval(() => {
-            this.download(url)
-        }, 500)
-    }
-    initialisePlayer(source) {
-        this.player = new Sound(source, '/', (error) => {
-        })
-    }
-    player = null
     componentDidMount() {
-        this.room = new ChatStore(this.props.firebaseRoom)
+        console.warn(this.props.message.source)
         this.setState({
             duration: null,
             currentPosition: 0,
@@ -144,15 +42,101 @@ export default class AudioMessage extends Component {
             time: this.props.message.created_at.split(" ")[1],
             creator: (this.props.message.sender.phone == this.props.creator)
         })
+        this.exchanger = new FileExachange(this.props.message.source,
+            this.path, this.state.total, this.state.received,
+            this.progress.bind(this),
+            this.success.bind(this),
+            this.onFail.bind(this),
+            this.onError.bind(this))
         setTimeout(() => {
             if (testForURL(this.props.message.source)) {
-                if (!this.props.message.cancled)
+                !this.props.message.cancled ?
                     this.downloadAudio(this.props.message.source)
+                    : this.setState({
+                        downloading: false
+                    })
             } else {
                 this.initialisePlayer(this.props.message.source)
             }
         }, 1000)
     }
+    setAfterSuccess(path) {
+        GState.downlading = false
+        this.props.message.source = Platform.OS === 'android' ? path + "/" : '' + path
+        this.props.room.addStaticFilePath(this.props.message.source, this.props.message.id).then(() => {
+            this.props.room.addAudioSizeProperties(this.props.message.id, this.state.total,
+                this.state.received, this.props.message.duration).then(() => {
+                    this.initialisePlayer(this.props.message.source)
+                    this.setState({
+                        loaded: true
+                    })
+                })
+        })
+    }
+    success(path, total, received) {
+        this.props.message.duration = this.exchanger.duration
+        this.setState({
+            total: total,
+            received: received
+        })
+        this.setAfterSuccess(path)
+    }
+    progress(received, total, size) {
+        let newReceived = received;
+        let newTotal = this.state.total && this.state.total > 0 && this.state.total > total ? this.state.total : total
+        newTotal = parseInt(newTotal)
+        this.setState({
+            downloadState: (newReceived / newTotal) * 100,
+            total: newTotal, received: newReceived
+        })
+    }
+    path = '/Sound/' + this.props.message.file_name
+    duration = 10
+    pattern = [1000, 0, 0]
+    tempPath = this.path + '.download'
+    download(url) {
+        clearInterval(this.downloadID)
+        GState.downlading = true
+        this.setState({
+            downloading: true
+        })
+        this.exchanger.download(this.state.received)
+    }
+    onError(error) {
+        GState.downlading = false
+        console.warn(error)
+        this.setState({
+            downloading: false,
+            error: true
+        })
+    }
+    onFail(received, total) {
+        //console.warn(total,received)
+        this.props.message.duration = this.exchanger.duration
+        this.setState({
+            received: received,
+            downloading: false,
+            total: this.state.total && this.state.total > 0 && this.state.total > total ? this.state.total : total
+        })
+        this.props.message.received = this.state.received
+        this.props.message.total = this.state.total
+        this.props.room.addAudioSizeProperties(this.props.message.id, this.state.total,
+            this.state.received, this.props.message.duration).then(() => {
+                this.setState({})
+            })
+    }
+    downloadID = null
+    downloadAudio(url) {
+        this.downloadID = setInterval(() => {
+            this.download(url)
+        }, 500)
+    }
+    initialisePlayer(source) {
+        this.player = new Sound(source, '/', (error) => {
+            console.warn(error,"error")
+        })
+    }
+    player = null
     pause() {
         this.setState({
             playing: false
@@ -188,24 +172,12 @@ export default class AudioMessage extends Component {
                         currentPosition: seconds / this.props.message.duration,
                         currentTime: seconds
                     })
-                    this.room.addDuration(seconds).then(status => {
+                    this.props.room.addDuration(seconds).then(status => {
                         //this.player.release()
                     })
                 })
             }
         })
-    }
-    convertToHMS(secs) {
-        var sec_num = parseInt(secs, 10)
-        var hours = Math.floor(sec_num / 3600)
-        var minutes = Math.floor(sec_num / 60) % 60
-        var seconds = sec_num % 60
-
-        return [hours, minutes, seconds]
-            .map(v => v < 10 ? "0" + v : v)
-            .filter((v, i) => v !== "00" || i > 0)
-            .join(":")
-
     }
     showProgress() {
         if (this.props.message.duration) {
@@ -218,11 +190,11 @@ export default class AudioMessage extends Component {
         }
     }
     cancelDownLoad(url) {
-        if (this.task !== null) {
-            this.task.cancel((err, taskID) => {
+        if (this.exchanger.task !== null) {
+            this.exchanger.task.cancel((err, taskID) => {
             })
         }
-        this.room.SetCancledState(this.props.message.id)
+        this.props.room.SetCancledState(this.props.message.id)
         this.setState({
             downloading: false
         })
@@ -248,8 +220,8 @@ export default class AudioMessage extends Component {
                             })
                         }}></Slider>
                             <View style={{ display: 'flex', flexDirection: 'row', alignContent: 'space-between', }}>
-                                <Text>{this.convertToHMS(Math.floor(this.state.currentTime))}</Text>
-                                <Right><Text>{this.convertToHMS(this.props.message.duration)}</Text></Right>
+                                <Text>{converToHMS(Math.floor(this.state.currentTime))}</Text>
+                                <Right><Text>{converToHMS(this.props.message.duration)}</Text></Right>
                             </View>
                         </View>
                     </View> : <View style={{ textStyleD }}>{!this.state.playing ? <BarIndicat animating={false}

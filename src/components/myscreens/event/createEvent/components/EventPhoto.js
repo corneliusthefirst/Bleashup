@@ -1,23 +1,21 @@
 import React, { Component } from "react";
-import {
-  Content, Card, CardItem, Text, Body, Container, Icon, Header,
-  Form, Item, Title, Input, Left, Right, H3, H1, H2, Spinner,
-  Button, InputGroup, DatePicker, Thumbnail, Alert
+import { 
+  Text, Icon, Spinner,
+  Button, Thumbnail, Toast
 } from "native-base";
 
 import { StyleSheet, View,Image,TouchableOpacity, Dimensions} from 'react-native';
 import ActionButton from 'react-native-action-button';
 import Modal from 'react-native-modalbox';
-import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 import autobind from "autobind-decorator";
-//import CacheImages from "../../../../../CacheImages";
-import PhotoEnlargeModal from "../../../invitations/components/PhotoEnlargeModal";
-//import ImagePicker from 'react-native-image-picker';
-import { head,filter,uniqBy,orderBy,find,findIndex,reject,uniq,indexOf,forEach,dropWhile } from "lodash";
-import request from "../../../../../services/requestObjects";
 import  stores from '../../../../../stores/index';
-import ImagePicker from 'react-native-customized-image-picker';
 import SearchImage from './SearchImage';
+import Pickers from '../../../../../services/Picker';
+import FileExachange from '../../../../../services/FileExchange';
+import testForURL from '../../../../../services/testForURL';
+import PhotoViewer from '../../PhotoViewer';
+import shadower from "../../../../shadower";
+import CacheImages from '../../../../CacheImages';
 
 
 
@@ -39,35 +37,51 @@ export default class EventPhoto extends Component {
     }
 
    componentDidMount(){
-    stores.Events.readFromStore().then(Events =>{
-      let event = find(Events, { id:"newEventId" }); 
-      this.setState({EventPhoto:event.background})
-      
-  });
  }
 
-
+componentDidUpdate(prevProps,prevState){
+  if(this.props.event.background !== prevProps.event.background){
+    this.setState({ EventPhoto: this.props.event.background })
+  }
+}
 
     @autobind
-    TakePhotoFromCamera(){
-    
-    return new Promise((resolve, reject) => {
-    
-      ImagePicker.openCamera({
-        cropping: true,
-        quality:"medium"
-      }).then(response => {
-        let res = head(response);
-        this.setState({EventPhoto: res.path});
-        stores.Events.updateBackground("newEventId",res.path,false).then(()=>{});
-        resolve(res.path);
+    TakePhotoFromCamera(){    
+      Pickers.SnapPhoto(true).then(res => {
+        this.setState({
+          uploading:true
+        })
+        let exchanger = new FileExachange(res.source,'/Photo/',res.size,0,null,(newDir,path,total)=>{
+          this.setState({ EventPhoto: path });
+          stores.Events.updateBackground("newEventId", path, false).then(() => {
+            this.setState({
+              uploading: false
+            })
+           });
+        },() => {
+        Toast.show({text:'Unable To upload photo',position:'top'})
+        this.setState({
+          uploading:false
+        })
+        },(error) => {
+            Toast.show({ text: 'Unable To upload photo', position: 'top' })
+            this.setState({
+              uploading: false
+            })
+        },res.content_type,res.filename,'/photo')
+        this.state.EventPhoto?exchanger.deleteFile(this.state.EventPhoto):null
+        exchanger.upload(0,res.size)
       });
-    
-
-    }) 
-    
   }
-
+  resetPhoto(){
+    let exchanger = new FileExachange()
+    exchanger.deleteFile(this.state.EventPhoto)
+    stores.Events.updateBackground("newEventId",null).then(() =>{
+      this.setState({
+        EventPhoto:null
+      })
+    })
+  }
     @autobind
     TakePhotoFromLibrary(){
     return new Promise((resolve, reject) => {
@@ -86,78 +100,75 @@ export default class EventPhoto extends Component {
     })
     
     }
-
-
-  
-
-
-
-
-
-
-
-
     render() {
     	return(
              <Modal
                 isOpen={this.props.isOpen}
-                onClosed={this.props.onClosed}
+                onClosed={() => this.props.onClosed(this.state.EventPhoto)}
                 style={{
                     height: height/2 + height/9, borderRadius: 15,
                     backgroundColor:"#FEFFDE",borderColor:'black',borderWidth:1,width: "98%",flexDirection:'column',
                     marginTop:"-8%"
                 }}
-                position={'bottom'} 
+                position={'bottom'}
+                backButtonClose={true}
                 //backdropPressToClose={false}
                 coverScreen={true}
                 >
          <View style={{flex:1}}>
-                 <View style={{flex:2,justifyContent:'space-between',alignItem:'center'}}>
+                 <View style={{justifyContent:'space-between',alignItem:'center'}}>
                     
-                    <Button style={{alignSelf:'center',width:"90%",borderRadius:15,borderColor:"#1FABAB",backgroundColor:"transparent",justifyContent:'center',alignItem:'center',marginTop:"5%"}}
-                      onPress={()=>{this.TakePhotoFromCamera().then(()=>{})}}>
-                        <View style={{flexDirection:"row"}}>
+                    <Button style={{alignSelf:'center',width:"90%",borderRadius:15,backgroundColor:"transparent",justifyContent:'center',alignItem:'center',marginTop:"5%"}}
+                      onPress={()=>{this.TakePhotoFromCamera()}}>
+                        <View style={{flexDirection:"row",marginBottom:'4%',}}>
                          <Icon name="photo-camera" active={true} type="MaterialIcons"
                             style={{color: "#0A4E52",alignSelf:"flex-start"}}/>
-                         <Text  style={{alignSelf:"center"}}>Take Photo From Camera</Text>
+                         <Text  style={{alignSelf:"center"}}>Add Photo</Text>
                         </View>
                     </Button>
-                  
-                    
-            
-                    <Button style={{alignSelf:'center',width:"90%",borderRadius:15,borderColor:"#1FABAB",backgroundColor:"transparent",justifyContent:'center',alignItem:'center',marginTop:"3%"}} 
-                      onPress={()=>{this.TakePhotoFromLibrary().then(url=>{})}}
-                     >
-                       <View style={{flexDirection:"row"}}>
-                         <Icon name="photo" active={true} type="FontAwesome"
-                            style={{color: "#0A4E52",alignSelf:"flex-start"}}/>
-                         <Text  style={{alignSelf:"center"}}>  Take Photo From Library</Text>
-                        </View>
-                    </Button>
-              
-                    <Button style={{alignSelf:'center',width:"90%",borderRadius:15,borderColor:"#1FABAB",backgroundColor:"transparent",justifyContent:'center',alignItem:'center',marginTop:"3%"}} 
+                    <Button style={{alignSelf:'center',width:"90%",borderRadius:15,borderColor:"#1FABAB",backgroundColor:"transparent",justifyContent:'center',
+                    alignItem:'center',marginTop:"3%"}} 
                       onPress={()=>{this.setState({ searchImageState:true})}}>
-                        <View style={{flexDirection:"row"}}>
-                         <Icon name="google" active={true} type="AntDesign"
+                        <View style={{flexDirection:"row",marginBottom: '1%',}}>
+                         <Icon name="web" active={true} type="Foundation"
                             style={{color: "#0A4E52",alignSelf:"flex-start",marginLeft:5}}/>
-                         <Text  style={{alignSelf:"center"}}> Download From Google</Text>
+                         <Text  style={{alignSelf:"center"}}> Download photo</Text>
                         </View>
                     </Button>
 
                  </View>
 
 
-                <View style={{ flex: 3, flexDirection: 'column',justifyContent:'center',alignItem:'center',marginTop:"8%"}}>
-                    <TouchableOpacity onPress={() => this.setState({ enlargeImage: true })} >
-                        <Image  source={this.state.EventPhoto? {uri:this.state.EventPhoto}:this.state.DefaultPhoto}
-                         style={{alignSelf:'center',height: "90%",width: "90%", borderWidth: 1, borderColor: "#1FABAB", borderRadius:100
-                        }}  />
+                <View style={{ flex: 3, flexDirection: 'column',justifyContent:'center',alignItem:'center',marginTop:"8%",}}>
+                    <TouchableOpacity onPress={() => this.state.EventPhoto && testForURL(this.state.EventPhoto)?this.setState({ enlargeImage: true }):null} >
+                        {this.state.EventPhoto && testForURL(this.state.EventPhoto)?<CacheImages thumbnails square  source={{uri:this.state.EventPhoto}}
+                         style={{alignSelf:'center',height: "90%",width: "90%", borderRadius:10
+                  }} /> : <Thumbnail source={this.state.EventPhoto ? { uri: this.state.EventPhoto } : this.state.DefaultPhoto}
+                    style={{
+                      alignSelf: 'center', height: "90%", width: "90%", borderRadius: 100
+                    }}></Thumbnail>}
                     </TouchableOpacity>
+                    {this.state.EventPhoto?<View style={{position:'absolute',alignSelf: 'flex-end',margin: '2%',marginBottom: '70%',marginRight: '5%',}}>
+                    <TouchableOpacity onPress={() =>{
+                      this.resetPhoto()
+                    }}>
+                      <Icon name={'close'} type={'EvilIcons'} style={{color:'red'}}></Icon>
+                    </TouchableOpacity>
+                    </View>:null}
+                    {this.state.uploading?<View style={{marginTop: "30%",marginLeft: "37%",position:'absolute'}}>
+                      <Spinner color={'#FEDDFE'}>
+                      </Spinner>
+                      </View>:null}
                 </View>
 
 
-                 <PhotoEnlargeModal isOpen={this.state.enlargeImage} onClosed={() => this.setState({ enlargeImage: false })} photo={this.state.EventPhoto} />
-                 <SearchImage accessLibrary={()=>{this.TakePhotoFromLibrary().then(()=>{})}} isOpen={this.state.searchImageState} onClosed={() => {this.setState({ searchImageState: false })}}  />
+                 {this.state.enlargeImage?<PhotoViewer open={this.state.enlargeImage} 
+                 hidePhoto={() => this.setState({ enlargeImage: false })}
+                  photo={this.state.EventPhoto} />:null}
+                 <SearchImage h_modal={true}  accessLibrary={()=>{this.TakePhotoFromCamera()}} isOpen={this.state.searchImageState} onClosed={(mother) => {
+                   this.setState({ searchImageState: false })
+                   mother?this.props.closeTemporarily() : null
+                  }}  />
       
        </View>
                 </Modal>

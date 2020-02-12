@@ -35,7 +35,7 @@ class Requester {
                     forEach(invites, element => {
                         element.invitation.type = 'sent';
                         element.invitation.sent = true;
-                        element.invitation.arrival_date = moment().format("YYYY-MM-DD HH:mm")
+                        element.invitation.arrival_date = moment().format()
                         stores.Invitations.addInvitations(element.invitation).then(mes => {
                             if (i == invites.length - 1) resolve(SuccessMessage)
                             i++
@@ -85,8 +85,8 @@ class Requester {
                                 date: moment().format(),
                             }
                             stores.ChangeLogs.addChanges(Change).then(() => {
-                                resolve()
                             })
+                            resolve()
                         })
                     })
                 }).catch(error => {
@@ -120,8 +120,8 @@ class Requester {
                             date: moment().format(),
                         }
                         stores.ChangeLogs.addChanges(Change).then(() => {
-                            resolve("ok")
                         })
+                        resolve("ok")
                     })
                 }).catch(error => {
                     reject(error)

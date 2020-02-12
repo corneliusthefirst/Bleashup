@@ -5,15 +5,11 @@ import {
 } from "native-base";
 //import { Button,View } from "react-native";
 
-import { AsyncStorage } from "react-native";
-import { observer, extendObservable, inject } from "mobx-react";
 import styles from "./styles";
 import stores from "../../../stores";
-import routerActions from "reazy-native-router-actions";
 import { functionDeclaration } from "@babel/types";
 const loginStore = stores.LoginStore;
 
-@observer
 export default class SettingView extends Component {
   constructor(props) {
     super(props);

@@ -41,14 +41,12 @@ import { AsyncStorage } from "@react-native-community/async-storage";
 import { observer, extendObservable, inject } from "mobx-react";
 import styles from "./styles";
 import stores from "../../../stores";
-import routerActions from "reazy-native-router-actions";
 import { functionDeclaration } from "@babel/types";
 
 import PhoneInput from "react-native-phone-input";
 import CountryPicker from "react-native-country-picker-modal";
 import UserService from "../../../services/userHttpServices";
 import globalState from "../../../stores/globalState";
-import RNExitApp from "react-native-exit-app";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 @observer
@@ -82,7 +80,7 @@ export default class LoginView extends Component {
   handleBackButton() {
     if(this.exiting){
     clearTimeout(this.timeout)
-    RNExitApp.exitApp();
+      BackHandler.exitApp()
     }else{
       this.exiting = true
       Toast.show({ text: "Press Again to exit app" });

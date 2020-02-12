@@ -35,7 +35,6 @@ import SettingView from "./../settings/index";
 import { observer } from "mobx-react";
 import autobind from "autobind-decorator";
 import { groupBy, map, findIndex, reject } from "lodash"
-import RNExitApp from "react-native-exit-app";
 import { withInAppNotification } from 'react-native-in-app-notification';
 import stores from "../../../stores";
 import CurrentEventView from '../currentevents';
@@ -51,6 +50,8 @@ import CalendarServe from '../../../services/CalendarService';
 import ForeignEventsModal from "./ForeignEventsModal";
 import DeepLinking from 'react-native-deep-linking';
 import Requester from '../event/Requester';
+import shadower from "../../shadower";
+import TabModal from "./TabModal";
 
 
 let { height, width } = Dimensions.get('window');
@@ -61,6 +62,7 @@ class Home extends Component {
     super(props);
     this.state = {
       appState: 'active',
+      isTabModalOpened: true,
       currentTab: 0
     };
     this.permisssionListener()
@@ -144,12 +146,13 @@ class Home extends Component {
   }
   realNew = []
   componentDidMount() {
+    //CalendarServe.saveEvent().then(() => {})
     stores.Highlights.initializeGetHighlightsListener()
     CalendarServe.fetchAllCalendarEvents().then(calendar => {
       let calen = groupBy(calendar, 'title')
       let idsMapper = map(calen, (value, key) => { return { title: key, ids: map(value, ele => ele.id) } })
       calen = map(calen, (value, key) => { return { ...value[0], key: key } })
-      calen = reject(calen, ele => findIndex(stores.Events.events, e => ele.title === e.about.title) >= 0)
+      calen = reject(calen, ele => findIndex(stores.Events.events, e => e.about && ele.title === e.about.title) >= 0 || ele.title.includes('reminder'))
       if (calen.length > 0) {
         let i = 0
         forEach(calen, element => {
@@ -288,7 +291,7 @@ class Home extends Component {
       }
     })
   }
-  navigateToInvitations(){
+  navigateToInvitations() {
     this.props.navigation.navigate("Invitation")
   }
   render() {
@@ -299,40 +302,36 @@ class Home extends Component {
       <Container style={{ backgroundColor: "#FEFFDE" }}>
         <View style={{
           height: 40, width: "98%",
-           backgroundColor: "#FEFFDE", 
-           shadowOpacity: 1,
-           borderBottomRightRadius: 5,
-           borderBottomLeftRadius: 5,
-          shadowOffset: {
-            height: 1,
-          },
-          shadowRadius: 10, elevation:6,alignSelf: 'center', marginLeft: "1%",marginRight: "1%", }}>
-          <View style={{ flex: 1, backgroundColor: "#FEFFDE", flexDirection: "row", 
-          justifyContent: "space-between", marginLeft: "3%", marginRight: "3%" }}>
+          backgroundColor: "#FEFFDE",
+          borderBottomRightRadius: 5,
+          borderBottomLeftRadius: 5,
+          ...shadower(6), alignSelf: 'center', marginLeft: "1%", marginRight: "1%",
+        }}>
+          <View style={{
+            flex: 1, backgroundColor: "#FEFFDE", flexDirection: "row",
+            justifyContent: "space-between", marginLeft: "3%", marginRight: "3%"
+          }}>
             <Thumbnail small source={require("../../../../assets/ic_launcher_round.png")}></Thumbnail>
-            <TouchableOpacity style={{ marginTop: '2%', }}>
-              <View style={{ alignSelf: "flex-end" ,display: 'flex',flexDirection: 'row',}}>
+            <View style={{ marginTop: '2%', }}>
+              <View style={{ alignSelf: "flex-end", display: 'flex', flexDirection: 'row', }}>
                 <Icon name="sc-telegram" active={true} type="EvilIcons" style={{ color: "#1FABAB", }} onPress={() => this.navigateToInvitations()} />
                 <Icon name="gear" active={true} type="EvilIcons" style={{ color: "#1FABAB", }} onPress={() => this.settings()} />
+              </View>
             </View>
-              </TouchableOpacity>
           </View>
 
         </View>
         <Tabs
-        locked
+          locked
           tabContainerStyle={{
             borderWidth: 1,
             borderRadius: 8,
             borderColor: '#ddd',
             borderBottomWidth: 0,
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.8,
             alignSelf: 'center',
-            margin: '2%',
-            shadowRadius: 2,
-            elevation: 20, margin: "1%", height: 45, backgroundColor: "#1FABAB", borderRadius: 4, }}
+            ...shadower(20),
+            margin: "1%", height: 45, backgroundColor: "#1FABAB", borderRadius: 4,
+          }}
           tabBarPosition="bottom"
           tabBarUnderlineStyle={{
             backgroundColor: "transparent"
@@ -373,7 +372,7 @@ class Home extends Component {
             heading={
               <TabHeading>
                 <View>
-                  <Icon name="user-alt" type="FontAwesome5" style={{ fontSize: this.state.currentTab == 2 ? 35 : 15, }} />
+                  <Icon name="user-alt" type="FontAwesome5" style={{ fontSize: this.state.currentTab == 2 ? 30 : 10, }} />
                 </View>
               </TabHeading>
             }
@@ -388,6 +387,11 @@ class Home extends Component {
           })
         }} events={this.state.foreignEvents}>
         </ForeignEventsModal> : null}
+        <TabModal isOpen={this.state.isTabModalOpened} closed={() => {
+          this.setState({
+            isTabModalOpened: false
+          })
+        }}></TabModal>
       </Container>
     );
   }

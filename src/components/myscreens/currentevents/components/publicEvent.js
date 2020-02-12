@@ -36,6 +36,7 @@ import Swipeout from '../../../SwipeOut';
 import { findIndex, isEqual } from "lodash"
 import InvitationModal from './InvitationModal';
 import ProfileSimple from './ProfileViewSimple';
+import shadower from "../../../shadower";
 
 class PublicEvent extends Component {
   constructor(props) {
@@ -47,7 +48,6 @@ class PublicEvent extends Component {
       public: false,
       notPressing: false,
       publishing: false,
-      image: this.props.Event.background,
       //event: this.props.Event,
       swipeClosed: true,
       attempt_to_puplish: false,
@@ -76,13 +76,17 @@ class PublicEvent extends Component {
       nextState.joint !== this.state.joint ||
       nextState.openInviteModal !== this.state.openInviteModal ||
       this.props.Event.joint !== nextProps.Event.joint ||
-      this.state.image !== nextState.image ||
       this.state.master !== nextState.master ||
       !isEqual(this.props.Event, nextProps.Event) ||
       this.state.fresh !== nextState.fresh
-  } 
+  }
   swipperComponent = null
   componentDidMount() {
+    setTimeout(() => {
+      this.setState({
+        isMount: true,
+      })
+    }, this.props.renderDelay + 20)
     setTimeout(() => {
       stores.TemporalUsersStore.getUser(this.props.Event.creator_phone).then(creator => {
         stores.Events.isMaster(this.props.Event.id, stores.LoginStore.user.phone).then(master => {
@@ -90,31 +94,6 @@ class PublicEvent extends Component {
             master: master,
             joint: findIndex(this.props.Event.participant, { phone: stores.LoginStore.user.phone }) > 0 ? true : false,
             creator: creator,
-            isMount: true
-          })
-          stores.Highlights.fetchHighlightsFromRemote(this.props.Event.id).then(highlights => {
-            if (highlights.length > 0) {
-              setTimeout(() => {
-                this.interval = setInterval(() => {
-                  let highlight = highlights[this.counter]
-                  if (highlight && highlight.url) {
-                    this.setState({
-                      image: highlight.url.photo,
-                      video: highlight.url.video ? true : false,
-                      audio: highlight.url.audio ? true : false
-                    })
-                    this.counter = this.counter + 1
-                  } else {
-                    this.setState({
-                      image: this.props.Event.background,
-                      video: false
-                    })
-                    this.counter = 0
-                  }
-                }, 2000 + this.props.renderDelay)
-              }
-          ,this.props.renderDelay)
-            }
           })
         })
       })
@@ -142,10 +121,6 @@ class PublicEvent extends Component {
       ],
     }
   }
-  componentWillUnmount() {
-    clearInterval(this.interval)
-  }
-
 
   showPublishersList() {
     this.setState({
@@ -166,7 +141,7 @@ class PublicEvent extends Component {
           publishing: false,
           public: true
         })
-        
+
       }).catch(error => {
         this.setState({
           publishing: false
@@ -291,14 +266,14 @@ class PublicEvent extends Component {
   onCloseSwipeout() {
   }
   showPhoto(url) {
-    url === this.props.Event.background && !this.state.audio ? this.props.showPhoto(url) : 
+    url === this.props.Event.background && !this.state.audio ? this.props.showPhoto(url) :
       this.props.navigation.navigate("HighLightsDetails", { event_id: this.props.Event.id })
   }
   render() {
     //emitter.emit('notify', "santerss") 
-    return (this.state.isMount ? <View style={{ width: "100%", }}>
+    return (this.state.isMount ? <View style={{ width: "100%", padding: '1%', alignSelf: 'center', }}>
       <Swipeout {...this.props} onOpen={() => this.openSwipeOut()} onClose={() => this.onCloseSwipeout()} style={{
-        width: "100%",
+        width: "100%", ...shadower(3),
         backgroundColor: this.props.Event.new ? "#cdfcfc" : null
       }}
         autoClose={true}
@@ -306,9 +281,8 @@ class PublicEvent extends Component {
         {...this.swipeOutSettings(this.state.master, this.state.joint)}>
         <Card
           style={{
-            borderColor: "#1FABAB",
-          }
-          }
+            margin: '1%',
+          }}
           bordered
         >
           <CardItem
@@ -319,11 +293,11 @@ class PublicEvent extends Component {
             }}
           >
             <Left>
-              <View style={{ flexDirection: "row", }}>
+              {this.state.creator ? <View style={{ flexDirection: "row", }}>
                 <ProfileSimple showPhoto={(url) =>
                   this.props.showPhoto(url)}
                   profile={(this.state.creator)}></ProfileSimple>
-              </View>
+              </View> : null}
             </Left>
             <Right>
               <Button onPress={() => this.props.showActions(this.props.Event.id)} transparent>
@@ -348,22 +322,16 @@ class PublicEvent extends Component {
             cardBody
           >
             <Left>
-              {this.state.isMount ? <View><PhotoView showPhoto={(url) => url ?
+              {this.state.isMount ? <View><PhotoView navigation={this.props.navigation} renderDelay={this.props.renderDelay} showPhoto={(url) => url ?
                 this.showPhoto(url) : null} joined={() => this.join()}
                 isToBeJoint hasJoin={this.props.Event.joint || this.state.joint} onOpen={() => this.onOpenPhotoModal()} style={{
                   width: "70%",
                   marginLeft: "4%"
-                }} photo={this.state.image} width={170} height={100} borderRadius={6} />
-                {this.state.video || this.state.audio ? <Icon onPress={() =>{
-                  this.showPhoto(this.state.image)
-                }} name={this.state.video ? "play" : "headset"} style={{
-                  fontSize: 50, color: '#1FABAB',
-                  position: 'absolute', marginTop: '18%', marginLeft: '37%',
-                }} type={this.state.video ? "EvilIcons" : "MaterialIcons"}>
-                </Icon> : null}</View> : null}
+                }} photo={this.props.Event.background} event_id={this.props.Event.id} width={170} height={100} borderRadius={6} />
+              </View> : null}
             </Left>
             <Right >
-              {this.state.isMount ? <MapView style={{ marginRight: "11%" }}
+              {this.state.isMount && this.props.Event.location.string ? <MapView style={{ marginRight: "11%" }}
                 location={this.props.Event.location.string}></MapView> : null}
             </Right>
           </CardItem>
@@ -382,7 +350,7 @@ class PublicEvent extends Component {
           </Footer>
         </Card>
       </Swipeout>
-    </View> : <Card style={{ height: 320 }}>
+    </View> : <Card style={{ height: 315, padding: '1%', margin: '1%', alignSelf: 'center', width: '97%' }}>
       </Card>)
   }
 }

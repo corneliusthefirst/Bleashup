@@ -44,44 +44,47 @@ export default class ParticipantList extends Component {
             }
         }, 3)
     }
+    delay = 0
     _keyExtractor = (item, index) => item.phone
     render() {
         return <View>
-            <View style={{ margin: 3, flexDirection: 'row',height:53 }}>
+            <View style={{ margin: 3, flexDirection: 'row', height: 53 }}>
                 <Text style={{ fontWeight: "bold", fontSize: 22, width: "70%" }}>{this.props.hide ? "" : "Participants List"}</Text>
-                <Text style={{ marginTop: "1%", }} note>{this.state.participants?this.state.participants.filter(ele => ele.phone).length:0}{" member(s)"}</Text>
+                <Text style={{ marginTop: "1%", }} note>{this.state.participants ? this.state.participants.filter(ele => ele.phone).length : 0}{" member(s)"}</Text>
             </View>
             {this.state.isloaded ? (
                 <View>
                     {this.state.isEmpty ? <Text style={{
                         margin: '4%',
-                    }} note>{"sory! there's no connction to the server"}</Text> : <View style={{hight:"93%"}}><BleashupFlatList
+                    }} note>{"sory! there's no connction to the server"}</Text> : <View style={{ hight: "93%" }}><BleashupFlatList
                         firstIndex={0}
                         renderPerBatch={7}
                         initialRender={15}
                         numberOfItems={this.state.participants ? this.state.participants.length : 0}
                         keyExtractor={this._keyExtractor}
-                        dataSource={this.state.participants?this.state.participants:[]}
-                            renderItem={(item, index) => item.phone ?
-                            <View style={{ margin: '3%', }}>
-                                <View style={{ display: 'flex', flexDirection: 'row', }} >
-                                    <View style={{}}>
-                                        <ProfileView phone={item.phone ? item.phone.replace("+", "00") : null}></ProfileView>
+                        dataSource={this.state.participants ? this.state.participants : []}
+                        renderItem={(item, index) => {
+                            this.delay = this.delay >= 15 ? 0 : this.delay + 1
+                            return item.phone ?
+                                <View style={{ margin: '3%', }}>
+                                    <View style={{ display: 'flex', flexDirection: 'row', }} >
+                                        <View style={{}}>
+                                            <ProfileView delay={this.delay} phone={item.phone ? item.phone.replace("+", "00") : null}></ProfileView>
+                                        </View>
+                                        <View style={{
+                                            marginLeft: "40%",
+                                            marginTop: "5%",
+                                        }}>
+                                            <Text style={{
+                                                fontWeight: this.props.creator == item.phone ? 'bold' : 'normal',
+                                                fontStyle: this.props.creator == item.phone ? 'italic' : 'normal',
+                                                color: this.props.creator == item.phone ? "#54F5CA" : "gray"
+                                            }} note>{this.writeParticant(item)}</Text>
+                                        </View>
                                     </View>
-                                    <View style={{
-                                        marginLeft: "40%",
-                                        marginTop: "5%",
-                                    }}>
-                                        <Text style={{
-                                            fontWeight: this.props.creator == item.phone ? 'bold' : 'normal',
-                                            fontStyle: this.props.creator == item.phone ? 'italic' : 'normal',
-                                            color: this.props.creator == item.phone ? "#54F5CA" : "gray"
-                                        }} note>{this.writeParticant(item)}</Text>
-                                    </View>
-                                </View>
-                                <MenuDivider color="#1FABAB" />
-                            </View>:null
-                        }
+                                    <MenuDivider color="#1FABAB" />
+                                </View> : null
+                        }}
                     ></BleashupFlatList></View>}
                 </View>) : <Spinner size="small"></Spinner>}
         </View>

@@ -13,6 +13,7 @@ import ActionsView from "./ActionsView";
 import Commitee from "./Commitee";
 import moment from "moment";
 import CacheImages from '../../CacheImages';
+import shadower from "../../shadower";
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenheight = Math.round(Dimensions.get('window').height);
 const HEADER_MAX_HEIGHT = 140;
@@ -100,30 +101,45 @@ export default class SWView extends Component {
             this.props.seen()
         })
     }
-    displayDate(date) {
-        let statDate = moment(date)
-        let end = moment()
-        let daysDiff = Math.floor(moment.duration(end.diff(statDate)).asDays())
-        if (daysDiff == 0) {
-            return "OnGoing Today from " + moment(date).format("h:mm a");
-        } else if (daysDiff == 1) {
-            return "Past Since Yesterday at " + moment(date).format("h:mm a")
-        } else if (daysDiff > 1 && daysDiff < 7) {
-            return `Past Since ${Math.abs(daysDiff)} Days Ago at ` + moment(date).format("h:mm a")
-        } else if (daysDiff == 7) {
-            return "Past Since 1 Week Ago at " + moment(date).format("h:mm a")
-        } else if (daysDiff == -1) {
-            return "Upcoming Tomorrow at " + moment(date).format("h:mm a");
-        }
-        else if (daysDiff < -1) {
-            return `Upcoming in ${Math.abs(daysDiff)} Days at ` + moment(date).format("h:mm a");
-        } else {
-            return `Past since ${moment(date).format("dddd, MMMM Do YYYY")} at ${moment(date).format("h:mm a")}`
+    writeInterval(frequency) {
+        switch (frequency) {
+            case 'daily':
+                return '   day(s)';
+            case 'weekly':
+                return '   week(s)';
+            case 'monthly':
+                return '   month(s)';
+            case 'yearly':
+                return '   year(s)';
+            default:
+                return ''
         }
     }
-    dateDiff(date) {
+    displayDate(event) {
+        let date = event.period
         let statDate = moment(date)
-        let end = moment()
+        let end = moment(typeof event.recurrence === "string" ? event.recurrence : null)
+        let daysDiff = Math.floor(moment.duration(end.diff(statDate)).asDays())
+        if (daysDiff == 0) {
+            return "Started Today At " + moment(date).format("h:mm a");
+        } else if (daysDiff == 1) {
+            return "Past Yesterday at " + moment(date).format("h:mm a")
+        } else if (daysDiff > 1 && daysDiff < 7) {
+            return `Past ${Math.abs(daysDiff)} Days Ago at ` + moment(date).format("h:mm a")
+        } else if (daysDiff == 7) {
+            return "Past 1 Week Ago at " + moment(date).format("h:mm a")
+        } else if (daysDiff == -1) {
+            return "Starting Tomorrow at " + moment(date).format("h:mm a");
+        }
+        else if (daysDiff < -1) {
+            return `Starting in ${Math.abs(daysDiff)} Days at ` + moment(date).format("h:mm a");
+        } else {
+            return `Past on ${moment(date).format("dddd, MMMM Do YYYY")} at ${moment(date).format("h:mm a")}`
+        }
+    }
+    dateDiff(event) {
+        let statDate = moment(event.period)
+        let end = moment(typeof event.recurrence === "string" ? event.recurrence : null)
         return daysDiff = Math.floor(moment.duration(end.diff(statDate)).asDays())
     }
     invite() {
@@ -160,20 +176,20 @@ export default class SWView extends Component {
             <View style={{
                 opacity: 0.9,
                 backgroundColor: "#FEFFDE",
-                width:"100%",
-                height:screenheight
+                width: "100%",
+                height: "100%"
             }}><View style={{
                 borderWidth: 1,
                 borderRadius: 2,
                 borderColor: '#ddd',
+                height:'100%',
                 borderBottomWidth: 0,
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.8,
-                shadowRadius: 2,
-                elevation: 5,margin: "1%",}}>
+                ...shadower(7), margin: "1%",
+            }}>
                     <ScrollView
-                        style={{ backgroundColor: "#FEFFDE", }}
+                        style={{
+                            backgroundColor: "#FEFFDE",
+                        }}
                         //scrollEnabled={true}
                         nestedScrollEnabled={true}
                         showsVerticalScrollIndicator={false}
@@ -182,24 +198,33 @@ export default class SWView extends Component {
                         )}>
                         <View style={{
                             marginTop: HEADER_MAX_HEIGHT,
-                            height: "100%", width: "100%", backgroundColor: "#FEFFDE",
+                            height: "100%", width: "100%",
+                            backgroundColor: "#FEFFDE",
                             display: 'flex', flexDirection: 'column', //borderRightWidth: 1.25, borderColor: "#1FABAB",
                         }}>
                             <View style={{
-                                backgroundColor: "#FEFFDE", width: screenWidth * 2.7 / 3,
-                                alignItems: 'center',
+                                backgroundColor: "#FEFFDE",
+                                width: screenWidth * 2.7 / 3,
+                                alignItems: 'flex-start',
                                 marginTop: 2,
                                 borderRadius: 5,
-                                justifyContent: 'center', flexDirection: 'row', shadowOpacity: 1,
-                                shadowOffset: {
-                                    height: 1,
-                                },
-                                shadowRadius: 10, elevation: 6
-                            }}><View style={{ width: "90%" }}><Title style={{ fontWeight: 'bold', fontSize: 17, marginTop: 2, color: "#0A4E52" }}>{this.props.event.about.title}</Title>
-                                    <Title style={{
+                                paddingLeft: '2.5%',
+                                justifyContent: 'flex-start', flexDirection: 'row', ...shadower(3)
+                            }}><View style={{ width: "90%" }}><Title style={{ fontWeight: 'bold', fontSize: 17, marginTop: 2, color: "#0A4E52",alignSelf: 'flex-start', }}>{this.props.event.about.title}</Title>
+                                    {this.props.event.period ? <Title style={{
+                                        alignSelf: 'flex-start',
                                         marginRight: "2%", fontStyle: 'italic', fontWeight: this.props.event.closed ? "bold" : "400",
-                                        color: this.props.event.closed ? "red" : this.dateDiff(this.props.event.period) > 0 ? "gray" : "#1FABAB", fontSize: 12,
-                                    }}>{this.props.event.closed ? "Closed" : this.displayDate(this.props.event.period)}</Title>
+                                        color: this.props.event.closed ? "red" : this.dateDiff(this.props.event) > 0 ? "gray" : "#1FABAB", fontSize: 12,
+                                    }}>{this.props.event.closed ? "Closed" : this.displayDate(this.props.event)}</Title> : null}
+                                    {/*this.props.event.interval > 1 && this.props.event.frequency !== 'yearly' && this.dateDiff(this.props.event) < 0 ?
+                                        <Text style={{
+                                            color: "#1FABAB"
+                                        }} note>
+                                            {`after every ${this.props.event.interval > 1 ? this.props.event.interval :
+                                                null} ${this.writeInterval(this.props.event.frequency)} till 
+                                                     ${moment(this.props.event.recurrence ? this.props.event.recurrence :
+                                                    null).format("dddd, MMMM Do YYYY")}`}
+                                                     </Text> : null*/}
                                 </View>
                                 <Icon onPress={() => {
                                     this.props.navigateHome()
@@ -208,13 +233,18 @@ export default class SWView extends Component {
                                     marginBottom: "6%"
                                 }} name="close" type="EvilIcons"></Icon>
                             </View>
-                            <View style={{ heignt: "60%", display: "flex", flexDirection: 'row', backgroundColor: "#FEFFDE", marginLeft: "1%", }}>
+                            <View style={{
+                                heignt: "60%", display: "flex", flexDirection: 'row',
+                                backgroundColor: "#FEFFDE",
+                                marginLeft: "1%",
+                            }}>
                                 <View style={{
-                                    marginTop: "2%", width: "25%", shadowOpacity: .5,
-                                    shadowOffset: {
-                                        height: 1,
-                                    },
-                                    shadowRadius: 10, elevation: 3, borderRadius: 12
+                                    marginTop: "5%",
+                                    padding: '1%',
+                                    height:300,
+                                    width: "25%", ...shadower(3),
+                                    backgroundColor: '#FEFFDE',
+                                    borderRadius: 12
                                 }}>
                                     <ActionsView
                                         publish={() => this.props.publish()}
@@ -232,7 +262,7 @@ export default class SWView extends Component {
                                         setCurrentPage={(page) => this.props.setCurrentPage(page)}></RouteView>
                                 </View>
                             </View>
-                            <View style={{ marginTop: "10%", height: 300, }}>
+                            <View style={{height: 315,marginTop: "-10%", }}>
                                 <Commitee
                                     master={this.props.master}
                                     ref="Commitee"

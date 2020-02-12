@@ -1,17 +1,12 @@
 import React, { Component } from "react"
 import { View, TouchableOpacity, TouchableWithoutFeedback, Vibration, StyleSheet } from 'react-native';
 import { Text, Icon, Spinner, Toast } from 'native-base';
-import PhotoView from "../currentevents/components/PhotoView";
 import Image from "react-native-scalable-image"
 import { AnimatedCircularProgress } from "react-native-circular-progress";
-import rnFetchBlob from 'rn-fetch-blob';
 import GState from "../../../stores/globalState";
 import TextContent from "./TextContent";
-import ChatStore from '../../../stores/ChatStore';
 import testForURL from '../../../services/testForURL';
-const { fs, config } = rnFetchBlob
-let dirs = rnFetchBlob.fs.dirs
-const AppDir = rnFetchBlob.fs.dirs.SDCardDir + '/Bleashup'
+import FileExachange from "../../../services/FileExchange";
 
 
 export default class VideoMessage extends Component {
@@ -31,7 +26,7 @@ export default class VideoMessage extends Component {
     }
     transparent = "rgba(52, 52, 52, 0.3)";
     componentDidMount() {
-        this.room = new ChatStore(this.props.firebaseRoom)
+        console.warn(this.props.message.received, this.props.message.total, "--")
         let downloadState = (this.props.message.received / this.props.message.total) * 100
         this.setState({
             text: this.props.message.text,
@@ -45,101 +40,85 @@ export default class VideoMessage extends Component {
             total: this.props.message.total ? parseInt(this.props.message.total).toFixed(2) : 0,
             creator: (this.props.message.sender.phone == this.props.creator)
         })
+        this.exchanger = new FileExachange(this.props.message.source,
+            this.path,
+            this.state.total,
+            this.state.received,
+            this.progress.bind(this),
+            this.success.bind(this),
+            this.onFail.bind(this),
+            this.onError.bind(this))
         // console.warn(this.state.downloadState, this.props.message.file_name)
     }
-    DetemineRange(path) {
-        return new Promise((resolve, reject) => {
-            fs.exists(path).then(ext => {
-                if (ext) {
-                    console.warn("exists")
-                    fs.stat(path).then(stat => resolve(stat.size))
-                } else {
-                    resolve(0)
-                }
-            })
+    progress(received, total, size) {
+        let newReceived = parseInt(received);
+        let newTotal = this.state.total && this.state.total > 0 && this.state.total > total ? this.state.total : total
+        newTotal = parseInt(newTotal)
+        this.setState({
+            downloadState: (newReceived / newTotal) * 100,
+            total: newTotal, received: newReceived
         })
     }
-    path = AppDir + '/Video/' + this.props.message.file_name
-    tempPath = this.path + '.download'
+    success(path, total, received) {
+        GState.downlading = false
+        this.setState({
+            total: this.state.total && this.state.total > 0 && this.state.total > total ? this.state.total : total,
+            received: received
+        })
+        this.props.message.duration = this.exchanger.duration
+        this.props.message.source = "file://" + path
+        this.setAfterSuccess(this.props.message.source, total * 1000 * 1000, received * 1000 * 1000)
+    }
+    onFail(received, total) {
+        console.warn(total, received)
+        this.setState({
+            total: this.state.total && this.state.total > 0 && this.state.total > total ? this.state.total : total,
+            received: received
+        })
+        GState.downlading = false
+        this.props.message.duration = this.exchanger.duration
+        this.props.message.received = received
+        this.props.message.total = total
+        this.props.room.addVideoSizeProperties(this.props.message.id, total, received)
+        this.setState({
+            downloading: false
+        })
+    }
+    onError(error) {
+        GState.downlading = false
+        console.warn(error)
+        this.setState({
+            downloading: false,
+            error: true
+        })
+    }
+    path = '/Video/' + this.props.message.file_name
     download(url) {
         clearInterval(this.downloadID)
         GState.downlading = true
         this.setState({
             downloading: true
         })
-        this.DetemineRange(this.tempPath).then(size => {
-            this.task = rnFetchBlob.config({
-                fileCache: true
-            }).fetch('GET', url, {
-                Range: `bytes=${size}-`,
-                From: `${size}`
-            })
-            this.task.progress((received, total) => {
-                let newReceived = parseInt(size) + parseInt(received);
-                let newTotal = this.props.message.total > 0 ? this.props.message.total : total
-                newTotal = parseInt(newTotal)
-                this.setState({
-                    downloadState: (newReceived / newTotal) * 100,
-                    total: newTotal, received: newReceived
-                })
-            })
-            this.task.catch(error => {
-                GState.downlading = false
-                console.warn(error)
-                this.setState({
-                    downloading: false,
-                    error: true
-                })
-            })
-            this.task.then((res) => {
-                GState.downlading = false
-                temper1 = this.toMB(this.state.total)
-                temper2 = this.toMB(this.state.received)
-                temp1 = Math.floor(temper1)
-                temp2 = Math.floor(temper2)
-                temp3 = Math.ceil(temper2)
-                if (temp1 == temp2 || temp1 == temp3) {
-                    this.props.message.duration = Math.floor(res.info().headers.Duration)
-                    fs.appendFile(this.tempPath, res.path(), 'uri').then(() => {
-                        fs.unlink(this.path)
-                        fs.appendFile(this.path, this.tempPath, 'uri').then(() => {
-                            fs.unlink(this.tempPath)
-                            fs.unlink(res.path())
-                            this.props.message.source = "file://" + this.path
-                            this.setAfterSuccess(this.props.message.source,this.state.total, this.state.received)
-                        })
-                    })
-                } else {
-                    fs.appendFile(this.tempPath, res.path(), 'uri').then(() => {
-                        fs.unlink(res.path())
-                        this.props.message.received = this.state.received
-                        this.props.message.total = this.state.total
-                        this.room.addVideoSizeProperties(this.props.message.id, this.state.total, this.state.received)
-                        this.setState({})
-                    })
-                }
-            })
-        })
+        this.exchanger.download(this.state.received, this.state.total)
     }
     downloadID = null
     downloadVideo(url) {
         this.downloadID = setInterval(() => this.download(url), 500)
     }
     setAfterSuccess(res, cap, received) {
-        this.room.addVideoProperties(this.props.message.id, this.props.message.source, cap, received).then(() => {
+        this.props.room.addVideoProperties(this.props.message.id, this.props.message.source, cap, received).then(() => {
             this.setState({
                 loaded: true,
                 downloading: false,
-                total: cap.toFixed(2),
                 downloadState: 100
             })
         })
     }
     cancelDownLoad(url) {
-        this.task.cancel((err, taskID) => {
+        this.exchanger.task.cancel((err, taskID) => {
             this.setState({ downloading: false })
         })
-        this.room.SetCancledState(this.props.message.id)
+        this.props.room.SetCancledState(this.props.message.id)
         this.setState({
             downloading: false
         })
@@ -168,7 +147,7 @@ export default class VideoMessage extends Component {
                                 }>
                                 <Icon type="EvilIcons" name="play" style={{
                                     fontSize: 40,
-                                    color: "#1FABAB"
+                                    color: "#FEFFDE"
                                 }}></Icon>
                             </TouchableOpacity>
                         </View>
@@ -180,15 +159,15 @@ export default class VideoMessage extends Component {
                                 <AnimatedCircularProgress size={40}
                                     width={2}
                                     fill={testForURL(this.props.message.source) ? this.state.downloadState : 100}
-                                    tintColor={this.state.error ? "red" : "#1FABAB"}
+                                    tintColor={this.state.error ? "red" : "#FEFFDE"}
                                     backgroundColor={this.transparent}>
                                     {
                                         (fill) => (<View>
                                             {this.state.downloading ? <TouchableWithoutFeedback onPress={() => this.cancelDownLoad(this.props.message.source)}>
-                                                <Icon type="EvilIcons" style={{ color: "#1FABAB" }} name="close">
+                                                <Icon type="EvilIcons" style={{ color: "#FEFFDE" }} name="close">
                                                 </Icon>
                                             </TouchableWithoutFeedback> : <TouchableWithoutFeedback onPress={() => this.downloadVideo(this.props.message.source)}>
-                                                    <Icon type="EvilIcons" style={{ color: "#1FABAB" }} name="arrow-down">
+                                                    <Icon type="EvilIcons" style={{ color: "#FEFFDE" }} name="arrow-down">
                                                     </Icon>
                                                 </TouchableWithoutFeedback>}
                                         </View>)
@@ -198,7 +177,7 @@ export default class VideoMessage extends Component {
                                     {this.toMB(this.state.total).toFixed(1)}{")Mb"}</Text></View></View>}</View>
                 </View>
                 {this.props.message.text ? <View style={{ marginTop: "-5%", padding: "2%" }}>
-                    <TextContent text={this.props.message.text}></TextContent>
+                    <TextContent pressingIn={() => this.props.pressingIn()} text={this.props.message.text}></TextContent>
                 </View> : null}
             </View>
         );

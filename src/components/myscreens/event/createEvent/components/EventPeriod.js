@@ -1,16 +1,12 @@
 import React, { Component } from "react";
 import {
-  Content, Card, CardItem, Text, Body, Container, Icon, Header,
-  Form, Item, Title, Input, Left, Right, H3, H1, H2, Spinner,
-  Button, InputGroup, DatePicker, Thumbnail, Alert
+   Text,  Icon, Item,Input,
+  Button, 
 } from "native-base";
 
-import { StyleSheet, View,Image,TouchableOpacity,Dimensions} from 'react-native';
-import ActionButton from 'react-native-action-button';
+import {  View,TouchableOpacity,Dimensions} from 'react-native';
 import Modal from 'react-native-modalbox';
-import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 import autobind from "autobind-decorator";
-import { filter,uniqBy,orderBy,find,findIndex,reject,uniq,indexOf,forEach,dropWhile } from "lodash";
 import request from "../../../../../services/requestObjects";
 import  stores from '../../../../../stores/index';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -37,24 +33,27 @@ export default class EventPeriod extends Component {
 
 
    componentDidMount(){
-    stores.Events.readFromStore().then(Events =>{
-        let event = find(Events, { id:"newEventId" }); 
-
-          this.setState({title:event.about.title});
-         
-       if(event.period!=""){
-        
+     //stores.Events.updatePeriod("newEventId","").then(() => {})
+         let period = this.props.event.period
+         //console.error(period)
          this.setState({
-          date:event.period,
-          time:event.period,
-          inputDateValue:moment(event.period).format().split("T")[0],
-          inputTimeValue:moment(event.period).format().split("T")[1].split("+")[0]
-         });
-       }
+          date:period,
+          time:period,
+          inputDateValue:period?moment(period).format().split("T")[0]:null,
+          inputTimeValue:period?moment(period).format().split("T")[1].split("+")[0]:null
+         }); 
+ }
 
-   
-   });
-      
+  componentDidUpdate(prevProps, prevState){
+    if(this.props.event.period !== prevProps.event.period){
+      let period = this.props.event.period 
+      this.setState({
+        date: period,
+        time: period,
+        inputDateValue:period?moment(period).format().split("T")[0]:null,
+        inputTimeValue: period?moment(period).format().split("T")[1].split("+")[0]:null
+      }); 
+    }
  }
 
 
@@ -78,56 +77,53 @@ export default class EventPeriod extends Component {
       this.setState({ isDateTimePickerVisible: true });
     };
 
-    @autobind
-    handleDatePicked(event,date){
-      if (date !== undefined) {
-
-        //deactivate the date picker before setting the obtain time
-        this.setState({ isDateTimePickerVisible: false });
-     
-        this.setState({date:date});
-        if(this.state.time==""){
-            let period = moment(this.state.date).format().split("T")[0] + "T" +
-            moment().format().split("T")[1];
-
-            this.setState({inputDateValue:moment(period).format().split("T")[0]})      
-            stores.Events.updatePeriod("newEventId",period,false).then(()=>{});
-        }else{
-            let period = moment(this.state.date).format().split("T")[0] + "T" +
-            moment(this.state.time).format().split("T")[1];
-
-            this.setState({inputDateValue:moment(period).format().split("T")[0]})      
-            stores.Events.updatePeriod("newEventId",period,false).then(()=>{});
-        }
-
-
-      }
+  @autobind
+  handleDatePicked(event, date) {
+    if (date !== undefined) {
+      let newDate = moment(date).format().split("T")[0]
+      let currentTime = this.state.date ?
+        moment(this.state.date).format().split("T")[1] :
+        moment().startOf("day").add(moment.duration(1,'hours')).toISOString().split("T")[1]
+      let dateTime = newDate + "T" + currentTime
+      //deactivate the date picker before setting the obtain time     
+      this.setState({ date: dateTime, isDateTimePickerVisible: false });
+      stores.Events.updatePeriod("newEventId", dateTime, false).then(() => { });
+    }else{
+      this.setState({
+        isDateTimePickerVisible:false
+      })
     }
-
-    @autobind
+  }
+    resetPeriod(){
+      stores.Events.updatePeriod("newEventId", "").then(() => {
+        this.setState({
+          date: null,
+          time: null
+        })
+      })
+    }
+    resetTime(){
+      let time = moment().startOf('day').add(moment.duration(1,'hours')).toISOString().split("T")[1]
+      let newDate = this.state.date ?
+        moment(this.state.date).format().split("T")[0] :
+        moment().format().split("T")[0]
+      let dateTime = newDate + "T" + time
+      this.setState({ show: false, date: dateTime });
+      stores.Events.updatePeriod("newEventId", dateTime, false).then(() => { });
+    }
     setTime(event, date){
       if (date !== undefined) {
-        //deactivate the clock before setting the obtain time
-        this.setState({show:false});
-        //set time
-        this.setState({time:date});
-        
-        if(this.state.date==""){
-            let period = moment().format().split("T")[0] + "T" +
-            moment(this.state.time).format().split("T")[1];
-
-            this.setState({inputTimeValue:moment(period).format().split("T")[1].split("+")[0]});
-            stores.Events.updatePeriod("newEventId",period,false).then(()=>{});
-        }else{
-            let period = moment(this.state.date).format().split("T")[0] + "T" +
-            moment(this.state.time).format().split("T")[1];
-
-            this.setState({inputTimeValue:moment(period).format().split("T")[1].split("+")[0]});
-            stores.Events.updatePeriod("newEventId",period,false).then(()=>{});
-        }
- 
-
-    
+        let time = moment(date).format().split("T")[1]
+        let newDate = this.state.date?
+        moment(this.state.date).format().split("T")[0]:
+        moment().format().split("T")[0]
+        let dateTime = newDate + "T"+time
+        this.setState({ show: false, date: dateTime});
+        stores.Events.updatePeriod("newEventId", dateTime, false).then(() => { });
+      }else{
+        this.setState({
+          show:false
+        })
       }
 
     }
@@ -137,7 +133,7 @@ export default class EventPeriod extends Component {
     	return(
           <Modal
                 isOpen={this.props.isOpen}
-                onClosed={this.props.onClosed}
+                onClosed={() => this.props.onClosed(this.state.date)}
                 onClosingState={()=>{this.setState({show:false})}}
                 style={{
                     height: height/4 + height/20 , borderRadius: 15,
@@ -146,6 +142,7 @@ export default class EventPeriod extends Component {
                 }}
                 coverScreen={true}
                 position={'bottom'}
+                backButtonClose={true}
                 //backdropPressToClose={false}
                 >
 
@@ -156,7 +153,7 @@ export default class EventPeriod extends Component {
              <Text style={{fontWeight:"500"}}>select   date/time</Text>
              </View>
 
-            <Item rounded style={{flexDirection:"row",height:height/17,marginLeft:"1%",marginRight:"1%",marginBottom:"8%"}} >
+            <Item rounded style={{flexDirection:"row",height:height/17,marginLeft:"1%",marginRight:"1%",marginBottom:"8%",paddingBottom: '5%',}} >
             <View style={{width:"12%"}} >
             <TouchableOpacity  onPress={this.showDateTimePicker}>     
             <Icon
@@ -167,9 +164,15 @@ export default class EventPeriod extends Component {
             />
             </TouchableOpacity>
             </View>
-            <View>
-              <Input editable={false} placeholder="select date of event" value={this.state.inputDateValue} style={{color:"#696969"}}/>
+            <View style={{width:'78%'}}>
+                <Input editable={false} placeholder="select date of activity" 
+                value={this.state.date?moment(this.state.date).format('dddd, MMMM Do YYYY'):null} style={{color:"#696969"}}/>
             </View>
+            {this.state.date || this.state.period?<View>
+            <Icon onPress={() => {
+                 this.resetPeriod()
+            }} name={"close"} type={"EvilIcons"} style={{color:'red'}}></Icon>
+            </View>:null}
 
             {this.state.isDateTimePickerVisible && <DateTimePicker
             mode="date"
@@ -192,13 +195,19 @@ export default class EventPeriod extends Component {
             />
         </TouchableOpacity>
         </View>
-        <View>
-        <Input editable={false} placeholder="select event time" value={this.state.inputTimeValue} style={{color:"#696969"}}/>
+        <View style={{ width:'78%'}}>
+          <Input editable={false} placeholder="select activity time" 
+          value={this.state.date?moment(this.state.date).format('hh:mm:s a'):null} 
+          style={{color:"#696969"}}/>
         </View>
-            
-        {this.state.show && <DateTimePicker  mode="time" value={this.state.defaultTime}  display="default" onChange={this.setTime}/>}
-       
+        {this.state.date || this.state.time?<View>
+        <Icon onPress={() => {
+            this.resetTime()
+        }} name={'close'} style={{color:'red'}} type={'EvilIcons'}></Icon>
+        </View>:null}
       </Item>
+            {this.state.show && <DateTimePicker is24Hour={true} mode="time"
+              value={this.state.defaultDate} display="default" onChange={(e,d) => this.setTime(e,d)} />}
 
     </View>
 

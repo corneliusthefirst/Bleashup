@@ -1,6 +1,6 @@
-import EStyleSheet from 'react-native-extended-stylesheet';
 
-const Exstyles = EStyleSheet.create({
+import { StyleSheet } from 'react-native';
+const Exstyles = StyleSheet.create({
 	
 	descModal:{
 	 padding:20,

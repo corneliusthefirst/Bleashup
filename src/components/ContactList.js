@@ -44,6 +44,7 @@ export default class ContactList extends Component {
             })
         }, 3)
     }
+    delay = 0
     _keyExtractor = (item, index) => item.phone
     render() {
         StatusBar.setBarStyle('dark-content', true)
@@ -68,12 +69,12 @@ export default class ContactList extends Component {
                         keyExtractor={this._keyExtractor}
                         dataSource={this.state.publishers}
                         renderItem={(item, index) => {
-                            console.warn(item.period)
+                            this.delay = this.delay >= 15 ? 0:this.delay + 1
                             return <View style={{ margin: 10 }}>
                                 <View>
                                     <View style={{ display: 'flex', flexDirection: 'row', }} >
                                         <View style={{ width: "50%" }}>
-                                            <ProfileView phone={item.phone}></ProfileView>
+                                            <ProfileView delay={this.delay} phone={item.phone}></ProfileView>
                                         </View>
                                         <View style={{
                                             width: "45%"

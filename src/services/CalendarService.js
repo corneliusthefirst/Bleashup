@@ -1,5 +1,5 @@
 import RNCalendarEvents from 'react-native-calendar-events';
-import { PermissionsAndroid } from 'react-native';
+import { PermissionsAndroid, Platform } from 'react-native';
 import moment from 'moment';
 import { findIndex } from 'lodash'
 import stores from '../stores';
@@ -79,31 +79,117 @@ class CalendarService {
         return RNCalendarEvents.fetchAllEvents(moment().subtract(8, 'months').utc().format(UTCFormat),
             moment().add(1, 'years').utc().format(UTCFormat))
     }
-    saveEvent(Bevent, alarms) {
-        let calendarEvent = this.translateToCalendar(Bevent, alarms)
-        return RNCalendarEvents.saveEvent(Bevent.about.title, calendarEvent)
+    saveEvent(Bevent, alarms, type) {
+        if (Bevent.period && Bevent.period.includes("T")) {
+            let calendarEvent = type === 'reminds' ? this.translateRemindToCalendar(Bevent) : this.translateToCalendar(Bevent, alarms)
+            console.warn(calendarEvent)
+            /*let calendarEvent = {   
+                title : "test",
+                startDate: (new Date()).toISOString(),
+                recurrence: 'weekly',
+                recurrenceRule: {
+                    frequency: 'weekly',
+                    interval: 2,
+                    endDate: (new Date()).toISOString(),
+                }
+            }*/
+            return RNCalendarEvents.saveEvent(type === 'reminds' ? `${Bevent.title} reminder` : Bevent.about.title, calendarEvent)
+        } else {
+            return new Promise((resolve, reject) => {
+                if (Bevent.calendar_id) {
+                    RNCalendarEvents.removeEvent(Bevent.calendar_id, { futureEvents: true }).then((res) => {
+                        resolve()
+                    })
+                } else {
+                    resolve()
+                }
+            })
+        }
+    }
+    translateRemindToCalendar(Bevent, alarms) {
+        console.warn('translating to reminder',Bevent.calendar_id)
+        return Platform.OS === 'android' ? {
+            id: Bevent.calendar_id ? Bevent.calendar_id : undefined,
+            //calendarID: this.calendarID,
+            title: `${Bevent.title} reminder`,
+            startDate: moment(Bevent.period).utc().format(UTCFormat),
+            allDay: false,
+            recurrence: Bevent.recursive_frequency.frequency,
+            //occurrenceDate: Platform.OS !== "ios" ? null : moment(Bevent.period).utc().format(UTCFormat),
+            recurrenceRule: {
+                frequency: Bevent.recursive_frequency.frequency,
+                interval: Bevent.recursive_frequency.interval,
+                //occurrence: Bevent.recurrence,
+                endDate: moment(Bevent.recursive_frequency.recurrence).utc().format(UTCFormat)
+            },
+            //recurrenceInterval:Bevent.recurrent? parseInt(Bevent.interval):null,
+            alarms: alarms,
+            //location: Bevent.location.string,
+            notes: Bevent.description,
+            description: GState.DeepLinkURL + "event/" + Bevent.event_id
+        } : {
+                id: Bevent.calendar_id ? Bevent.calendar_id : undefined,
+                //calendarID: this.calendarID,
+                title: Bevent.title + ' reminder',
+                startDate: moment(Bevent.period).utc().format(UTCFormat),
+                endDate: Platform.OS === "ios" ? null : moment(Bevent.period).add(1, 'hours').utc().format(UTCFormat),
+                allDay: false,
+                recurrence: Bevent.recursive_frequency.frequency,
+                occurrenceDate: Platform.OS !== "ios" ? null : moment(Bevent.period).utc().format(UTCFormat),
+                recurrenceRule: {
+                    frequency: Bevent.recursive_frequency.frequency,
+                    interval: Bevent.recursive_frequency.interval,
+                    //occurrence: Bevent.recurrence,
+                    endDate: moment(Bevent.recursive_frequency.recurrence).add(1, 'hours').utc().format(UTCFormat)
+                },
+                //recurrenceInterval:Bevent.recurrent? parseInt(Bevent.interval):null,
+                alarms: alarms,
+                notes: Bevent.description,
+                description: GState.DeepLinkURL + "event/" + Bevent.event_id
+            }
     }
     translateToCalendar(Bevent, alarms) {
-        console.warn(alarms, this.calendarID)
-        return {
+        return Platform.OS === "android" ? {
             id: Bevent.calendar_id ? Bevent.calendar_id : undefined,
             //calendarID: this.calendarID,
             title: Bevent.about.title,
             startDate: moment(Bevent.period).utc().format(UTCFormat),
-            endDate: moment(Bevent.period).add(1, 'hours').utc().format(UTCFormat),
+            endDate: Bevent.recurrent ? undefined : moment(Bevent.period).add(1, 'hours').utc().format(UTCFormat),
             allDay: false,
             recurrence: Bevent.recurrent ? Bevent.frequency : undefined,
-            occurrenceDate: moment(Bevent.period).utc().format(UTCFormat),
-            recurrentRule: Bevent.recurrent ? {
-                frequency: Bevent.frequency,
+            //occurrenceDate: Platform.OS !== "ios" ? null : moment(Bevent.period).utc().format(UTCFormat),
+            recurrenceRule: {
+                frequency: Bevent.recurrent ? Bevent.frequency : undefined,
                 interval: Bevent.interval,
-                occurrence: Bevent.occurrence,
-            } : null,
+                //occurrence: Bevent.recurrence,
+                endDate: moment(Bevent.recurrence).utc().format(UTCFormat)
+            },
+            //recurrenceInterval:Bevent.recurrent? parseInt(Bevent.interval):null,
             alarms: alarms,
             location: Bevent.location.string,
             notes: Bevent.notes,
-            description:  GState.DeepLinkURL + "event/" + Bevent.id
-        }
+            description: GState.DeepLinkURL + "event/" + Bevent.id
+        } : {
+                id: Bevent.calendar_id ? Bevent.calendar_id : undefined,
+                //calendarID: this.calendarID,
+                title: Bevent.about.title,
+                startDate: moment(Bevent.period).utc().format(UTCFormat),
+                endDate: Platform.OS === "ios" ? null : moment(Bevent.period).add(1, 'hours').utc().format(UTCFormat),
+                allDay: false,
+                recurrence: Bevent.recurrent ? Bevent.frequency : null,
+                occurrenceDate: Platform.OS !== "ios" ? null : moment(Bevent.period).utc().format(UTCFormat),
+                recurrenceRule: {
+                    frequency: Bevent.recurrent ? Bevent.frequency : null,
+                    interval: Bevent.interval,
+                    //occurrence: Bevent.recurrence,
+                    endDate: moment(Bevent.recurrence).add(1, 'hours').utc().format(UTCFormat)
+                },
+                //recurrenceInterval:Bevent.recurrent? parseInt(Bevent.interval):null,
+                alarms: alarms,
+                location: Bevent.location.string,
+                notes: Bevent.notes,
+                description: GState.DeepLinkURL + "event/" + Bevent.id
+            }
     }
 
 }

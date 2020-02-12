@@ -27,6 +27,11 @@ export default class InputView extends Component {
     state = {
 
     }
+    _clean(){
+        this.setState({
+            textValue: null
+        })
+    }
     handleEmojiSelected(e) {
         this.setState({
             textValue: this.state.textValue + e
@@ -49,13 +54,11 @@ export default class InputView extends Component {
     replyMessageCaption() {
         return <View style={{ backgroundColor: '#FEFEDE', marginLeft: "-1%", }}>
             <ReplyText openReply={(replyer) => {
-                this.setState({
-                    replyer: replyer,
-                    showRepliedMessage: true
-                });
+               
             }} pressingIn={() => { }} reply={this.props.replyer}></ReplyText>
             <Button onPress={() => this.cancleReply()
-            } style={{ position: "absolute", alignSelf: 'flex-end', }} transparent><Icon name={"close"} type={"EvilIcons"} style={{}}></Icon></Button>
+            } style={{ position: "absolute", alignSelf: 'flex-end', }} transparent>
+            <Icon name={"close"} type={"EvilIcons"} style={{}}></Icon></Button>
         </View>;
     }
     toggleEmojiKeyboard() {
@@ -75,7 +78,9 @@ export default class InputView extends Component {
                         }}>
                             {
                                 //* Reply Message caption */
-                                this.props.replyer.replyer_name ? this.replyMessageCaption() : null
+                                //this.props.replyer.replyer_name ? 
+                                this.replyMessageCaption() 
+                               // : null
                             }
                             <View>
                                 <View style={{ display: 'flex', flexDirection: 'row', }}>
@@ -158,6 +163,7 @@ export default class InputView extends Component {
                                         {this.state.textValue ? <View style={{ width: "45%", }}>
                                             <TouchableOpacity onPress={() => {
                                                 requestAnimationFrame(() => {
+                                                    Keyboard.dismiss()
                                                      this.props.sendMessageText(this.state.textValue);
                                                     this._textInput.clear();
                                                 });

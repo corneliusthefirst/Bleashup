@@ -49,7 +49,7 @@ export default class SelectableContactsMaster extends Component {
                                 "radio-button-unchecked"} type="MaterialIcons"></Icon>
                         </View>
                         <View style={{ width: "80%", color: "#0A4E52" }}>
-                            <ProfileView hideMe={() => {
+                            <ProfileView delay={this.props.delay} hideMe={() => {
                                 this.setState({
                                     hiden: true
                                 })

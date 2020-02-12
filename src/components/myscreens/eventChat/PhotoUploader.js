@@ -3,19 +3,13 @@ import React, { Component } from 'react';
 import { View, TouchableOpacity, TouchableWithoutFeedback, PermissionsAndroid } from "react-native"
 import Image from "react-native-scalable-image"
 import { Text, Icon, Spinner } from 'native-base';
-import rnFetchBlob from 'rn-fetch-blob';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
-import * as config from "../../../config/bleashup-server-config.json"
 import GState from '../../../stores/globalState';
-const { fs } = rnFetchBlob
-const AppDir = rnFetchBlob.fs.dirs.SDCardDir + '/Bleashup'
+import FileExachange from '../../../services/FileExchange.js';
+
 export default class PhotoUploader extends Component {
     constructor(props) {
         super(props)
-        this.uploadURL = config.file_server.protocol +
-            "://" + config.file_server.host + ":" + config.file_server.port + "/photo/save"
-        this.baseURL = config.file_server.protocol +
-            "://" + config.file_server.host + ":" + config.file_server.port + '/photo/get/'
         this.state = {
             received: 0, total: 0,
             uploadState: 0
@@ -23,73 +17,70 @@ export default class PhotoUploader extends Component {
     }
     state = {}
     componentDidMount() {
+        this.exchanger = new FileExachange(this.props.message.source,
+            "/Photo/", this.props.message.total ?
+            this.props.message.total : 0, this.props.message.received ?
+            this.props.message.received : 0,
+            this.progress.bind(this), this.onSuccess.bind(this),
+            null, this.onError.bind(this),
+            this.props.message.content_type,
+            this.props.message.filename, '/photo')
         this.uploaderPhoto()
+
     }
     task = null
     uploaderPhoto() {
-            if (!GState.downlading) this.uploadPhoto()
-            else setTimeout(() => {
-                this.uploaderPhoto()
-            },1000) 
+        console.warn("calling download")
+        if (!GState.downlading) this.uploadPhoto()
+        else setTimeout(() => {
+            this.uploaderPhoto()
+        }, 1000)
+    }
+    progress(writen, total) {
+        this.setState({
+            uploading: true,
+            total: parseInt(total),
+            received: parseInt(writen),
+            uploadState: (parseInt(writen) / parseInt(total)) * 100
+        })
+    }
+    onError(error) {
+        GState.downlading = false
+        this.setState({
+            uploading: false
+        })
+        console.warn(error)
     }
     uploadPhoto() {
         GState.downlading = true
         this.setState({
             uploading: true
         })
-        fs.exists(this.props.message.source).then(state => {
-            this.task = rnFetchBlob.fetch("POST", this.uploadURL, {
-                'content-type': 'multipart/form-data',
-            }, [{
-                name: "file",
-                filename: this.props.message.filename,
-                type: this.props.message.content_type,
-                data: rnFetchBlob.wrap(this.props.message.source)
-            }])
-            this.task.uploadProgress((writen, total) => {
-                this.setState({
-                    uploading: true,
-                    total: parseInt(total),
-                    received: parseInt(writen),
-                    uploadState: (parseInt(writen) / parseInt(total)) * 100
-                })
-            })
-            this.task.then(response => {
-                if (response.data) {
-                    temper1 = this.toMB(this.state.total)
-                    temper2 = this.toMB(this.state.received)
-                    temp1 = Math.floor(temper1)
-                    temp2 = Math.floor(temper2)
-                    temp3 = Math.ceil(temper2)
-                    newDir = `file://` + AppDir + "/Photo/" + response.data
-                    fs.writeFile(newDir.split(`file://`)[1], this.props.message.source.split(`file://`)[1], 'uri').then(() => {
-                        this.setState({
-                            uploadState: 100,
-                            uploading: false,
-                            loaded: true
-                        })
-                        this.props.message.type = 'photo'
-                        this.props.message.source = this.baseURL + response.data
-                        this.props.message.photo = newDir
-                        this.props.replaceMessage(this.props.message)
-                        GState.downlading = false
-                    })
-                }
-            })
-            this.task.catch((error) => {
-                this.setState({
-                    uploading: false
-                })
-                console.warn(error)
-            })
+        this.exchanger.upload(this.state.written,this.state.total)
+        
+    }
+    onSuccess(newDir, path) {
+        this.setState({
+            uploadState: 100,
+            uploading: false,
+            loaded: true
         })
+        this.props.message.type = 'photo'
+        this.props.message.source = path
+        this.props.message.photo = newDir
+        this.props.replaceMessage(this.props.message)
+        GState.downlading = false
     }
     toMB(data) {
         mb = 1000 * 1000
         return data / mb
     }
     cancelUpLoad() {
-        this.task.cancel((err, taskID) => {
+        this.exchanger.task.cancel((err, taskID) => {
+            GState.downlading = false
+            this.setState({
+                uploading:false
+            })
         })
     }
     render() {
@@ -107,7 +98,7 @@ export default class PhotoUploader extends Component {
                     <View style={{ alignSelf: 'center', margin: '2%', }}>
                         {this.state.loaded ? <View style={{ marginTop: 0 }}><View><Text
                             style={{ color: this.state.sender ? '#F8F7EE' : '#E1F8F9' }}>
-                            {this.toMB(this.state.total).toFixed(2)} {"Mb"}</Text></View></View> :
+                            {this.state.total.toFixed(2)} {"Mb"}</Text></View></View> :
                             <View style={{ marginTop: 1 }}>
                                 <AnimatedCircularProgress size={40}
                                     width={2}

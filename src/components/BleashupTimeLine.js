@@ -59,7 +59,7 @@ export default class BleashupTimeLine extends PureComponent {
 
         return null;
     }
-
+    delayer = 0
     render() {
         return (
             <View style={[styles.container, this.props.style]}>
@@ -68,11 +68,15 @@ export default class BleashupTimeLine extends PureComponent {
                     dataSource={this.state.data}
                     inverted={true}
                     firstIndex={0}
-                    renderPerBatch={3}
+                    renderPerBatch={10}
                     initialRender={6}
                     numberOfItems={this.state.data.length}
                     extraData={this.state}
-                    renderItem={this._renderItem}
+                    renderItem={(item,index) => {
+                        this.delayer = this.delayer +1
+                        if(this.delayer >= 6) this.delayer = 0
+                        return this._renderItem(item,index,this.delayer)
+                    }}
                     keyExtractor={(item, index) => index + ""}
                     {...this.props.options}
                 />
@@ -80,7 +84,7 @@ export default class BleashupTimeLine extends PureComponent {
         );
     }
 
-    _renderItem(item, index) {
+    _renderItem(item, index,delay) {
         let content = null;
         switch (item.type) {
             case "date_separator":
@@ -96,7 +100,7 @@ export default class BleashupTimeLine extends PureComponent {
                         content = (
                             <View style={[styles.rowContainer, this.props.rowContainerStyle]}>
                                 {this.renderTime(item, index)}
-                                {this.renderEvent(item, index)}
+                                {this.renderEvent(item, index,delay)}
                                 {this.renderCircle(item, index)}
                             </View>
                         );
@@ -104,7 +108,7 @@ export default class BleashupTimeLine extends PureComponent {
                     case "single-column-right":
                         content = (
                             <View style={[styles.rowContainer, this.props.rowContainerStyle]}>
-                                {this.renderEvent(item, index)}
+                                {this.renderEvent(item, index,delay)}
                                 {this.renderTime(item, index)}
                                 {this.renderCircle(item, index)}
                             </View>
@@ -115,12 +119,12 @@ export default class BleashupTimeLine extends PureComponent {
                             (item.position && item.position == "right") || (!item.position && index % 2 == 0) ? (
                                 <View style={[styles.rowContainer, this.props.rowContainerStyle]}>
                                     {this.renderTime(item, index)}
-                                    {this.renderEvent(item, index)}
+                                    {this.renderEvent(item, index,delay)}
                                     {this.renderCircle(item, index)}
                                 </View>
                             ) : (
                                     <View style={[styles.rowContainer, this.props.rowContainerStyle]}>
-                                        {this.renderEvent(item, index)}
+                                        {this.renderEvent(item, index,delay)}
                                         {this.renderTime(item, index)}
                                         {this.renderCircle(item, index)}
                                     </View>
@@ -168,7 +172,7 @@ export default class BleashupTimeLine extends PureComponent {
         );
     }
 
-    _renderEvent(rowData, rowID) {
+    _renderEvent(rowData, rowID,delay) {
         const lineWidth = rowData.lineWidth
             ? rowData.lineWidth
             : this.props.lineWidth;
@@ -238,7 +242,7 @@ export default class BleashupTimeLine extends PureComponent {
                     }
                 >
                     <View style={styles.detail}>
-                        {this.renderDetail(rowData, rowID)}
+                        {this.renderDetail(rowData, rowID,delay)}
                     </View>
                     {this._renderSeparator()}
                 </TouchableOpacity>
@@ -246,14 +250,18 @@ export default class BleashupTimeLine extends PureComponent {
         );
     }
 
-    _renderDetail(rowData, rowID) {
+    _renderDetail(rowData, rowID,delay) {
         let title = (
             <View>
                 <Text style={[styles.title, this.props.titleStyle]}>
                     {rowData.title}
                 </Text>
                 <View>
-                    <ChangeBox delayer={parseInt(rowID) < 6 ? parseInt(rowID) : 1} change={rowData}></ChangeBox>
+                    <ChangeBox master={this.props.master} 
+                    showPhoto={url => this.props.showPhoto(url)}
+                    restore={(data) => this.props.restore(data)}
+                     mention={(data) => this.props.mention(data)} 
+                     delayer={delay} change={rowData}></ChangeBox>
                 </View>
             </View>
         )

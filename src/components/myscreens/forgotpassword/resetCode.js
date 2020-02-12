@@ -9,7 +9,6 @@ import { AsyncStorage, Alert } from "react-native";
 import { observer } from "mobx-react";
 import styles from "./styles";
 import stores from "../../../stores";
-import routerActions from "reazy-native-router-actions";
 import { functionDeclaration } from "@babel/types";
 import globalState from '../../../stores/globalState';
 import UserService from '../../../services/userHttpServices';

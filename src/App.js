@@ -18,7 +18,7 @@ import SettingView from "./components/myscreens/settings/index";
 import CurrentEventView from "./components/myscreens/currentevents/index";
 import InvitationView from "./components/myscreens/invitations/index";
 import PotesChat from "./components/myscreens/poteschat/index";
-import Status from "./components/myscreens/status/index";
+import StatusView from "./components/myscreens/status/index";
 import LoginView from "./components/myscreens/login/index";
 import ForgotPasswordView from "./components/myscreens/forgotpassword/index";
 import ResetCodeView from "./components/myscreens/forgotpassword/resetCode";
@@ -39,13 +39,14 @@ import Highlights from "./components/myscreens/highlights";
 import ChangeLogs from "./components/myscreens/changelogs";
 import EventDetail from "./components/myscreens/eventDetails";
 import EventChat from "./components/myscreens/eventDetails";
-import Reminds from "./components/myscreens/reminds";
+import Reminds from "./components/myscreens/reminds/index";
 import CreateEventView from "./components/myscreens/event/createEvent/index"
 import EventDetailView from "./components/myscreens/eventDetails/index"
 import SendInvitations from "./components/myscreens/sent-invitations/index";
 import MyTasksView  from './components/myscreens/MyTasks/MyTasks'
 import HighLightsDetails from './components/myscreens/highlights_details';
 import LocalTasksCreation  from './components/myscreens/MyTasks/localTasksCreation'
+import TasksCreation  from './components/myscreens/reminds/TasksCreation'
 /*
 let {height, width} = Dimensions.get('window');
 EStyleSheet.build({
@@ -57,7 +58,7 @@ const AppNavigator = createStackNavigator(
     Home: { screen: Home },
     CurrentEvent: { screen: CurrentEventView },
     Settings: { screen: SettingView },
-    Status: { screen: Status },
+    Status: { screen:  StatusView },
     Invitation: { screen: InvitationView },
     PotesChat: { screen: PotesChat },
     Login: { screen: LoginView },
@@ -81,7 +82,8 @@ const AppNavigator = createStackNavigator(
     SendInvitations:{screen:SendInvitations},
     MyTasksView:{screen:MyTasksView},
     EventDetailView:{screen:EventDetailView },
-    LocalTasksCreation:{screen:LocalTasksCreation}
+    LocalTasksCreation:{screen:LocalTasksCreation},
+    TasksCreation:{screen:TasksCreation}
   },
   { 
     initialRouteName: "LoginHome",

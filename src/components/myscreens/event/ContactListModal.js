@@ -24,8 +24,9 @@ export default class ContactListModal extends PureComponent {
         }, 20)
     }
     _keyExtractor(item) {
-        return item.phone
+        return item && item.phone ?item.phone:item
     }
+    delay=0
     render() {
         return (
             <ModalBox
@@ -53,13 +54,13 @@ export default class ContactListModal extends PureComponent {
                             loaded: true,
                             //hideTitle: this.props.hideTitle
                         })
-                    }, 20)
+                    }, 100)
                 }}
                 style={{
                     height: "97%",
                     borderRadius: 8, backgroundColor: '#FEFFDE', width: "100%"
                 }}>
-                {!this.state.loaded ? <Spinner size={"small"}></Spinner> : <Container style={{marginTop:"7%"}}>
+                {!this.state.loaded ? <Spinner size={"small"}></Spinner> : <Container style={{ marginTop: "7%" }}>
                     <BleashupFlatList
                         firstIndex={0}
                         renderPerBatch={5}
@@ -67,15 +68,16 @@ export default class ContactListModal extends PureComponent {
                         numberOfItems={this.state.contacts.length}
                         keyExtractor={this._keyExtractor}
                         dataSource={this.state.contacts}
-                        renderItem={(item, index) =>
-                            <TouchableOpacity key={index.toString()} opPress={() => {
+                        renderItem={(item, index) => {
+                            this.delay = this.delay >= 15 ? 0 : this.delay + 1
+                            return (<TouchableOpacity key={index.toString()} opPress={() => {
                                 console.warn("pressed")
                             }}><View style={{ display: 'flex', flexDirection: 'row', }}>
-                                    <View style={{ margin: '2%', }}><TouchableOpacity ><ProfileView phone={item}></ProfileView>
+                                    <View style={{ margin: '2%', }}><TouchableOpacity ><ProfileView delay={this.delay} phone={item}></ProfileView>
                                     </TouchableOpacity></View>
-                                </View></TouchableOpacity>
+                                </View></TouchableOpacity>)
 
-                        }
+                        }}
                     >
                     </BleashupFlatList>
                 </Container>}

@@ -239,7 +239,7 @@ export default {
     // Tab
     tabDefaultBg: platform === "ios" ? "#1FABAB" : "#1FABAB",
     topTabBarTextColor: platform === "ios" ? "#9EEDD3" : "#9EEDD3",
-    topTabBarActiveTextColor: platform === "ios" ? "#FEFFDE" : "#FEFFDE",
+    topTabBarActiveTextColor: platform === "ios" ? "#FEFFDE" : "#FFF6C1",
     topTabBarBorderColor: platform === "ios" ? "#FEFFDE" : "#FEFFDE",
     topTabBarActiveBorderColor: platform === "ios" ? "#33BDBD" : "#1FABAB",
 
@@ -259,8 +259,8 @@ export default {
     titleFontfamily: platform === "ios" ? "System" : "Roboto_medium",
     titleFontSize: platform === "ios" ? 17 : 19,
     subTitleFontSize: platform === "ios" ? 11 : 14,
-    subtitleColor: platform === "ios" ? "#000" : "#FEFFDE",
-    titleFontColor: platform === "ios" ? "#000" : "#FEFFDE",
+    subtitleColor: platform === "ios" ? "#000" : "#0A4E52",
+    titleFontColor: platform === "ios" ? "#000" : "#0A4E52",
 
     // Other
     borderRadiusBase: platform === "ios" ? 5 : 2,

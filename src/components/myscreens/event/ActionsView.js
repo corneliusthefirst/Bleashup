@@ -23,7 +23,7 @@ export default class ActionsView extends Component {
     }
     render() {
         return (
-            <View style={{ height: 333, display: 'flex', flexDirection: 'column',marginTop: "6%", }}>
+            <View style={{ height: 300, display: 'flex', flexDirection: 'column', marginTop: "6%", ...shadower() }}>
                 <View style={{ height: this.actionHeight }}>
                     <TouchableOpacity onPress={() => requestAnimationFrame(() => this.props.publish())}>
                         <Icon style={{ marginLeft: "30%", color: this.actionColor, fontSize: this.fontSize, }} type="Entypo" name="megaphone"></Icon>
@@ -46,20 +46,20 @@ export default class ActionsView extends Component {
                     <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                         this.props.ShowMyActivity(stores.LoginStore.user.phone)
                     })}>
-                        <Icon style={{ marginLeft: "30%", color: this.actionColor, fontSize: this.fontSize, }} type="FontAwesome" name="user"></Icon>
-                        <Label style={{ marginLeft: "34%", fontSize: this.textSize, color: this.actionColor }}>Me</Label>
-                    </TouchableOpacity>
-                </View>
-                <View style={{ height: this.actionHeight }}>
-                    <TouchableOpacity onPress={() => requestAnimationFrame(() => this.props.leaveActivity())}>
-                        <Icon style={{ marginLeft: "30%", color: "red", fontSize: this.fontSize, }} type="AntDesign" name="poweroff"></Icon>
-                        <Label style={{ marginLeft: "30%", fontSize: this.textSize, color: "red" }}>Leave</Label>
+                        <Icon style={{ marginLeft: "35%", color: this.actionColor, fontSize: this.fontSize, }} type="FontAwesome" name="user"></Icon>
+                        <Label style={{ marginLeft: "38%", fontSize: this.textSize, color: this.actionColor }}>Me</Label>
                     </TouchableOpacity>
                 </View>
                 <View style={{ height: this.actionHeight }}>
                     <TouchableOpacity  onPress={()=>requestAnimationFrame(()=> this.props.openSettingsModal())}>
                         <Icon style={{ marginLeft: "30%", color: this.actionColor, fontSize: this.fontSize, }} type="Entypo" name="cog"></Icon>
                         <Label style={{ marginLeft: "25%", fontSize: this.textSize, color: this.actionColor }}>Settings</Label>
+                    </TouchableOpacity>
+                </View>
+                <View style={{ height: this.actionHeight }}>
+                    <TouchableOpacity onPress={() => requestAnimationFrame(() => this.props.leaveActivity())}>
+                        <Icon style={{ marginLeft: "30%", color: "red", fontSize: this.fontSize, }} type="AntDesign" name="poweroff"></Icon>
+                        <Label style={{ marginLeft: "30%", fontSize: this.textSize, color: "red" }}>Leave</Label>
                     </TouchableOpacity>
                 </View>
             </View>

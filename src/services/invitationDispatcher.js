@@ -79,7 +79,7 @@ class InvitationDispatcher {
                 requestData.received_invitation(invite,Invitation.invitation_id).then(JSONData => {
                     ServerEventListener.sendRequest(JSONData,Invitation.invitation_id).then((response) => {
                         Invitation.type = "received"
-                        Invitation.arrival_date = moment().format("YYYY-MM-DD HH:mm")
+                        Invitation.arrival_date = moment().format()
                         stores.Invitations.addInvitations(Invitation).then(() => {
                             ServerEventListener.GetData(Invitation.event_id).then(Event => {
                                 stores.Events.addEvent(Event).then(() => {
