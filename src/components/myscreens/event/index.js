@@ -245,7 +245,6 @@ export default class Event extends Component {
     this.propcessAndFoward(change)
   }
   propcessAndFoward(change) {
-    if (!GState.ShowingPhoto) {
       if (change.updated === "add_highlight") {
         this.showHighlightDetails(change.new_value.new_value)
       } else if (change.updated === "restored_remind" || change.updated === "delete_remind") {
@@ -292,7 +291,6 @@ export default class Event extends Component {
       } else {
 
       }
-    }
   }
   showMember(members) {
     this.setState({
@@ -1455,7 +1453,6 @@ export default class Event extends Component {
           // doing this because if the profile picture is being clicked from the 
           // the changeBox Component , the onPress function of the BleashupTimline Compoent is automatically 
           // triggered . so this is an attempt to restore the blocking done when that photo is being pressed
-          GState.ShowingPhoto = false
         }}></PhotoViewer> : null}
         {!this.state.isSearchImageModalOpened ? null : <SearchImage accessLibrary={() => setTimeout(() => this.openCamera(true),400)} isOpen={this.state.isSearchImageModalOpened} onClosed={() => {
           this.setState({

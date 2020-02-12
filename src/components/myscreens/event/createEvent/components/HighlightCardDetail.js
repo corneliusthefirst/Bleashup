@@ -42,6 +42,7 @@ export default class HighlightCardDetail extends Component {
            
           <ScrollView showsVerticalScrollIndicator={false} >
             <View style={{flex:1,...shadower(6)}}>
+            <Text style={{margin: '3%',}} note>{'post'}</Text>
               {this.props.shouldRestore ? <View style={{ width: '95%', alignItems: 'flex-end',margin: '2%', }}><Button 
               style={{alignSelf:'flex-end',margin:'2%',marginRight: '2%'}} onPress={() => {
                 this.props.onClosed()

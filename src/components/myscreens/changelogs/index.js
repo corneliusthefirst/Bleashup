@@ -99,7 +99,7 @@ export default class ChangeLogs extends Component {
           }}
           descriptionStyle={{ color: 'gray' }}
           onEventPress={(data) => {
-            this.props.propcessAndFoward(data)
+           !GState.showingProfile?this.props.propcessAndFoward(data):null
           }}
           data={this.props.activeMember && this.props.activeMember !== null ?
             this.changes.filter(ele => ele.updater.phone === this.props.activeMember ||

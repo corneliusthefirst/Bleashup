@@ -32,6 +32,7 @@ export default class ProfileModal extends Component {
                 position={'bottom'}
             >
                 <View style={{ margin: '3%', height: '95%', width: '95%' }}>
+                <Text note>{"profile details"}</Text>
                     <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                         <TouchableOpacity style={{}} onPress={this.props.onClosed} transparent>
                             <Icon style={{ color: "#1FABAB", fontSize: 35 }} name="close" type="EvilIcons" />

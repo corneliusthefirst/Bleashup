@@ -8,6 +8,7 @@ import stores from "../../../../stores";
 import ProfileModal from "../../invitations/components/ProfileModal";
 import { TouchableOpacity, TouchableWithoutFeedback } from "react-native-gesture-handler";
 import testForURL from '../../../../services/testForURL';
+import GState from '../../../../stores/globalState/index';
 
 export default class ProfileSimple extends Component {
     constructor(props) {
@@ -24,18 +25,24 @@ export default class ProfileSimple extends Component {
     render() {
         return (
             <TouchableOpacity onPress={() => requestAnimationFrame(() => {
-                !this.showingProfile? this.setState({
+                if(!GState.showingProfile){
+                    GState.showingProfile = true
+                    this.setState({
                     isModalOpened: true
-                }):null
+                })
+                setTimeout(() => {
+                    GState.showingProfile  = false
+                },50)
+            }
                 
             })}>
                 <View style={{ flexDirection: "row", }}>
                     <TouchableWithoutFeedback onPress={() => {
                         requestAnimationFrame(() => {
-                            this.showingProfile = true
+                            GState.showingProfile = true
                              this.props.showPhoto(this.props.profile.profile)
                             setTimeout(() => {
-                                this.showingProfile = false
+                                GState.showingProfile = false
                             }, 50)
                         });
                     }}>

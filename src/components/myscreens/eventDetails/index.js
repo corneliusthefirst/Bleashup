@@ -384,7 +384,7 @@ export default class EventDetailView extends Component {
               EventHighlightState: false
             })
           }}
-            update={this.state.update}
+            updateState={this.state.update}
             highlight_id={this.state.highlight_id}
             reinitializeHighlightsList={(newHighlight) => {
               this.reinitializeHighlightsList(newHighlight)

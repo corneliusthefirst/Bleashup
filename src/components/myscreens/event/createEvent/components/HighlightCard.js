@@ -79,10 +79,20 @@ export default class HighlightCard extends Component {
 
       this.state.mounted ? <Card style={{ width: width / 2 - width / 40 }}>
         <CardItem style={{ margin: 3, height: height / 30, }}>
-          <Left style={{ width: '95%' }}><Title style={{
-            fontSize: 14, color: "#0A4E52", fontWeight: 'bold',
-          }}>{this.props.item.title ? this.props.item.title : ""}</Title></Left>
-          <Right><PostMenu mention={() => this.props.mention(this.props.item)} delete={() => this.props.deleteHighlight(this.props.item)} update={() => this.props.update(this.props.item.id)} master={this.props.participant.master}></PostMenu></Right>
+        <View style={{flexDirection: 'row',}}>
+          <View style={{ width: '85%' }}>
+          <Title style={{
+            fontSize: 14, color: "#0A4E52", fontWeight: 'bold',marginLeft: '2%',alignSelf: 'flex-start',
+          }}>{this.props.item.title ? this.props.item.title : ""}</Title></View>
+          <View>
+          <View style={{alignSelf: 'flex-end',marginLeft: '2%',}}>
+                <PostMenu mention={() => this.props.mention(this.props.item)} delete={() => this.props.deleteHighlight(this.props.item)}
+                  update={() => this.props.update(this.props.item.id)}
+                  master={this.props.participant.master}>
+                </PostMenu>
+          </View>
+          </View>
+          </View>
         </CardItem>
         <TouchableOpacity onPress={() => requestAnimationFrame(() => this.props.showItem(this.props.item))} >
           {this.containsMedia() ? <CardItem style={{ width: "90%", backgroundColor: 'transparent', borderRadius: 8, ...shadower(7), alignSelf: 'center', }}>
