@@ -11,16 +11,15 @@ import cardListData from './EventData';
 import CardListItem from './invitationCard';
 
 import ImageActivityIndicator from "../currentevents/components/imageActivityIndicator";
-import { observable, action } from "mobx";
 import globalState from "../../../stores/globalState"
-import { observer } from "mobx-react";
+//import { observer } from "mobx-react";
 import stores from '../../../stores';
 import BleashupScrollView from '../../BleashupScrollView';
 
 
 
 
-@observer
+/*@observer*/
 class ReceivedInvitations extends Component {
   constructor(props) {
     super(props);
@@ -205,7 +204,7 @@ class ReceivedInvitations extends Component {
   }
 
   @autobind
-  @action addInvitation() {
+  /*@action*/ addInvitation() {
     const newKey = this.generateKey(6)
 
     const newdata = {

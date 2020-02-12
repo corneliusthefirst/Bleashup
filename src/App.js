@@ -31,7 +31,7 @@ import stores from "./stores";
 import routerActions from "reazy-native-router-actions";
 import reazy from "reazy";
 
-import { Provider } from "mobx-react";
+//import { Provider } from "mobx-react";
 import Event from "./components/myscreens/event";
 import Contributions from "./components/myscreens/contributions";
 import Votes from "./components/myscreens/votes";

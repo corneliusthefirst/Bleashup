@@ -15,14 +15,14 @@ import {
 
 import CardListItem from './invitationCard';
 import ImageActivityIndicator from "../currentevents/components/imageActivityIndicator";
-import { observer } from "mobx-react";
+//import { observer } from "mobx-react";
 import stores from '../../../stores';
 
 import BleashupFlatList from '../../BleashupFlatList';
 import CreateEvent from '../event/createEvent/CreateEvent';
 import CurrentEventView from '../currentevents';
 
-@observer
+/*@observer*/
 class SendInvitations extends Component {
   constructor(props) {
     super(props);

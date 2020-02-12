@@ -29,13 +29,13 @@ import styles from "./styles";
 import UserService from "../../../services/userHttpServices";
 import stores from "../../../stores";
 import globalState from "../../../stores/globalState";
-import { observer } from "mobx-react";
+//import { observer } from "mobx-react";
 import moment from "moment";
 import firebase from 'react-native-firebase';
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { BackHandler } from 'react-native';
 
-@observer
+/*@observer*/
 export default class SignUpView extends Component {
   constructor(props) {
     super(props);

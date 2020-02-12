@@ -4,8 +4,8 @@ import { Text, Spinner } from "native-base"
 import ImageActivityIndicator from "./myscreens/currentevents/components/imageActivityIndicator";
 import Likers from "./Likers";
 import { View } from "react-native"
-import { observer } from "mobx-react";
-@observer export default class LikerssModal extends PureComponent {
+//import { observer } from "mobx-react";
+/*@observer*/ export default class LikerssModal extends PureComponent {
     constructor(props) {
         super(props)
         this.state = {

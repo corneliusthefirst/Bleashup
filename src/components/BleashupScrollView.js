@@ -1,7 +1,7 @@
 import React, { Component } from "react"
 import { FlatList, View, ScrollView } from "react-native";
 import { Spinner, CardItem, Text, List } from "native-base";
-import { observer } from "mobx-react";
+//import { observer } from "mobx-react";
 
 
 const ifCloseToTop = ({ layoutMeasurement, contentOffset, contentSize }) => {
@@ -12,7 +12,7 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
     return layoutMeasurement.height + contentOffset.y >=
         ((contentSize.height - paddingToBottom) * (0.70));
 };
-@observer export default class BleashupScrollView extends Component {
+/*@observer*/ export default class BleashupScrollView extends Component {
     constructor(props) {
         super(props)
         this.state = {

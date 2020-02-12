@@ -1,5 +1,5 @@
 import storage from "./Storage";
-import { observable, action } from "mobx";
+//import { observable, action } from "mobx";
 import { find, findIndex, uniq, sortBy, reject } from "lodash";
 import tcpRequest from "../services/tcpRequestData";
 import serverEventListener from "../services/severEventListener";
@@ -10,12 +10,13 @@ export default class contacts {
       else this.contacts = [{}];
     });
   }
-  @observable contacts = [];
+  ///*@observable*/ 
+  contacts = [];
   saveKey = {
     key: "contacts",
     data: [{}]
   };
-  @action addContact(NewContact) {
+  /*@action*/ addContact(NewContact) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Contacts => {
         Contacts = uniq(Contacts.concat([NewContact]), "phone");
@@ -27,7 +28,7 @@ export default class contacts {
       });
     });
   }
-  @action removeContact(phone) {
+  /*@action*/ removeContact(phone) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Contacts => {
         Contacts = reject(Contacts, ["phone", phone]);
@@ -75,7 +76,7 @@ export default class contacts {
       });
     });
   }
-  @action updateName(Newcontact) {
+  /*@action*/ updateName(Newcontact) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Contacts => {
         let Contact = find(Contacts, {
@@ -94,7 +95,7 @@ export default class contacts {
       });
     });
   }
-  @action updateHost(Newcontact) {
+  /*@action*/ updateHost(Newcontact) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Contacts => {
         let Contact = find(Contacts, {
@@ -113,7 +114,7 @@ export default class contacts {
       });
     });
   }
-  @action updateProfile(Newcontact) {
+  /*@action*/ updateProfile(Newcontact) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Contacts => {
         let Contact = find(Contacts, {

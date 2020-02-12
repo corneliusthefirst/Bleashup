@@ -1,7 +1,7 @@
 import React, { Component } from "react"
 import { FlatList, View } from "react-native";
 import { Spinner, CardItem, Text, List } from "native-base";
-import { observer } from "mobx-react";
+//import { observer } from "mobx-react";
 import { SectionList } from 'react-navigation';
 import { thisExpression } from "@babel/types";
 
@@ -14,7 +14,7 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
     return layoutMeasurement.height + contentOffset.y >=
         ((contentSize.height - paddingToBottom) * (0.95));
 };
-@observer export default class BleashupSectionList extends Component {
+/*@observer*/ export default class BleashupSectionList extends Component {
     constructor(props) {
         super(props)
         this.state = {

@@ -1,5 +1,5 @@
 import storage from "./Storage";
-import { observable, action } from "mobx";
+//import { observable, action } from "mobx";
 
 import { uniqBy, reject, filter, find, findIndex, sortBy } from "lodash";
 import moment from "moment";
@@ -12,13 +12,13 @@ export default class highlights {
 
   }
   curentTemporalHighlight = []
-  @observable highlights = [];
+  /*@observable*/highlights = [];
   saveKey = {
     key: "highlights",
     data: []
   };
 
-  @action addHighlight(H) {
+  /*@action*/ addHighlight(H) {
     return this.addHighlights([H])
   }
 
@@ -51,7 +51,7 @@ export default class highlights {
       })
     })
   }
-  @action addHighlights(Highlight) {
+  /*@action*/ addHighlights(Highlight) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Highlights => {
         if (!Highlights || Highlights.length !== 0)
@@ -108,7 +108,7 @@ export default class highlights {
       }
     })
   }
-  @action fetchHighlights(eventID) {
+  /*@action*/ fetchHighlights(eventID) {
     let sorter = (a, b) => (a.created_at > b.created_at ? -1 :
       a.created_at < b.created_at ? 1 : 0)
     return new Promise((resolve, reject) => {
@@ -141,7 +141,7 @@ export default class highlights {
   }
 
 
-  @action updateHighlightTitle(newHightlight, inform) {
+  /*@action*/ updateHighlightTitle(newHightlight, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Highlights => {
         let index = findIndex(Highlights, {
@@ -162,7 +162,7 @@ export default class highlights {
       });
     });
   }
-  @action updateHighlightDescription(newHightlight, inform) {
+  /*@action*/ updateHighlightDescription(newHightlight, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Highlights => {
         let index = findIndex(Highlights, {
@@ -183,7 +183,7 @@ export default class highlights {
       });
     });
   }
-  @action updateHighlightUrl(newHightlight, inform) {
+  /*@action*/ updateHighlightUrl(newHightlight, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Highlights => {
         let index = findIndex(Highlights, {
@@ -205,7 +205,7 @@ export default class highlights {
     });
   }
 
-  @action updateHighlight(newHightlight, inform) {
+  /*@action*/ updateHighlight(newHightlight, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Highlights => {
         let Highlight = find(Highlights, {
@@ -234,7 +234,7 @@ export default class highlights {
     });
   }
 
-  @action updateEventHighlights(eventID, newHighlights) {
+  /*@action*/ updateEventHighlights(eventID, newHighlights) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Highlights => {
         Highlights = reject(Highlights, ["event_id", eventID]);
@@ -274,7 +274,7 @@ export default class highlights {
     })
   }
 
-  @action resetHighlight(newHightlight, inform) {
+  /*@action*/ resetHighlight(newHightlight, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Highlights => {
         let Highlight = find(Highlights, {

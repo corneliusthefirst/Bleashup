@@ -3,11 +3,11 @@ import {
   View
 } from "react-native";
 import CurrentEvents from "./components/CurrentEvents";
-import { observer } from "mobx-react";
+//import { observer } from "mobx-react";
 import { sortBy, findIndex } from "lodash"
 import stores from "../../../stores";
 
-@observer class CurrentEventView extends Component {
+/*@observer*/ class CurrentEventView extends Component {
   constructor(props) {
     super(props);
   }

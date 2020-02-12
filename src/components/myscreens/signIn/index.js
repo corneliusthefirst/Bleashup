@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import autobind from "autobind-decorator";
 import { Image, TouchableOpacity, BackHandler } from "react-native";
 import Modal from 'react-native-modalbox';
-import { observer } from "mobx-react";
+//import { observer } from "mobx-react";
 import {
   Content,
   Card,
@@ -29,7 +29,7 @@ import stores from "../../../stores/index";
 import globalState from "../../../stores/globalState";
 import firebase from 'react-native-firebase';
 import VerificationModal from "../invitations/components/VerificationModal";
-@observer
+/*@observer*/
 export default class SignInView extends Component {
   constructor(props) {
     super(props);

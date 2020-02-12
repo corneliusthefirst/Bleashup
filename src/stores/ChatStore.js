@@ -116,7 +116,7 @@ class ChatStore {
             })
         })
     }
-    @observable messages = [/*{
+    /*@observable*/ messages = [/*{
         id: '0',
         source: 'http://192.168.43.32:8555/sound/get/p2.mp3',
         file_name: 'p2.mp3',

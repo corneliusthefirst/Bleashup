@@ -4,7 +4,7 @@ import SentInvitations from '../sent-invitations/invitationCard';
 import ReceivedInvitations from '../received-invitations/invitationCard';
 import { Spinner, Icon,Title } from "native-base";
 import stores from "../../../stores";
-import { observer } from "mobx-react";
+//import { observer } from "mobx-react";
 import { sortBy } from "lodash"
 import { View ,StatusBar,LayoutAnimation,BackHandler} from 'react-native';
 import BleashupFlatList from '../../BleashupFlatList';
@@ -13,7 +13,7 @@ import DetailsModal from "./components/DetailsModal";
 import PhotoViewer from "../event/PhotoViewer";
 import shadower from "../../shadower";
 
-@observer export default class InvitationView extends Component {
+/*@observer*/ export default class InvitationView extends Component {
   constructor(props) {
     super(props)
     this.state = {

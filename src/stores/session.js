@@ -1,21 +1,15 @@
 import storage from "./Storage";
 import stores from "./";
-import { observable, action, extendObservable, autorun, computed } from "mobx";
+//import { observable, action, extendObservable, autorun, computed } from "mobx";
 require("json-circular-stringify"); // !! This is added to solve the problem TypeError: JSON.stringify cannot serialize cyclic structures
 export default class Session {
-  @observable SessionStore = {
+  /*@observable*/ SessionStore = {
     socket: null,
     phone: "",
     password: "",
     reference: "#Ref<0.3996024962.2836135937.9226>",
     host: "bleashup.com"
   };
-  get SessionStore() {
-    return this.SessionStore;
-  }
-  set SessionStore(New) {
-    this.SessionStore = New;
-  }
   constructor() {
     storage
       .load({
@@ -40,10 +34,10 @@ export default class Session {
           .catch(error => { });
       });
   }
-  @action getSocke() {
+  /*@action*/ getSocke() {
     return this.SessionStore.socket;
   }
-  @action initialzeStore() {
+  /*@action*/ initialzeStore() {
     return new Promise((resolve, reject) => {
       stores.LoginStore.getUser()
         .then(user => {
@@ -71,7 +65,7 @@ export default class Session {
         });
     });
   }
-  @action getSession() {
+  /*@action*/ getSession() {
     return new Promise((resolve, reject) => {
       storage
         .load({
@@ -123,7 +117,7 @@ export default class Session {
         });
     });
   }
-  @action updateReference(newReference) {
+  /*@action*/ updateReference(newReference) {
     return new Promise((resolve, reject) => {
       storage
         .load({
@@ -155,7 +149,7 @@ export default class Session {
     });
   }
 
-  @action updateSocket(newSocket) {
+  /*@action*/ updateSocket(newSocket) {
     return new Promise((resolve, reject) => {
       storage
         .load({
@@ -199,7 +193,7 @@ export default class Session {
         });
     });
   }
-  @action updateHost(newHost) {
+  /*@action*/ updateHost(newHost) {
     return new Promise((resolve, reject) => {
       storage
         .load({

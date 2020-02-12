@@ -1,4 +1,4 @@
-import { observable, action } from "mobx";
+//import { observable, action } from "mobx";
 import {
   filter,
   dropWhile,
@@ -23,12 +23,12 @@ export default class likes {
       key: 'likes'
     });*/
   }
-  @observable likes = [];
+  /*@observable*/ likes = [];
   saveKey = {
     key: "likes",
     data: [{}]
   };
-  @action loadLikes(id) {
+  /*@action*/ loadLikes(id) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(likes => {
         if (likes) {
@@ -79,7 +79,7 @@ export default class likes {
       })
     })
   }
-  @action like(ID, Liker, inform) {
+  /*@action*/ like(ID, Liker, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Likes => {
         if (Likes.length !== 0) {
@@ -111,10 +111,10 @@ export default class likes {
       });
     });
   }
-  @action setPropties(data) {
+  /*@action*/ setPropties(data) {
     this.likes = data
   }
-  @action addLike(Likes, Like) {
+  /*@action*/ addLike(Likes, Like) {
     return new Promise((resolve, reject) => {
       Likes.push(Like);
       this.saveKey.data = uniqBy(Likes, "event_id");
@@ -124,7 +124,7 @@ export default class likes {
       })
     })
   }
-  @action unlike(ID, phone, inform) {
+  /*@action*/ unlike(ID, phone, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Likes => {
         if (Likes.length !== 0) {
@@ -162,7 +162,7 @@ export default class likes {
       this.setPropties(likes)
     })
   }
-  @action UpdateEventLikes(EvenID, NewLikes) {
+  /*@action*/ UpdateEventLikes(EvenID, NewLikes) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Likes => {
         Likes = reject(Likes, ["event_id", EvenID]);

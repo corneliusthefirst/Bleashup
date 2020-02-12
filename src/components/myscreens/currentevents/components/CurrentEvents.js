@@ -245,7 +245,8 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
         ((contentSize.height - paddingToBottom) * (0.9));
 };
 
-@observer export default class CurrentEvents extends Component {
+/*@observer*/ 
+/* export default class CurrentEvents extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -301,7 +302,8 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
 }
 */
 
-/*@observer export default class CurrentEvents extends Component {
+/*/*@observer*/
+/* export default class CurrentEvents extends Component {
     constructor(props) {
         super(props)
         this.data = this.props.data._data;

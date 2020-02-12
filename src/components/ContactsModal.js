@@ -2,9 +2,9 @@ import React, { PureComponent } from "react"
 import Modal from "react-native-modalbox"
 import { Content, List, ListItem, Body, Left, Right, Text, Container } from 'native-base';
 import ImageActivityIndicator from "./myscreens/currentevents/components/imageActivityIndicator";
-import { observer } from "mobx-react";
+//import { observer } from "mobx-react";
 import Contacts from './Contacts';
-@observer export default class ContactsModal extends PureComponent {
+/*@observer*/ export default class ContactsModal extends PureComponent {
     constructor(props) {
         super(props)
         this.state = {

@@ -18,7 +18,7 @@ import AccordionModule from '../invitations/components/Accordion'
 
 let {height, width} = Dimensions.get('window')
 
-@observer
+/*@observer*/
 export default class MyTasksCard extends Component {
     constructor(props) {
         super(props)

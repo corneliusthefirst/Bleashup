@@ -1,16 +1,16 @@
 import storage from "./Storage";
-import { observable, action } from "mobx";
+//import { observable, action } from "mobx";
 import { uniqBy, reject, filter, find, findIndex, sortBy } from "lodash";
 import moment from "moment";
 
 export default class contribution {
   constructor() {}
-  @observable contributions = [];
+  /*@observable*/ contributions = [];
   saveKey = {
     key: "contributions",
     data: []
   };
-  @action addContribution(Contribution) {
+  /*@action*/ addContribution(Contribution) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Contributions => {
         if (Contributions)
@@ -26,7 +26,7 @@ export default class contribution {
       });
     });
   }
-  @action removeContribution(ContributionID) {
+  /*@action*/ removeContribution(ContributionID) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Contributions => {
         this.saveKey.data = reject(Contributions, ["id", ContributionID]);
@@ -37,7 +37,7 @@ export default class contribution {
       });
     });
   }
-  @action fetchContributions(EventID) {
+  /*@action*/ fetchContributions(EventID) {
     return new Promise((resolve, reject) => {
       if (this.contributions) {
         resolve(
@@ -86,7 +86,7 @@ export default class contribution {
       });
     });
   }
-  @action updateDescription(NewContribution, inform) {
+  /*@action*/ updateDescription(NewContribution, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Contributions => {
         let Contribution = find(Contributions, {
@@ -111,7 +111,7 @@ export default class contribution {
     });
   }
 
-  @action AddContributionMean(ContributionID, NewMean, inform) {
+  /*@action*/ AddContributionMean(ContributionID, NewMean, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Contributions => {
         let Contribution = find(Contributions, {
@@ -141,7 +141,7 @@ export default class contribution {
     });
   }
 
-  @action updateContributionMeanCredential(
+  /*@action*/ updateContributionMeanCredential(
     ContributionID,
     MeanName,
     newCredential,
@@ -178,7 +178,7 @@ export default class contribution {
     });
   }
 
-  @action updateContributionMeanName(
+  /*@action*/ updateContributionMeanName(
     ContributionID,
     MeanName,
     NewMeanName,
@@ -215,7 +215,7 @@ export default class contribution {
     });
   }
 
-  @action removeContributionMean(ContributionID, MeanName, inform) {
+  /*@action*/ removeContributionMean(ContributionID, MeanName, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Contributions => {
         let Contribution = find(Contributions, {
@@ -242,7 +242,7 @@ export default class contribution {
       });
     });
   }
-  @action updateContributionPeriod(NewContribution, inform) {
+  /*@action*/ updateContributionPeriod(NewContribution, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Contributions => {
         let Contribution = find(Contributions, {
@@ -266,7 +266,7 @@ export default class contribution {
       });
     });
   }
-  @action updateContributionAmount(NewContribution, inform) {
+  /*@action*/ updateContributionAmount(NewContribution, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Contributions => {
         let Contribution = find(Contributions, {
@@ -290,7 +290,7 @@ export default class contribution {
       });
     });
   }
-  @action publishContribution(ContributionID, inform) {
+  /*@action*/ publishContribution(ContributionID, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Contributions => {
         let Contribution = find(Contributions, {
@@ -312,7 +312,7 @@ export default class contribution {
     });
   }
 
-  @action like(ContributionID, inform) {
+  /*@action*/ like(ContributionID, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Contributions => {
         let Contribution = find(Contributions, {
@@ -337,7 +337,7 @@ export default class contribution {
     });
   }
 
-  @action unlike(ContributionID) {
+  /*@action*/ unlike(ContributionID) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Contributions => {
         let Contribution = find(Contributions, {
@@ -358,7 +358,7 @@ export default class contribution {
     });
   }
 
-  @action openContribution(ContributionID, inform) {
+  /*@action*/ openContribution(ContributionID, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Contributions => {
         let Contribution = find(Contributions, {
@@ -383,7 +383,7 @@ export default class contribution {
     });
   }
 
-  @action closeContribution(ContributionID, inform) {
+  /*@action*/ closeContribution(ContributionID, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Contributions => {
         let Contribution = find(Contributions, {
@@ -408,7 +408,7 @@ export default class contribution {
     });
   }
 
-  @action addcontributor(ContributionID, NewContributor, inform) {
+  /*@action*/ addcontributor(ContributionID, NewContributor, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Contributions => {
         let Contribution = find(Contributions, {
@@ -435,7 +435,7 @@ export default class contribution {
     });
   }
 
-  @action updateEventContribution(EventID, NewContributions) {
+  /*@action*/ updateEventContribution(EventID, NewContributions) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Contributions => {
         Contributions = reject(Contributions, ["event_id", EventID]);

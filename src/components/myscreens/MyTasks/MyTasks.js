@@ -21,7 +21,7 @@ import { find, findIndex, uniqBy, reject,filter } from "lodash";
 //const MyTasksData = stores.Reminds.MyTasksData
  
 
-@observer
+/*@observer*/
 export default class MyTasksView extends Component {
     constructor(props) {
         super(props)

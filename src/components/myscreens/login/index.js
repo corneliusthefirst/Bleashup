@@ -38,7 +38,7 @@ import {
 } from 'react-native';
 import { AsyncStorage } from "@react-native-community/async-storage";
 //import { observable } from 'mobx';
-import { observer, extendObservable, inject } from "mobx-react";
+//import { observer, extendObservable, inject } from "mobx-react";
 import styles from "./styles";
 import stores from "../../../stores";
 import { functionDeclaration } from "@babel/types";
@@ -49,7 +49,7 @@ import UserService from "../../../services/userHttpServices";
 import globalState from "../../../stores/globalState";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
-@observer
+/*@observer*/
 export default class LoginView extends Component {
   constructor(props) {
     super(props);

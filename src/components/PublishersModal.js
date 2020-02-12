@@ -3,8 +3,8 @@ import Modal from "react-native-modalbox"
 import { Content, List, ListItem, Body, Left, Right, Text, Container,Spinner } from 'native-base';
 import ImageActivityIndicator from "./myscreens/currentevents/components/imageActivityIndicator";
 import ContactList from "./ContactList";
-import { observer } from "mobx-react";
-@observer export default class PublishersModal extends PureComponent {
+//import { observer } from "mobx-react";
+/*@observer*/ export default class PublishersModal extends PureComponent {
     constructor(props) {
         super(props)
         this.state = {

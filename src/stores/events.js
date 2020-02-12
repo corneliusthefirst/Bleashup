@@ -1,4 +1,4 @@
-import { observable, action } from "mobx";
+//import { observable, action } from "mobx";
 import {
   filter,
   uniqBy,
@@ -38,10 +38,10 @@ export default class events {
       })
     });
   }
-  @observable currentEvents = [];
-  @observable pastEvents = [];
-  @observable events = []
-  @observable myReminds = [];
+  /*@observable*/ currentEvents = [];
+  /*@observable*/ pastEvents = [];
+  /*@observable*/ events = []
+  /*@observable*/ myReminds = [];
   storeAccessKey = {
     key: "Events",
     autoSync: true
@@ -50,7 +50,7 @@ export default class events {
     key: "Events",
     data: []
   };
-  @action addEvent(NewEvent) {
+  /*@action*/ addEvent(NewEvent) {
     if (NewEvent == 'no_such_key') {
       resolve()
     } else {
@@ -72,7 +72,7 @@ export default class events {
       });
     }
   }
-  @action delete(EventID) {
+  /*@action*/ delete(EventID) {
     return new Promise((resolve, rejec) => {
       this.readFromStore().then(Events => {
         Events = reject(Events, { id: EventID })
@@ -86,7 +86,7 @@ export default class events {
       })
     })
   }
-  @action hide(EventID) {
+  /*@action*/ hide(EventID) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let index = findIndex(Events, { id: EventID })
@@ -110,7 +110,7 @@ export default class events {
       })
     })
   }
-  @action updateNotes(eventID, Notes) {
+  /*@action*/ updateNotes(eventID, Notes) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let index = findIndex(Events, { id: eventID })
@@ -124,7 +124,7 @@ export default class events {
       })
     })
   }
-  @action markAsSeen(EventID) {
+  /*@action*/ markAsSeen(EventID) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then((Events) => {
         let index = findIndex(Events, { id: EventID });
@@ -139,7 +139,7 @@ export default class events {
       })
     })
   }
-  @action markAsCalendared(EventID, id, alarms) {
+  /*@action*/ markAsCalendared(EventID, id, alarms) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then((Events) => {
         let index = findIndex(Events, { id: EventID });
@@ -156,7 +156,7 @@ export default class events {
       })
     })
   }
-  @action markAsConfigured(EventID) {
+  /*@action*/ markAsConfigured(EventID) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then((Events) => {
         let index = findIndex(Events, { id: EventID });
@@ -185,7 +185,7 @@ export default class events {
       });
     });
   }
-  @action loadCurrentEvent(EventID) {
+  /*@action*/ loadCurrentEvent(EventID) {
     return new Promise((resolve, reject) => {
       this.readFromStore()
         .then(Events => {
@@ -206,14 +206,14 @@ export default class events {
         })
     });
   }
-  @action getPaticipants(eventID) {
+  /*@action*/ getPaticipants(eventID) {
     return new Promise((resolve, reject) => {
       this.loadCurrentEvent(eventID).then(event => {
         resolve(event.participant)
       })
     })
   }
-  @action loadEvents() {
+  /*@action*/ loadEvents() {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(events => {
         this.setProperties(events, true);
@@ -221,7 +221,7 @@ export default class events {
       })
     })
   }
-  @action loadCurrentEvents() {
+  /*@action*/ loadCurrentEvents() {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let CurrentEvent = filter(Events, { past: false });
@@ -229,7 +229,7 @@ export default class events {
       });
     });
   }
-  @action loadPastEvents() {
+  /*@action*/ loadPastEvents() {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let PastEvents = filter(Events, { past: true });
@@ -237,7 +237,7 @@ export default class events {
       });
     });
   }
-  @action changToPastEvent(EventID) {
+  /*@action*/ changToPastEvent(EventID) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         if (Events.length !== 0) {
@@ -254,7 +254,7 @@ export default class events {
       });
     });
   }
-  @action RescheduleEvent(Reschedule) {
+  /*@action*/ RescheduleEvent(Reschedule) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         if (Events.length !== 0) {
@@ -277,7 +277,7 @@ export default class events {
       });
     });
   }
-  @action removeEvent(EventID, inform) {
+  /*@action*/ removeEvent(EventID, inform) {
     return new Promise((resolve, Reject) => {
       this.readFromStore().then(Events => {
         let NewEvents = reject(Events, ["id", EventID]);
@@ -289,7 +289,7 @@ export default class events {
       });
     });
   }
-  @action updateEventParticipant(EventID, newParticipant, inform) {
+  /*@action*/ updateEventParticipant(EventID, newParticipant, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let eventIndex = findIndex(Events, { id: EventID });
@@ -310,7 +310,7 @@ export default class events {
       });
     });
   }
-  @action addParticipant(EventID, Participant, inform) {
+  /*@action*/ addParticipant(EventID, Participant, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let eventIndex = findIndex(Events, { id: EventID });
@@ -352,7 +352,7 @@ export default class events {
       });
     });
   }
-  @action removeParticipant(EventID, Phone, inform) {
+  /*@action*/ removeParticipant(EventID, Phone, inform) {
     return new Promise((resolve, rejec) => {
       this.readFromStore().then(Events => {
         let eventIndex = findIndex(Events, { id: EventID });
@@ -372,7 +372,7 @@ export default class events {
       });
     });
   }
-  @action updatePeriod(EventID, NewPeriod, inform) {
+  /*@action*/ updatePeriod(EventID, NewPeriod, inform) {
     console.warn(NewPeriod)
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
@@ -395,7 +395,7 @@ export default class events {
       });
     });
   }
-  @action updateLocation(EventID, NewLocation, inform) {
+  /*@action*/ updateLocation(EventID, NewLocation, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let eventIndex = findIndex(Events, { id: EventID });
@@ -413,7 +413,7 @@ export default class events {
       });
     });
   }
-  @action updateBackground(EventID, NewBackground, inform) {
+  /*@action*/ updateBackground(EventID, NewBackground, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let eventIndex = findIndex(Events, { id: EventID });
@@ -431,7 +431,7 @@ export default class events {
       });
     });
   }
-  @action updateRecurrency(EventID, RecurrentUpdate, inform) {
+  /*@action*/ updateRecurrency(EventID, RecurrentUpdate, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let index = findIndex(Events, { id: EventID })
@@ -452,7 +452,7 @@ export default class events {
       })
     })
   }
-  @action updateTitle(EventID, NewTitle, inform) {
+  /*@action*/ updateTitle(EventID, NewTitle, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let eventIndex = findIndex(Events, { id: EventID });
@@ -470,7 +470,7 @@ export default class events {
       });
     });
   }
-  @action openClose(EventID, NewState, inform) {
+  /*@action*/ openClose(EventID, NewState, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let eventIndex = findIndex(Events, { id: EventID });
@@ -488,7 +488,7 @@ export default class events {
       });
     });
   }
-  @action updateCalendarID(EventID, newID, inform) {
+  /*@action*/ updateCalendarID(EventID, newID, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let eventIndex = findIndex(Events, { id: EventID });
@@ -506,7 +506,7 @@ export default class events {
     });
   }
 
-  @action updateRecursiveFrequency(EventID, recursiveFrequency, inform) {
+  /*@action*/ updateRecursiveFrequency(EventID, recursiveFrequency, inform) {
     console.warn(recursiveFrequency, "recurfreq");
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
@@ -530,7 +530,7 @@ export default class events {
     });
   }
 
-  @action updateDescription(EventID, NewDescription, inform) {
+  /*@action*/ updateDescription(EventID, NewDescription, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let eventIndex = findIndex(Events, { id: EventID });
@@ -548,7 +548,7 @@ export default class events {
       });
     });
   }
-  @action publishEvent(EventID, inform) {
+  /*@action*/ publishEvent(EventID, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let index = findIndex(Events, { id: EventID });
@@ -564,7 +564,7 @@ export default class events {
     });
   }
 
-  @action unpublishEvent(EventID, inform) {
+  /*@action*/ unpublishEvent(EventID, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let index = findIndex(Events, { id: EventID });
@@ -577,7 +577,7 @@ export default class events {
       });
     });
   }
-  @action likeEvent(EventID, inform) {
+  /*@action*/ likeEvent(EventID, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let index = findIndex(Events, { id: EventID });
@@ -598,7 +598,7 @@ export default class events {
     });
   }
 
-  @action unlikeEvent(EventID, inform) {
+  /*@action*/ unlikeEvent(EventID, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let index = findIndex(Events, { id: EventID });
@@ -613,7 +613,7 @@ export default class events {
       });
     });
   }
-  @action addMustToContribute(EventID, ContributionID, inform) {
+  /*@action*/ addMustToContribute(EventID, ContributionID, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let index = findIndex(Events, { id: EventID });
@@ -632,7 +632,7 @@ export default class events {
       });
     });
   }
-  @action removeFromMustContribute(EventID, ContributionID) {
+  /*@action*/ removeFromMustContribute(EventID, ContributionID) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let index = findIndex(Events, { id: EventID });
@@ -652,7 +652,7 @@ export default class events {
       });
     });
   }
-  @action addVote(EventID, VoteID, inform) {
+  /*@action*/ addVote(EventID, VoteID, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let index = findIndex(Events, {
@@ -688,7 +688,7 @@ export default class events {
       });
     });
   }
-  @action removeVote(EventID, VoteID, inform) {
+  /*@action*/ removeVote(EventID, VoteID, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let index = findIndex(Events, { id: EventID });
@@ -706,7 +706,7 @@ export default class events {
       });
     });
   }
-  @action addContribution(EventID, ContributionID, inform) {
+  /*@action*/ addContribution(EventID, ContributionID, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let index = findIndex(Events, { id: EventID });
@@ -742,7 +742,7 @@ export default class events {
       });
     });
   }
-  @action removeContribution(EventID, ContributionID, inform) {
+  /*@action*/ removeContribution(EventID, ContributionID, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let index = findIndex(Events, { id: EventID });
@@ -788,7 +788,7 @@ export default class events {
     });
   }
 
-  @action addHighlight(EventID, HighlightID, inform) {
+  /*@action*/ addHighlight(EventID, HighlightID, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let index = findIndex(Events, {
@@ -829,7 +829,7 @@ export default class events {
       });
     });
   }
-  @action addRemind(EventID, RemindID, inform) {
+  /*@action*/ addRemind(EventID, RemindID, inform) {
     return new Promise((resolve, rejectPromise) => {
       this.readFromStore().then(Events => {
         let index = findIndex(Events, {
@@ -866,7 +866,7 @@ export default class events {
     });
   }
 
-  @action removeRemind(EventID, RemindID, inform) {
+  /*@action*/ removeRemind(EventID, RemindID, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let index = findIndex(Events, { id: EventID });
@@ -885,7 +885,7 @@ export default class events {
       });
     });
   }
-  @action joinEvent(EventID, phone) {
+  /*@action*/ joinEvent(EventID, phone) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let index = findIndex(Events, { id: EventID });
@@ -903,7 +903,7 @@ export default class events {
       });
     });
   }
-  @action leaveEvent(EventID) {
+  /*@action*/ leaveEvent(EventID) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let index = findIndex(Events, { id: EventID });
@@ -983,7 +983,7 @@ export default class events {
     })
   }
 
-  @action resetEvent(EventID) {
+  /*@action*/ resetEvent(EventID) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let Event = find(Events, { id: EventID });
@@ -1016,7 +1016,7 @@ export default class events {
 
 
 
-  @observable highlightData = [
+  /*@observable*/ highlightData = [
     {
       id: "1",
       creator: "",
@@ -1082,7 +1082,7 @@ export default class events {
 
   ]
 
-  @observable NewHighlightData = []
+  /*@observable*/ NewHighlightData = []
 
 
 

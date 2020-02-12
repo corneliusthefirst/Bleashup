@@ -1,7 +1,7 @@
 import React, { Component } from "react"
 import { FlatList, View,Dimensions } from "react-native";
 import { Spinner, CardItem, Text, List } from "native-base";
-import { observer } from "mobx-react";
+//import { observer } from "mobx-react";
 import { groupBy, chain, orderBy } from "lodash"
 import { thisExpression } from "@babel/types";
 import { moment } from "moment"
@@ -16,7 +16,7 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
     return layoutMeasurement.height + contentOffset.y >=
         ((contentSize.height - paddingToBottom) * (0.95));
 };
-@observer export default class BleashupHorizontalFlatList extends Component {
+/*@observer*/ export default class BleashupHorizontalFlatList extends Component {
     constructor(props) {
         super(props)
         this.state = {

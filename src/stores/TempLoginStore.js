@@ -1,15 +1,15 @@
-import { observable, action, extendObservable, autorun, computed } from "mobx";
+//import { observable, action, extendObservable, autorun, computed } from "mobx";
 import UserSevices from "../services/userHttpServices";
 import storage from "./Storage";
 
 export default class TempLoginStore {
   constructor() {}
-  @observable phonenumber = "";
-  @observable resetCode = "";
-  @observable confirmCode = {};
-  @observable counter = 0;
+  /*@observable*/ phonenumber = "";
+  /*@observable*/ resetCode = "";
+  /*@observable*/ confirmCode = {};
+  /*@observable*/ counter = 0;
 
-  @observable user = {
+  /*@observable*/ user = {
     phone: "",
     name: "",
     status: "",
@@ -25,7 +25,7 @@ export default class TempLoginStore {
 
   //Please check this commented code
 
-  @action deleteData(userKey) {
+  /*@action*/ deleteData(userKey) {
     return new Promise((resolve, reject) => {
       storage.remove({
         key: userKey
@@ -36,7 +36,7 @@ export default class TempLoginStore {
     });
   }
 
-  @action saveData(data, key) {
+  /*@action*/ saveData(data, key) {
     return new Promise((resolve, reject) => {
       storage.save({
         key: key,
@@ -49,7 +49,7 @@ export default class TempLoginStore {
     });
   }
 
-  @action loadSaveData(key) {
+  /*@action*/ loadSaveData(key) {
     return new Promise((resolve, reject) => {
       storage
         .load({
@@ -65,7 +65,7 @@ export default class TempLoginStore {
     });
   }
 
-  @action getUser() {
+  /*@action*/ getUser() {
     return new Promise((resolve, reject) => {
       if (this.user.phone == "" || this.user.password == "") {
         storage
@@ -98,7 +98,7 @@ export default class TempLoginStore {
     });
   }
 
-  @action setUser(newUser) {
+  /*@action*/ setUser(newUser) {
     return new Promise((resolve, reject) => {
       this.user = {
         phone: newUser.phone,

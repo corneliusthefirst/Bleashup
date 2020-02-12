@@ -6,7 +6,6 @@ import { List, ListItem, Icon, Label } from 'native-base';
 import InvitationModal from "./InvitationModal";
 import autobind from "autobind-decorator";
 import { findIndex } from "lodash"
-import { observer } from "mobx-react";
 import stores from "../../../../stores";
 import shadower from "../../../shadower";
 

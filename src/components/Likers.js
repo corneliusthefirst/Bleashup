@@ -5,11 +5,11 @@ import ImageActivityIndicator from "./myscreens/currentevents/components/imageAc
 import UserService from "../services/userHttpServices"
 import ProfileView from "./myscreens/invitations/components/ProfileView";
 import { FlatList, TouchableOpacity, ScrollView } from "react-native-gesture-handler";
-import { observer } from "mobx-react";
+//import { observer } from "mobx-react";
 import Menu, { MenuDivider, MenuItem } from 'react-native-material-menu';
 import BleashupFlatList from './BleashupFlatList';
 
-@observer export default class Likers extends PureComponent {
+/*@observer*/ export default class Likers extends PureComponent {
 
     constructor(props) {
         super(props)

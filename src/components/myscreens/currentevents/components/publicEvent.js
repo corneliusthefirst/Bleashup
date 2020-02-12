@@ -25,7 +25,6 @@ import PublishersView from "./PublishersView"
 import PhotoView from "./PhotoView";
 import MapView from "./MapView";
 import Requester from "../Requester";
-import { observer } from "mobx-react";
 import Like from "./Like";
 import Join from "./Join";
 import Options from "./Options";

@@ -32,7 +32,6 @@ import StatusView from "./../status/index";
 import InvitationView from "./../invitations/index";
 import Chats from "../poteschat";
 import SettingView from "./../settings/index";
-import { observer } from "mobx-react";
 import autobind from "autobind-decorator";
 import { groupBy, map, findIndex, reject } from "lodash"
 import { withInAppNotification } from 'react-native-in-app-notification';

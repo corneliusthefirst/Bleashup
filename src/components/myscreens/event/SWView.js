@@ -6,7 +6,6 @@ import { List, Icon, Label, Card, CardItem, Text, Header, Thumbnail, Title, Butt
 import Image from 'react-native-scalable-image';
 import InvitationModal from "../currentevents/components/InvitationModal";
 import autobind from "autobind-decorator";
-import { observer } from "mobx-react";
 import stores from "../../../stores";
 import RouteView from "./RouteView";
 import ActionsView from "./ActionsView";

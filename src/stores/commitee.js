@@ -14,7 +14,7 @@ export default class commitee {
 
         })
     }
-    @observable commitees = []
+    /*@observable*/ commitees = []
     storeAccessKey = {
         key: "commitees",
         autoSync: true

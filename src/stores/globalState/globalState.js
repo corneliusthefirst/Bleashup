@@ -1,160 +1,47 @@
-import { observable, action, extendObservable, autorun, computed } from "mobx";
+//import { observable, action, extendObservable, autorun, computed } from "mobx";
 
 export default class globalState {
-  @observable scrollOuter = true;
-  @observable writing = false;
-  @observable eventUpdated = false;
-  @observable isScrolling = true;
-  @observable loading = false;
+ /*@observable*/ scrollOuter = true;
+ /*@observable*/ writing = false;
+ /*@observable*/ eventUpdated = false;
+ /*@observable*/ isScrolling = true;
+ /*@observable*/ loading = false;
   ShowingPhoto = false
   editingCommiteeName = false
-  @observable error = false;
-  @observable downlading = false
-  @observable newContribution = false;
-  @observable connected = true
-  @observable currentRoom = null;
-  @observable reply = null
-  @observable success = false;
-  @observable previousCommitee = null;
-  @observable socket = null;
-  @observable DeepLinkURL = "http://bleashup.com/"
-  @observable currentRoomNewMessages;
-  @observable passwordError = false;
-  @observable newPasswordError = false;
-  @observable nameError = false;
-  @observable newEvent = false;
-  @observable emailError = false;
-  @observable generalNewMessages = []
-  @observable ageError = false;
+ /*@observable*/ error = false;
+ /*@observable*/ downlading = false
+ /*@observable*/ newContribution = false;
+ /*@observable*/ connected = true
+ /*@observable*/ currentRoom = null;
+ /*@observable*/ reply = null
+ /*@observable*/ success = false;
+ /*@observable*/ previousCommitee = null;
+ /*@observable*/ socket = null;
+ /*@observable*/ DeepLinkURL = "http://bleashup.com/"
+ /*@observable*/ currentRoomNewMessages;
+ /*@observable*/ passwordError = false;
+ /*@observable*/ newPasswordError = false;
+ /*@observable*/ nameError = false;
+ /*@observable*/ newEvent = false;
+ /*@observable*/ emailError = false;
+ /*@observable*/ generalNewMessages = []
+ /*@observable*/ ageError = false;
   currentCommitee = "Generale";
-  @observable invitationUpdated = true;
-  @observable newHightlight = false;
-  @observable newVote = false;
-  @observable dateError = false;
-  @observable timeError = false;
+ /*@observable*/ invitationUpdated = true;
+ /*@observable*/ newHightlight = false;
+ /*@observable*/ newVote = false;
+ /*@observable*/ dateError = false;
+ /*@observable*/ timeError = false;
   confimResult = ()=>{}
 
-  get newEvent() {
-    return this.newEvent;
-  }
-  set newEvent(New) {
-    this.newEvent = New;
-  }
-  get invitationUpdated() {
-    return this.invitationUpdated;
-  }
-  set invitationUpdated(New) {
-    this.invitationUpdated = New;
-  }
-  get newVote() {
-    return this.newVote;
-  }
-  set newVote(New) {
-    this.newVote = New;
-  }
-  get newHightlight() {
-    return this.newHightlight;
-  }
-  set newHightlight(New) {
-    this.newHightlight = New;
-  }
-  get scrollOuter() {
-    return this.scrollOuter;
-  }
-  get eventUpdated() {
-    return this.eventUpdated;
-  }
-  get newContribution() {
-    return this.newContribution;
-  }
-  set newContribution(state) {
-    this.newContribution = state;
-  }
+ 
 
-  set eventUpdated(newState) {
-    this.eventUpdated = newState;
-  }
-  set scrollOuter(newValue) {
-    this.scrollOuter = newValue;
-  }
-  @computed get continueScroll() {
-    return true;
-  }
-
-  get loading() {
-    return this.loading;
-  }
-  set loading(newValue) {
-    this.loading = newValue;
-  }
-
-  get error() {
-    return this.error;
-  }
-  set error(newValue) {
-    this.error = newValue;
-  }
-
-  get success() {
-    return this.success;
-  }
-  set success(newValue) {
-    this.success = newValue;
-  }
-
-  get passwordError() {
-    return this.passwordError;
-  }
-  set passwordError(newValue) {
-    this.passwordError = newValue;
-  }
-
-  get newPasswordError() {
-    return this.newPasswordError;
-  }
-  set newPasswordError(newValue) {
-    this.newPasswordError = newValue;
-  }
-
-  get nameError() {
-    return this.nameError;
-  }
-  set nameError(newValue) {
-    this.nameError = newValue;
-  }
-
-  get emailError() {
-    return this.emailError;
-  }
-  set emailError(newValue) {
-    this.emailError = newValue;
-  }
-
-  get ageError() {
-    return this.ageError;
-  }
-  set ageError(newValue) {
-    this.ageError = newValue;
-  }
-
-  get dateError() {
-    return this.dateError;
-  }
-  set dateError(newValue) {
-    this.dateError = newValue;
-  }
-
-  get timeError() {
-    return this.timeError;
-  }
-  set timeError(newValue) {
-    this.timeError = newValue;
-  }
+ 
 
 
 
-  //@observable receivedData = [];
-  @observable cardListData = [
+  ///*/*@observable*/ receivedData = [];
+ /*@observable*/ cardListData = [
     {
       "key": "32143",
       "sender_Image": "https://upload.wikimedia.org/wikipedia/commons/b/bf/Cornish_cream_tea_2.jpg",
@@ -1195,7 +1082,7 @@ export default class globalState {
 
 
 
-  @observable sendCardListData = [
+ /*@observable*/ sendCardListData = [
     {
       "key": "32143",
       "sender_Image": "https://upload.wikimedia.org/wikipedia/commons/b/bf/Cornish_cream_tea_2.jpg",

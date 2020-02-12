@@ -6,16 +6,15 @@ import {
 //import { Button,View } from "react-native";
 
 import { AsyncStorage, Alert } from "react-native";
-import { observer } from "mobx-react";
+//import { observer } from "mobx-react";
 import styles from "./styles";
 import stores from "../../../stores";
 import { functionDeclaration } from "@babel/types";
 import globalState from '../../../stores/globalState';
 import UserService from '../../../services/userHttpServices';
-import { observable } from "mobx";
 
 
-@observer
+/*@observer*/
 export default class ResetCodeView extends Component {
   constructor(props) {
     super(props);

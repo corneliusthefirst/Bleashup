@@ -7,13 +7,13 @@ import {
 } from "native-base";
 //import { Button,View } from "react-native";
 
-import { observer } from "mobx-react";
+//import { observer } from "mobx-react";
 import styles from "./styles";
 import stores from "../../../stores";
 import globalState from '../../../stores/globalState';
 import UserService from '../../../services/userHttpServices';
 
-@observer
+/*@observer*/
 export default class ForgotPasswordView extends Component {
   constructor(props) {
     super(props);

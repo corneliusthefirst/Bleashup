@@ -1,4 +1,4 @@
-import { observable, action } from "mobx";
+//import { observable, action } from "mobx";
 import { find, findIndex, uniqBy, reject } from "lodash";
 import storage from "./Storage";
 import moment from "moment";
@@ -7,7 +7,7 @@ import request from '../services/requestObjects';
 import tcpRequest from '../services/tcpRequestData';
 import EventListener from '../services/severEventListener';
 export default class Reminds {
-  @observable Reminds = {
+  /*@observable*/ Reminds = {
     id: '',
     event_id: "",
     remind_id: "",
@@ -29,7 +29,7 @@ export default class Reminds {
     data: []
   };
 
-  @action addReminds(NewRemind) {
+  /*@action*/ addReminds(NewRemind) {
     console.warn(NewRemind,"p")
     return new Promise((resolve, Reject) => {
       this.readFromStore().then(Reminds => {
@@ -72,7 +72,7 @@ export default class Reminds {
       })
     })
   }
-  @action updateDescription(NewRemind, inform) {
+  /*@action*/ updateDescription(NewRemind, inform) {
     return new Promise((resolve, Reject) => {
       this.readFromStore().then(Reminds => {
         let Remind = find(Reminds, { id: NewRemind.remind_id });
@@ -92,7 +92,7 @@ export default class Reminds {
       });
     });
   }
-  @action updateCalendarID(NewRemind, alarms, inform) {
+  /*@action*/ updateCalendarID(NewRemind, alarms, inform) {
     console.warn(NewRemind.calendar_id)
     return new Promise((resolve, Reject) => {
       this.readFromStore().then(Reminds => {
@@ -112,7 +112,7 @@ export default class Reminds {
       });
     });
   }
-  @action updateTitle(NewRemind, inform) {
+  /*@action*/ updateTitle(NewRemind, inform) {
     return new Promise((resolve, Reject) => {
       this.readFromStore().then(Reminds => {
         let Remind = find(Reminds, { id: NewRemind.remind_id });
@@ -130,7 +130,7 @@ export default class Reminds {
       });
     });
   }
-  @action updateStatus(NewRemind, inform) {
+  /*@action*/ updateStatus(NewRemind, inform) {
     return new Promise((resolve, Reject) => {
       this.readFromStore().then(Reminds => {
         let Remind = find(Reminds, { id: NewRemind.remind_id });
@@ -149,7 +149,7 @@ export default class Reminds {
     });
   }
 
-  @action updateIsDoneState(NewRemind, inform) {
+  /*@action*/ updateIsDoneState(NewRemind, inform) {
     return new Promise((resolve, Reject) => {
       this.readFromStore().then(Reminds => {
         let Remind = find(Reminds, { id: NewRemind.remind_id });
@@ -168,7 +168,7 @@ export default class Reminds {
     });
   }
 
-  @action updateAll(NewRemind, inform) {
+  /*@action*/ updateAll(NewRemind, inform) {
     return new Promise((resolve, Reject) => {
       this.readFromStore().then(Reminds => {
         let Remind = find(Reminds, { id: NewRemind.remind_id });
@@ -281,7 +281,7 @@ export default class Reminds {
       })
     })
   }
-  @action updateRecursiveFrequency(NewRemind, inform) {
+  /*@action*/ updateRecursiveFrequency(NewRemind, inform) {
     return new Promise((resolve, Reject) => {
       this.readFromStore().then(Reminds => {
         RemindIndex = findIndex(Reminds, { id: NewRemind.remind_id });
@@ -298,7 +298,7 @@ export default class Reminds {
     });
   }
 
-  @action updateRecurrence(NewRemind, inform) {
+  /*@action*/ updateRecurrence(NewRemind, inform) {
     return new Promise((resolve, Reject) => {
       this.readFromStore().then(Reminds => {
         let Remind = find(Reminds, { id: NewRemind.remind_id });
@@ -317,7 +317,7 @@ export default class Reminds {
     });
   }
 
-  @action updatePeriod(NewRemind, inform) {
+  /*@action*/ updatePeriod(NewRemind, inform) {
     return new Promise((resolve, Reject) => {
       this.readFromStore().then(Reminds => {
         let Remind = find(Reminds, { id: NewRemind.remind_id });
@@ -336,7 +336,7 @@ export default class Reminds {
     });
   }
 
-  @action updateMembers(NewRemind, inform) {
+  /*@action*/ updateMembers(NewRemind, inform) {
     return new Promise((resolve, Reject) => {
       this.readFromStore().then(Reminds => {
         let Remind = find(Reminds, { id: NewRemind.remind_id });
@@ -355,7 +355,7 @@ export default class Reminds {
     });
   }
 
-  @action removeRemind(RemindId) {
+  /*@action*/ removeRemind(RemindId) {
     console.warn("removing remind", RemindId)
     return new Promise((resolve, RejectPromise) => {
       this.readFromStore().then(Reminds => {
@@ -414,7 +414,7 @@ export default class Reminds {
   }
 
 
-  @observable MyTasksData = [
+  /*@observable*/ MyTasksData = [
     {
       id: '1',
       event_id: "",

@@ -32,7 +32,7 @@ import MapView from "../currentevents/components/MapView";
 import Creator from "../reminds/Creator";
 let { height, width } = Dimensions.get('window');
 
-//@observer
+///*@observer*/
 export default class EventDetailView extends Component {
 
   constructor(props) {

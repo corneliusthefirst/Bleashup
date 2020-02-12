@@ -15,9 +15,9 @@ import {
 import stores from '.';
 
 export default class Invitations {
-    @observable invitations = [];
-    @observable SendInvitations = [];
-    @observable ReceivedInvitations = [];
+    /*@observable*/ invitations = [];
+    /*@observable*/ SendInvitations = [];
+    /*@observable*/ ReceivedInvitations = [];
 
     saveKey = {
         key: "Invitations",
@@ -220,7 +220,7 @@ export default class Invitations {
             })
         })
     }
-    @action setProperties(Events, inform) {
+    /*@action*/ setProperties(Events, inform) {
         let sorter = (a, b) => (a.arrival_date > b.arrival_date ? -1 :
             a.arrival_date < b.arrival_date ? 1 : 0)
         if (inform) Events = orderBy(Events, ["arrival_date"], ["desc"]);

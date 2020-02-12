@@ -1,13 +1,13 @@
-import { observable, action, extendObservable, autorun, computed } from "mobx";
+//import { observable, action, extendObservable, autorun, computed } from "mobx";
 import UserSevices from "../services/userHttpServices";
 import storage from "./Storage";
 
 export default class LoginStore {
   constructor() {}
-  @observable phonenumber = "";
-  @observable resetCode = "2525256";
+  /*@observable*/ phonenumber = "";
+  /*@observable*/ resetCode = "2525256";
 
-  @observable user = {
+  /*@observable*/ user = {
     phone: "",
     name: "",
     status: "",
@@ -20,7 +20,7 @@ export default class LoginStore {
     profile:"",
     profile_ext:""
   }; 
-  @action getUser() {
+  /*@action*/ getUser() {
     return new Promise((resolve, reject) => {
       if (this.user.phone == "" || this.user.password == "") {
         storage
@@ -53,7 +53,7 @@ export default class LoginStore {
     });
   }
 
-  @action async setUser(newUser) {
+  /*@action*/ async setUser(newUser) {
     return new Promise((resolve, reject) => {
       this.user = {
         phone: newUser.phone,
@@ -82,7 +82,7 @@ export default class LoginStore {
     });
   }
 
-  @action updateName(newName) {
+  /*@action*/ updateName(newName) {
     return new Promise((resolve, reject) => {
       storage
         .load({
@@ -113,7 +113,7 @@ export default class LoginStore {
     });
   }
 
-  @action updateStatus(newStatus) {
+  /*@action*/ updateStatus(newStatus) {
     return new Promise((resolve, reject) => {
       storage
         .load({
@@ -143,7 +143,7 @@ export default class LoginStore {
         });
     });
   }
-  @action updateProfile(newProfile) {
+  /*@action*/ updateProfile(newProfile) {
     return new Promise((resolve, reject) => {
       storage
         .load({
@@ -174,7 +174,7 @@ export default class LoginStore {
     });
   }
 
-  @action updateProfileExt(newProfileExt) {
+  /*@action*/ updateProfileExt(newProfileExt) {
     return new Promise((resolve, reject) => {
       storage
         .load({
@@ -205,7 +205,7 @@ export default class LoginStore {
     });
   }
 
-  @action updatePassword(newPassword) {
+  /*@action*/ updatePassword(newPassword) {
     return new Promise((resolve, reject) => {
       storage
         .load({
@@ -236,7 +236,7 @@ export default class LoginStore {
     });
   }
 
-  @action updateEmail(newEmail) {
+  /*@action*/ updateEmail(newEmail) {
     return new Promise((resolve, reject) => {
       storage
         .load({
@@ -267,7 +267,7 @@ export default class LoginStore {
     });
   }
 
-  @action updateAge(newAge) {
+  /*@action*/ updateAge(newAge) {
     return new Promise((resolve, reject) => {
       storage
         .load({
@@ -298,7 +298,7 @@ export default class LoginStore {
     });
   }
 
-  @action async updateAge(newAge) {
+  /*@action*/ async updateAge(newAge) {
     return new Promise((resolve, reject) => {
       storage
         .load({

@@ -1,8 +1,5 @@
 import storage from "./Storage";
-import {
-    observable,
-    action
-} from "mobx";
+//import {observable,action} from "mobx";
 import {
     uniqBy,
     reject,
@@ -14,7 +11,7 @@ import {
 import moment from "moment";
 export default class votes {
     constructor() {}
-    @observable votes = [];
+    /*@observable*/ votes = [];
     saveKey = {
         key: "votes",
         data: []

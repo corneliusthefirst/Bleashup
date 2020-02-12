@@ -2,6 +2,7 @@ package com.bleashup.bleashup;
 
 import android.app.Application;
 import com.facebook.react.ReactApplication;
+import com.calendarevents.CalendarEventsPackage;
 import com.horcrux.svg.SvgPackage;
 import com.reactnative.ivpusic.imagepicker.PickerPackage;
 import com.arthenica.reactnative.RNFFmpegPackage; 
@@ -10,7 +11,6 @@ import io.invertase.firebase.RNFirebasePackage;
 import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
 import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage; // <-- Add this line
 import org.wonday.orientation.OrientationPackage;
-import com.calendarevents.CalendarEventsPackage;
 import com.reactcommunity.rndatetimepicker.RNDateTimePickerPackage;
 import io.invertase.firebase.auth.RNFirebaseAuthPackage; // <-- Add this line
 import com.kevinresol.react_native_sound_recorder.RNSoundRecorderPackage;
@@ -48,6 +48,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
             new MainReactPackage(),
+            new CalendarEventsPackage(),
             new SvgPackage(),
             new RNFFmpegPackage(),
             new RNFirebasePackage(),
@@ -58,7 +59,6 @@ public class MainApplication extends Application implements ReactApplication {
             new RNSoundRecorderPackage(),
             new DocumentPickerPackage(),
             new PickerPackage(),
-            new CalendarEventsPackage(),
             new RNFileViewerPackage(),
             new RNDateTimePickerPackage(),
             new ReactVideoPackage(),

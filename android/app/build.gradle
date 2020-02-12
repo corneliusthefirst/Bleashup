@@ -73,8 +73,14 @@ import com.android.build.OutputFile
  */
 
 project.ext.react = [
-    entryFile: "index.js"
+    entryFile: "index.js",
+    enableHermes: true
 ]
+def enableHermes = project.ext.react.get("enableHermes",false);
+def jscFlavor = 'org.webkit:android-jsc:+'
+def safeExtGet(prop, fallback) {
+    rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
+}
 apply from: "../../node_modules/react-native/react.gradle"
 apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
 
@@ -91,7 +97,7 @@ def enableSeparateBuildPerCPUArchitecture = false
 /**
  * Run Proguard to shrink the Java bytecode in release builds.
  */
-def enableProguardInReleaseBuilds = false
+def enableProguardInReleaseBuilds = false 
 android {
     //compileSdkVersion 27
    // buildToolsVersion "27.0.3"
@@ -116,13 +122,25 @@ android {
         pickFirst 'lib/x86/libavformat.so'
         pickFirst 'lib/armeabi-v7a/libavcodec.so'
         pickFirst 'lib/arm64-v8a/libavutil.so'
+        pickFirst '**/armeabi-v7a/libc++_shared.so'
+        pickFirst '**/x86/libc++_shared.so'
+        pickFirst '**/arm64-v8a/libc++_shared.so'
+        pickFirst '**/x86_64/libc++_shared.so'
+        pickFirst '**/x86/libjsc.so'
+        pickFirst '**/libjsc.so'
+        pickFirst '**/libc++_shared.so'
+        pickFirst '**/armeabi-v7a/libjsc.so'
     }
     compileSdkVersion rootProject.ext.compileSdkVersion
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-
+configurations.all {
+     resolutionStrategy {
+       force "com.facebook.soloader:soloader:0.8.0"
+     }
+}
     defaultConfig {
         multiDexEnabled true
         targetSdkVersion 27
@@ -163,6 +181,15 @@ android {
 }
 
 dependencies {
+    if (enableHermes) {
+        def hermesPath = "../../node_modules/hermes-engine/android/";
+        debugImplementation files(hermesPath + "hermes-debug.aar")
+        releaseImplementation files(hermesPath + "hermes-release.aar")
+    } else {
+        implementation jscFlavor
+    }
+    implementation "org.webkit:android-jsc:r241213"
+    implementation project(':react-native-calendar-events')
     implementation project(':react-native-svg')
     implementation project(':react-native-image-crop-picker')
     implementation project(':react-native-ffmpeg')
@@ -171,10 +198,8 @@ dependencies {
     implementation "com.google.firebase:firebase-database:17.0.0"
     implementation project(':react-native-firebase')
     implementation project(':react-native-datetimepicker')
-    implementation "org.webkit:android-jsc:r241213"
     //implementation 'com.android.support:appcompat-v7:27.1.1'
     //implementation 'com.android.support:design:27.1.1'
-    implementation project(':react-native-calendar-events')
     implementation project(':react-native-orientation-locker')
     implementation project(':react-native-sound-recorder')
     implementation project(':react-native-document-picker')
@@ -182,7 +207,6 @@ dependencies {
     implementation project(':react-native-video')
     implementation project(':rn-fetch-blob')
     implementation project(':react-native-sound')
-    implementation 'org.chromium:v8-android:+'
     implementation project(':react-native-community-netinfo')
     implementation project(':@react-native-community_async-storage')
     implementation project(':react-native-vector-icons')

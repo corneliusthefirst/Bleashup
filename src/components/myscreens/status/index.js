@@ -7,13 +7,13 @@ import {
 } from "native-base";
 
 import { AsyncStorage } from "react-native";
-import { observer, extendObservable, inject } from "mobx-react";
+//import { observer, extendObservable, inject } from "mobx-react";
 import styles from "./styles";
 import stores from "../../../stores";
 import Story from 'react-native-story'
 
 
-@observer
+/*@observer*/
 export default class StatusView extends Component {
   constructor(props) {
     super(props);

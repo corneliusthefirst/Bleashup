@@ -1,4 +1,4 @@
-import { observable, action } from "mobx";
+//import { observable, action } from "mobx";
 import {
     filter,
     uniqBy,
@@ -23,7 +23,7 @@ class Publishers {
             this.Publishers = Publishers
         })
     }
-    @observable Publishers = []
+    /*@observable*/ Publishers = []
     saveKey = {
         key: "Publishers",
         data: []
