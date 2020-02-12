@@ -1,6 +1,6 @@
 import React, { Component } from "react"
-import { View, TouchableOpacity } from 'react-native';
-import { Text, Left, Title } from 'native-base';
+import { View, TouchableOpacity, Text} from 'react-native';
+import {  Left, Title } from 'native-base';
 import autobind from "autobind-decorator";
 import stores from "../../../../stores";
 import DetailsModal from "../../invitations/components/DetailsModal";
@@ -82,17 +82,19 @@ export default class TitleView extends Component {
                     }
                     )}>
                         <View style={{ flexDirection: "column", alignItems: "flex-start" }}>
-                            <Title
+                            <Text
                                 adjustsFontSizeToFit={true}
+                                ellipsizeMode={'tail'}
+                                numberOfLines={1}
                                 style={{
                                     fontSize: 20,
-                                    color: "#0A4E52",
                                     fontWeight: "500",
+                                    color: "#696969",
                                     fontFamily: "Roboto",
                                 }}
                             >
                                 {this.props.Event.about.title}{/*{" "}{this.props.Event.id}*/}
-                            </Title>
+                            </Text>
                             {this.props.Event.period ? <Title
                                 style={{
                                     fontSize: 12,
@@ -105,7 +107,7 @@ export default class TitleView extends Component {
                                 {this.props.Event.closed ? "Closed" : this.writeDateTime(this.props.Event)}
                             </Title> : null}
                         </View>
-                        <View style={{marginLeft: '-5.5%',}}>
+                        <View style={{}}>
                             <Left>
                                 {this.props.Event.interval > 1 && this.props.Event.frequency !== 'yearly' && this.dateDiff(this.props.Event) < 0? <View style={
                                     {
@@ -113,8 +115,8 @@ export default class TitleView extends Component {
                                     }
                                 }>
                                     <View>
-                                        <Text style={{
-                                            //color: "#1FABAB"
+                                        <Text ellipsizeMode={'tail'} numberOfLines={1} style={{
+                                            color: "#696969",
                                             fontStyle: 'italic',
                                         }} note>
                                             {`after every ${this.props.Event.interval > 1 ? this.props.Event.interval : null} ${this.writeInterval(this.props.Event.frequency)} till ${moment(this.props.Event.recurrence ? this.props.Event.recurrence : null).format("dddd, MMMM Do YYYY")}`}

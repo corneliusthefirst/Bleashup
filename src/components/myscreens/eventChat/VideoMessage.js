@@ -147,7 +147,7 @@ export default class VideoMessage extends Component {
                                 }>
                                 <Icon type="EvilIcons" name="play" style={{
                                     fontSize: 40,
-                                    color: "#1FABAB"
+                                    color: "#FEFFDE"
                                 }}></Icon>
                             </TouchableOpacity>
                         </View>
@@ -159,15 +159,15 @@ export default class VideoMessage extends Component {
                                 <AnimatedCircularProgress size={40}
                                     width={2}
                                     fill={testForURL(this.props.message.source) ? this.state.downloadState : 100}
-                                    tintColor={this.state.error ? "red" : "#1FABAB"}
+                                    tintColor={this.state.error ? "red" : "#FEFFDE"}
                                     backgroundColor={this.transparent}>
                                     {
                                         (fill) => (<View>
                                             {this.state.downloading ? <TouchableWithoutFeedback onPress={() => this.cancelDownLoad(this.props.message.source)}>
-                                                <Icon type="EvilIcons" style={{ color: "#1FABAB" }} name="close">
+                                                <Icon type="EvilIcons" style={{ color: "#FEFFDE" }} name="close">
                                                 </Icon>
                                             </TouchableWithoutFeedback> : <TouchableWithoutFeedback onPress={() => this.downloadVideo(this.props.message.source)}>
-                                                    <Icon type="EvilIcons" style={{ color: "#1FABAB" }} name="arrow-down">
+                                                    <Icon type="EvilIcons" style={{ color: "#FEFFDE" }} name="arrow-down">
                                                     </Icon>
                                                 </TouchableWithoutFeedback>}
                                         </View>)

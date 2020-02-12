@@ -1,6 +1,6 @@
 import React, { Component } from "react"
-import { View, TouchableOpacity, Image } from "react-native"
-import { Text,Title } from "native-base";
+import { View, TouchableOpacity, Image, Text, } from "react-native"
+import { Title } from "native-base";
 import { createOpenLink } from "react-native-open-maps";
 export default class MapView extends Component {
     constructor(props) {
@@ -14,9 +14,9 @@ export default class MapView extends Component {
     render() {
         return <View style={this.props.style}>
             <TouchableOpacity>
-                <Title style={{marginBottom:4,fontSize:11,color:"#0A4E52", fontStyle: this.props.location ? 'normal' : 'italic'}} >
+                <Text ellipsizeMode={"tail"} numberOfLines={1} style={{marginBottom:4,fontSize:11, fontStyle: this.props.location ? 'normal' : 'italic'}} >
                     {this.props.location ? this.props.location : 'No Set Location'}
-                </Title>
+                </Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={this.props.location ? this.OpenLinkZoom : null}>
                 <Image

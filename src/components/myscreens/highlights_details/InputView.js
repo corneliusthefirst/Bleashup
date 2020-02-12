@@ -27,6 +27,11 @@ export default class InputView extends Component {
     state = {
 
     }
+    _clean(){
+        this.setState({
+            textValue: null
+        })
+    }
     handleEmojiSelected(e) {
         this.setState({
             textValue: this.state.textValue + e
@@ -158,6 +163,7 @@ export default class InputView extends Component {
                                         {this.state.textValue ? <View style={{ width: "45%", }}>
                                             <TouchableOpacity onPress={() => {
                                                 requestAnimationFrame(() => {
+                                                    Keyboard.dismiss()
                                                      this.props.sendMessageText(this.state.textValue);
                                                     this._textInput.clear();
                                                 });

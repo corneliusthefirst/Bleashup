@@ -43,7 +43,7 @@ export default class ProfileModal extends Component {
                     </View>
 
                     <View style={{ flex: 5, flexDirection: 'column', padding: 2, ...shadower(), backgroundColor: 'transparent', }}>
-                        <TouchableOpacity onPress={() => { this.setState({ enlargeImage: true }) }} >
+                        <TouchableOpacity onPress={() => requestAnimationFrame(() => { this.setState({ enlargeImage: true }) })} >
                             <CacheImages thumbnails source={{ uri: this.props.profile.profile }}
                                 square style={{ height: "100%", width: "100%", borderColor: "#1FABAB", borderRadius: 8, }} />
                         </TouchableOpacity>

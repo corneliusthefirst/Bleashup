@@ -40,7 +40,13 @@
 
     [*]  When a remind is added or deleted the whole list refreshes in the remind tab in the event page 
 
+[] implement daysOfWeek and WeekOfMonth in setting remind recurrence. 
 
+[] implement the configuratoins Who can add a post and who can add a remind.
+
+[] implement checking base on the conditions listed above . 
+
+[] 
     A solution needs to implemented to handle this . 
     The same applies for sharers.
 

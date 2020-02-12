@@ -113,7 +113,7 @@ export default class HighLightsDetails extends Component {
                 this.room ? this.room.addNewMessage(message).then(() => {
                     Toast.show({ text: 'Reaction Sent', type: 'success' })
                 }) : null
-
+                this.refs.inputView._clean()
             }
         }))
     }
@@ -186,7 +186,7 @@ export default class HighLightsDetails extends Component {
                 </View>
                 <View style={{ height: this.state.inputsHeight, backgroundColor: 'transparent', borderRadius: 10, }}>
                     {
-                        <InputView showImojiInput={this.state.showImojiInput}
+                        <InputView ref="inputView" showImojiInput={this.state.showImojiInput}
                             sendMessageText={(text) => {
                                 this.sendReaction(text)
                             }} replyer={this.state.replyer} increaseHeightToCopeEmoji={() => {
