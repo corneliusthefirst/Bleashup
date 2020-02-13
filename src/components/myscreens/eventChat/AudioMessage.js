@@ -209,7 +209,7 @@ export default class AudioMessage extends Component {
             flexDirection: 'column',
         }
         return (
-            <TouchableWithoutFeedback onPressIn={() => this.props.pressingIn()}>
+            <TouchableWithoutFeedback onLongPress={() => this.props.handleLongPress?this.props.handleLongPress():null} onPressIn={() => this.props.pressingIn()}>
                 <View style={{ disply: 'flex', flexDirection: 'row', minWidth: 283, maxWidth: 300, minHeight: 50, }}>
                     {this.props.message.duration ? <View style={textStyle}>
                         <View><Slider value={this.state.currentPosition} onValueChange={(value) => {

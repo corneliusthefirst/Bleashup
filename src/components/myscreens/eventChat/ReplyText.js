@@ -18,12 +18,13 @@ export default class ReplyText extends Component {
     }
     state = {}
     showReplyer() {
-        this.props.showProfile(this.props.reply.replyer_phone||this.props.reply.sender.phone.replace("+","00"))
+        this.props.showProfile(this.props.reply.replyer_phone || this.props.reply.sender.phone.replace("+", "00"))
     }
     render() {
         return (
             <TouchableWithoutFeedback
                 onPressIn={() => this.props.pressingIn()}
+                onLongPress={() => this.props.handLongPress ? this.props.handLongPress() : null}
                 onPress={() => this.props.openReply(this.props.reply)}>
                 <View style={{
                     display: 'flex', flexDirection: 'row', borderBottomWidth: 0,

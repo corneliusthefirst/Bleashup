@@ -30,7 +30,7 @@ export default class PhotoMessage extends Component {
     render() {
         return (
             <View style={{maxHieght:300 }}>
-            <TouchableWithoutFeedback onPressIn={()=>{
+                <TouchableWithoutFeedback onLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null} onPressIn={()=>{
                 this.props.pressingIn()
             }} onPress={()=> this.props.showPhoto(this.props.message.photo)}>
                     <Image resizeMode={"contain"} hasJoin onOpen={() => { }}
@@ -39,7 +39,7 @@ export default class PhotoMessage extends Component {
             </TouchableWithoutFeedback>
                 {this.props.message.text ? 
                     <View style={{marginBottom: "2%",maxWidth:"100%"}}>
-                    <TextContent pressingIn={() => this.props.pressingIn()} text={this.props.message.text}></TextContent>
+                        <TextContent onLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null} pressingIn={() => this.props.pressingIn()} text={this.props.message.text}></TextContent>
                     </View> : null}
 
             </View>

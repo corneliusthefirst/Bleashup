@@ -31,8 +31,8 @@ export default class ProfileModal extends Component {
                 }}
                 position={'bottom'}
             >
+            <View>
                 <View style={{ margin: '3%', height: '95%', width: '95%' }}>
-                <Text note>{"profile details"}</Text>
                     <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                         <TouchableOpacity style={{}} onPress={this.props.onClosed} transparent>
                             <Icon style={{ color: "#1FABAB", fontSize: 35 }} name="close" type="EvilIcons" />
@@ -90,6 +90,8 @@ export default class ProfileModal extends Component {
                     */}
 
                     {this.state.enlargeImage ? <PhotoViewer open={this.state.enlargeImage} hidePhoto={() => this.setState({ enlargeImage: false })} photo={this.props.profile.profile} /> : null}
+                </View>
+                    <View style={{position: 'absolute',margin: '3%',}}><Text note>{"profile cart"}</Text></View>
                 </View>
             </Modal>
         ) : null

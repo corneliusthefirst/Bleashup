@@ -27,14 +27,14 @@ export default class TextContent extends Component {
                 this.setState({
                     notShowingAll: !this.state.notShowingAll
                 })
-            }>
+            } onLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null}>
                 <View>
                     <Hyperlink linkStyle={{ color: '#2980b9', }} linkDefault={true}>
                         <Text ellipsizeMode={this.state.notShowingAll ? 'tail' : null} numberOfLines={this.state.notShowingAll ? 25 : null} style={{
                             justifyContent: 'center',
                             marginLeft: "2%",
                             fontSize: this.fontSizeFormular(),
-                            color:'darkGray'
+                            color: 'darkGray'
                             //backgroundColor: this.state.sender ? '#FFBFB2' : '#C1FFF2',
                         }}>
                             {this.props.text/*this.props.text.slice(0, this.state.splicer)}{"  "}{this.props.text.length >= 

@@ -39,10 +39,9 @@ export default class HighlightCardDetail extends Component {
 
                 coverScreen={true}
             >
-           
+          <View>
           <ScrollView showsVerticalScrollIndicator={false} >
             <View style={{flex:1,...shadower(6)}}>
-            <Text style={{margin: '3%',}} note>{'post'}</Text>
               {this.props.shouldRestore ? <View style={{ width: '95%', alignItems: 'flex-end',margin: '2%', }}><Button 
               style={{alignSelf:'flex-end',margin:'2%',marginRight: '2%'}} onPress={() => {
                 this.props.onClosed()
@@ -63,6 +62,8 @@ export default class HighlightCardDetail extends Component {
               </View>*/}
             </View>
             </ScrollView>
+            <View style={{ position: 'absolute', margin: '1%',}}><Text style={{ margin: '2%', }} note>{'post'}</Text></View>
+            </View>
             </Modal>
 
 

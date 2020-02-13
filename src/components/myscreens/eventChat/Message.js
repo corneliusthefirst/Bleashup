@@ -41,29 +41,29 @@ export default class Message extends Component {
         //console.warn(data.type)
         switch (data.type) {
             case "text":
-                return <TextMessage pressingIn={() => {
+                return <TextMessage handleLongPress={() => this.handLongPress()} pressingIn={() => {
                     this.replying = true
                 }} firebaseRoom={this.props.firebaseRoom} user={2} sender={sender} index={index} creator={2} message={data}></TextMessage>
             case "text_sender":
                 return <TextMessageSnder sendMessage={(message) => this.props.sendMessage(message)} firebaseRoom={this.props.firebaseRoom}
                     user={2} sender={sender} index={index} creator={3} message={data}></TextMessageSnder>
             case "photo":
-                return <PhotoMessage pressingIn={() => {
+                return <PhotoMessage handleLongPress={() => this.handLongPress()}  pressingIn={() => {
                     this.replying = true;
                     // this.props.hideAndshow()
                 }} firebaseRoom={this.props.firebaseRoom} showPhoto={(url) => this.props.showPhoto(url)} user={2} sender={sender} index={index} creator={2} message={data}></PhotoMessage>
             case "audio":
-                return <AudioMessage room={this.props.room} pressingIn={() => {
+                return <AudioMessage handleLongPress={() => this.handLongPress()} room={this.props.room} pressingIn={() => {
                     this.replying = true;
                     //this.props.hideAndshow()
                 }} index={index} sender={sender} message={data}></AudioMessage>
             case "video":
-                return <VideoMessage pressingIn={() =>{
+                return <VideoMessage handleLongPress={() => this.handLongPress()} pressingIn={() =>{
                     this.replying = true
                 }} room={this.props.room} index={index} sender={sender}
                     playVideo={(video) => { this.props.playVideo(video) }} message={data}></VideoMessage>
             case "attachement":
-                return <FileAttarchementMessaege room={this.props.room} sender={sender} index={index} message={data}></FileAttarchementMessaege>;
+                return <FileAttarchementMessaege handleLongPress={() => this.handLongPress()} room={this.props.room} sender={sender} index={index} message={data}></FileAttarchementMessaege>;
             case "photo_upload":
                 return <PhotoUploader room={this.props.room} showPhoto={(photo) => this.props.showPhoto(photo)}
                     replaceMessage={data => this.props.replaceMessage(data)} sender={false}
@@ -203,6 +203,11 @@ export default class Message extends Component {
         //marginTop: "-2%",
         marginBottom: 3
     }
+    handLongPress(){
+        this.replying = false
+        this.props.showActions(this.props.message)
+        Vibration.vibrate(this.longPressDuration)
+    }
     testForImoji(message) {
         let imoji = message.match(/[\u{1f300}-\u{1f5ff}\u{1f900}-\u{1f9ff}\u{1f600}-\u{1f64f}\u{1f680}-\u{1f6ff}\u{2600}-\u{26ff}\u{2700}-\u{27bf}\u{1f1e6}-\u{1f1ff}\u{1f191}-\u{1f251}\u{1f004}\u{1f0cf}\u{1f170}-\u{1f171}\u{1f17e}-\u{1f17f}\u{1f18e}\u{3030}\u{2b50}\u{2b55}\u{2934}-\u{2935}\u{2b05}-\u{2b07}\u{2b1b}-\u{2b1c}\u{3297}\u{3299}\u{303d}\u{00a9}\u{00ae}\u{2122}\u{23f3}\u{24c2}\u{23e9}-\u{23ef}\u{25b6}\u{23f8}-\u{23fa}]/ug)
         return imoji && imoji.length == 1 && message.length == imoji[0].length
@@ -265,16 +270,12 @@ export default class Message extends Component {
                                 <View>
                                     <View style={senderNameStyle}>
                                         <TouchableWithoutFeedback onLongPress={() => {
-                                            this.replying = false
-                                            this.props.showActions(this.props.message)
-                                            Vibration.vibrate(this.longPressDuration)
+                                           this.handLongPress()
                                         }} onPressIn={() => {
                                             this.replying = true
                                         }}><View style={subNameStyle}>{this.state.sender ?
                                              <TouchableOpacity onLongPress={() => {
-                                            this.replying = false
-                                            this.props.showActions(this.props.message)
-                                            Vibration.vibrate(this.longPressDuration)
+                                            this.handLongPress()
                                         }} onPress={() => {
                                             this.props.showProfile(this.message.sender.phone)
                                         }}>{this.state.different ? <Text style={nameTextStyle}
@@ -287,7 +288,7 @@ export default class Message extends Component {
                                                         {this.state.time}{"    "}</Text> : null}</Right></View></TouchableWithoutFeedback>
                                         <View>
                                             {this.props.message.reply ? <View style={{ borderRadius: 10, padding: '1%', marginTop: ".4%", width: "100%" }}>
-                                                <ReplyText showProfile={(pro) => this.props.showProfile(pro)} pressingIn={() => {
+                                                <ReplyText handLongPress={() => this.handLongPress()} showProfile={(pro) => this.props.showProfile(pro)} pressingIn={() => {
                                                     this.replying = true
                                                 }} openReply={(replyer) => {
                                                     replyer.isThisUser = !this.state.sender
@@ -298,15 +299,19 @@ export default class Message extends Component {
                                             }} onPress={() => {
                                                 this.replying = false
                                             }} onLongPress={() => {
-                                                this.replying = false
-                                                this.props.showActions(this.props.message)
-                                                Vibration.vibrate(this.longPressDuration)
+                                                this.handLongPress()
                                             }} >
                                                 <View>
                                                     {this.chooseComponent(this.props.message, this.props.message.id, this.state.sender)}
                                                 </View>
                                             </TouchableWithoutFeedback>
                                         </View>
+                                        <TouchableWithoutFeedback onPressIn={() => {
+                                            this.replying = true
+                                        }} onLongPress={() => {
+                                            this.handLongPress()
+                                        }}>
+                                        <View>
                                         <View style={{
                                             backgroundColor: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text) ? color : 'transparent' : 'transparent',
 
@@ -326,6 +331,8 @@ export default class Message extends Component {
                                             </Icon> : <Icon style={this.iconStyles} type={"EvilIcons"} name="check">
                                             </Icon> : <Icon style={{ ...this.iconStyles, color: "#FFF" }} type="MaterialCommunityIcons"
                                                 name="progress-check"></Icon> : null}</View>
+                                    </View>
+                                        </TouchableWithoutFeedback>
                                     </View>
                                 </View>
                             </View>
