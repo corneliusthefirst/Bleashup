@@ -21,7 +21,7 @@ export default class ContentModal extends PureComponent {
         return map(content, (value, key) => <Item>
             <View style={{ flexDirection: 'row', }}>
                 <Text style={{ fontWeight: 'bold', fontStyle: 'italic', }}>{key}{": "}</Text>
-                <Text>{value}</Text>
+                <Text>{Array.isArray(value) ? value.join(',') : value}</Text>
             </View>
         </Item>)
     }
@@ -53,14 +53,14 @@ export default class ContentModal extends PureComponent {
                     borderRadius: 8, backgroundColor: '#FEFFDE', width: "90%"
                 }}
             >
-            <View><Icon name={"close"} onPress={() => {
-                this.props.closed()
-            }} type={"EvilIcons"}></Icon></View>
+                <View><Icon name={"close"} onPress={() => {
+                    this.props.closed()
+                }} type={"EvilIcons"}></Icon></View>
                 <Content style={{ margin: "5%" }}>
-                    {typeof this.state.content === 'object' ? 
-                    this.renderObject(this.state.content) : Array.isArray(this.state.content) ? 
-                    this.renderContentItems(this.state.content) :
-                        <Text>{this.state.content}</Text>}
+                    {typeof this.state.content === 'object' ?
+                        this.renderObject(this.state.content) : Array.isArray(this.state.content) ?
+                            this.renderContentItems(this.state.content) :
+                            <Text>{this.state.content}</Text>}
                 </Content>
             </Modal>
         );

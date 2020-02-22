@@ -10,7 +10,7 @@ import {
   Spinner,
   Toast,
 } from "native-base";
-import EventDatails from "../eventDetails";
+import EventDetails from "../eventDetails";
 import Remind from "../reminds";
 import Highlights from "../highlights";
 import Votes from "../votes";
@@ -126,17 +126,18 @@ export default class Event extends Component {
     //console.error(this.props.navigation.getParam("Event").participant)
     switch (this.state.currentPage) {
       case "EventDetails":
-        return <EventDatails startLoader={() => {
+        return <EventDetails startLoader={() => {
           this.setState({
             working: true
           })
         }}
-          mention={(data) => this.mention(data)}
+          mention={(data) => this.mentionPost(data)}
           updateLocation={(loc) => this.updateActivityLocation(loc)}
           updateDesc={(newDes) => {
             this.updateActivityDescription(newDes)
           }}
           master={this.master}
+          computedMaster={this.computedMaster}
           stopLoader={() => {
             this.setState({
               working: false
@@ -144,7 +145,7 @@ export default class Event extends Component {
           }} {...this.props}
           showVideo={(url) => this.showVideo(url)}
           showHighlight={(h) => this.showHighlightDetails(h)}
-          Event={this.event}></EventDatails>
+          Event={this.event}></EventDetails>
       case "Reminds":
         return <Remind startLoader={() => {
           this.setState({
@@ -157,6 +158,7 @@ export default class Event extends Component {
         }}
           mention={(item) => this.mention(item)}
           master={this.master}
+          computedMaster={this.computedMaster}
           working={this.state.working}
           event={this.event}
           event_id={this.event.id} {...this.props}></Remind>
@@ -245,52 +247,52 @@ export default class Event extends Component {
     this.propcessAndFoward(change)
   }
   propcessAndFoward(change) {
-      if (change.updated === "add_highlight") {
-        this.showHighlightDetails(change.new_value.new_value)
-      } else if (change.updated === "restored_remind" || change.updated === "delete_remind") {
-        this.showRemind(change.new_value.new_value, change.updated === "delete_remind" ? true : false)
-      } else if (change.updated === 'added_remind') {
-        this.showRemindID(change.new_value.data)
-      } else if (change.updated === "highlight_delete" || change.updated == 'highlight_restored') {
-        this.showHighlightDetails(change.new_value.new_value, change.updated == 'highlight_delete' ? true : false)
-      } else if (change.updated === "highlight_url") {
-        this.showHighlightDetails({
-          title: change.changed,
-          description: null,
-          url: change.new_value.new_value,
-          created_at: change.date
-        })
-      } else if (Array.isArray(change.new_value.new_value) &&
-        change.new_value.new_value[0] &&
-        change.new_value.new_value[0].phone) {
-        this.showMember(change.new_value.new_value)
-      } else if (Array.isArray(change.new_value.new_value) &&
-        change.new_value.new_value[0] &&
-        change.new_value.new_value[0].includes("00")) {
-        console.warn("showing contacts")
-        this.showContacts(change.new_value.new_value)
-      } else if (typeof change.new_value.new_value === "string" &&
-        testForURL(change.new_value.new_value)) {
-        this.openPhoto(change.new_value.new_value)
-      }
-      else if (change.new_value &&
-        change.new_value.new_value &&
-        change.new_value.new_value[0] &&
-        typeof change.new_value.new_value === 'object' &&
-        change.new_value.new_value[0].includes("00")) {
-        this.showContacts(change.new_value.new_value)
-      }
-      else if (typeof change.new_value.new_value === "string" ||
-        (Array.isArray(change.new_value.new_value) &&
-          typeof change.new_value.new_value[0] === "string") ||
-        typeof change.new_value.new_value === 'object') {
-        this.showContent(change.new_value.new_value)
-      } else if (change.title.toLowerCase().includes("remind")) {
-        this.showRemindID(change.new_value.data)
+    if (change.updated === "add_highlight") {
+      this.showHighlightDetails(change.new_value.new_value)
+    } else if (change.updated === "restored_remind" || change.updated === "delete_remind") {
+      this.showRemind(change.new_value.new_value, change.updated === "delete_remind" ? true : false)
+    } else if (change.updated === 'added_remind') {
+      this.showRemindID(change.new_value.data)
+    } else if (change.updated === "highlight_delete" || change.updated == 'highlight_restored') {
+      this.showHighlightDetails(change.new_value.new_value, change.updated == 'highlight_delete' ? true : false)
+    } else if (change.updated === "highlight_url") {
+      this.showHighlightDetails({
+        title: change.changed,
+        description: null,
+        url: change.new_value.new_value,
+        created_at: change.date
+      })
+    } else if (Array.isArray(change.new_value.new_value) &&
+      change.new_value.new_value[0] &&
+      change.new_value.new_value[0].phone) {
+      this.showMember(change.new_value.new_value)
+    } else if (Array.isArray(change.new_value.new_value) &&
+      change.new_value.new_value[0] &&
+      change.new_value.new_value[0].includes("00")) {
+      console.warn("showing contacts")
+      this.showContacts(change.new_value.new_value)
+    } else if (typeof change.new_value.new_value === "string" &&
+      testForURL(change.new_value.new_value)) {
+      this.openPhoto(change.new_value.new_value)
+    }
+    else if (change.new_value &&
+      change.new_value.new_value &&
+      change.new_value.new_value[0] &&
+      typeof change.new_value.new_value === 'object' &&
+      change.new_value.new_value[0].includes("00")) {
+      this.showContacts(change.new_value.new_value)
+    }
+    else if (typeof change.new_value.new_value === "string" ||
+      (Array.isArray(change.new_value.new_value) &&
+        typeof change.new_value.new_value[0] === "string") ||
+      typeof change.new_value.new_value === 'object') {
+      this.showContent(change.new_value.new_value)
+    } else if (change.title.toLowerCase().includes("remind")) {
+      this.showRemindID(change.new_value.data)
 
-      } else {
+    } else {
 
-      }
+    }
   }
   showMember(members) {
     this.setState({
@@ -426,13 +428,17 @@ export default class Event extends Component {
       })
     }, 4000)
   }
+  computedMaster = false
   member = false
   initializeMaster() {
     this.user = stores.LoginStore.user;
     stores.Events.loadCurrentEvent(this.event.id).then(e => {
       this.event = e
       let member = find(this.event.participant, { phone: this.user.phone })
-      this.master = member && member.master
+      this.master = member && member.master || this.event.creator_phone === this.user.phone
+      this.computedMaster = this.event.who_can_update === 'master' ?
+        this.master : this.event.who_can_update === 'creator' ?
+          this.event.creator_phone === this.user.phone : true
       this.member = member ? true : false
       this.setState({
         working: false
@@ -541,7 +547,6 @@ export default class Event extends Component {
     }
   }
   componentDidMount() {
-    console.warn(this.event.calendar_id)
     if (!this.event.calendared && this.event.period) {
       this.setState({
         isSynchronisationModalOpned: true
@@ -587,7 +592,7 @@ export default class Event extends Component {
         })
       })
     } else {
-      Toast.show({ text: 'App is Busy' })
+      Toast.show({ text: 'App is busy' })
     }
   }
   componentWillUnmount() {
@@ -1051,7 +1056,7 @@ export default class Event extends Component {
         })
       })
     } else {
-      Toast.show({ text: "App Busy " })
+      Toast.show({ text: "App is busy " })
     }
   }
   publish() {
@@ -1067,7 +1072,7 @@ export default class Event extends Component {
         this.setState({
           working: false
         })
-        Toast.show({ text: "Please First Configure The Activity As Public In The Settings", duration: 5000 })
+        Toast.show({ text: "Cannot perform this action; the activity is not public", duration: 5000 })
       }
     } else {
       Toast.show({ text: "App Busy " })
@@ -1160,13 +1165,12 @@ export default class Event extends Component {
       })
       let exchanger = new FileExachange(snap.source, '/Photo/', 0, 0, null, (newDir, path, filename) => {
         Requester.changeBackground(this.event.id, path).then(res => {
-          console.warn(res)
           this.initializeMaster()
         }).catch(err => {
           this.setState({
             working: false
           })
-          Toast.show({ text: "Sorry , We are Unable To Perfrom This Action" })
+          Toast.show({ text: "Sorry, the action could not be performed" })
         })
       }, null, (error) => {
         console.warn("catching activity bacground Photo upload ", error)
@@ -1191,6 +1195,23 @@ export default class Event extends Component {
       isHighlightDetailModalOpened: false
     })
   }
+  mentionPost(replyer) {
+    this.mention({
+      id: replyer.id,
+      video: replyer.url.video ? true : false,
+      audio: !replyer.url.video && replyer.url.audio ? true : false,
+      video: replyer.url.video ? true : false,
+      photo: !replyer.url.video && replyer.url.photo ? true : false,
+      sourcer: replyer.url.video ?
+        replyer.url.photo : replyer.url.photo ?
+          replyer.url.photo : replyer.url.audio ?
+            replyer.url.audio : null,
+      title: `${replyer.title} : \n ${replyer.description}`,
+      replyer_phone: stores.LoginStore.user.phone,
+      //replyer_name: stores.LoginStore.user.name,
+      type_extern: 'Posts',
+    })
+  }
   goback() {
     this.props.navigation.goBack()
   }
@@ -1207,6 +1228,7 @@ export default class Event extends Component {
         navigateHome={() => {
           this.goback()
         }}
+        computedMaster={this.computedMaster}
         ref="swipperView"
         publish={() => this.publish()}
         showActivityPhotoAction={() => this.master ? this.openPhotoSelectorModal() : this.showPhoto(this.event.background)}
@@ -1215,10 +1237,10 @@ export default class Event extends Component {
           warnDescription: "Are You Sure You Want To Leave This Activity ?",
           warnTitle: "Leave Activity",
           callback: this.leaveActivity.bind(this)
-        })/*this.leaveActivity()*/ : Toast.show({ text: "You Are Not a  member Anymore !" })}
+        })/*this.leaveActivity()*/ : Toast.show({ text: "You are not a  member anymore !" })}
         openSettingsModal={() => this.openSettingsModal()}
         ShowMyActivity={(a) => this.checkActivity({ phone: stores.LoginStore.user.phone })}
-        inviteContacts={() => this.master || this.event.public ? this.inviteContacts() : Toast.show({ text: "You cannot invite for th" })}
+        inviteContacts={() => this.computedMaster || this.event.public ? this.inviteContacts() : Toast.show({ text: "You don't have enough priviledges to invite your contacts to this activity ", duration: 4000 })}
         join={(id) => { this.joinCommitee(id) }}
         leave={(id) => { this.leaveCommitee(id) }}
         removeMember={(id, members) => { this.removeMembers(id, members) }}
@@ -1228,12 +1250,12 @@ export default class Event extends Component {
         swapChats={(room) => this.swapChats(room)} phone={stores.LoginStore.user.phone}
         commitees={this.event.commitee ? this.event.commitee : []}
         showCreateCommiteeModal={() => {
-          if (!this.state.working && this.master) {
+          if (!this.state.working && this.computedMaster) {
             this.setState({
               isCommiteeModalOpened: true
             })
           } else {
-            Toast.show({ text: "cannot Add Commitee" })
+            Toast.show({ text: "You don't have enough priviledges to add a commiee ", duration: 4000 })
           }
         }}
         showMembers={() => this.showMembers()}
@@ -1283,6 +1305,7 @@ export default class Event extends Component {
         {this.state.working ? <View style={{ position: "absolute", marginTop: "-8%", }}><Spinner size={"small"}></Spinner></View> : null}
         {!this.state.showMembers ? null : <ParticipantModal
           hideTitle={this.state.hideTitle}
+          master={this.master}
           creator={this.event.creator_phone}
           participants={this.state.partimembers ? uniqBy(this.state.partimembers.filter(ele => ele !== null &&
             !Array.isArray(ele)), ele => ele.phone) : []} isOpen={this.state.showMembers}
@@ -1359,7 +1382,7 @@ export default class Event extends Component {
             this.setState({
               isInviteModalOpened: false
             })
-          }} isOpen={this.state.isInviteModalOpened} participant={this.event.participant}>
+          }} master={this.master} isOpen={this.state.isInviteModalOpened} participant={this.event.participant}>
         </InviteParticipantModal>}
         {!this.state.isManagementModalOpened ? null : <ManageMembersModal isOpen={this.state.isManagementModalOpened}
           checkActivity={(member) => this.checkActivity(member)}
@@ -1381,6 +1404,8 @@ export default class Event extends Component {
             okButtonText: "Close"
           })
         }}
+          creator={this.event.creator_phone === this.user.phone}
+          computedMaster={this.computedMaster}
           master={this.master}
           event={this.event} saveSettings={(original, newSettings) => {
             this.saveSettings(original, newSettings)
@@ -1454,7 +1479,7 @@ export default class Event extends Component {
           // the changeBox Component , the onPress function of the BleashupTimline Compoent is automatically 
           // triggered . so this is an attempt to restore the blocking done when that photo is being pressed
         }}></PhotoViewer> : null}
-        {!this.state.isSearchImageModalOpened ? null : <SearchImage accessLibrary={() => setTimeout(() => this.openCamera(true),400)} isOpen={this.state.isSearchImageModalOpened} onClosed={() => {
+        {!this.state.isSearchImageModalOpened ? null : <SearchImage accessLibrary={() => setTimeout(() => this.openCamera(true), 400)} isOpen={this.state.isSearchImageModalOpened} onClosed={() => {
           this.setState({
             isSearchImageModalOpened: false
           })
@@ -1463,6 +1488,12 @@ export default class Event extends Component {
           shouldRestore={this.state.shouldRestore}
           showPhoto={(url) => this.showPhoto(url)}
           showVideo={(url) => this.showVideo(url)}
+          mention={replyer => {
+            this.setState({
+              isHighlightDetailModalOpened:false
+            })
+            this.mentionPost(replyer)
+          }}
           restore={(item) => this.restoreHighlight({ new_value: { new_value: item } })}
           isOpen={this.state.isHighlightDetailModalOpened}
           item={this.state.highlight}

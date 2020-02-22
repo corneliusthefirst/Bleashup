@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, Vibration, TouchableOpacity } from 'react-native';
-import { Title, Text } from 'native-base';
+import { Title, Text, Icon } from 'native-base';
 import Swipeout from '../../SwipeOut';
 import HighlightContent from './HighlightContent';
 import moment from 'moment';
@@ -87,7 +87,7 @@ export default class HighLight extends Component {
                 marginTop: '2%',
             }}>
                 <Swipeout
-                    disabled={this.props.disableSwipper ? this.props.disableSwipper : false}
+                    disabled={this.props.disableSwipper ? this.props.disableSwipper : true}
                     ref={'chatSwipeOut'} onOpen={() => { this.openingSwipeout() }}
                     onClose={() => { this.closingSwipeout() }} autoClose={true} close={true}
                     left={[{
@@ -116,7 +116,8 @@ export default class HighLight extends Component {
                         <View>
                             {this.renderContent(this.props.highlight)}
                         </View>
-                        <View>
+                        <View style={{marginLeft: '3%',}}>
+                            { <Icon name="reply" onPress={() => this.props.mention?this.props.mention():this.quickMention()} type="Entypo" style={{ color: 'darkGray', margin: '1%',width:'20%' }}></Icon>}
                         </View>
                         <View style={{ flexDirection: "column", justifyContent: "space-between", bottom: 0, margin: 3, width: "98%" }}>
                             <Creator creator={this.props.highlight.creator} created_at={this.props.highlight.created_at} color={this.props.color ? this.props.color : "#9EEDD3"}></Creator>

@@ -95,7 +95,7 @@ class Request {
                             title: "Update On Commitees",
                             updated: 'published_commitee',
                             event_id: event_id,
-                            changed: `${state === true ?'Published':'Unpublished'} ${commitee.name} Commitee`,
+                            changed: `${state === true ? 'Published' : 'Unpublished'} ${commitee.name} Commitee`,
                             updater: stores.LoginStore.user,
                             new_value: { data: commitee.id, new_value: state === true ? 'Published' : 'Unpublished' },
                             date: moment().format(),
@@ -651,7 +651,7 @@ class Request {
                                     updated: "period",
                                     updater: stores.LoginStore.user,
                                     event_id: event.id,
-                                    changed: newPeriod ? "Changed The Scheduled Time Of The Activity To: " : "Removed The Date Of The Activity",
+                                    changed: newPeriod ? "Changed The Start Date Of The Activity To: " : "Removed The Date Of The Activity",
                                     new_value: { data: null, new_value: newPeriod ? moment(newPeriod).format("dddd, MMMM Do YYYY, h:mm:ss a") : null },
                                     date: moment().format(),
                                     time: null
@@ -661,7 +661,7 @@ class Request {
                                         resolve('ok')
                                     }) : resolve('ok')
                                 stores.ChangeLogs.addChanges(Change).then(() => {
-                                   
+
                                 })
 
                             })
@@ -696,10 +696,41 @@ class Request {
                                     time: null
                                 }
                                 stores.ChangeLogs.addChanges(Change).then(() => {
-                                    Eve.calendar_id ? CalendarServe.saveEvent(Eve, Eve.alarms).then((resp) => {
+                                    console.warn(event.about.title, "-------")
+                                    Eve.calendar_id ? CalendarServe.saveEvent({ old_title: event.about.title, ...Eve }, Eve.alarms).then((resp) => {
                                         console.warn(resp)
                                     }) : null
                                 })
+                                resolve("ok")
+                            })
+                        }).catch((e) => {
+                            reject(e)
+                        })
+                    })
+            } else {
+                resolve()
+            }
+        })
+    }
+    updateWhoCanManage(event, whoCanManage) {
+        return new Promise((resolve, reject) => {
+            if (event.who_can_update !== whoCanManage) {
+                tcpRequest.UpdateCurrentEvent(stores.LoginStore.user.phone,
+                    event.id, 'who_can_update', whoCanManage, event.id + '_who_can_update').then(JSONData => {
+                        serverEventListener.sendRequest(JSONData, event.id + '_who_can_update').then(response => {
+                            stores.Events.updateWhoCanManage(event.id, whoCanManage).then(eve => {
+                                let Change = {
+                                    id: uuid.v1(),
+                                    title: "Updates On Main Activity",
+                                    updated: "who_can_update",
+                                    event_id: event.id,
+                                    updater: stores.LoginStore.user,
+                                    changed: "Changed The Manage Priviledges of The Activity To ...",
+                                    new_value: { data: null, new_value: whoCanManage },
+                                    date: moment().format(),
+                                    time: null
+                                }
+                                stores.ChangeLogs.addChanges(Change).then(() => { })
                                 resolve("ok")
                             })
                         }).catch((e) => {
@@ -716,11 +747,12 @@ class Request {
             if (event.recurrent !== recurrentUpdate.recurrent ||
                 event.frequency !== recurrentUpdate.frequency ||
                 event.interval !== recurrentUpdate.interval ||
+                event.days_of_week !== recurrentUpdate.days_of_week ||
+                event.week_start !== recurrentUpdate.week_start ||
                 event.recurrence !== recurrentUpdate.recurrence) {
                 tcpRequest.UpdateCurrentEvent(stores.LoginStore.user.phone, event.id, 'recurrency',
                     recurrentUpdate, event.id + "_recurrency").then(JSONData => {
                         serverEventListener.sendRequest(JSONData, event.id + "_recurrency").then(response => {
-                            console.warn(response)
                             stores.Events.updateRecurrency(event.id, recurrentUpdate).then((Eve) => {
                                 let Change = {
                                     id: uuid.v1(),
@@ -819,24 +851,33 @@ class Request {
             this.updateTitle(JSON.parse(event), settings.title_new).then((t1) => {
                 this.updatePeriod(JSON.parse(event), settings.period_new).then((t2) => {
                     this.update_notes(JSON.parse(event), settings.notes_new).then((t3) => {
-                        console.warn(t3)
-                        this.updateRecurrency(JSON.parse(event), {
-                            recurrent: settings.recurrent_new,
-                            interval: settings.interval_new,
-                            frequency: settings.frequency_new,
-                            recurrence: settings.recurrence_new
-                        }).then((t4) => {
-                            event = JSON.parse(event)
-                            if (event.public !== settings.public_new && settings.public_new)
-                                this.publish(event.id).then((t5) => {
-                                    resolve(t1 + t2 + t3 + t4 + t5)
-                                })
-                            else if (event.public !== settings.public_new && !settings.public_new)
-                                this.unpublish(event.id).then((t5) => {
-                                    resolve(t1 + t2 + t3 + t4 + t5)
-                                })
-                            else resolve(t1 + t2 + t3 + t4)
-                        }).catch((e) => {
+                        this.updateWhoCanManage(JSON.parse(event), settings.who_can_update_new).then(t6 => {
+                            this.updateRecurrency(JSON.parse(event), {
+                                recurrent: settings.recurrent_new,
+                                interval: settings.interval_new,
+                                frequency: settings.frequency_new,
+                                recurrence: settings.recurrence_new,
+                                week_start: settings.week_start,
+                                days_of_week: settings.days_of_week
+                            }).then((t4) => {
+                                event = JSON.parse(event)
+                                if (event.public !== settings.public_new && settings.public_new)
+                                    this.publish(event.id).then((t5) => {
+                                        resolve(t1 + t2 + t3 + t4 + t5 + t6)
+                                    }).catch(e => {
+                                        reject(e)
+                                    })
+                                else if (event.public !== settings.public_new && !settings.public_new)
+                                    this.unpublish(event.id).then((t5) => {
+                                        resolve(t1 + t2 + t3 + t4 + t5 + t6)
+                                    }).catch(e => {
+                                        reject(e)
+                                    })
+                                else resolve(t1 + t2 + t3 + t4)
+                            }).catch((e) => {
+                                reject(e)
+                            })
+                        }).catch(e => {
                             reject(e)
                         })
                     }).catch(e => {
@@ -1089,12 +1130,12 @@ class Request {
             })
         })
     }
-    restoreHighlight(highlight){
-        return new Promise((resolve,reject) => {
-            tcpRequest.restoreHighlight(highlight,highlight.id + '_highlight').then(JSONData => {
-                serverEventListener.sendRequest(JSONData,highlight.id+'_highlight').then(response => {
+    restoreHighlight(highlight) {
+        return new Promise((resolve, reject) => {
+            tcpRequest.restoreHighlight(highlight, highlight.id + '_highlight').then(JSONData => {
+                serverEventListener.sendRequest(JSONData, highlight.id + '_highlight').then(response => {
                     stores.Highlights.addHighlight(highlight).then(() => {
-                        stores.Events.addHighlight(highlight.event_id,highlight.id,false).then(() => {
+                        stores.Events.addHighlight(highlight.event_id, highlight.id, false).then(() => {
                             let Change = {
                                 id: uuid.v1(),
                                 title: `Update On Main Activity`,

@@ -14,6 +14,8 @@ import Commitee from "./Commitee";
 import moment from "moment";
 import CacheImages from '../../CacheImages';
 import shadower from "../../shadower";
+import { dateDiff, writeDateTime } from "../../../services/datesWriter";
+import dateDisplayer from '../../../services/dates_displayer';
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenheight = Math.round(Dimensions.get('window').height);
 const HEADER_MAX_HEIGHT = 140;
@@ -101,47 +103,6 @@ export default class SWView extends Component {
             this.props.seen()
         })
     }
-    writeInterval(frequency) {
-        switch (frequency) {
-            case 'daily':
-                return '   day(s)';
-            case 'weekly':
-                return '   week(s)';
-            case 'monthly':
-                return '   month(s)';
-            case 'yearly':
-                return '   year(s)';
-            default:
-                return ''
-        }
-    }
-    displayDate(event) {
-        let date = event.period
-        let statDate = moment(date)
-        let end = moment(typeof event.recurrence === "string" ? event.recurrence : null)
-        let daysDiff = Math.floor(moment.duration(end.diff(statDate)).asDays())
-        if (daysDiff == 0) {
-            return "Started Today At " + moment(date).format("h:mm a");
-        } else if (daysDiff == 1) {
-            return "Past Yesterday at " + moment(date).format("h:mm a")
-        } else if (daysDiff > 1 && daysDiff < 7) {
-            return `Past ${Math.abs(daysDiff)} Days Ago at ` + moment(date).format("h:mm a")
-        } else if (daysDiff == 7) {
-            return "Past 1 Week Ago at " + moment(date).format("h:mm a")
-        } else if (daysDiff == -1) {
-            return "Starting Tomorrow at " + moment(date).format("h:mm a");
-        }
-        else if (daysDiff < -1) {
-            return `Starting in ${Math.abs(daysDiff)} Days at ` + moment(date).format("h:mm a");
-        } else {
-            return `Past on ${moment(date).format("dddd, MMMM Do YYYY")} at ${moment(date).format("h:mm a")}`
-        }
-    }
-    dateDiff(event) {
-        let statDate = moment(event.period)
-        let end = moment(typeof event.recurrence === "string" ? event.recurrence : null)
-        return daysDiff = Math.floor(moment.duration(end.diff(statDate)).asDays())
-    }
     invite() {
         this.setState({
             openInviteModal: true
@@ -214,8 +175,8 @@ export default class SWView extends Component {
                                     {this.props.event.period ? <Title style={{
                                         alignSelf: 'flex-start',
                                         marginRight: "2%", fontStyle: 'italic', fontWeight: this.props.event.closed ? "bold" : "400",
-                                        color: this.props.event.closed ? "red" : this.dateDiff(this.props.event) > 0 ? "gray" : "#1FABAB", fontSize: 12,
-                                    }}>{this.props.event.closed ? "Closed" : this.displayDate(this.props.event)}</Title> : null}
+                                        color: this.props.event.closed ? "red" : dateDiff(this.props.event) > 0 ? "gray" : "#1FABAB", fontSize: 12,
+                                    }}>{this.props.event.closed ? "Closed" : writeDateTime(this.props.event)}</Title> : null}
                                     {/*this.props.event.interval > 1 && this.props.event.frequency !== 'yearly' && this.dateDiff(this.props.event) < 0 ?
                                         <Text style={{
                                             color: "#1FABAB"
@@ -264,6 +225,7 @@ export default class SWView extends Component {
                             </View>
                             <View style={{height: 315,marginTop: "-10%", }}>
                                 <Commitee
+                                    computedMaster={this.props.computedMaster}
                                     master={this.props.master}
                                     ref="Commitee"
                                     participant={this.props.event.participant}

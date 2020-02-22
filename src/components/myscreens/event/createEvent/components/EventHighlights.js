@@ -485,9 +485,7 @@ export default class EventHighlights extends Component {
   rendering = 0
   render() {
     this.rendering = this.rendering + 1
-    return this.state.isMounted ? (
-
-      <Modal
+    return<Modal
         isOpen={this.props.isOpen}
         onClosed={() => {
           this.props.onClosed()
@@ -501,7 +499,7 @@ export default class EventHighlights extends Component {
         coverScreen={true}
         position={'bottom'}
         swipeToClose={false}
-      >
+    >{this.state.isMounted ? 
         <View>
           <View style={{ height: "98%", width: "100%", marginTop: '3%', }}>{!this.props.event_id ?
             <View style={{ height: "8%", width: "96%", marginLeft: "2%", marginRight: "2%" }}>
@@ -704,10 +702,9 @@ export default class EventHighlights extends Component {
           <View style={{ position: 'absolute' }}>
             <Text style={{ margin: '7%', }} note>{this.props.updateState ? "update post" : "add post"}</Text>
           </View>
-        </View>
+        </View> : <Spinner size={"small"} style={{ alignSelf: "center" }}></Spinner>}
       </Modal>
 
-    ) : <Spinner size={"small"} style={{ alignSelf: "center" }}></Spinner>
   }
 
 }

@@ -149,7 +149,7 @@ export default class CurrentEvents extends Component {
 
 
         return (
-            <View style={{ height: "100%",  }}>
+            <View style={{ height: "100%",backgroundColor: '#FEFFDE',  }}>
                 <BleashupFlatList
                 //backgroundColor={"white"}
                     keyExtractor={(item, index) => item.id}

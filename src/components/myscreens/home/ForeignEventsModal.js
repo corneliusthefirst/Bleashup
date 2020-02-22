@@ -59,8 +59,8 @@ export default class ForeignEventsModal extends PureComponent {
                         }, 20)
                 }}
                 style={{
-                    height: "97%",
-                    borderRadius: 8, backgroundColor: '#FEFFDE', width: "100%"
+                    height: "97%",borderTopLeftRadius: 8,borderTopRightRadius: 8
+                    ,backgroundColor: '#FEFFDE', width: "100%"
                 }}>
                 <View>{this.state.loaded ?
                     <View>
@@ -83,7 +83,7 @@ export default class ForeignEventsModal extends PureComponent {
                                 keyExtractor={this._keyExtractor}
                                 dataSource={this.state.events}
                                 renderItem={(item, index) =>
-                                    <View style={{ margin: '1%' }}>
+                                    <View key={index} style={{ margin: '1%' }}>
                                         <ForeignEvent inviteConcernee={(e) => this.inviteConcernee(e)} manageHere={(e) => this.manageHere(e)} event={item}>
                                         </ForeignEvent>
                                     </View>

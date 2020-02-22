@@ -238,6 +238,27 @@ class UpdatesDispatcher {
         })
       })
     },
+    who_can_manage:update => {
+      return new Promise((resolve,reject) => {
+        stores.Events.updateWhoCanManage(update.event_id,update.new_value,true).then(Eve => {
+          let Change = {
+            id: uuid.v1(),
+            title: "Updates On Main Activity",
+            updated: "who_can_update",
+            event_id: update.event_id,
+            updater: update.updater,
+            changed: "Changed The Manage Priviledges of The Activity To ...",
+            new_value: { data: null, new_value: update.new_value },
+            date: update.date,
+            time: null
+          }
+          this.infomCurrentRoom(Change, Eve, update.event_id)
+          stores.ChangeLogs.addChanges(Change).then(() =>{
+            resolve()
+          })
+        })
+      })
+    },
     recurrency_config: update => {
       return new Promise((resolve, reject) => {
         stores.Events.updateRecurrency(update.event_id, update.new_value, true).then((Eve) => {
@@ -1576,7 +1597,7 @@ class UpdatesDispatcher {
     },
     remind_recurrence: update => {
       return new Promise((resolve, reject) => {
-        stores.Reminds.updateRecurrence(update.new_value, true).then((oldRemind) => {
+        stores.Reminds.updateRecursiveFrequency(update.new_value, true).then((oldRemind) => {
           let Change = {
             id: uuid.v1(),
             title: `Updates On ${oldRemind.title} Remind`,

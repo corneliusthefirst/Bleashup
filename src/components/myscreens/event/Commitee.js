@@ -93,9 +93,10 @@ export default class Commitee extends Component {
                             height:256
                         }}
                             dataSource={union([this.generalCommitee], uniq(this.props.commitees))}
-                            keyExtractor={(item, index) => item}
+                            keyExtractor={(item, index) => index.toString()}
                             renderItem={(item, index) =>
                                 <CommiteeItem
+                                    computedMaster={this.props.computedMaster}
                                     key={index.toString()}
                                     master={this.props.master}
                                     event_id={this.props.event_id}

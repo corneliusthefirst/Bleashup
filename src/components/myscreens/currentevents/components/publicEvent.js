@@ -306,7 +306,7 @@ class PublicEvent extends Component {
             </Right>
           </CardItem>
           <CardItem style={{
-            marginLeft: "4%",
+            marginLeft: '2%',
           }}>
             {this.state.isMount ? <TitleView openDetail={() => this.props.openDetails(this.props.Event)} join={() => this.join()} joint={this.state.joint} seen={() => this.markAsSeen()}
               {...this.props}></TitleView> : null}
@@ -321,19 +321,23 @@ class PublicEvent extends Component {
             }}
             cardBody
           >
-            <Left>
-              {this.state.isMount ? <View><PhotoView navigation={this.props.navigation} renderDelay={this.props.renderDelay} showPhoto={(url) => url ?
+          <View style={{flexDirection: 'row',}}>
+              <View style={{ width: '65%' }}>{this.state.isMount ? <View style={{ alignSelf: 'flex-start' }}><CardItem 
+                style={{
+                  ...shadower(), 
+                  backgroundColor: '#1FABAB',
+                  width: "60%",
+                  borderRadius:5,
+                  marginLeft: "4%" }}><PhotoView
+               navigation={this.props.navigation} renderDelay={this.props.renderDelay} showPhoto={(url) => url ?
                 this.showPhoto(url) : null} joined={() => this.join()}
                 isToBeJoint hasJoin={this.props.Event.joint || this.state.joint} onOpen={() => this.onOpenPhotoModal()} style={{
-                  width: "70%",
-                  marginLeft: "4%"
+                  marginLeft: '-1%',
                 }} photo={this.props.Event.background} event_id={this.props.Event.id} width={170} height={100} borderRadius={6} />
-              </View> : null}
-            </Left>
-            <Right >
-              {this.state.isMount && this.props.Event.location.string ? <MapView style={{ marginRight: "11%" }}
-                location={this.props.Event.location.string}></MapView> : null}
-            </Right>
+              </CardItem></View> : null}</View>
+              {this.state.isMount && this.props.Event.location.string ?<View style={{alignSelf: 'flex-end',margin: '2%',}}><MapView style={{ marginRight: "11%" }}
+                location={this.props.Event.location.string}></MapView></View> : null}
+          </View>
           </CardItem>
           <CardItem>
             {this.state.isMount ? <Options seen={() => this.markAsSeen()} {...this.props}></Options> : null}

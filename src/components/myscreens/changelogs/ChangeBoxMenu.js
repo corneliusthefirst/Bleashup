@@ -46,11 +46,6 @@ export default class ChangeBoxMenu extends Component {
                         marginTop: '10%'
                     }} onPress={this.showMenu} name="dots-three-vertical" type="Entypo"></Icon>}
                 >
-                    <MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
-                        this.hideMenu()
-                        return this.props.mention()
-                    }
-                    }>{"Mention"}</MenuItem>
                     {this.props.master ? 
                         this.props.change.updated === 'delete_remind' ||
                         this.props.change.updated === 'highlight_delete' 

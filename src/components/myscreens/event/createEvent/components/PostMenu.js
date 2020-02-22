@@ -51,12 +51,12 @@ export default class PostMenu extends Component {
                         return this.props.mention()
                     }
                     }>{"Mention"}</MenuItem>
-                    {this.props.master ?
+                    {this.props.creator ?
                         <View><MenuDivider color="#1FABAB" /><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
                                 this.hideMenu()
                                 this.props.update()
                             }}>{"Update"}</MenuItem></View> : null}
-                    {this.props.master ?
+                    {this.props.master || this.props.creator ?
                         <View><MenuDivider color="#1FABAB" /><MenuItem textStyle={{ color: "red" }} onPress={() => {
                             this.hideMenu()
                             this.props.delete()

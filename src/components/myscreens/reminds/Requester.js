@@ -164,7 +164,7 @@ class Requester {
         return new Promise((resolve, reject) => {
             if ((typeof newConfigs === "string" && newConfigs !== oldConfig) ||
                 (typeof newConfigs === "object" && !isEqual(newConfigs, oldConfig))) {
-                console.warn("saving ruccrence")
+                console.warn("saving ruccrence",newConfigs)
                 let newRemindName = request.RemindUdate()
                 newRemindName.action = 'recurrence'
                 newRemindName.data = newConfigs
@@ -172,9 +172,9 @@ class Requester {
                 newRemindName.remind_id = remindID
                 tcpRequest.updateRemind(newRemindName, remindID + '_recurrence').then((JSONData) => {
                     EventListener.sendRequest(JSONData, remindID + '_recurrence').then(reponse => {
-                        stores.Reminds.updateRecurrence({
+                        stores.Reminds.updateRecursiveFrequency({
                             remind_id: remindID,
-                            recurrence: newConfigs
+                            recursive_frequency: newConfigs
                         }, remindID).then((oldRemind) => {
                             let Change = {
                                 id: uuid.v1(),
@@ -299,8 +299,8 @@ class Requester {
                                 updated: `remind_period_updated`,
                                 updater: stores.LoginStore.user,
                                 event_id: eventID,
-                                changed: "Changed Date/Time Of The Remind To ",
-                                new_value: { data: remindID, new_value: newPeriod },
+                                changed: "Changed start Date Of The Remind To ",
+                                new_value: { data: remindID, new_value: moment(newPeriod).format("dddd, MMMM Do YYYY, h:mm:ss a") },
                                 date: moment().format(),
                                 time: null
                             }

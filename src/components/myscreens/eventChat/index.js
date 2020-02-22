@@ -16,6 +16,7 @@ import stores from '../../../stores';
 import moment from 'moment';
 import firebase from 'react-native-firebase';
 import { values } from 'lodash';
+import Waiter from '../loginhome/Waiter';
 
 
 export default class EventChat extends Component {
@@ -227,9 +228,6 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
       activity_id={this.activity.id}
 
       newMessages={this.state.new_messages}
-      creator={this.props.creator} ></ChatRoom></View> : <ImageBackground
-        resizeMode={"contain"} source={require("../../../../assets/Bleashup.png")}
-        style={{ width: "100%", height: "100%", backgroundColor: "#FEFFDE", }}>
-      </ImageBackground>)
+      creator={this.props.creator} ></ChatRoom></View>:<Waiter dontshowSpinner={true}></Waiter>)
   }
 }

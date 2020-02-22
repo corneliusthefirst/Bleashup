@@ -24,6 +24,12 @@ class tcpRequestData {
         Update.about_update.action = action;
         Update.about_update.title = data;
         return Update;
+      }else if(action === 'who_can_update'){
+        Update.action = "who_can_update";
+        Update.phone = phone;
+        Update.event_id = eventID;
+        Update.who_can_update_update = data;
+        return Update;
       } else if (action == "description") {
         Update.action = "about";
         Update.phone = phone;

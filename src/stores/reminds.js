@@ -58,7 +58,7 @@ export default class Reminds {
           getRemind.event_id = event_id
           tcpRequest.getReminds(getRemind, event_id + '_get_reminds').then(JSONData => {
             EventListener.sendRequest(JSONData, event_id + "_get_reminds").then(response => {
-              if (!response.data || response.data === 'empty') {
+              if (!response.data || response.data === 'empty'|| response.data === 'no_such_value') {
                 resolve(fresh ? JSON.stringify([]) : [])
               }
               this.addReminds(response.data).then(() => {
@@ -281,11 +281,11 @@ export default class Reminds {
       })
     })
   }
-  @action updateRecursiveFrequency(NewRemind, inform) {
+  @action updateRecursiveFrequency(rem, inform) {
     return new Promise((resolve, Reject) => {
       this.readFromStore().then(Reminds => {
-        RemindIndex = findIndex(Reminds, { id: NewRemind.remind_id });
-        Reminds[RemindIndex].recursive_frequency = NewRemind.recursive_frequency;
+       let  RemindIndex = findIndex(Reminds, { id: rem.remind_id });
+        Reminds[RemindIndex].recursive_frequency = rem.recursive_frequency;
         Reminds[RemindIndex].updated_at = moment().format();
         Reminds[RemindIndex].description_updated = inform;
         Reminds[RemindIndex].updated = inform;
@@ -303,6 +303,7 @@ export default class Reminds {
       this.readFromStore().then(Reminds => {
         let Remind = find(Reminds, { id: NewRemind.remind_id });
         RemindIndex = findIndex(Reminds, { id: NewRemind.remind_id });
+        console.warn(NewRemind.recurrence,"pppp")
         Remind.recursive_frequency = NewRemind.recurrence;
         Remind.updated_at = moment().format();
         Remind.description_updated = inform;

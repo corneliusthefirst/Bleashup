@@ -42,7 +42,7 @@ export default class ChangeBox extends Component {
                 <View style={this.containerStyle}>
                     {!this.props.change ? null : <View style={{ flexDirection: 'column', margin: '2%', }}>
                         <View style={{ flexDirection: 'row', height: '45%' }}>
-                            <View style={{ width: '93%', height: '100%' }}><ProfileSimple showPhoto={(url) => {
+                            <View style={{ width: '83%', height: '100%' }}><ProfileSimple showPhoto={(url) => {
                                 this.props.showPhoto(url)
                             }} delay={this.props.delayer}
                                 profile={this.state.changer}></ProfileSimple>
@@ -58,11 +58,9 @@ export default class ChangeBox extends Component {
                                         <Text style={{ marginLeft: "2%" }} note>{this.props.change.updater.status}</Text>
                                     </View>
                                         </View>*/}</View>
-                            <View style={{ alignSelf: 'flex-start', marginTop: "-5%", marginRight: "3%", width: '7%' }}>
-                                {!this.props.replying ? <ChangeBoxMenu
-                                    master={this.props.master}
-                                    change={this.props.change}
-                                    mention={() => this.props.mention({
+                            <View style={{ alignSelf: 'flex-start', marginTop: "-2%", flexDirection: 'row', }}>
+                                <View style={{}}><Icon onPress={() => {
+                                    this.props.mention({
                                         id: this.props.change.id,
                                         title: `${this.props.change.changed}`,
                                         type_extern: this.props.change.title,
@@ -74,9 +72,13 @@ export default class ChangeBox extends Component {
                                         replyer_phone: this.state.changer.phone,
                                         replyer_name: this.state.changer.nickname
 
-                                    })}
+                                    })
+                                }} style={{ color: 'darkGray' }} type="Entypo" name="reply"></Icon></View>
+                                <View>{!this.props.replying ? <ChangeBoxMenu
+                                    master={this.props.master}
+                                    change={this.props.change}
                                     restore={() => this.props.restore(this.props.change)}
-                                ></ChangeBoxMenu> : null}
+                                ></ChangeBoxMenu> : null}</View>
                             </View>
                             <View style={{ width: "13%" }}>
                                 <TouchableOpacity onPress={() => requestAnimationFrame(() => {

@@ -2,6 +2,7 @@ package com.bleashup.bleashup;
 
 import android.app.Application;
 import com.facebook.react.ReactApplication;
+import com.swmansion.reanimated.ReanimatedPackage;
 import com.horcrux.svg.SvgPackage;
 import com.reactnative.ivpusic.imagepicker.PickerPackage;
 import com.arthenica.reactnative.RNFFmpegPackage; 
@@ -48,6 +49,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
             new MainReactPackage(),
+            new ReanimatedPackage(),
             new SvgPackage(),
             new RNFFmpegPackage(),
             new RNFirebasePackage(),

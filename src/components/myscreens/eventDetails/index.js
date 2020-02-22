@@ -162,7 +162,7 @@ export default class EventDetailView extends Component {
   _getItemLayout = (data, index) => (
     { length: 100, offset: 100 * index, index }
   )
-  _keyExtractor = (item, index) => item.id;
+  _keyExtractor = (item, index) => item.id.toString();
 
   /*
   _renderItem = ({ item, index }) => (
@@ -196,11 +196,14 @@ export default class EventDetailView extends Component {
   }
   @autobind
   newHighlight() {
-    this.setState({ EventHighlightState: true })
-    this.refs.highlights.setState({ animateHighlight: true })
+     this.props.computedMaster?this.setState({ EventHighlightState: true }):
+     Toast.show({text:"you don't have enough priviledges to add a post",duration:4000})
   }
   deleteHighlightHighlight(highlights) {
 
+  }
+  mention(replyer){
+    this.props.mention(replyer)
   }
   showCreator() {
     this.state.creatorInfo ? this.setState({
@@ -247,7 +250,9 @@ export default class EventDetailView extends Component {
                 //getItemLayout={this._getItemLayout}
                 renderItem={(item, index) => {
                   return (
-                    <HighlightCard update={(hid) => {
+                    <HighlightCard 
+                    phone={stores.LoginStore.user.phone}
+                    update={(hid) => {
                       this.setState({
                         EventHighlightState: true,
                         update: true,
@@ -255,21 +260,7 @@ export default class EventDetailView extends Component {
                       })
                     }}
                       mention={(replyer) => {
-                        this.props.mention({
-                          id:replyer.id,
-                          video: replyer.url.video ? true : false,
-                          audio: !replyer.url.video && replyer.url.audio ? true : false,
-                          video: replyer.url.video ? true : false,
-                          photo: !replyer.url.video && replyer.url.photo ? true : false,
-                          sourcer: replyer.url.video ?
-                            replyer.url.photo : replyer.url.photo ?
-                              replyer.url.photo : replyer.url.audio ?
-                                replyer.url.audio : null,
-                          title : `${replyer.title} : \n ${replyer.description}`,
-                          replyer_phone: stores.LoginStore.user.phone,
-                          //replyer_name: stores.LoginStore.user.name,
-                          type_extern: 'Posts',
-                        })
+                        this.mention(replyer)
                       }}
                       deleteHighlight={(item) => {
                         this.setState({
@@ -295,7 +286,7 @@ export default class EventDetailView extends Component {
               borderRadius: 8,
               borderColor: "#1FABAB", margin: "2%", borderWidth: 1,
             }}>
-              {this.props.master ? <Icon name={"pencil"} type={"EvilIcons"} onPress={() => {
+              {this.props.computedMaster ? <Icon name={"pencil"} type={"EvilIcons"} onPress={() => {
                 this.setState({
                   EventDescriptionState: true
                 })
@@ -305,16 +296,9 @@ export default class EventDetailView extends Component {
                 <View style={{ flex: 1 }}>
                   {this.props.Event.about.description != "" ?
                     <Hyperlink onPress={(url) => { Linking.openURL(url) }} linkStyle={{ color: '#48d1cc', fontSize: 16 }}>
-                      <Text dataDetectorType={'all'} style={{ fontSize: 16, fontWeight: "500", margin: "1%",color:'darkGray' }} delayLongPress={800} onLongPress={() => {
-                        if (this.state.participant.master == true) {
-                          this.setState({ EventDescriptionState: true })
-                          this.refs.description_ref.init();
-                        }
-                      }}>{this.props.Event.about.description}</Text>
+                      <Text dataDetectorType={'all'} style={{ fontSize: 16, fontWeight: "500", margin: "1%",color:'darkGray' }} delayLongPress={800}>{this.props.Event.about.description}</Text>
                     </Hyperlink> :
-                    <Text style={{ fontWeight: "500", margin: "1%", fontSize: 30, alignSelf: 'center', marginTop: (height) / 8 }} delayLongPress={800} onLongPress={() => {
-                      if (this.state.participant.master == true) { this.setState({ EventDescriptionState: true }) }
-                    }}>{this.state.defaultDetail}</Text>}
+                    <Text style={{ fontWeight: "500", margin: "1%", fontSize: 30, alignSelf: 'center', marginTop: (height) / 8 }} delayLongPress={800}>{this.state.defaultDetail}</Text>}
                 </View>
               </ScrollView>
             </View>
@@ -324,7 +308,7 @@ export default class EventDetailView extends Component {
 
             {this.props.Event.location.string != "" ?
               <View style={{ flexDirection: "column", height: height / 5, alignItems: "flex-end", marginRight: "3%", marginBottom: "5%", }}>
-                {this.props.master ? <Icon name={"pencil"} type={"EvilIcons"} onPress={() => {
+                {this.props.computedMaster ? <Icon name={"pencil"} type={"EvilIcons"} onPress={() => {
                   this.setState({
                     EventLocationState: true
                   })
@@ -336,7 +320,7 @@ export default class EventDetailView extends Component {
                   this.setState({ EventLocationState: true })
                 }
               }}>
-                {this.props.master ? <Icon name={"pencil"} type={"EvilIcons"} onPress={() => {
+                {this.props.computedMaster ? <Icon name={"pencil"} type={"EvilIcons"} onPress={() => {
                   this.setState({
                     EventLocationState: true
                   })

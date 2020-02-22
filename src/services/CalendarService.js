@@ -18,6 +18,7 @@ class CalendarService {
                         this.createBleashupCalendar()
                     } else {
                         this.calendarID = calendars[index].id
+                        console.warn(this.calendarID,"calendarID")
                     }
                 })
             } else {
@@ -36,7 +37,7 @@ class CalendarService {
             name: this.calendarName,
             title: this.calendarTitle,
             entityType: 'event',
-            accessLevel: 'freeebusy',
+            accessLevel: 'freebusy',
             ownerAccount: `Bleashup( ${stores.LoginStore.user.phone.replace('00', '+')})`,
             source: {
                 name: `Bleashup( ${stores.LoginStore.user.phone.replace('00', '+')})`,
@@ -81,8 +82,7 @@ class CalendarService {
     }
     saveEvent(Bevent, alarms, type) {
         if (Bevent.period && Bevent.period.includes("T")) {
-            let calendarEvent = type === 'reminds' ? this.translateRemindToCalendar(Bevent) : this.translateToCalendar(Bevent, alarms)
-            console.warn(calendarEvent)
+            let calendarEvent = type === 'reminds' ? this.translateRemindToCalendar(Bevent,alarms) : this.translateToCalendar(Bevent, alarms)
             /*let calendarEvent = {   
                 title : "test",
                 startDate: (new Date()).toISOString(),
@@ -107,10 +107,10 @@ class CalendarService {
         }
     }
     translateRemindToCalendar(Bevent, alarms) {
-        console.warn('translating to reminder',Bevent.calendar_id)
+        console.warn('translating to reminder',this.calendarID,alarms)
         return Platform.OS === 'android' ? {
             id: Bevent.calendar_id ? Bevent.calendar_id : undefined,
-            //calendarID: this.calendarID,
+            calendarID: this.calendarID,
             title: `${Bevent.title} reminder`,
             startDate: moment(Bevent.period).utc().format(UTCFormat),
             allDay: false,
@@ -120,6 +120,7 @@ class CalendarService {
                 frequency: Bevent.recursive_frequency.frequency,
                 interval: Bevent.recursive_frequency.interval,
                 //occurrence: Bevent.recurrence,
+                daysOfWeek : Bevent.recursive_frequency.days_of_week,
                 endDate: moment(Bevent.recursive_frequency.recurrence).utc().format(UTCFormat)
             },
             //recurrenceInterval:Bevent.recurrent? parseInt(Bevent.interval):null,
@@ -162,6 +163,7 @@ class CalendarService {
                 frequency: Bevent.recurrent ? Bevent.frequency : undefined,
                 interval: Bevent.interval,
                 //occurrence: Bevent.recurrence,
+                daysOfWeek : Bevent.days_of_week,
                 endDate: moment(Bevent.recurrence).utc().format(UTCFormat)
             },
             //recurrenceInterval:Bevent.recurrent? parseInt(Bevent.interval):null,

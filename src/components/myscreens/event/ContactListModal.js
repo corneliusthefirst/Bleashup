@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import ModalBox from 'react-native-modalbox';
-import { Container, Spinner } from 'native-base';
+import { Container, Spinner, Title } from 'native-base';
 import BleashupFlatList from '../../BleashupFlatList';
 import ProfileView from '../invitations/components/ProfileView';
 import { TouchableOpacity, View } from 'react-native';
@@ -61,25 +61,30 @@ export default class ContactListModal extends PureComponent {
                     borderRadius: 8, backgroundColor: '#FEFFDE', width: "100%"
                 }}>
                 {!this.state.loaded ? <Spinner size={"small"}></Spinner> : <Container style={{ marginTop: "7%" }}>
-                    <BleashupFlatList
-                        firstIndex={0}
-                        renderPerBatch={5}
-                        initialRender={10}
-                        numberOfItems={this.state.contacts.length}
-                        keyExtractor={this._keyExtractor}
-                        dataSource={this.state.contacts}
-                        renderItem={(item, index) => {
-                            this.delay = this.delay >= 15 ? 0 : this.delay + 1
-                            return (<TouchableOpacity key={index.toString()} opPress={() => {
-                                console.warn("pressed")
-                            }}><View style={{ display: 'flex', flexDirection: 'row', }}>
-                                    <View style={{ margin: '2%', }}><TouchableOpacity ><ProfileView delay={this.delay} phone={item}></ProfileView>
-                                    </TouchableOpacity></View>
-                                </View></TouchableOpacity>)
+                <View style={{height:'5%'}}>
+                <Title style={{color:'darkGray'}}>{this.props.title?this.props.title:''}</Title>
+                </View>
+                <View style={{height:'95%'}}>
+                        <BleashupFlatList
+                            firstIndex={0}
+                            renderPerBatch={5}
+                            initialRender={10}
+                            numberOfItems={this.state.contacts.length}
+                            keyExtractor={this._keyExtractor}
+                            dataSource={this.state.contacts}
+                            renderItem={(item, index) => {
+                                this.delay = this.delay >= 15 ? 0 : this.delay + 1
+                                return (<TouchableOpacity key={index.toString()} opPress={() => {
+                                    console.warn("pressed")
+                                }}><View style={{ display: 'flex', flexDirection: 'row', }}>
+                                        <View style={{ margin: '2%', }}><TouchableOpacity ><ProfileView delay={this.delay} phone={item}></ProfileView>
+                                        </TouchableOpacity></View>
+                                    </View></TouchableOpacity>)
 
-                        }}
-                    >
-                    </BleashupFlatList>
+                            }}
+                        >
+                        </BleashupFlatList>
+                </View>
                 </Container>}
             </ModalBox>
         )

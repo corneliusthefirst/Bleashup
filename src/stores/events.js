@@ -50,7 +50,8 @@ export default class events {
     key: "Events",
     data: []
   };
-  @action addEvent(NewEvent) {
+ addEvent(NewEvent) {
+    console.warn("calling create activity, -----")
     if (NewEvent == 'no_such_key') {
       resolve()
     } else {
@@ -72,7 +73,8 @@ export default class events {
       });
     }
   }
-  @action delete(EventID) {
+  delete(EventID) {
+    console.warn("calling delete activity ,,,,,, ",EventID)
     return new Promise((resolve, rejec) => {
       this.readFromStore().then(Events => {
         Events = reject(Events, { id: EventID })
@@ -310,6 +312,23 @@ export default class events {
       });
     });
   }
+  updateWhoCanManage(EventID,newVal,inform){
+    return new Promise((resolve,reject) => {
+      this.readFromStore().then(Events => {
+        let eventIndex = findIndex(Events, { id: EventID });
+        Events[eventIndex].who_can_update = newVal;
+        if (inform) {
+          Events[eventIndex].updated = true;
+        }
+        Events[eventIndex].updated_at = moment().format();
+        this.saveKey.data = Events;
+        storage.save(this.saveKey).then(() => {
+          this.setProperties(this.saveKey.data, inform);
+          resolve(Events[eventIndex]);
+        });
+      });
+    })
+  }
   @action addParticipant(EventID, Participant, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
@@ -439,6 +458,8 @@ export default class events {
         Events[index].recurrence = RecurrentUpdate.recurrence
         Events[index].frequency = RecurrentUpdate.frequency
         Events[index].interval = RecurrentUpdate.interval
+        Events[index].days_of_week  = RecurrentUpdate.days_of_week,
+        Events[index].week_start = RecurrentUpdate.week_start
         if (inform) {
           Events[index].title_updated = true;
           Events[index].updated = true;
@@ -936,8 +957,7 @@ export default class events {
   }
   readFromStore() {
     return new Promise((resolve, reject) => {
-      storage
-        .load(this.storeAccessKey)
+      storage.load(this.storeAccessKey)
         .then(events => {
           resolve(events);
         })

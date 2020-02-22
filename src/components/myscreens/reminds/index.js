@@ -59,7 +59,7 @@ export default class Reminds extends Component {
         this.props.startLoader()
         RemindRequest.addMembers({ ...this.state.currentTask, members: newMembers }).then(() => {
           this.props.stopLoader()
-          this.refrehReminds()
+          this.refreshReminds()
         }).catch((error) => {
           this.props.stopLoader()
         })
@@ -77,7 +77,7 @@ export default class Reminds extends Component {
 
   componentDidMount() {
     emitter.on('remind-updated', () => {
-      this.refrehReminds()
+      this.refreshReminds()
     })
     stores.Reminds.loadReminds(this.props.event_id).then((Reminds) => {
       setTimeout(() => {
@@ -92,7 +92,7 @@ export default class Reminds extends Component {
       this.props.startLoader()
       RemindRequest.removeMembers(members.map(ele => ele.phone), this.state.currentTask.id,
         this.state.currentTask.event_id).then(() => {
-          this.refrehReminds()
+          this.refreshReminds()
           this.props.stopLoader()
         }).catch(() => {
           this.props.stopLoader()
@@ -105,12 +105,14 @@ export default class Reminds extends Component {
 
   @autobind
   AddRemind() {
-    console.warn("opening remind")
-    //this.props.navigation.navigate("TasksCreation",{eventRemindData:this.state.eventRemindData,updateData:this.updateData,event_id:this.state.event_id});
-    this.setState({
-      RemindCreationState: true,
-      newing: !this.state.newing
-    })
+    if (!this.props.computedMaster) {
+      Toast.show({ text: "You don't have enough previlidges to add a remind", duration: 4000 })
+    } else {
+      this.setState({
+        RemindCreationState: true,
+        newing: !this.state.newing
+      })
+    }
   }
   sendUpdate(newRemind) {
     if (!this.props.working) {
@@ -133,7 +135,7 @@ export default class Reminds extends Component {
       Toast.show({ text: 'App is Busy' })
     }
   }
-  refrehReminds() {
+  refreshReminds() {
     console.warn('receiving updated remind message')
     stores.Reminds.loadReminds(this.props.event_id).then((Reminds) => {
       //console.warn(Reminds)
@@ -176,7 +178,7 @@ export default class Reminds extends Component {
         this.props.startLoader()
         RemindRequest.markAsDone([find(item.members, { phone: stores.LoginStore.user.phone })], item, null).then((res) => {
           this.props.stopLoader()
-          this.refrehReminds()
+          this.refreshReminds()
         }).catch((error) => {
           this.props.stopLoader()
         })
@@ -193,7 +195,7 @@ export default class Reminds extends Component {
       } else {
         this.props.startLoader()
         RemindRequest.confirm([user], this.state.currentTask.id, this.state.currentTask.event_id).then((res) => {
-          this.refrehReminds()
+          this.refreshReminds()
           this.props.stopLoader()
         }).catch(() => {
           this.props.stopLoader()
@@ -216,7 +218,7 @@ export default class Reminds extends Component {
         status: report
       }], this.state.currentTask, null).then((res) => {
         this.props.stopLoader()
-        this.refrehReminds()
+        this.refreshReminds()
       }).catch((error) => {
         this.props.stopLoader()
       })
@@ -227,7 +229,7 @@ export default class Reminds extends Component {
     if (!this.props.working) {
       this.props.startLoader()
       RemindRequest.deleteRemind(this.state.currentTask.id, this.state.currentTask.event_id).then(() => {
-        this.refrehReminds()
+        this.refreshReminds()
         this.props.stopLoader()
       }).catch(() => {
         this.props.stopLoader()
@@ -246,7 +248,7 @@ export default class Reminds extends Component {
           { phone: stores.LoginStore.user.phone })]
       }, alarms).then(() => {
         this.props.stopLoader()
-        this.refrehReminds()
+        this.refreshReminds()
       }).catch((error) => {
         this.props.stopLoader()
       })
@@ -258,20 +260,20 @@ export default class Reminds extends Component {
 
     return !this.state.mounted ? <Spinner size={'small'}></Spinner> : (
 
-      <View style={{ flex: 1, backgroundColor: '#FEFFDE' }}>
+      <View style={{ backgroundColor: '#FEFFDE' }}>
         <View style={{ height: "6%", width: "100%", padding: "2%", justifyContent: "space-between", flexDirection: "row", backgroundColor: "#FEFFDE", alignItems: "center", ...shadower() }}>
           <View>
-            <Title style={{ fontSize: 20, fontWeight: 'bold', }}>{"Reminds"}</Title>
+            <Title style={{ fontSize: 20, fontWeight: 'bold', ...shadower() }}>{"Reminds"}</Title>
           </View>
 
-          <View>
+          <View style={{ ...shadower()}}>
             <TouchableOpacity onPress={() => requestAnimationFrame(() => this.AddRemind())}>
-              <Icon type='AntDesign' name="pluscircle" style={{ color: "#1FABAB" }} />
+              <Icon type='AntDesign' name="pluscircle" style={{ color: "#1FABAB", ...shadower() }} />
             </TouchableOpacity>
           </View>
 
         </View>
-        <View style={{ height: "93%" }}>
+        <View style={{ height: "93%", }}>
           <BleashupFlatList
             initialRender={5}
             renderPerBatch={5}
@@ -285,6 +287,8 @@ export default class Reminds extends Component {
               return (
                 <View key={index}>
                   <TasksCard
+                    isLast={index === this.state.eventRemindData.length - 1}
+                    phone={stores.LoginStore.user.phone}
                     mention={itemer => {
                       this.props.mention({
                         id: itemer.id,
@@ -304,7 +308,8 @@ export default class Reminds extends Component {
                     showMembers={(members) => {
                       this.setState({
                         contacts: members,
-                        isContactsModalOpened: true
+                        isContactsModalOpened: true,
+                        title: 'Concernees'
                       })
                     }}
                     showDonners={(members, iteme) => {
@@ -317,15 +322,17 @@ export default class Reminds extends Component {
                     showConfirmed={(members, item) => {
                       this.setState({
                         isContactsModalOpened: true,
+                        title: 'Comfirmed Completion',
                         contacts: members
                       })
                     }}
                     removeMembers={(currentMembers, item) => {
-                      console.warn("executing remove configs")
+                      let contacts = currentMembers.filter(ele => findIndex(item.donners, { phone: ele.phone }) < 0)
                       this.setState({
                         isSelectableContactsModalOpened: true,
                         currentTask: item,
-                        contacts: currentMembers.filter(ele => findIndex(item.donners, { phone: ele.phone }) < 0),
+                        contacts: item.creator === stores.LoginStore.user.phone ?
+                          contacts : contacts.filter(ele => ele.phone === stores.LoginStore.user.phone),
                         adding: false,
                         removing: true,
                         notcheckAll: true,
@@ -398,6 +405,7 @@ export default class Reminds extends Component {
             })
           }}></SelectableContactList> : null}
         {this.state.isContactsModalOpened ? <ContactListModal
+          title={this.state.title}
           isOpen={this.state.isContactsModalOpened}
           onClosed={() => {
             this.setState({
@@ -407,7 +415,7 @@ export default class Reminds extends Component {
           contacts={uniq(this.state.contacts ? this.state.contacts.map(ele => ele.phone) : [])}></ContactListModal> : null}
         {this.state.iscontactReportModalOpened ? <ContactsReportModal
           must_report={this.state.currentTask.must_report}
-          master={this.props.master}
+          master={this.props.computedMaster}
           confirm={(user) => this.confirm(user)}
           isOpen={this.state.iscontactReportModalOpened}
           members={this.state.contacts}

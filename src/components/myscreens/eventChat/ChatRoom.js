@@ -52,6 +52,7 @@ import shadower from '../../shadower';
 import Pickers from '../../../services/Picker';
 import rnFetchBlob from 'rn-fetch-blob';
 import converToHMS from '../highlights_details/convertToHMS';
+import Waiter from "../loginhome/Waiter";
 let dirs = rnFetchBlob.fs.dirs
 
 const screenWidth = Math.round(Dimensions.get('window').width);
@@ -1130,12 +1131,11 @@ export default class ChatRoom extends Component {
     render() {
         return (
             <View style={{ height: "100%" }}>
-                <ImageBackground style={{ width: "100%", height: "100%" }} source={require("../../../../assets/Pure_.jpeg")}>
+                {
+                  //  <ImageBackground style={{ width: "100%", height: "100%" }} source={require("../../../../assets/Pure_.jpeg")}>
+            }
                     <StatusBar animated={true}  hidden={this.state.hideStatusBar} barStyle="dark-content" backgroundColor="#FEFFDE"></StatusBar>
-                    {!this.state.loaded ? <View><ImageBackground style={{ width: "100%", height: "100%" }}
-                        resizeMode={"contain"} source={require("../../../../assets/Bleashup.png")}></ImageBackground>
-                        <Spinner color="#FEFFDE" style={{ color: "#FEFFDE", position: 'absolute', marginTop: "90%", marginLeft: "39%", }} />
-                    </View> : <View><View style={{ width: "100%", alignSelf: 'center', }}>
+                    {!this.state.loaded ? <Waiter></Waiter> : <View><View style={{ width: "100%", alignSelf: 'center', }}>
                         <View style={{ height: this.state.messageListHeight, marginBottom: "0.5%" }}>
                             <TouchableWithoutFeedback onPressIn={() => {
                                 Keyboard.dismiss()
@@ -1184,7 +1184,8 @@ export default class ChatRoom extends Component {
                     <VerificationModal isOpened={this.state.isModalOpened}
                         verifyCode={(code) => this.verifyNumber(code)}
                         phone={this.props.user.phone}></VerificationModal>
-                </ImageBackground>
+                {//</ImageBackground>
+                }
             </View>
 
         )
@@ -1225,7 +1226,8 @@ export default class ChatRoom extends Component {
     keyboardView() {
         return <View style={{
             height: this.state.textInputHeight, backgroundColor: "#FEFFDE",
-            borderRadius: 8, alignSelf: 'center', borderBottomWidth: 0,
+            borderRadius: 8, alignSelf: 'center', borderBottomWidth: 0,borderWidth:.8,
+            borderColor:'gray',
             padding: '1%', maxWidth: "99.9%",
         }}>
             {

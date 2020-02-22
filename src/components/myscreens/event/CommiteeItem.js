@@ -53,7 +53,7 @@ export default class CommiteeItem extends Component {
                 this.setState({
                     commitee: this.props.commitee,
                     public: this.props.commitee.public_state,
-                    master: member ? member.master : false,
+                    master: member ? this.props.computedMaster : false,
                     loaded: true,
                     member: member,
                     joint: member ? true : false
@@ -61,14 +61,14 @@ export default class CommiteeItem extends Component {
             }, 50)
         } else {
             stores.CommiteeStore.getCommitee(this.props.id).then(commitee => {
-                this.member = find(commitee.member, (ele) => ele !== null && ele.phone === this.props.phone)
+                let member = find(commitee.member, (ele) => ele !== null && ele.phone === this.props.phone)
                 setTimeout(() => {
                     this.setState({
                         commitee: commitee,
                         public: commitee.public_state,
-                        master: this.member ? this.member.master : false,
+                        master: member ? this.props.computedMaster : false,
                         loaded: true,
-                        joint: this.member ? true : false
+                        joint: member ? true : false
                     })
                 }, 50)
             })
@@ -350,7 +350,7 @@ export default class CommiteeItem extends Component {
                                         },300)
                                     })
                                 }}>
-                                        <View>{this.props.master ? <Icon style={{ fontSize: 30, color: "#0A4E52" }} name="pencil" type="EvilIcons" /> : null}</View>
+                                        <View>{this.state.master  ? <Icon style={{ fontSize: 30, color: "#0A4E52" }} name="pencil" type="EvilIcons" /> : null}</View>
                                 </TouchableWithoutFeedback>
                             </View> : null}
                     </View>

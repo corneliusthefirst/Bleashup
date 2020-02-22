@@ -1,11 +1,11 @@
 import React, { Component } from "react";
 import {
-  Card, CardItem, Text, Icon, Label,
+  Card, CardItem, Icon, Label,
   Title, Input, Left, Right,
   Button, Thumbnail,
 } from "native-base";
 
-import { View, TouchableOpacity, Dimensions } from 'react-native';
+import { View, TouchableOpacity, Dimensions, Text, } from 'react-native';
 import Modal from 'react-native-modalbox';
 import autobind from "autobind-decorator";
 import Swipeout from 'react-native-swipeout';
@@ -45,22 +45,6 @@ export default class HighlightCard extends Component {
   shouldComponentUpdate(nextProps, nextState, nextContext) {
     return this.state.mounted !== nextState.mounted || !isEqual(this.props.item, nextProps.item)
   }
-  @autobind
-  delete() {
-    return new Promise((resolve, rejectPromise) => {
-
-      if (this.props.item.event_id == "newEventId") {
-        stores.Events.removeHighlight(this.props.item.event_id, this.props.item.id, false).then(() => { });
-      } else {
-        stores.Events.removeHighlight(this.props.item.event_id, this.props.item.id, false).then(() => { });
-      }
-      stores.Highlights.removeHighlight(this.props.item.id).then(() => { });
-      this.setState({ check: false });
-      //reset higlight data
-      this.props.deleteHighlight(this.props.item.id);
-    });
-
-  }
   containsMedia() {
     return this.props.item.url.video || this.props.item.url.audio || this.props.item.url.photo ? true : false
   }
@@ -86,7 +70,7 @@ export default class HighlightCard extends Component {
           }}>{this.props.item.title ? this.props.item.title : ""}</Title></View>
           <View>
           <View style={{alignSelf: 'flex-end',marginLeft: '2%',}}>
-                <PostMenu mention={() => this.props.mention(this.props.item)} delete={() => this.props.deleteHighlight(this.props.item)}
+                <PostMenu creator={this.props.item.creator === this.props.phone } mention={() => this.props.mention(this.props.item)} delete={() => this.props.deleteHighlight(this.props.item)}
                   update={() => this.props.update(this.props.item.id)}
                   master={this.props.participant.master}>
                 </PostMenu>
@@ -112,7 +96,7 @@ export default class HighlightCard extends Component {
             </View>
           </CardItem> : null}
           <CardItem style={{ height: this.containsMedia() ?  (height / 18) : (height / 7 ),margin: '2%',}}>
-            <Text ellipsizeMode='tail' style={{ fontSize: 12,color:'darkGray' }} numberOfLines={this.containsMedia() ? 2 : 10}>{this.props.item.description ? this.props.item.description : null}</Text>
+            <Text ellipsizeMode='tail' style={{ fontSize: 12, }} numberOfLines={this.containsMedia() ? 2 : 10}>{this.props.item.description ? this.props.item.description : null}</Text>
           </CardItem>
         </TouchableOpacity>
 

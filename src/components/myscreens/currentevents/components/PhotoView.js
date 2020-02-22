@@ -78,10 +78,11 @@ export default class PhotoView extends Component {
     }
     render() {
         return (<View style={{ ...this.props.style }}>
-            <TouchableOpacity onPress={() => requestAnimationFrame(() => {
+            <TouchableOpacity style={{...shadower()}} onPress={() => requestAnimationFrame(() => {
                 this.props.video ? this.playVideo(this.state.video) : this.showPhoto(this.state.image)
             })}>
                 {!this.state.image ? <Thumbnail style={{
+                    ...shadower(),
                     height: this.props.height ? this.props.height : 150,
                     width: this.props.width ? this.props.width : "100%",
                     borderRadius: this.props.borderRadius ? this.props.borderRadius : 0
@@ -89,6 +90,7 @@ export default class PhotoView extends Component {
                     <CacheImages thumbnails square source={{ uri: this.state.image }}
                         //parmenent={false}
                         style={{
+                            ...shadower(),
                             height: this.props.height ? this.props.height : 150,
                             width: this.props.width ? this.props.width : "100%",
                             borderRadius: this.props.borderRadius ? this.props.borderRadius : 0

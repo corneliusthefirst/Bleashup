@@ -10,8 +10,9 @@ import {
   Linking,
   Dimensions,
   TouchableOpacity,
-  Image
+  Image,
 } from 'react-native';
+import Animated, { Easing } from 'react-native-reanimated';
 import {
   Container,
   Header,
@@ -22,8 +23,6 @@ import {
   Tab,
   Body,
   TabHeading,
-  Card,
-  Right,
   Toast,
   Thumbnail
 } from 'native-base';
@@ -56,13 +55,12 @@ import TabModal from "./TabModal";
 
 let { height, width } = Dimensions.get('window');
 
-
 class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
       appState: 'active',
-      isTabModalOpened: true,
+      isTabModalOpened: false,
       currentTab: 0
     };
     this.permisssionListener()
@@ -70,6 +68,7 @@ class Home extends Component {
   state = {
 
   }
+  spinValue = new Animated.Value(0)
   permisssionListener() {
     firebase.messaging().hasPermission().then(status => {
       if (status) {
@@ -143,6 +142,19 @@ class Home extends Component {
     AppState.addEventListener('change', this._handleAppStateChange);
     NetInfo.isConnected.addEventListener("connectionChange", this.handleConnectionChange);
     BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this));
+  }
+  animating = false
+  launchAnimation() {
+    if (!this.animating)
+      Animated.timing(
+        this.spinValue,
+        {
+          toValue: 1,
+          duration: 3000,
+          easing: Easing.linear
+        }
+      ).start()
+      this.animating = true
   }
   realNew = []
   componentDidMount() {
@@ -295,6 +307,14 @@ class Home extends Component {
     this.props.navigation.navigate("Invitation")
   }
   render() {
+   const { concat,cos } = Animated
+    const spin = this.spinValue.interpolate({
+     inputRange: [0, 1],
+    outputRange: [1,95]
+  })
+    setTimeout(() => {
+     //this.launchAnimation()
+    }, 1000)
     StatusBar.setBackgroundColor("#FEFFDE", true)
     StatusBar.setBarStyle('dark-content', true)
     StatusBar.setHidden(false, true)
@@ -311,7 +331,11 @@ class Home extends Component {
             flex: 1, backgroundColor: "#FEFFDE", flexDirection: "row",
             justifyContent: "space-between", marginLeft: "3%", marginRight: "3%"
           }}>
-            <Thumbnail small source={require("../../../../assets/ic_launcher_round.png")}></Thumbnail>
+            <View style={{
+             // transform: [{ rotate: spin }]
+            }}>
+              <Thumbnail small source={require("../../../../assets/ic_launcher_round.png")}></Thumbnail>
+            </View>
             <View style={{ marginTop: '2%', }}>
               <View style={{ alignSelf: "flex-end", display: 'flex', flexDirection: 'row', }}>
                 <Icon name="sc-telegram" active={true} type="EvilIcons" style={{ color: "#1FABAB", }} onPress={() => this.navigateToInvitations()} />

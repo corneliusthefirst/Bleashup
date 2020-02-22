@@ -67,7 +67,7 @@ export default class InviteParticipantModal extends PureComponent {
                     stores.Contacts.getContacts().then(contacts => {
                         setTimeout(() => {
                             this.setState({
-                                contacts: contacts.filter(ele => findIndex(this.props.participants, { phone: ele.phone }) < 0),
+                                contacts: contacts ? contacts.filter(ele => findIndex(this.props.participants, { phone: ele.phone }) < 0):[],
                                 event_id: this.props.event_id,
                                 loaded: true,
                                 hideTitle: this.props.hideTitle
@@ -108,7 +108,7 @@ export default class InviteParticipantModal extends PureComponent {
                             dataSource={this.state.contacts}
                             renderItem={(item, index) => {
                                 this.delay = this.delay >= 15 ? 0: this.delay + 1
-                               return (<SelectableContactsMaster delay={this.delay} toggleMaster={(member) => this.toggleMaster(member)}
+                               return (<SelectableContactsMaster master={this.props.master} delay={this.delay} toggleMaster={(member) => this.toggleMaster(member)}
                                     selected={member => { this.addMember(member) }}
                                     unselected={(member) => this.remove(member)}
                                     key={index} contact={item}></SelectableContactsMaster>)

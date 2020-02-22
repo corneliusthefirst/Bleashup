@@ -13,7 +13,9 @@ class Request {
             recurrent : false,
             frequency :'daily',
             interval : 1,
-            recurrence : 1000
+            recurrence : 1000,
+            days_of_week:null,
+            week_start:null
         }
     }
     Update() {
@@ -29,6 +31,7 @@ class Request {
             participant_update: this.ParticipantUpdate(),
             location_update: this.LocationUpdate(),
             period_update: "",
+            who_can_update_update : null,
             background_update: ""
         }
     }
@@ -107,7 +110,8 @@ class Request {
             recursive_frequency:{
                 interval:1,
                 frequency:'yearly',
-                recurrence:null
+                recurrence:null,
+                days_of_week:null
             },
             status:"public",
             members:[],
@@ -377,7 +381,12 @@ class Request {
             votes: [],
             highlights: [],
             contributions: [],
-            must_contribute: []
+            must_contribute: [],
+            days_of_week : null,
+            week_start : null,
+            who_can_update:'master',
+            who_can_add_posts: 'master',
+            who_can_add_reminds: 'master'
         }
     }
     Period() {
