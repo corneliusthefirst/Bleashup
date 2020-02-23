@@ -86,9 +86,12 @@ export default class EventTasksCard extends Component {
     title: null,
     content: null
   }
+
+  canBeDone = dateDiff({ recurrence: this.props.item.period }) >= 0
+  missed = dateDiff({ recurrence: this.props.item.recursive_frequency.recurrence }) > 0
   long = false
   render() {
-   let status = this.props.item.confirmed && findIndex(this.props.item.confirmed, { phone: stores.LoginStore.user.phone }) >= 0
+    let status = this.props.item.confirmed && findIndex(this.props.item.confirmed, { phone: stores.LoginStore.user.phone }) >= 0
     this.accordData.title = this.props.item.description.slice(0, 103)
     this.accordData.content = this.props.item.description.slice(103,
       this.props.item.description.length)
@@ -98,22 +101,22 @@ export default class EventTasksCard extends Component {
       marginLeft: "2%", marginRight: "2%",
     }}>
     </Card> : (
-        <Card style={{ marginLeft: "2%", marginRight: "2%",marginBottom: this.props.isLast?'25%':'0%',}}>
+        <Card style={{ marginLeft: "2%", marginRight: "2%", marginBottom: this.props.isLast ? '25%' : '0%', }}>
           <CardItem>
             <View style={{ flexDirection: 'row', }}>
-            <View style={{ width: '68%' }}><Text style={{ width: '100%', fontWeight: "500", fontSize: 14, color: dateDiff({ period: this.props.item.period, recurrence: this.props.item.recursive_frequency.recurrence }) > 0 ? 'gray' : "#1FABAB", alignSelf: 'flex-end', }}
-              note>{`${writeDateTime({ period: this.props.item.period, recurrence: this.props.item.recursive_frequency.recurrence })}`}</Text></View>
-              <View style={{ flexDirection: 'row',}}>
-                <View style={{ flexDirection: 'row', marginTop: '3%',}}>
+              <View style={{ width: '68%' }}><Text style={{ width: '100%', fontWeight: "500", fontSize: 14, color: dateDiff({ period: this.props.item.period, recurrence: this.props.item.recursive_frequency.recurrence }) > 0 ? 'gray' : "#1FABAB", alignSelf: 'flex-end', }}
+                note>{`${writeDateTime({ period: this.props.item.period, recurrence: this.props.item.recursive_frequency.recurrence })}`}</Text></View>
+              <View style={{ flexDirection: 'row', }}>
+                <View style={{ flexDirection: 'row', marginTop: '3%', }}>
                   <Icon onPress={() => {
                     this.props.mention({ ...this.props.item, creator: this.state.creator })
-                  }} name={"reply"} style={{color:'darkGray'}} type="Entypo"></Icon>
+                  }} name={"reply"} style={{ color: 'darkGray' }} type="Entypo"></Icon>
                   <Icon style={{ color: 'darkGray' }} onPress={() => {
                     this.props.updateRemind(this.props.item)
                   }} name="gear" type="EvilIcons"></Icon>
                   <Icon style={{ color: 'darkGray' }} onPress={() => {
                     this.props.showMembers(this.props.item.members)
-                  }} name="ios-people" type="Ionicons"/>
+                  }} name="ios-people" type="Ionicons" />
                 </View>
                 <View style={{ marginTop: '-14%', }}>
                   <RemindsMenu
@@ -165,7 +168,7 @@ export default class EventTasksCard extends Component {
                     marginLeft: "90%"
                   }}></Icon>
                 :
-                <Button style={{
+                this.missed ? <Button transparent><Text style={{ fontWeight: 'bold', color: 'red' }}>{"Missed"}</Text></Button> : this.canBeDone ? <Button style={{
                   borderWidth: 2, marginTop: 5, borderRadius: 10, borderColor: "#1FABAB",
                   width: "21%", alignItems: 'center', justifyContent: 'center',
                   marginLeft: "78%"
@@ -175,7 +178,7 @@ export default class EventTasksCard extends Component {
                     fontWeight: "500", color: "#696969",
                     fontSize: 12
                   }}>{"Done"}</Text>
-                </Button>
+                </Button> : null
 
 
               )

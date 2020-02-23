@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import { Content, Text, Item, View, Button, Left, Right, Icon } from 'native-base';
 import Modal from "react-native-modalbox"
 import { ScrollView } from 'react-native-gesture-handler';
+import moment from 'moment';
 
 export default class RemindReportContent extends PureComponent {
     constructor(props) {
@@ -35,8 +36,8 @@ export default class RemindReportContent extends PureComponent {
                     }, 20)
                 }}
                 style={{
-                    height: "60%",
-                    borderRadius: 8, backgroundColor: '#FEFFDE', width: "90%"
+                    height: "50%",
+                    borderRadius: 8, backgroundColor: '#FEFFDE', width: "75%"
                 }}
             >
             <View>
@@ -53,9 +54,10 @@ export default class RemindReportContent extends PureComponent {
                             </Button>
                         </View>:null}
                     </View>
-                    <ScrollView style={{ margin: "5%", height: "80%" }}>
-                        <Text>{this.props.report}</Text>
+                    <ScrollView style={{ margin: "5%", height: "75%" }}>
+                        <Text>{this.props.report.report}</Text>
                     </ScrollView>
+                    <View style={{ margin: '2%' }}><Text note>{moment(this.props.report.date).format("dddd, MMMM Do YYYY, h:mm:ss a")}</Text></View>
             </View>
             </Modal>
         );

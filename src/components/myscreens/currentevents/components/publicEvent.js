@@ -326,6 +326,7 @@ class PublicEvent extends Component {
                 style={{
                   ...shadower(), 
                   backgroundColor: '#1FABAB',
+                  height:'90%',
                   width: "60%",
                   borderRadius:5,
                   marginLeft: "4%" }}><PhotoView

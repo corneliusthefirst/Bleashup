@@ -13,7 +13,13 @@
     - This is due to some Modals which are listening to backPress, once opened will not 
         unregister its handle even when closed because it's not unmounted onClosed.
 
+########################### contributions design ###########################################
 
+https://reactnativeexample.com/a-react-native-interface-for-the-paypal-payment-ui/
+react-native-paypal : https://github.com/MattFoley/react-native-paypal
+paypal-adaptive-payment: https://developer.paypal.com/docs/archive/adaptive-payments/integration-guide/APCallsHeadersAndPaymentTypes/
+
+###########################################################################################################################################
 [ ] Handle Proper Date display on the Activity menu Public event card and invitation
      card in case the activity is a recursive one.
 

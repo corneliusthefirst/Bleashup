@@ -21,7 +21,7 @@ import SelectableContactList from "../../SelectableContactList";
 import ContactListModal from "../event/ContactListModal";
 import ContactsReportModal from "./ContactsReportModal";
 import AreYouSure from "../event/AreYouSureModal";
-import BleashupScrollView from '../../BleashupScrollView';
+import moment from 'moment';
 //const MyTasksData = stores.Reminds.MyTasksData
 
 export default class Reminds extends Component {
@@ -176,7 +176,13 @@ export default class Reminds extends Component {
         })
       } else {
         this.props.startLoader()
-        RemindRequest.markAsDone([find(item.members, { phone: stores.LoginStore.user.phone })], item, null).then((res) => {
+        let member = find(item.members, { phone: stores.LoginStore.user.phone })
+        RemindRequest.markAsDone([{
+          ...member, status: {
+            date: moment().format(),
+            status: member.status
+          }
+        }], item, null).then((res) => {
           this.props.stopLoader()
           this.refreshReminds()
         }).catch((error) => {
@@ -212,10 +218,15 @@ export default class Reminds extends Component {
         showReportModal: false
       })
       this.props.startLoader()
+      let member = find(this.state.currentTask.members,
+        { phone: stores.LoginStore.user.phone })
       RemindRequest.markAsDone([{
-        ...find(this.state.currentTask.members,
-          { phone: stores.LoginStore.user.phone }),
-        status: report
+        ...member,
+        status: {
+          report: report,
+          date: moment().format(),
+          status: member.status
+        }
       }], this.state.currentTask, null).then((res) => {
         this.props.stopLoader()
         this.refreshReminds()
@@ -266,7 +277,7 @@ export default class Reminds extends Component {
             <Title style={{ fontSize: 20, fontWeight: 'bold', ...shadower() }}>{"Reminds"}</Title>
           </View>
 
-          <View style={{ ...shadower()}}>
+          <View style={{ ...shadower() }}>
             <TouchableOpacity onPress={() => requestAnimationFrame(() => this.AddRemind())}>
               <Icon type='AntDesign' name="pluscircle" style={{ color: "#1FABAB", ...shadower() }} />
             </TouchableOpacity>
@@ -415,7 +426,7 @@ export default class Reminds extends Component {
           contacts={uniq(this.state.contacts ? this.state.contacts.map(ele => ele.phone) : [])}></ContactListModal> : null}
         {this.state.iscontactReportModalOpened ? <ContactsReportModal
           must_report={this.state.currentTask.must_report}
-          master={this.props.computedMaster}
+          master={stores.LoginStore.user.phone === this.state.currentTask.creator}
           confirm={(user) => this.confirm(user)}
           isOpen={this.state.iscontactReportModalOpened}
           members={this.state.contacts}
@@ -434,7 +445,7 @@ export default class Reminds extends Component {
           callback={() => {
             this.deleteRemind()
           }}
-          message={"Are You Sure You Want To Delete This Remind?"}></AreYouSure> : null}
+          message={"Are you sure you want to delete this remind?"}></AreYouSure> : null}
       </View>
 
 

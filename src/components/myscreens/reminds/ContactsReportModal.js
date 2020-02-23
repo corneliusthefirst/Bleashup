@@ -53,7 +53,7 @@ export default class ContactsReportModal extends PureComponent {
                 }}>
                 {this.state.loaded ? <View>
                     <View style={{ width: "95%", margin: 4, height: 44, flexDirection: 'row', }}>
-                        <Text style={{ fontSize: 22, fontStyle: 'italic', fontWeight: 'bold', width: "80%", marginLeft: "5%", }}>{this.props.must_report ? "Remind/Task Completion Report" : "Completed By"}</Text>
+                        <Text style={{ fontSize: 22, fontStyle: 'italic', fontWeight: 'bold', width: "80%", marginLeft: "5%", }}>{this.props.must_report ? "Task Completion Report" : "Completed By"}</Text>
                     </View>
                     <View style={{}}>
                         <BleashupFlatList
@@ -86,7 +86,7 @@ export default class ContactsReportModal extends PureComponent {
                         >
                         </BleashupFlatList>
                     </View>
-                    <RemindReportContent master={this.props.master} isOpen={this.state.isReportModalOpened}
+                    {this.state.isReportModalOpened ? <RemindReportContent master={this.props.master} isOpen={this.state.isReportModalOpened}
                         report={this.state.currentReport}
                         user={this.state.currentUser}
                         closed={() => {
@@ -98,7 +98,7 @@ export default class ContactsReportModal extends PureComponent {
                             this.props.confirm(this.state.currentUser)
                             this.props.onClosed()
                         }}
-                    ></RemindReportContent>
+                    ></RemindReportContent> : null}
                 </View> : <Spinner size={'small'}></Spinner>}
             </Modal>
 
