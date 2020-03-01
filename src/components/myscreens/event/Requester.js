@@ -26,10 +26,10 @@ class Request {
                         stores.Events.addEventCommitee(commitee.event_id, commitee.id).then(() => {
                             let Change = {
                                 id: uuid.v1(),
-                                title: "Update On Commitees",
+                                title: "Update OnCommittees",
                                 updated: 'new_commitee',
                                 event_id: commitee.even_id,
-                                changed: `Create ${commitee.name} Commitee  `,
+                                changed: `Create ${commitee.name} Committee  `,
                                 updater: stores.LoginStore.user,
                                 new_value: { data: commitee.id, new_value: commitee.name },
                                 date: moment().format(),
@@ -60,10 +60,10 @@ class Request {
                     stores.CommiteeStore.updateCommiteeName(ID, newName).then((commitee) => {
                         let Change = {
                             id: uuid.v1(),
-                            title: "Update On Commitees",
+                            title: "Update OnCommittees",
                             updated: 'commitee_name_updated',
                             event_id: eventID,
-                            changed: `Changed ${commitee.name} Commitee Name To: `,
+                            changed: `Changed ${commitee.name} Committee Name To: `,
                             updater: stores.LoginStore.user,
                             new_value: { data: commitee.id, new_value: newName },
                             date: moment().format(),
@@ -92,10 +92,10 @@ class Request {
                     stores.CommiteeStore.updateCommiteeState(id, state).then((commitee) => {
                         let Change = {
                             id: uuid.v1(),
-                            title: "Update On Commitees",
+                            title: "Update On Committees",
                             updated: 'published_commitee',
                             event_id: event_id,
-                            changed: `${state === true ? 'Published' : 'Unpublished'} ${commitee.name} Commitee`,
+                            changed: `${state === true ? 'Published' : 'Unpublished'} ${commitee.name} Committee`,
                             updater: stores.LoginStore.user,
                             new_value: { data: commitee.id, new_value: state === true ? 'Published' : 'Unpublished' },
                             date: moment().format(),
@@ -124,10 +124,10 @@ class Request {
                     stores.CommiteeStore.addMembers(id, members).then((commitee) => {
                         let Change = {
                             id: uuid.v1(),
-                            title: "Update On Commitees",
+                            title: "Update OnCommittees",
                             updated: 'added_commitee_member',
                             event_id: event_id,
-                            changed: `Added Members To ${commitee.name} Commitee`,
+                            changed: `Added Members To ${commitee.name} Committee`,
                             updater: stores.LoginStore.user,
                             new_value: { data: commitee.id, new_value: members },
                             date: moment().format(),
@@ -155,10 +155,10 @@ class Request {
                     stores.CommiteeStore.changeCommiteeOpenedState(id, true).then((commitee) => {
                         let Change = {
                             id: uuid.v1(),
-                            title: "Update On Commitees",
+                            title: "Update OnCommittees",
                             updated: 'commitee_opened',
                             event_id: event_id,
-                            changed: `Opened ${commitee.name} Commitee`,
+                            changed: `Opened ${commitee.name} Committee`,
                             updater: stores.LoginStore.user,
                             new_value: { data: null, new_value: "opened" },
                             date: moment().format(),
@@ -186,10 +186,10 @@ class Request {
                     stores.CommiteeStore.changeCommiteeOpenedState(id, false).then((commitee) => {
                         let Change = {
                             id: uuid.v1(),
-                            title: "Update On Commitees",
+                            title: "Update OnCommittees",
                             updated: 'commitee_closed',
                             event_id: event_id,
-                            changed: `Closed ${commitee.name} Commitee`,
+                            changed: `Closed ${commitee.name} Committee`,
                             updater: stores.LoginStore.user,
                             new_value: { data: null, new_value: "closed" },
                             date: moment().format(),
@@ -219,10 +219,10 @@ class Request {
                     stores.CommiteeStore.removeMember(id, memberPhone).then((commitee) => {
                         let Change = {
                             id: uuid.v1(),
-                            title: "Update On Commitees",
+                            title: "Update OnCommittees",
                             updated: 'removed_commitee_member',
                             event_id: event_id,
-                            changed: `Removed Members From ${commitee.name} Commitee`,
+                            changed: `Removed Members From ${commitee.name} Committee`,
                             updater: stores.LoginStore.user,
                             new_value: { data: null, new_value: members },
                             date: moment().format(),
@@ -251,10 +251,10 @@ class Request {
                     stores.CommiteeStore.addMembers(id, member.member_phone).then((commitee) => {
                         let Change = {
                             id: uuid.v1(),
-                            title: "Update On Commitees",
+                            title: "Update OnCommittees",
                             updated: 'added_commitee_member',
                             event_id: event_id,
-                            changed: `Joint ${commitee.name} Commitee`,
+                            changed: `Joint ${commitee.name} Committee`,
                             updater: stores.LoginStore.user,
                             new_value: { data: null, new_value: [stores.LoginStore.user.phone] },
                             date: moment().format(),
@@ -284,10 +284,10 @@ class Request {
                     stores.CommiteeStore.removeMember(id, member.member_phone).then((commitee) => {
                         let Change = {
                             id: uuid.v1(),
-                            title: "Update On Commitees",
+                            title: "Update OnCommittees",
                             updated: 'removed_commitee_member',
                             event_id: event_id,
-                            changed: `Left ${commitee.name} Commitee`,
+                            changed: `Left ${commitee.name} Committee`,
                             updater: stores.LoginStore.user,
                             new_value: { data: null, new_value: [stores.LoginStore.user.phone] },
                             date: moment().format(),

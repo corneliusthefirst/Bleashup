@@ -43,6 +43,11 @@ export default class RouteView extends Component {
             emitter.emit("current_commitee_changed", GState.previousCommitee)
         }
     }
+    centerer = {
+        height: '100%', alignItems: 'center',
+        flex: 1,
+        justifyContent: 'center'
+    }
     resetCommiteeForGeneral() {
         GState.currentCommitee = GState.previousCommitee;
         emitter.emit("current_commitee_changed_by_main", GState.previousCommitee)
@@ -77,7 +82,7 @@ export default class RouteView extends Component {
                     height: this.height, backgroundColor: this.props.currentPage == "EventDetails" ? "#54F5CA" : "#FEFFDE",
                     width: "100%", borderTopLeftRadius: 12, ...shadower(3)
                 }}>
-                    <TouchableOpacity onPress={() => requestAnimationFrame(() => {
+                    <TouchableOpacity style={this.centerer} onPress={() => requestAnimationFrame(() => {
                         this.props.setCurrentPage("EventDetails")
                         this.resetSelectedCommitee()
                     }
@@ -92,7 +97,7 @@ export default class RouteView extends Component {
                     height: this.height, backgroundColor: this.props.currentPage == "EventChat" ? "#54F5CA" : "#FEFFDE",
                     ...shadower(3)
                 }}>
-                    <TouchableOpacity onPress={() => requestAnimationFrame(() => {
+                    <TouchableOpacity style={this.centerer} onPress={() => requestAnimationFrame(() => {
                         this.props.setCurrentPage("EventChat")
                         this.resetCommiteeForGeneral()
                     })
@@ -104,7 +109,8 @@ export default class RouteView extends Component {
                         </View>
                     </TouchableOpacity>
                 </CardItem>
-                {/*<CardItem style={{
+                {
+                /*<CardItem style={{
                     height: this.height, backgroundColor: this.props.currentPage == "Highlights" ? "#54F5CA" : "#FEFFDE", shadowOpacity: 1,
                     shadowOffset: {
                         height: 1,
@@ -119,13 +125,14 @@ export default class RouteView extends Component {
                             <Text style={{ padding: "1%", fontWeight: this.props.currentPage == "Highlights" ? "bold" : 'bold', }}>HighLights</Text>
                         </View>
                     </TouchableOpacity>
-                </CardItem>*/}
+                </CardItem>*/
+            }
                 <CardItem style={{
                     height: this.height,
                     backgroundColor: this.props.currentPage == "Reminds" ? "#54F5CA" : "#FEFFDE",
                     ...shadower(3)
                 }} >
-                    <TouchableOpacity onPress={() => requestAnimationFrame(() => {
+                    <TouchableOpacity style={this.centerer} onPress={() => requestAnimationFrame(() => {
                         this.props.setCurrentPage("Reminds")
                         this.resetSelectedCommitee()
                     })}>
@@ -138,7 +145,7 @@ export default class RouteView extends Component {
                 <CardItem style={{
                     height: this.height,  borderBottomLeftRadius: 12, backgroundColor: this.props.currentPage == "ChangeLogs" ? "#54F5CA" : "#FEFFDE", ...shadower(3)
                 }}>
-                    <TouchableOpacity onPress={() => requestAnimationFrame(() => {
+                    <TouchableOpacity style={this.centerer} onPress={() => requestAnimationFrame(() => {
                         this.props.setCurrentPage("ChangeLogs")
                         this.resetSelectedCommitee()
                     }

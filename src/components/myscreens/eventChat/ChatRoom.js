@@ -147,7 +147,8 @@ export default class ChatRoom extends Component {
                     firebase.database().ref(`${this.props.firebaseRoom}/${newKey}/received`).set(received)
                     if (newMessage.sender.phone == this.props.user.phone) {
                         console.warn("adding new_message")
-                        SendNotifications(this.props.user.name, newKey, newMessage.type, newMessage.text, this.props.firebaseRoom, this.props.user.phone, this.activity_name, this.props.activity_id, this.props.roomName).then(() => {
+                        //!! example of cloud functions calling . 
+                        SendNotifications(this.props.user.name, newKey, newMessage.type, newMessage.text, this.props.firebaseRoom, this.props.user.phone, this.activity_name, this.props.activity_id, this.props.roomName,this.props.room_type).then(() => {
                             this.setState({ newMessage: true })
                         })
                         // fetch(`https://us-central1-bleashup-1562173529011.cloudfunctions.net/informOthers?sender_name=${this.props.user.name}&message_key=${newKey}&message_type=${newMessage.type}&message=${newMessage.text}&room_key=${this.props.firebaseRoom}&sender_phone=${this.props.user.phone}&activity_name=${this.props.activity_name}&activity_id=${this.props.activity_id}&room_name=${this.props.roomName}`).then(response => {
@@ -203,6 +204,15 @@ export default class ChatRoom extends Component {
     typingRef = null
     setTypingRef(room) {
         this.typingRef = firebase.database().ref(`typing/${room}`)
+        // !! set typing ref on the relaion/activity page here.
+        //!! you will the set the typing reff on the relation/activity page. where activity_id is either the "relation" of the id of the current_activity
+        // i advice you to do this as a cloud function 
+        // this.how i will advice you to do this .
+        /* 
+        write a cloud function that is going to iterate throught the members of the current room an
+        and update the activity/relation typing state of each individual member. 
+        and on the relation of activity committees page those changes are going to be listen for
+        */
     }
     currentTyper = null
     showTypingToast(newTyper) {
@@ -331,8 +341,13 @@ export default class ChatRoom extends Component {
     componentWillMount() {
         this.fireRef = this.getRef(this.props.firebaseRoom);
         this.setTypingRef(this.props.firebaseRoom)
+
+        //!! handle user peer user disconnection here listen to something like 'current_room/${peer_user_phone}' to know wether the user is connected or not
+        // !! this will only be valid for a when there is just one user in a room .
+
+
         firebase.database().ref(`current_room/${this.props.user.phone}`).onDisconnect().set(null)
-        this.room = new ChatStore(this.props.firebaseRoom)
+        this.room = new ChatStore(this.props.firebaseRoom) //!! example of chat store initialization
         this.keyboardDidShowSub = Keyboard.addListener('keyboardDidShow', this.handleKeyboardDidShow);
         this.keyboardDidHideSub = Keyboard.addListener('keyboardDidHide', this.handleKeyboardDidHide);
         if (this.BackHandler) this.BackHandler.remove()
@@ -551,6 +566,8 @@ export default class ChatRoom extends Component {
         if (messager) {
             messager = { ...messager, received: [{ phone: this.props.user.phone, date: moment().format() }] }
             this.fireRef.push(messager)
+            
+            // !! update the latess message of the relation page
         }
     }
     sending = false
@@ -1243,7 +1260,7 @@ export default class ChatRoom extends Component {
                             <Icon name={"attach-file"} type={"MaterialIcons"} style={{ color: "#0A4E52", }}></Icon></TouchableOpacity>
                         <TouchableOpacity style={{ width: "24%", }} onLongPress={() => this.openPhotoSelector()} onPress={() => this.openCamera()}><Icon style={{ color: "#0A4E52", marginRight: "4%", }} type={"Ionicons"} name={"md-photos"}></Icon></TouchableOpacity><TouchableOpacity onPress={() => this.openVideo()}>
                             <Icon name={"video-camera"} type={"Entypo"} style={{ color: "#0A4E52", }}></Icon></TouchableOpacity>
-                        <TouchableOpacity style={{ width: "24%", }}>
+                        <TouchableOpacity style={{ width: "23%",marginLeft: '2%', }}>
                             <Icon onPress={() => {
                                 this.toggleEmojiKeyboard();
                                 this.markAsRead();
@@ -1252,12 +1269,12 @@ export default class ChatRoom extends Component {
                     <TextInput value={this.state.textValue} onChange={(event) => this._onChange(event)} style={{
                         paddingLeft: 10,
                         fontSize: 17,
-                        height: 50,
+                        height: 40,
                         width: "50%",
                         borderColor: "#1FABAB",
                         backgroundColor: 'white',
                         borderWidth: 1,
-                        borderRadius: 8,
+                        borderRadius: 6,
                     }} placeholder={'Your Message'} placeholderTextColor='#66737C' maxHeight={200} multiline={this.state.keyboardOpened ? true : false} minHeight={45} enableScrollToCaret ref={(r) => { this._textInput = r; }} />
                     <View style={{
                         marginLeft: this.state.showAudioRecorder ? "5%" : "3%", marginTop: "2%", display: 'flex',
@@ -1308,7 +1325,7 @@ export default class ChatRoom extends Component {
 
     audioRecorder() {
         return <View style={{
-            position: "absolute", width: 350, opacity: 0.97,
+            position: "absolute", width: '87%', opacity: 0.97,
             // marginTop: "1%",
             backgroundColor: '#5CB99E', height: 50, display: 'flex', flexDirection: 'row',
             marginLeft: 2, borderRadius: 10,
@@ -1332,7 +1349,11 @@ export default class ChatRoom extends Component {
     }
 
     header() {
-        return <View style={this.headerStyles}><View style={{ width: "90%", backgroundColor: "#FEFFDE", }}><Title style={{ fontSize: 20, fontWeight: 'bold', margin: "1%", alignSelf: 'flex-start', marginLeft: "4%" }}>{this.props.roomName}</Title></View>
+        return <View style={this.headerStyles}><View style={{ width: "90%", backgroundColor: "#FEFFDE", }}>
+        <Title style={{ fontSize: 20, fontWeight: 'bold', margin: "1%", alignSelf: 'flex-start', marginLeft: "4%" }}>{this.props.roomName}</Title></View>
+        {
+            //!! you can add the member last seen here if the room has just one member */
+        }
             <View style={{ width: "10%", backgroundColor: "#FEFFDE" }}>
                 <ChatroomMenu showMembers={() => this.showMembers()} addMembers={() => this.props.addMembers()} closeCommitee={() => this.props.close()} openCommitee={() => this.props.open()} leaveCommitee={() => this.props.leave()} removeMembers={() => this.props.removeMembers()} publishCommitee={() => this.props.publish()} master={this.props.master} eventID={this.props.activity_id} roomID={this.props.firebaseRoom} public={this.props.public_state} opened={this.props.opened}></ChatroomMenu>
             </View></View>;

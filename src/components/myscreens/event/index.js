@@ -168,7 +168,9 @@ export default class Event extends Component {
         return <Highlights {...this.props}></Highlights>
       case "EventChat":
         return <EventChat
-          activity={this.event}
+          activity_id={this.event.id}
+          activity_name={this.event.about.title}
+          room_type={"activity"} //!! 'relation' if it's a relation
           //activity_name={this.event.about.title}
           showLoader={() => this.startLoader()}
           stopLoader={() => this.stopLoader()}

@@ -207,7 +207,7 @@ class PublicEvent extends Component {
     })
   }
   join() {
-    if (!this.props.Event.joint) {
+    if (findIndex(this.props.Event.participant,{phone:stores.LoginStore.user.phone})) {
       if (this.props.Event.new) {
         stores.Events.markAsSeen(this.props.Event.id).then(() => {
         })
@@ -307,6 +307,7 @@ class PublicEvent extends Component {
           </CardItem>
           <CardItem style={{
             marginLeft: '2%',
+            marginBottom: '1%',
           }}>
             {this.state.isMount ? <TitleView openDetail={() => this.props.openDetails(this.props.Event)} join={() => this.join()} joint={this.state.joint} seen={() => this.markAsSeen()}
               {...this.props}></TitleView> : null}
@@ -336,7 +337,7 @@ class PublicEvent extends Component {
                   marginLeft: '-1%',
                 }} photo={this.props.Event.background} event_id={this.props.Event.id} width={170} height={100} borderRadius={6} />
               </CardItem></View> : null}</View>
-              {this.state.isMount && this.props.Event.location.string ?<View style={{alignSelf: 'flex-end',margin: '2%',}}><MapView style={{ marginRight: "11%" }}
+              {this.state.isMount && this.props.Event.location.string ?<View style={{alignSelf: 'flex-start',}}><MapView style={{ marginRight: "11%" }}
                 location={this.props.Event.location.string}></MapView></View> : null}
           </View>
           </CardItem>

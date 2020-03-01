@@ -29,14 +29,13 @@ export default class EventChat extends Component {
       typingText: null,
       isLoadingEarlier: false,
     };
-    this.activity = this.props.activity
   }
   state = {}
   activity = {}
   componentDidMount() {
     let user = stores.LoginStore.user
       let phone = user.phone.replace("00","+")
-      firebase.database().ref(`new_message/${this.props.activity.id}/${phone}/${this.props.roomID}/new_messages`).once('value', snapshoot => {
+      firebase.database().ref(`new_message/${this.props.activity_id}/${phone}/${this.props.roomID}/new_messages`).once('value', snapshoot => {
         this.props.newMessageCount = snapshoot.val() === null ?
           this.props.newMessageCount : snapshoot.val().lenght
         if (this.props.newMessageCount > 0) {
@@ -209,7 +208,7 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
       showLoader={this.props.showLoader}
       stopLoader={this.props.stopLoader}
       showProfile={(pro) => this.props.showProfile(pro)}
-      activity_name={this.activity.about.title}
+      activity_name={this.props.activity_name} // name_of_the_other_user
       close={() => this.props.close()}
       open={() => this.props.open()}
       addMembers={() => this.props.addMembers()}
@@ -217,15 +216,16 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
       leave={() => this.props.leave()}
       generallyMember={this.props.generallyMember}
       publish={() => this.props.publish()}
+      room_type={this.props.room_type}
       master={this.props.master}
       public_state={this.props.public_state}
       opened={this.props.opened}
       newMessageNumber={this.props.newMessageCount}
       showContacts={this.props.showContacts}
       showMembers={() => this.props.showMembers()}
-      firebaseRoom={this.props.roomID}
-      members={this.props.members}
-      activity_id={this.activity.id}
+      firebaseRoom={this.props.roomID} // relation_id
+      members={this.props.members} // relation_members
+      activity_id={this.activity_id} //reloation
 
       newMessages={this.state.new_messages}
       creator={this.props.creator} ></ChatRoom></View>:<Waiter dontshowSpinner={true}></Waiter>)

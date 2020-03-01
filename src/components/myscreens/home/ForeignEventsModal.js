@@ -69,10 +69,10 @@ export default class ForeignEventsModal extends PureComponent {
                             borderBottomWidth: .8, borderColor: "#1FABAB"
                         }}>
                             <Text style={{
-                                fontWeight: 'bold', fontStyle: 'italic',
-                                fontSize: 24,
+                                fontWeight: 'bold', 
+                                fontSize: 18,
                             }}>{"Events From Calendar"}</Text><Text note style={{
-                                fontSize: 12, fontStyle: 'italic', marginLeft: "0%",marginTop: "-1%",
+                                fontSize: 12, fontStyle: 'italic', marginLeft: "0%",
                             }}>{"Events where Found from Your Calendar; Manage Them From Here."}</Text></View>
                         <View style={{ height: "90%" }}>
                             <BleashupFlatList

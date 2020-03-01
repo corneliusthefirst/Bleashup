@@ -435,31 +435,33 @@ export default class SettingsModal extends Component {
                             {this.state.recurrent ?
                                 <View style={{ marginLeft: '1%', }}>
                                     <View style={{ flexDirection: 'column', marginLeft: "4%", }}>
-                                        <Item style={{ width: "100%", margin: '1%' }}>
-                                            <View style={{ flexDirection: 'column', }}>
-                                                <View pointerEvents={this.props.computedMaster ? null : 'none'} style={{ marginLeft: '1%', flexDirection: 'row', }}>
+                                        <Item style={{ width: "100%", margin: '1%', height: 37 }}>
+                                            <View style={{ flexDirection: 'column', marginTop: '-1%', }}>
+                                                <View style={{ marginLeft: '1%', flexDirection: 'row', }}>
                                                     <Text style={{ fontStyle: 'italic', marginTop: 3, }}>Every  </Text>
-                                                    <NumericInput value={this.state.interval}
-                                                        onChange={value => this.setInterval(value)}
-                                                        totalWidth={70}
-                                                        rounded
-                                                        borderColor={'#FEFFDE'}
-                                                        maxValue={this.computeMax()}
-                                                        initValue={this.state.interval}
-                                                        reachMaxIncIconStyle={{ color: 'red' }}
-                                                        reachMinDecIconStyle={{ color: 'red' }}
-                                                        minValue={1}
-                                                        sepratorWidth={0}
-                                                        iconStyle={{ color: '#FEFFDE' }}
-                                                        rightButtonBackgroundColor='#1FABAB'
-                                                        leftButtonBackgroundColor='#1FABAB'
-                                                        totalHeight={30}
-                                                    ></NumericInput>
+                                                    <View pointerEvents={this.props.computedMaster ? null : 'none'}>
+                                                        <NumericInput value={this.state.interval}
+                                                            onChange={value => this.setInterval(value)}
+                                                            totalWidth={70}
+                                                            rounded
+                                                            borderColor={'#FEFFDE'}
+                                                            maxValue={this.computeMax()}
+                                                            initValue={this.state.interval}
+                                                            reachMaxIncIconStyle={{ color: 'red' }}
+                                                            reachMinDecIconStyle={{ color: 'red' }}
+                                                            minValue={1}
+                                                            sepratorWidth={0}
+                                                            iconStyle={{ color: '#FEFFDE' }}
+                                                            rightButtonBackgroundColor='#1FABAB'
+                                                            leftButtonBackgroundColor='#1FABAB'
+                                                            totalHeight={30}
+                                                        ></NumericInput>
+                                                    </View>
                                                     <View style={{ flexDirection: 'row', width: "50%", }}>
                                                         <View pointerEvents={this.props.computedMaster ? null : 'none'}
                                                             style={{
                                                                 width: '60%',
-                                                                marginTop: '-12%',
+                                                                marginTop: '-10%',
                                                                 marginLeft: 3,
                                                             }}>
                                                             <Dropdown
@@ -474,19 +476,20 @@ export default class SettingsModal extends Component {
                                                                 containerStyle={{ borderWidth: 0, borderColor: "gray", borderRadius: 6, justifyContent: "center", padding: 2, height: 38 }}
                                                             />
                                                         </View>
-                                                        {this.state.frequency === 'weekly' ? <TouchableOpacity onPress={() => {
+                                                        {this.state.frequency === 'weekly' ? <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                                                             this.setState({
                                                                 isSelectDaysModalOpened: true,
                                                                 newThing: !this.state.newThing
                                                             })
-                                                        }}><Text>{"select days"}</Text></TouchableOpacity> : this.state.frequency === 'monthly' ? <TouchableOpacity onPress={() => {
-                                                            this.showDatePicker()
-                                                        }} >
-                                                            <Text>{`on the ${getDayMonth(this.state.date)}`}</Text>
-                                                        </TouchableOpacity> : this.state.frequency === 'yearly' ? <TouchableOpacity onPress={() => {
-                                                            this.showDatePicker()
-                                                        }}><Text>{`on ${getMonthDay(this.state.date)}`}</Text></TouchableOpacity> : <Text>{'(all days)'}</Text>}
-                                                        {this.state.isSelectDaysModalOpened ? <SelectDays isOpen={this.state.isSelectDaysModalOpened} addCode={(code) => {
+                                                        })}><Text>{this.props.computedMaster ? "select days" : "view days"}</Text></TouchableOpacity> : this.state.frequency === 'monthly' ?
+                                                                <View pointerEvents={this.props.computedMaster ? null : 'none'}><TouchableOpacity onPress={() => requestAnimationFrame(() => {
+                                                                    this.showDatePicker()
+                                                                })}>
+                                                                    <Text>{`on the ${getDayMonth(this.state.date)}`}</Text>
+                                                                </TouchableOpacity></View> : this.state.frequency === 'yearly' ? <View pointerEvents={this.props.computedMaster ? null : 'none'}><TouchableOpacity onPress={() => requestAnimationFrame(() => {
+                                                                    this.showDatePicker()
+                                                                })}><Text>{`on ${getMonthDay(this.state.date)}`}</Text></TouchableOpacity></View> : <Text>{'(all days)'}</Text>}
+                                                        {this.state.isSelectDaysModalOpened ? <SelectDays ownership={this.props.computedMaster} isOpen={this.state.isSelectDaysModalOpened} addCode={(code) => {
                                                             this.setState({
                                                                 daysOfWeek: uniq([code, ...this.state.daysOfWeek]),
                                                                 newThing: !this.state.newThing

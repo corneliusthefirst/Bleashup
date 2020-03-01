@@ -81,7 +81,7 @@ export default class EditNameModal extends PureComponent {
                 <View>
                     <View style={{ display: 'flex', flexDirection: 'row', marginBottom: "10%", }}>
                         <Icon style={{ color: "#0A4E52", fontSize: 35, marginRight: "5%", marginTop: "1%", }} type={"EvilIcons"} name={"pencil"}></Icon>
-                        <Text style={{ fontSize: 35, fontWeight: '400', }}> Edit Commitee Name</Text>
+                        <Text style={{ fontSize: 35, fontWeight: '400', }}>{"Edit Committee Name"}</Text>
                     </View>
                     <Text style={{ fontSize: 12, }}> the commitee name should not be greaterthan 20 characters.</Text>
                     {this.state.commiteeNameErrror ? <Text style={{ color: "red",fontWeight: 'bold', }} note>{"the commitee name cannot be empty"}</Text> : null}
@@ -95,7 +95,7 @@ export default class EditNameModal extends PureComponent {
                                 commiteeName: text
                             })
                             this.validator(text)
-                        }} placeholder="Commitee Name" />
+                        }} placeholder="Committee Name" />
                     </Item>
                     <View style={{ marginLeft: "90%", marginTop: "5%", }}>
                         <TouchableOpacity onPress={() => requestAnimationFrame(() => {

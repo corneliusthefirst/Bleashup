@@ -20,6 +20,12 @@ react-native-paypal : https://github.com/MattFoley/react-native-paypal
 paypal-adaptive-payment: https://developer.paypal.com/docs/archive/adaptive-payments/integration-guide/APCallsHeadersAndPaymentTypes/
 
 ###########################################################################################################################################
+
+########################## cacheble video ############################################
+
+https://stackoverflow.com/questions/44090112/how-to-implement-cache-in-react-native-video
+
+#############################################################
 [ ] Handle Proper Date display on the Activity menu Public event card and invitation
      card in case the activity is a recursive one.
 

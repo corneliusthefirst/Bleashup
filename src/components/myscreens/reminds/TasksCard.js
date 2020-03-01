@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import {
-  Card, CardItem, Text, Icon, Title, Left, Button, Right
+  Card, CardItem, Text, Icon, Title, Left, Button, Right, Spinner
 } from "native-base";
 
 import { StyleSheet, View, TouchableOpacity, Dimensions } from 'react-native';
@@ -13,6 +13,9 @@ import AccordionModule from '../invitations/components/Accordion';
 import Creator from "./Creator";
 import RemindsMenu from "./RemindsMenu";
 import { dateDiff, writeDateTime } from "../../../services/datesWriter";
+import { getCurrentDateInterval, getcurrentDateIntervals } from '../../../services/getCurrentDateInterval';
+import { format } from '../../../services/recurrenceConfigs';
+import { confirmedChecker } from "../../../services/mapper";
 
 let { height, width } = Dimensions.get('window')
 
@@ -29,8 +32,12 @@ export default class EventTasksCard extends Component {
       newing: false,
       showAll: false,
       period_time: "",
+      hasDoneForThisInterval: false,
+      correspondingDateInterval: {},
       mounted: false,
+      currentDateIntervals: [],
       cardData: this.props.item,
+
       assignToMe: false,
       userphone: "",
       accordData: { title: "", content: "" },
@@ -39,12 +46,39 @@ export default class EventTasksCard extends Component {
     }
 
   }
+  componentWillMount() {
+
+  }
+  loadIntervals() {
+    return new Promise((resolve, reject) => {
+      getcurrentDateIntervals({
+        start: moment(this.props.item.period).format(format),
+        end: moment(this.props.item.recursive_frequency.recurrence).format(format)
+      }, this.props.item.recursive_frequency.interval, this.props.item.recursive_frequency.frequency,
+        this.props.item.recursive_frequency.days_of_week).then((currentDateIntervals) => {
+          getCurrentDateInterval(currentDateIntervals,
+            moment().format(format)).then(correspondingDateInterval => {
+              this.setState({
+                correspondingDateInterval,
+                currentDateIntervals,
+                hasDoneForThisInterval
+              })
+              resolve('ok')
+            })
+        })
+    })
+  }
   componentDidMount() {
     setTimeout(() => {
       this.setState({
         mounted: true
       })
-    }, 20 + 20 * this.props.delay)
+    })
+    /*setTimeout(() => {
+     this.loadIntervals().then(() => {
+      console.warn('done loading')
+     })
+    }, 20 + 20 * this.props.delay)*/
   }
 
   @autobind
@@ -71,11 +105,13 @@ export default class EventTasksCard extends Component {
       this.state.newing !== nextState.newing
   }
   componentDidUpdate(prevProps, prevState) {
-    this.previousItem = JSON.stringify(prevProps.item)
-    /*if (prevProps.item.description !== this.props.item.description) {
-      console.warn("updating description")
-      this.setState({ accordData: this.state.accordData, newing: !this.state.newing })
-    }*/
+
+    if (prevProps.item.period !== this.props.item.period || !isEqual(this.props.item.recursive_frequency,
+      prevProps.item.recursive_frequency) || this.state.mounted !== prevState.mounted) {
+      this.loadIntervals().then(() => {
+
+      })
+    }
   }
   componentWillUnmount() {
   }
@@ -86,52 +122,90 @@ export default class EventTasksCard extends Component {
     title: null,
     content: null
   }
-
-  canBeDone = dateDiff({ recurrence: this.props.item.period }) >= 0
-  missed = dateDiff({ recurrence: this.props.item.recursive_frequency.recurrence }) > 0
-  long = false
   render() {
-    let status = this.props.item.confirmed && findIndex(this.props.item.confirmed, { phone: stores.LoginStore.user.phone }) >= 0
-    this.accordData.title = this.props.item.description.slice(0, 103)
-    this.accordData.content = this.props.item.description.slice(103,
-      this.props.item.description.length)
-    this.long = this.props.item.description.length > 103
+    hasDoneForThisInterval = find(this.props.item.donners, (ele) =>
+      ele.status.date &&
+      this.state.correspondingDateInterval &&
+      moment(ele.status.date).format("X") >
+      moment(this.state.correspondingDateInterval.start,
+        format).format("X") && moment(ele.status.date).format("X") <=
+      moment(this.state.correspondingDateInterval.end, format).format("X")) ? true : false
+    canBeDone = this.state.correspondingDateInterval ? true : false
+    missed = dateDiff({
+      recurrence: this.state.correspondingDateInterval ?
+        moment(this.state.correspondingDateInterval.end, format).format() :
+        this.props.item.recursive_frequency.recurrence
+    }) > 0;
+    status = this.props.item.confirmed && this.state.correspondingDateInterval && findIndex(this.props.item.confirmed,
+      ele => confirmedChecker(ele, stores.LoginStore.user.phone, this.state.correspondingDateInterval)) >= 0;
+    cannotAssign = dateDiff({ recurrence: this.state.correspondingDateInterval ? moment(this.state.correspondingDateInterval.end, format).format() : this.props.item.period }) > 0
+    member = findIndex(this.props.item.members, { phone: stores.LoginStore.user.phone }) >= 0;
     return !this.state.mounted ? <Card style={{
       width: '98%', height: 200,
       marginLeft: "2%", marginRight: "2%",
     }}>
+      <Spinner size={"small"}></Spinner>
     </Card> : (
-        <Card style={{ marginLeft: "2%", marginRight: "2%", marginBottom: this.props.isLast ? '25%' : '0%', }}>
+        <Card style={{ marginLeft: "2%", marginRight: "2%", //marginBottom: this.props.isLast ? '25%' : '0%',
+       }}>
           <CardItem>
-            <View style={{ flexDirection: 'row', }}>
-              <View style={{ width: '68%' }}><Text style={{ width: '100%', fontWeight: "500", fontSize: 14, color: dateDiff({ period: this.props.item.period, recurrence: this.props.item.recursive_frequency.recurrence }) > 0 ? 'gray' : "#1FABAB", alignSelf: 'flex-end', }}
-                note>{`${writeDateTime({ period: this.props.item.period, recurrence: this.props.item.recursive_frequency.recurrence })}`}</Text></View>
-              <View style={{ flexDirection: 'row', }}>
+              <Left style={{ width: '68%' }}><Text style={{
+                width: '100%', fontWeight: "500", fontSize: 14,
+                color: dateDiff({
+                  recurrence: this.state.correspondingDateInterval ?
+                    moment(this.state.correspondingDateInterval.end, format).format() :
+                    this.props.item.period
+                }) > 0 ? 'gray' : "#1FABAB",
+                alignSelf: 'flex-end',
+              }}
+                note>{`${writeDateTime(
+                  this.state.correspondingDateInterval ?
+                    {
+                      period: moment(this.state.correspondingDateInterval.end, format).format(),
+                      recurrence: moment(this.state.correspondingDateInterval.end, format).format(),
+                      title: this.props.item.title
+                    } : {
+                      period: moment(this.state.currentDateIntervals[this.state.currentDateIntervals.length - 1].end, format).format(),
+                      recurrence: moment(this.state.currentDateIntervals[this.state.currentDateIntervals.length - 1].end, format).format(),
+                      title: this.props.item.title
+                    }).
+                  replace("Starting", "Due").
+                  replace("Ended", "Past").
+                  replace("Started", "Past")}`}</Text>
+                  </Left>
+              <Right>
+              <View style={{ flexDirection: 'row', alignSelf: 'flex-end',}}>
                 <View style={{ flexDirection: 'row', marginTop: '3%', }}>
                   <Icon onPress={() => {
                     this.props.mention({ ...this.props.item, creator: this.state.creator })
-                  }} name={"reply"} style={{ color: 'darkGray' }} type="Entypo"></Icon>
-                  <Icon style={{ color: 'darkGray' }} onPress={() => {
+                  }} name={"reply"} style={{ color: 'darkGray', fontSize: 25, margin: '2%', }} type="Entypo"></Icon>
+                  <Icon style={{ color: 'darkGray', fontSize: 25, margin: '2%', }} onPress={() => {
                     this.props.updateRemind(this.props.item)
                   }} name="gear" type="EvilIcons"></Icon>
-                  <Icon style={{ color: 'darkGray' }} onPress={() => {
-                    this.props.showMembers(this.props.item.members)
+                  <Icon style={{ color: 'darkGray', fontSize: 25, margin: '2%', }} onPress={() => {
+                    this.props.showMembers(this.props.item.members.map(ele => ele.phone))
                   }} name="ios-people" type="Ionicons" />
                 </View>
-                <View style={{ marginTop: '-14%', }}>
+                <View style={{ alignSelf: 'flex-end',}}>
                   <RemindsMenu
                     creator={this.props.item.creator === this.props.phone}
                     master={this.props.master}
+                    canUnassign={!(missed || this.props.item.status === 'private') && member && !hasDoneForThisInterval && canBeDone}
                     addMembers={() => { this.props.addMembers(this.props.item.members, this.props.item) }}
                     removeMembers={() => this.props.removeMembers(this.props.item.members.filter(ele => this.props.master ||
                       ele.phone === stores.LoginStore.user.phone), this.props.item)}
-                    viewDoneBy={() => this.props.showDonners(this.props.item.donners, this.props.item)}
-                    viewConfirmed={() => this.props.showConfirmed(this.props.item.confirmed, this.props.item)}
+                    viewDoneBy={() => this.props.showDonners(this.props.item,
+                      this.state.currentDateIntervals,
+                      this.state.correspondingDateInterval)}
+                    viewConfirmed={() => this.props.showConfirmed(
+                      this.props.item,
+                      this.state.currentDateIntervals,
+                      this.state.correspondingDateInterval)}
                     deleteRemind={() => this.props.deleteRemind(this.props.item)}
                   ></RemindsMenu>
                 </View>
               </View>
-            </View>
+              </Right>
           </CardItem>
 
           <CardItem>
@@ -151,15 +225,14 @@ export default class EventTasksCard extends Component {
           </CardItem>
 
           <CardItem style={{ width: "100%", marginTop: '2%', }}>
-            {findIndex(this.props.item.members, { phone: stores.LoginStore.user.phone }) < 0 ?
-              this.props.item.status == 'private' ? null :
+            {!member ?
+              cannotAssign ? null :
                 <Button style={{ borderWidth: 2, borderRadius: 10, borderColor: "#1FABAB", width: "32%", alignItems: 'center', justifyContent: 'center', marginLeft: "67%" }}
                   onPress={() => this.assignToMe()} transparent >
                   <Text style={{ fontWeight: "500", color: "#696969", fontSize: 11 }}>Assign To Me</Text>
                 </Button>
               :
-              (this.props.item.donners &&
-                findIndex(this.props.item.donners, { phone: stores.LoginStore.user.phone }) >= 0 ?
+              (hasDoneForThisInterval ?
                 status ?
                   <Icon type="MaterialCommunityIcons" name="check-all"
                     style={{ color: "#54F5CA", marginLeft: "90%" }}></Icon>
@@ -168,19 +241,22 @@ export default class EventTasksCard extends Component {
                     marginLeft: "90%"
                   }}></Icon>
                 :
-                this.missed ? <Button transparent><Text style={{ fontWeight: 'bold', color: 'red' }}>{"Missed"}</Text></Button> : this.canBeDone ? <Button style={{
-                  borderWidth: 2, marginTop: 5, borderRadius: 10, borderColor: "#1FABAB",
+                missed ? <Button style={{
+                  borderWidth: 2, marginTop: 5, borderRadius: 10,
                   width: "21%", alignItems: 'center', justifyContent: 'center',
                   marginLeft: "78%"
-                }}
-                  onPress={() => this.onDone()} transparent >
-                  <Text style={{
-                    fontWeight: "500", color: "#696969",
-                    fontSize: 12
-                  }}>{"Done"}</Text>
-                </Button> : null
-
-
+                }} transparent><Text style={{ fontWeight: 'bold', color: 'red' }}>{"Missed"}</Text></Button>
+                  : canBeDone ? <Button style={{
+                    borderWidth: 2, marginTop: 5, borderRadius: 10, borderColor: "#1FABAB",
+                    width: "21%", alignItems: 'center', justifyContent: 'center',
+                    marginLeft: "78%"
+                  }}
+                    onPress={() => this.onDone()} transparent >
+                    <Text style={{
+                      fontWeight: "500", color: "#696969",
+                      fontSize: 12
+                    }}>{"Done"}</Text>
+                  </Button> : null
               )
 
             }

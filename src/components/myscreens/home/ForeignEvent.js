@@ -79,27 +79,27 @@ export default class ForeignEvent extends Component {
             <Card>
                 <CardItem>
                     <View>
-                        <Text style={{ fontWeight: 'bold', fontSize: 22, }}>{this.props.event.title}</Text>
+                        <Text style={{ fontWeight: 'bold', }}>{this.props.event.title}</Text>
                     </View>
                 </CardItem>
                 <CardItem>
-                    <Text style={{ fontStyle: 'italic', }}>
+                    <Text note style={{ fontStyle: 'italic', }}>
                         {`${moment(this.props.event.startDate).format("dddd, MMMM Do YYYY")} at ${moment(this.props.event.startDate).format("h:mm a")}`}
                     </Text>
                 </CardItem>
                 <CardItem>
-                    <View style={{ width: '60%' }}>
+                    <View style={{ width: '80%' }}>
                         {this.props.event.attendees.length > 0 ?
                             <Button onPress={() => this.inviteConcernee()} transparent>
                                 <Icon type={"EvilIcons"} style={{ fontSize: 50, }} name={"sc-telegram"}></Icon>
                                 <Text>{"Invite Attendees"}</Text>
                             </Button> : null}
                     </View>
-                    <View>{
+                    <View style={{alignSelf: 'flex-end',}}>{
                         !this.state.managed ? this.state.managing ? <Spinner></Spinner> :
                             <Button onPress={() => this.manageHere()} transparent>
-                                <Text style={{ fontSize: 23, fontWeight: 'bold', fontStyle: 'italic' }}>
-                                    {"Manage Here"}
+                                <Text style={{ fontWeight: '400', }}>
+                                    {"Manage"}
                                 </Text>
                             </Button> : null}
                     </View>

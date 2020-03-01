@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import Modal from "react-native-modalbox"
-import { Header, Left, Icon, Text, Label, Right, Title } from 'native-base';
+import { Header, Left, Icon, Text, Label, Right, Title, Button } from 'native-base';
 import { View, TouchableWithoutFeedback, TouchableHighlight, TouchableOpacity } from 'react-native';
 import BleashupFlatList from './BleashupFlatList';
 import ProfileWithCheckBox from './myscreens/currentevents/components/PofileWithCheckbox';
@@ -68,23 +68,16 @@ export default class SelectableContactList extends PureComponent {
                         <Text style={{ fontWeight: 'bold', fontStyle: 'italic', fontSize: 20, }}>{this.props.title} </Text>
                     </View>
                     <View>
-                        <TouchableOpacity onPress={() => requestAnimationFrame(() => {
+                        <Button style={{backgroundColor: '#1FABAB',}} onPress={() => requestAnimationFrame(() => {
                             this.props.removing ? this.props.saveRemoved(this.state.checked) :
                                 this.props.adding ? this.props.addMembers(this.state.checked) :
                                     this.props.takecheckedResult(this.state.checked)
                             this.setState({ checked: [] })
                             this.props.close();
                         })
-                        }>
-                            <View style={{ flexDirection: 'row', }}>
-                                <Text style={{ color: "#1FABAB", fontSize: 20, fontWeight: 'bold', marginTop: "3%", marginLeft: "1%", fontStyle: 'italic', }}>Go</Text>
-                                <Icon
-                                    style={{ color: "#1FABAB", }}
-                                    type="AntDesign"
-                                    name="doubleright"
-                                />
-                            </View>
-                        </TouchableOpacity>
+                        } rounded transparent>
+                            <Text style={{ fontWeight: 'bold', color: '#FEFFDE' }}>{"OK"}</Text>
+                        </Button>
                     </View>
                 </View>
                 <View>

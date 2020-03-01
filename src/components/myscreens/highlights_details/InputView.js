@@ -86,7 +86,7 @@ export default class InputView extends Component {
                                 <View style={{ display: 'flex', flexDirection: 'row', }}>
                                     <View style={{
                                         marginTop: "2%",
-                                        width: "33%",
+                                        width: "35%",
                                         display: 'flex', flexDirection: 'row',
                                     }}><View style={{ margin: '1%', }}>
                                             <TouchableOpacity onPress={() => {
@@ -127,25 +127,25 @@ export default class InputView extends Component {
                                             </TouchableOpacity>
                                         </View>
                                     </View>
-                                    <TextInput value={this.state.textValue}
+                                    <View style={{ width: '45%', marginLeft: '2%', marginTop: '2%',}}><TextInput value={this.state.textValue}
                                         onChange={(event) => this._onChange(event)}
                                         style={{
                                             paddingLeft: 10,
                                             fontSize: 17,
-                                            height: 50,
-                                            width: "50%",
+                                            height: 36,
+                                            width: "98%",
                                             borderColor: "#1FABAB",
                                             backgroundColor: 'white',
                                             borderWidth: 1,
-                                            borderRadius: 8,
+                                            borderRadius: 6,
                                         }} placeholder={'Your Message'}
                                         placeholderTextColor='#66737C'
                                         maxHeight={200}
                                         multiline={this.state.keyboardOpened ? true : false}
                                         minHeight={45}
-                                        enableScrollToCaret ref={(r) => { this._textInput = r; }} />
+                                        enableScrollToCaret ref={(r) => { this._textInput = r; }} /></View>
                                     <View style={{
-                                        marginLeft: "1%", marginTop: "2%", display: 'flex',
+                                        marginTop: "4%", display: 'flex',
                                         width: "20%",
                                         flexDirection: 'row',
                                     }}>

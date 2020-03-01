@@ -396,7 +396,7 @@ class Requester {
                                     time: null
                                 }
                                 if (oldRemind.calendar_id && findIndex(members, ele => ele === stores.LoginStore.user.phone) >= 0) {
-                                    CalendarServe.saveEvent({ ...oldRemind, period: null }, null, 'reminds').then(() => {
+                                    CalendarServe.saveEvent({ ...oldRemind, period: null }, null, 'reminds',true).then(() => {
                                         stores.Reminds.updateCalendarID({ remind_id: oldRemind.id, calendar_id: undefined }).then(() => {
                                             console.warn("calendar_id successfully removed")
                                         })
@@ -572,6 +572,8 @@ class Requester {
                             resolve('ok')
                         })
                     })
+                }).catch((er) => {
+                    reject(er)
                 })
             })
         })

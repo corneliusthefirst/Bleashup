@@ -76,7 +76,7 @@ export default class Commitee extends Component {
                             fontStyle: 'italic',
                             marginLeft: 10, fontSize: 22,
                             marginBottom: "3%",
-                        }}>Commitees</Title>
+                        }}>Committees</Title>
                 </View>
                     <View>
                         <TouchableOpacity onPress={() => requestAnimationFrame(() => { this.props.showCreateCommiteeModal() })}>

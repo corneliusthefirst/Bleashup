@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import {
   Content, Card, CardItem, Text, Icon, Item,
-   Title, Input, Left, Right, Spinner, Toast,
+  Title, Input, Left, Right, Spinner, Toast,
   Button, Label
 } from "native-base";
 
@@ -19,7 +19,7 @@ import NumericInput from 'react-native-numeric-input'
 import Modal from 'react-native-modalbox';
 import uuid from 'react-native-uuid';
 import emitter from '../../../services/eventEmiter';
-import { frequencyType, FrequencyReverser, nameToDataMapper, daysOfWeeksDefault } from '../../../services/recurrenceConfigs';
+import { frequencyType, FrequencyReverser, nameToDataMapper, daysOfWeeksDefault, formWeekIntervals, format, } from '../../../services/recurrenceConfigs';
 import SelectDays from "../event/SelectDaysModal";
 import { getMonthDay, getDayMonth, getDay } from "../../../services/datesWriter";
 
@@ -61,7 +61,7 @@ export default class TasksCreation extends Component {
         mounted: true,
         recurrent: remind.recursive_frequency.interval !== 1 && remind.recursive_frequency.frequency !== 'yearly',
         members: this.props.event.participant,
-        ownership:remind.creator === stores.LoginStore.user.phone && this.props.update,
+        ownership: remind.creator === stores.LoginStore.user.phone && this.props.update,
         currentMembers: remind && remind.members ? remind.members : [],
         date: remind && remind.period ? moment(remind.period).format() : moment().format(),
         title: remind && remind.period ? moment(remind.period).format() : moment().format()
@@ -84,27 +84,47 @@ export default class TasksCreation extends Component {
   }
 
   getCode(day) {
+    !find(find(daysOfWeeksDefault, { day: day })) ? console.error(this.state.currentRemind.period) : null
     return find(daysOfWeeksDefault, { day: day }).code
   }
   computeDaysOfWeek(data) {
+    let newDate = data && data.length > 0 ?
+      moment(formWeekIntervals(data, {
+        start: moment(this.state.date).format(format),
+        end: moment(this.state.currentRemind.recursive_frequency.recurrence).format(format)
+      },
+        moment(this.state.currentRemind.period).format(format))[0].end, format).format() :
+      this.state.currentRemind.period
     let NewRemind = {
       remind_id: this.state.currentRemind.id,
       recursive_frequency: {
         ...this.state.currentRemind.recursive_frequency,
-        days_of_week: data
-      }
+        days_of_week: data,
+      },
+      period: newDate
     }
     if (!this.props.update) {
       stores.Reminds.updateRecursiveFrequency(NewRemind, false).then((newRemind) => {
-        this.setState({ currentRemind: newRemind });
+        if (this.state.currentRemind.period !== NewRemind.period) {
+          stores.Reminds.updatePeriod(NewRemind, false).then((newRem) => {
+            this.setState({ currentRemind: newRem, date: NewRemind.period });
+          })
+        } else {
+          this.setState({
+            currentRemind: newRemind,
+            date: NewRemind.period
+          })
+        }
 
       });
     } else {
       this.setState({
         currentRemind: {
           ...this.state.currentRemind,
-          recursive_frequency: NewRemind.recursive_frequency
-        }
+          recursive_frequency: NewRemind.recursive_frequency,
+          period: NewRemind.period
+        },
+        date: NewRemind.period
       })
     }
   }
@@ -308,11 +328,12 @@ export default class TasksCreation extends Component {
   }
   componentDidUpdate(prevProp, prevState) {
     let data = this.state.currentRemind.recursive_frequency.days_of_week ?
-      this.state.currentRemind.recursive_frequency.days_of_week : [this.getCode(getDay(this.state.currentRemind.period))]
+      this.state.currentRemind.recursive_frequency.days_of_week : [this.getCode(getDay(moment(this.state.currentRemind.period)))]
     if (this.props.remind_id !== prevProp.remind_id) {
       this.init()
     } else if (this.state.currentRemind.recursive_frequency.frequency === 'weekly' &&
-      prevState.currentRemind.recursive_frequency.frequency !== this.state.currentRemind.recursive_frequency.frequency) {
+      this.state.currentRemind.recursive_frequency.frequency !==
+      prevState.currentRemind.recursive_frequency.frequency) {
       this.computeDaysOfWeek(data)
     } else if (this.state.currentRemind.recursive_frequency.frequency !== prevState.currentRemind.recursive_frequency.frequency) {
       this.computeDaysOfWeek(null)
@@ -339,6 +360,7 @@ export default class TasksCreation extends Component {
         this.setState({
           creating: true
         })
+        this.props.reinitializeList()
         let newRemind = request.Remind();
         newRemind = this.state.currentRemind;
         newRemind.id = uuid.v1();
@@ -347,7 +369,7 @@ export default class TasksCreation extends Component {
         let user = stores.LoginStore.user
         newRemind.creator = user.phone;
         newRemind.recursive_frequency.recurrence = this.state.currentRemind.recursive_frequency.recurrence ?
-          this.state.currentRemind.recursive_frequency.recurrence : this.state.currentRemind.period
+          this.state.currentRemind.recursive_frequency.recurrence : moment(this.state.currentRemind.period).add(1, 'h').format()
         newRemind.event_id = this.props.event_id; //user phone is use to uniquely identify locals
         newRemind.created_at = moment().format();
         newRemind.members = this.state.currentMembers
@@ -449,8 +471,9 @@ export default class TasksCreation extends Component {
       //newThing: !this.state.newThing
     })
   }
-  
+
   render() {
+    console.warn(this.state.currentRemind.period, 'from render', this.state.currentRemind.recursive_frequency.recurrence)
     return !this.state.mounted ? null : (
       <Modal
         isOpen={this.props.isOpen}
@@ -550,27 +573,30 @@ export default class TasksCreation extends Component {
                 {this.state.recurrent ?
                   <Item style={{ marginLeft: '4%' }}><View style={{ width: "95%", flexDirection: "column", justifyContent: "space-between", marginTop: "1%" }}>
 
-                    <View >
-                      <Item pointerEvents={this.state.ownership ? null : 'none'} style={{ width: "100%", marginLeft: '3%', padding: '1%' }}>
-                        <View pointerEvents={this.state.ownership ? null : 'none'} style={{ flexDirection: 'column', }}>
+                    <View>
+                      <Item style={{ width: "100%", marginLeft: '3%', padding: '1%' }}>
+                        <View style={{ flexDirection: 'column', }}>
                           <View style={{ marginLeft: '1%', flexDirection: 'row', }}>
                             <Text style={{ fontStyle: 'italic', marginTop: 3, }}>Every  </Text>
-                            <NumericInput value={this.state.currentRemind.recursive_frequency.interval ? this.state.currentRemind.recursive_frequency.interval : 0}
-                              onChange={value => this.setInterval(value)}
-                              totalWidth={70}
-                              rounded
-                              borderColor={'#FEFFDE'}
-                              maxValue={this.computeMax(this.state.currentRemind)}
-                              initValue={this.state.currentRemind.recursive_frequency.interval ? this.state.currentRemind.recursive_frequency.interval : 1}
-                              reachMaxIncIconStyle={{ color: 'red' }}
-                              reachMinDecIconStyle={{ color: 'red' }}
-                              minValue={1}
-                              sepratorWidth={0}
-                              iconStyle={{ color: '#FEFFDE' }}
-                              rightButtonBackgroundColor='#1FABAB'
-                              leftButtonBackgroundColor='#1FABAB'
-                              totalHeight={30}
-                            ></NumericInput>
+                            <View pointerEvents={this.state.ownership ? null : 'none'}>
+                              <NumericInput value={this.state.currentRemind.recursive_frequency.interval ?
+                                this.state.currentRemind.recursive_frequency.interval : 0}
+                                onChange={value => this.setInterval(value)}
+                                totalWidth={70}
+                                rounded
+                                borderColor={'#FEFFDE'}
+                                maxValue={this.computeMax(this.state.currentRemind)}
+                                initValue={this.state.currentRemind.recursive_frequency.interval ? this.state.currentRemind.recursive_frequency.interval : 1}
+                                reachMaxIncIconStyle={{ color: 'red' }}
+                                reachMinDecIconStyle={{ color: 'red' }}
+                                minValue={1}
+                                sepratorWidth={0}
+                                iconStyle={{ color: '#FEFFDE' }}
+                                rightButtonBackgroundColor='#1FABAB'
+                                leftButtonBackgroundColor='#1FABAB'
+                                totalHeight={30}
+                              ></NumericInput>
+                            </View>
                             <View pointerEvents={this.state.ownership ? null : 'none'} style={{ width: "30%", marginTop: '-6%', margin: '2%', }}>
                               <Dropdown
                                 data={frequencyType}
@@ -583,15 +609,22 @@ export default class TasksCreation extends Component {
                                 containerStyle={{ borderWidth: 0, borderColor: "gray", borderRadius: 6, justifyContent: "center", padding: "2%", height: 43 }}
                               />
                             </View>
-                            {this.state.currentRemind.recursive_frequency.frequency === 'weekly' ? <TouchableOpacity onPress={() => {
+                            {this.state.currentRemind.recursive_frequency.frequency === 'weekly' ? <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                               this.setState({
                                 isSelectDaysModalOpened: true
                               })
-                            }}><Text>{"select days"}</Text></TouchableOpacity> : this.state.currentRemind.recursive_frequency.frequency === 'monthly'?<TouchableOpacity onPress={() =>{
-                              this.showDateTimePicker()
-                            }}><Text>{` on the ${getDayMonth(this.state.date)}`}</Text></TouchableOpacity>:this.state.currentRemind.recursive_frequency.frequency === 'yearly'?<TouchableOpacity onPress={() => {
-                              this.showDateTimePicker()
-                                }}><Text>{`on ${getMonthDay(this.state.date)}`}</Text></TouchableOpacity>:<Text>{'(all days)'}</Text>}
+                            })
+                            }><Text>{this.state.ownership ? "select days" : "view days"}</Text></TouchableOpacity> :
+                              this.state.currentRemind.recursive_frequency.frequency === 'monthly' ?
+                                <View pointerEvents={this.state.ownership ? null : 'none'} >
+                                  <TouchableOpacity onPress={() => {
+                                    this.showDateTimePicker()
+                                  }}><Text>{` on the ${getDayMonth(this.state.date)}`}</Text>
+                                  </TouchableOpacity></View> : this.state.currentRemind.recursive_frequency.frequency === 'yearly' ?
+                                  <View pointerEvents={this.state.ownership ? null : 'none'}>
+                                    <TouchableOpacity onPress={() => {
+                                      this.showDateTimePicker()
+                                    }}><Text>{`on ${getMonthDay(this.state.date)}`}</Text></TouchableOpacity></View> : <Text>{'(all days)'}</Text>}
                           </View>
                         </View>
                       </Item>
@@ -668,7 +701,13 @@ export default class TasksCreation extends Component {
                 </View>
               </View>
               {!this.state.creating ? this.state.ownership ? !this.props.update ?
-                <View style={{ width: "20%", alignSelf: 'center', marginBottom: "3%", marginLeft: "68%", marginTop: "-8%" }}>
+                <View style={{
+                  width: "20%",
+                  alignSelf: 'center',
+                  marginBottom: "3%",
+                  marginLeft: "68%",
+                  marginTop: "-8%"
+                }}>
                   <Button
                     onPress={() => { this.addNewRemind() }} rounded>
                     <Text style={{ color: "#FEFFDE" }}> Create </Text>
@@ -689,13 +728,19 @@ export default class TasksCreation extends Component {
               removeCode={code => {
                 this.computeDaysOfWeek(this.state.currentRemind.recursive_frequency.days_of_week.filter(ele => ele !== code))
               }}
+              ownership={this.state.ownership}
               daysSelected={this.state.currentRemind.recursive_frequency.days_of_week}
               isOpen={this.state.isSelectDaysModalOpened} onClosed={() => {
+
                 this.setState({
-                  isSelectDaysModalOpened: false
+                  isSelectDaysModalOpened: false,
                 })
               }}></SelectDays>
-            <SelectableContactList isOpen={this.state.selectMemberState} close={() => { this.setState({ selectMemberState: false }) }}
+            <SelectableContactList isOpen={this.state.selectMemberState} close={() => {
+              this.setState({
+                selectMemberState: false,
+              })
+            }}
               members={this.state.members} notcheckall={true} takecheckedResult={this.takecheckedResult}>
             </SelectableContactList>
           </View>

@@ -41,15 +41,17 @@ export default class SelectDays extends Component {
                 }}
             >
                 <View>
-                <View style={{margin: '2%',justifyContent: 'center',alignSelf: 'center',}}>
+                    <View style={{margin: '2%',justifyContent: 'center',alignSelf: 'center',}}>
                         <Text style={{width:'90%',alignSelf:'center',fontWeight:'bold'}}>{"Select days in the week "}</Text>
                         {//<Icon style={{ margin: '2%', }} onPress={() => this.props.onClosed()} type={"EvilIcons"} name="close"></Icon>
             }
 
                 </View>
-                    <ScrollView>
-                        {this.renderAll()}
-                    </ScrollView>
+                    <View pointerEvents={this.props.ownership ? null : 'none'}>
+                        <ScrollView>
+                            {this.renderAll()}
+                        </ScrollView>
+                    </View>
                 </View>
             </ModalBox>
         )

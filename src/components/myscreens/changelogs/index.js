@@ -86,16 +86,16 @@ export default class ChangeLogs extends Component {
           restore={(data) => this.props.restore(data)}
           circleColor='rgb(45,156,219)'
           lineColor='#1FABAB'
-          timeContainerStyle={{ minWidth: 52, marginTop: -5 }}
+          timeContainerStyle={{ minWidth: 52, marginTop: -5,backgroundColor: '#FEFFDE',opacity:.8 }}
           timeStyle={{
             marginLeft: "4%",
             textAlign: 'center',
             backgroundColor: '#FEFFDE',
-            color: 'white', padding: 5,
+             padding: 4,
             borderRadius: 6,
             color: "#1FABAB",
-            borderWidth: .7,
-            borderColor: "#1FABAB",
+            //borderWidth: .7,
+            //borderColor: "#1FABAB",
           }}
           descriptionStyle={{ color: 'gray' }}
           onEventPress={(data) => {

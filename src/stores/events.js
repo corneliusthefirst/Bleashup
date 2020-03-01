@@ -979,7 +979,7 @@ export default class events {
       this.readFromStore().then(Events => {
         let index = findIndex(Events, { id: EventID })
         !Events[index].commitee || Events[index].commitee.length <= 0 ? Events[index].commitee = [CommiteeID] :
-          Events[index].commitee.unshift(CommiteeID)
+          Events[index].commitee.unshift(ID)
         Events[index].updated_at = moment().format();
         this.saveKey.data = Events
         storage.save(this.saveKey).then(() => {

@@ -95,7 +95,7 @@ export default class HighlightCard extends Component {
               </Icon> : null}
             </View>
           </CardItem> : null}
-          <CardItem style={{ height: this.containsMedia() ?  (height / 18) : (height / 7 ),margin: '2%',}}>
+          <CardItem style={{ height: this.containsMedia() ?  (height / 18) : (height / 7 ),margin: '.5%',}}>
             <Text ellipsizeMode='tail' style={{ fontSize: 12, }} numberOfLines={this.containsMedia() ? 2 : 10}>{this.props.item.description ? this.props.item.description : null}</Text>
           </CardItem>
         </TouchableOpacity>

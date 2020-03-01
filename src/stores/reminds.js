@@ -6,6 +6,9 @@ import GState from "./globalState";
 import request from '../services/requestObjects';
 import tcpRequest from '../services/tcpRequestData';
 import EventListener from '../services/severEventListener';
+import { getcurrentDateIntervalsNoneAsync, getCurrentDateIntervalNonAsync } from "../services/getCurrentDateInterval";
+import { format } from "../services/recurrenceConfigs";
+//import { mapper } from '../services/mapper';
 export default class Reminds {
   @observable Reminds = {
     id: '',
@@ -28,9 +31,8 @@ export default class Reminds {
     key: "reminds",
     data: []
   };
-
   @action addReminds(NewRemind) {
-    console.warn(NewRemind,"p")
+    console.warn(NewRemind, "p")
     return new Promise((resolve, Reject) => {
       this.readFromStore().then(Reminds => {
         if (Reminds && Reminds.length > 0) Reminds = uniqBy(Array.isArray(NewRemind) ?
@@ -58,7 +60,7 @@ export default class Reminds {
           getRemind.event_id = event_id
           tcpRequest.getReminds(getRemind, event_id + '_get_reminds').then(JSONData => {
             EventListener.sendRequest(JSONData, event_id + "_get_reminds").then(response => {
-              if (!response.data || response.data === 'empty'|| response.data === 'no_such_value') {
+              if (!response.data || response.data === 'empty' || response.data === 'no_such_value') {
                 resolve(fresh ? JSON.stringify([]) : [])
               }
               this.addReminds(response.data).then(() => {
@@ -265,10 +267,11 @@ export default class Reminds {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Reminds => {
         let index = findIndex(Reminds, { id: Remind.remind_id })
-        Reminds[index].confirm && Reminds[index].confirmed.length > 0 ? Reminds[index].confirmed =
+        Reminds[index].confirm && Reminds[index].confirmed.length > 0 ?
+          Reminds[index].confirmed =
           Array.isArray(Remind.confirmed) ?
-            [Remind.confirmed].concat(Reminds[index].confirmed) :
-            Remind.donners.concat(Reminds[index].confirmed) :
+            [...Remind.confirmed, ...Reminds[index].confirmed] :
+            [...[Remind.confirmed], ...Reminds[index].confirmed] :
           Reminds[index].confirmed = Array.isArray(Remind.confirmed) ?
             Remind.confirmed : [Remind.confirmed]
         inform ? Reminds[index].updated_at = moment().format() : null
@@ -284,11 +287,12 @@ export default class Reminds {
   @action updateRecursiveFrequency(rem, inform) {
     return new Promise((resolve, Reject) => {
       this.readFromStore().then(Reminds => {
-       let  RemindIndex = findIndex(Reminds, { id: rem.remind_id });
+        let RemindIndex = findIndex(Reminds, { id: rem.remind_id });
         Reminds[RemindIndex].recursive_frequency = rem.recursive_frequency;
         Reminds[RemindIndex].updated_at = moment().format();
         Reminds[RemindIndex].description_updated = inform;
         Reminds[RemindIndex].updated = inform;
+        Reminds[RemindIndex] = [Reminds[RemindIndex]][0]
         this.keyData.data = Reminds;
         storage.save(this.keyData).then(() => {
           GState.eventUpdated = true;
@@ -303,11 +307,12 @@ export default class Reminds {
       this.readFromStore().then(Reminds => {
         let Remind = find(Reminds, { id: NewRemind.remind_id });
         RemindIndex = findIndex(Reminds, { id: NewRemind.remind_id });
-        console.warn(NewRemind.recurrence,"pppp")
+        console.warn(NewRemind.recurrence, "pppp")
         Remind.recursive_frequency = NewRemind.recurrence;
         Remind.updated_at = moment().format();
         Remind.description_updated = inform;
         Remind.updated = inform;
+        Remind = [Remind][0]
         Reminds.splice(RemindIndex, 1, Remind);
         this.keyData.data = Reminds;
         storage.save(this.keyData).then(() => {
@@ -326,6 +331,7 @@ export default class Reminds {
         Remind.period = NewRemind.period;
         Remind.updated_at = moment().format();
         Remind.description_updated = inform;
+        Remind = [Remind][0]
         Remind.updated = inform;
         Reminds.splice(RemindIndex, 1, Remind);
         this.keyData.data = Reminds;
@@ -383,11 +389,11 @@ export default class Reminds {
           RemindID.remind_id = id;
           tcpRequest.getRemind(RemindID, id + "_get_remind").then(JSONData => {
             EventListener.sendRequest(JSONData, id + "_get_remind").then(Remind => {
-              if(Remind.data !== 'empty'){
+              if (Remind.data !== 'empty') {
                 this.addReminds(Remind.data).then(() => {
                   resolve(Remind.data)
                 })
-              }else{
+              } else {
                 resolve()
               }
             }).catch(() => {

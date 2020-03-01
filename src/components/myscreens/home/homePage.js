@@ -97,6 +97,9 @@ class Home extends Component {
         })
         break;
       }
+      case "relation": {
+        break
+      }
       //break;
       default:
         console.warn('defaulting.=------')
@@ -154,7 +157,7 @@ class Home extends Component {
           easing: Easing.linear
         }
       ).start()
-      this.animating = true
+    this.animating = true
   }
   realNew = []
   componentDidMount() {
@@ -307,13 +310,13 @@ class Home extends Component {
     this.props.navigation.navigate("Invitation")
   }
   render() {
-   const { concat,cos } = Animated
+    const { concat, cos } = Animated
     const spin = this.spinValue.interpolate({
-     inputRange: [0, 1],
-    outputRange: [1,95]
-  })
+      inputRange: [0, 1],
+      outputRange: [1, 95]
+    })
     setTimeout(() => {
-     //this.launchAnimation()
+      //this.launchAnimation()
     }, 1000)
     StatusBar.setBackgroundColor("#FEFFDE", true)
     StatusBar.setBarStyle('dark-content', true)
@@ -332,7 +335,7 @@ class Home extends Component {
             justifyContent: "space-between", marginLeft: "3%", marginRight: "3%"
           }}>
             <View style={{
-             // transform: [{ rotate: spin }]
+              // transform: [{ rotate: spin }]
             }}>
               <Thumbnail small source={require("../../../../assets/ic_launcher_round.png")}></Thumbnail>
             </View>
