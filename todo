@@ -26,6 +26,9 @@ paypal-adaptive-payment: https://developer.paypal.com/docs/archive/adaptive-paym
 https://stackoverflow.com/questions/44090112/how-to-implement-cache-in-react-native-video
 
 #############################################################
+
+note that deleting recurrent event on ios will not work use instead removeFutureEvents from RNCalendarEvents instead of tradtional RemoveEvents. 
+see: https://github.com/wmcmahan/react-native-calendar-events/issues/12
 [ ] Handle Proper Date display on the Activity menu Public event card and invitation
      card in case the activity is a recursive one.
 

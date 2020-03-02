@@ -478,11 +478,11 @@ class Requester {
                             time: null
                         }
                         if (oldRemind.calendar_id) {
-                            CalendarServe.saveEvent({ ...oldRemind, period: null }, null, 'reminds').then(() => {
-                                stores.Reminds.updateCalendarID({ remind_id: oldRemind.id, calendar_id: undefined }).then(() => {
+                            //CalendarServe.saveEvent({ ...oldRemind, period: null }, null, 'reminds',false).then(() => {
+                             //   stores.Reminds.updateCalendarID({ remind_id: oldRemind.id, calendar_id: undefined }).then(() => {
                                     console.warn("calendar_id successfully removed")
-                                })
-                            })
+                              //  })
+                          //  })
                         }
                         resolve('ok')
                         stores.ChangeLogs.addChanges(Change).then(() => {
