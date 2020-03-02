@@ -19,7 +19,6 @@ export default class Creator extends Component {
     componentDidMount() {
         setTimeout(() => {
             stores.TemporalUsersStore.getUser(this.props.creator).then(creator => {
-                console.warn(creator)
                 this.setState({
                     mounted: true,
                     creator: creator

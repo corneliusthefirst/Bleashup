@@ -5,7 +5,10 @@ import {
   Button,
 } from "native-base";
 
-import { StyleSheet, View, Image, TouchableOpacity, Dimensions } from 'react-native';
+import {
+  StyleSheet, View, Image, TouchableOpacity, Dimensions, ToastAndroid,
+  Platform,
+  AlertIOS, } from 'react-native';
 import autobind from "autobind-decorator";
 import TasksCard from "./TasksCard"
 import stores from '../../../stores/index';
@@ -30,6 +33,7 @@ import {
   getCurrentDateInterval
 } from "../../../services/getCurrentDateInterval";
 import { confirmedChecker } from "../../../services/mapper";
+import ReportTabModal from './NewReportTab';
 //const MyTasksData = stores.Reminds.MyTasksData
 
 export default class Reminds extends Component {
@@ -163,7 +167,9 @@ export default class Reminds extends Component {
     console.warn('receiving updated remind message')
     stores.Reminds.loadReminds(this.props.event_id).then((Reminds) => {
       //console.warn(Reminds)
-      this.setState({ eventRemindData: Reminds });
+      this.setState({ 
+        eventRemindData: Reminds, 
+        currentTask: find(Reminds, { id: this.state.currentTask.id }) });
     })
   }
 
@@ -221,7 +227,12 @@ export default class Reminds extends Component {
     } else {
 
       if (findIndex(this.state.currentTask.confirmed, ele => confirmedChecker(ele, user.data.phone, { start: user.start, end: user.end })) >= 0) {
-        Toast.show({ text: 'Task Completion Has Already Been Confirmed', duration: 5000 })
+        let msg = "confirmed already!"
+        if (Platform.OS === 'android') {
+          ToastAndroid.show(msg, ToastAndroid.SHORT)
+        } else {
+          AlertIOS.alert(msg);
+        }
       } else {
         this.props.startLoader()
         RemindRequest.confirm([user.data], this.state.currentTask.id, this.state.currentTask.event_id).then((res) => {
@@ -294,6 +305,48 @@ export default class Reminds extends Component {
     result = [...result, ...array[i]]
     return this.flatterarray(array, result, i + 1)
   }
+  @autobind showReport(item, intervals, thisInterval) {
+    this.props.startLoader()
+    let confirmed = intervals.map(ele => {
+      temp = item.confirmed.filter(el => moment(el.status.date).format('X') >
+        moment(ele.start, format).format("X") &&
+        moment(el.status.date).format('X') <= moment(ele.end, format).format('X'))
+      temp = [{ type: 'interval', from: ele.start, to: ele.end },
+      ...temp.map(e => {
+        return {
+          data: e,
+          start: ele.start, end: ele.end
+        }
+      })]
+      return temp
+    })
+    let donners = intervals.map(ele => {
+      temp = item.donners.filter(el => moment(el.status.date).format('X') >
+        moment(ele.start, format).format("X") &&
+        moment(el.status.date).format('X') <= moment(ele.end,
+          format).format('X'))
+      temp = [{
+        type: 'interval', from: ele.start,
+        to: ele.end
+      }, ...temp.map(e => {
+        return {
+          data: e,
+          start: ele.start, end: ele.end
+        }
+      })]
+      return temp
+    })
+    let members = item.members.map(ele => ele.phone)
+    this.setState({
+      confirmed: this.flatterarray(confirmed, [], 0),
+      members: members,
+      actualInterval: thisInterval,
+      isReportModalOpened: true,
+      currentTask: item,
+      donners: this.flatterarray(donners, [], 0),
+      complexReport: false
+    })
+  }
   scrollRemindListToTop() {
     this.refs.RemindsList.scrollToEnd()
     this.refs.RemindsList.resetItemNumbers()
@@ -355,48 +408,10 @@ export default class Reminds extends Component {
                         contacts: members,
                         isContactsModalOpened: true,
                         title: 'Concernees',
-                        complexReport:false
+                        complexReport: false
                       })
                     }}
-                    showDonners={(item, intervals, thisInterval) => {
-                      let temp = []
-                      result = intervals.map(ele => {
-                        temp = item.donners.filter(el => moment(el.status.date).format('X') >
-                          moment(ele.start, format).format("X") &&
-                          moment(el.status.date).format('X') <= moment(ele.end, format).format('X'))
-                        temp = [{ type: 'interval', from: ele.start, to: ele.end }, ...temp.map(e => { return { data: e, start: ele.start, end: ele.end } })]
-                        return temp
-                      })
-                      this.setState({
-                        iscontactReportModalOpened: true,
-                        currentTask: item,
-                        contacts: this.flatterarray(result, [], 0),
-                        actualInterval: thisInterval
-                      })
-                    }}
-                    showConfirmed={(item, intervals, thisInterval) => {
-                      let temp = []
-                      let result = intervals.map(ele => {
-                        temp = item.confirmed.filter(el => moment(el.status.date).format('X') >
-                          moment(ele.start, format).format("X") &&
-                          moment(el.status.date).format('X') <= moment(ele.end, format).format('X'))
-                        temp = [{ type: 'interval', from: ele.start, to: ele.end },
-                        ...temp.map(e => {
-                          return {
-                            data: e,
-                            start: ele.start, end: ele.end
-                          }
-                        })]
-                        return temp
-                      })
-                      this.setState({
-                        isContactsModalOpened: true,
-                        title: 'Comfirmed Completion',
-                        contacts: this.flatterarray(result, [], 0),
-                        actualInterval:thisInterval,
-                        complexReport:true
-                      })
-                    }}
+                    showReport={this.showReport}
                     removeMembers={(currentMembers, item) => {
                       let contacts = currentMembers.filter(ele => findIndex(item.donners, { phone: ele.phone }) < 0)
                       this.setState({
@@ -499,6 +514,28 @@ export default class Reminds extends Component {
               iscontactReportModalOpened: false
             })
           }}></ContactsReportModal> : null}
+        {this.state.isReportModalOpened ? <ReportTabModal
+          concernees={this.state.members}
+          confirmed={this.state.confirmed}
+          donners={this.state.donners}
+          confirm={e => this.confirm(e)}
+          master={stores.LoginStore.user.phone === this.state.currentTask.creator}
+          must_report={this.state.currentTask.must_report}
+          stopLoader={() => this.props.stopLoader()}
+          actualInterval={this.state.actualInterval}
+          complexReport={this.state.complexReport}
+          changeComplexReport={() => {
+            this.setState({
+              complexReport: !this.state.complexReport
+            })
+          }}
+          onClosed={() => {
+            this.setState({
+              isReportModalOpened: false
+            })
+          }}
+          isOpen={this.state.isReportModalOpened}
+        ></ReportTabModal> : null}
         {this.state.isAreYouModalOpened ? <AreYouSure isOpen={this.state.isAreYouModalOpened}
           title={'Delete Remind'} closed={() => {
             this.setState({

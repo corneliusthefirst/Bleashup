@@ -63,7 +63,7 @@ export default class HighlightCardDetail extends Component {
               </View>*/}
               </View>
             </ScrollView>
-            <View style={{ position: 'absolute', margin: '1%', }}><Text style={{ margin: '2%', }} note>{'post'}</Text></View>
+            <View style={{ position: 'absolute', margin: '1%', }}><Text style={{ margin: '2%', color: '#A91A84', fontWeight: 'bold' }} note>{'post'}</Text></View>
           </View>
         </View>
       </Modal>

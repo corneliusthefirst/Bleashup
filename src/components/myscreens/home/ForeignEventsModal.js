@@ -65,15 +65,17 @@ export default class ForeignEventsModal extends PureComponent {
                 <View>{this.state.loaded ?
                     <View>
                         <View style={{
-                            width: "99%", height: 44, margin: '2%',
-                            borderBottomWidth: .8, borderColor: "#1FABAB"
+                            width: "100%", height: 44, margin: '2%',opacity:.8,
+                            borderBottomWidth: .8, borderColor: "#1FABAB",alignSelf: 'center',paddingLeft: '2%',
                         }}>
-                            <Text style={{
-                                fontWeight: 'bold', 
+                            <Text style={{ color: '#A91A84', fontWeight: 'bold' }} note>{"sync"}</Text>
+                            <View style={{flexDirection: 'row',}}><Text style={{
+                                fontWeight: 'bold',
                                 fontSize: 18,
-                            }}>{"Events From Calendar"}</Text><Text note style={{
-                                fontSize: 12, fontStyle: 'italic', marginLeft: "0%",
-                            }}>{"Events where Found from Your Calendar; Manage Them From Here."}</Text></View>
+                            }}>{"Manage events"}</Text><Text note style={{
+                                fontSize: 12, fontStyle: 'italic', margin: '1%',
+                            }}>{"(events where found from calendar)"}</Text></View>
+                            </View>
                         <View style={{ height: "90%" }}>
                             <BleashupFlatList
                                 firstIndex={0}

@@ -61,7 +61,8 @@ export default class EventTasksCard extends Component {
               this.setState({
                 correspondingDateInterval,
                 currentDateIntervals,
-                hasDoneForThisInterval
+                hasDoneForThisInterval,
+                newing:!this.state.newing
               })
               resolve('ok')
             })
@@ -93,9 +94,6 @@ export default class EventTasksCard extends Component {
 
   @autobind
   assignToMe() {
-    console.warn("assigning to meee", findIndex(this.props.item.members,
-      { phone: stores.LoginStore.user.phone }) < 0,
-      this.props.item.members, stores.LoginStore.user.phone);
     this.props.assignToMe(this.props.item)
   }
   previousItem = null
@@ -105,11 +103,10 @@ export default class EventTasksCard extends Component {
       this.state.newing !== nextState.newing
   }
   componentDidUpdate(prevProps, prevState) {
-
+    this.previousItem = JSON.stringify(this.props.item)
     if (prevProps.item.period !== this.props.item.period || !isEqual(this.props.item.recursive_frequency,
       prevProps.item.recursive_frequency) || this.state.mounted !== prevState.mounted) {
       this.loadIntervals().then(() => {
-
       })
     }
   }
@@ -123,6 +120,7 @@ export default class EventTasksCard extends Component {
     content: null
   }
   render() {
+    console.warn(this.props.item.confirmed,this.props.item.title)
     hasDoneForThisInterval = find(this.props.item.donners, (ele) =>
       ele.status.date &&
       this.state.correspondingDateInterval &&
@@ -135,46 +133,52 @@ export default class EventTasksCard extends Component {
       recurrence: this.state.correspondingDateInterval ?
         moment(this.state.correspondingDateInterval.end, format).format() :
         this.props.item.recursive_frequency.recurrence
-    }) > 0;
+    }) > 0 && !hasDoneForThisInterval;
     status = this.props.item.confirmed && this.state.correspondingDateInterval && findIndex(this.props.item.confirmed,
       ele => confirmedChecker(ele, stores.LoginStore.user.phone, this.state.correspondingDateInterval)) >= 0;
-    cannotAssign = dateDiff({ recurrence: this.state.correspondingDateInterval ? moment(this.state.correspondingDateInterval.end, format).format() : this.props.item.period }) > 0
-    member = findIndex(this.props.item.members, { phone: stores.LoginStore.user.phone }) >= 0;
+    cannotAssign = dateDiff({
+      recurrence: this.state.correspondingDateInterval ?
+        moment(this.state.correspondingDateInterval.end, format).format() :
+        this.props.item.period
+    }) > 0
+    member = findIndex(this.props.item.members,
+      { phone: stores.LoginStore.user.phone }) >= 0;
     return !this.state.mounted ? <Card style={{
       width: '98%', height: 200,
       marginLeft: "2%", marginRight: "2%",
     }}>
       <Spinner size={"small"}></Spinner>
     </Card> : (
-        <Card style={{ marginLeft: "2%", marginRight: "2%", //marginBottom: this.props.isLast ? '25%' : '0%',
-       }}>
+        <Card style={{
+          marginLeft: "2%", marginRight: "2%", //marginBottom: this.props.isLast ? '25%' : '0%',
+        }}>
           <CardItem>
-              <Left style={{ width: '68%' }}><Text style={{
-                width: '100%', fontWeight: "500", fontSize: 14,
-                color: dateDiff({
-                  recurrence: this.state.correspondingDateInterval ?
-                    moment(this.state.correspondingDateInterval.end, format).format() :
-                    this.props.item.period
-                }) > 0 ? 'gray' : "#1FABAB",
-                alignSelf: 'flex-end',
-              }}
-                note>{`${writeDateTime(
-                  this.state.correspondingDateInterval ?
-                    {
-                      period: moment(this.state.correspondingDateInterval.end, format).format(),
-                      recurrence: moment(this.state.correspondingDateInterval.end, format).format(),
-                      title: this.props.item.title
-                    } : {
-                      period: moment(this.state.currentDateIntervals[this.state.currentDateIntervals.length - 1].end, format).format(),
-                      recurrence: moment(this.state.currentDateIntervals[this.state.currentDateIntervals.length - 1].end, format).format(),
-                      title: this.props.item.title
-                    }).
-                  replace("Starting", "Due").
-                  replace("Ended", "Past").
-                  replace("Started", "Past")}`}</Text>
-                  </Left>
-              <Right>
-              <View style={{ flexDirection: 'row', alignSelf: 'flex-end',}}>
+            <Left style={{ width: '68%' }}><Text style={{
+              width: '100%', fontWeight: "500", fontSize: 14,
+              color: dateDiff({
+                recurrence: this.state.correspondingDateInterval ?
+                  moment(this.state.correspondingDateInterval.end, format).format() :
+                  this.props.item.period
+              }) > 0 ? 'gray' : "#1FABAB",
+              alignSelf: 'flex-end',
+            }}
+              note>{`${writeDateTime(
+                this.state.correspondingDateInterval ?
+                  {
+                    period: moment(this.state.correspondingDateInterval.end, format).format(),
+                    recurrence: moment(this.state.correspondingDateInterval.end, format).format(),
+                    title: this.props.item.title
+                  } : {
+                    period: moment(this.state.currentDateIntervals[this.state.currentDateIntervals.length - 1].end, format).format(),
+                    recurrence: moment(this.state.currentDateIntervals[this.state.currentDateIntervals.length - 1].end, format).format(),
+                    title: this.props.item.title
+                  }).
+                replace("Starting", "Due").
+                replace("Ended", "Past").
+                replace("Started", "Past")}`}</Text>
+            </Left>
+            <Right>
+              <View style={{ flexDirection: 'row', alignSelf: 'flex-end', }}>
                 <View style={{ flexDirection: 'row', marginTop: '3%', }}>
                   <Icon onPress={() => {
                     this.props.mention({ ...this.props.item, creator: this.state.creator })
@@ -183,29 +187,22 @@ export default class EventTasksCard extends Component {
                     this.props.updateRemind(this.props.item)
                   }} name="gear" type="EvilIcons"></Icon>
                   <Icon style={{ color: 'darkGray', fontSize: 25, margin: '2%', }} onPress={() => {
-                    this.props.showMembers(this.props.item.members.map(ele => ele.phone))
+                    this.props.showReport(this.props.item, this.state.currentDateIntervals, this.state.correspondingDateInterval)
                   }} name="ios-people" type="Ionicons" />
                 </View>
-                <View style={{ alignSelf: 'flex-end',}}>
+                <View style={{ alignSelf: 'flex-end', }}>
                   <RemindsMenu
                     creator={this.props.item.creator === this.props.phone}
-                    master={this.props.master}
+                    master={this.props.item.creator === this.props.phone}
                     canUnassign={!(missed || this.props.item.status === 'private') && member && !hasDoneForThisInterval && canBeDone}
                     addMembers={() => { this.props.addMembers(this.props.item.members, this.props.item) }}
                     removeMembers={() => this.props.removeMembers(this.props.item.members.filter(ele => this.props.master ||
                       ele.phone === stores.LoginStore.user.phone), this.props.item)}
-                    viewDoneBy={() => this.props.showDonners(this.props.item,
-                      this.state.currentDateIntervals,
-                      this.state.correspondingDateInterval)}
-                    viewConfirmed={() => this.props.showConfirmed(
-                      this.props.item,
-                      this.state.currentDateIntervals,
-                      this.state.correspondingDateInterval)}
                     deleteRemind={() => this.props.deleteRemind(this.props.item)}
                   ></RemindsMenu>
                 </View>
               </View>
-              </Right>
+            </Right>
           </CardItem>
 
           <CardItem>

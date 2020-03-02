@@ -3,6 +3,7 @@ import { Content, Text, Item, View, Button, Left, Right, Icon } from 'native-bas
 import Modal from "react-native-modalbox"
 import { ScrollView } from 'react-native-gesture-handler';
 import moment from 'moment';
+import { Root } from 'native-base';
 
 export default class RemindReportContent extends PureComponent {
     constructor(props) {
@@ -40,24 +41,26 @@ export default class RemindReportContent extends PureComponent {
                     borderRadius: 8, backgroundColor: '#FEFFDE', width: "75%"
                 }}
             >
-            <View>
-                    <View style={{margin: '2%',height:'5%',flexDirection: 'row',}}>
-                        <View style={{width:'80%'}}>
+                <Root>
+                    <View>
+                        <View style={{ margin: '2%', height: '5%', flexDirection: 'row', }}>
+                            <View style={{ width: '80%' }}>
+                            </View>
+                            {this.props.master ? <View>
+                                <Button rounded style={{ flexDirection: 'column', }} onPress={() => {
+                                    this.props.confirm()
+                                    this.props.closed()
+                                }}>
+                                    <Icon style={{ color: '#FEFFDE', fontSize: 18 }} type="AntDesign" name="checkcircle"></Icon>
+                                </Button>
+                            </View> : null}
                         </View>
-                        {this.props.master?<View>
-                            <Button rounded style={{flexDirection: 'column',}} onPress={() => {
-                                this.props.confirm()
-                                this.props.closed()
-                            }}>
-                                <Icon style={{color:'#FEFFDE',fontSize:18}} type="AntDesign" name="checkcircle"></Icon>
-                            </Button>
-                        </View>:null}
+                        <ScrollView style={{ margin: "5%", height: "75%" }}>
+                            <Text>{this.props.report.report}</Text>
+                        </ScrollView>
+                        <View style={{ margin: '2%' }}><Text note>{moment(this.props.report.date).format("dddd, MMMM Do YYYY, h:mm:ss a")}</Text></View>
                     </View>
-                    <ScrollView style={{ margin: "5%", height: "75%" }}>
-                        <Text>{this.props.report.report}</Text>
-                    </ScrollView>
-                    <View style={{ margin: '2%' }}><Text note>{moment(this.props.report.date).format("dddd, MMMM Do YYYY, h:mm:ss a")}</Text></View>
-            </View>
+                </Root>
             </Modal>
         );
     }

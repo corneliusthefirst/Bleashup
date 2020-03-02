@@ -267,7 +267,8 @@ export default class Reminds {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Reminds => {
         let index = findIndex(Reminds, { id: Remind.remind_id })
-        Reminds[index].confirm && Reminds[index].confirmed.length > 0 ?
+        console.warn(Reminds[index].confirmed && Reminds[index].confirmed.length > 0 ? true : false, 'from confirm')
+        Reminds[index].confirmed && Reminds[index].confirmed.length > 0 ?
           Reminds[index].confirmed =
           Array.isArray(Remind.confirmed) ?
             [...Remind.confirmed, ...Reminds[index].confirmed] :

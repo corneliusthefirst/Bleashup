@@ -479,7 +479,7 @@ export default class TasksCreation extends Component {
         isOpen={this.props.isOpen}
         onClosed={() => { this.props.onClosed() }}
         style={{
-          height: "93%", width: "100%", borderTopLeftRadius: 8, borderTopRightRadius: 8,
+          height: "85%", width: "100%", borderTopLeftRadius: 8, borderTopRightRadius: 8,
           backgroundColor: "#FEFFDE", borderColor: 'black', flexDirection: 'column'
         }}
         coverScreen={true}
@@ -504,14 +504,13 @@ export default class TasksCreation extends Component {
          </View>*/}
 
             <ScrollView ref={"scrollView"} showsVerticalScrollIndicator={false}>
-              {this.props.shouldRestore ? <View style={{ width: '95%', alignItems: 'flex-end', }}><Button style={{ alignSelf: 'flex-end', margin: '2%', marginRight: '2%', }} onPress={() => {
+              {this.props.shouldRestore && this.props.canRestore ? <View style={{ width: '95%', alignItems: 'flex-end', }}><Button style={{ alignSelf: 'flex-end', margin: '2%', marginRight: '2%', }} onPress={() => {
                 this.props.onClosed()
                 this.props.restore(this.props.remind)
               }} rounded><Text>{"Restore"}</Text></Button></View> : null}
-              <View pointerEvents={this.state.ownership ? null : 'none'} style={{ height: height / 8, alignItems: 'center' }}>
-                {/*<Text style={{alignSelf:'flex-start',margin:"3%",fontWeight:"500",fontSize:16}} >Title :</Text>*/}
-                <Item style={{ borderColor: 'black', width: "95%", marginTop: "3%" }} rounded>
-                  <TextInput maxLength={20} style={{ marginLeft: '2%', width: '100%' }} maxLength={40} value={this.state.currentRemind.title} maxLength={40} placeholder='New Remind Title' keyboardType='email-address' returnKeyType='next' inverse last
+              <View pointerEvents={this.state.ownership ? null : 'none'} style={{ height: height / 12, alignItems: 'center' }}>
+                <Item style={{ borderColor: 'black', width: "95%", marginTop: "4%" }} rounded>
+                  <TextInput maxLength={20} style={{ marginLeft: '2%', width: '100%',height:'100%',marginTop: '-2.5%', }} maxLength={40} value={this.state.currentRemind.title} maxLength={40} placeholder='New Remind Title' keyboardType='email-address' returnKeyType='next' inverse last
                     onChangeText={(value) => this.onChangedTitle(value)} />
                 </Item>
               </View>
@@ -524,7 +523,7 @@ export default class TasksCreation extends Component {
                         active
                         type="MaterialIcons"
                         name="date-range"
-                        style={{ color: "#1FABAB" }}
+                        style={{ color: "#1FABAB",marginTop: '-10%', }}
                       />
                     </TouchableOpacity>
                   </View>
@@ -554,7 +553,9 @@ export default class TasksCreation extends Component {
                     </TouchableOpacity>
                   </View>
                   <View pointerEvents={this.state.ownership ? null : 'none'} >
-                    <Input editable={false} placeholder="select event time" value={moment(this.state.date).format('hh:mm:s a')} style={{ color: "#696969" }} />
+                    <Input editable={false} placeholder="select event time" 
+                    value={moment(this.state.date).format('hh:mm:s a')} style={{ color: "#696969" }} 
+                    />
                   </View>
 
                   {this.state.show && <DateTimePicker mode="time" value={this.state.defaultTime} display="default" onChange={this.setTime} />}
@@ -624,7 +625,7 @@ export default class TasksCreation extends Component {
                                   <View pointerEvents={this.state.ownership ? null : 'none'}>
                                     <TouchableOpacity onPress={() => {
                                       this.showDateTimePicker()
-                                    }}><Text>{`on ${getMonthDay(this.state.date)}`}</Text></TouchableOpacity></View> : <Text>{'(all days)'}</Text>}
+                                    }}><Text>{`on ${getMonthDay(this.state.date)}`}</Text></TouchableOpacity></View> : <Text>{this.state.currentRemind.recursive_frequency.interval === 1?'(all days)':`(${this.state.currentRemind.recursive_frequency.interval} days)`}</Text>}
                           </View>
                         </View>
                       </Item>
@@ -745,7 +746,7 @@ export default class TasksCreation extends Component {
             </SelectableContactList>
           </View>
           <View style={{ position: 'absolute', }}>
-            <Text style={{ margin: '7%', }} note>{!this.state.ownership ? "remind configs" : this.props.update ? "update remind" : "add remind"}</Text>
+            <Text style={{ margin: '7%', color: '#A91A84', fontWeight: 'bold' }} note>{!this.state.ownership ? "remind configs" : this.props.update ? "update remind" : "add remind"}</Text>
           </View>
         </View>
       </Modal>

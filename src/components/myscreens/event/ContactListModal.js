@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import ModalBox from 'react-native-modalbox';
-import { Container, Spinner, Title } from 'native-base';
+import { Container, Spinner, Title,Item } from 'native-base';
 import BleashupFlatList from '../../BleashupFlatList';
 import ProfileView from '../invitations/components/ProfileView';
 import { TouchableOpacity, View } from 'react-native';
@@ -70,9 +70,9 @@ export default class ContactListModal extends PureComponent {
                             firstIndex={0}
                             renderPerBatch={5}
                             initialRender={10}
-                            numberOfItems={this.state.contacts.length}
+                            numberOfItems={this.props.contacts.length}
                             keyExtractor={this._keyExtractor}
-                            dataSource={this.state.contacts}
+                            dataSource={this.props.contacts}
                             renderItem={(item, index) => {
                                 this.delay = this.delay >= 15 ? 0 : this.delay + 1
                                 return (this.props.complexReport ? <View key={index.toString()}>
@@ -82,20 +82,15 @@ export default class ContactListModal extends PureComponent {
                                             item.to === this.props.actualInterval.end}
                                         first={index === 0 ? true : false}
                                         from={item.from}></IntervalSeparator> :
-                                        <TouchableOpacity key={index.toString()} opPress={() => {
-                                            console.warn("pressed")
-                                        }}><View style={{ display: 'flex', flexDirection: 'row', }}>
-                                                <View style={{ margin: '2%', }}><TouchableOpacity
-                                                ><ProfileView delay={this.delay} phone={item.data.phone}></ProfileView>
-                                                </TouchableOpacity></View>
-                                            </View></TouchableOpacity>}
+                                        <Item style={{ margin: '1%', }} key={index.toString()}><View style={{ display: 'flex', flexDirection: 'row', }}>
+                                            <View style={{ margin: '2%', height: 60 }}><ProfileView delay={this.delay} phone={item}></ProfileView>
+                                            </View>
+                                        </View></Item>}
                                 </View> :
-                                    <TouchableOpacity key={index.toString()} opPress={() => {
-                                        console.warn("pressed")
-                                    }}><View style={{ display: 'flex', flexDirection: 'row', }}>
-                                            <View style={{ margin: '2%', }}><TouchableOpacity ><ProfileView delay={this.delay} phone={item}></ProfileView>
-                                            </TouchableOpacity></View>
-                                        </View></TouchableOpacity>)
+                                    <Item style={{ margin: '1%', }} key={index.toString()}><View style={{ display: 'flex', flexDirection: 'row', }}>
+                                        <View style={{ margin: '2%', height: 60 }}><ProfileView delay={this.delay} phone={item}></ProfileView>
+                                        </View>
+                                    </View></Item>)
 
                             }}
                         >

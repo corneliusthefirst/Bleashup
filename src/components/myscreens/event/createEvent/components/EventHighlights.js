@@ -700,7 +700,7 @@ export default class EventHighlights extends Component {
             }} />
         </View>
           <View style={{ position: 'absolute' }}>
-            <Text style={{ margin: '7%', }} note>{this.props.updateState ? "update post" : "add post"}</Text>
+            <Text style={{ margin: '7%', color: '#A91A84', fontWeight: 'bold' }} note>{this.props.updateState ? "update post" : "add post"}</Text>
           </View>
         </View> : <Spinner size={"small"} style={{ alignSelf: "center" }}></Spinner>}
       </Modal>
