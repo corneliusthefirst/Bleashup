@@ -48,7 +48,7 @@ export default class ParticipantList extends Component {
     _keyExtractor = (item, index) => item.phone
     render() {
         return <View>
-            <View style={{ margin: 3, flexDirection: 'row', height: 53 }}>
+            <View style={{ margin: '2%', flexDirection: 'row', height: 53 }}>
                 <Text style={{ fontWeight: "bold", fontSize: 22, width: "70%" }}>{this.props.hide ? "" : "Participants List"}</Text>
                 <Text style={{ marginTop: "1%", }} note>{this.state.participants ? this.state.participants.filter(ele => ele.phone).length : 0}{" member(s)"}</Text>
             </View>

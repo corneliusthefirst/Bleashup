@@ -52,13 +52,13 @@ export default class RemindsMenu extends Component {
                         this.props.addMembers()
                     }}>{"Assign"}</MenuItem>
                         <MenuDivider color="#1FABAB" /></View> : null}
-                    {this.props.canUnassign ? <View>
+                    <View>
                         <MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
                             this.hideMenu()
                             this.props.removeMembers()
                         }}>{"Unassign"}</MenuItem>
-                        <MenuDivider color="#1FABAB" /></View> : null}
-                    {this.props.master ? <View><MenuItem textStyle={{ color: "red" }} onPress={() => {
+                        <MenuDivider color="#1FABAB" /></View>
+                    {this.props.creator ? <View><MenuItem textStyle={{ color: "red" }} onPress={() => {
                         this.hideMenu()
                         this.props.deleteRemind()
                     }}>{"Delete"}</MenuItem>

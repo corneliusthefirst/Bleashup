@@ -51,11 +51,13 @@ export default class ProfileView extends Component {
                         })
                     });
                 }} transparent>
-                    {testForURL(this.state.profile.profile) ? <CacheImages thumbnails {...this.props}
+                    {testForURL(this.state.profile.profile) ? <CacheImages small thumbnails {...this.props}
                         source={{ uri: this.state.profile.profile }} /> :
-                        <Thumbnail source={{ uri: this.state.profile.profile }}></Thumbnail>}
+                        <Thumbnail small source={{ uri: this.state.profile.profile }}></Thumbnail>}
                 </Button>
-                <View style={{ marginTop: "3%", marginLeft: "2%", display: 'flex', fontWeight: 'bold', }}>
+                <View style={{
+                    alignItems: 'center',
+                    justifyContent: 'center', marginLeft: "4%", display: 'flex', fontWeight: 'bold', }}>
                     <Text ellipsizeMode={'tail'} numberOfLines={1} style={{
                         marginBottom: "2%",
                         color: "#0A4E52",

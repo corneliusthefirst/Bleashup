@@ -35,6 +35,7 @@ export default class EventTasksCard extends Component {
       hasDoneForThisInterval: false,
       correspondingDateInterval: {},
       mounted: false,
+      creator: this.props.item.creator === this.props.phone,
       currentDateIntervals: [],
       cardData: this.props.item,
 
@@ -127,7 +128,8 @@ export default class EventTasksCard extends Component {
       moment(ele.status.date).format("X") >
       moment(this.state.correspondingDateInterval.start,
         format).format("X") && moment(ele.status.date).format("X") <=
-      moment(this.state.correspondingDateInterval.end, format).format("X")) ? true : false
+      moment(this.state.correspondingDateInterval.end, format).format("X") && 
+      ele.phone === stores.LoginStore.user.phone) ? true : false
     canBeDone = this.state.correspondingDateInterval ? true : false
     missed = dateDiff({
       recurrence: this.state.correspondingDateInterval ?
@@ -192,11 +194,9 @@ export default class EventTasksCard extends Component {
                 </View>
                 <View style={{ alignSelf: 'flex-end', }}>
                   <RemindsMenu
-                    creator={this.props.item.creator === this.props.phone}
-                    master={this.props.item.creator === this.props.phone}
-                    canUnassign={!(missed || this.props.item.status === 'private') && member && !hasDoneForThisInterval && canBeDone}
+                    creator={this.state.creator}
                     addMembers={() => { this.props.addMembers(this.props.item.members, this.props.item) }}
-                    removeMembers={() => this.props.removeMembers(this.props.item.members.filter(ele => this.props.master ||
+                    removeMembers={() => this.props.removeMembers(this.props.item.members.filter(ele => this.state.creator ||
                       ele.phone === stores.LoginStore.user.phone), this.props.item)}
                     deleteRemind={() => this.props.deleteRemind(this.props.item)}
                   ></RemindsMenu>

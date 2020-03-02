@@ -225,7 +225,7 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
       showMembers={() => this.props.showMembers()}
       firebaseRoom={this.props.roomID} // relation_id
       members={this.props.members} // relation_members
-      activity_id={this.activity_id} //reloation
+      activity_id={this.props.activity_id} //reloation
 
       newMessages={this.state.new_messages}
       creator={this.props.creator} ></ChatRoom></View>:<Waiter dontshowSpinner={true}></Waiter>)

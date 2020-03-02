@@ -73,7 +73,7 @@ export default class Commitee extends Component {
                             color: "#9EEDD3",
                             fontWeight: 'bold',
                             alignSelf: 'flex-start',
-                            fontStyle: 'italic',
+                            fontStyle: 'normal',
                             marginLeft: 10, fontSize: 22,
                             marginBottom: "3%",
                         }}>Committees</Title>

@@ -1507,7 +1507,7 @@ export default class Event extends Component {
           }}></HighlightCardDetail> : null}
         {this.state.isremindConfigurationModal ? <TasksCreation 
           shouldRestore={this.state.shouldRestore}
-          canRestore={this.state.remind.creator === this.user.phone}
+          canRestore={this.state.remind && this.state.remind.creator === this.user.phone}
           restore={(item) => this.restoreRemind({ new_value: { new_value: item } })} isOpen={this.state.isremindConfigurationModal} onClosed={() => {
             this.setState({
               isremindConfigurationModal: false,

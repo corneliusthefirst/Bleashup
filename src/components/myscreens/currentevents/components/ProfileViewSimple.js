@@ -48,9 +48,11 @@ export default class ProfileSimple extends Component {
                     }}>
                         {this.props.profile.profile && testForURL(this.props.profile.profile) ? <CacheImages small thumbnails {...this.props}
                             source={{ uri: this.props.profile.profile }} /> :
-                            <Thumbnail source={{ uri: this.props.profile.profile }}></Thumbnail>}
+                            <Thumbnail small source={{ uri: this.props.profile.profile }}></Thumbnail>}
                     </TouchableWithoutFeedback>
-                    <View style={{ marginTop: "3%", marginLeft: "2%", flexDirection: "column" }}>
+                    <View style={{
+                        alignItems: 'center',
+                        justifyContent: 'center',marginLeft: "3%", flexDirection: "column" }}>
                         <Text ellipsizeMode={'tail'} numberOfLines={1} style={{ marginBottom: "2%", fontWeight: 'bold', alignSelf: "flex-start", color: "#696969" }}>{this.props.profile.phone === stores.LoginStore.user.phone ? "You " : this.props.profile.nickname}</Text>
                         {this.props.profile.status && this.props.profile.status !== 'undefined' ? <Text ellipsizeMode={'tail'} numberOfLines={1} style={{ fontStyle: 'italic', alignSelf: "flex-start" }} note>{this.props.profile.status}</Text> : null}
                     </View>

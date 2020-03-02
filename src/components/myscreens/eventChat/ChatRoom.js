@@ -1355,7 +1355,19 @@ export default class ChatRoom extends Component {
             //!! you can add the member last seen here if the room has just one member */
         }
             <View style={{ width: "10%", backgroundColor: "#FEFFDE" }}>
-                <ChatroomMenu showMembers={() => this.showMembers()} addMembers={() => this.props.addMembers()} closeCommitee={() => this.props.close()} openCommitee={() => this.props.open()} leaveCommitee={() => this.props.leave()} removeMembers={() => this.props.removeMembers()} publishCommitee={() => this.props.publish()} master={this.props.master} eventID={this.props.activity_id} roomID={this.props.firebaseRoom} public={this.props.public_state} opened={this.props.opened}></ChatroomMenu>
+                <ChatroomMenu 
+                showMembers={() => this.showMembers()} 
+                addMembers={() => this.props.addMembers()} 
+                closeCommitee={() => this.props.close()} 
+                openCommitee={() => this.props.open()} 
+                leaveCommitee={() => this.props.leave()} 
+                removeMembers={() => this.props.removeMembers()} 
+                publishCommitee={() => this.props.publish()} 
+                master={this.props.master} 
+                eventID={this.props.activity_id} 
+                roomID={this.props.firebaseRoom} 
+                public={this.props.public_state} 
+                opened={this.props.opened}></ChatroomMenu>
             </View></View>;
     }
 

@@ -189,7 +189,6 @@ export default class Reminds extends Component {
 
   }
   assignToMe(item) {
-    console.warn(item)
     this.setState({
       isSelectAlarmPatternModalOpened: true,
       currentTask: item
@@ -248,7 +247,6 @@ export default class Reminds extends Component {
     if (this.props.working) {
       Toast.show({ text: 'App is Busy' })
     } else {
-      console.warn(report)
       this.setState({
         showReportModal: false
       })
@@ -413,12 +411,10 @@ export default class Reminds extends Component {
                     }}
                     showReport={this.showReport}
                     removeMembers={(currentMembers, item) => {
-                      let contacts = currentMembers.filter(ele => findIndex(item.donners, { phone: ele.phone }) < 0)
                       this.setState({
                         isSelectableContactsModalOpened: true,
                         currentTask: item,
-                        contacts: item.creator === stores.LoginStore.user.phone ?
-                          contacts : contacts.filter(ele => ele.phone === stores.LoginStore.user.phone),
+                        contacts: currentMembers,
                         adding: false,
                         removing: true,
                         notcheckAll: true,
