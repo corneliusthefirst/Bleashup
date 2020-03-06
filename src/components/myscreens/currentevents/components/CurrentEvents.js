@@ -158,6 +158,7 @@ export default class CurrentEvents extends Component {
                     renderItem={(item, index) => {
                         this.delay = index % this.renderPerbatch == 0 ? 0 : this.delay + 1
                         return <PublicEvent
+                        key={item.id}
                             showLikers={likers => {
                                 this.setState({
                                     isLikersModalOpened: true,

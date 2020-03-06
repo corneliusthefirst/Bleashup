@@ -27,13 +27,13 @@ export default class ForeignEventsModal extends PureComponent {
         console.warn(e)
     }
     _keyExtractor(item) {
-        return item.phone
+        return item.id
     }
     render() {
         return (
             <Modal
-                backdropPressToClose={false}
-                //swipeToClose={false}
+                backdropPressToClose={true}
+                swipeToClose={false}
                 backdropOpacity={0.7}
                 backButtonClose={true}
                 //entry={"top"}
@@ -59,7 +59,7 @@ export default class ForeignEventsModal extends PureComponent {
                         }, 20)
                 }}
                 style={{
-                    height: "97%",borderTopLeftRadius: 8,borderTopRightRadius: 8
+                    height: "90%",borderTopLeftRadius: 8,borderTopRightRadius: 8
                     ,backgroundColor: '#FEFFDE', width: "100%"
                 }}>
                 <View>{this.state.loaded ?
@@ -74,7 +74,7 @@ export default class ForeignEventsModal extends PureComponent {
                                 fontSize: 18,
                             }}>{"Manage events"}</Text><Text note style={{
                                 fontSize: 12, fontStyle: 'italic', margin: '1%',
-                            }}>{"(events where found from calendar)"}</Text></View>
+                            }}>{"(events from your calendar)"}</Text></View>
                             </View>
                         <View style={{ height: "90%" }}>
                             <BleashupFlatList

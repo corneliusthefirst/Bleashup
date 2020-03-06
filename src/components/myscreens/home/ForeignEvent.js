@@ -58,8 +58,8 @@ export default class ForeignEvent extends Component {
         event.period = e.startDate
         event.recurrent = e.recurrence ? true : false
         event.interval = e.recurrenceRule && e.recurrenceRule.interval ? e.recurrenceRule.interval : 1
-        event.frequency = e.recurrenceRule && e.recurrenceRule.frequency ? e.recurrenceRule.frequency : "daily"
-        event.recurrence = e.recurrenceRule && e.recurrenceRule.endDate ? e.recurrenceRule.endDate : moment().format()
+        event.frequency = e.recurrenceRule && e.recurrenceRule.frequency ? e.recurrenceRule.frequency : "yearly"
+        event.recurrence = e.recurrenceRule && e.recurrenceRule.endDate ? e.recurrenceRule.endDate : moment(e.startDate).add(1, 'h').format()
         event.notes = e.notes ? [e.notes] : event.notes
         event.location.string = e.location
         event.calendar_id = e.id
@@ -88,16 +88,18 @@ export default class ForeignEvent extends Component {
                     </Text>
                 </CardItem>
                 <CardItem>
-                    <View style={{ width: '80%' }}>
+                    <View style={{ width: '75%' }}>
                         {this.props.event.attendees.length > 0 ?
-                            <Button onPress={() => this.inviteConcernee()} transparent>
+                            <Button onPress={() => this.inviteConcernee()} rounded>
                                 <Icon type={"EvilIcons"} style={{ fontSize: 50, }} name={"sc-telegram"}></Icon>
                                 <Text>{"Invite Attendees"}</Text>
                             </Button> : null}
                     </View>
-                    <View style={{alignSelf: 'flex-end',}}>{
+                    <View style={{alignSelf: 'flex-end',margin: '2%',}}>{
                         !this.state.managed ? this.state.managing ? <Spinner></Spinner> :
-                            <Button onPress={() => this.manageHere()} transparent>
+                            <Button onPress={() => this.manageHere()} style={{
+                                borderRadius: 8,
+                            }}>
                                 <Text style={{ fontWeight: '400', }}>
                                     {"Manage"}
                                 </Text>

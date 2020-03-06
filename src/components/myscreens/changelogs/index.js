@@ -108,12 +108,12 @@ export default class ChangeLogs extends Component {
         </BleashupTimeLine>
       </View>
       {this.state.hideHeader ? null : <View style={{
-        width: "100%", height: 44, position: "absolute", opacity: .6, alignSelf: 'center',
+        width: "100%", height: 44, position: "absolute", alignSelf: 'flex-start',
         backgroundColor: "#FEFFDE", ...shadower(6)
       }}>
         <View style={{ flexDirection: 'row', width: "100%", }}>
-          <Text style={{ alignSelf: 'flex-start', margin: '3%', fontWeight: 'bold', fontSize: 20, width: "83%" }}>{(this.props.forMember ? this.props.forMember : (this.props.isMe ? "Your " : "")) + " Activity Logs"}</Text>
-          <Icon style={{ alignSelf: 'flex-end', margin: '3%', }} name={"dots-three-vertical"} type="Entypo"></Icon>
+          <Text style={{ alignSelf: 'flex-start', margin: '1%', fontWeight: 'bold', fontSize: 20, width: "90%" }}>{(this.props.forMember ? this.props.forMember : (this.props.isMe ? "Your " : "")) + " Activity Logs"}</Text>
+          <Icon style={{ alignSelf: 'flex-end', margin: '1%',color:'#0A91A84',alignSelf:'center' }} name={"dots-three-vertical"} type="Entypo"></Icon>
         </View>
       </View>}
     </View>

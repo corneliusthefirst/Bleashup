@@ -33,6 +33,12 @@ export default class Message extends Component {
             disabledSwipeout: true,
             openRight: true,
             time: "",
+            sender_name: this.props.message.sender.nickname,
+            sender: !(this.props.message.sender.phone == this.props.user),
+            different: this.props.PreviousSenderPhone !== this.props.message.sender.phone
+                && !(this.props.message.sender.phone == this.props.user),
+            time: moment(this.props.message.created_at).format("HH:mm"),
+            creator: (this.props.message.sender.phone == this.props.creator),
             replying: false,
             loaded: false
         }
@@ -86,12 +92,6 @@ export default class Message extends Component {
         console.warn(this.props.message.sender.phone, this.props.user, this.props.PreviousSenderPhone)
         setTimeout(() => {
             this.setState({
-                sender_name: this.props.message.sender.nickname,
-                sender: !(this.props.message.sender.phone == this.props.user),
-                different: this.props.PreviousSenderPhone !== this.props.message.sender.phone
-                    && !(this.props.message.sender.phone == this.props.user),
-                time: moment(this.props.message.created_at).format("HH:mm"),
-                creator: (this.props.message.sender.phone == this.props.creator),
                 loaded: true
             })
         }, 50 * this.props.delay)
@@ -243,6 +243,7 @@ export default class Message extends Component {
             ...topMostStyle, height: 100, backgroundColor: color, borderBottomLeftRadius: 10, borderColor: color,
             borderTopLeftRadius: this.state.sender ? 0 : 10,// borderWidth: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text)?.7:0:0,
             backgroundColor: color,
+            alignSelf: this.state.sender ? 'flex-start' : 'flex-end',
             borderTopRightRadius: 10,
 
             width: 200

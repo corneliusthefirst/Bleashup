@@ -444,7 +444,7 @@ export default class EventHighlights extends Component {
           newing: !this.state.newing,
           uploading: true
         })
-        let exchanger = new FileExachange('file://' + decodeURIComponent(audio.uri), '/Sound/', 0, 0, null,
+        let exchanger = new FileExachange('file://' + audio.uri, '/Sound/', 0, 0, null,
           (newDir, path, filename) => {
             RNFFmpeg.getMediaInformation(path).then(info => {
               console.warn(info, path)

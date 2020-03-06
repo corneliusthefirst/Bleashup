@@ -25,7 +25,7 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
     renderPerBatch = 3
     previousNewRender = 0
     previousRendered = 0
-    componentDidMount(){
+    componentDidMount() {
         console.warn("BleashupFlatlist remounting")
     }
     _renderItems(array) {
@@ -80,11 +80,12 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
     }
     render() {
         return (
-            <View style={{ flexDirection: 'column', 
-            backgroundColor: this.props.backgroundColor ? 
-            this.props.backgroundColor : "#FEFFDE",
-            ...this.props.style
-         }}>
+            <View style={{
+                flexDirection: 'column',
+                backgroundColor: this.props.backgroundColor ?
+                    this.props.backgroundColor : "#FEFFDE",
+                ...this.props.style
+            }}>
                 <FlatList
                     onScrollEndDrag={({ nativeEvent }) => {
                         if (isCloseToBottom(nativeEvent)) {
@@ -95,7 +96,8 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
                     }
                     }
                     nestedScrollEnabled={true}
-                    horizontal={this.props.horizontal?this.props.horizontal:false}
+                    numColumns={this.props.numColumns ? this.props.numColumns : 1}
+                    horizontal={this.props.horizontal ? this.props.horizontal : false}
                     onScroll={this.props.onScroll}
                     centerContent={true}
                     //horizontal={this.props.horizontal}

@@ -51,6 +51,7 @@ import DeepLinking from 'react-native-deep-linking';
 import Requester from '../event/Requester';
 import shadower from "../../shadower";
 import TabModal from "./TabModal";
+import VoteCreation from "../eventChat/VoteCreation";
 
 
 let { height, width } = Dimensions.get('window');
@@ -419,6 +420,11 @@ class Home extends Component {
             isTabModalOpened: false
           })
         }}></TabModal>
+        <VoteCreation isOpen={false} onClosed={() => {
+
+        }} takeVote={(vote) => {
+          
+        }}></VoteCreation>
       </Container>
     );
   }

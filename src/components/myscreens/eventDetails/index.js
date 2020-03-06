@@ -218,18 +218,17 @@ export default class EventDetailView extends Component {
           <View style={{
             height: 44,
             ...shadower(6),
+            paddingTop: '2%',
             width: "100%",
-            justifyContent: "space-between",
             flexDirection: "row",
             backgroundColor: "#FEFFDE",
-            alignItems: "center",
           }}>
-            <View style={{ marginLeft: "4%", ...shadower(6), }}>
-              <Title style={{ color: "#0A4E52", fontWeight: 'bold', }}>{this.props.Event.about.title}</Title>
+            <View style={{ marginLeft: "4%", width:'80%'}}>
+              <Title style={{ color: "#0A4E52", fontWeight: 'bold',alignSelf:'flex-start' }}>{this.props.Event.about.title}</Title>
             </View>
-            <View >
-              <TouchableOpacity onPress={() => requestAnimationFrame(() => this.newHighlight())} style={{}}>
-                <Icon type='AntDesign' name="pluscircle" style={{ color: "#1FABAB", fontSize: 25, alignSelf: 'center', marginRight: "5%", }} />
+            <View style={{width:'20%'}}>
+              <TouchableOpacity onPress={() => requestAnimationFrame(() => this.newHighlight())}>
+                <Icon type='AntDesign' name="pluscircle" style={{ color: "#1FABAB", fontSize: 25, alignSelf: 'center', }} />
               </TouchableOpacity>
             </View>
 

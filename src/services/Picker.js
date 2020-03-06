@@ -3,6 +3,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 import DocumentPicker from 'react-native-document-picker';
 import FileViewer from 'react-native-file-viewer';
 import { LogLevel, RNFFmpeg } from 'react-native-ffmpeg';
+import { PermissionsAndroid } from 'react-native';
 
 class Picker {
     constructor() {
@@ -139,7 +140,7 @@ class Picker {
             const res = await DocumentPicker.pick({
                 type: [DocumentPicker.types.allFiles],
             });
-            res.uri.replace('content://', 'file://')
+            //res.uri = res.uri.replace('content://', 'file://')
             return res
         } catch (err) {
             if (DocumentPicker.isCancel(err)) {
@@ -152,9 +153,14 @@ class Picker {
     openFile(source) {
         FileViewer.open(source).then(() => {
 
-        }).catch((e) => {
-            console.warn(e)
-        })
+        })/*.catch((e) => {
+            PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.MANAGE_DOCUMENTS, {
+                title: "Write To Storage Permission",
+                message: "Bleashup Wants to write to disk"
+            }).then(pers => {
+                console.warn(pers)
+            })
+        })*/
     }
     CleanAll() {
         if (this.uploaded) {

@@ -55,11 +55,20 @@ see: https://github.com/wmcmahan/react-native-calendar-events/issues/12
 
     [*]  When a remind is added or deleted the whole list refreshes in the remind tab in the event page 
 
-[] implement daysOfWeek and WeekOfMonth in setting remind recurrence. 
+[*] implement daysOfWeek and WeekOfMonth in setting remind recurrence. 
 
-[] implement the configuratoins Who can add a post and who can add a remind.
+[*] implement the configuratoins Who can add a post and who can add a remind.
 
-[] implement checking base on the conditions listed above . 
+[*] implement checking base on the conditions listed above . 
+
+[ ] attarchement message ar not able to be opened af reopening the app after sending it .
+    this is deu to a permission issues. i dought if this happens on all devices. but it 
+    happened on my own. 
+
+[ ] add likes to posts.
+[ ] add and handle the concept of public and private post. 
+[ ] make sound recorder as component so that it should be working for both message and reminds report. 
+[ ] add recorder audio possibility to remind reports. 
 
 [] 
     A solution needs to implemented to handle this . 

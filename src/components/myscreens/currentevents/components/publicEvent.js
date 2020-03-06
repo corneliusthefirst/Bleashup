@@ -271,7 +271,7 @@ class PublicEvent extends Component {
   }
   render() {
     //emitter.emit('notify', "santerss") 
-    return (this.state.isMount ? <View style={{ width: "100%", padding: '1%', alignSelf: 'center', }}>
+    return (this.state.isMount ? <View style={{ width: "100%", paddingLeft: '3%',paddingRight: '3%', alignSelf: 'center', }}>
       <Swipeout {...this.props} onOpen={() => this.openSwipeOut()} onClose={() => this.onCloseSwipeout()} style={{
         width: "100%", ...shadower(3),
         backgroundColor: this.props.Event.new ? "#cdfcfc" : null
@@ -337,7 +337,7 @@ class PublicEvent extends Component {
                   marginLeft: '-1%',
                 }} photo={this.props.Event.background} event_id={this.props.Event.id} width={170} height={100} borderRadius={6} />
               </CardItem></View> : null}</View>
-              {this.state.isMount && this.props.Event.location.string ?<View style={{alignSelf: 'flex-start',}}><MapView style={{ marginRight: "11%" }}
+              {this.state.isMount && this.props.Event.location.string ?<View style={{alignSelf: 'flex-start',width:'40%'}}><MapView card 
                 location={this.props.Event.location.string}></MapView></View> : null}
           </View>
           </CardItem>

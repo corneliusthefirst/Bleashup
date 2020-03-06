@@ -68,23 +68,21 @@ export default class TitleView extends Component {
                             </Title> : null}
                         </View>
                         <View style={{}}>
-                            <Left>
-                                {this.props.Event.interval === 1 && this.props.Event.frequency === 'yearly'
-                                    ? null : <View style={
-                                        {
-                                            flexDirection: "column"
-                                        }
-                                    }>
-                                        <View>
-                                            <Text ellipsizeMode={'tail'} numberOfLines={1} style={{
-                                                color: "#696969",
-                                                fontStyle: 'italic',
-                                            }} note>
-                                                {`Every${this.props.Event.interval > 1 ? " "+ this.props.Event.interval : ''} ${writeInterval(this.props.Event.frequency)} till ${moment(this.props.Event.recurrence ? this.props.Event.recurrence : null).format("dddd, MMMM Do YYYY")}`}
-                                            </Text>
-                                        </View>
-                                    </View>}
-                            </Left>
+                            {this.props.Event.interval === 1 && this.props.Event.frequency === 'yearly'
+                                ? null : <View style={
+                                    {
+                                        flexDirection: "column"
+                                    }
+                                }>
+                                    <View>
+                                        <Text ellipsizeMode={'tail'} numberOfLines={1} style={{
+                                            color: "#696969",
+                                            fontStyle: 'italic',
+                                        }} note>
+                                            {`Every${this.props.Event.interval > 1 ? " " + this.props.Event.interval : ''} ${writeInterval(this.props.Event.frequency)} till ${moment(this.props.Event.recurrence ? this.props.Event.recurrence : null).format("dddd, MMMM Do YYYY")}`}
+                                        </Text>
+                                    </View>
+                                </View>}
                         </View>
                     </TouchableOpacity>
                 </View>

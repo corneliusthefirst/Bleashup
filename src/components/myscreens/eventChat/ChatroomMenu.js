@@ -72,7 +72,7 @@ export default class ChatroomMenu extends Component {
                     style={{ backgroundColor: "#FEFFDE" }}
                     ref={this.setMenuRef}
                     button={<Icon style={{
-                        color: "#0A4E52",
+                        color: "darkGray",
                         fontSize: 25,
                         marginTop: '10%'
                     }} onPress={this.showMenu} name="dots-three-vertical" type="Entypo"></Icon>}

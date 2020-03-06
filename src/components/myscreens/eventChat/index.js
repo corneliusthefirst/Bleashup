@@ -37,7 +37,7 @@ export default class EventChat extends Component {
       let phone = user.phone.replace("00","+")
       firebase.database().ref(`new_message/${this.props.activity_id}/${phone}/${this.props.roomID}/new_messages`).once('value', snapshoot => {
         this.props.newMessageCount = snapshoot.val() === null ?
-          this.props.newMessageCount : snapshoot.val().lenght
+          this.props.newMessageCount : snapshoot.val().length
         if (this.props.newMessageCount > 0) {
           firebase.database().ref(`${this.props.roomID}`).limitToLast(this.props.newMessageCount).once('value', snapshoot => {
             setTimeout(() => {
@@ -59,7 +59,7 @@ export default class EventChat extends Component {
         }
       })
   }
-  newMessages = [/*{
+  newMessages = [{
     id: Math.random().toString(),
     source: 'http://192.168.43.32:8555/sound/get/p2.mp3',
     file_name: 'p2.mp3',
@@ -194,7 +194,7 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
 `,
     duration: Math.floor(0),
     created_at: moment().format(),
-  }*/]
+  }]
   render() {
     return (this.state.loaded ? <View style={{ backgroundColor: "#FEFFDE", }}><ChatRoom
       roomName={this.props.roomName}
@@ -220,7 +220,7 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
       master={this.props.master}
       public_state={this.props.public_state}
       opened={this.props.opened}
-      newMessageNumber={this.props.newMessageCount}
+      newMessageNumber={this.state.new_messages.length}
       showContacts={this.props.showContacts}
       showMembers={() => this.props.showMembers()}
       firebaseRoom={this.props.roomID} // relation_id
