@@ -3,6 +3,8 @@ package com.bleashup.bleashup;
 import android.app.Application;
 import com.horcrux.svg.SvgPackage;
 import com.facebook.react.ReactApplication;
+//import com.adobe.creativesdk.foundation.AdobeCSDKFoundation;
+//import com.adobe.creativesdk.foundation.auth.IAdobeAuthClientCredentials;
 import com.arthenica.reactnative.RNFFmpegPackage; 
 import io.invertase.firebase.database.RNFirebaseDatabasePackage;
 import io.invertase.firebase.RNFirebasePackage;
@@ -95,10 +97,34 @@ public class MainApplication extends Application implements ReactApplication {
     return mReactNativeHost;
   }
 
+  /*
   @Override
   public void onCreate() {
     super.onCreate();
-    SoLoader.init(this, /* native exopackage */ false);
-
+    SoLoader.init(this, /* native exopackage  false);
+    //MultiDex.install(getBaseContext()); //opotional, for some case this might cause an error
+    AdobeCSDKFoundation.initializeCSDKFoundation(getApplicationContext());
   }
+
+  @Override
+  public String getClientID() {
+      return "46dea44f58734ea2a9d97861cc431a43";
+  }
+
+  @Override
+  public String getClientSecret() {
+      return "27b441c1-6d83-4898-9fc9-b0bf7d6f6ed5";
+  }
+
+  @Override
+  public String getRedirectURI() {
+      return "ams\\+c524e8835130d05139d2656459b1880883ebbd9a://adobeid/46dea44f58734ea2a9d97861cc431a43";
+  }
+
+  
+  @Override
+  public String[] getAdditionalScopesList() {
+      return new String[]{"ndeffo.jugal98@gmail.com", "profile", "address"};
+  }*/
+
 }
