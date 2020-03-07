@@ -28,7 +28,7 @@ export default class BleashupAlert extends Component {
             coverScreen={true}
             position={'center'}
             swipeToClose={false}
-            backdropPressToClose={false}
+            //backdropPressToClose={false}
           > 
 
          

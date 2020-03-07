@@ -16,6 +16,7 @@ import stores from '../../../stores';
 import moment from 'moment';
 import firebase from 'react-native-firebase';
 import { values } from 'lodash';
+import Waiter from '../loginhome/Waiter';
 
 
 export default class EventChat extends Component {
@@ -28,16 +29,15 @@ export default class EventChat extends Component {
       typingText: null,
       isLoadingEarlier: false,
     };
-    this.activity = this.props.activity
   }
   state = {}
   activity = {}
   componentDidMount() {
     let user = stores.LoginStore.user
       let phone = user.phone.replace("00","+")
-      firebase.database().ref(`new_message/${this.props.activity.id}/${phone}/${this.props.roomID}/new_messages`).once('value', snapshoot => {
+      firebase.database().ref(`new_message/${this.props.activity_id}/${phone}/${this.props.roomID}/new_messages`).once('value', snapshoot => {
         this.props.newMessageCount = snapshoot.val() === null ?
-          this.props.newMessageCount : snapshoot.val().lenght
+          this.props.newMessageCount : snapshoot.val().length
         if (this.props.newMessageCount > 0) {
           firebase.database().ref(`${this.props.roomID}`).limitToLast(this.props.newMessageCount).once('value', snapshoot => {
             setTimeout(() => {
@@ -59,7 +59,7 @@ export default class EventChat extends Component {
         }
       })
   }
-  newMessages = [/*{
+  newMessages = [{
     id: Math.random().toString(),
     source: 'http://192.168.43.32:8555/sound/get/p2.mp3',
     file_name: 'p2.mp3',
@@ -194,7 +194,7 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
 `,
     duration: Math.floor(0),
     created_at: moment().format(),
-  }*/]
+  }]
   render() {
     return (this.state.loaded ? <View style={{ backgroundColor: "#FEFFDE", }}><ChatRoom
       roomName={this.props.roomName}
@@ -202,7 +202,13 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
         ...this.state.user,
         phone: this.state.user.phone.replace("00", "+")
       }}
-      activity_name={this.activity.about.title}
+      handleReplyExtern={(reply) => {
+        this.props.handleReplyExtern(reply)
+      }}
+      showLoader={this.props.showLoader}
+      stopLoader={this.props.stopLoader}
+      showProfile={(pro) => this.props.showProfile(pro)}
+      activity_name={this.props.activity_name} // name_of_the_other_user
       close={() => this.props.close()}
       open={() => this.props.open()}
       addMembers={() => this.props.addMembers()}
@@ -210,20 +216,18 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
       leave={() => this.props.leave()}
       generallyMember={this.props.generallyMember}
       publish={() => this.props.publish()}
+      room_type={this.props.room_type}
       master={this.props.master}
       public_state={this.props.public_state}
       opened={this.props.opened}
-      newMessageNumber={this.props.newMessageCount}
+      newMessageNumber={this.state.new_messages.length}
       showContacts={this.props.showContacts}
       showMembers={() => this.props.showMembers()}
-      firebaseRoom={this.props.roomID}
-      members={this.props.members}
-      activity_id={this.activity.id}
+      firebaseRoom={this.props.roomID} // relation_id
+      members={this.props.members} // relation_members
+      activity_id={this.props.activity_id} //reloation
 
       newMessages={this.state.new_messages}
-      creator={this.props.creator} ></ChatRoom></View> : <ImageBackground
-        resizeMode={"contain"} source={require("../../../../assets/Bleashup.png")}
-        style={{ width: "100%", height: "100%", backgroundColor: "#FEFFDE", }}>
-      </ImageBackground>)
+      creator={this.props.creator} ></ChatRoom></View>:<Waiter dontshowSpinner={true}></Waiter>)
   }
 }

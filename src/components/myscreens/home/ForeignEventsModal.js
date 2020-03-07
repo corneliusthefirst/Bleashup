@@ -27,13 +27,13 @@ export default class ForeignEventsModal extends PureComponent {
         console.warn(e)
     }
     _keyExtractor(item) {
-        return item.phone
+        return item.id
     }
     render() {
         return (
             <Modal
-                backdropPressToClose={false}
-                //swipeToClose={false}
+                backdropPressToClose={true}
+                swipeToClose={false}
                 backdropOpacity={0.7}
                 backButtonClose={true}
                 //entry={"top"}
@@ -59,21 +59,23 @@ export default class ForeignEventsModal extends PureComponent {
                         }, 20)
                 }}
                 style={{
-                    height: "97%",
-                    borderRadius: 8, backgroundColor: '#FEFFDE', width: "100%"
+                    height: "90%",borderTopLeftRadius: 8,borderTopRightRadius: 8
+                    ,backgroundColor: '#FEFFDE', width: "100%"
                 }}>
                 <View>{this.state.loaded ?
                     <View>
                         <View style={{
-                            width: "99%", height: 44, margin: '2%',
-                            borderBottomWidth: .8, borderColor: "#1FABAB"
+                            width: "100%", height: 44, margin: '2%',opacity:.8,
+                            borderBottomWidth: .8, borderColor: "#1FABAB",alignSelf: 'center',paddingLeft: '2%',
                         }}>
-                            <Text style={{
-                                fontWeight: 'bold', fontStyle: 'italic',
-                                fontSize: 24,
-                            }}>{"Events From Calendar"}</Text><Text note style={{
-                                fontSize: 12, fontStyle: 'italic', marginLeft: "0%",marginTop: "-1%",
-                            }}>{"Events where Found from Your Calendar; Manage Them From Here."}</Text></View>
+                            <Text style={{ color: '#A91A84', fontWeight: 'bold' }} note>{"sync"}</Text>
+                            <View style={{flexDirection: 'row',}}><Text style={{
+                                fontWeight: 'bold',
+                                fontSize: 18,
+                            }}>{"Manage events"}</Text><Text note style={{
+                                fontSize: 12, fontStyle: 'italic', margin: '1%',
+                            }}>{"(events from your calendar)"}</Text></View>
+                            </View>
                         <View style={{ height: "90%" }}>
                             <BleashupFlatList
                                 firstIndex={0}
@@ -83,7 +85,7 @@ export default class ForeignEventsModal extends PureComponent {
                                 keyExtractor={this._keyExtractor}
                                 dataSource={this.state.events}
                                 renderItem={(item, index) =>
-                                    <View style={{ margin: '1%' }}>
+                                    <View key={index} style={{ margin: '1%' }}>
                                         <ForeignEvent inviteConcernee={(e) => this.inviteConcernee(e)} manageHere={(e) => this.manageHere(e)} event={item}>
                                         </ForeignEvent>
                                     </View>

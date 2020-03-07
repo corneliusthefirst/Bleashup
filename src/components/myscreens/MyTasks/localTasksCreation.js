@@ -7,7 +7,6 @@ import {
 
 import { StyleSheet, View,Image,TouchableOpacity,Dimensions,ScrollView} from 'react-native';
 import Modal from 'react-native-modalbox';
-import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 import autobind from "autobind-decorator";
 import { filter,uniqBy,orderBy,find,findIndex,reject,uniq,indexOf,forEach,dropWhile } from "lodash";
 import request from "../../../services/requestObjects";

@@ -1,0 +1,76 @@
+//TODO: A;l Of These Issues below needs to be resovle by the completion of the feature reminds/tasks
+
+[ ] Handle the error that occurs when one onpens the post list view from the changing image lists from on the public event card.
+        - I don't yet know what causes the error but what i know is that it happens rarely .
+        - While waiting to solve it i can only investigate.
+
+[*] Handle the error of the Activity details page ever loading sometimes.
+    - Sometimes, The spinner(loader) spines for ever. i don't yet know what causes it .
+        i will only investigate while waiting to solve it .
+
+
+[*] Handle The of the backPress sometimes not working .
+    - This is due to some Modals which are listening to backPress, once opened will not 
+        unregister its handle even when closed because it's not unmounted onClosed.
+
+########################### contributions design ###########################################
+
+https://reactnativeexample.com/a-react-native-interface-for-the-paypal-payment-ui/
+react-native-paypal : https://github.com/MattFoley/react-native-paypal
+paypal-adaptive-payment: https://developer.paypal.com/docs/archive/adaptive-payments/integration-guide/APCallsHeadersAndPaymentTypes/
+
+###########################################################################################################################################
+
+########################## cacheble video ############################################
+
+https://stackoverflow.com/questions/44090112/how-to-implement-cache-in-react-native-video
+
+#############################################################
+
+note that deleting recurrent event on ios will not work use instead removeFutureEvents from RNCalendarEvents instead of tradtional RemoveEvents. 
+see: https://github.com/wmcmahan/react-native-calendar-events/issues/12
+[ ] Handle Proper Date display on the Activity menu Public event card and invitation
+     card in case the activity is a recursive one.
+
+[*] Check if the user is a master before performing an update onLongPress on the Acivity Details page.
+
+[*] implement a restore after deleting
+
+[*] Check that A Post has atleat one of the inputs fields before accepting creation on the Activiy Details page.
+
+[*] Add A BackPress handle on Create Activity page and on the mytask page.
+
+[ ] On the likes module if the likes has never been initialized in the store, It will alway fetch likes 
+    on Mount . But one The Likes is initialised in the store . it will never fetch again.
+    From Then Likes will be updatable only through updatesDispatcher. 
+
+    - This is a Good Practise in case the user is a member of the activity. since being a member
+    implies having subscribed to all incomming updates on that activity. 
+
+    - But in the case it a public Activity and the user has not yet joint, once it fetches the likes and 
+        initialises the store for the first time, it will never fetch again and hence the likes of the
+        likes for that activity on that device will remain outdated if any update occurs. 
+
+    - This is highly problematic. 
+
+    [*]  When a remind is added or deleted the whole list refreshes in the remind tab in the event page 
+
+[*] implement daysOfWeek and WeekOfMonth in setting remind recurrence. 
+
+[*] implement the configuratoins Who can add a post and who can add a remind.
+
+[*] implement checking base on the conditions listed above . 
+
+[ ] attarchement message ar not able to be opened af reopening the app after sending it .
+    this is deu to a permission issues. i dought if this happens on all devices. but it 
+    happened on my own. 
+
+[ ] add likes to posts.
+[ ] add and handle the concept of public and private post. 
+[ ] make sound recorder as component so that it should be working for both message and reminds report. 
+[ ] add recorder audio possibility to remind reports. 
+
+[] 
+    A solution needs to implemented to handle this . 
+    The same applies for sharers.
+

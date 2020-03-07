@@ -44,7 +44,11 @@ export default class SelectableProfileWithOptions extends Component {
                                     "radio-button-unchecked"} type="MaterialIcons"></Icon>
                             </View> : null}
                             <View style={{ width: "80%", color: "#0A4E52" }}>
-                                <ProfileView hideMe={() => {
+                                <ProfileView setContact={(con) => {
+                                    this.setState({
+                                        con:con
+                                    })
+                                }} delay={this.props.delay} hideMe={() => {
                                     this.setState({
                                         hiden: true
                                     })
@@ -62,7 +66,7 @@ export default class SelectableProfileWithOptions extends Component {
                                     changeMasterState={() => this.changeMasterState()}
                                     creator={this.props.creator}
                                     phone={this.state.contact.phone}
-                                    checkActivity={() => this.props.checkActivity(this.state.contact.phone)}
+                                    checkActivity={() => this.props.checkActivity(this.state.con)}
                                     mainMaster={this.props.mainMaster}
                                     master={this.state.contact.master}>
                                 </MemberActions>

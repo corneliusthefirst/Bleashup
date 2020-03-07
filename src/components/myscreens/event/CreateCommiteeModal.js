@@ -71,20 +71,20 @@ export default class CreateCommiteeModal extends PureComponent {
                     width: "100%"
                 }}
             >
-                <StatusBar barStyle="dark-content"></StatusBar>
+                <StatusBar animated={true} barStyle="dark-content"></StatusBar>
                 <View>
-                    <View><Text style={{ fontSize: 30, fontWeight: '400', marginBottom: "5%", marginLeft: "10%", }}>{"Create A Commitee"}</Text></View>
+                    <View><Text style={{ fontSize: 30, fontWeight: '400', marginBottom: "5%", marginLeft: "10%", }}>{"Create  committee"}</Text></View>
                     <Text style={{ fontSize: 12, }}> the commitee name should not be greaterthan 20 characters</Text>
                     {this.state.commiteeNameErrror ? <Text style={{ color: "#A91A84", fontWeight: 'bold', }} note>{"the commitee name cannot be empty"}</Text> : null}
                     {this.state.showGenralNameError ? <Text style={{ color: "#A91A84", fontWeight: 'bold', }} note> the commitee name cannot be same as General</Text> : null}
                     {this.state.nameTooLongError ? <Text style={{ color: "#A91A84", fontWeight: 'bold', }} note>the name is too long</Text> : null}
                     <Item>
-                        <TextInput style={{ width: "100%" }} onChangeText={(text) => {
+                        <TextInput maxLength={20} style={{ width: "100%" }} onChangeText={(text) => {
                             this.setState({
                                 commiteeName: text
                             })
                             this.validator(text)
-                        }} placeholder="Commitee Name" />
+                        }} placeholder="Committee name" />
                     </Item>
                     <Item>
                         <TouchableOpacity onPress={() => requestAnimationFrame(() => {

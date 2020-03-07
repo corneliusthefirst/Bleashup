@@ -6,11 +6,14 @@ export default class globalState {
   @observable eventUpdated = false;
   @observable isScrolling = true;
   @observable loading = false;
+  showingProfile = false
+  editingCommiteeName = false
   @observable error = false;
   @observable downlading = false
   @observable newContribution = false;
   @observable connected = true
   @observable currentRoom = null;
+  @observable reply = null
   @observable success = false;
   @observable previousCommitee = null;
   @observable socket = null;

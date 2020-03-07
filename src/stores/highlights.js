@@ -69,10 +69,10 @@ export default class highlights {
   removeHighlight(id) {
     return new Promise((resolve, rejectPromise) => {
       this.readFromStore().then(Highlights => {
-        let Previoushighlight = find(Highlights,{id:id})
+        let Previoushighlight = find(Highlights, { id: id })
         Highlights = reject(Highlights, { id, id });
-        this.saveKey.data =  id == "newHighlightId" ?  [request.Highlight()].concat(Highlights) : 
-        Highlights;
+        this.saveKey.data = id == "newHighlightId" ? [request.Highlight()].concat(Highlights) :
+          Highlights;
         storage.save(this.saveKey).then(() => {
           this.highlights = this.saveKey.data;
           resolve(Previoushighlight);
@@ -81,6 +81,8 @@ export default class highlights {
     });
   }
   fetchHighlightsFromRemote(eventID) {
+    let sorter = (a, b) => (a.created_at > b.created_at ? -1 :
+      a.created_at < b.created_at ? 1 : 0)
     return new Promise((resolve, reject) => {
       if (this.curentTemporalHighlight[eventID] && this.curentTemporalHighlight[eventID].length > 0) {
         resolve(this.curentTemporalHighlight[eventID])
@@ -95,8 +97,8 @@ export default class highlights {
               this.replaceHighlights(Array.isArray(Data.data) ?
                 uniqBy(Data.data, 'id') : [Data.data], eventID).then(() => {
                   this.curentTemporalHighlight[eventID] = Data.data
-                  resolve(uniqBy(sortBy(Array.isArray(Data.data) ?
-                    uniqBy(Data.data, 'id') : [Data.data], ['created_at', 'desc']), 'id'))
+                  resolve(uniqBy((Array.isArray(Data.data) ?
+                    uniqBy(Data.data, 'id') : [Data.data]).sort(sorter), 'id'))
                 })
             }
           }).catch(error => {
@@ -107,28 +109,32 @@ export default class highlights {
     })
   }
   @action fetchHighlights(eventID) {
+    let sorter = (a, b) => (a.created_at > b.created_at ? -1 :
+      a.created_at < b.created_at ? 1 : 0)
     return new Promise((resolve, reject) => {
       if (this.highlights.length == 0) {
         this.readFromStore().then(Highlights => {
           let result = filter(Highlights, {
             event_id: eventID
-          })
+          }).sort(sorter)
           if (result.length == 0) {
             this.fetchHighlightsFromRemote(eventID).then(data => {
-              resolve(data)
+              resolve(data.sort(sorter))
+            }).catch(() => {
+              resolve([])
             })
           } else {
-            resolve(uniqBy(sortBy(result, ['created_at'], ['desc']), 'id'))
+            resolve(uniqBy(result, 'id'))
           }
         });
       } else {
         let highlights = filter(this.highlights, { event_id: eventID });
         if (highlights.length == 0) {
           this.fetchHighlightsFromRemote(eventID).then(data => {
-            resolve(data)
+            resolve(uniqBy(data.sort(sorter), 'id'))
           })
         } else {
-          resolve(highlights)
+          resolve(uniqBy(highlights.sort(sorter), 'id'))
         }
       }
     });
@@ -240,6 +246,32 @@ export default class highlights {
         });
       });
     });
+  }
+  loadHighlight(id) {
+    return new Promise((resolve, reject) => {
+      this.readFromStore().then(Highs => {
+        let high = find(Highs, { id: id })
+        if (high) {
+          resolve(high)
+        } else {
+          let RequestObject = request.HID();
+          RequestObject.h_id = id;
+          tcpRequest.getHighlight(RequestObject, update.new_value + "highlight").then(JSONData => {
+            serverEventListener.sendRequest(JSONData, update.new_value + "highlight").then(Highlight => {
+              if (Highlight.data && Highlight.data !== 'empty') {
+                this.addHighlight(Highlight.data).then(() => {
+                  resolve(Highlight.data)
+                })
+              }else{
+                resolve()
+              }
+            }).catch((e) => {
+              resolve()
+            })
+          })
+        }
+      })
+    })
   }
 
   @action resetHighlight(newHightlight, inform) {

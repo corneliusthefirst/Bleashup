@@ -79,9 +79,14 @@ class PublicEvent extends Component {
       this.state.master !== nextState.master ||
       !isEqual(this.props.Event, nextProps.Event) ||
       this.state.fresh !== nextState.fresh
-  } 
+  }
   swipperComponent = null
   componentDidMount() {
+    setTimeout(() => {
+      this.setState({
+        isMount: true,
+      })
+    }, this.props.renderDelay + 20)
     setTimeout(() => {
       stores.TemporalUsersStore.getUser(this.props.Event.creator_phone).then(creator => {
         stores.Events.isMaster(this.props.Event.id, stores.LoginStore.user.phone).then(master => {
@@ -89,7 +94,6 @@ class PublicEvent extends Component {
             master: master,
             joint: findIndex(this.props.Event.participant, { phone: stores.LoginStore.user.phone }) > 0 ? true : false,
             creator: creator,
-            isMount: true
           })
         })
       })
@@ -117,10 +121,6 @@ class PublicEvent extends Component {
       ],
     }
   }
-  componentWillUnmount() {
-    clearInterval(this.interval)
-  }
-
 
   showPublishersList() {
     this.setState({
@@ -141,7 +141,7 @@ class PublicEvent extends Component {
           publishing: false,
           public: true
         })
-        
+
       }).catch(error => {
         this.setState({
           publishing: false
@@ -207,7 +207,7 @@ class PublicEvent extends Component {
     })
   }
   join() {
-    if (!this.props.Event.joint) {
+    if (findIndex(this.props.Event.participant,{phone:stores.LoginStore.user.phone})) {
       if (this.props.Event.new) {
         stores.Events.markAsSeen(this.props.Event.id).then(() => {
         })
@@ -266,14 +266,14 @@ class PublicEvent extends Component {
   onCloseSwipeout() {
   }
   showPhoto(url) {
-    url === this.props.Event.background && !this.state.audio ? this.props.showPhoto(url) : 
+    url === this.props.Event.background && !this.state.audio ? this.props.showPhoto(url) :
       this.props.navigation.navigate("HighLightsDetails", { event_id: this.props.Event.id })
   }
   render() {
     //emitter.emit('notify', "santerss") 
-    return (this.state.isMount ? <View style={{ width: "100%", }}>
+    return (this.state.isMount ? <View style={{ width: "100%", paddingLeft: '3%',paddingRight: '3%', alignSelf: 'center', }}>
       <Swipeout {...this.props} onOpen={() => this.openSwipeOut()} onClose={() => this.onCloseSwipeout()} style={{
-        width: "100%",
+        width: "100%", ...shadower(3),
         backgroundColor: this.props.Event.new ? "#cdfcfc" : null
       }}
         autoClose={true}
@@ -281,9 +281,8 @@ class PublicEvent extends Component {
         {...this.swipeOutSettings(this.state.master, this.state.joint)}>
         <Card
           style={{
-            borderColor: "#1FABAB",
-          }
-          }
+            margin: '1%',
+          }}
           bordered
         >
           <CardItem
@@ -294,11 +293,11 @@ class PublicEvent extends Component {
             }}
           >
             <Left>
-              <View style={{ flexDirection: "row", }}>
+              {this.state.creator ? <View style={{ flexDirection: "row", }}>
                 <ProfileSimple showPhoto={(url) =>
                   this.props.showPhoto(url)}
                   profile={(this.state.creator)}></ProfileSimple>
-              </View>
+              </View> : null}
             </Left>
             <Right>
               <Button onPress={() => this.props.showActions(this.props.Event.id)} transparent>
@@ -307,7 +306,8 @@ class PublicEvent extends Component {
             </Right>
           </CardItem>
           <CardItem style={{
-            marginLeft: "4%",
+            marginLeft: '2%',
+            marginBottom: '1%',
           }}>
             {this.state.isMount ? <TitleView openDetail={() => this.props.openDetails(this.props.Event)} join={() => this.join()} joint={this.state.joint} seen={() => this.markAsSeen()}
               {...this.props}></TitleView> : null}
@@ -322,19 +322,24 @@ class PublicEvent extends Component {
             }}
             cardBody
           >
-            <Left>
-              {this.state.isMount ? <View><PhotoView navigation={this.props.navigation} renderDelay={this.props.renderDelay} showPhoto={(url) => url ?
+          <View style={{flexDirection: 'row',}}>
+              <View style={{ width: '65%' }}>{this.state.isMount ? <View style={{ alignSelf: 'flex-start' }}><CardItem 
+                style={{
+                  ...shadower(), 
+                  backgroundColor: '#1FABAB',
+                  height:'90%',
+                  width: "60%",
+                  borderRadius:5,
+                  marginLeft: "4%" }}><PhotoView
+               navigation={this.props.navigation} renderDelay={this.props.renderDelay} showPhoto={(url) => url ?
                 this.showPhoto(url) : null} joined={() => this.join()}
                 isToBeJoint hasJoin={this.props.Event.joint || this.state.joint} onOpen={() => this.onOpenPhotoModal()} style={{
-                  width: "70%",
-                  marginLeft: "4%"
+                  marginLeft: '-1%',
                 }} photo={this.props.Event.background} event_id={this.props.Event.id} width={170} height={100} borderRadius={6} />
-                </View> : null}
-            </Left>
-            <Right >
-              {this.state.isMount && this.props.Event.location.string ? <MapView style={{ marginRight: "11%" }}
-                location={this.props.Event.location.string}></MapView> : null}
-            </Right>
+              </CardItem></View> : null}</View>
+              {this.state.isMount && this.props.Event.location.string ?<View style={{alignSelf: 'flex-start',width:'40%'}}><MapView card 
+                location={this.props.Event.location.string}></MapView></View> : null}
+          </View>
           </CardItem>
           <CardItem>
             {this.state.isMount ? <Options seen={() => this.markAsSeen()} {...this.props}></Options> : null}
@@ -351,7 +356,7 @@ class PublicEvent extends Component {
           </Footer>
         </Card>
       </Swipeout>
-    </View> : <Card style={{ height: 320 }}>
+    </View> : <Card style={{ height: 315, padding: '1%', margin: '1%', alignSelf: 'center', width: '97%' }}>
       </Card>)
   }
 }

@@ -100,7 +100,7 @@ export default class FileAttarchementMessaege extends Component {
     }
     success(path, total, received) {
         this.props.message.received = this.state.receive
-       // this.props.message.source = path
+        // this.props.message.source = path
         this.props.message.total = this.state.total
         this.setAfterSuccess(path, total * 1000 * 1000, received * 1000 * 1000)
     }
@@ -137,16 +137,16 @@ export default class FileAttarchementMessaege extends Component {
                     <View style={textStyle}>
                         <View>
                             <View style={{ display: 'flex', flexDirection: 'row', alignContent: 'space-between', }}>
-                                <View style={{ width: "70%" }}>
-                                    <Text style={{}}>{this.props.message.file_name}</Text>
+                                <View style={{ width: "65%" }}>
+                                    <Text elipsizeMode={'tail'} numberOfLines={4} style={{}}>{this.props.message.file_name}</Text>
                                 </View>
-                                <Text style={{ fontSize: 30, color: "#0A4E52" }}>{this.props.message.file_name.split(".")
-                                [this.props.message.file_name.split(".").length - 1].toUpperCase()}</Text>
-                                <Right></Right>
+                                <View style={{width:'35%'}}><Text elipsizeMode={"tail"} numberOfLines={1} 
+                                style={{ fontSize: 30, color: "#0A4E52", alignSelf: 'flex-start' }}>{this.props.message.file_name.split(".")
+                                [this.props.message.file_name.split(".").length - 1].toUpperCase()}</Text></View>
                             </View>
                         </View>
                     </View>
-                    <View style={{ marginTop: "3%", marginLeft: "-5%", }}>
+                    <View style={{ marginTop: "3%", marginLeft: "-5%",width:'20%' }}>
                         <AnimatedCircularProgress
                             size={40}
                             width={3}
@@ -176,7 +176,7 @@ export default class FileAttarchementMessaege extends Component {
                             }
                         </AnimatedCircularProgress><View>
                             {!testForURL(this.props.message.source) ? <Text>{this.toMB(this.state.total).toFixed(1)}{"Mb"}</Text> :
-                                <Text style={{ fontSize: 10 }} note>{"("}{this.toMB(isNaN(this.state.received)?0:this.state.received).toFixed(1)}{"/"}
+                                <Text style={{ fontSize: 10 }} note>{"("}{this.toMB(isNaN(this.state.received) ? 0 : this.state.received).toFixed(1)}{"/"}
                                     {this.toMB(this.state.total).toFixed(1)}{")Mb"}</Text>}</View></View>
                 </View>
             </View>

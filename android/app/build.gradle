@@ -93,6 +93,8 @@ def enableSeparateBuildPerCPUArchitecture = false
  */
 def enableProguardInReleaseBuilds = false
 android {
+    //compileSdkVersion 27
+   // buildToolsVersion "27.0.3"
      packagingOptions {
         pickFirst 'lib/x86/libc++_shared.so'
         pickFirst 'lib/x86_64/libc++_shared.so'
@@ -123,8 +125,9 @@ android {
     }
 
     defaultConfig {
-        manifestPlaceholders = [appPackageName: "${applicationId}"]
         multiDexEnabled true
+        targetSdkVersion 27
+        vectorDrawables.useSupportLibrary true
         applicationId "com.bleashup.bleashup"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
@@ -162,29 +165,27 @@ android {
 }
 
 dependencies {
-  
+    implementation project(':react-native-reanimated')
+    implementation project(':react-native-svg')
+    implementation project(':react-native-image-crop-picker')
     implementation project(':react-native-ffmpeg')
-    implementation project(':react-native-device-info')
     implementation project(':react-native-inappbrowser-reborn')
     implementation "com.google.firebase:firebase-auth:17.0.0"
     implementation "com.google.firebase:firebase-database:17.0.0"
     implementation project(':react-native-firebase')
     implementation project(':react-native-datetimepicker')
-    implementation project(':react-native-video-processing')
     //implementation 'com.android.support:appcompat-v7:27.1.1'
     //implementation 'com.android.support:design:27.1.1'
     implementation project(':react-native-calendar-events')
     implementation project(':react-native-orientation-locker')
     implementation project(':react-native-sound-recorder')
     implementation project(':react-native-document-picker')
-    implementation project(':react-native-customized-image-picker')
     implementation project(':react-native-file-viewer')
     implementation project(':react-native-video')
     implementation project(':rn-fetch-blob')
     implementation project(':react-native-sound')
   
     implementation project(':react-native-community-netinfo')
-    implementation project(':react-native-svg')
     implementation project(':@react-native-community_async-storage')
     implementation project(':react-native-vector-icons')
     implementation project(':react-native-tcp')
@@ -198,8 +199,6 @@ dependencies {
     implementation 'com.android.support:design:27.1.1'
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
     implementation "com.facebook.react:react-native:+"  // From node_modules
-    implementation project(':react-native-exit-app')
-    implementation project(':react-native-nested-scroll-view')
     implementation project(':react-native-image-picker')
     
     compile 'com.android.support:multidex:1.0.3'

@@ -2,6 +2,8 @@ import tcpRequest from '../../../services/tcpRequestData';
 import stores from '../../../stores';
 import EventListener from '../../../services/severEventListener';
 import GState from '../../../stores/globalState';
+import uuid  from 'react-native-uuid';
+
 class HomeRequester {
     constructor() {
 
@@ -13,6 +15,20 @@ class HomeRequester {
                 EventListener.sendRequest(JSONData, stores.LoginStore.user.phone).then((response) => {
                     let newEvent = { ...event, id: response.event_id, calendared: true }
                     stores.Events.addEvent(newEvent).then(() => {
+                        let Change = {
+                            id: uuid.v1(),
+                            title: `First Update`,
+                            updated: "new_event",
+                            event_id: response.event_id,
+                            updater: stores.LoginStore.user,
+                            changed: `Created The Activity`,
+                            new_value: { data: null, new_value: null },
+                            date: event.created_at,
+                            time: null
+                        }
+                        stores.ChangeLogs.addChanges(Change).then(res => {
+
+                        })
                         resolve(GState.DeepLinkURL+"event/"+response.event_id)
                     })
                     // stores.Events.addEvent()

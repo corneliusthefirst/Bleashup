@@ -13,6 +13,7 @@ import BleashupFlatList from './BleashupFlatList';
 import DateView from "./myscreens/eventChat/DateView";
 import moment from "moment";
 import ChangeBox from "./myscreens/changelogs/ChangesBox";
+import shadower from "./shadower";
 
 const defaultCircleSize = 16;
 const defaultCircleColor = "#007AFF";
@@ -162,10 +163,10 @@ export default class BleashupTimeLine extends PureComponent {
                 break;
         }
         return (
-            <View style={timeWrapper}>
+            <View style={{...timeWrapper}}>
                 <View style={[styles.timeContainer, this.props.timeContainerStyle]}>
                     <Text style={[styles.time, this.props.timeStyle]}>
-                        {moment(rowData.date).format("hh:mm:ss a")}
+                        {moment(rowData.date).format("hh:mm a")}
                     </Text>
                 </View>
             </View>
@@ -257,7 +258,11 @@ export default class BleashupTimeLine extends PureComponent {
                     {rowData.title}
                 </Text>
                 <View>
-                    <ChangeBox delayer={delay} change={rowData}></ChangeBox>
+                    <ChangeBox master={this.props.master} 
+                    showPhoto={url => this.props.showPhoto(url)}
+                    restore={(data) => this.props.restore(data)}
+                     mention={(data) => this.props.mention(data)} 
+                     delayer={delay} change={rowData}></ChangeBox>
                 </View>
             </View>
         )
@@ -388,6 +393,8 @@ const styles = StyleSheet.create({
         justifyContent: "center"
     },
     timeContainer: {
+        ...shadower(3),
+        borderRadius:5,
         minWidth: 45
     },
     time: {

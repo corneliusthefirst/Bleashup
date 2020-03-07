@@ -51,7 +51,7 @@ export default class EditNameModal extends PureComponent {
             <Modal
                 backdropPressToClose={true}
                 backdropOpacity={0.4}
-                swipeToClose={false}
+                //swipeToClose={false}
                 backButtonClose={true}
                 entry={"top"}
                 position={"bottom"}
@@ -77,11 +77,11 @@ export default class EditNameModal extends PureComponent {
                     width: "100%"
                 }}
             >
-                <StatusBar barStyle="dark-content"></StatusBar>
+                <StatusBar animated={true}  barStyle="dark-content"></StatusBar>
                 <View>
                     <View style={{ display: 'flex', flexDirection: 'row', marginBottom: "10%", }}>
                         <Icon style={{ color: "#0A4E52", fontSize: 35, marginRight: "5%", marginTop: "1%", }} type={"EvilIcons"} name={"pencil"}></Icon>
-                        <Text style={{ fontSize: 35, fontWeight: '400', }}> Edit Commitee Name</Text>
+                        <Text style={{ fontSize: 35, fontWeight: '400', }}>{"Edit Committee Name"}</Text>
                     </View>
                     <Text style={{ fontSize: 12, }}> the commitee name should not be greaterthan 20 characters.</Text>
                     {this.state.commiteeNameErrror ? <Text style={{ color: "red",fontWeight: 'bold', }} note>{"the commitee name cannot be empty"}</Text> : null}
@@ -90,12 +90,12 @@ export default class EditNameModal extends PureComponent {
                     {this.state.updatedNameError ? <Text style={{ color: "#A91A84", fontWeight: 'bold', }} note>updated name cannot be same as current commitee name.</Text> : null}
 
                     <Item>
-                        <TextInput style={{ width: "100%" }} value={this.state.commiteeName} onChangeText={(text) => {
+                        <TextInput maxLength={20} style={{ width: "100%" }} value={this.state.commiteeName} onChangeText={(text) => {
                             this.setState({
                                 commiteeName: text
                             })
                             this.validator(text)
-                        }} placeholder="Commitee Name" />
+                        }} placeholder="Committee Name" />
                     </Item>
                     <View style={{ marginLeft: "90%", marginTop: "5%", }}>
                         <TouchableOpacity onPress={() => requestAnimationFrame(() => {

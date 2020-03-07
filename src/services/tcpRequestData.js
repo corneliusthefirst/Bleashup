@@ -24,6 +24,12 @@ class tcpRequestData {
         Update.about_update.action = action;
         Update.about_update.title = data;
         return Update;
+      }else if(action === 'who_can_update'){
+        Update.action = "who_can_update";
+        Update.phone = phone;
+        Update.event_id = eventID;
+        Update.who_can_update_update = data;
+        return Update;
       } else if (action == "description") {
         Update.action = "about";
         Update.phone = phone;
@@ -376,6 +382,9 @@ class tcpRequestData {
   deleteHighlight(data, id) {
     return this.sendData("delete_highlight", data, id);
   }
+  restoreHighlight(data, id) {
+    return this.sendData("restore_highlight", data, id);
+  }
   udateContribution(data, id) {
     return this.sendData("update_contribution", data, id);
   }
@@ -406,8 +415,8 @@ class tcpRequestData {
   addRemind(data, id) {
     return this.sendData("add_remind", data, id);
   }
-  getReminds(data) {
-    return this.sendData("get_reminds", data);
+  getReminds(data,id) {
+    return this.sendData("get_reminds", data,id);
   }
   getRemind(data, id) {
     return this.sendData("get_remind", data, id);

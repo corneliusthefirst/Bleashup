@@ -1,13 +1,12 @@
 import React, { Component } from "react"
-import { View, TouchableOpacity } from 'react-native';
-import { Text, Left, Title } from 'native-base';
+import { View, TouchableOpacity, Text } from 'react-native';
+import { Left, Title } from 'native-base';
 import autobind from "autobind-decorator";
-import SvgAnimatedLinearGradient from 'react-native-svg-animated-linear-gradient'
-import Svg, { Circle, Rect } from 'react-native-svg'
 import stores from "../../../../stores";
 import DetailsModal from "../../invitations/components/DetailsModal";
 import { forEach, find } from "lodash"
 import moment from "moment";
+import { writeInterval, writeDateTime, dateDiff } from '../../../../services/datesWriter';
 export default class TitleView extends Component {
     constructor(props) {
         super(props)
@@ -32,32 +31,6 @@ export default class TitleView extends Component {
             this.props.seen()
         })
     }
-    dateDiff(date) {
-        let statDate = moment(date)
-        let end = moment()
-        return daysDiff = Math.floor(moment.duration(end.diff(statDate)).asDays())
-    }
-    writeDateTime(date) {
-        let statDate = moment(date)
-        let end = moment()
-        let daysDiff = Math.floor(moment.duration(end.diff(statDate)).asDays())
-        if (daysDiff == 0) {
-            return "Ongoing Today from " + moment(date).format("h:mm a");
-        } else if (daysDiff == 1) {
-            return "Past Since Yesterday at " + moment(date).format("h:mm a")
-        } else if (daysDiff > 1 && daysDiff < 7) {
-            return `Past Since ${Math.abs(daysDiff)} Days Ago at ` + moment(date).format("h:mm a")
-        } else if (daysDiff == 7) {
-            return "Past Since 1 Week Ago at " + moment(date).format("h:mm a")
-        } else if (daysDiff == -1) {
-            return "Upcoming Tomorrow at " + moment(date).format("h:mm a");
-        }
-        else if (daysDiff < -1) {
-            return `Upcoming in ${Math.abs(daysDiff)} Days at ` + moment(date).format("h:mm a");
-        } else {
-            return `Past since ${moment(date).format("dddd, MMMM Do YYYY")} at ${moment(date).format("h:mm a")}`
-        }
-    }
     render() {
         return <View>
             <View style={{
@@ -69,51 +42,47 @@ export default class TitleView extends Component {
                     }
                     )}>
                         <View style={{ flexDirection: "column", alignItems: "flex-start" }}>
-                            <Title
+                            <Text
                                 adjustsFontSizeToFit={true}
+                                ellipsizeMode={'tail'}
+                                numberOfLines={1}
                                 style={{
                                     fontSize: 20,
-                                    color: "#0A4E52",
                                     fontWeight: "500",
+                                    color: "#696969",
                                     fontFamily: "Roboto",
                                 }}
                             >
                                 {this.props.Event.about.title}{/*{" "}{this.props.Event.id}*/}
-                            </Title>
+                            </Text>
                             {this.props.Event.period ? <Title
                                 style={{
                                     fontSize: 12,
-                                    color: this.props.Event.closed ? "red" : this.dateDiff(this.props.Event.period) > 0 ? "gray" : "#1FABAB",
+                                    color: this.props.Event.closed ? "red" : dateDiff(this.props.Event) > 0 ? "gray" : "#1FABAB",
                                     fontStyle: 'italic',
                                     fontWeight: this.props.Event.closed ? "bold" : '400',
                                 }}
                                 note
                             >
-                                {this.props.Event.closed ? "Closed" : this.writeDateTime(this.props.Event.period)}
+                                {this.props.Event.closed ? "Closed" : writeDateTime(this.props.Event)}
                             </Title> : null}
                         </View>
-                        <View>
-                            <Left>
-                                {this.props.Event.recursive ? <View style={
+                        <View style={{}}>
+                            {this.props.Event.interval === 1 && this.props.Event.frequency === 'yearly'
+                                ? null : <View style={
                                     {
                                         flexDirection: "column"
                                     }
                                 }>
                                     <View>
-                                        <Text style={{
-                                            color: "#1FABAB"
+                                        <Text ellipsizeMode={'tail'} numberOfLines={1} style={{
+                                            color: "#696969",
+                                            fontStyle: 'italic',
                                         }} note>
-                                            {this.props.Event.recursion.type}
+                                            {`Every${this.props.Event.interval > 1 ? " " + this.props.Event.interval : ''} ${writeInterval(this.props.Event.frequency)} till ${moment(this.props.Event.recurrence ? this.props.Event.recurrence : null).format("dddd, MMMM Do YYYY")}`}
                                         </Text>
                                     </View>
-
-                                    <View>
-                                        <Text note>
-                                            {this.props.Event.recursion.days}
-                                        </Text>
-                                    </View>
-                                </View> : null}
-                            </Left>
+                                </View>}
                         </View>
                     </TouchableOpacity>
                 </View>

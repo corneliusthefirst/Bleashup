@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { View, Vibration, TouchableOpacity } from 'react-native';
-import { Title, Text } from 'native-base';
+import { Title, Text, Icon } from 'native-base';
 import Swipeout from '../../SwipeOut';
 import HighlightContent from './HighlightContent';
 import moment from 'moment';
-import ProfileModal from '../invitations/components/ProfileModal';
 import stores from '../../../stores';
+import Creator from '../reminds/Creator';
 export default class HighLight extends Component {
     constructor(props) {
         super(props)
@@ -24,15 +24,10 @@ export default class HighLight extends Component {
 
     }
     componentDidMount() {
-        this.props.highlight.creator ? stores.TemporalUsersStore.getUser(this.props.highlight.creator).then(creator => {
-            this.setState({
-                creator: creator
-            })
-        }) : null
+
     }
     shouldComponentUpdate(nextProps, nextState, nextContext) {
-        return this.state.showProfile !== nextState.showProfile ||
-            this.state.creator !== nextState.creator
+        return false
     }
     handleReply() {
         console.warn('handling reply .....')
@@ -92,7 +87,7 @@ export default class HighLight extends Component {
                 marginTop: '2%',
             }}>
                 <Swipeout
-                    disabled={this.props.disableSwipper ? this.props.disableSwipper : false}
+                    disabled={this.props.disableSwipper ? this.props.disableSwipper : true}
                     ref={'chatSwipeOut'} onOpen={() => { this.openingSwipeout() }}
                     onClose={() => { this.closingSwipeout() }} autoClose={true} close={true}
                     left={[{
@@ -121,22 +116,12 @@ export default class HighLight extends Component {
                         <View>
                             {this.renderContent(this.props.highlight)}
                         </View>
-                        <View>
+                        <View style={{marginLeft: '3%',}}>
+                            { <Icon name="reply" onPress={() => this.props.mention?this.props.mention():this.quickMention()} type="Entypo" style={{ color: 'darkGray', margin: '1%',width:'20%' }}></Icon>}
                         </View>
                         <View style={{ flexDirection: "column", justifyContent: "space-between", bottom: 0, margin: 3, width: "98%" }}>
-                            <TouchableOpacity onPress={() => {
-                                this.showCreator()
-                            }}>
-                                <Text style={{ fontWeight: 'bold', fontSize: 11, margin: 1, }} note>Created </Text>
-                                {this.state.creator ? <Text style={{ margin: "1%", fontSize: 11, fontStyle: 'normal', }} note>by {this.state.creator.nickname} </Text> : null}
-                                <Text style={{ margin: "1%", fontSize: 11, color: "gray" }} >{"On "}{moment(this.props.highlight.created_at).format("dddd, MMMM Do YYYY, h:mm:ss a")}</Text>
-                            </TouchableOpacity>
+                            <Creator creator={this.props.highlight.creator} created_at={this.props.highlight.created_at} color={this.props.color ? this.props.color : "#9EEDD3"}></Creator>
                         </View>
-                        {this.state.showProfile ? <ProfileModal isOpen={this.state.showProfile} profile={this.state.creator} onClosed={() => {
-                            this.setState({
-                                showProfile: false
-                            })
-                        }}></ProfileModal> : null}
                     </View>
                 </Swipeout>
             </View>

@@ -2,7 +2,7 @@ import React, { Component } from "react";
 
 import SentInvitations from '../sent-invitations/invitationCard';
 import ReceivedInvitations from '../received-invitations/invitationCard';
-import { Spinner } from "native-base";
+import { Spinner, Icon,Title } from "native-base";
 import stores from "../../../stores";
 import { observer } from "mobx-react";
 import { sortBy } from "lodash"
@@ -11,6 +11,7 @@ import BleashupFlatList from '../../BleashupFlatList';
 import CreateEvent from '../event/createEvent/CreateEvent';
 import DetailsModal from "./components/DetailsModal";
 import PhotoViewer from "../event/PhotoViewer";
+import shadower from "../../shadower";
 
 @observer export default class InvitationView extends Component {
   constructor(props) {
@@ -48,15 +49,18 @@ import PhotoViewer from "../event/PhotoViewer";
         // Update your scroll position
         this._listViewOffset = currentOffset
       }
+      goback(){
+        this.props.navigation.goBack()
+      }
       handleBackButton(){
-        this.props.navigation.navigate('Home')
+        this.goback()
         return true
       }
       componentWillMount() {
-        BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this));
+       this.BackPressHandler =  BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this));
       }
       componentWillUnmount() {
-        BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton.bind(this));
+        this.BackPressHandler.remove()
       }
 
   _keyExtractor = (item, index) => item.invitation_id;
@@ -72,7 +76,7 @@ import PhotoViewer from "../event/PhotoViewer";
             //onScroll={this._onScroll}
             firstIndex={0}
             keyExtractor={this._keyExtractor}
-            dataSource={sortBy(stores.Invitations.invitations, "period")}
+            dataSource={stores.Invitations.invitations}
             numberOfItems={stores.Invitations.invitations.length}
             renderItem={(item, index) => {
               this.delay = (index % this.renderPerBatch) === 0 ? 0 : this.delay + 1
@@ -101,6 +105,10 @@ import PhotoViewer from "../event/PhotoViewer";
             }}
           >
           </BleashupFlatList>}
+      <View style={{ height: 44,padding: '2%', backgroundColor: '#FEFFDE',opacity:.8,position:'absolute', width: '100%', ...shadower(5),flexDirection: 'row', }}><View style={{width:'30%'}}><Icon type='Ionicons' 
+      name="md-arrow-round-back" style={{ color: "#1FABAB", marginLeft: "5%",fontSize: 26, }} onPress={() => {
+        this.goback()
+      }}></Icon></View><Title style={{fontWeight: 'bold',fontSize:22}}>{"Invitations"}</Title></View>
       {this.state.isActionButtonVisible ? <CreateEvent {...this.props} /> : null}
 
       {this.state.isDetailsModalOpened ? <DetailsModal event={this.state.event}

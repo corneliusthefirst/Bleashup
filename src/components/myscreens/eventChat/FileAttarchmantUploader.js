@@ -44,9 +44,7 @@ export default class FileAttarchementUploader extends Component {
         })
         this.props.message.type = 'attachement'
         ///this.props.message.thumbnailSource = this.baseURL + response.data.split('.')[0] + '_thumbnail.jpeg'
-        this.props.message.temp = path
-        this.props.message.received = this.state.total
-        this.props.replaceMessage(this.props.message)
+        this.props.replaceMessage({...this.props.message,temp:path,received:this.state.total})
     }
     onError(error) {
         console.warn(error)

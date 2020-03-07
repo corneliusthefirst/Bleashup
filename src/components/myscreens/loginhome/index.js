@@ -1,28 +1,14 @@
 import React, { Component } from "react";
 import {
-  Content,
-  Card,
-  CardItem,
-  Body,
   Container,
-  Header,
-  Form,
-  Title,
-  Input,
-  Left,
-  Right,
-  Icon,
-  H3,
-  Spinner,
 } from "native-base";
-import { Text, View, ImageBackground, PermissionsAndroid,StatusBar } from 'react-native';
+import { Text, View, PermissionsAndroid } from 'react-native';
 import initialRoute from "../invitations/components/initialRoute";
 import globalState from "../../../stores/globalState";
-import ServerEventListener from "../../../services/severEventListener";
 import connection from "../../../services/tcpConnect";
-import UpdatesDispatcher from "../../../services/updatesDispatcher";
-import ChatRoom from "../eventChat/ChatRoom";
 import rnFetchBlob from 'rn-fetch-blob';
+import Waiter from "./Waiter";
+import Voter from "../eventChat/Voter";
 const AppDir = rnFetchBlob.fs.dirs.SDCardDir + '/Bleashup'
 const PhotoDir = AppDir + '/Photo'
 const SounDir = AppDir + '/Sound'
@@ -57,7 +43,7 @@ export default class LoginHomeView extends Component {
    // }
   }
   render() {
-    //console.disableYellowBox = true;
+  //console.disableYellowBox = true;
     this.requestReadAndWritePermission()
   /*return (
      <Container>
@@ -65,7 +51,7 @@ export default class LoginHomeView extends Component {
       </Container>
 
     )*/
-     routeName = initialRoute.routeName;
+     /*routeName = initialRoute.routeName;
        if ((globalState.loading = true)) {
          initialRoute.initialRoute().then(route => {
            if(route !== "Login"){
@@ -80,19 +66,18 @@ export default class LoginHomeView extends Component {
            }
          });
        }
-       globalState.loading = true;
-       return (
-         <Container>
-           <StatusBar backgroundColor="#FEFFDE" barStyle="dark-content"></StatusBar>
-         <ImageBackground resizeMode={"contain"} source={require("../../../../assets/Bleashup.png")} style={{ width: "100%", height: "100%", backgroundColor: "#FEFFDE", }}>
+       globalState.loading = true;*/
+       /*return (
+         <Container style={{}}>
              {globalState.loading ? (
-               <Spinner color="#FEFFDE" style={{ color:"#FEFFDE",marginTop: "95.5%",marginLeft: "8%", }} />
+            <Waiter></Waiter>
              ) : (
                  <Text> Waiting ... </Text>
                )}
-         </ImageBackground>
          </Container>
          
-       );
+       );*/
+
+       return <Voter></Voter>
   }
 }

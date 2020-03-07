@@ -146,6 +146,7 @@ export default class InvitationModal extends PureComponent {
       resolve(invite)
     })
   }
+  delay = 0
   _keyExtractor = (item, index) => item.phone;
   render() {
     return <Modal
@@ -224,9 +225,10 @@ export default class InvitationModal extends PureComponent {
               renderPerBatch={7}
               initialRender={15}
               numberOfItems={this.state.contacts.length}
-              renderItem={(item, index) =>
-                <View style={{ margin: 4 }}>
-                  <ProfileWithCheckBox checked={false}
+              renderItem={(item, index) =>{
+                this.delay = this.delay >= 15 ? 0:this.delay + 1
+                return (<View style={{ margin: 4 }}>
+                  <ProfileWithCheckBox delay={this.delay} checked={false}
                     index={indexOf(this.state.checked, item.phone)} phone={item.phone} check={(phone) =>
                       this.setState({
                         checked: concat(this.state.checked, [item]),
@@ -236,7 +238,7 @@ export default class InvitationModal extends PureComponent {
                       this.setState({ checked: reject(this.state.checked, ele => ele.phone == phone) })
                     }></ProfileWithCheckBox>
                   <MenuDivider color="#1FABAB" />
-                </View>
+                </View>)}
               }
             /* refreshControl={
                <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />

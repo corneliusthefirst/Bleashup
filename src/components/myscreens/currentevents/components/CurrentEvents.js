@@ -149,14 +149,16 @@ export default class CurrentEvents extends Component {
 
 
         return (
-            <View style={{ height: "100%", backgroundColor: "#FEFFDE" }}>
+            <View style={{ height: "100%",backgroundColor: '#FEFFDE',  }}>
                 <BleashupFlatList
+                //backgroundColor={"white"}
                     keyExtractor={(item, index) => item.id}
                     dataSource={this.props.data}
                     onScroll={this._onScroll}
                     renderItem={(item, index) => {
                         this.delay = index % this.renderPerbatch == 0 ? 0 : this.delay + 1
                         return <PublicEvent
+                        key={item.id}
                             showLikers={likers => {
                                 this.setState({
                                     isLikersModalOpened: true,
@@ -194,19 +196,19 @@ export default class CurrentEvents extends Component {
                         })
                     }}></PhotoViewer> : null
                 }
-                <ParticipantModal isOpen={this.state.isParticipantModalOpened} hideTitle={false} participants={this.state.participant} onClosed={() => {
+                {!this.state.isParticipantModalOpened ? null : <ParticipantModal isOpen={this.state.isParticipantModalOpened} hideTitle={false} participants={this.state.participant} onClosed={() => {
                     this.setState({
                         isParticipantModalOpened: false
                     })
-                }}  ></ParticipantModal>
-                <PublishersModal isOpen={this.state.isPublisherModalOpened} event_id={this.state.event_id} onClosed={() => {
+                }}  ></ParticipantModal>}
+                {!this.state.isPublisherModalOpened ? null : <PublishersModal isOpen={this.state.isPublisherModalOpened} event_id={this.state.event_id} onClosed={() => {
                     this.setState({
                         isPublisherModalOpened: false
                     })
-                }}></PublishersModal>
-                <LikerssModal likers={this.state.likers} isOpen={this.state.isLikersModalOpened} onClosed={() => this.setState({
+                }}></PublishersModal>}
+                {!this.state.likers ? null : <LikerssModal likers={this.state.likers} isOpen={this.state.isLikersModalOpened} onClosed={() => this.setState({
                     isLikersModalOpened: false
-                })}></LikerssModal>
+                })}></LikerssModal>}
                 {this.state.isInvitationModalOpened ? <InvitationModal
                     isOpen={this.state.isInvitationModalOpened}
                     public={this.state.event.public}

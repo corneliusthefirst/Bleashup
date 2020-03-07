@@ -18,7 +18,7 @@ export default class AreYouSure extends PureComponent {
                 backButtonClose={true}
                 position='center'
                 coverScreen={true}
-                animationDuration={0}
+                //animationDuration={0}
                 isOpen={this.props.isOpen}
                 onClosed={() => {
                     this.props.closed()
@@ -49,7 +49,10 @@ export default class AreYouSure extends PureComponent {
                     </View>
                     <View style={{ alignSelf: 'flex-end', flexDirection: 'row', }}>
                         <Button onPress={() => this.props.closed()} style={{ width: 100, marginRight: 60, alignItems: 'center',borderRadius: 10, }} ><Text style={{marginLeft: "15%",}}>Cancel</Text></Button>
-                        <Button onPress={() => this.props.callback()} style={{ width: 100, alignItems: 'center',borderRadius: 10, }}  danger><Text style={{ marginLeft: "15%", }}>{this.props.ok ? this.props.ok : "Leave"}</Text></Button>
+                        <Button onPress={() => {
+                            this.props.callback()
+                            this.props.closed()
+                        }} style={{ width: 100, alignItems: 'center',borderRadius: 10, }}  danger><Text style={{ marginLeft: "15%", }}>{this.props.ok ? this.props.ok : "Leave"}</Text></Button>
                     </View>
                 </Content>
             </Modal>

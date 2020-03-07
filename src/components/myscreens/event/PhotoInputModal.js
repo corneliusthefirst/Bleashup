@@ -19,7 +19,7 @@ export default class PhotoInputModal extends PureComponent {
                 backButtonClose={true}
                 position='center'
                 coverScreen={true}
-                animationDuration={0}
+                //animationDuration={0}
                 isOpen={this.props.isOpen}
                 onClosed={() => {
                     this.props.closed()

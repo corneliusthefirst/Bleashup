@@ -14,6 +14,8 @@ import moment from "moment";
 import emitter from '../../../services/eventEmiter';
 import testForURL from '../../../services/testForURL';
 import shadower from "../../shadower";
+import TasksCreation from "../reminds/TasksCreation";
+import GState from '../../../stores/globalState/index';
 
 export default class ChangeLogs extends Component {
   constructor(props) {
@@ -65,35 +67,6 @@ export default class ChangeLogs extends Component {
       }, 200)
     })
   }
-
-  propcessAndFoward(change) {
-    if (change.updated === "add_highlight") {
-      this.props.showHighlightDetails(change.new_value.new_value)
-    } else if (change.updated === "highlight_delete"){
-      this.props.showHighlightDetails(change.new_value.new_value)
-    } else if (change.updated === "highlight_url"){
-      this.props.showHighlightDetails({
-        title:change.changed,
-        description:null,
-        url:change.new_value.new_value,
-        created_at:change.date
-      })
-    } else if (Array.isArray(change.new_value.new_value) && change.new_value.new_value[0] && change.new_value.new_value[0].phone) {
-      this.props.showMembers(change.new_value.new_value)
-    } else if (Array.isArray(change.new_value.new_value) && change.new_value.new_value[0] && change.new_value.new_value[0].includes("00")) {
-      console.warn("showing contacts")
-      this.props.showContacts(change.new_value.new_value)
-    } else if (typeof change.new_value.new_value === "string" && testForURL(change.new_value.new_value)) {
-      this.props.openPhoto(change.new_value.new_value)
-    }
-    else if (typeof change.new_value.new_value === "string" ||
-      (Array.isArray(change.new_value.new_value) && typeof change.new_value.new_value[0] === "string") ||
-      typeof change.new_value.new_value === 'object') {
-      this.props.showContent(change.new_value.new_value)
-    } else {
-
-    }
-  }
   @autobind goBack() {
     this.props.navigation.goBack()
   }
@@ -102,27 +75,31 @@ export default class ChangeLogs extends Component {
     return (<View><Text>{item.changed}</Text></View>)
   }
   render() {
-    console.warn(this.props.forMember, "poo")
+    //console.warn(this.props.forMember, "poo")
     return (!this.state.loaded ? <Spinner size={"small"}></Spinner> : <View style={{ width: "100%", height: "100%", backgroundColor: "#FEFFDE", }}>
       <View style={{ flex: 1, height: "95%", top: 0, bottom: 0, left: 0, right: 0 }}>
         <BleashupTimeLine
           circleSize={20}
+          showPhoto={url => this.props.openPhoto(url)}
+          master={this.props.master}
+          mention={(data) => this.props.mention(data)}
+          restore={(data) => this.props.restore(data)}
           circleColor='rgb(45,156,219)'
           lineColor='#1FABAB'
-          timeContainerStyle={{ minWidth: 52, marginTop: -5 }}
+          timeContainerStyle={{ minWidth: 52, marginTop: -5,backgroundColor: '#FEFFDE',opacity:.8 }}
           timeStyle={{
             marginLeft: "4%",
             textAlign: 'center',
             backgroundColor: '#FEFFDE',
-            color: 'white', padding: 5,
+             padding: 4,
             borderRadius: 6,
             color: "#1FABAB",
-            borderWidth: .7,
-            borderColor: "#1FABAB",
+            //borderWidth: .7,
+            //borderColor: "#1FABAB",
           }}
           descriptionStyle={{ color: 'gray' }}
           onEventPress={(data) => {
-            this.propcessAndFoward(data)
+           !GState.showingProfile?this.props.propcessAndFoward(data):null
           }}
           data={this.props.activeMember && this.props.activeMember !== null ?
             this.changes.filter(ele => ele.updater.phone === this.props.activeMember ||
@@ -131,12 +108,12 @@ export default class ChangeLogs extends Component {
         </BleashupTimeLine>
       </View>
       {this.state.hideHeader ? null : <View style={{
-        width: "100%", height: 44, position: "absolute", opacity: .6,
+        width: "100%", height: 44, position: "absolute", alignSelf: 'flex-start',
         backgroundColor: "#FEFFDE", ...shadower(6)
       }}>
         <View style={{ flexDirection: 'row', width: "100%", }}>
-          <Text style={{ alignSelf: 'flex-start', margin: '3%', fontWeight: 'bold', fontSize: 20, width: "83%" }}>{(this.props.isMe ? "Your " : "") + "Activities Logs"}</Text>
-          <Icon style={{ alignSelf: 'flex-end', margin: '3%', }} name={"dots-three-vertical"} type="Entypo"></Icon>
+          <Text style={{ alignSelf: 'flex-start', margin: '1%', fontWeight: 'bold', fontSize: 20, width: "90%" }}>{(this.props.forMember ? this.props.forMember : (this.props.isMe ? "Your " : "")) + " Activity Logs"}</Text>
+          <Icon style={{ alignSelf: 'flex-end', margin: '1%',color:'#0A91A84',alignSelf:'center' }} name={"dots-three-vertical"} type="Entypo"></Icon>
         </View>
       </View>}
     </View>

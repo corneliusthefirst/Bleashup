@@ -13,8 +13,6 @@ import {
 
 import Swipeout from 'react-native-swipeout';
 import Modal from 'react-native-modalbox';
-import SvgAnimatedLinearGradient from 'react-native-svg-animated-linear-gradient'
-import Svg, { Circle, Rect } from 'react-native-svg'
 import styles from './style';
 import CacheImages from "../../CacheImages";
 import Exstyles from './style';
@@ -193,41 +191,43 @@ class CardListItem extends Component {
         </Text>
           </CardItem>
           <CardItem>
-            <Left>
+            <Left style={{margin: '2%'}}>
               <TouchableOpacity onPress={() => requestAnimationFrame(() => this.props.showPhoto(this.state.item.sender_Image))} >
-                {this.state.loading ? null : testForURL(this.state.item.sender_Image) ? <CacheImages small thumbnails source={{ uri: this.state.item.sender_Image }} /> :
+                {this.state.loading || !testForURL(this.state.item.sender_Image) ? <CacheImages small thumbnails source={{ uri: this.state.item.sender_Image }} /> :
                   <Thumbnail small source={{ uri: this.state.item.sender_Image }}></Thumbnail>}
               </TouchableOpacity>
-              <Body >
-                {this.state.loading ? null : <Text style={{ fontWeight: 'bold', }} >{this.state.item.sender_name}</Text>}
-                <Text style={{
-                  color: 'dimgray', padding: 10, fontStyle: 'italic',
-                  fontSize: 16, marginTop: -10, borderWidth: 0
-                }} note>{this.state.item.sender_status && this.state.item.sender_status.length > 50 ?
-                  this.state.item.sender_status.splice(0, 50) : this.state.item.sender_status ?
-                    this.state.item.sender_status : null}</Text>
+              <Body>
+                <View style={{flexDirection: 'row',alignSelf: 'flex-start',}}>
+                {this.state.loading ? null : <Text ellipsizeMode={'tail'} numberOfLines={1} style={{ fontWeight: 'bold',alignSelf: 'flex-start', }} >{this.state.item.sender_name}</Text>}
+                {this.state.item.status && this.state.item.status !== 'undefined' ? <Text ellipsizeMode={'tail'} numberOfLines={1} style={{
+                  color: 'dimgray', fontStyle: 'italic',
+                  fontSize: 16,  borderWidth: 0
+                }} note>{this.state.item.sender_status}</Text> : null}
+                </View>
               </Body>
             </Left>
           </CardItem>
           <CardItem cardBody>
             <Left>
               {this.state.loading ? null : <DoublePhoto showPhoto={(image) => this.props.showPhoto(image)}
-                enlargeImage={() => this.setState({ opening: true, enlargeEventImage: true })} 
+                enlargeImage={() => this.setState({ opening: true, enlargeEventImage: true })}
                 LeftImage={this.state.item.receiver_Image}
                 RightImage={this.state.item.event_Image} />}
             </Left>
             <Body >
-              {this.state.loading ? null : <TouchableOpacity onPress={() => requestAnimationFrame(() => {
+              {this.state.loading ? null : <TouchableOpacity style={{ alignSelf: 'flex-start', marginLeft: '-30%', marginTop: '8%'}} onPress={() => requestAnimationFrame(() => {
                 let event = filter(stores.Events.events, { id: this.state.event_id })
                 this.props.navigation.navigate("Event", {
                   Event: event[0],
                   tab: "EventDetails"
                 })
               })} >
-                <Title style={{ marginLeft: -40, fontWeight: 'bold', color:"#0A4E52" }}
+                <Title style={{alignSelf:'flex-start', fontWeight: 'bold', color: "#0A4E52" }}
                 >{this.state.item.event_title}</Title>
-                {this.state.item.event_time?<Title style={{ marginLeft: -40, color: 'dimgray', fontSize: 12, color:"#0A4E52", fontStyle: 
-                'italic', }}> on {moment(this.state.item.event_time).format("dddd, MMMM Do YYYY, h:mm:ss a")}</Title>:null}
+                {this.state.item.event_time ? <Text style={{
+                  color: 'dimgray', fontSize: 12, color: "#0A4E52", fontStyle:
+                    'italic',alignSelf:'flex-start'
+                }}> {`starts on ${moment(this.state.item.event_time).format("dddd, MMMM Do YYYY, h:mm:ss a")}`}</Text> : null}
               </TouchableOpacity>}
             </Body>
           </CardItem>

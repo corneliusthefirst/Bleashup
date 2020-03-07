@@ -32,12 +32,15 @@ export default class SelectableContactsMaster extends Component {
     }
     setMaster() {
         //this.state.checked && this.state.masterchecked ? this.props.unselected(this.props.contact.phone) : null
-        !this.state.checked && !this.state.masterchecked ? this.props.selected({ phone: this.props.contact.phone, master: true, host: this.props.contact.host, status: "invited" }) :
-            this.props.toggleMaster(this.props.contact.phone)
-        this.setState({
+        this.props.master ? !this.state.checked && !this.state.masterchecked ? this.props.selected({
+            phone: this.props.contact.phone,
+            master: true, host: this.props.contact.host, status: "invited"
+        }) :
+            this.props.toggleMaster(this.props.contact.phone) : null
+        this.props.master ? this.setState({
             masterchecked: !this.state.masterchecked,
             checked: (!this.state.checked && !this.state.masterchecked) ? !this.state.checked : this.state.checked
-        })
+        }) : null
     }
     render() {
         return !this.state.hiden ? (
@@ -49,7 +52,7 @@ export default class SelectableContactsMaster extends Component {
                                 "radio-button-unchecked"} type="MaterialIcons"></Icon>
                         </View>
                         <View style={{ width: "80%", color: "#0A4E52" }}>
-                            <ProfileView hideMe={() => {
+                            <ProfileView delay={this.props.delay} hideMe={() => {
                                 this.setState({
                                     hiden: true
                                 })

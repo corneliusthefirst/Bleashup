@@ -32,6 +32,20 @@ export default class EventLocation extends Component {
         event_id:this.props.event.id
       });
   }
+  componentWillMount(){
+    this.keyboardDidShowSub = Keyboard.addListener('keyboardDidShow', this.handleKeyboardDidShow.bind(this));
+    this.keyboardDidHideSub = Keyboard.addListener('keyboardDidHide', this.handleKeyboardDidHide.bind(this));
+  }
+  handleKeyboardDidHide(){
+    this.keyboarddissmissed = true
+  }
+  handleKeyboardDidShow() {
+    this.keyboarddissmissed = false
+  }
+  componentWillUnmount() {
+    this.keyboardDidHideSub.remove();
+    this.keyboardDidShowSub.remove()
+  }
   componentDidMount(){
     this.init()
   }
@@ -52,16 +66,21 @@ export default class EventLocation extends Component {
       }
      
    }
-
+   keyboarddissmissed = false
    @autobind
    updateLocation(){
-     this.state.location.string !== this.props.event.location.string ? this.props.updateLocation(this.state.location.string) : null
-     /*stores.Events.updateLocation(this.state.event_id,this.state.location,false).then(()=>{});
-     this.setState({update:false});
-     this.props.parentComp.state.EventData.location.string = this.state.location.string;
-     this.props.parentComp.setState({EventData:this.props.parentComp.state.EventData});
-     this.setState({location:request.Location()});*/
-     this.props.onClosed();
+     if(!this.keyboarddissmissed){
+       this.keyboarddissmissed = true
+       Keyboard.dismiss()
+     }else{
+       this.state.location.string !== this.props.event.location.string ? this.props.updateLocation(this.state.location.string) : null
+       /*stores.Events.updateLocation(this.state.event_id,this.state.location,false).then(()=>{});
+       this.setState({update:false});
+       this.props.parentComp.state.EventData.location.string = this.state.location.string;
+       this.props.parentComp.setState({EventData:this.props.parentComp.state.EventData});
+       this.setState({location:request.Location()});*/
+       this.props.onClosed();
+     }
    }
 
     render() {
@@ -90,7 +109,7 @@ export default class EventLocation extends Component {
                    <View>
                    <Text style={{alignSelf:'flex-start',margin:"3%",fontWeight:"500",fontSize:18}} >Activity Location </Text>
                     <Item  style={{borderColor:'black',width:"95%",alignSelf:'center'}} rounded>
-                     <Input placeholder='Activity Location' 
+                <Input maxLength={20} placeholder='Activity Location' 
                      keyboardType='email-address' autoCapitalize="none"
                       returnKeyType='next' inverse last
                        value={this.state.location.string} 

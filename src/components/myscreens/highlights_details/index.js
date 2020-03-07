@@ -32,12 +32,19 @@ export default class HighLightsDetails extends Component {
         this.room = new ChatStore(this.event_id)
         this.keyboardDidShowSub = Keyboard.addListener('keyboardDidShow', this.handleKeyboardDidShow.bind(this));
         this.keyboardDidHideSub = Keyboard.addListener('keyboardDidHide', this.handleKeyboardDidHide.bind(this));
-        BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this));
+        this.BackHandler = BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this));
 
     }
     handleKeyboardDidShow() {
         this.setState({
-            showImojiInput: false
+            showImojiInput: false,
+            inputsHeight: //!this.state.showImojiInput ? 
+            this.formHeightPercent(245)
+            // : this.formHeightPercent(350)
+            ,
+            messageListHeight: //!this.state.showImojiInput ? 
+            this.formHeightPercent(screenheight - 245)
+            // : this.formHeightPercent(screenheight - 350)
         })
     }
 
@@ -48,8 +55,11 @@ export default class HighLightsDetails extends Component {
             messageListHeight: !this.state.showImojiInput ? this.formHeightPercent(screenheight - 140) : this.formHeightPercent(screenheight - 350)
         });
     }
+    goback(){
+        this.props.navigation.goBack()
+    }
     handleBackButton() {
-        this.props.navigation.navigate('Home')
+        this.goback()
         StatusBar.setHidden(false, true)
         return true
     }
@@ -64,7 +74,7 @@ export default class HighLightsDetails extends Component {
     componentWillUnmount() {
         this.keyboardDidShowSub.remove();
         this.keyboardDidHideSub.remove();
-        BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton.bind(this));
+        this.BackHandler.remove()
     }
     formHeightPercent(height) {
         return `${(height / screenheight * 100).toString()}%`
@@ -103,7 +113,7 @@ export default class HighLightsDetails extends Component {
                 this.room ? this.room.addNewMessage(message).then(() => {
                     Toast.show({ text: 'Reaction Sent', type: 'success' })
                 }) : null
-
+                this.refs.inputView._clean()
             }
         }))
     }
@@ -136,7 +146,8 @@ export default class HighLightsDetails extends Component {
                     highlight={item}
                     showInput={(replyer) => {
                         let reply = {
-                            ...replyer, video: replyer.url.video ? true : false,
+                            id:replyer.id,
+                            video: replyer.url.video ? true : false,
                             audio: !replyer.url.video && replyer.url.audio ? true : false,
                             video: replyer.url.video ? true : false,
                             photo: !replyer.url.video && replyer.url.photo ? true : false,
@@ -145,8 +156,9 @@ export default class HighLightsDetails extends Component {
                                     replyer.url.photo : replyer.url.audio ?
                                         replyer.url.audio : null,
                             replyer_phone: stores.LoginStore.user.phone,
-                            replyer_name: stores.LoginStore.user.name,
-                            type_extern: 'HighLights',
+                            //replyer_name: stores.LoginStore.user.name,
+                            title : `${replyer.title}: \n ${replyer.description}`,
+                            type_extern: 'Posts',
                         }
                         this.setState({
                             replyer: reply,
@@ -159,129 +171,6 @@ export default class HighLightsDetails extends Component {
             dataSource={this.state.highlights}>
         </BleashupFlatList>;
     }
-    /* highlights = [{
-         id: Math.random().toString(),
-         title: "Audio HighLights",
-         description: `Hallo everybody
- DESCRIPTIVE TEXT, or in terms of writing only known as “description” is one of English lessons that should be mastered not only by junior high school students but also by senior high school students, college students and anyone who loves English. Because after all, descriptive material is very necessary for the increasing of our English proficiency.
- 
- Some of the most famous authors, especially fiction writers, have good skill in writing of descriptive text so that their writing is very readable and easy to understand. Therefore, if we were able to master this lesson well, we might be able to become a great writer in the future.
- 
- Furthermore, explanations and examples of this descriptive text can help a friend who is or still a long journey to learn English. Do not hesitate to read the descriptive text below, the more often we read we will be able to understand it more. And it would be nice if we do not only understand mere, but also can write descriptive text ourself….
- 
- Maybe you are “bored” to learn narrative text, because of that, it’s time to discuss descriptive text so that our head is not merely contains stories and stories
- 
- Descriptive Text
- 
- Definition`,
-         url: {
-             audio: 'http://192.168.43.32:8555/sound/get/p2.mp3',
-             duration: Math.floor(0)
-         },
-         type: 'audio',
-         created_at: moment().format(),
-     }, {
-         id: Math.random().toString(),
-         url: {
- 
-         },
-         type: 'text',
-         title: "Text Description HighLight",
-         description: `Hallo everybody
- DESCRIPTIVE TEXT, or in terms of writing only known as “description” is one of English lessons that should be mastered not only by junior high school students but also by senior high school students, college students and anyone who loves English. Because after all, descriptive material is very necessary for the increasing of our English proficiency.
- 
- Some of the most famous authors, especially fiction writers, have good skill in writing of descriptive text so that their writing is very readable and easy to understand. Therefore, if we were able to master this lesson well, we might be able to become a great writer in the future.
- 
-  Furthermore, explanations and examples of this descriptive text can help a friend who is or still a long journey to learn English. Do not hesitate to read the descriptive text below, the more often we read we will be able to understand it more. And it would be nice if we do not only understand mere, but also can write descriptive text ourself….
- 
- Maybe you are “bored” to learn narrative text, because of that, it’s time to discuss descriptive text so that our head is not merely contains stories and stories
- 
- Descriptive Text
- 
- Definition`,
-         created_at: moment().format(),
-     }, {
-         id: Math.random().toString(),
-         type: "photo",
-         url: {
-             photo: "http://192.168.43.32:8555/sound/get/bm33r9813uloeua1aasg_bm33r9813uloeua1aat0_bm33r9813uloeua1aatg.jpg"
-         },
-         title: "Photo HighLight",
-         created_at: moment().format(),
-         description: `Furthermore, explanations and examples of this descriptive text can help a friend who is or still a long journey to learn English. Do not hesitate to read the descriptive text below, the more often we read we will be able to understand it more. And it would be nice if we do not only understand mere, but also can write descriptive text ourself….
- 
- Maybe you are “bored” to learn narrative text, because of that, it’s time to discuss descriptive text so that our head is not merely contains stories and stories
- 
- Descriptive Text
- 
- Definition`
-     }, {
-         id: Math.random().toString(),
-         url: {
-             photo: 'http://192.168.43.32:8555/video/thumbnail/get/bma9auo13ult3nh5n690_bma9auo13ult3nh5n69g_bma9auo13ult3nh5n6a0_thumbnail.jpeg',
-             video: 'http://192.168.43.32:8555/video/get/bma9auo13ult3nh5n690_bma9auo13ult3nh5n69g_bma9auo13ult3nh5n6a0.mp4',
- 
-         },
-         type: "video",
-         title: 'Video Highlight',
-         description: `Hello!
-         Erlang/OTP is divided into a number of OTP applications. An application normally contains Erlang modules. Some OTP applications, such as the C interface erl_interface, are written in other languages and have no Erlang modules.
- On a Unix system you can view the manual pages from the command line using
-     % erl -man <module>
- You can of course use any editor you like to write Erlang programs, but if you use Emacs there exists editing support such as indentation, syntax highlighting, electric commands, module name verification, comment support including paragraph filling, skeletons, tags support and more. See the Tools application for details.
- There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , Eclipse (ErlIDE) and IntelliJ IDEA.`,
-         duration: Math.floor(0),
-         created_at: moment().format(),
-     }/*, {
-     id: Math.random().toString(),
-     source: 'http://192.168.43.32:8555/video/get/bm6lgk013ult9gc75vmg_bm6lgk013ult9gc75vn0_bm6lgk013ult9gc75vng.mp4',
-     file_name: 'Black M - Le prince Aladin (Clip officiel) ft. Kev Adams.mp4',
-     thumbnailSource: 'http://192.168.43.32:8555/video/thumbnail/get/bm7sd5813ulrbjp7u1sg_bm7sd5813ulrbjp7u1t0_bm7sd5813ulrbjp7u1tg_thumbnail.jpeg',
-     sender: {
-       phone: 3,
-       nickname: "Sokeng Kamga"
-     },
-     user: 2,
-     creator: 2,
-     type: "attachement",
-     received: 0,
-     total: 0,
-     text: `Hello!
-         Erlang/OTP is divided into a number of OTP applications. An application normally contains Erlang modules. Some OTP applications, such as the C interface erl_interface, are written in other languages and have no Erlang modules.
- On a Unix system you can view the manual pages from the command line using
-     % erl -man <module>
- You can of course use any editor you like to write Erlang programs, but if you use Emacs there exists editing support such as indentation, syntax highlighting, electric commands, module name verification, comment support including paragraph filling, skeletons, tags support and more. See the Tools application for details.
- There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , Eclipse (ErlIDE) and IntelliJ IDEA.
- 
- `,
-     duration: Math.floor(0),
-     created_at: moment().format(),
-   },
-     , {
-     id: Math.random().toString(),
-     source: 'http://192.168.43.32:8555/video/get/Black M - Le prince Aladin (Clip officiel) ft. Kev Adams.mp4',
-     file_name: 'bm6lgk013ult9gc75vmg_bm6lgk013ult9gc75vn0_bm6lgk013ult9gc75vng.mp4',
-     thumbnailSource: 'http://192.168.43.32:8555/video/thumbnail/get/bm7sd5813ulrbjp7u1sg_bm7sd5813ulrbjp7u1t0_bm7sd5813ulrbjp7u1tg_thumbnail.jpeg',
-     sender: {
-       phone: 3,
-       nickname: "Sokeng Kamga"
-     },
-     type: "video",
-     user: 3,
-     creator: 2,
-     received: 0,
-     total: 0,
-     text: `Hello!
-         Erlang/OTP is divided into a number of OTP applications. An application normally contains Erlang modules. Some OTP applications, such as the C interface erl_interface, are written in other languages and have no Erlang modules.
- On a Unix system you can view the manual pages from the command line using
-     % erl -man <module>
- You can of course use any editor you like to write Erlang programs, but if you use Emacs there exists editing support such as indentation, syntax highlighting, electric commands, module name verification, comment support including paragraph filling, skeletons, tags support and more. See the Tools application for details.
- There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , Eclipse (ErlIDE) and IntelliJ IDEA.
- 
- `,
-     duration: Math.floor(0),
-     created_at: moment().format(),
-   }]*/
     render() {
         return (
             <View>
@@ -290,14 +179,14 @@ export default class HighLightsDetails extends Component {
                     width: "100%",
                     backgroundColor: '#3D3D1F',
                     opacity: 0.9
-                }}>
+                }}><StatusBar animated={true} barStyle="light-content" backgroundColor="#3D3D1F"></StatusBar>
                     {!this.state.mounted ? <Spinner size={'small'}></Spinner> :
                         this.messageList()
                     }
                 </View>
                 <View style={{ height: this.state.inputsHeight, backgroundColor: 'transparent', borderRadius: 10, }}>
                     {
-                        <InputView showImojiInput={this.state.showImojiInput}
+                        <InputView ref="inputView" showImojiInput={this.state.showImojiInput}
                             sendMessageText={(text) => {
                                 this.sendReaction(text)
                             }} replyer={this.state.replyer} increaseHeightToCopeEmoji={() => {
@@ -337,19 +226,19 @@ export default class HighLightsDetails extends Component {
                     flexDirection: 'row',
                 }}>
                     <Icon onPress={() => {
-                        this.props.navigation.navigate('Home')
+                        this.goback()
                     }} name="doubleleft" style={{ marginLeft: '8%', color: '#0A4E52', marginBottom: '7%', alignSelf: 'center', }} type={"AntDesign"}></Icon>
                 </View>
-                <PhotoViewer photo={this.state.photo} open={this.state.showPhoto} hidePhoto={() => {
+                {this.state.showPhoto?<PhotoViewer photo={this.state.photo} open={this.state.showPhoto} hidePhoto={() => {
                     this.setState({
                         showPhoto: false
                     })
-                }}></PhotoViewer>
-                <VideoViewer video={this.state.video} open={this.state.showVideo} hideVideo={() => {
+                }}></PhotoViewer>:null}
+                {this.state.showVideo?<VideoViewer video={this.state.video} open={this.state.showVideo} hideVideo={() => {
                     this.setState({
                         showVideo: false
                     })
-                }}></VideoViewer>
+                }}></VideoViewer>:null}
             </View>
         );
     }

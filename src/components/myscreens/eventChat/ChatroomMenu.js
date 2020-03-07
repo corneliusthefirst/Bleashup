@@ -72,7 +72,7 @@ export default class ChatroomMenu extends Component {
                     style={{ backgroundColor: "#FEFFDE" }}
                     ref={this.setMenuRef}
                     button={<Icon style={{
-                        color: "#0A4E52",
+                        color: "darkGray",
                         fontSize: 25,
                         marginTop: '10%'
                     }} onPress={this.showMenu} name="dots-three-vertical" type="Entypo"></Icon>}
@@ -98,20 +98,20 @@ export default class ChatroomMenu extends Component {
                         <View><MenuItem textStyle={{ color: this.state.opened ? "red" : "green" }} onPress={() => {
                             this.hideMenu()
                             this.state.opened ? this.props.closeCommitee() : this.props.openCommitee()
-                        }}>{this.state.opened ? "Close Commitee" : "Open Commitee"}</MenuItem>
+                        }}>{this.state.opened ? "Close Committee" : "Open Committee"}</MenuItem>
                             <MenuDivider color="#1FABAB" /></View>}
                     {this.props.roomID === this.props.eventID ? null : !this.props.master ? null :
                         <View><MenuItem textStyle={{ color: "green" }} onPress={() => {
                             this.hideMenu()
                             this.state.public ? this.props.publishCommitee() : this.props.publishCommitee()
                         }}>{this.props.roomID == this.props.eventID ? null : this.state.public ?
-                            "Unpublish Commitee" : "Publish Commitee"}</MenuItem>
+                            "Unpublish Committee" : "Publish Committee"}</MenuItem>
                             <MenuDivider color="#1FABAB" /></View>}
                     {this.props.roomID == this.props.eventID ? null :
                         <View><MenuItem textStyle={{ color: "green" }} onPress={() => {
                             this.hideMenu()
                             this.props.leaveCommitee()
-                        }}>{"Leave Commitee"}</MenuItem>
+                        }}>{"Leave Committee"}</MenuItem>
                             <MenuDivider color="#1FABAB" /></View>}
                 </Menu>
             </View>

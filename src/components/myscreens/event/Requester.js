@@ -26,19 +26,19 @@ class Request {
                         stores.Events.addEventCommitee(commitee.event_id, commitee.id).then(() => {
                             let Change = {
                                 id: uuid.v1(),
-                                title: "Update On Commitees",
+                                title: "Update OnCommittees",
                                 updated: 'new_commitee',
                                 event_id: commitee.even_id,
-                                changed: `Create ${commitee.name} Commitee  `,
+                                changed: `Create ${commitee.name} Committee  `,
                                 updater: stores.LoginStore.user,
                                 new_value: { data: commitee.id, new_value: commitee.name },
                                 date: moment().format(),
                                 time: null
                             }
                             stores.ChangeLogs.addChanges(Change).then(() => {
-                                Toast.show({ text: "commitee successfully added !", type: "success" })
-                                resolve()
+                                //Toast.show({ text: "commitee successfully added !", type: "success" })
                             })
+                            resolve()
                         })
                     })
                 }).catch(error => {
@@ -60,19 +60,19 @@ class Request {
                     stores.CommiteeStore.updateCommiteeName(ID, newName).then((commitee) => {
                         let Change = {
                             id: uuid.v1(),
-                            title: "Update On Commitees",
+                            title: "Update OnCommittees",
                             updated: 'commitee_name_updated',
                             event_id: eventID,
-                            changed: `Changed ${commitee.name} Commitee Name To: `,
+                            changed: `Changed ${commitee.name} Committee Name To: `,
                             updater: stores.LoginStore.user,
                             new_value: { data: commitee.id, new_value: newName },
                             date: moment().format(),
                             time: null
                         }
                         stores.ChangeLogs.addChanges(Change).then(() => {
-                            Toast.show({ text: "update went successfully !", type: "success" })
-                            resolve()
+                            //Toast.show({ text: "update went successfully !", type: "success" }) 
                         })
+                        resolve()
                     })
                 }).catch(error => {
                     Toast.show({ text: "Unable to perform the name editing action" })
@@ -92,19 +92,19 @@ class Request {
                     stores.CommiteeStore.updateCommiteeState(id, state).then((commitee) => {
                         let Change = {
                             id: uuid.v1(),
-                            title: "Update On Commitees",
+                            title: "Update On Committees",
                             updated: 'published_commitee',
                             event_id: event_id,
-                            changed: `Published ${commitee.name} Commitee`,
+                            changed: `${state === true ? 'Published' : 'Unpublished'} ${commitee.name} Committee`,
                             updater: stores.LoginStore.user,
-                            new_value: { data: commitee.id, new_value: "published" },
+                            new_value: { data: commitee.id, new_value: state === true ? 'Published' : 'Unpublished' },
                             date: moment().format(),
                             time: null
                         }
                         stores.ChangeLogs.addChanges(Change).then(() => {
-                            Toast.show({ text: "Commitee accessibility was successfully !", type: "success" })
-                            resolve()
+                            //Toast.show({ text: "Commitee accessibility was successfully !", type: "success" })
                         })
+                        resolve()
                     })
                 }).catch((error) => {
                     Toast.show({ text: "Unable to perform the publish action" })
@@ -124,19 +124,19 @@ class Request {
                     stores.CommiteeStore.addMembers(id, members).then((commitee) => {
                         let Change = {
                             id: uuid.v1(),
-                            title: "Update On Commitees",
+                            title: "Update OnCommittees",
                             updated: 'added_commitee_member',
                             event_id: event_id,
-                            changed: `Added Members To ${commitee.name} Commitee`,
+                            changed: `Added Members To ${commitee.name} Committee`,
                             updater: stores.LoginStore.user,
                             new_value: { data: commitee.id, new_value: members },
                             date: moment().format(),
                             time: null
                         }
                         stores.ChangeLogs.addChanges(Change).then(() => {
-                            Toast.show({ text: "members where successfully added !", type: "success" })
-                            resolve(members)
+                            //Toast.show({ text: "members where successfully added !", type: "success" })
                         })
+                        resolve(members)
                     })
                 }).catch((error) => {
                     Toast.show({ text: "Unable to perform the add action" })
@@ -155,10 +155,10 @@ class Request {
                     stores.CommiteeStore.changeCommiteeOpenedState(id, true).then((commitee) => {
                         let Change = {
                             id: uuid.v1(),
-                            title: "Update On Commitees",
+                            title: "Update OnCommittees",
                             updated: 'commitee_opened',
                             event_id: event_id,
-                            changed: `Opened ${commitee.name} Commitee`,
+                            changed: `Opened ${commitee.name} Committee`,
                             updater: stores.LoginStore.user,
                             new_value: { data: null, new_value: "opened" },
                             date: moment().format(),
@@ -166,8 +166,8 @@ class Request {
                         }
                         stores.ChangeLogs.addChanges(Change).then(() => {
                             Toast.show({ text: "The commitee was successfully opened !", type: "success" })
-                            resolve()
                         })
+                        resolve()
                     })
                 }).catch((error) => {
                     Toast.show({ text: "Unable to perform the open action" })
@@ -186,19 +186,19 @@ class Request {
                     stores.CommiteeStore.changeCommiteeOpenedState(id, false).then((commitee) => {
                         let Change = {
                             id: uuid.v1(),
-                            title: "Update On Commitees",
+                            title: "Update OnCommittees",
                             updated: 'commitee_closed',
                             event_id: event_id,
-                            changed: `Closed ${commitee.name} Commitee`,
+                            changed: `Closed ${commitee.name} Committee`,
                             updater: stores.LoginStore.user,
                             new_value: { data: null, new_value: "closed" },
                             date: moment().format(),
                             time: null
                         }
                         stores.ChangeLogs.addChanges(Change).then(() => {
-                            Toast.show({ text: "The commitee was successfully opened !", type: "success" })
-                            resolve()
+                            //Toast.show({ text: "The commitee was successfully opened !", type: "success" })
                         })
+                        resolve()
                     })
                 }).catch((error) => {
                     Toast.show({ text: "Unable to perform the close action" })
@@ -219,19 +219,19 @@ class Request {
                     stores.CommiteeStore.removeMember(id, memberPhone).then((commitee) => {
                         let Change = {
                             id: uuid.v1(),
-                            title: "Update On Commitees",
+                            title: "Update OnCommittees",
                             updated: 'removed_commitee_member',
                             event_id: event_id,
-                            changed: `Removed Members From ${commitee.name} Commitee`,
+                            changed: `Removed Members From ${commitee.name} Committee`,
                             updater: stores.LoginStore.user,
                             new_value: { data: null, new_value: members },
                             date: moment().format(),
                             time: null
                         }
                         stores.ChangeLogs.addChanges(Change).then(() => {
-                            Toast.show({ text: "members where successfully removed !", type: "success" })
-                            resolve()
+                            //Toast.show({ text: "members where successfully removed !", type: "success" })
                         })
+                        resolve()
                     })
                 }).catch((error) => {
                     Toast.show({ text: "Unable to perform the remove action" })
@@ -251,19 +251,19 @@ class Request {
                     stores.CommiteeStore.addMembers(id, member.member_phone).then((commitee) => {
                         let Change = {
                             id: uuid.v1(),
-                            title: "Update On Commitees",
+                            title: "Update OnCommittees",
                             updated: 'added_commitee_member',
                             event_id: event_id,
-                            changed: `Joint ${commitee.name} Commitee`,
+                            changed: `Joint ${commitee.name} Committee`,
                             updater: stores.LoginStore.user,
                             new_value: { data: null, new_value: [stores.LoginStore.user.phone] },
                             date: moment().format(),
                             time: null
                         }
                         stores.ChangeLogs.addChanges(Change).then(() => {
-                            Toast.show({ text: "commitee successfully joint !", type: "success" })
-                            resolve()
+                            //Toast.show({ text: "commitee successfully joint !", type: "success" })
                         })
+                        resolve()
                     })
                 }).catch((error) => {
                     Toast.show({ text: "Unable to perform the join action" })
@@ -284,19 +284,19 @@ class Request {
                     stores.CommiteeStore.removeMember(id, member.member_phone).then((commitee) => {
                         let Change = {
                             id: uuid.v1(),
-                            title: "Update On Commitees",
+                            title: "Update OnCommittees",
                             updated: 'removed_commitee_member',
                             event_id: event_id,
-                            changed: `Left ${commitee.name} Commitee`,
+                            changed: `Left ${commitee.name} Committee`,
                             updater: stores.LoginStore.user,
                             new_value: { data: null, new_value: [stores.LoginStore.user.phone] },
                             date: moment().format(),
                             time: null
                         }
                         stores.ChangeLogs.addChanges(Change).then(() => {
-                            Toast.show({ text: "commitee successfully left !!", type: "success" })
-                            resolve()
+                            //Toast.show({ text: "commitee successfully left !!", type: "success" })
                         })
+                        resolve()
                     })
                 }).catch((error) => {
                     Toast.show({ text: "Unable to perform the leave action" })
@@ -406,8 +406,8 @@ class Request {
                                 time: null
                             }
                             stores.ChangeLogs.addChanges(Change).then(() => {
-                                resolve(mem)
                             })
+                            resolve(mem)
                         })
                     }).catch(e => {
                         console.warn(e)
@@ -439,8 +439,9 @@ class Request {
                                 time: null
                             }
                             stores.ChangeLogs.addChanges(Change).then(() => {
-                                resolve("done")
+
                             })
+                            resolve("done")
                         }).catch(e => {
                             reject(e)
                         })
@@ -470,8 +471,8 @@ class Request {
                                 time: null
                             }
                             stores.ChangeLogs.addChanges(Change).then(() => {
-                                resolve("done")
                             })
+                            resolve("done")
                         })
                     }).catch((e) => {
                         console.warn(e)
@@ -502,8 +503,8 @@ class Request {
                                 time: null
                             }
                             stores.ChangeLogs.addChanges(Change).then(() => {
-                                resolve("done")
                             })
+                            resolve("done")
                         })
                     })
                 }).catch((e) => {
@@ -530,8 +531,9 @@ class Request {
                             time: null
                         }
                         stores.ChangeLogs.addChanges(Change).then(() => {
-                            resolve("done")
+
                         })
+                        resolve("done")
                     })
                 })
             }).catch((e) => {
@@ -563,8 +565,8 @@ class Request {
                                 stores.ChangeLogs.addChanges(Change).then(() => {
                                     Eve.calendar_id ? CalendarServe.saveEvent(Eve, Eve.alarms).then(() => {
                                     }) : null
-                                    resolve('ok')
                                 })
+                                resolve('ok')
                             })
                         }).catch((e) => {
                             reject(e)
@@ -594,8 +596,8 @@ class Request {
                                 time: null
                             }
                             stores.ChangeLogs.addChanges(Change).then(() => {
-                                resolve('ok')
                             })
+                            resolve('ok')
                         })
                     }).catch((e) => {
                         console.warn(e)
@@ -624,8 +626,8 @@ class Request {
                                 time: null
                             }
                             stores.ChangeLogs.addChanges(Change).then(() => {
-                                resolve('ok')
                             })
+                            resolve('ok')
                         })
                     }).catch((e) => {
                         console.warn(error)
@@ -649,16 +651,19 @@ class Request {
                                     updated: "period",
                                     updater: stores.LoginStore.user,
                                     event_id: event.id,
-                                    changed: newPeriod ? "Changed The Scheduled Time Of The Activity To: " : "Removed The Date Of The Activity",
+                                    changed: newPeriod ? "Changed The Start Date Of The Activity To: " : "Removed The Date Of The Activity",
                                     new_value: { data: null, new_value: newPeriod ? moment(newPeriod).format("dddd, MMMM Do YYYY, h:mm:ss a") : null },
                                     date: moment().format(),
                                     time: null
                                 }
+                                event.period ? CalendarServe.saveEvent({ ...event, period: newPeriod },
+                                    Eve.alarms).then(() => {
+                                        resolve('ok')
+                                    }) : resolve('ok')
                                 stores.ChangeLogs.addChanges(Change).then(() => {
-                                    Eve.calendar_id ? CalendarServe.saveEvent(Eve, Eve.alarms).then(() => {
-                                    }) : null
-                                    resolve('ok')
+
                                 })
+
                             })
                         }).catch((e) => {
                             reject(e)
@@ -691,11 +696,42 @@ class Request {
                                     time: null
                                 }
                                 stores.ChangeLogs.addChanges(Change).then(() => {
-                                    Eve.calendar_id ? CalendarServe.saveEvent(Eve, Eve.alarms).then((resp) => {
+                                    console.warn(event.about.title, "-------")
+                                    Eve.calendar_id ? CalendarServe.saveEvent({ old_title: event.about.title, ...Eve }, Eve.alarms).then((resp) => {
                                         console.warn(resp)
                                     }) : null
-                                    resolve("ok")
                                 })
+                                resolve("ok")
+                            })
+                        }).catch((e) => {
+                            reject(e)
+                        })
+                    })
+            } else {
+                resolve()
+            }
+        })
+    }
+    updateWhoCanManage(event, whoCanManage) {
+        return new Promise((resolve, reject) => {
+            if (event.who_can_update !== whoCanManage) {
+                tcpRequest.UpdateCurrentEvent(stores.LoginStore.user.phone,
+                    event.id, 'who_can_update', whoCanManage, event.id + '_who_can_update').then(JSONData => {
+                        serverEventListener.sendRequest(JSONData, event.id + '_who_can_update').then(response => {
+                            stores.Events.updateWhoCanManage(event.id, whoCanManage).then(eve => {
+                                let Change = {
+                                    id: uuid.v1(),
+                                    title: "Updates On Main Activity",
+                                    updated: "who_can_update",
+                                    event_id: event.id,
+                                    updater: stores.LoginStore.user,
+                                    changed: "Changed The Manage Priviledges of The Activity To ...",
+                                    new_value: { data: null, new_value: whoCanManage },
+                                    date: moment().format(),
+                                    time: null
+                                }
+                                stores.ChangeLogs.addChanges(Change).then(() => { })
+                                resolve("ok")
                             })
                         }).catch((e) => {
                             reject(e)
@@ -711,11 +747,12 @@ class Request {
             if (event.recurrent !== recurrentUpdate.recurrent ||
                 event.frequency !== recurrentUpdate.frequency ||
                 event.interval !== recurrentUpdate.interval ||
+                event.days_of_week !== recurrentUpdate.days_of_week ||
+                event.week_start !== recurrentUpdate.week_start ||
                 event.recurrence !== recurrentUpdate.recurrence) {
                 tcpRequest.UpdateCurrentEvent(stores.LoginStore.user.phone, event.id, 'recurrency',
                     recurrentUpdate, event.id + "_recurrency").then(JSONData => {
                         serverEventListener.sendRequest(JSONData, event.id + "_recurrency").then(response => {
-                            console.warn(response)
                             stores.Events.updateRecurrency(event.id, recurrentUpdate).then((Eve) => {
                                 let Change = {
                                     id: uuid.v1(),
@@ -728,11 +765,12 @@ class Request {
                                     date: moment().format(),
                                     time: null
                                 }
-                                stores.ChangeLogs.addChanges(Change).then(() => {
-                                    Eve.calendar_id ? CalendarServe.saveEvent(Eve, Eve.alarms).then(() => {
-                                    }) : null
+                                Eve.calendar_id ? CalendarServe.saveEvent(Eve, Eve.alarms).then(() => {
+                                    stores.ChangeLogs.addChanges(Change).then(() => {
+
+                                    })
                                     resolve("ok")
-                                })
+                                }) : resolve("ok")
                             })
                         }).catch((e) => {
                             reject(e)
@@ -763,8 +801,8 @@ class Request {
                                     time: null
                                 }
                                 stores.ChangeLogs.addChanges(Change).then(() => {
-                                    resolve("ok")
                                 })
+                                resolve("ok")
                             })
                         }).catch((e) => {
                             reject(e)
@@ -795,8 +833,8 @@ class Request {
                                     time: null
                                 }
                                 stores.ChangeLogs.addChanges(Change).then(() => {
-                                    resolve("ok")
                                 })
+                                resolve("ok")
                             })
                         }).catch((e) => {
                             reject(e)
@@ -813,23 +851,33 @@ class Request {
             this.updateTitle(JSON.parse(event), settings.title_new).then((t1) => {
                 this.updatePeriod(JSON.parse(event), settings.period_new).then((t2) => {
                     this.update_notes(JSON.parse(event), settings.notes_new).then((t3) => {
-                        console.warn(t3)
-                        this.updateRecurrency(JSON.parse(event), {
-                            recurrent: settings.recurrent_new,
-                            interval: settings.interval_new, frequency: settings.frequency_new,
-                            recurrence: settings.recurrence_new
-                        }).then((t4) => {
-                            event = JSON.parse(event)
-                            if (event.public !== settings.public_new && settings.public_new)
-                                this.publish(event.id).then((t5) => {
-                                    resolve(t1 + t2 + t3 + t4 + t5)
-                                })
-                            else if (event.public !== settings.public_new && !settings.public_new)
-                                this.unpublish(event.id).then((t5) => {
-                                    resolve(t1 + t2 + t3 + t4 + t5)
-                                })
-                            else resolve(t1 + t2 + t3 + t4)
-                        }).catch((e) => {
+                        this.updateWhoCanManage(JSON.parse(event), settings.who_can_update_new).then(t6 => {
+                            this.updateRecurrency(JSON.parse(event), {
+                                recurrent: settings.recurrent_new,
+                                interval: settings.interval_new,
+                                frequency: settings.frequency_new,
+                                recurrence: settings.recurrence_new,
+                                week_start: settings.week_start,
+                                days_of_week: settings.days_of_week
+                            }).then((t4) => {
+                                event = JSON.parse(event)
+                                if (event.public !== settings.public_new && settings.public_new)
+                                    this.publish(event.id).then((t5) => {
+                                        resolve(t1 + t2 + t3 + t4 + t5 + t6)
+                                    }).catch(e => {
+                                        reject(e)
+                                    })
+                                else if (event.public !== settings.public_new && !settings.public_new)
+                                    this.unpublish(event.id).then((t5) => {
+                                        resolve(t1 + t2 + t3 + t4 + t5 + t6)
+                                    }).catch(e => {
+                                        reject(e)
+                                    })
+                                else resolve(t1 + t2 + t3 + t4)
+                            }).catch((e) => {
+                                reject(e)
+                            })
+                        }).catch(e => {
                             reject(e)
                         })
                     }).catch(e => {
@@ -863,8 +911,8 @@ class Request {
                                 time: null
                             }
                             stores.ChangeLogs.addChanges(Change).then(() => {
-                                resolve("ok")
                             })
+                            resolve("ok")
                         })
                     }).catch((error) => {
                         console.warn(error)
@@ -892,8 +940,8 @@ class Request {
                                 time: null
                             }
                             stores.ChangeLogs.addChanges(Change).then(res => {
-                                resolve("ok")
                             })
+                            resolve("ok")
                         })
                     })
                 }).catch((error) => {
@@ -903,177 +951,150 @@ class Request {
             })
         })
     }
-    updateHighlightTitle(newTitle, highlightID, eventID) {
+    updateHighlightTitle(newTitle, oldTitle, highlightID, eventID) {
         return new Promise((resolve, reject) => {
-            let higlightTitle = request.HUpdate();
-            higlightTitle.action = 'title'
-            higlightTitle.event_id = eventID
-            higlightTitle.h_id = highlightID
-            higlightTitle.new_data = newTitle
-            tcpRequest.updateHighlight(higlightTitle, highlightID).then(JSONData => {
-                serverEventListener.sendRequest(JSONData, highlightID).then(response => {
-                    stores.Highlights.updateHighlightTitle({
-                        id: highlightID,
-                        title: newTitle
-                    }, false).then((HighlightJS) => {
-                        Highlight = JSON.parse(HighlightJS)
-                        let Change = {
-                            id: uuid.v1(),
-                            title: `Update On ${Highlight.title} Post`,
-                            updated: "highlight_title",
-                            event_id: eventID,
-                            updater: stores.LoginStore.user,
-                            changed: newTitle ? `Changed The Title of ${Highlight.title} Post to ...` :
-                                `Removed The Title of ${Highlight.title} Post`,
-                            new_value: { data: null, new_value: newTitle },
-                            date: moment().format(),
-                            time: null
-                        }
-                        stores.ChangeLogs.addChanges(Change).then(res => {
+            if (newTitle !== oldTitle) {
+                let higlightTitle = request.HUpdate();
+                higlightTitle.action = 'title'
+                higlightTitle.event_id = eventID
+                higlightTitle.h_id = highlightID
+                higlightTitle.new_data = newTitle
+                tcpRequest.updateHighlight(higlightTitle, highlightID).then(JSONData => {
+                    serverEventListener.sendRequest(JSONData, highlightID).then(response => {
+                        stores.Highlights.updateHighlightTitle({
+                            id: highlightID,
+                            title: newTitle
+                        }, false).then((HighlightJS) => {
+                            Highlight = JSON.parse(HighlightJS)
+                            let Change = {
+                                id: uuid.v1(),
+                                title: `Update On ${Highlight.title} Post`,
+                                updated: "highlight_title",
+                                event_id: eventID,
+                                updater: stores.LoginStore.user,
+                                changed: newTitle ? `Changed The Title of ${Highlight.title} Post to ...` :
+                                    `Removed The Title of ${Highlight.title} Post`,
+                                new_value: { data: null, new_value: newTitle },
+                                date: moment().format(),
+                                time: null
+                            }
+                            stores.ChangeLogs.addChanges(Change).then(res => {
+                            })
                             resolve("ok")
                         })
+                    }).catch((error) => {
+                        console.warn(error)
+                        reject(error)
                     })
-                }).catch((error) => {
-                    console.warn(error)
-                    reject(error)
                 })
-            })
+            } else {
+                resolve()
+            }
         })
     }
-    updateHighlightDescription(newDescription, highlightID, eventID) {
+    updateHighlightDescription(newDescription, oldDes, highlightID, eventID) {
         return new Promise((resolve, reject) => {
-            let higlightTitle = request.HUpdate();
-            higlightTitle.action = 'description'
-            higlightTitle.event_id = eventID
-            higlightTitle.h_id = highlightID
-            higlightTitle.new_data = newDescription
-            tcpRequest.updateHighlight(higlightTitle, highlightID).then(JSONData => {
-                serverEventListener.sendRequest(JSONData, highlightID).then(response => {
-                    stores.Highlights.updateHighlightDescription({
-                        id: higlightTitle.h_id,
-                        description: higlightTitle.new_data
-                    }, false).then((Highlight) => {
-                        let Change = {
-                            id: uuid.v1(),
-                            title: `Update On ${Highlight.title} Post`,
-                            updated: "highlight_decription",
-                            event_id: eventID,
-                            updater: stores.LoginStore.user,
-                            changed: newDescription ? `Changed The Content of ${Highlight.title} Post To` : `Removed The Content of ${Highlight.title} Post`,
-                            new_value: { data: null, new_value: newDescription },
-                            date: moment().format(),
-                            time: null
-                        }
-                        stores.ChangeLogs.addChanges(Change).then(res => {
+            if (oldDes !== newDescription) {
+                let higlightTitle = request.HUpdate();
+                higlightTitle.action = 'description'
+                higlightTitle.event_id = eventID
+                higlightTitle.h_id = highlightID
+                higlightTitle.new_data = newDescription
+                tcpRequest.updateHighlight(higlightTitle, highlightID).then(JSONData => {
+                    serverEventListener.sendRequest(JSONData, highlightID).then(response => {
+                        stores.Highlights.updateHighlightDescription({
+                            id: higlightTitle.h_id,
+                            description: higlightTitle.new_data
+                        }, false).then((Highlight) => {
+                            let Change = {
+                                id: uuid.v1(),
+                                title: `Update On ${Highlight.title} Post`,
+                                updated: "highlight_decription",
+                                event_id: eventID,
+                                updater: stores.LoginStore.user,
+                                changed: newDescription ? `Changed The Content of ${Highlight.title} Post To` : `Removed The Content of ${Highlight.title} Post`,
+                                new_value: { data: null, new_value: newDescription },
+                                date: moment().format(),
+                                time: null
+                            }
+                            stores.ChangeLogs.addChanges(Change).then(res => {
+                            })
                             resolve("ok")
                         })
+                    }).catch((error) => {
+                        console.warn(error)
+                        reject(error)
                     })
-                }).catch((error) => {
-                    console.warn(error)
-                    reject(error)
                 })
-            })
+            } else {
+                resolve()
+            }
         })
     }
-    updateHighlightURL(newURL, highlightID, eventID) {
+    updateHighlightURL(newURL, oldURL, highlightID, eventID) {
         return new Promise((resolve, reject) => {
-            let newHighlightURL = request.HUpdate()
-            newHighlightURL.h_id = highlightID
-            newHighlightURL.event_id = eventID
-            newHighlightURL.action = 'url'
-            newHighlightURL.new_data = newURL
-            tcpRequest.updateHighlight(newHighlightURL, highlightID).then(JSONData => {
-                serverEventListener.sendRequest(JSONData, highlightID).then(response => {
-                    stores.Highlights.updateHighlightUrl({
-                        id: newHighlightURL.h_id,
-                        url: newHighlightURL.new_data
-                    }, false).then((Highlight) => {
-                        let Change = {
-                            id: uuid.v1(),
-                            title: `Update On ${Highlight.title} Post`,
-                            updated: "highlight_url",
-                            event_id: eventID,
-                            updater: stores.LoginStore.user,
-                            changed: `Changed The Media Specifications of ${Highlight.title} Post`,
-                            new_value: { data: null, new_value: newURL },
-                            date: moment().format(),
-                            time: null
-                        }
-                        stores.ChangeLogs.addChanges(Change).then(res => {
+            if (!isEqual(newURL, oldURL)) {
+                let newHighlightURL = request.HUpdate()
+                newHighlightURL.h_id = highlightID
+                newHighlightURL.event_id = eventID
+                newHighlightURL.action = 'url'
+                newHighlightURL.new_data = newURL
+                tcpRequest.updateHighlight(newHighlightURL, highlightID).then(JSONData => {
+                    serverEventListener.sendRequest(JSONData, highlightID).then(response => {
+                        stores.Highlights.updateHighlightUrl({
+                            id: newHighlightURL.h_id,
+                            url: newHighlightURL.new_data
+                        }, false).then((Highlight) => {
+                            let Change = {
+                                id: uuid.v1(),
+                                title: `Update On ${Highlight.title} Post`,
+                                updated: "highlight_url",
+                                event_id: eventID,
+                                updater: stores.LoginStore.user,
+                                changed: `Changed The Media Specifications of ${Highlight.title} Post`,
+                                new_value: { data: null, new_value: newURL },
+                                date: moment().format(),
+                                time: null
+                            }
+                            stores.ChangeLogs.addChanges(Change).then(res => {
+                            })
                             resolve("ok")
                         })
+                    }).catch((error) => {
+                        console.warn(error)
+                        reject(error)
                     })
-                }).catch((error) => {
-                    console.warn(error)
-                    reject(error)
                 })
-            })
+            } else {
+                resolve()
+            }
         })
     }
     updateCount = 0
     updatedhighlight = null
     applyAllHighlightsUpdate(newHighlight, highlight) {
         return new Promise((resolve, reject) => {
-            if (newHighlight.title !== JSON.parse(highlight).title) {
-                this.updateHighlightTitle(newHighlight.title,
-                    newHighlight.id,
-                    newHighlight.event_id).then(() => {
-                        this.updatedhighlight = this.updatedhighlight + "sucess"
-                        this.updateCount = this.updateCount + 1
-                        if (this.updateCount === 3) {
-                            resolve(this.updatedhighlight)
-                            this.updateCount = 0
-                            this.updatedhighlight = null
-                        }
-                    })
-            } else {
-                this.updateCount = this.updateCount + 1
-                if (this.updateCount === 3) {
-                    resolve(this.updatedhighlight)
-                    this.updateCount = 0
-                    this.updatedhighlight = null
-                }
-            }
-            if (newHighlight.description !== JSON.parse(highlight).description) {
-                this.updateHighlightDescription(newHighlight.description,
-                    newHighlight.id,
-                    newHighlight.event_id).then(() => {
-                        this.updatedhighlight = this.updatedhighlight + "sucess"
-                        this.updateCount = this.updateCount + 1
-                        if (this.updateCount === 3) {
-                            resolve(this.updatedhighlight)
-                            this.updateCount = 0
-                            this.updatedhighlight = null
-                        }
-                    })
-            } else {
-                this.updateCount = this.updateCount + 1
-                if (this.updateCount === 3) {
-                    resolve(this.updatedhighlight)
-                    this.updateCount = 0
-                    this.updatedhighlight = null
-                }
-            }
-            if (!isEqual(newHighlight.url, JSON.parse(highlight).url)) {
-                this.updateHighlightURL(newHighlight.url,
-                    newHighlight.id,
-                    newHighlight.event_id).then(() => {
-                        this.updatedhighlight = this.updatedhighlight + "sucess"
-                        this.updateCount = this.updateCount + 1
-                        if (this.updateCount === 3) {
-                            resolve(this.updatedhighlight)
-                            this.updateCount = 0
-                            this.updatedhighlight = null
-                        }
-                    })
-            } else {
-                this.updateCount = this.updateCount + 1
-                if (this.updateCount === 3) {
-                    resolve(this.updatedhighlight)
-                    this.updateCount = 0
-                    this.updatedhighlight = null
-                }
-            }
+            this.updateHighlightTitle(newHighlight.title, JSON.parse(highlight).title,
+                newHighlight.id,
+                newHighlight.event_id).then((t1) => {
+                    this.updateHighlightDescription(newHighlight.description,
+                        JSON.parse(highlight).description,
+                        newHighlight.id,
+                        newHighlight.event_id).then((t2) => {
+                            this.updateHighlightURL(newHighlight.url,
+                                JSON.parse(highlight).url,
+                                newHighlight.id,
+                                newHighlight.event_id).then((t3) => {
+                                    resolve(t1 + t2 + t3)
+                                }).catch(r => {
+                                    reject(r)
+                                })
+                        }).catch(r => {
+                            reject(r)
+                        }).catch(r => {
+                            reject(r)
+                        })
+                })
         })
     }
     deleteHighlight(highlightID, eventID) {
@@ -1097,8 +1118,38 @@ class Request {
                                 time: null
                             }
                             stores.ChangeLogs.addChanges(Change).then(res => {
-                                resolve("ok")
                             })
+                            resolve("ok")
+                        })
+                    })
+                }).catch((error) => {
+                    console.warn(error)
+                    Toast.show({ text: "Unable To Perform Request" })
+                    reject(error)
+                })
+            })
+        })
+    }
+    restoreHighlight(highlight) {
+        return new Promise((resolve, reject) => {
+            tcpRequest.restoreHighlight(highlight, highlight.id + '_highlight').then(JSONData => {
+                serverEventListener.sendRequest(JSONData, highlight.id + '_highlight').then(response => {
+                    stores.Highlights.addHighlight(highlight).then(() => {
+                        stores.Events.addHighlight(highlight.event_id, highlight.id, false).then(() => {
+                            let Change = {
+                                id: uuid.v1(),
+                                title: `Update On Main Activity`,
+                                updated: "highlight_restored",
+                                event_id: highlight.event_id,
+                                updater: stores.LoginStore.user,
+                                changed: `Restored ${highlight.title} Post`,
+                                new_value: { data: null, new_value: highlight },
+                                date: moment().format(),
+                                time: null
+                            }
+                            stores.ChangeLogs.addChanges(Change).then(res => {
+                            })
+                            resolve()
                         })
                     })
                 }).catch((error) => {

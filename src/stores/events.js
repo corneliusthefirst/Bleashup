@@ -50,7 +50,8 @@ export default class events {
     key: "Events",
     data: []
   };
-  @action addEvent(NewEvent) {
+ addEvent(NewEvent) {
+    console.warn("calling create activity, -----")
     if (NewEvent == 'no_such_key') {
       resolve()
     } else {
@@ -72,7 +73,8 @@ export default class events {
       });
     }
   }
-  @action delete(EventID) {
+  delete(EventID) {
+    console.warn("calling delete activity ,,,,,, ",EventID)
     return new Promise((resolve, rejec) => {
       this.readFromStore().then(Events => {
         Events = reject(Events, { id: EventID })
@@ -310,6 +312,23 @@ export default class events {
       });
     });
   }
+  updateWhoCanManage(EventID,newVal,inform){
+    return new Promise((resolve,reject) => {
+      this.readFromStore().then(Events => {
+        let eventIndex = findIndex(Events, { id: EventID });
+        Events[eventIndex].who_can_update = newVal;
+        if (inform) {
+          Events[eventIndex].updated = true;
+        }
+        Events[eventIndex].updated_at = moment().format();
+        this.saveKey.data = Events;
+        storage.save(this.saveKey).then(() => {
+          this.setProperties(this.saveKey.data, inform);
+          resolve(Events[eventIndex]);
+        });
+      });
+    })
+  }
   @action addParticipant(EventID, Participant, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
@@ -377,7 +396,11 @@ export default class events {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let eventIndex = findIndex(Events, { id: EventID });
+        let cid = JSON.stringify({ cal_id:Events[eventIndex].calendar_id})
         Events[eventIndex].period = NewPeriod;
+        if (!NewPeriod || (NewPeriod && !NewPeriod.includes("T")))
+          Events[eventIndex].calendared = false
+          Events[eventIndex].calendar_id = null
         if (inform) {
           Events[eventIndex].period_updated = true;
           Events[eventIndex].updated = true;
@@ -386,7 +409,7 @@ export default class events {
         this.saveKey.data = Events;
         storage.save(this.saveKey).then(() => {
           this.setProperties(this.saveKey.data, inform);
-          resolve(Events[eventIndex]);
+          resolve(Events[eventIndex],cid);
         });
       });
     });
@@ -435,6 +458,8 @@ export default class events {
         Events[index].recurrence = RecurrentUpdate.recurrence
         Events[index].frequency = RecurrentUpdate.frequency
         Events[index].interval = RecurrentUpdate.interval
+        Events[index].days_of_week  = RecurrentUpdate.days_of_week,
+        Events[index].week_start = RecurrentUpdate.week_start
         if (inform) {
           Events[index].title_updated = true;
           Events[index].updated = true;
@@ -488,9 +513,8 @@ export default class events {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let eventIndex = findIndex(Events, { id: EventID });
-        Events[eventIndex].calendar_id = newID;
+        Events[eventIndex].calendar_id = newID ? newID : null;
         if (inform) {
-          Events[eventIndex].title_updated = true;
           Events[eventIndex].updated = true;
         }
         Events[eventIndex].updated_at = moment().format();
@@ -833,8 +857,8 @@ export default class events {
           id: EventID
         });
         if (index >= 0) {
-          if (Events[index].reminds.length !== 0)
-            Events[index].reminds = uniq(Event.reminds.concat([RemindID]));
+          if (Events[index].reminds && Events[index].reminds.length !== 0)
+            Events[index].reminds = uniq(Events[index].reminds.concat([RemindID]));
           else Events[index].reminds = [RemindID];
           if (inform) {
             Events[index].remind_added = true;
@@ -867,7 +891,8 @@ export default class events {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let index = findIndex(Events, { id: EventID });
-        Events[index].reminds = dropWhile(Event.reminds, element => element !== RemindID);
+        Events[index].reminds = dropWhile(Events[index].reminds,
+           element => element !== RemindID);
         if (inform) {
           Events[index].remind_removed = true;
           Events[index].updated = true;
@@ -932,8 +957,7 @@ export default class events {
   }
   readFromStore() {
     return new Promise((resolve, reject) => {
-      storage
-        .load(this.storeAccessKey)
+      storage.load(this.storeAccessKey)
         .then(events => {
           resolve(events);
         })
@@ -955,7 +979,7 @@ export default class events {
       this.readFromStore().then(Events => {
         let index = findIndex(Events, { id: EventID })
         !Events[index].commitee || Events[index].commitee.length <= 0 ? Events[index].commitee = [CommiteeID] :
-          Events[index].commitee.unshift(CommiteeID)
+          Events[index].commitee.unshift(ID)
         Events[index].updated_at = moment().format();
         this.saveKey.data = Events
         storage.save(this.saveKey).then(() => {

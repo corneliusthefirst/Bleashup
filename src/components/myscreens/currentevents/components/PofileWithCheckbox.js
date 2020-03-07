@@ -35,7 +35,7 @@ export default class ProfileWithCheckBox extends PureComponent {
                     <Icon style={{ marginTop: "5%", color: "#1FABAB" }} name={this.state.checked ? "radio-button-checked" :
                         "radio-button-unchecked"} type="MaterialIcons"></Icon>
                     <View style={{ margin: '2%', }}>
-                        <ProfileView hideMe={() => {
+                        <ProfileView delay={this.props.delay} hideMe={() => {
                             this.setState({ hide: true })
                         }} phone={this.props.phone}></ProfileView>
                     </View>

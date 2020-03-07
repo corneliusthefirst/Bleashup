@@ -15,6 +15,7 @@ import ChatStore from '../../../stores/ChatStore';
 import testForURL from '../../../services/testForURL';
 import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
 import { Title } from 'native-base';
+import shadower from '../../shadower';
 
 export default class CommiteeItem extends Component {
     constructor(props) {
@@ -52,7 +53,7 @@ export default class CommiteeItem extends Component {
                 this.setState({
                     commitee: this.props.commitee,
                     public: this.props.commitee.public_state,
-                    master: member ? member.master : false,
+                    master: member ? this.props.computedMaster : false,
                     loaded: true,
                     member: member,
                     joint: member ? true : false
@@ -60,14 +61,14 @@ export default class CommiteeItem extends Component {
             }, 50)
         } else {
             stores.CommiteeStore.getCommitee(this.props.id).then(commitee => {
-                this.member = find(commitee.member, (ele) => ele !== null && ele.phone === this.props.phone)
+                let member = find(commitee.member, (ele) => ele !== null && ele.phone === this.props.phone)
                 setTimeout(() => {
                     this.setState({
                         commitee: commitee,
                         public: commitee.public_state,
-                        master: this.member ? this.member.master : false,
+                        master: member ? this.props.computedMaster : false,
                         loaded: true,
-                        joint: this.member ? true : false
+                        joint: member ? true : false
                     })
                 }, 50)
             })
@@ -158,7 +159,7 @@ export default class CommiteeItem extends Component {
             newThing: !this.state.newThing
         })
         this.props.editName(newName, this.state.commitee.id)
-        this.swap()
+        //this.swap()
         emitter.once("edit-failed", () => {
             this.revertName()
         })
@@ -307,16 +308,21 @@ export default class CommiteeItem extends Component {
         this.accessible = this.state.joint || this.state.public
         return (
             this.state.loaded ? <View style={{
-                opacity: this.accessible ? 1 : 0.1,
+                opacity: this.accessible ? 1 : 0.7,
                 borderBottomRightRadius: 8,
                 width: "90%",
+                ...shadower(3),
+                marginBottom: '1%',
+                marginTop: '1%',
+                padding: '2%',
                 borderTopRightRadius: 8,
-                backgroundColor: GState.currentCommitee == this.state.commitee.id ? "#54F5CA" : null,
+                backgroundColor: GState.currentCommitee == this.state.commitee.id ? "#54F5CA" : "#FEFFDE",
             }}>
                 <TouchableOpacity onPress={() => requestAnimationFrame(() => {
+                    if(GState.editingCommiteeName === false)
                     this.swappCommitee()
                 })}>
-                <View style={{ display: 'flex', hieght: 100, width: "100%", flexDirection: "row", marginBottom: "2%", }}>
+                    <View style={{ display: 'flex', hieght: 100, width: "100%", flexDirection: "row", marginBottom: "2%", }}>
                    <View style={{ margin: '1%', width: "70%", display: 'flex', flexDirection: 'column', }}>
                             <Text style={{
                                 fontWeight: 'bold', fontSize: 18, color: GState.currentCommitee == this.state.commitee.id ? "#0A4E52" : "gray"
@@ -333,14 +339,18 @@ export default class CommiteeItem extends Component {
                         {this.state.commitee.name.toLowerCase() === "Generale".toLowerCase() ? null : this.state.master ?
                             <View style={{ marginTop: "-5%", marginRight: "15%", }}>
                                 <TouchableWithoutFeedback onPress={() => {
+                                        GState.editingCommiteeName = true
                                     requestAnimationFrame(() => {
                                         this.setState({
                                             isEditNameModelOpened: true,
                                             newThing: !this.state.newThing
                                         })
+                                        setTimeout(() => {
+                                            GState.editingCommiteeName = false
+                                        },300)
                                     })
                                 }}>
-                                        <View>{this.props.master ? <Icon style={{ fontSize: 30, color: "#0A4E52" }} name="pencil" type="EvilIcons" /> : null}</View>
+                                        <View>{this.state.master  ? <Icon style={{ fontSize: 30, color: "#0A4E52" }} name="pencil" type="EvilIcons" /> : null}</View>
                                 </TouchableWithoutFeedback>
                             </View> : null}
                     </View>
@@ -356,7 +366,8 @@ export default class CommiteeItem extends Component {
                         this.editName(newName)
                     }}
                 ></EditNameModal>:null}
-                <MenuDivider color="#1FABAB" />
+               {//<MenuDivider color="#1FABAB" />
+            }
 
 
             </View> : <Spinner size={"small"}></Spinner>
