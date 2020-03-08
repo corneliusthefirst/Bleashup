@@ -65,6 +65,7 @@ export default class BleashupTimeLine extends PureComponent {
         return (
             <View style={[styles.container, this.props.style]}>
                 <BleashupFlatList
+                    marginTop
                     style={[styles.listview, this.props.listViewStyle]}
                     dataSource={this.state.data}
                     inverted={true}

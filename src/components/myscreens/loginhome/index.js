@@ -18,7 +18,20 @@ const { fs } = rnFetchBlob
 export default class LoginHomeView extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      vote: {
+        id: "1",
+        always_show:true,
+        title: 'My First Poll',
+        description: `When you set up Facebook Login or change it and have made a mistake in the setup, you will get an error message when signing in or login in with Facebook. There are different error messages depending on what the issue is.
+
+In this article, we show you how to solve the error message “URL blocked: This redirect failed because the redirect URI is not white-listed in the app's client OAuth settings. Make sure that the client and web OAuth logins are on and add all your app domains as valid OAuth redirect URIs.“ `,
+        options: [{ name: "Yes,Do It", vote_count: 0, index: 0 }, { name: 'No, Stop It', vote_count: 0, index: 1 }, { name: 'None , I Don,t Know ', vote_count: 0 }],
+        voters: [{ phone: "00237698683806", index: 0 }],
+      }
+    }
   }
+  state = {}
   async requestReadAndWritePermission(){
    // const pers =  await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE	,{title:"Write To Storage Permission",
   //  message:"Bleashup Wants to write to disk"})
@@ -42,6 +55,7 @@ export default class LoginHomeView extends Component {
    //   console.warn("permission deneid")
    // }
   }
+   
   render() {
   //console.disableYellowBox = true;
     this.requestReadAndWritePermission()
@@ -51,7 +65,7 @@ export default class LoginHomeView extends Component {
       </Container>
 
     )*/
-     /*routeName = initialRoute.routeName;
+    routeName = initialRoute.routeName;
        if ((globalState.loading = true)) {
          initialRoute.initialRoute().then(route => {
            if(route !== "Login"){
@@ -66,8 +80,8 @@ export default class LoginHomeView extends Component {
            }
          });
        }
-       globalState.loading = true;*/
-       /*return (
+       /*globalState.loading = true;*/
+       return (
          <Container style={{}}>
              {globalState.loading ? (
             <Waiter></Waiter>
@@ -76,8 +90,14 @@ export default class LoginHomeView extends Component {
                )}
          </Container>
          
-       );*/
+       );
 
-       return <Voter></Voter>
+      /* return <Voter voteItem={(item) => {
+         this.setState({
+           vote:item.vote
+          })
+       }} message={{vote:this.state.vote}} showVoters={(members) => {
+         //todo: call chatroom show members method with this members as participants 
+       }}></Voter>*/
   }
 }

@@ -23,6 +23,7 @@ import DateView from './DateView';
 import NewSeparator from './NewSeparator';
 import moment from 'moment';
 import shadower from '../../shadower';
+import Voter from './Voter';
 
 export default class Message extends Component {
 
@@ -54,7 +55,7 @@ export default class Message extends Component {
                 return <TextMessageSnder sendMessage={(message) => this.props.sendMessage(message)} firebaseRoom={this.props.firebaseRoom}
                     user={2} sender={sender} index={index} creator={3} message={data}></TextMessageSnder>
             case "photo":
-                return <PhotoMessage handleLongPress={() => this.handLongPress()}  pressingIn={() => {
+                return <PhotoMessage handleLongPress={() => this.handLongPress()} pressingIn={() => {
                     this.replying = true;
                     // this.props.hideAndshow()
                 }} firebaseRoom={this.props.firebaseRoom} showPhoto={(url) => this.props.showPhoto(url)} user={2} sender={sender} index={index} creator={2} message={data}></PhotoMessage>
@@ -64,7 +65,7 @@ export default class Message extends Component {
                     //this.props.hideAndshow()
                 }} index={index} sender={sender} message={data}></AudioMessage>
             case "video":
-                return <VideoMessage handleLongPress={() => this.handLongPress()} pressingIn={() =>{
+                return <VideoMessage handleLongPress={() => this.handLongPress()} pressingIn={() => {
                     this.replying = true
                 }} room={this.props.room} index={index} sender={sender}
                     playVideo={(video) => { this.props.playVideo(video) }} message={data}></VideoMessage>
@@ -84,6 +85,8 @@ export default class Message extends Component {
             case "audio_uploader":
                 return <AudioUploader room={this.props.room} message={data} index={data.id}
                     replaceMessage={(data) => this.props.replaceAudioMessage(data)}></AudioUploader>
+            case "vote":
+                return <Voter voteItem={this.props.voteItem} message={data} room={this.props.room} index={data.id}></Voter>
             default:
                 return null
         }
@@ -148,7 +151,7 @@ export default class Message extends Component {
     pattern = [1000, 0, 0]
     handleReply() {
         //console.warn(this.props.message)
-        let color = this.state.sender ? '#DEDEDE' : '#9EEDD3'
+        let color = this.props.message.type === 'vote' ? "#FEFFDE" : this.state.sender ? '#DEDEDE' : '#9EEDD3'
         switch (this.props.message.type) {
             case 'text':
                 tempMessage = this.props.message
@@ -203,7 +206,7 @@ export default class Message extends Component {
         //marginTop: "-2%",
         marginBottom: 3
     }
-    handLongPress(){
+    handLongPress() {
         this.replying = false
         this.props.showActions(this.props.message)
         Vibration.vibrate(this.longPressDuration)
@@ -212,21 +215,27 @@ export default class Message extends Component {
         let imoji = message.match(/[\u{1f300}-\u{1f5ff}\u{1f900}-\u{1f9ff}\u{1f600}-\u{1f64f}\u{1f680}-\u{1f6ff}\u{2600}-\u{26ff}\u{2700}-\u{27bf}\u{1f1e6}-\u{1f1ff}\u{1f191}-\u{1f251}\u{1f004}\u{1f0cf}\u{1f170}-\u{1f171}\u{1f17e}-\u{1f17f}\u{1f18e}\u{3030}\u{2b50}\u{2b55}\u{2934}-\u{2935}\u{2b05}-\u{2b07}\u{2b1b}-\u{2b1c}\u{3297}\u{3299}\u{303d}\u{00a9}\u{00ae}\u{2122}\u{23f3}\u{24c2}\u{23e9}-\u{23ef}\u{25b6}\u{23f8}-\u{23fa}]/ug)
         return imoji && imoji.length == 1 && message.length == imoji[0].length
     }
+    isVote() {
+        return this.props.message.type === 'vote'
+    }
     render() {
         topMostStyle = {
-            marginLeft: this.state.sender ? '1%' : 0,
-            marginRight: !this.state.sender ? '1%' : 0,
-            marginTop: this.state.different ? "1.5%" : 0,
-            marginBottom: "0.5%",
-            alignSelf: this.state.sender ? 'flex-start' : 'flex-end',
+            marginLeft: this.state.sender && !this.isVote() ? '1%' : this.isVote ? '3.5%' : 0,
+            marginRight: !this.state.sender && !this.isVote() ? '1%' : 0,
+            marginTop: this.state.different ? "1.5%" : ".3%",
+            //marginBottom: "0.5%",
+            alignSelf: this.isVote() ? "center" : this.state.sender ? 'flex-start' : 'flex-end',
         }
-        let color = this.state.sender ? '#D0FEEB' : '#9EEDD3'
+        let color = this.isVote() ? "#FEFFDE" : this.state.sender ? '#D0FEEB' : '#9EEDD3'
         GeneralMessageBoxStyle = {
-            maxWidth: 300, flexDirection: 'column', minWidth: 120,
+            maxWidth: this.isVote() ? "96%" : 300, flexDirection: 'column', minWidth: 120,
             minHeight: 10, overflow: 'hidden', borderBottomLeftRadius: 10, borderColor: color,
-            borderTopLeftRadius: this.state.sender ? 0 : 10,// borderWidth: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text)?.7:0:0,
+            borderTopLeftRadius: this.state.sender && !this.isVote() ? 0 : 10,
+            // borderWidth: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text)?.7:0:0,
             backgroundColor: color, ...shadower(3),
-            borderTopRightRadius: 10, borderBottomRightRadius: this.state.sender ? 10 : this.props.message.reply && this.props.message.reply.type_extern ? 10 : null,
+            borderTopRightRadius: 10,
+            borderBottomRightRadius: this.state.sender || this.isVote() ? 10 :
+                this.props.message.reply && this.props.message.reply.type_extern ? 10 : null,
         }
         senderNameStyle = {
             maxWidth: "100%",
@@ -243,7 +252,7 @@ export default class Message extends Component {
             ...topMostStyle, height: 100, backgroundColor: color, borderBottomLeftRadius: 10, borderColor: color,
             borderTopLeftRadius: this.state.sender ? 0 : 10,// borderWidth: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text)?.7:0:0,
             backgroundColor: color,
-            alignSelf: this.state.sender ? 'flex-start' : 'flex-end',
+            alignSelf: this.isVote() ? 'center' : this.state.sender ? 'flex-start' : 'flex-end',
             borderTopRightRadius: 10,
 
             width: 200
@@ -271,16 +280,16 @@ export default class Message extends Component {
                                 <View>
                                     <View style={senderNameStyle}>
                                         <TouchableWithoutFeedback onLongPress={() => {
-                                           this.handLongPress()
+                                            this.handLongPress()
                                         }} onPressIn={() => {
                                             this.replying = true
                                         }}><View style={subNameStyle}>{this.state.sender ?
-                                             <TouchableOpacity onLongPress={() => {
-                                            this.handLongPress()
-                                        }} onPress={() => {
-                                            this.props.showProfile(this.message.sender.phone)
-                                        }}>{this.state.different ? <Text style={nameTextStyle}
-                                            note>{" "}{this.state.sender_name}</Text> : <Text>{"         "}</Text>}</TouchableOpacity> : null}<Right>
+                                            <TouchableOpacity onLongPress={() => {
+                                                this.handLongPress()
+                                            }} onPress={() => {
+                                                this.props.showProfile(this.message.sender.phone)
+                                            }}>{this.state.different ? <Text style={nameTextStyle}
+                                                note>{" "}{this.state.sender_name}</Text> : <Text>{"         "}</Text>}</TouchableOpacity> : null}<Right>
                                                     {!this.state.sender ? <Text note
                                                         style={{
                                                             color: this.state.sender ? null : '#1FABAB',
@@ -312,27 +321,27 @@ export default class Message extends Component {
                                         }} onLongPress={() => {
                                             this.handLongPress()
                                         }}>
-                                        <View>
-                                        <View style={{
-                                            backgroundColor: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text) ? color : 'transparent' : 'transparent',
+                                            <View>
+                                                <View style={{
+                                                    backgroundColor: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text) ? color : 'transparent' : 'transparent',
 
-                                        }}>
-                                            {this.state.sender ? <Text note
-                                                style={{
-                                                    marginLeft: "5%",
-                                                    color: this.state.sender ? null : '#1FABAB',
-                                                    fontSize: 13, marginRight: "2%", marginTop: "1%",
                                                 }}>
-                                                {this.state.time}{"    "}</Text> : null}
-                                        </View>
-                                        <View style={{
-                                            backgroundColor: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text) ? color : 'transparent' : 'transparent',
-                                        }}>{!this.state.sender ? this.props.message.sent ? this.props.received ?
-                                            <Icon style={this.iconStyles} type="Ionicons" name="ios-checkmark-circle">
-                                            </Icon> : <Icon style={this.iconStyles} type={"EvilIcons"} name="check">
-                                            </Icon> : <Icon style={{ ...this.iconStyles, color: "#FFF" }} type="MaterialCommunityIcons"
-                                                name="progress-check"></Icon> : null}</View>
-                                    </View>
+                                                    {this.state.sender ? <Text note
+                                                        style={{
+                                                            marginLeft: "5%",
+                                                            color: this.state.sender ? null : '#1FABAB',
+                                                            fontSize: 13, marginRight: "2%", marginTop: "1%",
+                                                        }}>
+                                                        {this.state.time}{"    "}</Text> : null}
+                                                </View>
+                                                <View style={{
+                                                    backgroundColor: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text) ? color : 'transparent' : 'transparent',
+                                                }}>{!this.state.sender ? this.props.message.sent ? this.props.received ?
+                                                    <Icon style={this.iconStyles} type="Ionicons" name="ios-checkmark-circle">
+                                                    </Icon> : <Icon style={this.iconStyles} type={"EvilIcons"} name="check">
+                                                    </Icon> : <Icon style={{ ...this.iconStyles, color: "#FFF" }} type="MaterialCommunityIcons"
+                                                        name="progress-check"></Icon> : null}</View>
+                                            </View>
                                         </TouchableWithoutFeedback>
                                     </View>
                                 </View>
