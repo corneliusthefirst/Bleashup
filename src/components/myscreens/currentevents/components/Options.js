@@ -128,9 +128,8 @@ export default class Options extends Component {
                 <View style={{
                     width: this.width
                 }}>
-                    <TouchableOpacity onPress={() => requestAnimationFrame(() => this.navigateToReminds())}>
                         <View style={this.svgStyle}>
-                            <Icon type="Entypo" name="bell" style={
+                            <Icon onPress={() => requestAnimationFrame(() => this.navigateToReminds())} type="Entypo" name="bell" style={
                                 {
                                     color: "#1FABAB",
                                     alignSelf:'center'
@@ -154,16 +153,14 @@ export default class Options extends Component {
                                     </View>
                                 )}
                         </View>
-                    </TouchableOpacity>
                 </View>
                 <View
                     style={{
                         width: this.width
                     }}
                 >
-                    <TouchableOpacity onPress={() => requestAnimationFrame(() => this.navigateToEventChat())}>
                         <View style={this.svgStyle}>
-                            <Icon name="group" type="FontAwesome" style={
+                            <Icon onPress={() => requestAnimationFrame(() => this.navigateToEventChat())} name="group" type="FontAwesome" style={
                                 {
                                     color: "#1FABAB",
                                     alignSelf: 'center',
@@ -188,7 +185,6 @@ export default class Options extends Component {
                                     </View>
                                 )}
                         </View >
-                    </TouchableOpacity>
                 </View>
                 {/*<View
                     style={{

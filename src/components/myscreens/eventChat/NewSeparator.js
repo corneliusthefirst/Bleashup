@@ -10,7 +10,7 @@ export default class NewSeparator extends Component {
     }
     render() {
         return (
-            <View style={{ width: 300, height: 30, backgroundColor: "#fff", borderRadius: 10, 
+            <View style={{ width: 300, height: 30, backgroundColor: "#FEFFDE", borderRadius: 10, 
             alignSelf: 'center', borderWidth: 1, borderColor: "#fff",...shadower(2) }}>
                 <Text style={{ fontWeight: 'bold', marginTop: "1%", alignSelf: 'center' }}>{this.props.data}</Text>
             </View>

@@ -55,6 +55,7 @@ import converToHMS from '../highlights_details/convertToHMS';
 import Waiter from "../loginhome/Waiter";
 import MediaTabModal from "./MediaTabModal";
 import testForURL from '../../../services/testForURL';
+import VoteCreation from "./VoteCreation";
 let dirs = rnFetchBlob.fs.dirs
 
 const screenWidth = Math.round(Dimensions.get('window').width);
@@ -285,6 +286,7 @@ export default class ChatRoom extends Component {
                 }
             }, 100)
             this.fireRef.endAt().limitToLast(1).on('child_added', snapshot => {
+                console.warn("new_child",snapshot.val())
                 let message = snapshot.val()
                 message.received ? message.received.unshift({
                     phone:
@@ -1075,6 +1077,26 @@ export default class ChatRoom extends Component {
     initialzeFlatList() {
         this.refs.bleashupSectionListOut.resetItemNumbers()
     }
+    createVote(vote) {
+        let message = {
+            id: uuid.v1(),
+            type: "vote",
+            vote: vote,
+            created_at: moment().format(),
+            sender: this.sender
+        }
+        this.room.messages.unshift(message)
+        this.room.addMessageToStore(message).then(() =>{
+            this.sendMessage(message)
+            this.setState({
+                isVoteCreationModalOpened: false,
+                newMessage: true
+            })
+
+            // this.informMembers()
+            this.initialzeFlatList()
+        })
+    }
     verifyNumber(code) {
         stores.TempLoginStore.confirmCode.confirm(code).then(success => {
             this.setState({
@@ -1145,15 +1167,16 @@ export default class ChatRoom extends Component {
     showRoomMedia() {
         this.setState({
             isMediaModalOpened: true,
-            messages:JSON.stringify(this.room.messages)
+            messages: JSON.stringify(this.room.messages)
         })
     }
     headerStyles = {
         width: "100%", height: 44, display: 'flex', flexDirection: 'row',
         backgroundColor: "#FEFFDE", position: "absolute", ...shadower(8)
-    }
+    } 
     transparent = "rgba(50, 51, 53, 0.8)";
     render() {
+        //console.error(this.props.firebaseRoom)
         return (
             <View style={{ height: "100%" }}>
                 {
@@ -1218,16 +1241,39 @@ export default class ChatRoom extends Component {
                             isMediaModalOpened: false
                         })
                     }}></MediaTabModal> : null}
+                {<VoteCreation takeVote={(vote => this.createVote(vote))} isOpen={this.state.isVoteCreationModalOpened} onClosed={() => {
+                    this.setState({
+                        isVoteCreationModalOpened: false
+                    })
+                }}></VoteCreation>}
                 {//</ImageBackground>
                 }
             </View>
 
         )
     }
+    replaceVote(vote){
+        this.room.removeMessage(this.perviousId).then(() => {
+            this.room.messages.unshift(vote)
+            this.room.replaceNewMessage(vote).then(() => {
+                this.sendMessage(vote)
+                this.initialzeFlatList()
+                this.setState({
+                    newMessage: true
+                })
+            })
+        })
+    }
+    openVoteCreation() {
+        this.setState({
+            isVoteCreationModalOpened: true
+        })
+    }
     delay = 1
     messageList() {
         return <BleashupFlatList
-            backgroundColor={"transparent"}
+            //backgroundColor={"transparent"}
+            marginTop
             firstIndex={0}
             ref="bleashupSectionListOut"
             inverted={true}
@@ -1238,6 +1284,10 @@ export default class ChatRoom extends Component {
             renderItem={(item, index) => {
                 this.delay = this.delay >= 20 || !item.sent ? 0 : this.delay + 1
                 return item ? <Message
+                   voteItem={(vote) => {
+                       this.perviousId = vote.id
+                        this.replaceVote({ ...vote, id: uuid.v1() })
+                   }}
                     showProfile={(pro) => this.props.showProfile(pro)
                     } delay={this.delay} room={this.room}
                     PreviousSenderPhone={this.room.messages[index > 0 ? index - 1 : 0] ?
@@ -1395,7 +1445,7 @@ export default class ChatRoom extends Component {
                 justifyContent: 'flex-end',
             }}>
                 <View style={{ flexDirection: 'row', }}>
-                    <Icon style={{ margin: '4%', color: 'darkGray' }} type={"FontAwesome5"} name="poll">
+                    <Icon style={{ margin: '4%', color: 'darkGray' }} onPress={() => this.openVoteCreation()} type={"FontAwesome5"} name="poll">
                     </Icon>
                     <Icon onPress={() => this.showRoomMedia()} type={"MaterialIcons"} style={{ margin: '4%', color: 'darkGray' }} name={"perm-media"}>
                     </Icon>
