@@ -19,7 +19,7 @@ import CurrentEventView from "./components/myscreens/currentevents/index";
 import InvitationView from "./components/myscreens/invitations/index";
 import PotesChat from "./components/myscreens/poteschat/index";
 import StatusView from "./components/myscreens/status/index";
-import StickerPicker  from "./components/myscreens/status/components/stickersPicker";
+
 
 import LoginView from "./components/myscreens/login/index";
 import ForgotPasswordView from "./components/myscreens/forgotpassword/index";
@@ -85,10 +85,10 @@ const AppNavigator = createStackNavigator(
     EventDetailView:{screen:EventDetailView },
     LocalTasksCreation:{screen:LocalTasksCreation},
     TasksCreation:{screen:TasksCreation},
-    StickerPicker:{screen:StickerPicker}
+   
   },
   { 
-    initialRouteName: " StickerPicker",
+    initialRouteName: "Home",
     headerMode: "none"
   }
 );

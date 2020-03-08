@@ -95,11 +95,7 @@ export default class EventDescription extends Component {
                 isOpen={this.props.isOpen}
                 onClosed={() => this.props.onClosed(this.state.description)}
                 style={{
-<<<<<<< HEAD
-                    height: height/2, borderRadius: 15,marginTop:"-3%",
-=======
                     height: height/2-height/25, borderRadius: 15,marginTop:"-3%",
->>>>>>> 2fa61c8e42b82e73991866ea567b308e6a191280
                     backgroundColor:"#FEFFDE",borderColor:'black',borderWidth:1,width: "98%",
                 }}
                 coverScreen={true}
@@ -118,11 +114,7 @@ export default class EventDescription extends Component {
             <View style={{ height: "65%" }}>
               <Textarea containerStyle={{
                 width: "95%", margin: "1%",
-<<<<<<< HEAD
-                height: height / 3+height/30,
-=======
                 height: height / 3.6,
->>>>>>> 2fa61c8e42b82e73991866ea567b308e6a191280
                 borderRadius: 10, borderWidth: 1,
                 borderColor: "#1FABAB",alignSelf: 'center',
                 backgroundColor: "#f5fffa"
