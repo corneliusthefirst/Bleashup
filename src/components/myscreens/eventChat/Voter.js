@@ -50,6 +50,7 @@ export default class Voter extends Component {
     returnOption(item, index) {
         return this.props.message.vote.always_show || !this.hasVoted() ? this.returnOptionWithCount(item, index) : this.returnOptionWithoutCount(item, index)
     }
+    creator = stores.LoginStore.user.phone === this.props.message.vote.creator
     hasVoted() {
         return findIndex(this.props.message.vote.voter, (ele) => ele.phone === stores.LoginStore.user.phone) < 0
     }
@@ -131,7 +132,8 @@ export default class Voter extends Component {
                         this.props.showVoters(this.props.message.vote.voter)
                     }}
                     name={'ios-people'} type={"Ionicons"}></Icon></View>
-                    {this.props.configurable && <View><Icon onPress={() => this.props.updateVote(this.props.message.vote)} style={{ color: 'darkGray' }} name="gear"
+                    {this.props.configurable && this.creator && <View><Icon onPress={() => this.props.updateVote(this.props.message.vote)} 
+                    style={{ color: 'darkGray', marginTop: '13%',}} name="gear"
                         type="EvilIcons"></Icon></View>}</View>
             </View>
             {this.props.message.vote.period ? <View style={{ margin: '4%', alignItems: 'center', }}><Text style={{ color: dateDiff({ period: this.props.message.vote.period }) > 0 ? "gray" : "#1FABAB" }}>{`${writeDateTime({

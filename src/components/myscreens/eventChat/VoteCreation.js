@@ -72,6 +72,9 @@ export default class VoteCreation extends Component {
     }
     previousVote = JSON.stringify({ name: "" })
     componentDidUpdate(prevProps, prevState, contex) {
+        if(this.props.update !== prevProps.update && !this.props.update){
+            this.initializeVote()
+        }
         if (!this.props.update) {
             if (this.state.vote.title !== prevState.vote.title) {
                 stores.Votes.updateVoteTitle({
@@ -247,12 +250,17 @@ export default class VoteCreation extends Component {
             }}
         >
             <View style={{ height: '100%', flexDirection: 'column', }}>
-                <View style={{ width: '95%', height: '6%', ...shadower(), margin: '1%', }}>
-                    <Text note style={{
+                <View style={{ width: '98%', height: '6%', ...shadower(), margin: '1%', flexDirection: 'row',}}>
+                    <View style={{width:'35%'}}><Text note style={{
                         fontWeight: 'bold',
                         color: '#A91A84',
                         //margin: '2%'
-                    }}>{"new vote"}</Text>
+                    }}>{"new vote"}</Text></View>
+                    {this.props.update ? <View style={{ width: '65%' }}><Text note style={{
+                        fontWeight: 'bold',
+                        color: 'darkGray',
+                        //margin: '2%'
+                    }}>{"ony the voting end date is updated"}</Text></View>:null}
                 </View>
                 <View style={{ height: '94%', }}>
                     <ScrollView showsVerticalScrollIndicator={false} style={{ height: '100%' }}>

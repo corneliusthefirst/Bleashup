@@ -107,6 +107,7 @@ export default class Event extends Component {
     stores.Highlights.loadHighlight(id).then(High => {
       High ? this.setState({
         isHighlightDetailModalOpened: true,
+        shouldNotMention: true,
         highlight: High
 
       }) : null
@@ -420,11 +421,11 @@ export default class Event extends Component {
       change.title.toLowerCase().includes('remind')) {
       console.warn('includes reminds')
       emitter.emit('remind-updated')
-    } if(change.changed.toLowerCase().includes("vote") ||
-     change.title.toLowerCase().includes('vote')){
-       console.warn("including vote")
-       emitter.emit("votes-updated",newValue.committee_id)
-     }
+    } if (change.changed.toLowerCase().includes("vote") ||
+      change.title.toLowerCase().includes('vote')) {
+      console.warn("including vote")
+      emitter.emit("votes-updated", newValue.committee_id)
+    }
     if (!this.unmounted) emitter.emit('refresh-history')
     setTimeout(() => {
       this.setState({
@@ -462,10 +463,10 @@ export default class Event extends Component {
   }
   mention(data) {
     GState.reply = data
-  //GState.currentCommitee = this.event.id
+    //GState.currentCommitee = this.event.id
     emitter.emit('mentioning')
     this.setState({
-      currentPage:'EventChat'
+      currentPage: 'EventChat'
     })
     //this.swapChats(this.generalCommitee(this.event))
   }
@@ -684,7 +685,7 @@ export default class Event extends Component {
     }
   }
   editName(newName, id) {
-    let roomName = this.state.roomID === id ? newName:this.state.roomName
+    let roomName = this.state.roomID === id ? newName : this.state.roomName
     if (!this.state.working) {
       this.setState({
         working: true
@@ -1256,7 +1257,7 @@ export default class Event extends Component {
         removeMember={(id, members) => { this.removeMembers(id, members) }}
         addMembers={(id, currentMembers) => this.addCommiteeMembers(id, currentMembers)}
         publishCommitee={(id, stater) => { this.publishCommitee(id, stater) }}
-        editName={(newName, id,currentName) => this.computedMaster ? this.editName(newName, id) : Toast.show({ text: "Connot Update This Commitee" })}
+        editName={(newName, id, currentName) => this.computedMaster ? this.editName(newName, id) : Toast.show({ text: "Connot Update This Commitee" })}
         swapChats={(room) => this.swapChats(room)} phone={stores.LoginStore.user.phone}
         commitees={this.event.commitee ? this.event.commitee : []}
         showCreateCommiteeModal={() => {
@@ -1289,7 +1290,7 @@ export default class Event extends Component {
         height: "100%",
         backgroundColor: "white"
       }}>
-        {this.state.fresh ? <View style={{height:'100%',width:'100%',backgroundColor: '#FEFFDE',}}><Spinner size={"small"}></Spinner></View> :
+        {this.state.fresh ? <View style={{ height: '100%', width: '100%', backgroundColor: '#FEFFDE', }}><Spinner size={"small"}></Spinner></View> :
           this.renderMenu()
         }
         {this.state.showNotifiation ? <View style={{
@@ -1495,20 +1496,28 @@ export default class Event extends Component {
           })
         }}></SearchImage>}
         {this.state.isHighlightDetailModalOpened ? <HighlightCardDetail
+          mention={(item) => {
+            this.mentionPost(item)
+            this.setState({
+              isHighlightDetailModalOpened: false
+            })
+          }
+          }
           shouldRestore={this.state.shouldRestore}
           showPhoto={(url) => this.showPhoto(url)}
           showVideo={(url) => this.showVideo(url)}
-          shouldNotMention
+          shouldNotMention={this.state.shouldNotMention}
           restore={(item) => this.restoreHighlight({ new_value: { new_value: item } })}
           isOpen={this.state.isHighlightDetailModalOpened}
           item={this.state.highlight}
           onClosed={() => {
             this.setState({
               isHighlightDetailModalOpened: false,
+              shouldNotMention: false,
               shouldRestore: false
             })
           }}></HighlightCardDetail> : null}
-        {this.state.isremindConfigurationModal ? <TasksCreation 
+        {this.state.isremindConfigurationModal ? <TasksCreation
           shouldRestore={this.state.shouldRestore}
           canRestore={this.state.remind && this.state.remind.creator === this.user.phone}
           restore={(item) => this.restoreRemind({ new_value: { new_value: item } })} isOpen={this.state.isremindConfigurationModal} onClosed={() => {

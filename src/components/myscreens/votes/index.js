@@ -56,6 +56,8 @@ export default class Votes extends Component {
   AddVote() {
     this.setState({
       isVoteCreationModalOpened: true,
+      update:false,
+      vote:null,
       vote_id:request.Vote().id
     })
   }
@@ -237,7 +239,7 @@ export default class Votes extends Component {
         }} 
         vote={this.state.vote}
         updateVote={(prev,newV) => this.appdateVote(prev,newV)}
-        update={this.state.update} vote_id={request.Vote().id}
+        update={this.state.update} vote_id={this.state.vote_id}
           isOpen={this.state.isVoteCreationModalOpened} onClosed={() => {
             this.setState({
               isVoteCreationModalOpened: false
