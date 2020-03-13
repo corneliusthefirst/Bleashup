@@ -5,6 +5,7 @@ import { Button, Icon, Content,Text } from 'native-base';
 import { findIndex } from 'lodash';
 import { SceneView } from 'react-navigation';
 import { ScrollView } from 'react-native-gesture-handler';
+import bleashupHeaderStyle from '../../../services/bleashupHeaderStyle';
 
 export default class SelectDays extends Component {
     constructor(props) {
@@ -37,16 +38,17 @@ export default class SelectDays extends Component {
                     width: '50%',
                     height: '50%',
                     backgroundColor: '#FEFFDE',
-                    borderRadius: 8
+                    borderRadius: 8,borderTopLeftRadius: 0,borderTopRightRadius: 0,
                 }}
             >
                 <View>
-                    <View style={{margin: '2%',justifyContent: 'center',alignSelf: 'center',}}>
+                <View style={{height:20}}> 
+                <View style={{justifyContent: 'center',alignSelf: 'center',...bleashupHeaderStyle}}>
                         <Text style={{width:'90%',alignSelf:'center',fontWeight:'bold'}}>{"Select days in the week "}</Text>
                         {//<Icon style={{ margin: '2%', }} onPress={() => this.props.onClosed()} type={"EvilIcons"} name="close"></Icon>
             }
 
-                </View>
+                </View></View>
                     <View pointerEvents={this.props.ownership ? null : 'none'}>
                         <ScrollView>
                             {this.renderAll()}

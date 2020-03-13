@@ -13,6 +13,7 @@ import SelectDays from './SelectDaysModal';
 import { uniq } from 'lodash';
 import { frequencyType, daysOfWeeksDefault, nameToDataMapper, FrequencyReverser } from '../../../services/recurrenceConfigs';
 import { getDayMonth, getMonthDay } from '../../../services/datesWriter';
+import bleashupHeaderStyle from '../../../services/bleashupHeaderStyle';
 var event = null
 export default class SettingsModal extends Component {
     constructor(props) {
@@ -361,21 +362,25 @@ export default class SettingsModal extends Component {
                 onOpened={() => {
                 }}
                 style={{
-                    borderTopLeftRadius: 8,
-                    borderTopRightRadius: 8,
-                    height: "97%",
+                    height: "90%",
                     width: "100%",
                     backgroundColor: "#FEFFDE",
                 }}>
                 {!this.state.loaded ? <Spinner size={'small'}></Spinner> : <View>
-                    <View style={{ margin: '2%', flexDirection: 'row', }}>
-                        <Text
-                            style={{ fontSize: 23, fontWeight: 'bold', fontStyle: 'italic', width: '60%', }}>Activity Settings</Text>
-                        {this.props.computedMaster ? <Button onPress={() => this.saveConfigurations()} transparent><Icon
-                            style={{ color: "#1FABAB", }}
-                            type="AntDesign"
-                            name="checkcircle"
-                        /><Text style={{ fontWeight: 'bold', fontStyle: 'italic', }} >Save</Text></Button> : null}
+                    <View style={{ height:50 }}>
+                        <View style={{ flexDirection: 'row',...bleashupHeaderStyle,padding: '2%',}}>
+                            <View style={{width:'70%'}}>
+                                <Text
+                                    style={{ fontSize: 20, fontWeight: 'bold', width: '100%', }}>Activity Settings</Text>
+                            </View>
+                            <View style={{width:'30%'}}>
+                                {this.props.computedMaster ? <Button onPress={() => this.saveConfigurations()} transparent><Icon
+                                    style={{ color: "#1FABAB", }}
+                                    type="AntDesign"
+                                    name="checkcircle"
+                                /><Text style={{ fontWeight: 'bold', fontStyle: 'italic', }} >Save</Text></Button> : null}
+                            </View>
+                        </View>
                     </View>
                     {!this.state.loaded ? <Spinner size={"small"}></Spinner> : <ScrollView style={{ height: '90%' }} showsVerticalScrollIndicator={false}>
                         <View style={{ marginLeft: '4%', flexDirection: 'column', }}>

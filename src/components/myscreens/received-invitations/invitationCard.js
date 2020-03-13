@@ -243,14 +243,14 @@ class CardListItem extends Component {
     ],
     style: {
       width: "100%",
-      backgroundColor: "#FEFFDE"
+      backgroundColor: "white"
     },
     rowId: this.props.index,
     sectionId: 1
   }
   render() {
-    return this.state.loading ? <Card style={{ height: 230 }}></Card> : <View style={{ width: "100%", }}>
-      <Swipeout style={{ width: "100%", backgroundColor: "#FEFFDE" }} {...this.swipeSettings}>
+    return this.state.loading ? <Card style={{ height: 230 }}></Card> : <View style={{ width: "98%",alignSelf: 'center', }}>
+      <Swipeout style={{ width: "100%", }} {...this.swipeSettings}>
         <Card>
           <CardItem>
             <Text style={{ color: "#A91A84", fontSize: 14, }} note>

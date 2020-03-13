@@ -51,8 +51,8 @@ import ParticipantList from "./ParticipantList";
                     },100)
                 }}
                 style={{
-                    height: "97%",
-                    borderRadius: 8, backgroundColor: '#FEFFDE', width: "100%"
+                    height: "90%",
+                     width: "100%"
                 }}>
                 {this.state.loaded?
                     <ParticipantList master={this.props.master} creator={this.props.creator} hide={this.state.hideTitle} participants={this.state.participants} title={"Participants List"}

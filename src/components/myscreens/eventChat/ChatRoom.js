@@ -56,6 +56,11 @@ import Waiter from "../loginhome/Waiter";
 import MediaTabModal from "./MediaTabModal";
 import testForURL from '../../../services/testForURL';
 import VoteCreation from "./VoteCreation";
+import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
+import Votes from "../votes";
+import emitter from '../../../services/eventEmiter';
+import ChatRoomPlus from "./ChatRoomPlus";
+import ContactsModal from "../../ContactsModal";
 let dirs = rnFetchBlob.fs.dirs
 
 const screenWidth = Math.round(Dimensions.get('window').width);
@@ -286,7 +291,7 @@ export default class ChatRoom extends Component {
                 }
             }, 100)
             this.fireRef.endAt().limitToLast(1).on('child_added', snapshot => {
-                console.warn("new_child",snapshot.val())
+                console.warn("new_child", snapshot.val())
                 let message = snapshot.val()
                 message.received ? message.received.unshift({
                     phone:
@@ -300,7 +305,6 @@ export default class ChatRoom extends Component {
                 this.addNewMessage(message, snapshot.key)
             })
             this.fireRef.on('child_changed', snapshot => {
-                console.warn(snapshot.val(), snapshot.key, "changed-----")
                 let index = find(this.room.messages, { key: snapshot.key })
                 if (index >= 0) {
                     this.room.messages[index] = snapshot.val()
@@ -475,7 +479,6 @@ export default class ChatRoom extends Component {
         showTime: true
     }
     formHeight(factor) {
-        // console.warn(factor, screenheight)
         return (factor * 100).toString() + "%"
     }
     playVideo(video) {
@@ -570,7 +573,6 @@ export default class ChatRoom extends Component {
         if (messager) {
             messager = { ...messager, received: [{ phone: this.props.user.phone, date: moment().format() }] }
             this.fireRef.push(messager)
-
             // !! update the latess message of the relation page
         }
     }
@@ -1080,16 +1082,18 @@ export default class ChatRoom extends Component {
     createVote(vote) {
         let message = {
             id: uuid.v1(),
+            text: vote.title,
             type: "vote",
-            vote: vote,
+            vote: { id: vote.id, option: vote.option },
             created_at: moment().format(),
+            received: [{ phone: stores.LoginStore.phone, date: moment().format() }],
             sender: this.sender
         }
-        this.room.messages.unshift(message)
-        this.room.addMessageToStore(message).then(() =>{
+        this.room.addMessageToStore(message).then(() => {
             this.sendMessage(message)
+            this.room.messages.unshift(message)
             this.setState({
-                isVoteCreationModalOpened: false,
+                //isVoteCreationModalOpened: false,
                 newMessage: true
             })
 
@@ -1152,6 +1156,12 @@ export default class ChatRoom extends Component {
             showHeader: true
         }), 5000)
     }
+    initializeVotes(votes) {
+        this.setState({
+            votes: votes,
+            newMessage: !this.state.newMessage
+        })
+    }
     showMembers() {
         this.props.showLoader()
         firebase.database().ref(`rooms/${this.props.activity_id}/${this.props.firebaseRoom}`).once('value', snapshot => {
@@ -1171,9 +1181,15 @@ export default class ChatRoom extends Component {
         })
     }
     headerStyles = {
-        width: "100%", height: 44, display: 'flex', flexDirection: 'row',
-        backgroundColor: "#FEFFDE", position: "absolute", ...shadower(8)
-    } 
+        flexDirection: 'row', ...bleashupHeaderStyle
+    }
+    showVoters(voters){
+        this.setState({
+            showContacts:true,
+            voters:voters,
+            title:'Voters list '
+        })
+    }
     transparent = "rgba(50, 51, 53, 0.8)";
     render() {
         //console.error(this.props.firebaseRoom)
@@ -1241,18 +1257,42 @@ export default class ChatRoom extends Component {
                             isMediaModalOpened: false
                         })
                     }}></MediaTabModal> : null}
-                {<VoteCreation takeVote={(vote => this.createVote(vote))} isOpen={this.state.isVoteCreationModalOpened} onClosed={() => {
+                {<Votes takeVotes={(votes => {
+                    this.initializeVotes(votes)
+                })}
+                    takeVote={(vote => this.createVote(vote))}
+                    voteItem={mess => {
+                        this.perviousId = mess.id
+                        this.replaceVote({ ...mess, id: uuid.v1() })
+                    }}
+                    isSingleVote={this.state.single_vote}
+                    vote_id={this.state.vote_id}
+                    startLoader={this.props.showLoader}
+                    showVoters={(voters) => {
+                        this.showVoters(voters)
+                    }}
+                    stopLoader={this.props.stopLoader}
+                    committee_id={this.props.firebaseRoom}
+                    event_id={this.props.activity_id}
+                    isOpen={this.state.isVoteCreationModalOpened}
+                    sender={this.sender}
+                    onClosed={() => {
+                        this.setState({
+                            isVoteCreationModalOpened: false
+                        })
+                    }}></Votes>}
+                {this.state.showContacts ? <ContactsModal title={this.state.title} contacts={this.state.voters} isOpen={this.state.showContacts} onClosed={() => {
                     this.setState({
-                        isVoteCreationModalOpened: false
+                        showContacts: false
                     })
-                }}></VoteCreation>}
+                }}></ContactsModal> : null}
                 {//</ImageBackground>
                 }
             </View>
 
         )
     }
-    replaceVote(vote){
+    replaceVote(vote) {
         this.room.removeMessage(this.perviousId).then(() => {
             this.room.messages.unshift(vote)
             this.room.replaceNewMessage(vote).then(() => {
@@ -1266,7 +1306,8 @@ export default class ChatRoom extends Component {
     }
     openVoteCreation() {
         this.setState({
-            isVoteCreationModalOpened: true
+            isVoteCreationModalOpened: true,
+            single_vote: false
         })
     }
     delay = 1
@@ -1284,28 +1325,32 @@ export default class ChatRoom extends Component {
             renderItem={(item, index) => {
                 this.delay = this.delay >= 20 || !item.sent ? 0 : this.delay + 1
                 return item ? <Message
-                   voteItem={(vote) => {
-                       this.perviousId = vote.id
-                        this.replaceVote({ ...vote, id: uuid.v1() })
-                   }}
-                    showProfile={(pro) => this.props.showProfile(pro)
-                    } delay={this.delay} room={this.room}
-                    PreviousSenderPhone={this.room.messages[index > 0 ? index - 1 : 0] ?
+                    voteItem={(index, vote) => {
+                        emitter.emit("vote-me", index, { ...item, vote: vote })
+                    }}
+                    showVoters={(voters) => this.showVoters(voters)}
+                    votes={this.state.votes}
+                    showProfile={(pro) => this.props.showProfile(pro)}
+                    delay={this.delay}
+                    room={this.room}
+                    PreviousSenderPhone={this.room.messages[index > 0 ? index - 1 : 0] &&
+                        this.room.messages[index > 0 ? index - 1 : 0].user ?
                         this.room.messages[index > 0 ? index - 1 : 0].sender.phone : null}
                     showActions={(message) => this.showActions(message)}
                     firebaseRoom={this.props.firebaseRoom}
                     roomName={this.props.roomName}
                     sendMessage={message => this.sendTextMessage(message)}
-                    received={item.received ? item.received.length >= this.props.members.length :
-                        false} replaceMessageVideo={(data) => this.replaceMessageVideo(data)}
+                    received={item.received ? item.received.length >= this.props.members.length : false}
+                    replaceMessageVideo={(data) => this.replaceMessageVideo(data)}
                     showPhoto={(photo) => this.showPhoto(photo)}
                     replying={(replyer, color) => this.replying(replyer, color)}
                     replaceMessage={(data) => this.replaceMessage(data)}
                     replaceAudioMessage={(data) => this.replaceAudioMessage(data)}
                     handleReplyExtern={(reply) => {
-                        this.props.handleReplyExtern(reply)
+                        this.handleReplyExtern(reply)
                     }}
-                    message={item} openReply={(replyer) => {
+                    message={item}
+                    openReply={(replyer) => {
                         this.setState({
                             replyer: replyer,
                             showRepliedMessage: true
@@ -1321,12 +1366,22 @@ export default class ChatRoom extends Component {
             newDataLength={this.showMessage.length}>
         </BleashupFlatList>;
     }
-
+    handleReplyExtern(replyer) {
+        if (replyer.type === 'Votes') {
+            this.setState({
+                isVoteCreationModalOpened: true,
+                single_vote: true,
+                vote_id: replyer.id
+            })
+        } else {
+            this.props.handleReplyExtern(replyer)
+        }
+    }
     keyboardView() {
         return <View style={{
-            height: this.state.textInputHeight, backgroundColor: "#FEFFDE",
-            borderRadius: 8, alignSelf: 'center', borderBottomWidth: 0, borderWidth: .8,
-            borderColor: 'gray',
+            height: this.state.textInputHeight, backgroundColor: "#FFF",
+            alignSelf: 'center', borderBottomWidth: 0, borderTopWidth: .8,
+            borderColor: 'gray', borderColor: "#1FABAB",
             padding: '1%', maxWidth: "99.9%",
         }}>
             {
@@ -1394,14 +1449,14 @@ export default class ChatRoom extends Component {
     replyMessageCaption() {
         return <View style={{ backgroundColor: this.state.replyerBackColor, alignSelf: 'center', width: '98%' }}><ReplyText compose={true} openReply={(replyer) => {
             replyer.type_extern ?
-                this.props.handleReplyExtern(replyer) : this.setState({
+                this.handleReplyExtern(replyer) : this.setState({
                     replyer: replyer,
                     showRepliedMessage: true
                 });
         }}
             pressingIn={() => { }} showProfile={(pro) => this.props.showProfile(pro)} reply={this.state.replyContent}></ReplyText>
             <Button onPress={() => this.cancleReply()
-            } style={{ position: "absolute", alignSelf: 'flex-end', }} transparent><Icon name={"close"} type={"EvilIcons"} style={{}}></Icon></Button>
+            } style={{ position: "absolute", alignSelf: 'flex-end', }} rounded transparent><Icon name={"close"} type={"EvilIcons"} style={{ color: '#1FABAB' }}></Icon></Button>
         </View>;
     }
 
@@ -1429,45 +1484,51 @@ export default class ChatRoom extends Component {
             <EmojiSelector onEmojiSelected={(emoji) => this.handleEmojiSelected(emoji)} enableSearch={false} ref={emojiInput => this._emojiInput = emojiInput} resetSearch={this.state.reset} showSearchBar={false} loggingFunction={this.verboseLoggingFunction.bind(this)} verboseLoggingFunction={true} filterFunctions={[this.filterFunctionByUnicode]}></EmojiSelector>
         </View>;
     }
-
     header() {
-        return <View style={this.headerStyles}><View style={{ width: "50%", backgroundColor: "#FEFFDE", flexDirection: 'row', }}>
+        return <View style={{
+            width: "100%",
+            height: 44,
+            position: 'absolute'
+        }}><View style={this.headerStyles}><View style={{ width: "50%", flexDirection: 'row', }}>
             <Title style={{ fontSize: 20, fontWeight: 'bold', margin: "2%", alignSelf: 'flex-start', marginLeft: "4%" }}>{this.props.roomName}</Title></View>
-            {
-                //!! you can add the member last seen here if the room has just one member */
-            }
-            <View style={{
-                width: "50%",
-                backgroundColor: "#FEFFDE",
-                flexDirection: 'row',
-                alignSelf: 'flex-end',
-                alignItems: 'flex-end',
-                justifyContent: 'flex-end',
-            }}>
-                <View style={{ flexDirection: 'row', }}>
-                    <Icon style={{ margin: '4%', color: 'darkGray' }} onPress={() => this.openVoteCreation()} type={"FontAwesome5"} name="poll">
-                    </Icon>
-                    <Icon onPress={() => this.showRoomMedia()} type={"MaterialIcons"} style={{ margin: '4%', color: 'darkGray' }} name={"perm-media"}>
-                    </Icon>
-                    <Icon style={{ margin: '4%', color: 'darkGray' }} type={"MaterialIcons"} name="add-alarm">
-                    </Icon>
-                </View>
-                <View>
-                    <ChatroomMenu
-                        showMembers={() => this.showMembers()}
-                        addMembers={() => this.props.addMembers()}
-                        closeCommitee={() => this.props.close()}
-                        openCommitee={() => this.props.open()}
-                        leaveCommitee={() => this.props.leave()}
-                        removeMembers={() => this.props.removeMembers()}
-                        publishCommitee={() => this.props.publish()}
-                        master={this.props.master}
-                        eventID={this.props.activity_id}
-                        roomID={this.props.firebaseRoom}
-                        public={this.props.public_state}
-                        opened={this.props.opened}></ChatroomMenu>
-                </View>
-            </View></View>;
+                {
+                    //!! you can add the member last seen here if the room has just one member */
+                }
+                <View style={{
+                    width: "50%",
+                    flexDirection: 'row',
+                    alignSelf: 'flex-end',
+                    alignItems: 'flex-end',
+                    justifyContent: 'flex-end',
+                }}>
+                    <View style={{ alignSelf: 'flex-start', width: '25%' }}>
+                        <ChatRoomPlus
+                            master={this.props.master}
+                            eventID={this.props.activity_id}
+                            roomID={this.props.firebaseRoom}
+                            public={this.props.public_state}
+                            showVote={() => this.openVoteCreation()}
+                            showReminds={() => { }}
+                            addMembers={() => this.props.addMembers()}
+                        ></ChatRoomPlus>
+                    </View>
+                    <View>
+                        <ChatroomMenu
+                            showMembers={() => this.showMembers()}
+                            addMembers={() => this.props.addMembers()}
+                            closeCommitee={() => this.props.close()}
+                            openCommitee={() => this.props.open()}
+                            leaveCommitee={() => this.props.leave()}
+                            showRoomMedia={() => this.showRoomMedia()}
+                            removeMembers={() => this.props.removeMembers()}
+                            publishCommitee={() => this.props.publish()}
+                            master={this.props.master}
+                            eventID={this.props.activity_id}
+                            roomID={this.props.firebaseRoom}
+                            public={this.props.public_state}
+                            opened={this.props.opened}></ChatroomMenu>
+                    </View>
+                </View></View></View>;
     }
 
     newMessageIndicator() {

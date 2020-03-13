@@ -34,6 +34,7 @@ import {
 } from "../../../services/getCurrentDateInterval";
 import { confirmedChecker } from "../../../services/mapper";
 import ReportTabModal from './NewReportTab';
+import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
 //const MyTasksData = stores.Reminds.MyTasksData
 
 export default class Reminds extends Component {
@@ -353,21 +354,24 @@ export default class Reminds extends Component {
   delay = 1
   render() {
 
-    return !this.state.mounted ? <Spinner size={'small'}></Spinner> : (
+    return !this.state.mounted ? <View style={{width:'100%',height:'100%',backgroundColor: '#FEFFDE',}}><Spinner size={'small'}></Spinner></View> : (
 
-      <View style={{ backgroundColor: '#FEFFDE' }}>
-        <View style={{ height: "6%", width: "100%", padding: "2%", justifyContent: "space-between", flexDirection: "row", backgroundColor: "#FEFFDE", alignItems: "center", ...shadower() }}>
-          <View>
-            <Title style={{ fontSize: 20, fontWeight: 'bold', ...shadower() }}>{"Reminds"}</Title>
+      <View>
+        <View style={{ height: "6%", width: '100%' }}>
+          <View style={{
+            paddingLeft: '1%',paddingRight: '1%', ...bleashupHeaderStyle,
+            flexDirection: "row", alignItems: "center", 
+          }}>
+            <View style={{width:'90%',paddingLeft: '2%',}}>
+              <Title style={{ fontSize: 20, fontWeight: 'bold',alignSelf: 'flex-start', }}>{"Reminds"}</Title>
+            </View>
+            <View style={{width:'10%'}}>
+              <Icon onPress={() => requestAnimationFrame(() => this.AddRemind())} type='AntDesign'
+               name="pluscircle" style={{ color: "#1FABAB", alignSelf: 'center', }} />
+            </View>
           </View>
-
-          <View style={{ ...shadower() }}>
-            <TouchableOpacity onPress={() => requestAnimationFrame(() => this.AddRemind())}>
-              <Icon type='AntDesign' name="pluscircle" style={{ color: "#1FABAB", ...shadower() }} />
-            </TouchableOpacity>
-          </View>
-
         </View>
+    
         <View style={{ height: "93%", }}>
           <BleashupFlatList
             initialRender={5}

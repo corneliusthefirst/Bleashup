@@ -1,22 +1,42 @@
 import React, { Component } from 'react';
 import { View } from 'react-native';
 import TextContent from './TextContent';
-import { Text, Icon } from 'native-base';
+import { Text, Icon, Spinner, Toast } from 'native-base';
 import labler from './labler';
 import shadower from '../../shadower';
-import { findIndex, uniqBy } from 'lodash';
 import stores from '../../../stores';
+import { isEqual, findIndex, uniqBy } from 'lodash';
+import sayAppBusy from '../votes/sayAppBusy';
+import Creator from '../reminds/Creator';
+import { writeDateTime, dateDiff } from '../../../services/datesWriter';
 
 export default class Voter extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            totalVotes: this.props.message.vote.options.reduce((acc, item) => acc + item.vote_count, 0)
+            totalVotes: this.props.message.vote.option ? this.props.message.vote.option.reduce((acc, item) => acc + item.vote_count, 0) : 0
         }
     }
+    componentDidMount() {
+        setTimeout(() => {
+            this.setState({
+                loaded: true
+            })
+        }, this.props.delay * 60)
+    }
+    shouldComponentUpdate(nextProps, nextState, nextContex) {
+        return !isEqual(JSON.parse(this.previousVote), nextProps.message.vote) ||
+            this.state.newing !== nextState.newing ||
+            this.state.loaded !== nextState.loaded
+
+    }
+    previousVote = JSON.stringify({ temp: 'temper' })
     state = {}
+    componentDidUpdate(prevProps, preState, preContx) {
+        this.previousVote = JSON.stringify(this.props.message.vote)
+    }
     renderOptions() {
-        return this.props.message.vote.options.map((item, index) => {
+        return this.props.message.vote.option && this.props.message.vote.option.map((item, index) => {
             return this.returnOption(item, index)
         })
     }
@@ -25,26 +45,16 @@ export default class Voter extends Component {
         return isNaN(percent) ? dir >= 0 ? 0 : 100 : isFinite(percent) ? percent : dir >= 0 ? 100 : 0
     }
     vote(index) {
-        let message = {
-            ...this.props.message,
-            vote: {
-                ...this.props.message.vote,
-                options: this.props.message.vote.options.map(ele => {
-                    return { ...ele, vote_count: ele.index === index ? ele.vote_count + 1 : ele.vote_count }
-                }),
-                voters: uniqBy([...this.props.message.vote.voters, { phone: stores.LoginStore.user.phone, index: index }])
-            }
-        }
-        this.props.voteItem(message)
+        this.props.vote(index, this.props.message.vote)
     }
     returnOption(item, index) {
         return this.props.message.vote.always_show || !this.hasVoted() ? this.returnOptionWithCount(item, index) : this.returnOptionWithoutCount(item, index)
     }
     hasVoted() {
-        return findIndex(this.props.message.vote.voters, (ele) => ele.phone === stores.LoginStore.user.phone) < 0
+        return findIndex(this.props.message.vote.voter, (ele) => ele.phone === stores.LoginStore.user.phone) < 0
     }
     returnOptionWithCount(item, index) {
-        return <View style={{ flexDirection: 'row', width: '100%', height: 40, marginBottom: '8%', alignSelf: 'center',}}>
+        return <View style={{ flexDirection: 'row', width: '100%', height: 40, marginBottom: '8%', alignSelf: 'center', }}>
             <View style={{
                 width: '10%',
                 justifyContent: 'center',
@@ -77,7 +87,7 @@ export default class Voter extends Component {
                 </View>
             </View>
             <View style={{ width: '11%', justifyContent: 'center', alignSelf: 'center', marginLeft: '1%', }}>
-                {this.hasVoted() ? <Icon onPress={() => this.vote(item.index)} name="vote-yea"
+                {this.hasVoted() || dateDiff({ period: this.props.message.vote.period }) <= 0 ? <Icon onPress={() => this.vote(item.index)} name="vote-yea"
                     style={{ alignSelf: 'flex-end', marginTop: '25%', color: 'darkGray' }}
                     type={"FontAwesome5"}></Icon> : null}
             </View>
@@ -93,21 +103,20 @@ export default class Voter extends Component {
             }}><Text
                 style={{ color: '#1FABAB', fontSize: 23, fontWeight: '400', }}
             >{`${labler(index)}.`}</Text></View>
-            <View style={{ width: '80%', height: '100%', flexDirection: 'row', }}>
+            <View style={{ width: '75%', height: '100%', flexDirection: 'row', }}>
                 <View style={{ width: '100%', justifyContent: 'center' }}>
                     <Text style={{ color: '#1FABAB', fontWight: 'bold', fontSize: 24 }} >{`${item.name} `}</Text>
                 </View>
             </View>
-            <View style={{ width: '8%', justifyContent: 'center', alignItems: 'center', }}>
-                {this.hasVoted() ? <Icon onPress={() => this.vote(item.index)} name="vote-yea"
+            <View style={{ width: '15%', justifyContent: 'center', alignItems: 'center', }}>
+                {this.hasVoted() || dateDiff({period:this.props.message.vote.period}) <=0 ? <Icon onPress={() => this.vote(item.index)} name="vote-yea"
                     style={{ alignSelf: 'center', marginTop: '50%', color: 'darkGray' }}
                     type={"FontAwesome5"}></Icon> : null}
             </View>
         </View>
     }
     render() {
-        console.warn(this.state.totalVotes)
-        return <View style={{ margin: '1%', backgroundColor: '#FEFFDE', }}>
+        return !this.state.loaded ? <Spinner size={"small"}></Spinner> : <View style={{ margin: '1%', backgroundColor: '#FEFFDE', }}>
             <View style={{ alignSelf: 'center', margin: '2%', flexDirection: 'row', }}>
                 <View style={{ width: '80%' }}>
                     <Text style={{
@@ -116,15 +125,22 @@ export default class Voter extends Component {
                         fontSize: 21,
                     }}>{this.props.message.vote.title}</Text>
                 </View>
-                <View><Icon
-                    style={{ alignSelf: 'center', color: 'darkGray' }}
+                <View style={{ flexDirection: 'row', width: '20%' }}><View style={{ width: '50%' }}><Icon
+                    style={{ color: 'darkGray', }}
                     onPress={() => {
-                        this.props.showVoters(this.props.message.vote.voters)
+                        this.props.showVoters(this.props.message.vote.voter)
                     }}
                     name={'ios-people'} type={"Ionicons"}></Icon></View>
+                    {this.props.configurable && <View><Icon onPress={() => this.props.updateVote(this.props.message.vote)} style={{ color: 'darkGray' }} name="gear"
+                        type="EvilIcons"></Icon></View>}</View>
             </View>
-            <View style={{ margin: '2%', }}>
+            {this.props.message.vote.period ? <View style={{ margin: '4%', alignItems: 'center', }}><Text style={{ color: dateDiff({ period: this.props.message.vote.period }) > 0 ? "gray" : "#1FABAB" }}>{`${writeDateTime({
+                period: this.props.message.vote.period,
+                recurrence: this.props.message.vote.period
+            }).replace("Starting", "Ends")}`}</Text></View> : null}
+            <View style={{ margin: '4%', }}>
                 <TextContent
+                    pressingIn={() => this.props.pressingIn ? this.props.pressingIn() : null}
                     handleLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null}
                     pressingIn={() => this.props.pressingIn ? this.props.pressingIn() : null}
                     text={this.props.message.vote.description}></TextContent>
@@ -132,6 +148,9 @@ export default class Voter extends Component {
             <View>
                 {this.renderOptions()}
             </View>
+            <View><Creator created_at={this.props.message.vote.created_at} pressingIn={() => this.props.pressingIn ? this.props.pressingIn() : null} giveCreator={(creator) => {
+                this.props.takeCreator ? this.props.takeCreator(creator) : null
+            }} creator={this.props.message.vote.creator}></Creator></View>
         </View>
     }
 }

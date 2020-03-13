@@ -116,9 +116,9 @@ export default class HighLight extends Component {
                         <View>
                             {this.renderContent(this.props.highlight)}
                         </View>
-                        <View style={{marginLeft: '3%',}}>
+                        {!this.props.shouldNotMention && <View style={{marginLeft: '3%',}}>
                             { <Icon name="reply" onPress={() => this.props.mention?this.props.mention():this.quickMention()} type="Entypo" style={{ color: 'darkGray', margin: '1%',width:'20%' }}></Icon>}
-                        </View>
+                        </View>}
                         <View style={{ flexDirection: "column", justifyContent: "space-between", bottom: 0, margin: 3, width: "98%" }}>
                             <Creator creator={this.props.highlight.creator} created_at={this.props.highlight.created_at} color={this.props.color ? this.props.color : "#9EEDD3"}></Creator>
                         </View>

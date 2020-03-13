@@ -10,6 +10,9 @@ export default class Waiter extends Component{
         return <View style={{
             alignItems: 'center',
             flex: 1,
+            width:'100%',
+            height:'100%',
+            backgroundColor: '#FEFFDE',
             justifyContent: 'center'
         }}>
             <StatusBar animated={true} backgroundColor="#FEFFDE" barStyle="dark-content"></StatusBar>

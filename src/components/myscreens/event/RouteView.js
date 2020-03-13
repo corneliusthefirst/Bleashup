@@ -80,7 +80,7 @@ export default class RouteView extends Component {
             <Card style={{ height: 300, width:"100%",marginTop: "30%"}} transparent >
                 <CardItem style={{
                     height: this.height, backgroundColor: this.props.currentPage == "EventDetails" ? "#54F5CA" : "#FEFFDE",
-                    width: "100%", borderTopLeftRadius: 12, ...shadower(3)
+                    width: "100%", borderTopLeftRadius: 12, ...shadower(2)
                 }}>
                     <TouchableOpacity style={this.centerer} onPress={() => requestAnimationFrame(() => {
                         this.props.setCurrentPage("EventDetails")
@@ -95,7 +95,7 @@ export default class RouteView extends Component {
                 </CardItem>
                <CardItem style={{
                     height: this.height, backgroundColor: this.props.currentPage == "EventChat" ? "#54F5CA" : "#FEFFDE",
-                    ...shadower(3)
+                    ...shadower(2)
                 }}>
                     <TouchableOpacity style={this.centerer} onPress={() => requestAnimationFrame(() => {
                         this.props.setCurrentPage("EventChat")
@@ -130,7 +130,7 @@ export default class RouteView extends Component {
                 <CardItem style={{
                     height: this.height,
                     backgroundColor: this.props.currentPage == "Reminds" ? "#54F5CA" : "#FEFFDE",
-                    ...shadower(3)
+                    ...shadower(2)
                 }} >
                     <TouchableOpacity style={this.centerer} onPress={() => requestAnimationFrame(() => {
                         this.props.setCurrentPage("Reminds")
@@ -143,7 +143,7 @@ export default class RouteView extends Component {
                     </TouchableOpacity>
                 </CardItem>
                 <CardItem style={{
-                    height: this.height,  borderBottomLeftRadius: 12, backgroundColor: this.props.currentPage == "ChangeLogs" ? "#54F5CA" : "#FEFFDE", ...shadower(3)
+                    height: this.height,  borderBottomLeftRadius: 12, backgroundColor: this.props.currentPage == "ChangeLogs" ? "#54F5CA" : "#FEFFDE", ...shadower(2)
                 }}>
                     <TouchableOpacity style={this.centerer} onPress={() => requestAnimationFrame(() => {
                         this.props.setCurrentPage("ChangeLogs")
@@ -157,7 +157,7 @@ export default class RouteView extends Component {
                     </TouchableOpacity>
                 </CardItem>
                 {/*<CardItem style={{
-                    height: this.height, ...shadower(3),
+                    height: this.height, ...shadower(2),
                     backgroundColor: this.props.currentPage == "Votes" ? "#54F5CA" : "#FEFFDE", width: "100%"
                 }}>
                     <TouchableOpacity onPress={() => requestAnimationFrame(() => {
@@ -172,7 +172,7 @@ export default class RouteView extends Component {
                 </CardItem>*/}
                 {/*<CardItem style={{
                     height: this.height, backgroundColor: this.props.currentPage == "Contributions" ? "#54F5CA" : "#FEFFDE",
-                    ...shadower(3), borderBottomLeftRadius: 12, 
+                    ...shadower(2), borderBottomLeftRadius: 12, 
                 }}>
                     <TouchableWithoutFeedback onPress={() => requestAnimationFrame(() => {
                         this.props.setCurrentPage("Contributions")

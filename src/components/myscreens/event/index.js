@@ -21,7 +21,6 @@ import SWView from './SWView';
 import SideMenu from 'react-native-side-menu';
 import ChangeLogs from "../changelogs";
 import ParticipantModal from "../../ParticipantModal";
-import ContactsModal from "../../ContactsModal";
 import SelectableContactList from "../../SelectableContactList";
 import CreateCommiteeModal from "./CreateCommiteeModal";
 import moment from "moment";
@@ -421,7 +420,11 @@ export default class Event extends Component {
       change.title.toLowerCase().includes('remind')) {
       console.warn('includes reminds')
       emitter.emit('remind-updated')
-    }
+    } if(change.changed.toLowerCase().includes("vote") ||
+     change.title.toLowerCase().includes('vote')){
+       console.warn("including vote")
+       emitter.emit("votes-updated",newValue.committee_id)
+     }
     if (!this.unmounted) emitter.emit('refresh-history')
     setTimeout(() => {
       this.setState({
@@ -459,9 +462,12 @@ export default class Event extends Component {
   }
   mention(data) {
     GState.reply = data
-    GState.currentCommitee = this.event.id
+  //GState.currentCommitee = this.event.id
     emitter.emit('mentioning')
-    this.swapChats(this.generalCommitee(this.event))
+    this.setState({
+      currentPage:'EventChat'
+    })
+    //this.swapChats(this.generalCommitee(this.event))
   }
   startLoader() {
     this.setState({
@@ -678,13 +684,15 @@ export default class Event extends Component {
     }
   }
   editName(newName, id) {
+    let roomName = this.state.roomID === id ? newName:this.state.roomName
     if (!this.state.working) {
       this.setState({
         working: true
       })
       Requester.editCommiteeName(newName, id, this.event.id).then(() => {
         this.setState({
-          working: false
+          working: false,
+          roomName
         })
       }).catch(error => {
         this.setState({
@@ -1248,7 +1256,7 @@ export default class Event extends Component {
         removeMember={(id, members) => { this.removeMembers(id, members) }}
         addMembers={(id, currentMembers) => this.addCommiteeMembers(id, currentMembers)}
         publishCommitee={(id, stater) => { this.publishCommitee(id, stater) }}
-        editName={(newName, id) => this.master ? this.editName(newName, id) : Toast.show({ text: "Connot Update This Commitee" })}
+        editName={(newName, id,currentName) => this.computedMaster ? this.editName(newName, id) : Toast.show({ text: "Connot Update This Commitee" })}
         swapChats={(room) => this.swapChats(room)} phone={stores.LoginStore.user.phone}
         commitees={this.event.commitee ? this.event.commitee : []}
         showCreateCommiteeModal={() => {
@@ -1279,9 +1287,9 @@ export default class Event extends Component {
         public={this.event.public}></SWView></View>}>
       <View style={{
         height: "100%",
-        backgroundColor: "#FEFFDE"
+        backgroundColor: "white"
       }}>
-        {this.state.fresh ? <Spinner size={"small"}></Spinner> :
+        {this.state.fresh ? <View style={{height:'100%',width:'100%',backgroundColor: '#FEFFDE',}}><Spinner size={"small"}></Spinner></View> :
           this.renderMenu()
         }
         {this.state.showNotifiation ? <View style={{
@@ -1490,12 +1498,7 @@ export default class Event extends Component {
           shouldRestore={this.state.shouldRestore}
           showPhoto={(url) => this.showPhoto(url)}
           showVideo={(url) => this.showVideo(url)}
-          mention={replyer => {
-            this.setState({
-              isHighlightDetailModalOpened:false
-            })
-            this.mentionPost(replyer)
-          }}
+          shouldNotMention
           restore={(item) => this.restoreHighlight({ new_value: { new_value: item } })}
           isOpen={this.state.isHighlightDetailModalOpened}
           item={this.state.highlight}

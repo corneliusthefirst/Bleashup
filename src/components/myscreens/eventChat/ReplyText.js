@@ -28,6 +28,7 @@ export default class ReplyText extends Component {
                 onPress={() => this.props.openReply(this.props.reply)}>
                 <View style={{
                     display: 'flex', flexDirection: 'row', borderBottomWidth: 0,
+                    backgroundColor: this.props.color,
                     ...shadower(2), //backgroundColor: "rgba(34, 0, 0, 0.1)",
                     padding: "1%",//margin: '1%',
                     height: 75,

@@ -24,6 +24,7 @@ import NewSeparator from './NewSeparator';
 import moment from 'moment';
 import shadower from '../../shadower';
 import Voter from './Voter';
+import { find } from 'lodash';
 
 export default class Message extends Component {
 
@@ -34,7 +35,9 @@ export default class Message extends Component {
             disabledSwipeout: true,
             openRight: true,
             time: "",
-            sender_name: this.props.message.sender.nickname,
+            sender_name: this.props.message &&
+                this.props.message.sender &&
+                this.props.message.sender.nickname,
             sender: !(this.props.message.sender.phone == this.props.user),
             different: this.props.PreviousSenderPhone !== this.props.message.sender.phone
                 && !(this.props.message.sender.phone == this.props.user),
@@ -86,13 +89,27 @@ export default class Message extends Component {
                 return <AudioUploader room={this.props.room} message={data} index={data.id}
                     replaceMessage={(data) => this.props.replaceAudioMessage(data)}></AudioUploader>
             case "vote":
-                return <Voter voteItem={this.props.voteItem} message={data} room={this.props.room} index={data.id}></Voter>
+                return <Voter takeCreator={(creator) => {
+                    this.voteCreator = creator
+                }} vote={this.props.voteItem}
+                    pressingIn={() => {
+                        this.replying = true
+                    }}
+                    showVoters={this.props.showVoters}
+                    message={{
+                        ...data,
+                        vote: {
+                            ...this.props.votes &&
+                            find(this.props.votes, { id: data.vote.id }), option: data.vote.option
+                        }
+                    }}
+                    room={this.props.room} index={data.id}></Voter>
             default:
                 return null
         }
     }
+    voteCreator = null
     componentDidMount() {
-        console.warn(this.props.message.sender.phone, this.props.user, this.props.PreviousSenderPhone)
         setTimeout(() => {
             this.setState({
                 loaded: true
@@ -187,6 +204,17 @@ export default class Message extends Component {
                 tempMessage.sourcer = this.props.message.photo
                 this.props.replying(tempMessage)
                 break;
+            case 'vote':
+                let vote = this.props.votes &&
+                    find(this.props.votes, { id: this.props.message.vote.id })
+                this.props.replying({
+                    id:vote.id,
+                    type_extern:'Votes',
+                    sourcer:this.voteCreator.profile,
+                    title: `${vote.title} : \n ${vote.description}`,
+                    replyer_phone: this.props.user.phone,
+                })
+                break;
             default:
                 Toast.show({ text: 'unable to reply for unsent messages' })
                 break
@@ -200,7 +228,7 @@ export default class Message extends Component {
     }
     iconStyles = {
         fontSize: 12,
-        color: "#018A62",
+        color: "#1FABAB",
         marginLeft: 5,
         paddingTop: 1,
         //marginTop: "-2%",

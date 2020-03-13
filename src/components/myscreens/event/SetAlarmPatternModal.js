@@ -8,6 +8,7 @@ import BleashupFlatList from '../../BleashupFlatList';
 import SelectableAlarmPeriod from './SelectableAlarmPeriod';
 import { reject } from "lodash"
 import { MenuDivider } from 'react-native-material-menu';
+import bleashupHeaderStyle from '../../../services/bleashupHeaderStyle';
 const UTCFormat = "YYYY-MM-DDTHH:mm:ss.SSS[Z]"
 export default class SetAlarmPatternModal extends Component {
     constructor(props) {
@@ -93,12 +94,21 @@ export default class SetAlarmPatternModal extends Component {
                 }}
                 style={{
                     height: "60%",
-                    borderRadius: 10, backgroundColor: '#FEFFDE', width: "90%"
+                    borderRadius: 10,
+                    borderTopLeftRadius: 0,
+                    borderTopRightRadius: 0,
+                     backgroundColor: '#FEFFDE', width: "90%"
                 }}
             >
-                <View style={{ width: "100%", height: 50, flexDirection: 'row', }}>
-                    <Text style={{ fontSize: 23, alignSelf: 'flex-start', fontWeight: 'bold', fontStyle: 'italic', width: "76%",margin: '2%',padding: '1%', }}>{"Set Alarm Pattern"}</Text>
-                    <Button onPress={() => this.save()} style={{ alignSelf: 'flex-end', }} transparent><Text style={{ fontSize: 30, fontWeight: 'bold', }}>SET</Text></Button>
+                <View style={{ width: "100%", height: 50, }}>
+                    <View style={{ flexDirection: 'row',...bleashupHeaderStyle,padding: '2%', }}>
+                        <View style={{width:'70%'}}>
+                            <Text style={{ fontSize: 20, alignSelf: 'flex-start', fontWeight: 'bold', fontStyle: 'italic', width: "76%", margin: '2%', padding: '1%', }}>{"Set Alarm Pattern"}</Text>
+                        </View>
+                        <View style={{width:'30%'}}>
+                            <Button onPress={() => this.save()} style={{ alignSelf: 'flex-end', }} transparent><Text style={{ fontSize: 23, fontWeight: 'bold', }}>SET</Text></Button>
+                        </View>
+                    </View>
                 </View>
                 <View style={{ margin: '3%', height: "85%" }}>
                     <View style={{ hieght: "" }}>

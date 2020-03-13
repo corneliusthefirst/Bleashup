@@ -8,6 +8,7 @@ import Menu, { MenuDivider, MenuItem } from 'react-native-material-menu';
 import ProfileView from "./myscreens/invitations/components/ProfileView";
 import BleashupFlatList from './BleashupFlatList';
 import moment from "moment";
+import bleashupHeaderStyle from "../services/bleashupHeaderStyle";
 export default class ContactList extends Component {
 
     constructor(props) {
@@ -49,13 +50,13 @@ export default class ContactList extends Component {
     render() {
         StatusBar.setBarStyle('dark-content', true)
         return <View style={{}}>
-            <View style={{ width: "90%", margin: 4, height: 44, flexDirection: 'row', }}>
-                <View style={{ flexDirection: 'row', }}>
-                    <Text style={{
-                        fontSize: 22, fontStyle: 'italic',
-                        fontWeight: 'bold', width: "80%", marginLeft: "5%",
-                    }}>{"Shared By "}</Text>
-                    <Text note>{this.state.publishers.length}{" sharer(s)"}</Text>
+            <View style={{ width: "100%", height: 44, }}>
+                <View style={{ flexDirection: 'row',...bleashupHeaderStyle ,padding: '2%',}}>
+                    <View style={{ width: "80%",}}><Text style={{
+                        fontSize: 20, 
+                        fontWeight: 'bold', 
+                    }}>{"Shared By "}</Text></View>
+                    <View style={{width:'20%'}}><Text note>{this.state.publishers.length}{" sharer(s)"}</Text></View>
                 </View></View>
             {this.state.isloaded ? (
                 <View>

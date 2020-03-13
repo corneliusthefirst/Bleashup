@@ -9,6 +9,8 @@ import { find, findIndex, drop, reject, forEach } from "lodash";
 import moment from "moment"
 import uuid from 'react-native-uuid';
 import CalendarServe from './CalendarService';
+import { format } from './recurrenceConfigs';
+import request from "./requestObjects";
 class UpdatesDispatcher {
   constructor() { }
   dispatchUpdates(updates) {
@@ -238,9 +240,9 @@ class UpdatesDispatcher {
         })
       })
     },
-    who_can_manage:update => {
-      return new Promise((resolve,reject) => {
-        stores.Events.updateWhoCanManage(update.event_id,update.new_value,true).then(Eve => {
+    who_can_manage: update => {
+      return new Promise((resolve, reject) => {
+        stores.Events.updateWhoCanManage(update.event_id, update.new_value, true).then(Eve => {
           let Change = {
             id: uuid.v1(),
             title: "Updates On Main Activity",
@@ -253,7 +255,7 @@ class UpdatesDispatcher {
             time: null
           }
           this.infomCurrentRoom(Change, Eve, update.event_id)
-          stores.ChangeLogs.addChanges(Change).then(() =>{
+          stores.ChangeLogs.addChanges(Change).then(() => {
             resolve()
           })
         })
@@ -1031,6 +1033,31 @@ class UpdatesDispatcher {
         });
       });
     },
+    highlight_public_state: update => {
+      return new Promise((resolve, reject) => {
+        stores.Highlights.updateHighlightPublicState(update.new_value).then((highlight) => {
+          let Change = {
+            id: uuid.v1(),
+            title: `Update On ${highlight.title} Post`,
+            updated: "highlight_public_state",
+            event_id: update.event_id,
+            updater: update.updater,
+            changed: `Changed The Privacy Level Of ${highlight.title} Post to`,
+            new_value: {
+              data: null,
+              new_value: update.new_value.public_State
+            },
+            date: update.date,
+            time: null
+          }
+          this.infomCurrentRoom(Change, highlight, update.event_id)
+          stores.ChangeLogs.addChanges(Change).then(() => {
+            GState.eventUpdated = true
+            resolve("ok")
+          })
+        })
+      })
+    },
     highlight_deleted: update => {
       return new Promise((resolve, reject) => {
         stores.Highlights.removeHighlight(update.new_value).then((Highlight) => {
@@ -1084,63 +1111,114 @@ class UpdatesDispatcher {
     },
     vote_added: update => {
       return new Promise((resolve, reject) => {
-        let Change = {
-          event_id: update.event_id,
-          changed: "New Vote",
-          updater: update.updater,
-          new_value: update.new_value,
-          date: update.date,
-          time: update.time
-        };
         let VoteID = requestObjects.VID();
         VoteID.vote_id = update.new_value;
-        tcpRequestData.getVote(VoteID).then(JSONData => {
-          Getter.get_data(JSONData).then(Vote => {
-            stores.Votes.addVote(Vote).then(() => {
-              stores.Events.addVote(Vote.event_id, Vote.id).then(() => {
-                GState.newVote = true;
-                stores.Events.changeUpdatedStatus(
-                  update.event_id,
-                  "vote_updated",
-                  true
-                ).then(() => {
+        tcpRequestData.getVote(VoteID, update.new_value + "_get").then(JSONData => {
+          serverEventListener.sendRequest(JSONData, update.new_value + '_get').then(Vote => {
+            if (Vote.data && Vote.data !== 'empty') {
+              let vote = Vote.data
+              console.warn(vote)
+              stores.Votes.addVote(vote).then(() => {
+                stores.Events.addVote(vote.event_id, vote.id).then(() => {
+                  stores.CommiteeStore.imIInThisCommttee(stores.LoginStore.user.phone,
+                    vote.committee_id).then((state) => {
+                      console.warn(state)
+                      if (state || vote.published === 'public') {
+                        let Change = {
+                          id: uuid.v1(),
+                          event_id: update.event_id,
+                          updated: 'new_vote',
+                          changed: `Added ${vote.title} Vote`,
+                          title: `Update On Main Activity`,
+                          updater: update.updater,
+                          new_value: { data: null, new_value: vote.title },
+                          date: update.date,
+                          time: null
+                        };
+                        stores.ChangeLogs.addChanges(Change).then(() => {
+                          this.infomCurrentRoom(Change, vote, update.event_id)
+                          resolve()
+                        })
+                      } else {
+                        resolve()
+                      }
+                    })
+                  GState.newVote = true;
                   GState.eventUpdated = true;
                   resolve();
                 });
               });
-            });
+            } else {
+              let vote = { ...request.Vote(),title:'Deleted Vote', event_id: update.event_id, id: update.new_value }
+              stores.Votes.addVote(vote).then(() => {
+                stores.Events.addVote(vote.event_id, Vote.id).then(() => {
+                })
+              })
+            }
           });
         });
       });
     },
     vote_deleted: update => {
       return new Promise((resolve, reject) => {
-        let Change = {
-          event_id: update.event_id,
-          changed: "Vote Deleted",
-          updater: update.updater,
-          new_value: update.new_value,
-          date: update.date,
-          time: update.time
-        };
-        stores.ChangeLogs.addChanges(Changed).then(() => {
-          stores.Votes.removeVote(update.new_value).then(() => {
-            stores.Events.removeVote(update.event_id, update.new_value).then(
-              () => {
-                stores.Events.changeUpdatedStatus(
-                  update.event_id,
-                  "vote_updated",
-                  true
-                ).then(() => {
-                  GState.eventUpdated = true;
-                  resolve();
-                });
-              }
-            );
-          });
+        stores.Votes.removeVote(update.new_value).then((vote) => {
+          stores.Events.removeVote(update.event_id, update.new_value).then(
+            () => {
+              stores.CommiteeStore.imIInThisCommttee(stores.LoginStore.user.phone,
+                vote.committee_id).then((state) => {
+                  if (sate || vote.published === 'public') {
+                    let Change = {
+                      id: uuid.v1(),
+                      event_id: update.event_id,
+                      updated: 'vote_deleted',
+                      title: `Update On Main Activity`,
+                      changed: `Deleted ${vote.title} vote`,
+                      updater: update.updater,
+                      new_value: { data: null, new_value: vote },
+                      date: update.date,
+                      time: null
+                    };
+                    stores.ChangeLogs.addChanges(Change).then(() => {
+                      this.infomCurrentRoom(Change, vote, update.event_id)
+                      resolve()
+                    })
+                  } else {
+                    resolve()
+                  }
+                })
+            }
+          );
         });
       });
     },
+    restored_vote: update => new Promise((resolve, reject) => {
+      stores.Votes.addVote(update.new_value).then(() => {
+        stores.Events.addVote(update.event_id, update.new_value.id).then(() => {
+          stores.CommiteeStore.imIInThisCommttee(stores.LoginStore.user.phone, update.new_value.committee_id).then((state) => {
+            if (update.published === 'public' || state) {
+              let Change = {
+                id: uuid.v1(),
+                event_id: update.event_id,
+                updated: 'vote_restored',
+                title: `Update on ${update.new_value.title} vote`,
+                changed: `Restored ${update.new_value.title} vote`,
+                updater: update.updater,
+                new_value: { data: null, new_value: update.new_value.id },
+                date: update.date,
+                time: null
+              };
+              stores.ChangeLogs.addChanges(Change).then(() => {
+                this.infomCurrentRoom(Change, update.new_value, update.event_id);
+                resolve();
+              });
+            }
+            else {
+              resolve();
+            }
+          });
+        });
+      });
+    }),
     vote_published: update => {
       return new Promise((resolve, reject) => {
         let Change = {
@@ -1165,34 +1243,61 @@ class UpdatesDispatcher {
         });
       });
     },
-    vote_period_changed: update => {
+    vote: update => {
       return new Promise((resolve, reject) => {
-        let Change = {
-          event_id: update.event_id,
-          changed: "New Vote Period",
-          updater: update.updater,
-          new_value: update.new_value,
-          date: update.date,
-          time: update.time
-        };
-        stores.ChangeLogs.addChanges(Change).then(() => {
-          stores.Votes.UpdateEventVotes(
-            {
-              id: update.new_value.vote_id,
-              period: update.new_value.new_period
-            },
-            true
-          ).then(() => {
-            stores.Events.changeUpdatedStatus(
-              update.event_id,
-              "vote_updated",
-              true
-            ).then(() => {
-              GState.eventUpdated = true;
-              resolve();
-            });
-          });
-        });
+        stores.Votes.vote(update.new_value).then((vote) => {
+          stores.CommiteeStore.imIInThisCommttee(stores.LoginStore.user.phone,
+            vote.committee_id).then((state) => {
+              if (state || vote.published === 'public') {
+                let Change = {
+                  id: uuid.v1(),
+                  event_id: update.event_id,
+                  updated: 'voted',
+                  title: `Update on ${vote.title} vote`,
+                  changed: `Voted ${vote.title} vote`,
+                  updater: update.updater,
+                  new_value: { data: null, new_value: null },
+                  date: update.date,
+                  time: null
+                };
+                this.infomCurrentRoom(Change, vote, update.event_id)
+              }
+            })
+          resolve()
+        })
+      })
+    },
+    vote_period_updated: update => {
+      return new Promise((resolve, reject) => {
+        stores.Votes.UpdateVotePeriod(update.new_value).then((vote) => {
+          stores.CommiteeStore.imIInThisCommttee(stores.LoginStore.user.phone,
+            vote.committee_id).then((state) => {
+              if (sate || votes.published === 'public') {
+                let Change = {
+                  id: uuid.v1(),
+                  event_id: update.event_id,
+                  updated: 'vote_period',
+                  title: `Update on ${vote.title} vote`,
+                  changed: update.new_value.new_period && vote.period ? `Changed Voting End Date of ${vote.title} Vote To: ` :
+                    update.new_value.new_period && !vote.period ? `Added Voting End Date To ${vote.title} Vote : ` :
+                      'Remove Voting End Date From ${vote.title} Vote',
+                  updater: update.updater,
+                  new_value: {
+                    data: null,
+                    new_value: update.new_value.period ? moment(update.new_value.new_period).format(format) : null
+                  },
+                  date: update.date,
+                  time: null
+                };
+                stores.ChangeLogs.addChanges(Change).then(() => {
+                  this.infomCurrentRoom(Change, vote, update.event_id)
+                  resolve()
+                })
+              } else {
+                resolve()
+              }
+            })
+        })
       });
     },
     vote_description_updated: update => {
@@ -1393,8 +1498,8 @@ class UpdatesDispatcher {
         RemindID.remind_id = update.new_value;
         tcpRequestData.getRemind(RemindID, update.new_value + "reminder").then(JSONData => {
           serverEventListener.sendRequest(JSONData, update.new_value + "reminder").then(Remind => {
-            stores.Reminds.addReminds(Remind.data).then(() => {
-              if (Remind.data && Remind.data !== 'empty') {
+            if (Remind.data && Remind.data !== 'empty') {
+              stores.Reminds.addReminds(Remind.data).then(() => {
                 stores.Events.addRemind(update.event_id, Remind.id).then(() => {
                   let Change = {
                     id: uuid.v1(),
@@ -1414,13 +1519,13 @@ class UpdatesDispatcher {
                     resolve('ok')
                   })
                 });
-              } else {
-                //!! heyyy case that remind doesn't exists please think of handling this.
-                //!! a case where this scenario can occur is when the user add a remind and imediately deletes it 
-                //!! such that when offline users will received their updates,they will be receiving of and 
-                //!! that doesn't exists. 
-              }
-            });
+              });
+            } else {
+              //!! heyyy case that remind doesn't exists please think of handling this.
+              //!! a case where this scenario can occur is when the user add a remind and imediately deletes it 
+              //!! such that when offline users will received their updates,they will be receiving of and 
+              //!! that doesn't exists. 
+            }
           });
         });
       });
@@ -1579,7 +1684,7 @@ class UpdatesDispatcher {
             updated: `remind_public_state_updated`,
             updater: update.updater,
             event_id: update.event_id,
-            changed: "Changed Status Of The Remind To",
+            changed: "Changed Privacy Level Of The Remind To",
             new_value: {
               data: update.new_value.remind_id,
               new_value: update.new_value.status

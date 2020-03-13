@@ -75,7 +75,7 @@ export default class SwipeOutView extends Component {
     blinkerSize = 26;
     render() {
         return (
-            <View style={{ width: "98%", borderRadius: 4,...shadower(2) ,height:'99.5%',padding: '1%',backgroundColor: '#FEFFDE',}}>
+            <View style={{ width: "98%", borderRadius: 4,...shadower(2) ,height:'99.5%',padding: '3%',backgroundColor: '#FEFFDE',}}>
                 <View style={{ display: 'flex', flexDirection: 'column', marginLeft: "20%", }}>
                     <View style={{ height: this.width, marginBottom: "9%", alignSelf: 'flex-start',marginLeft: "10%", }}>
                         <TouchableOpacity onPress={() => requestAnimationFrame(() => {

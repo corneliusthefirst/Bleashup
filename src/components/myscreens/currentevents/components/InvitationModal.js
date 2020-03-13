@@ -33,6 +33,7 @@ import BleashupFlatList from '../../../BleashupFlatList';
 import Menu, { MenuDivider, MenuItem } from 'react-native-material-menu';
 import Mailer from 'react-native-mail';
 import uuid from 'react-native-uuid';
+import bleashupHeaderStyle from "../../../../services/bleashupHeaderStyle";
 export default class InvitationModal extends PureComponent {
   constructor(props) {
     super(props);
@@ -150,7 +151,7 @@ export default class InvitationModal extends PureComponent {
   _keyExtractor = (item, index) => item.phone;
   render() {
     return <Modal
-      backdropPressToClose={false}
+      //backdropPressToClose={false}
       //swipeToClose={false}
       backdropOpacity={0.7}
       backButtonClose={true}
@@ -184,35 +185,34 @@ export default class InvitationModal extends PureComponent {
         }, 20)
       }}
       style={{
-        height: "97%",
-        borderRadius: 8, backgroundColor: '#FEFFDE', width: "100%"
+        height: "90%",
+        width: "100%"
       }}
     ><View>
-        <View style={{ margin: "2%", width: "96%", flexDirection: 'row', height: 44 }}>
-          <View style={{ width: "70%" }}>
-            <Text
-              style={{
-                fontSize: 23,
-                fontStyle: 'italic',
-                fontWeight: "bold",
-                //color: "#1FABAB"
-              }}
-            >
-              Quick Invite
+        <View style={{ width: "100%",  height: 44 }}>
+          <View style={{ flexDirection: 'row',...bleashupHeaderStyle,padding: '2%',}}>
+            <View style={{ width: "85%" }}>
+              <Text
+                style={{
+                  fontSize: 20,
+                  fontWeight: "bold",
+                  //color: "#1FABAB"
+                }}
+              >
+                Quick Invite
               </Text>
+            </View>
+            {this.state.checked.length > 0 ? <View style={{ width: "15%" }}>
+              <Icon onPress={() => requestAnimationFrame(() => {
+                this.invite(this.state.checked, false)
+              })} type="EvilIcons"
+                style={{
+                  fontSize: 45,
+                  //fontWeight: "bold",
+                  color: "#1FABAB"
+                }} name="sc-telegram"></Icon>
+            </View> : null}
           </View>
-          {this.state.checked.length > 0 ? <View style={{ width: "30%" }}><TouchableOpacity onPress={() => requestAnimationFrame(() => {
-            this.invite(this.state.checked, false)
-          })}>
-            <Icon type="EvilIcons"
-              style={{
-                marginLeft: "50%",
-                fontSize: 50,
-                //fontWeight: "bold",
-                color: "#1FABAB"
-              }} name="sc-telegram"></Icon>
-          </TouchableOpacity>
-          </View> : null}
         </View>{this.state.loading ? <Spinner size={"small"}></Spinner> :
           <View>
             {this.state.isEmpty ? <Text style={{
@@ -225,8 +225,8 @@ export default class InvitationModal extends PureComponent {
               renderPerBatch={7}
               initialRender={15}
               numberOfItems={this.state.contacts.length}
-              renderItem={(item, index) =>{
-                this.delay = this.delay >= 15 ? 0:this.delay + 1
+              renderItem={(item, index) => {
+                this.delay = this.delay >= 15 ? 0 : this.delay + 1
                 return (<View style={{ margin: 4 }}>
                   <ProfileWithCheckBox delay={this.delay} checked={false}
                     index={indexOf(this.state.checked, item.phone)} phone={item.phone} check={(phone) =>
@@ -238,7 +238,8 @@ export default class InvitationModal extends PureComponent {
                       this.setState({ checked: reject(this.state.checked, ele => ele.phone == phone) })
                     }></ProfileWithCheckBox>
                   <MenuDivider color="#1FABAB" />
-                </View>)}
+                </View>)
+              }
               }
             /* refreshControl={
                <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />

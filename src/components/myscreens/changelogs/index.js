@@ -16,6 +16,7 @@ import testForURL from '../../../services/testForURL';
 import shadower from "../../shadower";
 import TasksCreation from "../reminds/TasksCreation";
 import GState from '../../../stores/globalState/index';
+import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
 
 export default class ChangeLogs extends Component {
   constructor(props) {
@@ -76,7 +77,8 @@ export default class ChangeLogs extends Component {
   }
   render() {
     //console.warn(this.props.forMember, "poo")
-    return (!this.state.loaded ? <Spinner size={"small"}></Spinner> : <View style={{ width: "100%", height: "100%", backgroundColor: "#FEFFDE", }}>
+    return (!this.state.loaded ? <View style={{width:'100%',height:'100%',
+    backgroundColor: '#FEFFDE',}}><Spinner size={"small"}></Spinner></View>: <View style={{ width: "100%", height: "100%", backgroundColor: "#FEFFDE", }}>
       <View style={{ flex: 1, height: "95%", top: 0, bottom: 0, left: 0, right: 0 }}>
         <BleashupTimeLine
           circleSize={20}
@@ -86,12 +88,12 @@ export default class ChangeLogs extends Component {
           restore={(data) => this.props.restore(data)}
           circleColor='rgb(45,156,219)'
           lineColor='#1FABAB'
-          timeContainerStyle={{ minWidth: 52, marginTop: -5,backgroundColor: '#FEFFDE',opacity:.8 }}
+          timeContainerStyle={{ minWidth: 52, marginTop: -5, backgroundColor: '#FEFFDE', opacity: .8 }}
           timeStyle={{
             marginLeft: "4%",
             textAlign: 'center',
             backgroundColor: '#FEFFDE',
-             padding: 4,
+            padding: 4,
             borderRadius: 6,
             color: "#1FABAB",
             //borderWidth: .7,
@@ -99,7 +101,7 @@ export default class ChangeLogs extends Component {
           }}
           descriptionStyle={{ color: 'gray' }}
           onEventPress={(data) => {
-           !GState.showingProfile?this.props.propcessAndFoward(data):null
+            !GState.showingProfile ? this.props.propcessAndFoward(data) : null
           }}
           data={this.props.activeMember && this.props.activeMember !== null ?
             this.changes.filter(ele => ele.updater.phone === this.props.activeMember ||
@@ -108,12 +110,24 @@ export default class ChangeLogs extends Component {
         </BleashupTimeLine>
       </View>
       {this.state.hideHeader ? null : <View style={{
-        width: "100%", height: 44, position: "absolute", alignSelf: 'flex-start',
-        backgroundColor: "#FEFFDE", ...shadower(6)
+        width: "100%", height: 44, position: "absolute",
       }}>
-        <View style={{ flexDirection: 'row', width: "100%", }}>
-          <Text style={{ alignSelf: 'flex-start', margin: '1%', fontWeight: 'bold', fontSize: 20, width: "90%" }}>{(this.props.forMember ? this.props.forMember : (this.props.isMe ? "Your " : "")) + " Activity Logs"}</Text>
-          <Icon style={{ alignSelf: 'flex-end', margin: '1%',color:'#0A91A84',alignSelf:'center' }} name={"dots-three-vertical"} type="Entypo"></Icon>
+        <View style={{
+          flexDirection: 'row', ...bleashupHeaderStyle, 
+         
+        }}>
+          <View style={{ margin: '1%', width: "85%" }}>
+            <Text style={{
+              fontWeight: 'bold', fontSize: 20,
+            }}>{(this.props.forMember ? this.props.forMember :
+              (this.props.isMe ? "Your " : "")) + " Activity Logs"}</Text>
+          </View>
+          <View style={{  width: '15%',backgroundColor: 'transparent', }}>
+            <Icon style={{
+              color: '#0A91A84',
+              alignSelf: 'center'
+            }} name={"dots-three-vertical"} type="Entypo"></Icon>
+          </View>
         </View>
       </View>}
     </View>

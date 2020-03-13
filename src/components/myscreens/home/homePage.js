@@ -51,7 +51,7 @@ import DeepLinking from 'react-native-deep-linking';
 import Requester from '../event/Requester';
 import shadower from "../../shadower";
 import TabModal from "./TabModal";
-import VoteCreation from "../eventChat/VoteCreation";
+import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
 
 
 let { height, width } = Dimensions.get('window');
@@ -324,30 +324,29 @@ class Home extends Component {
     StatusBar.setHidden(false, true)
     return (
       <Container style={{ backgroundColor: "#FEFFDE" }}>
-        <View style={{
-          height: 40, width: "98%",
-          backgroundColor: "#FEFFDE",
-          borderBottomRightRadius: 5,
-          borderBottomLeftRadius: 5,
-          ...shadower(6), alignSelf: 'center', marginLeft: "1%", marginRight: "1%",
-        }}>
+        <View style={{ height: 40, }}>
           <View style={{
-            flex: 1, backgroundColor: "#FEFFDE", flexDirection: "row",
-            justifyContent: "space-between", marginLeft: "3%", marginRight: "3%"
+            ...bleashupHeaderStyle,
+            alignSelf: 'center',
           }}>
             <View style={{
-              // transform: [{ rotate: spin }]
+              flex: 1, backgroundColor: "#FEFFDE", flexDirection: "row",
+              justifyContent: "space-between", marginLeft: "3%", marginRight: "3%"
             }}>
-              <Thumbnail small source={require("../../../../assets/ic_launcher_round.png")}></Thumbnail>
-            </View>
-            <View style={{ marginTop: '2%', }}>
-              <View style={{ alignSelf: "flex-end", display: 'flex', flexDirection: 'row', }}>
-                <Icon name="sc-telegram" active={true} type="EvilIcons" style={{ color: "#1FABAB", }} onPress={() => this.navigateToInvitations()} />
-                <Icon name="gear" active={true} type="EvilIcons" style={{ color: "#1FABAB", }} onPress={() => this.settings()} />
+              <View style={{
+                // transform: [{ rotate: spin }]
+              }}>
+                <Thumbnail small source={require("../../../../assets/ic_launcher_round.png")}></Thumbnail>
+              </View>
+              <View style={{ marginTop: '2%', }}>
+                <View style={{ alignSelf: "flex-end", display: 'flex', flexDirection: 'row', }}>
+                  <Icon name="sc-telegram" active={true} type="EvilIcons" style={{ color: "#1FABAB", }} onPress={() => this.navigateToInvitations()} />
+                  <Icon name="gear" active={true} type="EvilIcons" style={{ color: "#1FABAB", }} onPress={() => this.settings()} />
+                </View>
               </View>
             </View>
-          </View>
 
+          </View>
         </View>
         <Tabs
           locked
@@ -420,11 +419,6 @@ class Home extends Component {
             isTabModalOpened: false
           })
         }}></TabModal>
-        <VoteCreation isOpen={false} onClosed={() => {
-
-        }} takeVote={(vote) => {
-          
-        }}></VoteCreation>
       </Container>
     );
   }

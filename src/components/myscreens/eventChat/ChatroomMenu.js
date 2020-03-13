@@ -77,17 +77,15 @@ export default class ChatroomMenu extends Component {
                         marginTop: '10%'
                     }} onPress={this.showMenu} name="dots-three-vertical" type="Entypo"></Icon>}
                 >
-                    <MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
+                    <View><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
                         this.hideMenu()
                         return this.props.showMembers()
                     }
-                    }>View Members</MenuItem>
-                    {this.props.roomID == this.props.eventID ? null : !this.props.master ? null :
-                        <View><MenuDivider color="#1FABAB" /><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
-                            this.hideMenu()
-                            this.props.addMembers()
-                        }}>Add Members</MenuItem>
-                            <MenuDivider color="#1FABAB" /></View>}
+                    }>View Members</MenuItem></View>
+                    <View><MenuDivider color="#1FABAB" /><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
+                        this.hideMenu()
+                        this.props.showRoomMedia()
+                    }}>Media</MenuItem></View>
                     {this.props.roomID == this.props.eventID ? null : !this.props.master ? null : <View>
                         <MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
                             this.hideMenu()

@@ -6,6 +6,7 @@ import BleashupFlatList from './BleashupFlatList';
 import ProfileWithCheckBox from './myscreens/currentevents/components/PofileWithCheckbox';
 import { indexOf, reject, concat, find } from "lodash"
 import Menu, { MenuDivider, MenuItem } from 'react-native-material-menu';
+import bleashupHeaderStyle from '../services/bleashupHeaderStyle';
 
 export default class SelectableContactList extends PureComponent {
     constructor(props) {
@@ -58,29 +59,28 @@ export default class SelectableContactList extends PureComponent {
                 }}
                 style={{
                     height: this.state.inviteViaEmail ? "30%" : "90%",
-                    borderTopLeftRadius: 8,
-                    borderTopRightRadius: 8,
-                    backgroundColor: "#FEFFDE",
                     width: "100%"
                 }}
-            ><View style={{ display: 'flex', flexDirection: 'row', margin: 4, marginLeft: "2%", }}>
-                    <View style={{ width: "85%" }}>
-                        <Text style={{ fontWeight: 'bold', fontStyle: 'italic', fontSize: 20, }}>{this.props.title} </Text>
-                    </View>
-                    <View>
-                        <Button style={{backgroundColor: '#1FABAB',}} onPress={() => requestAnimationFrame(() => {
-                            this.props.removing ? this.props.saveRemoved(this.state.checked) :
-                                this.props.adding ? this.props.addMembers(this.state.checked) :
-                                    this.props.takecheckedResult(this.state.checked)
-                            this.setState({ checked: [] })
-                            this.props.close();
-                        })
-                        } rounded transparent>
-                            <Text style={{ fontWeight: 'bold', color: '#FEFFDE' }}>{"OK"}</Text>
-                        </Button>
+            ><View style={{ height:'9%' }}>
+                    <View style={{ flexDirection: 'row',...bleashupHeaderStyle,padding: '2%', }}>
+                        <View style={{ width: "85%" }}>
+                            <Text style={{ fontWeight: 'bold', fontStyle: 'italic', fontSize: 20, }}>{this.props.title}</Text>
+                        </View>
+                        <View>
+                            <Button style={{ backgroundColor: '#1FABAB', }} onPress={() => requestAnimationFrame(() => {
+                                this.props.removing ? this.props.saveRemoved(this.state.checked) :
+                                    this.props.adding ? this.props.addMembers(this.state.checked) :
+                                        this.props.takecheckedResult(this.state.checked)
+                                this.setState({ checked: [] })
+                                this.props.close();
+                            })
+                            } rounded transparent>
+                                <Text style={{ fontWeight: 'bold', color: '#FEFFDE' }}>{"OK"}</Text>
+                            </Button>
+                        </View>
                     </View>
                 </View>
-                <View>
+                <View style={{height:'91%'}}>
                     {this.state.members.length <= 0 ? <Text style={{
                         margin: '10%',
                     }} note>{"sory! could not load members"}</Text> : <BleashupFlatList

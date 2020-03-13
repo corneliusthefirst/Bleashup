@@ -63,10 +63,10 @@ export default class Commitee extends Component {
         return (this.state.loaded ?
             <View style={{ height: "100%", }}>
                 <View style={{
-                    borderTopRightRadius: 10, borderBottomRightRadius: 10,
+                    borderTopRightRadius: 5, borderBottomRightRadius: 5,
                     backgroundColor: "#1FABAB", height: 35,
                     width: "95%", display: 'flex', flexDirection: 'row', marginBottom: "5%", 
-                   ...shadower(3)
+                   ...shadower(1)
                 }}>
                 <View style={{ width: "80%",}}>
                         <Title style={{
@@ -87,9 +87,9 @@ export default class Commitee extends Component {
                 <View>{this.state.refresh ? null :
                     <View style={{height:'97%',}}>
                         <BleashupFlatList
-                        backgroundColor={'#feffde'}
+                        backgroundColor={'#FEFFDE'}
                         style={{
-                            width: '98%', borderBottomRightRadius: 8,borderTopRightRadius: 8,margin: '1%', ...shadower(3),
+                            width: '98%', borderBottomRightRadius: 1,borderTopRightRadius: 5,margin: '1%', ...shadower(1),
                             height:256
                         }}
                             dataSource={union([this.generalCommitee], uniq(this.props.commitees))}
@@ -106,7 +106,7 @@ export default class Commitee extends Component {
                                     removeMember={(id, members) => { this.props.removeMember(id, members) }}
                                     addMembers={(id, currentMembers) => { this.props.addMembers(id, currentMembers) }}
                                     publishCommitee={(id, state) => { this.props.publishCommitee(id, state) }}
-                                    editName={(newName, id) => this.props.editName(newName, id)}
+                                    editName={this.props.editName}
                                     swapChats={(commitee) => { this.props.swapChats(commitee) }}
                                     phone={this.props.phone}
                                     newMessagesCount={4}
