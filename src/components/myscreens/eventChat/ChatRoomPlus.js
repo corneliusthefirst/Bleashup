@@ -42,8 +42,18 @@ export default class ChatRoomPlus extends Component {
                     <View><MenuDivider color="#1FABAB" /><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
                         this.hideMenu()
                         this.props.addMembers()
-                    }}>Add Members</MenuItem>
+                    }}>Members</MenuItem>
                         <MenuDivider color="#1FABAB" /></View>}
+                <View><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
+                        this.hideMenu()
+                        this.props.addPhotos()
+                    }}>Photos</MenuItem>
+                        <MenuDivider color="#1FABAB" /></View>
+                <View><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
+                    this.hideMenu()
+                    this.props.addAudio()
+                }}>Audio</MenuItem>
+                    <MenuDivider color="#1FABAB" /></View>        
             </Menu>
         </View>
     }

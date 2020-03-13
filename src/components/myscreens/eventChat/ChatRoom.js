@@ -1395,7 +1395,7 @@ export default class ChatRoom extends Component {
                         display: 'flex', flexDirection: 'row',
                     }}><TouchableOpacity style={{ width: "24%", }} onPress={() => this.openFilePicker()}>
                             <Icon name={"attach-file"} type={"MaterialIcons"} style={{ color: "#0A4E52", }}></Icon></TouchableOpacity>
-                        <TouchableOpacity style={{ width: "24%", }} onLongPress={() => this.openPhotoSelector()} onPress={() => this.openCamera()}><Icon style={{ color: "#0A4E52", marginRight: "4%", }} type={"Ionicons"} name={"md-photos"}></Icon></TouchableOpacity><TouchableOpacity onPress={() => this.openVideo()}>
+                        <TouchableOpacity style={{ width: "24%", }} onPress={() => this.openCamera()}><Icon style={{ color: "#0A4E52", marginRight: "4%", }} type={"Ionicons"} name={"md-photos"}></Icon></TouchableOpacity><TouchableOpacity onPress={() => this.openVideo()}>
                             <Icon name={"video-camera"} type={"Entypo"} style={{ color: "#0A4E52", }}></Icon></TouchableOpacity>
                         <TouchableOpacity style={{ width: "23%", marginLeft: '2%', }}>
                             <Icon onPress={() => {
@@ -1418,10 +1418,8 @@ export default class ChatRoom extends Component {
                         width: "17%",
                         flexDirection: 'row',
                     }}>
-                        {!this.state.showAudioRecorder ? <TouchableOpacity style={{ width: "40%", }} onLongPress={() => {
-                            this.openAudioPicker();
-                            this.markAsRead();
-                        }} onPress={() => {
+                        {!this.state.showAudioRecorder ? <TouchableOpacity style={{ width: "40%", }}
+                         onPress={() => {
                             this.toggleAudioRecorder();
                             this.markAsRead();
                         }}><Icon style={{
@@ -1507,8 +1505,13 @@ export default class ChatRoom extends Component {
                             eventID={this.props.activity_id}
                             roomID={this.props.firebaseRoom}
                             public={this.props.public_state}
+                            addAudio={() => {
+                                this.openAudioPicker();
+                                this.markAsRead();
+                            }}
                             showVote={() => this.openVoteCreation()}
                             showReminds={() => { }}
+                            addPhotos={() => this.openPhotoSelector() }
                             addMembers={() => this.props.addMembers()}
                         ></ChatRoomPlus>
                     </View>
