@@ -535,7 +535,7 @@ export default class ChatRoom extends Component {
     }
     handleEmojieSectionCaption(e) {
         this.setState({
-            captionText: this.state.captionText + e
+            textValue: this.state.textValue + e
         })
     }
     handleEmojiSelected(e) {
@@ -742,7 +742,7 @@ export default class ChatRoom extends Component {
             send: 0,
             content_type: this.state.content_type,
             filename: this.state.filename,
-            text: this.state.captionText
+            text: this.state.textValue
         }
 
         this.room.messages.unshift(message)
@@ -757,6 +757,7 @@ export default class ChatRoom extends Component {
         let offset = this.state.replying ? .1 : 0
         this.setState({
             captionText: '',
+            textValue:'',
             replyContent: null,
             messageListHeight: this.formHeight(this.state.initialMessaListHeightFactor),
             textInputHeight: this.formHeight(this.inittialTextInputHeightFactor),
@@ -868,7 +869,7 @@ export default class ChatRoom extends Component {
     _onChangeCaption(event) {
         this.setTyingState(this.sender)
         this.setState({
-            captionText: event.nativeEvent.text || ''
+            textValue: event.nativeEvent.text || ''
         })
     }
     toggleAudioRecorder() {
@@ -1463,7 +1464,7 @@ export default class ChatRoom extends Component {
                             photoHeight: screenheight * (this.state.replying ? 0.45 - 0.1 : 0.45)
                         });
                     }} type="Entypo" name="emoji-flirt" style={{ color: "#0A4E52", marginTop: "3%", width: "8%" }}>
-                    </Icon><TextInput multiline enableScrollToCaret ref={(r) => { this._captionTextInput = r; }} value={this.state.captionText} onChange={(data) => this._onChangeCaption(data)} style={{ left: 0, right: 0, height: 59, width: "84%" }} placeholder={'Enter your text!'} />
+                    </Icon><TextInput multiline enableScrollToCaret ref={(r) => { this._captionTextInput = r; }} value={this.state.textValue} onChange={(data) => this._onChangeCaption(data)} style={{ left: 0, right: 0, height: 59, width: "84%" }} placeholder={'Enter your text!'} />
                     <Icon style={{ color: "#0A4E52", marginTop: "3%", width: "8%" }} onPress={() => this._sendCaptionMessage()} type={"Ionicons"} name={"md-send"}></Icon>
                 </View>
                 {
