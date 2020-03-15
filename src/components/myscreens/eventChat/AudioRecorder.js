@@ -25,14 +25,7 @@ export default class AudioRecorder extends Component{
     }
     handleBackButton(){
         if (this.props.showAudioRecorder) {
-            this.stopRecordTiming()
-            SoundRecorder.stop().then(() => {
-                this.setState({
-                    recordTime: 0,
-                    recording: false,
-                    showAudioRecorder: false
-                })
-            })
+            this.props.toggleAudioRecorder()
             return true
         }
     }
@@ -55,12 +48,7 @@ export default class AudioRecorder extends Component{
                 }).catch(error => {
                     //console.warn(error)
                     Toast.show({ duration: 4000, text: "cannot record due to " + error })
-                    this.setState({ recording: false, recordTime: 0 })
                     this.props.toggleAudioRecorder()
-                    this.stopRecordTiming()
-                    SoundRecorder.stop().then(() => {
-
-                    })
                 });
         });
     }

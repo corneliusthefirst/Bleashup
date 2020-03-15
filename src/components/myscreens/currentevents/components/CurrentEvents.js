@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import { View, Dimensions, BackHandler, StatusBar, LayoutAnimation } from 'react-native';
 import PublicEvent from "./publicEvent.js"
+import Relation from "./Relation"
 import { observer } from 'mobx-react';
 import BleashupScrollView from '../../../BleashupScrollView.js';
 import BleashupFlatList from '../../../BleashupFlatList';
@@ -157,7 +158,7 @@ export default class CurrentEvents extends Component {
                     onScroll={this._onScroll}
                     renderItem={(item, index) => {
                         this.delay = index % this.renderPerbatch == 0 ? 0 : this.delay + 1
-                        return <PublicEvent
+                        return <Relation
                         key={item.id}
                             showLikers={likers => {
                                 this.setState({
@@ -541,6 +542,7 @@ import stores from "../../../../stores"
 import { RecyclerListView, DataProvider, LayoutProvider } from "recyclerlistview";
 import { Spinner } from "native-base";
 import { forEach } from "lodash";
+import Relation from './Relation';
 class CurrentEvents extends Component {
     constructor(props) {
         super(props)
