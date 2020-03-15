@@ -124,8 +124,9 @@ export default class ChangeLogs extends Component {
           </View>
           <View style={{  width: '15%',backgroundColor: 'transparent', }}>
             <Icon style={{
-              color: '#0A91A84',
-              alignSelf: 'center'
+              color: '#1FABAB',
+              alignSelf: 'center',
+              marginTop: '20%',
             }} name={"gear"} type="EvilIcons"></Icon>
           </View>
         </View>
