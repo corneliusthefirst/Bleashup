@@ -207,7 +207,7 @@ export default class Message extends Component {
                 this.props.replying(tempMessage)
                 break;
             case 'vote':
-                let vote = this.props.votes &&
+                let vote = this.props.votes && this.props.votes.length > 0 && this.props.message.vote &&
                     find(this.props.votes, { id: this.props.message.vote.id })
                 this.props.replying({
                     id: vote.id,
@@ -224,9 +224,10 @@ export default class Message extends Component {
     }
     prevVote = null
     shouldComponentUpdate(nextProps, nextState, nextContext) {
-        peVote = this.prevVote ? JSON.parse(this.prevVote) : this.props.votes &&
+        peVote = this.prevVote ? JSON.parse(this.prevVote) : this.props.votes 
+        && this.props.votes.length > 0 && this.props.message.vote &&
             find(this.props.votes, { id: this.props.message.vote.id })
-        newVote = nextProps.votes &&
+        newVote = nextProps.votes && nextProps.votes.length > 0 && nextProps.message.vote && 
             find(nextProps.votes, { id: nextProps.message.vote.id })
         let voter = (peVote && newVote && peVote.voter && newVote.voter &&
             newVote.voter.length !== peVote.voter.length)

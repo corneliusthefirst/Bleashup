@@ -72,7 +72,7 @@ export default class VoteCreation extends Component {
     }
     previousVote = JSON.stringify({ name: "" })
     componentDidUpdate(prevProps, prevState, contex) {
-        if(this.props.update !== prevProps.update && !this.props.update){
+        if (this.props.update !== prevProps.update && !this.props.update) {
             this.initializeVote()
         }
         if (!this.props.update) {
@@ -154,18 +154,18 @@ export default class VoteCreation extends Component {
             showVoteContentError: true
         })
     }
-    showMustSpecifyVotePeriodError(){
+    showMustSpecifyVotePeriodError() {
         this.setState({
-            nowVotePeriod:true
+            nowVotePeriod: true
         })
     }
     addVote() {
         let vote = this.state.vote
-        if (vote.option.length <= 1 ) {
+        if (vote.option.length <= 1) {
             this.showVoteOptionError()
         } else if (!vote.description && !vote.title) {
             this.showVoteContentError()
-        } if(!vote.period){
+        } if (!vote.period) {
             this.showMustSpecifyVotePeriodError()
         } else {
             this.props.takeVote({ ...vote, voter: [] })
@@ -210,8 +210,8 @@ export default class VoteCreation extends Component {
                 moment().startOf("day").add(moment.duration(1, 'hours')).toISOString().split("T")[1]
             let newDateTime = newDate + "T" + newTime
             this.setState({
-                nowVotePeriod: false ,
-                vote: { ...this.state.vote, period: newDateTime,},
+                nowVotePeriod: false,
+                vote: { ...this.state.vote, period: newDateTime, },
                 showDatePicker: false,
                 showTimePicker: true
             })
@@ -229,7 +229,7 @@ export default class VoteCreation extends Component {
             this.setState({
                 nowVotePeriod: false,
                 showTimePicker: false,
-                vote: { ...this.state.vote, period: newDate + "T" + newTime,  },
+                vote: { ...this.state.vote, period: newDate + "T" + newTime, },
                 //newThing: !this.state.newThing
             })
         }
@@ -259,8 +259,8 @@ export default class VoteCreation extends Component {
             }}
         >
             <View style={{ height: '100%', flexDirection: 'column', }}>
-                <View style={{ width: '98%', height: '6%', ...shadower(), margin: '1%', flexDirection: 'row',}}>
-                    <View style={{width:'35%'}}><Text note style={{
+                <View style={{ width: '98%', height: '6%', ...shadower(), margin: '1%', flexDirection: 'row', }}>
+                    <View style={{ width: '35%' }}><Text note style={{
                         fontWeight: 'bold',
                         color: '#A91A84',
                         //margin: '2%'
@@ -269,7 +269,7 @@ export default class VoteCreation extends Component {
                         fontWeight: 'bold',
                         color: '#555756',
                         //margin: '2%'
-                    }}>{"ony the voting end date is updated"}</Text></View>:null}
+                    }}>{"ony the voting end date is updated"}</Text></View> : null}
                 </View>
                 <View style={{ height: '94%', }}>
                     <ScrollView showsVerticalScrollIndicator={false} style={{ height: '100%' }}>
@@ -313,13 +313,13 @@ export default class VoteCreation extends Component {
                                 <Icon name={this.state.vote.always_show ? "radio-button-checked" :
                                     "radio-button-unchecked"} type={"MaterialIcons"}></Icon>
                                 <Text>{"always show vote percentages"}</Text></Button>
-                            <Button transparent onPress={() => {
+                            {/*<Button transparent onPress={() => {
                                 this.setState({
                                     vote: { ...this.state.vote, published: this.state.vote.published === 'public' ? 'private' : 'public' }
                                 })
                             }}><Icon name={this.state.vote.published === 'public' ? "radio-button-checked" :
                                 "radio-button-unchecked"} type={"MaterialIcons"}></Icon>
-                                <Text>{`${this.state.vote.published}`}</Text></Button>
+                        <Text>{`${this.state.vote.published}`}</Text></Button>*/}
                             <Item>
                                 <View style={{ width: '90%' }}>
                                     <Button onPress={() => {

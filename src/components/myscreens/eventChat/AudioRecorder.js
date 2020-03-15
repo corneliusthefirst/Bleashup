@@ -113,7 +113,7 @@ export default class AudioRecorder extends Component{
     duration = 0
     stopRecord() {
         this.setState({
-            recording: !this.state.recording,
+            //recording: !this.state.recording,
             showAudioRecorder: false,
             recordTime: 0
         })

@@ -383,7 +383,6 @@ class Home extends Component {
           >
             <CurrentEventView {...this.props}></CurrentEventView>
           </Tab>
-
           <Tab
             heading={
               <TabHeading>
@@ -395,7 +394,7 @@ class Home extends Component {
           >
             <Chats {...this.props} />
           </Tab>
-          <Tab
+          {/*<Tab
             heading={
               <TabHeading>
                 <View>
@@ -405,7 +404,7 @@ class Home extends Component {
             }
           >
             <StatusView {...this.props} />
-          </Tab>
+          </Tab>*/}
         </Tabs>
         {this.state.isForeignEventsModalOpened ? <ForeignEventsModal isOpen={this.state.isForeignEventsModalOpened} onClosed={() => {
           this.setState({

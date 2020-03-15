@@ -126,17 +126,17 @@ export default class Voter extends Component {
     render() {
         return !this.state.loaded ? <Spinner size={"small"}></Spinner> : <View style={{ margin: '1%', backgroundColor: '#FEFFDE', }}>
             <View style={{ alignSelf: 'center', margin: '2%', flexDirection: 'row', }}>
-                <View style={{ width: '75%' }}>
+                <View style={{ width: '70%',marginLeft: '2%', }}>
                     <Text style={{
-                        alignSelf: 'center',
+                        alignSelf: 'flex-start',
                         fontWeight: 'bold',
                         fontSize: 21,
                     }}>{this.props.message.vote.title}</Text>
                 </View>
-                <View style={{ flexDirection: 'row', width: '25%' }}>
+                <View style={{ flexDirection: 'row', width: '30%' }}>
                     <View style={{ width: '33.33%', padding: '1%', }}><Icon onPress={() => this.reply()} name={"reply"}
-                        type={"Entypo"} style={{ color: '#555756', }}></Icon></View>
-                    {this.props.computedMaster ? <View style={{ width: '33.33%' }}><Icon
+                        type={"Entypo"} style={{ color: '#555756',alignSelf:'flex-start',marginRight: '15%', }}></Icon></View>
+                    {this.props.computedMaster ? <View style={{ width: '38.33%' }}><Icon
                         style={{ color: '#555756', padding: '1%' }}
                         onPress={() => {
                             this.props.showVoters(this.props.message.vote.voter)
@@ -146,7 +146,7 @@ export default class Voter extends Component {
                         style={{ color: '#555756', marginTop: '13%', }} name="gear"
                         type="EvilIcons"></Icon></View>}</View>
             </View>
-            {this.props.message.vote.period ? <View style={{ margin: '4%', alignItems: 'center', }}><Text style={{ color: dateDiff({ recurrence: this.props.message.vote.period }) > 0 ? "gray" : "#1FABAB" }}>{`${writeDateTime({
+            {this.props.message.vote.period ? <View style={{ margin: '4%', alignItems: 'flex-start', }}><Text style={{ color: dateDiff({ recurrence: this.props.message.vote.period }) > 0 ? "gray" : "#1FABAB" }}>{`${writeDateTime({
                 period: this.props.message.vote.period,
                 recurrence: this.props.message.vote.period
             }).replace("Starting", "Ends")}`}</Text></View> : null}

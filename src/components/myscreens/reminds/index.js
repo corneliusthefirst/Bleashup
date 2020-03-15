@@ -389,7 +389,7 @@ export default class Reminds extends Component {
             renderItem={(item, index) => {
               this.delay = index >= 5 ? 0 : this.delay + 1
               return (
-                <View key={index}>
+                <View>
                   <TasksCard
                     isLast={index === this.state.eventRemindData.length - 1}
                     phone={stores.LoginStore.user.phone}
@@ -490,7 +490,7 @@ export default class Reminds extends Component {
             this.saveAddMembers(members)
           }}
           saveRemoved={(members) => this.saveRemoved(members)}
-          members={uniqBy(this.state.contacts ? this.state.contacts : [], ['phone'])}
+          members={this.state.contacts && this.state.contacts.length > 0 ? this.state.contacts : []}
           notcheckall={this.state.notcheckAll}
           isOpen={this.state.isSelectableContactsModalOpened} close={() => {
             this.setState({
