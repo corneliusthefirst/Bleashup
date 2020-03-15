@@ -875,7 +875,6 @@ export default class ChatRoom extends Component {
     toggleAudioRecorder() {
         this.setState({
             showAudioRecorder: !this.state.showAudioRecorder,
-            recording: !this.state.recording,
         })
         if (this.state.showAudioRecorder) {
             this.refs.AudioRecorder.stopRecordSimple()
