@@ -269,6 +269,10 @@ class PublicEvent extends Component {
     url === this.props.Event.background && !this.state.audio ? this.props.showPhoto(url) :
       this.props.navigation.navigate("HighLightsDetails", { event_id: this.props.Event.id })
   }
+  renderMap(){
+    return this.state.isMount && this.props.Event.location.string ? <View style={{ alignSelf: 'flex-start', width: '40%' }}><MapView card
+      location={this.props.Event.location.string}></MapView></View> : null
+  }
   render() {
     //emitter.emit('notify', "santerss") 
     return (this.state.isMount ? <View style={{ width: "100%", paddingLeft: '2%', paddingRight: '2%', alignSelf: 'center', }}>
@@ -344,8 +348,7 @@ class PublicEvent extends Component {
                     marginLeft: '-1%',
                   }} photo={this.props.Event.background} event_id={this.props.Event.id} width={170} height={100} borderRadius={6} />
               </CardItem></View> : null}</View>
-              {this.state.isMount && this.props.Event.location.string ? <View style={{ alignSelf: 'flex-start', width: '40%' }}><MapView card
-                location={this.props.Event.location.string}></MapView></View> : null}
+              {this.renderMap()}
             </View>
           </CardItem>
           <CardItem>
