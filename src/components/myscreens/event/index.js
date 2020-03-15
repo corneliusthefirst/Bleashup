@@ -4,7 +4,8 @@ import {
   Dimensions,
   BackHandler,
   StatusBar,
-  Platform
+  Platform,
+  Vibration
 } from 'react-native';
 import {
   Spinner,
@@ -476,9 +477,11 @@ export default class Event extends Component {
       creator: event.creator_phone
     }
   }
+  duration = 10
   mention(data) {
     GState.reply = data
     //GState.currentCommitee = this.event.id
+    Vibration.vibrate(this.duration)
     emitter.emit('mentioning')
     this.setState({
       currentPage: 'EventChat'
