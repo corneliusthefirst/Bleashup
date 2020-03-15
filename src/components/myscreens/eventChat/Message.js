@@ -90,10 +90,10 @@ export default class Message extends Component {
                 return <AudioUploader room={this.props.room} message={data} index={data.id}
                     replaceMessage={(data) => this.props.replaceAudioMessage(data)}></AudioUploader>
             case "vote":
-                return <Voter computedMaster={this.props.computedMaster} 
-                mention={() => this.handleReply()} takeCreator={(creator) => {
-                    this.voteCreator = creator
-                }} vote={this.props.voteItem}
+                return <Voter computedMaster={this.props.computedMaster}
+                    mention={() => this.handleReply()} takeCreator={(creator) => {
+                        this.voteCreator = creator
+                    }} vote={this.props.voteItem}
                     pressingIn={() => {
                         this.replying = true
                     }}
@@ -210,9 +210,9 @@ export default class Message extends Component {
                 let vote = this.props.votes &&
                     find(this.props.votes, { id: this.props.message.vote.id })
                 this.props.replying({
-                    id:vote.id,
-                    type_extern:'Votes',
-                    sourcer:this.voteCreator.profile,
+                    id: vote.id,
+                    type_extern: 'Votes',
+                    sourcer: this.voteCreator.profile,
                     title: `${vote.title} : \n ${vote.description}`,
                     replyer_phone: this.props.user.phone,
                 })
@@ -222,11 +222,21 @@ export default class Message extends Component {
                 break
         }
     }
+    prevVote = null
     shouldComponentUpdate(nextProps, nextState, nextContext) {
+        peVote = this.prevVote ? JSON.parse(this.prevVote) : this.props.votes &&
+            find(this.props.votes, { id: this.props.message.vote.id })
+        newVote = nextProps.votes &&
+            find(nextProps.votes, { id: nextProps.message.vote.id })
+        let voter = (peVote && newVote && peVote.voter && newVote.voter &&
+            newVote.voter.length !== peVote.voter.length)
+        let votePeriod = (peVote && newVote && peVote.period !== newVote.period)
+        if (voter || votePeriod) {
+            this.prevVote = JSON.stringify(newVote)
+        }
         return this.props.message.sent !== nextProps.message.sent ||
             this.props.received !== nextProps.received ||
-            (this.props.message.vote && this.props.message.vote.period !== nextProps.message.vote.period) || 
-            (this.props.message.vote && this.props.message.voter && this.props.message.vote.voter.length !== nextProps.vote.voter.length) ||
+            voter || votePeriod ||
             this.state.loaded !== nextState.loaded ||
             this.props.message.id !== nextProps.message.id
     }
@@ -283,7 +293,7 @@ export default class Message extends Component {
         placeholderStyle = {
             ...topMostStyle, height: 100, backgroundColor: color, borderBottomLeftRadius: 10, borderColor: color,
             borderTopLeftRadius: this.state.sender ? 0 : 10,// borderWidth: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text)?.7:0:0,
-            backgroundColor: color,...shadower(2),
+            backgroundColor: color, ...shadower(2),
             alignSelf: this.isVote() ? 'center' : this.state.sender ? 'flex-start' : 'flex-end',
             borderTopRightRadius: 10,
 

@@ -1206,6 +1206,7 @@ export default class ChatRoom extends Component {
                     voteItem={(index, vote) => {
                         emitter.emit("vote-me", index, { ...item, vote: vote })
                     }}
+                    key={index.toString()}
                     computedMaster={this.props.computedMaster}
                     showVoters={(voters) => this.showVoters(voters)}
                     votes={this.state.votes}
