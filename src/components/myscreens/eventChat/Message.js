@@ -200,7 +200,7 @@ export default class Message extends Component {
     }
     iconStyles = {
         fontSize: 12,
-        color: "#018A62",
+        color: "#1fafba",
         marginLeft: 5,
         paddingTop: 1,
         //marginTop: "-2%",
