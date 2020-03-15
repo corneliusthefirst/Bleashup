@@ -1284,7 +1284,7 @@ class UpdatesDispatcher {
                   updater: update.updater,
                   new_value: {
                     data: null,
-                    new_value: update.new_value.period ? moment(update.new_value.new_period).format(format) : null
+                    new_value: update.new_value.period ? moment(update.new_value.period).format(format) : null
                   },
                   date: update.date,
                   time: null

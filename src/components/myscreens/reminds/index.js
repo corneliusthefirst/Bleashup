@@ -8,7 +8,8 @@ import {
 import {
   StyleSheet, View, Image, TouchableOpacity, Dimensions, ToastAndroid,
   Platform,
-  AlertIOS, } from 'react-native';
+  AlertIOS,
+} from 'react-native';
 import autobind from "autobind-decorator";
 import TasksCard from "./TasksCard"
 import stores from '../../../stores/index';
@@ -60,7 +61,7 @@ export default class Reminds extends Component {
       adding: true,
       removing: false,
       notcheckAll: false,
-      contacts: this.props.event.participant.filter(e => findIndex(currentMembers, { phone: e.phone }) < 0 && e.phone !== stores.LoginStore.user.phone)
+      contacts: this.props.event.participant.filter(e => findIndex(currentMembers, { phone: e.phone }) < 0)
     })
   }
   saveAddMembers(members) {
@@ -70,6 +71,7 @@ export default class Reminds extends Component {
       let newMembers = members.filter(ele => findIndex(this.state.currentTask.members, { phone: ele.phone }) < 0)
       if (newMembers.length > 0) {
         this.props.startLoader()
+        console.warn(newMembers)
         RemindRequest.addMembers({ ...this.state.currentTask, members: newMembers }).then(() => {
           this.props.stopLoader()
           this.refreshReminds()
@@ -109,6 +111,7 @@ export default class Reminds extends Component {
       setTimeout(() => {
         this.setState({
           mounted: true,
+          RemindCreationState: this.props.currentMembers ? true : false,
           eventRemindData: Reminds
         })
       }, 100)
@@ -168,9 +171,10 @@ export default class Reminds extends Component {
     console.warn('receiving updated remind message')
     stores.Reminds.loadReminds(this.props.event_id).then((Reminds) => {
       //console.warn(Reminds)
-      this.setState({ 
-        eventRemindData: Reminds, 
-        currentTask: find(Reminds, { id: this.state.currentTask.id }) });
+      this.setState({
+        eventRemindData: Reminds,
+        currentTask: find(Reminds, { id: this.state.currentTask.id })
+      });
     })
   }
 
@@ -354,24 +358,24 @@ export default class Reminds extends Component {
   delay = 1
   render() {
 
-    return !this.state.mounted ? <View style={{width:'100%',height:'100%',backgroundColor: '#FEFFDE',}}><Spinner size={'small'}></Spinner></View> : (
+    return !this.state.mounted ? <View style={{ width: '100%', height: '100%', backgroundColor: '#FEFFDE', }}><Spinner size={'small'}></Spinner></View> : (
 
       <View>
         <View style={{ height: "6%", width: '100%' }}>
           <View style={{
-            paddingLeft: '1%',paddingRight: '1%', ...bleashupHeaderStyle,
-            flexDirection: "row", alignItems: "center", 
+            paddingLeft: '1%', paddingRight: '1%', ...bleashupHeaderStyle,
+            flexDirection: "row", alignItems: "center",
           }}>
-            <View style={{width:'90%',paddingLeft: '2%',}}>
-              <Title style={{ fontSize: 20, fontWeight: 'bold',alignSelf: 'flex-start', }}>{"Reminds"}</Title>
+            <View style={{ width: '90%', paddingLeft: '2%', }}>
+              <Title style={{ fontSize: 20, fontWeight: 'bold', alignSelf: 'flex-start', }}>{"Reminds"}</Title>
             </View>
-            <View style={{width:'10%'}}>
+            <View style={{ width: '10%' }}>
               <Icon onPress={() => requestAnimationFrame(() => this.AddRemind())} type='AntDesign'
-               name="pluscircle" style={{ color: "#1FABAB", alignSelf: 'center', }} />
+                name="pluscircle" style={{ color: "#1FABAB", alignSelf: 'center', }} />
             </View>
           </View>
         </View>
-    
+
         <View style={{ height: "93%", }}>
           <BleashupFlatList
             initialRender={5}
@@ -454,6 +458,7 @@ export default class Reminds extends Component {
           updateRemind={(data) => this.sendUpdate(data)}
           isOpen={this.state.RemindCreationState}
           onClosed={() => {
+            this.props.clearCurrentMembers()
             this.setState({
               RemindCreationState: false, update: false,
               remind_id: null, remind: null
@@ -461,6 +466,7 @@ export default class Reminds extends Component {
           }}
           reinitializeList={() => this.scrollRemindListToTop()}
           working={this.props.working}
+          currentMembers={this.props.currentMembers}
           stopLoader={this.props.stopLoader}
           startLoader={this.props.startLoader}
           event={this.props.event}

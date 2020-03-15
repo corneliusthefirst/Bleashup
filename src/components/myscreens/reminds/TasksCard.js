@@ -35,7 +35,7 @@ export default class EventTasksCard extends Component {
       hasDoneForThisInterval: false,
       correspondingDateInterval: {},
       mounted: false,
-      creator: this.props.item.creator === this.props.phone,
+      creator: this.props.master,//this.props.item.creator === this.props.phone,
       currentDateIntervals: [],
       cardData: this.props.item,
 
@@ -184,16 +184,14 @@ export default class EventTasksCard extends Component {
                 <View style={{ flexDirection: 'row', marginTop: '3%', }}>
                   <Icon onPress={() => {
                     this.props.mention({ ...this.props.item, creator: this.state.creator })
-                  }} name={"reply"} style={{ color: 'darkGray', fontSize: 25, margin: '2%', }} type="Entypo"></Icon>
-                  <Icon style={{ color: 'darkGray', fontSize: 25, margin: '2%', }} onPress={() => {
-                    this.props.updateRemind(this.props.item)
-                  }} name="gear" type="EvilIcons"></Icon>
-                  <Icon style={{ color: 'darkGray', fontSize: 25, margin: '2%', }} onPress={() => {
+                  }} name={"reply"} style={{ color: '#555756', fontSize: 25, margin: '2%', }} type="Entypo"></Icon>
+                  <Icon style={{ color: '#555756', fontSize: 25, margin: '2%', }} onPress={() => {
                     this.props.showReport(this.props.item, this.state.currentDateIntervals, this.state.correspondingDateInterval)
                   }} name="ios-people" type="Ionicons" />
                 </View>
                 <View style={{ alignSelf: 'flex-end', }}>
                   <RemindsMenu
+                  update={() => this.props.updateRemind(this.props.item)}
                     creator={this.state.creator}
                     addMembers={() => { this.props.addMembers(this.props.item.members, this.props.item) }}
                     removeMembers={() => this.props.removeMembers(this.props.item.members.filter(ele => this.state.creator ||

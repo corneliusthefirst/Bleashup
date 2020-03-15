@@ -45,7 +45,7 @@ export default class RemindsMenu extends Component {
                         color: "#0A4E52",
                         fontSize: 25,
                         marginTop: '10%'
-                    }} onPress={this.showMenu} name="dots-three-vertical" type="Entypo"></Icon>}
+                    }} onPress={this.showMenu} name="gear" type="EvilIcons"></Icon>}
                 >
                     {this.props.creator ? <View><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
                         this.hideMenu()
@@ -58,6 +58,11 @@ export default class RemindsMenu extends Component {
                             this.props.removeMembers()
                         }}>{"Unassign"}</MenuItem>
                         <MenuDivider color="#1FABAB" /></View>
+                    {this.props.creator ? <View><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
+                        this.hideMenu()
+                        this.props.update()
+                    }}>{"Update"}</MenuItem>
+                        <MenuDivider color="#1FABAB" /></View> : null}
                     {this.props.creator ? <View><MenuItem textStyle={{ color: "red" }} onPress={() => {
                         this.hideMenu()
                         this.props.deleteRemind()

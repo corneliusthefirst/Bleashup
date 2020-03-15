@@ -367,13 +367,13 @@ export default class SettingsModal extends Component {
                     backgroundColor: "#FEFFDE",
                 }}>
                 {!this.state.loaded ? <Spinner size={'small'}></Spinner> : <View>
-                    <View style={{ height:50 }}>
-                        <View style={{ flexDirection: 'row',...bleashupHeaderStyle,padding: '2%',}}>
-                            <View style={{width:'70%'}}>
+                    <View style={{ height: 50 }}>
+                        <View style={{ flexDirection: 'row', ...bleashupHeaderStyle, padding: '2%', }}>
+                            <View style={{ width: '70%' }}>
                                 <Text
                                     style={{ fontSize: 20, fontWeight: 'bold', width: '100%', }}>Activity Settings</Text>
                             </View>
-                            <View style={{width:'30%'}}>
+                            <View style={{ width: '30%' }}>
                                 {this.props.computedMaster ? <Button onPress={() => this.saveConfigurations()} transparent><Icon
                                     style={{ color: "#1FABAB", }}
                                     type="AntDesign"
@@ -405,7 +405,7 @@ export default class SettingsModal extends Component {
                                     {this.state.date ? <Icon style={{ color: "red" }}
                                         onPress={() => this.resetDate()} name={"close"} type={"EvilIcons"}></Icon> : null}
                                     {this.state.showDate ? <DateTimePicker
-                                        value={new Date()}
+                                        value={this.state.date ? parseInt(moment(this.state.date).format('x')) : new Date()}
                                         display={this.state.display}
                                         mode={this.state.mode}
                                         onChange={(e, date) => this.changeActivityDate(e, date)}></DateTimePicker> : null}
@@ -420,7 +420,7 @@ export default class SettingsModal extends Component {
                                         name={"close"} type={"EvilIcons"}></Icon> : null}
                                     {this.state.show ? <DateTimePicker
                                         mode={this.state.mode}
-                                        value={new Date()}
+                                        value={this.state.date ? parseInt(moment(this.state.date).format('x')) : new Date()}
                                         is24Hour={true} display={this.state.display}
                                         onChange={(e, date) => this.changeActivityTime(e, date)}></DateTimePicker> : null}
                                 </Item>
@@ -524,9 +524,9 @@ export default class SettingsModal extends Component {
                                                     Ends
                                         </Label>
                                                 <Button style={{ width: "90%" }} onPress={() => this.showEndatePiker()} transparent>
-                                                    <Text>{this.state.date ? `On ${moment(this.state.recurrence).format('dddd, MMMM Do YYYY')}` : "Select Activity End Date"}</Text>
+                                                    <Text>{this.state.recurrence ? `On ${moment(this.state.recurrence).format('dddd, MMMM Do YYYY')}` : "Select Activity End Date"}</Text>
                                                 </Button>
-                                                {this.state.showEndatePiker ? <DateTimePicker value={new Date()}
+                                                {this.state.showEndatePiker ? <DateTimePicker value={this.state.recurrence ? parseInt(moment(this.state.recurrence).format('x')) : new Date()}
                                                     display={this.state.display}
                                                     mode={this.state.mode}
                                                     onChange={(e, date) => this.changeEndDate(e, date)}></DateTimePicker> : null}

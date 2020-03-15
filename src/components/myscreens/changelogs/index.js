@@ -126,7 +126,7 @@ export default class ChangeLogs extends Component {
             <Icon style={{
               color: '#0A91A84',
               alignSelf: 'center'
-            }} name={"dots-three-vertical"} type="Entypo"></Icon>
+            }} name={"gear"} type="EvilIcons"></Icon>
           </View>
         </View>
       </View>}

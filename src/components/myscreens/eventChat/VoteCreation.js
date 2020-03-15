@@ -154,14 +154,21 @@ export default class VoteCreation extends Component {
             showVoteContentError: true
         })
     }
+    showMustSpecifyVotePeriodError(){
+        this.setState({
+            nowVotePeriod:true
+        })
+    }
     addVote() {
         let vote = this.state.vote
-        if (vote.option.length <= 1) {
+        if (vote.option.length <= 1 ) {
             this.showVoteOptionError()
         } else if (!vote.description && !vote.title) {
             this.showVoteContentError()
+        } if(!vote.period){
+            this.showMustSpecifyVotePeriodError()
         } else {
-            this.props.takeVote({ ...vote, voters: [] })
+            this.props.takeVote({ ...vote, voter: [] })
             setTimeout(() => {
                 // this.setState({
                 //     vote: request.Vote()
@@ -203,7 +210,8 @@ export default class VoteCreation extends Component {
                 moment().startOf("day").add(moment.duration(1, 'hours')).toISOString().split("T")[1]
             let newDateTime = newDate + "T" + newTime
             this.setState({
-                vote: { ...this.state.vote, period: newDateTime },
+                nowVotePeriod: false ,
+                vote: { ...this.state.vote, period: newDateTime,},
                 showDatePicker: false,
                 showTimePicker: true
             })
@@ -219,8 +227,9 @@ export default class VoteCreation extends Component {
             let newDate = this.state.vote.period ? moment(this.state.vote.period).format().split("T")[0] :
                 moment().format().split("T")[0]
             this.setState({
+                nowVotePeriod: false,
                 showTimePicker: false,
-                vote: { ...this.state.vote, period: newDate + "T" + newTime },
+                vote: { ...this.state.vote, period: newDate + "T" + newTime,  },
                 //newThing: !this.state.newThing
             })
         }
@@ -258,7 +267,7 @@ export default class VoteCreation extends Component {
                     }}>{"new vote"}</Text></View>
                     {this.props.update ? <View style={{ width: '65%' }}><Text note style={{
                         fontWeight: 'bold',
-                        color: 'darkGray',
+                        color: '#555756',
                         //margin: '2%'
                     }}>{"ony the voting end date is updated"}</Text></View>:null}
                 </View>
@@ -267,6 +276,7 @@ export default class VoteCreation extends Component {
                         <View style={{ margin: '3%', }}>
                             {this.state.showVoteContentError ? <Text style={{ color: "#A91A84", fontWeight: 'bold', }} note>{"vote should at least have a title or a detail"}</Text> : null}
                             {this.state.showVoteOptionError ? <Text style={{ color: "#A91A84", fontWeight: 'bold', }} note>{"vote should have at least a 2 options"}</Text> : null}
+                            {this.state.nowVotePeriod ? <Text style={{ color: "#A91A84", fontWeight: 'bold', }} note>{"you must specify the voting endate"}</Text> : null}
                             <View style={{ height: height / 14, alignItems: 'center', margin: '2%', }}>
                                 <Item style={{ borderColor: '#1FABAB', width: "95%", margin: '2%', height: height / 17 }} rounded>
                                     <TextInput maxLength={20} style={{ width: "100%", height: "100%", margin: '2%', marginBottom: '5%', }}
@@ -319,12 +329,12 @@ export default class VoteCreation extends Component {
                                     }} transparent><Text style={{ fontWeight: 'bold', }}>{"Ends: "}</Text><Text>{this.state.vote.period ?
                                         moment(this.state.vote.period).format(format) :
                                         'select voting end date'}</Text></Button>
-                                </View><View><Icon
+                                </View>{/*<View><Icon
                                     type={"EvilIcons"} name={"close"} onPress={() => {
                                         this.setState({
                                             vote: { ...this.state.vote, period: null }
                                         })
-                                    }} style={{ color: 'red' }}></Icon></View></Item>
+                                    }} style={{ color: 'red' }}></Icon></View>*/}</Item>
                             {this.state.showDatePicker ? <DateTimePicker
                                 value={this.state.period ? parseFloat(moment(this.state.vote.period).format('x')) : new Date()}
                                 is24Hour={true}

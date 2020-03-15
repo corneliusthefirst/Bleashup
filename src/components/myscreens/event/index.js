@@ -120,6 +120,13 @@ export default class Event extends Component {
       isHighlightDetailModalOpened: true
     })
   }
+  addRemindForCommittee(members) {
+    emitter.emit("leave-chat")
+    this.setState({
+      currentPage: "Reminds",
+      currentRemindMembers: members
+    })
+  }
   currentWidth = screenWidth * 2.7 / 3
   isOpen = this.props.navigation.getParam('isOpen') ? this.props.navigation.getParam('isOpen') : false
   renderMenu(NewMessages) {
@@ -156,6 +163,12 @@ export default class Event extends Component {
             working: false
           })
         }}
+          clearCurrentMembers={() => {
+            this.setState({
+              currentRemindMembers: null
+            })
+          }}
+          currentMembers={this.state.currentRemindMembers}
           mention={(item) => this.mention(item)}
           master={this.master}
           computedMaster={this.computedMaster}
@@ -173,9 +186,11 @@ export default class Event extends Component {
           room_type={"activity"} //!! 'relation' if it's a relation
           //activity_name={this.event.about.title}
           showLoader={() => this.startLoader()}
+          addRemind={(members) => this.addRemindForCommittee(members)}
           stopLoader={() => this.stopLoader()}
           showProfile={(pro) => this.showProfile(pro)}
           roomName={this.state.roomName}
+          computedMaster={this.computedMaster}
           members={this.state.roomMembers}
           addMembers={() => this.addCommiteeMembers(this.state.roomID, this.state.roomMembers)}
           removeMembers={() => this.removeMembers(this.state.roomID, this.state.roomMembers)}
@@ -1223,6 +1238,16 @@ export default class Event extends Component {
       type_extern: 'Posts',
     })
   }
+  setCurrentPage(page, data) {
+    this.isOpen = false
+    this.setState({
+      currentPage: page,
+      activeMember: null,
+      fresh: false,
+      isMe: false,
+      forMember: null
+    })
+  }
   goback() {
     this.props.navigation.goBack()
   }
@@ -1235,7 +1260,7 @@ export default class Event extends Component {
     }} bounceBackOnOverdraw={false} onChange={(position) => {
       this.isOpen = position
     }} isOpen={this.isOpen} openMenuOffset={this.currentWidth}
-      menu={<View><SWView
+      menu={<View style={{ backgroundColor: '#FEFFDE', }}><SWView
         navigateHome={() => {
           this.goback()
         }}
@@ -1271,14 +1296,7 @@ export default class Event extends Component {
         }}
         showMembers={() => this.showMembers()}
         setCurrentPage={(page, data) => {
-          this.isOpen = false
-          this.setState({
-            currentPage: page,
-            activeMember: null,
-            fresh: false,
-            isMe: false,
-            forMember: null
-          })
+          this.setCurrentPage(page, data)
         }
         }
         currentPage={this.state.currentPage}

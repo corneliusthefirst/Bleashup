@@ -34,17 +34,16 @@ export default class ChatRoomPlus extends Component {
                     return this.props.showVote()
                 }
                 }>Votes</MenuItem></View>
-                <View><MenuDivider color="#1FABAB" /><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
+                {this.props.computedMaster?<View><MenuDivider color="#1FABAB" /><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
                     this.hideMenu()
                     this.props.showReminds()
-                }}>Reminds</MenuItem></View>
+                }}>Reminds</MenuItem></View>:null}
                 {this.props.roomID == this.props.eventID ? null : !this.props.master ? null :
                     <View><MenuDivider color="#1FABAB" /><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
                         this.hideMenu()
                         this.props.addMembers()
-                    }}>Members</MenuItem>
-                        <MenuDivider color="#1FABAB" /></View>}
-                <View><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
+                    }}>Members</MenuItem></View>}
+                <View><MenuDivider color="#1FABAB" /><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
                         this.hideMenu()
                         this.props.addPhotos()
                     }}>Photos</MenuItem>
@@ -53,7 +52,11 @@ export default class ChatRoomPlus extends Component {
                     this.hideMenu()
                     this.props.addAudio()
                 }}>Audio</MenuItem>
-                    <MenuDivider color="#1FABAB" /></View>        
+                    <MenuDivider color="#1FABAB" /></View>
+                <View><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
+                    this.hideMenu()
+                    this.props.addFile()
+                }}>File</MenuItem></View>        
             </Menu>
         </View>
     }

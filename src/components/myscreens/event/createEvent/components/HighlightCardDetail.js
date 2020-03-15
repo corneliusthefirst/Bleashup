@@ -33,8 +33,13 @@ export default class HighlightCardDetail extends Component {
         position={'bottom'}
         swipeToClose={true}
         style={{
-          height: "90%", alignSelf: 'center',
-          backgroundColor: "#FEFFDE", borderTopLeftRadius: 8, borderTopRightRadius: 8, width: "100%", flexDirection: 'column'
+          height: "90%", 
+          alignSelf: 'center',
+          backgroundColor: "#FEFFDE", 
+          borderTopLeftRadius: 8, 
+          borderTopRightRadius: 8,
+          width: "100%", 
+          flexDirection: 'column'
         }}
 
         coverScreen={true}

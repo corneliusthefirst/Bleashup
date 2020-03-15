@@ -210,8 +210,8 @@ class Request {
             created_at: moment().format(),
             updated_at: moment().format(),
             always_show:false,
-            period: null,
-            option: ['yes ','no '],//this.supposed to be Option()
+            period: "",
+            option: [{index:0,name:'yes',vote_count:0},{index:1,name:'no',vote_count:0}],//this.supposed to be Option()
             description: "",
             published: 'private',
             creator: stores.LoginStore.user.phone

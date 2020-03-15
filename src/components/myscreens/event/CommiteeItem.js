@@ -253,12 +253,12 @@ export default class CommiteeItem extends Component {
         switch (message.type) {
             case "text":
                 return <View style={{ display: 'flex', flexDirection: 'row', }}>
-                    <Title style={{ fontWeight: "bold", fontSize: 20, color: "#0A4E52" }}>{this.formNickName(message.sender)}{" :"}</Title>
+                    <Title style={{ fontWeight: "bold", fontSize: 20, color: "#0A4E52" }}>{this.formNickName(message.sender)}{": "}</Title>
                     <Text style={{ fontSize: 18, marginTop: "1%", }}>{message.text.slice(0, 15)}</Text>
                 </View>
             case "photo":
                 return <View style={{ display: 'flex', flexDirection: 'row', }}>
-                    <Title style={{ fontWeight: "bold", fontSize: 20, color: "#0A4E52" }}>{this.formNickName(message.sender)}{" :"}</Title>
+                    <Title style={{ fontWeight: "bold", fontSize: 20, color: "#0A4E52" }}>{this.formNickName(message.sender)}{": "}</Title>
                     <View style={{ display: 'flex', flexDirection: 'row', marginTop: "1%", }}>
                         <Text style={{ fontSize: 18, width: "74%" }}>{message.text ? message.text.slice(0, 15) : "  "}</Text>
                         <View style={{ alignSelf: 'flex-end', marginTop: "-8%", borderRadius: 8, }}>
@@ -270,7 +270,7 @@ export default class CommiteeItem extends Component {
                 </View>
             case "audio":
                 return <View style={{ display: 'flex', flexDirection: 'row', }}>
-                    <Title style={{ fontWeight: "bold", fontSize: 20, color: "#0A4E52" }}>{this.formNickName(message.sender)}{" :"}</Title>
+                    <Title style={{ fontWeight: "bold", fontSize: 20, color: "#0A4E52" }}>{this.formNickName(message.sender)}{": "}</Title>
                     <View style={{ display: 'flex', flexDirection: 'row' }}>
                         <Text style={{ fontSize: 18, marginLeft: "3%", marginTop: "1%", width: "70%" }}>{message.text ?
                             message.text.slice(0, 15) + message.text.length < 15 ? "..." : "" :
@@ -283,7 +283,7 @@ export default class CommiteeItem extends Component {
                 </View>
             case "video":
                 return <View style={{ display: 'flex', flexDirection: 'row', }}>
-                    <Title style={{ fontWeight: "bold", fontSize: 20, color: "#0A4E52" }}>{this.formNickName(message.sender)}{" :"}</Title>
+                    <Title style={{ fontWeight: "bold", fontSize: 20, color: "#0A4E52" }}>{this.formNickName(message.sender)}{": "}</Title>
                     <View style={{ display: 'flex', flexDirection: 'row', marginTop: "1%", }}>
                         <Text style={{ fontSize: 18, marginLeft: "3%", width: "70%" }}>{message.text ?
                             message.text.slice(0, 15) : message.duration ? message.duration : message.total ? this.toMB(message.total) : ""}</Text>
@@ -294,7 +294,7 @@ export default class CommiteeItem extends Component {
                 </View>
             case "attachement":
                 return <View style={{ display: 'flex', flexDirection: 'row', }}>
-                    <Title style={{ fontWeight: "bold", fontSize: 20, color: "#0A4E52" }}>{this.formNickName(message.sender)}{" :"}</Title>
+                    <Title style={{ fontWeight: "bold", fontSize: 20, color: "#0A4E52" }}>{this.formNickName(message.sender)}{": "}</Title>
                     <View style={{ display: 'flex', flexDirection: 'row', }}>
                         <Text style={{ fontSize: 20, marginLeft: "3%", alignSelf: 'flex-start', fontWeight: 'bold', width: "70%" }}>{message.file_name.split(".")
                         [message.file_name.split(".").length - 1].toUpperCase()}</Text>

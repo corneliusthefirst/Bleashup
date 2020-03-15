@@ -25,6 +25,7 @@ import moment from 'moment';
 import shadower from '../../shadower';
 import Voter from './Voter';
 import { find } from 'lodash';
+import { isEqual } from 'lodash';
 
 export default class Message extends Component {
 
@@ -89,7 +90,8 @@ export default class Message extends Component {
                 return <AudioUploader room={this.props.room} message={data} index={data.id}
                     replaceMessage={(data) => this.props.replaceAudioMessage(data)}></AudioUploader>
             case "vote":
-                return <Voter takeCreator={(creator) => {
+                return <Voter computedMaster={this.props.computedMaster} 
+                mention={() => this.handleReply()} takeCreator={(creator) => {
                     this.voteCreator = creator
                 }} vote={this.props.voteItem}
                     pressingIn={() => {
@@ -137,7 +139,6 @@ export default class Message extends Component {
                 this.closed = true
                 this.handleReply()
                 this.closing = 0
-                Vibration.vibrate(this.duration)
                 setTimeout(() => {
                     this.closed = false
                 }, 1000)
@@ -167,6 +168,7 @@ export default class Message extends Component {
     longPressDuration = 50
     pattern = [1000, 0, 0]
     handleReply() {
+        Vibration.vibrate(this.duration)
         //console.warn(this.props.message)
         let color = this.props.message.type === 'vote' ? "#FEFFDE" : this.state.sender ? '#DEDEDE' : '#9EEDD3'
         switch (this.props.message.type) {
@@ -223,6 +225,8 @@ export default class Message extends Component {
     shouldComponentUpdate(nextProps, nextState, nextContext) {
         return this.props.message.sent !== nextProps.message.sent ||
             this.props.received !== nextProps.received ||
+            (this.props.message.vote && this.props.message.vote.period !== nextProps.message.vote.period) || 
+            (this.props.message.vote && this.props.message.voter && this.props.message.vote.voter.length !== nextProps.vote.voter.length) ||
             this.state.loaded !== nextState.loaded ||
             this.props.message.id !== nextProps.message.id
     }
@@ -279,7 +283,7 @@ export default class Message extends Component {
         placeholderStyle = {
             ...topMostStyle, height: 100, backgroundColor: color, borderBottomLeftRadius: 10, borderColor: color,
             borderTopLeftRadius: this.state.sender ? 0 : 10,// borderWidth: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text)?.7:0:0,
-            backgroundColor: color,
+            backgroundColor: color,...shadower(2),
             alignSelf: this.isVote() ? 'center' : this.state.sender ? 'flex-start' : 'flex-end',
             borderTopRightRadius: 10,
 

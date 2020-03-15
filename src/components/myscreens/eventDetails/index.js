@@ -227,9 +227,9 @@ export default class EventDetailView extends Component {
                   <Title style={{ color: "#0A4E52", fontWeight: 'bold', alignSelf: 'flex-start' }}>{this.props.Event.about.title}</Title>
                 </View>
                 <View style={{ width: '20%' }}>
-                  <TouchableOpacity onPress={() => requestAnimationFrame(() => this.newHighlight())}>
+                  {this.props.computedMaster ? <TouchableOpacity onPress={() => requestAnimationFrame(() => this.newHighlight())}>
                     <Icon type='AntDesign' name="pluscircle" style={{ color: "#1FABAB", fontSize: 25, alignSelf: 'center', }} />
-                  </TouchableOpacity>
+                  </TouchableOpacity> : null}
                 </View>
 
               </View>
@@ -268,6 +268,7 @@ export default class EventDetailView extends Component {
                             isAreYouSureModalOpened: true,
                           })
                         }}
+                        computedMaster={this.props.computedMaster}
                         showItem={(item) => {
                           this.props.showHighlight(item)
                         }} participant={this.state.participant} parentComponent={this} item={item} ancien={true}
@@ -295,7 +296,7 @@ export default class EventDetailView extends Component {
                     <View style={{ flex: 1 }}>
                       {this.props.Event.about.description != "" ?
                         <Hyperlink onPress={(url) => { Linking.openURL(url) }} linkStyle={{ color: '#48d1cc', fontSize: 16 }}>
-                          <Text dataDetectorType={'all'} style={{ fontSize: 16, fontWeight: "500", margin: "1%", color: 'darkGray' }} delayLongPress={800}>{this.props.Event.about.description}</Text>
+                          <Text dataDetectorType={'all'} style={{ fontSize: 16, fontWeight: "500", margin: "1%", color: '#555756' }} delayLongPress={800}>{this.props.Event.about.description}</Text>
                         </Hyperlink> :
                         <Text style={{ fontWeight: "500", margin: "1%", fontSize: 30, alignSelf: 'center', marginTop: (height) / 8 }} delayLongPress={800}>{this.state.defaultDetail}</Text>}
                     </View>

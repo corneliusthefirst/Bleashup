@@ -64,7 +64,7 @@ export default class ContactListModal extends PureComponent {
                 }}>
                 {!this.state.loaded ? <Spinner size={"small"}></Spinner> : <Container style={{ marginTop: "7%" }}>
                     <View style={{ height: '5%' }}>
-                        <View style={{ ...bleashupHeaderStyle, padding: '2%', }}><Title style={{ color: 'darkGray' }}>{this.props.title ? this.props.title : ''}</Title>
+                        <View style={{ ...bleashupHeaderStyle, padding: '2%', }}><Title style={{ color: '#555756' }}>{this.props.title ? this.props.title : ''}</Title>
                         </View>
                     </View>
                     <View style={{ height: '95%' }}>

@@ -146,7 +146,7 @@ export default class votes {
             this.readFromStore().then(Votes => {
                 let index = findIndex(Votes, { id: NewVote.vote_id })
                 let previousVote = find(Votes, { id: NewVote.vote_id })
-                Votes[index].period = NewVote.new_period
+                Votes[index].period = NewVote.period
                 storage.save({ ...this.saveKey, data: Votes }).then(() => {
                     this.votes = Votes
                     resolve(previousVote)

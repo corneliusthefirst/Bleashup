@@ -74,7 +74,7 @@ export default class TasksCreation extends Component {
           recurrent: remind && !(remind.recursive_frequency.interval === 1 && remind.recursive_frequency.frequency === 'yearly'),
           members: this.props.event.participant,
           ownership: remind.creator === stores.LoginStore.user.phone && (this.props.update || remind.id === "newRemindId"),
-          currentMembers: remind && remind.members ? remind.members : [],
+          currentMembers: this.props.currentMembers && this.props.currentMembers.length > 0 ? this.props.currentMembers : remind && remind.members ? remind.members : [],
           date: remind && remind.period ? moment(remind.period).format() : moment().format(),
           title: remind && remind.period ? moment(remind.period).format() : moment().format()
         });
@@ -329,6 +329,9 @@ export default class TasksCreation extends Component {
   componentDidUpdate(prevProp, prevState) {
     let data = this.state.currentRemind.recursive_frequency.days_of_week ?
       this.state.currentRemind.recursive_frequency.days_of_week : [this.getCode(getDay(moment(this.state.currentRemind.period)))]
+    if(this.props.currentMembers !== prevProp.currentMembers){
+      this.init()
+    }
     if (this.props.remind_id !== prevProp.remind_id) {
       this.init()
     } else if (this.state.currentRemind.recursive_frequency.frequency === 'weekly' &&
@@ -473,7 +476,8 @@ export default class TasksCreation extends Component {
   }
 
   render() {
-    console.warn(this.state.currentRemind.period, 'from render', this.state.currentRemind.recursive_frequency.recurrence)
+    let defaultDate = parseInt(moment(this.state.currentRemind.period).format("x"))
+    console.warn(this.state.currentRemind.members, 'from render', this.state.currentRemind.status)
     return !this.state.mounted ? null : (
       <Modal
         isOpen={this.props.isOpen}
@@ -510,7 +514,7 @@ export default class TasksCreation extends Component {
               }} rounded><Text>{"Restore"}</Text></Button></View> : null}
               <View pointerEvents={this.state.ownership ? null : 'none'} style={{ height: height / 12, alignItems: 'center' }}>
                 <Item style={{ borderColor: 'black', width: "95%", marginTop: "4%" }} rounded>
-                  <TextInput maxLength={20} style={{ marginLeft: '2%', width: '100%',height:'100%',marginTop: '-2.5%', }} maxLength={40} value={this.state.currentRemind.title} maxLength={40} placeholder='New Remind Title' keyboardType='email-address' returnKeyType='next' inverse last
+                  <TextInput maxLength={20} style={{ marginLeft: '2%', width: '100%', height: '100%', marginTop: '-2.5%', }} maxLength={40} value={this.state.currentRemind.title} maxLength={40} placeholder='New Remind Title' keyboardType='email-address' returnKeyType='next' inverse last
                     onChangeText={(value) => this.onChangedTitle(value)} />
                 </Item>
               </View>
@@ -523,7 +527,7 @@ export default class TasksCreation extends Component {
                         active
                         type="MaterialIcons"
                         name="date-range"
-                        style={{ color: "#1FABAB",marginTop: '-10%', }}
+                        style={{ color: "#1FABAB", marginTop: '-10%', }}
                       />
                     </TouchableOpacity>
                   </View>
@@ -533,8 +537,7 @@ export default class TasksCreation extends Component {
 
                   {this.state.isDateTimePickerVisible && <DateTimePicker
                     mode="date"
-                    minimumDate={this.state.defaultDate}
-                    value={this.state.defaultDate}
+                    value={defaultDate}
                     onChange={this.handleDatePicked}
                   />
                   }
@@ -553,12 +556,16 @@ export default class TasksCreation extends Component {
                     </TouchableOpacity>
                   </View>
                   <View pointerEvents={this.state.ownership ? null : 'none'} >
-                    <Input editable={false} placeholder="select event time" 
-                    value={moment(this.state.date).format('hh:mm:s a')} style={{ color: "#696969" }} 
+                    <Input editable={false} placeholder="select event time"
+                      value={moment(this.state.date).format('hh:mm:s a')} style={{ color: "#696969" }}
+                      value={moment(this.state.date).format('hh:mm:s a')} style={{ color: "#696969" }}
+                      value={moment(this.state.date).format('hh:mm:s a')} style={{ color: "#696969" }}
+                      value={moment(this.state.date).format('hh:mm:s a')} style={{ color: "#696969" }}
+                      value={moment(this.state.date).format('hh:mm:s a')} style={{ color: "#696969" }}
                     />
                   </View>
 
-                  {this.state.show && <DateTimePicker mode="time" value={this.state.defaultTime} display="default" onChange={this.setTime} />}
+                  {this.state.show && <DateTimePicker mode="time" value={defaultDate} display="default" onChange={this.setTime} />}
 
                 </Item>
                 <Item style={{ width: "100%" }}>
@@ -625,7 +632,7 @@ export default class TasksCreation extends Component {
                                   <View pointerEvents={this.state.ownership ? null : 'none'}>
                                     <TouchableOpacity onPress={() => {
                                       this.showDateTimePicker()
-                                    }}><Text>{`on ${getMonthDay(this.state.date)}`}</Text></TouchableOpacity></View> : <Text>{this.state.currentRemind.recursive_frequency.interval === 1?'(all days)':`(${this.state.currentRemind.recursive_frequency.interval} days)`}</Text>}
+                                    }}><Text>{`on ${getMonthDay(this.state.date)}`}</Text></TouchableOpacity></View> : <Text>{this.state.currentRemind.recursive_frequency.interval === 1 ? '(all days)' : `(${this.state.currentRemind.recursive_frequency.interval} days)`}</Text>}
                           </View>
                         </View>
                       </Item>
@@ -636,7 +643,9 @@ export default class TasksCreation extends Component {
                         <Button pointerEvents={this.state.ownership ? null : 'none'} style={{ width: "90%" }} onPress={() => this.showEndatePiker()} transparent>
                           <Text>{this.state.date && this.state.currentRemind.recursive_frequency.recurrence ? `On ${moment(this.state.currentRemind.recursive_frequency.recurrence).format('dddd, MMMM Do YYYY')}` : "Select Recurrence Stop Date"}</Text>
                         </Button>
-                        {this.state.showEndatePiker ? <DateTimePicker value={new Date()}
+                        {this.state.showEndatePiker ? <DateTimePicker value={this.state.currentRemind.recursive_frequency.recurrence ?
+                          parseInt(moment(this.state.currentRemind.recursive_frequency.recurrence).format("x")) :
+                          new Date()}
                           display={this.state.display}
                           mode={this.state.mode}
                           onChange={(e, date) => this.changeEndDate(e, date)}></DateTimePicker> : null}
@@ -646,7 +655,7 @@ export default class TasksCreation extends Component {
                 <View>
                   <Item>
                     <View pointerEvents={this.state.ownership ? null : 'none'} style={{ width: '60%' }}>
-                      {this.state.currentRemind.status == "public" ?
+                      {this.state.currentRemind.status === "public" ?
                         <Button onPress={() => this.onChangedStatus()} transparent>
                           <Icon name="md-radio-button-on" //active={true}  type="Ionicons" style={{ color: "#0A4E52", alignSelf: "center", marginTop: "1%" }} 
                           />
@@ -658,10 +667,10 @@ export default class TasksCreation extends Component {
                           <Text>Private</Text>
                         </Button>}
                     </View>
-                    {this.state.currentRemind.status == "private" && !this.props.update ?
+                    {!this.props.update ?
                       <Button pointerEvents={this.state.ownership ? null : 'none'} onPress={() => { this.setState({ selectMemberState: true }) }} transparent>
                         <Icon name="ios-people" type="Ionicons" style={{ fontSize: 25 }} />
-                        <Text>Members</Text>
+                        <Text>Add members</Text>
                       </Button> : null}
                   </Item>
                   <Item pointerEvents={this.state.ownership ? null : 'none'}>
@@ -742,7 +751,8 @@ export default class TasksCreation extends Component {
                 selectMemberState: false,
               })
             }}
-              members={this.state.members} notcheckall={true} takecheckedResult={this.takecheckedResult}>
+              members={this.state.members.filter(ele => findIndex(this.state.currentMembers,
+                e => e.phone === ele.phone) < 0)} notcheckall={true} takecheckedResult={this.takecheckedResult}>
             </SelectableContactList>
           </View>
           <View style={{ position: 'absolute', }}>

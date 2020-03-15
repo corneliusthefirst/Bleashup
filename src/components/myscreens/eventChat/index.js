@@ -214,6 +214,7 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
       addMembers={() => this.props.addMembers()}
       removeMembers={() => this.props.removeMembers()}
       leave={() => this.props.leave()}
+      computedMaster={this.props.computedMaster}
       generallyMember={this.props.generallyMember}
       publish={() => this.props.publish()}
       room_type={this.props.room_type}
@@ -223,6 +224,7 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
       newMessageNumber={this.state.new_messages.length}
       showContacts={this.props.showContacts}
       showMembers={() => this.props.showMembers()}
+      addRemind={this.props.addRemind}
       firebaseRoom={this.props.roomID} // relation_id
       members={this.props.members} // relation_members
       activity_id={this.props.activity_id} //reloation

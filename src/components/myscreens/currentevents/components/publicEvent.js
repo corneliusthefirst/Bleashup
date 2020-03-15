@@ -314,7 +314,7 @@ class PublicEvent extends Component {
                   {...this.props}></TitleView> : null}
               </View>
               <View style={{ width: '5%',justifyContent: 'center', alignItems: 'center', }}>
-                <Icon onPress={() => this.props.showActions(this.props.Event.id)} type="Entypo" style={{ fontSize: 24, color: "darkGray"}} name="dots-three-vertical"></Icon>
+                <Icon onPress={() => this.props.showActions(this.props.Event.id)} type="Entypo" style={{ fontSize: 24, color: "#555756"}} name="dots-three-vertical"></Icon>
               </View>
             </View>
           </CardItem>

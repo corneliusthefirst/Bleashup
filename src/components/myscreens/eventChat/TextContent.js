@@ -34,7 +34,7 @@ export default class TextContent extends Component {
                             justifyContent: 'center',
                             marginLeft: "2%",
                             fontSize: this.fontSizeFormular(),
-                            color: 'darkGray'
+                            color: '#555756'
                             //backgroundColor: this.state.sender ? '#FFBFB2' : '#C1FFF2',
                         }}>
                             {this.props.text/*this.props.text.slice(0, this.state.splicer)}{"  "}{this.props.text.length >= 

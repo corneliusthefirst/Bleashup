@@ -48,7 +48,7 @@ export default class Voter extends Component {
         this.props.vote(index, this.props.message.vote)
     }
     returnOption(item, index) {
-        return this.props.message.vote.always_show || !this.hasVoted() ? this.returnOptionWithCount(item, index) : this.returnOptionWithoutCount(item, index)
+        return this.props.message.vote.always_show || !this.hasVoted() || (this.props.message.vote.period && dateDiff({ recurrence: this.props.message.vote.period }) > 0) ? this.returnOptionWithCount(item, index) : this.returnOptionWithoutCount(item, index)
     }
     creator = stores.LoginStore.user.phone === this.props.message.vote.creator
     hasVoted() {
@@ -66,7 +66,7 @@ export default class Voter extends Component {
             >{`${labler(index)}.`}</Text></View>
             <View style={{ width: '78%', height: '80%', }}>
                 <View style={{ width: '100%' }}>
-                    <Text style={{ color: 'darkGray', fontSize: 14 }} note>{`${item.name}    ${this.calculateVotePercentage(item.vote_count, 0)}%`}</Text>
+                    <Text style={{ color: '#555756', fontSize: 14 }} note>{`${item.name && item.name !== 'undefined' ? item.name : "none"}    ${this.calculateVotePercentage(item.vote_count, 0)}%`}</Text>
                     <View style={{ flexDirection: 'row', height: '60%' }}>
                         <View style={{
                             height: '110%', ...shadower(2),
@@ -88,9 +88,9 @@ export default class Voter extends Component {
                 </View>
             </View>
             <View style={{ width: '11%', justifyContent: 'center', alignSelf: 'center', marginLeft: '1%', }}>
-                {this.hasVoted() || dateDiff({ period: this.props.message.vote.period }) <= 0 ? <Icon onPress={() => this.vote(item.index)} name="vote-yea"
-                    style={{ alignSelf: 'flex-end', marginTop: '25%', color: 'darkGray' }}
-                    type={"FontAwesome5"}></Icon> : null}
+                {!this.hasVoted() || dateDiff({ recurrence: this.props.message.vote.period }) > 0 ? null : <Icon onPress={() => this.vote(item.index)} name="vote-yea"
+                    style={{ alignSelf: 'flex-end', marginTop: '25%', color: '#555756' }}
+                    type={"FontAwesome5"}></Icon>}
             </View>
         </View>
     }
@@ -106,37 +106,47 @@ export default class Voter extends Component {
             >{`${labler(index)}.`}</Text></View>
             <View style={{ width: '75%', height: '100%', flexDirection: 'row', }}>
                 <View style={{ width: '100%', justifyContent: 'center' }}>
-                    <Text style={{ color: '#1FABAB', fontWight: 'bold', fontSize: 24 }} >{`${item.name} `}</Text>
+                    <Text style={{ color: '#1FABAB', fontWight: 'bold', fontSize: 24 }} >{`${item.name && item.name !== 'undefined' ? item.name : 'none'} `}</Text>
                 </View>
             </View>
             <View style={{ width: '15%', justifyContent: 'center', alignItems: 'center', }}>
-                {this.hasVoted() || dateDiff({period:this.props.message.vote.period}) <=0 ? <Icon onPress={() => this.vote(item.index)} name="vote-yea"
-                    style={{ alignSelf: 'center', marginTop: '50%', color: 'darkGray' }}
-                    type={"FontAwesome5"}></Icon> : null}
+                {!this.hasVoted() || dateDiff({ recurrence: this.props.message.vote.period }) > 0 ? null : <Icon onPress={() => this.vote(item.index)} name="vote-yea"
+                    style={{ alignSelf: 'center', marginTop: '50%', color: '#555756' }}
+                    type={"FontAwesome5"}></Icon>}
             </View>
         </View>
+    }
+    crerator = null
+    reply() {
+        this.props.mention(this.props.message.vote, this.creator)
+    }
+    takeCreator(creator) {
+        this.creator = creator
     }
     render() {
         return !this.state.loaded ? <Spinner size={"small"}></Spinner> : <View style={{ margin: '1%', backgroundColor: '#FEFFDE', }}>
             <View style={{ alignSelf: 'center', margin: '2%', flexDirection: 'row', }}>
-                <View style={{ width: '80%' }}>
+                <View style={{ width: '75%' }}>
                     <Text style={{
                         alignSelf: 'center',
                         fontWeight: 'bold',
                         fontSize: 21,
                     }}>{this.props.message.vote.title}</Text>
                 </View>
-                <View style={{ flexDirection: 'row', width: '20%' }}><View style={{ width: '50%' }}><Icon
-                    style={{ color: 'darkGray', }}
-                    onPress={() => {
-                        this.props.showVoters(this.props.message.vote.voter)
-                    }}
-                    name={'ios-people'} type={"Ionicons"}></Icon></View>
-                    {this.props.configurable && this.creator && <View><Icon onPress={() => this.props.updateVote(this.props.message.vote)} 
-                    style={{ color: 'darkGray', marginTop: '13%',}} name="gear"
+                <View style={{ flexDirection: 'row', width: '25%' }}>
+                    <View style={{ width: '33.33%', padding: '1%', }}><Icon onPress={() => this.reply()} name={"reply"}
+                        type={"Entypo"} style={{ color: '#555756', }}></Icon></View>
+                    {this.props.computedMaster ? <View style={{ width: '33.33%' }}><Icon
+                        style={{ color: '#555756', padding: '1%' }}
+                        onPress={() => {
+                            this.props.showVoters(this.props.message.vote.voter)
+                        }}
+                        name={'ios-people'} type={"Ionicons"}></Icon></View> : null}
+                    {this.props.configurable && this.creator && <View><Icon onPress={() => this.props.updateVote(this.props.message.vote)}
+                        style={{ color: '#555756', marginTop: '13%', }} name="gear"
                         type="EvilIcons"></Icon></View>}</View>
             </View>
-            {this.props.message.vote.period ? <View style={{ margin: '4%', alignItems: 'center', }}><Text style={{ color: dateDiff({ period: this.props.message.vote.period }) > 0 ? "gray" : "#1FABAB" }}>{`${writeDateTime({
+            {this.props.message.vote.period ? <View style={{ margin: '4%', alignItems: 'center', }}><Text style={{ color: dateDiff({ recurrence: this.props.message.vote.period }) > 0 ? "gray" : "#1FABAB" }}>{`${writeDateTime({
                 period: this.props.message.vote.period,
                 recurrence: this.props.message.vote.period
             }).replace("Starting", "Ends")}`}</Text></View> : null}
@@ -151,7 +161,7 @@ export default class Voter extends Component {
                 {this.renderOptions()}
             </View>
             <View><Creator created_at={this.props.message.vote.created_at} pressingIn={() => this.props.pressingIn ? this.props.pressingIn() : null} giveCreator={(creator) => {
-                this.props.takeCreator ? this.props.takeCreator(creator) : null
+                this.props.takeCreator ? this.props.takeCreator(creator) : this.takeCreator(creator)
             }} creator={this.props.message.vote.creator}></Creator></View>
         </View>
     }
