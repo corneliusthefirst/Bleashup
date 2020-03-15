@@ -1,5 +1,5 @@
 import moment from "moment"
-import  stores  from '../stores';
+import stores from '../stores';
 class Request {
     constructor() { }
 
@@ -8,14 +8,14 @@ class Request {
             nothing: "this request is usually empty"
         }
     }
-    recurrent_update(){
+    recurrent_update() {
         return {
-            recurrent : false,
-            frequency :'daily',
-            interval : 1,
-            recurrence : 1000,
-            days_of_week:null,
-            week_start:null
+            recurrent: false,
+            frequency: 'daily',
+            interval: 1,
+            recurrence: 1000,
+            days_of_week: null,
+            week_start: null
         }
     }
     Update() {
@@ -24,14 +24,14 @@ class Request {
             event_id: "",
             phone: "",
             notes_update: [],
-            calendar_id : "",
-            closed : false,
-            recurrent_update:this.recurrent_update(),
+            calendar_id: "",
+            closed: false,
+            recurrent_update: this.recurrent_update(),
             about_update: this.AboutUpdate(),
             participant_update: this.ParticipantUpdate(),
             location_update: this.LocationUpdate(),
             period_update: "",
-            who_can_update_update : null,
+            who_can_update_update: null,
             background_update: ""
         }
     }
@@ -96,7 +96,7 @@ class Request {
         }
     }
     Remind() {
-        return { 
+        return {
             id: 'newRemindId',
             event_id: "",
             created_at: moment().format(),
@@ -104,19 +104,19 @@ class Request {
             creator: stores.LoginStore.user.phone,
             title: '',
             description: '',
-            must_report:false,
+            must_report: false,
             confirmed: [],
             period: moment().format(),
-            recursive_frequency:{
-                interval:1,
-                frequency:'yearly',
-                recurrence:null,
-                days_of_week:null
+            recursive_frequency: {
+                interval: 1,
+                frequency: 'yearly',
+                recurrence: null,
+                days_of_week: null
             },
-            status:"public",
-            members:[],
-            donners:[],
-            isDone:false
+            status: "public",
+            members: [],
+            donners: [],
+            isDone: false
         }
     }
 
@@ -125,7 +125,7 @@ class Request {
             remind_id: ''
         }
     }
-    
+
     RemindUdate() {
         return {
             action: "",
@@ -201,23 +201,34 @@ class Request {
     }
     Vote() {
         return {
-            id: "",
+            id: "newVoteID",
             likes: 0,
             event_id: "",
+            committee_id: "",
             title: "",
+            voter:[],
             created_at: moment().format(),
             updated_at: moment().format(),
-            period: this.Period(),
-            option: [this.Option()],
+            always_show:false,
+            period: "",
+            option: [{index:0,name:'yes',vote_count:0},{index:1,name:'no',vote_count:0}],//this.supposed to be Option()
             description: "",
-            published: false,
-            creator: ""
+            published: 'private',
+            creator: stores.LoginStore.user.phone
+        }
+    }
+    goVote(){
+        return {
+            event_id:'',
+            vote_id:'',
+            option: ''
         }
     }
     Option() {
         return {
             name: "",
-            vote_number: 0
+            index: 0,
+            vote_count: 0
         }
     }
     Voter() {
@@ -236,7 +247,7 @@ class Request {
         return {
             event_id: "",
             vote_id: "",
-            period: this.Period()
+            period: ""
         }
     }
     Contribute() {
@@ -296,15 +307,16 @@ class Request {
             id: "newHighlightId",
             creator: "",
             event_id: "",
+            public_state:'public',
             created_at: moment().format(),
             updated_at: moment().format(),
             title: "",
             description: "",
             url: {
-                audio:"",
-                photo:"",
-                video:"",
-                duration:""
+                audio: "",
+                photo: "",
+                video: "",
+                duration: ""
             }
         }
     }
@@ -358,37 +370,39 @@ class Request {
             created_at: moment().format(),
             updated_at: moment().format(),
             creator_phone: stores.LoginStore.user.phone,
-            closed:false,
-            notes:[],
-            recurrent:true,
-            frequency:'yearly',
-            interval:1,
-            recurrence:moment().format(),
-            calendar_id:null,
+            closed: false,
+            notes: [],
+            recurrent: true,
+            frequency: 'yearly',
+            interval: 1,
+            recurrence: moment().format(),
+            calendar_id: null,
             about: this.About(),
-            commitee : [],
+            commitee: [],
             period: null,
             location: this.Location(),
             background: "",
-            participant: [{phone:stores.LoginStore.user.phone,
-            master:true,status:'creator',host:stores.Session.SessionStore.host}],
+            participant: [{
+                phone: stores.LoginStore.user.phone,
+                master: true,
+                status: 'creator',
+                host: stores.Session.SessionStore.host
+            }],
             likes: 0,
             reminds: [],
-            recursiveFrequency:"None",
+            recursiveFrequency: "None",
             public: false,
             votes: [],
             highlights: [],
             contributions: [],
             must_contribute: [],
-            days_of_week : null,
-            week_start : null,
-            who_can_update:'master',
-            who_can_add_posts: 'master',
-            who_can_add_reminds: 'master'
+            days_of_week: null,
+            week_start: null,
+            who_can_update: 'master',
         }
     }
     Period() {
-        return { 
+        return {
             time: this.Time(),
             date: this.Date()
         }
@@ -399,7 +413,7 @@ class Request {
             url: ""
         }
     }
-    Participant() { 
+    Participant() {
         return {
             phone: "",
             master: false,
@@ -448,8 +462,8 @@ class Request {
             host: ""
         }
     }
-    many_contact(){
-        return [{phone:"",host:""}]
+    many_contact() {
+        return [{ phone: "", host: "" }]
     }
     Field() {
         return {
@@ -482,69 +496,69 @@ class Request {
             event_id: "",
             member: [],
             name: "",
-            opened:true,
+            opened: true,
             created_at: moment().format(),
             updated_at: moment().format(),
             public_state: true
         }
     }
-    UpdateCommiteeName(){
+    UpdateCommiteeName() {
         return {
-            commitee_id:"",
-            event_id:"",
-            name:""
-        }
-    }
-    updateCommiteeState(){
-        return {
-            commitee_id:"",
-            event_id:"",
-            state:true
-        }
-    }
-    createCommitee(){
-        return {
-            event_id:"",
-            commitee:this.Commitee()
-        }
-    }
-    removeCommitee(){
-        return {
-            commitee_id:"",
-            event_id:"",
-        }
-    }
-    addCommiteeMember(){
-        return {
-            commitee_id : "",
+            commitee_id: "",
             event_id: "",
-            member:[this.Participant()]
+            name: ""
         }
     }
-    removeCommiteeMember(){
+    updateCommiteeState() {
         return {
-            commitee_id:"",
-            event_id:"",
-            member_phone:[""]
+            commitee_id: "",
+            event_id: "",
+            state: true
         }
     }
-    updateCommiteeMemberMaster(){
+    createCommitee() {
         return {
-            commitee_id:"",
-            event_id:"",
-            member_phone:"",
-            member_status : false
+            event_id: "",
+            commitee: this.Commitee()
         }
     }
-    get_commitee(){
+    removeCommitee() {
         return {
-            id:""
+            commitee_id: "",
+            event_id: "",
         }
     }
-    COEID(){
+    addCommiteeMember() {
         return {
-            commitee_id:"",
-            event_id:"",
+            commitee_id: "",
+            event_id: "",
+            member: [this.Participant()]
+        }
+    }
+    removeCommiteeMember() {
+        return {
+            commitee_id: "",
+            event_id: "",
+            member_phone: [""]
+        }
+    }
+    updateCommiteeMemberMaster() {
+        return {
+            commitee_id: "",
+            event_id: "",
+            member_phone: "",
+            member_status: false
+        }
+    }
+    get_commitee() {
+        return {
+            id: ""
+        }
+    }
+    COEID() {
+        return {
+            commitee_id: "",
+            event_id: "",
         }
     }
     ContactStat(){

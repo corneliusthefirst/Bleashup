@@ -5,6 +5,7 @@ import ImageActivityIndicator from "./myscreens/currentevents/components/imageAc
 import Likers from "./Likers";
 import { View } from "react-native"
 import { observer } from "mobx-react";
+import bleashupHeaderStyle from "../services/bleashupHeaderStyle";
 @observer export default class LikerssModal extends PureComponent {
     constructor(props) {
         super(props)
@@ -47,13 +48,16 @@ import { observer } from "mobx-react";
                     }, 100)
                 }}
                 style={{
-                    height: "97%",
-                    borderRadius: 8, backgroundColor: '#FEFFDE', width: "100%"
+                    height: "90%",
+                    width: "100%"
                 }}>
                 {this.state.loaded ? <View>
-                    <View style={{ width: "95%", margin: 4, height: 44, flexDirection: 'row', }}>
-                        <Text style={{ fontSize: 22, fontStyle: 'italic', fontWeight: 'bold', width: "80%", marginLeft: "5%", }}>{"Likers"}</Text>
-                        <Text style={{ marginTop: "3%", }} note>{this.state.likers ? this.state.likers.length : 0}{" likers"}</Text>
+                    <View style={{ width: "100%", height: 44,}}>
+                        <View style={{ flexDirection: 'row',padding: '2%',...bleashupHeaderStyle }}>
+                            <Text style={{ fontSize: 20,  fontWeight: 'bold', width: "80%", marginLeft: "5%", }}>{"Likers"}</Text>
+                            <Text style={{ marginTop: "3%", }} note>{this.state.likers ? this.state.likers.length : 0}{" likers"}</Text>
+
+                        </View>
                     </View>
                     <View style={{}}>
                         <Likers likers={!this.state.likers ? [] : this.state.likers}></Likers>

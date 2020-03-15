@@ -12,6 +12,7 @@ import CreateEvent from '../event/createEvent/CreateEvent';
 import DetailsModal from "./components/DetailsModal";
 import PhotoViewer from "../event/PhotoViewer";
 import shadower from "../../shadower";
+import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
 
 @observer export default class InvitationView extends Component {
   constructor(props) {
@@ -66,11 +67,12 @@ import shadower from "../../shadower";
   _keyExtractor = (item, index) => item.invitation_id;
   render() {
     StatusBar.setHidden(false,true)
-    return <View style={{ height: "100%", backgroundColor: "#FEFFDE" }}>
+    return <View style={{ height: "100%",}}>
       {
         this.state.loadingInvitations ?
           <Spinner></Spinner> :
           <BleashupFlatList
+            marginTop
             initialRender={this.renderPerBatch}
             renderPerBatch={this.renderPerBatch}
             //onScroll={this._onScroll}
@@ -105,10 +107,13 @@ import shadower from "../../shadower";
             }}
           >
           </BleashupFlatList>}
-      <View style={{ height: 44,padding: '2%', backgroundColor: '#FEFFDE',opacity:.8,position:'absolute', width: '100%', ...shadower(5),flexDirection: 'row', }}><View style={{width:'30%'}}><Icon type='Ionicons' 
-      name="md-arrow-round-back" style={{ color: "#1FABAB", marginLeft: "5%",fontSize: 26, }} onPress={() => {
-        this.goback()
-      }}></Icon></View><Title style={{fontWeight: 'bold',fontSize:22}}>{"Invitations"}</Title></View>
+      <View style={{ height: 44,position:'absolute', width: '100%' }}>
+      <View style={{...bleashupHeaderStyle,flexDirection: 'row',padding: '2%',}}>
+          <View style={{ width: '30%' }}><Icon type='Ionicons'
+            name="md-arrow-round-back" style={{ color: "#1FABAB", marginLeft: "5%", fontSize: 26, }} onPress={() => {
+              this.goback()
+            }}></Icon></View><Title style={{ fontWeight: 'bold', fontSize: 22 }}>{"Invitations"}</Title></View>
+      </View>
       {this.state.isActionButtonVisible ? <CreateEvent {...this.props} /> : null}
 
       {this.state.isDetailsModalOpened ? <DetailsModal event={this.state.event}

@@ -6,6 +6,7 @@ import { Spinner, Text, Button, Icon } from 'native-base';
 import { findIndex, reject } from "lodash";
 import stores from '../../../stores';
 import SelectableContactsMaster from "./SelectableContactsMaster";
+import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
 export default class InviteParticipantModal extends PureComponent {
     constructor(props) {
         super(props)
@@ -67,7 +68,7 @@ export default class InviteParticipantModal extends PureComponent {
                     stores.Contacts.getContacts().then(contacts => {
                         setTimeout(() => {
                             this.setState({
-                                contacts: contacts ? contacts.filter(ele => findIndex(this.props.participants, { phone: ele.phone }) < 0):[],
+                                contacts: contacts ? contacts.filter(ele => findIndex(this.props.participants, { phone: ele.phone }) < 0) : [],
                                 event_id: this.props.event_id,
                                 loaded: true,
                                 hideTitle: this.props.hideTitle
@@ -76,27 +77,30 @@ export default class InviteParticipantModal extends PureComponent {
                     })
                 }}
                 style={{
-                    height: "97%",
-                    borderRadius: 8, backgroundColor: '#FEFFDE', width: "100%"
+                    height: "90%",
+                    width: "100%"
                 }}>
                 <View>{this.state.loaded ? <View>
                     <View style={{
-                        width: "99%", height: 44, margin: '2%',
-                        borderBottomWidth: .8, borderColor: "#1FABAB", flexDirection: 'row',
+                        width: "100%", height: 53, 
+                        
                     }}>
-                        <View style={{ width: "80%", flexDirection: 'column', }}>
-                            <Text style={{
-                                fontWeight: 'bold', fontStyle: 'italic',
-                                fontSize: 24,
-                            }}>{"Select New Members"}</Text><Text note style={{
-                                fontSize: 14, fontStyle: 'italic', marginLeft: "3%",
-                            }}>{this.state.selected.length}{" members and "}{this.state.selected.filter(ele => ele.master == true).length}{" master"}</Text></View>
-                        <View style={{ width: "20%" }}><Button transparent>
-                            <View>
-                                <TouchableOpacity onPress={() => requestAnimationFrame(() => this.props.invite(this.state.selected))}><Icon type={"EvilIcons"} style={{ fontSize: 50, marginBottom: "6%", }} name={"sc-telegram"}></Icon>
-                                </TouchableOpacity>
-                            </View>
-                        </Button></View>
+                        <View style={{  flexDirection: 'row',...bleashupHeaderStyle,padding: '2%',}}>
+                            <View style={{ width: "80%", flexDirection: 'column', }}>
+                                <Text style={{
+                                    fontWeight: 'bold', 
+                                    fontSize: 20,
+                                }}>{"Select New Members"}</Text><Text note style={{
+                                    fontSize: 14, fontStyle: 'italic',
+                                }}>{this.state.selected.length}{" members and "}
+                                    {this.state.selected.filter(ele => ele.master == true).length}{" master"}</Text></View>
+                            <View style={{ width: "20%" }}><Button transparent>
+                                <View>
+                                    <TouchableOpacity onPress={() => requestAnimationFrame(() => this.props.invite(this.state.selected))}><Icon type={"EvilIcons"} style={{ fontSize: 50, marginBottom: "6%", }} name={"sc-telegram"}></Icon>
+                                    </TouchableOpacity>
+                                </View>
+                            </Button></View>
+                        </View>
                     </View>
                     <View style={{ height: "90%" }}>
                         <BleashupFlatList
@@ -107,8 +111,8 @@ export default class InviteParticipantModal extends PureComponent {
                             keyExtractor={this._keyExtractor}
                             dataSource={this.state.contacts}
                             renderItem={(item, index) => {
-                                this.delay = this.delay >= 15 ? 0: this.delay + 1
-                               return (<SelectableContactsMaster master={this.props.master} delay={this.delay} toggleMaster={(member) => this.toggleMaster(member)}
+                                this.delay = this.delay >= 15 ? 0 : this.delay + 1
+                                return (<SelectableContactsMaster master={this.props.master} delay={this.delay} toggleMaster={(member) => this.toggleMaster(member)}
                                     selected={member => { this.addMember(member) }}
                                     unselected={(member) => this.remove(member)}
                                     key={index} contact={item}></SelectableContactsMaster>)

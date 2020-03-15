@@ -304,6 +304,19 @@ export default class EventHighlights extends Component {
 
   }
 
+  @autobind 
+  onchangeHighLightPublicState(value){
+    this.setState({
+      currentHighlight:{...this.state.currentHighlight,public_state:value},
+      newing:!this.state.newing
+    })
+    if(this.state.update === false){
+      stores.Highlights.updateHighlightPublicState(
+        {highlight_id:this.state.currentHighlight.id,
+          public_state:value}).then((ele) => ele)
+    }
+  }
+
   @autobind
   AddHighlight() {
     var arr = new Array(32);
@@ -665,6 +678,11 @@ export default class EventHighlights extends Component {
                       onChangeText={(value) => this.onChangedDescription(value)} />
                   </View>
                 </View>
+                  <Button transparent onPress={() => {
+                    this.onchangeHighLightPublicState(this.state.currentHighlight.public_state === 'public' ? 'private' : 'public')
+                  }}><Icon name={this.state.currentHighlight.public_state === 'public' ? "radio-button-checked" :
+                    "radio-button-unchecked"} type={"MaterialIcons"}></Icon>
+                    <Text>{`${this.state.currentHighlight.public_state}`}</Text></Button>
                 <View style={{
                   height: height / 10,
                   justifyContent: 'space-between',

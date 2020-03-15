@@ -111,7 +111,7 @@ export default class CurrentEvents extends Component {
     }
 
     delay = 0
-    renderPerbatch = 3
+    renderPerbatch = 10
     componentDidMount() {
         //  let id1="cc28b850-2555-11ea-9234-4fbde55a1fd4";
         //let id1="e761ac10-252f-11ea-9234-dd23f4cef77f"
@@ -184,7 +184,7 @@ export default class CurrentEvents extends Component {
                     }}
                     firstIndex={0}
                     renderPerBatch={this.renderPerbatch}
-                    initialRender={this.renderPerbatch}
+                    initialRender={3}
                     numberOfItems={this.props.data.length}
                 >
                 </BleashupFlatList>

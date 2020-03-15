@@ -9,6 +9,7 @@ import SelectableContactsMaster from "./SelectableContactsMaster";
 import SelectableProfileWithOptions from './SelectableProfileWithOption';
 import emitter from '../../../services/eventEmiter';
 import CacheImages from '../../CacheImages';
+import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
 export default class ManageMembersModal extends PureComponent {
     constructor(props) {
         super(props)
@@ -80,7 +81,7 @@ export default class ManageMembersModal extends PureComponent {
                         setTimeout(() => {
                             this.setState({
                                 contacts: uniqBy(this.props.participants, "phone").filter(ele => !Array.isArray(ele) && ele && ele.phone
-                                 !== stores.LoginStore.user.phone),
+                                    !== stores.LoginStore.user.phone),
                                 event_id: this.props.event_id,
                                 loaded: true,
                                 hideTitle: this.props.hideTitle
@@ -89,21 +90,29 @@ export default class ManageMembersModal extends PureComponent {
                     })
                 }}
                 style={{
-                    height: "97%",
-                    borderRadius: 8, backgroundColor: '#FEFFDE', width: "100%"
+                    height: "90%",
+                    borderRadius: 8,borderTopLeftRadius: 0,borderTopRightRadius: 0,  width: "100%"
                 }}>
                 <View>{this.state.loaded ? <View>
                     <View style={{
-                        width: "99%", height: 44, margin: '2%',
-                        borderBottomWidth: .8, borderColor: "#1FABAB", flexDirection: 'row',
-                    }}><CacheImages source={{uri:stores.LoginStore.user.profile}} thumbnails small></CacheImages><Text style={{
-                        fontWeight: 'bold', fontStyle: 'italic',marginLeft: "2%",
-                        fontSize: 24, width: "65%"
-                    }}>{"Manage Participant"}</Text>{this.state.selected.length> 0 && this.props.master ?
-                        <TouchableOpacity onPress={() => requestAnimationFrame(() => this.apply())}><View style={{ flexDirection: 'row', marginTop: "2%", }}><Icon name={"trash"}
-                            type={"EvilIcons"} style={{ color: "red", fontSize: 40, }}></Icon>
-                            <Text style={{ fontStyle: 'italic', color: "red", fontWeight: 'bold', marginTop: "3%", }}>{"Ban"}</Text></View>
-                        </TouchableOpacity> : null}</View>
+                        width: "100%", height: 53,
+                    }}>
+                        <View style={{
+                            flexDirection: 'row', ...bleashupHeaderStyle, padding: '2%',
+                        }}>
+                            <View style={{flexDirection: 'row',width:'70%',alignItems: 'center',}}><CacheImages source={{ uri: stores.LoginStore.user.profile }} thumbnails small></CacheImages><Text style={{
+                                fontWeight: 'bold', fontStyle: 'italic', marginLeft: "2%",
+                                fontSize: 20, width: "65%"
+                            }}>{"Manage Participant"}</Text></View>
+                            <View style={{width:'30%'}}>
+                                {this.state.selected.length > 0 && this.props.master ?
+                                    <TouchableOpacity onPress={() => requestAnimationFrame(() => this.apply())}><View style={{ flexDirection: 'row', marginTop: "2%", }}><Icon name={"trash"}
+                                        type={"EvilIcons"} style={{ color: "red", fontSize: 40, }}></Icon>
+                                        <Text style={{ fontStyle: 'italic', color: "red", fontWeight: 'bold', marginTop: "3%", }}>{"Ban"}</Text></View>
+                                    </TouchableOpacity> : null}
+                            </View>
+                        </View>
+                    </View>
                     <View style={{ height: "90%" }}>
                         <BleashupFlatList
                             firstIndex={0}
@@ -112,11 +121,11 @@ export default class ManageMembersModal extends PureComponent {
                             numberOfItems={this.state.contacts.length}
                             keyExtractor={this._keyExtractor}
                             dataSource={this.state.contacts}
-                            renderItem={(item, index) =>{
-                                this.delay = this.delay >= 15?0:this.delay + 1
-                               return (<SelectableProfileWithOptions delay={this.delay} toggleMaster={(member) => this.toggleMaster(member)}
+                            renderItem={(item, index) => {
+                                this.delay = this.delay >= 15 ? 0 : this.delay + 1
+                                return (<SelectableProfileWithOptions delay={this.delay} toggleMaster={(member) => this.toggleMaster(member)}
                                     selected={member => { this.addMember(member) }}
-                                    changeMasterState={(newState) => this.props.changeMasterState(newState) }
+                                    changeMasterState={(newState) => this.props.changeMasterState(newState)}
                                     checkActivity={(member) => this.props.checkActivity(member)}
                                     creator={this.props.creator}
                                     mainMaster={this.props.master}

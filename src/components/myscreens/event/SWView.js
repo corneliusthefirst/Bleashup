@@ -203,7 +203,7 @@ export default class SWView extends Component {
                                     marginTop: "5%",
                                     padding: '1%',
                                     height:300,
-                                    width: "25%", ...shadower(3),
+                                    width: "25%", ...shadower(1),
                                     backgroundColor: '#FEFFDE',
                                     borderRadius: 12
                                 }}>
@@ -236,7 +236,7 @@ export default class SWView extends Component {
                                     removeMember={(id, members) => { this.props.removeMember(id, members) }}
                                     addMembers={(id, currentMembers) => { this.props.addMembers(id, currentMembers) }}
                                     publishCommitee={(id, state) => { this.props.publishCommitee(id, state) }}
-                                    editName={(newName, id) => this.props.editName(newName, id)}
+                                    editName={this.props.editName}
                                     swapChats={(commitee) => { this.props.swapChats(commitee) }} phone={this.props.phone}
                                     commitees={this.props.commitees}
                                     event_id={this.props.event.id}></Commitee>

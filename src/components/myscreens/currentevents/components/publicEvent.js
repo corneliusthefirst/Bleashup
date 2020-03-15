@@ -116,7 +116,7 @@ class PublicEvent extends Component {
             join={() => this.join()}
             hide={() => this.hide()} {...this.props} ></SwipeOutView >,
           //autoClose: true,
-          backgroundColor: "transparent",
+          backgroundColor: "white",
         }
       ],
     }
@@ -207,7 +207,7 @@ class PublicEvent extends Component {
     })
   }
   join() {
-    if (findIndex(this.props.Event.participant,{phone:stores.LoginStore.user.phone})) {
+    if (findIndex(this.props.Event.participant, { phone: stores.LoginStore.user.phone })) {
       if (this.props.Event.new) {
         stores.Events.markAsSeen(this.props.Event.id).then(() => {
         })
@@ -271,9 +271,9 @@ class PublicEvent extends Component {
   }
   render() {
     //emitter.emit('notify', "santerss") 
-    return (this.state.isMount ? <View style={{ width: "100%", paddingLeft: '3%',paddingRight: '3%', alignSelf: 'center', }}>
+    return (this.state.isMount ? <View style={{ width: "100%", paddingLeft: '2%', paddingRight: '2%', alignSelf: 'center', }}>
       <Swipeout {...this.props} onOpen={() => this.openSwipeOut()} onClose={() => this.onCloseSwipeout()} style={{
-        width: "100%", ...shadower(3),
+        width: "100%", ...shadower(1),
         backgroundColor: this.props.Event.new ? "#cdfcfc" : null
       }}
         autoClose={true}
@@ -285,7 +285,7 @@ class PublicEvent extends Component {
           }}
           bordered
         >
-          <CardItem
+          {/*<CardItem
             style={{
               paddingBottom: 1,
               paddingTop: 1,
@@ -300,17 +300,23 @@ class PublicEvent extends Component {
               </View> : null}
             </Left>
             <Right>
-              <Button onPress={() => this.props.showActions(this.props.Event.id)} transparent>
-                <Icon type="Entypo" style={{ fontSize: 24, }} name="dots-three-vertical"></Icon>
+              <Button  transparent>
               </Button>
             </Right>
-          </CardItem>
+                </CardItem>*/}
           <CardItem style={{
             marginLeft: '2%',
             marginBottom: '1%',
           }}>
-            {this.state.isMount ? <TitleView openDetail={() => this.props.openDetails(this.props.Event)} join={() => this.join()} joint={this.state.joint} seen={() => this.markAsSeen()}
-              {...this.props}></TitleView> : null}
+            <View style={{ flexDirection: 'row', width: '100%' }}>
+              <View style={{ width: '95%' }}>
+                {this.state.isMount ? <TitleView openDetail={() => this.props.openDetails(this.props.Event)} join={() => this.join()} joint={this.state.joint} seen={() => this.markAsSeen()}
+                  {...this.props}></TitleView> : null}
+              </View>
+              <View style={{ width: '5%',justifyContent: 'center', alignItems: 'center', }}>
+                <Icon onPress={() => this.props.showActions(this.props.Event.id)} type="Entypo" style={{ fontSize: 24, color: "#555756"}} name="dots-three-vertical"></Icon>
+              </View>
+            </View>
           </CardItem>
           <CardItem
             style={{
@@ -322,24 +328,25 @@ class PublicEvent extends Component {
             }}
             cardBody
           >
-          <View style={{flexDirection: 'row',}}>
-              <View style={{ width: '65%' }}>{this.state.isMount ? <View style={{ alignSelf: 'flex-start' }}><CardItem 
+            <View style={{ flexDirection: 'row', }}>
+              <View style={{ width: '65%' }}>{this.state.isMount ? <View style={{ alignSelf: 'flex-start' }}><CardItem
                 style={{
-                  ...shadower(), 
+                  ...shadower(),
                   backgroundColor: '#1FABAB',
-                  height:'90%',
+                  height: '90%',
                   width: "60%",
-                  borderRadius:5,
-                  marginLeft: "4%" }}><PhotoView
-               navigation={this.props.navigation} renderDelay={this.props.renderDelay} showPhoto={(url) => url ?
-                this.showPhoto(url) : null} joined={() => this.join()}
-                isToBeJoint hasJoin={this.props.Event.joint || this.state.joint} onOpen={() => this.onOpenPhotoModal()} style={{
-                  marginLeft: '-1%',
-                }} photo={this.props.Event.background} event_id={this.props.Event.id} width={170} height={100} borderRadius={6} />
+                  borderRadius: 5,
+                  marginLeft: "4%"
+                }}><PhotoView
+                  navigation={this.props.navigation} renderDelay={this.props.renderDelay} showPhoto={(url) => url ?
+                    this.showPhoto(url) : null} joined={() => this.join()}
+                  isToBeJoint hasJoin={this.props.Event.joint || this.state.joint} onOpen={() => this.onOpenPhotoModal()} style={{
+                    marginLeft: '-1%',
+                  }} photo={this.props.Event.background} event_id={this.props.Event.id} width={170} height={100} borderRadius={6} />
               </CardItem></View> : null}</View>
-              {this.state.isMount && this.props.Event.location.string ?<View style={{alignSelf: 'flex-start',width:'40%'}}><MapView card 
+              {this.state.isMount && this.props.Event.location.string ? <View style={{ alignSelf: 'flex-start', width: '40%' }}><MapView card
                 location={this.props.Event.location.string}></MapView></View> : null}
-          </View>
+            </View>
           </CardItem>
           <CardItem>
             {this.state.isMount ? <Options seen={() => this.markAsSeen()} {...this.props}></Options> : null}
@@ -356,8 +363,8 @@ class PublicEvent extends Component {
           </Footer>
         </Card>
       </Swipeout>
-    </View> : <Card style={{ height: 315, padding: '1%', margin: '1%', alignSelf: 'center', width: '97%' }}>
-      </Card>)
+    </View> : <View style={{ paddingLeft: '2%', paddingRight: '2%', }}><Card style={{ height: 315, padding: '1%', margin: '1%', alignSelf: 'center', width: '97%' }}></Card></View>
+    )
   }
 }
 export default PublicEvent

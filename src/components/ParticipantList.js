@@ -7,6 +7,7 @@ import UserService from "../services/userHttpServices"
 import ProfileView from "./myscreens/invitations/components/ProfileView";
 import BleashupFlatList from './BleashupFlatList';
 import Menu, { MenuDivider, MenuItem } from 'react-native-material-menu';
+import bleashupHeaderStyle from "../services/bleashupHeaderStyle";
 
 export default class ParticipantList extends Component {
 
@@ -24,7 +25,7 @@ export default class ParticipantList extends Component {
         return nextState.isOpen !== this.state.isOpen || nextState.isloaded !== this.state.isloaded ? true : false
     }
     writeParticant(participant) {
-        return this.props.creator === participant.phone ? "creator" : participant.master == true ? "Master" : "Simple Member"
+        return this.props.creator === participant.phone ? "creator" : participant.master == true ? "Master" : participant.master && participant.master !== "undefined" ? "Simple Member" : ""
     }
     componentDidMount() {
         setTimeout(() => {
@@ -48,9 +49,11 @@ export default class ParticipantList extends Component {
     _keyExtractor = (item, index) => item.phone
     render() {
         return <View>
-            <View style={{ margin: '2%', flexDirection: 'row', height: 53 }}>
-                <Text style={{ fontWeight: "bold", fontSize: 22, width: "70%" }}>{this.props.hide ? "" : "Participants List"}</Text>
-                <Text style={{ marginTop: "1%", }} note>{this.state.participants ? this.state.participants.filter(ele => ele.phone).length : 0}{" member(s)"}</Text>
+            <View style={{ height: 53 }}>
+                <View style={{ padding: '3%', flexDirection: 'row', ...bleashupHeaderStyle }}>
+                    <Text style={{ fontWeight: "bold", fontSize: 20, width: "70%" }}>{this.props.hide ? "" : "Participants List"}</Text>
+                    <Text style={{ marginTop: "1%", }} note>{this.state.participants ? this.state.participants.length : 0}{" member(s)"}</Text>
+                </View>
             </View>
             {this.state.isloaded ? (
                 <View>

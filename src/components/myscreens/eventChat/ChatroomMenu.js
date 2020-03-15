@@ -72,22 +72,18 @@ export default class ChatroomMenu extends Component {
                     style={{ backgroundColor: "#FEFFDE" }}
                     ref={this.setMenuRef}
                     button={<Icon style={{
-                        color: "darkGray",
-                        fontSize: 25,
-                        marginTop: '10%'
-                    }} onPress={this.showMenu} name="dots-three-vertical" type="Entypo"></Icon>}
+                        color: "#1FABAB",
+                    }} onPress={this.showMenu} name="gear" type="EvilIcons"></Icon>}
                 >
-                    <MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
+                    <View><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
                         this.hideMenu()
                         return this.props.showMembers()
                     }
-                    }>View Members</MenuItem>
-                    {this.props.roomID == this.props.eventID ? null : !this.props.master ? null :
-                        <View><MenuDivider color="#1FABAB" /><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
-                            this.hideMenu()
-                            this.props.addMembers()
-                        }}>Add Members</MenuItem>
-                            <MenuDivider color="#1FABAB" /></View>}
+                    }>View Members</MenuItem></View>
+                    <View><MenuDivider color="#1FABAB" /><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
+                        this.hideMenu()
+                        this.props.showRoomMedia()
+                    }}>Media</MenuItem><MenuDivider color="#1FABAB" /></View>
                     {this.props.roomID == this.props.eventID ? null : !this.props.master ? null : <View>
                         <MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
                             this.hideMenu()
@@ -101,14 +97,14 @@ export default class ChatroomMenu extends Component {
                         }}>{this.state.opened ? "Close Committee" : "Open Committee"}</MenuItem>
                             <MenuDivider color="#1FABAB" /></View>}
                     {this.props.roomID === this.props.eventID ? null : !this.props.master ? null :
-                        <View><MenuItem textStyle={{ color: "green" }} onPress={() => {
+                        <View><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
                             this.hideMenu()
                             this.state.public ? this.props.publishCommitee() : this.props.publishCommitee()
                         }}>{this.props.roomID == this.props.eventID ? null : this.state.public ?
                             "Unpublish Committee" : "Publish Committee"}</MenuItem>
                             <MenuDivider color="#1FABAB" /></View>}
                     {this.props.roomID == this.props.eventID ? null :
-                        <View><MenuItem textStyle={{ color: "green" }} onPress={() => {
+                        <View><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
                             this.hideMenu()
                             this.props.leaveCommitee()
                         }}>{"Leave Committee"}</MenuItem>

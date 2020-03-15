@@ -24,6 +24,8 @@ import NewSeparator from './NewSeparator';
 import moment from 'moment';
 import shadower from '../../shadower';
 import Voter from './Voter';
+import { find } from 'lodash';
+import { isEqual } from 'lodash';
 
 export default class Message extends Component {
 
@@ -34,7 +36,9 @@ export default class Message extends Component {
             disabledSwipeout: true,
             openRight: true,
             time: "",
-            sender_name: this.props.message.sender.nickname,
+            sender_name: this.props.message &&
+                this.props.message.sender &&
+                this.props.message.sender.nickname,
             sender: !(this.props.message.sender.phone == this.props.user),
             different: this.props.PreviousSenderPhone !== this.props.message.sender.phone
                 && !(this.props.message.sender.phone == this.props.user),
@@ -86,13 +90,28 @@ export default class Message extends Component {
                 return <AudioUploader room={this.props.room} message={data} index={data.id}
                     replaceMessage={(data) => this.props.replaceAudioMessage(data)}></AudioUploader>
             case "vote":
-                return <Voter voteItem={this.props.voteItem} message={data} room={this.props.room} index={data.id}></Voter>
+                return <Voter computedMaster={this.props.computedMaster}
+                    mention={() => this.handleReply()} takeCreator={(creator) => {
+                        this.voteCreator = creator
+                    }} vote={this.props.voteItem}
+                    pressingIn={() => {
+                        this.replying = true
+                    }}
+                    showVoters={this.props.showVoters}
+                    message={{
+                        ...data,
+                        vote: {
+                            ...this.props.votes &&
+                            find(this.props.votes, { id: data.vote.id }), option: data.vote.option
+                        }
+                    }}
+                    room={this.props.room} index={data.id}></Voter>
             default:
                 return null
         }
     }
+    voteCreator = null
     componentDidMount() {
-        console.warn(this.props.message.sender.phone, this.props.user, this.props.PreviousSenderPhone)
         setTimeout(() => {
             this.setState({
                 loaded: true
@@ -120,7 +139,6 @@ export default class Message extends Component {
                 this.closed = true
                 this.handleReply()
                 this.closing = 0
-                Vibration.vibrate(this.duration)
                 setTimeout(() => {
                     this.closed = false
                 }, 1000)
@@ -150,6 +168,7 @@ export default class Message extends Component {
     longPressDuration = 50
     pattern = [1000, 0, 0]
     handleReply() {
+        Vibration.vibrate(this.duration)
         //console.warn(this.props.message)
         let color = this.props.message.type === 'vote' ? "#FEFFDE" : this.state.sender ? '#DEDEDE' : '#9EEDD3'
         switch (this.props.message.type) {
@@ -187,20 +206,44 @@ export default class Message extends Component {
                 tempMessage.sourcer = this.props.message.photo
                 this.props.replying(tempMessage)
                 break;
+            case 'vote':
+                let vote = this.props.votes && this.props.votes.length > 0 && this.props.message.vote &&
+                    find(this.props.votes, { id: this.props.message.vote.id })
+                this.props.replying({
+                    id: vote.id,
+                    type_extern: 'Votes',
+                    sourcer: this.voteCreator.profile,
+                    title: `${vote.title} : \n ${vote.description}`,
+                    replyer_phone: this.props.user.phone,
+                })
+                break;
             default:
                 Toast.show({ text: 'unable to reply for unsent messages' })
                 break
         }
     }
+    prevVote = null
     shouldComponentUpdate(nextProps, nextState, nextContext) {
+        peVote = this.prevVote ? JSON.parse(this.prevVote) : this.props.votes 
+        && this.props.votes.length > 0 && this.props.message.vote &&
+            find(this.props.votes, { id: this.props.message.vote.id })
+        newVote = nextProps.votes && nextProps.votes.length > 0 && nextProps.message.vote && 
+            find(nextProps.votes, { id: nextProps.message.vote.id })
+        let voter = (peVote && newVote && peVote.voter && newVote.voter &&
+            newVote.voter.length !== peVote.voter.length)
+        let votePeriod = (peVote && newVote && peVote.period !== newVote.period)
+        if (voter || votePeriod) {
+            this.prevVote = JSON.stringify(newVote)
+        }
         return this.props.message.sent !== nextProps.message.sent ||
             this.props.received !== nextProps.received ||
+            voter || votePeriod ||
             this.state.loaded !== nextState.loaded ||
             this.props.message.id !== nextProps.message.id
     }
     iconStyles = {
         fontSize: 12,
-        color: "#1fafba",
+        color: "#1FABAB",
         marginLeft: 5,
         paddingTop: 1,
         //marginTop: "-2%",
@@ -251,7 +294,7 @@ export default class Message extends Component {
         placeholderStyle = {
             ...topMostStyle, height: 100, backgroundColor: color, borderBottomLeftRadius: 10, borderColor: color,
             borderTopLeftRadius: this.state.sender ? 0 : 10,// borderWidth: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text)?.7:0:0,
-            backgroundColor: color,
+            backgroundColor: color, ...shadower(2),
             alignSelf: this.isVote() ? 'center' : this.state.sender ? 'flex-start' : 'flex-end',
             borderTopRightRadius: 10,
 

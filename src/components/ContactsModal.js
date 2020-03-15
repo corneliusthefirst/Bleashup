@@ -36,11 +36,11 @@ import Contacts from './Contacts';
                     })
                 }}
                 style={{
-                    height: "97%",
-                    borderRadius: 8, backgroundColor: '#FEFFDE', width: "100%"
+                    height: "90%",
+                     width: "100%"
                 }}>
                 <Container>
-                    <Contacts contacts={this.state.contacts} title={"Seen By ..."}></Contacts>
+                    <Contacts contacts={this.props.contacts} title={this.props.title ? this.props.title : "Seen By ..."}></Contacts>
                 </Container>
             </Modal>
 

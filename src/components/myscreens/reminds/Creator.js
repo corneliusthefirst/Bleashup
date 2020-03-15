@@ -10,7 +10,7 @@ export default class Creator extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            mounted:false
+            mounted: false
         }
     }
     state = {
@@ -23,16 +23,16 @@ export default class Creator extends Component {
                     mounted: true,
                     creator: creator
                 })
-               this.props.giveCreator?this.props.giveCreator(creator):null
+                this.props.giveCreator ? this.props.giveCreator(creator) : null
             })
-        },10)
+        }, 10)
     }
     render() {
         return !this.state.mounted ? null : (
             <View>
-                <TouchableOpacity onPress={ () => requestAnimationFrame(() => {
+                <TouchableOpacity onPressIn={() => this.props.pressingIn ? this.props.pressingIn() : null} onPress={() => requestAnimationFrame(() => {
                     this.setState({
-                        showProfileModal:true
+                        showProfileModal: true
                     })
                 })}>
                     <Text style={{ fontWeight: 'bold', fontSize: 11, margin: 1, }} note></Text>

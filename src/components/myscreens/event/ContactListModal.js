@@ -1,10 +1,11 @@
 import React, { PureComponent } from 'react';
 import ModalBox from 'react-native-modalbox';
-import { Container, Spinner, Title,Item } from 'native-base';
+import { Container, Spinner, Title, Item } from 'native-base';
 import BleashupFlatList from '../../BleashupFlatList';
 import ProfileView from '../invitations/components/ProfileView';
 import { TouchableOpacity, View } from 'react-native';
 import IntervalSeparator from '../reminds/IntervalSeparator';
+import bleashupHeaderStyle from '../../../services/bleashupHeaderStyle';
 
 
 
@@ -58,12 +59,13 @@ export default class ContactListModal extends PureComponent {
                     }, 100)
                 }}
                 style={{
-                    height: "97%",
-                    borderRadius: 8, backgroundColor: '#FEFFDE', width: "100%"
+                    height: "90%",
+                    borderRadius: 8,borderTopLeftRadius: 0,borderTopRightRadius: 0, backgroundColor: '#FEFFDE', width: "100%"
                 }}>
                 {!this.state.loaded ? <Spinner size={"small"}></Spinner> : <Container style={{ marginTop: "7%" }}>
                     <View style={{ height: '5%' }}>
-                        <Title style={{ color: 'darkGray' }}>{this.props.title ? this.props.title : ''}</Title>
+                        <View style={{ ...bleashupHeaderStyle, padding: '2%', }}><Title style={{ color: '#555756' }}>{this.props.title ? this.props.title : ''}</Title>
+                        </View>
                     </View>
                     <View style={{ height: '95%' }}>
                         <BleashupFlatList

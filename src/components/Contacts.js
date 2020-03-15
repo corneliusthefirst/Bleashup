@@ -8,6 +8,7 @@ import ProfileView from "./myscreens/invitations/components/ProfileView";
 import BleashupFlatList from './BleashupFlatList';
 import moment from "moment";
 import dateDisplayer from '../services/dates_displayer';
+import bleashupHeaderStyle from "../services/bleashupHeaderStyle";
 export default class Contacts extends Component {
 
     constructor(props) {
@@ -42,11 +43,13 @@ export default class Contacts extends Component {
     _keyExtractor = (item, index) => item.phone
     render() {
         return <View>
-            <Header>
-                <Title>
-                    {this.props.title}
-                </Title>
-            </Header>
+            <View style={{width:'100%',height:44}}>
+                <View style={{ ...bleashupHeaderStyle, padding: '2%', }}>
+                    <Title style={{fontWeight: 'bold',}}>
+                        {this.props.title}
+                    </Title>
+                </View>
+            </View>
             {this.state.isloaded ? (
                 <View>
                     {this.state.isEmpty ? <Text style={{
@@ -68,9 +71,9 @@ export default class Contacts extends Component {
                                     marginLeft: "40%",
                                     marginTop: "5%",
                                 }}>
-                                    <Text style={{
+                                    {item.date ? <Text style={{
                                     }} note>{dateDisplayer(moment(item.date).format("YYYY/MM/DD"))}{" at "}
-                                        {moment(item.date).format("HH:mm")}</Text>
+                                        {moment(item.date).format("HH:mm")}</Text> : null}
                                 </View>
                             </View>
                         }}

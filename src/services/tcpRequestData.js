@@ -264,6 +264,9 @@ class tcpRequestData {
   CreateVote(data, id) {
     return this.sendData("create_vote", data, id);
   }
+  RestoreVote(data,id){
+    return this.sendData("restore_vote",data,id)
+  }
 
   //My data is requestObject.Voter()
   Vote(data, id) {

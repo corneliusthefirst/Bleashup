@@ -44,13 +44,13 @@ export default class PostMenu extends Component {
                         color: "#0A4E52",
                         fontSize: 15,
                         marginTop: '10%'
-                    }} onPress={this.showMenu} name="dots-three-vertical" type="Entypo"></Icon>}
+                    }} onPress={this.showMenu} name="gear" type="EvilIcons"></Icon>}
                 >
                     <MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
                         this.hideMenu()
                         return this.props.mention()
                     }
-                    }>{"Mention"}</MenuItem>
+                    }>{"Reply"}</MenuItem>
                     {this.props.creator ?
                         <View><MenuDivider color="#1FABAB" /><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
                                 this.hideMenu()

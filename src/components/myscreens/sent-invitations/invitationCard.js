@@ -173,7 +173,7 @@ class CardListItem extends Component {
     ],
     style: {
       width: "100%",
-      backgroundColor: "#FEFFDE"
+      backgroundColor: "white"
     },
     rowId: this.props.index,
     sectionId: 1
@@ -182,7 +182,7 @@ class CardListItem extends Component {
 
 
   render() {
-    return (this.state.loading ? <Card style={{ height: 220 }}></Card> : <View style={{ width: "100%", }}>
+    return (this.state.loading ? <Card style={{ height: 220 }}></Card> : <View style={{ width: "98%",alignSelf: 'center', }}>
       <Swipeout style={{ width: "100%", }} {...this.swipeSettings}>
         <Card >
           <CardItem>

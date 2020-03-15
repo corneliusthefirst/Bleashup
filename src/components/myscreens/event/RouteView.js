@@ -56,10 +56,19 @@ export default class RouteView extends Component {
             updating: !this.state.updating
         })
     }
-    componentDidMount() {
-        emitter.on('mentioning',() => {
+    componentWillMount(){
+        emitter.on('mentioning', () => {
             this.resetCommiteeForGeneral()
         })
+        emitter.on("leave-chat", () => {
+            this.resetSelectedCommitee()
+        })
+    }
+    componentWillUnmount(){
+        emitter.off('mentioning')
+        emitter.off("leave-chat")
+    }
+    componentDidMount() {
         let phone = stores.LoginStore.user.phone.replace("00", "+");
         firebase.database().ref(`new_message/${phone}/${this.props.event_id}/new_messages`).once('value', snapshoot => {
             GState.generalNewMessages = snapshoot.val() !== null ? snapshoot.val() : []
@@ -77,32 +86,32 @@ export default class RouteView extends Component {
     render() {
         if (this.props.currentPage == "EventChat") GState.generalNewMessages = []
         return (
-            <Card style={{ height: 300, width:"100%",marginTop: "30%"}} transparent >
+            <Card style={{ height: 300, width: "100%", marginTop: "30%" }} transparent >
                 <CardItem style={{
                     height: this.height, backgroundColor: this.props.currentPage == "EventDetails" ? "#54F5CA" : "#FEFFDE",
-                    width: "100%", borderTopLeftRadius: 12, ...shadower(3)
+                    width: "100%", borderTopLeftRadius: 12, ...shadower(2)
                 }}>
                     <TouchableOpacity style={this.centerer} onPress={() => requestAnimationFrame(() => {
                         this.props.setCurrentPage("EventDetails")
                         this.resetSelectedCommitee()
                     }
                     )}>
-                        <View style={{ display: 'flex', flexDirection: 'row', width: "100%"}}>
-                            <Icon type="AntDesign" style={{ color: this.props.currentPage == "EventDetails" ? "#0A4E52" :  this.original }} name="appstore1"></Icon>
-                            <Text style={{ padding: "1%", color: this.props.currentPage == "EventDetails" ? "#0A4E52":"gray", width: "100%" }}>Details</Text>
+                        <View style={{ display: 'flex', flexDirection: 'row', width: "100%" }}>
+                            <Icon type="AntDesign" style={{ color: this.props.currentPage == "EventDetails" ? "#0A4E52" : this.original }} name="appstore1"></Icon>
+                            <Text style={{ padding: "1%", color: this.props.currentPage == "EventDetails" ? "#0A4E52" : "gray", width: "100%" }}>Details</Text>
                         </View>
                     </TouchableOpacity>
                 </CardItem>
-               <CardItem style={{
+                <CardItem style={{
                     height: this.height, backgroundColor: this.props.currentPage == "EventChat" ? "#54F5CA" : "#FEFFDE",
-                    ...shadower(3)
+                    ...shadower(2)
                 }}>
                     <TouchableOpacity style={this.centerer} onPress={() => requestAnimationFrame(() => {
                         this.props.setCurrentPage("EventChat")
                         this.resetCommiteeForGeneral()
                     })
                     }>
-                        <View style={{ display: 'flex', flexDirection: 'row', width: "100%"}}>
+                        <View style={{ display: 'flex', flexDirection: 'row', width: "100%" }}>
                             <View style={{ width: "85%", display: 'flex', flexDirection: 'row', }}><Icon type="FontAwesome" style={{ color: this.props.currentPage == "EventChat" ? "#0A4E52" : this.original }} name="group"></Icon>
                                 <Text style={{ padding: "1%", color: this.props.currentPage == "EventChat" ? "#0A4E52" : "gray", width: "100%" }}>Discusion</Text></View>
                             {GState.generalNewMessages.length > 0 ? <Badge primary><Text style={{ marginTop: "30%", }}>{GState.generalNewMessages.length}</Text></Badge> : <View></View>}
@@ -110,40 +119,40 @@ export default class RouteView extends Component {
                     </TouchableOpacity>
                 </CardItem>
                 {
-                /*<CardItem style={{
-                    height: this.height, backgroundColor: this.props.currentPage == "Highlights" ? "#54F5CA" : "#FEFFDE", shadowOpacity: 1,
-                    shadowOffset: {
-                        height: 1,
-                    },
-                    shadowRadius: 10, elevation: 6 }}>
-                    <TouchableOpacity onPress={() => requestAnimationFrame(() => {
-                        this.props.setCurrentPage("Highlights")
-                        this.resetSelectedCommitee()
-                    })}>
-                        <View style={{ display: 'flex', flexDirection: 'row', }}>
-                            <Icon type="AntDesign" style={{ color: this.props.currentPage == "Highlights" ? "#0A4E52" : this.original }} name="star"></Icon>
-                            <Text style={{ padding: "1%", fontWeight: this.props.currentPage == "Highlights" ? "bold" : 'bold', }}>HighLights</Text>
-                        </View>
-                    </TouchableOpacity>
-                </CardItem>*/
-            }
+                    /*<CardItem style={{
+                        height: this.height, backgroundColor: this.props.currentPage == "Highlights" ? "#54F5CA" : "#FEFFDE", shadowOpacity: 1,
+                        shadowOffset: {
+                            height: 1,
+                        },
+                        shadowRadius: 10, elevation: 6 }}>
+                        <TouchableOpacity onPress={() => requestAnimationFrame(() => {
+                            this.props.setCurrentPage("Highlights")
+                            this.resetSelectedCommitee()
+                        })}>
+                            <View style={{ display: 'flex', flexDirection: 'row', }}>
+                                <Icon type="AntDesign" style={{ color: this.props.currentPage == "Highlights" ? "#0A4E52" : this.original }} name="star"></Icon>
+                                <Text style={{ padding: "1%", fontWeight: this.props.currentPage == "Highlights" ? "bold" : 'bold', }}>HighLights</Text>
+                            </View>
+                        </TouchableOpacity>
+                    </CardItem>*/
+                }
                 <CardItem style={{
                     height: this.height,
                     backgroundColor: this.props.currentPage == "Reminds" ? "#54F5CA" : "#FEFFDE",
-                    ...shadower(3)
+                    ...shadower(2)
                 }} >
                     <TouchableOpacity style={this.centerer} onPress={() => requestAnimationFrame(() => {
                         this.props.setCurrentPage("Reminds")
                         this.resetSelectedCommitee()
                     })}>
-                        <View style={{ display: 'flex', flexDirection: 'row', width:"100%"}}>
+                        <View style={{ display: 'flex', flexDirection: 'row', width: "100%" }}>
                             <Icon type="Entypo" style={{ color: this.props.currentPage == "Reminds" ? "#0A4E52" : this.original }} name="bell"></Icon>
                             <Text style={{ padding: "1%", color: this.props.currentPage == "Reminds" ? "#0A4E52" : "gray", width: "100%" }}>Reminds</Text>
                         </View>
                     </TouchableOpacity>
                 </CardItem>
                 <CardItem style={{
-                    height: this.height,  borderBottomLeftRadius: 12, backgroundColor: this.props.currentPage == "ChangeLogs" ? "#54F5CA" : "#FEFFDE", ...shadower(3)
+                    height: this.height, borderBottomLeftRadius: 12, backgroundColor: this.props.currentPage == "ChangeLogs" ? "#54F5CA" : "#FEFFDE", ...shadower(2)
                 }}>
                     <TouchableOpacity style={this.centerer} onPress={() => requestAnimationFrame(() => {
                         this.props.setCurrentPage("ChangeLogs")
@@ -157,7 +166,7 @@ export default class RouteView extends Component {
                     </TouchableOpacity>
                 </CardItem>
                 {/*<CardItem style={{
-                    height: this.height, ...shadower(3),
+                    height: this.height, ...shadower(2),
                     backgroundColor: this.props.currentPage == "Votes" ? "#54F5CA" : "#FEFFDE", width: "100%"
                 }}>
                     <TouchableOpacity onPress={() => requestAnimationFrame(() => {
@@ -172,7 +181,7 @@ export default class RouteView extends Component {
                 </CardItem>*/}
                 {/*<CardItem style={{
                     height: this.height, backgroundColor: this.props.currentPage == "Contributions" ? "#54F5CA" : "#FEFFDE",
-                    ...shadower(3), borderBottomLeftRadius: 12, 
+                    ...shadower(2), borderBottomLeftRadius: 12, 
                 }}>
                     <TouchableWithoutFeedback onPress={() => requestAnimationFrame(() => {
                         this.props.setCurrentPage("Contributions")

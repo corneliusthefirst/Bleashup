@@ -61,14 +61,29 @@ see: https://github.com/wmcmahan/react-native-calendar-events/issues/12
 
 [*] implement checking base on the conditions listed above . 
 
-[ ] attarchement message ar not able to be opened af reopening the app after sending it .
+[ ] attarchement message ar not able to be opened after reopening the app after sending it .
     this is deu to a permission issues. i dought if this happens on all devices. but it 
     happened on my own. 
 
 [ ] add likes to posts.
 [ ] add and handle the concept of public and private post. 
 [ ] make sound recorder as component so that it should be working for both message and reminds report. 
-[ ] add recorder audio possibility to remind reports. 
+[ ] add recorder audio possibility to remind reports.
+[ ] ensure realtimecity in all the sub components of all individual pages. 
+    that is going to mark the difference as pro. 
+[ ] handle updates of deleted functionalities . the application should be able to handle and 
+    updates of deleted functionalities . like some create a vote while you where offline, he mad numerous 
+    updates on it and later he deleted it while you where offline . 
+    now you come online receive all the updates including the creation update . 
+    the app should be able to handle that scenario . 
+
+    the approach to solve this as follows, if a during fetching a functionlity , it does noted exist, 
+    the app will store that functionlality with deleted information, like title:'deleted vote/remind/post',
+    and providing deleted info for others . 
+    so that when the updates related to that deleted features comes they should be handle without the app 
+    crashing there by leting the current user to know that the functionlality was deleted . 
+[ ] apply default date on the datime picker implemented on votes on all the other parts of the application 
+    where date time pickers are used namely reminds settings and activity settings .
 
 [] 
     A solution needs to implemented to handle this . 

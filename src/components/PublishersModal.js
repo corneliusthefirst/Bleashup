@@ -43,12 +43,11 @@ import { observer } from "mobx-react";
                     },50)
                 }}
                 style={{
-                    height: "97%",
-                    borderRadius: 8, backgroundColor: '#FEFFDE', width: "100%"
+                    height: "90%",
+                   width: "100%"
                 }}>{this.state.loaded?
-                <Container>
                     <ContactList title={"Publishers List"} event_id={this.state.event_id}></ContactList>
-                </Container>:<Spinner size={"small"}></Spinner>}
+                :<Spinner size={"small"}></Spinner>}
             </Modal>
 
         );

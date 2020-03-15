@@ -992,6 +992,45 @@ class Request {
             }
         })
     }
+    updateHightlightPublicState(newPublicState, oldPublicState, highlightID, eventID) {
+        return new Promise((resolve, reject) => {
+            if (newPublicState !== oldPublicState) {
+                let higlightTitle = request.HUpdate();
+                higlightTitle.action = 'public_state'
+                higlightTitle.event_id = eventID
+                higlightTitle.h_id = highlightID
+                higlightTitle.new_data = newPublicState
+                tcpRequest.updateHighlight(higlightTitle, highlightID).then(JSONData => {
+                    serverEventListener.sendRequest(JSONData, highlightID).then(response => {
+                        stores.Highlights.updateHighlightPublicState({
+                            highlight_id: higlightTitle.h_id,
+                            public_state: higlightTitle.new_data
+                        }, false).then((Highlight) => {
+                            let Change = {
+                                id: uuid.v1(),
+                                title: `Update On ${Highlight.title} Post`,
+                                updated: "highlight_decription",
+                                event_id: eventID,
+                                updater: stores.LoginStore.user,
+                                changed: `Changed The Privacy Level Of ${Highlight.title} Post to`,
+                                new_value: { data: null, new_value: newPublicState },
+                                date: moment().format(),
+                                time: null
+                            }
+                            stores.ChangeLogs.addChanges(Change).then(res => {
+                            })
+                            resolve("ok")
+                        })
+                    }).catch((error) => {
+                        console.warn(error)
+                        reject(error)
+                    })
+                })
+            } else {
+                resolve()
+            }
+        })
+    }
     updateHighlightDescription(newDescription, oldDes, highlightID, eventID) {
         return new Promise((resolve, reject) => {
             if (oldDes !== newDescription) {
@@ -1085,7 +1124,13 @@ class Request {
                                 JSON.parse(highlight).url,
                                 newHighlight.id,
                                 newHighlight.event_id).then((t3) => {
-                                    resolve(t1 + t2 + t3)
+                                    this.updateHightlightPublicState(newHighlight.public_state,
+                                        JSON.parse(highlight).public_state,
+                                        newHighlight.id, newHighlight.event_id).then(t4 => {
+                                            resolve(t1 + t2 + t3 + t4)
+                                        }).catch(r => {
+                                            reject(r)
+                                        })
                                 }).catch(r => {
                                     reject(r)
                                 })

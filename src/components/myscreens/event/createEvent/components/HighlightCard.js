@@ -56,26 +56,26 @@ export default class HighlightCard extends Component {
     }, 100)
   }
 
-
+  creator = this.props.computedMaster//this.props.item.creator === this.props.phone 
   render() {
 
     return (
 
       this.state.mounted ? <Card style={{ width: width / 2 - width / 40 }}>
         <CardItem style={{ margin: 3, height: height / 30, }}>
-        <View style={{flexDirection: 'row',}}>
-          <View style={{ width: '85%' }}>
-          <Title style={{
-            fontSize: 14, color: "#0A4E52", fontWeight: 'bold',marginLeft: '2%',alignSelf: 'flex-start',
-          }}>{this.props.item.title ? this.props.item.title : ""}</Title></View>
-          <View>
-          <View style={{alignSelf: 'flex-end',marginLeft: '2%',}}>
-                <PostMenu creator={this.props.item.creator === this.props.phone } mention={() => this.props.mention(this.props.item)} delete={() => this.props.deleteHighlight(this.props.item)}
+          <View style={{ flexDirection: 'row', }}>
+            <View style={{ width: '85%' }}>
+              <Title style={{
+                fontSize: 14, color: "#0A4E52", fontWeight: 'bold', marginLeft: '2%', alignSelf: 'flex-start',
+              }}>{this.props.item.title ? this.props.item.title : ""}</Title></View>
+            <View>
+              {this.creator ? <View style={{ alignSelf: 'flex-end', marginLeft: '2%', }}>
+                <PostMenu creator={this.creator} mention={() => this.props.mention(this.props.item)} delete={() => this.props.deleteHighlight(this.props.item)}
                   update={() => this.props.update(this.props.item.id)}
                   master={this.props.participant.master}>
                 </PostMenu>
-          </View>
-          </View>
+              </View> : null}
+            </View>
           </View>
         </CardItem>
         <TouchableOpacity onPress={() => requestAnimationFrame(() => this.props.showItem(this.props.item))} >
@@ -95,7 +95,7 @@ export default class HighlightCard extends Component {
               </Icon> : null}
             </View>
           </CardItem> : null}
-          <CardItem style={{ height: this.containsMedia() ?  (height / 18) : (height / 7 ),margin: '.5%',}}>
+          <CardItem style={{ height: this.containsMedia() ? (height / 18) : (height / 7), margin: '.5%', }}>
             <Text ellipsizeMode='tail' style={{ fontSize: 12, }} numberOfLines={this.containsMedia() ? 2 : 10}>{this.props.item.description ? this.props.item.description : null}</Text>
           </CardItem>
         </TouchableOpacity>

@@ -12,17 +12,61 @@ import {
     findIndex
 } from "lodash";
 import moment from "moment";
+import request from '../services/requestObjects';
+import tcpRequest from '../services/tcpRequestData';
+import EventListener from '../services/severEventListener';
 export default class votes {
-    constructor() {}
+    constructor() { }
     @observable votes = [];
     saveKey = {
         key: "votes",
         data: []
     };
-    addVote(Vote) {
+    fetchVoteFromRemote(voteID) {
+        return new Promise((resolve, reject) => {
+            let Vid = request.VID()
+            Vid.vote_id = voteID
+            tcpRequest.getVote(Vid, voteID + "_get_vote").then(JSONData => {
+                EventListener.sendRequest(JSONData, voteID + "_get_vote").then(vote => {
+                    console.warn(vote)
+                    if (vote === 'empty' || !response) {
+                        resolve(undefined)
+                    } else {
+                        this.addVote(vote).then(() => {
+                            resolve(vote)
+                        })
+                    }
+                }).catch(() => {
+                    resolve()
+                })
+            })
+        })
+    }
+    loadVote(voteID) {
         return new Promise((resolve, reject) => {
             this.readFromStore().then(Votes => {
-                if (Votes) this.saveKey.data = uniqBy(Votes.concat([Vote]), "id");
+                if (Votes && Votes.length > 0) {
+                    let vote = find(Votes, { id: voteID })
+                    if (vote) {
+                        resolve(vote)
+                    } else {
+                        this.fetchVoteFromRemote(voteID).then((remoteVote) => {
+                            resolve(remoteVote)
+                        })
+                    }
+                } else {
+                    this.fetchVoteFromRemote(voteID).then((remoteVote) => {
+                        resolve(remoteVote)
+                    })
+                }
+            })
+        })
+    }
+    addVote(Vote) {
+        return new Promise((resolve, rejectPromise) => {
+            this.readFromStore().then(Votes => {
+                Votes = reject(Votes, { id: Vote.id })
+                if (Votes) this.saveKey.data = uniqBy([Vote, ...Votes], "id");
                 else this.saveKey.data = [Vote];
                 storage.save(this.saveKey).then(() => {
                     this.votes = this.saveKey.data;
@@ -32,51 +76,53 @@ export default class votes {
         });
     }
     removeVote(VoteID) {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve, rejectPromise) => {
             this.readFromStore().then(Votes => {
-                this.saveKey.data = reject(votes, ["id", VoteID]);
+                let vote = find(Votes, { id: VoteID })
+                this.saveKey.data = reject(votes, { id: VoteID });
                 storage.save(this.saveKey).then(() => {
                     this.votes = this.saveKey.data;
-                    resolve();
+                    resolve(vote);
                 });
             });
         });
     }
-    fetchVotes(EventID) {
+    vote({ vote_id, voter, option }) {
         return new Promise((resolve, reject) => {
-            if (this.votes) {
-                resolve(
-                    sortBy(filter(this.votes, {
-                        event_id: EventID
-                    })),
-                    "update_date"
-                );
-            } else {
-                this.readFromStore().then(Votes => {
-                    resolve(sortBy(filter(Votes, {
-                        event_id: EventID
-                    })), "update_date");
-                });
-            }
+            this.readFromStore().then(Votes => {
+                let voteIndex = findIndex(Votes, { id: vote_id })
+                let optionIndex = findIndex(Votes[voteIndex].option, { index: option })
+                Votes[voteIndex].option[optionIndex].vote_count =
+                    Votes[voteIndex].option[optionIndex].vote_count + 1
+                Votes[voteIndex].voter = uniqBy([...Votes[voteIndex].voter ? Votes[voteIndex].voter : [],
+                { phone: voter, index: option }], ['phone'])
+                Votes[voteIndex].updated_at = moment().format()
+                storage.save({ ...this.saveKey, data: Votes }).then(() => {
+                    this.votes = Votes
+                    resolve(Votes[voteIndex])
+                })
+            })
+        })
+    }
+    fetchVotes(EventID, CommitteeID) {
+        return new Promise((resolve, reject) => {
+            this.readFromStore().then(Votes => {
+                resolve(filter(Votes, {
+                    event_id: EventID,
+                    committee_id: CommitteeID
+                }));
+            });
         });
     }
     updateVoteTitle(NewVote, inform) {
         return new Promise((resolve, reject) => {
             this.readFromStore().then(Votes => {
-                let Vote = find(Votes, {
-                    id: NewVote.id
-                });
-                let index = findIndex(Votes, {
-                    id: NewVote.id
-                });
-                Vote.title = NewVote.title;
-                if (inform) Vote.title_updated = true;
-                Vote.update_date = moment.format("YYYY-MM-DD HH:mm");
-                Votes.splice(index, 1, Vote);
-                this.saveKey.data = sortBy(Votes, "update_date");
+                let index = findIndex(Votes, { id: NewVote.vote_id })
+                Votes[index].title = NewVote.new_title
+                this.saveKey.data = Votes
                 storage.save(this.saveKey).then(() => {
                     this.votes = this.saveKey.data;
-                    resolve();
+                    resolve(Votes[index]);
                 });
             });
         });
@@ -84,23 +130,12 @@ export default class votes {
     UpdateVoteDescription(NewVote, inform) {
         return new Promise((resolve, reject) => {
             this.readFromStore().then(Votes => {
-                let Vote = find(Votes, {
-                    id: NewVote.id
-                });
-                let index = findIndex(Votes, {
-                    id: NewVote.id
-                });
-                Vote.description = NewVote.description;
-                if (inform) {
-                    Vote.description_updated = true;
-                    Vote.updated = true;
-                }
-                Vote.update_date = moment.format("YYYY-MM-DD HH:mm");
-                Votes.splice(index, 1, Vote);
-                this.saveKey.data = sortBy(Votes, "update_date");
+                let index = findIndex(Votes, { id: NewVote.vote_id })
+                Votes[index].description = NewVote.new_description
+                this.saveKey.data = Votes
                 storage.save(this.saveKey).then(() => {
                     this.votes = this.saveKey.data;
-                    resolve();
+                    resolve(Votes[index]);
                 });
             });
         });
@@ -109,195 +144,68 @@ export default class votes {
     UpdateVotePeriod(NewVote, inform) {
         return new Promise((resolve, reject) => {
             this.readFromStore().then(Votes => {
-                let Vote = find(Votes, {
-                    id: NewVote.id
-                });
-                let index = findIndex(Votes, {
-                    id: NewVote.id
-                });
-                Vote.period = NewVote.period;
-                if (inform) {
-                    Vote.period_updated = true;
-                    Vote.updated = true;
-                }
-                Vote.update_date = moment.format("YYYY-MM-DD HH:mm");
-                Votes.splice(index, 1, Vote);
-                this.saveKey.data = sortBy(Votes, "update_date");
+                let index = findIndex(Votes, { id: NewVote.vote_id })
+                let previousVote = find(Votes, { id: NewVote.vote_id })
+                Votes[index].period = NewVote.period
+                storage.save({ ...this.saveKey, data: Votes }).then(() => {
+                    this.votes = Votes
+                    resolve(previousVote)
+                })
+            });
+        });
+    }
+    updateAlwayShowPercentage(newVote, inform) {
+        return new Promise((resolve, reject) => {
+            this.readFromStore().then(Votes => {
+                let index = findIndex(Votes, { id: newVote.vote_id })
+                Votes[index].always_show = newVote.new_always_show
+                this.saveKey.data = Votes
                 storage.save(this.saveKey).then(() => {
                     this.votes = this.saveKey.data;
-                    resolve();
+                    resolve(Votes[index]);
+                });
+            });
+        })
+    }
+    PublishVote(newVote, inform) {
+        return new Promise((resolve, reject) => {
+            this.readFromStore().then(Votes => {
+                let index = findIndex(Votes, { id: newVote.vote_id })
+                Votes[index].published = newVote.new_public_state
+                this.saveKey.data = Votes
+                storage.save(this.saveKey).then(() => {
+                    this.votes = this.saveKey.data;
+                    resolve(Votes[index]);
                 });
             });
         });
     }
-    PublishVote(VoteID, inform) {
+    updateVoteOptions(NewVote) {
+        console.warn("updating vote options")
         return new Promise((resolve, reject) => {
             this.readFromStore().then(Votes => {
-                let Vote = find(Votes, {
-                    id: VoteID
-                });
-                let index = findIndex(Votes, {
-                    id: VoteID
-                });
-                Vote.published = true;
-                Vote.update_date = moment.format("YYYY-MM-DD HH:mm");
-                Votes.splice(index, 1, Vote);
-                this.saveKey.data = sortBy(Votes, "update_date");
+                let index = findIndex(Votes, { id: NewVote.vote_id })
+                Votes[index].option = NewVote.new_option
+                this.saveKey.data = Votes
                 storage.save(this.saveKey).then(() => {
-                    this.votes = this.saveKey.data;
-                    resolve();
-                });
-            });
-        });
+                    this.votes = this.saveKey.data
+                    resolve(Votes[index])
+                })
+            })
+        })
     }
-    addVoteOption(NewVote, inform) {
+    clearVoteCreation() {
         return new Promise((resolve, reject) => {
-            this.readFromStore().then(Votes => {
-                let Vote = find(Votes, {
-                    id: NewVote.id
-                });
-                let index = findIndex(Votes, {
-                    id: NewVote.id
-                });
-                if (Vote.option) Vote.option = Vote.option.concat([NewVote.option]);
-                else Vote.option = [NewVote.option];
-                if (inform) {
-                    Vote.option_added = true;
-                    Vote.updated = true;
-                }
-                Vote.update_date = moment.format("YYYY-MM-DD HH:mm");
-                Votes.splice(index, 1, Vote);
-                this.saveKey.data = sortBy(Votes, "update_date");
+            this.readFromStore().then((Votes) => {
+                let index = findIndex(Votes, { id: request.Vote().id })
+                Votes[index] = request.Vote()
+                this.saveKey.data = Votes
                 storage.save(this.saveKey).then(() => {
-                    this.votes = this.saveKey.data;
-                    resolve();
-                });
-            });
-        });
-    }
-    removeVoteOption(VoteID, OptionName, inform) {
-        return new Promise((resolve, reject) => {
-            this.readFromStore().then(Votes => {
-                let Vote = find(Votes, {
-                    id: VoteID
-                });
-                let index = findIndex(Votes, {
-                    id: VoteID
-                });
-                Vote.option = reject(Vote.option, ["name", OptionName]);
-                if (inform) {
-                    Vote.option_removed = true;
-                    Vote.updated = true;
-                }
-                Vote.update_date = moment.format("YYYY-MM-DD HH:mm");
-                Votes.splice(index, 1, Vote);
-                this.saveKey.data = sortBy(Votes, "update_date");
-                storage.save(this.saveKey).then(() => {
-                    this.votes = this.saveKey.data;
-                    resolve();
-                });
-            });
-        });
-    }
-    UpdateVoteOptionName(VoteID, OptionName, NewOptionName, inform) {
-        return new Promise((resolve, reject) => {
-            this.readFromStore().then(Votes => {
-                let Vote = find(Votes, {
-                    id: VoteID
-                });
-                let index = findIndex(Votes, {
-                    id: VoteID
-                });
-                let option = find(Vote.option, {
-                    name: OptionName
-                });
-                let optionIndex = findIndex(Vote.option, {
-                    name: OptionName
-                });
-                option.name = NewOptionName;
-                Vote.option.splice(optionIndex, 1, option);
-                if (inform) {
-                    Vote.option_name_changed = true;
-                    Vote.updated = true;
-                }
-                Vote.update_date = moment.format("YYYY-MM-DD HH:mm");
-                Votes.splice(index, 1, Vote);
-                this.saveKey.data = sortBy(Votes, "update_date");
-                storage.save(this.saveKey).then(() => {
-                    this.votes = this.saveKey.data;
-                    resolve();
-                });
-            });
-        });
-    }
-    likeVote(VoteID, inform) {
-        return new Promise((resolve, reject) => {
-            this.readFromStore().then(Votes => {
-                let Vote = find(Votes, {
-                    id: VoteID
-                });
-                let index = findIndex(Votes, {
-                    id: VoteID
-                });
-                Vote.likes += 1;
-                if (inform) Vote.like_updated = true;
-                Vote.update_date = moment.format("YYYY-MM-DD HH:mm");
-                Votes.splice(index, 1, Vote);
-                this.saveKey.data = sortBy(Votes, "update_date");
-                storage.save(this.saveKey).then(() => {
-                    this.votes = this.saveKey.data;
-                    resolve();
-                });
-            });
-        });
-    }
-    unlikeVote(VoteID) {
-        return new Promise((resolve, reject) => {
-            this.readFromStore().then(Votes => {
-                let Vote = find(Votes, {
-                    id: VoteID
-                });
-                let index = findIndex(Votes, {
-                    id: VoteID
-                });
-                Vote.likes -= 1;
-                Vote.update_date = moment.format("YYYY-MM-DD HH:mm");
-                Votes.splice(index, 1, Vote);
-                this.saveKey.data = sortBy(Votes, "update_date");
-                storage.save(this.saveKey).then(() => {
-                    this.votes = this.saveKey.data;
-                    resolve();
-                });
-            });
-        });
-    }
-    votes(VoteID, OptionName, inform) {
-        return new Promise((resolve, reject) => {
-            this.readFromStore().then(Votes => {
-                let Vote = find(Votes, {
-                    id: VoteID
-                });
-                let index = findIndex(Votes, {
-                    id: VoteID
-                });
-                let option = find(Vote.option, {
-                    name: OptionName
-                });
-                let optionIndex = findIndex(Vote.option, {
-                    name: OptionName
-                });
-                option.vote_number += 1;
-                Vote.option.splice(optionIndex, 1, option);
-                Vote.voted = inform;
-                Vote.update_date = moment.format("YYYY-MM-DD HH:mm");
-                Votes.splice(index, 1, Vote);
-                this.saveKey.data = sortBy(Votes, "update_date");
-                storage.save(this.saveKey).then(() => {
-                    this.votes = this.saveKey.data;
-                    resolve();
-                });
-            });
-        });
+                    this.votes = this.saveKey.data
+                    resolve("ok")
+                })
+            })
+        })
     }
     UpdateEventVotes(EventID, NewVotes) {
         return new Promise((resolve, reject) => {

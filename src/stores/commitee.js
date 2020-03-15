@@ -1,6 +1,6 @@
 import storage from './Storage';
 import { observable } from 'mobx';
-import { reject, findIndex, uniqBy, unionBy } from "lodash"
+import { reject, findIndex, uniqBy, unionBy,find } from "lodash"
 import moment from 'moment';
 import request from '../services/requestObjects';
 import tcpRequest from '../services/tcpRequestData';
@@ -11,7 +11,7 @@ export default class commitee {
  
          })*/
         this.readFromStore().then(data => {
-
+            this.commitees = data;
         })
     }
     @observable commitees = []
@@ -66,6 +66,18 @@ export default class commitee {
                     })
                 } else {
                     resolve()
+                }
+            })
+        })
+    }
+    imIInThisCommttee(phone, committeeID) {
+        return new Promise((resolve, reject) => {
+            this.readFromStore().then(Committees => {
+                let committee = find(Committees, { id: committeeID })
+                if (findIndex(committee.member, { phone: phone }) >= 0) {
+                    resolve(true)
+                } else {
+                    resolve(false)
                 }
             })
         })

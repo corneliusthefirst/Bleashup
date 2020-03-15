@@ -32,9 +32,13 @@ export default class Reminds {
     data: []
   };
   @action addReminds(NewRemind) {
-    console.warn(NewRemind, "p")
     return new Promise((resolve, Reject) => {
       this.readFromStore().then(Reminds => {
+        if(Array.isArray(NewRemind) && NewRemind.length == 1){
+          Reminds = reject(Reminds,{id:NewRemind[0].id})
+        }else{
+          Reminds = reject(Reminds,{id:NewRemind.id})
+        }
         if (Reminds && Reminds.length > 0) Reminds = uniqBy(Array.isArray(NewRemind) ?
           NewRemind.concat(Reminds) :
           [NewRemind].concat(Reminds), "id");
@@ -95,7 +99,6 @@ export default class Reminds {
     });
   }
   @action updateCalendarID(NewRemind, alarms, inform) {
-    console.warn(NewRemind.calendar_id)
     return new Promise((resolve, Reject) => {
       this.readFromStore().then(Reminds => {
         RemindIndex = findIndex(Reminds, { id: NewRemind.remind_id });
@@ -267,7 +270,6 @@ export default class Reminds {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Reminds => {
         let index = findIndex(Reminds, { id: Remind.remind_id })
-        console.warn(Reminds[index].confirmed && Reminds[index].confirmed.length > 0 ? true : false, 'from confirm')
         Reminds[index].confirmed && Reminds[index].confirmed.length > 0 ?
           Reminds[index].confirmed =
           Array.isArray(Remind.confirmed) ?

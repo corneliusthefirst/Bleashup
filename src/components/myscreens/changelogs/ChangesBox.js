@@ -73,7 +73,7 @@ export default class ChangeBox extends Component {
                                         replyer_name: this.state.changer.nickname
 
                                     })
-                                }} style={{ color: 'darkGray' }} type="Entypo" name="reply"></Icon></View>
+                                }} style={{ color: '#555756' }} type="Entypo" name="reply"></Icon></View>
                                 <View>{!this.props.replying ? <ChangeBoxMenu
                                     master={this.props.master}
                                     change={this.props.change}
@@ -93,10 +93,10 @@ export default class ChangeBox extends Component {
                             flexDirection: 'column',
                         }}>
                             <View style={{ flexDirection: 'row', }}>
-                                <Text ellipsizeMode='tail' style={{ fontSize: 16, fontWeight: 'bold', color: 'darkGray' }}
+                                <Text ellipsizeMode='tail' style={{ fontSize: 16, fontWeight: 'bold', color: '#555756' }}
                                     numberOfLines={2}>{this.props.change.changed}</Text>
                             </View>
-                            <Text ellipsizeMode='tail' style={{ fontSize: 14, color: 'darkGray', fontStyle: 'italic', }}
+                            <Text ellipsizeMode='tail' style={{ fontSize: 14, color: '#555756', fontStyle: 'italic', }}
                                 numberOfLines={1}>{typeof this.props.change.new_value.new_value === "string"
                                     && !testForURL(this.props.change.new_value.new_value, true) ? this.props.change.new_value.new_value : ""}</Text>
                         </View>

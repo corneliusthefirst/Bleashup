@@ -9,6 +9,14 @@ import moment from 'moment';
 import { findIndex } from 'lodash';
 import CalendarServe from '../../../services/CalendarService';
 class Requester {
+    saveToCanlendar(remind,alarms){
+        if (findIndex(remind.members, { phone: stores.LoginStore.user.phone }) >= 0) {
+            CalendarServe.saveEvent(remind, alarms, 'reminds').then(calendar_id => {
+                stores.Reminds.updateCalendarID({ remind_id: remind.id, calendar_id: calendar_id }, alarms).then(() => {
+                })
+            })
+        }
+    }
     CreateRemind(Remind) {
         return new Promise((resolve, reject) => {
             tcpRequest.addRemind(Remind,
@@ -28,6 +36,7 @@ class Requester {
                                         date: moment().format(),
                                         time: null
                                     }
+                                    this.saveToCanlendar(Remind)
                                     stores.ChangeLogs.addChanges(Change).then(() => {
                                         console.warn("completed")
                                     })
@@ -349,12 +358,7 @@ class Requester {
                             date: moment().format(),
                             time: null
                         }
-                        if (findIndex(remind.members, { phone: stores.LoginStore.user.phone }) >= 0) {
-                            CalendarServe.saveEvent(remind, alarms, 'reminds').then(calendar_id => {
-                                stores.Reminds.updateCalendarID({ remind_id: remind.id, calendar_id: calendar_id }, alarms).then(() => {
-                                })
-                            })
-                        }
+                        this.saveToCanlendar(remind,alarms)
                         stores.ChangeLogs.addChanges(Change).then(() => {
                             
                         })

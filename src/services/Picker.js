@@ -15,7 +15,7 @@ class Picker {
             ImagePicker.openPicker({
                 cropping: crop ? true : false,
                 isCamera: "photo",
-                mediaType: "photo",
+                //mediaType: "photo",
                 //openCameraOnStart: true,
                 includeBase64: false,
                 returnAfterShot: true,
