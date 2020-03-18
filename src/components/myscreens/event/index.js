@@ -80,6 +80,7 @@ export default class Event extends Component {
       isManagementModalOpened: false,
       roomMembers: this.event.participant,
       working: false,
+      isChat: false,
       showNotifiation: false,
     };
     this.backHandler = null
@@ -128,7 +129,8 @@ export default class Event extends Component {
       currentRemindMembers: members
     })
   }
-  currentWidth = screenWidth * 2.7 / 3
+  currentWidth = screenWidth * 2.7/3
+  //normalWidth = 
   isOpen = this.props.navigation.getParam('isOpen') ? this.props.navigation.getParam('isOpen') : false
   renderMenu(NewMessages) {
     //console.error(this.props.navigation.getParam("Event").participant)
@@ -1242,10 +1244,11 @@ export default class Event extends Component {
     })
   }
   setCurrentPage(page, data) {
-    this.isOpen = false
+    page === "EentChat" ? this.currentWidth = screenWidth * 2.7 / 3 : this.currentWidth = screenWidth * .25
     this.setState({
       currentPage: page,
       activeMember: null,
+      isChat: page === 'EventChat' ? true : false,
       fresh: false,
       isMe: false,
       forMember: null
@@ -1257,12 +1260,15 @@ export default class Event extends Component {
   render() {
     //console.error(this.event.id)
     //console.warn(this.event.calendar_id)
+    //let currentWidth = this.state.currentPage === 'EventChat' ? this.currentWidth : this.normalWidth
     StatusBar.setHidden(false, true)
-    return (<SideMenu style={{ backgroundColor: "#FEFEDE", }} autoClosing={true} onMove={(position) => {
+    return (<SideMenu style={{ backgroundColor: "#FEFEDE", }}
+       autoClosing={true}
+       onMove={(position) => {
 
-    }} bounceBackOnOverdraw={false} onChange={(position) => {
-      this.isOpen = position
-    }} isOpen={this.isOpen} openMenuOffset={this.currentWidth}
+      }} bounceBackOnOverdraw={false} onChange={(position) => {
+        //this.isOpen = position
+      }} isOpen={this.isOpen} openMenuOffset={this.currentWidth}
       menu={<View style={{ backgroundColor: '#FEFFDE', }}><SWView
         navigateHome={() => {
           this.goback()
@@ -1303,7 +1309,7 @@ export default class Event extends Component {
         }
         }
         currentPage={this.state.currentPage}
-        width={this.currentWidth}
+        //width={this.state.isChat ? this.normalWidth : this.currentWidth}
         event={this.event}
         master={this.master}
         public={this.event.public}></SWView></View>}>

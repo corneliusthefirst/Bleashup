@@ -8,6 +8,7 @@ import PhotoViewer from '../event/PhotoViewer';
 import testForURL from '../../../services/testForURL';
 import { Thumbnail, Button, Icon } from 'native-base';
 import VideoViewer from '../highlights_details/VideoModal';
+import MediaSeparator from './MediaSeparator';
 
 export default class Video extends Component {
     constructor(props) {
@@ -32,9 +33,8 @@ export default class Video extends Component {
                 numberOfItems={this.props.video.length}
                 keyExtractor={(item, index) => item ? item.id : null}
                 renderItem={(item, index) => {
-                    console.warn("rendering itenmmm")
-                    return <Button transparent style={{ height: '100%' }} onPress={() => {
-                        console.warn("Pressing touchable")
+                    return item.type === 'date_separator' ? <MediaSeparator item={item}>
+                    </MediaSeparator> : <Button transparent style={{ height: '100%' }} onPress={() => {
                         this.setState({
                             showVideo: true,
                             created_at: item.created_at,

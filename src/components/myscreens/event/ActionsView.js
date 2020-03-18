@@ -23,7 +23,7 @@ export default class ActionsView extends Component {
     }
     render() {
         return (
-            <View style={{ height: 300, display: 'flex', flexDirection: 'column', marginTop: "6%", ...shadower() }}>
+            <View style={{ height: 300, display: 'flex', flexDirection: 'column', marginTop: "6%", ...shadower(),width:'80%' }}>
                 <View style={{ height: this.actionHeight }}>
                     <TouchableOpacity onPress={() => requestAnimationFrame(() => this.props.publish())}>
                         <Icon style={{ marginLeft: "30%", color: this.actionColor, fontSize: this.fontSize, }} type="Entypo" name="megaphone"></Icon>

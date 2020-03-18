@@ -366,7 +366,8 @@ class PublicEvent extends Component {
           </Footer>
         </Card>
       </Swipeout>
-    </View> : <View style={{ paddingLeft: '2%', paddingRight: '2%', }}><Card style={{ height: 315, padding: '1%', margin: '1%', alignSelf: 'center', width: '97%' }}></Card></View>
+    </View> : <View style={{ paddingLeft: '2%', paddingRight: '2%', }}><Card style={{ height: 230, 
+      padding: '1%', margin: '1%', alignSelf: 'center', width: '97%' }}></Card></View>
     )
   }
 }

@@ -8,6 +8,7 @@ import testForURL from '../../../services/testForURL';
 import { Thumbnail, Button, Icon, Text } from 'native-base';
 import moment from 'moment';
 import Pickers from '../../../services/Picker';
+import MediaSeparator from './MediaSeparator';
 
 export default class File extends Component {
     constructor(props) {
@@ -34,8 +35,8 @@ export default class File extends Component {
                 numberOfItems={this.props.file.length}
                 keyExtractor={(item, index) => item ? item.id : null}
                 renderItem={(item, index) => {
-                    console.warn("rendering itenmmm", item.source)
-                    return <View style={{
+                    return item.type === 'date_separator' ? <MediaSeparator item={item}>
+                    </MediaSeparator> : <View style={{
                         ...shadower(3), margin: '2%', borderRadius: 10,
                         backgroundColor: '#FEFFDE', opacity: .8, alignSelf: 'center', width: '100%',
                     }}>

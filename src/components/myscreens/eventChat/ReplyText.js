@@ -31,8 +31,9 @@ export default class ReplyText extends Component {
                     backgroundColor: this.props.color,
                     ...shadower(2), //backgroundColor: "rgba(34, 0, 0, 0.1)",
                     padding: "1%",//margin: '1%',
-                    height: 75,
-                    borderRadius: 9,
+                    minHeight: 50,
+                    maxHeight: 200,
+                    borderRadius: 5,
                 }}>
                     {
                         /*<View style={{ /*width: "5%" }}><Icon type="FontAwesome"
@@ -40,12 +41,9 @@ export default class ReplyText extends Component {
                         </View>*/
                     }
                     <View style={{/* width: "90%",*/
-                        borderLeftColor: "#1FABAF", borderLeftWidth: 5,
-                        borderBottomLeftRadius: 8, borderTopLeftRadius: 8,
-                        height: "100%", padding: '1%', width: this.props.compose ? '100%' : null,
-                        marginTop: '-.5%', marginLeft: '-.5%',
+                        width: this.props.compose ? '100%' : null,
                     }}>
-                        <View style={{ marginLeft: "2%" }}>
+                        <View style={{ margin: "1%" }}>
                             <TouchableOpacity onPressIn={() => this.props.pressingIn()} onPress={() => requestAnimationFrame(() => {
                                 this.props.reply.replyer_name && (this.props.reply.replyer_phone || this.props.reply.sender.phone) ? this.showReplyer() : null
                             })
@@ -93,9 +91,9 @@ export default class ReplyText extends Component {
                                     width: this.props.reply.sourcer ? '76%' : '98%'
                                 }}>
                                     {this.props.reply.title ? <Text ellipsizeMode='tail' numberOfLines={this.props.reply.sourcer ?
-                                        this.props.reply.replyer_name ? 3 : 4 : 4} style={{ fontWeight: 'bold', fontSize: 12, color: "#A91A84", }}>{this.props.reply.replyer_name ? this.props.reply.title : this.props.reply.title.split(': \n')[1]}</Text>
+                                        this.props.reply.replyer_name ? 8 : 10 : 10} style={{ fontWeight: 'bold', fontSize: 12, color: "#A91A84", }}>{this.props.reply.replyer_name ? this.props.reply.title : this.props.reply.title.split(': \n')[1]}</Text>
                                         : this.props.reply.text ? <Text ellipsizeMode='tail' numberOfLines={this.props.reply.sourcer ?
-                                            this.props.reply.replyer_name ? 3 : 4 : 4} style={{ color: "#81A8A0", fontSize: 12, }}>{this.props.reply.text}</Text> : null}
+                                            this.props.reply.replyer_name ? 7 : 8 : 8} style={{ color: "#81A8A0", fontSize: 12, }}>{this.props.reply.text}</Text> : null}
                                 </View>
                             </View>
                                     {this.props.reply.change_date ? <Text note>{`On: ${moment(this.props.reply.change_date).format("dddd, MMMM Do YYYY, h:mm:ss a")}`}</Text> : null}

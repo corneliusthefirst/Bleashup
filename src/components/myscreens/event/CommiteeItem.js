@@ -253,14 +253,14 @@ export default class CommiteeItem extends Component {
         switch (message.type) {
             case "text":
                 return <View style={{ display: 'flex', flexDirection: 'row', }}>
-                    <Title style={{ fontWeight: "bold", fontSize: 20, color: "#0A4E52" }}>{this.formNickName(message.sender)}{": "}</Title>
-                    <Text style={{ fontSize: 18, marginTop: "1%", }}>{message.text.slice(0, 15)}</Text>
+                    <Title style={{ fontWeight: "bold", fontSize: 16, color: "#0A4E52" }}>{this.formNickName(message.sender)}{": "}</Title>
+                    <Text style={{ fontSize: 14, marginTop: "1%", }}>{message.text.slice(0, 15)}</Text>
                 </View>
             case "photo":
                 return <View style={{ display: 'flex', flexDirection: 'row', }}>
-                    <Title style={{ fontWeight: "bold", fontSize: 20, color: "#0A4E52" }}>{this.formNickName(message.sender)}{": "}</Title>
+                    <Title style={{ fontWeight: "bold", fontSize: 16, color: "#0A4E52" }}>{this.formNickName(message.sender)}{": "}</Title>
                     <View style={{ display: 'flex', flexDirection: 'row', marginTop: "1%", }}>
-                        <Text style={{ fontSize: 18, width: "74%" }}>{message.text ? message.text.slice(0, 15) : "  "}</Text>
+                        <Text style={{ fontSize: 14, width: "74%" }}>{message.text ? message.text.slice(0, 15) : "  "}</Text>
                         <View style={{ alignSelf: 'flex-end', marginTop: "-8%", borderRadius: 8, }}>
                             {testForURL(message.photo) ?
                                 <CacheImages source={{ uri: message.photo }} thumbnails square small></CacheImages> :
@@ -270,9 +270,9 @@ export default class CommiteeItem extends Component {
                 </View>
             case "audio":
                 return <View style={{ display: 'flex', flexDirection: 'row', }}>
-                    <Title style={{ fontWeight: "bold", fontSize: 20, color: "#0A4E52" }}>{this.formNickName(message.sender)}{": "}</Title>
+                    <Title style={{ fontWeight: "bold", fontSize: 16, color: "#0A4E52" }}>{this.formNickName(message.sender)}{": "}</Title>
                     <View style={{ display: 'flex', flexDirection: 'row' }}>
-                        <Text style={{ fontSize: 18, marginLeft: "3%", marginTop: "1%", width: "70%" }}>{message.text ?
+                        <Text style={{ fontSize: 14, marginLeft: "3%", marginTop: "1%", width: "70%" }}>{message.text ?
                             message.text.slice(0, 15) + message.text.length < 15 ? "..." : "" :
                             message.duration ? this.convertToHMS(message.duration) :
                                 message.total ? this.toMB(message.total) : ""}</Text>
@@ -283,9 +283,9 @@ export default class CommiteeItem extends Component {
                 </View>
             case "video":
                 return <View style={{ display: 'flex', flexDirection: 'row', }}>
-                    <Title style={{ fontWeight: "bold", fontSize: 20, color: "#0A4E52" }}>{this.formNickName(message.sender)}{": "}</Title>
+                    <Title style={{ fontWeight: "bold", fontSize: 16, color: "#0A4E52" }}>{this.formNickName(message.sender)}{": "}</Title>
                     <View style={{ display: 'flex', flexDirection: 'row', marginTop: "1%", }}>
-                        <Text style={{ fontSize: 18, marginLeft: "3%", width: "70%" }}>{message.text ?
+                        <Text style={{ fontSize: 14, marginLeft: "3%", width: "70%" }}>{message.text ?
                             message.text.slice(0, 15) : message.duration ? message.duration : message.total ? this.toMB(message.total) : ""}</Text>
                         <View style={{ alignSelf: 'flex-end', marginTop: "-2%" }}>
                             <Icon type={"AntDesign"} name={"videocamera"} style={{ fontSize: 30, color: "#0A4E52" }}></Icon>
@@ -294,9 +294,9 @@ export default class CommiteeItem extends Component {
                 </View>
             case "attachement":
                 return <View style={{ display: 'flex', flexDirection: 'row', }}>
-                    <Title style={{ fontWeight: "bold", fontSize: 20, color: "#0A4E52" }}>{this.formNickName(message.sender)}{": "}</Title>
+                    <Title style={{ fontWeight: "bold", fontSize: 16, color: "#0A4E52" }}>{this.formNickName(message.sender)}{": "}</Title>
                     <View style={{ display: 'flex', flexDirection: 'row', }}>
-                        <Text style={{ fontSize: 20, marginLeft: "3%", alignSelf: 'flex-start', fontWeight: 'bold', width: "70%" }}>{message.file_name.split(".")
+                        <Text style={{ fontSize: 14, marginLeft: "3%", alignSelf: 'flex-start', fontWeight: 'bold', width: "70%" }}>{message.file_name.split(".")
                         [message.file_name.split(".").length - 1].toUpperCase()}</Text>
                         <View style={{ alignSelf: 'flex-end', marginTop: "-2%", }}>
                             <Icon type={"Octicons"} name={"file"} style={{ fontSize: 30, color: "#0A4E52" }}></Icon>
@@ -330,7 +330,7 @@ export default class CommiteeItem extends Component {
                     <View style={{ display: 'flex', hieght: 100, width: "100%", flexDirection: "row", marginBottom: "2%", }}>
                         <View style={{ margin: '1%', width: "70%", display: 'flex', flexDirection: 'column', }}>
                             <Text style={{
-                                fontWeight: 'bold', fontSize: 18, color: GState.currentCommitee == this.state.commitee.id ? "#0A4E52" : "gray"
+                                fontWeight: 'bold', fontSize: 14, color: GState.currentCommitee == this.state.commitee.id ? "#0A4E52" : "gray"
                             }}>{this.state.commitee.name}</Text>
                             {this.state.joint && this.state.newest_message ? <Text note>Latest Message :</Text> : null}
                             {this.state.joint && this.state.newest_message ? this.writeLatestMessage(this.state.newest_message) : null}

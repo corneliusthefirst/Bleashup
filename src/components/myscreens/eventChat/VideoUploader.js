@@ -6,7 +6,8 @@ import { Text, Icon, Spinner } from 'native-base';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import FileExachange from '../../../services/FileExchange';
 import Pickers from '../../../services/Picker';
-
+import rnFetchBlob from 'rn-fetch-blob';
+const { fs } = rnFetchBlob
 export default class VideoUploader extends Component {
     constructor(props) {
         super(props)
@@ -51,8 +52,10 @@ export default class VideoUploader extends Component {
             loaded: true,
             uploading: false
         })
+        fs.unlink(newDir).then(() => {})
         this.props.message.type = 'video'
-        this.props.message.source = newDir
+        this.props.message.source = path
+        this.props.message.cancled = true
         this.props.message.thumbnailSource = baseUrl + filename.split('.')[0] + '_thumbnail.jpeg'
         this.props.message.temp = path
         this.props.message.total = this.state.total

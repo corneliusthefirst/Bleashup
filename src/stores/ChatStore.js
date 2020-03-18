@@ -1,6 +1,6 @@
 import { observable } from 'mobx'
 import storage from './Storage'
-import { orderBy, filter, reject, findIndex,uniqBy } from "lodash"
+import { orderBy, filter, reject, findIndex, uniqBy } from "lodash"
 import autobind from 'autobind-decorator'
 import moment, { months } from "moment";
 class ChatStore {
@@ -8,20 +8,23 @@ class ChatStore {
 
         this.storeAccessKey.key = key
         this.saveKey.key = key
-       // storage.remove({key:key}).then(()=>{
-            
+        // storage.remove({key:key}).then(()=>{
+
         //})
         this.readFromStore().then(value => {
+            //value[0] = null 
+            //this.saveKey.data = value
+            //storage.save(this.saveKey).then(() => {})
             this.setProperties(value)
-     })
+        })
 
     }
     addToStore(data) {
         this.saveKey.data = data;
         return storage.save(this.saveKey)
     }
-    loadLatestMessage(key){
-        return new Promise((resolve,reject) =>{
+    loadLatestMessage(key) {
+        return new Promise((resolve, reject) => {
             this.readFromStore().then(messages => {
                 resolve(messages[0])
             })
@@ -87,10 +90,20 @@ class ChatStore {
     removeMessage(messageID) {
         return new Promise((resolve, reje) => {
             this.readFromStore().then(data => {
-                data = reject(data, { id: messageID })
-                this.addToStore(data).then(() => {
-                    resolve()
-                })
+                let index = findIndex(data, { id: messageID })
+                if (index <= 0 && data[index + 1].type === 'date_separator') {
+                    let otherID = data[index + 1].id
+                    data = reject(data, { id: messageID })
+                    data = reject(data, { id: otherID })
+                    this.addToStore(data).then(() => {
+                        this.messages = data
+                        resolve(data)
+                    })
+                } else {
+                    this.addToStore(data).then(() => {
+                        resolve()
+                    })
+                }
             })
         })
     }
@@ -110,8 +123,9 @@ class ChatStore {
             this.readFromStore().then(data => {
                 index = findIndex(data, { id: newMessage.id })
                 data[index] = newMessage
+                this.messages = data
                 this.addToStore(data).then(() => {
-                    resolve("ok")
+                    resolve(data)
                 })
             })
         })
@@ -281,7 +295,7 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
         return new Promise((resolve, reject) => {
             this.readFromStore().then(data => {
                 let newData = messages.concat(data);
-                newData = uniqBy(newData,"id")
+                newData = uniqBy(newData, "id")
                 this.addToStore(newData).then(() => {
                     //this.messages = newData;
                     resolve()
@@ -335,7 +349,7 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
             resolve()
         })
     }
-    addAudioSizeProperties(id, total, recieved,duration) {
+    addAudioSizeProperties(id, total, recieved, duration) {
         return new Promise((resolve, reject) => {
             this.readFromStore().then(data => {
                 let index = findIndex(data, { id: id })

@@ -6,7 +6,8 @@ import { Text, Icon, Spinner } from 'native-base';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import GState from '../../../stores/globalState';
 import FileExachange from '../../../services/FileExchange.js';
-
+import rnFetchBlob from 'rn-fetch-blob';
+const { fs } = rnFetchBlob
 export default class PhotoUploader extends Component {
     constructor(props) {
         super(props)
@@ -66,10 +67,12 @@ export default class PhotoUploader extends Component {
             loaded: true
         })
         this.props.message.type = 'photo'
+        this.props.message.photo = path //this.props.message.source
         this.props.message.source = path
-        this.props.message.photo = newDir
-        this.props.replaceMessage(this.props.message)
-        GState.downlading = false
+        fs.unlink(newDir).then(() => {
+            this.props.replaceMessage(this.props.message)
+            GState.downlading = false
+        })
     }
     toMB(data) {
         mb = 1000 * 1000

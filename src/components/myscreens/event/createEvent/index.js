@@ -27,12 +27,12 @@ uuid.v1({
 
 
 var radio_props = [
-  { label: 'Add Activity title', value: 0 },
-  { label: 'Add Activity period', value: 1 },
-  { label: 'Add Activity Photo', value: 2 },
-  { label: 'Add Activity Description', value: 3 },
-  { label: 'Add Activity Location', value: 4 },
-  { label: 'Add Activity Hightlights', value: 5 }
+  { label: 'Add activity title', value: 0 },
+  { label: 'Add activity period', value: 1 },
+  { label: 'Add activity Photo', value: 2 },
+  { label: 'Add activity Description', value: 3 },
+  { label: 'Add activity Location', value: 4 },
+  { label: 'Add activity Hightlights', value: 5 }
 
 ];
 

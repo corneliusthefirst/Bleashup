@@ -2,7 +2,14 @@
 import React, { Component } from 'react';
 
 import {
-    StyleSheet, Text, TouchableOpacity, View, ScrollView, Alert, Slider, Vibration, Platform
+    StyleSheet, Text,
+    TouchableOpacity,
+    View,
+    ScrollView,
+    Alert,
+    Slider,
+    Vibration,
+    Platform
 } from 'react-native';
 import Sound from 'react-native-sound';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
@@ -13,6 +20,8 @@ import GState from '../../../stores/globalState';
 import FileExachange from '../../../services/FileExchange';
 import converToHMS from '../highlights_details/convertToHMS';
 import { LogLevel, RNFFmpeg } from 'react-native-ffmpeg';
+import rnFetchBlob from 'rn-fetch-blob';
+const { fs } = rnFetchBlob
 
 
 export default class AudioUploader extends Component {
@@ -52,20 +61,22 @@ export default class AudioUploader extends Component {
             loaded: true,
             downloading: false
         })
-        this.initialisePlayer(newDir.replace('file://', ''))
-        this.props.message.type = 'audio'
-        this.props.message.source = newDir.replace("file://", "")
-        this.props.message.temp = path
-        this.props.message.received = 0
-        this.props.message.file_name = filename
-        if (this.props.message.duration) {
-            this.props.replaceMessage(this.props.message)
-        } else {
-            RNFFmpeg.getMediaInformation(path).then(info => {
-                this.props.message.duration = Math.ceil(info.duration/1000)
+        fs.unlink(this.tempSource).then(() => {
+            this.initialisePlayer(newDir.replace('file://', ''))
+            this.props.message.type = 'audio'
+            this.props.message.source = newDir.replace("file://", "")
+            this.props.message.temp = path
+            this.props.message.received = 0
+            this.props.message.file_name = filename
+            if (this.props.message.duration) {
                 this.props.replaceMessage(this.props.message)
-            })
-        }
+            } else {
+                RNFFmpeg.getMediaInformation(path).then(info => {
+                    this.props.message.duration = Math.ceil(info.duration / 1000)
+                    this.props.replaceMessage(this.props.message)
+                })
+            }
+        })
     }
     downloadID = null
     uploadAudio(url) {
@@ -76,26 +87,46 @@ export default class AudioUploader extends Component {
             console.warn(error)
         })
     }
-    player = null
-    componentDidMount() {
-        this.setState({
-            duration: this.props.message.duration,
-            currentPosition: 0,
-            playing: false,
-            received: this.props.message.received,
-            total: this.props.message.total,
-            sender_name: this.props.message.sender.nickname,
-            sender: !(this.props.message.sender.phone == this.props.user),
-            time: this.props.message.created_at.split(" ")[1],
-            creator: (this.props.message.sender.phone == this.props.creator)
+    checkIfExist() {
+        return new Promise((resolve, reject) => {
+            fs.exists(this.tempSource).then((status) => {
+                if (status) {
+                    resolve("ok")
+                } else {
+                    fs.cp(this.props.message.source.replace("file://", ''),
+                        this.tempSource).then(() => {
+                            console.warn(this.props.message.source, "00", fs.dirs.DocumentDir)
+                            resolve("ok")
+                        })
+                }
+            })
         })
-        this.exchanger = new FileExachange(this.props.message.source, "/Sound/",
-            this.state.total, this.state.received, this.progress.bind(this),
-            this.onSuccess.bind(this), null,
-            this.onError.bind(this),
-            this.props.message.content_type,
-            this.props.message.file_name, "/sound")
-        this.uploadAudio(this.props.message.source)
+    }
+    player = null
+    tempSource = this.props.message.source.
+        replace("test", this.props.message.id).
+        replace("file://", '')
+    componentDidMount() {
+        this.checkIfExist().then(() => {
+            this.setState({
+                duration: this.props.message.duration,
+                currentPosition: 0,
+                playing: false,
+                received: this.props.message.received,
+                total: this.props.message.total,
+                sender_name: this.props.message.sender.nickname,
+                sender: !(this.props.message.sender.phone == this.props.user),
+                time: this.props.message.created_at.split(" ")[1],
+                creator: (this.props.message.sender.phone == this.props.creator)
+            })
+            this.exchanger = new FileExachange('file://' + this.tempSource, "/Sound/",
+                this.state.total, this.state.received, this.progress.bind(this),
+                this.onSuccess.bind(this), null,
+                this.onError.bind(this),
+                this.props.message.content_type,
+                this.props.message.file_name, "/sound")
+            this.uploadAudio('file://' + this.tempSource)
+        })
     }
     pause() {
         this.setState({
@@ -192,8 +223,8 @@ export default class AudioUploader extends Component {
                             (fill) => (
                                 <View style={{ marginTop: "-5%" }}>
                                     {!this.state.loaded ?
-                                        <TouchableOpacity onPress={() => this.state.downloading ? this.cancelUpLoad(this.props.message.source) :
-                                            this.uploadAudio(this.props.message.source)}>
+                                        <TouchableOpacity onPress={() => this.state.downloading ? this.cancelUpLoad(this.tempSource) :
+                                            this.uploadAudio(this.tempSource)}>
                                             <View>
                                                 <Icon style={{ color: "#0A4E52" }} type="EvilIcons"
                                                     name={this.state.downloading ? "close" : "arrow-up"}></Icon>

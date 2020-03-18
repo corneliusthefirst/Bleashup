@@ -21,7 +21,7 @@ class Picker {
                 returnAfterShot: true,
                 title: "Selecet Photo",
                 // returnAfterShot:true,
-                compressQuality: 50
+                compressQuality: .5
             }).then(response => {
                 this.uploaded = true
                 //console.warn("opening camera")
@@ -82,7 +82,7 @@ class Picker {
                 returnAfterShot: true,
                 title: "Select A Video",
                 // returnAfterShot:true,
-                compressQuality: 50
+                compressQuality: .5
             }).then(response => {
                 console.warn(response);
                 let temp = response.path.split('/');
