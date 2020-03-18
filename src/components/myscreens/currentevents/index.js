@@ -21,7 +21,7 @@ import stores from "../../../stores";
     return (
       <View>
         <CurrentEvents data={stores.Events.events.filter(event => (findIndex(event.participant,
-          { phone: stores.LoginStore.user.phone }) >= 0 && !event.hiden && event.id !== "newEventId") || (event.public && !event.hiden && event.id !== "newEventId"))} {...this.props}></CurrentEvents>
+          { phone: stores.LoginStore.user.phone }) >= 0 || !event.hiden && event.id !== "newEventId") || (event.public && !event.hiden && event.id !== "newEventId"))} {...this.props}></CurrentEvents>
       </View>
     );
   }

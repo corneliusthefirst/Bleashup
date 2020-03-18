@@ -139,70 +139,77 @@ export default class SWView extends Component {
             backgroundColor: "#FEFFDE",
             width: "100%",
             height: screenheight,
-            ...shadower(7),
             borderWidth: 1,
             borderRadius: 2,
             borderColor: '#DDD',
             borderBottomWidth: 0,
-            margin: "1%",
+            //margin: "1%",
         }}>
-            <View style={{ flexDirection: 'row', }}>
-                <View style={{backgroundColor: 'white',
-                 width: screenWidth * .27,...shadower(2),
-                borderRadius: 5,paddingLeft: '2.5%',padding:"2%",height:'98%',margin: '2%',marginBottom: '2%', }}>
+            <ScrollView nestedScrollEnabled={true} showsVerticalScrollIndicator={false}>
+                <View style={{ flexDirection: 'row', }}>
                     <View style={{
-                        alignItems: 'flex-start',
-                        height: screenheight * .09, marginLeft: '5%', margin: '2%', padding: '6%',
-                    }}><Button rounded style={{ backgroundColor: '#1FABAB' }} onPress={() => requestAnimationFrame(() => this.props.showActivityPhotoAction())}>
-                            {this.props.event.background ? <CacheImages thumbnails
-                                source={{ uri: this.props.event.background }}></CacheImages> : null}
-                        </Button>
-                    </View>
-                    <View style={{ height: screenheight * .4, marginLeft: '1%', }}>
-                        <RouteView refreshCommitee={() => this.refreshCommitees()} event_id={this.props.event.id} currentPage={this.props.currentPage}
-                            setCurrentPage={(page) => {
-                                this.props.setCurrentPage(page)
-                            }}></RouteView>
-                    </View>
-                    <View style={{
-                        marginTop: "5%",
-                        padding: '1%',
-                        paddingLeft: '8%',
-                        width: '83%',
-                        height: screenheight * .42,
-                        ...shadower(1),
-                        marginLeft: '8%',
-                        backgroundColor: '#FEFFDE',
-                        borderRadius: 8
+                        backgroundColor: 'white',
+                        width: screenWidth * .18, ...shadower(2),
+                        borderRadius: 5, paddingLeft: '2.5%', padding: "2%", height: '98%', margin: '2%', marginBottom: '2%',
                     }}>
-                        <ActionsView
-                            publish={() => this.props.publish()}
-                            leaveActivity={() => this.props.leaveActivity()}
-                            inviteContacts={() => this.props.inviteContacts()}
-                            openSettingsModal={() => this.props.openSettingsModal()}
-                            ShowMyActivity={(a) => this.props.ShowMyActivity(a)}
-                            showMembers={() => this.props.showMembers()}></ActionsView>
+                        <View style={{
+                            alignItems: 'center',
+                            height: 70, margin: '1%', padding: '6%',
+                        }}><Button rounded style={{ backgroundColor: '#1FABAB' }} onPress={() => requestAnimationFrame(() => this.props.showActivityPhotoAction())}>
+                                {this.props.event.background ? <CacheImages thumbnails
+                                    source={{ uri: this.props.event.background }}></CacheImages> : <CacheImages thumbnails source={require('../../../../assets/default_event_image.jpeg')} ></CacheImages>}
+                            </Button>
+                        </View>
+                        <View style={{ height: 235, alignSelf: 'center', }}>
+                            <Text style={{ margin: 2 }} note>pages</Text>
+                            <RouteView refreshCommitee={() => this.refreshCommitees()} event_id={this.props.event.id} currentPage={this.props.currentPage}
+                                setCurrentPage={(page) => {
+                                    this.props.setCurrentPage(page)
+                                }}></RouteView>
+                        </View>
+                        <Text style={{ margin: 2, }} note>actions</Text>
+                        <View style={{
+                            width: '100%',
+                            height: 300,
+                            //...shadower(0),
+                            alignSelf: 'center',
+                            paddingRight: 5,
+                            backgroundColor: 'white',
+                            borderRadius: 8
+                        }}>
+                            <ActionsView
+                                publish={() => this.props.publish()}
+                                leaveActivity={() => this.props.leaveActivity()}
+                                inviteContacts={() => this.props.inviteContacts()}
+                                openSettingsModal={() => this.props.openSettingsModal()}
+                                ShowMyActivity={(a) => this.props.ShowMyActivity(a)}
+                                showMembers={() => this.props.showMembers()}></ActionsView>
+                        </View>
                     </View>
-                </View>
-                <View style={{ height: screenheight, width: screenWidth * .56, margin: '1%',backgroundColor: 'white', ...shadower(2),borderRadius: 5,}}>
-                    <View style={{ height: screenheight * .1 }}><View style={{
-                        height: '60%',
-                        width: "100%",
-                        marginTop: '-1%'
-                    }}><View style={{
-                         paddingLeft: '2%',
-                        ...bleashupHeaderStyle,
-                        flexDirection: 'row',
-                    }}><View style={{ marginLeft: '1%',width:'88%' }}><Title style={{
-                        fontWeight: 'bold',
-                        fontSize: 17, marginTop: 2, color: "#0A4E52", alignSelf: 'flex-start',
-                    }}>{this.props.event.about.title}</Title>
-                                {this.props.event.period ? <Title style={{
-                                    alignSelf: 'flex-start',
-                                    marginRight: "2%",  fontWeight: this.props.event.closed ? "bold" : "400",
-                                    color: this.props.event.closed ? "red" : dateDiff(this.props.event) > 0 ? "gray" : "#1FABAB", fontSize: 12,
-                                }}>{this.props.event.closed ? "Closed" : writeDateTime(this.props.event)}</Title> : null}
-                                {/*this.props.event.interval > 1 && this.props.event.frequency !== 'yearly' && this.dateDiff(this.props.event) < 0 ?
+                    <View style={{
+                        height: screenheight,
+                        width: screenWidth * .56,
+                        backgroundColor: 'white',
+                        ...shadower(2),
+                    }}>
+                        <View style={{ height: 70 }}><View style={{
+                            height: '62%',
+                            width: "100%",
+                        }}><View style={{
+                            paddingLeft: '2%',
+                            ...bleashupHeaderStyle, marginLeft: 0, marginRight: 0,
+                            alignSelf: 'center',
+                            flexDirection: 'row',
+                        }}><View style={{ marginLeft: '1%', width: '88%' }}><Title style={{
+                            fontWeight: 'bold',
+                            fontSize: 17, marginTop: 2, color: "#0A4E52", alignSelf: 'flex-start',
+                        }}>{this.props.event.about.title}</Title>
+                                    {this.props.event.period ? <Title style={{
+                                        alignSelf: 'flex-start',
+                                        marginRight: "2%", fontWeight: this.props.event.closed ? "bold" : "400",
+                                        color: this.props.event.closed ? "red" : dateDiff(this.props.event) > 0 ? "gray" : "#1FABAB", fontSize: 12,
+                                    }}>{this.props.event.closed ? "Closed" : writeDateTime(this.props.event)}</Title> : null}
+                                    {/*this.props.event.interval > 1 && this.props.event.frequency !== 'yearly' && this.dateDiff(this.props.event) < 0 ?
                                         <Text style={{
                                             color: "#1FABAB"
                                         }} note>
@@ -211,31 +218,32 @@ export default class SWView extends Component {
                                                      ${moment(this.props.event.recurrence ? this.props.event.recurrence :
                                                     null).format("dddd, MMMM Do YYYY")}`}
                                                      </Text> : null*/}
-                            </View><View style={{width:'10%'}}><Icon onPress={() => {
-                                this.props.navigateHome()
-                            }} style={{
-                                alignSelf: 'center', color: "#1FABAB",margin: '2%',
-                                marginBottom: "6%"
-                            }} name="close" type="EvilIcons"></Icon></View></View></View></View>
-                    <Commitee
-                        computedMaster={this.props.computedMaster}
-                        master={this.props.master}
-                        ref="Commitee"
-                        participant={this.props.event.participant}
-                        creator={this.props.creator}
-                        join={(id) => { this.props.join(id) }}
-                        showCreateCommiteeModal={() => this.props.showCreateCommiteeModal()}
-                        leave={(id) => { this.props.leave(id) }}
-                        removeMember={(id, members) => { this.props.removeMember(id, members) }}
-                        addMembers={(id, currentMembers) => { this.props.addMembers(id, currentMembers) }}
-                        publishCommitee={(id, state) => { this.props.publishCommitee(id, state) }}
-                        editName={this.props.editName}
-                        swapChats={(commitee) => { this.props.swapChats(commitee) }} phone={this.props.phone}
-                        commitees={this.props.commitees}
-                        event_id={this.props.event.id}>
-                    </Commitee>
+                                </View><View style={{ width: '10%' }}><Icon onPress={() => {
+                                    this.props.navigateHome()
+                                }} style={{
+                                    alignSelf: 'center', color: "#1FABAB", margin: '2%',
+                                    marginBottom: "6%"
+                                }} name="close" type="EvilIcons"></Icon></View></View></View></View>
+                        <Commitee
+                            computedMaster={this.props.computedMaster}
+                            master={this.props.master}
+                            ref="Commitee"
+                            participant={this.props.event.participant}
+                            creator={this.props.creator}
+                            join={(id) => { this.props.join(id) }}
+                            showCreateCommiteeModal={() => this.props.showCreateCommiteeModal()}
+                            leave={(id) => { this.props.leave(id) }}
+                            removeMember={(id, members) => { this.props.removeMember(id, members) }}
+                            addMembers={(id, currentMembers) => { this.props.addMembers(id, currentMembers) }}
+                            publishCommitee={(id, state) => { this.props.publishCommitee(id, state) }}
+                            editName={this.props.editName}
+                            swapChats={(commitee) => { this.props.swapChats(commitee) }} phone={this.props.phone}
+                            commitees={this.props.commitees}
+                            event_id={this.props.event.id}>
+                        </Commitee>
+                    </View>
                 </View>
-            </View>
+            </ScrollView>
         </View>
     }
 }

@@ -944,9 +944,7 @@ export default class events {
         let index = findIndex(Events, {
           id: EventID
         });
-        Events[index][statusKey] = newStatus;
-        //Events[index].updated_at = moment().format();
-        Events.splice(index, 1, Event);
+        Events[index].updated_at = moment().format();
         this.saveKey.data = Events;
         storage.save(this.saveKey).then(() => {
           this.setProperties(this.saveKey.data, true);
@@ -969,10 +967,6 @@ export default class events {
   setProperties(Events, inform) {
     if (inform) Events = orderBy(Events, ["updated_at"], ["desc"]);
     this.events = Events;
-    this.newEvent = [Events[2]]
-    this.currentEvents = filter(Events, { past: false });
-    this.PastEvents = filter(Events, { past: true });
-    this.myReminds = filter(Events, { reminds: true });
   }
   addEventCommitee(EventID, CommiteeID) {
     return new Promise((resolve, reject) => {

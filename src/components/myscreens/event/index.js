@@ -129,7 +129,7 @@ export default class Event extends Component {
       currentRemindMembers: members
     })
   }
-  currentWidth = screenWidth * 2.7/3
+  currentWidth = screenWidth * 2.335 / 3
   //normalWidth = 
   isOpen = this.props.navigation.getParam('isOpen') ? this.props.navigation.getParam('isOpen') : false
   renderMenu(NewMessages) {
@@ -1060,9 +1060,10 @@ export default class Event extends Component {
       isSettingsModalOpened: true
     })
   }
-  openPhotoSelectorModal() {
+  openPhotoSelectorModal(photo) {
     this.setState({
-      isSelectPhotoInputMethodModal: true
+      isSelectPhotoInputMethodModal: true,
+      photo: photo
     })
   }
   leaveActivity() {
@@ -1264,11 +1265,11 @@ export default class Event extends Component {
     //let currentWidth = this.state.currentPage === 'EventChat' ? this.currentWidth : this.normalWidth
     StatusBar.setHidden(false, true)
     return (<SideMenu style={{ backgroundColor: "#FEFEDE", }}
-       autoClosing={false}
-       onMove={(position) => {
+      autoClosing={false}
+      onMove={(position) => {
 
       }} bounceBackOnOverdraw={false} onChange={(position) => {
-        //this.isOpen = position
+        this.isOpen = position
       }} isOpen={this.isOpen} openMenuOffset={this.currentWidth}
       menu={<View style={{ backgroundColor: '#FEFFDE', }}><SWView
         navigateHome={() => {
@@ -1277,7 +1278,7 @@ export default class Event extends Component {
         computedMaster={this.computedMaster}
         ref="swipperView"
         publish={() => this.publish()}
-        showActivityPhotoAction={() => this.master ? this.openPhotoSelectorModal() : this.showPhoto(this.event.background)}
+        showActivityPhotoAction={() => this.master ? this.openPhotoSelectorModal(this.event.background) : this.showPhoto(this.event.background)}
         leaveActivity={() => this.member ? this.setState({
           isAreYouSureModalOpened: true,
           warnDescription: "Are You Sure You Want To Leave This Activity ?",

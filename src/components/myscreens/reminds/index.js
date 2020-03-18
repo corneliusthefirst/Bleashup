@@ -361,7 +361,7 @@ export default class Reminds extends Component {
     return !this.state.mounted ? <View style={{ width: '100%', height: '100%', backgroundColor: '#FEFFDE', }}><Spinner size={'small'}></Spinner></View> : (
 
       <View>
-        <View style={{ height: "6%", width: '100%' }}>
+        <View style={{ height: 45, width: '100%' }}>
           <View style={{
             paddingLeft: '1%', paddingRight: '1%', ...bleashupHeaderStyle,
             flexDirection: "row", alignItems: "center",

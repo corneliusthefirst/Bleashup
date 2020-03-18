@@ -30,7 +30,7 @@ export default class RouteView extends Component {
     fontSize = 28
     textSize = 14
     actionHeight = "14.5%"
-    height = 60
+    height = 50
     original = "#1FABAB"
     previous = this.props.event_id
     // This function resetSelectedCommitee will emite an event to the currently listening commiteeItem to adjust its highlightColor
@@ -46,7 +46,7 @@ export default class RouteView extends Component {
     }
     centerer = {
         height: this.height, alignItems: 'center',
-        flex: 1,margin: '3%',borderRadius: 8,
+        borderRadius: 6,marginBottom: '6%',
         justifyContent: 'center'
     }
     resetCommiteeForGeneral() {
@@ -83,7 +83,7 @@ export default class RouteView extends Component {
             }
         })
     };
-    width = screenWidth * .2
+    width = screenWidth * .15
     render() {
         if (this.props.currentPage == "EventChat") GState.generalNewMessages = []
         return (

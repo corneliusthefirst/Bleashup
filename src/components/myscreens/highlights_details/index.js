@@ -13,6 +13,7 @@ import firebase from 'react-native-firebase';
 import uuid from 'react-native-uuid';
 import ChatStore from '../../../stores/ChatStore';
 import shadower from '../../shadower';
+import { ScrollView } from 'react-native-gesture-handler';
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenheight = Math.round(Dimensions.get('window').height);
 export default class HighLightsDetails extends Component {
@@ -39,11 +40,11 @@ export default class HighLightsDetails extends Component {
         this.setState({
             showImojiInput: false,
             inputsHeight: //!this.state.showImojiInput ? 
-            this.formHeightPercent(245)
+                this.formHeightPercent(245)
             // : this.formHeightPercent(350)
             ,
             messageListHeight: //!this.state.showImojiInput ? 
-            this.formHeightPercent(screenheight - 245)
+                this.formHeightPercent(screenheight - 245)
             // : this.formHeightPercent(screenheight - 350)
         })
     }
@@ -55,7 +56,7 @@ export default class HighLightsDetails extends Component {
             messageListHeight: !this.state.showImojiInput ? this.formHeightPercent(screenheight - 140) : this.formHeightPercent(screenheight - 350)
         });
     }
-    goback(){
+    goback() {
         this.props.navigation.goBack()
     }
     handleBackButton() {
@@ -146,7 +147,7 @@ export default class HighLightsDetails extends Component {
                     highlight={item}
                     showInput={(replyer) => {
                         let reply = {
-                            id:replyer.id,
+                            id: replyer.id,
                             video: replyer.url.video ? true : false,
                             audio: !replyer.url.video && replyer.url.audio ? true : false,
                             video: replyer.url.video ? true : false,
@@ -157,88 +158,108 @@ export default class HighLightsDetails extends Component {
                                         replyer.url.audio : null,
                             replyer_phone: stores.LoginStore.user.phone,
                             //replyer_name: stores.LoginStore.user.name,
-                            title : `${replyer.title}: \n ${replyer.description}`,
+                            title: `${replyer.title}: \n ${replyer.description}`,
                             type_extern: 'Posts',
                         }
                         this.setState({
                             replyer: reply,
                             inputsHeight: this.formHeightPercent(140),
+                            replying: true,
                             messageListHeight: this.formHeightPercent(screenheight - 140)
                         });
+                        this.adjutRoomDisplay()
                     }}
                     playVideo={(source) => this.playVideo(source)}></HighLight> : null;
             }}
             dataSource={this.state.highlights}>
         </BleashupFlatList>;
     }
+    adjutRoomDisplay() {
+        setTimeout(() => {
+            //this.refs.inputView.focus()
+            this.refs.ScrollViewRefer.scrollToEnd({ animated: true, duration: 200 })
+        })
+    }
     render() {
         return (
             <View>
-                <View style={{
-                    height: this.state.messageListHeight,
-                    width: "100%",
-                    backgroundColor: '#3D3D1F',
-                    opacity: 0.9
-                }}><StatusBar animated={true} barStyle="light-content" backgroundColor="#3D3D1F"></StatusBar>
-                    {!this.state.mounted ? <Spinner size={'small'}></Spinner> :
-                        this.messageList()
-                    }
-                </View>
-                <View style={{ height: this.state.inputsHeight, backgroundColor: 'transparent', borderRadius: 10, }}>
-                    {
-                        <InputView ref="inputView" showImojiInput={this.state.showImojiInput}
-                            sendMessageText={(text) => {
-                                this.sendReaction(text)
-                            }} replyer={this.state.replyer} increaseHeightToCopeEmoji={() => {
-                                this.setState({
-                                    inputsHeight: this.formHeightPercent(350),
-                                    messageListHeight: this.formHeightPercent(screenheight - 350),
-                                    showImojiInput: true
-                                })
-                                Keyboard.dismiss()
-                            }} decreaseHeightToCopeEmoji={() => {
-                                this.setState({
-                                    inputsHeight: this.formHeightPercent(140),
-                                    messageListHeight: this.formHeightPercent(screenheight - 140),
-                                    showImojiInput: false
-                                })
-                            }} cancleReply={() => {
-                                this.setState({
-                                    inputsHeight: this.formHeightPercent(0),
-                                    messageListHeight: this.formHeightPercent(screenheight)
-                                })
-                            }}></InputView>
-                    }
-                </View>
+                <ScrollView ref={"ScrollViewRefer"} keyboardShouldPersistTaps={"always"} showsVerticalScrollIndicator={false} scrollEnabled={false} nestedScrollEnabled >
+                    <View style={{
+                        height: this.state.replying ? screenheight * .9 : screenheight,
+                        width: "100%",
+                        backgroundColor: '#3D3D1F',
+                        opacity: 0.9
+                    }}><StatusBar animated={true} barStyle="light-content" backgroundColor="#3D3D1F"></StatusBar>
+                        {!this.state.mounted ? <Spinner size={'small'}></Spinner> :
+                            this.messageList()
+                        }
+                    </View>
+                    <View style={{ height: this.state.replying ? null : 0, backgroundColor: 'transparent', borderRadius: 10, }}>
+                        {
+                            <InputView onInputChange={() => {
+                                this.adjutRoomDisplay()
+                            }} ref="inputView" showImojiInput={this.state.showImojiInput}
+                                sendMessageText={(text) => {
+                                    this.sendReaction(text)
+                                    this.setState({
+                                        replying:false
+                                    })
+                                    this.adjutRoomDisplay()
+                                }} replyer={this.state.replyer} increaseHeightToCopeEmoji={() => {
+                                    this.setState({
+                                        //inputsHeight: this.formHeightPercent(350),
+                                        //messageListHeight: this.formHeightPercent(screenheight - 350),
+                                        showImojiInput: true
+                                    })
+                                    this.adjutRoomDisplay()
+                                    Keyboard.dismiss()
+                                }} decreaseHeightToCopeEmoji={() => {
+                                    this.setState({
+                                        //inputsHeight: this.formHeightPercent(140),
+                                        //messageListHeight: this.formHeightPercent(screenheight - 140),
+                                        showImojiInput: false
+                                    })
+                                    this.adjutRoomDisplay()
+                                }} cancleReply={() => {
+                                    this.setState({
+                                        replying:false,
+                                        inputsHeight: this.formHeightPercent(0),
+                                        messageListHeight: this.formHeightPercent(screenheight)
+                                    })
+                                    this.adjutRoomDisplay()
+                                }}></InputView>
+                        }
+                    </View>
 
-                <View style={{
-                    position: 'absolute', backgroundColor: '#FEFEDE', width: '15%', ...shadower(8),
-                    height: 30, opacity: 0.7, alignSelf: 'flex-end', marginTop: '2%',
-                    borderBottomLeftRadius: 8, borderTopLeftRadius: 8, borderRightWidth: 0,
-                    flexDirection: 'row',
-                }}> 
-                    <Text style={{ fontSize: 18, fontStyle: 'italic', marginBottom: "13%", fontWeight: 'bold', alignSelf: 'flex-end', marginLeft: '7%', width: '100%' }}>{"Posts"} </Text>
-                </View>
-                <View style={{
-                    position: 'absolute', backgroundColor: '#FEFEDE', width: '10%', ...shadower(8),
-                    height: 30, opacity: 0.7, alignSelf: 'flex-start', marginTop: '2%',
-                    borderBottomRightRadius: 8, borderTopRightRadius: 8, borderRightWidth: 0,
-                    flexDirection: 'row',
-                }}>
-                    <Icon onPress={() => {
-                        this.goback()
-                    }} name="doubleleft" style={{ marginLeft: '8%', color: '#0A4E52', marginBottom: '7%', alignSelf: 'center', }} type={"AntDesign"}></Icon>
-                </View>
-                {this.state.showPhoto?<PhotoViewer photo={this.state.photo} open={this.state.showPhoto} hidePhoto={() => {
-                    this.setState({
-                        showPhoto: false
-                    })
-                }}></PhotoViewer>:null}
-                {this.state.showVideo?<VideoViewer video={this.state.video} open={this.state.showVideo} hideVideo={() => {
-                    this.setState({
-                        showVideo: false
-                    })
-                }}></VideoViewer>:null}
+                    <View style={{
+                        position: 'absolute', backgroundColor: '#FEFEDE', width: '15%', ...shadower(8),
+                        height: 30, opacity: 0.7, alignSelf: 'flex-end', marginTop: '2%',
+                        borderBottomLeftRadius: 8, borderTopLeftRadius: 8, borderRightWidth: 0,
+                        flexDirection: 'row',
+                    }}>
+                        <Text style={{ fontSize: 18, fontStyle: 'italic', marginBottom: "13%", fontWeight: 'bold', alignSelf: 'flex-end', marginLeft: '7%', width: '100%' }}>{"Posts"} </Text>
+                    </View>
+                    <View style={{
+                        position: 'absolute', backgroundColor: '#FEFEDE', width: '10%', ...shadower(8),
+                        height: 30, opacity: 0.7, alignSelf: 'flex-start', marginTop: '2%',
+                        borderBottomRightRadius: 8, borderTopRightRadius: 8, borderRightWidth: 0,
+                        flexDirection: 'row',
+                    }}>
+                        <Icon onPress={() => {
+                            this.goback()
+                        }} name="doubleleft" style={{ marginLeft: '8%', color: '#0A4E52', marginBottom: '7%', alignSelf: 'center', }} type={"AntDesign"}></Icon>
+                    </View>
+                    {this.state.showPhoto ? <PhotoViewer photo={this.state.photo} open={this.state.showPhoto} hidePhoto={() => {
+                        this.setState({
+                            showPhoto: false
+                        })
+                    }}></PhotoViewer> : null}
+                    {this.state.showVideo ? <VideoViewer video={this.state.video} open={this.state.showVideo} hideVideo={() => {
+                        this.setState({
+                            showVideo: false
+                        })
+                    }}></VideoViewer> : null}
+                </ScrollView>
             </View>
         );
     }

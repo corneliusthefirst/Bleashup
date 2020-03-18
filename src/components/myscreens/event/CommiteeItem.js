@@ -329,7 +329,7 @@ export default class CommiteeItem extends Component {
                 })}>
                     <View style={{ display: 'flex', hieght: 100, width: "100%", flexDirection: "row", marginBottom: "2%", }}>
                         <View style={{ margin: '1%', width: "70%", display: 'flex', flexDirection: 'column', }}>
-                            <Text style={{
+                            <Text elipsizeMode={'tail'} numberOfLines={1} style={{
                                 fontWeight: 'bold', fontSize: 14, color: GState.currentCommitee == this.state.commitee.id ? "#0A4E52" : "gray"
                             }}>{this.state.commitee.name}</Text>
                             {this.state.joint && this.state.newest_message ? <Text note>Latest Message :</Text> : null}
