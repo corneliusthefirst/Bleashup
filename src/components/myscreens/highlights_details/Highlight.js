@@ -12,7 +12,7 @@ export default class HighLight extends Component {
         this.state = {
             showProfile: false
         }
-    }
+    } 
     renderContent(highlight) {
         return <HighlightContent modal={this.props.modal} showVideo={(url) => this.props.showVideo(url)} showPhoto={(uri) => this.props.showPhoto(uri)} PressingIn={() => {
             this.replying = true

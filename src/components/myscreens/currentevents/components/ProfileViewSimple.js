@@ -1,7 +1,7 @@
 import React, { Component } from "react"
 import CacheImages from '../../../CacheImages';
 import { View,Text } from "react-native";
-import { Body, Accordion, Content, Thumbnail } from "native-base"
+import { Body, Accordion, Content, Thumbnail ,Title} from "native-base"
 import ImageActivityIndicator from '../../currentevents/components/imageActivityIndicator';
 import ProfileIdicator from "../../currentevents/components/ProfilIndicator";
 import stores from "../../../../stores";
@@ -9,7 +9,7 @@ import ProfileModal from "../../invitations/components/ProfileModal";
 import { TouchableOpacity, TouchableWithoutFeedback } from "react-native-gesture-handler";
 import testForURL from '../../../../services/testForURL';
 import GState from '../../../../stores/globalState/index';
-
+ 
 export default class ProfileSimple extends Component {
     constructor(props) {
         super(props)
@@ -46,16 +46,17 @@ export default class ProfileSimple extends Component {
                             }, 50)
                         });
                     }}>
-                        {this.props.profile.profile && testForURL(this.props.profile.profile) ? <CacheImages small thumbnails {...this.props}
+                        {this.props.profile.profile && testForURL(this.props.profile.profile) ? <CacheImages  thumbnails {...this.props}
                             source={{ uri: this.props.profile.profile }} /> :
-                            <Thumbnail small source={{ uri: this.props.profile.profile }}></Thumbnail>}
+                            <Thumbnail  source={require("../../../../../Images/images.jpeg")} ></Thumbnail>}
                     </TouchableWithoutFeedback>
                     <View style={{
                         alignItems: 'center',
                         justifyContent: 'center',marginLeft: "3%", flexDirection: "column" }}>
                         <Text ellipsizeMode={'tail'} numberOfLines={1} style={{ marginBottom: "2%", 
                         fontWeight: 'bold', alignSelf: "flex-start", color: "#696969" }}>{this.props.profile.phone === stores.LoginStore.user.phone ? "You " : this.props.profile.nickname}</Text>
-                        {this.props.profile.status && this.props.profile.status !== 'undefined' ? <Text ellipsizeMode={'tail'} numberOfLines={1} style={{ fontStyle: 'italic', alignSelf: "flex-start" }} note>{this.props.profile.status}</Text> : null}
+                        {this.props.profile.status && this.props.profile.status !== 'undefined' ? <Title style={{ fontStyle: 'italic',width:130, alignSelf: "flex-start",fontSize:12 ,color:"gray"}} >{this.props.profile.status}</Title> : null}
+        
                     </View>
                     {<ProfileModal
                         isOpen={this.state.isModalOpened}

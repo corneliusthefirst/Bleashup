@@ -14,9 +14,7 @@ export default class MapView extends Component {
     render() {
         return <View style={{...this.props.style,flexDirection: 'column',}}>
             <TouchableOpacity style={{alignSelf: 'flex-start',}}>
-                <Text ellipsizeMode={"tail"} numberOfLines={1} style={{alignSelf: 'flex-start', fontSize: 11, fontStyle: this.props.location ? 'normal' : 'italic' }} >
-                    {this.props.location ? this.props.card ? this.props.location.slice(0, 25) : this.props.location : 'No Set Location'}
-                </Text>
+                <Title style={{width:100,fontSize:12}}> {this.props.location && this.props.card ? this.props.location: 'No Set Location'}</Title>     
             </TouchableOpacity>
             <TouchableOpacity  onPress={this.props.location ? this.OpenLinkZoom : null}>
                 <Thumbnail

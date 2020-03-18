@@ -1051,7 +1051,7 @@ export default class ChatRoom extends Component {
         })
     }
     headerStyles = {
-        flexDirection: 'row', ...bleashupHeaderStyle
+        flexDirection: 'row', ...bleashupHeaderStyle 
     }
     showVoters(voters) {
         this.setState({

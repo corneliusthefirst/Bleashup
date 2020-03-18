@@ -15,6 +15,7 @@ import Materials from "./native-base-theme/variables/material";
 import CommonColor from "./native-base-theme/variables/commonColor";
 import Home from "./components/myscreens/home/homePage";
 import SettingView from "./components/myscreens/settings/index";
+import ProfileView from "./components/myscreens/settings/profile";
 import CurrentEventView from "./components/myscreens/currentevents/index";
 import InvitationView from "./components/myscreens/invitations/index";
 import PotesChat from "./components/myscreens/poteschat/index";
@@ -59,6 +60,7 @@ const AppNavigator = createStackNavigator(
     Home: { screen: Home },
     CurrentEvent: { screen: CurrentEventView },
     Settings: { screen: SettingView },
+    Profile: { screen: ProfileView },
     Status: { screen:  StatusView },
     Invitation: { screen: InvitationView },
     PotesChat: { screen: PotesChat },

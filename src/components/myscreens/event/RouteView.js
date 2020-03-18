@@ -84,9 +84,12 @@ export default class RouteView extends Component {
     };
 
     render() {
+        
+
         if (this.props.currentPage == "EventChat") GState.generalNewMessages = []
         return (
             <Card style={{ height: 300, width: "100%", marginTop: "30%" }} transparent >
+             
                 <CardItem style={{
                     height: this.height, backgroundColor: this.props.currentPage == "EventDetails" ? "#54F5CA" : "#FEFFDE",
                     width: "100%", borderTopLeftRadius: 12, ...shadower(2)
@@ -96,24 +99,27 @@ export default class RouteView extends Component {
                         this.resetSelectedCommitee()
                     }
                     )}>
+
                         <View style={{ display: 'flex', flexDirection: 'row', width: "100%" }}>
                             <Icon type="AntDesign" style={{ color: this.props.currentPage == "EventDetails" ? "#0A4E52" : this.original }} name="appstore1"></Icon>
                             <Text style={{ padding: "1%", color: this.props.currentPage == "EventDetails" ? "#0A4E52" : "gray", width: "100%" }}>Details</Text>
                         </View>
                     </TouchableOpacity>
                 </CardItem>
+             
+             
                 <CardItem style={{
                     height: this.height, backgroundColor: this.props.currentPage == "EventChat" ? "#54F5CA" : "#FEFFDE",
                     ...shadower(2)
-                }}>
+                }}> 
                     <TouchableOpacity style={this.centerer} onPress={() => requestAnimationFrame(() => {
                         this.props.setCurrentPage("EventChat")
                         this.resetCommiteeForGeneral()
                     })
                     }>
                         <View style={{ display: 'flex', flexDirection: 'row', width: "100%" }}>
-                            <View style={{ width: "85%", display: 'flex', flexDirection: 'row', }}><Icon type="FontAwesome" style={{ color: this.props.currentPage == "EventChat" ? "#0A4E52" : this.original }} name="group"></Icon>
-                                <Text style={{ padding: "1%", color: this.props.currentPage == "EventChat" ? "#0A4E52" : "gray", width: "100%" }}>Discusion</Text></View>
+                            <View style={{ width: "85%", display: 'flex', flexDirection: 'row', }}><Icon type="Ionicons" style={{ color: this.props.currentPage == "EventChat" ? "#0A4E52" : this.original }} name="ios-chatbubbles"></Icon>
+                                <Text style={{ padding: "1%", color: this.props.currentPage == "EventChat" ? "#0A4E52" : "gray", width: "100%" }}>chats</Text></View>
                             {GState.generalNewMessages.length > 0 ? <Badge primary><Text style={{ marginTop: "30%", }}>{GState.generalNewMessages.length}</Text></Badge> : <View></View>}
                         </View>
                     </TouchableOpacity>

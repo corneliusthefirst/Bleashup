@@ -399,6 +399,7 @@ class Request {
             days_of_week: null,
             week_start: null,
             who_can_update: 'master',
+            type:"activity"
         }
     }
     Period() {

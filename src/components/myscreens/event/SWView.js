@@ -133,6 +133,7 @@ export default class SWView extends Component {
         this.refs.Commitee.refreshCommitees()
     }
     render() {
+        
         return (
             <View style={{
                 opacity: 0.9,
@@ -213,18 +214,22 @@ export default class SWView extends Component {
                                         inviteContacts={() => this.props.inviteContacts()}
                                         openSettingsModal={() => this.props.openSettingsModal()}
                                         ShowMyActivity={(a) => this.props.ShowMyActivity(a)}
-                                        showMembers={() => this.props.showMembers()}></ActionsView>
+                                        showMembers={() => this.props.showMembers()}
+                                        event_type={this.props.event.type}
+                                        ></ActionsView>
+                                        
                                 </View>
                                 <View style={{ width: "5%", }}></View>
                                 <View style={{
                                     width: "70%",
                                 }}>
                                     <RouteView refreshCommitee={() => this.refreshCommitees()} event_id={this.props.event.id} currentPage={this.props.currentPage}
-                                        setCurrentPage={(page) => this.props.setCurrentPage(page)}></RouteView>
+                                        setCurrentPage={(page) => this.props.setCurrentPage(page)}  event_type={this.props.event.type} ></RouteView>
                                 </View>
                             </View>
+                        {this.props.event_type = "relation"?null:
                             <View style={{height: 315,marginTop: "-10%", }}>
-                                <Commitee
+                                <Commitee 
                                     computedMaster={this.props.computedMaster}
                                     master={this.props.master}
                                     ref="Commitee"
@@ -241,7 +246,9 @@ export default class SWView extends Component {
                                     commitees={this.props.commitees}
                                     event_id={this.props.event.id}></Commitee>
                             </View>
+                           }
                         </View>
+                            
                     </ScrollView>
                     <Animated.View style={[{
                         position: 'absolute',

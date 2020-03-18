@@ -61,7 +61,7 @@ export default class Join extends Component {
     }
     render() {
         return (
-            <View style={{ padding: "-5%", marginLeft: "-25%" }}>
+            <View style={{ }}>
                 <View style={{ flexDirection: "row" }}>
                     <TouchableWithoutFeedback onPress={() => this.join()} >
                         <View >
