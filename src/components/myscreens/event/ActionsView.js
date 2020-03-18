@@ -23,7 +23,7 @@ export default class ActionsView extends Component {
     }
     render() {
         return (
-            <View style={{ height: 300, display: 'flex', flexDirection: 'column', marginTop: "6%", ...shadower(),width:'80%' }}>
+            <View style={{ height: 300, display: 'flex', flexDirection: 'column', marginTop: "6%", ...shadower(),width:'100%' }}>
                 <View style={{ height: this.actionHeight }}>
                     <TouchableOpacity onPress={() => requestAnimationFrame(() => this.props.publish())}>
                         <Icon style={{ marginLeft: "30%", color: this.actionColor, fontSize: this.fontSize, }} type="Entypo" name="megaphone"></Icon>
@@ -39,7 +39,7 @@ export default class ActionsView extends Component {
                 <View style={{ height: this.actionHeight }}>
                     <TouchableOpacity onPress={() => requestAnimationFrame(() => this.props.showMembers())}>
                         <Icon style={{ marginLeft: "30%", color: this.actionColor, fontSize: this.fontSize, }} type="FontAwesome" name="users"></Icon>
-                        <Label style={{ marginLeft: "22%", fontSize: this.textSize, color: this.actionColor }}>Members</Label>
+                        <Label style={{ marginLeft: "22%", fontSize: this.textSize, color: this.actionColor }}>Membs.</Label>
                     </TouchableOpacity>
                 </View>
                 <View style={{ height: this.actionHeight }}>

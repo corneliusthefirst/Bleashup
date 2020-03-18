@@ -168,7 +168,7 @@ export default class SWView extends Component {
                         marginTop: "5%",
                         padding: '1%',
                         paddingLeft: '8%',
-                        width: '80%',
+                        width: '83%',
                         height: screenheight * .42,
                         ...shadower(1),
                         marginLeft: '8%',

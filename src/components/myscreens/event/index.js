@@ -1245,6 +1245,7 @@ export default class Event extends Component {
   }
   setCurrentPage(page, data) {
     page === "EentChat" ? this.currentWidth = screenWidth * 2.7 / 3 : this.currentWidth = screenWidth * .25
+    //this.isOpen = position
     this.setState({
       currentPage: page,
       activeMember: null,
@@ -1263,7 +1264,7 @@ export default class Event extends Component {
     //let currentWidth = this.state.currentPage === 'EventChat' ? this.currentWidth : this.normalWidth
     StatusBar.setHidden(false, true)
     return (<SideMenu style={{ backgroundColor: "#FEFEDE", }}
-       autoClosing={true}
+       autoClosing={false}
        onMove={(position) => {
 
       }} bounceBackOnOverdraw={false} onChange={(position) => {
