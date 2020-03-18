@@ -15,10 +15,13 @@ import Materials from "./native-base-theme/variables/material";
 import CommonColor from "./native-base-theme/variables/commonColor";
 import Home from "./components/myscreens/home/homePage";
 import SettingView from "./components/myscreens/settings/index";
+import ProfileView from "./components/myscreens/settings/profile";
 import CurrentEventView from "./components/myscreens/currentevents/index";
 import InvitationView from "./components/myscreens/invitations/index";
 import PotesChat from "./components/myscreens/poteschat/index";
 import StatusView from "./components/myscreens/status/index";
+
+
 import LoginView from "./components/myscreens/login/index";
 import ForgotPasswordView from "./components/myscreens/forgotpassword/index";
 import ResetCodeView from "./components/myscreens/forgotpassword/resetCode";
@@ -30,7 +33,6 @@ import LoginHomeView from "./components/myscreens/loginhome/index";
 import stores from "./stores";
 import routerActions from "reazy-native-router-actions";
 import reazy from "reazy";
-
 import { Provider } from "mobx-react";
 import Event from "./components/myscreens/event";
 import Contributions from "./components/myscreens/contributions";
@@ -58,6 +60,7 @@ const AppNavigator = createStackNavigator(
     Home: { screen: Home },
     CurrentEvent: { screen: CurrentEventView },
     Settings: { screen: SettingView },
+    Profile: { screen: ProfileView },
     Status: { screen:  StatusView },
     Invitation: { screen: InvitationView },
     PotesChat: { screen: PotesChat },
@@ -83,10 +86,11 @@ const AppNavigator = createStackNavigator(
     MyTasksView:{screen:MyTasksView},
     EventDetailView:{screen:EventDetailView },
     LocalTasksCreation:{screen:LocalTasksCreation},
-    TasksCreation:{screen:TasksCreation}
+    TasksCreation:{screen:TasksCreation},
+   
   },
   { 
-    initialRouteName: "LoginHome",
+    initialRouteName: "Home",
     headerMode: "none"
   }
 );

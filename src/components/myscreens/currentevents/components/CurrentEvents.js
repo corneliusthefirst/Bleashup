@@ -158,7 +158,7 @@ export default class CurrentEvents extends Component {
                     onScroll={this._onScroll}
                     renderItem={(item, index) => {
                         this.delay = index % this.renderPerbatch == 0 ? 0 : this.delay + 1
-                        return <Relation
+                        return item.type && item.type == "relation" ?<Relation
                         key={item.id}
                             showLikers={likers => {
                                 this.setState({
@@ -182,6 +182,30 @@ export default class CurrentEvents extends Component {
                             showActions={(event_id) => this.showActions(event_id)}
                             renderDelay={this.delay * 100}
                             showPhoto={(url) => this.showPhoto(url)} key={item.id}  {...this.props} Event={item} />
+                            :<PublicEvent
+                            key={item.id}
+                                showLikers={likers => {
+                                    this.setState({
+                                        isLikersModalOpened: true,
+                                        likers: likers
+                                    })
+                                }}
+                                quickInvite={(e) => {
+                                    this.setState({
+                                        event: e.event,
+                                        master: e.master,
+                                        isInvitationModalOpened: true
+                                    })
+                                }}
+                                openDetails={(event) => {
+                                    this.setState({
+                                        isDetailsModalOpened: true,
+                                        event: event
+                                    })
+                                }}
+                                showActions={(event_id) => this.showActions(event_id)}
+                                renderDelay={this.delay * 100}
+                                showPhoto={(url) => this.showPhoto(url)} key={item.id}  {...this.props} Event={item} />
                     }}
                     firstIndex={0}
                     renderPerBatch={this.renderPerbatch}

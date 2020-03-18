@@ -23,7 +23,8 @@ export default class CreateEvent extends Component {
 
     stores.Events.readFromStore().then(Events =>{
      let event = find(Events, { id:"newEventId" });
-      console.warn(event);
+      console.warn(Events);
+
 
      if(!event){
       event =  request.Event();

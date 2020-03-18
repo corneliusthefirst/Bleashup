@@ -108,12 +108,14 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
                         }
                     }
                     }initialRender={5}
-                    onScroll={this.props.onScroll}
+                    //onScroll={this.props.onScroll}
                     centerContent={true}
                     ref={this.props.refHorizontal}
                     canCancelContentTouches={true}
-                    horizontal={true}
+                    horizontal={this.props.vertical?false:true}
                     renderPerBatch={5}
+                    style={this.props.style?this.props.style:null}
+                    ItemSeparatorComponent={this.props.ItemSeparatorComponent?this.props.ItemSeparatorComponent:null}
                     inverted={this.props.inverted ? this.props.inverted : false}
                     removeClippedSubviews={false}
                     maxToRenderPerBatch={this.props.renderPerBatch ? this.props.renderPerBatch : this.props.inverted ? 5 : this.state.endReached ? 1 : 3}

@@ -1,6 +1,6 @@
 import React, { Component } from "react"
 import { View, TouchableOpacity } from 'react-native';
-import { Icon, Label,Toast } from "native-base"
+import { Icon, Label,Toast ,Text} from "native-base"
 import { observer } from 'mobx-react';
 import autobind from "autobind-decorator";
 import UpdateStateIndicator from "./updateStateIndicator";
@@ -38,7 +38,7 @@ export default class Options extends Component {
         alignSelf: 'center',
     }
     svgStyle = {
-        alignSelf: 'center',
+        alignSelf: 'center', 
     }
     width = "50%"
     @autobind navigateToHighLights() {
@@ -121,13 +121,14 @@ export default class Options extends Component {
     }
     render() {
         return (
+    
             <View style={{
                 flexDirection: "row",
-                width:'100%'
+                width:'100%',
+                height:"100%"
             }}>
-                <View style={{
-                    width: this.width
-                }}>
+             <TouchableOpacity style={{width:'50%',height:"100%",justifyContent:"center"}} onPress={() => requestAnimationFrame(() => this.navigateToReminds())}>
+
                         <View style={this.svgStyle}>
                             <Icon onPress={() => requestAnimationFrame(() => this.navigateToReminds())} type="Entypo" name="bell" style={
                                 {
@@ -135,11 +136,11 @@ export default class Options extends Component {
                                     alignSelf:'center'
                                 }
                             }></Icon>
-                            <Label style={{
+                            <Text style={{
                                 color: "#1FABAB",
-                                fontSize: 12, fontStyle: 'italic',
+                                fontSize: 11, fontStyle: 'italic',
                                 alignSelf: 'center',
-                            }} >{"Reminds"}</Label>
+                            }} >reminds</Text>
                             {this.props.Event.remind_upated ? (
                                 <View style={this.indicatorMargin}>
                                     <UpdateStateIndicator size={this.blinkerSize} />
@@ -152,26 +153,25 @@ export default class Options extends Component {
                                         />
                                     </View>
                                 )}
-                        </View>
+                         
                 </View>
-                <View
-                    style={{
-                        width: this.width
-                    }}
-                >
+                </TouchableOpacity>
+
+                <TouchableOpacity style={{width:'50%',height:"100%",justifyContent:"center"}} onPress={() => requestAnimationFrame(() => this.navigateToEventChat())} >
+   
                         <View style={this.svgStyle}>
-                            <Icon onPress={() => requestAnimationFrame(() => this.navigateToEventChat())} name="group" type="FontAwesome" style={
+                            <Icon onPress={() => requestAnimationFrame(() => this.navigateToEventChat())} name="ios-chatbubbles" type="Ionicons" style={
                                 {
                                     color: "#1FABAB",
                                     alignSelf: 'center',
                                 }
                             }></Icon>
                             <Label style={{
-                                // marginLeft: "-5%"
-                                fontSize: 12, fontStyle: 'italic',
+                                marginLeft: "-13%",
+                                fontSize: 11, fontStyle: 'italic',
                                 alignSelf:'center',
                                 color: "#1FABAB"
-                            }}>Discussions</Label>
+                            }}>chats</Label>
                             {this.props.Event.chat_updated ? (
                                 <View style={this.indicatorMargin}>
                                     <UpdateStateIndicator size={22} />
@@ -184,8 +184,9 @@ export default class Options extends Component {
                                         />
                                     </View>
                                 )}
-                        </View >
-                </View>
+                          
+                  </View>
+                </TouchableOpacity>
                 {/*<View
                     style={{
                         width: this.width

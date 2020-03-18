@@ -85,6 +85,8 @@ export default class RouteView extends Component {
     };
     width = screenWidth * .15
     render() {
+        
+
         if (this.props.currentPage == "EventChat") GState.generalNewMessages = []
         return (
             <View style={{ width: this.width, height:'100%' }} transparent >

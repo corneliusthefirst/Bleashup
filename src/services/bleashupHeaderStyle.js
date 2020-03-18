@@ -9,4 +9,4 @@ export default {
     backgroundColor: "#FEFFDE",
     width: "98%",
     height: '100%',
-}
+} 

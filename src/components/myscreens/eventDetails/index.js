@@ -31,6 +31,8 @@ import HighlightCard from "../event/createEvent/components/HighlightCard"
 import MapView from "../currentevents/components/MapView";
 import Creator from "../reminds/Creator";
 import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
+import HighLightsDetails from '../highlights_details/index';
+
 let { height, width } = Dimensions.get('window');
 
 //@observer
@@ -212,193 +214,201 @@ export default class EventDetailView extends Component {
       profile: this.state.creatorInfo
     }) : null
   }
+  relationPost(id) {
+    return this.props.navigation.navigate("HighLightsDetails", { event_id: id });
+  }
   render() {
     return (
-      !this.state.isMounted ? <View style={{ height: height, backgroundColor: '#FEFFDE', width: '100%' }}><Spinner size={'small'}></Spinner></View> :
-        <ScrollView showsVerticalScrollIndicator={false} nestedScrolEnabled={true}><View style={{ height: height, width: "100%" }}>
-          <View style={{
-            height: 44,
-            width: "100%",
-          }}><View style={{
-            paddingTop: '2%', ...bleashupHeaderStyle,
-            flexDirection: "row",
-          }}>
-              <View style={{ marginLeft: "4%", width: '80%' }}>
-                <Title style={{ color: "#0A4E52", fontWeight: 'bold', alignSelf: 'flex-start' }}>{this.props.Event.about.title}</Title>
-              </View>
-              <View style={{ width: '20%' }}>
-                {this.props.computedMaster ? <TouchableOpacity onPress={() => requestAnimationFrame(() => this.newHighlight())}>
-                  <Icon type='AntDesign' name="pluscircle" style={{ color: "#1FABAB", fontSize: 25, alignSelf: 'center', }} />
-                </TouchableOpacity> : null}
-              </View>
-
-            </View>
-          </View>
-          <View style={{ height: "92%", flexDirection: "column", width: "100%" }} >
-            <View style={{ height: this.state.highlightData.length == 0 ? 0 : "30%", width: "100%" }} >
-              {this.state.refresh ? <BleashupFlatList
-                initialRender={4}
-                showsHorizontalScrollIndicator={false}
-                horizontal={true}
-                renderPerBatch={5}
-                firstIndex={0}
-                refHorizontal={(ref) => { this.detail_flatlistRef = ref }}
-                keyExtractor={this._keyExtractor}
-                dataSource={this.state.highlightData}
-                numberOfItems={this.state.highlightData.length}
-                parentComponent={this}
-                //getItemLayout={this._getItemLayout}
-                renderItem={(item, index) => {
-                  return (
-                    <HighlightCard
-                      phone={stores.LoginStore.user.phone}
-                      update={(hid) => {
-                        this.setState({
-                          EventHighlightState: true,
-                          update: true,
-                          highlight_id: hid
-                        })
-                      }}
-                      mention={(replyer) => {
-                        this.mention(replyer)
-                      }}
-                      deleteHighlight={(item) => {
-                        this.setState({
-                          current_highlight: item,
-                          isAreYouSureModalOpened: true,
-                        })
-                      }}
-                      computedMaster={this.props.computedMaster}
-                      showItem={(item) => {
-                        this.props.showHighlight(item)
-                      }} participant={this.state.participant} parentComponent={this} item={item} ancien={true}
-                      ref={"higlightcard"} />
-                  );
-                }}
-              >
-              </BleashupFlatList> : null}
-            </View>
+      !this.state.isMounted ? <View style={{ height: '100%', backgroundColor: '#FEFFDE', width: '100%' }}><Spinner size={'small'}></Spinner></View> :
+        (this.state.EventData.type == "relation" ?
+          (this.relationPost(this.state.EventData.id))
+          :
+          <ScrollView showsVerticalScrollIndicator={false} nestedScrolEnabled={true}><View style={{ height: "100%", width: "100%" }}>
             <View style={{
-              margin: '2%', height: !(this.state.highlightData &&
-                this.state.highlightData.length) > 0 ? "100%" : '70%', borderTopLeftRadius: 5, borderTopRightRadius: 5, ...shadower(2), backgroundColor: '#FEFFDE',
+              height: 44,
+              width: "100%",
+            }}><View style={{
+              paddingTop: '2%', ...bleashupHeaderStyle,
+              flexDirection: "row",
             }}>
-              <View style={{
-                height: "70%", width: "96%",
-                borderRadius: 8,
-                borderColor: "#1FABAB", margin: "2%", borderWidth: 1,
-              }}>
-                {this.props.computedMaster ? <Icon name={"pencil"} type={"EvilIcons"} onPress={() => {
-                  this.setState({
-                    EventDescriptionState: true
-                  })
-                }} style={{ alignSelf: 'flex-end', }}></Icon> : null}
-                <ScrollView showsVerticalScrollIndicator={false}
-                  nestedScrolEnabled={true}>
-                  <View style={{ flex: 1 }}>
-                    {this.props.Event.about.description != "" ?
-                      <Hyperlink onPress={(url) => { Linking.openURL(url) }} linkStyle={{ color: '#48d1cc', fontSize: 16 }}>
-                        <Text dataDetectorType={'all'} style={{ fontSize: 16, fontWeight: "500", margin: "1%", color: '#555756' }} delayLongPress={800}>{this.props.Event.about.description}</Text>
-                      </Hyperlink> :
-                      <Text style={{ fontWeight: "500", margin: "1%", fontSize: 30, alignSelf: 'center', marginTop: (height) / 8 }} delayLongPress={800}>{this.state.defaultDetail}</Text>}
-                  </View>
-                </ScrollView>
+                <View style={{ marginLeft: "4%", width: '80%' }}>
+                  <Title style={{ color: "#0A4E52", fontWeight: 'bold', alignSelf: 'flex-start' }}>{this.props.Event.about.title}</Title>
+                </View>
+                <View style={{ width: '20%' }}>
+                  {this.props.computedMaster ? <TouchableOpacity onPress={() => requestAnimationFrame(() => this.newHighlight())}>
+                    <Icon type='AntDesign' name="pluscircle" style={{ color: "#1FABAB", fontSize: 25, alignSelf: 'center', }} />
+                  </TouchableOpacity> : null}
+                </View>
+
               </View>
-              {this.props.Event.location.string != "" ?
-                <View style={{ flexDirection: "column", height: height / 5, alignItems: "flex-end", marginRight: "3%", marginBottom: "5%", }}>
-                  {this.props.computedMaster ? <Icon name={"pencil"} type={"EvilIcons"} onPress={() => {
-                    this.setState({
-                      EventLocationState: true
-                    })
-                  }} style={{ alignSelf: 'flex-end', }}></Icon> : null}
-                  <MapView location={this.props.Event.location.string}></MapView>
-                </View> :
-                <TouchableOpacity delayLongPress={1000} onLongPress={() => {
-                  if (this.state.participant.master == true) {
-                    this.setState({ EventLocationState: true })
-                  }
+            </View>
+            <View style={{ height: "92%", flexDirection: "column", width: "100%" }} >
+              <View style={{ height: this.state.highlightData.length == 0 ? 0 : "30%", width: "100%" }} >
+                {this.state.refresh ? <BleashupFlatList
+                  initialRender={4}
+                  showsHorizontalScrollIndicator={false}
+                  horizontal={true}
+                  renderPerBatch={5}
+                  firstIndex={0}
+                  refHorizontal={(ref) => { this.detail_flatlistRef = ref }}
+                  keyExtractor={this._keyExtractor}
+                  dataSource={this.state.highlightData}
+                  numberOfItems={this.state.highlightData.length}
+                  parentComponent={this}
+                  //getItemLayout={this._getItemLayout}
+                  renderItem={(item, index) => {
+                    return (
+                      <HighlightCard
+                        phone={stores.LoginStore.user.phone}
+                        update={(hid) => {
+                          this.setState({
+                            EventHighlightState: true,
+                            update: true,
+                            highlight_id: hid
+                          })
+                        }}
+                        mention={(replyer) => {
+                          this.mention(replyer)
+                        }}
+                        deleteHighlight={(item) => {
+                          this.setState({
+                            current_highlight: item,
+                            isAreYouSureModalOpened: true,
+                          })
+                        }}
+                        computedMaster={this.props.computedMaster}
+                        showItem={(item) => {
+                          this.props.showHighlight(item)
+                        }} participant={this.state.participant} parentComponent={this} item={item} ancien={true}
+                        ref={"higlightcard"} />
+                    );
+                  }}
+                >
+                </BleashupFlatList> : null}
+              </View>
+              <View style={{
+                margin: '2%', height: !(this.state.highlightData &&
+                  this.state.highlightData.length) > 0 ? "100%" : '70%', borderTopLeftRadius: 5, borderTopRightRadius: 5, ...shadower(2), backgroundColor: '#FEFFDE',
+              }}>
+                <View style={{
+                  height: "70%", width: "96%",
+                  borderRadius: 8,
+                  borderColor: "#1FABAB", margin: "2%", borderWidth: 1,
                 }}>
                   {this.props.computedMaster ? <Icon name={"pencil"} type={"EvilIcons"} onPress={() => {
                     this.setState({
-                      EventLocationState: true
+                      EventDescriptionState: true
                     })
                   }} style={{ alignSelf: 'flex-end', }}></Icon> : null}
-                  <View>
-                    <Text ellipsizeMode="clip" numberOfLines={3} style={{ alignSelf: 'flex-end', fontSize: 14, color: "#1FABAB", margin: "2%" }}>
-                      {this.state.defaultLocation}</Text>
-                  </View>
-                </TouchableOpacity>}
-              <View style={{ flexDirection: "column", position: 'absolute', justifyContent: "space-between", bottom: 0, margin: 3, width: "98%" }}>
-                <Creator color={"#FEFFDE"} creator={this.props.Event.creator_phone} created_at={this.props.Event.created_at}></Creator>
+                  <ScrollView showsVerticalScrollIndicator={false}
+                    nestedScrolEnabled={true}>
+                    <View style={{ flex: 1 }}>
+                      {this.props.Event.about.description != "" ?
+                        <Hyperlink onPress={(url) => { Linking.openURL(url) }} linkStyle={{ color: '#48d1cc', fontSize: 16 }}>
+                          <Text dataDetectorType={'all'} style={{ fontSize: 16, fontWeight: "500", margin: "1%", color: '#555756' }} delayLongPress={800}>{this.props.Event.about.description}</Text>
+                        </Hyperlink> :
+                        <Text style={{ fontWeight: "500", margin: "1%", fontSize: 30, alignSelf: 'center', marginTop: (height) / 8 }} delayLongPress={800}>{this.state.defaultDetail}</Text>}
+                    </View>
+                  </ScrollView>
+                </View>
+                {this.props.Event.location.string != "" ?
+                  <View style={{ flexDirection: "column", height: height / 5, alignItems: "flex-end", marginRight: "3%", marginBottom: "5%", }}>
+                    {this.props.computedMaster ? <Icon name={"pencil"} type={"EvilIcons"} onPress={() => {
+                      this.setState({
+                        EventLocationState: true
+                      })
+                    }} style={{ alignSelf: 'flex-end', }}></Icon> : null}
+                    <MapView location={this.props.Event.location.string}></MapView>
+                  </View> :
+                  <TouchableOpacity delayLongPress={1000} onLongPress={() => {
+                    if (this.state.participant.master == true) {
+                      this.setState({ EventLocationState: true })
+                    }
+                  }}>
+                    {this.props.computedMaster ? <Icon name={"pencil"} type={"EvilIcons"} onPress={() => {
+                      this.setState({
+                        EventLocationState: true
+                      })
+                    }} style={{ alignSelf: 'flex-end', }}></Icon> : null}
+                    <View>
+                      <Text ellipsizeMode="clip" numberOfLines={3} style={{ alignSelf: 'flex-end', fontSize: 14, color: "#1FABAB", margin: "2%" }}>
+                        {this.state.defaultLocation}</Text>
+                    </View>
+                  </TouchableOpacity>}
+                <View style={{ flexDirection: "column", position: 'absolute', justifyContent: "space-between", bottom: 0, margin: 3, width: "98%" }}>
+                  <Creator color={"#FEFFDE"} creator={this.props.Event.creator_phone} created_at={this.props.Event.created_at}></Creator>
+                </View>
               </View>
             </View>
-          </View>
-          {this.state.EventDescriptionState ? <EventDescription updateDesc={(newDesc) => {
-            this.props.updateDesc(newDesc)
-          }} event={this.props.Event} isOpen={this.state.EventDescriptionState} onClosed={() => { this.setState({ EventDescriptionState: false }) }}
-            ref={"description_ref"} eventId={this.props.Event.id} updateDes={true} parentComp={this} /> : null}
+            {this.state.EventDescriptionState ? <EventDescription updateDesc={(newDesc) => {
+              this.props.updateDesc(newDesc)
+            }} event={this.props.Event} isOpen={this.state.EventDescriptionState} onClosed={() => { this.setState({ EventDescriptionState: false }) }}
+              ref={"description_ref"} eventId={this.props.Event.id} updateDes={true} parentComp={this} /> : null}
 
-          {this.state.EventLocationState ? <EventLocation updateLocation={(newLoc) => {
-            this.props.updateLocation(newLoc)
-          }} event={this.props.Event} isOpen={this.state.EventLocationState} onClosed={() => { this.setState({ EventLocationState: false }) }}
-            ref={"location_ref"} updateLoc={true} eventId={this.props.Event.id} parentComp={this} /> : null}
-          <EventHighlights
-            closeTeporary={() => {
-              this.setState({
-                EventHighlightState: false,
-              })
-              setTimeout(() => {
+            {this.state.EventLocationState ? <EventLocation updateLocation={(newLoc) => {
+              this.props.updateLocation(newLoc)
+            }} event={this.props.Event} isOpen={this.state.EventLocationState} onClosed={() => { this.setState({ EventLocationState: false }) }}
+              ref={"location_ref"} updateLoc={true} eventId={this.props.Event.id} parentComp={this} /> : null}
+            <EventHighlights
+              closeTeporary={() => {
                 this.setState({
-                  EventHighlightState: true
+                  EventHighlightState: false,
                 })
-              }, 600)
-            }}
-            startLoader={() => {
-              this.props.startLoader()
-            }} stopLoader={() => {
-              this.props.stopLoader()
-            }} playVideo={(vid) => {
-              this.wasEventHiglightOpened = true
-              this.setState({
-                showVideo: true,
-                video: vid,
-                EventHighlightState: false
-              })
-            }}
-            updateState={this.state.update}
-            highlight_id={this.state.highlight_id}
-            reinitializeHighlightsList={(newHighlight) => {
-              this.reinitializeHighlightsList(newHighlight)
-            }} isOpen={this.state.EventHighlightState} onClosed={() => {
-              this.setState({
-                EventHighlightState: false, update: false,
-                highlight_id: null
-              })
-            }}
-            update={(newHighlight, previousHighlight) => this.updateHighlight(newHighlight, previousHighlight)}
-            participant={this.state.participant} parentComponent={this} ref={"highlights"} event_id={this.props.Event.id} />
+                setTimeout(() => {
+                  this.setState({
+                    EventHighlightState: true
+                  })
+                }, 600)
+              }}
+              startLoader={() => {
+                this.props.startLoader()
+              }} stopLoader={() => {
+                this.props.stopLoader()
+              }} playVideo={(vid) => {
+                this.wasEventHiglightOpened = true
+                this.setState({
+                  showVideo: true,
+                  video: vid,
+                  EventHighlightState: false
+                })
+              }}
+              updateState={this.state.update}
+              highlight_id={this.state.highlight_id}
+              reinitializeHighlightsList={(newHighlight) => {
+                this.reinitializeHighlightsList(newHighlight)
+              }} isOpen={this.state.EventHighlightState} onClosed={() => {
+                this.setState({
+                  EventHighlightState: false, update: false,
+                  highlight_id: null
+                })
+              }}
+              update={(newHighlight, previousHighlight) => this.updateHighlight(newHighlight, previousHighlight)}
+              participant={this.state.participant} parentComponent={this} ref={"highlights"} event_id={this.props.Event.id} />
 
-          {this.state.isAreYouSureModalOpened ? <BleashupAlert title={"Delete Higlight"} accept={"Yes"} refuse={"No"} message={" Are you sure you want to delete these highlight ?"}
-            deleteFunction={() => this.deleteHighlight(this.state.current_highlight)}
-            isOpen={this.state.isAreYouSureModalOpened} onClosed={() => { this.setState({ isAreYouSureModalOpened: false }) }} /> : null}
+            {this.state.isAreYouSureModalOpened ? <BleashupAlert title={"Delete Higlight"} accept={"Yes"} refuse={"No"} message={" Are you sure you want to delete these highlight ?"}
+              deleteFunction={() => this.deleteHighlight(this.state.current_highlight)}
+              isOpen={this.state.isAreYouSureModalOpened} onClosed={() => { this.setState({ isAreYouSureModalOpened: false }) }} /> : null}
 
-          {this.state.showPhoto ? <PhotoViewer photo={this.state.photo} open={this.state.showPhoto} hidePhoto={() => {
-            this.setState({
-              showPhoto: false,
-              isHighlightDetailsModalOpened: true
-            })
-          }}></PhotoViewer> : null}
-          {this.state.showVideo ? <VideoViewer open={this.state.showVideo} hideVideo={() => {
-            this.setState({
-              showVideo: false,
-              EventHighlightState: this.wasEventHiglightOpened ? true : false,
-              isHighlightDetailsModalOpened: this.wasDetailOpened ? true : false,
-            })
-            this.wasEventHiglightOpened = false;
-            this.wasDetailOpened = false
-          }} video={this.state.video}
-          ></VideoViewer> : null}
-        </View>
-        </ScrollView>
+            {this.state.showPhoto ? <PhotoViewer photo={this.state.photo} open={this.state.showPhoto} hidePhoto={() => {
+              this.setState({
+                showPhoto: false,
+                isHighlightDetailsModalOpened: true
+              })
+            }}></PhotoViewer> : null}
+            {this.state.showVideo ? <VideoViewer open={this.state.showVideo} hideVideo={() => {
+              this.setState({
+                showVideo: false,
+                EventHighlightState: this.wasEventHiglightOpened ? true : false,
+                isHighlightDetailsModalOpened: this.wasDetailOpened ? true : false,
+              })
+              this.wasEventHiglightOpened = false;
+              this.wasDetailOpened = false
+            }} video={this.state.video}
+            ></VideoViewer> : null}
+          </View>
+          </ScrollView>
+        )
+
     )
   }
 

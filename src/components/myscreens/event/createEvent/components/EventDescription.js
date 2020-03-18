@@ -118,10 +118,13 @@ export default class EventDescription extends Component {
                 borderRadius: 10, borderWidth: 1,
                 borderColor: "#1FABAB",alignSelf: 'center',
                 backgroundColor: "#f5fffa"
-              }} maxLength={1000} style={{
+              }} maxLength={1000}
+               style={{
                 margin: 1,
+                textAlignVertical: 'top',  // hack android
                 backgroundColor: "#f5fffa",
-                height: "95%", width: "98%"
+                height: "95%",
+                width: "98%"
               }}
                 placeholder="Activity Description" value={this.state.description} keyboardType="default"
                 onChangeText={(value) => this.onChangedEventDescription(value)} />

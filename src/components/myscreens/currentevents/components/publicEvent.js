@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Vibration, TouchableWithoutFeedback, TouchableOpacity } from 'react-native';
+import { View, Vibration, TouchableWithoutFeedback, TouchableOpacity,Dimensions } from 'react-native';
 
 import {
   Card,
@@ -38,6 +38,8 @@ import InvitationModal from './InvitationModal';
 import ProfileSimple from './ProfileViewSimple';
 import shadower from "../../../shadower";
 
+
+let {height, width} = Dimensions.get('window');
 class PublicEvent extends Component {
   constructor(props) {
     super(props);
@@ -65,12 +67,15 @@ class PublicEvent extends Component {
       liked: false,
       likeIncrelment: 0,
       isPublisherModalOpened: false,
-      currentUser: undefined
+      currentUser: undefined,
+      creator:null
     };
   }
-  state = {
+  
+  /*state = {
     master: true
-  }
+  }*/
+
   shouldComponentUpdate(nextProps, nextState, nextContext) {
     return this.state.isMount !== nextState.isMount ||
       nextState.joint !== this.state.joint ||
@@ -82,6 +87,10 @@ class PublicEvent extends Component {
   }
   swipperComponent = null
   componentDidMount() {
+    //this is done to use as default for my test
+    stores.TempLoginStore.getUser("0666406835").then(creator=>{
+      this.setState({creator:creator});
+    })
     setTimeout(() => {
       this.setState({
         isMount: true,
@@ -93,7 +102,7 @@ class PublicEvent extends Component {
           this.setState({
             master: master,
             joint: findIndex(this.props.Event.participant, { phone: stores.LoginStore.user.phone }) > 0 ? true : false,
-            creator: creator,
+            creator: this.state.creator==null?creator:this.state.creator,
           })
         })
       })
@@ -273,6 +282,112 @@ class PublicEvent extends Component {
     return this.state.isMount && this.props.Event.location.string ? <View style={{ alignSelf: 'flex-start', width: '40%' }}><MapView card
       location={this.props.Event.location.string}></MapView></View> : null
   }
+  renderprofile(){
+       
+       return (
+       <CardItem
+       style={{
+         paddingBottom: 1,
+         paddingTop: 1,
+         borderRadius: 5,
+         height:height/8,
+         width:"100%"
+       }}
+     >
+       <View style={{width:"100%",flexDirection: "row",alignItems:"center"}}>
+      
+         {this.state.creator ? <View style={{width:"60%"}}>
+           <ProfileSimple showPhoto={(url) =>
+             this.props.showPhoto(url)}
+             profile={this.state.creator}>
+             </ProfileSimple>
+         </View> : null}
+
+         <View style={{height:"100%",width:"40%",...shadower()}}>
+           {this.state.isMount ? <Options seen={() => this.markAsSeen()} {...this.props}></Options> : null}
+         </View>
+
+       </View>
+       </CardItem> );
+     
+  }
+
+
+  renderTitle(){
+    return  ( <CardItem style={{
+      marginLeft: '2%',
+      marginBottom: '3%',
+    }}>
+      <View style={{ flexDirection: 'row', width: '100%' }}>
+        <View style={{ width: '95%' }}>
+          {this.state.isMount ? <TitleView openDetail={() => this.props.openDetails(this.props.Event)} join={() => this.join()} joint={this.state.joint} seen={() => this.markAsSeen()}
+            {...this.props}></TitleView> : null}
+        </View>
+        <View style={{ width: '5%',justifyContent: 'center', alignItems: 'center', }}>
+          <Icon onPress={() => this.props.showActions(this.props.Event.id)} type="Entypo" style={{ fontSize: 24, color: "#555756"}} name="dots-three-vertical"></Icon>
+        </View>
+      </View>
+    </CardItem>)
+  }
+  renderBody(){
+    return ( <CardItem
+      style={{
+        paddingLeft: 0,
+        aspectRatio: 3 / 1,
+        paddingRight: 0,
+        paddingTop: 4,
+        paddingBottom: 6
+      }}
+      cardBody
+    >
+      <View style={{ flexDirection: 'row', }}>
+        <View style={{ width: '65%' }}>{this.state.isMount ? <View style={{ alignSelf: 'flex-start' }}><CardItem
+          style={{
+            ...shadower(),
+            backgroundColor: '#1FABAB',
+            height: '90%',
+            width: "60%",
+            borderRadius: 5,
+            marginLeft: "4%"
+          }}><PhotoView
+            navigation={this.props.navigation} renderDelay={this.props.renderDelay} showPhoto={(url) => url ?
+              this.showPhoto(url) : null} joined={() => this.join()}
+            isToBeJoint hasJoin={this.props.Event.joint || this.state.joint} onOpen={() => this.onOpenPhotoModal()} style={{
+              marginLeft: '-1%',
+            }} photo={this.props.Event.background} event_id={this.props.Event.id} width={170} height={100} borderRadius={6} />
+        </CardItem></View> : null}</View>
+        {this.renderMap()}
+      </View>
+    </CardItem>)
+  }
+
+ renderMarkAsSeen(){
+   return (         
+      <CardItem>
+        {this.state.isMount ? <Options seen={() => this.markAsSeen()} {...this.props}></Options> : null}
+      </CardItem>)
+ }
+renderFooter(){
+  return (
+    <Footer style={{height:height/15}}>
+      <View style={{width:"100%", flexDirection: "row",}}>
+
+      <View style={{alignSelf:"flex-start",width:"60%",paddingLeft:"2%"}}>
+        {this.state.isMount && !this.state.fresh ? <Join event={this.props.Event} refreshJoint={() => this.refreshJoint()}></Join> : null}
+      </View>
+
+  
+      {this.state.isMount ? <View style={{ flexDirection: "row",width:"40%" }}>
+        <Like showLikers={(likers) => this.props.showLikers(likers)} id={this.props.Event.id} end={() => this.markAsSeen()} />
+         {this.renderMarkAsSeen()}
+      </View> : null}
+  
+    </View>
+  </Footer>
+  )
+}
+
+
   render() {
     //emitter.emit('notify', "santerss") 
     return (this.state.isMount ? <View style={{ width: "100%", paddingLeft: '2%', paddingRight: '2%', alignSelf: 'center', }}>
@@ -289,81 +404,10 @@ class PublicEvent extends Component {
           }}
           bordered
         >
-          {/*<CardItem
-            style={{
-              paddingBottom: 1,
-              paddingTop: 1,
-              borderRadius: 5
-            }}
-          >
-            <Left>
-              {this.state.creator ? <View style={{ flexDirection: "row", }}>
-                <ProfileSimple showPhoto={(url) =>
-                  this.props.showPhoto(url)}
-                  profile={(this.state.creator)}></ProfileSimple>
-              </View> : null}
-            </Left>
-            <Right>
-              <Button  transparent>
-              </Button>
-            </Right>
-                </CardItem>*/}
-          <CardItem style={{
-            marginLeft: '2%',
-            marginBottom: '1%',
-          }}>
-            <View style={{ flexDirection: 'row', width: '100%' }}>
-              <View style={{ width: '95%' }}>
-                {this.state.isMount ? <TitleView openDetail={() => this.props.openDetails(this.props.Event)} join={() => this.join()} joint={this.state.joint} seen={() => this.markAsSeen()}
-                  {...this.props}></TitleView> : null}
-              </View>
-              <View style={{ width: '5%',justifyContent: 'center', alignItems: 'center', }}>
-                <Icon onPress={() => this.props.showActions(this.props.Event.id)} type="Entypo" style={{ fontSize: 24, color: "#555756"}} name="dots-three-vertical"></Icon>
-              </View>
-            </View>
-          </CardItem>
-          <CardItem
-            style={{
-              paddingLeft: 0,
-              aspectRatio: 3 / 1,
-              paddingRight: 0,
-              paddingTop: 4,
-              paddingBottom: 6
-            }}
-            cardBody
-          >
-            <View style={{ flexDirection: 'row', }}>
-              <View style={{ width: '65%' }}>{this.state.isMount ? <View style={{ alignSelf: 'flex-start' }}><CardItem
-                style={{
-                  ...shadower(),
-                  backgroundColor: '#1FABAB',
-                  height: '90%',
-                  width: "60%",
-                  borderRadius: 5,
-                  marginLeft: "4%"
-                }}><PhotoView
-                  navigation={this.props.navigation} renderDelay={this.props.renderDelay} showPhoto={(url) => url ?
-                    this.showPhoto(url) : null} joined={() => this.join()}
-                  isToBeJoint hasJoin={this.props.Event.joint || this.state.joint} onOpen={() => this.onOpenPhotoModal()} style={{
-                    marginLeft: '-1%',
-                  }} photo={this.props.Event.background} event_id={this.props.Event.id} width={170} height={100} borderRadius={6} />
-              </CardItem></View> : null}</View>
-              {this.renderMap()}
-            </View>
-          </CardItem>
-          <CardItem>
-            {this.state.isMount ? <Options seen={() => this.markAsSeen()} {...this.props}></Options> : null}
-          </CardItem>
-          <Footer>
-            <Left>
-              {this.state.isMount ? <View style={{ flexDirection: "row" }}>
-                <Like showLikers={(likers) => this.props.showLikers(likers)} id={this.props.Event.id} end={() => this.markAsSeen()} />
-              </View> : null}
-            </Left>
-            <Right>
-              {this.state.isMount && !this.state.fresh ? <Join event={this.props.Event} refreshJoint={() => this.refreshJoint()}></Join> : null}
-            </Right>
-          </Footer>
+          {this.renderTitle()}
+          {this.renderBody()}
+          {this.renderFooter()}
+
         </Card>
       </Swipeout>
     </View> : <View style={{ paddingLeft: '2%', paddingRight: '2%', }}><Card style={{ height: 230, 

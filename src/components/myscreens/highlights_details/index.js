@@ -19,7 +19,7 @@ const screenheight = Math.round(Dimensions.get('window').height);
 export default class HighLightsDetails extends Component {
     constructor(props) {
         super(props)
-        this.event_id = this.props.navigation.getParam('event_id')
+        this.event_id = this.props.navigation.getParam('event_id');
         this.state = {
             inputsHeight: 0,
             showImojiInput: false,

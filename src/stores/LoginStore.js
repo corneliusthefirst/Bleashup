@@ -83,6 +83,7 @@ export default class LoginStore {
   }
 
   @action updateName(newName) {
+    console.warn("here1",newName)
     return new Promise((resolve, reject) => {
       storage
         .load({
@@ -90,9 +91,11 @@ export default class LoginStore {
           autoSync: true
         })
         .then(data => {
-          UserSevices.changeNickname(data.phone, data.password, newName)
-            .then(() => {
-              data.name = newName;
+          console.warn("here2",data)
+         // UserSevices.changeNickname(data.phone, data.password, newName)
+           // .then(() => {
+              console.warn("here3",newName)
+              data.nickname = newName;
               storage
                 .save({
                   key: "loginStore",
@@ -102,10 +105,10 @@ export default class LoginStore {
                   this.user = data;
                   resolve();
                 });
-            })
-            .catch(error => {
-              reject(error);
-            });
+           // })
+           // .catch(error => {
+           //   reject(error);
+          //  });
         })
         .catch(error => {
           reject(error);

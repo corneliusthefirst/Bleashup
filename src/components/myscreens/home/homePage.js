@@ -52,9 +52,11 @@ import Requester from '../event/Requester';
 import shadower from "../../shadower";
 import TabModal from "./TabModal";
 import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
+import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
 
 
 let { height, width } = Dimensions.get('window');
+
 
 class Home extends Component {
   constructor(props) {
@@ -62,13 +64,18 @@ class Home extends Component {
     this.state = {
       appState: 'active',
       isTabModalOpened: false,
-      currentTab: 0
+      currentTab: 0,
+      setting:false
     };
     this.permisssionListener()
   }
   state = {
 
   }
+  //initialise menu
+  _menu = null;
+
+
   spinValue = new Animated.Value(0)
   permisssionListener() {
     firebase.messaging().hasPermission().then(status => {
@@ -280,10 +287,10 @@ class Home extends Component {
     scroll: true,
     currentTab: 0
   };
-  @autobind
-  settings() { }
+  
 
-  /*
+
+  /* 
   @autobind
   setCreateButton(){
    
@@ -296,8 +303,21 @@ class Home extends Component {
      this.setState({color:"#1FABAB"});
    }
   }*/
-
-
+  setMenuRef = (ref)=>{
+    this._menu = ref;
+  }
+  hideMenu = () => {
+    this._menu.hide();
+  };
+ 
+  showMenu = () => {
+    this._menu.show();
+  };
+  settings = () => {
+    this.hideMenu();
+    this.props.navigation.navigate("Settings");
+    
+  };
 
   handleURL = ({ url }) => {
     console.warn("responding to links")
@@ -338,11 +358,27 @@ class Home extends Component {
               }}>
                 <Thumbnail small source={require("../../../../assets/ic_launcher_round.png")}></Thumbnail>
               </View>
-              <View style={{ marginTop: '2%', }}>
+
+              <View style={{ alignItems:"center",justifyContent:"center" }}>
                 <View style={{ alignSelf: "flex-end", display: 'flex', flexDirection: 'row', }}>
+
+                 <TouchableOpacity style={{height:40,alignItems:"center",justifyContent:"center"}} onPress={() => this.navigateToInvitations()}>
                   <Icon name="sc-telegram" active={true} type="EvilIcons" style={{ color: "#1FABAB", }} onPress={() => this.navigateToInvitations()} />
-                  <Icon name="gear" active={true} type="EvilIcons" style={{ color: "#1FABAB", }} onPress={() => this.settings()} />
+                  </TouchableOpacity>
+
+                  <TouchableOpacity style={{height:40,alignItems:"center",justifyContent:"center"}} onPress={this.showMenu}>
+                    <Menu
+                     ref={this.setMenuRef}
+                     button={<Icon name="gear" active={true} type="EvilIcons" style={{ color: "#1FABAB",marginLeft:width/35 }} onPress={this.showMenu} />}
+                     style={{ backgroundColor: "#FEFFDE" }}
+                     >
+                   <MenuItem onPress={this.settings}>settings</MenuItem>
+                  </Menu> 
+                  </TouchableOpacity>
+
                 </View>
+            
+
               </View>
             </View>
 
@@ -352,12 +388,12 @@ class Home extends Component {
           locked
           tabContainerStyle={{
             borderWidth: 1,
-            borderRadius: 8,
+            borderRadius: 0,
             borderColor: '#ddd',
             borderBottomWidth: 0,
             alignSelf: 'center',
             ...shadower(20),
-            margin: "1%", height: 45, backgroundColor: "#1FABAB", borderRadius: 4,
+            margin: "1%", height: 45, backgroundColor: "#FEFFDE", borderRadius: 4,
           }}
           tabBarPosition="bottom"
           tabBarUnderlineStyle={{
