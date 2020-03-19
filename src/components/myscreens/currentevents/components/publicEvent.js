@@ -319,12 +319,12 @@ class PublicEvent extends Component {
       marginBottom: '3%',
     }}>
       <View style={{ flexDirection: 'row', width: '100%' }}>
-        <View style={{ width: '95%' }}>
+        <View style={{ width: '85%' }}>
           {this.state.isMount ? <TitleView openDetail={() => this.props.openDetails(this.props.Event)} join={() => this.join()} joint={this.state.joint} seen={() => this.markAsSeen()}
             {...this.props}></TitleView> : null}
         </View>
-        <View style={{ width: '5%',justifyContent: 'center', alignItems: 'center', }}>
-          <Icon onPress={() => this.props.showActions(this.props.Event.id)} type="Entypo" style={{ fontSize: 24, color: "#555756"}} name="dots-three-vertical"></Icon>
+        <View style={{ width: '15%',justifyContent: 'flex-end', alignItems: 'flex-end', }}>
+          <Icon onPress={() => this.props.showActions(this.props.Event.id)} type="Entypo" style={{ fontSize: 24, color: "#555756",alignSelf:'flex-end'}} name="dots-three-vertical"></Icon>
         </View>
       </View>
     </CardItem>)
@@ -369,7 +369,7 @@ class PublicEvent extends Component {
  }
 renderFooter(){
   return (
-    <Footer style={{height:height/15}}>
+    <Footer style={{height:40}}>
       <View style={{width:"100%", flexDirection: "row",}}>
 
       <View style={{alignSelf:"flex-start",width:"60%",paddingLeft:"2%"}}>
@@ -378,7 +378,7 @@ renderFooter(){
 
   
       {this.state.isMount ? <View style={{ flexDirection: "row",width:"40%" }}>
-        <Like showLikers={(likers) => this.props.showLikers(likers)} id={this.props.Event.id} end={() => this.markAsSeen()} />
+        {/*<Like showLikers={(likers) => this.props.showLikers(likers)} id={this.props.Event.id} end={() => this.markAsSeen()} />*/}
          {this.renderMarkAsSeen()}
       </View> : null}
   

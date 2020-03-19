@@ -22,12 +22,13 @@ export default class ActionsView extends Component {
     inviteContacts(){
         this.props.inviteContacts()
     }
+    padding='20%'
     render() {
         
         return (
             <View style={{ height: 300, display: 'flex', flexDirection: 'column', marginTop: "6%", ...shadower() }}>
-               {this.props.event_type = "relation"?null:
-                <View style={{ height: this.actionHeight }}>
+               {this.props.event_type === "relation"?null:
+                <View style={{ height: this.actionHeight,marginBottom: this.padding, }}>
                 <TouchableOpacity onPress={() => requestAnimationFrame(() => this.props.publish())}>
                     <Icon style={{ marginLeft: "30%", color: this.actionColor, fontSize: this.fontSize, }} type="Entypo" name="megaphone"></Icon>
                     <Label style={{ marginLeft: "25%", fontSize: this.textSize, color: this.actionColor }}>Publish</Label>
@@ -36,8 +37,8 @@ export default class ActionsView extends Component {
                }
 
 
-               {this.props.event_type = "relation"?null:
-                <View style={{ height: this.actionHeight }}>
+               {this.props.event_type === "relation"?null:
+                    <View style={{ height: this.actionHeight, marginBottom: this.padding,}}>
                     <TouchableOpacity onPress={() => requestAnimationFrame(() => this.props.showMembers())}>
                         <Icon style={{ marginLeft: "30%", color: this.actionColor, fontSize: this.fontSize, }} type="FontAwesome" name="users"></Icon>
                         <Label style={{ marginLeft: "22%", fontSize: this.textSize, color: this.actionColor }}>Membs.</Label>
@@ -45,7 +46,7 @@ export default class ActionsView extends Component {
                 </View>
                 }
 
-                <View style={{ height: this.actionHeight }}>
+                <View style={{ height: this.actionHeight,marginBottom: this.padding, }}>
                     <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                         this.props.ShowMyActivity(stores.LoginStore.user.phone)
                     })}>
@@ -53,15 +54,15 @@ export default class ActionsView extends Component {
                         <Label style={{ marginLeft: "38%", fontSize: this.textSize, color: this.actionColor }}>Me</Label>
                     </TouchableOpacity>
                 </View>
-                {this.props.event_type = "relation"?null:
-                <View style={{ height: this.actionHeight }}>
+                {this.props.event_type === "relation"?null:
+                    <View style={{ height: this.actionHeight, marginBottom: this.padding, }}>
                     <TouchableOpacity  onPress={()=>requestAnimationFrame(()=> this.props.openSettingsModal())}>
                         <Icon style={{ marginLeft: "30%", color: this.actionColor, fontSize: this.fontSize, }} type="Entypo" name="cog"></Icon>
                         <Label style={{ marginLeft: "25%", fontSize: this.textSize, color: this.actionColor }}>Settings</Label>
                     </TouchableOpacity>
                 </View>
                  }
-                <View style={{ height: this.actionHeight }}>
+                <View style={{ height: this.actionHeight, marginBottom: this.padding,}}>
                     <TouchableOpacity onPress={() => requestAnimationFrame(() => this.props.leaveActivity())}>
                         <Icon style={{ marginLeft: "30%", color: "red", fontSize: this.fontSize, }} type="AntDesign" name="poweroff"></Icon>
                         <Label style={{ marginLeft: "30%", fontSize: this.textSize, color: "red" }}>Leave</Label>

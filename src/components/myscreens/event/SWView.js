@@ -171,7 +171,7 @@ export default class SWView extends Component {
                         <View style={{
                             width: '100%',
                             height: 300,
-                            //...shadower(0),
+                            ...shadower(1),
                             alignSelf: 'center',
                             paddingRight: 5,
                             backgroundColor: 'white',

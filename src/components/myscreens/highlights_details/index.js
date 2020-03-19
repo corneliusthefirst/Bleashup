@@ -13,7 +13,7 @@ import firebase from 'react-native-firebase';
 import uuid from 'react-native-uuid';
 import ChatStore from '../../../stores/ChatStore';
 import shadower from '../../shadower';
-import { ScrollView } from 'react-native-gesture-handler';
+import { ScrollView, TouchableWithoutFeedback } from 'react-native-gesture-handler';
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenheight = Math.round(Dimensions.get('window').height);
 export default class HighLightsDetails extends Component {
@@ -191,7 +191,9 @@ export default class HighLightsDetails extends Component {
                         opacity: 0.9
                     }}><StatusBar animated={true} barStyle="light-content" backgroundColor="#3D3D1F"></StatusBar>
                         {!this.state.mounted ? <Spinner size={'small'}></Spinner> :
-                            this.messageList()
+                            <TouchableWithoutFeedback onPressIn={() => {
+                                this.adjutRoomDisplay()
+                            }}>{this.messageList()}</TouchableWithoutFeedback>
                         }
                     </View>
                     <View style={{ height: this.state.replying ? null : 0, backgroundColor: 'transparent', borderRadius: 10, }}>

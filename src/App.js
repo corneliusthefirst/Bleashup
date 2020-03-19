@@ -90,7 +90,7 @@ const AppNavigator = createStackNavigator(
    
   },
   { 
-    initialRouteName: "Home",
+    initialRouteName: "LoginHome",
     headerMode: "none"
   }
 );
