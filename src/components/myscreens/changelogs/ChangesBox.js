@@ -35,29 +35,18 @@ export default class ChangeBox extends Component {
                 })
         }, 60 * this.props.delayer)
     }
-    containerStyle = { margin: '2%', borderRadius: 6, backgroundColor: "#9EEDD3", ...shadower(4), height: 110 }
+    containerStyle = { margin: '2%', borderRadius: 6, backgroundColor: "#9EEDD3", ...shadower(4), height: 120 }
     render() {
-        return (!this.state.loaded ? <View style={{ ...this.containerStyle, width: '95%', height: 110 }}></View> :
+        return (!this.state.loaded ? <View style={{ ...this.containerStyle, width: '95%', height: 120 }}></View> :
             <View>
                 <View style={this.containerStyle}>
                     {!this.props.change ? null : <View style={{ flexDirection: 'column', margin: '2%', }}>
                         <View style={{ flexDirection: 'row', height: '45%' }}>
-                            <View style={{ width: '83%', height: '100%' }}><ProfileSimple showPhoto={(url) => {
+                        <View style={{ width: '83%', height: '100%' }}><ProfileSimple showPhoto={(url) => {
                                 this.props.showPhoto(url)
                             }} delay={this.props.delayer}
                                 profile={this.state.changer}></ProfileSimple>
-                                {/*<View style={{ flexDirection: 'row', }}>
-                                    <View style={{ width: "25%" }}>
-                                        {this.props.change.updater.profile && testForURL(this.props.change.updater.profile, true) ?
-                                            <CacheImages thumbnails
-                                                source={{ uri: this.props.change.updater.profile }}>
-                                            </CacheImages> : <Thumbnail source={{ uri: this.props.change.updater.profile ? this.props.change.updater.profile : '' }}></Thumbnail>}
-                                    </View>
-                                    <View style={{ marginTop: "5%", marginLeft: "4%", flexDirection: 'column', width: "65%" }}>
-                                        <Text style={{ marginBottom: "2%", fontWeight: 'bold', }}>{this.props.change.updater.phone === stores.LoginStore.user.phone ? "You" : this.props.change.updater.nickname}</Text>
-                                        <Text style={{ marginLeft: "2%" }} note>{this.props.change.updater.status}</Text>
-                                    </View>
-                                        </View>*/}</View>
+                        </View>
                             <View style={{ alignSelf: 'flex-start', marginTop: "-2%", flexDirection: 'row', }}>
                                 <View style={{}}><Icon onPress={() => {
                                     this.props.mention({

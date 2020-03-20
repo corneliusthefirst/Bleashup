@@ -19,7 +19,9 @@ export default class TitleView extends Component {
     componentDidMount() {
     }
     navigateToEventDetails() {
-        stores.Events.isParticipant(this.props.Event.id, stores.Session.SessionStore.phone).then(status => {
+        stores.Events.isParticipant(
+            this.props.Event.id, 
+            stores.Session.SessionStore.phone).then(status => {
             if (status) {
                 this.props.navigation.navigate("Event", {
                     Event: find(stores.Events.events, { id: this.props.Event.id }),

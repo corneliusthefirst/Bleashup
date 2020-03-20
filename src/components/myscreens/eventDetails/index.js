@@ -217,6 +217,9 @@ export default class EventDetailView extends Component {
   relationPost(id) {
     return this.props.navigation.navigate("HighLightsDetails", { event_id: id });
   }
+
+  sorter = (a, b) => (a.created_at > b.created_at ? -1 :
+    a.created_at < b.created_at ? 1 : 0)
   render() {
     return (
       !this.state.isMounted ? <View style={{ height: '100%', backgroundColor: '#FEFFDE', width: '100%' }}><Spinner size={'small'}></Spinner></View> :
@@ -253,7 +256,7 @@ export default class EventDetailView extends Component {
                     firstIndex={0}
                     refHorizontal={(ref) => { this.detail_flatlistRef = ref }}
                     keyExtractor={this._keyExtractor}
-                    dataSource={this.state.highlightData}
+                    dataSource={this.state.highlightData.sort(this.sorter)}
                     numberOfItems={this.state.highlightData.length}
                     parentComponent={this}
                     //getItemLayout={this._getItemLayout}

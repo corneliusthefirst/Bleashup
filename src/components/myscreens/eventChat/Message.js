@@ -133,18 +133,20 @@ export default class Message extends Component {
                 openRight: true
             })
         }
-        if (this.replying) {
-            if (!this.closed) {
-                this.closing++
-                this.closed = true
-                this.handleReply()
-                this.closing = 0
-                setTimeout(() => {
-                    this.closed = false
-                }, 1000)
+        setTimeout(() => {
+            if (this.replying) {
+                if (!this.closed) {
+                    this.closing++
+                    this.closed = true
+                    this.handleReply()
+                    this.closing = 0
+                    setTimeout(() => {
+                        this.closed = false
+                    }, 1000)
+                }
+                this.replying = false
             }
-            this.replying = false
-        }
+        },50)
     }
     timeoutID = null
     closing = 0
@@ -224,10 +226,10 @@ export default class Message extends Component {
     }
     prevVote = null
     shouldComponentUpdate(nextProps, nextState, nextContext) {
-        peVote = this.prevVote ? JSON.parse(this.prevVote) : this.props.votes 
-        && this.props.votes.length > 0 && this.props.message.vote &&
+        peVote = this.prevVote ? JSON.parse(this.prevVote) : this.props.votes
+            && this.props.votes.length > 0 && this.props.message.vote &&
             find(this.props.votes, { id: this.props.message.vote.id })
-        newVote = nextProps.votes && nextProps.votes.length > 0 && nextProps.message.vote && 
+        newVote = nextProps.votes && nextProps.votes.length > 0 && nextProps.message.vote &&
             find(nextProps.votes, { id: nextProps.message.vote.id })
         let voter = (peVote && newVote && peVote.voter && newVote.voter &&
             newVote.voter.length !== peVote.voter.length)

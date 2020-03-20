@@ -89,7 +89,7 @@ export default class Commitee extends Component {
                         <BleashupFlatList
                         backgroundColor={'white'}
                         style={{borderTopRightRadius: 5,
-                            width: '100%', borderBottomRightRadius: 1, ...shadower(1),
+                            width: '100%', borderBottomRightRadius: 1, 
                             height:'100%'
                         }}
                             dataSource={union([this.generalCommitee], uniq(this.props.commitees))}

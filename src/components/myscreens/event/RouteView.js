@@ -24,6 +24,7 @@ export default class RouteView extends Component {
     shouldComponentUpdate(nextProps, nextState) {
         return this.state.updating !== nextState.updating ||
             this.props.currentPage !== nextProps.currentPage ||
+            this.props.isChat !== nextProps.isChat ||
             this.props.master !== nextProps.master
     }
     actionColor = "#1FABAB"
@@ -36,6 +37,7 @@ export default class RouteView extends Component {
     // This function resetSelectedCommitee will emite an event to the currently listening commiteeItem to adjust its highlightColor
     // because the selected tab has changed
     resetSelectedCommitee() {
+    GState.reply = null
         if (GState.currentCommitee !== null) {
             GState.previousCommitee = GState.currentCommitee
             GState.currentCommitee = null;
@@ -46,7 +48,7 @@ export default class RouteView extends Component {
     }
     centerer = {
         height: this.height, alignItems: 'center',
-        borderRadius: 6,marginBottom: '6%',
+        borderRadius: 6, marginBottom: '6%',
         justifyContent: 'center'
     }
     resetCommiteeForGeneral() {
@@ -62,6 +64,7 @@ export default class RouteView extends Component {
             this.resetCommiteeForGeneral()
         })
         emitter.on("leave-chat", () => {
+            //emitted when a new remind is added from the chat
             this.resetSelectedCommitee()
         })
     }
@@ -85,49 +88,60 @@ export default class RouteView extends Component {
     };
     width = screenWidth * .15
     render() {
-        
 
-        if (this.props.currentPage == "EventChat") GState.generalNewMessages = []
+
+        if (this.props.currentPage == "EventChat" || this.props.isChat) GState.generalNewMessages = []
         return (
-            <View style={{ width: this.width, height:'100%' }} transparent >
-                <Button style={{
-                    ...this.centerer, backgroundColor: this.props.currentPage == "EventDetails" ? "#54F5CA" : "#FEFFDE",
+            <View style={{ width: this.width, height: '100%' }} transparent >
+                <TouchableOpacity style={{
+                    ...this.centerer, backgroundColor: this.props.currentPage == "EventDetails" && !this.props.isChat ? "#54F5CA" : "#FEFFDE",
                     width: "100%", ...shadower(2)
                 }} onPress={() => requestAnimationFrame(() => {
                     this.props.setCurrentPage("EventDetails")
                     this.resetSelectedCommitee()
                 }
                 )}>
-                    <View style={{ display: 'flex', width: "100%",marginTop: '10%', }}>
-                        <Icon type="AntDesign" style={{ alignSelf: 'center', fontSize:this.fontSize, color: this.props.currentPage == "EventDetails" ? "#0A4E52" : this.original }} name="appstore1"></Icon>
+                    <View style={{ display: 'flex', width: "100%", marginTop: '10%', }}>
+                        <Icon type="AntDesign" style={{
+                            alignSelf: 'center', fontSize: this.fontSize, color:
+                                this.props.currentPage == "EventDetails" &&
+                                    !this.props.isChat ? "#0A4E52" : this.original
+                        }} name="appstore1"></Icon>
                         {/*<Text style={{ padding: "1%", color: this.props.currentPage == "EventDetails" ? "#0A4E52" : "gray", width: "100%" }}>Details</Text>*/}
                     </View>
-                </Button>
-                <Button style={{
-                    ...this.centerer,width:'100%',
-                    backgroundColor: this.props.currentPage == "EventChat" ? "#54F5CA" : "#FEFFDE",
+                </TouchableOpacity>
+                <TouchableOpacity style={{
+                    ...this.centerer, width: '100%',
+                    backgroundColor: this.props.currentPage == "EventChat" || this.props.isChat ? "#54F5CA" : "#FEFFDE",
                     ...shadower(2)
                 }} onPress={() => requestAnimationFrame(() => {
                     this.props.setCurrentPage("EventChat")
-                    this.resetCommiteeForGeneral()
+                    //this.resetCommiteeForGeneral()
                 })
                 }>
-                    <View style={{ width: "100%", marginTop: '10%',}}>
-                        <View style={{}}><Icon type="FontAwesome" style={{ alignSelf: 'center',fontSize:this.fontSize, color: this.props.currentPage == "EventChat" ? "#0A4E52" : this.original }} name="group"></Icon>
+                    <View style={{ width: "100%", marginTop: '10%', }}>
+                        <View style={{}}><Icon type="FontAwesome" style={{
+                            alignSelf: 'center',
+                            fontSize: this.fontSize,
+                            color: this.props.currentPage == "EventChat" || this.props.isChat ? "#0A4E52" : this.original
+                        }} name="group"></Icon>
                             {/*<Text style={{ padding: "1%", color: this.props.currentPage == "EventChat" ? "#0A4E52" : "gray", width: "100%" }}>Discusion</Text>*/}</View>
-                        {GState.generalNewMessages.length > 0 ? <Badge primary><Text style={{ marginTop: "30%", }}>{GState.generalNewMessages.length}</Text></Badge> : <View></View>}
+                        {GState.generalNewMessages.length > 0 ? <Badge style={{ position: 'absolute' }}
+                            primary><Text style={{ marginTop: "30%", }}>{GState.generalNewMessages.length}</Text></Badge> : <View></View>}
                     </View>
-                </Button>
-                <Button style={{
-                    ...this.centerer, width:'100%',
-                    backgroundColor: this.props.currentPage == "Reminds" ? "#54F5CA" : "#FEFFDE",
+                </TouchableOpacity>
+                <TouchableOpacity style={{
+                    ...this.centerer, width: '100%',
+                    backgroundColor: this.props.currentPage == "Reminds" && !this.props.isChat ? "#54F5CA" : "#FEFFDE",
                     ...shadower(2)
                 }} onPress={() => requestAnimationFrame(() => {
                     this.props.setCurrentPage("Reminds")
                     this.resetSelectedCommitee()
                 })}>
                     <View style={{ width: "100%", marginTop: '10%', }}>
-                        <Icon type="Entypo" style={{alignSelf: 'center', fontSize: this.fontSize, color: this.props.currentPage == "Reminds" ? "#0A4E52" : this.original }} name="bell"></Icon>
+                        <Icon type="Entypo" style={{ alignSelf: 'center', 
+                            fontSize: this.fontSize,
+                             color: this.props.currentPage == "Reminds" && !this.props.isChat ? "#0A4E52" : this.original }} name="bell"></Icon>
                         {/*<Text style={{ padding: "1%", color: this.props.currentPage == "Reminds" ? "#0A4E52" : "gray", width: "100%" }}>Reminds</Text>*?/}
                     </View>
                 </Button>
@@ -141,20 +155,26 @@ export default class RouteView extends Component {
                         {/*<Text style={{ padding: "1%", color: this.props.currentPage == "ChangeLogs" ? 
                 "#0A4E52" : "gray", width: "100%" }}>{"Logs"}</Text>*/}
                     </View>
-                </Button>
-                <Button style={{
-                    width:'100%',
-                    ...this.centerer,backgroundColor: this.props.currentPage == "ChangeLogs" ? "#54F5CA" : "#FEFFDE", ...shadower(2)
+                </TouchableOpacity>
+                <TouchableOpacity style={{
+                    width: '100%',
+                    ...this.centerer, backgroundColor: this.props.currentPage == "ChangeLogs"&& !this.props.isChat ? "#54F5CA" : "#FEFFDE", 
+                    ...shadower(2)
                 }} onPress={() => requestAnimationFrame(() => {
                     this.props.setCurrentPage("ChangeLogs")
                     this.resetSelectedCommitee()
                 }
                 )}>
                     <View style={{ marginTop: '10%', width: "100%" }}>
-                        <Icon type="Entypo" style={{alignSelf: 'center', alignSelf: 'center',fontSize: this.fontSize, color: this.props.currentPage == "ChangeLogs" ? "#0A4E52" : this.original }} name="clock"></Icon>
+                        <Icon type="Entypo" style={{ 
+                            alignSelf: 'center', 
+                            alignSelf: 'center', 
+                            fontSize: this.fontSize, 
+                            color: this.props.currentPage == "ChangeLogs" && !this.props.isChat
+                             ? "#0A4E52" : this.original }} name="clock"></Icon>
                         {/*<Text style={{ padding: "1%", color: this.props.currentPage == "ChangeLogs" ? "#0A4E52" : "gray", width: "100%" }}>{"Logs"}</Text>*/}
                     </View>
-                </Button>
+                </TouchableOpacity>
             </View>
         )
     }

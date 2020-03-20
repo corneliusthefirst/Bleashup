@@ -1,5 +1,9 @@
 import React, { Component } from "react"
-import { View, TouchableOpacity, TouchableWithoutFeedback, Vibration } from 'react-native';
+import {
+    View, TouchableOpacity,
+    TouchableWithoutFeedback,
+    Vibration, PanResponder
+} from 'react-native';
 import { Text } from 'native-base';
 import TextContent from "./TextContent";
 import Image from 'react-native-scalable-image';
@@ -29,16 +33,19 @@ export default class PhotoMessage extends Component {
     }
     render() {
         return (
-            <View style={{maxHieght:300 }}>
-                <TouchableWithoutFeedback onLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null} onPressIn={()=>{
-                this.props.pressingIn()
-            }} onPress={()=> this.props.showPhoto(this.props.message.photo)}>
+            <View style={{ maxHieght: 300 }}>
+                <TouchableWithoutFeedback 
+                onLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null}
+                onPressIn={() => {
+                    this.props.pressingIn()
+                }} 
+                onPress={() => this.props.showPhoto(this.props.message.photo)}>
                     <Image resizeMode={"contain"} hasJoin onOpen={() => { }}
-                        source={{ uri: this.props.message.photo }} style={{ alignSelf: 'center', maxWidth: 380,}} height={300} borderRadius={5}>
+                        source={{ uri: this.props.message.photo }} style={{ alignSelf: 'center', maxWidth: 380, }} height={300} borderRadius={5}>
                     </Image>
-            </TouchableWithoutFeedback>
-                {this.props.message.text ? 
-                    <View style={{marginBottom: "2%",maxWidth:"100%"}}>
+                </TouchableWithoutFeedback>
+                {this.props.message.text ?
+                    <View style={{ marginBottom: "2%", maxWidth: "100%" }}>
                         <TextContent onLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null} pressingIn={() => this.props.pressingIn()} text={this.props.message.text}></TextContent>
                     </View> : null}
 

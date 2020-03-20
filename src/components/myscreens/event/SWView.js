@@ -19,55 +19,12 @@ import dateDisplayer from '../../../services/dates_displayer';
 import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenheight = Math.round(Dimensions.get('window').height);
-const HEADER_MAX_HEIGHT = 140;
-const HEADER_MIN_HEIGHT = 0;
-const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
 export default class SWView extends Component {
     constructor(props) {
         super(props)
         this.state = {
             scrollY: new Animated.Value(0),
         }
-        this._panResponder = PanResponder.create({
-            // Ask to be the responder:
-            onStartShouldSetPanResponder: (evt, gestureState) => true,
-            onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
-            onMoveShouldSetPanResponder: (evt, gestureState) => true,
-            onMoveShouldSetPanResponderCapture: (evt, gestureState) => {
-                const { dx, dy } = gestureState
-                return (dx > 2 || dx < -2 || dy > 2 || dy < -2)
-            },
-
-            onPanResponderGrant: (evt, gestureState) => {
-                // The gesture has started. Show visual feedback so the user knows
-                // what is happening!
-                // gestureState.d{x,y} will be set to zero now
-            },
-            onPanResponderMove: (evt, gestureState) => {
-                if (gestureState.dx >= 70) {
-                    this.props.navigateHome()
-                }
-                const { dx, dy } = gestureState
-                return dx > 2 || dx < -2 || dy > 2 || dy < -2
-                // The most recent move distance is gestureState.move{X,Y}
-                // The accumulated gesture distance since becoming responder is
-                // gestureState.d{x,y}
-            },
-            onPanResponderTerminationRequest: (evt, gestureState) => false,
-            onPanResponderRelease: (evt, gestureState) => {
-                // The user has released all touches while this view is the
-                // responder. This typically means a gesture has succeeded
-            },
-            onPanResponderTerminate: (evt, gestureState) => {
-                // Another component has become the responder, so this gesture
-                // should be cancelled
-            },
-            onShouldBlockNativeResponder: (evt, gestureState) => {
-                // Returns whether this component should block native components from becoming the JS
-                // responder. Returns true by default. Is currently only supported on android.
-                return true;
-            },
-        });
     }
     width = "9%"
     padding = "9%"
@@ -135,34 +92,33 @@ export default class SWView extends Component {
     }
     render() {
         return <View style={{
-            opacity: 0.9,
             backgroundColor: "#FEFFDE",
             width: "100%",
             height: screenheight,
-            borderWidth: 1,
-            borderRadius: 2,
-            borderColor: '#DDD',
+            borderRadius: 5,
             borderBottomWidth: 0,
             //margin: "1%",
         }}>
             <ScrollView nestedScrollEnabled={true} showsVerticalScrollIndicator={false}>
                 <View style={{ flexDirection: 'row', }}>
                     <View style={{
-                        backgroundColor: 'white',
-                        width: screenWidth * .18, ...shadower(2),
+                        backgroundColor: 'white', borderRadius: 5,
+                        width: screenWidth * .18, ...shadower(5),
                         borderRadius: 5, paddingLeft: '2.5%', padding: "2%", height: '98%', margin: '2%', marginBottom: '2%',
                     }}>
                         <View style={{
                             alignItems: 'center',
                             height: 70, margin: '1%', padding: '6%',
-                        }}><Button rounded style={{ backgroundColor: '#1FABAB' }} onPress={() => requestAnimationFrame(() => this.props.showActivityPhotoAction())}>
+                        }}><Button rounded style={{ backgroundColor: '#1FABAB', ...shadower() }} onPress={() => requestAnimationFrame(() => this.props.showActivityPhotoAction())}>
                                 {this.props.event.background ? <CacheImages thumbnails
                                     source={{ uri: this.props.event.background }}></CacheImages> : <CacheImages thumbnails source={require('../../../../assets/default_event_image.jpeg')} ></CacheImages>}
                             </Button>
                         </View>
                         <View style={{ height: 235, alignSelf: 'center', }}>
                             <Text style={{ margin: 2 }} note>pages</Text>
-                            <RouteView refreshCommitee={() => this.refreshCommitees()} event_id={this.props.event.id} currentPage={this.props.currentPage}
+                            <RouteView isChat={this.props.isChat} refreshCommitee={() => this.refreshCommitees()}
+                                event_id={this.props.event.id}
+                                currentPage={this.props.currentPage}
                                 setCurrentPage={(page) => {
                                     this.props.setCurrentPage(page)
                                 }}></RouteView>
@@ -171,13 +127,14 @@ export default class SWView extends Component {
                         <View style={{
                             width: '100%',
                             height: 300,
-                            ...shadower(1),
                             alignSelf: 'center',
-                            paddingRight: 5,
                             backgroundColor: 'white',
                             borderRadius: 8
                         }}>
                             <ActionsView
+                                calendared={this.props.calendared}
+                                period={this.props.period}
+                                handleSync={this.props.handleSync}
                                 publish={() => this.props.publish()}
                                 leaveActivity={() => this.props.leaveActivity()}
                                 inviteContacts={() => this.props.inviteContacts()}
@@ -194,19 +151,22 @@ export default class SWView extends Component {
                     }}>
                         <View style={{ height: 70 }}><View style={{
                             height: '62%',
-                            width: "100%",
+                            width: "101%",
                         }}><View style={{
                             paddingLeft: '2%',
-                            ...bleashupHeaderStyle, marginLeft: 0, marginRight: 0,
+                            ...bleashupHeaderStyle, marginLeft: '-1%', marginRight: 0,
                             alignSelf: 'center',
                             flexDirection: 'row',
                         }}><View style={{ marginLeft: '1%', width: '88%' }}><Title style={{
                             fontWeight: 'bold',
-                            fontSize: 17, marginTop: 2, color: "#0A4E52", alignSelf: 'flex-start',
+                            fontSize: 14,
+                            marginTop: 2,
+                            color: "#0A4E52",
+                            alignSelf: 'flex-start',
                         }}>{this.props.event.about.title}</Title>
                                     {this.props.event.period ? <Title style={{
                                         alignSelf: 'flex-start',
-                                        marginRight: "2%", fontWeight: this.props.event.closed ? "bold" : "400",
+                                        fontWeight: this.props.event.closed ? "bold" : "400",
                                         color: this.props.event.closed ? "red" : dateDiff(this.props.event) > 0 ? "gray" : "#1FABAB", fontSize: 12,
                                     }}>{this.props.event.closed ? "Closed" : writeDateTime(this.props.event)}</Title> : null}
                                     {/*this.props.event.interval > 1 && this.props.event.frequency !== 'yearly' && this.dateDiff(this.props.event) < 0 ?

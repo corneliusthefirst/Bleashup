@@ -27,7 +27,7 @@ export default class SelectableProfileWithOptions extends Component {
         })
     }
     selectContact() {
-        this.state.checked && this.props.creator !== this.state.contact.phone ? this.props.unselected(this.props.contact.phone) : this.props.selected(this.state.contact)
+        this.props.creator !== this.state.contact.phone ? this.state.checked ? this.props.unselected(this.props.contact.phone) : this.props.selected(this.state.contact) : null
         this.setState({
             checked: !this.state.checked
         })
@@ -46,7 +46,7 @@ export default class SelectableProfileWithOptions extends Component {
                             <View style={{ width: "80%", color: "#0A4E52" }}>
                                 <ProfileView setContact={(con) => {
                                     this.setState({
-                                        con:con
+                                        con: con
                                     })
                                 }} delay={this.props.delay} hideMe={() => {
                                     this.setState({

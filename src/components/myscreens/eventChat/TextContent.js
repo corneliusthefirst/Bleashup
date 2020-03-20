@@ -1,5 +1,5 @@
 import React, { Component } from "react"
-import { View, TouchableOpacity } from 'react-native'
+import { View, TouchableOpacity,PanResponder } from 'react-native'
 import { Text } from "native-base"
 import Hyperlink from 'react-native-hyperlink'
 import { TouchableWithoutFeedback } from "react-native-gesture-handler"
@@ -8,7 +8,24 @@ export default class TextContent extends Component {
         super(props)
         this.state = {
             splicer: 500,
-            notShowingAll: true
+            notShowingAll: true,
+            _panResponder : PanResponder.create({
+                // Ask to be the responder:
+                onStartShouldSetPanResponder: (evt, gestureState) => true,
+                //onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
+                //onMoveShouldSetPanResponder: (evt, gestureState) => true,
+                //onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
+                onPanResponderMove: (evt, gestureState) => {
+                    //console.error("pressing in")
+                    this.props.pressingIn ? this.props.pressingIn() : null
+                    //return true
+                },
+                onShouldBlockNativeResponder: (evt, gestureState) => {
+                    // Returns whether this component should block native components from becoming the JS
+                    // responder. Returns true by default. Is currently only supported on android.
+                    return true;
+                },
+            })
         }
     }
     fontSizeFormular() {
@@ -21,14 +38,14 @@ export default class TextContent extends Component {
     render() {
         //console.warn(this.props.text.length,this.props.text)
         return (
-            <TouchableOpacity onPressIn={() => {
-                this.props.pressingIn ? this.props.pressingIn() : null
+            <TouchableWithoutFeedback onPressIn={() => {
+
             }} onPress={() =>
                 this.setState({
                     notShowingAll: !this.state.notShowingAll
                 })
             } onLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null}>
-                <View>
+                <View {...this.state._panResponder.panHandlers}>
                     <Hyperlink linkStyle={{ color: '#2980b9', }} linkDefault={true}>
                         <Text ellipsizeMode={this.state.notShowingAll ? 'tail' : null} numberOfLines={this.state.notShowingAll ? 25 : null} style={{
                             justifyContent: 'center',
@@ -42,7 +59,7 @@ export default class TextContent extends Component {
                         </Text>
                     </Hyperlink>
                 </View>
-            </TouchableOpacity>
+            </TouchableWithoutFeedback>
         )
     }
 }

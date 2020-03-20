@@ -23,7 +23,7 @@ export default class CalendarSynchronisationModal extends Component{
                     this.props.closed()
                 }}
                 style={{
-                    height: "40%",
+                    height: 300,
                     borderRadius: 10, backgroundColor: '#FEFFDE', width: "93%"
                 }}
              >

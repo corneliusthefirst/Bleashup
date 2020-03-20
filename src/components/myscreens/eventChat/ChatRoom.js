@@ -335,11 +335,12 @@ export default class ChatRoom extends Component {
             this.adjutRoomDisplay()
         }, 500)
     }
-    adjutRoomDisplay() {
+    adjutRoomDisplay(dontToggle) {
         setTimeout(() => {
             GState.reply && this._textInput.focus()
             this.refs.scrollViewRef.scrollToEnd({ animated: true, duration: 200 })
             this.state.showCaption && this.refs.captionScrollViewRef.scrollToEnd({ animated: true, duration: 200 })
+            this.temp ? GState.reply = JSON.parse(this.temp) : null
         })
     }
     markAsRead() {
@@ -370,7 +371,7 @@ export default class ChatRoom extends Component {
         Orientation.lockToPortrait();
     }
     componentWillUnmount() {
-        GState.reply = null
+        //GState.reply = null
         Pickers.CleanAll()
         this.fireRef.off()
         this.typingRef.off()
@@ -388,10 +389,6 @@ export default class ChatRoom extends Component {
         this.setState({
             showEmojiInput: false,
             keyboardOpened: true,
-            // textHeight: (screenheight * (this.state.replying ? this.formPercentage(580) : this.formPercentage(540))),
-            // photoHeight: (screenheight * (this.state.replying ? this.formPercentage(screenheight - 580) : this.formPercentage(screenheight - 540))),
-            //textInputHeight: this.formHeight(this.textInputFactor + offset),
-            //    messageListHeight: this.formHeight(this.messageListFactor - offset),
             showEmojiInputCaption: false
         })
         this.adjutRoomDisplay()
@@ -405,13 +402,8 @@ export default class ChatRoom extends Component {
             messageListHeight: !this.state.showEmojiInput ?
                 this.formHeight(this.state.replying ? ((screenheight - 147) / screenheight) : this.state.initialMessaListHeightFactor) :
                 this.formHeight(this.state.replying ? 0.40 : 0.50),
-            // textInputHeight: !this.state.showEmojiInput ?
-            //     this.formHeight(this.state.replying ? ((147) / screenheight) : this.state.inittialTextInputHeightFactor) :
-            //     this.formHeight(this.state.replying ? 0.60 : 0.50),
-            // textHeight: (this.state.showEmojiInputCaption ? screenheight * 0.55 : screenheight * .1) + (offset * screenheight),
-            // photoHeight: (this.state.showEmojiInputCaption ? screenheight * 0.45 : screenheight * .9) - (offset * screenheight)
         })
-        this.adjutRoomDisplay()
+        //this.adjutRoomDisplay()
     }
     convertPercentageToInt(data) {
         return parseInt(data.split('%')[0]) / 100
@@ -429,17 +421,13 @@ export default class ChatRoom extends Component {
                 showRepliedMessage: false
             })
             return true
-        } else if (this.state.replying) {
+        } /*else if (this.state.replying) {
             this.setState({
                 replying: false,
                 replyContent: null,
-                messageListHeight: this.state.previousMessageHeight,
-                textInputHeight: this.state.previousTextHeight,
-                textHeight: screenheight * 0.1,
-                photoHeight: screenheight * 0.9,
             })
             return true
-        } else if (this.state.showVideo) {
+        }*/ else if (this.state.showVideo) {
             this.setState({
                 showVideo: false,
                 showCaption: false,
@@ -577,6 +565,7 @@ export default class ChatRoom extends Component {
     }
     sendMessage(messager) {
         if (messager) {
+            GState.reply = null
             messager = { ...messager, received: [{ phone: this.props.user.phone, date: moment().format() }] }
             this.fireRef.push(messager)
             // !! update the latess message of the relation page
@@ -888,6 +877,7 @@ export default class ChatRoom extends Component {
         }
     }
     cancleReply() {
+        GState.reply = null
         this.setState({
             replying: false,
             replyContent: null,
@@ -934,17 +924,17 @@ export default class ChatRoom extends Component {
     }
     toggleEmojiKeyboard() {
         offset = this.state.replying ? 0.1 : 0
+        this.temp = GState.reply ? JSON.stringify(GState.reply) : null
+        GState.reply = null
         //!this.state.showEmojiInput ? 
-        Keyboard.dismiss() //: this._textInput.focus()
-        this.setState({
-            showEmojiInput: !this.state.showEmojiInput,
-            messageListHeight: this.state.showEmojiInput ?
-                this.formHeight(this.state.initialMessaListHeightFactor - offset) : this.formHeight(0.50 - offset),
-            // textInputHeight: this.state.showEmojiInput ?
-            //     this.formHeight(this.state.inittialTextInputHeightFactor
-            //          + offset) : this.formHeight(0.50 + offset)
-        })
-        this.adjutRoomDisplay()
+        Keyboard.dismiss()
+        //: this._textInput.focus()
+        setTimeout(() => {
+            this.setState({
+                showEmojiInput: !this.state.showEmojiInput,
+            })
+            this.adjutRoomDisplay(true)
+        }, this.state.keyboardOpened ? 200 : 0)
     }
     scrollToEnd() {
         this.refs.bleashupSectionListOut.scrollToEnd()
@@ -990,11 +980,6 @@ export default class ChatRoom extends Component {
             replying: true,
             replyContent: replyer,
             replyerBackColor: color,
-            //textInputHeight: this.state.keyboardOpened ? this.formHeight(this.textInputFactor + offset) :
-            //    this.state.showEmojiInput ? this.formHeight(0.61) : this.formHeight(148 / screenheight),
-            //messageListHeight: this.state.keyboardOpened ? this.formHeight(this.messageListFactor - offset) :
-            // //    this.state.showEmojiInput ? this.formHeight(0.39) : this.formHeight((screenheight - 148) / screenheight),
-            //  textHeight: screenheight * 0.20,
             photoHeight: screenheight * 0.80
         })
         this.adjutRoomDisplay()
@@ -1080,6 +1065,7 @@ export default class ChatRoom extends Component {
                         <View style={{ height: this.state.messageListHeight, marginBottom: "0.5%" }}>
                             <TouchableWithoutFeedback onPressIn={() => {
                                 // Keyboard.dismiss()
+                                this.scrolling = false
                                 this.adjutRoomDisplay()
                                 //this.hideAndShowHeader()
                             }}>
@@ -1231,6 +1217,7 @@ export default class ChatRoom extends Component {
                     voteItem={(index, vote) => {
                         emitter.emit("vote-me", index, { ...item, vote: vote })
                     }}
+                    scrolling={this.scrolling}
                     computedMaster={this.props.computedMaster}
                     showVoters={(voters) => this.showVoters(voters)}
                     votes={this.state.votes}
@@ -1458,14 +1445,13 @@ export default class ChatRoom extends Component {
     }
     handleCaptionImojiOnPress() {
         offset = this.state.replying ? 0.1 : 0;
+        this.temp = GState.reply ? JSON.stringify(GState.reply) : null
         //!this.state.showEmojiInputCaption ? 
         Keyboard.dismiss()
         this.adjutRoomDisplay()
         //: this._captionTextInput.focus();
         this.setState({
             showEmojiInputCaption: !this.state.showEmojiInputCaption,
-            // textHeight: screenheight * (this.state.replying ? 0.55 + 0.1 : 0.55),
-            // photoHeight: screenheight * (this.state.replying ? 0.45 - 0.1 : 0.45)
         });
         this.adjutRoomDisplay()
     }
