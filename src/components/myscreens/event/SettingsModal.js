@@ -369,16 +369,14 @@ export default class SettingsModal extends Component {
                 {!this.state.loaded ? <Spinner size={'small'}></Spinner> : <View>
                     <View style={{ height: 50 }}>
                         <View style={{ flexDirection: 'row', ...bleashupHeaderStyle, padding: '2%', }}>
-                            <View style={{ width: '70%' }}>
+                            <View style={{ width: '80%' }}>
                                 <Text
-                                    style={{ fontSize: 20, fontWeight: 'bold', width: '100%', }}>Activity Settings</Text>
+                                    style={{ fontSize: 18, fontWeight: 'bold', width: '100%', }}>Activity Settings</Text>
                             </View>
-                            <View style={{ width: '30%' }}>
-                                {this.props.computedMaster ? <Button onPress={() => this.saveConfigurations()} transparent><Icon
-                                    style={{ color: "#1FABAB", }}
-                                    type="AntDesign"
-                                    name="checkcircle"
-                                /><Text style={{ fontWeight: 'bold', fontStyle: 'italic', }} >Save</Text></Button> : null}
+                            <View style={{ width: '20%' }}>
+                                {this.props.computedMaster ? <TouchableOpacity onPress={() => this.saveConfigurations()}><Text style={{ 
+                                    fontWeight: 'bold', 
+                                    fontSize:20, color:'#1FABAB' }} >{"Save"}</Text></TouchableOpacity> : null}
                             </View>
                         </View>
                     </View>

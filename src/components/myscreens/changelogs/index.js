@@ -3,7 +3,8 @@ import { View, BackHandler } from 'react-native';
 import {
   Icon,
   Text,
-  Spinner
+  Spinner,
+  Title
 } from 'native-base';
 import autobind from "autobind-decorator";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -65,7 +66,7 @@ export default class ChangeLogs extends Component {
           newThing: !this.state.newThing,
           loaded: true
         })
-      }, 200)
+      },)
     })
   }
   @autobind goBack() {
@@ -78,7 +79,7 @@ export default class ChangeLogs extends Component {
   render() {
     //console.warn(this.props.forMember, "poo")
     return (!this.state.loaded ? <View style={{width:'100%',height:'100%',
-    backgroundColor: '#FEFFDE',}}><Spinner size={"small"}></Spinner></View>: <View style={{ width: "100%", height: "100%", backgroundColor: "#FEFFDE", }}>
+    backgroundColor: '#FEFFDE',}}></View>: <View style={{ width: "100%", height: "100%", backgroundColor: "#FEFFDE", }}>
       <View style={{ flex: 1, height: "95%", top: 0, bottom: 0, left: 0, right: 0 }}>
         <BleashupTimeLine
           circleSize={20}
@@ -116,17 +117,22 @@ export default class ChangeLogs extends Component {
           flexDirection: 'row', ...bleashupHeaderStyle, 
          
         }}>
-          <View style={{ margin: '1%', width: "85%" }}>
-            <Text style={{
-              fontWeight: 'bold', fontSize: 20,
+            <View style={{ width: '10%', paddingLeft: '1%', margin: '1%',  }}>
+              <Icon onPress={() => {
+                this.props.openMenu()
+              }} style={{ color: '#0A4E52' }} type={"Ionicons"} name={"ios-menu"}></Icon>
+            </View>
+          <View style={{ margin: '1%', width: "70%" ,}}>
+            <Title style={{
+              fontWeight: 'bold', alignSelf: 'flex-start',
             }}>{(this.props.forMember ? this.props.forMember :
-              (this.props.isMe ? "Your " : "")) + " Activity Logs"}</Text>
+              (this.props.isMe ? "Your " : "")) + " Activity logs"}</Title>
           </View>
-          <View style={{  width: '15%',backgroundColor: 'transparent', }}>
+          <View style={{  width: '20%',backgroundColor: 'transparent', }}>
             <Icon style={{
               color: '#1FABAB',
               alignSelf: 'center',
-              marginTop: '20%',
+              margin:'1%'
             }} name={"gear"} type="EvilIcons"></Icon>
           </View>
         </View>

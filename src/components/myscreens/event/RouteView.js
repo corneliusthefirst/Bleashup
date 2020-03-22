@@ -120,11 +120,11 @@ export default class RouteView extends Component {
                 })
                 }>
                     <View style={{ width: "100%", marginTop: '10%', }}>
-                        <View style={{}}><Icon type="FontAwesome" style={{
+                        <View style={{}}><Icon type="Ionicons" style={{
                             alignSelf: 'center',
                             fontSize: this.fontSize,
                             color: this.props.currentPage == "EventChat" || this.props.isChat ? "#0A4E52" : this.original
-                        }} name="group"></Icon>
+                        }} name="ios-chatbubbles"></Icon>
                             {/*<Text style={{ padding: "1%", color: this.props.currentPage == "EventChat" ? "#0A4E52" : "gray", width: "100%" }}>Discusion</Text>*/}</View>
                         {GState.generalNewMessages.length > 0 ? <Badge style={{ position: 'absolute' }}
                             primary><Text style={{ marginTop: "30%", }}>{GState.generalNewMessages.length}</Text></Badge> : <View></View>}

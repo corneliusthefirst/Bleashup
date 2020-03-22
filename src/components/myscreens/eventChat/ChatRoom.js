@@ -1383,13 +1383,23 @@ export default class ChatRoom extends Component {
             width: "100%",
             height: 44,
             position: 'absolute'
-        }}><View style={headerStyles}><View style={{ width: "50%", flexDirection: 'row', }}>
-            <Title style={{ fontSize: 20, fontWeight: 'bold', margin: "2%", alignSelf: 'flex-start', marginLeft: "4%" }}>{this.props.roomName}</Title></View>
+        }}><View style={headerStyles}>
+            <View style={{ width: '10%', paddingLeft: '1%', }}>
+                    <Icon onPress={() => {
+                        this.props.openMenu()
+                    }} 
+                    style={{ color: '#0A4E52' }} 
+                    type={"Ionicons"} 
+                    name={"ios-menu"}></Icon>
+            </View>
+        <View style={{ width: "50%", flexDirection: 'row', }}>
+            <Title style={{ fontWeight: 'bold',
+             alignSelf: 'flex-start', marginLeft: "4%" }}>{this.props.roomName}</Title></View>
                 {
                     //!! you can add the member last seen here if the room has just one member */
                 }
                 <View style={{
-                    width: "50%",
+                    width: "40%",
                     flexDirection: 'row',
                     alignSelf: 'flex-end',
                     alignItems: 'flex-end',

@@ -94,13 +94,12 @@ export default class SWView extends Component {
         return <View style={{
             backgroundColor: "#FEFFDE",
             width: "100%",
-            height: screenheight,
             borderRadius: 5,
             borderBottomWidth: 0,
             //margin: "1%",
         }}>
             <ScrollView nestedScrollEnabled={true} showsVerticalScrollIndicator={false}>
-                <View style={{ flexDirection: 'row', }}>
+                <View style={{ flexDirection: 'row',height:824}}>
                     <View style={{
                         backgroundColor: 'white', borderRadius: 5,
                         width: screenWidth * .18, ...shadower(5),
@@ -126,7 +125,7 @@ export default class SWView extends Component {
                         <Text style={{ margin: 2, }} note>actions</Text>
                         <View style={{
                             width: '100%',
-                            height: 300,
+                            height: 400,
                             alignSelf: 'center',
                             backgroundColor: 'white',
                             borderRadius: 8
@@ -134,6 +133,7 @@ export default class SWView extends Component {
                             <ActionsView
                                 calendared={this.props.calendared}
                                 period={this.props.period}
+                                exitActivity={this.props.exitActivity}
                                 handleSync={this.props.handleSync}
                                 publish={() => this.props.publish()}
                                 leaveActivity={() => this.props.leaveActivity()}
@@ -144,7 +144,7 @@ export default class SWView extends Component {
                         </View>
                     </View>
                     <View style={{
-                        height: screenheight,
+                        height: '100%',
                         width: screenWidth * .56,
                         backgroundColor: 'white',
                         ...shadower(2),
@@ -157,7 +157,7 @@ export default class SWView extends Component {
                             ...bleashupHeaderStyle, marginLeft: '-1%', marginRight: 0,
                             alignSelf: 'center',
                             flexDirection: 'row',
-                        }}><View style={{ marginLeft: '1%', width: '88%' }}><Title style={{
+                        }}><View style={{ marginLeft: '1%', width: '85%' }}><Title style={{
                             fontWeight: 'bold',
                             fontSize: 14,
                             marginTop: 2,
@@ -178,7 +178,7 @@ export default class SWView extends Component {
                                                      ${moment(this.props.event.recurrence ? this.props.event.recurrence :
                                                     null).format("dddd, MMMM Do YYYY")}`}
                                                      </Text> : null*/}
-                                </View><View style={{ width: '10%' }}><Icon onPress={() => {
+                                </View><View style={{ width: '14%' }}><Icon onPress={() => {
                                     this.props.navigateHome()
                                 }} style={{
                                     alignSelf: 'center', color: "#1FABAB", margin: '2%',

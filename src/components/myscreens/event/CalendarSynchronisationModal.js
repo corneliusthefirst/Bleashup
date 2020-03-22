@@ -1,17 +1,18 @@
 import React, { Component } from 'react';
 
-import {View} from "react-native"
+import { View } from "react-native"
 import ModalBox from 'react-native-modalbox';
-import { Button,Content,Text, Title } from 'native-base';
+import { Button, Content, Text, Title } from 'native-base';
+import bleashupHeaderStyle from '../../../services/bleashupHeaderStyle';
 
-export default class CalendarSynchronisationModal extends Component{
-    constructor(props){
+export default class CalendarSynchronisationModal extends Component {
+    constructor(props) {
         super(props)
     }
 
     render() {
         return (
-             <ModalBox
+            <ModalBox
                 backdropOpacity={0.7}
                 backButtonClose={true}
                 //backdropPressToClose={false}
@@ -23,27 +24,63 @@ export default class CalendarSynchronisationModal extends Component{
                     this.props.closed()
                 }}
                 style={{
-                    height: 300,
-                    borderRadius: 10, backgroundColor: '#FEFFDE', width: "93%"
+                    height: 160,
+                    borderBottomLeftRadius: 8,
+                    borderBottomRightRadius: 8,
+                    backgroundColor: '#FEFFDE', width: "70%"
                 }}
-             >
-                <Content showsVerticalScrollIndicator={false} style={{ margin: "10%", flexDirection: 'column', }}>
-                    <View style={{ width: "100%", height: 50,alignSelf: 'center', }}>
-                        <Title style={{ marginLeft: "1%",fontSize: 22, alignSelf: 'center', fontWeight: 'bold', fontStyle: 'italic', color:'#0A4E52' }}>{"Calendar Synchronisation"}</Title>
+            >
+                <Content showsVerticalScrollIndicator={false} style={{
+                    flexDirection: 'column',
+                }}>
+                    <View style={{
+                        width: "100%",
+                        height: 44,
+                        alignSelf: 'center',
+                    }}>
+                        <View style={{
+                            ...bleashupHeaderStyle,
+                            paddingLeft: '1%',
+                        }}><Title style={{
+                            fontSize: 18,
+                            alignSelf: 'center',
+                            fontWeight: 'bold',
+                            color: '#0A4E52'
+                        }}>{"Calendar sync"}</Title>
+                        </View>
                     </View>
-                    <View style={{}}>
-                        <Text style={{color:'gray',fontSize: 12,fontWeight: 'bold',fontStyle: 'italic',}}>{"This Activity Has Not Yet Been Added To Your Calendar ; Let's Add It To Your Calendar So That You Should Properly Reminded of IT."}</Text>
+                    <View style={{ margin: '3%', alignSelf: 'center', }}>
+                        <Text style={{
+                            color: 'gray',
+                            fontSize: 12,
+                        }}>{this.props.synced ?
+                            'This activity is synced with your device calendar' :
+                            'This activity is not yet synced with your calendar'}</Text>
                     </View>
-                    <View style={{ alignSelf: 'center', flexDirection: 'row',margin: '6%',width:"100%",}}>
-                        <Button onPress={() => this.props.closed()} style={{ width: 100, 
-                            marginRight: "9%", borderRadius: 10, alignItems: 'center', }} 
-                        light><Text style={{ marginLeft: "15%"}}>Cancel</Text></Button>
-                        <Button onPress={() => this.props.callback()} style={{ width: 100, 
-                            alignItems: 'center', borderRadius: 10, }} success>
-                        <Text style={{ marginLeft: "15%", }}>{"Sync"}</Text></Button>
+                    <View style={{
+                        alignSelf: 'center',
+                        flexDirection: 'row',
+                        marginTop: '6%',
+                        width: "100%", marginLeft: '20%',
+                    }}>
+                        {this.props.synced ? <View style={{ width: '50%' }}>
+                            <Button onPress={() => this.props.unsync()} style={{
+                                borderRadius: 10, alignItems: 'center',
+                            }}
+                                light><Text>{"unsync"}</Text>
+                            </Button>
+                        </View> :
+                            <View>
+                                <Button onPress={() => this.props.callback()} style={{
+                                    alignItems: 'center',
+                                    borderRadius: 10,
+                                }} success>
+                                    <Text>{"sync"}</Text>
+                                </Button>
+                            </View>}
                     </View>
                 </Content>
-             </ModalBox>
+            </ModalBox>
         );
     }
 } 

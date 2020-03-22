@@ -37,7 +37,7 @@ export default class Creator extends Component {
                 })}>
                     <Text style={{ fontWeight: 'bold', fontSize: 11, margin: 1, }} note></Text>
                     {this.state.creator.nickname ? <Text style={{ margin: "1%", fontSize: 11, fontStyle: 'normal', }} note>by {this.state.creator.nickname} </Text> : null}
-                    <Text style={{ margin: "1%", fontSize: 11, color: "gray" }} >{"On "}{moment(this.props.created_at).format("dddd, MMMM Do YYYY, h:mm:ss a")}</Text>
+                    <Text style={{ margin: "1%", fontSize: 11, color: "gray" }} >{"On "}{moment(this.props.created_at).calendar()}</Text>
                 </TouchableOpacity>
                 {this.state.showProfileModal && this.state.creator.profile ? <ProfileModal isOpen={this.state.showProfileModal} onClosed={() => {
                     this.setState({

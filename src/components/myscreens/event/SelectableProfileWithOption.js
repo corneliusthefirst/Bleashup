@@ -1,5 +1,5 @@
 import React, { Component } from "react"
-import { View } from "react-native"
+import { View,TouchableOpacity } from "react-native"
 import { Button, Icon, Text } from "native-base"
 import MemberActions from "./MemberActions"
 import ProfileView from '../invitations/components/ProfileView';
@@ -37,12 +37,12 @@ export default class SelectableProfileWithOptions extends Component {
         return !this.state.hiden ? (
             <View style={{ heigh: 100, width: "90%" }}>
                 <View style={{ flexDirection: 'row', margin: 15, marginBottom: "10%", }}>
-                    <Button transparent onPress={() => requestAnimationFrame(() => this.selectContact())}>
+                    <TouchableOpacity transparent onPress={() => requestAnimationFrame(() => this.selectContact())}>
                         <View style={{ width: "90%", flexDirection: 'row', alignSelf: 'flex-start', }}>
-                            {this.props.mainMaster && this.state.contact.phone !== this.props.creator ? <View style={{ width: "20%", marginTop: "5%", }}>
-                                <Icon name={this.state.checked ? "radio-button-checked" :
-                                    "radio-button-unchecked"} type="MaterialIcons"></Icon>
-                            </View> : null}
+                             <View style={{ width: "20%", marginTop: "5%", }}>
+                                {this.props.mainMaster && this.state.contact.phone !== this.props.creator ? <Icon style={{color:'#1FABAB'}} name={this.state.checked ? "radio-button-checked" :
+                                    "radio-button-unchecked"} type="MaterialIcons"></Icon> : null}
+                            </View>
                             <View style={{ width: "80%", color: "#0A4E52" }}>
                                 <ProfileView setContact={(con) => {
                                     this.setState({
@@ -55,7 +55,7 @@ export default class SelectableProfileWithOptions extends Component {
                                 }} phone={this.state.contact.phone}></ProfileView>
                             </View>
                         </View>
-                    </Button>
+                    </TouchableOpacity>
                     <View>
                         <View style={{ flexDirection: 'row', marginRight: "5%", }}>
                             <Text note style={{

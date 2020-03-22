@@ -35,14 +35,14 @@ export default class ChangeBox extends Component {
                 })
         }, 60 * this.props.delayer)
     }
-    containerStyle = { margin: '2%', borderRadius: 6, backgroundColor: "#9EEDD3", ...shadower(4), height: 120 }
+    containerStyle = { margin: '2%', borderRadius: 6, backgroundColor: "#9EEDD3", ...shadower(4), height: 125 }
     render() {
         return (!this.state.loaded ? <View style={{ ...this.containerStyle, width: '95%', height: 120 }}></View> :
             <View>
                 <View style={this.containerStyle}>
                     {!this.props.change ? null : <View style={{ flexDirection: 'column', margin: '2%', }}>
                         <View style={{ flexDirection: 'row', height: '45%' }}>
-                        <View style={{ width: '83%', height: '100%' }}><ProfileSimple showPhoto={(url) => {
+                        <View style={{ width: '80%', height: '100%' }}><ProfileSimple showPhoto={(url) => {
                                 this.props.showPhoto(url)
                             }} delay={this.props.delayer}
                                 profile={this.state.changer}></ProfileSimple>
@@ -69,14 +69,14 @@ export default class ChangeBox extends Component {
                                     restore={() => this.props.restore(this.props.change)}
                                 ></ChangeBoxMenu> : null}</View>
                             </View>
-                            <View style={{ width: "13%" }}>
+                            {/*<View style={{ width: "13%" }}>
                                 <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                                     console.warn("pressing !!!")
                                     this.props.close()
                                 })}>
                                     <View></View>
                                 </TouchableOpacity>
-                            </View>
+                            </View>*/}
                         </View>
                         <View style={{
                             flexDirection: 'column',

@@ -45,15 +45,24 @@ export default class HighlightCardDetail extends Component {
         coverScreen={true}
       >
         <View>
-          <View style={{ height: '94%' }}>
+          <View style={{ height: '100%' }}>
             <ScrollView showsVerticalScrollIndicator={false} >
               <View style={{ flex: 1, ...shadower(6) }}>
-                {this.props.shouldRestore ? <View style={{ width: '95%', alignItems: 'flex-end', margin: '2%', }}><Button
+                {this.props.shouldRestore ? <View style={{ width: '95%', alignItems: 'flex-end', margin: '2%',height:'100%' }}><Button
                   style={{ alignSelf: 'flex-end', margin: '2%', marginRight: '2%' }} onPress={() => {
                     this.props.onClosed()
                     this.props.restore(this.props.item)
                   }} rounded><Text>{"Restore"}</Text></Button></View> : null}
-                <HighLight shouldNotMention={this.props.shouldNotMention} mention={() => this.props.mention(this.props.item)} hideReplyer={true} color={"#FEFFDE"} showPhoto={(url) => this.props.showPhoto(url)} modal={true} showVideo={(url) => this.props.showVideo(url)} background={"#FEFFDE"} highlight={this.props.item} disableSwipper={true}></HighLight>
+                <HighLight 
+                shouldNotMention={this.props.shouldNotMention}
+                 mention={() => this.props.mention(this.props.item)} 
+                 hideReplyer={true} color={"#FEFFDE"} 
+                 showPhoto={(url) => this.props.showPhoto(url)} 
+                 modal={true} 
+                 showVideo={(url) => this.props.showVideo(url)} 
+                 background={"#FEFFDE"} 
+                 highlight={this.props.item}
+                  disableSwipper={true}></HighLight>
                 {/*<View style={{alignItems:'center',justifyContent:'center',height:height/7}}>
                <Title style={{color:'#1FABAB',fontSize:23,fontWeight:"bold"}}>{this.props.item.title}</Title>
             </View>

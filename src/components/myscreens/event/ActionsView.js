@@ -31,7 +31,7 @@ export default class ActionsView extends Component {
         borderRadius: 5, ...shadower(2),
         marginBottom: '15%',
         padding: '1%',
-        alignSelf: 'center', width: 60, height: 50
+        alignSelf: 'center', width: 55, height: 50
     }
     padding = '20%'
     render() {
@@ -51,8 +51,14 @@ export default class ActionsView extends Component {
                         </TouchableOpacity>
                     </View>
                 }
-
-
+                {this.props.event_type === "relation" ? null :
+                    <View style={this.container}>
+                        <TouchableOpacity style={this.center} onPress={() => requestAnimationFrame(() => this.inviteContacts())}>
+                            <Icon style={{ color: this.actionColor, fontSize: this.fontSize, }} type={"EvilIcons"} name="sc-telegram"></Icon>
+                            <Label style={{ fontSize: this.textSize, color: this.actionColor }}>Invite</Label>
+                        </TouchableOpacity>
+                    </View>
+                }
                 {this.props.event_type === "relation" ? null :
                     <View style={this.container}>
                         <TouchableOpacity style={this.center} onPress={() => requestAnimationFrame(() => this.props.showMembers())}>
@@ -86,22 +92,37 @@ export default class ActionsView extends Component {
                                     this.props.calendared ? 'green' : 'red' :
                                     'gray', fontSize: this.fontSize,
                             }}
-                                type="MaterialIcons" name="sync"></Icon>
+                                type="MaterialIcons" name={this.props.calendared ? "sync" : "sync-problem"}></Icon>
                             <Label style={{
                                 fontSize: this.textSize,
                                 color: this.props.period ?
                                     this.props.calendared ? 'green' : 'red' :
                                     'gray',
-                            }}>{this.props.calendared?"Sync":"Not sync"}</Label>
+                            }}>{this.props.calendared ? "Synced" : null}</Label>
                         </TouchableOpacity>
                     </View>
                 }
-                <View style={this.container}>
+                {this.props.event_type === 'relation' ? null : <View style={this.container}>
                     <TouchableOpacity style={this.center} onPress={() => requestAnimationFrame(() => this.props.leaveActivity())}>
                         <Icon style={{ color: "red", fontSize: this.fontSize, }} type="AntDesign" name="poweroff"></Icon>
                         <Label style={{ fontSize: this.textSize, color: "red" }}>Leave</Label>
                     </TouchableOpacity>
-                </View>
+                </View>}
+                {this.props.event_type === "relation" ? null :
+                    <View style={this.container}>
+                        <TouchableOpacity style={this.center} onPress={() => requestAnimationFrame(() => this.props.exitActivity())}>
+                            <Icon style={{
+                                color: "#1FABAB" ,
+                                fontSize: this.fontSize,
+                            }}
+                                type="AntDesign" name={"closecircle"}></Icon>
+                            <Label style={{
+                                fontSize: this.textSize,
+                                color: "#1FABAB"
+                            }}>{"Exit"}</Label>
+                        </TouchableOpacity>
+                    </View>
+                }
             </View>
         )
     }

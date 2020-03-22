@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { View, Platform } from 'react-native';
+import { View, Platform, TouchableOpacity } from 'react-native';
 import ModalBox from 'react-native-modalbox';
 import { Button, Content, Text } from 'native-base';
 import moment from 'moment';
@@ -102,15 +102,18 @@ export default class SetAlarmPatternModal extends Component {
             >
                 <View style={{ width: "100%", height: 50, }}>
                     <View style={{ flexDirection: 'row',...bleashupHeaderStyle,padding: '2%', }}>
-                        <View style={{width:'70%'}}>
-                            <Text style={{ fontSize: 20, alignSelf: 'flex-start', fontWeight: 'bold', fontStyle: 'italic', width: "76%", margin: '2%', padding: '1%', }}>{"Set Alarm Pattern"}</Text>
+                        <View style={{width:'80%'}}>
+                            <Text style={{ fontSize: 18, alignSelf: 'flex-start', fontWeight: 'bold',  padding: '1%', }}>{"Set Alarm Pattern"}</Text>
                         </View>
-                        <View style={{width:'30%'}}>
-                            <Button onPress={() => this.save()} style={{ alignSelf: 'flex-end', }} transparent><Text style={{ fontSize: 23, fontWeight: 'bold', }}>SET</Text></Button>
+                        <View style={{width:'20%'}}>
+                            <TouchableOpacity onPress={() => this.save()} style={{ alignSelf: 'flex-end', }}><Text style={{ 
+                                fontSize: 23, 
+                                fontWeight: 'bold',
+                            color:'#1FABAB' }}>{"SET"}</Text></TouchableOpacity>
                         </View>
                     </View>
                 </View>
-                <View style={{ margin: '3%', height: "85%" }}>
+                <View style={{ margin: '3%', height: "80%" }}>
                     <View style={{ hieght: "" }}>
                         <BleashupFlatList
                             listKey={"contacts"}

@@ -279,7 +279,8 @@ class PublicEvent extends Component {
       this.props.navigation.navigate("HighLightsDetails", { event_id: this.props.Event.id })
   }
   renderMap(){
-    return this.state.isMount && this.props.Event.location.string ? <View style={{ alignSelf: 'flex-start', width: '40%' }}><MapView card
+    return this.state.isMount && this.props.Event.location.string ? 
+    <View style={{ alignSelf: 'center', }}><MapView card
       location={this.props.Event.location.string}></MapView></View> : null
   }
   renderprofile(){
@@ -319,7 +320,7 @@ class PublicEvent extends Component {
       marginBottom: '3%',
     }}>
       <View style={{ flexDirection: 'row', width: '100%' }}>
-        <View style={{ width: '85%' }}>
+        <View style={{ width: '90%' }}>
           {this.state.isMount ? <TitleView openDetail={() => this.props.openDetails(this.props.Event)} join={() => this.join()} joint={this.state.joint} seen={() => this.markAsSeen()}
             {...this.props}></TitleView> : null}
         </View>
@@ -356,7 +357,7 @@ class PublicEvent extends Component {
               marginLeft: '-1%',
             }} photo={this.props.Event.background} event_id={this.props.Event.id} width={170} height={100} borderRadius={6} />
         </CardItem></View> : null}</View>
-        {this.renderMap()}
+        <View style={{width:'35%',}}>{this.renderMap()}</View>
       </View>
     </CardItem>)
   }

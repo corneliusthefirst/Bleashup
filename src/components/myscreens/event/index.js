@@ -131,6 +131,12 @@ export default class Event extends Component {
       currentRemindMembers: members
     })
   }
+  openMenu(){
+    this.isOpen = !this.isOpen
+    this.setState({
+      mounted:true
+    })
+  }
   currentWidth = .4
   //normalWidth = 
   isOpen = false
@@ -143,6 +149,9 @@ export default class Event extends Component {
             working: true
           })
         }}
+          openMenu={() => {
+            this.openMenu()
+          }}
           mention={(data) => this.mentionPost(data)}
           updateLocation={(loc) => this.updateActivityLocation(loc)}
           updateDesc={(newDes) => {
@@ -168,6 +177,7 @@ export default class Event extends Component {
             working: false
           })
         }}
+          openMenu={() => this.openMenu()}
           clearCurrentMembers={() => {
             this.setState({
               currentRemindMembers: null
@@ -190,6 +200,7 @@ export default class Event extends Component {
           activity_name={this.event.about.title}
           room_type={"activity"} //!! 'relation' if it's a relation
           //activity_name={this.event.about.title}
+          openMenu={() => this.openMenu()}
           showLoader={() => this.startLoader()}
           addRemind={(members) => this.addRemindForCommittee(members)}
           stopLoader={() => this.stopLoader()}
@@ -240,6 +251,7 @@ export default class Event extends Component {
           propcessAndFoward={(change) => this.propcessAndFoward(change)}
           mention={(data) => this.mention(data)}
           restore={(data) => this.restore(data)}
+          openMenu={() => this.openMenu()}
           openPhoto={(url) => this.openPhoto(url)}
           master={this.master}
           isM={this.state.isMe}
@@ -643,6 +655,7 @@ export default class Event extends Component {
     this.setState({ scrollEnabled: scrollEnabled })
   }
   showMembers() {
+    this.isOpen = false
     this.setState({
       isManagementModalOpened: true,
       partimembers: this.event.participant
@@ -848,7 +861,7 @@ export default class Event extends Component {
       this.setState({
         fresh: false
       })
-    }, 100)
+    }, 20)
 
   }
   invite(members) {
@@ -1046,6 +1059,7 @@ export default class Event extends Component {
     }
   }
   inviteContacts() {
+    this.isOpen = false
     this.setState({
       isInviteModalOpened: true
     })
@@ -1064,6 +1078,7 @@ export default class Event extends Component {
     this.refreshePage()
   }
   openSettingsModal() {
+    this.isOpen = false
     this.setState({
       isSettingsModalOpened: true
     })
@@ -1274,6 +1289,14 @@ export default class Event extends Component {
       }, 250)
     }
   }
+  unsync() {
+    this.setState({
+      isSynchronisationModalOpned: false
+    })
+    Requester.unsyncActivity(this.event).then(() => {
+      this.initializeMaster()
+    })
+  }
   goback() {
     this.props.navigation.goBack()
   }
@@ -1329,9 +1352,13 @@ export default class Event extends Component {
           navigateHome={() => {
             this.goback()
           }}
+          exitActivity={() => {
+            this.goback()
+          }}
           period={this.event.period}
           calendared={this.event.calendar_id ? true : false}
           handleSync={() => {
+            this.isOpen = false
             this.event.period ? this.setState({
               isSynchronisationModalOpned: true,
             }) : Toast.show({ text: 'cannot sync this activity to your calendar', duration: 4000 })
@@ -1341,12 +1368,15 @@ export default class Event extends Component {
           ref="swipperView"
           publish={() => this.publish()}
           showActivityPhotoAction={() => this.master ? this.openPhotoSelectorModal(this.event.background) : this.showPhoto(this.event.background)}
-          leaveActivity={() => this.member ? this.setState({
+          leaveActivity={() => {
+            this.isOpen = false
+            this.member ? this.setState({
             isAreYouSureModalOpened: true,
-            warnDescription: "Are You Sure You Want To Leave This Activity ?",
-            warnTitle: "Leave Activity",
+            warnDescription: "Are you sure you want to leave this activity ?",
+            warnTitle: "Leave activity",
             callback: this.leaveActivity.bind(this)
-          })/*this.leaveActivity()*/ : Toast.show({ text: "You are not a  member anymore !" })}
+            }) : Toast.show({ text: "You are not a  member anymore !" })
+          }}
           openSettingsModal={() => this.openSettingsModal()}
           ShowMyActivity={(a) => this.checkActivity({ phone: stores.LoginStore.user.phone })}
           inviteContacts={() => this.computedMaster || this.event.public ? this.inviteContacts() : Toast.show({ text: "You don't have enough priviledges to invite your contacts to this activity ", duration: 4000 })}
@@ -1386,8 +1416,7 @@ export default class Event extends Component {
           height: '100%', marginLeft: '-1%',
           width: '100%',
           backgroundColor: '#FEFFDE',
-        }}>
-          <Spinner size={"small"}></Spinner></View> :
+        }}></View> :
           this.renderMenu()
         }
         {this.state.showNotifiation ? <View style={{
@@ -1530,6 +1559,10 @@ export default class Event extends Component {
               isSynchronisationModalOpned: false
             })
           }}
+          unsync={() => {
+            this.unsync()
+          }}
+          synced={this.event.calendar_id ? true : false}
           isOpen={this.state.isSynchronisationModalOpned}
           callback={() => this.setState({
             isSetPatternModalOpened: true,

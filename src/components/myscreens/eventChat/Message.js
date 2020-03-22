@@ -356,7 +356,7 @@ export default class Message extends Component {
                                             }} onLongPress={() => {
                                                 this.handLongPress()
                                             }} >
-                                                <View>
+                                                <View style={{margin: '1%',}}>
                                                     {this.chooseComponent(this.props.message, this.props.message.id, this.state.sender)}
                                                 </View>
                                             </TouchableWithoutFeedback>

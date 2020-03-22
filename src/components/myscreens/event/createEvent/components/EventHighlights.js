@@ -691,7 +691,7 @@ export default class EventHighlights extends Component {
                   {!this.props.updateState ? this.state.creating ? <Spinner></Spinner> :
                     <View style={{ alignSelf: 'flex-end', }}>
                       <Button onPress={() => { this.AddHighlight() }} rounded>
-                        <Text style={{ color: "#FEFFDE", fontWeight: 'bold', }}>{"Ok!"}</Text>
+                        <Text style={{ color: "#FEFFDE", fontWeight: 'bold', }}>{"Ok"}</Text>
                       </Button>
                     </View> :
                     <View style={{ alignSelf: 'flex-end' }}>

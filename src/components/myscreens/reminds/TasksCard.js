@@ -146,10 +146,9 @@ export default class EventTasksCard extends Component {
     member = findIndex(this.props.item.members,
       { phone: stores.LoginStore.user.phone }) >= 0;
     return !this.state.mounted ? <Card style={{
-      width: '98%', height: 200,
+      width: '98%', height: 220,
       marginLeft: "2%", marginRight: "2%",
     }}>
-      <Spinner size={"small"}></Spinner>
     </Card> : (
         <Card style={{
           marginLeft: "2%", marginRight: "2%", //marginBottom: this.props.isLast ? '25%' : '0%',
