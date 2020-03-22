@@ -68,10 +68,10 @@ export default class BleashupTimeLine extends PureComponent {
                     marginTop
                     style={[styles.listview, this.props.listViewStyle]}
                     dataSource={this.state.data}
-                    //inverted={true}
+                    inverted={true}
                     firstIndex={0}
                     renderPerBatch={10}
-                    initialRender={6}
+                    initialRender={10}
                     numberOfItems={this.state.data.length}
                     extraData={this.state}
                     renderItem={(item,index) => {
