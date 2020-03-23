@@ -374,9 +374,10 @@ export default class SettingsModal extends Component {
                                     style={{ fontSize: 18, fontWeight: 'bold', width: '100%', }}>Activity Settings</Text>
                             </View>
                             <View style={{ width: '20%' }}>
-                                {this.props.computedMaster ? <TouchableOpacity onPress={() => this.saveConfigurations()}><Text style={{ 
-                                    fontWeight: 'bold', 
-                                    fontSize:20, color:'#1FABAB' }} >{"Save"}</Text></TouchableOpacity> : null}
+                                {this.props.computedMaster ? <TouchableOpacity onPress={() => this.saveConfigurations()}><Text style={{
+                                    fontWeight: 'bold',
+                                    fontSize: 20, color: '#1FABAB'
+                                }} >{"Save"}</Text></TouchableOpacity> : null}
                             </View>
                         </View>
                     </View>
@@ -539,7 +540,7 @@ export default class SettingsModal extends Component {
                                             this.state.public ? "radio-button-checked" :
                                                 "radio-button-unchecked"
                                         } type={"MaterialIcons"}></Icon>
-                                        <Text>Public</Text></Button>
+                                        <Text>{this.state.public ? "Public" : "Private"}</Text></Button>
                                 </View>
                             </Item>
                             <View pointerEvents={this.props.computedMaster ? null : 'none'}>

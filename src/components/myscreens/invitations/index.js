@@ -70,7 +70,7 @@ import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
     return <View style={{ height: "100%",}}>
       {
         this.state.loadingInvitations ?
-          <Spinner></Spinner> :
+          null:
           <BleashupFlatList
             marginTop
             initialRender={this.renderPerBatch}

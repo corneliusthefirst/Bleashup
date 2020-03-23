@@ -32,6 +32,7 @@ import MapView from "../currentevents/components/MapView";
 import Creator from "../reminds/Creator";
 import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
 import HighLightsDetails from '../highlights_details/index';
+import QRDisplayer from "../QR/QRCodeDisplayer";
 
 let { height, width } = Dimensions.get('window');
 
@@ -321,7 +322,10 @@ export default class EventDetailView extends Component {
                   </ScrollView>
                 </View>
                 <View style={{ flexDirection: 'row', }}>
-                  <View style={{ flexDirection: "column", justifyContent: "space-between", bottom: 0, margin: 3, width: "60%" }}>
+                  <View style={{ flexDirection: "column", justifyContent: "space-between",
+                   bottom: 0, margin: '3%', 
+                   width: "60%" }}>
+                  <QRDisplayer code={this.props.Event.id} title={this.props.Event.about.title}></QRDisplayer>
                   </View>
                   <View style={{ width: '40%',alignItems: 'center',alignSelf: 'center', }}>
                   {this.props.Event.location.string ?
@@ -349,11 +353,11 @@ export default class EventDetailView extends Component {
                       </View>
                     </TouchableOpacity>}
                   </View>
-                  {/*<View style={{margin: '1%',}}>
-                    <Creator color={"#FEFFDE"} creator={this.props.Event.creator_phone}
-                     created_at={this.props.Event.created_at}></Creator>
-                    </View>*/}
                     </View>
+              </View>
+              <View style={{marginBottom:'3%',marginLeft: '2%',marginTop: '-1%',}}>
+                <Creator color={"#FEFFDE"} creator={this.props.Event.creator_phone}
+                  created_at={this.props.Event.created_at} />
               </View>
             </View>
             {this.state.EventDescriptionState ? <EventDescription updateDesc={(newDesc) => {

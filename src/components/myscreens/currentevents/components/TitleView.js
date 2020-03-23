@@ -28,9 +28,9 @@ export default class TitleView extends Component {
                     tab: "EventDetails"
                 });
             } else {
-                this.props.openDetail()
+               this.props.openDetail && this.props.openDetail()
             }
-            this.props.seen()
+            this.props.seen && this.props.seen()
         })
     }
     render() {

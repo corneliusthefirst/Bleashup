@@ -129,6 +129,7 @@ android {
         targetSdkVersion 27
         vectorDrawables.useSupportLibrary true
         applicationId "com.bleashup.bleashup"
+         missingDimensionStrategy 'react-native-camera', 'general'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -165,6 +166,8 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-permissions')
+    implementation project(':react-native-camera')
     implementation project(':react-native-reanimated')
     implementation project(':react-native-svg')
     implementation project(':react-native-image-crop-picker')

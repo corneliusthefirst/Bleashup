@@ -68,7 +68,7 @@ export default class DeckSwiperModule extends Component {
   render() {
 
     return (
-      <View style={{ width: "98%", height: 400, marginTop: -40, marginLeft: 5 }}>
+      <View style={{ width: "98%", height: 300, marginTop: -40, marginLeft: 5 }}>
         <DeckSwiper
           ref={(c) => this._deckSwiper = c}
           dataSource={this.props.details}

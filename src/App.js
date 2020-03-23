@@ -45,23 +45,25 @@ import Reminds from "./components/myscreens/reminds/index";
 import CreateEventView from "./components/myscreens/event/createEvent/index"
 import EventDetailView from "./components/myscreens/eventDetails/index"
 import SendInvitations from "./components/myscreens/sent-invitations/index";
-import MyTasksView  from './components/myscreens/MyTasks/MyTasks'
+import MyTasksView from './components/myscreens/MyTasks/MyTasks'
 import HighLightsDetails from './components/myscreens/highlights_details';
-import LocalTasksCreation  from './components/myscreens/MyTasks/localTasksCreation'
-import TasksCreation  from './components/myscreens/reminds/TasksCreation'
+import LocalTasksCreation from './components/myscreens/MyTasks/localTasksCreation'
+import TasksCreation from './components/myscreens/reminds/TasksCreation'
+import QRCode from "./components/myscreens/QR"
 /*
 let {height, width} = Dimensions.get('window');
 EStyleSheet.build({
   $rem: width > 340 ? 18 : 16
 });*/
 
-const AppNavigator = createStackNavigator( 
+const AppNavigator = createStackNavigator(
   {
     Home: { screen: Home },
     CurrentEvent: { screen: CurrentEventView },
+    QR: { screen: QRCode },
     Settings: { screen: SettingView },
     Profile: { screen: ProfileView },
-    Status: { screen:  StatusView },
+    Status: { screen: StatusView },
     Invitation: { screen: InvitationView },
     PotesChat: { screen: PotesChat },
     Login: { screen: LoginView },
@@ -73,7 +75,7 @@ const AppNavigator = createStackNavigator(
     SignIn: { screen: SignInView },
     LoginHome: { screen: LoginHomeView },
     Event: { screen: Event },
-    HighLightsDetails:{screen:HighLightsDetails},
+    HighLightsDetails: { screen: HighLightsDetails },
     Contributions: { screen: Contributions },
     Votes: { screen: Votes },
     Highlights: { screen: Highlights },
@@ -81,15 +83,15 @@ const AppNavigator = createStackNavigator(
     EventDetails: { screen: EventDetail },
     EventChat: { screen: EventChat },
     Reminds: { screen: Reminds },
-    CreateEventView:{screen: CreateEventView},
-    SendInvitations:{screen:SendInvitations},
-    MyTasksView:{screen:MyTasksView},
-    EventDetailView:{screen:EventDetailView },
-    LocalTasksCreation:{screen:LocalTasksCreation},
-    TasksCreation:{screen:TasksCreation},
-   
+    CreateEventView: { screen: CreateEventView },
+    SendInvitations: { screen: SendInvitations },
+    MyTasksView: { screen: MyTasksView },
+    EventDetailView: { screen: EventDetailView },
+    LocalTasksCreation: { screen: LocalTasksCreation },
+    TasksCreation: { screen: TasksCreation },
+
   },
-  { 
+  {
     initialRouteName: "LoginHome",
     headerMode: "none"
   }
@@ -103,11 +105,11 @@ export default () => (
   <Root>
     <InAppNotificationProvider closeInterval={4000} height={80} openCloseDuration={200}
       iconApp={require('../assets/BleashupIcon.png')} backgroundColour={"#9EEDD3"}>
-    <StyleProvider style={getTheme(CommonColor)}>
+      <StyleProvider style={getTheme(CommonColor)}>
         <Provider app={app}>
           <AppContainer />
         </Provider>
-    </StyleProvider>
+      </StyleProvider>
     </InAppNotificationProvider>
   </Root>
 );

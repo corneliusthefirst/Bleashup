@@ -79,6 +79,8 @@
 		F0B2DDD87FFB4FE5BC3D25BF /* libRNCalendarReminders.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D4D58DB66763446FB97EA1F3 /* libRNCalendarReminders.a */; };
 		563B20CCB1584EABACCEA5C6 /* libRNReanimated.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D634488DF84E46869A30CEF1 /* libRNReanimated.a */; };
 		1701CB4A8407400996E8382C /* libRNReanimated-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F5C4BC034EF14848A78B05BF /* libRNReanimated-tvOS.a */; };
+		572E0388F0F84E2B851B0444 /* libRNCamera.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FD7B978609F4091911D71A0 /* libRNCamera.a */; };
+		650C1BD02FEB4EC39AFE3052 /* libRNPermissions.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F55CCEEABD4449BBBB03CB4C /* libRNPermissions.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -459,6 +461,10 @@
 		C31C5563D625469AB0445CEF /* RNReanimated.xcodeproj */ = {isa = PBXFileReference; name = "RNReanimated.xcodeproj"; path = "../node_modules/react-native-reanimated/ios/RNReanimated.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		D634488DF84E46869A30CEF1 /* libRNReanimated.a */ = {isa = PBXFileReference; name = "libRNReanimated.a"; path = "libRNReanimated.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 		F5C4BC034EF14848A78B05BF /* libRNReanimated-tvOS.a */ = {isa = PBXFileReference; name = "libRNReanimated-tvOS.a"; path = "libRNReanimated-tvOS.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		DF197252A975415C811D3325 /* RNCamera.xcodeproj */ = {isa = PBXFileReference; name = "RNCamera.xcodeproj"; path = "../node_modules/react-native-camera/ios/RNCamera.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		9FD7B978609F4091911D71A0 /* libRNCamera.a */ = {isa = PBXFileReference; name = "libRNCamera.a"; path = "libRNCamera.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		D622F8D542C24804A714A82D /* RNPermissions.xcodeproj */ = {isa = PBXFileReference; name = "RNPermissions.xcodeproj"; path = "../node_modules/react-native-permissions/ios/RNPermissions.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		F55CCEEABD4449BBBB03CB4C /* libRNPermissions.a */ = {isa = PBXFileReference; name = "libRNPermissions.a"; path = "libRNPermissions.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -521,6 +527,8 @@
 				4E71F1248B15447C8F5AC706 /* libReactNativeFFmpeg.a in Frameworks */,
 				F0B2DDD87FFB4FE5BC3D25BF /* libRNCalendarReminders.a in Frameworks */,
 				563B20CCB1584EABACCEA5C6 /* libRNReanimated.a in Frameworks */,
+				572E0388F0F84E2B851B0444 /* libRNCamera.a in Frameworks */,
+				650C1BD02FEB4EC39AFE3052 /* libRNPermissions.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -749,6 +757,8 @@
 				F41AD761CA3C42739F428F68 /* ReactNativeFFmpeg.xcodeproj */,
 				F9B80749BBD54C54852B9F9C /* RNCalendarReminders.xcodeproj */,
 				C31C5563D625469AB0445CEF /* RNReanimated.xcodeproj */,
+				DF197252A975415C811D3325 /* RNCamera.xcodeproj */,
+				D622F8D542C24804A714A82D /* RNPermissions.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1416,6 +1426,8 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1451,6 +1463,8 @@
 					"$(SRCROOT)/../node_modules/react-native-ffmpeg/ios",
 					"$(SRCROOT)/../node_modules/react-native-calendar-reminders",
 					"$(SRCROOT)/../node_modules/react-native-reanimated/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-camera/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-permissions/ios/**",
 				);
 			};
 			name = Debug;
@@ -1512,6 +1526,8 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1547,6 +1563,8 @@
 					"$(SRCROOT)/../node_modules/react-native-ffmpeg/ios",
 					"$(SRCROOT)/../node_modules/react-native-calendar-reminders",
 					"$(SRCROOT)/../node_modules/react-native-reanimated/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-camera/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-permissions/ios/**",
 				);
 			};
 			name = Release;
@@ -1601,6 +1619,8 @@
 					"$(SRCROOT)/../node_modules/react-native-ffmpeg/ios",
 					"$(SRCROOT)/../node_modules/react-native-calendar-reminders",
 					"$(SRCROOT)/../node_modules/react-native-reanimated/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-camera/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-permissions/ios/**",
 				);
 			};
 			name = Debug;
@@ -1654,6 +1674,8 @@
 					"$(SRCROOT)/../node_modules/react-native-ffmpeg/ios",
 					"$(SRCROOT)/../node_modules/react-native-calendar-reminders",
 					"$(SRCROOT)/../node_modules/react-native-reanimated/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-camera/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-permissions/ios/**",
 				);
 			};
 			name = Release;
@@ -1723,6 +1745,8 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1758,6 +1782,8 @@
 					"$(SRCROOT)/../node_modules/react-native-ffmpeg/ios",
 					"$(SRCROOT)/../node_modules/react-native-calendar-reminders",
 					"$(SRCROOT)/../node_modules/react-native-reanimated/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-camera/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-permissions/ios/**",
 				);
 			};
 			name = Debug;
@@ -1827,6 +1853,8 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1862,6 +1890,8 @@
 					"$(SRCROOT)/../node_modules/react-native-ffmpeg/ios",
 					"$(SRCROOT)/../node_modules/react-native-calendar-reminders",
 					"$(SRCROOT)/../node_modules/react-native-reanimated/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-camera/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-permissions/ios/**",
 				);
 			};
 			name = Release;
@@ -1930,6 +1960,8 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1965,6 +1997,8 @@
 					"$(SRCROOT)/../node_modules/react-native-ffmpeg/ios",
 					"$(SRCROOT)/../node_modules/react-native-calendar-reminders",
 					"$(SRCROOT)/../node_modules/react-native-reanimated/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-camera/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-permissions/ios/**",
 				);
 			};
 			name = Debug;
@@ -2033,6 +2067,8 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2068,6 +2104,8 @@
 					"$(SRCROOT)/../node_modules/react-native-ffmpeg/ios",
 					"$(SRCROOT)/../node_modules/react-native-calendar-reminders",
 					"$(SRCROOT)/../node_modules/react-native-reanimated/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-camera/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-permissions/ios/**",
 				);
 			};
 			name = Release;

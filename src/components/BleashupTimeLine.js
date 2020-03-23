@@ -73,7 +73,7 @@ export default class BleashupTimeLine extends PureComponent {
                     renderPerBatch={10}
                     initialRender={10}
                     numberOfItems={this.state.data.length}
-                    extraData={this.state}
+                    //extraData={this.state}
                     renderItem={(item,index) => {
                         this.delayer = this.delayer +1
                         if(this.delayer >= 6) this.delayer = 0
