@@ -36,6 +36,7 @@ import {
 import { confirmedChecker } from "../../../services/mapper";
 import ReportTabModal from './NewReportTab';
 import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
+import { dateDiff } from "../../../services/datesWriter";
 //const MyTasksData = stores.Reminds.MyTasksData
 
 export default class Reminds extends Component {
@@ -114,7 +115,7 @@ export default class Reminds extends Component {
           RemindCreationState: this.props.currentMembers ? true : false,
           eventRemindData: Reminds
         })
-      }, 100)
+      })
     })
   }
   saveRemoved(members) {
@@ -358,16 +359,21 @@ export default class Reminds extends Component {
   delay = 1
   render() {
 
-    return !this.state.mounted ? <View style={{ width: '100%', height: '100%', backgroundColor: '#FEFFDE', }}><Spinner size={'small'}></Spinner></View> : (
+    return !this.state.mounted ? <View style={{ width: '100%', height: '100%', backgroundColor: '#FEFFDE', }}></View> : (
 
       <View>
-        <View style={{ height: "6%", width: '100%' }}>
+        <View style={{ height: 45, width: '100%' }}>
           <View style={{
             paddingLeft: '1%', paddingRight: '1%', ...bleashupHeaderStyle,
             flexDirection: "row", alignItems: "center",
           }}>
-            <View style={{ width: '90%', paddingLeft: '2%', }}>
-              <Title style={{ fontSize: 20, fontWeight: 'bold', alignSelf: 'flex-start', }}>{"Reminds"}</Title>
+            <View style={{ width: '10%', paddingLeft: '1%', }}>
+              <Icon onPress={() => {
+                this.props.openMenu()
+              }} style={{ color: '#0A4E52' }} type={"Ionicons"} name={"ios-menu"}></Icon>
+            </View>
+            <View style={{ width: '80%', paddingLeft: '2%', }}>
+              <Title style={{ fontWeight: 'bold', alignSelf: 'flex-start', }}>{"Reminds"}</Title>
             </View>
             <View style={{ width: '10%' }}>
               <Icon onPress={() => requestAnimationFrame(() => this.AddRemind())} type='AntDesign'

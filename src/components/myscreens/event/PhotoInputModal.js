@@ -3,6 +3,9 @@ import { Content, Text, Button, Icon } from 'native-base';
 import { View } from "react-native"
 import Modal from "react-native-modalbox"
 import AreYouSure from './AreYouSureModal';
+import CacheImages from '../../CacheImages';
+import shadower from '../../shadower';
+import { CardItem } from 'native-base';
 
 export default class PhotoInputModal extends PureComponent {
     constructor(props) {
@@ -37,22 +40,33 @@ export default class PhotoInputModal extends PureComponent {
                     }, 20)
                 }}
                 style={{
-                    height: "50%",
-                    borderRadius: 10, backgroundColor: '#FEFFDE', width: "90%"
+                    height: 300,
+                    borderRadius: 5, 
+                    backgroundColor: 'transparent',
+                    width: 300
                 }}
             >
-                <Content style={{ margin: "10%", flexDirection: 'column', }}>
-                    <View style={{ width: "100%", height: 50 }}>
-                        <Text style={{ fontSize: 30, alignSelf: 'center', fontWeight: 'bold', fontStyle: 'italic', }}>{"Select Action"}</Text>
-                    </View>
-                    <View style={{ margin: '5%', }}>
-                        <Button onPress={() => this.props.showActivityPhoto()} transparent><Icon type={"Entypo"} name={"eye"}></Icon><Text>View Photo</Text></Button>
-                        <Button onPress={() => this.props.openCamera()} transparent><Icon type={"MaterialIcons"} name={"insert-photo"}></Icon><Text>Select From Galery</Text></Button>
-                        <Button onPress={() => this.props.openInternet()} transparent><Icon type={"Foundation"} name={"web"}></Icon><Text>Download From Web</Text></Button>
+                <Content style={{  flexDirection: 'column',margin: '2%', }}>
+                    <Button onPress={() => this.props.showActivityPhoto()}  style={{
+                        backgroundColor: '#1FABAB',
+                        ...shadower(2),
+                        margin: '3%', 
+                        alignSelf: 'center',
+                        borderRadius: 5,
+                        height:200
+                    }}>
+                    <CacheImages source={{uri:this.props.photo}} style={{
+                        width:180,
+                        height:190,
+                        borderRadius:5
+                    }} thumbnails square></CacheImages>
+                    </Button>
+                    <View style={{ margin: '2%',flexDirection: 'row', alignSelf: 'center',backgroundColor: '#FEFFDE',borderRadius: 4,}}>
+                        <Button onPress={() => this.props.openCamera()} transparent><Icon type={"MaterialIcons"} name={"insert-photo"}></Icon></Button>
+                        <Button onPress={() => this.props.openInternet()} transparent><Icon type={"Foundation"} name={"web"}></Icon></Button>
                         {this.props.photo ? <Button danger onPress={() => this.props.removePhoto()}
                             transparent><Icon style={{ color: 'red' }}
-                                name="trash" transparent type="EvilIcons"></Icon><Text
-                                    style={{ color: 'red' }}>Remove Photo</Text></Button> : null}
+                                name="trash" transparent type="EvilIcons"></Icon></Button> : null}
                     </View>
                 </Content>
             </Modal>

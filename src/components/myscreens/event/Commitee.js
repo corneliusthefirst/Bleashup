@@ -74,23 +74,23 @@ export default class Commitee extends Component {
                             fontWeight: 'bold',
                             alignSelf: 'flex-start',
                             fontStyle: 'normal',
-                            marginLeft: 10, fontSize: 22,
-                            marginBottom: "3%",
+                            marginLeft: 10, 
+                            fontSize: 20,
                         }}>Committees</Title>
                 </View>
                     <View>
                         <TouchableOpacity onPress={() => requestAnimationFrame(() => { this.props.showCreateCommiteeModal() })}>
-                            <Icon style={{ marginTop: "10%", color: "#FEFFDE" }}
+                            <Icon style={{ marginTop: "20%", color: "#FEFFDE",fontSize:22 }}
                                 name="pluscircle" type="AntDesign"></Icon></TouchableOpacity>
                     </View>
                 </View>
                 <View>{this.state.refresh ? null :
                     <View style={{height:'97%',}}>
                         <BleashupFlatList
-                        backgroundColor={'#FEFFDE'}
-                        style={{
-                            width: '98%', borderBottomRightRadius: 1,borderTopRightRadius: 5,margin: '1%', ...shadower(1),
-                            height:256
+                        backgroundColor={'white'}
+                        style={{borderTopRightRadius: 5,
+                            width: '100%', borderBottomRightRadius: 1, 
+                            height:'100%'
                         }}
                             dataSource={union([this.generalCommitee], uniq(this.props.commitees))}
                             keyExtractor={(item, index) => index.toString()}

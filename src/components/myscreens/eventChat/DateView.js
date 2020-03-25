@@ -13,7 +13,7 @@ export default class DateView extends Component {
         return (
             <View style={{ width: 150, height: 30, backgroundColor: this.props.backgroundColor ? this.props.backgroundColor : "#FEFFDE", borderRadius: 10, alignSelf: 'center', borderWidth: 1,
              borderColor: "#fff",...shadower(2) }}>
-                <Text style={{ fontWeight: 'bold', marginTop: "3%", alignSelf: 'center' }}>{dateDisplayer(this.props.date)}</Text>
+                <Text style={{ fontWeight: 'bold',  alignSelf: 'center' }}>{dateDisplayer(this.props.date)}</Text>
             </View>
         );
     }

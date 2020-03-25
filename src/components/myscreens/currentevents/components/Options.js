@@ -136,12 +136,12 @@ export default class Options extends Component {
                                     alignSelf:'center'
                                 }
                             }></Icon>
-                            <Text style={{
+                            {/*<Text style={{
                                 color: "#1FABAB",
                                 fontSize: 11, fontStyle: 'italic',
                                 alignSelf: 'center',
-                            }} >reminds</Text>
-                            {this.props.Event.remind_upated ? (
+                            }} >reminds</Text>*/}
+                            {/*this.props.Event.remind_upated ? (
                                 <View style={this.indicatorMargin}>
                                     <UpdateStateIndicator size={this.blinkerSize} />
                                 </View>
@@ -152,7 +152,7 @@ export default class Options extends Component {
                                             color={this.transparent}
                                         />
                                     </View>
-                                )}
+                            )*/}
                          
                 </View>
                 </TouchableOpacity>
@@ -166,13 +166,13 @@ export default class Options extends Component {
                                     alignSelf: 'center',
                                 }
                             }></Icon>
-                            <Label style={{
+                            {/*<Label style={{
                                 marginLeft: "-13%",
                                 fontSize: 11, fontStyle: 'italic',
                                 alignSelf:'center',
                                 color: "#1FABAB"
-                            }}>chats</Label>
-                            {this.props.Event.chat_updated ? (
+                            }}>chats</Label>*/}
+                            {/*this.props.Event.chat_updated ? (
                                 <View style={this.indicatorMargin}>
                                     <UpdateStateIndicator size={22} />
                                 </View>
@@ -183,7 +183,7 @@ export default class Options extends Component {
                                             color={this.transparent}
                                         />
                                     </View>
-                                )}
+                            )*/}
                           
                   </View>
                 </TouchableOpacity>

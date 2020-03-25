@@ -1205,6 +1205,15 @@ class Request {
             })
         })
     }
+    unsyncActivity(event){
+        return new Promise((resolve,reject) => {
+            CalendarServe.saveEvent({...event,period:null}).then(() => {
+                stores.Events.markAsCalendared(event.id,null,null).then(() => {
+                    resolve()
+                })
+            })
+        })
+    }
 }
 
 const Requester = new Request()

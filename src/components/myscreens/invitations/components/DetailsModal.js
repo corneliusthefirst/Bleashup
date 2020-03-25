@@ -13,7 +13,9 @@ import {
     Header,
     Content,
     Footer,
-    Container
+    Container,
+    Toast,
+    Title
 } from 'native-base';
 import CacheImages from '../../../CacheImages'
 import autobind from 'autobind-decorator';
@@ -23,7 +25,12 @@ import DeckSwiperModule from './deckswiper/index';
 import MapView from '../../currentevents/components/MapView';
 import stores from '../../../../stores';
 import moment from "moment"
-import {forEach} from "lodash"
+import { forEach, findIndex } from "lodash"
+import bleashupHeaderStyle from '../../../../services/bleashupHeaderStyle';
+import PhotoViewer from '../../event/PhotoViewer';
+import Request from '../../currentevents/Requester';
+import TitleView from '../../currentevents/components/TitleView';
+import Creator from '../../reminds/Creator';
 export default class DetailsModal extends Component {
     constructor(props) {
         super(props);
@@ -56,8 +63,6 @@ export default class DetailsModal extends Component {
         this.setState({
             details: nextProps.details ? nextProps.details : this.details,
             isOpen: nextProps.isOpen,
-            created_date: this.props.created_date ? this.props.created_date : this.created_date,
-            event_organiser_name: this.props.event_organiser_name ? this.props.event_organiser_name : this.event_organiser_name,
             location: this.props.location ? this.props.location : this.location,
             isToBeJoint: this.props.isToBeJoint ? this.props.isToBeJoint : this.isToBeJoint,
             id: this.props.id ? this.props.id : this.id
@@ -74,8 +79,8 @@ export default class DetailsModal extends Component {
     formDetailModal(event) {
         return new Promise((resolve, reject) => {
             stores.Highlights.fetchHighlights(event.id).then(highlights => {
-                console.warn(highlights,"ppp")
                 let card = [];
+                highlights = []
                 let i = 0;
                 Description = { event_title: event.about.title, event_description: event.about.description }
                 card.push(Description)
@@ -93,15 +98,39 @@ export default class DetailsModal extends Component {
             })
         })
     }
+    join() {
+        if (findIndex(this.state.event.participant, { phone: stores.LoginStore.user.phone }) < 0) {
+            this.setState({
+                isJoining: true
+            })
+            Request.join(this.state.event.id, this.state.event.event_host).then((status) => {
+                this.setState({
+                    isJoining: false
+                })
+                this.props.goToActivity()
+                this.props.onClosed()
+                ///emitter.emit(`left_${this.props.Event.id}`)
+            }).catch((error) => {
+                this.setState({ isJoining: false })
+                Toast.show({
+                    text: 'unable to perform this action',
+                    buttonText: 'Okay'
+                    , position: 'top', duration: 4000
+                })
+            })
+        } else {
+            this.props.goToActivity()
+            this.props.onClosed()
+        }
+    }
     render() {
         const accept = this.state.accept
         const deny = this.state.deny
-
         return (
             <Modal
-                backdropPressToClose={false}
-                swipeToClose={true}
-                backdropOpacity={0.5}
+                backdropPressToClose={true}
+                swipeToClose={false}
+                backdropOpacity={0.3}
                 backButtonClose={true}
                 position='bottom'
                 coverScreen={true}
@@ -110,15 +139,18 @@ export default class DetailsModal extends Component {
                     this.props.onClosed()
                 }}
                 style={{
-                    height: "70%", width: "98%", flexDirection: 'column', borderRadius: 8,
-                    backgroundColor: '#FEFFDE', marginTop: -5
+                    height: 420, width: "100%", flexDirection: 'column',
+                    borderRadius: 8,
+                    borderTopLeftRadius: 0,
+                    borderTopRightRadius: 0,
+                    backgroundColor: '#FEFFDE',
                 }}
                 onOpened={() => {
                     setTimeout(() =>
                         this.formDetailModal(this.props.event).then(details => {
                             this.formCreator().then((creator) => {
                                 this.setState({
-                                    event:this.props.event,
+                                    event: this.props.event,
                                     details: details,
                                     creator: creator,
                                     loaded: true,
@@ -130,59 +162,61 @@ export default class DetailsModal extends Component {
                 }}
 
             >
-                {!this.state.loaded ? <Spinner size={'small'}></Spinner> : <Content>
+                {!this.state.loaded ? <Spinner size={'small'}></Spinner> : <Content showsVerticalScrollIndicator={false}>
                     <View style={{ height: "98%", }}>
-                        <DeckSwiperModule details={this.state.details} />
-                            <CardItem>
-                                <View style={{ marginLeft: "60%" }}>
-                                    <MapView location={this.state.location.string} ></MapView>
+                        <View style={{ height: 65 }}>
+                            <View style={{ ...bleashupHeaderStyle, padding: '1%', flexDirection: 'row', }}>
+                                <TouchableOpacity style={{ width: '30%' }}
+                                    onPress={() =>
+                                        requestAnimationFrame(() => {
+                                            this.setState({
+                                                showPhoto: true,
+                                            })
+                                        })
+                                    }>
+                                    <CacheImages thumbnails
+                                        source={{ uri: this.state.event.background }}>
+                                    </CacheImages>
+                                </TouchableOpacity>
+                                <View style={{ width: '80%' }}>
+                                   <TitleView Event={this.state.event}></TitleView> 
                                 </View>
-                            </CardItem>
-                            {/*<CardItem>
-                                <View style={{ marginTop: "20%", }}>
-                                    {this.props.isToBeJoint ? (<View>
-                                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: "20%" }}>
-                                            <Button onPress={this.props.join} style={{ marginLeft: 40, alignItems: 'center', width: 100, marginTop: 4, borderRadius: 5 }} success ><Text style={{ fontSize: 18, fontWeight: "500", marginLeft: 31 }}>Join</Text></Button>
-                                            <View style={{ flexDirection: 'column' }}></View>
-                                        </View></View>)
-                                        :
-                                        (this.props.accept || this.props.deny ?
-                                            null :
-
-                                            <View style={{ flex: 10, flexDirection: 'row', margin: '5%', }}>
-                                                <View style={{ width: "35%", }}>
-                                                    <View style={{}}>
-                                                        <Button onPress={this.props.onAccept} style={{ width: 90, borderRadius: 5, justifyContent: 'center' }} success >
-                                                            <Text>Accept</Text></Button>
-                                                    </View>
-                                                </View>
-                                                <View style={{ width: "35%", }}>
-                                                    <View style={{ marginLeft: "20%", }}>
-                                                        <Icon name="comment" type="EvilIcons" onPress={{}} style={{ color: "#1FABAB" }} />
-                                                        <Text style={{ marginTop: 5, color: "#1FABAB" }}>chat</Text>
-                                                    </View>
-                                                </View>
-                                                <View style={{ width: "35%", }}>
-                                                    <View style={{}}>
-                                                        <Button onPress={this.props.onDenied} style={{ width: 90, borderRadius: 5, justifyContent: 'center' }} danger ><Text>Deny</Text></Button>
-                                                    </View>
-                                                </View>
-                                            </View>
-
-                                        )
-                                    }
-
-                                </View>
-                                </CardItem>*/}
-                            <View style={{ display: 'flex', marginTop: "4%", flexDirection: 'row',}} >
-                                <Text style={{ width:'60%'}} note>
-                                    {moment(this.state.event.created_at).format("dddd, MMMM Do YYYY, h:mm:ss a")}
-                                </Text>
-                                <Text style={{ fontStyle: "italic", }} note>
-                                    Organised by {this.state.creator.name}
-                                </Text>
                             </View>
+                        </View>
+                        <DeckSwiperModule details={this.state.details} />
+                        <CardItem>
+                            <Left>{this.props.isToBeJoint && this.state.event.public ? (<View>
+                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
+                                    {this.state.isJoining ? <Spinner></Spinner> : <Button onPress={this.props.join} style={{
+                                        alignItems: 'center',
+                                        width: 100,
+                                        marginTop: 4,
+                                        borderRadius: 5
+                                    }}
+                                        onPress={() => this.props.join ? this.props.join() : this.join()} success ><Text
+                                            style={{
+                                                fontSize: 18,
+                                                fontWeight: "500",
+                                                marginLeft: 31
+                                            }}>Join</Text>
+                                    </Button>}
+                                    <View style={{ flexDirection: 'column' }}></View>
+                                </View></View>) : null}
+                            </Left>
+                            <Right>
+                                {this.state.location && this.state.location.string ? <MapView card location={this.state.location.string} >
+                                </MapView> : null}
+                            </Right>
+                        </CardItem>
+                        <View style={{marginLeft:'2%',marginTop: '-1%',}}>
+                            {<Creator creator={this.state.event.creator_phone} created_at={this.state.event.created_at}></Creator>}
+                        </View>
                     </View>
+                    {this.state.showPhoto ? <PhotoViewer open={this.state.showPhoto} photo={this.state.event.background} hidePhoto={() => {
+                        this.setState({
+                            showPhoto: false
+                        })
+                    }}></PhotoViewer> : null}
                 </Content>}
             </Modal>
         )

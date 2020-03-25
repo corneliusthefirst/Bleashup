@@ -16,7 +16,7 @@ export default class SwipeOutView extends Component {
         this.state = {
         }
     }
-    width = "19%"
+    width = "24%"
     padding = "8%"
     indicatorMargin = {
         marginLeft: "5%",
@@ -55,6 +55,7 @@ export default class SwipeOutView extends Component {
             this.props.seen()
         })
     }
+    color = "#0A4E52"
     invite() {
         this.props.openInvitationModal()
     }
@@ -75,16 +76,16 @@ export default class SwipeOutView extends Component {
     blinkerSize = 26;
     render() {
         return (
-            <View style={{ width: "98%", borderRadius: 4,...shadower(2) ,height:'99.5%',padding: '3%',backgroundColor: '#FEFFDE',}}>
+            <View style={{ width: "98%", borderRadius: 4,...shadower(2) ,height:'99.5%',padding: '3%',backgroundColor: 'white',}}>
                 <View style={{ display: 'flex', flexDirection: 'column', marginLeft: "20%", }}>
                     <View style={{ height: this.width, marginBottom: "9%", alignSelf: 'flex-start',marginLeft: "10%", }}>
                         <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                             this.props.publish()
                         })
                         }>
-                            <Icon style={{ fontSize: 25, color: this.props.Event.public || this.props.master ? "#7DD2D2" : "#bfc6ea" }} name="megaphone" type="Entypo">
+                            <Icon style={{ fontSize: 25, color: this.props.Event.public || this.props.master ? this.color : "#bfc6ea" }} name="megaphone" type="Entypo">
                             </Icon>
-                            <Label style={{ fontSize: 14, color: this.props.Event.public || this.props.master ? "#7DD2D2" : "#bfc6ea", marginRight: "11%" }}>Share</Label>
+                            <Label style={{ fontSize: 14, color: this.props.Event.public || this.props.master ? this.color : "#bfc6ea", marginRight: "11%" }}>Share</Label>
                         </TouchableOpacity>
                     </View>
                     <View style={{ height: this.width, marginBottom: "9%", alignSelf: 'flex-start' }}>
@@ -92,20 +93,20 @@ export default class SwipeOutView extends Component {
                             this.invite()
                         })
                         }>
-                            <Icon style={{ fontSize: 40, color: this.props.master || this.props.Event.public ? "#7DD2D2" : "#bfc6ea", }} name="sc-telegram" type="EvilIcons">
+                            <Icon style={{ fontSize: 40, color: this.props.master || this.props.Event.public ? this.color : "#bfc6ea", }} name="sc-telegram" type="EvilIcons">
                             </Icon>
-                            <Label style={{ fontSize: 14, color: this.props.master || this.props.Event.public ? "#7DD2D2" : "#bfc6ea", marginLeft: "7%", }}>Invite</Label>
+                            <Label style={{ fontSize: 14, color: this.props.master || this.props.Event.public ? this.color : "#bfc6ea", marginLeft: "7%", }}>Invite</Label>
                         </TouchableOpacity>}
                     </View>
                     <View style={{ height: this.width, marginBottom: "9%" }}>
                         {<TouchableOpacity onPress={() => {
                             this.props.join()
                         }}>
-                            <Icon style={{ fontSize: 35, color: findIndex(this.props.Event.participant, { phone: stores.LoginStore.user.phone }) >= 0 ? "#7DD2D2" : "#bfc6ea" }} name="account-group"
+                            <Icon style={{ fontSize: 35, color: findIndex(this.props.Event.participant, { phone: stores.LoginStore.user.phone }) >= 0 ? "#1FABAB" : "#bfc6ea" }} name="account-group"
                                 type="MaterialCommunityIcons">
                             </Icon>
                             <Label style={{
-                                color: findIndex(this.props.Event.participant, { phone: stores.LoginStore.user.phone }) >= 0 ? "#7DD2D2" : "#bfc6ea",
+                                color: findIndex(this.props.Event.participant, { phone: stores.LoginStore.user.phone }) >= 0 ? "#1FABAB" : "#bfc6ea",
                                 fontSize: 14,
                                 marginLeft: "3%",
                             }}
@@ -120,7 +121,7 @@ export default class SwipeOutView extends Component {
                             this.navigateToLogs()
                         })
                         }>
-                            <Icon style={{ fontSize: 30, color: "#1FABAB" }} name="clock" type="Entypo">
+                            <Icon style={{ fontSize: 30, color: this.color }} name="clock" type="Entypo">
                             </Icon>
                             {this.props.Event.upated ? (
                                 <View style={this.indicatorMargin}>
@@ -134,7 +135,7 @@ export default class SwipeOutView extends Component {
                                         />
                                     </View>
                                 )}
-                            <Label style={{ fontSize: 14, color: "#1FABAB", marginRight: "13%", }}>{"Logs"}</Label>
+                            <Label style={{ fontSize: 14, color: this.color, marginRight: "13%", }}>{"Logs"}</Label>
                         </TouchableOpacity>
                     </View >
                     {/*<View style={{ height: this.width, marginBottom: "9%", alignSelf: 'flex-start' }}>
@@ -146,7 +147,7 @@ export default class SwipeOutView extends Component {
                             <Label style={{ fontSize: 14, color: "#1FABAB" }}>Hide</Label>
                         </TouchableOpacity>
                     </View>*/}
-                    <View style={{ height: this.width, marginBottom: "9%", marginLeft: '10%' }}>
+                    {/*<View style={{ height: this.width, marginBottom: "9%", marginLeft: '10%' }}>
                         <TouchableOpacity onPress={() => {
                             return this.props.delete()
                         }}>
@@ -154,7 +155,7 @@ export default class SwipeOutView extends Component {
                             </Icon>
                             <Label style={{ fontSize: 14, color: "red" }} >Delete</Label>
                         </TouchableOpacity>
-                    </View>
+                    </View>*/}
                 </View>
             </View>
         );

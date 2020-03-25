@@ -46,9 +46,9 @@ export default class ProfileSimple extends Component {
                             }, 50)
                         });
                     }}>
-                        {this.props.profile.profile && testForURL(this.props.profile.profile) ? <CacheImages  thumbnails {...this.props}
+                        {this.props.profile.profile && testForURL(this.props.profile.profile) ? <CacheImages small  thumbnails {...this.props}
                             source={{ uri: this.props.profile.profile }} /> :
-                            <Thumbnail  source={require("../../../../../Images/images.jpeg")} ></Thumbnail>}
+                            <Thumbnail small  source={require("../../../../../Images/images.jpeg")} ></Thumbnail>}
                     </TouchableWithoutFeedback>
                     <View style={{
                         alignItems: 'center',

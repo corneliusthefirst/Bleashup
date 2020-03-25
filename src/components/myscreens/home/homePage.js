@@ -327,6 +327,9 @@ class Home extends Component {
       }
     })
   }
+  navigateToQRScanner(){
+    this.props.navigation.navigate("QR")
+  }
   navigateToInvitations() {
     this.props.navigation.navigate("Invitation")
   }
@@ -361,8 +364,10 @@ class Home extends Component {
 
               <View style={{ alignItems:"center",justifyContent:"center" }}>
                 <View style={{ alignSelf: "flex-end", display: 'flex', flexDirection: 'row', }}>
-
-                 <TouchableOpacity style={{height:40,alignItems:"center",justifyContent:"center"}} onPress={() => this.navigateToInvitations()}>
+                  <TouchableOpacity style={{ height: 40, alignItems: "center", justifyContent: "center" }} onPress={() => this.navigateToQRScanner()}>
+                    <Icon name="barcode-scan" active={true} type="MaterialCommunityIcons" style={{ color: "#1FABAB", }} onPress={() => this.navigateToQRScanner()} />
+                  </TouchableOpacity>
+                 <TouchableOpacity style={{height:40,alignItems:"center",justifyContent:"center",marginLeft:width/35}} onPress={() => this.navigateToInvitations()}>
                   <Icon name="sc-telegram" active={true} type="EvilIcons" style={{ color: "#1FABAB", }} onPress={() => this.navigateToInvitations()} />
                   </TouchableOpacity>
 

@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import { Content, Text, Button } from 'native-base';
 import { View } from "react-native"
 import Modal from "react-native-modalbox"
+import bleashupHeaderStyle from '../../../services/bleashupHeaderStyle';
 
 export default class AreYouSure extends PureComponent {
     constructor(props) {
@@ -36,23 +37,34 @@ export default class AreYouSure extends PureComponent {
                     }, 20)
                 }}
                 style={{
-                    height: "40%",
-                    borderRadius: 10, backgroundColor: '#FEFFDE', width: "90%"
+                    height: 200,
+                    borderBottomLeftRadius: 8,
+                    borderBottomRightRadius: 8,
+                    backgroundColor: '#FEFFDE',
+                    width: 300
                 }}
             >
-                <Content style={{ margin: "10%", flexDirection: 'column', }}>
-                    <View style={{ width: "100%", height: 50 }}>
-                        <Text style={{ fontSize: 30, alignSelf: 'center', fontWeight: 'bold', fontStyle: 'italic', }}>{this.props.title}</Text>
+                <Content style={{ flexDirection: 'column', }}>
+                    <View style={{ width: "100%", height: 44 }}>
+                        <View style={{...bleashupHeaderStyle,paddingLeft: '1%',}}>
+                            <Text style={{ fontSize: 20, alignSelf: 'center', fontWeight: '400',  }}>{this.props.title}</Text>
+                        </View>
                     </View>
-                    <View style={{ margin: '5%',  }}>
-                        <Text style={{ color: 'grey'}}>{this.props.message}</Text>
+                    <View style={{ margin: '5%', }}>
+                        <Text style={{ color: 'grey' }}>{this.props.message}</Text>
                     </View>
-                    <View style={{ alignSelf: 'flex-end', flexDirection: 'row', }}>
-                        <Button onPress={() => this.props.closed()} style={{ width: 100, marginRight: 60, alignItems: 'center',borderRadius: 10, }} ><Text style={{marginLeft: "15%",}}>Cancel</Text></Button>
-                        <Button onPress={() => {
+                    <View style={{ marginLeft: '10%', flexDirection: 'row', }}>
+                    <View style={{width:'50%'}}>
+                        <Button onPress={() => this.props.closed()} 
+                        style={{  alignItems: 'center', 
+                        borderRadius: 10, }} ><Text>Cancel</Text></Button>
+                        </View>
+                        <View style={{width:'50%'}}><Button onPress={() => {
                             this.props.callback()
                             this.props.closed()
-                        }} style={{ width: 100, alignItems: 'center',borderRadius: 10, }}  danger><Text style={{ marginLeft: "15%", }}>{this.props.ok ? this.props.ok : "Leave"}</Text></Button>
+                        }} style={{ alignItems: 'center',
+                         borderRadius: 10, }} danger><Text>{this.props.ok ? this.props.ok : "Leave"}</Text></Button>
+                        </View>
                     </View>
                 </Content>
             </Modal>
