@@ -311,10 +311,10 @@ export default class EventDetailView extends Component {
                     <View>
                       {this.props.Event.about.description != "" ?
                         <Hyperlink onPress={(url) => { Linking.openURL(url) }} linkStyle={{ color: '#48d1cc', fontSize: 16 }}>
-                          <Text dataDetectorType={'all'} style={{ fontSize: 16, fontWeight: "500", margin: "1%", color: '#555756' }} delayLongPress={800}>{this.props.Event.about.description}</Text>
+                          <Text dataDetectorType={'all'} style={{ fontSize: 16, fontWeight: "400", margin: "1%", color: '#555756' }} delayLongPress={800}>{this.props.Event.about.description}</Text>
                         </Hyperlink> :
                         <Text style={{
-                          fontWeight: "500", margin: "1%", fontSize: 30,
+                          fontWeight: "400", margin: "1%", fontSize: 30,
                           alignSelf: 'center', marginTop: (height) / 8
                         }}
                           delayLongPress={800}>{this.state.defaultDetail}</Text>}

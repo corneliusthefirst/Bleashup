@@ -324,7 +324,7 @@ class PublicEvent extends Component {
           {this.state.isMount ? <TitleView openDetail={() => this.props.openDetails(this.props.Event)} join={() => this.join()} joint={this.state.joint} seen={() => this.markAsSeen()}
             {...this.props}></TitleView> : null}
         </View>
-        <View style={{ width: '15%', justifyContent: 'flex-end', alignItems: 'flex-end', }}>
+        <View style={{ width: '12%', justifyContent: 'flex-end', alignItems: 'flex-end', }}>
           <Icon onPress={() => this.props.showActions(this.props.Event.id)} type="Entypo" style={{ fontSize: 24, color: "#555756", alignSelf: 'flex-end' }} name="dots-three-vertical"></Icon>
         </View>
       </View>
@@ -357,7 +357,7 @@ class PublicEvent extends Component {
               marginLeft: '-1%',
             }} photo={this.props.Event.background} event_id={this.props.Event.id} width={170} height={100} borderRadius={6} />
         </CardItem></View> : null}</View>
-        <View style={{ width: '35%', }}>{this.renderMap()}</View>
+        <View style={{ width: '30%', }}>{this.renderMap()}</View>
       </View>
     </CardItem>)
   }

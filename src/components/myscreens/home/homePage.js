@@ -397,8 +397,8 @@ class Home extends Component {
             borderColor: '#ddd',
             borderBottomWidth: 0,
             alignSelf: 'center',
-            ...shadower(20),
-            margin: "1%", height: 45, backgroundColor: "#FEFFDE", borderRadius: 4,
+            ...shadower(),
+            margin: "1%", height: 45, backgroundColor: "#FEFFDE", borderRadius: 8,
           }}
           tabBarPosition="bottom"
           tabBarUnderlineStyle={{
