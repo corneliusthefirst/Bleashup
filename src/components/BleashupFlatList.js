@@ -119,7 +119,7 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
                         this.state.currentRender >= this.props.numberOfItems - 1 ? null : <CardItem style={{ width: "100%", height: 25 }} >
                             {this.state.endReached ? <Text style={{
                                 marginLeft: "35%"
-                            }}>no more data to load</Text> : <Spinner size={"small"}></Spinner>}
+                            }}>no more data to load</Text> : (this.props.noSpinner?null:<Spinner size={"small"}></Spinner>)}
                         </CardItem>
                     }
                 >

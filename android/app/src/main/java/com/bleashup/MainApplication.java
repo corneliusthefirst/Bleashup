@@ -35,7 +35,7 @@ import com.imagepicker.ImagePickerPackage;
 import com.proyecto26.inappbrowser.RNInAppBrowserPackage;
 import java.util.Arrays;
 import java.util.List;
-
+import com.rt2zz.reactnativecontacts.ReactNativeContacts; 
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -74,7 +74,8 @@ public class MainApplication extends Application implements ReactApplication {
             new RNGestureHandlerPackage(),
             new RNFetchBlobPackage(),
             new ImagePickerPackage(),
-            new RNInAppBrowserPackage()
+            new RNInAppBrowserPackage(),
+            new ReactNativeContacts()
         );
     }
 

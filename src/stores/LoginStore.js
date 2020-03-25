@@ -20,6 +20,7 @@ export default class LoginStore {
     profile:"",
     profile_ext:""
   }; 
+
   @action getUser() {
     return new Promise((resolve, reject) => {
       if (this.user.phone == "" || this.user.password == "") {
@@ -124,22 +125,20 @@ export default class LoginStore {
           autoSync: true
         })
         .then(data => {
-          UserSevices.changeStatus(data.phone, data.password, newStatus)
-            .then(() => {
+        //  UserSevices.changeStatus(data.phone, data.password, newStatus)
+          //  .then(() => {
               data.status = newStatus;
-              storage
-                .save({
+              storage.save({
                   key: "loginStore",
                   data: data
-                })
-                .then(() => {
+                }).then(() => {
                   this.user = data;
                   resolve();
                 });
-            })
-            .catch(error => {
-              reject(error);
-            });
+           // })
+            //.catch(error => {
+          //    reject(error);
+           // });
         })
         .catch(error => {
           reject(error);
@@ -331,4 +330,72 @@ export default class LoginStore {
         });
     });
   }
+
+
+ @observable statusOptions = [{id:"1",name:"available",state:false},{id:"2",name:"occupied",state:false},{id:"3",name:"At school",state:false},{id:"4",name:"At work",state:false},{id:"5",name:"At cinema",state:false},{id:"6",name:"At metting",state:false},{id:"7",name:"Sleeping",state:false},{id:"8",name:"Urgent calls only",state:false},{id:"9",name:"Battery very low",state:false}]
+ @action  setStatusOptions(newArray) {
+    return new Promise((resolve, reject) => {
+      //console.warn("here1",newArray)
+      storage
+        .save({
+          key: "statusOptions",
+          data: newArray
+        })
+        .then(() => {
+          this.statusOptions = newArray;
+          resolve(newArray);
+        })
+        .catch(error => {
+          reject(error);
+        });
+    });
+  }
+
+  @action async updateStatusOptions(newArray) {
+    return new Promise((resolve, reject) => {
+      storage
+        .load({
+          key: "statusOptions",
+          autoSync: true
+        })
+        .then(data => {
+              storage
+                .save({
+                  key: "statusOptions",
+                  data: newArray
+                })
+                .then(() => {
+                  this.statusOptions = data;
+                  resolve();
+                });
+        })
+        .catch(error => {
+          reject(error);
+        });
+    });
+  }
+
+
+  @action getStatusOptions() {
+     return new Promise((resolve, reject) => {
+     
+        storage
+          .load({
+            key: "statusOptions",
+            autoSync: true
+          })
+          .then(data => {
+                 resolve(data);
+          })
+          .catch(error => {
+            this.setStatusOptions(this.statusOptions).then((newArray)=>{ 
+              resolve(newArray);
+            })
+            
+          });
+  })
+}
+
+
+
 }

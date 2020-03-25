@@ -13,8 +13,8 @@ import testForURL from '../../../services/testForURL';
 import GState from '../../../stores/globalState/index';
 import PhotoViewer from '../event/PhotoViewer';
 import CacheImages from '../../CacheImages';
-import EditUserModal from "./editUserModal"
-
+import EditUserModal from "./editUserModal";
+import shadower from "../../../components/shadower";
 
 let { height, width } = Dimensions.get('window');
 export default class ProfileView extends Component {
@@ -24,21 +24,36 @@ export default class ProfileView extends Component {
       isMount:false, 
       userInfo:null,
       enlarge:false,
-      updateName:false
+      update:false,
+      updatetitle:"",
+      position:"",
+      coverscreen:true
+    }
+    if(this.props.navigation.getParam("update")==true){
+         this.init
     }
   }
-
-  componentDidMount(){
+  init = ()=>{
     setTimeout(() => {
-        this.setState({isMount:true,userInfo:this.props.navigation.getParam("userInfo")})
-    }, 50)
-     
-  
+      this.setState({isMount:true,userInfo:this.props.navigation.getParam("userInfo")})
+  }, 50)
+   
   }
-  updateName = () => {
-     this.setState({updateName:true})
+  componentDidMount(){
+    this.init();
   }
 
+  updateName = () => {
+    this.setState({updatetitle:"Write your name"})
+    this.setState({position:"bottom"})
+    this.setState({coverscreen:true});
+    this.setState({update:true})
+
+  }
+  editActu = ()=>{
+    this.props.navigation.navigate("Actu",{userInfo:this.state.userInfo});
+  }
+  
   render() {
     return (
       <Container style={{ backgroundColor: "#FEFFDE",flexDirection:"column",width:width }}>
@@ -84,28 +99,34 @@ export default class ProfileView extends Component {
                     }}>
                         {this.state.userInfo.profile  && testForURL(this.state.userInfo.profile ) ? <CacheImages   {...this.props}
                             source={{ uri: this.state.userInfo.profile }} /> :
-                            <Image source={require("../../../../Images/images.jpeg")} style={{flex:1,borderRadius:14}} ></Image>}
+                            <Image source={require("../../../../Images/profile-icon.webp")} style={{height:height/3+height/14,width:width-width/9,borderRadius:14}} ></Image>}
                     </TouchableWithoutFeedback>
-                    <View style={{height:height/15,width:width/7,borderRadius:30,backgroundColor:"#1FABAB",alignItems:"center",justifyContent:"center",alignSelf:"flex-end",marginTop:-height/20,marginRight:width/25}}>
+                    <View style={{...shadower(),height:height/13,width:width/6,borderRadius:30,backgroundColor:"#1FABAB",alignItems:"center",justifyContent:"center",alignSelf:"flex-end",marginTop:-height/20,marginRight:width/25,borderWidth:3,borderColor:"#FEFFDE"}}>
                     <Icon name="add-a-photo" active={true} type="MaterialIcons" style={{ color: "white" }}/>
                     </View>
             </View>
         </View>
 
         <View style={{width:"100%",justifyContent:"center",flexDirection:"row",marginTop:height/30}}>
-          <View style={{width:"80%",flexDirection:"row"}}>
-            <View style={{width:"10%"}}>
+          <View style={{width:"90%",flexDirection:"column"}}>
+            <View style={{flexDirection:"row",justifyContent:"flex-start"}}>
             <Icon name="infocirlceo" active={true} type="AntDesign" style={{ color: "#1FABAB", }}/>
+            <Text style={{alignSelf:"flex-start",marginLeft:"3%"}} note>Actu</Text>
             </View>
-            <View style={{width:"65%",marginLeft:"5%",flexDirection:"column"}}>
-               <Text style={{alignSelf:"flex-start"}} note>Actu</Text>
-               <Title style={{alignSelf:"flex-start",width:width-width/3,marginLeft:"-8%"}} numberOfLines={2} >{this.state.userInfo.status}</Title>
+
+            <View style={{width:"92%",marginLeft:"12%",flexDirection:"row"}}>
+              <View style={{width:"75%"}}>
+               <Title style={{alignSelf:"flex-start"}} numberOfLines={1}  >{this.state.userInfo.status}</Title>
+               </View>
+
+               <View style={{width:"20%",marginLeft:"7%"}}>
+               <Icon name="edit" active={true} type="MaterialIcons" style={{ color: "gray" }} onPress={this.editActu}/>
+               </View>
             </View>
+
           </View>
 
-          <View style={{width:"10%"}}>
-             <Icon name="edit" active={true} type="MaterialIcons" style={{ color: "gray" }}/>
-          </View>
+
         </View>
 
 
@@ -123,7 +144,7 @@ export default class ProfileView extends Component {
         </View>
 
   
-        <EditUserModal isOpen={this.state.updateName} onClosed={()=>{this.setState({updateName:false})}} nickname={true} userInfo={this.state.userInfo} title={"Write your name"}/>
+        <EditUserModal isOpen={this.state.update} onClosed={()=>{this.setState({update:false})}} type="nickname" userInfo={this.state.userInfo} title={this.state.updatetitle} position={this.state.position} coverscreen={this.state.coverscreen} maxLength={20} />
 
 
         </View>
