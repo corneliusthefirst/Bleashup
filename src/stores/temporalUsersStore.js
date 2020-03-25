@@ -16,6 +16,7 @@ export default class TemporalUsersStore {
         key: "TemporalUsersStore",
         data: []
     }
+
     addUser(user) {
         return new Promise((resolve, reject) => {
             this.readFromStore().then(users => {
@@ -61,7 +62,10 @@ export default class TemporalUsersStore {
                 let user = find(this.Users, { phone: phone });
                 if (user) {
                     resolve(user);
-                } else {
+                }else{
+                    resolve(null);
+                } 
+                /*else {
                     userHttpServices.checkUser(phone).then(profile => {
                         if (profile.message) {
                             reject(profile.message)
@@ -101,8 +105,10 @@ export default class TemporalUsersStore {
                             resolve(profile)
                         })
                     })
-                })
+                })*/
             }
+        }).catch((error) => {
+            reject(error);
         })
     }
     getUsers(phones) {
@@ -156,7 +162,7 @@ export default class TemporalUsersStore {
         this.Users = NewUsers;
     }
     loadFromStore() {
-        console.warn("iuygtfrdesz")
+        //console.warn("iuygtfrdesz")
         return new Promise((resolve, reject) => {
             this.readFromStore().then(users => {
                 resolve(users)
@@ -170,7 +176,20 @@ export default class TemporalUsersStore {
             storage.load({ key: 'TemporalUsersStore', syncInBackground: true }).then(Users => {
                 resolve(Users)
             }).catch(error => {
-                reject(error);
+                //reject(error);
+                console.warn("here")
+                switch (error.name) {
+                    case 'NotFoundError':
+                         // TODO;
+                    break;
+                    case 'ExpiredError':
+                      this.saveKey.data = this.Users;
+                      storage.save(this.saveKey).then(() => {
+                          this.setPropterties(this.saveKey);
+                          resolve()
+                      })
+                   break;
+                 }
             })
         })
     }

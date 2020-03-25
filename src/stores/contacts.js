@@ -13,7 +13,7 @@ export default class contacts {
   @observable contacts = [];
   saveKey = {
     key: "contacts",
-    data: [{}]
+    data: [{}] 
   };
   @action addContact(NewContact) {
     return new Promise((resolve, reject) => {
@@ -37,7 +37,7 @@ export default class contacts {
           resolve();
         });
       });
-    });
+    }); 
   }
   getContacts(phone) {
     return new Promise((resolve, reject) => {

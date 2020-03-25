@@ -150,7 +150,7 @@ export default class CurrentEvents extends Component {
         return (
             <View style={{ height: "100%",backgroundColor: '#FEFFDE',  }}>
                 <BleashupFlatList
-                //backgroundColor={"white"}
+                //backgroundColor={"white"} 
                     keyExtractor={(item, index) => item.id}
                     dataSource={this.props.data}
                     onScroll={this._onScroll}

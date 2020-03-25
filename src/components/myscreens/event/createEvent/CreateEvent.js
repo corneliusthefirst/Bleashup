@@ -71,10 +71,7 @@ export default class CreateEvent extends Component {
  }
 
  onClickNewRemind(){
- /* stores.Reminds.removeRemind("newRemindId").then((R1)=>{
-    console.warn("first deleted",R1)
-  });*/
- 
+  return new Promise((resolve, rejectPromise) => {
 
   stores.Reminds.readFromStore().then(Reminds =>{
     console.warn("remind are",Reminds);
@@ -91,7 +88,11 @@ export default class CreateEvent extends Component {
     this.props.navigation.navigate("MyTasksView");
    })
 
-  
+  })
+ }
+
+ onClickNewContact(){
+  this.props.navigation.navigate("Contacts");
  }
 
   render() {
@@ -100,10 +101,13 @@ export default class CreateEvent extends Component {
  
         <ActionButton buttonColor="#1CDBAB" position="right" backgroundTappable={true} btnOutRange="green" size={57}>
 
-          <ActionButton.Item buttonColor='#9b59b6' title="New Event" onPress={()=>{this.onClickNewEvent().then(()=>{})}} size={72}>
+          <ActionButton.Item buttonColor='#1FABAB' title="Contacts" onPress={()=>{this.onClickNewContact()}} size={75}>
+            <Icon name="person-add" active={true} type="MaterialIcons" style={styles.actionButtonIcon} />
+          </ActionButton.Item>   
+          <ActionButton.Item buttonColor='#9b59b6' title=" New Event  " onPress={()=>{this.onClickNewEvent().then(()=>{})}} size={65}>
             <Icon name="md-create" style={styles.actionButtonIcon} />
           </ActionButton.Item>   
-          <ActionButton.Item buttonColor='#1abc9c' title="Tasks/Reminds" onPress={() => {this.onClickNewRemind()}} size={65}>
+          <ActionButton.Item buttonColor='#1abc9c' title="Tasks/Reminds" onPress={() => {this.onClickNewRemind()}} size={55}>
             <Icon name="tasks" type="FontAwesome" style={styles.actionButtonIcon} />
           </ActionButton.Item>
 
@@ -123,6 +127,16 @@ const styles = StyleSheet.create({
 });
 
 
+
+
+
+
+
+
+
+
+
+
 //stores.Reminds.removeRemind(remind.id).then((value)=>{console.warn("here it is",value)});
 /* 
      /*  let user = {
@@ -139,4 +153,7 @@ const styles = StyleSheet.create({
         profile_ext:""
       }; 
       stores.LoginStore.setUser(user).then(()=>{console.warn("user added")})*/
-   
+
+    /* stores.Reminds.removeRemind("newRemindId").then((R1)=>{
+    console.warn("first deleted",R1)
+  });*/
