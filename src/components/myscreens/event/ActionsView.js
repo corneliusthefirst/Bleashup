@@ -23,7 +23,7 @@ export default class ActionsView extends Component {
     inviteContacts() {
         this.props.inviteContacts()
     }
-    center = { alignSelf: 'center', alignItems: 'center', }
+    center = { alignSelf: 'center', alignItems: 'center'}
     container = {
         height: this.actionHeight,
         marginBottom: this.padding,

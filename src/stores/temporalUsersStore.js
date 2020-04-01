@@ -3,9 +3,6 @@ import { uniqBy, find, forEach } from "lodash"
 import userHttpServices from "../services/userHttpServices"
 export default class TemporalUsersStore {
     constructor() {
-        // storage.remove({key:this.saveKey.key}).then(()=>{
-
-        //})
         this.loadFromStore().then(users => {
             this.Users = users;
         })
@@ -63,7 +60,9 @@ export default class TemporalUsersStore {
                 if (user) {
                     resolve(user);
                 }else{
-                    resolve(null);
+                    let user={response:""};
+                    user.response = "unknown_user";
+                    resolve(user.response);
                 } 
                 /*else {
                     userHttpServices.checkUser(phone).then(profile => {

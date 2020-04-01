@@ -52,6 +52,7 @@ import HighLightsDetails from './components/myscreens/highlights_details';
 import LocalTasksCreation from './components/myscreens/MyTasks/localTasksCreation'
 import TasksCreation from './components/myscreens/reminds/TasksCreation'
 import QRCode from "./components/myscreens/QR"
+
 /*
 let {height, width} = Dimensions.get('window');
 EStyleSheet.build({
@@ -97,7 +98,7 @@ const AppNavigator = createStackNavigator(
 
   },
   {
-    initialRouteName: "LoginHome",
+    initialRouteName: "Home",
     headerMode: "none"
   }
 );

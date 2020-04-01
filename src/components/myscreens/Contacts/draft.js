@@ -12,13 +12,13 @@ import CacheImages from '../../CacheImages';
 import stores from "../../../stores";
 import { functionDeclaration } from "@babel/types";
 import testForURL from '../../../services/testForURL';
-import {find,uniqBy,uniq,filter,concat} from "lodash";
+import {find,uniqBy,uniq,filter,includes,concat} from "lodash";
 import request from '../../../services/requestObjects';
 import autobind from "autobind-decorator";
 import Invite from './invite';
 import moment from "moment"
 //import CreateRequest from '../event/createEvent/CreateRequester';
-
+import ProfileView from "../invitations/components/ProfileView"
 
 var uuid = require('react-native-uuid');
 uuid.v1({
@@ -78,7 +78,7 @@ componentDidMount(){
 
 array = [];
 getValidUsers(contacts){
-  
+   console.warn("contacts",contacts,"array",this.array)
    contacts.forEach((contact)=>{
       contact.phoneNumbers.forEach((subcontact)=>{
          if(subcontact.number.charAt(0)!="+"){
@@ -87,23 +87,25 @@ getValidUsers(contacts){
            this.array.push(subcontact.number);
       })
    })
+   console.warn("contacts",contacts,"array",this.array)
 
    stores.Contacts.readFromStore().then((store_contacts)=>{
      store_contacts.forEach((contact)=>{
         this.array.push(contact.phone);
      })
    })
-
+ console.warn("array",this.array)
    this.array = uniq(this.array);
-   userArray=[];
-   //get valid users from temporal user store
+   var i=0;
+   var phoneArray = []
    this.array.forEach((phone)=>{
-     user = find(stores.TemporalUsersStore.Users, { phone: phone});
-     if(user){
-       userArray.push(user);
-     }
-   })
-   this.setState({contacts:userArray});
+     obj = {id:i,phone:phone}
+     phoneArray.push(obj);
+     i++;
+  })
+  console.warn("phonearray",phoneArray);
+  this.setState({contacts:phoneArray});
+
 }
 
 
@@ -112,9 +114,7 @@ invite = ()=>{
 }
 
 findIn = (arrayOfObjects,object)=>{
-
    // console.warn("here bro",arrayOfObjects,object);
-
     arrayOfObjects.forEach((element)=>{
         if(element.phone == object.phone){
           return true;
@@ -124,21 +124,22 @@ findIn = (arrayOfObjects,object)=>{
 }
 
 createRelation = (user)=>{
-  this.setState({alreadyCreated:false});
+  /*this.setState({alreadyCreated:false});
   stores.Events.readFromStore().then((events) =>{
       relations =  filter(events,{type:"relation"});
       currentUser = stores.LoginStore.user;
-
-      relations.forEach(relation => {
-
-
-
+      //console.warn(relations);
+     //console.warn(user,currentUser)
+     //console.warn(events)
+     relations.forEach(relation => {
+         //add new participant
+         //stores.Events.addParticipant(relation.id,user,false).then(()=>{console.warn("partipant updated")}); 
          if(this.findIn(relation.participant,currentUser)&&this.findIn(relation.participant,user)){
              this.setState({alreadyCreated:true});
              console.warn("relation exist");
          }
      });
-   
+     
      if(!this.state.alreadyCreated){
         let relation = request.Event();
         //set it type
@@ -168,7 +169,8 @@ createRelation = (user)=>{
      }else{
        this.setState({alreadyCreated:false})
      }
-  })
+
+  })*/
 
 
 }
@@ -180,6 +182,8 @@ createRelation = (user)=>{
 
 
 render(){
+  //contacts = this.state.contacts;
+  //console.warn("here boy",this.state.contacts)
     return (
       <Container style={{ backgroundColor: "#FEFFDE",flexDirection:"column",width:width }}>
          <View style={{ height:40, }}>
@@ -249,16 +253,37 @@ render(){
                     style={{backgroundColor:"#FEFFDE"}}
                     firstIndex={0}
                     //extraData={this.state}
-                    keyExtractor={(item,index)=>item.recordID}
+                    keyExtractor={(item,index)=>item.id}
                     dataSource={this.state.contacts}
                     noSpinner = {true}
                     renderItem={(item,index) =>{
                     
-                    //console.warn(user);
+                    console.warn(item);
 
                    return(
-                     
-                      <View style={{flexDirection:"row",margin:"3%",width:"100%",height:50}}>
+                        <View style={{width:width,height:60}}>
+                          <ProfileView phone={item.phone}></ProfileView>  
+                        </View>
+                      )
+                    }
+                    }
+
+                >
+                </BleashupFlatList>
+                    <Invite isOpen={this.state.invite} onClosed={()=>{this.setState({invite:false})}} />
+             </View>
+
+         </View>
+         :null}
+
+        </Container>
+    );
+}
+
+}
+
+/**
+ *                          <View style={{flexDirection:"row",margin:"3%",width:"100%",height:50}}>
                       <View style={{width:width/6,height:50}}>
                       <TouchableWithoutFeedback onPress={() => {
                              requestAnimationFrame(() => {
@@ -280,93 +305,7 @@ render(){
                                 <Title style={{color:"gray",alignSelf:"flex-start",fontSize:15}}>{item.status}</Title>
                          </View>
                         </TouchableOpacity>
-                    </View>
-                            
-
-                      )
-                    }
-                    }
-
-                >
-                </BleashupFlatList>
-                    <Invite isOpen={this.state.invite} onClosed={()=>{this.setState({invite:false})}} />
-             </View>
-
-         </View>
-         :null}
-
-        </Container>
-    );
-}
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/**
- *                  
+                    </View>              
  */
 
 
@@ -489,3 +428,15 @@ checkUser(phoneNumbers){
 
 }
  */
+   //console.warn(userArray)
+      /*
+         array = uniq(concat(this.array,this.array1));
+   console.warn(array)
+   userArray=[];
+   //get valid users from temporal user store
+   array.forEach((phone)=>{
+     user = find(stores.TemporalUsersStore.Users, { phone: phone});
+     if(user){
+       userArray.push(user);
+     }
+   })*/

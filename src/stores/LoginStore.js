@@ -3,7 +3,10 @@ import UserSevices from "../services/userHttpServices";
 import storage from "./Storage";
 
 export default class LoginStore {
-  constructor() {}
+  constructor() {
+    this.getStatusOptions().then((options)=>{this.statusOptions = options });
+  }
+
   @observable phonenumber = "";
   @observable resetCode = "2525256";
 
