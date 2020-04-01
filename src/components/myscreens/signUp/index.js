@@ -142,7 +142,7 @@ export default class SignUpView extends Component {
         loading:true
       });
       this.user.password = this.state.password;
-      this.user.email = this.state.email;
+      //this.user.email = this.state.email;
       this.user.birth_date = this.state.age;
       this.user.name = this.state.name;
       let emailVerificationCode = Math.floor(Math.random() * 60000) + 1000;
@@ -175,9 +175,9 @@ export default class SignUpView extends Component {
           this.temploginStore.confirmCode = confirmCode
           this.temploginStore.setUser(this.user).then(() => {
             this.props.navigation.navigate("EmailVerification");
-          });
+          });  
         }).catch(e => {
-          alert("Unable To Verify Your Account", "Please Check Your Internet Connection")
+          alert(this.user.phone.replace("00", "+"),"Unable To Verify Your Account", "Please Check Your Internet Connection")
           console.warn(e, "errr here!!!")
         })
       });

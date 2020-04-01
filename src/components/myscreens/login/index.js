@@ -110,8 +110,11 @@ export default class LoginView extends Component {
 
 
    onClickContinue() {
+    console.warn(this.state.value.replace(/\s/g, "").replace("+", "00"))
+    console.warn("original",this.state.value)
+    
     try {
-      this.setState({
+      this.setState({ 
         loading: true
       })
       if (this.state.value == "") {
@@ -121,9 +124,10 @@ export default class LoginView extends Component {
       } else {
         UserService.checkUser(
           this.state.value.replace(/\s/g, "").replace("+", "00")
-        )
-          .then(response => {
+        ).then(response => {
             if (response.response !== "unknown_user" && response.response !== "wrong server_key") {
+
+
               this.loginStore
                 .setUser({
                   phone: this.state.value.replace(/\s/g, "").replace("+", "00"),

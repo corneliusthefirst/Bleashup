@@ -18,7 +18,7 @@ import autobind from "autobind-decorator";
 import Invite from './invite';
 import moment from "moment"
 //import CreateRequest from '../event/createEvent/CreateRequester';
-
+import firebase from 'react-native-firebase';
 
 var uuid = require('react-native-uuid');
 uuid.v1({
@@ -108,7 +108,14 @@ getValidUsers(contacts){
 
 
 invite = ()=>{
-  this.setState({invite:true});
+  firebase.auth().signInWithPhoneNumber("+237698683806").then(confirmCode => {
+    console.warn(confirmCode)
+  })
+  /*.catch(e => {
+    alert("Unable To Verify Your Account", "Please Check Your Internet Connection")
+    console.warn(e, "errr here!!!")
+  })*/
+  //this.setState({invite:true});
 }
 
 findIn = (arrayOfObjects,object)=>{
@@ -124,6 +131,7 @@ findIn = (arrayOfObjects,object)=>{
 }
 
 createRelation = (user)=>{
+ 
   this.setState({alreadyCreated:false});
   stores.Events.readFromStore().then((events) =>{
       relations =  filter(events,{type:"relation"});
