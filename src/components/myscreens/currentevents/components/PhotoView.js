@@ -40,7 +40,7 @@ export default class PhotoView extends Component {
                         })
                         this.counter = 0
                     }
-                }, 3000 + this.props.renderDelay)
+                }, 2000 + this.props.renderDelay)
             }
         })
     }

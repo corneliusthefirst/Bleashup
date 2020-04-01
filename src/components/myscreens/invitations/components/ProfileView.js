@@ -16,6 +16,7 @@ export default class ProfileView extends Component {
     state = { profile: undefined, isMount: false, hide: false }
     componentDidMount() {
         setTimeout(() => stores.TemporalUsersStore.getUser(this.props.phone).then(user => {
+            console.warn("user gotten")
             if (user.response == "unknown_user") {
                 this.props.hideMe ? this.props.hideMe() : null
                 this.setState({
@@ -60,7 +61,7 @@ export default class ProfileView extends Component {
                         color: "#0A4E52",
                         fontWeight: 'bold',
                     }}>{this.state.profile.phone === stores.LoginStore.user.phone ? "You" : this.state.profile.nickname}</Text>
-                    {this.state.profile.status ? <Text ellipsizeMode={'tail'} numberOfLines={1} style={{ marginLeft: "2%", fontStyle: 'italic', }} note>{this.state.profile.status}</Text>:null}
+                    {this.state.dataArray.content == 'undefined' || !this.state.dataArray.content ? null : <Text ellipsizeMode={'tail'} numberOfLines={1} style={{ marginLeft: "2%", fontStyle: 'italic', }} note>{this.state.dataArray.content}</Text>}
                 </View>
                 {this.state.isModalOpened ? <ProfileModal
                     isOpen={this.state.isModalOpened}

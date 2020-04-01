@@ -77,7 +77,7 @@ export default class ManageMembersModal extends PureComponent {
                     })
                 }}
                 onOpened={() => {
-                    stores.Contacts.getContacts().then(contacts => {
+                    stores.Contacts.getContacts(stores.LoginStore.user.phone).then(contacts => {
                         setTimeout(() => {
                             this.setState({
                                 contacts: uniqBy(this.props.participants, "phone").filter(ele => !Array.isArray(ele) && ele && ele.phone

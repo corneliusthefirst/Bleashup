@@ -304,16 +304,18 @@ export default class EventHighlights extends Component {
 
   }
 
-  @autobind 
-  onchangeHighLightPublicState(value){
+  @autobind
+  onchangeHighLightPublicState(value) {
     this.setState({
-      currentHighlight:{...this.state.currentHighlight,public_state:value},
-      newing:!this.state.newing
+      currentHighlight: { ...this.state.currentHighlight, public_state: value },
+      newing: !this.state.newing
     })
-    if(this.state.update === false){
+    if (this.state.update === false) {
       stores.Highlights.updateHighlightPublicState(
-        {highlight_id:this.state.currentHighlight.id,
-          public_state:value}).then((ele) => ele)
+        {
+          highlight_id: this.state.currentHighlight.id,
+          public_state: value
+        }).then((ele) => ele)
     }
   }
 
@@ -346,7 +348,7 @@ export default class EventHighlights extends Component {
     } else {
       this.props.startLoader()
       this.props.onClosed()
-      if(newHighlight.title || newHighlight.url.audio || newHighlight.url.photo || newHighlight.url.video){
+      if (newHighlight.title || newHighlight.url.audio || newHighlight.url.photo || newHighlight.url.video) {
         this.setState({
           creating: true
         })
@@ -365,8 +367,8 @@ export default class EventHighlights extends Component {
             creating: false
           })
         })
-      }else{
-        Toast.show({text:'Post Must include at least a media or title',duration:5000,buttonText:'ok'})
+      } else {
+        Toast.show({ text: 'Post Must include at least a media or title', duration: 5000, buttonText: 'ok' })
         this.props.stopLoader()
       }
     }
@@ -498,32 +500,32 @@ export default class EventHighlights extends Component {
   rendering = 0
   render() {
     this.rendering = this.rendering + 1
-    return<Modal
-        isOpen={this.props.isOpen}
-        onClosed={() => {
-          this.props.onClosed()
-          this.setState({ newing: !this.state.newing, animateHighlight: false })
-        }}
-        style={{
-          height: this.props.event_id ? "70%" : "100%", width: "100%", borderTopLeftRadius: 10, borderTopRightRadius: 10,
-          backgroundColor: "#FEFFDE", borderColor: 'black', flexDirection: 'column'
-        }}
-        backButtonClose={true}
-        coverScreen={true}
-        position={'bottom'}
-        swipeToClose={false}
-    >{this.state.isMounted ? 
-        <View>
-          <View style={{ height: "98%", width: "100%", marginTop: '3%', }}>{!this.props.event_id ?
-            <View style={{ height: "8%", width: "96%", marginLeft: "2%", marginRight: "2%" }}>
-              <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
-                <TouchableOpacity>
-                  <Icon onPress={this.back} type='MaterialCommunityIcons' name="keyboard-backspace" style={{ color: "#1FABAB" }} />
-                </TouchableOpacity>
-                <Text style={{ marginLeft: "27%", fontWeight: "500" }}>New Highlight</Text>
-              </View>
-            </View> : null
-          }
+    return <Modal
+      isOpen={this.props.isOpen}
+      onClosed={() => {
+        this.props.onClosed()
+        this.setState({ newing: !this.state.newing, animateHighlight: false })
+      }}
+      style={{
+        height: this.props.event_id ? "70%" : "100%", width: "100%", borderTopLeftRadius: 10, borderTopRightRadius: 10,
+        backgroundColor: "#FEFFDE", borderColor: 'black', flexDirection: 'column'
+      }}
+      backButtonClose={true}
+      coverScreen={true}
+      position={'bottom'}
+      swipeToClose={false}
+    >{this.state.isMounted ?
+      <View>
+        <View style={{ height: "98%", width: "100%", marginTop: '3%', }}>{!this.props.event_id ?
+          <View style={{ height: "8%", width: "96%", marginLeft: "2%", marginRight: "2%" }}>
+            <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
+              <TouchableOpacity>
+                <Icon onPress={this.back} type='MaterialCommunityIcons' name="keyboard-backspace" style={{ color: "#1FABAB" }} />
+              </TouchableOpacity>
+              <Text style={{ marginLeft: "27%", fontWeight: "500" }}>New Highlight</Text>
+            </View>
+          </View> : null
+        }
           <View style={{ height: !this.props.event_id ? "95%" : "100%", width: "90%", alignSelf: 'center', }}>
             <ScrollView showsVerticalScrollIndicator={false} ref={"svrollView"} >
               <View style={{ height: "100%" }}>
@@ -551,10 +553,10 @@ export default class EventHighlights extends Component {
                 </View> : null}
                 <View style={{ height: height / 14, alignItems: 'center', margin: '2%', }}>
                   <Item style={{ borderColor: '#1FABAB', width: "95%", margin: '2%', height: height / 17 }} rounded>
-                    <TextInput maxLength={20} style={{ width: "100%", height: "100%", margin: '2%', marginBottom: '5%', }} 
-                    value={this.state.currentHighlight.title ? this.state.currentHighlight.title : ""} 
-                    maxLength={40} placeholder='Post Title' keyboardType='email-address' autoCapitalize="none" returnKeyType='next' inverse last
-                      onChangeText={(value) => 
+                    <TextInput maxLength={20} style={{ width: "100%", height: "100%", margin: '2%', marginBottom: '5%', }}
+                      value={this.state.currentHighlight.title ? this.state.currentHighlight.title : ""}
+                      maxLength={40} placeholder='Post Title' keyboardType='email-address' autoCapitalize="none" returnKeyType='next' inverse last
+                      onChangeText={(value) =>
                         this.onChangedTitle(value)
                       } />
                   </Item>
@@ -567,7 +569,7 @@ export default class EventHighlights extends Component {
                     <View style={{ flexDirection: "column" }}>
                       <Icon name="photo-camera" active={true} type="MaterialIcons"
                         style={{ color: "#0A4E52", alignSelf: "flex-start" }} />
-                      <Text style={{ fontSize: 10, marginBottom: 6 }}>Photo</Text>
+                      <Text style={{ fontSize: 10, marginBottom: 6 }}>{"Photo"}</Text>
                     </View>
                   </TouchableOpacity>
                   <TouchableOpacity style={{ width: "15%", backgroundColor: "transparent", justifyContent: 'center', alignItem: 'center' }}
@@ -575,7 +577,7 @@ export default class EventHighlights extends Component {
                     <View style={{ flexDirection: "column" }}>
                       <Icon name="video" active={true} type="Entypo"
                         style={{ color: "#0A4E52", alignSelf: "flex-start" }} />
-                      <Text style={{ fontSize: 10, marginBottom: 6 }}>Videos</Text>
+                      <Text style={{ fontSize: 10, marginBottom: 6 }}>{"Videos"}</Text>
                     </View>
                   </TouchableOpacity>
                   <TouchableOpacity style={{ width: "15%", backgroundColor: "transparent", justifyContent: 'center', alignItem: 'center' }}
@@ -585,7 +587,7 @@ export default class EventHighlights extends Component {
                     <View style={{ flexDirection: "column" }}>
                       <Icon name="microphone" active={true} type="FontAwesome"
                         style={{ color: "#0A4E52", alignSelf: "flex-start" }} />
-                      <Text style={{ fontSize: 10, marginBottom: 6 }}>Audio</Text>
+                      <Text style={{ fontSize: 10, marginBottom: 6 }}>{"Audio"}</Text>
                     </View>
                   </TouchableOpacity>
                   <TouchableOpacity style={{ width: "15%", backgroundColor: "transparent", justifyContent: 'center', alignItem: 'center' }}
@@ -598,24 +600,32 @@ export default class EventHighlights extends Component {
                     <View style={{ flexDirection: "column" }}>
                       <Icon name="web" active={true} type="MaterialCommunityIcons"
                         style={{ color: "#0A4E52", alignSelf: "flex-start", }} />
-                      <Text style={{ fontSize: 10, marginBottom: 6 }}>Download</Text>
+                      <Text style={{ fontSize: 10, marginBottom: 6 }}>{"Download"}</Text>
                     </View>
                   </TouchableOpacity>
                 </View>
                 {this.state.currentHighlight.url.audio ?
                   <View style={{ height: height / 11, alignSelf: 'center', backgroundColor: "yellow", ...shadower(7), margin: '3%', width: '80%' }}>
                     <SimpleAudioPlayer url={this.state.currentHighlight.url}></SimpleAudioPlayer>
-                    <Icon name={'close'} type="EvilIcons" onPress={() => this.cleanAudio()} style={{ color: 'red', position: 'absolute', alignSelf: 'flex-end', fontSize: 20 }}></Icon>
+                    <Icon
+                      name={'close'}
+                      type="EvilIcons"
+                      onPress={() => this.cleanAudio()} style={{
+                        color: 'red',
+                        position: 'absolute',
+                        alignSelf: 'flex-end',
+                        fontSize: 20
+                      }}></Icon>
                   </View> : null}
                 <View style={{ height: height / 4 - height / 18, width: "90%", alignSelf: 'center', }}>
                   <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItem: 'center', }}>
                     <TouchableOpacity onPress={() => this.setState({ newing: !this.state.newing, enlargeImage: true })} >
                       {this.state.currentHighlight.url && this.state.currentHighlight.url.photo && testForURL(this.state.currentHighlight.url.photo) ?
-                        {/*<CacheImages thumbnails source={{ uri: this.state.currentHighlight.url.photo }} style={{
+                        <CacheImages thumbnails source={{ uri: this.state.currentHighlight.url.photo }} style={{
                           alignSelf: 'center',
                           height: "100%", width: "100%",
                           borderColor: "#1FABAB", borderRadius: this.state.currentHighlight.url.photo || this.state.currentHighlight.url.video ? 10 : 100,
-                        }} />*/} : <Thumbnail square
+                        }} /> : <Thumbnail square
                           source={this.state.currentHighlight.url &&
                             this.state.currentHighlight.url.photo ? {
                               uri:
@@ -678,11 +688,11 @@ export default class EventHighlights extends Component {
                       onChangeText={(value) => this.onChangedDescription(value)} />
                   </View>
                 </View>
-                  <Button transparent onPress={() => {
-                    this.onchangeHighLightPublicState(this.state.currentHighlight.public_state === 'public' ? 'private' : 'public')
-                  }}><Icon name={this.state.currentHighlight.public_state === 'public' ? "radio-button-checked" :
-                    "radio-button-unchecked"} type={"MaterialIcons"}></Icon>
-                    <Text>{`${this.state.currentHighlight.public_state}`}</Text></Button>
+                <Button transparent onPress={() => {
+                  this.onchangeHighLightPublicState(this.state.currentHighlight.public_state === 'public' ? 'private' : 'public')
+                }}><Icon name={this.state.currentHighlight.public_state === 'public' ? "radio-button-checked" :
+                  "radio-button-unchecked"} type={"MaterialIcons"}></Icon>
+                  <Text>{`${this.state.currentHighlight.public_state}`}</Text></Button>
                 <View style={{
                   height: height / 10,
                   justifyContent: 'space-between',
@@ -717,11 +727,11 @@ export default class EventHighlights extends Component {
               mother ? this.props.closeTeporary() : null
             }} />
         </View>
-          <View style={{ position: 'absolute' }}>
-            <Text style={{ margin: '7%', color: '#A91A84', fontWeight: 'bold' }} note>{this.props.updateState ? "update post" : "add post"}</Text>
-          </View>
-        </View> : <Spinner size={"small"} style={{ alignSelf: "center" }}></Spinner>}
-      </Modal>
+        <View style={{ position: 'absolute' }}>
+          <Text style={{ margin: '7%', color: '#A91A84', fontWeight: 'bold' }} note>{this.props.updateState ? "update post" : "add post"}</Text>
+        </View>
+      </View> : <Spinner size={"small"} style={{ alignSelf: "center" }}></Spinner>}
+    </Modal>
 
   }
 

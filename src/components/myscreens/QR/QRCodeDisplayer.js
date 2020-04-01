@@ -22,8 +22,7 @@ export default class QRDisplayer extends Component{
             <View style={{margin: '3%',}}>
             <Icon onPress={() => {
                 this.svg.toDataURL(data => {
-                    RNFetchBlob.fs.writeFile(RNFetchBlob.fs.dirs.DownloadDir + '/Bleashup/'+this.props.title + '_qrcode.jpeg', data, 'base64').then(status => {
-                        //console.error(status)
+                    RNFetchBlob.fs.writeFile(RNFetchBlob.fs.dirs.DownloadDir + '/Bleashup/'+this.props.title + '_qrcode(Bleashup).jpeg', data, 'base64').then(status => {
                         Toast.show({text:'QR Code save to downloads as image',type:'success',duration:3000})
                     })
                 })

@@ -38,9 +38,8 @@ export default class AudioRecorder extends Component{
                 .then(() => {
                     this.startRecordTiming()
                 }).catch(error => {
-                    //console.warn(error)
+                    this.props.justHideMe()
                     Toast.show({ duration: 4000, text: "cannot record due to " + error })
-                    this.props.toggleAudioRecorder()
                 });
         });
     }

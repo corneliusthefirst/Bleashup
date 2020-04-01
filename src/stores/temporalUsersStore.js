@@ -59,12 +59,7 @@ export default class TemporalUsersStore {
                 let user = find(this.Users, { phone: phone });
                 if (user) {
                     resolve(user);
-                }else{
-                    let user={response:""};
-                    user.response = "unknown_user";
-                    resolve(user.response);
-                } 
-                /*else {
+                } else {
                     userHttpServices.checkUser(phone).then(profile => {
                         if (profile.message) {
                             reject(profile.message)
@@ -80,6 +75,7 @@ export default class TemporalUsersStore {
                 }
             } else { 
                 this.readFromStore().then(users => {
+                    console.warn(users, "user from get user")
                     let user = find(users, { phone: phone });
                     if (user) {
                         this.setPropterties(users);
@@ -104,10 +100,8 @@ export default class TemporalUsersStore {
                             resolve(profile)
                         })
                     })
-                })*/
+                })
             }
-        }).catch((error) => {
-            reject(error);
         })
     }
     getUsers(phones) {
@@ -174,21 +168,8 @@ export default class TemporalUsersStore {
         return new Promise((resolve, reject) => {
             storage.load({ key: 'TemporalUsersStore', syncInBackground: true }).then(Users => {
                 resolve(Users)
-            }).catch(error => {
-                //reject(error);
-                console.warn("here")
-                switch (error.name) {
-                    case 'NotFoundError':
-                         // TODO;
-                    break;
-                    case 'ExpiredError':
-                      this.saveKey.data = this.Users;
-                      storage.save(this.saveKey).then(() => {
-                          this.setPropterties(this.saveKey);
-                          resolve()
-                      })
-                   break;
-                 }
+            }).catch(() => {
+                resolve([])
             })
         })
     }

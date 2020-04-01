@@ -67,9 +67,11 @@ export default class TasksCreation extends Component {
         title: remind && remind.period ? moment(remind.period).format() : moment().format()
       });
     }) : stores.Reminds.loadRemind(this.props.remind_id ?
-      this.props.remind_id : "newRemindId").then(remind => {
+      this.props.remind_id : "newRemindId").then(rem => {
+        console.warn("remind from render ....",remind)
+        let remind = rem ? rem: request.Remind()
         this.setState({
-          currentRemind: remind ? remind : request.Remind(),
+          currentRemind:remind, 
           mounted: true,
           recurrent: remind && !(remind.recursive_frequency.interval === 1 && remind.recursive_frequency.frequency === 'yearly'),
           members: this.props.event.participant,

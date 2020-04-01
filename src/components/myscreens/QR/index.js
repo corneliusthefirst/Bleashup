@@ -31,6 +31,7 @@ export default class QRScanner extends Component {
             Event: event,
             tab: "EventDetails"
         });
+        this.scanner.reactivate()
         //this.props.onClosed()
     }
     componentDidMount() {

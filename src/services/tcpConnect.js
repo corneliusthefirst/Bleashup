@@ -21,6 +21,8 @@ class Connection {
                 socket.write(JSONData)
                 this.socket = socket;
                 resolve(socket);
+            }).catch(error => {
+              reject(error)
             });
           });
         }

@@ -86,7 +86,7 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
                     this.props.backgroundColor : "#ffffff",
                 ...this.props.style
             }}>
-            {this.props.marginTop?<View style={{height:60}}></View>:null}
+            {this.props.marginTop?<View style={{height:30}}></View>:null}
                 <FlatList
                     onScrollEndDrag={({ nativeEvent }) => {
                         if (isCloseToBottom(nativeEvent)) {
@@ -102,10 +102,10 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
                     onScroll={this.props.onScroll}
                     centerContent={true}
                     //horizontal={this.props.horizontal}
+                    updateCellsBatchingPeriod={100}
                     ref="bleashupFlatlist"
                     canCancelContentTouches={true}
                     inverted={this.props.inverted ? this.props.inverted : false}
-                    removeClippedSubviews={false}
                     style={this.props.style}
                     ItemSeparatorComponent={this.props.ItemSeparatorComponent}
                     maxToRenderPerBatch={this.props.renderPerBatch ? this.props.renderPerBatch : this.props.inverted ? 5 : this.state.endReached ? 1 : 3}

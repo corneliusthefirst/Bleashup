@@ -22,18 +22,18 @@ export default class SimpleAudioPlayer extends Component {
 
 
     player = null
-    componentDidMount(){
+    componentDidMount() {
         this.initialisePlayer(this.props.url.audio).then((state) => {
 
         })
     }
-    componentWillUnmount(){
+    componentWillUnmount() {
         this.player && this.player.stop()
     }
     shouldComponentUpdate(nextProps, nextState, nextContext) {
-         return this.state.currentPosition !== nextState.currentPosition || 
-         this.props.url.audio !== nextProps.url.audio || 
-         this.state.playing !== nextState.playing
+        return this.state.currentPosition !== nextState.currentPosition ||
+            this.props.url.audio !== nextProps.url.audio ||
+            this.state.playing !== nextState.playing
     }
     static getDerivedStateFromProps(nextProps, prevState) {
         return null
@@ -124,30 +124,18 @@ export default class SimpleAudioPlayer extends Component {
                                 <Right><Text>{converToHMS(this.props.url.duration)}</Text></Right>
                             </View>
                         </View>
-                    </View> : <View style={{ textStyleD }}>{!this.state.playing ? <BarIndicat animating={false}
-                        color={"#1FABAB"} size={30} count={20} ></BarIndicat> : <BarIndicator color={"#1FABAB"} size={30} count={20}></BarIndicator>}</View>}
-                    <View style={{ marginTop: this.props.url.duration ? "3%" : '1%', }}>
-                        <AnimatedCircularProgress
-                            size={40}
-                            width={3}
-                            fill={100}
-                            tintColor={"#1FABAB"}
-                            backgroundColor={'#F8F7EE'}>
-                            {
-                                (fill) => (
-                                    <View style={{ marginTop: "-5%" }}>
-                                        {!this.state.playing ? <TouchableOpacity
-                                            onPress={() => requestAnimationFrame(() => this.plays())}>
-                                            <Icon type="FontAwesome5" style={{ color: "#0A4E52", fontSize: 20 }} name="play">
-                                            </Icon>
-                                        </TouchableOpacity> : <TouchableOpacity onPress={() => requestAnimationFrame(() => this.pause())}>
-                                                <Icon type="FontAwesome5" style={{ color: "#0A4E52", fontSize: 20 }} name="pause">
-                                                </Icon>
-                                            </TouchableOpacity>}
-                                    </View>
-                                )
-                            }
-                        </AnimatedCircularProgress></View>
+                    </View> : <View style={{ textStyleD }}>{/*!this.state.playing ? <BarIndicat animating={false}
+                    color={"#1FABAB"} size={30} count={20} ></BarIndicat> : <BarIndicator color={"#1FABAB"} size={30} count={20}></BarIndicator>*/}</View>}
+                    <View style={{ margin: '4%'}}>
+                        {!this.state.playing ? <TouchableOpacity
+                            onPress={() => requestAnimationFrame(() => this.plays())}>
+                            <Icon type="FontAwesome5" style={{ color: "#0A4E52", fontSize: 20 }} name="play">
+                            </Icon>
+                        </TouchableOpacity> : <TouchableOpacity onPress={() => requestAnimationFrame(() => this.pause())}>
+                                <Icon type="FontAwesome5" style={{ color: "#0A4E52", fontSize: 20 }} name="pause">
+                                </Icon>
+                            </TouchableOpacity>}
+                    </View>
                 </View>
             </View>
         )

@@ -31,9 +31,10 @@ import StatusView from "./../status/index";
 import InvitationView from "./../invitations/index";
 import Chats from "../poteschat";
 import SettingView from "./../settings/index";
-import { observer } from "mobx-react";
 import autobind from "autobind-decorator";
-import { groupBy, map, findIndex, reject } from "lodash"
+import {
+   find
+} from "lodash"
 import { withInAppNotification } from 'react-native-in-app-notification';
 import stores from "../../../stores";
 import CurrentEventView from '../currentevents';
@@ -44,11 +45,8 @@ import CreateEvent from '../event/createEvent/CreateEvent';
 
 
 
-import { find, forEach } from "lodash"
-import CalendarServe from '../../../services/CalendarService';
 import ForeignEventsModal from "./ForeignEventsModal";
 import DeepLinking from 'react-native-deep-linking';
-import Requester from '../event/Requester';
 import shadower from "../../shadower";
 import TabModal from "./TabModal";
 import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
@@ -169,43 +167,7 @@ class Home extends Component {
   }
   realNew = []
   componentDidMount() {
-    //CalendarServe.saveEvent().then(() => {})
     stores.Highlights.initializeGetHighlightsListener()
-    CalendarServe.fetchAllCalendarEvents().then(calendar => {
-      let calen = groupBy(calendar, 'title')
-      let idsMapper = map(calen, (value, key) => { return { title: key, ids: map(value, ele => ele.id) } })
-      calen = map(calen, (value, key) => { return { ...value[0], key: key } })
-      calen = reject(calen, ele => findIndex(stores.Events.events, e => e.about && ele.title === e.about.title) >= 0 || ele.title.includes('reminder'))
-      if (calen.length > 0) {
-        let i = 0
-        forEach(calen, element => {
-          idsmap = find(idsMapper, { title: element.key })
-          let event = find(stores.Events.events, ele => idsmap.ids.indexOf(ele.calendar_id) >= 0)
-          if (event) {
-            Requester.updateTitle(event, element.key).then((state) => {
-              if (i === calen.length - 1) {
-                if (this.realNew.length > 0)
-                  this.setState({
-                    foreignEvents: calen,
-                    isForeignEventsModalOpened: true
-                  })
-              }
-              i = i + 1
-            })
-          } else {
-            this.realNew.unshift(element)
-            if (i === calen.length - 1) {
-              this.setState({
-                foreignEvents: calen,
-                isForeignEventsModalOpened: true
-              })
-            }
-            i = i + 1
-          }
-        })
-        /**/
-      }
-    })
     emitter.on("notify", (event) => {
       {
         if (GState.currentRoom !== event.data.room_key) {
@@ -289,20 +251,6 @@ class Home extends Component {
   };
   
 
-
-  /* 
-  @autobind
-  setCreateButton(){
-   
-   if(this.refs.invitation_view.state.create==false){
-      this.refs.invitation_view.setState({create:true});
-      this.setState({color:"salmon"});
-      
-   }else{
-     this.refs.invitation_view.setState({create:false});
-     this.setState({color:"#1FABAB"});
-   }
-  }*/
   setMenuRef = (ref)=>{
     this._menu = ref;
   }
@@ -397,8 +345,8 @@ class Home extends Component {
             borderColor: '#ddd',
             borderBottomWidth: 0,
             alignSelf: 'center',
-            ...shadower(20),
-            margin: "1%", height: 45, backgroundColor: "#FEFFDE", borderRadius: 4,
+            ...shadower(),
+            margin: "1%", height: 45, backgroundColor: "#FEFFDE", borderRadius: 8,
           }}
           tabBarPosition="bottom"
           tabBarUnderlineStyle={{

@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { View, Vibration, TouchableWithoutFeedback, TouchableOpacity, Dimensions } from 'react-native';
-
 import {
   Card,
   CardItem,
