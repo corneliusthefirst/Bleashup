@@ -87,7 +87,7 @@ class PublicEvent extends Component {
   }
   swipperComponent = null
   componentDidMount() {
-    //this is done to use as default for my test
+    //!this is done to use as default for my test
     stores.TempLoginStore.getUser("0666406835").then(creator => {
       this.setState({ creator: creator });
     })
@@ -279,7 +279,7 @@ class PublicEvent extends Component {
       this.props.navigation.navigate("HighLightsDetails", { event_id: this.props.Event.id })
   }
   renderMap() {
-    return this.state.isMount && this.props.Event.location.string ?
+    return this.state.isMount && this.props.Event.location && this.props.Event.location.string ?
       <View style={{ alignSelf: 'center', }}><MapView card
         location={this.props.Event.location.string}></MapView></View> : null
   }

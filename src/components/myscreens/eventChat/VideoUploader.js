@@ -53,6 +53,7 @@ export default class VideoUploader extends Component {
             uploading: false
         })
         fs.unlink(newDir).then(() => {})
+        console.warn("this is my path",path)
         this.props.message.type = 'video'
         this.props.message.source = path
         this.props.message.cancled = true

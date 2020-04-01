@@ -66,7 +66,7 @@ export default class VoteCreation extends Component {
         stores.Votes.loadVote(request.Vote().id).then(vote => {
             console.warn(vote, "voter vote")
             this.setState({
-                vote: vote
+                vote: !vote ? request.Vote() : vote
             })
         })
     }

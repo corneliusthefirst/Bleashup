@@ -143,7 +143,7 @@ export default class VideoMessage extends Component {
                             marginLeft: "1.2%",
                         }} 
                         borderRadius={5} 
-                        source={{ uri: this.props.message.source }} 
+                        source={{ uri: this.props.message.thumbnailSource }} 
                         photo={this.props.message.thumbnailSource}
                             width={290} height={200}>
                         </Image>

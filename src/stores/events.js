@@ -350,7 +350,7 @@ export default class events {
           });
         } else {
           serverEventListener.GetData(EventID).then(event => {
-            event.participant[event.participant.length] = Participant;
+            event && event.participant?event.participant[event.participant.length] = Participant:event.participant = [Participant];
             event.participant = uniqBy(event.participant, "phone")
             if (inform) {
               event.participant_added = true;

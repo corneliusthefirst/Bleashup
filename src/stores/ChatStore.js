@@ -100,6 +100,8 @@ class ChatStore {
                         resolve(data)
                     })
                 } else {
+                    data = reject(data, {id: messageID})
+                    this.messages = data
                     this.addToStore(data).then(() => {
                         resolve()
                     })

@@ -43,9 +43,10 @@ export default class ReplyText extends Component {
                     <View style={{/* width: "90%",*/
                         width: this.props.compose ? '100%' : null,
                     }}>
-                        <View style={{ margin: "1%" }}>
+                        <View style={{ margin: "1%", }}>
                             <TouchableOpacity onPressIn={() => this.props.pressingIn()} onPress={() => requestAnimationFrame(() => {
-                                this.props.reply.replyer_name && (this.props.reply.replyer_phone || this.props.reply.sender.phone) ? this.showReplyer() : null
+                                this.props.reply.replyer_name && (this.props.reply.replyer_phone ||
+                                    this.props.reply.sender.phone) ? this.showReplyer() : null
                             })
                             }>
                                 <View style={{ flexDirection: 'row', }}>
@@ -75,10 +76,15 @@ export default class ReplyText extends Component {
                                 <View style={{ /*width: this.props.reply.sourcer ? "20%" : "0%",*/ marginRight: "1%", }}>
                                     {this.props.reply.sourcer ? <View>{testForURL(this.props.reply.sourcer) ? <CacheImages thumbnails square style={{
                                         width: 60,
-                                        height: 40, borderRadius: 5,
+                                        minHeight: this.state.currentHeight > 50 ? this.state.currentHeight : 50,
+                                        maxHeight: this.state.currentHeight > 50 ? this.state.currentHeight : 50,
+                                        borderBottomRightRadius: 5, borderTopRightRadius: 5,
                                     }} source={{ uri: this.props.reply.sourcer }}></CacheImages> : <Thumbnail thumbnails square style={{
                                         width: 60,
-                                        height: 40, borderRadius: 5,
+                                        minHeight: this.state.currentHeight > 50 ? this.state.currentHeight : 50,
+                                        maxHeight: this.state.currentHeight > 50 ? this.state.currentHeight : 50,
+                                        borderBottomRightRadius: 5, borderTopRightRadius: 5,
+                                        height: this.state.currentHeight, borderRadius: 5,
                                     }} source={{ uri: this.props.reply.sourcer }}></Thumbnail>}
                                         {this.props.reply.video ? <Icon type={"EvilIcons"} name={"play"} style={{
                                             position: "absolute", color: "#1FABAF",
@@ -86,7 +92,11 @@ export default class ReplyText extends Component {
                                         }}></Icon> : null}</View> : null}
 
                                 </View>
-                                <View style={{ /*width: this.props.reply.sourcer ? "79%" : "100%",*/ alignSelf: 'center',
+                                <View onLayout={(e) => {
+                                    this.setState({
+                                        currentHeight: e.nativeEvent.layout.height
+                                    })
+                                }} style={{ /*width: this.props.reply.sourcer ? "79%" : "100%",*/ alignSelf: 'center',
                                     marginLeft: this.props.reply.sourcer ? '1%' : null,
                                     width: this.props.reply.sourcer ? '76%' : '98%'
                                 }}>

@@ -334,8 +334,8 @@ export default class EventDetailView extends Component {
                         this.setState({
                           EventLocationState: true
                         })
-                      }} style={{ alignSelf: 'flex-end', }}></Icon> : null}
-                      <MapView card location={this.props.Event.location.string}></MapView>
+                      }} style={{ alignSelf: 'flex-end', width:'30%'}}></Icon> : null}
+                      <MapView style={{width:'60%'}} card location={this.props.Event.location.string}></MapView>
                     </View> :
                     <TouchableOpacity delayLongPress={1000} onLongPress={() => {
                       if (this.state.participant.master == true) {

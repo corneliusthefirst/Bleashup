@@ -25,8 +25,8 @@ export default class AudioMessage extends Component {
             downloading: true
         }
     }
-    componentWillUnmount(){
-       this.player && this.player.stop()
+    componentWillUnmount() {
+        this.player && this.player.stop()
         clearInterval(this.downloadID)
     }
     componentDidMount() {
@@ -133,7 +133,7 @@ export default class AudioMessage extends Component {
     }
     initialisePlayer(source) {
         this.player = new Sound(source, '/', (error) => {
-            console.warn(error,"error")
+            console.warn(error, "error")
         })
     }
     player = null
@@ -209,7 +209,7 @@ export default class AudioMessage extends Component {
             flexDirection: 'column',
         }
         return (
-            <TouchableWithoutFeedback onLongPress={() => this.props.handleLongPress?this.props.handleLongPress():null} onPressIn={() => this.props.pressingIn()}>
+            <TouchableWithoutFeedback onLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null} onPressIn={() => this.props.pressingIn()}>
                 <View style={{ disply: 'flex', flexDirection: 'row', minWidth: 283, maxWidth: 300, minHeight: 50, }}>
                     {this.props.message.duration ? <View style={textStyle}>
                         <View><Slider value={this.state.currentPosition} onValueChange={(value) => {
@@ -224,10 +224,10 @@ export default class AudioMessage extends Component {
                                 <Right><Text>{converToHMS(this.props.message.duration)}</Text></Right>
                             </View>
                         </View>
-                    </View> : <View style={{ textStyleD }}>{!this.state.playing ? <BarIndicat animating={false}
-                        color={"#1FABAB"} size={30} count={20} ></BarIndicat> : <BarIndicator color={"#1FABAB"} size={30} count={20}></BarIndicator>}</View>}
-                    <View style={{ marginTop: this.props.message.duration ? "3%" : '1%', }}>
-                        <AnimatedCircularProgress
+                    </View> : <View style={{ textStyleD }}>{/*!this.state.playing ? <BarIndicat animating={false}
+                    color={"#1FABAB"} size={30} count={20} ></BarIndicat> : <BarIndicator color={"#1FABAB"} size={30} count={20}></BarIndicator>*/}</View>}
+                    <View style={{ margin:  "4%"  }}>
+                        {testForURL(this.props.message.source) ? <AnimatedCircularProgress
                             size={40}
                             width={3}
                             fill={testForURL(this.props.message.source) ? this.state.downloadState : 100}
@@ -236,28 +236,27 @@ export default class AudioMessage extends Component {
                             {
                                 (fill) => (
                                     <View style={{ marginTop: "-5%" }}>
-                                        {testForURL(this.props.message.source) ?
-                                            <TouchableOpacity onPress={() => this.state.downloading ? this.cancelDownLoad(this.props.message.source) :
-                                                this.downloadAudio(this.props.message.source)}>
-                                                <View>
-                                                    <Icon style={{ color: "#0A4E52" }} type="EvilIcons"
-                                                        name={this.state.downloading ? "close" : "arrow-down"}></Icon>
-                                                </View>
-                                                <View style={{ position: 'absolute', marginTop: '-103%', marginLeft: '-14%', }}>
-                                                    {this.state.downloading ? <Spinner></Spinner> : null}
-                                                </View>
-                                            </TouchableOpacity> : !this.state.playing ? <TouchableOpacity
-                                                onPress={() => requestAnimationFrame(() => this.plays())}>
-                                                <Icon type="FontAwesome5" style={{ color: "#0A4E52", fontSize: 20 }} name="play">
-                                                </Icon>
-                                            </TouchableOpacity> : <TouchableOpacity onPress={() => requestAnimationFrame(() => this.pause())}>
-                                                    <Icon type="FontAwesome5" style={{ color: "#0A4E52", fontSize: 20 }} name="pause">
-                                                    </Icon>
-                                                </TouchableOpacity>}
+                                        <TouchableOpacity onPress={() => this.state.downloading ? this.cancelDownLoad(this.props.message.source) :
+                                            this.downloadAudio(this.props.message.source)}>
+                                            <View>
+                                                <Icon style={{ color: "#0A4E52" }} type="EvilIcons"
+                                                    name={this.state.downloading ? "close" : "arrow-down"}></Icon>
+                                            </View>
+                                            <View style={{ position: 'absolute', marginTop: '-103%', marginLeft: '-14%', }}>
+                                                {this.state.downloading ? <Spinner></Spinner> : null}
+                                            </View>
+                                        </TouchableOpacity>
                                     </View>
                                 )
                             }
-                        </AnimatedCircularProgress></View>
+                        </AnimatedCircularProgress> : !this.state.playing ? <TouchableOpacity
+                            onPress={() => requestAnimationFrame(() => this.plays())}>
+                            <Icon type="FontAwesome5" style={{ color: "#0A4E52", fontSize: 20 }} name="play">
+                            </Icon>
+                        </TouchableOpacity> : <TouchableOpacity onPress={() => requestAnimationFrame(() => this.pause())}>
+                                    <Icon type="FontAwesome5" style={{ color: "#0A4E52", fontSize: 20 }} name="pause">
+                                    </Icon>
+                                </TouchableOpacity>}</View>
                 </View>
             </TouchableWithoutFeedback>
         );

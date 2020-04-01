@@ -397,6 +397,7 @@ export default class ChatRoom extends Component {
 
     handleKeyboardDidHide = () => {
         offset = this.state.replying ? 0.13 : 0
+        this._textInput.blur()
         this.setState({
             keyboardOpened: false,
             messageListHeight: !this.state.showEmojiInput ?
@@ -987,8 +988,8 @@ export default class ChatRoom extends Component {
     }
     options = ["Remove message", "Update message", "Seen by ...", "Copy to clipboard", "Cancel"]
     showActions(message) {
-        ActionSheet.show({ options: this.options, title: "Choose You Action", cancelButtonIndex: 3 }, (index) => {
-            if (index == 0) {
+        ActionSheet.show({ options: this.options, title: "Choose You Action", cancelButtonIndex: 4 }, (index) => {
+            if (index === 0) {
                 if (GState.connected) {
                     let messageRef = this.fireRef.child(message.key)
                     this.room.removeMessage(message.id).then(() => {
@@ -1365,6 +1366,12 @@ export default class ChatRoom extends Component {
 
     audioRecorder() {
         return <AudioRecorder
+            justHideMe={() => {
+                this.setState({
+                    showAudioRecorder: false
+                })
+                this.refs.AudioRecorder.stopRecordSimple()
+            }}
             showAudioRecorder={this.state.showAudioRecorder}
             sendAudioMessge={(file, duration, dontsend) => this.sendAudioMessge(file, duration, dontsend)}
             ref={"AudioRecorder"}
@@ -1384,17 +1391,19 @@ export default class ChatRoom extends Component {
             height: 44,
             position: 'absolute'
         }}><View style={headerStyles}>
-            <View style={{ width: '10%', paddingLeft: '1%', }}>
+                <View style={{ width: '10%', paddingLeft: '1%', }}>
                     <Icon onPress={() => {
                         this.props.openMenu()
-                    }} 
-                    style={{ color: '#0A4E52' }} 
-                    type={"Ionicons"} 
-                    name={"ios-menu"}></Icon>
-            </View>
-        <View style={{ width: "50%", flexDirection: 'row', }}>
-            <Title style={{ fontWeight: 'bold',
-             alignSelf: 'flex-start', marginLeft: "4%" }}>{this.props.roomName}</Title></View>
+                    }}
+                        style={{ color: '#0A4E52' }}
+                        type={"Ionicons"}
+                        name={"ios-menu"}></Icon>
+                </View>
+                <View style={{ width: "50%", flexDirection: 'row', }}>
+                    <Title style={{
+                        fontWeight: 'bold',
+                        alignSelf: 'flex-start', marginLeft: "4%"
+                    }}>{this.props.roomName}</Title></View>
                 {
                     //!! you can add the member last seen here if the room has just one member */
                 }
