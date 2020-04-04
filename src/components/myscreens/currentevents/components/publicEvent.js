@@ -315,11 +315,11 @@ class PublicEvent extends Component {
 
   renderTitle(){
     return  ( <CardItem style={{
-      marginLeft: '2%',
       marginBottom: '3%',
+      backgroundColor:"white"
     }}>
       <View style={{ flexDirection: 'row', width: '100%' }}>
-        <View style={{ width: '95%' }}>
+        <View style={{ width: '95%',paddingLeft:6}}>
           {this.state.isMount ? <TitleView openDetail={() => this.props.openDetails(this.props.Event)} join={() => this.join()} joint={this.state.joint} seen={() => this.markAsSeen()}
             {...this.props}></TitleView> : null}
         </View>
@@ -336,43 +336,39 @@ class PublicEvent extends Component {
         aspectRatio: 3 / 1,
         paddingRight: 0,
         paddingTop: 4,
-        paddingBottom: 6
+        paddingBottom: 6,
+        backgroundColor:"white",
+        height:200
       }}
       cardBody
     >
-      <View style={{ flexDirection: 'row', }}>
-        <View style={{ width: '65%' }}>{this.state.isMount ? <View style={{ alignSelf: 'flex-start' }}><CardItem
+      <View style={{ flex:1,flexDirection: 'row', }}>
+        <View style={{ flex:1,width: '100%' }}>{this.state.isMount ? <View style={{ alignSelf: 'flex-start' }}><CardItem
           style={{
-            ...shadower(),
-            backgroundColor: '#1FABAB',
-            height: '90%',
-            width: "60%",
-            borderRadius: 5,
-            marginLeft: "4%"
+            flex:1,
+            marginLeft:"-1%",
+            backgroundColor:"white"
           }}><PhotoView
             navigation={this.props.navigation} renderDelay={this.props.renderDelay} showPhoto={(url) => url ?
               this.showPhoto(url) : null} joined={() => this.join()}
-            isToBeJoint hasJoin={this.props.Event.joint || this.state.joint} onOpen={() => this.onOpenPhotoModal()} style={{
-              marginLeft: '-1%',
-            }} photo={this.props.Event.background} event_id={this.props.Event.id} width={170} height={100} borderRadius={6} />
+            isToBeJoint hasJoin={this.props.Event.joint || this.state.joint} onOpen={() => this.onOpenPhotoModal()} style={{}} photo={this.props.Event.background} event_id={this.props.Event.id} width={355} height={198} borderRadius={0} />
         </CardItem></View> : null}</View>
-        {this.renderMap()}
       </View>
     </CardItem>)
   }
 
  renderMarkAsSeen(){
    return (         
-      <CardItem>
+      <CardItem style={{backgroundColor:"white"}}>
         {this.state.isMount ? <Options seen={() => this.markAsSeen()} {...this.props}></Options> : null}
       </CardItem>)
  }
 renderFooter(){
   return (
-    <Footer style={{height:height/15}}>
+    <Footer style={{height:height/15,width:"100%", backgroundColor:"white"}}>
       <View style={{width:"100%", flexDirection: "row",}}>
 
-      <View style={{alignSelf:"flex-start",width:"60%",paddingLeft:"2%"}}>
+      <View style={{alignSelf:"flex-start",width:"60%"}}>
         {this.state.isMount && !this.state.fresh ? <Join event={this.props.Event} refreshJoint={() => this.refreshJoint()}></Join> : null}
       </View>
 
@@ -390,7 +386,7 @@ renderFooter(){
 
   render() {
     //emitter.emit('notify', "santerss") 
-    return (this.state.isMount ? <View style={{ width: "100%", paddingLeft: '2%', paddingRight: '2%', alignSelf: 'center', }}>
+    return (this.state.isMount ? <View style={{ width: "100%",alignSelf: 'center', }}>
       <Swipeout {...this.props} onOpen={() => this.openSwipeOut()} onClose={() => this.onCloseSwipeout()} style={{
         width: "100%", ...shadower(1),
         backgroundColor: this.props.Event.new ? "#cdfcfc" : null
@@ -399,9 +395,7 @@ renderFooter(){
         //close={true}
         {...this.swipeOutSettings(this.state.master, this.state.joint)}>
         <Card
-          style={{
-            margin: '1%',
-          }}
+          style={{width:"100%",backgroundColor:"white"}}
           bordered
         >
           {this.renderTitle()}
@@ -410,8 +404,11 @@ renderFooter(){
 
         </Card>
       </Swipeout>
-    </View> : <View style={{ paddingLeft: '2%', paddingRight: '2%', }}><Card style={{ height: 315, padding: '1%', margin: '1%', alignSelf: 'center', width: '97%' }}></Card></View>
+    </View> : <View style={{}}><Card style={{ height: 300, marginTop: '1%', alignSelf: 'center', width: '100%',backgroundColor:"white"}}></Card></View>
     )
   }
 }
 export default PublicEvent
+
+
+/* {this.renderMap()} */

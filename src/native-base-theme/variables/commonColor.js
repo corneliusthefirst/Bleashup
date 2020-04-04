@@ -95,7 +95,7 @@ export default {
     },
 
     // Card
-    cardDefaultBg: "#FEFFDE",
+    cardDefaultBg: "white",
     cardBorderColor: "#ccc",
     cardBorderRadius: 2,
     cardItemPadding: platform === "ios" ? 1 : 2,
@@ -237,14 +237,14 @@ export default {
     inverseSpinnerColor: "#305455",
 
     // Tab
-    tabDefaultBg: platform === "ios" ? "#FEFFDE" : "#FEFFDE",
-    topTabBarTextColor: platform === "ios" ? "#9EEDD3" : "#9EEDD3",
-    topTabBarActiveTextColor: platform === "ios" ? "#1FABAB" : "#1FABAB",
-    topTabBarBorderColor: platform === "ios" ? "#FEFFDE" : "#FEFFDE",
-    topTabBarActiveBorderColor: platform === "ios" ? "#33BDBD" : "#1FABAB",
+    tabDefaultBg: platform === "ios" ? "#1FABAB" : "#1FABAB",
+    topTabBarTextColor: platform === "ios" ? "white" : "white",
+    topTabBarActiveTextColor: platform === "ios" ? "white" : "white",
+    topTabBarBorderColor: platform === "ios" ? "#1FABAB" : "#1FABAB",
+    topTabBarActiveBorderColor: platform === "ios" ? "#1FABAB" : "#1FABAB",
 
     // Tabs
-    tabBgColor: "#FEFFDE",
+    tabBgColor: "#1FABAB",
     tabFontSize: 16,
 
     // Text

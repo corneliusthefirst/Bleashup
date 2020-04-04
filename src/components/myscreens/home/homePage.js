@@ -339,38 +339,32 @@ class Home extends Component {
     setTimeout(() => {
       //this.launchAnimation()
     }, 1000)
-    StatusBar.setBackgroundColor("#FEFFDE", true)
+    StatusBar.setBackgroundColor("#1FABAB", true)
     StatusBar.setBarStyle('dark-content', true)
     StatusBar.setHidden(false, true)
     return (
-      <Container style={{ backgroundColor: "#FEFFDE" }}>
-        <View style={{ height: 40, }}>
-          <View style={{
-            ...bleashupHeaderStyle,
-            alignSelf: 'center',
-          }}>
-            <View style={{
-              flex: 1, backgroundColor: "#FEFFDE", flexDirection: "row",
-              justifyContent: "space-between", marginLeft: "3%", marginRight: "3%"
-            }}>
-              <View style={{
-                // transform: [{ rotate: spin }]
-              }}>
-                <Thumbnail small source={require("../../../../assets/ic_launcher_round.png")}></Thumbnail>
+      <Container style={{ height:height,backgroundColor: "#1FABAB",width:width  }}>
+        <View style={{ height: 50,backgroundColor: "#1FABAB",width:"100%", }}>
+        
+         
+            <View style={{flex: 1, backgroundColor: "#1FABAB", flexDirection: "row",justifyContent: "space-between",width:"100%" }}>
+             
+              <View style={{ alignSelf: "flex-start",justifyContent:"center",height:"100%" /*transform: [{ rotate: spin }] */}}>
+                <Thumbnail source={require("../../../../assets/bleashuptitle.png")} style={{width:120}}></Thumbnail>
               </View>
 
-              <View style={{ alignItems:"center",justifyContent:"center" }}>
-                <View style={{ alignSelf: "flex-end", display: 'flex', flexDirection: 'row', }}>
+            
+                <View style={{ height:"100%",alignSelf: "flex-end", display: 'flex', flexDirection: 'row', marginRight:"2%"}}>
 
                  <TouchableOpacity style={{height:40,alignItems:"center",justifyContent:"center"}} onPress={() => this.navigateToInvitations()}>
-                  <Icon name="sc-telegram" active={true} type="EvilIcons" style={{ color: "#1FABAB", }} onPress={() => this.navigateToInvitations()} />
+                  <Icon name="sc-telegram" active={true} type="EvilIcons" style={{ color: "white", }} onPress={() => this.navigateToInvitations()} />
                   </TouchableOpacity>
 
                   <TouchableOpacity style={{height:40,alignItems:"center",justifyContent:"center"}} onPress={this.showMenu}>
                     <Menu
                      ref={this.setMenuRef}
-                     button={<Icon name="gear" active={true} type="EvilIcons" style={{ color: "#1FABAB",marginLeft:width/35 }} onPress={this.showMenu} />}
-                     style={{ backgroundColor: "#FEFFDE" }}
+                     button={<Icon name="gear" active={true} type="EvilIcons" style={{ color: "white",marginLeft:width/35 }} onPress={this.showMenu} />}
+                     style={{ backgroundColor: "white" }}
                      >
                    <MenuItem onPress={this.settings}>settings</MenuItem>
                   </Menu> 
@@ -379,25 +373,19 @@ class Home extends Component {
                 </View>
             
 
-              </View>
+            
             </View>
 
           </View>
-        </View>
+       
         <Tabs
           locked
           tabContainerStyle={{
-            borderWidth: 1,
-            borderRadius: 0,
-            borderColor: '#ddd',
-            borderBottomWidth: 0,
-            alignSelf: 'center',
-            ...shadower(20),
-            margin: "1%", height: 45, backgroundColor: "#FEFFDE", borderRadius: 4,
+             backgroundColor: "#1FABAB"
           }}
           tabBarPosition="bottom"
           tabBarUnderlineStyle={{
-            backgroundColor: "transparent"
+            backgroundColor: "1FABAB"
           }}
           onChangeTab={({ i }) => {
             this.setState({
@@ -407,7 +395,7 @@ class Home extends Component {
         >
           <Tab
             tabStyle={{
-              borderRadius: 0
+              borderRadius: 0,
             }}
             heading={
               <TabHeading>

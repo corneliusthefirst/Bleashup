@@ -1,11 +1,14 @@
 import React, { Component } from "react"
-import { View, TouchableWithoutFeedback, Animated } from 'react-native';
-import { Text, Icon, Toast } from "native-base"
+import { View, TouchableWithoutFeedback, Animated,Dimensions} from 'react-native';
+import { Text, Icon, Toast,Thumbnail } from "native-base"
 import stores from '../../../../stores';
 import Requester from "../Requester"
 import emitter from '../../../../services/eventEmiter';
 import { AddParticipant } from '../../../../services/cloud_services';
 import request from '../../../../services/requestObjects';
+
+
+let {height, width} = Dimensions.get('window');
 export default class Join extends Component {
     constructor(props) {
         super(props)
@@ -61,11 +64,23 @@ export default class Join extends Component {
     }
     render() {
         return (
-            <View style={{ }}>
-                <View style={{ flexDirection: "row" }}>
+            
+                <View style={{ alignItem:"flex-start" ,alignItem:"center",justifyContent:"center"}}>
                     <TouchableWithoutFeedback onPress={() => this.join()} >
                         <View >
-                            <Icon
+                         { this.state.participant ?<Thumbnail source={require("../../../../../assets/join1.png")} style={{height:height/15,width:70}}></Thumbnail>
+                         :null}   
+                        </View>
+                    </TouchableWithoutFeedback>
+
+                </View>
+         
+        )
+    }
+}
+
+/**
+ *                            <Icon
                                 name="account-group"
                                 type="MaterialCommunityIcons"
                                 style={{
@@ -73,14 +88,8 @@ export default class Join extends Component {
                                     fontSize: 35
                                 }}
                             />
-                        </View>
-                    </TouchableWithoutFeedback>
-                    {/*<View style={{ marginTop: 5 }}>
+                                                {/*<View style={{ marginTop: 5 }}>
                             <Text style={{ color: this.state.participant ? "#54F5CA" : "#bfc6ea", 
                             fontSize: 15, }} note>{this.state.participant ? " Joint" :" Join"}</Text>
-                                </View>*/}
-                </View>
-            </View>
-        )
-    }
-}
+                                </View>
+ */

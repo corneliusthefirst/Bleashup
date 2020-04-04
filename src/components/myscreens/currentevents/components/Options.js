@@ -130,17 +130,13 @@ export default class Options extends Component {
              <TouchableOpacity style={{width:'50%',height:"100%",justifyContent:"center"}} onPress={() => requestAnimationFrame(() => this.navigateToReminds())}>
 
                         <View style={this.svgStyle}>
-                            <Icon onPress={() => requestAnimationFrame(() => this.navigateToReminds())} type="Entypo" name="bell" style={
-                                {
-                                    color: "#1FABAB",
-                                    alignSelf:'center'
-                                }
-                            }></Icon>
+                            <Icon onPress={() => requestAnimationFrame(() => this.navigateToReminds())} type="FontAwesome" name="bell-o" style={{alignSelf:'center' }}></Icon>
                             <Text style={{
-                                color: "#1FABAB",
+
+                                //color: "#1FABAB",
                                 fontSize: 11, fontStyle: 'italic',
                                 alignSelf: 'center',
-                            }} >reminds</Text>
+                            }} note>reminds</Text>
                             {this.props.Event.remind_upated ? (
                                 <View style={this.indicatorMargin}>
                                     <UpdateStateIndicator size={this.blinkerSize} />
@@ -159,18 +155,15 @@ export default class Options extends Component {
 
                 <TouchableOpacity style={{width:'50%',height:"100%",justifyContent:"center"}} onPress={() => requestAnimationFrame(() => this.navigateToEventChat())} >
    
-                        <View style={this.svgStyle}>
-                            <Icon onPress={() => requestAnimationFrame(() => this.navigateToEventChat())} name="ios-chatbubbles" type="Ionicons" style={
-                                {
-                                    color: "#1FABAB",
-                                    alignSelf: 'center',
-                                }
-                            }></Icon>
+                        <View style={{alignSelf:"flex-end"}}>
+                            <Icon onPress={() => requestAnimationFrame(() => this.navigateToEventChat())} name="comments-o" type="FontAwesome" style={
+                                { alignSelf: 'center'}
+                            } active={false}></Icon>
                             <Label style={{
                                 marginLeft: "-13%",
                                 fontSize: 11, fontStyle: 'italic',
                                 alignSelf:'center',
-                                color: "#1FABAB"
+                                //color: "#1FABAB"
                             }}>chats</Label>
                             {this.props.Event.chat_updated ? (
                                 <View style={this.indicatorMargin}>
