@@ -9,6 +9,7 @@ import SimpleAudioPlayer from './SimpleAudioPlayer';
 import shadower from '../../shadower';
 import CacheImages from '../../CacheImages';
 import testForURL from '../../../services/testForURL';
+import buttoner from '../../../services/buttoner';
 
 export default class HighlightContent extends Component {
     constructor(props) {
@@ -57,11 +58,10 @@ export default class HighlightContent extends Component {
                                     </CacheImages> : null}
                                     {this.props.highlight.url.video && testForURL(this.props.highlight.url.video)  ?
                                         <View style={{ position: 'absolute', marginTop: "25%", marginLeft: '43%', }}>
-                                            <Button onPress={() => {
-                                                this.props.showVideo(this.props.highlight.url.video)
-                                            }} transparent>
-                                                <Icon style={{ fontSize: 50,color:'#FEFFDE' }} type={'EvilIcons'} name={'play'}></Icon>
-                                            </Button>
+                                               <Icon onPress={() => {
+                                                    this.props.showVideo(this.props.highlight.url.video)
+                                                }} style={{ fontSize: 50,color:'#FEFFDE',marginRight: '10%',
+                                            }} type={'EvilIcons'} name={'play'}></Icon>
                                         </View> : null
                                     }
                                 </View>
@@ -88,7 +88,7 @@ export default class HighlightContent extends Component {
                         }
                         {this.props.highlight.description ?
                             <View style={{ margin: '1%', }}>
-                                <TextContent color={"#FEFEDE"} text={this.props.highlight.description}></TextContent>
+                                <TextContent modal={this.props.modal} color={"#FEFEDE"} text={this.props.highlight.description}></TextContent>
                             </View> : null
                         }
                     </View>

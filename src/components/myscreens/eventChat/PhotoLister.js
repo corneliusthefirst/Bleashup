@@ -1,18 +1,21 @@
 import React, { Component } from 'react';
 import shadower from '../../shadower';
-import { View } from "react-native"
+import { View,Dimensions } from "react-native"
 import CacheImages from '../../CacheImages';
 import BleashupFlatList from '../../BleashupFlatList';
-import { TouchableOpacity,TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import { TouchableOpacity, TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import PhotoViewer from '../event/PhotoViewer';
 import testForURL from '../../../services/testForURL';
-import { Thumbnail, Button } from 'native-base';
+import { Thumbnail, Button, Text } from 'native-base';
+import moment from 'moment';
+import MediaSeparator from './MediaSeparator';
 
+let { height, width } = Dimensions.get('window');
 export default class Photo extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            showPhoto:false
+            showPhoto: false
         }
     }
     state = {}
@@ -20,33 +23,36 @@ export default class Photo extends Component {
         return this.state.showPhoto !== nextState.showPhoto
     }
     render() {
-        console.warn(this.props.photo)
-        return <View style={{ height: '100%',alignSelf: 'center', margin: '2%',}}>
+        //console.warn(this.props.photo)
+        return <View style={{ height: '100%', alignSelf: 'center' }}>
+            <View style={{flex:1,marginTop:5}}>
             <BleashupFlatList
                 backgroundColor={"transparent"}
-                numColumns={5}
+                numColumns={3}
                 firstIndex={0}
                 renderPerBatch={20}
                 initialRender={40}
                 numberOfItems={this.props.photo.length}
                 keyExtractor={(item, index) => item ? item.id : null}
                 renderItem={(item, index) => {
-                    console.warn("rendering itenmmm")
-                    return <Button transparent style={{height:'100%'}} onPress={() => {
+                    //console.warn("rendering itenmmm")
+                    return item.type === 'date_separator' ? <MediaSeparator item={item} style={{height:width/3,width:width/3,borderColor:"white",borderWidth:1}}>
+                    </MediaSeparator> : <Button transparent style={{height:width/3,width:width/3}} onPress={() => {
                         console.warn("Pressing touchable")
                         this.setState({
                             showPhoto: true,
-                            created_at:item.created_at,
+                            created_at: item.created_at,
                             photo: item.photo
                         })
-                    }}><View style={{ ...shadower(), margin: '2.5%', borderRadius: 10, alignSelf: 'center', }}>
-                            {testForURL(item.photo) ? <CacheImages style={{borderRadius: 5,}} source={{ uri: item.photo }} square thumbnails large></CacheImages> :
-                                <Thumbnail style={{borderRadius: 5,}} source={{ uri: item.photo }} square large></Thumbnail>}
-                    </View>
-                    </Button>
+                    }}><View style={{ ...shadower(),alignSelf: 'center', }}>
+                                {testForURL(item.photo) ? <CacheImages style={{borderColor:"white",borderWidth:1,height:width/3,width:width/3 }} source={{ uri: item.photo }} square thumbnails ></CacheImages> :
+                                    <Thumbnail style={{ borderColor:"white",borderWidth:1,height:width/3,width:width/3 }} source={{ uri: item.photo }} square ></Thumbnail>}
+                            </View>
+                        </Button>
                 }}
                 dataSource={this.props.photo}
             ></BleashupFlatList>
+        </View>
             {this.state.showPhoto ? <PhotoViewer created_at={this.state.created_at} open={this.state.showPhoto} photo={this.state.photo} hidePhoto={() => {
                 this.setState({
                     showPhoto: false

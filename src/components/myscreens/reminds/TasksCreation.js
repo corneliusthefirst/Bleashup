@@ -67,9 +67,11 @@ export default class TasksCreation extends Component {
         title: remind && remind.period ? moment(remind.period).format() : moment().format()
       });
     }) : stores.Reminds.loadRemind(this.props.remind_id ?
-      this.props.remind_id : "newRemindId").then(remind => {
+      this.props.remind_id : "newRemindId").then(rem => {
+        console.warn("remind from render ....",remind)
+        let remind = rem ? rem: request.Remind()
         this.setState({
-          currentRemind: remind ? remind : request.Remind(),
+          currentRemind:remind, 
           mounted: true,
           recurrent: remind && !(remind.recursive_frequency.interval === 1 && remind.recursive_frequency.frequency === 'yearly'),
           members: this.props.event.participant,
@@ -329,7 +331,7 @@ export default class TasksCreation extends Component {
   componentDidUpdate(prevProp, prevState) {
     let data = this.state.currentRemind.recursive_frequency.days_of_week ?
       this.state.currentRemind.recursive_frequency.days_of_week : [this.getCode(getDay(moment(this.state.currentRemind.period)))]
-    if(this.props.currentMembers !== prevProp.currentMembers){
+    if (this.props.currentMembers !== prevProp.currentMembers) {
       this.init()
     }
     if (this.props.remind_id !== prevProp.remind_id) {
@@ -527,12 +529,14 @@ export default class TasksCreation extends Component {
                         active
                         type="MaterialIcons"
                         name="date-range"
-                        style={{ color: "#1FABAB", marginTop: '-10%', }}
+                        style={{ color: "#1FABAB",  }}
                       />
                     </TouchableOpacity>
                   </View>
                   <View pointerEvents={this.state.ownership ? null : 'none'}>
-                    <Input editable={false} placeholder="select date of event" value={moment(this.state.date).format("dddd, MMMM Do YYYY")} style={{ color: "#696969" }} />
+                    <Text style={{ color: "#696969" }}>
+                      {this.state.date ? moment(this.state.date).format("dddd, MMMM Do YYYY") : 'set remind date'}
+                    </Text>
                   </View>
 
                   {this.state.isDateTimePickerVisible && <DateTimePicker
@@ -556,13 +560,7 @@ export default class TasksCreation extends Component {
                     </TouchableOpacity>
                   </View>
                   <View pointerEvents={this.state.ownership ? null : 'none'} >
-                    <Input editable={false} placeholder="select event time"
-                      value={moment(this.state.date).format('hh:mm:s a')} style={{ color: "#696969" }}
-                      value={moment(this.state.date).format('hh:mm:s a')} style={{ color: "#696969" }}
-                      value={moment(this.state.date).format('hh:mm:s a')} style={{ color: "#696969" }}
-                      value={moment(this.state.date).format('hh:mm:s a')} style={{ color: "#696969" }}
-                      value={moment(this.state.date).format('hh:mm:s a')} style={{ color: "#696969" }}
-                    />
+                    <Text style={{ color: "#696969" }}>{this.state.date ? moment(this.state.date).format('hh:mm:s a') : 'add remind time'}</Text>
                   </View>
 
                   {this.state.show && <DateTimePicker mode="time" value={defaultDate} display="default" onChange={this.setTime} />}
@@ -654,7 +652,7 @@ export default class TasksCreation extends Component {
                   </View></Item> : null}
                 <View>
                   <Item>
-                    <View pointerEvents={this.state.ownership ? null : 'none'} style={{ width: '60%' }}>
+                    <View pointerEvents={this.state.ownership ? null : 'none'} style={{ width: '40%' }}>
                       {this.state.currentRemind.status === "public" ?
                         <Button onPress={() => this.onChangedStatus()} transparent>
                           <Icon name="md-radio-button-on" //active={true}  type="Ionicons" style={{ color: "#0A4E52", alignSelf: "center", marginTop: "1%" }} 
@@ -720,7 +718,7 @@ export default class TasksCreation extends Component {
                 }}>
                   <Button
                     onPress={() => { this.addNewRemind() }} rounded>
-                    <Text style={{ color: "#FEFFDE" }}> Create </Text>
+                    <Text style={{ color: "#FEFFDE" }}>{"Add"}</Text>
                   </Button>
                 </View> : <View style={{ width: "22%", marginBottom: "1%", marginLeft: "72%", marginTop: "-8%" }}>
                   <Button style={{ width: "100%", borderRadius: 15, borderColor: "#1FABAB", backgroundColor: "#1FABAB", justifyContent: 'center', alignItem: 'center' }}

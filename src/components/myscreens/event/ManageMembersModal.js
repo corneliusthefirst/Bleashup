@@ -77,7 +77,7 @@ export default class ManageMembersModal extends PureComponent {
                     })
                 }}
                 onOpened={() => {
-                    stores.Contacts.getContacts().then(contacts => {
+                    stores.Contacts.getContacts(stores.LoginStore.user.phone).then(contacts => {
                         setTimeout(() => {
                             this.setState({
                                 contacts: uniqBy(this.props.participants, "phone").filter(ele => !Array.isArray(ele) && ele && ele.phone
@@ -91,24 +91,30 @@ export default class ManageMembersModal extends PureComponent {
                 }}
                 style={{
                     height: "90%",
-                    borderRadius: 8,borderTopLeftRadius: 0,borderTopRightRadius: 0,  width: "100%"
+                    borderRadius: 8, borderTopLeftRadius: 0, borderTopRightRadius: 0, width: "100%"
                 }}>
                 <View>{this.state.loaded ? <View>
                     <View style={{
                         width: "100%", height: 53,
                     }}>
                         <View style={{
-                            flexDirection: 'row', ...bleashupHeaderStyle, padding: '2%',
+                            flexDirection: 'row', ...bleashupHeaderStyle, paddingLeft: '1%',
                         }}>
-                            <View style={{flexDirection: 'row',width:'70%',alignItems: 'center',}}><CacheImages source={{ uri: stores.LoginStore.user.profile }} thumbnails small></CacheImages><Text style={{
-                                fontWeight: 'bold', fontStyle: 'italic', marginLeft: "2%",
-                                fontSize: 20, width: "65%"
-                            }}>{"Manage Participant"}</Text></View>
-                            <View style={{width:'30%'}}>
+                            <View style={{
+                                flexDirection: 'row',
+                                width: '90%',
+                                alignItems: 'center',
+                            }}><CacheImages
+                                source={{ uri: stores.LoginStore.user.profile }}
+                                thumbnails small></CacheImages>
+                                <Text style={{
+                                    fontWeight: 'bold', fontStyle: 'italic', marginLeft: "2%",
+                                    fontSize: 16, width: "65%"
+                                }}>{"Manage Participant"}</Text></View>
+                            <View style={{ width: '10%' }}>
                                 {this.state.selected.length > 0 && this.props.master ?
-                                    <TouchableOpacity onPress={() => requestAnimationFrame(() => this.apply())}><View style={{ flexDirection: 'row', marginTop: "2%", }}><Icon name={"trash"}
-                                        type={"EvilIcons"} style={{ color: "red", fontSize: 40, }}></Icon>
-                                        <Text style={{ fontStyle: 'italic', color: "red", fontWeight: 'bold', marginTop: "3%", }}>{"Ban"}</Text></View>
+                                    <TouchableOpacity style={{marginTop: '40%',}} onPress={() => requestAnimationFrame(() => this.apply())}>
+                                        <Text style={{ color: "red", fontWeight: 'bold', }}>{"Ban"}</Text>
                                     </TouchableOpacity> : null}
                             </View>
                         </View>

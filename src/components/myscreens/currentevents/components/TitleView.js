@@ -19,16 +19,18 @@ export default class TitleView extends Component {
     componentDidMount() {
     }
     navigateToEventDetails() {
-        stores.Events.isParticipant(this.props.Event.id, stores.Session.SessionStore.phone).then(status => {
+        stores.Events.isParticipant(
+            this.props.Event.id, 
+            stores.Session.SessionStore.phone).then(status => {
             if (status) {
                 this.props.navigation.navigate("Event", {
                     Event: find(stores.Events.events, { id: this.props.Event.id }),
                     tab: "EventDetails"
                 });
             } else {
-                this.props.openDetail()
+               this.props.openDetail && this.props.openDetail()
             }
-            this.props.seen()
+            this.props.seen && this.props.seen()
         })
     }
     render() {
@@ -56,34 +58,31 @@ export default class TitleView extends Component {
                             >
                                 {this.props.Event.about.title}{/*{" "}{this.props.Event.id}*/}
                             </Text>
-                            {this.props.Event.period ? <Title
+                            {this.props.Event.period ? <Text
+                                adjustsFontSizeToFit={true}
+                                ellipsizeMode={'tail'}
+                                numberOfLines={1}
                                 style={{
                                     fontSize: 12,
                                     color: this.props.Event.closed ? "red" : dateDiff(this.props.Event) > 0 ? "gray" : "#1FABAB",
-                                    fontStyle: 'italic',
                                     fontWeight: this.props.Event.closed ? "bold" : '400',
                                 }}
                                 note
                             >
                                 {this.props.Event.closed ? "Closed" : writeDateTime(this.props.Event)}
-                            </Title> : null}
-                        </View>
-                        <View style={{}}>
+                            </Text> : null}
+
                             {this.props.Event.interval === 1 && this.props.Event.frequency === 'yearly'
-                                ? null : <View style={
-                                    {
-                                        flexDirection: "column"
-                                    }
-                                }>
+                                ? null :
                                     <View>
                                         <Text ellipsizeMode={'tail'} numberOfLines={1} style={{
                                             color: "#696969",
-                                            fontStyle: 'italic',
+                                            fontSize:12
                                         }} note>
                                             {`Every${this.props.Event.interval > 1 ? " " + this.props.Event.interval : ''} ${writeInterval(this.props.Event.frequency)} till ${moment(this.props.Event.recurrence ? this.props.Event.recurrence : null).format("dddd, MMMM Do YYYY")}`}
                                         </Text>
                                     </View>
-                                </View>}
+                                }
                         </View>
                     </TouchableOpacity>
                 </View>

@@ -85,7 +85,7 @@ export default class Join extends Component {
                                 type="MaterialCommunityIcons"
                                 style={{
                                     color: this.state.participant ? "#54F5CA" : "#bfc6ea",
-                                    fontSize: 35
+                                    fontSize: 40
                                 }}
                             />
                                                 {/*<View style={{ marginTop: 5 }}>

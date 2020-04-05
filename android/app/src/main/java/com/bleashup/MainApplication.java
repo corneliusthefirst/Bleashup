@@ -2,6 +2,8 @@ package com.bleashup.bleashup;
 
 import android.app.Application;
 import com.facebook.react.ReactApplication;
+import com.reactnativecommunity.rnpermissions.RNPermissionsPackage;
+import org.reactnative.camera.RNCameraPackage;
 import com.swmansion.reanimated.ReanimatedPackage;
 import com.horcrux.svg.SvgPackage;
 import com.reactnative.ivpusic.imagepicker.PickerPackage;
@@ -49,6 +51,8 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
             new MainReactPackage(),
+            new RNPermissionsPackage(),
+            new RNCameraPackage(),
             new ReanimatedPackage(),
             new SvgPackage(),
             new RNFFmpegPackage(),

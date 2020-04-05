@@ -60,6 +60,8 @@ export default class Commitee extends Component {
         }, 100)
     }
     render() {
+        //console.warn(this.props.commitees,this.props.commitees.length)
+
         return (this.state.loaded ?
             <View style={{ height: "100%", }}>
                 <View style={{
@@ -74,23 +76,23 @@ export default class Commitee extends Component {
                             fontWeight: 'bold',
                             alignSelf: 'flex-start',
                             fontStyle: 'normal',
-                            marginLeft: 10, fontSize: 22,
-                            marginBottom: "3%",
+                            marginLeft: 10, 
+                            fontSize: 20,
                         }}>Committees</Title>
                 </View>
                     <View>
                         <TouchableOpacity onPress={() => requestAnimationFrame(() => { this.props.showCreateCommiteeModal() })}>
-                            <Icon style={{ marginTop: "10%", color: "#FEFFDE" }}
+                            <Icon style={{ marginTop: "20%", color: "#FEFFDE",fontSize:22 }}
                                 name="pluscircle" type="AntDesign"></Icon></TouchableOpacity>
                     </View>
                 </View>
                 <View>{this.state.refresh ? null :
                     <View style={{height:'97%',}}>
                         <BleashupFlatList
-                        backgroundColor={'#FEFFDE'}
-                        style={{
-                            width: '98%', borderBottomRightRadius: 1,borderTopRightRadius: 5,margin: '1%', ...shadower(1),
-                            height:256
+                        backgroundColor={'white'}
+                        style={{borderTopRightRadius: 5,
+                            width: '100%', borderBottomRightRadius: 1, 
+                            height: 700
                         }}
                             dataSource={union([this.generalCommitee], uniq(this.props.commitees))}
                             keyExtractor={(item, index) => index.toString()}
@@ -98,6 +100,8 @@ export default class Commitee extends Component {
                                 <CommiteeItem
                                     computedMaster={this.props.computedMaster}
                                     key={index.toString()}
+                                    ImICurrentCommitee={item.id && item.id === GState.currentCommitee ||
+                                         item === GState.currentCommitee}
                                     master={this.props.master}
                                     event_id={this.props.event_id}
                                     join={(id) => { this.props.join(id) }}
@@ -114,7 +118,7 @@ export default class Commitee extends Component {
                             }
                             firstIndex={0}
                             renderPerBatch={7}
-                            initialRender={5}
+                            initialRender={14}
                             numberOfItems={this.props.commitees.length}
                         /></View>}
                 </View>

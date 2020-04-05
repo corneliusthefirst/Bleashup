@@ -16,23 +16,18 @@ export default class SwiperCard extends Component {
                     <CardItem>
                         <Text note>description</Text>
                     </CardItem>
-                    <CardItem style={{ height: 40 }}>
-                        <Text style={{ color: "#1FABAB", fontSize: 18,marginLeft:24 }}>{this.props.item.event_title}</Text>
-                    </CardItem>
                     <CardItem cardBody>
-                        <Icon name="caretleft" type="AntDesign" style={{ color: "#1FABAB" }}
-                            onPress={this.props.swipeleft} />
+                        {/*<Icon name="caretleft" type="AntDesign" style={{ color: "#1FABAB" }}
+    onPress={this.props.swipeleft} />*/}
 
                       
-                        <Text style={{ height: "100%", flex: 1,fontStyle:'italic',fontWeight:"600" }} >
+                        <Text style={{ height: "100%", flex: 1,fontWeight:"400",margin: 5, }} >
                             {this.props.descriptionStartData}
                       {this.props.descriptionEndData != "" ? <Text style={{ color: "blue" }} onPress={this.props.onOpen} > ...view all</Text>:
                       ("")}
                         </Text>
-                      
-
-                        <Icon name="caretright" style={{ color: "#1FABAB" }} type="AntDesign"
-                            onPress={this.props.swiperight} />
+                        {/*<Icon name="caretright" style={{ color: "#1FABAB" }} type="AntDesign"
+  onPress={this.props.swiperight} />*/}
 
                     </CardItem>
                     <Modal
@@ -44,8 +39,8 @@ export default class SwiperCard extends Component {
                     >
                        <ScrollView nestedScrollEnabled style={{}}>
                         <TouchableOpacity onPress={this.props.onClosed}>
-                        <Text style={{fontStyle:'italic',fontWeight:"600",color:"green"}}>{this.props.descriptionStartData}...</Text>
-                        <Text style={{fontStyle:'italic',fontWeight:"600"}}>...{this.props.descriptionEndData}</Text>
+                        <Text style={{fontWeight:"400",color:"green"}}>{this.props.descriptionStartData}...</Text>
+                        <Text style={{fontWeight:"400"}}>...{this.props.descriptionEndData}</Text>
                          </TouchableOpacity>
                        </ScrollView>
                     </Modal>

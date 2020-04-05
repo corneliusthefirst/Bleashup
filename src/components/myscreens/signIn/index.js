@@ -29,6 +29,7 @@ import stores from "../../../stores/index";
 import globalState from "../../../stores/globalState";
 import firebase from 'react-native-firebase';
 import VerificationModal from "../invitations/components/VerificationModal";
+import connect from '../../../services/tcpConnect';
 @observer
 export default class SignInView extends Component {
   constructor(props) {
@@ -102,7 +103,11 @@ export default class SignInView extends Component {
       stores.Session.initialzeStore().then(session => {
         globalState.loading = false;
         this.setState({ isModalOpened: false })
-        this.props.navigation.navigate("Home");
+        connect.init().then(socket => {
+          this.props.navigation.navigate("Home");
+        }).catch(() =>{
+          console.warn("error while connecting socket")
+        })
       });
     });
   }

@@ -19,7 +19,6 @@ import { reject } from "lodash"
 import EventChat from "../eventChat";
 import Contributions from "../contributions";
 import SWView from './SWView';
-import SideMenu from 'react-native-side-menu';
 import ChangeLogs from "../changelogs";
 import ParticipantModal from "../../ParticipantModal";
 import SelectableContactList from "../../SelectableContactList";
@@ -54,6 +53,8 @@ import TasksCreation from "../reminds/TasksCreation";
 import testForURL from '../../../services/testForURL';
 import ProfileModal from "../invitations/components/ProfileModal";
 import VideoViewer from '../highlights_details/VideoModal';
+import Drawer from 'react-native-drawer'
+import shadower from "../../shadower";
 
 const screenWidth = Math.round(Dimensions.get('window').width);
 
@@ -80,6 +81,7 @@ export default class Event extends Component {
       isManagementModalOpened: false,
       roomMembers: this.event.participant,
       working: false,
+      isChat: true,
       showNotifiation: false,
     };
     this.backHandler = null
@@ -125,11 +127,19 @@ export default class Event extends Component {
     emitter.emit("leave-chat")
     this.setState({
       currentPage: "Reminds",
+      isChat: false,
       currentRemindMembers: members
     })
   }
-  currentWidth = screenWidth * 2.7 / 3
-  isOpen = this.props.navigation.getParam('isOpen') ? this.props.navigation.getParam('isOpen') : false
+  openMenu(){
+    this.isOpen = !this.isOpen
+    this.setState({
+      mounted:true
+    })
+  }
+  currentWidth = .4
+  //normalWidth = 
+  isOpen = false
   renderMenu(NewMessages) {
     //console.error(this.props.navigation.getParam("Event").participant)
     switch (this.state.currentPage) {
@@ -139,6 +149,9 @@ export default class Event extends Component {
             working: true
           })
         }}
+          openMenu={() => {
+            this.openMenu()
+          }}
           mention={(data) => this.mentionPost(data)}
           updateLocation={(loc) => this.updateActivityLocation(loc)}
           updateDesc={(newDes) => {
@@ -164,6 +177,7 @@ export default class Event extends Component {
             working: false
           })
         }}
+          openMenu={() => this.openMenu()}
           clearCurrentMembers={() => {
             this.setState({
               currentRemindMembers: null
@@ -186,6 +200,7 @@ export default class Event extends Component {
           activity_name={this.event.about.title}
           room_type={"activity"} //!! 'relation' if it's a relation
           //activity_name={this.event.about.title}
+          openMenu={() => this.openMenu()}
           showLoader={() => this.startLoader()}
           addRemind={(members) => this.addRemindForCommittee(members)}
           stopLoader={() => this.stopLoader()}
@@ -223,9 +238,10 @@ export default class Event extends Component {
                 , "phone")
             })
           }} {...this.props}
-          showContacts={(conctacts) => {
+          showContacts={(conctacts,title) => {
             this.setState({
               isContactListOpened: true,
+              title:title,
               contactList: conctacts
             })
           }}></EventChat>
@@ -236,6 +252,7 @@ export default class Event extends Component {
           propcessAndFoward={(change) => this.propcessAndFoward(change)}
           mention={(data) => this.mention(data)}
           restore={(data) => this.restore(data)}
+          openMenu={() => this.openMenu()}
           openPhoto={(url) => this.openPhoto(url)}
           master={this.master}
           isM={this.state.isMe}
@@ -410,7 +427,7 @@ export default class Event extends Component {
         change: change,
         showNotifiation: true
       })
-    if (change.changed.toLowerCase().includes("commitee")) {
+    if (change.changed.toLowerCase().includes("committee")) {
       if (change.changed.toLowerCase().includes("created")) this.event.commitee.unshift(change.new_value.new_value)
       this.refreshCommitees()
       let commitee = newValue
@@ -482,9 +499,11 @@ export default class Event extends Component {
     GState.reply = data
     //GState.currentCommitee = this.event.id
     Vibration.vibrate(this.duration)
+    this.isOpen = true
     emitter.emit('mentioning')
     this.setState({
-      currentPage: 'EventChat'
+      currentPage: 'EventChat',
+      isChat: true
     })
     //this.swapChats(this.generalCommitee(this.event))
   }
@@ -558,6 +577,7 @@ export default class Event extends Component {
     this.backHandler = BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this))
   }
   user = null
+  isOpen = true
   event = this.props.navigation.getParam("Event")
   handleBackButton() {
     console.warn("handling backpress from simple activity")
@@ -575,18 +595,19 @@ export default class Event extends Component {
   }
   componentDidMount() {
     if (!this.event.calendared && this.event.period) {
-      this.setState({
-        isSynchronisationModalOpned: true
-      })
-    } else if (!this.event.configured) {
+      this.addToCalendar()
+    }/* else if (!this.event.configured) {
       this.setState({
         isSettingsModalOpened: true
       })
-    }
+    }*/
+    let page = this.props.navigation.getParam("tab")
     this.setState({
-      currentPage: this.props.navigation.getParam("tab"),
+      isChat: page === 'EventChat' ? true : false,
+      currentPage: page,
       mounted: true
     })
+    this.isOpen = page === 'EventChat' ? true : false
 
     this.refreshePage()
   }
@@ -625,6 +646,7 @@ export default class Event extends Component {
   componentWillUnmount() {
     this.unmounted = true
     Pickers.CleanAll()
+    GState.reply = null
     console.warn("unMounting")
     GState.currentCommitee = null
     this.backHandler.remove()
@@ -634,6 +656,7 @@ export default class Event extends Component {
     this.setState({ scrollEnabled: scrollEnabled })
   }
   showMembers() {
+    this.isOpen = false
     this.setState({
       isManagementModalOpened: true,
       partimembers: this.event.participant
@@ -645,7 +668,7 @@ export default class Event extends Component {
     this.setState({
       isSelectableListOpened: true,
       isCommiteeModalOpened: false,
-      title: "Select Members for the new Commitee",
+      title: "Select Members",
       members: this.event.participant,
       notcheckall: !data.publicState,
       tempCommiteeName: data.commiteeName,
@@ -682,7 +705,8 @@ export default class Event extends Component {
       Requester.addCommitee(commitee).then(() => {
         !this.event.commitee || this.event.commitee.length <= 0 ? this.event.commitee = [commitee.id] :
           this.event.commitee.unshift(commitee.id)
-        console.warn('marking as not working!!')
+          this.swapChats(commitee)
+        //console.warn('marking as not working!!')
         this.setState({
           newCommitee: true,
           working: false
@@ -825,6 +849,7 @@ export default class Event extends Component {
   }
   swapChats(commitee) {
     this.isOpen = false
+    GState.currentCommitee = commitee.id
     this.setState({
       roomID: commitee.id,
       roomName: commitee.name,
@@ -839,7 +864,7 @@ export default class Event extends Component {
       this.setState({
         fresh: false
       })
-    }, 100)
+    }, 20)
 
   }
   invite(members) {
@@ -1037,6 +1062,7 @@ export default class Event extends Component {
     }
   }
   inviteContacts() {
+    this.isOpen = false
     this.setState({
       isInviteModalOpened: true
     })
@@ -1048,19 +1074,22 @@ export default class Event extends Component {
       currentPage: "ChangeLogs",
       isMe: member.phone === stores.LoginStore.user.phone ? true : false,
       isManagementModalOpened: false,
+      isChat: false,
       activeMember: member.phone,
       forMember: member.nickname
     })
     this.refreshePage()
   }
   openSettingsModal() {
+    this.isOpen = false
     this.setState({
       isSettingsModalOpened: true
     })
   }
-  openPhotoSelectorModal() {
+  openPhotoSelectorModal(photo) {
     this.setState({
-      isSelectPhotoInputMethodModal: true
+      isSelectPhotoInputMethodModal: true,
+      photo: photo
     })
   }
   leaveActivity() {
@@ -1168,14 +1197,14 @@ export default class Event extends Component {
     })
     let alarms = pattern && pattern.length > 0 ? pattern : [{
       date: Platform.OS === 'ios'
-        ? moment(Bevent.period)
+        ? moment(this.event.period)
           .subtract(600, 'seconds')
-          .toISOString() : parseInt(moment(Bevent.period).diff(moment(Bevent.period).subtract(600, 'seconds'), 'minutes'))
+          .toISOString() : parseInt(moment(this.event.period).diff(moment(this.event.period).subtract(600, 'seconds'), 'minutes'))
     }, {
       date: Platform.OS === 'ios'
-        ? moment(Bevent.period)
+        ? moment(this.event.period)
           .subtract(1, 'hours')
-          .toISOString() : parseInt(moment(Bevent.period).diff(moment(Bevent.period).subtract(1, 'hours'), 'minutes'))
+          .toISOString() : parseInt(moment(this.event.period).diff(moment(this.event.period).subtract(1, 'hours'), 'minutes'))
     }]
     CalendarServe.saveEvent(this.event, alarms).then(id => {
       stores.Events.markAsCalendared(this.event.id, id, alarms).then(() => {
@@ -1242,76 +1271,165 @@ export default class Event extends Component {
     })
   }
   setCurrentPage(page, data) {
-    this.isOpen = false
+    if (page === 'EventChat') {
+      this.setState({
+        isChat: true
+      })
+    } else {
+      this.isOpen = false
+      this.setState({
+        isOpen: !this.state.isOpen
+      })
+      setTimeout(() => {
+        this.setState({
+          currentPage: page,
+          activeMember: null,
+          isChat: false,
+          fresh: false,
+          isMe: false,
+          forMember: null
+        })
+      }, 250)
+    }
+  }
+  unsync() {
     this.setState({
-      currentPage: page,
-      activeMember: null,
-      fresh: false,
-      isMe: false,
-      forMember: null
+      isSynchronisationModalOpned: false
+    })
+    Requester.unsyncActivity(this.event).then(() => {
+      this.initializeMaster()
     })
   }
   goback() {
     this.props.navigation.goBack()
   }
   render() {
-    //console.error(this.event.id)
-    //console.warn(this.event.calendar_id)
     StatusBar.setHidden(false, true)
-    return (<SideMenu style={{ backgroundColor: "#FEFEDE", }} autoClosing={true} onMove={(position) => {
-
-    }} bounceBackOnOverdraw={false} onChange={(position) => {
-      this.isOpen = position
-    }} isOpen={this.isOpen} openMenuOffset={this.currentWidth}
-      menu={<View style={{ backgroundColor: '#FEFFDE', }}><SWView
-        navigateHome={() => {
-          this.goback()
-        }}
-        computedMaster={this.computedMaster}
-        ref="swipperView"
-        publish={() => this.publish()}
-        showActivityPhotoAction={() => this.master ? this.openPhotoSelectorModal() : this.showPhoto(this.event.background)}
-        leaveActivity={() => this.member ? this.setState({
-          isAreYouSureModalOpened: true,
-          warnDescription: "Are You Sure You Want To Leave This Activity ?",
-          warnTitle: "Leave Activity",
-          callback: this.leaveActivity.bind(this)
-        })/*this.leaveActivity()*/ : Toast.show({ text: "You are not a  member anymore !" })}
-        openSettingsModal={() => this.openSettingsModal()}
-        ShowMyActivity={(a) => this.checkActivity({ phone: stores.LoginStore.user.phone })}
-        inviteContacts={() => this.computedMaster || this.event.public ? this.inviteContacts() : Toast.show({ text: "You don't have enough priviledges to invite your contacts to this activity ", duration: 4000 })}
-        join={(id) => { this.joinCommitee(id) }}
-        leave={(id) => { this.leaveCommitee(id) }}
-        removeMember={(id, members) => { this.removeMembers(id, members) }}
-        addMembers={(id, currentMembers) => this.addCommiteeMembers(id, currentMembers)}
-        publishCommitee={(id, stater) => { this.publishCommitee(id, stater) }}
-        editName={(newName, id, currentName) => this.computedMaster ? this.editName(newName, id) : Toast.show({ text: "Connot Update This Commitee" })}
-        swapChats={(room) => this.swapChats(room)} phone={stores.LoginStore.user.phone}
-        commitees={this.event.commitee ? this.event.commitee : []}
-        showCreateCommiteeModal={() => {
-          if (!this.state.working && this.computedMaster) {
-            this.setState({
-              isCommiteeModalOpened: true
-            })
-          } else {
-            Toast.show({ text: "You don't have enough priviledges to add a commiee ", duration: 4000 })
+    return (<Drawer
+      useInteractionManager={true}
+      tweenHandler={this.state.currentPage === 'EventChat' ? null : Drawer.tweenPresets.parallax}
+      open={this.isOpen}
+      onOpen={() => {
+        this.isOpen = true
+      }}
+      onClose={() => {
+        this.isOpen = false
+        setTimeout(() => {
+          this.state.currentPage !== 'EventChat' ? this.setState({
+            isChat: false,
+          }) : null
+        }, 50)
+      }}
+      tapToClose={true}
+      panOpenMask={.1}
+      //negotiatePan={true}
+      //acceptPan={true}
+      //captureGestures={true}
+      acceptDoubleTap={true}
+      panOpenMask={.2}
+      elevation={this.state.isChat ? 7 : null}
+      openDrawerOffset={this.state.isChat ? .23 : .815}
+      type={this.state.isChat ? "overlay" : "static"}
+      styles={
+        {
+          drawer: {
+            shadowColor: '#000000',
+            shadowOpacity: 0.8,
+            shadowRadius: 3
           }
+          ,
+          main: {}
         }}
-        showMembers={() => this.showMembers()}
-        setCurrentPage={(page, data) => {
-          this.setCurrentPage(page, data)
-        }
-        }
-        currentPage={this.state.currentPage}
-        width={this.currentWidth}
-        event={this.event}
-        master={this.master}
-        public={this.event.public}></SWView></View>}>
+      autoClosing={false}
+      onMove={(position) => {
+
+      }}
+      bounceBackOnOverdraw={false}
+      onChange={(position) => {
+        this.isOpen = position
+      }} isOpen={this.isOpen}
+      //initializeOpen={true}
+      openMenuOffset={this.currentWidth}
+      content={<View
+        style={{ backgroundColor: 'white', }}><SWView
+          navigateHome={() => {
+            this.setState({
+              isChat:false
+            })
+            //this.goback()
+          }}
+          exitActivity={() => {
+            this.goback()
+          }}
+          hideMenu={() => {
+            this.isOpen = false 
+            this.setState({
+              
+            })
+          }}
+          period={this.event.period}
+          calendared={this.event.calendar_id ? true : false}
+          handleSync={() => {
+            this.isOpen = false
+            this.event.period ? this.setState({
+              isSynchronisationModalOpned: true,
+            }) : Toast.show({ text: 'cannot sync this activity to your calendar', duration: 4000 })
+          }}
+          isChat={this.state.isChat}
+          computedMaster={this.computedMaster}
+          ref="swipperView"
+          publish={() => this.publish()}
+          showActivityPhotoAction={() => this.master ? this.openPhotoSelectorModal(this.event.background) : this.showPhoto(this.event.background)}
+          leaveActivity={() => {
+            this.isOpen = false
+            this.member ? this.setState({
+            isAreYouSureModalOpened: true,
+            warnDescription: "Are you sure you want to leave this activity ?",
+            warnTitle: "Leave activity",
+            callback: this.leaveActivity.bind(this)
+            }) : Toast.show({ text: "You are not a  member anymore !" })
+          }}
+          openSettingsModal={() => this.openSettingsModal()}
+          ShowMyActivity={(a) => this.checkActivity({ phone: stores.LoginStore.user.phone })}
+          inviteContacts={() => this.computedMaster || this.event.public ? this.inviteContacts() : Toast.show({ text: "You don't have enough priviledges to invite your contacts to this activity ", duration: 4000 })}
+          join={(id) => { this.joinCommitee(id) }}
+          leave={(id) => { this.leaveCommitee(id) }}
+          removeMember={(id, members) => { this.removeMembers(id, members) }}
+          addMembers={(id, currentMembers) => this.addCommiteeMembers(id, currentMembers)}
+          publishCommitee={(id, stater) => { this.publishCommitee(id, stater) }}
+          editName={(newName, id, currentName) => this.computedMaster ? this.editName(newName, id) : Toast.show({ text: "Connot Update This Commitee" })}
+          swapChats={(room) => this.swapChats(room)} phone={stores.LoginStore.user.phone}
+          commitees={this.event.commitee ? this.event.commitee : []}
+          showCreateCommiteeModal={() => {
+            //this.isOpen = false
+            if (!this.state.working && this.computedMaster) {
+              this.setState({
+                isCommiteeModalOpened: true
+              })
+            } else {
+              Toast.show({ text: "You don't have enough priviledges to add a commitee ", duration: 4000 })
+            }
+          }}
+          showMembers={() => this.showMembers()}
+          setCurrentPage={(page, data) => {
+            this.setCurrentPage(page, data)
+          }
+          }
+          currentPage={this.state.currentPage}
+          //width={this.state.isChat ? this.normalWidth : this.currentWidth}
+          event={this.event}
+          master={this.master}
+          public={this.event.public}></SWView></View>}>
       <View style={{
         height: "100%",
+        // ...shadower(12),
         backgroundColor: "white"
       }}>
-        {this.state.fresh ? <View style={{ height: '100%', width: '100%', backgroundColor: '#FEFFDE', }}><Spinner size={"small"}></Spinner></View> :
+        {this.state.fresh ? <View style={{
+          height: '100%', marginLeft: '-1%',
+          width: '100%',
+          backgroundColor: '#FEFFDE',
+        }}></View> :
           this.renderMenu()
         }
         {this.state.showNotifiation ? <View style={{
@@ -1381,6 +1499,7 @@ export default class Event extends Component {
         })}></CreateCommiteeModal>}
         {!this.state.isContactListOpened ? null : <ContactListModal
           contacts={this.state.contactList}
+          title={this.state.title}
           isOpen={this.state.isContactListOpened}
           onClosed={() => {
             this.setState({
@@ -1454,6 +1573,10 @@ export default class Event extends Component {
               isSynchronisationModalOpned: false
             })
           }}
+          unsync={() => {
+            this.unsync()
+          }}
+          synced={this.event.calendar_id ? true : false}
           isOpen={this.state.isSynchronisationModalOpned}
           callback={() => this.setState({
             isSetPatternModalOpened: true,
@@ -1559,7 +1682,7 @@ export default class Event extends Component {
           })
         }}></VideoViewer> : null}
       </View>
-    </SideMenu>
+    </Drawer>
     );
   }
 }

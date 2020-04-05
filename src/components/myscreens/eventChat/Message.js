@@ -31,6 +31,7 @@ export default class Message extends Component {
 
     constructor(props) {
         super(props)
+        let isDiff = this.props.PreviousMessage && this.props.PreviousMessage.sender && this.props.PreviousMessage.sender.phone !== this.props.message.sender.phone
         this.state = {
             showTime: false,
             disabledSwipeout: true,
@@ -40,12 +41,33 @@ export default class Message extends Component {
                 this.props.message.sender &&
                 this.props.message.sender.nickname,
             sender: !(this.props.message.sender.phone == this.props.user),
-            different: this.props.PreviousSenderPhone !== this.props.message.sender.phone
-                && !(this.props.message.sender.phone == this.props.user),
-            time: moment(this.props.message.created_at).format("HH:mm"),
+            different: isDiff,
+            time: !isDiff && this.props.PreviousMessage && 
+            this.props.message && 
+                moment(this.props.message.created_at).format('X') - moment(this.props.PreviousMessage.created_at).format('X') < 60 ? "" : moment(this.props.message.created_at).format("HH:mm"),
             creator: (this.props.message.sender.phone == this.props.creator),
             replying: false,
             loaded: false
+        }
+    }
+    placeHolder = {
+        'audio': {
+            height:50,
+        },
+        'photo': {
+            height: 250,
+        },
+        'video':{
+            height: 250,
+        },
+        'attachement':{
+            height: 50,
+        },
+        'vote':{
+            height: 250,
+        },
+        'text':{
+            height: 100,
         }
     }
     chooseComponent(data, index, sender) {
@@ -116,7 +138,7 @@ export default class Message extends Component {
             this.setState({
                 loaded: true
             })
-        }, 50 * this.props.delay)
+        }, 5 * this.props.delay)
     }
     slept = false
     openingSwipeout() {
@@ -133,18 +155,20 @@ export default class Message extends Component {
                 openRight: true
             })
         }
-        if (this.replying) {
-            if (!this.closed) {
-                this.closing++
-                this.closed = true
-                this.handleReply()
-                this.closing = 0
-                setTimeout(() => {
-                    this.closed = false
-                }, 1000)
+        setTimeout(() => {
+            if (this.replying) {
+                if (!this.closed) {
+                    this.closing++
+                    this.closed = true
+                    this.handleReply()
+                    this.closing = 0
+                    setTimeout(() => {
+                        this.closed = false
+                    }, 1000)
+                }
+                this.replying = false
             }
-            this.replying = false
-        }
+        }, 50)
     }
     timeoutID = null
     closing = 0
@@ -224,10 +248,10 @@ export default class Message extends Component {
     }
     prevVote = null
     shouldComponentUpdate(nextProps, nextState, nextContext) {
-        peVote = this.prevVote ? JSON.parse(this.prevVote) : this.props.votes 
-        && this.props.votes.length > 0 && this.props.message.vote &&
+        peVote = this.prevVote ? JSON.parse(this.prevVote) : this.props.votes
+            && this.props.votes.length > 0 && this.props.message.vote &&
             find(this.props.votes, { id: this.props.message.vote.id })
-        newVote = nextProps.votes && nextProps.votes.length > 0 && nextProps.message.vote && 
+        newVote = nextProps.votes && nextProps.votes.length > 0 && nextProps.message.vote &&
             find(nextProps.votes, { id: nextProps.message.vote.id })
         let voter = (peVote && newVote && peVote.voter && newVote.voter &&
             newVote.voter.length !== peVote.voter.length)
@@ -239,6 +263,7 @@ export default class Message extends Component {
             this.props.received !== nextProps.received ||
             voter || votePeriod ||
             this.state.loaded !== nextState.loaded ||
+            this.props.messagelayouts && this.props.messagelayouts[this.props.message.id] !== nextProps.messagelayouts[nextProps.message.id] ||
             this.props.message.id !== nextProps.message.id
     }
     iconStyles = {
@@ -262,17 +287,19 @@ export default class Message extends Component {
         return this.props.message.type === 'vote'
     }
     render() {
+        //console.warn("here",this.props.message.sent,this.props.received);
+
         topMostStyle = {
             marginLeft: this.state.sender && !this.isVote() ? '1%' : this.isVote ? '3.5%' : 0,
             marginRight: !this.state.sender && !this.isVote() ? '1%' : 0,
-            marginTop: this.state.different ? "1.5%" : ".3%",
+            marginTop: this.state.different ? "4%" : '1.5%',
             //marginBottom: "0.5%",
             alignSelf: this.isVote() ? "center" : this.state.sender ? 'flex-start' : 'flex-end',
         }
         let color = this.isVote() ? "#FEFFDE" : this.state.sender ? '#D0FEEB' : '#9EEDD3'
         GeneralMessageBoxStyle = {
-            maxWidth: this.isVote() ? "96%" : 300, flexDirection: 'column', minWidth: 120,
-            minHeight: 10, overflow: 'hidden', borderBottomLeftRadius: 10, borderColor: color,
+            maxWidth: this.isVote() ? "96%" : 300, flexDirection: 'column', minWidth: 200,
+            minHeight: 20, overflow: 'hidden', borderBottomLeftRadius: 10, borderColor: color,
             borderTopLeftRadius: this.state.sender && !this.isVote() ? 0 : 10,
             // borderWidth: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text)?.7:0:0,
             backgroundColor: color, ...shadower(3),
@@ -292,7 +319,10 @@ export default class Message extends Component {
             // backgroundColor: color,
         }
         placeholderStyle = {
-            ...topMostStyle, height: 100, backgroundColor: color, borderBottomLeftRadius: 10, borderColor: color,
+            ...topMostStyle, ... this.props.messagelayouts && this.props.messagelayouts[this.props.message.id] && this.props.messagelayouts[this.props.message.id].width ? 
+            this.props.messagelayouts[this.props.message.id] : 
+            this.placeHolder[this.props.message.type], 
+            backgroundColor: color, borderBottomLeftRadius: 10, borderColor: color,
             borderTopLeftRadius: this.state.sender ? 0 : 10,// borderWidth: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text)?.7:0:0,
             backgroundColor: color, ...shadower(2),
             alignSelf: this.isVote() ? 'center' : this.state.sender ? 'flex-start' : 'flex-end',
@@ -319,7 +349,7 @@ export default class Message extends Component {
                         }]}
                         style={{ backgroundColor: 'transparent', width: "100%" }}>
                         <View>
-                            <View style={GeneralMessageBoxStyle}>
+                            <View onLayout={(e) => this.props.setCurrentLayout && this.props.setCurrentLayout(e.nativeEvent.layout)} style={GeneralMessageBoxStyle}>
                                 <View>
                                     <View style={senderNameStyle}>
                                         <TouchableWithoutFeedback onLongPress={() => {
@@ -330,7 +360,7 @@ export default class Message extends Component {
                                             <TouchableOpacity onLongPress={() => {
                                                 this.handLongPress()
                                             }} onPress={() => {
-                                                this.props.showProfile(this.message.sender.phone)
+                                                this.props.showProfile(this.props.message.sender.phone.replace("+", "00"))
                                             }}>{this.state.different ? <Text style={nameTextStyle}
                                                 note>{" "}{this.state.sender_name}</Text> : <Text>{"         "}</Text>}</TouchableOpacity> : null}<Right>
                                                     {!this.state.sender ? <Text note
@@ -354,7 +384,7 @@ export default class Message extends Component {
                                             }} onLongPress={() => {
                                                 this.handLongPress()
                                             }} >
-                                                <View>
+                                                <View style={{ margin: '1%', }}>
                                                     {this.chooseComponent(this.props.message, this.props.message.id, this.state.sender)}
                                                 </View>
                                             </TouchableWithoutFeedback>
@@ -377,6 +407,7 @@ export default class Message extends Component {
                                                         }}>
                                                         {this.state.time}{"    "}</Text> : null}
                                                 </View>
+                                                <Text>{this.props.received.toString()} {JSON.stringify(this.props.message.received)}</Text>
                                                 <View style={{
                                                     backgroundColor: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text) ? color : 'transparent' : 'transparent',
                                                 }}>{!this.state.sender ? this.props.message.sent ? this.props.received ?

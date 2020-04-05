@@ -82,24 +82,24 @@ export default class InviteParticipantModal extends PureComponent {
                 }}>
                 <View>{this.state.loaded ? <View>
                     <View style={{
-                        width: "100%", height: 53, 
-                        
+                        width: "100%", height: 53,
+
                     }}>
-                        <View style={{  flexDirection: 'row',...bleashupHeaderStyle,padding: '2%',}}>
-                            <View style={{ width: "80%", flexDirection: 'column', }}>
+                        <View style={{ flexDirection: 'row', ...bleashupHeaderStyle, padding: '2%', }}>
+                            <View style={{ width: "85%", flexDirection: 'column', }}>
                                 <Text style={{
-                                    fontWeight: 'bold', 
-                                    fontSize: 20,
+                                    fontWeight: 'bold',
+                                    fontSize: 18,
                                 }}>{"Select New Members"}</Text><Text note style={{
                                     fontSize: 14, fontStyle: 'italic',
                                 }}>{this.state.selected.length}{" members and "}
                                     {this.state.selected.filter(ele => ele.master == true).length}{" master"}</Text></View>
-                            <View style={{ width: "20%" }}><Button transparent>
-                                <View>
-                                    <TouchableOpacity onPress={() => requestAnimationFrame(() => this.props.invite(this.state.selected))}><Icon type={"EvilIcons"} style={{ fontSize: 50, marginBottom: "6%", }} name={"sc-telegram"}></Icon>
-                                    </TouchableOpacity>
-                                </View>
-                            </Button></View>
+                            <View style={{ width: "15%" }}>
+                                <TouchableOpacity onPress={() => requestAnimationFrame(() => 
+                                    this.props.invite(this.state.selected))}><Icon 
+                                    type={"EvilIcons"} style={{ fontSize: 50, color:'#1FABAB' }} name={"sc-telegram"}></Icon>
+                                </TouchableOpacity>
+                            </View>
                         </View>
                     </View>
                     <View style={{ height: "90%" }}>

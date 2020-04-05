@@ -10,7 +10,8 @@ import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import GState from '../../../stores/globalState';
 import FileViewer from 'react-native-file-viewer';
 import FileExachange from '../../../services/FileExchange';
-
+import rnFetchBlob from 'rn-fetch-blob';
+const { fs } = rnFetchBlob
 export default class FileAttarchementUploader extends Component {
     constructor(props) {
         super(props);
@@ -42,9 +43,10 @@ export default class FileAttarchementUploader extends Component {
             loaded: true,
             downloading: false
         })
+        fs.unlink(newDir,() => {})
         this.props.message.type = 'attachement'
         ///this.props.message.thumbnailSource = this.baseURL + response.data.split('.')[0] + '_thumbnail.jpeg'
-        this.props.replaceMessage({...this.props.message,temp:path,received:this.state.total})
+        this.props.replaceMessage({...this.props.message,source:path,temp:path,received:this.state.total})
     }
     onError(error) {
         console.warn(error)

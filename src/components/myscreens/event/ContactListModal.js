@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import ModalBox from 'react-native-modalbox';
-import { Container, Spinner, Title, Item } from 'native-base';
+import { Container, Spinner, Text, Item } from 'native-base';
 import BleashupFlatList from '../../BleashupFlatList';
 import ProfileView from '../invitations/components/ProfileView';
 import { TouchableOpacity, View } from 'react-native';
@@ -62,9 +62,9 @@ export default class ContactListModal extends PureComponent {
                     height: "90%",
                     borderRadius: 8,borderTopLeftRadius: 0,borderTopRightRadius: 0, backgroundColor: '#FEFFDE', width: "100%"
                 }}>
-                {!this.state.loaded ? <Spinner size={"small"}></Spinner> : <Container style={{ marginTop: "7%" }}>
+                {!this.state.loaded ? <Spinner size={"small"}></Spinner> : <Container>
                     <View style={{ height: '5%' }}>
-                        <View style={{ ...bleashupHeaderStyle, padding: '2%', }}><Title style={{ color: '#555756' }}>{this.props.title ? this.props.title : ''}</Title>
+                        <View style={{ ...bleashupHeaderStyle, padding: '2%', }}><Text ellipsizeMode={'tail'} numberOfLines={1} style={{ color: '#555756',fontWeight: 'bold', }}>{this.props.title ? this.props.title : ''}</Text>
                         </View>
                     </View>
                     <View style={{ height: '95%' }}>

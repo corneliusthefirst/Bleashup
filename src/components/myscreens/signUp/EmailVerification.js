@@ -36,6 +36,7 @@ import globalState from "../../../stores/globalState";
 import { observable } from "mobx";
 import UserServices from "../../../services/userHttpServices";
 import firebase from 'react-native-firebase';
+import connect from '../../../services/tcpConnect';
 
 @observer
 export default class EmailVerificationView extends Component {
@@ -151,7 +152,11 @@ export default class EmailVerificationView extends Component {
                 this.setState({
                   loading: false
                 })
-                this.props.navigation.navigate("Home");
+                connect.init().then((socket) => {
+                  this.props.navigation.navigate("Home");
+                }).catch(() => {
+                  console.warn("error while connecting socket")
+                })
               });
           });
         });

@@ -8,6 +8,7 @@ import converToHMS from '../highlights_details/convertToHMS';
 import shadower from "../../shadower";
 import testForURL from '../../../services/testForURL';
 import ProfileModal from "../invitations/components/ProfileModal";
+import buttoner from "../../../services/buttoner";
 let stores = null
 export default class ReplyText extends Component {
     constructor(props) {
@@ -31,8 +32,9 @@ export default class ReplyText extends Component {
                     backgroundColor: this.props.color,
                     ...shadower(2), //backgroundColor: "rgba(34, 0, 0, 0.1)",
                     padding: "1%",//margin: '1%',
-                    height: 75,
-                    borderRadius: 9,
+                    minHeight: 50,
+                    maxHeight: 200,
+                    borderRadius: 5,
                 }}>
                     {
                         /*<View style={{ /*width: "5%" }}><Icon type="FontAwesome"
@@ -40,14 +42,12 @@ export default class ReplyText extends Component {
                         </View>*/
                     }
                     <View style={{/* width: "90%",*/
-                        borderLeftColor: "#1FABAF", borderLeftWidth: 5,
-                        borderBottomLeftRadius: 8, borderTopLeftRadius: 8,
-                        height: "100%", padding: '1%', width: this.props.compose ? '100%' : null,
-                        marginTop: '-.5%', marginLeft: '-.5%',
+                        width: this.props.compose ? '100%' : null,
                     }}>
-                        <View style={{ marginLeft: "2%" }}>
+                        <View style={{ margin: "1%", }}>
                             <TouchableOpacity onPressIn={() => this.props.pressingIn()} onPress={() => requestAnimationFrame(() => {
-                                this.props.reply.replyer_name && (this.props.reply.replyer_phone || this.props.reply.sender.phone) ? this.showReplyer() : null
+                                this.props.reply.replyer_name && (this.props.reply.replyer_phone ||
+                                    this.props.reply.sender.phone) ? this.showReplyer() : null
                             })
                             }>
                                 <View style={{ flexDirection: 'row', }}>
@@ -77,25 +77,33 @@ export default class ReplyText extends Component {
                                 <View style={{ /*width: this.props.reply.sourcer ? "20%" : "0%",*/ marginRight: "1%", }}>
                                     {this.props.reply.sourcer ? <View>{testForURL(this.props.reply.sourcer) ? <CacheImages thumbnails square style={{
                                         width: 60,
-                                        height: 40, borderRadius: 5,
+                                        minHeight: this.state.currentHeight > 50 ? this.state.currentHeight : 50,
+                                        maxHeight: this.state.currentHeight > 50 ? this.state.currentHeight : 50,
+                                        borderBottomRightRadius: 5, borderTopRightRadius: 5,
                                     }} source={{ uri: this.props.reply.sourcer }}></CacheImages> : <Thumbnail thumbnails square style={{
                                         width: 60,
-                                        height: 40, borderRadius: 5,
+                                        minHeight: this.state.currentHeight > 50 ? this.state.currentHeight : 50,
+                                        maxHeight: this.state.currentHeight > 50 ? this.state.currentHeight : 50,
+                                        borderBottomRightRadius: 5, borderTopRightRadius: 5,
+                                        height: this.state.currentHeight, borderRadius: 5,
                                     }} source={{ uri: this.props.reply.sourcer }}></Thumbnail>}
-                                        {this.props.reply.video ? <Icon type={"EvilIcons"} name={"play"} style={{
-                                            position: "absolute", color: "#1FABAF",
-                                            marginTop: "15%", marginLeft: "30%",
-                                        }}></Icon> : null}</View> : null}
+                                            {this.props.reply.video ? <View style={{ ...buttoner, position: "absolute", marginTop: "7%", marginLeft: "18%",}}><Icon type={"EvilIcons"} name={"play"} style={{
+                                             color: "#1FABAF",
+                                        }}></Icon></View> : null}</View> : null}
 
                                 </View>
-                                <View style={{ /*width: this.props.reply.sourcer ? "79%" : "100%",*/ alignSelf: 'center',
+                                <View onLayout={(e) => {
+                                    this.setState({
+                                        currentHeight: e.nativeEvent.layout.height
+                                    })
+                                }} style={{ /*width: this.props.reply.sourcer ? "79%" : "100%",*/ alignSelf: 'center',
                                     marginLeft: this.props.reply.sourcer ? '1%' : null,
                                     width: this.props.reply.sourcer ? '76%' : '98%'
                                 }}>
                                     {this.props.reply.title ? <Text ellipsizeMode='tail' numberOfLines={this.props.reply.sourcer ?
-                                        this.props.reply.replyer_name ? 3 : 4 : 4} style={{ fontWeight: 'bold', fontSize: 12, color: "#A91A84", }}>{this.props.reply.replyer_name ? this.props.reply.title : this.props.reply.title.split(': \n')[1]}</Text>
+                                        this.props.reply.replyer_name ? 8 : 10 : 10} style={{ fontWeight: 'bold', fontSize: 12, color: "#A91A84", }}>{this.props.reply.replyer_name ? this.props.reply.title : this.props.reply.title.split(': \n')[1]}</Text>
                                         : this.props.reply.text ? <Text ellipsizeMode='tail' numberOfLines={this.props.reply.sourcer ?
-                                            this.props.reply.replyer_name ? 3 : 4 : 4} style={{ color: "#81A8A0", fontSize: 12, }}>{this.props.reply.text}</Text> : null}
+                                            this.props.reply.replyer_name ? 7 : 8 : 8} style={{ color: "#81A8A0", fontSize: 12, }}>{this.props.reply.text}</Text> : null}
                                 </View>
                             </View>
                                     {this.props.reply.change_date ? <Text note>{`On: ${moment(this.props.reply.change_date).format("dddd, MMMM Do YYYY, h:mm:ss a")}`}</Text> : null}

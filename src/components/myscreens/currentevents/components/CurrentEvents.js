@@ -112,7 +112,7 @@ export default class CurrentEvents extends Component {
     }
 
     delay = 0
-    renderPerbatch = 10
+    renderPerbatch = 5
     componentDidMount() {
         //  let id1="cc28b850-2555-11ea-9234-4fbde55a1fd4";
         //let id1="e761ac10-252f-11ea-9234-dd23f4cef77f"
@@ -147,8 +147,6 @@ export default class CurrentEvents extends Component {
     render() {
 
         StatusBar.setHidden(false, true)
-
-
         return (
             <View style={{ height: "100%",backgroundColor: '#FEFFDE',  }}>
                 <BleashupFlatList

@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { View, TouchableOpacity } from 'react-native';
-import { Text } from 'native-base';
+import { Text, Icon } from 'native-base';
 import ProfileModal from '../invitations/components/ProfileModal';
 import stores from '../../../stores';
 import moment from 'moment';
+import CreatorModal from './CreatorModal';
 
 
 export default class Creator extends Component {
@@ -28,22 +29,20 @@ export default class Creator extends Component {
         }, 10)
     }
     render() {
-        return !this.state.mounted ? null : (
+        return !this.state.mounted ? <Icon name={"info-with-circle"} type={"Entypo"} style={{ color: 'gray', fontSize: 12, }}></Icon> : (
             <View>
                 <TouchableOpacity onPressIn={() => this.props.pressingIn ? this.props.pressingIn() : null} onPress={() => requestAnimationFrame(() => {
                     this.setState({
-                        showProfileModal: true
+                        showCreatorModal: true
                     })
                 })}>
-                    <Text style={{ fontWeight: 'bold', fontSize: 11, margin: 1, }} note></Text>
-                    {this.state.creator.nickname ? <Text style={{ margin: "1%", fontSize: 11, fontStyle: 'normal', }} note>by {this.state.creator.nickname} </Text> : null}
-                    <Text style={{ margin: "1%", fontSize: 11, color: "gray" }} >{"On "}{moment(this.props.created_at).format("dddd, MMMM Do YYYY, h:mm:ss a")}</Text>
-                </TouchableOpacity>
-                {this.state.showProfileModal && this.state.creator.profile ? <ProfileModal isOpen={this.state.showProfileModal} onClosed={() => {
+                    <Icon name={"info-with-circle"} type={"Entypo"} style={{color:'gray',fontSize: 12,}}></Icon>
+                    </TouchableOpacity>
+                {this.state.showCreatorModal ? <CreatorModal isOpen={this.state.showCreatorModal} onClosed={() => {
                     this.setState({
-                        showProfileModal: false
+                        showCreatorModal: false
                     })
-                }} profile={this.state.creator} color={this.props.color} ></ProfileModal> : null}
+                }} creator={this.state.creator} created_at={this.props.created_at} color={this.props.color} ></CreatorModal> : null}
             </View>
         )
     }

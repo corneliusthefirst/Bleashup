@@ -21,7 +21,7 @@ class CacheImages extends Component {
       CacheableImages: imageCacheHoc(this.props.thumbnails ? Thumbnail : Image, {
         validProtocols: ['http', 'https'],
         defaultPlaceholder: {
-          component: () => <View style={{ alignSelf: 'center', width: '100%', borderRadius: 5, }}><ImageActivityIndicator rect={this.props.thumbnails && this.props.square}></ImageActivityIndicator></View>,
+          component: () => <View style={{ alignSelf: 'center', width:60, borderRadius: 5, }}><ImageActivityIndicator rect={this.props.thumbnails && this.props.square}></ImageActivityIndicator></View>,
           props: {
             style: activityIndicatorStyle
           }

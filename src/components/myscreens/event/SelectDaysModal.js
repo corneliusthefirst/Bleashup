@@ -36,15 +36,15 @@ export default class SelectDays extends Component {
                 }}
                 style={{
                     width: '50%',
-                    height: '50%',
+                    height: 400,
                     backgroundColor: '#FEFFDE',
                     borderRadius: 8,borderTopLeftRadius: 0,borderTopRightRadius: 0,
                 }}
             >
                 <View>
-                <View style={{height:20}}> 
+                <View style={{height:30}}> 
                 <View style={{justifyContent: 'center',alignSelf: 'center',...bleashupHeaderStyle}}>
-                        <Text style={{width:'90%',alignSelf:'center',fontWeight:'bold'}}>{"Select days in the week "}</Text>
+                        <Text style={{width:'90%',alignSelf:'center',fontWeight:'bold'}}>{"days"}</Text>
                         {//<Icon style={{ margin: '2%', }} onPress={() => this.props.onClosed()} type={"EvilIcons"} name="close"></Icon>
             }
 

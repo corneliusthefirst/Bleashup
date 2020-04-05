@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Vibration, TouchableWithoutFeedback, TouchableOpacity,Dimensions } from 'react-native';
+import { View, Vibration, TouchableWithoutFeedback, TouchableOpacity, Dimensions } from 'react-native';
 
 import {
   Card,
@@ -39,7 +39,7 @@ import ProfileSimple from './ProfileViewSimple';
 import shadower from "../../../shadower";
 
 
-let {height, width} = Dimensions.get('window');
+let { height, width } = Dimensions.get('window');
 class PublicEvent extends Component {
   constructor(props) {
     super(props);
@@ -68,10 +68,10 @@ class PublicEvent extends Component {
       likeIncrelment: 0,
       isPublisherModalOpened: false,
       currentUser: undefined,
-      creator:null
+      creator: null
     };
   }
-  
+
   /*state = {
     master: true
   }*/
@@ -87,9 +87,9 @@ class PublicEvent extends Component {
   }
   swipperComponent = null
   componentDidMount() {
-    //this is done to use as default for my test
-    stores.TempLoginStore.getUser("0666406835").then(creator=>{
-      this.setState({creator:creator});
+    //!this is done to use as default for my test
+    stores.TempLoginStore.getUser("0666406835").then(creator => {
+      this.setState({ creator: creator });
     })
     setTimeout(() => {
       this.setState({
@@ -102,7 +102,7 @@ class PublicEvent extends Component {
           this.setState({
             master: master,
             joint: findIndex(this.props.Event.participant, { phone: stores.LoginStore.user.phone }) > 0 ? true : false,
-            creator: this.state.creator==null?creator:this.state.creator,
+            creator: this.state.creator == null ? creator : this.state.creator,
           })
         })
       })
@@ -216,7 +216,7 @@ class PublicEvent extends Component {
     })
   }
   join() {
-    if (findIndex(this.props.Event.participant, { phone: stores.LoginStore.user.phone })) {
+    if (findIndex(this.props.Event.participant, { phone: stores.LoginStore.user.phone }) < 0) {
       if (this.props.Event.new) {
         stores.Events.markAsSeen(this.props.Event.id).then(() => {
         })
@@ -224,7 +224,7 @@ class PublicEvent extends Component {
       this.setState({
         isJoining: true
       })
-      Requester.join(this.props.Event.id, this.props.Event.event_host).then((status) => {
+      Requester.join(this.props.Event.id, this.props.Event.event_host, this.props.Event.participant).then((status) => {
         Toast.show({ text: "Event Successfully Joint !", type: "success", buttonText: "ok" })
         this.setState({
           joint: true
@@ -278,38 +278,39 @@ class PublicEvent extends Component {
     url === this.props.Event.background && !this.state.audio ? this.props.showPhoto(url) :
       this.props.navigation.navigate("HighLightsDetails", { event_id: this.props.Event.id })
   }
-  renderMap(){
-    return this.state.isMount && this.props.Event.location.string ? <View style={{ alignSelf: 'flex-start', width: '40%' }}><MapView card
-      location={this.props.Event.location.string}></MapView></View> : null
+  renderMap() {
+    return this.state.isMount && this.props.Event.location && this.props.Event.location.string ?
+      <View style={{ alignSelf: 'center', }}><MapView card
+        location={this.props.Event.location.string}></MapView></View> : null
   }
-  renderprofile(){
-       
-       return (
-       <CardItem
-       style={{
-         paddingBottom: 1,
-         paddingTop: 1,
-         borderRadius: 5,
-         height:height/8,
-         width:"100%"
-       }}
-     >
-       <View style={{width:"100%",flexDirection: "row",alignItems:"center"}}>
-      
-         {this.state.creator ? <View style={{width:"60%"}}>
-           <ProfileSimple showPhoto={(url) =>
-             this.props.showPhoto(url)}
-             profile={this.state.creator}>
-             </ProfileSimple>
-         </View> : null}
+  renderprofile() {
 
-         <View style={{height:"100%",width:"40%",...shadower()}}>
-           {this.state.isMount ? <Options seen={() => this.markAsSeen()} {...this.props}></Options> : null}
-         </View>
+    return (
+      <CardItem
+        style={{
+          paddingBottom: 1,
+          paddingTop: 1,
+          borderRadius: 5,
+          height: height / 8,
+          width: "100%"
+        }}
+      >
+        <View style={{ width: "100%", flexDirection: "row", alignItems: "center" }}>
 
-       </View>
-       </CardItem> );
-     
+          {this.state.creator ? <View style={{ width: "60%" }}>
+            <ProfileSimple showPhoto={(url) =>
+              this.props.showPhoto(url)}
+              profile={this.state.creator}>
+            </ProfileSimple>
+          </View> : null}
+
+          <View style={{ height: "100%", width: "40%", ...shadower() }}>
+            {this.state.isMount ? <Options seen={() => this.markAsSeen()} {...this.props}></Options> : null}
+          </View>
+
+        </View>
+      </CardItem>);
+
   }
 
 
@@ -323,14 +324,14 @@ class PublicEvent extends Component {
           {this.state.isMount ? <TitleView openDetail={() => this.props.openDetails(this.props.Event)} join={() => this.join()} joint={this.state.joint} seen={() => this.markAsSeen()}
             {...this.props}></TitleView> : null}
         </View>
-        <View style={{ width: '5%',justifyContent: 'center', alignItems: 'center', }}>
-          <Icon onPress={() => this.props.showActions(this.props.Event.id)} type="Entypo" style={{ fontSize: 24, color: "#555756"}} name="dots-three-vertical"></Icon>
+        <View style={{ width: '12%', justifyContent: 'flex-end', alignItems: 'flex-end', }}>
+          <Icon onPress={() => this.props.showActions(this.props.Event.id)} type="Entypo" style={{ fontSize: 24, color: "#555756", alignSelf: 'flex-end' }} name="dots-three-vertical"></Icon>
         </View>
       </View>
     </CardItem>)
   }
-  renderBody(){
-    return ( <CardItem
+  renderBody() {
+    return (<CardItem
       style={{
         paddingLeft: 0,
         aspectRatio: 3 / 1,
@@ -372,16 +373,16 @@ renderFooter(){
         {this.state.isMount && !this.state.fresh ? <Join event={this.props.Event} refreshJoint={() => this.refreshJoint()}></Join> : null}
       </View>
 
-  
-      {this.state.isMount ? <View style={{ flexDirection: "row",width:"40%" }}>
-        <Like showLikers={(likers) => this.props.showLikers(likers)} id={this.props.Event.id} end={() => this.markAsSeen()} />
-         {this.renderMarkAsSeen()}
-      </View> : null}
-  
-    </View>
-  </Footer>
-  )
-}
+
+          {this.state.isMount ? <View style={{ flexDirection: "row", width: "40%" }}>
+            {/*<Like showLikers={(likers) => this.props.showLikers(likers)} id={this.props.Event.id} end={() => this.markAsSeen()} />*/}
+            {this.renderMarkAsSeen()}
+          </View> : null}
+
+        </View>
+      </Footer>
+    )
+  }
 
 
   render() {

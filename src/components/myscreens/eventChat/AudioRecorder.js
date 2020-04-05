@@ -17,17 +17,9 @@ export default class AudioRecorder extends Component{
         this.BackHandler = null
     }
     componentWillMount(){
-        if (this.BackHandler) this.BackHandler.remove()
-        this.BackHandler = BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this))
-    }
+         }
     stopRecordTiming() {
         clearInterval(this.recordInterval)
-    }
-    handleBackButton(){
-        if (this.props.showAudioRecorder) {
-            this.props.toggleAudioRecorder()
-            return true
-        }
     }
     startRecorder() {
         let recordAudioRequest;
@@ -46,9 +38,8 @@ export default class AudioRecorder extends Component{
                 .then(() => {
                     this.startRecordTiming()
                 }).catch(error => {
-                    //console.warn(error)
+                    this.props.justHideMe()
                     Toast.show({ duration: 4000, text: "cannot record due to " + error })
-                    this.props.toggleAudioRecorder()
                 });
         });
     }
@@ -78,15 +69,15 @@ export default class AudioRecorder extends Component{
     filename = dirs.DocumentDir + "/test.mp3"
     componentWillUnmount(){
         SoundRecorder.stop().then(() => {
-            this.BackHandler.remove()
+            //this.BackHandler.remove()
         })
     }
-    _stopRecoder() {
+    _stopRecoder(dontsend) {
         this.stopRecordTiming()
         SoundRecorder.stop()
             .then((result) => {
                 this.duration = Math.ceil(result.duration / 1000)
-                this.props.sendAudioMessge(this.filename,this.duration)
+                this.props.sendAudioMessge(this.filename,this.duration,dontsend)
             });
     }
     stopRecordSimple(){
@@ -99,13 +90,13 @@ export default class AudioRecorder extends Component{
         })
     }
     duration = 0
-    stopRecord() {
+    stopRecord(dontsend) {
         this.setState({
             //recording: !this.state.recording,
             showAudioRecorder: false,
             recordTime: 0
         })
-        this._stopRecoder()
+        this._stopRecoder(dontsend)
     }
     pauseRecorder() {
         this.stopRecordTiming()

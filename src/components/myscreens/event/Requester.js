@@ -28,7 +28,7 @@ class Request {
                                 id: uuid.v1(),
                                 title: "Update OnCommittees",
                                 updated: 'new_commitee',
-                                event_id: commitee.even_id,
+                                event_id: commitee.event_id,
                                 changed: `Create ${commitee.name} Committee  `,
                                 updater: stores.LoginStore.user,
                                 new_value: { data: commitee.id, new_value: commitee.name },
@@ -1201,6 +1201,15 @@ class Request {
                     console.warn(error)
                     Toast.show({ text: "Unable To Perform Request" })
                     reject(error)
+                })
+            })
+        })
+    }
+    unsyncActivity(event){
+        return new Promise((resolve,reject) => {
+            CalendarServe.saveEvent({...event,period:null}).then(() => {
+                stores.Events.markAsCalendared(event.id,null,null).then(() => {
+                    resolve()
                 })
             })
         })

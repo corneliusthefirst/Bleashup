@@ -9,6 +9,7 @@ import connection from "../../../services/tcpConnect";
 import rnFetchBlob from 'rn-fetch-blob';
 import Waiter from "./Waiter";
 import Voter from "../eventChat/Voter";
+import GState from '../../../stores/globalState/index';
 const AppDir = rnFetchBlob.fs.dirs.SDCardDir + '/Bleashup'
 const PhotoDir = AppDir + '/Photo'
 const SounDir = AppDir + '/Sound'
@@ -72,6 +73,9 @@ In this article, we show you how to solve the error message “URL blocked: This
              connection.init().then(socket => {
                globalState.loading = false;
                this.props.navigation.navigate(route);
+             }).catch((error) => {
+               GState.connected = false
+               console.warn("error while connecting socket",error)
              })
              setTimeout(() => this.props.navigation.navigate(route), 500)
            }else{

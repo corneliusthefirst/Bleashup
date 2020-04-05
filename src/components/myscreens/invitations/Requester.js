@@ -4,6 +4,8 @@ import stores from "../../../stores";
 import serverEventListener from '../../../services/severEventListener'
 import { AddParticipant } from '../../../services/cloud_services';
 import uuid  from 'react-native-uuid';
+import  firebase  from 'react-native-firebase';
+import { uniqBy } from 'lodash';
 class Requester {
     seen(invitation) {
         return new Promise((resolve, reject) => {
@@ -56,6 +58,9 @@ class Requester {
                         Participant.master = invitation.status;
                         Participant.host = stores.Session.SessionStore.host
                         stores.Events.addParticipant(invitation.event_id, Participant, true).then(() => {
+                         firebase.database().ref(`activity/${invitation.event_id}/participants`).once('value',val => {
+                             firebase.database().ref(`activity/${invitation.event_id}/participants`).set(uniqBy([Participant,val.val()],'phone'))
+                         })
                             let Change = {
                                 id: uuid.v1(),
                                 title: `First Update`,

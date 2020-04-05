@@ -61,22 +61,22 @@ export default class SelectableContactList extends PureComponent {
                     height: this.state.inviteViaEmail ? "30%" : "90%",
                     width: "100%"
                 }}
-            ><View style={{ height:'9%' }}>
+            ><View style={{ height:50 }}>
                     <View style={{ flexDirection: 'row',...bleashupHeaderStyle,padding: '2%', }}>
                         <View style={{ width: "85%" }}>
                             <Text style={{ fontWeight: 'bold', fontStyle: 'italic', fontSize: 20, }}>{this.props.title}</Text>
                         </View>
                         <View>
-                            <Button style={{ backgroundColor: '#1FABAB', }} onPress={() => requestAnimationFrame(() => {
+                            <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                                 this.props.removing ? this.props.saveRemoved(this.state.checked) :
                                     this.props.adding ? this.props.addMembers(this.state.checked) :
                                         this.props.takecheckedResult(this.state.checked)
                                 this.setState({ checked: [] })
                                 this.props.close();
                             })
-                            } rounded transparent>
-                                <Text style={{ fontWeight: 'bold', color: '#FEFFDE' }}>{"OK"}</Text>
-                            </Button>
+                            }>
+                                <Text style={{ fontWeight: 'bold', color: '#1FABAB',fontSize:22 }}>{"OK"}</Text>
+                            </TouchableOpacity>
                         </View>
                     </View>
                 </View>

@@ -42,7 +42,7 @@ export default class PostMenu extends Component {
                     ref={this.setMenuRef}
                     button={<Icon style={{
                         color: "#0A4E52",
-                        fontSize: 15,
+                        fontSize: 22,
                         marginTop: '10%'
                     }} onPress={this.showMenu} name="gear" type="EvilIcons"></Icon>}
                 >

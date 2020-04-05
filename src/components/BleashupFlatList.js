@@ -1,7 +1,6 @@
 import React, { Component } from "react"
 import { FlatList, View } from "react-native";
 import { Spinner, CardItem, Text, List } from "native-base";
-import { observer } from "mobx-react";
 import { moment } from "moment"
 
 const ifCloseToTop = ({ layoutMeasurement, contentOffset, contentSize }) => {
@@ -12,7 +11,7 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
     return layoutMeasurement.height + contentOffset.y >=
         ((contentSize.height - paddingToBottom) * (0.70));
 };
-@observer export default class BleashupFlatList extends Component {
+ export default class BleashupFlatList extends Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -81,12 +80,12 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
     render() {
         return (
             <View style={{
-                flexDirection: 'column',height:'100%',
+                flexDirection: 'column', height: '100%',
                 backgroundColor: this.props.backgroundColor ?
                     this.props.backgroundColor : "#ffffff",
                 ...this.props.style
             }}>
-            {this.props.marginTop?<View style={{height:42}}></View>:null}
+            {this.props.marginTop?<View style={{height:30}}></View>:null}
                 <FlatList
                     onScrollEndDrag={({ nativeEvent }) => {
                         if (isCloseToBottom(nativeEvent)) {
@@ -102,10 +101,10 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
                     onScroll={this.props.onScroll}
                     centerContent={true}
                     //horizontal={this.props.horizontal}
+                    updateCellsBatchingPeriod={100}
                     ref="bleashupFlatlist"
                     canCancelContentTouches={true}
                     inverted={this.props.inverted ? this.props.inverted : false}
-                    removeClippedSubviews={false}
                     style={this.props.style}
                     ItemSeparatorComponent={this.props.ItemSeparatorComponent}
                     maxToRenderPerBatch={this.props.renderPerBatch ? this.props.renderPerBatch : this.props.inverted ? 5 : this.state.endReached ? 1 : 3}

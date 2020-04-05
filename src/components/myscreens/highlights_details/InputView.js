@@ -50,6 +50,7 @@ export default class InputView extends Component {
     }
     _onChange(event) {
         this.setState({ textValue: event.nativeEvent.text || '' });
+        this.props.onInputChange()
     }
     replyMessageCaption() {
         return <View style={{ backgroundColor: '#FEFEDE', marginLeft: "-1%", }}>

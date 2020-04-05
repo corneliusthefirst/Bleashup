@@ -148,7 +148,7 @@ export default class Options extends Component {
                                             color={this.transparent}
                                         />
                                     </View>
-                                )}
+                            )}
                          
                 </View>
                 </TouchableOpacity>
@@ -176,7 +176,7 @@ export default class Options extends Component {
                                             color={this.transparent}
                                         />
                                     </View>
-                                )}
+                            )}
                           
                   </View>
                 </TouchableOpacity>

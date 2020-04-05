@@ -14,18 +14,18 @@ export default class MapView extends Component {
     render() {
         return <View style={{...this.props.style,flexDirection: 'column',}}>
             <TouchableOpacity style={{alignSelf: 'flex-start',}}>
-                <Title style={{width:100,fontSize:12}}> {this.props.location && this.props.card ? this.props.location: 'No Set Location'}</Title>     
+                <Title style={{fontSize:12}}> {this.props.location && this.props.card ? this.props.location: 'No Set Location'}</Title>     
             </TouchableOpacity>
             <TouchableOpacity  onPress={this.props.location ? this.OpenLinkZoom : null}>
                 <Thumbnail
                     square
                     source={require("../../../../../Images/google-maps-alternatives-china-720x340.jpg")}
                     style={{
-                        height: 70,
-                        width: 100,
-                        borderRadius: 5
+                        height: 40,
+                        borderRadius: 5,
+                        width:'100%'
                     }}
-                    resizeMode="contain"
+                    //resizeMode="contain"
                 />
             </TouchableOpacity>
             <View
@@ -35,7 +35,7 @@ export default class MapView extends Component {
                 }}
             >
                 <TouchableOpacity onPress={this.props.location ? this.OpenLink : null}>
-                    <Text note> View On Map </Text>
+                    <Text note>{"View On Map"}</Text>
                 </TouchableOpacity>
             </View>
         </View>

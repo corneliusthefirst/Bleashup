@@ -196,7 +196,7 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
     created_at: moment().format(),
   }]
   render() {
-    return (this.state.loaded ? <View style={{ backgroundColor: "#FEFFDE", }}><ChatRoom
+    return (this.state.loaded ? <View style={{ backgroundColor: "white", }}><ChatRoom
       roomName={this.props.roomName}
       user={{
         ...this.state.user,
@@ -205,6 +205,7 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
       handleReplyExtern={(reply) => {
         this.props.handleReplyExtern(reply)
       }}
+      openMenu={this.props.openMenu}
       showLoader={this.props.showLoader}
       stopLoader={this.props.stopLoader}
       showProfile={(pro) => this.props.showProfile(pro)}

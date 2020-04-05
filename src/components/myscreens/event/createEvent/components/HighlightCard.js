@@ -53,7 +53,7 @@ export default class HighlightCard extends Component {
       this.setState({
         mounted: true
       })
-    }, 100)
+    }, 50 * this.props.delay)
   }
 
   creator = this.props.computedMaster//this.props.item.creator === this.props.phone 

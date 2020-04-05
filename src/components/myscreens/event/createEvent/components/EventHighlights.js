@@ -26,6 +26,7 @@ import PhotoViewer from '../../PhotoViewer';
 import { RNFFmpeg } from 'react-native-ffmpeg';
 import shadower from '../../../../shadower';
 import Requester from '../../Requester';
+import buttoner from "../../../../../services/buttoner";
 
 //create an extension to toast so that it can work in my modal
 
@@ -179,7 +180,8 @@ export default class EventHighlights extends Component {
         newing: !this.state.newing,
         uploading: true
       })
-      let exchanger = new FileExachange(snap.source,
+      this.clear()
+      this.exchanger = new FileExachange(snap.source,
         '/Photo/', 0, 0, (writen, total) => {
           console.warn('writen: ', writen)
         }, (newDir, path, filename) => {
@@ -195,7 +197,7 @@ export default class EventHighlights extends Component {
             },
             uploading: false,
           });
-          if (this.state.update == false) {
+          if (!this.props.updateState) {
             stores.Highlights.updateHighlightUrl(this.state.currentHighlight, false).then(() => { });
           }
         }, null, (error) => {
@@ -206,12 +208,12 @@ export default class EventHighlights extends Component {
             uploading: false
           })
         }, snap.content_type, snap.filename, '/photo')
-      !this.state.update ? this.state.currentHighlight.url.photo ||
+      !this.props.updateState ? this.state.currentHighlight.url.photo ||
         this.state.currentHighlight.url.video ?
-        exchanger.deleteFile(this.state.currentHighlight.url.video ?
+        this.exchanger.deleteFile(this.state.currentHighlight.url.video ?
           this.state.currentHighlight.url.video :
           this.state.currentHighlight.url.photo) : null : null, true
-      exchanger.upload()
+      this.exchanger.upload()
     })
   }
 
@@ -223,42 +225,43 @@ export default class EventHighlights extends Component {
         newing: !this.state.newing,
         uploading: true
       })
-      Pickers.CompressVideo(snaper).then(snap => {
-        let exchanger = new FileExachange(snap.source, "/Video/", 0, 0, null, (newDir, path, filename, baseURL) => {
-          this.setState({
-            newing: !this.state.newing,
-            currentHighlight: {
-              ...this.state.currentHighlight,
-              url: {
-                ...this.state.currentHighlight.url,
-                photo: baseURL + filename.split('.')[0] + '_thumbnail.jpeg',
-                video: path,
-                //audio:null
-              }
-            },
-            uploading: false
-          })
-          if (this.state.update == false) {
-            stores.Highlights.updateHighlightUrl(this.state.currentHighlight, false).then(() => { });
-          }
+      this.clear()
+      //Pickers.CompressVideo(snaper).then(snap => {
+      this.exchanger = new FileExachange(snaper.source, "/Video/", 0, 0, null, (newDir, path, filename, baseURL) => {
+        this.setState({
+          newing: !this.state.newing,
+          currentHighlight: {
+            ...this.state.currentHighlight,
+            url: {
+              ...this.state.currentHighlight.url,
+              photo: baseURL + filename.split('.')[0] + '_thumbnail.jpeg',
+              video: path,
+              //audio:null
+            }
+          },
+          uploading: false
+        })
+        if (!this.props.updateState) {
+          stores.Highlights.updateHighlightUrl(this.state.currentHighlight, false).then(() => { });
+        }
 
-        }, null, (error) => {
-          this.setState({
-            newing: !this.state.newing,
-            uploading: false
-          })
-          Toast.show({ text: "Unable To Upload Video", position: "top" })
-          console.warn(error)
-        }, snap.content_type, snap.filename, '/video')
-        !this.state.update ? this.state.currentHighlight.url.video ||
-          this.state.currentHighlight.url.photo ?
-          exchanger.deleteFile(
-            this.state.currentHighlight.url.video ?
-              this.state.currentHighlight.url.video :
-              this.state.currentHighlight.url.photo) : null : null, true
-        exchanger.upload()
-      })
+      }, null, (error) => {
+        this.setState({
+          newing: !this.state.newing,
+          uploading: false
+        })
+        Toast.show({ text: "Unable To Upload Video", position: "top" })
+        console.warn(error)
+      }, snaper.content_type, snaper.filename, '/video')
+      !this.props.updateState ? this.state.currentHighlight.url.video ||
+        this.state.currentHighlight.url.photo ?
+        this.exchanger.deleteFile(
+          this.state.currentHighlight.url.video ?
+            this.state.currentHighlight.url.video :
+            this.state.currentHighlight.url.photo) : null : null, true
+      this.exchanger.upload()
     })
+    //})
   }
 
 
@@ -286,7 +289,7 @@ export default class EventHighlights extends Component {
     //this.setState({newing:!this.state.newing,title:value})
     this.state.currentHighlight.title = value;
     this.setState({ newing: !this.state.newing, currentHighlight: this.state.currentHighlight });
-    if (this.state.update == false) {
+    if (!this.props.updateState) {
       stores.Highlights.updateHighlightTitle(this.state.currentHighlight, false).then(() => { });
     }
 
@@ -297,23 +300,25 @@ export default class EventHighlights extends Component {
     this.state.currentHighlight.description = value;
     this.setState({ newing: !this.state.newing, currentHighlight: this.state.currentHighlight });
 
-    if (this.state.update == false) {
+    if (!this.props.updateState) {
       stores.Highlights.updateHighlightDescription(this.state.currentHighlight, false).then(() => { });
     }
 
 
   }
 
-  @autobind 
-  onchangeHighLightPublicState(value){
+  @autobind
+  onchangeHighLightPublicState(value) {
     this.setState({
-      currentHighlight:{...this.state.currentHighlight,public_state:value},
-      newing:!this.state.newing
+      currentHighlight: { ...this.state.currentHighlight, public_state: value },
+      newing: !this.state.newing
     })
-    if(this.state.update === false){
+    if (this.props.updateState === false) {
       stores.Highlights.updateHighlightPublicState(
-        {highlight_id:this.state.currentHighlight.id,
-          public_state:value}).then((ele) => ele)
+        {
+          highlight_id: this.state.currentHighlight.id,
+          public_state: value
+        }).then((ele) => ele)
     }
   }
 
@@ -346,7 +351,7 @@ export default class EventHighlights extends Component {
     } else {
       this.props.startLoader()
       this.props.onClosed()
-      if(newHighlight.title || newHighlight.url.audio || newHighlight.url.photo || newHighlight.url.video){
+      if (newHighlight.title || newHighlight.url.audio || newHighlight.url.photo || newHighlight.url.video) {
         this.setState({
           creating: true
         })
@@ -365,8 +370,8 @@ export default class EventHighlights extends Component {
             creating: false
           })
         })
-      }else{
-        Toast.show({text:'Post Must include at least a media or title',duration:5000,buttonText:'ok'})
+      } else {
+        Toast.show({ text: 'Post Must include at least a media or title', duration: 5000, buttonText: 'ok' })
         this.props.stopLoader()
       }
     }
@@ -393,26 +398,82 @@ export default class EventHighlights extends Component {
   }
   cleanAudio() {
     console.warn('executing clean audio')
-    let exchanger = new FileExachange()
-    exchanger.deleteFile(this.state.currentHighlight.url.audio)
-    this.setState({
-      newing: !this.state.newing,
-      currentHighlight: {
-        ...this.state.currentHighlight,
-        url: {
-          ...this.state.currentHighlight.url,
-          //photo: this.state.currentHighlight.url.video ? null : this.state.currentHighlight.url.photo,
-          //video: null,
-          audio: null,
-          duration: null
-        }
-      },
-    })
-    stores.Highlights.updateHighlightUrl(this.state.currentHighlight, false).then(() => { });
+    this.clearAudio()
+    if (!this.props.updateState) {
+      this.audioExchanger = new FileExachange(null, null, null, null, null, () => {
+        this.setState({
+          newing: !this.state.newing,
+          currentHighlight: {
+            ...this.state.currentHighlight,
+            url: {
+              ...this.state.currentHighlight.url,
+              //photo: this.state.currentHighlight.url.video ? null : this.state.currentHighlight.url.photo,
+              //video: null,
+              audio: null,
+              duration: null
+            }
+          },
+        })
+        stores.Highlights.updateHighlightUrl(this.state.currentHighlight, false).then(() => { });
 
+      },() => {
+        Toast.show({text:'Unable to perform network request'})
+      })
+      this.audioExchanger.deleteFile(this.state.currentHighlight.url.audio)
+    } else {
+      this.setState({
+        newing: !this.state.newing,
+        currentHighlight: {
+          ...this.state.currentHighlight,
+          url: {
+            ...this.state.currentHighlight.url,
+            //photo: this.state.currentHighlight.url.video ? null : this.state.currentHighlight.url.photo,
+            //video: null,
+            audio: null,
+            duration: null
+          }
+        },
+      })
+    }
+  }
+  exchanger = null
+  clear() {
+    this.exchanger && this.exchanger.task && this.exchanger.task.cancel && this.exchanger.task.cancel()
   }
   cleanMedia() {
-    let exchanger = new FileExachange(null, null, null, null, null, () => {
+    this.clear()
+    if (!this.props.updateState) {
+      this.exchanger = new FileExachange(null, null, null, null, null, () => {
+        this.setState({
+          newing: !this.state.newing,
+          currentHighlight: {
+            ...this.state.currentHighlight,
+            url: {
+              ...this.state.currentHighlight.url,
+              photo: null,
+              video: null,
+              //audio: null,
+              //duration: null
+            }
+          },
+        })
+        !this.props.updateState && stores.Highlights.updateHighlightUrl({
+          ...this.state.currentHighlight,
+          url: {
+            ...this.state.currentHighlight.url,
+            photo: null,
+            video: null,
+            //audio: null,
+            //duration: null
+          }
+        }, false).then(() => { });
+      }, () => {
+        Toast.show({ text: 'unable to perform network request' })
+      })
+      this.exchanger.deleteFile(this.state.currentHighlight.url.video ?
+        this.state.currentHighlight.url.video :
+        this.state.currentHighlight.url.photo)
+    } else {
       this.setState({
         newing: !this.state.newing,
         currentHighlight: {
@@ -426,29 +487,19 @@ export default class EventHighlights extends Component {
           }
         },
       })
-      stores.Highlights.updateHighlightUrl({
-        ...this.state.currentHighlight,
-        url: {
-          ...this.state.currentHighlight.url,
-          photo: null,
-          video: null,
-          //audio: null,
-          //duration: null
-        }
-      }, false).then(() => { });
-    }, () => {
-      Toast.show({ text: 'unable to perform network request' })
-    })
-    exchanger.deleteFile(this.state.currentHighlight.url.video ?
-      this.state.currentHighlight.url.video :
-      this.state.currentHighlight.url.photo)
+    }
   }
   @autobind
   deleteHighlight(id) {
     this.state.highlightData = reject(this.state.highlightData, { id, id });
     this.setState({ newing: !this.state.newing, highlightData: this.state.highlightData });
   }
-
+  clearAudio() {
+    this.audioExchanger &&
+      this.audioExchanger.task && 
+      this.audioExchanger.task.cancel &&
+      this.audioExchanger.task.cancel()
+  }
   takeAudio() {
     Pickers.TakeAudio().then(audio => {
       if (audio) {
@@ -457,7 +508,8 @@ export default class EventHighlights extends Component {
           newing: !this.state.newing,
           uploading: true
         })
-        let exchanger = new FileExachange('file://' + audio.uri, '/Sound/', 0, 0, null,
+        this.clearAudio()
+        this.audioExchanger = new FileExachange('file://' + audio.uri, '/Sound/', 0, 0, null,
           (newDir, path, filename) => {
             RNFFmpeg.getMediaInformation(path).then(info => {
               console.warn(info, path)
@@ -475,7 +527,7 @@ export default class EventHighlights extends Component {
                 },
                 uploading: false
               })
-              if (this.state.update == false) {
+              if (!this.props.updateState) {
                 stores.Highlights.updateHighlightUrl(this.state.currentHighlight, false).then(() => { });
               }
             })
@@ -483,9 +535,9 @@ export default class EventHighlights extends Component {
             Toast.show({ text: "Unable To Upload Audio", position: 'top' })
           }, audio.type, audio.name, '/sound')
         this.state.currentHighlight.url.audio ?
-          exchanger.deleteFile(this.state.currentHighlight.url.audio, true).then(() => {
+          this.audioExchanger.deleteFile(this.state.currentHighlight.url.audio, true).then(() => {
           }) : null
-        exchanger.upload()
+        this.audioExchanger .upload()
       }
     })
   }
@@ -498,32 +550,34 @@ export default class EventHighlights extends Component {
   rendering = 0
   render() {
     this.rendering = this.rendering + 1
-    return<Modal
-        isOpen={this.props.isOpen}
-        onClosed={() => {
-          this.props.onClosed()
-          this.setState({ newing: !this.state.newing, animateHighlight: false })
-        }}
-        style={{
-          height: this.props.event_id ? "70%" : "100%", width: "100%", borderTopLeftRadius: 10, borderTopRightRadius: 10,
-          backgroundColor: "#FEFFDE", borderColor: 'black', flexDirection: 'column'
-        }}
-        backButtonClose={true}
-        coverScreen={true}
-        position={'bottom'}
-        swipeToClose={false}
-    >{this.state.isMounted ? 
-        <View>
-          <View style={{ height: "98%", width: "100%", marginTop: '3%', }}>{!this.props.event_id ?
-            <View style={{ height: "8%", width: "96%", marginLeft: "2%", marginRight: "2%" }}>
-              <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
-                <TouchableOpacity>
-                  <Icon onPress={this.back} type='MaterialCommunityIcons' name="keyboard-backspace" style={{ color: "#1FABAB" }} />
-                </TouchableOpacity>
-                <Text style={{ marginLeft: "27%", fontWeight: "500" }}>New Highlight</Text>
-              </View>
-            </View> : null
-          }
+    return <Modal
+      isOpen={this.props.isOpen}
+      onClosed={() => {
+        this.props.onClosed()
+        this.clear()
+        this.clearAudio()
+        this.setState({ newing: !this.state.newing,uploading:false, animateHighlight: false,})
+      }}
+      style={{
+        height: this.props.event_id ? "70%" : "100%", width: "100%", borderTopLeftRadius: 10, borderTopRightRadius: 10,
+        backgroundColor: "#FEFFDE", borderColor: 'black', flexDirection: 'column'
+      }}
+      backButtonClose={true}
+      coverScreen={true}
+      position={'bottom'}
+      swipeToClose={false}
+    >{this.state.isMounted ?
+      <View>
+        <View style={{ height: "98%", width: "100%", marginTop: '3%', }}>{!this.props.event_id ?
+          <View style={{ height: "8%", width: "96%", marginLeft: "2%", marginRight: "2%" }}>
+            <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
+              <TouchableOpacity>
+                <Icon onPress={this.back} type='MaterialCommunityIcons' name="keyboard-backspace" style={{ color: "#1FABAB" }} />
+              </TouchableOpacity>
+              <Text style={{ marginLeft: "27%", fontWeight: "500" }}>New Highlight</Text>
+            </View>
+          </View> : null
+        }
           <View style={{ height: !this.props.event_id ? "95%" : "100%", width: "90%", alignSelf: 'center', }}>
             <ScrollView showsVerticalScrollIndicator={false} ref={"svrollView"} >
               <View style={{ height: "100%" }}>
@@ -551,10 +605,10 @@ export default class EventHighlights extends Component {
                 </View> : null}
                 <View style={{ height: height / 14, alignItems: 'center', margin: '2%', }}>
                   <Item style={{ borderColor: '#1FABAB', width: "95%", margin: '2%', height: height / 17 }} rounded>
-                    <TextInput maxLength={20} style={{ width: "100%", height: "100%", margin: '2%', marginBottom: '5%', }} 
-                    value={this.state.currentHighlight.title ? this.state.currentHighlight.title : ""} 
-                    maxLength={40} placeholder='Post Title' keyboardType='email-address' autoCapitalize="none" returnKeyType='next' inverse last
-                      onChangeText={(value) => 
+                    <TextInput maxLength={20} style={{ width: "100%", height: "100%", margin: '2%', marginBottom: '5%', }}
+                      value={this.state.currentHighlight.title ? this.state.currentHighlight.title : ""}
+                      maxLength={40} placeholder='Post Title' keyboardType='email-address' autoCapitalize="none" returnKeyType='next' inverse last
+                      onChangeText={(value) =>
                         this.onChangedTitle(value)
                       } />
                   </Item>
@@ -567,7 +621,7 @@ export default class EventHighlights extends Component {
                     <View style={{ flexDirection: "column" }}>
                       <Icon name="photo-camera" active={true} type="MaterialIcons"
                         style={{ color: "#0A4E52", alignSelf: "flex-start" }} />
-                      <Text style={{ fontSize: 10, marginBottom: 6 }}>Photo</Text>
+                      <Text style={{ fontSize: 10, marginBottom: 6 }}>{"Photo"}</Text>
                     </View>
                   </TouchableOpacity>
                   <TouchableOpacity style={{ width: "15%", backgroundColor: "transparent", justifyContent: 'center', alignItem: 'center' }}
@@ -575,7 +629,7 @@ export default class EventHighlights extends Component {
                     <View style={{ flexDirection: "column" }}>
                       <Icon name="video" active={true} type="Entypo"
                         style={{ color: "#0A4E52", alignSelf: "flex-start" }} />
-                      <Text style={{ fontSize: 10, marginBottom: 6 }}>Videos</Text>
+                      <Text style={{ fontSize: 10, marginBottom: 6 }}>{"Videos"}</Text>
                     </View>
                   </TouchableOpacity>
                   <TouchableOpacity style={{ width: "15%", backgroundColor: "transparent", justifyContent: 'center', alignItem: 'center' }}
@@ -585,7 +639,7 @@ export default class EventHighlights extends Component {
                     <View style={{ flexDirection: "column" }}>
                       <Icon name="microphone" active={true} type="FontAwesome"
                         style={{ color: "#0A4E52", alignSelf: "flex-start" }} />
-                      <Text style={{ fontSize: 10, marginBottom: 6 }}>Audio</Text>
+                      <Text style={{ fontSize: 10, marginBottom: 6 }}>{"Audio"}</Text>
                     </View>
                   </TouchableOpacity>
                   <TouchableOpacity style={{ width: "15%", backgroundColor: "transparent", justifyContent: 'center', alignItem: 'center' }}
@@ -598,24 +652,32 @@ export default class EventHighlights extends Component {
                     <View style={{ flexDirection: "column" }}>
                       <Icon name="web" active={true} type="MaterialCommunityIcons"
                         style={{ color: "#0A4E52", alignSelf: "flex-start", }} />
-                      <Text style={{ fontSize: 10, marginBottom: 6 }}>Download</Text>
+                      <Text style={{ fontSize: 10, marginBottom: 6 }}>{"Download"}</Text>
                     </View>
                   </TouchableOpacity>
                 </View>
                 {this.state.currentHighlight.url.audio ?
                   <View style={{ height: height / 11, alignSelf: 'center', backgroundColor: "yellow", ...shadower(7), margin: '3%', width: '80%' }}>
                     <SimpleAudioPlayer url={this.state.currentHighlight.url}></SimpleAudioPlayer>
-                    <Icon name={'close'} type="EvilIcons" onPress={() => this.cleanAudio()} style={{ color: 'red', position: 'absolute', alignSelf: 'flex-end', fontSize: 20 }}></Icon>
+                    <Icon
+                      name={'close'}
+                      type="EvilIcons"
+                      onPress={() => this.cleanAudio()} style={{
+                        color: 'red',
+                        position: 'absolute',
+                        alignSelf: 'flex-end',
+                        fontSize: 20
+                      }}></Icon>
                   </View> : null}
                 <View style={{ height: height / 4 - height / 18, width: "90%", alignSelf: 'center', }}>
                   <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItem: 'center', }}>
                     <TouchableOpacity onPress={() => this.setState({ newing: !this.state.newing, enlargeImage: true })} >
                       {this.state.currentHighlight.url && this.state.currentHighlight.url.photo && testForURL(this.state.currentHighlight.url.photo) ?
-                        {/*<CacheImages thumbnails source={{ uri: this.state.currentHighlight.url.photo }} style={{
+                        <CacheImages thumbnails source={{ uri: this.state.currentHighlight.url.photo }} style={{
                           alignSelf: 'center',
                           height: "100%", width: "100%",
                           borderColor: "#1FABAB", borderRadius: this.state.currentHighlight.url.photo || this.state.currentHighlight.url.video ? 10 : 100,
-                        }} />*/} : <Thumbnail square
+                        }} /> : <Thumbnail square
                           source={this.state.currentHighlight.url &&
                             this.state.currentHighlight.url.photo ? {
                               uri:
@@ -625,23 +687,18 @@ export default class EventHighlights extends Component {
                               height: "100%", width: "100%", borderColor: "#1FABAB", borderRadius: this.state.currentHighlight.url.photo || this.state.currentHighlight.url.video ? 10 : 100,
                             }}></Thumbnail>}
                     </TouchableOpacity>
-                    {this.state.currentHighlight.url.video ||
-                      this.state.currentHighlight.url.photo ? <Icon name={'close'} type="EvilIcons"
-                        onPress={() => this.cleanMedia()}
-                        style={{
-                          color: 'red', position: 'absolute',
-                          alignSelf: 'flex-end', fontSize: 20,
-                          marginBottom: '35%'
-                        }}></Icon> : null}
                     {this.state.currentHighlight.url.video ? <View style={{
                       position: 'absolute',
                       marginTop: '15%',
                       marginLeft: '36%',
-                      opacity: .9
+                      opacity: .9,
                     }}>
                       <Icon onPress={() => {
                         this.choseAction(this.state.currentHighlight.url)
                       }} name={this.state.currentHighlight.url.video ? "play" : "headset"} style={{
+                        backgroundColor: 'black',
+                        opacity:.5,
+                        borderRadius:30,
                         fontSize: 50, color: this.state.currentHighlight.url.audio ? 'yellow' : '#FEFFDE', alignSelf: 'center'
                       }} type={this.state.currentHighlight.url.video ? "EvilIcons" : "MaterialIcons"}>
                       </Icon></View> : null}
@@ -654,6 +711,13 @@ export default class EventHighlights extends Component {
                   {this.state.enlargeImage && this.state.currentHighlight.url.photo ? <PhotoViewer open={this.state.enlargeImage} hidePhoto={() =>
                     this.setState({ newing: !this.state.newing, enlargeImage: false })}
                     photo={this.state.currentHighlight.url.photo} /> : null}
+                  {this.state.currentHighlight.url.video ||
+                    this.state.currentHighlight.url.photo ? <View style={{ ...buttoner, position: 'absolute', alignSelf: 'flex-end', }}><Icon name={'close'} type="EvilIcons"
+                      onPress={() => this.cleanMedia()}
+                      style={{
+                        color: 'white',
+                        fontSize: 20,
+                      }}></Icon></View> : null}
                 </View>
                 <View style={{ height: height / 4.5, alignItems: 'flex-start', justifyContent: 'center' }}>
                   <View style={{ width: "90%", height: "90%", alignSelf: 'center', }}>
@@ -678,11 +742,11 @@ export default class EventHighlights extends Component {
                       onChangeText={(value) => this.onChangedDescription(value)} />
                   </View>
                 </View>
-                  <Button transparent onPress={() => {
-                    this.onchangeHighLightPublicState(this.state.currentHighlight.public_state === 'public' ? 'private' : 'public')
-                  }}><Icon name={this.state.currentHighlight.public_state === 'public' ? "radio-button-checked" :
-                    "radio-button-unchecked"} type={"MaterialIcons"}></Icon>
-                    <Text>{`${this.state.currentHighlight.public_state}`}</Text></Button>
+                <Button transparent onPress={() => {
+                  this.onchangeHighLightPublicState(this.state.currentHighlight.public_state === 'public' ? 'private' : 'public')
+                }}><Icon name={this.state.currentHighlight.public_state === 'public' ? "radio-button-checked" :
+                  "radio-button-unchecked"} type={"MaterialIcons"}></Icon>
+                  <Text>{`${this.state.currentHighlight.public_state}`}</Text></Button>
                 <View style={{
                   height: height / 10,
                   justifyContent: 'space-between',
@@ -691,7 +755,7 @@ export default class EventHighlights extends Component {
                   {!this.props.updateState ? this.state.creating ? <Spinner></Spinner> :
                     <View style={{ alignSelf: 'flex-end', }}>
                       <Button onPress={() => { this.AddHighlight() }} rounded>
-                        <Text style={{ color: "#FEFFDE", fontWeight: 'bold', }}>{"Ok!"}</Text>
+                        <Text style={{ color: "#FEFFDE", fontWeight: 'bold', }}>{"Ok"}</Text>
                       </Button>
                     </View> :
                     <View style={{ alignSelf: 'flex-end' }}>
@@ -717,11 +781,11 @@ export default class EventHighlights extends Component {
               mother ? this.props.closeTeporary() : null
             }} />
         </View>
-          <View style={{ position: 'absolute' }}>
-            <Text style={{ margin: '7%', color: '#A91A84', fontWeight: 'bold' }} note>{this.props.updateState ? "update post" : "add post"}</Text>
-          </View>
-        </View> : <Spinner size={"small"} style={{ alignSelf: "center" }}></Spinner>}
-      </Modal>
+        <View style={{ position: 'absolute' }}>
+          <Text style={{ margin: '7%', color: '#A91A84', fontWeight: 'bold' }} note>{this.props.updateState ? "update post" : "add post"}</Text>
+        </View>
+      </View> : <Spinner size={"small"} style={{ alignSelf: "center" }}></Spinner>}
+    </Modal>
 
   }
 
