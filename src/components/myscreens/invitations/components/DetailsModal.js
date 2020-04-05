@@ -191,6 +191,7 @@ export default class DetailsModal extends Component {
                                         alignItems: 'center',
                                         width: 100,
                                         marginTop: 4,
+                                        marginBottom: 10,
                                         borderRadius: 5
                                     }}
                                         onPress={() => this.props.join ? this.props.join() : this.join()} success ><Text

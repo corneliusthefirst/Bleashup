@@ -44,9 +44,8 @@ export default class commitee {
                     getCommitee.id = id;
                     tcpRequest.get_commitee(getCommitee, id).then(JSONData => {
                         serverEventListener.sendRequest(JSONData, id).then(data => {
-                            console.warn(data)
-                            this.addCommitee(data).then(() => {
-                                resolve(data)
+                            this.addCommitee(data.data[0]).then(() => {
+                                resolve(data.data[0])
                             })
                         })
                     })

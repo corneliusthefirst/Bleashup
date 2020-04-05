@@ -405,6 +405,7 @@ export default class Message extends Component {
                                                         }}>
                                                         {this.state.time}{"    "}</Text> : null}
                                                 </View>
+                                                <Text>{this.props.received.toString()} {JSON.stringify(this.props.message.received)}</Text>
                                                 <View style={{
                                                     backgroundColor: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text) ? color : 'transparent' : 'transparent',
                                                 }}>{!this.state.sender ? this.props.message.sent ? this.props.received ?

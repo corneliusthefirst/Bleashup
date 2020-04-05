@@ -7,6 +7,7 @@ import moment from "moment"
 import { AddParticipant } from '../../../services/cloud_services';
 import { Toast } from "native-base";
 import uuid from 'react-native-uuid';
+import  firebase  from 'react-native-firebase';
 class Requester {
     constructor() {
         this.currentUserPhone = stores.Session.SessionStore.phone;
@@ -95,7 +96,7 @@ class Requester {
             })
         })
     }
-    join(EventID, EventHost) {
+    join(EventID, EventHost,particant) {
         return new Promise((resolve, reject) => {
             let Participant = requestObject.Participant();
             Participant.phone = stores.Session.SessionStore.phone;
@@ -109,6 +110,9 @@ class Requester {
                 serverEventListener.sendRequest(JSONData, EventID + "join").then((SuccessMessage) => {
                     Toast.show({ text: "Event Successfully Joint !", type: "success", buttonText: "ok" })
                     stores.Events.addParticipant(EventID, Participant, false).then(() => {
+                        firebase.database().ref(`activity/${EventID}/participants`).once('value',val => {
+                            firebase.database().ref(`activity/${EventID}/participants`).set(uniqBy([Participant,...val.val()],'phone'))
+                        })
                         let Change = {
                             id: uuid.v1(),
                             title: "Updates On Main Activity",

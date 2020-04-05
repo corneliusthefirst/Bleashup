@@ -224,7 +224,7 @@ class PublicEvent extends Component {
       this.setState({
         isJoining: true
       })
-      Requester.join(this.props.Event.id, this.props.Event.event_host).then((status) => {
+      Requester.join(this.props.Event.id, this.props.Event.event_host, this.props.Event.participant).then((status) => {
         Toast.show({ text: "Event Successfully Joint !", type: "success", buttonText: "ok" })
         this.setState({
           joint: true
@@ -390,7 +390,6 @@ class PublicEvent extends Component {
 
 
   render() {
-    //emitter.emit('notify', "santerss") 
     return (this.state.isMount ? <View style={{ width: "100%", paddingLeft: '2%', paddingRight: '2%', alignSelf: 'center', }}>
       <Swipeout {...this.props} onOpen={() => this.openSwipeOut()} onClose={() => this.onCloseSwipeout()} style={{
         width: "100%", ...shadower(1),

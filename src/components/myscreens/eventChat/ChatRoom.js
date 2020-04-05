@@ -165,13 +165,16 @@ export default class ChatRoom extends Component {
                 })
             } else {
                 //console.warn(newMessage, "PPPPPPPPPP")
-                if (this.sender.phone == newMessage.sender.phone) { } else {
-                    firebase.database().ref(`${this.props.firebaseRoom}/${newKey}/received`).set(received)
-                    this.newMessages.length !== 0 ? this.newMessages.unshift(newMessage) : null
-                    console.warn("saving new messagess")
-                    this.room.addNewMessage(newMessage, newKey, newMessage.type, true, this.newMessages.length == 0).then(() => {
-                        this.setState({
-                            newMessage: true
+                if (this.sender.phone == newMessage.sender.phone) {
+
+                 } else {
+                    firebase.database().ref(`${this.props.firebaseRoom}/${newKey}/received`).set(received).then(() => {
+                        this.newMessages.length !== 0 ? this.newMessages.unshift(newMessage) : null
+                        console.warn("saving new messagess")
+                        this.room.addNewMessage(newMessage, newKey, newMessage.type, true, this.newMessages.length == 0).then(() => {
+                            this.setState({
+                                newMessage: true
+                            })
                         })
                     })
                 }
@@ -312,6 +315,7 @@ export default class ChatRoom extends Component {
                 this.addNewMessage(message, snapshot.key)
             })
             this.fireRef.on('child_changed', snapshot => {
+                console.warn(snapshot.val(),"snapshot from seen")
                 let index = find(this.room.messages, { key: snapshot.key })
                 if (index >= 0) {
                     this.room.messages[index] = snapshot.val()

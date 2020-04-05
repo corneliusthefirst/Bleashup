@@ -43,14 +43,14 @@ export default class QRScanner extends Component {
         //console.error(e.data)
         stores.Events.loadCurrentEvent(e.data).then((event) => {
             let isParticipant = findIndex(event.participant, { phone: stores.LoginStore.user.phone }) >= 0
-            if (isParticipant) {
-                this.goToActivity(event)
-            } else {
+            //if (isParticipant) {
+               // this.goToActivity(event)
+           // } else {
                 this.setState({
                     isDetailModalOpened: true,
                     event: event
                 })
-            }
+           // }
         })
     };
     goback() {

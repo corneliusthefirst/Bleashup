@@ -556,7 +556,7 @@ export default class EventHighlights extends Component {
         this.props.onClosed()
         this.clear()
         this.clearAudio()
-        this.setState({ newing: !this.state.newing,uploading:false, animateHighlight: false })
+        this.setState({ newing: !this.state.newing,uploading:false, animateHighlight: false,})
       }}
       style={{
         height: this.props.event_id ? "70%" : "100%", width: "100%", borderTopLeftRadius: 10, borderTopRightRadius: 10,

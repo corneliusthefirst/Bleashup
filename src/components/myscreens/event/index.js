@@ -427,7 +427,7 @@ export default class Event extends Component {
         change: change,
         showNotifiation: true
       })
-    if (change.changed.toLowerCase().includes("commitee")) {
+    if (change.changed.toLowerCase().includes("committee")) {
       if (change.changed.toLowerCase().includes("created")) this.event.commitee.unshift(change.new_value.new_value)
       this.refreshCommitees()
       let commitee = newValue
@@ -1407,7 +1407,7 @@ export default class Event extends Component {
                 isCommiteeModalOpened: true
               })
             } else {
-              Toast.show({ text: "You don't have enough priviledges to add a commiee ", duration: 4000 })
+              Toast.show({ text: "You don't have enough priviledges to add a commitee ", duration: 4000 })
             }
           }}
           showMembers={() => this.showMembers()}
