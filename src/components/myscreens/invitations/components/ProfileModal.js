@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
 import Modal from 'react-native-modalbox';
 import { View, Text, TouchableOpacity } from 'react-native'
-import { Button, Icon } from 'native-base'
+import { Button, Icon, Thumbnail } from 'native-base'
 import CacheImages from '../../../CacheImages';
 import PhotoEnlargeModal from './PhotoEnlargeModal';
 import PhotoViewer from '../../event/PhotoViewer';
 import shadower from '../../../shadower';
+import testForURL from '../../../../services/testForURL';
 
 
 export default class ProfileModal extends Component {
@@ -45,8 +46,13 @@ export default class ProfileModal extends Component {
 
                     <View style={{ flex: 5, flexDirection: 'column', padding: 2, ...shadower(), backgroundColor: 'transparent', }}>
                         <TouchableOpacity onPress={() => requestAnimationFrame(() => { this.setState({ enlargeImage: true }) })} >
-                            <CacheImages thumbnails source={{ uri: this.props.profile.profile }}
-                                square style={{ height: "100%", width: "100%", borderColor: "#1FABAB", borderRadius: 8, }} />
+                           {this.props.profile.profile && testForURL(this.props.profile.profile)? <CacheImages thumbnails source={{ uri: this.props.profile.profile }}
+                                square style={{ height: "100%", width: "100%", 
+                                        borderColor: "#1FABAB", borderRadius: 8,
+                                    }} /> : <Thumbnail square style={{
+                                        height: "100%", width: "100%",
+                                        borderColor: "#1FABAB", borderRadius: 8,
+                                    }} source={require("../../../../../Images/images.jpeg")}></Thumbnail>}
                         </TouchableOpacity>
                     </View>
 

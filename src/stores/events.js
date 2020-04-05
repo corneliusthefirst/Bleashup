@@ -976,9 +976,10 @@ export default class events {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let index = findIndex(Events, { id: EventID })
+        console.warn(EventID,index)
         !Events[index].commitee || Events[index].commitee.length <= 0 ? Events[index].commitee = [CommiteeID] :
           Events[index].commitee.unshift(CommiteeID)
-        Events[index].updated_at = moment().format();
+        Events[index]["updated_at"] = moment().format();
         this.saveKey.data = Events
         storage.save(this.saveKey).then(() => {
           this.setProperties(this.saveKey.data, true);

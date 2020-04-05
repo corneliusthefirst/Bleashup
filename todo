@@ -108,7 +108,13 @@ see: https://github.com/wmcmahan/react-native-calendar-events/issues/12
 [ ] some time, when you update a post an download an image and you comeback on post addition page, 
 [ ] the update will change to create . that's an issue that i don't yet know the cause . 
     this happened when the post didn't have a photo in the first place .
-[ ] some times fetchingHighlights fails with error un processable entry .  
+[ ] some times fetchingHighlights fails with error un processable entry . 
+[ ] unable to fetch all reminds for an activity it fails with error please represence your account. 
+[ ] the background image of the activity doesnot save permanently in the server
+[ ] the detail modal appears empty when there's no description provided . there should be something 
+    indicating that the desription is not provided or event change the display something else smaller
+    which is going to aprear nicer. 
+[ ] backpresses are not working on none of the auth pages
  
 [] 
     A solution needs to implemented to handle this . 

@@ -30,8 +30,8 @@ export default class CommiteeItem extends Component {
     }
     shouldComponentUpdate(nextProps, nextState, nextContext) {
         return this.props.newMessagesCount !== nextProps.newMessagesCount ||
-            this.state.newThing !== nextState.newThing || this.props.ImICurrentCommitee ||
-            this.props.id !== nextProps.id || this.state.loaded !== nextState.loaded
+            this.state.newThing !== nextState.newThing || this.props.ImICurrentCommitee !== nextProps.ImICurrentCommitee ||
+            this.props.id !== nextProps.id || this.state.loaded !== nextState.loaded 
     }
 
     componentDidMount() {
@@ -48,7 +48,6 @@ export default class CommiteeItem extends Component {
                     })
                     firebase.database().ref(`new_message/${phone}/${this.props.id}/new_messages`).set([])
                 })
-                this.listenToInitialChange()
             }
             setTimeout(() => {
                 this.setState({
@@ -97,11 +96,6 @@ export default class CommiteeItem extends Component {
             }
         }).catch(error => {
             console.warn(error)
-        })
-    }
-    listenToInitialChange() {
-        emitter.once("current_commitee_changed", (currentRoom) => {
-            currentRoom !== "Generale" ? emitter.off("current_commitee_changed_by_main") : this.listenToInitialChange()
         })
     }
     revertName() {
@@ -172,9 +166,9 @@ export default class CommiteeItem extends Component {
     }
     swap() {
         GState.currentRoomNewMessages = this.state.commitee.new_messages
+        //GState.currentCommitee = this.state.commitee.id
         this.props.swapChats(this.state.commitee)
-        GState.currentCommitee = this.state.commitee.id
-        emitter.emit("current_commitee_changed", this.props.id)
+        //emitter.emit("current_commitee_changed", this.props.id)
         let phone = stores.LoginStore.user.phone.replace("00", "+");
         firebase.database().ref(`new_message/${phone}/${this.props.id}/new_messages`).set([])
         this.setState({
@@ -191,31 +185,6 @@ export default class CommiteeItem extends Component {
             } else {
                 this.swap()
             }
-        }
-    }
-    listen() {
-        if (GState.currentCommitee == this.props.id ||
-            (this.props.commitee && GState.currentCommitee == this.props.commitee.id)) {
-            emitter.once("current_commitee_changed", (newCurrent) => {
-                console.warn(GState.currentCommitee, "---------")
-                if (newCurrent == this.props.id && !GState.currentCommitee) {
-                    emitter.once("current_commitee_changed", (newCurrent) => {
-                        this.setState({
-                            newThing: !this.state.newThing
-                        })
-                    })
-                }
-                emitter.once("current_commitee_changed_by_main", room => {
-                    this.setState({
-                        newThing: !this.state.newThing
-                    })
-                })
-                this.setState({
-                    newThing: !this.state.newThing
-                })
-            })
-        } else {
-
         }
     }
     setActionPercentage() {
@@ -310,7 +279,6 @@ export default class CommiteeItem extends Component {
         }
     }
     render() {
-        this.listen()
         this.accessible = this.state.joint || this.state.public
         return (
             this.state.loaded ? <View style={{
@@ -321,7 +289,7 @@ export default class CommiteeItem extends Component {
                 margin: '1%',
                 padding: '2%',
                 borderTopRightRadius: 5,
-                backgroundColor: GState.currentCommitee == this.state.commitee.id ? "#54F5CA" : "#FEFFDE",
+                backgroundColor: this.props.ImICurrentCommitee ? "#54F5CA" : "#FEFFDE",
             }}>
                 <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                     if (GState.editingCommiteeName === false)

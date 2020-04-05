@@ -216,7 +216,7 @@ export default class EventDetailView extends Component {
   relationPost(id) {
     return this.props.navigation.navigate("HighLightsDetails", { event_id: id });
   }
-
+  delay = 1
   sorter = (a, b) => (a.created_at > b.created_at ? -1 :
     a.created_at < b.created_at ? 1 : 0)
   render() {
@@ -264,9 +264,11 @@ export default class EventDetailView extends Component {
                   parentComponent={this}
                   //getItemLayout={this._getItemLayout}
                   renderItem={(item, index) => {
+                    this.delay = index >= 5 ? 0 : this.delay + 1
                     return (
                       <HighlightCard
                         phone={stores.LoginStore.user.phone}
+                        delay={this.delay}
                         update={(hid) => {
                           this.setState({
                             EventHighlightState: true,
@@ -337,7 +339,7 @@ export default class EventDetailView extends Component {
                       }} style={{ alignSelf: 'flex-end', width:'30%'}}></Icon> : null}
                       <MapView style={{width:'60%'}} card location={this.props.Event.location.string}></MapView>
                     </View> :
-                    <TouchableOpacity delayLongPress={1000} onLongPress={() => {
+                    <TouchableOpacity style={{width:'60%'}} delayLongPress={1000} onLongPress={() => {
                       if (this.state.participant.master == true) {
                         this.setState({ EventLocationState: true })
                       }
@@ -385,11 +387,11 @@ export default class EventDetailView extends Component {
               }} stopLoader={() => {
                 this.props.stopLoader()
               }} playVideo={(vid) => {
-                this.wasEventHiglightOpened = true
+                //this.wasEventHiglightOpened = true
                 this.setState({
                   showVideo: true,
                   video: vid,
-                  EventHighlightState: false
+                  //EventHighlightState: false
                 })
               }}
               updateState={this.state.update}
@@ -398,7 +400,7 @@ export default class EventDetailView extends Component {
                 this.reinitializeHighlightsList(newHighlight)
               }} isOpen={this.state.EventHighlightState} onClosed={() => {
                 this.setState({
-                  EventHighlightState: false, update: false,
+                  EventHighlightState: false, 
                   highlight_id: null
                 })
               }}
@@ -418,7 +420,7 @@ export default class EventDetailView extends Component {
             {this.state.showVideo ? <VideoViewer open={this.state.showVideo} hideVideo={() => {
               this.setState({
                 showVideo: false,
-                EventHighlightState: this.wasEventHiglightOpened ? true : false,
+                //EventHighlightState: this.wasEventHiglightOpened ? true : false,
                 isHighlightDetailsModalOpened: this.wasDetailOpened ? true : false,
               })
               this.wasEventHiglightOpened = false;

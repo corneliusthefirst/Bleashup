@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { View, Dimensions } from "react-native"
-import { Content, Text, Item, Container, Tabs, Tab, TabHeading } from 'native-base';
+import { Content, Text, Item, Container, Tabs, Tab, TabHeading, Spinner } from 'native-base';
 import { map } from "lodash"
 import Modal from "react-native-modalbox"
 import shadower from '../../shadower';
@@ -29,15 +29,17 @@ export default class MediaTabModal extends PureComponent {
                 onClosed={() => {
                     this.props.closed()
                     this.setState({
-                        content: null
+                        content: null,
+                        mounted:false
                     })
                 }}
                 onOpened={() => {
                     setTimeout(() => {
                         this.setState({
-                            content: this.props.content
+                            content: this.props.content,
+                            mounted:true
                         })
-                    }, 20)
+                    }, 100)
                 }}
                 style={{
                     height: '90%',
@@ -45,7 +47,7 @@ export default class MediaTabModal extends PureComponent {
                 }}
             >
                 <Container style={{ margin: "1%" }}>
-                    <Tabs tabContainerStyle={{ borderRadius: 8, ...shadower(6) }}>
+                    {this.state.mounted?<Tabs tabContainerStyle={{ borderRadius: 8, ...shadower(6) }}>
                         <Tab heading={
                             <TabHeading>
                                 <Text>Photos</Text>
@@ -74,7 +76,7 @@ export default class MediaTabModal extends PureComponent {
                             <View style={{ backgroundColor: '#FEFFDE',height:'100%' }}>
                             <File file={this.props.file}></File>
                             </View></Tab>
-                    </Tabs>
+                    </Tabs>:<Spinner size={'small'}></Spinner>}
                 </Container>
             </Modal>
         );
