@@ -306,12 +306,9 @@ export default class ChatRoom extends Component {
                 message.received && message.received.length > 0 ? message.received.unshift({
                     phone:
                         this.props.user.phone, date: moment().format()
-                }) : message.received = [{
-                    phone:
-                        this.props.user.phone, date: moment().format()
-                }]
+                }) : message.received = [{phone:this.props.user.phone, date: moment().format()}]
                 message.received = uniqBy(message.received, "phone");
-                console.warn(message.received)
+                console.warn("here we are",message.received)
                 this.addNewMessage(message, snapshot.key)
             })
             this.fireRef.on('child_changed', snapshot => {
@@ -1016,7 +1013,7 @@ export default class ChatRoom extends Component {
                 }
             } else if (index == 2) {
                 firebase.database().ref(`${this.props.firebaseRoom}/${message.key}/received`).once('value', snapshot => {
-                    console.warn(snapshot)
+                    console.warn("here ",snapshot)
                     snapshot.val() !== null ? this.props.showContacts(snapshot.val().map(ele => { return ele.phone.replace("+", "00") }),"Seen by") :
                         this.props.showContacts(message.received.map(ele => { return { ...ele, phone: ele.phone.replace("+", "00") } }), "Seen by")
                 })
@@ -1069,6 +1066,8 @@ export default class ChatRoom extends Component {
     }
     transparent = "rgba(50, 51, 53, 0.8)";
     render() {
+        //console.warn("messages are",this.room.messages)
+
         headerStyles = {
             flexDirection: 'row', ... (!this.state.showVideo && !this.state.showPhoto && !this.state.showRepliedMessage && !this.state.showCaption && bleashupHeaderStyle)
         }
@@ -1228,6 +1227,8 @@ export default class ChatRoom extends Component {
             numberOfItems={this.room.messages.length}
             keyExtractor={(item, index) => item ? item.id : null}
             renderItem={(item, index) => {
+               //console.warn("item received",item.received,this.props.members,item.received.length >= this.props.members.length)
+
                 this.delay = this.delay >= 20 || (item && !item.sent) ? 0 : this.delay + 1
                 return item ? <Message
                     voteItem={(index, vote) => {
