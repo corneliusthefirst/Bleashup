@@ -287,6 +287,8 @@ export default class Message extends Component {
         return this.props.message.type === 'vote'
     }
     render() {
+        //console.warn("here",this.props.message.sent,this.props.received);
+
         topMostStyle = {
             marginLeft: this.state.sender && !this.isVote() ? '1%' : this.isVote ? '3.5%' : 0,
             marginRight: !this.state.sender && !this.isVote() ? '1%' : 0,

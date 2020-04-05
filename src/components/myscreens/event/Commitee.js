@@ -60,6 +60,8 @@ export default class Commitee extends Component {
         }, 100)
     }
     render() {
+        //console.warn(this.props.commitees,this.props.commitees.length)
+
         return (this.state.loaded ?
             <View style={{ height: "100%", }}>
                 <View style={{

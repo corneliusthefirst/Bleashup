@@ -27,7 +27,7 @@ export default class CommiteeItem extends Component {
     }
     state = {
 
-    }
+    } 
     shouldComponentUpdate(nextProps, nextState, nextContext) {
         return this.props.newMessagesCount !== nextProps.newMessagesCount ||
             this.state.newThing !== nextState.newThing || this.props.ImICurrentCommitee !== nextProps.ImICurrentCommitee ||
