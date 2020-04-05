@@ -7,6 +7,7 @@ import { Thumbnail, Icon } from 'native-base';
 import shadower from "../../../shadower";
 import stores from '../../../../stores';
 import emitter from '../../../../services/eventEmiter';
+import GState from '../../../../stores/globalState';
 
 export default class PhotoView extends Component {
     constructor(props) {
@@ -20,29 +21,34 @@ export default class PhotoView extends Component {
         isModalOpened: false
     }
     initializeIterator() {
-        stores.Highlights.fetchHighlightsFromRemote(this.props.event_id).then(highlights => {
-            this.highlights = highlights
-            if (this.highlights.length > 0) {
-                this.interval = setInterval(() => {
-                    let highlight = this.highlights[this.counter]
-                    if (highlight && highlight.url) {
-                        this.setState({
-                            image: highlight.url.photo,
-                            video: highlight.url.video ? true : false,
-                            audio: highlight.url.audio ? true : false
-                        })
-                        this.counter = this.counter + 1
-                    } else {
-                        this.setState({
-                            image: this.props.photo,
-                            video: false,
-                            audio: false
-                        })
-                        this.counter = 0
+        this.outerMostinterval = setInterval(() => {
+            if(GState.initialized){
+                clearInterval(this.outerMostinterval)
+                stores.Highlights.fetchHighlightsFromRemote(this.props.event_id).then(highlights => {
+                    this.highlights = highlights
+                    if (this.highlights && this.highlights.length > 0) {
+                        this.interval = setInterval(() => {
+                            let highlight = this.highlights[this.counter]
+                            if (highlight && highlight.url) {
+                                this.setState({
+                                    image: highlight.url.photo,
+                                    video: highlight.url.video ? true : false,
+                                    audio: highlight.url.audio ? true : false
+                                })
+                                this.counter = this.counter + 1
+                            } else {
+                                this.setState({
+                                    image: this.props.photo,
+                                    video: false,
+                                    audio: false
+                                })
+                                this.counter = 0
+                            }
+                        }, 2000 + this.props.renderDelay)
                     }
-                }, 2000 + this.props.renderDelay)
+                })
             }
-        })
+        },500)
     }
     componentDidMount() {
         this.setState({
@@ -53,7 +59,7 @@ export default class PhotoView extends Component {
     }
     componentDidUpdate(previousProps, previousState) {
         if (this.props.photo !== previousProps.photo) {
-            if (this.highlights.length <= 0) {
+            if (this.highlights && this.highlights.length <= 0) {
                 this.setState({
                     image: this.props.photo
                 })

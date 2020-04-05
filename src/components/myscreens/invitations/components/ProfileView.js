@@ -54,7 +54,7 @@ export default class ProfileView extends Component {
                 }} transparent>
                     {testForURL(this.state.profile.profile) ? <CacheImages small thumbnails {...this.props}
                         source={{ uri: this.state.profile.profile }} /> :
-                        <Thumbnail small source={{ uri: this.state.profile.profile }}></Thumbnail>}
+                        <Thumbnail small {...this.props} source={require("../../../../../Images/images.jpeg")}></Thumbnail>}
                 </Button>
                 <View style={{
                     alignItems: 'center',

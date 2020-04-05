@@ -94,20 +94,25 @@ export default class CreateEvent extends Component {
  onClickNewContact(){
   this.props.navigation.navigate("Contacts");
  }
-
+  navigateToQRScanner() {
+    this.props.navigation.navigate("QR")
+  }
   render() {
     return (
 
  
         <ActionButton buttonColor="#1CDBAB" position="right" backgroundTappable={true} btnOutRange="green" size={57}>
 
-          <ActionButton.Item buttonColor='#1FABAB' title="Contacts" onPress={()=>{this.onClickNewContact()}} size={75}>
+          <ActionButton.Item buttonColor='#1FABAB' title="New Relation" onPress={()=>{this.onClickNewContact()}} size={75}>
             <Icon name="person-add" active={true} type="MaterialIcons" style={styles.actionButtonIcon} />
           </ActionButton.Item>   
-          <ActionButton.Item buttonColor='#9b59b6' title=" New Event  " onPress={()=>{this.onClickNewEvent().then(()=>{})}} size={65}>
+          <ActionButton.Item buttonColor='#9b59b6' title=" New Activity  " onPress={()=>{this.onClickNewEvent().then(()=>{})}} size={65}>
             <Icon name="md-create" style={styles.actionButtonIcon} />
           </ActionButton.Item>   
-          <ActionButton.Item buttonColor='#1abc9c' title="Tasks/Reminds" onPress={() => {this.onClickNewRemind()}} size={55}>
+        <ActionButton.Item buttonColor='#3D90E3' title="Join Activity" onPress={() => { this.navigateToQRScanner() }} size={55}>
+          <Icon name="barcode-scan" active={true} type="MaterialCommunityIcons" style={{ color: "#FEFFDE", }} />
+        </ActionButton.Item> 
+          <ActionButton.Item buttonColor='#1abc9c' title="My Tasks" onPress={() => {this.onClickNewRemind()}} size={45}>
             <Icon name="tasks" type="FontAwesome" style={styles.actionButtonIcon} />
           </ActionButton.Item>
 

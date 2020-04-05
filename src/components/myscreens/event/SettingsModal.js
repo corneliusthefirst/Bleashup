@@ -238,8 +238,8 @@ export default class SettingsModal extends Component {
             })
         } else if (this.state.date !== prevState.date) {
             this.setState({
-                startOfWeek: [find(daysOfWeeksDefault, { day: this.getDay(this.state.date) }).code],
-                daysOfWeek: this.state.daysOfWeek ? this.state.daysOfWeek : [find(daysOfWeeksDefault, { day: this.getDay(this.state.date) }).code],
+                startOfWeek: this.state.date ? [find(daysOfWeeksDefault, { day: this.getDay(this.state.date) }).code] : null,
+                daysOfWeek: this.state.data ? this.state.daysOfWeek ? this.state.daysOfWeek : [find(daysOfWeeksDefault, { day: this.getDay(this.state.date) }).code] : null,
                 newThing: !this.state.newThing
             })
         }

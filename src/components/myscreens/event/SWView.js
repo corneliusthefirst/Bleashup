@@ -131,6 +131,7 @@ export default class SWView extends Component {
                             borderRadius: 8
                         }}>
                             <ActionsView
+                                hideMenu={this.props.hideMenu}
                                 calendared={this.props.calendared}
                                 period={this.props.period}
                                 exitActivity={this.props.exitActivity}

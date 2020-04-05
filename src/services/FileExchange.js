@@ -93,7 +93,6 @@ export default class FileExachange {
             })
         })
     }
-
     upload(written, total) {
         this.written = written
         this.total = total

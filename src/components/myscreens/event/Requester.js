@@ -28,7 +28,7 @@ class Request {
                                 id: uuid.v1(),
                                 title: "Update OnCommittees",
                                 updated: 'new_commitee',
-                                event_id: commitee.even_id,
+                                event_id: commitee.event_id,
                                 changed: `Create ${commitee.name} Committee  `,
                                 updater: stores.LoginStore.user,
                                 new_value: { data: commitee.id, new_value: commitee.name },

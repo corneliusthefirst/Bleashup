@@ -96,7 +96,7 @@ class tcpRequestData {
         Update.action = "background"
         Update.phone = phone
         Update.event_id = eventID
-        Update.background = data
+        Update.background_update = data
         return Update
       } else if (action === 'notes') {
         Update.action = action

@@ -12,6 +12,7 @@ export default class globalState {
   @observable downlading = false
   @observable newContribution = false;
   @observable connected = true
+  @observable initialized = false
   @observable currentRoom = null;
   @observable reply = null
   @observable success = false;

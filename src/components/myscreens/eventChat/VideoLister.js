@@ -9,6 +9,7 @@ import testForURL from '../../../services/testForURL';
 import { Thumbnail, Button, Icon } from 'native-base';
 import VideoViewer from '../highlights_details/VideoModal';
 import MediaSeparator from './MediaSeparator';
+import buttoner from '../../../services/buttoner';
 
 export default class Video extends Component {
     constructor(props) {
@@ -33,8 +34,8 @@ export default class Video extends Component {
                 numberOfItems={this.props.video.length}
                 keyExtractor={(item, index) => item ? item.id : null}
                 renderItem={(item, index) => {
-                    return item.type === 'date_separator' ? <MediaSeparator item={item}>
-                    </MediaSeparator> : <Button transparent style={{ height: '100%' }} onPress={() => {
+                    return item.type === 'date_separator' ? <View style={{margin: '4%',}}><MediaSeparator item={item}>
+                    </MediaSeparator></View> : <Button transparent style={{ height: '100%' }} onPress={() => {
                         this.setState({
                             showVideo: true,
                             created_at: item.created_at,
@@ -43,7 +44,10 @@ export default class Video extends Component {
                     }}><View style={{ ...shadower(), margin: '2.5%', borderRadius: 10, alignSelf: 'center', }}>
                             {testForURL(item.thumbnailSource) ? <CacheImages style={{ borderRadius: 5, }} source={{ uri: item.thumbnailSource }} square thumbnails large></CacheImages> :
                                 <Thumbnail style={{ borderRadius: 5, }} source={{ uri: item.thumbnailSource }} square large></Thumbnail>}
-                                <Icon type={'EvilIcons'} name={"play"} style={{color:'#FEFFDE',position: 'absolute',alignSelf:'center',marginTop: '35%',}}></Icon>
+                                <Icon type={'EvilIcons'} name={"play"} style={{color:'#FEFFDE',position: 'absolute',alignSelf:'center',marginTop: '35%',backgroundColor: 'black',
+                                opacity:.5,
+                                height:10,
+                                borderRadius:10}}></Icon>
                         </View>
                     </Button>
                 }}
