@@ -340,8 +340,8 @@ export default class CommiteeItem extends Component {
                                 <Text style={{ marginTop: "30%", }}>
                                     {this.state.commitee.new_messages.length}
                                 </Text>
-                            </Badge> : null : null}
-                            {this.state.commitee.name.toLowerCase() === "Generale".toLowerCase() ? null : this.state.master ?
+                            </Badge> : null : null} 
+                            {this.state.commitee&&this.state.commitee.name&&this.state.commitee.name.toLowerCase() === "Generale".toLowerCase() ? null : this.state.master ?
                                 <View style={{ marginTop: "-5%", marginRight: "15%", }}>
                                     <TouchableWithoutFeedback onPress={() => {
                                         GState.editingCommiteeName = true
