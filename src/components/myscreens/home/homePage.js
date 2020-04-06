@@ -51,7 +51,7 @@ import shadower from "../../shadower";
 import TabModal from "./TabModal";
 import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
 import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
-
+import colorList from "../../colorList";
 
 let { height, width } = Dimensions.get('window');
 
@@ -291,13 +291,13 @@ class Home extends Component {
     StatusBar.setBarStyle('dark-content', true)
     StatusBar.setHidden(false, true)
     return (
-      <Container style={{ height:height,backgroundColor: "#1FABAB",width:width  }}>
-        <View style={{ height: 50,backgroundColor: "#1FABAB",width:"100%", }}>
+      <Container style={{ height:colorList.containerHeight,backgroundColor: colorList.containerBackground ,width:colorList.containerWidth }}>
+        <View style={{ height: colorList.headerHeight,backgroundColor: colorList.headerBackground ,width:"100%", }}>
         
          
             <View style={{flex: 1, backgroundColor: "#1FABAB", flexDirection: "row",justifyContent: "space-between",width:"100%" }}>
              
-              <View style={{ alignSelf: "flex-start",justifyContent:"center",height:"100%" /*transform: [{ rotate: spin }] */}}>
+              <View style={{ alignSelf: "flex-start",justifyContent:"center",height:"98%",marginTop:"1%" }}>
                 <Thumbnail source={require("../../../../assets/bleashuptitle.png")} style={{width:120}}></Thumbnail>
               </View>
 

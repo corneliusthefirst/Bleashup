@@ -21,8 +21,8 @@ export default class MapView extends Component {
                     square
                     source={require("../../../../../Images/google-maps-alternatives-china-720x340.jpg")}
                     style={{
-                        height: 40,
-                        borderRadius: 5,
+                        height: 50,
+                        borderRadius: 3,
                         width:'100%'
                     }}
                     //resizeMode="contain"

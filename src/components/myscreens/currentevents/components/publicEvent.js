@@ -37,6 +37,7 @@ import { findIndex, isEqual } from "lodash"
 import InvitationModal from './InvitationModal';
 import ProfileSimple from './ProfileViewSimple';
 import shadower from "../../../shadower";
+import colorList from "../../../colorList";
 
 
 let { height, width } = Dimensions.get('window');
@@ -124,8 +125,7 @@ class PublicEvent extends Component {
             }
             join={() => this.join()}
             hide={() => this.hide()} {...this.props} ></SwipeOutView >,
-          //autoClose: true,
-          backgroundColor: "white",
+            backgroundColor: colorList.bodyBackground,
         }
       ],
     }
@@ -292,7 +292,7 @@ class PublicEvent extends Component {
           paddingTop: 1,
           borderRadius: 5,
           height: height / 8,
-          width: "100%"
+          width: colorList.containerWidth
         }}
       >
         <View style={{ width: "100%", flexDirection: "row", alignItems: "center" }}>
@@ -317,14 +317,15 @@ class PublicEvent extends Component {
   renderTitle(){
     return  ( <CardItem style={{
       marginBottom: '3%',
-      backgroundColor:"white"
+      backgroundColor:colorList.bodyBackground,
+      width: colorList.containerWidth
     }}>
       <View style={{ flexDirection: 'row', width: '100%' }}>
-        <View style={{ width: '95%',paddingLeft:6}}>
+        <View style={{ width: '90%',paddingLeft:6}}>
           {this.state.isMount ? <TitleView openDetail={() => this.props.openDetails(this.props.Event)} join={() => this.join()} joint={this.state.joint} seen={() => this.markAsSeen()}
             {...this.props}></TitleView> : null}
         </View>
-        <View style={{ width: '12%', justifyContent: 'flex-end', alignItems: 'flex-end', }}>
+        <View style={{ width: '10%', justifyContent: 'flex-end', alignItems: 'flex-end',marginLeft:"2%" }}>
           <Icon onPress={() => this.props.showActions(this.props.Event.id)} type="Entypo" style={{ fontSize: 24, color: "#555756", alignSelf: 'flex-end' }} name="dots-three-vertical"></Icon>
         </View>
       </View>
@@ -333,44 +334,40 @@ class PublicEvent extends Component {
   renderBody() {
     return (<CardItem
       style={{
-        paddingLeft: 0,
-        aspectRatio: 3 / 1,
-        paddingRight: 0,
         paddingTop: 4,
         paddingBottom: 6,
-        backgroundColor:"white",
+        backgroundColor:colorList.bodyBackground,
+        width: colorList.containerWidth,
         height:200
       }}
       cardBody
     >
-      <View style={{ flex:1,flexDirection: 'row', }}>
-        <View style={{ flex:1,width: '100%' }}>{this.state.isMount ? <View style={{ alignSelf: 'flex-start' }}><CardItem
-          style={{
-            flex:1,
-            marginLeft:"-1%",
-            backgroundColor:"white"
-          }}><PhotoView
+      <View style={{ flex:1,flexDirection: 'row',alignItems:"center" }}>
+        <View style={{ flex:1,width:colorList.containerWidth,alignSelf:"flex-start" }}>{this.state.isMount ? <View style={{ alignSelf: 'flex-start' }}>
+          <PhotoView
             navigation={this.props.navigation} renderDelay={this.props.renderDelay} showPhoto={(url) => url ?
               this.showPhoto(url) : null} joined={() => this.join()}
             isToBeJoint hasJoin={this.props.Event.joint || this.state.joint} onOpen={() => this.onOpenPhotoModal()} style={{}} photo={this.props.Event.background} event_id={this.props.Event.id} width={355} height={198} borderRadius={0} />
-        </CardItem></View> : null}</View>
+        </View> : null}</View>
       </View>
     </CardItem>)
   }
 
  renderMarkAsSeen(){
    return (         
-      <CardItem style={{backgroundColor:"white"}}>
+      <CardItem style={{backgroundColor:colorList.bodyBackground}}>
         {this.state.isMount ? <Options seen={() => this.markAsSeen()} {...this.props}></Options> : null}
       </CardItem>)
  }
 renderFooter(){
   return (
-    <Footer style={{height:height/15,width:"100%", backgroundColor:"white"}}>
+    <Footer style={{height:height/15,backgroundColor:colorList.bodyBackground, width: colorList.containerWidth}}>
       <View style={{width:"100%", flexDirection: "row",}}>
 
       <View style={{alignSelf:"flex-start",width:"60%"}}>
+        <View style={{width:"35%"}}>
         {this.state.isMount && !this.state.fresh ? <Join event={this.props.Event} refreshJoint={() => this.refreshJoint()}></Join> : null}
+        </View>
       </View>
 
 
@@ -387,7 +384,8 @@ renderFooter(){
 
   render() {
     //emitter.emit('notify', "santerss") 
-    return (this.state.isMount ? <View style={{ width: "100%",alignSelf: 'center', }}>
+    return (this.state.isMount ? <View style={{  ackgroundColor:colorList.bodyBackground,
+      width: colorList.containerWidth,alignSelf: 'center', }}>
       <Swipeout {...this.props} onOpen={() => this.openSwipeOut()} onClose={() => this.onCloseSwipeout()} style={{
         width: "100%", ...shadower(1),
         backgroundColor: this.props.Event.new ? "#cdfcfc" : null
@@ -396,7 +394,7 @@ renderFooter(){
         //close={true}
         {...this.swipeOutSettings(this.state.master, this.state.joint)}>
         <Card
-          style={{width:"100%",backgroundColor:"white"}}
+          style={{ backgroundColor:colorList.bodyBackground,width:colorList.containerWidth}}
           bordered
         >
           {this.renderTitle()}
@@ -405,7 +403,8 @@ renderFooter(){
 
         </Card>
       </Swipeout>
-    </View> : <View style={{}}><Card style={{ height: 300, marginTop: '1%', alignSelf: 'center', width: '100%',backgroundColor:"white"}}></Card></View>
+    </View> : <View style={{}}><Card style={{ height: 300, alignSelf: 'center',backgroundColor:colorList.bodyBackground,
+      width: colorList.containerWidth}}></Card></View>
     )
   }
 }

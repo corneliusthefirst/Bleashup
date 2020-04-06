@@ -6,6 +6,7 @@ import Requester from './Requester';
 import stores from '../../../stores';
 import shadower from '../../shadower';
 import ActionsMenu from './ActionsMenu';
+import colorList from '../../colorList';
 
 export default class ActionsView extends Component {
     constructor(props) {
@@ -24,51 +25,32 @@ export default class ActionsView extends Component {
     inviteContacts() {
         this.props.inviteContacts()
     }
-    center = { alignSelf: 'center', alignItems: 'center', }
-    container = {
-        height: this.actionHeight,
-        marginBottom: this.padding,
-        backgroundColor: '#FEFFDE',
-        borderRadius: 5, ...shadower(2),
-        marginBottom: '15%',
-        padding: '1%',
-        alignSelf: 'center', width: 55, height: 50
-    }
-    padding = '20%'
+    
+
     render() {
 
         return (
             <View style={{
-                height: 300,
+                height: 200,
                 display: 'flex',
                 flexDirection: 'column',
-                marginTop: "6%", alignSelf: 'center', alignItems: 'center',
+                alignSelf: 'center', alignItems: 'center',
             }}>
-                { <View style={this.container}>
-                        <TouchableOpacity style={this.center} onPress={() => requestAnimationFrame(() => this.props.exitActivity())}>
-                            <Icon style={{
-                                color: "#1FABAB" ,
-                                fontSize: this.fontSize,
-                            }}
-                            type="AntDesign" name={"arrowleft"}></Icon>
-                            <Label style={{
-                                fontSize: this.textSize,
-                                color: "#1FABAB"
-                            }}>{"Back"}</Label>
-                        </TouchableOpacity>
-                    </View>
-                }
+        
                 {this.props.event_type === "relation" ? null :
-                    <View style={{...this.container, height:20,}}>
+                    <View style={{ height:50,width:50,borderRadius:30,...shadower(2),alignItems:"center",justifyContent:"center"}}>
                         <Icon style={{
-                            color: "#1FABAB",
-                            alignSelf: 'center',
-                            marginTop: -6,
+                            color: colorList.bodyIcon,
                             fontSize: 30,
                         }} onPress={() => {
                             this.refs.ActionMenu.showMenu()
-                        }} name="dots-three-horizontal" type="Entypo"></Icon>
-                          <ActionsMenu
+                        }} name="plus" type="AntDesign"></Icon>
+
+
+                    </View>
+                }
+                        <View>
+                           <ActionsMenu
                                 ref={'ActionMenu'}
                                 hideMenu={this.props.hideMenu}
                                 sync={this.props.handleSync}
@@ -82,8 +64,7 @@ export default class ActionsView extends Component {
                                 leave={this.props.leaveActivity}
                                 members={this.props.showMembers}
                           ></ActionsMenu>
-                    </View>
-                }
+                      </View>
             </View>
         )
     }

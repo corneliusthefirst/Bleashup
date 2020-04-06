@@ -16,6 +16,7 @@ import testForURL from '../../../services/testForURL';
 import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
 import { Title } from 'native-base';
 import shadower from '../../shadower';
+import colorList from '../../colorList';
 
 export default class CommiteeItem extends Component {
     constructor(props) {
@@ -280,30 +281,29 @@ export default class CommiteeItem extends Component {
         this.accessible = this.state.joint || this.state.public
         return (
             this.state.loaded ? <View style={{
-                opacity: this.accessible ? 1 : 0.2,
-                borderBottomRightRadius: 5,
-                width: "90%",
+                opacity: this.accessible ? 1 : 0.5,
+                width: "100%",
                 ...shadower(1),
-                margin: '1%',
-                padding: '2%',
+                padding: '5%',
                 borderTopRightRadius: 5,
-                backgroundColor: this.props.ImICurrentCommitee ? "#54F5CA" : "#FEFFDE",
+                backgroundColor: this.props.ImICurrentCommitee ? colorList.bodyDarkWhite : colorList.bodyBackground,
             }}>
-                <TouchableOpacity onPress={() => requestAnimationFrame(() => {
+                <TouchableWithoutFeedback onPress={() => requestAnimationFrame(() => {
                     if (GState.editingCommiteeName === false)
                         this.swappCommitee()
                 })}>
-                    <View style={{ display: 'flex', hieght: 100, width: "100%", flexDirection: "row", marginBottom: "2%", }}>
-                        <View style={{ margin: '1%', width: "70%", display: 'flex', flexDirection: 'column', }}>
-                            <Text elipsizeMode={'tail'} numberOfLines={1} style={{
-                                fontWeight: 'bold', fontSize: 14, color: GState.currentCommitee == this.state.commitee.id ? "#0A4E52" : "gray"
+                    <View style={{ display: 'flex', width: "99%", flexDirection: "row",margin:"1%"}}>
+                        
+                        <View style={{flex:1, flexDirection: 'column', }}>
+                            <Text elipsizeMode={'tail'} numberOfLines={1} style={{fontWeight:"800",fontSize: 14, color: GState.currentCommitee == this.state.commitee.id ? colorList.bodyText : "gray"
                             }}>{this.state.commitee.name}</Text>
                             {this.state.joint && this.state.newest_message ? <Text note>Latest Message :</Text> : null}
                             {this.state.joint && this.state.newest_message ? this.writeLatestMessage(this.state.newest_message) : null}
                         </View>
-                        <View style={{ display: 'flex', flexDirection: 'row', marginTop: "6%", }}>
+
+                        <View style={{  flexDirection: 'row',justifyContent:"center" }}>
                             {this.state.joint && this.state.commitee.new_messages ? this.state.commitee.new_messages.length > 0 ? <Badge primary>
-                                <Text style={{ marginTop: "30%", }}>
+                                <Text style={{}}>
                                     {this.state.commitee.new_messages.length}
                                 </Text>
                             </Badge> : null : null}
@@ -312,7 +312,8 @@ export default class CommiteeItem extends Component {
                                 this.state.commitee.name && 
                                 this.state.commitee.name.toLowerCase() === "Generale".toLowerCase() ? null : 
                                 this.state.master ?
-                                <View style={{ marginTop: "-5%", marginRight: "15%", }}>
+                                
+                                <View style={{marginRight: "2%"}}>
                                     <TouchableWithoutFeedback onPress={() => {
                                         GState.editingCommiteeName = true
                                         requestAnimationFrame(() => {
@@ -327,10 +328,12 @@ export default class CommiteeItem extends Component {
                                     }}>
                                         <View>{this.state.master ? <Icon style={{ fontSize: 30, color: "#0A4E52" }} name="pencil" type="EvilIcons" /> : null}</View>
                                     </TouchableWithoutFeedback>
+
                                 </View> : null}
                         </View>
                     </View>
-                </TouchableOpacity>
+                </TouchableWithoutFeedback>
+
                 {this.state.isEditNameModelOpened ? <EditNameModal value={this.state.commitee.name} isOpen={this.state.isEditNameModelOpened} close={() => {
                     this.setState({
                         isEditNameModelOpened: false,
@@ -341,9 +344,6 @@ export default class CommiteeItem extends Component {
                         this.editName(newName)
                     }}
                 ></EditNameModal> : null}
-                {//<MenuDivider color="#1FABAB" />
-                }
-
 
             </View> : <Spinner size={"small"}></Spinner>
         );

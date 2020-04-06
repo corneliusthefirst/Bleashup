@@ -17,6 +17,9 @@ import shadower from "../../shadower";
 import { dateDiff, writeDateTime } from "../../../services/datesWriter";
 import dateDisplayer from '../../../services/dates_displayer';
 import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
+import colorList from "../../colorList";
+
+
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenheight = Math.round(Dimensions.get('window').height);
 export default class SWView extends Component {
@@ -92,14 +95,16 @@ export default class SWView extends Component {
     }
     render() {
         return <View style={{
-            backgroundColor: "#FEFFDE",
+            backgroundColor: colorList.bodyBackground,
             width: "100%",
+            height:colorList.containerHeight,
             borderRadius: 5,
             borderBottomWidth: 0,
             //margin: "1%",
         }}>
-            <ScrollView nestedScrollEnabled={true} showsVerticalScrollIndicator={false}>
-                <View style={{ flexDirection: 'row',height:824}}>
+            
+                <View style={{ flexDirection: 'row',height:colorList.containerHeight}}>
+
                     <View style={{
                         backgroundColor: 'white', borderRadius: 5,
                         width: screenWidth * .18, ...shadower(5),
@@ -114,7 +119,7 @@ export default class SWView extends Component {
                             </Button>
                         </View>
                         <View style={{ height: 235, alignSelf: 'center', }}>
-                            <Text style={{ margin: 2 }} note>pages</Text>
+                          
                             <RouteView isChat={this.props.isChat} refreshCommitee={() => this.refreshCommitees()}
                                 event_id={this.props.event.id}
                                 currentPage={this.props.currentPage}
@@ -122,13 +127,12 @@ export default class SWView extends Component {
                                     this.props.setCurrentPage(page)
                                 }}></RouteView>
                         </View>
-                        <Text style={{ margin: 2, }} note>actions</Text>
+                      
                         <View style={{
                             width: '100%',
                             height: 400,
                             alignSelf: 'center',
-                            backgroundColor: 'white',
-                            borderRadius: 8
+                            backgroundColor: colorList.bodyBackground,
                         }}>
                             <ActionsView
                                 hideMenu={this.props.hideMenu}
@@ -144,32 +148,32 @@ export default class SWView extends Component {
                                 showMembers={() => this.props.showMembers()}></ActionsView>
                         </View>
                     </View>
+
+
+
+
+
+
+
+
+
+                <ScrollView nestedScrollEnabled={true} showsVerticalScrollIndicator={false}>
                     <View style={{
                         height: '100%',
                         width: screenWidth * .56,
                         backgroundColor: 'white',
                         ...shadower(2),
                     }}>
-                        <View style={{ height: 70 }}><View style={{
-                            height: '62%',
-                            width: "101%",
-                        }}><View style={{
-                            paddingLeft: '2%',
-                            ...bleashupHeaderStyle, marginLeft: '-1%', marginRight: 0,
-                            alignSelf: 'center',
-                            flexDirection: 'row',
-                        }}><View style={{ marginLeft: '1%', width: '85%' }}><Title style={{
-                            fontWeight: 'bold',
-                            fontSize: 14,
-                            marginTop: 2,
-                            color: "#0A4E52",
-                            alignSelf: 'flex-start',
-                        }}>{this.props.event.about.title}</Title>
+                    <View style={{ height: 60,alignItems:"flex-start",padding:"2%" }}>
+                        
+                      <Title style={{fontWeight: 'bold',fontSize: 18,color: colorList. headerBlackText}}>{this.props.event.about.title}</Title>
+
                                     {this.props.event.period ? <Title style={{
                                         alignSelf: 'flex-start',
                                         fontWeight: this.props.event.closed ? "bold" : "400",
                                         color: this.props.event.closed ? "red" : dateDiff(this.props.event) > 0 ? "gray" : "#1FABAB", fontSize: 12,
                                     }}>{this.props.event.closed ? "Closed" : writeDateTime(this.props.event)}</Title> : null}
+
                                     {/*this.props.event.interval > 1 && this.props.event.frequency !== 'yearly' && this.dateDiff(this.props.event) < 0 ?
                                         <Text style={{
                                             color: "#1FABAB"
@@ -178,13 +182,10 @@ export default class SWView extends Component {
                                                 null} ${this.writeInterval(this.props.event.frequency)} till 
                                                      ${moment(this.props.event.recurrence ? this.props.event.recurrence :
                                                     null).format("dddd, MMMM Do YYYY")}`}
-                                                     </Text> : null*/}
-                                </View><View style={{ width: '14%' }}><Icon onPress={() => {
-                                    this.props.navigateHome()
-                                }} style={{
-                                    alignSelf: 'center', color: "#1FABAB", margin: '2%',
-                                    marginBottom: "6%"
-                                }} name="close" type="EvilIcons"></Icon></View></View></View></View>
+                                                     </Text> : null*/}    
+                              
+                            </View>
+
                         <Commitee
                             computedMaster={this.props.computedMaster}
                             master={this.props.master}
@@ -203,8 +204,9 @@ export default class SWView extends Component {
                             event_id={this.props.event.id}>
                         </Commitee>
                     </View>
+                    </ScrollView>
                 </View>
-            </ScrollView>
+            
         </View>
     }
 }

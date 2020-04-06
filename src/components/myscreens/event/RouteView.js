@@ -7,6 +7,8 @@ import emitter from '../../../services/eventEmiter';
 import firebase from 'react-native-firebase';
 import stores from '../../../stores';
 import { Badge } from "native-base"
+import colorList from '../../colorList';
+
 const screenWidth = Math.round(Dimensions.get('window').width);
 
 import shadower from "../../shadower";
@@ -93,8 +95,9 @@ export default class RouteView extends Component {
         if (this.props.currentPage == "EventChat" || this.props.isChat) GState.generalNewMessages = []
         return (
             <View style={{ width: this.width, height: '100%' }} transparent >
+
                 <TouchableOpacity style={{
-                    ...this.centerer, backgroundColor: this.props.currentPage == "EventDetails" && !this.props.isChat ? "#54F5CA" : "#FEFFDE",
+                    ...this.centerer, backgroundColor: this.props.currentPage == "EventDetails" && !this.props.isChat ? "#54F5CA" : colorList.bodyBackground,
                     width: "100%", ...shadower(2)
                 }} onPress={() => requestAnimationFrame(() => {
                     this.props.setCurrentPage("EventDetails")
@@ -103,16 +106,15 @@ export default class RouteView extends Component {
                 )}>
                     <View style={{ display: 'flex', width: "100%", marginTop: '10%', }}>
                         <Icon type="AntDesign" style={{
-                            alignSelf: 'center', fontSize: this.fontSize, color:
-                                this.props.currentPage == "EventDetails" &&
-                                    !this.props.isChat ? "#0A4E52" : this.original
-                        }} name="appstore1"></Icon>
+                            alignSelf: 'center', fontSize: this.fontSize, color:colorList.bodyIcon
+                        }} name="appstore-o"></Icon>
                         {/*<Text style={{ padding: "1%", color: this.props.currentPage == "EventDetails" ? "#0A4E52" : "gray", width: "100%" }}>Details</Text>*/}
                     </View>
                 </TouchableOpacity>
+
                 <TouchableOpacity style={{
                     ...this.centerer, width: '100%',
-                    backgroundColor: this.props.currentPage == "EventChat" || this.props.isChat ? "#54F5CA" : "#FEFFDE",
+                    backgroundColor: this.props.currentPage == "EventChat" || this.props.isChat ? "#54F5CA" : colorList.bodyBackground,
                     ...shadower(2)
                 }} onPress={() => requestAnimationFrame(() => {
                     this.props.setCurrentPage("EventChat")
@@ -120,28 +122,29 @@ export default class RouteView extends Component {
                 })
                 }>
                     <View style={{ width: "100%", marginTop: '10%', }}>
-                        <View style={{}}><Icon type="Ionicons" style={{
+                        <View style={{}}><Icon type="FontAwesome" style={{
                             alignSelf: 'center',
                             fontSize: this.fontSize,
-                            color: this.props.currentPage == "EventChat" || this.props.isChat ? "#0A4E52" : this.original
-                        }} name="ios-chatbubbles"></Icon>
+                            color: colorList.bodyIcon
+                        }} name="comments-o"></Icon>
                             {/*<Text style={{ padding: "1%", color: this.props.currentPage == "EventChat" ? "#0A4E52" : "gray", width: "100%" }}>Discusion</Text>*/}</View>
                         {GState.generalNewMessages.length > 0 ? <Badge style={{ position: 'absolute' }}
                             primary><Text style={{ marginTop: "30%", }}>{GState.generalNewMessages.length}</Text></Badge> : <View></View>}
                     </View>
                 </TouchableOpacity>
+                
                 <TouchableOpacity style={{
                     ...this.centerer, width: '100%',
-                    backgroundColor: this.props.currentPage == "Reminds" && !this.props.isChat ? "#54F5CA" : "#FEFFDE",
+                    backgroundColor: this.props.currentPage == "Reminds" && !this.props.isChat ? "#54F5CA" : colorList.bodyBackground,
                     ...shadower(2)
                 }} onPress={() => requestAnimationFrame(() => {
                     this.props.setCurrentPage("Reminds")
                     this.resetSelectedCommitee()
                 })}>
                     <View style={{ width: "100%", marginTop: '10%', }}>
-                        <Icon type="Entypo" style={{ alignSelf: 'center', 
+                        <Icon type="FontAwesome" style={{ alignSelf: 'center', 
                             fontSize: this.fontSize,
-                             color: this.props.currentPage == "Reminds" && !this.props.isChat ? "#0A4E52" : this.original }} name="bell"></Icon>
+                             color: colorList.bodyIcon }} name="bell-o"></Icon>
                         {/*<Text style={{ padding: "1%", color: this.props.currentPage == "Reminds" ? "#0A4E52" : "gray", width: "100%" }}>Reminds</Text>*?/}
                     </View>
                 </Button>
@@ -158,7 +161,7 @@ export default class RouteView extends Component {
                 </TouchableOpacity>
                 <TouchableOpacity style={{
                     width: '100%',
-                    ...this.centerer, backgroundColor: this.props.currentPage == "ChangeLogs"&& !this.props.isChat ? "#54F5CA" : "#FEFFDE", 
+                    ...this.centerer, backgroundColor: this.props.currentPage == "ChangeLogs"&& !this.props.isChat ? "#54F5CA" : colorList.bodyBackground, 
                     ...shadower(2)
                 }} onPress={() => requestAnimationFrame(() => {
                     this.props.setCurrentPage("ChangeLogs")
@@ -166,12 +169,10 @@ export default class RouteView extends Component {
                 }
                 )}>
                     <View style={{ marginTop: '10%', width: "100%" }}>
-                        <Icon type="Entypo" style={{ 
-                            alignSelf: 'center', 
+                        <Icon type="AntDesign" style={{ 
                             alignSelf: 'center', 
                             fontSize: this.fontSize, 
-                            color: this.props.currentPage == "ChangeLogs" && !this.props.isChat
-                             ? "#0A4E52" : this.original }} name="clock"></Icon>
+                            color: colorList.bodyIcon }} name="clockcircleo"></Icon>
                         {/*<Text style={{ padding: "1%", color: this.props.currentPage == "ChangeLogs" ? "#0A4E52" : "gray", width: "100%" }}>{"Logs"}</Text>*/}
                     </View>
                 </TouchableOpacity>

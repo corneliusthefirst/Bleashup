@@ -60,6 +60,9 @@ import ChatRoomPlus from "./ChatRoomPlus";
 import ContactsModal from "../../ContactsModal";
 import AudioRecorder from "./AudioRecorder";
 import TypingIndicator from "./TypingIndicator";
+import colorList from "../../colorList";
+
+
 
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenheight = Math.round(Dimensions.get('window').height);
@@ -1065,14 +1068,19 @@ export default class ChatRoom extends Component {
         })
     }
     transparent = "rgba(50, 51, 53, 0.8)";
+
     render() {
         //console.warn("messages are",this.room.messages)
-
         headerStyles = {
-            flexDirection: 'row', ... (!this.state.showVideo && !this.state.showPhoto && !this.state.showRepliedMessage && !this.state.showCaption && bleashupHeaderStyle)
+            flexDirection: 'row', ... (!this.state.showVideo && !this.state.showPhoto && !this.state.showRepliedMessage && !this.state.showCaption)
         }
         return (
             <View style={{ height: "100%", }}>
+                    {
+                        // **********************Header************************ //
+                        this.state.showHeader ? this.header() : null
+                    }
+            <View style={{ height: "90%", }}>
                 <StatusBar animated={true} hidden={this.state.hideStatusBar} barStyle="dark-content" backgroundColor="#FEFFDE"></StatusBar>
                 {!this.state.loaded ? <Waiter></Waiter> : <View style={{}}><View style={{ width: "100%", alignSelf: 'center', }}>
                     <ScrollView keyboardShouldPersistTaps={"always"} showsVerticalScrollIndicator={false} scrollEnabled={false} inverted nestedScrollEnabled
@@ -1097,10 +1105,7 @@ export default class ChatRoom extends Component {
                         </View>
                     </ScrollView>
                 </View>
-                    {
-                        // **********************Header************************ //
-                        this.state.showHeader ? this.header() : null
-                    }
+
                     {
                         // **********************New Message Indicator *****************//
                         this.newMessages.length > 0 ? this.newMessageIndicator() : null
@@ -1183,6 +1188,7 @@ export default class ChatRoom extends Component {
                 }}></ContactsModal> : null}
                 {//</ImageBackground>
                 }
+            </View>
             </View>
 
         )
@@ -1299,7 +1305,7 @@ export default class ChatRoom extends Component {
     }
     keyboardView() {
         return <View style={{
-            backgroundColor: "#FFF",
+            backgroundColor: colorList.bodyBackground,
             alignSelf: 'center', alignItems: 'center', borderBottomWidth: 0, borderTopWidth: .3,
             borderColor: 'gray', borderRadius: 4,
             padding: '1%', width: "99%", alignItems: 'center',
@@ -1309,10 +1315,10 @@ export default class ChatRoom extends Component {
                 this.state.replying ? this.replyMessageCaption() : null}
             <View style={{
                 flexDirection: 'row',
-                alignSelf: 'center', width: '100%'
+                alignSelf: 'center', width: colorList.containerWidth
             }}>
                 <View style={{
-                    width: "88%",
+                    width: "86%",
                     fontSize: 17,
                     //height: 40,
                     flexDirection: 'row',
@@ -1320,29 +1326,33 @@ export default class ChatRoom extends Component {
                     borderWidth: 0,
                     borderRadius: 10,
                 }}>
-                    <View style={{ width: '12%', padding: '1%', }}><Icon onPress={() => {
-                        this.toggleEmojiKeyboard();
-                        this.markAsRead();
-                    }} style={{ color: "#1FABAB", alignSelf: 'flex-start', marginTop: '20%', }}
-                        type="Entypo" name="emoji-flirt"></Icon></View>
-                    <Item style={{ width: '76%' }}>
+
+                    <View style={{ height:45,width: '12%',alignItems:"center",justifyContent:"center",padding: '1%' }}><Icon onPress={() => this.openCamera()}
+                        style={{ color: "#696969"}}
+                        type={"MaterialCommunityIcons"}
+                        name={"image-filter"}></Icon>
+                    </View>  
+
+                    <Item style={{ width: '88%',marginLeft:"2%" }} rounded>
                         <TextInput
                             value={this.state.textValue}
                             onChange={(event) => this._onChange(event)}
                             placeholder={'Your Message'}
-                            style={{ width: '100%', maxHeight: 200, minHeight: 45 }}
+                            style={{ width: '80%', maxHeight: 200, minHeight: 45 }}
                             placeholderTextColor='#66737C'
                             multiline={true}
                             enableScrollToCaret
-                            ref={(r) => { this._textInput = r; }} /></Item>
-                    <View style={{ width: '12%', padding: '1%', }}><Icon onPress={() => this.openCamera()}
-                        style={{ color: "#1FABAB", alignSelf: 'flex-end', marginTop: '20%', }}
-                        type={"Ionicons"}
-                        name={"md-photos"}></Icon>
-                    </View>
+                            ref={(r) => { this._textInput = r; }} />
+                    <View style={{flex:1, width: '20%', padding: '1%',justifyContent:"center",alignItems:"center" }}><Icon onPress={() => {
+                        this.toggleEmojiKeyboard();
+                        this.markAsRead();
+                    }} style={{ color: "gray" }}
+                        type="Entypo" name="emoji-flirt"></Icon></View></Item>
+
                 </View>
+
                 <View style={{
-                    width: "10%",
+                    width: "12%",
                     marginLeft: '2%',
                     paddingTop: '2.5%',
                     padding: '1%',
@@ -1407,39 +1417,48 @@ export default class ChatRoom extends Component {
     }
     header() {
         return <View style={{
-            width: "100%",
-            height: 44,
-            position: 'absolute'
-        }}><View style={headerStyles}>
-                <View style={{ width: '60%', }}>
-                    <View style={{ flexDirection: 'row', }}><View style={{ width: '20%', paddingLeft: '2%', }}>
+            width: colorList.containerWidth,
+            height: colorList.headerHeight,
+            backgroundColor:colorList.headerBackground,
+            flexDirection:"row",
+            headerStyles
+        }}>
+         
+                <View style={{ width: "65%", height: 50,flexDirection:"row",alignSelf:"flex-start", alignItems:"center",  }}>
+                  
                         <Icon onPress={() => {
-                            this.props.openMenu()
+                            this.props.navigation.navigate("Home")
                         }}
-                            style={{ color: '#0A4E52', fontSize: 35  }}
-                            type={"Ionicons"}
-                            name={"ios-menu"}></Icon>
-                    </View>
-                        <View style={{ width: "80%", marginTop: "2%", }}>
+                            style={{ color:colorList.headerIcon,marginLeft:"5%",marginRight:"5%"}}
+                            type={"MaterialIcons"}
+                            name={"arrow-back"}></Icon>
+                                            
+                      
                             <Title style={{
-                                fontWeight: 'bold',
-                                alignSelf: 'flex-start',
+                                color:colorList.headerText,
+                                fontSize:colorList.headerFontSize,
+                                fontWeight:colorList.headerFontweight ,
+                                
                             }}>{this.props.roomName}</Title>
                             {this.state.typing && <TypingIndicator></TypingIndicator>}
-                        </View>
-                    </View>
+                       
+                   
                     {
                         //!! you can add the member last seen here if the room has just one member */
                     }
                 </View>
+
+               
                 <View style={{
-                    width: "40%",
+                    width: "35%",
                     flexDirection: 'row',
                     alignSelf: 'flex-end',
-                    alignItems: 'flex-end',
-                    justifyContent: 'flex-end',
+                    alignItems:"center",
+                    justifyContent:"space-between",
+                    height: 50,
+        
                 }}>
-                    <View style={{ alignSelf: 'flex-start', width: '25%' }}>
+                        <View style={{ height:50,marginLeft:"10%"  }}>
                         <ChatRoomPlus
                             computedMaster={this.props.computedMaster}
                             master={this.props.master}
@@ -1456,8 +1475,8 @@ export default class ChatRoom extends Component {
                             addPhotos={() => this.openPhotoSelector()}
                             addMembers={() => this.props.addMembers()}
                         ></ChatRoomPlus>
-                    </View>
-                    <View>
+                        </View>
+                       <View style={{ height:50 }}>
                         <ChatroomMenu
                             showMembers={() => this.showMembers()}
                             addMembers={() => this.props.addMembers()}
@@ -1472,8 +1491,17 @@ export default class ChatRoom extends Component {
                             roomID={this.props.firebaseRoom}
                             public={this.props.public_state}
                             opened={this.props.opened}></ChatroomMenu>
-                    </View>
-                </View></View></View>;
+                       </View>
+                       <View style={{ height:50,justifyContent:"center",marginRight:"10%" }}>
+                        <Icon onPress={() => {
+                            this.props.openMenu()
+                        }}
+                            style={{ color: 'white',fontSize:35}}
+                            type={"Ionicons"}
+                            name={"ios-menu"}></Icon>
+                      </View> 
+                      </View>  
+            </View>;
     }
 
     newMessageIndicator() {

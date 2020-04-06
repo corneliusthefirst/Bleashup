@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, TouchableWithoutFeedback, PanResponder } from 'react-native';
-import { Text, Content, Icon, Spinner,Title } from 'native-base';
+import { Text, Content, Icon, Spinner,Title,Thumbnail } from 'native-base';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import firebase from 'react-native-firebase';
 import stores from '../../../stores';
@@ -11,6 +11,8 @@ import { union, uniq } from "lodash";
 import GState from '../../../stores/globalState';
 import emitter from '../../../services/eventEmiter';
 import shadower from '../../shadower';
+import colorList from '../../colorList';
+
 export default class Commitee extends Component {
     constructor(props) {
         super(props)
@@ -63,33 +65,24 @@ export default class Commitee extends Component {
         //console.warn(this.props.commitees,this.props.commitees.length)
 
         return (this.state.loaded ?
-            <View style={{ height: "100%", }}>
-                <View style={{
-                    borderTopRightRadius: 5, borderBottomRightRadius: 5,
-                    backgroundColor: "#1FABAB", height: 35,
-                    width: "95%", display: 'flex', flexDirection: 'row', marginBottom: "5%", 
-                   ...shadower(1)
-                }}>
-                <View style={{ width: "80%",}}>
-                        <Title style={{
-                            color: "#9EEDD3",
-                            fontWeight: 'bold',
-                            alignSelf: 'flex-start',
-                            fontStyle: 'normal',
-                            marginLeft: 10, 
-                            fontSize: 20,
-                        }}>Committees</Title>
+            <View style={{ height: "100%", width: "100%"}}>
+                
+              <View style={{height:45, width: "100%",flexDirection:'row',justifyContent:"space-between"}}>
+                
+                <View style={{height:45,alignSelf: "flex-start",justifyContent:"center" }}>
+                  <Thumbnail source={require("../../../../assets/committees.png")} style={{width:130,height:32}}></Thumbnail>
                 </View>
-                    <View>
-                        <TouchableOpacity onPress={() => requestAnimationFrame(() => { this.props.showCreateCommiteeModal() })}>
-                            <Icon style={{ marginTop: "20%", color: "#FEFFDE",fontSize:22 }}
-                                name="pluscircle" type="AntDesign"></Icon></TouchableOpacity>
-                    </View>
-                </View>
+                <View  style={{height:45,justifyContent:"center",marginRight:"5%"}}>
+               <TouchableOpacity onPress={() => requestAnimationFrame(() => { this.props.showCreateCommiteeModal() })}>
+                  <Icon style={{ color: colorList.bodyIcon,fontSize:22, }}
+                     name="plus" type="AntDesign"></Icon></TouchableOpacity>
+                </View>      
+             </View>
+
                 <View>{this.state.refresh ? null :
                     <View style={{height:'97%',}}>
                         <BleashupFlatList
-                        backgroundColor={'white'}
+                        backgroundColor={colorList.bodyBackground}
                         style={{borderTopRightRadius: 5,
                             width: '100%', borderBottomRightRadius: 1, 
                             height: 700

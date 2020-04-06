@@ -55,6 +55,7 @@ import ProfileModal from "../invitations/components/ProfileModal";
 import VideoViewer from '../highlights_details/VideoModal';
 import Drawer from 'react-native-drawer'
 import shadower from "../../shadower";
+import colorList from "../../colorList";
 
 const screenWidth = Math.round(Dimensions.get('window').width);
 
@@ -1335,7 +1336,7 @@ export default class Event extends Component {
           drawer: {
             shadowColor: '#000000',
             shadowOpacity: 0.8,
-            shadowRadius: 3
+            shadowRadius: 3,
           }
           ,
           main: {}
@@ -1350,8 +1351,7 @@ export default class Event extends Component {
       }} isOpen={this.isOpen}
       //initializeOpen={true}
       openMenuOffset={this.currentWidth}
-      content={<View
-        style={{ backgroundColor: 'white', }}><SWView
+      content={<View style={{ backgroundColor:colorList.bodyBackground,width:"100%"}}><SWView
           navigateHome={() => {
             this.setState({
               isChat:false
@@ -1422,13 +1422,12 @@ export default class Event extends Component {
           public={this.event.public}></SWView></View>}>
       <View style={{
         height: "100%",
-        // ...shadower(12),
-        backgroundColor: "white"
+        backgroundColor:colorList.bodyBackground
       }}>
         {this.state.fresh ? <View style={{
-          height: '100%', marginLeft: '-1%',
+          height: '100%',
           width: '100%',
-          backgroundColor: '#FEFFDE',
+          backgroundColor: colorList.bodyBackground,
         }}></View> :
           this.renderMenu()
         }

@@ -5,6 +5,7 @@ import {
 import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
 import { Icon, } from "native-base"
 import emitter from '../../../services/eventEmiter';
+import colorList from '../../colorList';
 
 export default class ActionsMenu extends Component {
     constructor(props) {
@@ -40,7 +41,7 @@ export default class ActionsMenu extends Component {
         return this.state.isMount ? (
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                 <Menu
-                    style={{ backgroundColor: "#FEFFDE" }}
+                    style={{ backgroundColor: colorList.popMenuBackground }}
                     ref={this.setMenuRef}
                     button={null}
                 >

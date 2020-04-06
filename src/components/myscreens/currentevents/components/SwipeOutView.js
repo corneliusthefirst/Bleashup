@@ -9,6 +9,8 @@ import { findIndex } from "lodash"
 import { observer } from "mobx-react";
 import stores from "../../../../stores";
 import shadower from "../../../shadower";
+import colorList from "../../../colorList";
+
 
 export default class SwipeOutView extends Component {
     constructor(props) {
@@ -76,39 +78,41 @@ export default class SwipeOutView extends Component {
     blinkerSize = 26;
     render() {
         return (
-            <View style={{ width: "98%", borderRadius: 4,...shadower(2) ,height:'99.5%',padding: '3%',backgroundColor: 'white',}}>
-                <View style={{ display: 'flex', flexDirection: 'column', marginLeft: "20%", }}>
-                    <View style={{ height: this.width, marginBottom: "9%", alignSelf: 'flex-start',marginLeft: "10%", }}>
+            <View style={{ width: "99%", borderRadius: 4,...shadower(2) ,height:'99.5%',backgroundColor:colorList.bodyBackground,alignItems:"center"}}>
+                <View style={{ flex:1, flexDirection: 'column',justifyContent:"space-between" }}>
+                   
+                    <View style={{ height: this.width,alignItems:"center" }}>
                         <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                             this.props.publish()
                         })
-                        }>
-                            <Icon style={{ fontSize: 25, color: this.props.Event.public || this.props.master ? this.color : "#bfc6ea" }} name="megaphone" type="Entypo">
+                        } style={{ flexDirection:"column",alignItems:"center" }}>
+                            <Icon style={{ fontSize: 35, color: this.props.Event.public || this.props.master ? colorList.bodyIcon : "#bfc6ea" }} name="share-outline" type="MaterialCommunityIcons">
                             </Icon>
-                            <Label style={{ fontSize: 14, color: this.props.Event.public || this.props.master ? this.color : "#bfc6ea", marginRight: "11%" }}>Share</Label>
+                            <Label style={{ fontSize: 14, color: this.props.Event.public || this.props.master ? colorList.bodySubtext : "#bfc6ea"}}>Share</Label>
                         </TouchableOpacity>
                     </View>
-                    <View style={{ height: this.width, marginBottom: "9%", alignSelf: 'flex-start' }}>
+
+                    <View style={{ height: this.width,flexDirection:"column",alignItems:"center" }}>
                         {<TouchableOpacity onPress={() => requestAnimationFrame(() => {
                             this.invite()
                         })
-                        }>
-                            <Icon style={{ fontSize: 40, color: this.props.master || this.props.Event.public ? this.color : "#bfc6ea", }} name="sc-telegram" type="EvilIcons">
-                            </Icon>
-                            <Label style={{ fontSize: 14, color: this.props.master || this.props.Event.public ? this.color : "#bfc6ea", marginLeft: "7%", }}>Invite</Label>
+                        } style={{flexDirection:"column",alignItems:"center" }}>
+                            <Icon style={{ fontSize: 40, color: this.props.Event.public || this.props.master ? colorList.bodyIcon : "#bfc6ea" }} name="sc-telegram" type="EvilIcons"></Icon>
+                            <Label style={{ fontSize: 14, color: this.props.master || this.props.Event.public ? colorList.bodySubtext : "#bfc6ea" }}>Invite</Label>
                         </TouchableOpacity>}
                     </View>
-                    <View style={{ height: this.width, marginBottom: "9%" }}>
+
+
+                    <View style={{ height: this.width,flexDirection:"column",alignItems:"center" }}>
                         {<TouchableOpacity onPress={() => {
                             this.props.join()
                         }}>
-                            <Icon style={{ fontSize: 35, color: findIndex(this.props.Event.participant, { phone: stores.LoginStore.user.phone }) >= 0 ? "#1FABAB" : "#bfc6ea" }} name="account-group"
+                            <Icon style={{alignSelf:"center", fontSize: 30, color: findIndex(this.props.Event.participant, { phone: stores.LoginStore.user.phone }) >= 0 ? "#1FABAB" : colorList.bodyIcon }} name="account-group-outline"
                                 type="MaterialCommunityIcons">
                             </Icon>
                             <Label style={{
-                                color: findIndex(this.props.Event.participant, { phone: stores.LoginStore.user.phone }) >= 0 ? "#1FABAB" : "#bfc6ea",
+                                color: findIndex(this.props.Event.participant, { phone: stores.LoginStore.user.phone }) >= 0 ? "#1FABAB" :  colorList.bodyIcon ,
                                 fontSize: 14,
-                                marginLeft: "3%",
                             }}
                             >
                                 {findIndex(this.props.Event.participant, { phone: stores.LoginStore.user.phone }) >= 0 ? "Joined" : "Join"}
@@ -116,13 +120,13 @@ export default class SwipeOutView extends Component {
                         </TouchableOpacity>}
 
                     </View>
-                    <View style={{ height: this.width, marginBottom: "9%", alignSelf: 'flex-start',marginLeft: '10%', }}>
+
+                    <View style={{ height: this.width,flexDirection:"column",alignItems:"center"}}>
                         <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                             this.navigateToLogs()
                         })
                         }>
-                            <Icon style={{ fontSize: 30, color: this.color }} name="clock" type="Entypo">
-                            </Icon>
+                            <Icon style={{ fontSize: 30, color:colorList.bodyIcon}} name="clockcircleo" type="AntDesign"></Icon>
                             {this.props.Event.upated ? (
                                 <View style={this.indicatorMargin}>
                                     <UpdateStateIndicator size={this.blinkerSize} />
@@ -135,7 +139,7 @@ export default class SwipeOutView extends Component {
                                         />
                                     </View>
                                 )}
-                            <Label style={{ fontSize: 14, color: this.color, marginRight: "13%", }}>{"Logs"}</Label>
+                            <Label style={{ fontSize: 14, color:colorList.bodySubtext,marginLeft:2 }}>{"Logs"}</Label>
                         </TouchableOpacity>
                     </View >
                     {/*<View style={{ height: this.width, marginBottom: "9%", alignSelf: 'flex-start' }}>

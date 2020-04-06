@@ -5,6 +5,7 @@ import {
 import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
 import { Icon, } from "native-base"
 import emitter from '../../../services/eventEmiter';
+import colorList from "../../colorList";
 
 export default class ChatroomMenu extends Component {
     constructor(props) {
@@ -69,10 +70,10 @@ export default class ChatroomMenu extends Component {
         return this.state.isMount ? (
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                 <Menu
-                    style={{ backgroundColor: "#FEFFDE" }}
+                    style={{ backgroundColor: colorList.popMenuBackground}}
                     ref={this.setMenuRef}
                     button={<Icon style={{
-                        color: "#1FABAB",
+                        color: colorList.headerIcon,
                     }} onPress={this.showMenu} name="gear" type="EvilIcons"></Icon>}
                 >
                     <View><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
@@ -80,7 +81,7 @@ export default class ChatroomMenu extends Component {
                         return this.props.showMembers()
                     }
                     }>View Members</MenuItem></View>
-                    <View><MenuDivider color="#1FABAB" /><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
+                    <View><MenuDivider color="gray" /><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
                         this.hideMenu()
                         this.props.showRoomMedia()
                     }}>Media</MenuItem><MenuDivider color="#1FABAB" /></View>

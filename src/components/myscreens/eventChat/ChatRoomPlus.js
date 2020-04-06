@@ -4,6 +4,7 @@ import {
 } from 'react-native';
 import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
 import { Icon, } from "native-base"
+import colorList from "../../colorList";
 
 export default class ChatRoomPlus extends Component {
     constructor(props) {
@@ -21,13 +22,13 @@ export default class ChatRoomPlus extends Component {
     };
     render() {
         return <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', }}>
-            <Menu style={{ backgroundColor: "#FEFFDE" }}
+            <Menu style={{ backgroundColor:colorList.popMenuBackground}}
                 ref={this.setMenuRef}
                 button={<Icon style={{
-                    color: "#1FABAB",
+                    color:colorList.headerIcon,
                     fontSize: 25,
                 }} onPress={this.showMenu}
-                    name="pluscircle" type="AntDesign"></Icon>}>
+                    name="plus" type="AntDesign"></Icon>}>
                 <View><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
                     this.hideMenu()
                     return this.props.showVote()

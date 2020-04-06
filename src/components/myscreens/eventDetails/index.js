@@ -33,6 +33,8 @@ import Creator from "../reminds/Creator";
 import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
 import HighLightsDetails from '../highlights_details/index';
 import QRDisplayer from "../QR/QRCodeDisplayer";
+import colorList from '../../colorList'
+import { round } from "react-native-reanimated";
 
 let { height, width } = Dimensions.get('window');
 
@@ -221,34 +223,43 @@ export default class EventDetailView extends Component {
     a.created_at < b.created_at ? 1 : 0)
   render() {
     return (
-      !this.state.isMounted ? <View style={{ height: '100%', backgroundColor: '#FEFFDE', width: '100%' }}></View> :
+      !this.state.isMounted ? <View style={{height:colorList.containerHeight, backgroundColor:'#FEFFDE', width: '100%' }}></View> :
         (this.state.EventData.type == "relation" ?
           (this.relationPost(this.state.EventData.id))
           :
-          <View style={{ height: height - 23, width: "100%" }}>
-            <View style={{
-              height: 44,
-              width: "100%",
-            }}><View style={{
-              paddingTop: '2%', ...bleashupHeaderStyle,
-              flexDirection: "row",
-            }}>
-            <View style={{width:'10%',paddingLeft: '1%',}}>
-                  <Icon onPress={() => {
-                    this.props.openMenu()
-                  }} style={{ color:'#0A4E52'}} type={"Ionicons"} name={"ios-menu"}></Icon>
-            </View>
-                <View style={{ width: '80%' }}>
-                  <Title style={{ color: "#0A4E52", fontWeight: 'bold', alignSelf: 'flex-start' }}>{this.props.Event.about.title}</Title>
-                </View>
-                <View style={{ width: '10%' }}>
-                  {this.props.computedMaster ? <TouchableOpacity onPress={() => requestAnimationFrame(() => this.newHighlight())}>
-                    <Icon type='AntDesign' name="pluscircle" style={{ color: "#1FABAB", fontSize: 25, alignSelf: 'center', }} />
-                  </TouchableOpacity> : null}
+          <View style={{ flex:1, width: "100%" }}>
+    
+            <View style={{flexDirection: "row",height: colorList.headerHeight,width: colorList.headerWidth,backgroundColor:colorList.headerBackground}}>
+              
+
+                <View style={{height:colorList.headerHeight,width:"80%",flexDirection:"row" ,alignItems:"center"}}>
+                  <View >
+                   <Icon onPress={() => {this.props.navigation.navigate("Home")}}
+                    style={{ color:colorList.headerIcon,marginLeft:"5%",marginRight:"5%"}} type={"MaterialIcons"}name={"arrow-back"}></Icon>
+                 </View>
+                  <View>
+                   <Title style={{ color: colorList.headerText, fontWeight: 'bold', alignSelf: 'flex-start' }}>{this.props.Event.about.title}</Title>
+                   </View>
                 </View>
 
-              </View>
+                <View style={{width: '20%',flexDirection:"row"}}>
+                 
+                  {this.props.computedMaster ? <TouchableOpacity onPress={() => requestAnimationFrame(() => this.newHighlight())} style={{height: colorList.headerHeight,alignSelf:"flex-start",justifyContent:"center"}}>
+                    <Icon type='AntDesign' name="plus" style={{ color: colorList.headerIcon, fontSize: 25,alignSelf:"flex-start" }} />
+                  </TouchableOpacity> : null}
+ 
+                  <TouchableOpacity style={{height: colorList.headerHeight,justifyContent:"center"}}>
+                    <Icon onPress={() => {
+                      this.props.openMenu()}} style={{ color:colorList.headerIcon,marginLeft:"30%"}} type={"Ionicons"} name={"ios-menu"}></Icon>
+                  </TouchableOpacity>
+
+                </View>
+
+
             </View>
+
+
+
             <View style={{ height: "90%", flexDirection: "column", width: "100%" }} >
               <View style={{ height: this.state.highlightData.length == 0 ? 0 : "31%", width: "100%" }} >
                 {this.state.refresh ? <BleashupFlatList
@@ -295,14 +306,13 @@ export default class EventDetailView extends Component {
                 >
                 </BleashupFlatList> : null}
               </View>
-              <View style={{
-                margin: '2%', height: !(this.state.highlightData &&
-                  this.state.highlightData.length) > 0 ? "100%" : '69%', borderTopLeftRadius: 5, borderTopRightRadius: 5, ...shadower(2), backgroundColor: '#FEFFDE',
+              <View style={{ height: !(this.state.highlightData &&
+                  this.state.highlightData.length) > 0 ? "100%" : '69%', borderTopLeftRadius: 5, borderTopRightRadius: 5, ...shadower(2), backgroundColor:colorList.bodyBackground,
               }}>
                 <View style={{
                   height: "69%", width: "96%",
                   borderRadius: 8,
-                  borderColor: "#1FABAB", margin: "2%", borderWidth: 1,
+                  margin: "0.5%", ...shadower(1),alignSelf:"center"
                 }}>
                   {this.props.computedMaster ? <Icon name={"pencil"} type={"EvilIcons"} onPress={() => {
                     this.setState({
@@ -316,8 +326,8 @@ export default class EventDetailView extends Component {
                           <Text dataDetectorType={'all'} style={{ fontSize: 16, fontWeight: "400", margin: "1%", color: '#555756' }} delayLongPress={800}>{this.props.Event.about.description}</Text>
                         </Hyperlink> :
                         <Text style={{
-                          fontWeight: "400", margin: "1%", fontSize: 30,
-                          alignSelf: 'center', marginTop: (height) / 8
+                          fontWeight: "400", margin: "1%", fontSize:25,
+                          alignSelf: 'center', marginTop: (colorList.containerHeight) / 8
                         }}
                           delayLongPress={800}>{this.state.defaultDetail}</Text>}
                     </View>
@@ -326,18 +336,18 @@ export default class EventDetailView extends Component {
                 <View style={{ flexDirection: 'row', }}>
                   <View style={{ flexDirection: "column", justifyContent: "space-between",
                    bottom: 0, margin: '3%', 
-                   width: "60%" }}>
+                   width: "56%" }}>
                   <QRDisplayer code={this.props.Event.id} title={this.props.Event.about.title}></QRDisplayer>
                   </View>
-                  <View style={{ width: '40%',alignItems: 'center',alignSelf: 'center', }}>
+                  <View style={{ width: '40%',alignItems: 'center',alignSelf: 'center',marginRight:"2%" }}>
                   {this.props.Event.location.string ?
-                    <View style={{ flexDirection: "column", height: height / 5, alignItems: "flex-end", marginRight: "3%", marginBottom: "5%", }}>
+                    <View style={{  width: '95%',marginRight:"5%",flexDirection: "column", height: height / 5, alignItems: "flex-end", marginRight: "3%", marginBottom: "5%", }}>
                       {this.props.computedMaster ? <Icon name={"pencil"} type={"EvilIcons"} onPress={() => {
                         this.setState({
                           EventLocationState: true
                         })
                       }} style={{ alignSelf: 'flex-end', width:'30%'}}></Icon> : null}
-                      <MapView style={{width:'60%'}} card location={this.props.Event.location.string}></MapView>
+                      <MapView style={{width:'90%',alignSelf:"flex-start"}} card location={this.props.Event.location.string}></MapView>
                     </View> :
                     <TouchableOpacity style={{width:'60%'}} delayLongPress={1000} onLongPress={() => {
                       if (this.state.participant.master == true) {
@@ -349,7 +359,7 @@ export default class EventDetailView extends Component {
                           EventLocationState: true
                         })
                       }} style={{ alignSelf: 'flex-end', }}></Icon> : null}
-                      <View>
+                      <View style={{width:"100%"}}>
                         <Text ellipsizeMode="clip" numberOfLines={3} style={{ alignSelf: 'flex-end', fontSize: 14, color: "#1FABAB", margin: "2%" }}>
                           {this.state.defaultLocation}</Text>
                       </View>
