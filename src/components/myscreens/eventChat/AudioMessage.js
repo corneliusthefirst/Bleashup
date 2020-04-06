@@ -201,16 +201,16 @@ export default class AudioMessage extends Component {
     }
     render() {
         textStyle = {
-            width: "80%", margin: '2%', marginTop: "5%", display: 'flex', alignSelf: 'center',
+            width: "80%", display: 'flex', alignSelf: 'center',
             flexDirection: 'column',
         }
         textStyleD = {
-            width: "80%", margin: '4%', paddingLeft: '10%', paddingRight: '20%', marginTop: "5%", display: 'flex', alignSelf: 'center',
+            width: "80%", paddingLeft: '10%', paddingRight: '20%', display: 'flex', alignSelf: 'center',
             flexDirection: 'column',
         }
         return (
             <TouchableWithoutFeedback onLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null} onPressIn={() => this.props.pressingIn()}>
-                <View style={{ disply: 'flex', flexDirection: 'row', minWidth: 283, maxWidth: 300, minHeight: 50, }}>
+                <View style={{ disply: 'flex', flexDirection: 'row', minWidth: 300, maxWidth: 300, minHeight: 50, }}>
                     {this.props.message.duration ? <View style={textStyle}>
                         <View><Slider value={this.state.currentPosition} onValueChange={(value) => {
                             this.player.setCurrentTime(value * this.props.message.duration)
@@ -226,7 +226,7 @@ export default class AudioMessage extends Component {
                         </View>
                     </View> : <View style={{ textStyleD }}>{/*!this.state.playing ? <BarIndicat animating={false}
                     color={"#1FABAB"} size={30} count={20} ></BarIndicat> : <BarIndicator color={"#1FABAB"} size={30} count={20}></BarIndicator>*/}</View>}
-                    <View style={{ margin:  "4%"  }}>
+                    <View style={{ margin:  "2%"  }}>
                         {testForURL(this.props.message.source) ? <AnimatedCircularProgress
                             size={40}
                             width={3}
@@ -243,7 +243,7 @@ export default class AudioMessage extends Component {
                                                     name={this.state.downloading ? "close" : "arrow-down"}></Icon>
                                             </View>
                                             <View style={{ position: 'absolute', marginTop: '-103%', marginLeft: '-14%', }}>
-                                                {this.state.downloading ? <Spinner></Spinner> : null}
+                                                {/*this.state.downloading ? <Spinner></Spinner> : null*/}
                                             </View>
                                         </TouchableOpacity>
                                     </View>

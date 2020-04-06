@@ -7,6 +7,7 @@ import GState from "../../../stores/globalState";
 import TextContent from "./TextContent";
 import testForURL from '../../../services/testForURL';
 import FileExachange from "../../../services/FileExchange";
+import buttoner from "../../../services/buttoner";
 
 
 export default class VideoMessage extends Component {
@@ -55,6 +56,7 @@ export default class VideoMessage extends Component {
         let newTotal = this.state.total && this.state.total > 0 && this.state.total > total ? this.state.total : total
         newTotal = parseInt(newTotal)
         this.setState({
+            error:false,
             downloadState: (newReceived / newTotal) * 100,
             total: newTotal, received: newReceived
         })
@@ -148,7 +150,7 @@ export default class VideoMessage extends Component {
                             width={290} height={200}>
                         </Image>
                         <View style={{ position: 'absolute', marginTop: "25%", marginLeft: "45%", }}>
-                            <View>
+                            <View style={{...buttoner}}>
                                 <TouchableOpacity
                                     onPress={() => this.props.playVideo(this.props.message.source)
                                     }>
@@ -160,7 +162,7 @@ export default class VideoMessage extends Component {
                             </View>
                         </View>
                         <View style={{ alignSelf: this.state.sender ? 'flex-start' : 'flex-end', margin: '2%', }}>
-                            {this.state.loaded ? <View style={{ marginTop: "-10%" }}><View><Text style={{ color: this.state.sender ? '#F8F7EE' : '#E1F8F9' }}>
+                            {this.state.loaded ? <View style={{ marginTop: "-12%" }}><View style={{...buttoner,height:25,width:65}}><Text style={{ color: '#FEFFDE' }}>
                                 {this.toMB(this.state.total).toFixed(2)} {"Mb"}</Text></View></View> :
                                 <View style={{ marginTop: "-25%" }}>
                                     <AnimatedCircularProgress size={40}
@@ -169,7 +171,7 @@ export default class VideoMessage extends Component {
                                         tintColor={this.state.error ? "red" : "#FEFFDE"}
                                         backgroundColor={this.transparent}>
                                         {
-                                            (fill) => (<View>
+                                            (fill) => (<View style={{...buttoner}}>
                                                 {this.state.downloading ? <TouchableWithoutFeedback onPress={() => this.cancelDownLoad(this.props.message.source)}>
                                                     <Icon type="EvilIcons" style={{ color: "#FEFFDE" }} name="close">
                                                     </Icon>
@@ -180,7 +182,7 @@ export default class VideoMessage extends Component {
                                             </View>)
                                         }
                                     </AnimatedCircularProgress>
-                                    <View style={{ marginTop: "15%" }}><Text note>{"("}{this.toMB(this.state.received).toFixed(1)}{"/"}
+                                    <View style={{ marginTop: "10%",...buttoner,height:15,width:75 }}><Text style={{marginBottom: 7,}} note>{"("}{this.toMB(this.state.received).toFixed(1)}{"/"}
                                         {this.toMB(this.state.total).toFixed(1)}{")Mb"}</Text></View></View>}</View>
                     </View>
                     {this.props.message.text ? <View style={{ marginTop: "-5%", padding: "2%" }}>

@@ -60,6 +60,8 @@ export default class Commitee extends Component {
         }, 100)
     }
     render() {
+        //console.warn(this.props.commitees,this.props.commitees.length)
+
         return (this.state.loaded ?
             <View style={{ height: "100%", }}>
                 <View style={{
@@ -90,7 +92,7 @@ export default class Commitee extends Component {
                         backgroundColor={'white'}
                         style={{borderTopRightRadius: 5,
                             width: '100%', borderBottomRightRadius: 1, 
-                            height:'100%'
+                            height: 700
                         }}
                             dataSource={union([this.generalCommitee], uniq(this.props.commitees))}
                             keyExtractor={(item, index) => index.toString()}
@@ -98,6 +100,8 @@ export default class Commitee extends Component {
                                 <CommiteeItem
                                     computedMaster={this.props.computedMaster}
                                     key={index.toString()}
+                                    ImICurrentCommitee={item.id && item.id === GState.currentCommitee ||
+                                         item === GState.currentCommitee}
                                     master={this.props.master}
                                     event_id={this.props.event_id}
                                     join={(id) => { this.props.join(id) }}
@@ -114,7 +118,7 @@ export default class Commitee extends Component {
                             }
                             firstIndex={0}
                             renderPerBatch={7}
-                            initialRender={5}
+                            initialRender={14}
                             numberOfItems={this.props.commitees.length}
                         /></View>}
                 </View>

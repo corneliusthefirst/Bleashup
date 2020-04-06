@@ -26,7 +26,6 @@ export default class ChatRoomPlus extends Component {
                 button={<Icon style={{
                     color: "#1FABAB",
                     fontSize: 25,
-                    marginTop: '10%'
                 }} onPress={this.showMenu}
                     name="pluscircle" type="AntDesign"></Icon>}>
                 <View><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {

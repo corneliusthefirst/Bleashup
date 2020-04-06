@@ -1471,7 +1471,6 @@ class UpdatesDispatcher {
       return new Promise((resolve, reject) => {
         let Participant = requestObjects.Participant();
         Participant.phone = update.updater;
-        Participant.master = update.new_value.master;
         Participant.host = update.new_value.host;
         Participant.status = update.new_value.status;
         let Change = {
@@ -1872,7 +1871,7 @@ class UpdatesDispatcher {
     new_commitee: update => {
       return new Promise((resolve, reject) => {
         stores.CommiteeStore.getCommitee(update.new_value).then(commitee => {
-          stores.Events.addEventCommitee(update.event_id, update.new_value).then(() => {
+                  stores.Events.addEventCommitee(update.event_id, update.new_value).then(() => {
             let Change = {
               id: uuid.v1(),
               updated: update.updated,

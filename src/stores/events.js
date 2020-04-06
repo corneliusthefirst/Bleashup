@@ -50,7 +50,7 @@ export default class events {
     key: "Events",
     data: []
   };
- addEvent(NewEvent) {
+  addEvent(NewEvent) {
     console.warn("calling create activity, -----")
     if (NewEvent == 'no_such_key') {
       resolve()
@@ -74,7 +74,7 @@ export default class events {
     }
   }
   delete(EventID) {
-    console.warn("calling delete activity ,,,,,, ",EventID)
+    console.warn("calling delete activity ,,,,,, ", EventID)
     return new Promise((resolve, rejec) => {
       this.readFromStore().then(Events => {
         Events = reject(Events, { id: EventID })
@@ -187,19 +187,28 @@ export default class events {
       });
     });
   }
+  loadCurrentEventFromRemote(EventID) {
+    return new Promise((resolve, reject) => {
+      serverEventListener.GetData(EventID).then(event => {
+        this.addEvent(event).then(() => {
+          resolve(event)
+        })
+      }).catch(error => {
+        serverEventListener.socket.write = undefined
+        console.warn(error, "in load events")
+        reject(error)
+      })
+    })
+  }
   @action loadCurrentEvent(EventID) {
     return new Promise((resolve, reject) => {
       this.readFromStore()
         .then(Events => {
           let event = find(Events, { id: EventID });
           if (!event) {
-            serverEventListener.GetData(EventID).then(event => {
-              this.addEvent(event).then(() => {
-                resolve(event)
-              })
-            }).catch(error => {
-              serverEventListener.socket.write = undefined
-              console.error(error, "in load events")
+            this.loadCurrentEventFromRemote(EventID).then((Event) => {
+              resolve(Event)
+            }).catch((error) => {
               reject(error)
             })
           } else {
@@ -312,8 +321,8 @@ export default class events {
       });
     });
   }
-  updateWhoCanManage(EventID,newVal,inform){
-    return new Promise((resolve,reject) => {
+  updateWhoCanManage(EventID, newVal, inform) {
+    return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let eventIndex = findIndex(Events, { id: EventID });
         Events[eventIndex].who_can_update = newVal;
@@ -350,7 +359,7 @@ export default class events {
           });
         } else {
           serverEventListener.GetData(EventID).then(event => {
-            event && event.participant?event.participant[event.participant.length] = Participant:event.participant = [Participant];
+            event && event.participant ? event.participant[event.participant.length] = Participant : event.participant = [Participant];
             event.participant = uniqBy(event.participant, "phone")
             if (inform) {
               event.participant_added = true;
@@ -396,11 +405,11 @@ export default class events {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let eventIndex = findIndex(Events, { id: EventID });
-        let cid = JSON.stringify({ cal_id:Events[eventIndex].calendar_id})
+        let cid = JSON.stringify({ cal_id: Events[eventIndex].calendar_id })
         Events[eventIndex].period = NewPeriod;
         if (!NewPeriod || (NewPeriod && !NewPeriod.includes("T")))
           Events[eventIndex].calendared = false
-          Events[eventIndex].calendar_id = null
+        Events[eventIndex].calendar_id = null
         if (inform) {
           Events[eventIndex].period_updated = true;
           Events[eventIndex].updated = true;
@@ -409,7 +418,7 @@ export default class events {
         this.saveKey.data = Events;
         storage.save(this.saveKey).then(() => {
           this.setProperties(this.saveKey.data, inform);
-          resolve(Events[eventIndex],cid);
+          resolve(Events[eventIndex], cid);
         });
       });
     });
@@ -458,8 +467,8 @@ export default class events {
         Events[index].recurrence = RecurrentUpdate.recurrence
         Events[index].frequency = RecurrentUpdate.frequency
         Events[index].interval = RecurrentUpdate.interval
-        Events[index].days_of_week  = RecurrentUpdate.days_of_week,
-        Events[index].week_start = RecurrentUpdate.week_start
+        Events[index].days_of_week = RecurrentUpdate.days_of_week,
+          Events[index].week_start = RecurrentUpdate.week_start
         if (inform) {
           Events[index].title_updated = true;
           Events[index].updated = true;
@@ -896,7 +905,7 @@ export default class events {
       this.readFromStore().then(Events => {
         let index = findIndex(Events, { id: EventID });
         Events[index].reminds = dropWhile(Events[index].reminds,
-           element => element !== RemindID);
+          element => element !== RemindID);
         if (inform) {
           Events[index].remind_removed = true;
           Events[index].updated = true;
@@ -976,9 +985,10 @@ export default class events {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let index = findIndex(Events, { id: EventID })
+        console.warn(EventID, index)
         !Events[index].commitee || Events[index].commitee.length <= 0 ? Events[index].commitee = [CommiteeID] :
           Events[index].commitee.unshift(CommiteeID)
-        Events[index].updated_at = moment().format();
+        Events[index]["updated_at"] = moment().format();
         this.saveKey.data = Events
         storage.save(this.saveKey).then(() => {
           this.setProperties(this.saveKey.data, true);

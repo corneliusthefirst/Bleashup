@@ -113,7 +113,8 @@ export default class CreateCommiteeModal extends PureComponent {
                                 color: "#1FABAB",
                                 fontSize: 30,
                             }} type="AntDesign"></Icon>
-                            <Label style={{ color: "#1FABAB", fontSize: 14, marginLeft: "10%", fontWeight: 'bold', }}>{"ok"}</Label>
+                            {//<Label style={{ color: "#1FABAB", fontSize: 14, marginLeft: "10%", fontWeight: 'bold', }}>{"ok"}</Label>
+                        }
                         </TouchableOpacity>
                     </View>
                 </View>

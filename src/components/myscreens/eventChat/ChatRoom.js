@@ -59,6 +59,7 @@ import emitter from '../../../services/eventEmiter';
 import ChatRoomPlus from "./ChatRoomPlus";
 import ContactsModal from "../../ContactsModal";
 import AudioRecorder from "./AudioRecorder";
+import TypingIndicator from "./TypingIndicator";
 
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenheight = Math.round(Dimensions.get('window').height);
@@ -152,7 +153,7 @@ export default class ChatRoom extends Component {
                 this.room.addNewMessage(newMessage, newKey, newMessage.type, true, true).then(() => {
                     firebase.database().ref(`${this.props.firebaseRoom}/${newKey}/received`).set(received)
                     if (newMessage.sender.phone == this.props.user.phone) {
-                        console.warn("adding new_message")
+                        console.warn("adding new_message"," with cloud functions")
                         //!! example of cloud functions calling . 
                         SendNotifications(this.props.user.name, newKey, newMessage.type, newMessage.text, this.props.firebaseRoom, this.props.user.phone, this.activity_name, this.props.activity_id, this.props.roomName, this.props.room_type).then(() => {
                             this.setState({ newMessage: true })
@@ -164,12 +165,16 @@ export default class ChatRoom extends Component {
                 })
             } else {
                 //console.warn(newMessage, "PPPPPPPPPP")
-                if (this.sender.phone == newMessage.sender.phone) { } else {
-                    this.newMessages.length !== 0 ? this.newMessages.unshift(newMessage) : null
-                    console.warn("saving new messagess")
-                    this.room.addNewMessage(newMessage, newKey, newMessage.type, true, this.newMessages.length == 0).then(() => {
-                        this.setState({
-                            newMessage: true
+                if (this.sender.phone == newMessage.sender.phone) {
+
+                 } else {
+                    firebase.database().ref(`${this.props.firebaseRoom}/${newKey}/received`).set(received).then(() => {
+                        this.newMessages.length !== 0 ? this.newMessages.unshift(newMessage) : null
+                        console.warn("saving new messagess")
+                        this.room.addNewMessage(newMessage, newKey, newMessage.type, true, this.newMessages.length == 0).then(() => {
+                            this.setState({
+                                newMessage: true
+                            })
                         })
                     })
                 }
@@ -221,7 +226,6 @@ export default class ChatRoom extends Component {
     }
     currentTyper = null
     showTypingToast(newTyper) {
-        //console.warn(newTyper);
         if (newTyper[0]) {
             this.currentTyper = newTyper[0].nickname + " is "
         } else if (newTyper.phone !== undefined) {
@@ -232,8 +236,17 @@ export default class ChatRoom extends Component {
                 this.currentTyper = "You are"
             }
         }
+        this.typingTimeout && clearTimeout(this.typingTimeout)
         // console.warn(this.currentTyper)
-        Toast.show({ text: `typing ...`, position: "top", textStyle: this.toastTextStyles, style: this.toastStyle })
+        this.setState({
+            typing:true
+        })
+       this.typingTimeout = setTimeout(() => {
+            this.setState({
+                typing:false
+            })
+        },1000)
+        //Toast.show({ text: `typing ...`, position: "top", textStyle: this.toastTextStyles, style: this.toastStyle })
     }
     setTyingState(typer) {
         this.typingRef.set([typer, moment().format()])
@@ -290,18 +303,16 @@ export default class ChatRoom extends Component {
             this.fireRef.endAt().limitToLast(1).on('child_added', snapshot => {
                 console.warn("new_child", snapshot.val())
                 let message = snapshot.val()
-                message.received ? message.received.unshift({
+                message.received && message.received.length > 0 ? message.received.unshift({
                     phone:
                         this.props.user.phone, date: moment().format()
-                }) : message.received = [{
-                    phone:
-                        this.props.user.phone, date: moment().format()
-                }]
+                }) : message.received = [{phone:this.props.user.phone, date: moment().format()}]
                 message.received = uniqBy(message.received, "phone");
-                //console.warn(message.received)
+                console.warn("here we are",message.received)
                 this.addNewMessage(message, snapshot.key)
             })
             this.fireRef.on('child_changed', snapshot => {
+                console.warn(snapshot.val(),"snapshot from seen")
                 let index = find(this.room.messages, { key: snapshot.key })
                 if (index >= 0) {
                     this.room.messages[index] = snapshot.val()
@@ -890,7 +901,7 @@ export default class ChatRoom extends Component {
     }
     sendAudioMessge(filename, duration, dontsend) {
         this.setState({
-            showAudioRecorder: !this.state.showAudioRecorder
+            showAudioRecorder: false
         })
         if (!dontsend) {
             this.scrollToEnd()
@@ -1002,9 +1013,9 @@ export default class ChatRoom extends Component {
                 }
             } else if (index == 2) {
                 firebase.database().ref(`${this.props.firebaseRoom}/${message.key}/received`).once('value', snapshot => {
-                    console.warn(snapshot)
-                    snapshot.val() !== null ? this.props.showContacts(snapshot.val().map(ele => { return ele.phone.replace("+", "00") })) :
-                        this.props.showContacts(message.received.map(ele => { return { ...ele, phone: ele.phone.replace("+", "00") } }))
+                    console.warn("here ",snapshot)
+                    snapshot.val() !== null ? this.props.showContacts(snapshot.val().map(ele => { return ele.phone.replace("+", "00") }),"Seen by") :
+                        this.props.showContacts(message.received.map(ele => { return { ...ele, phone: ele.phone.replace("+", "00") } }), "Seen by")
                 })
             } else if (index == 3) {
                 Clipboard.setString(message.text)
@@ -1039,6 +1050,7 @@ export default class ChatRoom extends Component {
             }
         })
     }
+    messagelayouts={}
     showRoomMedia() {
         this.setState({
             isMediaModalOpened: true,
@@ -1054,6 +1066,8 @@ export default class ChatRoom extends Component {
     }
     transparent = "rgba(50, 51, 53, 0.8)";
     render() {
+        //console.warn("messages are",this.room.messages)
+
         headerStyles = {
             flexDirection: 'row', ... (!this.state.showVideo && !this.state.showPhoto && !this.state.showRepliedMessage && !this.state.showCaption && bleashupHeaderStyle)
         }
@@ -1213,10 +1227,17 @@ export default class ChatRoom extends Component {
             numberOfItems={this.room.messages.length}
             keyExtractor={(item, index) => item ? item.id : null}
             renderItem={(item, index) => {
+               //console.warn("item received",item.received,this.props.members,item.received.length >= this.props.members.length)
+
                 this.delay = this.delay >= 20 || (item && !item.sent) ? 0 : this.delay + 1
                 return item ? <Message
                     voteItem={(index, vote) => {
                         emitter.emit("vote-me", index, { ...item, vote: vote })
+                    }}
+                    messagelayouts={this.messagelayouts}
+                    setCurrentLayout={layout => {
+                        //console.warn("setting layout for " , item.id)
+                        this.messagelayouts[item.id] = layout
                     }}
                     scrolling={this.scrolling}
                     computedMaster={this.props.computedMaster}
@@ -1225,9 +1246,8 @@ export default class ChatRoom extends Component {
                     showProfile={(pro) => this.props.showProfile(pro)}
                     delay={this.delay}
                     room={this.room}
-                    PreviousSenderPhone={this.room.messages[index > 0 ? index - 1 : 0] &&
-                        this.room.messages[index > 0 ? index - 1 : 0].user ?
-                        this.room.messages[index > 0 ? index - 1 : 0].sender.phone : null}
+                    PreviousMessage={this.room.messages[index >= 0 ? index + 1 : 0] &&
+                        this.room.messages[index >= 0 ? index + 1 : 0]}
                     showActions={(message) => this.showActions(message)}
                     firebaseRoom={this.props.firebaseRoom}
                     roomName={this.props.roomName}
@@ -1391,22 +1411,27 @@ export default class ChatRoom extends Component {
             height: 44,
             position: 'absolute'
         }}><View style={headerStyles}>
-                <View style={{ width: '10%', paddingLeft: '1%', }}>
-                    <Icon onPress={() => {
-                        this.props.openMenu()
-                    }}
-                        style={{ color: '#0A4E52' }}
-                        type={"Ionicons"}
-                        name={"ios-menu"}></Icon>
+                <View style={{ width: '60%', }}>
+                    <View style={{ flexDirection: 'row', }}><View style={{ width: '20%', paddingLeft: '2%', }}>
+                        <Icon onPress={() => {
+                            this.props.openMenu()
+                        }}
+                            style={{ color: '#0A4E52', fontSize: 35  }}
+                            type={"Ionicons"}
+                            name={"ios-menu"}></Icon>
+                    </View>
+                        <View style={{ width: "80%", marginTop: "2%", }}>
+                            <Title style={{
+                                fontWeight: 'bold',
+                                alignSelf: 'flex-start',
+                            }}>{this.props.roomName}</Title>
+                            {this.state.typing && <TypingIndicator></TypingIndicator>}
+                        </View>
+                    </View>
+                    {
+                        //!! you can add the member last seen here if the room has just one member */
+                    }
                 </View>
-                <View style={{ width: "50%", flexDirection: 'row', }}>
-                    <Title style={{
-                        fontWeight: 'bold',
-                        alignSelf: 'flex-start', marginLeft: "4%"
-                    }}>{this.props.roomName}</Title></View>
-                {
-                    //!! you can add the member last seen here if the room has just one member */
-                }
                 <View style={{
                     width: "40%",
                     flexDirection: 'row',

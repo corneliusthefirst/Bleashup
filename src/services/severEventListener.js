@@ -8,6 +8,7 @@ import RescheduleDispatcher from "./reschedulDispatcher";
 import tcpConnect from "./tcpConnect"
 import GState from "../stores/globalState";
 import { forEach } from "lodash"
+import { moment } from 'moment';
 
 class ServerEventListener {
   constructor() { }
@@ -27,7 +28,8 @@ class ServerEventListener {
           break;
         case "all_updates":
           console.warn(data)
-          if (data.updated.length !== 0) UpdatesDispatcher.dispatchUpdates(data.updated);
+          let sorter = (a, b) => (moment(a.date).format("x") < moment(b.date).format("x") ? 1 : moment(a.date).format("x") > moment(b.date).format("x") ? -1 : 0)
+          if (data.updated.length !== 0) UpdatesDispatcher.dispatchUpdates(data.updated.sort(sorter));
           if (data.new_events.length !== 0) {
             InvitationDispatcher.dispatchUpdates(
               data.new_events,
@@ -51,6 +53,7 @@ class ServerEventListener {
           break;
         case "presence":
           console.warn(data.reference)
+          GState.initialized = true
           stores.Session.updateReference(data.reference).then(sessios => {
             tcpRequest.get_all_update().then(JSONData => {
               this.socket.write(JSONData)
@@ -238,8 +241,8 @@ class ServerEventListener {
         console.warn("unsuccessful, " + response)
         reject(response);
       });
+      console.warn("writing socket",data)
       if (this.socket.write) {
-        console.warn(this.socket.write)
         this.socket.write(data)
       } else {
         this.socket.write = tcpConnect.socket.write

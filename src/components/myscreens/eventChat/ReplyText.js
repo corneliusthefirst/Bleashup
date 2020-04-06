@@ -8,6 +8,7 @@ import converToHMS from '../highlights_details/convertToHMS';
 import shadower from "../../shadower";
 import testForURL from '../../../services/testForURL';
 import ProfileModal from "../invitations/components/ProfileModal";
+import buttoner from "../../../services/buttoner";
 let stores = null
 export default class ReplyText extends Component {
     constructor(props) {
@@ -86,10 +87,9 @@ export default class ReplyText extends Component {
                                         borderBottomRightRadius: 5, borderTopRightRadius: 5,
                                         height: this.state.currentHeight, borderRadius: 5,
                                     }} source={{ uri: this.props.reply.sourcer }}></Thumbnail>}
-                                        {this.props.reply.video ? <Icon type={"EvilIcons"} name={"play"} style={{
-                                            position: "absolute", color: "#1FABAF",
-                                            marginTop: "15%", marginLeft: "30%",
-                                        }}></Icon> : null}</View> : null}
+                                            {this.props.reply.video ? <View style={{ ...buttoner, position: "absolute", marginTop: "7%", marginLeft: "18%",}}><Icon type={"EvilIcons"} name={"play"} style={{
+                                             color: "#FEFFDE",
+                                        }}></Icon></View> : null}</View> : null}
 
                                 </View>
                                 <View onLayout={(e) => {

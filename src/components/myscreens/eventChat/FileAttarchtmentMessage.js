@@ -146,8 +146,8 @@ export default class FileAttarchementMessaege extends Component {
                             </View>
                         </View>
                     </View>
-                    <View style={{ marginTop: "3%", marginLeft: "-5%", width: '20%' }}>
-                        {testForURL(this.props.message.source) ? <AnimatedCircularProgress
+                    <View style={{ marginTop: "3%", marginLeft: "-5%", width: '20%', }}>
+                        {testForURL(this.props.message.source) ? <View style={{ alignSelf: 'center',}}><AnimatedCircularProgress
                             size={40}
                             width={3}
                             fill={testForURL(this.props.message.source) ? this.state.downloadState : 100}
@@ -169,12 +169,12 @@ export default class FileAttarchementMessaege extends Component {
                                     </View>
                                 )
                             }
-                        </AnimatedCircularProgress> : <TouchableOpacity
+                        </AnimatedCircularProgress></View> : <TouchableOpacity
                             onPress={() => requestAnimationFrame(() => this.openFile())}>
                                 <Icon type="FontAwesome" style={{ color: "#0A4E52", fontSize: 22,alignSelf:'center',justifyContent: 'center', }} name="folder-open">
                                 </Icon>
                             </TouchableOpacity>}<View>
-                            {!testForURL(this.props.message.source) ? <Text>{this.toMB(this.state.total).toFixed(1)}{"Mb"}</Text> :
+                            {!testForURL(this.props.message.source) ? <Text style={{alignSelf: 'center',}}>{this.toMB(this.state.total).toFixed(1)}{"Mb"}</Text> :
                                 <Text style={{ fontSize: 10,alignSelf: 'center',justifyContent: 'center', }} note>{"("}{this.toMB(isNaN(this.state.received) ? 0 : this.state.received).toFixed(1)}{"/"}
                                     {this.toMB(this.state.total).toFixed(1)}{")Mb"}</Text>}</View></View>
                 </View>

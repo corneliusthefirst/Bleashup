@@ -167,8 +167,29 @@ export default class SWView extends Component {
                         <TouchableOpacity  style={{height:25,width:55,marginTop:"15%",marginBottom:"20%",alignSelf:"center"}} onPress={this.setAction}>
                         <View  style={{height:25,width:55,justifyContent:"center",alignItems:"center",backgroundColor:"mintcream",borderRadius:10}}>
                            <Text style={{ color:"#1FABAB",fontSize:14}} >actions</Text>
+                        <Text style={{ margin: 2, }} note>actions</Text>
+                        <View style={{
+                            width: '100%',
+                            height: 400,
+                            alignSelf: 'center',
+                            backgroundColor: 'white',
+                            borderRadius: 8
+                        }}>
+                            <ActionsView
+                                hideMenu={this.props.hideMenu}
+                                calendared={this.props.calendared}
+                                period={this.props.period}
+                                exitActivity={this.props.exitActivity}
+                                handleSync={this.props.handleSync}
+                                publish={() => this.props.publish()}
+                                leaveActivity={() => this.props.leaveActivity()}
+                                inviteContacts={() => this.props.inviteContacts()}
+                                openSettingsModal={() => this.props.openSettingsModal()}
+                                ShowMyActivity={(a) => this.props.ShowMyActivity(a)}
+                                showMembers={() => this.props.showMembers()}></ActionsView>
+                           </View>
                         </View>
-                        </TouchableOpacity>
+                    </TouchableOpacity>
 
                  {this.state.action?
                   <View style={{

@@ -4,6 +4,7 @@ import  stores  from '../../../../stores';
 import  uuid  from 'react-native-uuid';
 import  moment  from 'moment';
 import { Toast } from 'native-base';
+import firebase  from 'react-native-firebase';
 
 class CreateRequester {
     createEvent(event){
@@ -26,6 +27,7 @@ class CreateRequester {
                             date: event.created_at,
                             time: null
                         }
+                        firebase.database().ref(`activity/${newEvent.id}/participants`).set(newEvent.participant)
                         stores.ChangeLogs.addChanges(Change).then(res => {
                             
                         })
