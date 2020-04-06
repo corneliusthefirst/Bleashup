@@ -108,24 +108,26 @@ class Requester {
             Join.host = EventHost;
             requestData.joinEvent(Join, EventID + "join").then((JSONData) => {
                 serverEventListener.sendRequest(JSONData, EventID + "join").then((SuccessMessage) => {
-                    Toast.show({ text: "Event Successfully Joint !", type: "success", buttonText: "ok" })
+                    Toast.show({ text: "Activity Successfully Joint !", type: "success", buttonText: "ok" })
                     stores.Events.addParticipant(EventID, Participant, false).then(() => {
                         firebase.database().ref(`activity/${EventID}/participants`).once('value',val => {
-                            firebase.database().ref(`activity/${EventID}/participants`).set(uniqBy([Participant,...val.val()],'phone'))
+                            console.warn(val.val(),"00000")
+                            firebase.database().ref(`activity/${EventID}/participants`).set([Participant,...val.val()]).then(() => {
+                                let Change = {
+                                    id: uuid.v1(),
+                                    title: "Updates On Main Activity",
+                                    updated: "joint_paticipant",
+                                    event_id: EventID,
+                                    changed: "Joint The Activity",
+                                    updater: stores.LoginStore.user.phone,
+                                    new_value: { data: null, new_value: null },
+                                    date: moment().format(),
+                                }
+                                stores.ChangeLogs.addChanges(Change).then(() => {
+                                    resolve("ok")
+                                })
+                            })
                         })
-                        let Change = {
-                            id: uuid.v1(),
-                            title: "Updates On Main Activity",
-                            updated: "joint_paticipant",
-                            event_id: EventID,
-                            changed: "Joint The Activity",
-                            updater: stores.LoginStore.user.phone,
-                            new_value: { data: null, new_value: null },
-                            date: moment().format(),
-                        }
-                        stores.ChangeLogs.addChanges(Change).then(() => {
-                        })
-                        resolve("ok")
                     })
                 }).catch(error => {
                     reject(error)

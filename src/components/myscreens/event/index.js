@@ -1379,7 +1379,7 @@ export default class Event extends Component {
           computedMaster={this.computedMaster}
           ref="swipperView"
           publish={() => this.publish()}
-          showActivityPhotoAction={() => this.master ? this.openPhotoSelectorModal(this.event.background) : this.showPhoto(this.event.background)}
+          showActivityPhotoAction={() => this.computedMaster ? this.openPhotoSelectorModal(this.event.background) : this.showPhoto(this.event.background)}
           leaveActivity={() => {
             this.isOpen = false
             this.member ? this.setState({

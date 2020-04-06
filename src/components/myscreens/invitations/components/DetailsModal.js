@@ -99,10 +99,10 @@ export default class DetailsModal extends Component {
         })
     }
     join() {
-        if (findIndex(this.state.event.participant, { phone: stores.LoginStore.user.phone }) < 0) {
-            this.setState({
+        //if (findIndex(this.state.event.participant, { phone: stores.LoginStore.user.phone }) < 0) {
+           /* this.setState({
                 isJoining: true
-            })
+            })*/
             Request.join(this.state.event.id, this.state.event.event_host).then((status) => {
                 this.setState({
                     isJoining: false
@@ -118,10 +118,10 @@ export default class DetailsModal extends Component {
                     , position: 'top', duration: 4000
                 })
             })
-        } else {
+       /* } else {
             this.props.goToActivity()
             this.props.onClosed()
-        }
+        }*/
     }
     render() {
         const accept = this.state.accept
