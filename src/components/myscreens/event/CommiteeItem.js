@@ -56,7 +56,7 @@ export default class CommiteeItem extends Component {
                     master: member ? this.props.computedMaster : false,
                     loaded: true,
                     member: member,
-                    joint: member ? true : false
+                    joint: true
                 })
             }, 50)
         } else {

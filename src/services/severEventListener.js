@@ -241,8 +241,8 @@ class ServerEventListener {
         console.warn("unsuccessful, " + response)
         reject(response);
       });
+      console.warn("writing socket",data)
       if (this.socket.write) {
-        console.warn(this.socket.write)
         this.socket.write(data)
       } else {
         this.socket.write = tcpConnect.socket.write

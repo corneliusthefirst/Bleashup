@@ -59,22 +59,23 @@ class Requester {
                         Participant.host = stores.Session.SessionStore.host
                         stores.Events.addParticipant(invitation.event_id, Participant, true).then(() => {
                          firebase.database().ref(`activity/${invitation.event_id}/participants`).once('value',val => {
-                             firebase.database().ref(`activity/${invitation.event_id}/participants`).set(uniqBy([Participant,val.val()],'phone'))
+                             firebase.database().ref(`activity/${invitation.event_id}/participants`).set([Participant,val.val()]).then(() => {
+                                 let Change = {
+                                     id: uuid.v1(),
+                                     title: `First Update`,
+                                     updated: "new_event",
+                                     event_id: invitation.event_id,
+                                     updater: invitation.inviter,
+                                     changed: `Invited You To Ths Activity`,
+                                     new_value: { data: null, new_value: null },
+                                     date: event.created_at,
+                                     time: null
+                                 }
+                                 stores.ChangeLogs.addChanges(Change).then(res => {
+                                 })
+                                 resolve()
+                             })
                          })
-                            let Change = {
-                                id: uuid.v1(),
-                                title: `First Update`,
-                                updated: "new_event",
-                                event_id: invitation.event_id,
-                                updater: invitation.inviter,
-                                changed: `Invited You To Ths Activity`,
-                                new_value: { data: null, new_value: null },
-                                date: event.created_at,
-                                time: null
-                            }
-                            stores.ChangeLogs.addChanges(Change).then(res => {
-                            })
-                                resolve()
                         })
                     })
                 }).catch(error => {

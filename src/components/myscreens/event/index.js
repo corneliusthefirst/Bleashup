@@ -688,6 +688,7 @@ export default class Event extends Component {
       let creator = find(this.event.participant, { phone: this.event.creator_phone })
       let currentCreator = find(this.event.participant, { phone: stores.LoginStore.user.phone })
       let arr = [creator, currentCreator]
+      //console.warn(arr,data)
       let commitee = {
         id: uuid.v1(),
         creator: this.user.phone,
@@ -1304,6 +1305,7 @@ export default class Event extends Component {
     this.props.navigation.goBack()
   }
   render() {
+    console.warn(this.event.participant)
     StatusBar.setHidden(false, true)
     return (<Drawer
       useInteractionManager={true}
