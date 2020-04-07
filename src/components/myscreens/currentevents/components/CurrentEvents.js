@@ -241,7 +241,13 @@ export default class CurrentEvents extends Component {
                             isInvitationModalOpened: false
                         })
                     }}></InvitationModal> : null}
-                {this.state.isDetailsModalOpened ? <DetailsModal event={this.state.event}
+                {this.state.isDetailsModalOpened ? <DetailsModal goToActivity={() => {
+                    this.props.navigation.navigate('Event',
+                    {
+                        'tab':'EventDetails',
+                        Event:this.state.event
+                })
+                }} isToBeJoint event={this.state.event}
                     isOpen={this.state.isDetailsModalOpened}
                     onClosed={() => {
                         this.setState({

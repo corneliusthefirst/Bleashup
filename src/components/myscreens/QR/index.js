@@ -6,6 +6,7 @@ import { Button, Text, Icon } from 'native-base';
 import stores from '../../../stores';
 import DetailsModal from '../invitations/components/DetailsModal';
 import { findIndex } from 'lodash';
+import { Toast } from 'native-base';
 
 export default class QRScanner extends Component {
     constructor(props) {
@@ -40,17 +41,18 @@ export default class QRScanner extends Component {
         }, 500)
     }
     onSuccess = e => {
-        //console.error(e.data)
         stores.Events.loadCurrentEventFromRemote(e.data).then((event) => {
             let isParticipant = findIndex(event.participant, { phone: stores.LoginStore.user.phone }) >= 0
-            //if (isParticipant) {
-               // this.goToActivity(event)
-           // } else {
+            if (isParticipant) {
+                this.goToActivity(event)
+           } else {
                 this.setState({
                     isDetailModalOpened: true,
                     event: event
                 })
-           // }
+           }
+        }).catch((error) => {
+            Toast.show({text:'Unable to perform network request',position:'top',duration:4000})
         })
     };
     goback() {

@@ -4,7 +4,6 @@ import { Text, Icon, Toast,Thumbnail } from "native-base"
 import stores from '../../../../stores';
 import Requester from "../Requester"
 import emitter from '../../../../services/eventEmiter';
-import { AddParticipant } from '../../../../services/cloud_services';
 import request from '../../../../services/requestObjects';
 
 
@@ -27,14 +26,6 @@ export default class Join extends Component {
             }
             Requester.join(this.props.event.id, this.props.event.event_host).then((status) => {
                 this.setState({ participant: true, });
-                let Participant = request.Participant();
-                Participant.phone = stores.Session.SessionStore.phone;
-                Participant.status = "joint";
-                Participant.master = false;
-                Participant.host = stores.Session.SessionStore.host
-                AddParticipant(this.props.event.id,[Participant]).then((resp) =>{
-                    console.warn(resp)
-                })
             }).catch((error) => {
                 Toast.show({
                     text: 'unable to Perform This Action',
@@ -74,7 +65,6 @@ export default class Join extends Component {
                     </TouchableWithoutFeedback>
 
                 </View>
-         
         )
     }
 }
@@ -84,7 +74,7 @@ export default class Join extends Component {
                                 name="account-group"
                                 type="MaterialCommunityIcons"
                                 style={{
-                                    color: this.state.participant ? "#54F5CA" : "#bfc6ea",
+                                    color: findIndex(this.props.event.participant, { phone: stores.Session.SessionStore.phone }) >= 0 ? "#54F5CA" : "#bfc6ea",
                                     fontSize: 40
                                 }}
                             />

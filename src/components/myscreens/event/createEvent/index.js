@@ -16,6 +16,7 @@ import { head, find, } from "lodash";
 import request from "../../../../services/requestObjects";
 import stores from '../../../../stores/index';
 import CreateRequest from './CreateRequester';
+import  firebase  from 'react-native-firebase';
 
 var uuid = require('react-native-uuid');
 uuid.v1({
@@ -83,6 +84,9 @@ export default class CreateEventView extends Component {
     this.props.navigation.navigate('Home');
 
   }
+  navigateToActivity(event){
+    this.props.navigation.navigate('Event',{Event:event,tab:'EventDetails'})
+  }
 
   @autobind
   creatEvent() {
@@ -101,11 +105,13 @@ export default class CreateEventView extends Component {
       CreateRequest.createEvent(newEvent).then((res) => {
         console.warn(res)
         stores.Events.delete("newEventId").then(() => {
-          this.setState({
-            currentEvent: request.Event(),
-            creating: false
+          firebase.database().ref(`rooms/${newEvent.id}/${newEvent.id}`).set({ name: 'General', members: newEvent.participant }).then(() => {
+            this.setState({
+              currentEvent: request.Event(),
+              creating: false
+            })
+            this.navigateToActivity(newEvent)
           })
-          this.back()
         });
       }).catch(() => {
         this.setState({

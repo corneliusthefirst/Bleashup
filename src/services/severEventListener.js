@@ -8,7 +8,7 @@ import RescheduleDispatcher from "./reschedulDispatcher";
 import tcpConnect from "./tcpConnect"
 import GState from "../stores/globalState";
 import { forEach } from "lodash"
-import { moment } from 'moment';
+import  moment  from 'moment';
 
 class ServerEventListener {
   constructor() { }

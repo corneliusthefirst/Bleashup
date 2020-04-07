@@ -355,7 +355,7 @@ export default class events {
           this.saveKey.data = Events;
           storage.save(this.saveKey).then(() => {
             this.setProperties(this.saveKey.data, inform);
-            resolve();
+            resolve(Events[eventIndex]);
           });
         } else {
           serverEventListener.GetData(EventID).then(event => {

@@ -368,10 +368,17 @@ export default class ChatRoom extends Component {
             })
         }
     }
+    initializeNotifications(){
+        firebase.messaging().getToken().then(token => {
+            firebase.database().ref(`notifications_tokens/${this.sender.phone.replace("00", "+")}`).set(token).then(() => {
+                console.warn("notification token successfully initialized")
+            })
+        })
+    }
     componentWillMount() {
+        this.initializeNotifications()
         this.fireRef = this.getRef(this.props.firebaseRoom);
         this.setTypingRef(this.props.firebaseRoom)
-
         //!! handle user peer user disconnection here listen to something like 'current_room/${peer_user_phone}' to know wether the user is connected or not
         // !! this will only be valid for a when there is just one user in a room .
 

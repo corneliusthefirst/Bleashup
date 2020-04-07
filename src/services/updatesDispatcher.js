@@ -456,9 +456,9 @@ class UpdatesDispatcher {
           let Change = {
             title: "Updates on Main Activity",
             event_id: update.event_id,
-            changed: "Removed Participant(s) From Main Activity",
+            changed: update.updater === update.new_value ? "Left The Activity" : "Removed Participant(s) From Main Activity",
             updater: update.updater,
-            new_value: { data: null, new_value: update.new_value },
+            new_value: { data: null, new_value: Array.isArray(update.new_value) ? update.new_value:[update.new_value] },
             date: update.date,
             time: update.time
           };
@@ -1149,7 +1149,7 @@ class UpdatesDispatcher {
                 });
               });
             } else {
-              let vote = { ...request.Vote(),title:'Deleted Vote', event_id: update.event_id, id: update.new_value }
+              let vote = { ...request.Vote(), title: 'Deleted Vote', event_id: update.event_id, id: update.new_value }
               stores.Votes.addVote(vote).then(() => {
                 stores.Events.addVote(vote.event_id, Vote.id).then(() => {
                 })
@@ -1474,21 +1474,24 @@ class UpdatesDispatcher {
         Participant.host = update.new_value.host;
         Participant.status = update.new_value.status;
         let Change = {
+          id: uuid.v1(),
+          title: 'Update On Main Activity',
           event_id: update.event_id,
+          updated: 'joint',
           changed: "Joint The Activity",
           updater: update.new_value.inviter,
-          new_value: Participant,
+          new_value: { data: null, new_value: [Participant] },
           date: update.date,
           time: update.time
         };
-        stores.ChangeLogs.addChanges(Change).then(() => {
-          stores.Events.addParticipant(update.event_id, Participant, true).then(
-            () => {
-              GState.eventUpdated = true;
+        stores.Events.addParticipant(update.event_id, Participant, true).then(
+          (event) => {
+            this.infomCurrentRoom(Change,event, update.event_id)
+            stores.ChangeLogs.addChanges(Change).then(() => {
               resolve();
             }
-          );
-        });
+            );
+          });
       });
     },
     remind_added: update => {
@@ -1871,7 +1874,7 @@ class UpdatesDispatcher {
     new_commitee: update => {
       return new Promise((resolve, reject) => {
         stores.CommiteeStore.getCommitee(update.new_value).then(commitee => {
-                  stores.Events.addEventCommitee(update.event_id, update.new_value).then(() => {
+          stores.Events.addEventCommitee(update.event_id, update.new_value).then(() => {
             let Change = {
               id: uuid.v1(),
               updated: update.updated,
