@@ -10,7 +10,15 @@ export function SendNotifications(senderName,newKey,newMessageType,text,fireRoom
 export function AddParticipant(activityID,Members){
     return fetch(`${CloudURL}/addParticipant?event_id=${activityID}&members=${JSON.stringify(Members)}`)
 }
+export function AddMembers(activityID,committeeID, Members) {
+    return fetch(`${CloudURL}/addMembers?committee_id=${committeeID}&event_id=${activityID}&members=${JSON.stringify(Members)}`)
+}
 
 export function RemoveParticipant(activityID,members){
     return fetch(`${CloudURL}/removeParticipant?event_id=${activityID}&members=${JSON.stringify(members)}`)
+}
+
+export function RemoveMembers(activityID,committeeID,members){
+    return fetch(`${CloudURL}/removeMembers?committee_id=${committeeID}&event_id=${activityID}&members=${JSON.stringify(members)}`)
+
 }

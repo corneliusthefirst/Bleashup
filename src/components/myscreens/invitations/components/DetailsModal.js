@@ -99,18 +99,20 @@ export default class DetailsModal extends Component {
         })
     }
     join() {
-        //if (findIndex(this.state.event.participant, { phone: stores.LoginStore.user.phone }) < 0) {
-           /* this.setState({
+        if (findIndex(this.state.event.participant, { phone: stores.LoginStore.user.phone }) < 0) {
+            this.setState({
                 isJoining: true
-            })*/
+            })
             Request.join(this.state.event.id, this.state.event.event_host).then((status) => {
                 this.setState({
                     isJoining: false
                 })
                 this.props.goToActivity()
                 this.props.onClosed()
-                ///emitter.emit(`left_${this.props.Event.id}`)
+                console.warn('joint successfully')
+                //emitter.emit(`left_${this.state.event.id}`)
             }).catch((error) => {
+                console.warn(error," error which occured while joining ")
                 this.setState({ isJoining: false })
                 Toast.show({
                     text: 'unable to perform this action',
@@ -118,10 +120,10 @@ export default class DetailsModal extends Component {
                     , position: 'top', duration: 4000
                 })
             })
-       /* } else {
+        } else {
             this.props.goToActivity()
             this.props.onClosed()
-        }*/
+        }
     }
     render() {
         const accept = this.state.accept

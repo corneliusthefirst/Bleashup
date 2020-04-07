@@ -313,7 +313,11 @@ class PublicEvent extends Component {
 
   }
 
-
+openDetail(){
+  stores.Events.loadCurrentEventFromRemote(this.props.Event.id).then(act => {
+    this.props.openDetails(act)
+  })
+}
   renderTitle() {
     return (<CardItem style={{
       marginLeft: '2%',
@@ -321,7 +325,7 @@ class PublicEvent extends Component {
     }}>
       <View style={{ flexDirection: 'row', width: '100%' }}>
         <View style={{ width: '90%' }}>
-          {this.state.isMount ? <TitleView openDetail={() => this.props.openDetails(this.props.Event)} join={() => this.join()} joint={this.state.joint} seen={() => this.markAsSeen()}
+          {this.state.isMount ? <TitleView openDetail={() => this.openDetail()} join={() => this.join()} joint={this.state.joint} seen={() => this.markAsSeen()}
             {...this.props}></TitleView> : null}
         </View>
         <View style={{ width: '12%', justifyContent: 'flex-end', alignItems: 'flex-end', }}>
@@ -390,6 +394,7 @@ class PublicEvent extends Component {
 
 
   render() {
+    console.error(this.props.Event.id)
     return (this.state.isMount ? <View style={{ width: "100%", paddingLeft: '2%', paddingRight: '2%', alignSelf: 'center', }}>
       <Swipeout {...this.props} onOpen={() => this.openSwipeOut()} onClose={() => this.onCloseSwipeout()} style={{
         width: "100%", ...shadower(1),

@@ -37,7 +37,7 @@ import ContentModal from "./ContentModal";
 import InviteParticipantModal from "./InviteParticipantModal";
 import ManageMembersModal from "./ManageMembersModal";
 import AreYouSure from "./AreYouSureModal";
-import { RemoveParticipant } from '../../../services/cloud_services';
+import { RemoveParticipant, AddMembers, RemoveMembers } from '../../../services/cloud_services';
 import SettingsModal from "./SettingsModal";
 import CalendarSynchronisationModal from "./CalendarSynchronisationModal";
 import CalendarServe from '../../../services/CalendarService';
@@ -131,10 +131,10 @@ export default class Event extends Component {
       currentRemindMembers: members
     })
   }
-  openMenu(){
+  openMenu() {
     this.isOpen = !this.isOpen
     this.setState({
-      mounted:true
+      mounted: true
     })
   }
   currentWidth = .4
@@ -238,10 +238,10 @@ export default class Event extends Component {
                 , "phone")
             })
           }} {...this.props}
-          showContacts={(conctacts,title) => {
+          showContacts={(conctacts, title) => {
             this.setState({
               isContactListOpened: true,
-              title:title,
+              title: title,
               contactList: conctacts
             })
           }}></EventChat>
@@ -704,16 +704,17 @@ export default class Event extends Component {
 
       //commitee.member = uniqBy(commitee.member, "phone");
       Requester.addCommitee(commitee).then(() => {
-        !this.event.commitee || this.event.commitee.length <= 0 ? this.event.commitee = [commitee.id] :
-          this.event.commitee.unshift(commitee.id)
+        firebase.database().ref(`rooms/${this.event.id}/${commitee.id}`).set({ name: commitee.name, members: commitee.member }).then(() => {
+          !this.event.commitee || this.event.commitee.length <= 0 ? this.event.commitee = [commitee.id] :
+            this.event.commitee.unshift(commitee.id)
           this.swapChats(commitee)
-        //console.warn('marking as not working!!')
-        this.setState({
-          newCommitee: true,
-          working: false
+          //console.warn('marking as not working!!')
+          this.setState({
+            newCommitee: true,
+            working: false
+          })
+          this.refreshCommitees()
         })
-        firebase.database().ref(`rooms/${this.event.id}/${commitee.id}`).set({ name: commitee.name, members: commitee.member })
-        this.refreshCommitees()
       }).catch(() => {
         this.setState({
           newCommitee: true,
@@ -797,26 +798,16 @@ export default class Event extends Component {
           working: true,
           isSelectableListOpened: false
         })
-        let key = `rooms/${this.event.id}/${this.state.commitee_id}`
+
         Requester.addMembers(this.state.commitee_id, members, this.event.id).then((mem) => {
-          firebase.database().ref(key).once('value', snapshoot => {
-            if (snapshoot.val()) {
-              newMembers = { ...snapshoot.val(), members: unionBy(snapshoot.val().members, members, "phone") }
-              firebase.database().ref(key).set(newMembers)
-            } else {
-              firebase.database().ref(key).set({
-                name: this.state.roomName,
-                members: unionBy(this.state.roomMembers, members, "phone")
-              })
-            }
-            //this.refreshCommitees()
-            this.setState({
-              commitee_id: null,
-              members: null,
-              roomMembers: unionBy(this.state.roomMembers, members, "phone"),
-              adding: false,
-              working: false
-            })
+          AddMembers(this.event.id, this.state.commitee_id, members).then(() => { })
+          //this.refreshCommitees()
+          this.setState({
+            commitee_id: null,
+            members: null,
+            roomMembers: unionBy(this.state.roomMembers, members, "phone"),
+            adding: false,
+            working: false
           })
         }).catch(error => {
           this.setState({
@@ -901,15 +892,8 @@ export default class Event extends Component {
           working: true,
           isSelectableListOpened: false
         })
-        let key = `rooms/${this.event.id}/${this.state.commitee_id}/members`
         Requester.removeMembers(this.state.commitee_id, mem, this.event.id).then(() => {
-          firebase.database().ref(key).once("value", snapshoot => {
-            if (snapshoot.val()) {
-              let newMembers = snapshoot.val().filter(ele => (findIndex(mem, { phone: ele.phone }) < 0))
-              firebase.database().ref(key).set(newMembers)
-            } else {
-              firebase.database().ref(key).set(this.state.roomMembers.filter(ele => (findIndex(mem, { phone: ele.phone }) < 0)))
-            }
+            RemoveMembers(this.event.id, this.state.commitee_id, mem).then(() => { })
             this.setState({
               commitee_id: null,
               members: null,
@@ -918,7 +902,7 @@ export default class Event extends Component {
               working: false,
               notcheckall: false
             })
-          })
+
           //this.refreshCommitees()
         }).catch(error => {
           this.setState({
@@ -965,11 +949,7 @@ export default class Event extends Component {
           working: false
         })
         this.refreshCommitees()
-        let key = `rooms/${this.event.id}/${id}`
-        firebase.database().ref(key).once('value', snapshoot => {
-          let newComm = { ...snapshoot.val(key), members: unionBy(snapshoot.val().members, [member]) }
-          firebase.database().ref(key).set(newComm)
-        })
+        AddMembers(this.event.id,id,[member]).then(() => {})
       }).catch((error) => {
         this.setState({
           working: false
@@ -1004,11 +984,7 @@ export default class Event extends Component {
         })
         emitter.emit('left')
         this.refreshCommitees()
-        let key = `rooms/${this.event.id}/${id}`
-        firebase.database().ref(key).once('value', snapshoot => {
-          let newComm = { ...snapshoot.val(), members: reject(snapshoot.val().members, { phone: stores.LoginStore.user.phone }) }
-          firebase.database().ref(key).set(newComm)
-        })
+        RemoveMembers(this.event.id,id,[{phone:this.user.phone}]).then(() =>{})
       }).catch(() => {
         this.setState({
           working: false
@@ -1106,8 +1082,9 @@ export default class Event extends Component {
           working: false
         })
         emitter.emit(`left_${this.event.id}`) //TODO: this signal is beign listen to in the module current_events>public_events>join
-        RemoveParticipant(this.event_id, this.user.phone).then((response) => {
-          console.warn(response)
+        RemoveParticipant(this.event.id, [this.user]).then((response) => {
+          this.initializeMaster()
+          this.goback()
         })
       }).catch((e) => {
         this.setState({
@@ -1305,7 +1282,6 @@ export default class Event extends Component {
     this.props.navigation.goBack()
   }
   render() {
-    console.warn(this.event.participant)
     StatusBar.setHidden(false, true)
     return (<Drawer
       useInteractionManager={true}
@@ -1356,7 +1332,7 @@ export default class Event extends Component {
         style={{ backgroundColor: 'white', }}><SWView
           navigateHome={() => {
             this.setState({
-              isChat:false
+              isChat: false
             })
             //this.goback()
           }}
@@ -1364,9 +1340,9 @@ export default class Event extends Component {
             this.goback()
           }}
           hideMenu={() => {
-            this.isOpen = false 
+            this.isOpen = false
             this.setState({
-              
+
             })
           }}
           period={this.event.period}
@@ -1385,10 +1361,10 @@ export default class Event extends Component {
           leaveActivity={() => {
             this.isOpen = false
             this.member ? this.setState({
-            isAreYouSureModalOpened: true,
-            warnDescription: "Are you sure you want to leave this activity ?",
-            warnTitle: "Leave activity",
-            callback: this.leaveActivity.bind(this)
+              isAreYouSureModalOpened: true,
+              warnDescription: "Are you sure you want to leave this activity ?",
+              warnTitle: "Leave activity",
+              callback: this.leaveActivity.bind(this)
             }) : Toast.show({ text: "You are not a  member anymore !" })
           }}
           openSettingsModal={() => this.openSettingsModal()}
