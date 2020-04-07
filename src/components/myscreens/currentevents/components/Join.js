@@ -68,8 +68,8 @@ export default class Join extends Component {
                 <View style={{ alignItem:"flex-start" ,alignItem:"center",justifyContent:"center"}}>
                     <TouchableWithoutFeedback onPress={() => this.join()} >
                         <View >
-                         { this.state.participant ?<Thumbnail source={require("../../../../../assets/join1.png")} style={{height:height/15,width:70}}></Thumbnail>
-                         :null}   
+                         {!this.state.participant ?<Thumbnail source={require("../../../../../assets/join1.png")} style={{height:height/15,width:70}}></Thumbnail>
+                         :<Thumbnail source={require("../../../../../assets/join3.png")} style={{height:height/15,width:70}}></Thumbnail>}   
                         </View>
                     </TouchableWithoutFeedback>
 

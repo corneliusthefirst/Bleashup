@@ -101,9 +101,9 @@ export default class CreateEvent extends Component {
     return (
 
  
-        <ActionButton buttonColor="#1CDBAB" position="right" backgroundTappable={true} btnOutRange="green" size={57}>
+        <ActionButton buttonColor="#1FABAB" position="right" backgroundTappable={true} btnOutRange="green" size={57} useNativeFeedback={false}>
 
-          <ActionButton.Item buttonColor='#1FABAB' title="New Relation" onPress={()=>{this.onClickNewContact()}} size={75}>
+          <ActionButton.Item buttonColor='#1CDBAB' title="New Relation" onPress={()=>{this.onClickNewContact()}} size={75}>
             <Icon name="person-add" active={true} type="MaterialIcons" style={styles.actionButtonIcon} />
           </ActionButton.Item>   
           <ActionButton.Item buttonColor='#9b59b6' title=" New Activity  " onPress={()=>{this.onClickNewEvent().then(()=>{})}} size={65}>

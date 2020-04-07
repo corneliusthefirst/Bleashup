@@ -306,20 +306,24 @@ export default class EventDetailView extends Component {
                 >
                 </BleashupFlatList> : null}
               </View>
+
+
               <View style={{ height: !(this.state.highlightData &&
                   this.state.highlightData.length) > 0 ? "100%" : '69%', borderTopLeftRadius: 5, borderTopRightRadius: 5, ...shadower(2), backgroundColor:colorList.bodyBackground,
               }}>
                 <View style={{
-                  height: "69%", width: "96%",
-                  borderRadius: 8,
-                  margin: "0.5%", ...shadower(1),alignSelf:"center"
+                  height: "69%", width: colorList.containerWidth,
+                  borderRadius: 1,
+                  ...shadower(1),alignSelf:"center"
                 }}>
+
                   {this.props.computedMaster ? <Icon name={"pencil"} type={"EvilIcons"} onPress={() => {
                     this.setState({
                       EventDescriptionState: true
                     })
-                  }} style={{ alignSelf: 'flex-end', }}></Icon> : null}
-                  <ScrollView style={{ width: '100%', }} showsVerticalScrollIndicator={false}>
+                  }} style={{ alignSelf: 'flex-end',marginRight:"6%" }}></Icon> : null}
+
+                  <ScrollView style={{ width:"99%", }} showsVerticalScrollIndicator={false}>
                     <View>
                       {this.props.Event.about.description != "" ?
                         <Hyperlink onPress={(url) => { Linking.openURL(url) }} linkStyle={{ color: '#48d1cc', fontSize: 16 }}>
@@ -332,6 +336,7 @@ export default class EventDetailView extends Component {
                           delayLongPress={800}>{this.state.defaultDetail}</Text>}
                     </View>
                   </ScrollView>
+
                 </View>
                 <View style={{ flexDirection: 'row', }}>
                   <View style={{ flexDirection: "column", justifyContent: "space-between",
@@ -416,6 +421,7 @@ export default class EventDetailView extends Component {
               }}
               update={(newHighlight, previousHighlight) => this.updateHighlight(newHighlight, previousHighlight)}
               participant={this.state.participant} parentComponent={this} ref={"highlights"} event_id={this.props.Event.id} />
+              
 
             {this.state.isAreYouSureModalOpened ? <BleashupAlert title={"Delete Higlight"} accept={"Yes"} refuse={"No"} message={" Are you sure you want to delete these highlight ?"}
               deleteFunction={() => this.deleteHighlight(this.state.current_highlight)}

@@ -1075,11 +1075,17 @@ export default class ChatRoom extends Component {
             flexDirection: 'row', ... (!this.state.showVideo && !this.state.showPhoto && !this.state.showRepliedMessage && !this.state.showCaption)
         }
         return (
-            <View style={{ height: "100%", }}>
+
+            <View style={{ height:colorList.containerHeight }}>
+ 
                     {
                         // **********************Header************************ //
                         this.state.showHeader ? this.header() : null
                     }
+      
+         <KeyboardAvoidingView behavior={Platform.Os == "ios" ? "padding" : "height"}
+          style={{flex:1,backgroundColor:"red",flexDirection: 'column',marginBottom:"2%",
+          justifyContent: 'center'}} >               
             <View style={{ height: "90%", }}>
                 <StatusBar animated={true} hidden={this.state.hideStatusBar} barStyle="dark-content" backgroundColor="#FEFFDE"></StatusBar>
                 {!this.state.loaded ? <Waiter></Waiter> : <View style={{}}><View style={{ width: "100%", alignSelf: 'center', }}>
@@ -1100,7 +1106,9 @@ export default class ChatRoom extends Component {
                         <View>
                             {!this.props.opened || !this.props.generallyMember ? <Text style={{ fontStyle: 'italic', marginLeft: "3%", }} note>{"This commitee has been closed for you"}</Text> :
                                 // ***************** KeyBoard Displayer *****************************
-                                this.keyboardView()
+
+                                 this.keyboardView()
+                            
                             }
                         </View>
                     </ScrollView>
@@ -1188,11 +1196,15 @@ export default class ChatRoom extends Component {
                 }}></ContactsModal> : null}
                 {//</ImageBackground>
                 }
-            </View>
-            </View>
-
+                  
+               </View>
+             </KeyboardAvoidingView> 
+           
+        </View>
+        
         )
     }
+
     groupByWeek(media) {
         let groupedDates = groupBy(media, ele => moment(ele.created_at).startOf('week'))
         let keys = Object.keys(groupedDates)
@@ -1304,11 +1316,11 @@ export default class ChatRoom extends Component {
         this.markAsRead();
     }
     keyboardView() {
-        return <View style={{
-            backgroundColor: colorList.bodyBackground,
-            alignSelf: 'center', alignItems: 'center', borderBottomWidth: 0, borderTopWidth: .3,
-            borderColor: 'gray', borderRadius: 4,
-            padding: '1%', width: "99%", alignItems: 'center',
+        return (
+       <View style={{
+            backgroundColor: colorList.bodyBackground,position:"absolute",bottom:0,
+            alignItems: 'center', borderTopWidth: .3,
+            borderColor: 'gray', padding: '1%', width: "99%"
         }}>
             {
                 //* Reply Message caption */
@@ -1377,7 +1389,9 @@ export default class ChatRoom extends Component {
             {
                 // ***************** Emoji keyBoard Input ***********************//
                 this.state.showEmojiInput ? this.imojiInput() : null}
-        </View>;
+        </View>
+        )
+        
     }
 
     replyMessageCaption() {
