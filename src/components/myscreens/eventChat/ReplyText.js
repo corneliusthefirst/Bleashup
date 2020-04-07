@@ -88,7 +88,7 @@ export default class ReplyText extends Component {
                                         height: this.state.currentHeight, borderRadius: 5,
                                     }} source={{ uri: this.props.reply.sourcer }}></Thumbnail>}
                                             {this.props.reply.video ? <View style={{ ...buttoner, position: "absolute", marginTop: "7%", marginLeft: "18%",}}><Icon type={"EvilIcons"} name={"play"} style={{
-                                             color: "#1FABAF",
+                                             color: "#FEFFDE",
                                         }}></Icon></View> : null}</View> : null}
 
                                 </View>

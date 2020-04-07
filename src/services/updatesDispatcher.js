@@ -1471,7 +1471,6 @@ class UpdatesDispatcher {
       return new Promise((resolve, reject) => {
         let Participant = requestObjects.Participant();
         Participant.phone = update.updater;
-        Participant.master = update.new_value.master;
         Participant.host = update.new_value.host;
         Participant.status = update.new_value.status;
         let Change = {

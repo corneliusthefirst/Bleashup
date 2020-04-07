@@ -41,7 +41,7 @@ export default class QRScanner extends Component {
     }
     onSuccess = e => {
         //console.error(e.data)
-        stores.Events.loadCurrentEvent(e.data).then((event) => {
+        stores.Events.loadCurrentEventFromRemote(e.data).then((event) => {
             let isParticipant = findIndex(event.participant, { phone: stores.LoginStore.user.phone }) >= 0
             //if (isParticipant) {
                // this.goToActivity(event)

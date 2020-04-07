@@ -29,7 +29,7 @@ class ServerEventListener {
         case "all_updates":
           console.warn(data)
           let sorter = (a, b) => (moment(a.date).format("x") < moment(b.date).format("x") ? 1 : moment(a.date).format("x") > moment(b.date).format("x") ? -1 : 0)
-          if (data.updated.length !== 0) UpdatesDispatcher.dispatchUpdates(data.updated.sort(soter));
+          if (data.updated.length !== 0) UpdatesDispatcher.dispatchUpdates(data.updated.sort(sorter));
           if (data.new_events.length !== 0) {
             InvitationDispatcher.dispatchUpdates(
               data.new_events,
@@ -241,8 +241,8 @@ class ServerEventListener {
         console.warn("unsuccessful, " + response)
         reject(response);
       });
+      console.warn("writing socket",data)
       if (this.socket.write) {
-        console.warn(this.socket.write)
         this.socket.write(data)
       } else {
         this.socket.write = tcpConnect.socket.write

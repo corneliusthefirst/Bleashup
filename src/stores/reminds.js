@@ -64,6 +64,7 @@ export default class Reminds {
           getRemind.event_id = event_id
           tcpRequest.getReminds(getRemind, event_id + '_get_reminds').then(JSONData => {
             EventListener.sendRequest(JSONData, event_id + "_get_reminds").then(response => {
+              console.warn(response)
               if (!response.data || response.data === 'empty' || response.data === 'no_such_value') {
                 resolve(fresh ? JSON.stringify([]) : [])
               }
