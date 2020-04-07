@@ -5,7 +5,7 @@ import stores from '../../../../stores';
 import Requester from "../Requester"
 import emitter from '../../../../services/eventEmiter';
 import request from '../../../../services/requestObjects';
-
+import { findIndex } from 'lodash';
 
 let {height, width} = Dimensions.get('window');
 export default class Join extends Component {
@@ -59,7 +59,7 @@ export default class Join extends Component {
                 <View style={{ alignItem:"flex-start" ,alignItem:"center",justifyContent:"center"}}>
                     <TouchableWithoutFeedback onPress={() => this.join()} >
                         <View >
-                         {!this.state.participant ?<Thumbnail source={require("../../../../../assets/join1.png")} style={{height:height/15,width:70}}></Thumbnail>
+                         {!findIndex(this.props.event.participant, { phone: stores.Session.SessionStore.phone }) >= 0 ?<Thumbnail source={require("../../../../../assets/join1.png")} style={{height:height/15,width:70}}></Thumbnail>
                          :<Thumbnail source={require("../../../../../assets/join3.png")} style={{height:height/15,width:70}}></Thumbnail>}   
                         </View>
                     </TouchableWithoutFeedback>
