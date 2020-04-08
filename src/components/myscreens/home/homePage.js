@@ -295,7 +295,7 @@ class Home extends Component {
         <View style={{ height: colorList.headerHeight,backgroundColor: colorList.headerBackground ,width:"100%", }}>
         
          
-            <View style={{flex: 1, backgroundColor: "#1FABAB", flexDirection: "row",justifyContent: "space-between",width:"100%" }}>
+            <View style={{flex: 1, backgroundColor: colorList.headerBackground, flexDirection: "row",justifyContent: "space-between",width:"100%" }}>
              
               <View style={{ alignSelf: "flex-start",justifyContent:"center",height:"98%",marginTop:"1%" }}>
                 <Thumbnail source={require("../../../../assets/bleashuptitle.png")} style={{width:120}}></Thumbnail>
@@ -329,11 +329,11 @@ class Home extends Component {
         <Tabs
           locked
           tabContainerStyle={{
-             backgroundColor: "#1FABAB"
+             backgroundColor: colorList.headerBackground
           }}
           tabBarPosition="bottom"
           tabBarUnderlineStyle={{
-            backgroundColor: "1FABAB"
+            backgroundColor: colorList.headerBackground
           }}
           onChangeTab={({ i }) => {
             this.setState({

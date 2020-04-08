@@ -6,6 +6,7 @@ import {
   find,
   findIndex,
   reject,
+  findLast,
   uniq,
   indexOf,
   forEach,
@@ -17,9 +18,11 @@ import requestObject from "../services/requestObjects";
 import tcpRequest from "../services/tcpRequestData";
 import serverEventListener from "../services/severEventListener"
 import request from "../services/requestObjects";
+import stores from ".";
 
 export default class events {
   constructor() {
+
     /*storage.remove({
       key: 'Events'
     });*/
@@ -36,6 +39,12 @@ export default class events {
         }
         i++
       })
+      /*
+      this.createSearchdata(Events).then((array)=>{
+          this.searchdata = array;
+          console.warn(this.searchdata);
+      })*/
+
     });
   }
   @observable currentEvents = [];
@@ -1057,26 +1066,40 @@ export default class events {
 
   @observable searchdata = [];
 
- 
   createSearchdata(Events){
     return new Promise((resolve, reject) => {
-       
-
+        array = [];
+        Events.forEach((event)=>{
+           if(event.type == "activity"){
+             obj = {id:event.id,name:event.about.title}
+             this.array.unshift(obj);
+            }else{
+              participant = findLast(event.participant,(n)=>{
+                  n.phone != stores.LoginStore.user.phone;
+              })
+              stores.TemporalUsersStore.getUser(participant.phone).then((user)=>{
+                  obj = {id:event.id,name:user.name}
+                  this.array.unshift(obj);
+              })
+           }
+        })
+         resolve(this.array);
     })
+
   }
 
 
-  @action  setSearchData(newArray) {
+  @action  setSearchData(array) {
     return new Promise((resolve, reject) => {
       //console.warn("here1",newArray)
       storage
         .save({
           key: "searchdata",
-          data: newArray
+          data: array
         })
         .then(() => {
-          this.searchdata = newArray;
-          resolve(newArray);
+          this.searchdata = array;
+          resolve(array);
         })
         .catch(error => {
           reject(error);
@@ -1086,7 +1109,7 @@ export default class events {
 
 
 
-  @action async updateSearchData(newArray) {
+  @action async updateSearchData(newarray) {
     return new Promise((resolve, reject) => {
       storage
         .load({
@@ -1126,10 +1149,14 @@ export default class events {
             this.setSearchData(this.searchdata).then((newArray)=>{ 
               resolve(newArray);
             })
-            
-          });
+       });
   })
 }
+
+
+
+
+
 
 
 
