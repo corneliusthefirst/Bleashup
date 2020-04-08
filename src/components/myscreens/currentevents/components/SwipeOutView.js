@@ -79,7 +79,7 @@ export default class SwipeOutView extends Component {
     render() {
         return (
             <View style={{ width: "99%", borderRadius: 4,...shadower(2) ,height:'99.5%',backgroundColor:colorList.bodyBackground,alignItems:"center"}}>
-                <View style={{ flex:1, flexDirection: 'column',justifyContent:"space-between" }}>
+                <View style={{ flex:1, flexDirection: 'column',justifyContent:"space-around" }}>
                    
                     <View style={{ height: this.width,alignItems:"center" }}>
                         <TouchableOpacity onPress={() => requestAnimationFrame(() => {
@@ -103,7 +103,7 @@ export default class SwipeOutView extends Component {
                     </View>
 
 
-                    <View style={{ height: this.width,flexDirection:"column",alignItems:"center" }}>
+                   {/* <View style={{ height: this.width,flexDirection:"column",alignItems:"center" }}>
                         {<TouchableOpacity onPress={() => {
                             this.props.join()
                         }}>
@@ -141,7 +141,9 @@ export default class SwipeOutView extends Component {
                                 )}
                             <Label style={{ fontSize: 14, color:colorList.bodySubtext,marginLeft:2 }}>{"Logs"}</Label>
                         </TouchableOpacity>
-                    </View >
+                    </View >*/}
+
+
                     {/*<View style={{ height: this.width, marginBottom: "9%", alignSelf: 'flex-start' }}>
                         <TouchableOpacity onPress={() => {
                             return this.props.hide()

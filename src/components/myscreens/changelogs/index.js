@@ -18,6 +18,7 @@ import shadower from "../../shadower";
 import TasksCreation from "../reminds/TasksCreation";
 import GState from '../../../stores/globalState/index';
 import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
+import colorList from '../../colorList';
 
 export default class ChangeLogs extends Component {
   constructor(props) {
@@ -76,31 +77,35 @@ export default class ChangeLogs extends Component {
   renderDetail(item, sectionID, rowID) {
     return (<View><Text>{item.changed}</Text></View>)
   }
+  
   render() {
     //console.warn(this.props.forMember, "poo")
     return (!this.state.loaded ? <View style={{width:'100%',height:'100%',
-    backgroundColor: '#FEFFDE',}}></View>: <View style={{ width: "100%", height: "100%", backgroundColor: "#FEFFDE", }}>
-      <View style={{ flex: 1, height: "95%", top: 0, bottom: 0, left: 0, right: 0 }}>
+    backgroundColor: colorList.bodyBackground,}}></View>: 
+    
+    <View style={{ height:"100%",width: "100%"}}>
+
+      <View style={{ flex:1, width: "100%" }} >     
         <BleashupTimeLine
           circleSize={20}
           showPhoto={url => this.props.openPhoto(url)}
           master={this.props.master}
           mention={(data) => this.props.mention(data)}
           restore={(data) => this.props.restore(data)}
-          circleColor='rgb(45,156,219)'
+          circleColor='white'
           lineColor='#1FABAB'
-          timeContainerStyle={{ minWidth: 52, marginTop: -5, backgroundColor: '#FEFFDE', opacity: .8 }}
+          timeContainerStyle={{ minWidth: 52, backgroundColor: colorList.bodyBackground, opacity: .8 }}
           timeStyle={{
             marginLeft: "4%",
             textAlign: 'center',
-            backgroundColor: '#FEFFDE',
+            backgroundColor: colorList.bodyBackground,
             padding: 4,
             borderRadius: 6,
             color: "#1FABAB",
             //borderWidth: .7,
             //borderColor: "#1FABAB",
           }}
-          descriptionStyle={{ color: 'gray' }}
+          descriptionStyle={{ color:colorList.bodyText }}
           onEventPress={(data) => {
             !GState.showingProfile ? this.props.propcessAndFoward(data) : null
           }}
@@ -109,34 +114,35 @@ export default class ChangeLogs extends Component {
               ele.type === "date_separator") : this.changes}
         >
         </BleashupTimeLine>
-      </View>
-      {this.state.hideHeader ? null : <View style={{
-        width: "100%", height: 44, position: "absolute",
-      }}>
-        <View style={{
-          flexDirection: 'row', ...bleashupHeaderStyle, 
-         
-        }}>
-            <View style={{ width: '10%', paddingLeft: '1%', margin: '1%',  }}>
-              <Icon onPress={() => {
-                this.props.openMenu()
-              }} style={{ color: '#0A4E52' }} type={"Ionicons"} name={"ios-menu"}></Icon>
-            </View>
-          <View style={{ margin: '1%', width: "70%" ,}}>
-            <Title style={{
-              fontWeight: 'bold', alignSelf: 'flex-start',
-            }}>{(this.props.forMember ? this.props.forMember :
-              (this.props.isMe ? "Your " : "")) + " Activity logs"}</Title>
-          </View>
-          <View style={{  width: '20%',backgroundColor: 'transparent', }}>
-            <Icon style={{
-              color: '#1FABAB',
-              alignSelf: 'center',
-              margin:'1%'
-            }} name={"gear"} type="EvilIcons"></Icon>
-          </View>
-        </View>
-      </View>}
+    </View>
+
+      {this.state.hideHeader ? null : 
+      <View style={{height: colorList.headerHeight,width: colorList.headerWidth,backgroundColor:colorList.headerBackground, position: "absolute"}}>
+             
+             
+              <View style={{flex:1,paddingLeft: '1%', paddingRight: '1%',backgroundColor:colorList.headerBackground,
+                 flexDirection: "row", alignItems: "center"}}>
+                    <View style={{width:"10%",paddingLeft:"1%"}} >
+                     <Icon onPress={() => {this.props.navigation.navigate("Home")}}
+                      style={{ color:colorList.headerIcon}} type={"MaterialIcons"}name={"arrow-back"}></Icon>
+                   </View>
+                   <View style={{ width: '70%', paddingLeft: '2%',justifyContent:"center" }}>
+                   <Title style={{ color: colorList.headerText, fontWeight: 'bold', alignSelf: 'flex-start' }}>{"History"}</Title>
+                   </View>
+  
+                   <View style={{ width: '10%', paddingRight: '3%' }}>
+                    <Icon  
+                     name={"gear"} type="EvilIcons" style={{ color: colorList.headerIcon, alignSelf: 'center', }} />
+                    </View>
+  
+                    <View style={{ width: '10%', paddingLeft: '1%', }}>
+                      <Icon onPress={() => { this.props.openMenu()
+                       }} style={{ color:colorList.headerIcon }} type={"Ionicons"} name={"ios-menu"}></Icon>
+                    </View>
+  
+                </View>
+          </View>}
+
     </View>
     )
   }

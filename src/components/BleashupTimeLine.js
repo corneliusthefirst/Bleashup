@@ -14,6 +14,8 @@ import DateView from "./myscreens/eventChat/DateView";
 import moment from "moment";
 import ChangeBox from "./myscreens/changelogs/ChangesBox";
 import shadower from "./shadower";
+import colorList from '../components/colorList';
+
 
 const defaultCircleSize = 16;
 const defaultCircleColor = "#007AFF";
@@ -371,7 +373,7 @@ BleashupTimeLine.defaultProps = {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1
+        flex: 1,
     },
     listview: {
         flex: 1
@@ -391,7 +393,8 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         flex: 1,
         //alignItems: 'stretch',
-        justifyContent: "center"
+        justifyContent: "center",
+        
     },
     timeContainer: {
         ...shadower(3),
@@ -421,16 +424,16 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 16,
-        fontWeight: "bold"
+        fontWeight: "800"
     },
     details: {
         borderLeftWidth: defaultLineWidth,
         flexDirection: "column",
-        flex: 1
+        flex: 1,
     },
-    detail: { paddingTop: 10, paddingBottom: 10 },
+    detail: { paddingTop: 10, paddingBottom: 10, },
     description: {
-        marginTop: 10
+        marginTop: 10,
     },
     separator: {
         height: 1,

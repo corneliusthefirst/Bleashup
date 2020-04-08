@@ -102,7 +102,8 @@ export default class ChatRoom extends Component {
             showVideo: false,
             showPhoto: false,
             playing: true,
-            replyContent: null
+            replyContent: null,
+            marginBottom:"0%",
         };
         this.BackHandler = null
     }
@@ -368,17 +369,10 @@ export default class ChatRoom extends Component {
             })
         }
     }
-    initializeNotifications(){
-        firebase.messaging().getToken().then(token => {
-            firebase.database().ref(`notifications_tokens/${this.sender.phone.replace("00", "+")}`).set(token).then(() => {
-                console.warn("notification token successfully initialized")
-            })
-        })
-    }
     componentWillMount() {
-        this.initializeNotifications()
         this.fireRef = this.getRef(this.props.firebaseRoom);
         this.setTypingRef(this.props.firebaseRoom)
+
         //!! handle user peer user disconnection here listen to something like 'current_room/${peer_user_phone}' to know wether the user is connected or not
         // !! this will only be valid for a when there is just one user in a room .
 
@@ -1083,16 +1077,17 @@ export default class ChatRoom extends Component {
         }
         return (
 
-            <View style={{ height:colorList.containerHeight }}>
- 
+            <View style={{ height:"100%" }}>
+               
                     {
                         // **********************Header************************ //
                         this.state.showHeader ? this.header() : null
                     }
-      
-         <KeyboardAvoidingView behavior={Platform.Os == "ios" ? "padding" : "height"}
-          style={{flex:1,backgroundColor:"red",flexDirection: 'column',marginBottom:"2%",
-          justifyContent: 'center'}} >               
+            
+        {/* <KeyboardAvoidingView 
+          behavior={Platform.Os == "ios" ? "padding" : "height"}
+          style={{flex:1,justifyContent:"center",marginBottom:this.state.marginBottom,backgroundColor:'rgba(0,0,0,0.3)',
+          }} >  */}             
             <View style={{ height: "90%", }}>
                 <StatusBar animated={true} hidden={this.state.hideStatusBar} barStyle="dark-content" backgroundColor="#FEFFDE"></StatusBar>
                 {!this.state.loaded ? <Waiter></Waiter> : <View style={{}}><View style={{ width: "100%", alignSelf: 'center', }}>
@@ -1118,7 +1113,7 @@ export default class ChatRoom extends Component {
                             
                             }
                         </View>
-                    </ScrollView>
+                   </ScrollView>
                 </View>
 
                     {
@@ -1205,8 +1200,7 @@ export default class ChatRoom extends Component {
                 }
                   
                </View>
-             </KeyboardAvoidingView> 
-           
+             {/*</KeyboardAvoidingView> */}
         </View>
         
         )
@@ -1322,25 +1316,32 @@ export default class ChatRoom extends Component {
         this.toggleAudioRecorder();
         this.markAsRead();
     }
+     onFocus = ()=>{
+         this.setState({marginBottom:"5%"})
+     }
+     onEndEditing = ()=>{
+        this.setState({marginBottom:"0%"})
+     }
     keyboardView() {
         return (
        <View style={{
-            backgroundColor: colorList.bodyBackground,position:"absolute",bottom:0,
-            alignItems: 'center', borderTopWidth: .3,
+            marginBottom:this.state.marginBottom,
+            alignItems: 'center',
             borderColor: 'gray', padding: '1%', width: "99%"
         }}>
             {
                 //* Reply Message caption */
                 this.state.replying ? this.replyMessageCaption() : null}
             <View style={{
-                flexDirection: 'row',
-                alignSelf: 'center', width: colorList.containerWidth
+                flexDirection: 'row',alignSelf:"center",
+                alignSelf: 'center', width: colorList.containerWidth-8
             }}>
                 <View style={{
                     width: "86%",
                     fontSize: 17,
                     //height: 40,
                     flexDirection: 'row',
+                    justifyContent:"space-around",
                     borderColor: "#1FABAB",
                     borderWidth: 0,
                     borderRadius: 10,
@@ -1354,6 +1355,8 @@ export default class ChatRoom extends Component {
 
                     <Item style={{ width: '88%',marginLeft:"2%" }} rounded>
                         <TextInput
+                            onFocus={this.onFocus}
+                            onEndEditing={this.onEndEditing}
                             value={this.state.textValue}
                             onChange={(event) => this._onChange(event)}
                             placeholder={'Your Message'}
@@ -1362,10 +1365,10 @@ export default class ChatRoom extends Component {
                             multiline={true}
                             enableScrollToCaret
                             ref={(r) => { this._textInput = r; }} />
-                    <View style={{flex:1, width: '20%', padding: '1%',justifyContent:"center",alignItems:"center" }}><Icon onPress={() => {
+                    <View style={{flex:1, width: '20%', position:"absolute",bottom:0,right:0}}><Icon onPress={() => {
                         this.toggleEmojiKeyboard();
                         this.markAsRead();
-                    }} style={{ color: "gray" }}
+                    }} style={{ color: "gray",marginBottom:11 }}
                         type="Entypo" name="emoji-flirt"></Icon></View></Item>
 
                 </View>
@@ -1436,7 +1439,7 @@ export default class ChatRoom extends Component {
             <EmojiSelector onEmojiSelected={(emoji) => this.handleEmojiSelected(emoji)} enableSearch={false} ref={emojiInput => this._emojiInput = emojiInput} resetSearch={this.state.reset} showSearchBar={false} loggingFunction={this.verboseLoggingFunction.bind(this)} verboseLoggingFunction={true} filterFunctions={[this.filterFunctionByUnicode]}></EmojiSelector>
         </View>;
     }
-    header() {
+    header(){
         return <View style={{
             width: colorList.containerWidth,
             height: colorList.headerHeight,
@@ -1447,9 +1450,7 @@ export default class ChatRoom extends Component {
          
                 <View style={{ width: "65%", height: 50,flexDirection:"row",alignSelf:"flex-start", alignItems:"center",  }}>
                   
-                        <Icon onPress={() => {
-                            this.props.navigation.navigate("Home")
-                        }}
+                        <Icon onPress={() => this.props.navigatePage("Home")}
                             style={{ color:colorList.headerIcon,marginLeft:"5%",marginRight:"5%"}}
                             type={"MaterialIcons"}
                             name={"arrow-back"}></Icon>

@@ -59,8 +59,8 @@ export default class Join extends Component {
                 <View style={{ alignItem:"flex-start" ,alignItem:"center",justifyContent:"center"}}>
                     <TouchableWithoutFeedback onPress={() => this.join()} >
                         <View >
-                         {!findIndex(this.props.event.participant, { phone: stores.Session.SessionStore.phone }) >= 0 ?<Thumbnail source={require("../../../../../assets/join1.png")} style={{height:height/15,width:70}}></Thumbnail>
-                         :<Thumbnail source={require("../../../../../assets/join3.png")} style={{height:height/15,width:70}}></Thumbnail>}   
+                         {findIndex(this.props.event.participant, { phone: stores.Session.SessionStore.phone }) >= 0 ?<Thumbnail source={require("../../../../../assets/join3.png")} style={{height:height/15,width:70}}></Thumbnail>
+                         :<Thumbnail source={require("../../../../../assets/join1.png")} style={{height:height/15,width:70}}></Thumbnail>}   
                         </View>
                     </TouchableWithoutFeedback>
 

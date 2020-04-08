@@ -37,9 +37,7 @@ export default class Options extends Component {
     others = {
         alignSelf: 'center',
     }
-    svgStyle = {
-        alignSelf: 'center', 
-    }
+
     width = "50%"
     @autobind navigateToHighLights() {
         stores.Events.isParticipant(this.props.Event.id, stores.Session.SessionStore.phone).then((status) => {
@@ -125,11 +123,11 @@ export default class Options extends Component {
             <View style={{
                 flexDirection: "row",
                 width:'100%',
-                height:"100%"
+                height:"100%",
             }}>
              <TouchableOpacity style={{width:'50%',height:"100%",justifyContent:"center"}} onPress={() => requestAnimationFrame(() => this.navigateToReminds())}>
 
-                        <View style={this.svgStyle}>
+                        <View style={{ alignSelf: 'flex-end',}}>
                             <Icon onPress={() => requestAnimationFrame(() => this.navigateToReminds())} type="FontAwesome" name="bell-o" style={{alignSelf:'center' }}></Icon>
                             <Text style={{
 
@@ -153,7 +151,7 @@ export default class Options extends Component {
                 </View>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={{width:'50%',height:"100%",justifyContent:"center"}} onPress={() => requestAnimationFrame(() => this.navigateToEventChat())} >
+                <TouchableOpacity style={{width:'50%',height:"100%",justifyContent:"center",}} onPress={() => requestAnimationFrame(() => this.navigateToEventChat())} >
    
                         <View style={{alignSelf:"flex-end"}}>
                             <Icon onPress={() => requestAnimationFrame(() => this.navigateToEventChat())} name="comments-o" type="FontAwesome" style={

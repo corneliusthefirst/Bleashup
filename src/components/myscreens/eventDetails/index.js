@@ -231,32 +231,30 @@ export default class EventDetailView extends Component {
     
             <View style={{flexDirection: "row",height: colorList.headerHeight,width: colorList.headerWidth,backgroundColor:colorList.headerBackground}}>
               
-
-                <View style={{height:colorList.headerHeight,width:"80%",flexDirection:"row" ,alignItems:"center"}}>
-                  <View >
+            <View style={{flex:1,
+            paddingLeft: '1%', paddingRight: '1%',backgroundColor:colorList.headerBackground,
+            flexDirection: "row", alignItems: "center",
+          }}>
+                  <View style={{width:"10%",paddingLeft:"1%"}} >
                    <Icon onPress={() => {this.props.navigation.navigate("Home")}}
                     style={{ color:colorList.headerIcon,marginLeft:"5%",marginRight:"5%"}} type={"MaterialIcons"}name={"arrow-back"}></Icon>
                  </View>
-                  <View>
-                   <Title style={{ color: colorList.headerText, fontWeight: 'bold', alignSelf: 'flex-start' }}>{this.props.Event.about.title}</Title>
-                   </View>
-                </View>
+                 <View style={{ width: '70%', paddingLeft: '2%',justifyContent:"center" }}>
+                 <Title style={{ color: colorList.headerText, fontWeight: 'bold', alignSelf: 'flex-start' }}>{this.props.Event.about.title}</Title>
+                 </View>
 
-                <View style={{width: '20%',flexDirection:"row"}}>
-                 
-                  {this.props.computedMaster ? <TouchableOpacity onPress={() => requestAnimationFrame(() => this.newHighlight())} style={{height: colorList.headerHeight,alignSelf:"flex-start",justifyContent:"center"}}>
-                    <Icon type='AntDesign' name="plus" style={{ color: colorList.headerIcon, fontSize: 25,alignSelf:"flex-start" }} />
-                  </TouchableOpacity> : null}
- 
-                  <TouchableOpacity style={{height: colorList.headerHeight,justifyContent:"center"}}>
-                    <Icon onPress={() => {
-                      this.props.openMenu()}} style={{ color:colorList.headerIcon,marginLeft:"30%"}} type={"Ionicons"} name={"ios-menu"}></Icon>
-                  </TouchableOpacity>
+                 {this.props.computedMaster ?<View style={{ width: '10%', paddingRight: '3%' }}>
+                  <Icon onPress={() => requestAnimationFrame(() => this.newHighlight())} type='AntDesign'
+                   name="plus" style={{ color: colorList.headerIcon, alignSelf: 'center', }} />
+                  </View>: null}
 
-                </View>
+                  <View style={{ width: '10%', paddingLeft: '1%', }}>
+                    <Icon onPress={() => { this.props.openMenu()
+                     }} style={{ color:colorList.headerIcon }} type={"Ionicons"} name={"ios-menu"}></Icon>
+                  </View>
 
-
-            </View>
+              </View>
+        </View>
 
 
 

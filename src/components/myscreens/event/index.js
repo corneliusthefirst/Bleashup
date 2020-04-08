@@ -1288,6 +1288,7 @@ export default class Event extends Component {
       useInteractionManager={true}
       tweenHandler={this.state.currentPage === 'EventChat' ? null : Drawer.tweenPresets.parallax}
       open={this.isOpen}
+      //side="right"
       onOpen={() => {
         this.isOpen = true
       }}

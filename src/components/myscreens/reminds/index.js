@@ -37,6 +37,7 @@ import { confirmedChecker } from "../../../services/mapper";
 import ReportTabModal from './NewReportTab';
 import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
 import { dateDiff } from "../../../services/datesWriter";
+import colorList from '../../colorList';
 //const MyTasksData = stores.Reminds.MyTasksData
 
 export default class Reminds extends Component {
@@ -362,23 +363,32 @@ export default class Reminds extends Component {
     return !this.state.mounted ? <View style={{ width: '100%', height: '100%', backgroundColor: '#FEFFDE', }}></View> : (
 
       <View>
-        <View style={{ height: 45, width: '100%' }}>
-          <View style={{
-            paddingLeft: '1%', paddingRight: '1%', ...bleashupHeaderStyle,
+        <View style={{ height:colorList.headerHeight, width: '100%' }}>
+          <View style={{flex:1,
+            paddingLeft: '1%', paddingRight: '1%',backgroundColor:colorList.headerBackground,
             flexDirection: "row", alignItems: "center",
           }}>
             <View style={{ width: '10%', paddingLeft: '1%', }}>
+            <Icon onPress={() => this.props.navigation.navigate("Home")}
+                style={{ color:colorList.headerIcon}}
+                type={"MaterialIcons"} name={"arrow-back"}></Icon>
+            </View>
+
+            <View style={{ width: '70%', paddingLeft: '2%',justifyContent:"center" }}>
+              <Title style={{ fontWeight: 'bold', alignSelf: 'flex-start',color:colorList.headerText }}>{"Reminds"}</Title>
+            </View>
+
+            <View style={{ width: '10%', paddingRight: '3%' }}>
+              <Icon onPress={() => requestAnimationFrame(() => this.AddRemind())} type='AntDesign'
+                name="plus" style={{ color: colorList.headerIcon, alignSelf: 'center', }} />
+            </View>
+
+            <View style={{ width: '10%', paddingLeft: '1%', }}>
               <Icon onPress={() => {
                 this.props.openMenu()
-              }} style={{ color: '#0A4E52' }} type={"Ionicons"} name={"ios-menu"}></Icon>
+              }} style={{ color:colorList.headerIcon }} type={"Ionicons"} name={"ios-menu"}></Icon>
             </View>
-            <View style={{ width: '80%', paddingLeft: '2%', }}>
-              <Title style={{ fontWeight: 'bold', alignSelf: 'flex-start', }}>{"Reminds"}</Title>
-            </View>
-            <View style={{ width: '10%' }}>
-              <Icon onPress={() => requestAnimationFrame(() => this.AddRemind())} type='AntDesign'
-                name="pluscircle" style={{ color: "#1FABAB", alignSelf: 'center', }} />
-            </View>
+
           </View>
         </View>
 
