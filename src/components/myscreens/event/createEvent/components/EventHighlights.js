@@ -30,7 +30,7 @@ import buttoner from "../../../../../services/buttoner";
 
 //create an extension to toast so that it can work in my modal
 
-
+ 
 var uuid = require('react-native-uuid');
 uuid.v1({
   node: [0x01, 0x23, 0x45, 0x67, 0x89, 0xab],

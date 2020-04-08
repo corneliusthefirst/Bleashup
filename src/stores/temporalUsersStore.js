@@ -3,9 +3,6 @@ import { uniqBy, find, forEach } from "lodash"
 import userHttpServices from "../services/userHttpServices"
 export default class TemporalUsersStore {
     constructor() {
-        // storage.remove({key:this.saveKey.key}).then(()=>{
-
-        //})
         this.loadFromStore().then(users => {
             this.Users = users;
         })

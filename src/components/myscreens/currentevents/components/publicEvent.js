@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { View, Vibration, TouchableWithoutFeedback, TouchableOpacity, Dimensions } from 'react-native';
-
 import {
   Card,
   CardItem,
@@ -33,7 +32,7 @@ import TitleView from "./TitleView";
 import SwipeOutView from "./SwipeOutView";
 import emitter from "../../../../services/eventEmiter";
 import Swipeout from '../../../SwipeOut';
-import { findIndex, isEqual } from "lodash"
+import { findIndex, isEqual,find } from "lodash"
 import InvitationModal from './InvitationModal';
 import ProfileSimple from './ProfileViewSimple';
 import shadower from "../../../shadower";
@@ -69,7 +68,7 @@ class PublicEvent extends Component {
       likeIncrelment: 0,
       isPublisherModalOpened: false,
       currentUser: undefined,
-      creator: null
+      opponent: null
     };
   }
 
@@ -88,10 +87,22 @@ class PublicEvent extends Component {
   }
   swipperComponent = null
   componentDidMount() {
-    //!this is done to use as default for my test
-    stores.TempLoginStore.getUser("0666406835").then(creator => {
-      this.setState({ creator: creator });
-    })
+    //this is done to use as default for my test
+    if(this.props.Event.type == "relation"){
+        //console.warn("here2",this.props.Event.participant);
+        this.props.Event.participant.forEach((participant)=>{
+             if(participant.phone !=  stores.LoginStore.user.phone){
+               stores.TemporalUsersStore.Users.forEach((user)=>{
+                  if(participant.phone == user.phone){
+                    this.setState({ opponent:user});
+                  }
+               })
+
+             }
+        })
+    
+    }
+
     setTimeout(() => {
       this.setState({
         isMount: true,
@@ -279,7 +290,7 @@ class PublicEvent extends Component {
       this.props.navigation.navigate("HighLightsDetails", { event_id: this.props.Event.id })
   }
   renderMap() {
-    return this.state.isMount && this.props.Event.location && this.props.Event.location.string ?
+    return this.state.isMount && this.props.Event.location.string ?
       <View style={{ alignSelf: 'center', }}><MapView card
         location={this.props.Event.location.string}></MapView></View> : null
   }
@@ -297,10 +308,10 @@ class PublicEvent extends Component {
       >
         <View style={{ width: "100%", flexDirection: "row", alignItems: "center" }}>
 
-          {this.state.creator ? <View style={{ width: "60%" }}>
+          {this.state.opponent ? <View style={{ width: "60%" }}>
             <ProfileSimple showPhoto={(url) =>
               this.props.showPhoto(url)}
-              profile={this.state.creator}>
+              profile={this.state.opponent}>
             </ProfileSimple>
           </View> : null}
 

@@ -18,15 +18,19 @@ import { dateDiff, writeDateTime } from "../../../services/datesWriter";
 import dateDisplayer from '../../../services/dates_displayer';
 import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
 import colorList from "../../colorList";
+import SearchView from "./searchView";
 
 
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenheight = Math.round(Dimensions.get('window').height);
+
 export default class SWView extends Component {
     constructor(props) {
         super(props)
         this.state = {
             scrollY: new Animated.Value(0),
+            action:false,
+            search:false
         }
     }
     width = "9%"
@@ -93,6 +97,25 @@ export default class SWView extends Component {
     refreshCommitees() {
         this.refs.Commitee.refreshCommitees()
     }
+
+   setAction = ()=>{
+    
+       if(this.state.action == false){
+           this.setState({action:true});
+       }else{
+           this.setState({action:false})
+       }
+   }
+
+   setSearch = ()=>{
+    if(this.state.search == false){
+        this.setState({search:true});
+       
+    }else{
+        this.setState({search:false})
+    }
+  }
+
     render() {
         return <View style={{
             backgroundColor: colorList.bodyBackground,
@@ -118,6 +141,13 @@ export default class SWView extends Component {
                                     source={{ uri: this.props.event.background }}></CacheImages> : <CacheImages thumbnails source={require('../../../../assets/default_event_image.jpeg')} ></CacheImages>}
                             </Button>
                         </View>
+
+                         <TouchableOpacity style={{ alignSelf: 'center',...shadower(2),borderRadius: 5,width: 55, height: 50}} onPress={this.setSearch}>
+                               <View style={{backgroundColor: colorList.bodyBackground,marginBottom: '15%',width: 55,borderRadius: 5,height: 50,justifyContent:"center",alignItems:"center"}}>
+                                 <Icon style={{ color:"#1FABAB",fontSize:50}} type="EvilIcons" name="search"></Icon>
+                               </View>
+                            </TouchableOpacity>
+
                         <View style={{ height: 235, alignSelf: 'center', }}>
                           
                             <RouteView isChat={this.props.isChat} refreshCommitee={() => this.refreshCommitees()}
@@ -126,6 +156,9 @@ export default class SWView extends Component {
                                 setCurrentPage={(page) => {
                                     this.props.setCurrentPage(page)
                                 }}></RouteView>
+                            </View>
+
+
                         </View>
                       
                         <View style={{
@@ -146,67 +179,84 @@ export default class SWView extends Component {
                                 openSettingsModal={() => this.props.openSettingsModal()}
                                 ShowMyActivity={(a) => this.props.ShowMyActivity(a)}
                                 showMembers={() => this.props.showMembers()}></ActionsView>
+                           </View>
                         </View>
-                    </View>
+                   
 
-
-
-
-
-
-
-
-
-                <ScrollView nestedScrollEnabled={true} showsVerticalScrollIndicator={false}>
-                    <View style={{
-                        height: '100%',
-                        width: screenWidth * .56,
-                        backgroundColor: 'white',
-                        ...shadower(2),
-                    }}>
-                    <View style={{ height: 60,alignItems:"flex-start",padding:"2%" }}>
-                        
-                      <Title style={{fontWeight: 'bold',fontSize: 18,color: colorList. headerBlackText}}>{this.props.event.about.title}</Title>
-
-                                    {this.props.event.period ? <Title style={{
-                                        alignSelf: 'flex-start',
-                                        fontWeight: this.props.event.closed ? "bold" : "400",
-                                        color: this.props.event.closed ? "red" : dateDiff(this.props.event) > 0 ? "gray" : "#1FABAB", fontSize: 12,
-                                    }}>{this.props.event.closed ? "Closed" : writeDateTime(this.props.event)}</Title> : null}
-
-                                    {/*this.props.event.interval > 1 && this.props.event.frequency !== 'yearly' && this.dateDiff(this.props.event) < 0 ?
-                                        <Text style={{
-                                            color: "#1FABAB"
-                                        }} note>
-                                            {`after every ${this.props.event.interval > 1 ? this.props.event.interval :
-                                                null} ${this.writeInterval(this.props.event.frequency)} till 
-                                                     ${moment(this.props.event.recurrence ? this.props.event.recurrence :
-                                                    null).format("dddd, MMMM Do YYYY")}`}
-                                                     </Text> : null*/}    
-                              
-                            </View>
-
-                        <Commitee
-                            computedMaster={this.props.computedMaster}
-                            master={this.props.master}
-                            ref="Commitee"
-                            participant={this.props.event.participant}
-                            creator={this.props.creator}
-                            join={(id) => { this.props.join(id) }}
-                            showCreateCommiteeModal={() => this.props.showCreateCommiteeModal()}
-                            leave={(id) => { this.props.leave(id) }}
-                            removeMember={(id, members) => { this.props.removeMember(id, members) }}
-                            addMembers={(id, currentMembers) => { this.props.addMembers(id, currentMembers) }}
-                            publishCommitee={(id, state) => { this.props.publishCommitee(id, state) }}
-                            editName={this.props.editName}
-                            swapChats={(commitee) => { this.props.swapChats(commitee) }} phone={this.props.phone}
-                            commitees={this.props.commitees}
-                            event_id={this.props.event.id}>
-                        </Commitee>
-                    </View>
-                    </ScrollView>
+                 {this.state.action?
+                  <View style={{
+                    width: '100%',
+                    height: 400,
+                    alignSelf: 'center',
+                    backgroundColor: 'white',
+                    borderRadius: 8
+                }}>
+                    <ActionsView 
+                        calendared={this.props.calendared}
+                        period={this.props.period}
+                        exitActivity={this.props.exitActivity}
+                        handleSync={this.props.handleSync}
+                        publish={() => this.props.publish()}
+                        leaveActivity={() => this.props.leaveActivity()}
+                        inviteContacts={() => this.props.inviteContacts()}
+                        openSettingsModal={() => this.props.openSettingsModal()}
+                        ShowMyActivity={(a) => this.props.ShowMyActivity(a)}
+                        showMembers={() => this.props.showMembers()}></ActionsView>
                 </View>
-            
-        </View>
+                 :null}       
+                       
+                   
+    {this.state.search==false?
+   <ScrollView nestedScrollEnabled={true} showsVerticalScrollIndicator={false}>
+   <View style={{
+       height: '100%',
+       width: screenWidth * .56,
+       backgroundColor: 'white',
+       ...shadower(2),
+   }}>
+   <View style={{ height: 60,alignItems:"flex-start",padding:"2%" }}>
+       
+     <Title style={{fontWeight: 'bold',fontSize: 18,color: colorList. headerBlackText}}>{this.props.event.about.title}</Title>
+
+                   {this.props.event.period ? <Title style={{
+                       alignSelf: 'flex-start',
+                       fontWeight: this.props.event.closed ? "bold" : "400",
+                       color: this.props.event.closed ? "red" : dateDiff(this.props.event) > 0 ? "gray" : "#1FABAB", fontSize: 12,
+                   }}>{this.props.event.closed ? "Closed" : writeDateTime(this.props.event)}</Title> : null}
+
+                   {/*this.props.event.interval > 1 && this.props.event.frequency !== 'yearly' && this.dateDiff(this.props.event) < 0 ?
+                       <Text style={{
+                           color: "#1FABAB"
+                       }} note>
+                           {`after every ${this.props.event.interval > 1 ? this.props.event.interval :
+                               null} ${this.writeInterval(this.props.event.frequency)} till 
+                                    ${moment(this.props.event.recurrence ? this.props.event.recurrence :
+                                   null).format("dddd, MMMM Do YYYY")}`}
+                                    </Text> : null*/}    
+             
+                                    </View>
+
+                                    <Commitee
+                                        computedMaster={this.props.computedMaster}
+                                        master={this.props.master}
+                                        ref="Commitee"
+                                        participant={this.props.event.participant}
+                                        creator={this.props.creator}
+                                        join={(id) => { this.props.join(id) }}
+                                        showCreateCommiteeModal={() => this.props.showCreateCommiteeModal()}
+                                        leave={(id) => { this.props.leave(id) }}
+                                        removeMember={(id, members) => { this.props.removeMember(id, members) }}
+                                        addMembers={(id, currentMembers) => { this.props.addMembers(id, currentMembers) }}
+                                        publishCommitee={(id, state) => { this.props.publishCommitee(id, state) }}
+                                        editName={this.props.editName}
+                                        swapChats={(commitee) => { this.props.swapChats(commitee) }} phone={this.props.phone}
+                                        commitees={this.props.commitees}
+                                        event_id={this.props.event.id}>
+                                    </Commitee>
+                                </View>
+                                </ScrollView>:<SearchView></SearchView>}
+                </View>
     }
 }
+
+

@@ -1,7 +1,7 @@
 import React, { Component } from "react"
 import CacheImages from '../../../CacheImages';
 import { View } from "react-native";
-import { Body, Text, Accordion, Content, Thumbnail, Button } from "native-base"
+import { Body, Text, Accordion, Content, Thumbnail, Button,Title } from "native-base"
 import ImageActivityIndicator from '../../currentevents/components/imageActivityIndicator';
 import ProfileIdicator from "../../currentevents/components/ProfilIndicator";
 import stores from "../../../../stores";
@@ -13,7 +13,7 @@ export default class ProfileView extends Component {
     constructor(props) {
         super(props)
     }
-    state = { profile: undefined, isMount: false, dataArray: undefined, hide: false }
+    state = { profile: undefined, isMount: false, hide: false }
     componentDidMount() {
         setTimeout(() => stores.TemporalUsersStore.getUser(this.props.phone).then(user => {
             console.warn("user gotten")
@@ -23,14 +23,11 @@ export default class ProfileView extends Component {
                     hide: true
                 })
             } else {
+                console.warn(user);
                 this.setState({
                     profile: user,
                     isModalOpened: false,
                     isMount: true,
-                    dataArray: {
-                        title: user.status.slice(0, 60) + " ...",
-                        content: user.status
-                    }
                 })
                 this.props.setContact ? this.props.setContact(user) : null
             }
@@ -54,7 +51,7 @@ export default class ProfileView extends Component {
                 }} transparent>
                     {testForURL(this.state.profile.profile) ? <CacheImages small thumbnails {...this.props}
                         source={{ uri: this.state.profile.profile }} /> :
-                        <Thumbnail small {...this.props} source={require("../../../../../Images/images.jpeg")}></Thumbnail>}
+                        <Thumbnail small source={require("../../../../../Images/images.jpeg")}></Thumbnail>}
                 </Button>
                 <View style={{
                     alignItems: 'center',
