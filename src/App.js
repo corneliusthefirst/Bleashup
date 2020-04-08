@@ -52,7 +52,7 @@ import HighLightsDetails from './components/myscreens/highlights_details';
 import LocalTasksCreation from './components/myscreens/MyTasks/localTasksCreation'
 import TasksCreation from './components/myscreens/reminds/TasksCreation'
 import QRCode from "./components/myscreens/QR"
-
+import SearchView from './components/myscreens/event/searchView';
 /*
 let {height, width} = Dimensions.get('window');
 EStyleSheet.build({
@@ -96,7 +96,7 @@ const AppNavigator = createStackNavigator(
     EventDetailView: { screen: EventDetailView },
     LocalTasksCreation: { screen: LocalTasksCreation },
     TasksCreation: { screen: TasksCreation },
-    
+    SearchView  : {screen: SearchView },
 
   },
   {

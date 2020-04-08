@@ -24,7 +24,7 @@ containerBackground = "#1FABAB"
 //body
  bodyIcon = "black"
  bodyText = "black"
- bodyBackground = 'rgb(255,255,255)'
+ bodyBackground = "white"
  bodySubtext = "gray"
  bodyDarkWhite = "#f4f6fc"
   

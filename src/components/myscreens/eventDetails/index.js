@@ -239,16 +239,17 @@ export default class EventDetailView extends Component {
                    <Icon onPress={() => {this.props.navigation.navigate("Home")}}
                     style={{ color:colorList.headerIcon,marginLeft:"5%",marginRight:"5%"}} type={"MaterialIcons"}name={"arrow-back"}></Icon>
                  </View>
+
                  <View style={{ width: '70%', paddingLeft: '2%',justifyContent:"center" }}>
                  <Title style={{ color: colorList.headerText, fontWeight: 'bold', alignSelf: 'flex-start' }}>{this.props.Event.about.title}</Title>
                  </View>
 
-                 {this.props.computedMaster ?<View style={{ width: '10%', paddingRight: '3%' }}>
+                  <View style={{ width: '10%', paddingRight: '3%' }}>
                   <Icon onPress={() => requestAnimationFrame(() => this.newHighlight())} type='AntDesign'
                    name="plus" style={{ color: colorList.headerIcon, alignSelf: 'center', }} />
-                  </View>: null}
+                  </View>
 
-                  <View style={{ width: '10%', paddingLeft: '1%', }}>
+                  <View style={{ width: '10%', paddingLeft: '1%' }}>
                     <Icon onPress={() => { this.props.openMenu()
                      }} style={{ color:colorList.headerIcon }} type={"Ionicons"} name={"ios-menu"}></Icon>
                   </View>
@@ -307,7 +308,7 @@ export default class EventDetailView extends Component {
 
 
               <View style={{ height: !(this.state.highlightData &&
-                  this.state.highlightData.length) > 0 ? "100%" : '69%', borderTopLeftRadius: 5, borderTopRightRadius: 5, ...shadower(2), backgroundColor:colorList.bodyBackground,
+                  this.state.highlightData.length) > 0 ? "100%" : "69%", borderTopLeftRadius: 5, borderTopRightRadius: 5, ...shadower(2), backgroundColor:colorList.bodyBackground,
               }}>
                 <View style={{
                   height: "69%", width: colorList.containerWidth,
@@ -319,7 +320,7 @@ export default class EventDetailView extends Component {
                     this.setState({
                       EventDescriptionState: true
                     })
-                  }} style={{ alignSelf: 'flex-end',marginRight:"6%" }}></Icon> : null}
+                  }} style={{ alignSelf: 'flex-end',marginRight:"5%" }}></Icon> : null}
 
                   <ScrollView style={{ width:"99%", }} showsVerticalScrollIndicator={false}>
                     <View>

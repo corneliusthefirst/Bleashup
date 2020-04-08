@@ -8,7 +8,7 @@ import stores from "../../../stores/index"
 import GlobalFunctions from "../../globalFunctions"
 import {uniq,concat} from "lodash";
 import CacheImages from "../../CacheImages";
-
+import colorList from '../../colorList';
 
 let globalFunctions = new GlobalFunctions();
 let { height, width } = Dimensions.get('window');
@@ -63,28 +63,23 @@ opponent={}
  }
 
    render(){
-    if (this.state.loading) {
-      return (
-        <Container style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-          <ActivityIndicator />
-        </Container>
-      );
-    }
-
        return(
         
-        <Container style={{height: '100%',width:"100%",backgroundColor: 'white',alignItems:"center"}}>
-        <Header searchBar rounded style={{backgroundColor:"FEFFDE",borderRadius:20,height:45,marginTop:5,width:"100%"}}>
-          <Item style={{width:"100%",backgroundColor:"white",borderRadius:10}}> 
-            <Icon type="EvilIcons" name="search" />
-            <Input placeholder="Search"  onChangeText={text => this.searchFilterFunction(text)}  value={this.state.value} />
-            <Icon name="ios-people" />
-          </Item>
+        <Container style={{height:"100%",width:colorList.containerWidth,backgroundColor:colorList.bodyBackground,alignItems:"center"}}>
+       
+       <View style={{height:65,width:"100%",alignItems:"center",backgroundColor:colorList.headerBackground}}>
+        <View style={{flexDirection:"row",backgroundColor:colorList.bodyBackground,height:colorList.headerHeight,width:"95%",borderColor:"gray",borderWidth:1,justifyContent:"center",marginTop:"2%",alignItems:"center",borderRadius:15}}>
+          
+              <Icon onPress={() => {this.props.navigation.goBack()}}
+               style={{ color:colorList.bodyIcon,marginLeft:"2%",marginRight:"2%"}} type={"MaterialIcons"}name={"arrow-back"}></Icon>
+                
+              <Icon type="EvilIcons" name="search" />
+               <Input placeholder="search @activity/relation"  onChangeText={text => this.searchFilterFunction(text)}  value={this.state.value} />
+              <Icon name="ios-people" style={{marginRight:"2%"}} />
+        </View>
+       </View>
 
-        </Header>
-
-
-        <View style={{flex:1,backgroundColor:"red",marginTop:10}}>
+        <View style={{flex:1,marginTop:10}}>
 
         {this.state.loading ?
             <Container style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -93,7 +88,7 @@ opponent={}
                <BleashupFlatList
                     initialRender={10}
                     renderPerBatch={5}
-                    style={{backgroundColor:"#FEFFDE"}}
+                    style={{backgroundColor:colorList.bodyBackground}}
                     firstIndex={0}
                     //extraData={this.state}
                     keyExtractor={(item,index)=>item.id}
@@ -105,8 +100,9 @@ opponent={}
 
                    return(
                      item.type=="activity"?
-                     <View style={{flexDirection:"row",margin:"3%",width:width-width/5}}>
-                      <View style={{width:"15%"}}>
+                     <View style={{flexDirection:"row",width:"100%",marginBottom:"5%"}}>
+                      
+                      <View style={{width:colorList.containerWidth/5,alignItems:"center"}}>
                       <TouchableWithoutFeedback>
                              {item.background && testForURL(item.background) ? <CacheImages small thumbnails {...this.props}
                                  source={{ uri:item.background}} /> :
@@ -114,16 +110,18 @@ opponent={}
                          </TouchableWithoutFeedback>
                          </View>
      
-                        <TouchableOpacity style={{width:"82%"}} onPress={()=>{this.openDetail(item)}} >
-                         <View style={{flexDirection:"column",width:"78%"}}>
-                                <Title style={{alignSelf:"flex-start",marginLeft:2}}>{item.about.title}</Title>
-                                <Title style={{color:"gray",alignSelf:"flex-start",fontSize:15,marginLeft:2}}>{item.about.description}</Title>
+                         <TouchableWithoutFeedback style={{width:(4*colorList.containerWidth)/5,backgroundColor:"red"}} onPress={()=>{this.openDetail(item)}} >
+                         <View style={{flexDirection:"column",width:"100%"}}>
+                                <Title style={{alignSelf:"flex-start",marginLeft:2,fontSize:14}}>{item.about.title}</Title>
+                                <Title style={{color:"gray",alignSelf:"flex-start",fontSize:14,marginLeft:2}}>{item.about.description}</Title>
                          </View>
-                        </TouchableOpacity>
+                         </TouchableWithoutFeedback>
+
                     </View> :
                    
-                    <View style={{flexDirection:"row",margin:"3%",width:width-width/5}}>
-                      <View style={{width:"15%"}}>
+                    <View style={{flexDirection:"row",width:"100%",marginBottom:"5%"}}>
+
+                      <View style={{width:colorList.containerWidth/5,alignItems:"center"}}>
                       <TouchableWithoutFeedback>
                              {opponent.profile && testForURL(opponent.profile) ? <CacheImages small thumbnails {...this.props}
                                  source={{ uri:opponent.profile}} /> :
@@ -131,12 +129,12 @@ opponent={}
                          </TouchableWithoutFeedback>
                          </View>
      
-                        <TouchableOpacity onPress={()=>{this.openDetail(item)}}>
-                         <View style={{flexDirection:"column",width:"82%"}}>
-                                <Title style={{alignSelf:"flex-start",marginLeft:2}}>{opponent.nickname}</Title>
-                                <Title style={{color:"gray",alignSelf:"flex-start",fontSize:15,marginLeft:2}}>{opponent.status}</Title>
+                         <TouchableWithoutFeedback style={{width:(4*colorList.containerWidth)/5,backgroundColor:"red"}} onPress={()=>{this.openDetail(item)}} >
+                         <View style={{flexDirection:"column",width:"100%"}}>
+                                <Title style={{alignSelf:"flex-start",marginLeft:2,fontSize:14}}>{opponent.nickname}</Title>
+                                <Title style={{color:"gray",alignSelf:"flex-start",fontSize:14,marginLeft:2}}>{opponent.status}</Title>
                          </View>
-                        </TouchableOpacity>
+                         </TouchableWithoutFeedback>
                     </View>
                                   
 

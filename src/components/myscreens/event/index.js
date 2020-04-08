@@ -1398,7 +1398,7 @@ export default class Event extends Component {
           //width={this.state.isChat ? this.normalWidth : this.currentWidth}
           event={this.event}
           master={this.master}
-          public={this.event.public}></SWView></View>}>
+          public={this.event.public} navigate={(page)=>{this.props.navigation.navigate(page)}}></SWView></View>}>
       <View style={{
         height: "100%",
         backgroundColor:colorList.bodyBackground

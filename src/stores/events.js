@@ -50,6 +50,8 @@ export default class events {
     key: "Events",
     data: []
   };
+
+
   addEvent(NewEvent) {
     console.warn("calling create activity, -----")
     if (NewEvent == 'no_such_key') {
@@ -73,6 +75,7 @@ export default class events {
       });
     }
   }
+
   delete(EventID) {
     console.warn("calling delete activity ,,,,,, ", EventID)
     return new Promise((resolve, rejec) => {
@@ -88,6 +91,7 @@ export default class events {
       })
     })
   }
+
   @action hide(EventID) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
@@ -1034,6 +1038,98 @@ export default class events {
   }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  @observable searchdata = [];
+
+ 
+  createSearchdata(Events){
+    return new Promise((resolve, reject) => {
+       
+
+    })
+  }
+
+
+  @action  setSearchData(newArray) {
+    return new Promise((resolve, reject) => {
+      //console.warn("here1",newArray)
+      storage
+        .save({
+          key: "searchdata",
+          data: newArray
+        })
+        .then(() => {
+          this.searchdata = newArray;
+          resolve(newArray);
+        })
+        .catch(error => {
+          reject(error);
+        });
+    });
+  }
+
+
+
+  @action async updateSearchData(newArray) {
+    return new Promise((resolve, reject) => {
+      storage
+        .load({
+          key: "searchdata",
+          autoSync: true
+        })
+        .then(data => {
+              storage
+                .save({
+                  key: "searchdata",
+                  data: newArray
+                })
+                .then(() => {
+                  this.searchdata = data;
+                  resolve();
+                });
+        })
+        .catch(error => {
+          reject(error);
+        });
+    });
+  }
+
+
+  @action getSearchData() {
+     return new Promise((resolve, reject) => {
+     
+        storage
+          .load({
+            key:"searchdata",
+            autoSync: true
+          })
+          .then(data => {
+                 resolve(data);
+          })
+          .catch(error => {
+            this.setSearchData(this.searchdata).then((newArray)=>{ 
+              resolve(newArray);
+            })
+            
+          });
+  })
+}
 
 
 

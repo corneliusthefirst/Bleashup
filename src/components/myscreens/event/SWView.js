@@ -30,7 +30,6 @@ export default class SWView extends Component {
         this.state = {
             scrollY: new Animated.Value(0),
             action:false,
-            search:false
         }
     }
     width = "9%"
@@ -107,17 +106,12 @@ export default class SWView extends Component {
        }
    }
 
-   setSearch = ()=>{
-    if(this.state.search == false){
-        this.setState({search:true});
-       
-    }else{
-        this.setState({search:false})
-    }
+  onSearch = ()=>{
+    this.props.navigate("SearchView");
   }
 
     render() {
-        return <View style={{
+        return (<View style={{
             backgroundColor: colorList.bodyBackground,
             width: "100%",
             height:colorList.containerHeight,
@@ -142,13 +136,13 @@ export default class SWView extends Component {
                             </Button>
                         </View>
 
-                         <TouchableOpacity style={{ alignSelf: 'center',...shadower(2),borderRadius: 5,width: 55, height: 50}} onPress={this.setSearch}>
+                         <TouchableOpacity style={{ alignSelf: 'center',...shadower(2),borderRadius: 5,width: 55, height: 50,marginBottom:5}} onPress={this.onSearch}>
                                <View style={{backgroundColor: colorList.bodyBackground,marginBottom: '15%',width: 55,borderRadius: 5,height: 50,justifyContent:"center",alignItems:"center"}}>
-                                 <Icon style={{ color:"#1FABAB",fontSize:50}} type="EvilIcons" name="search"></Icon>
+                                 <Icon style={{ color:colorList.bodyIcon,fontSize:50}} type="EvilIcons" name="search"></Icon>
                                </View>
-                            </TouchableOpacity>
+                         </TouchableOpacity>
 
-                        <View style={{ height: 235, alignSelf: 'center', }}>
+                          <View style={{ height: 240, alignSelf: 'center', }}>
                           
                             <RouteView isChat={this.props.isChat} refreshCommitee={() => this.refreshCommitees()}
                                 event_id={this.props.event.id}
@@ -158,32 +152,7 @@ export default class SWView extends Component {
                                 }}></RouteView>
                             </View>
 
-
-                        </View>
-                      
-                        <View style={{
-                            width: '100%',
-                            height: 400,
-                            alignSelf: 'center',
-                            backgroundColor: colorList.bodyBackground,
-                        }}>
-                            <ActionsView
-                                hideMenu={this.props.hideMenu}
-                                calendared={this.props.calendared}
-                                period={this.props.period}
-                                exitActivity={this.props.exitActivity}
-                                handleSync={this.props.handleSync}
-                                publish={() => this.props.publish()}
-                                leaveActivity={() => this.props.leaveActivity()}
-                                inviteContacts={() => this.props.inviteContacts()}
-                                openSettingsModal={() => this.props.openSettingsModal()}
-                                ShowMyActivity={(a) => this.props.ShowMyActivity(a)}
-                                showMembers={() => this.props.showMembers()}></ActionsView>
-                           </View>
-                        </View>
-                   
-
-                 {this.state.action?
+                 
                   <View style={{
                     width: '100%',
                     height: 400,
@@ -203,10 +172,12 @@ export default class SWView extends Component {
                         ShowMyActivity={(a) => this.props.ShowMyActivity(a)}
                         showMembers={() => this.props.showMembers()}></ActionsView>
                 </View>
-                 :null}       
-                       
+                      
+    </View>
+            
                    
-    {this.state.search==false?
+
+                   
    <ScrollView nestedScrollEnabled={true} showsVerticalScrollIndicator={false}>
    <View style={{
        height: '100%',
@@ -254,8 +225,9 @@ export default class SWView extends Component {
                                         event_id={this.props.event.id}>
                                     </Commitee>
                                 </View>
-                                </ScrollView>:<SearchView></SearchView>}
+                                </ScrollView>
                 </View>
+        </View>)
     }
 }
 
