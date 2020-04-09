@@ -185,7 +185,7 @@ export default class InvitationModal extends PureComponent {
         }, 20)
       }}
       style={{
-        height: "90%",
+        height: "95%",
         width: "100%"
       }}
     ><View>

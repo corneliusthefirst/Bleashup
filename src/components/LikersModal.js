@@ -48,7 +48,7 @@ import bleashupHeaderStyle from "../services/bleashupHeaderStyle";
                     }, 100)
                 }}
                 style={{
-                    height: "90%",
+                    height: "95%",
                     width: "100%"
                 }}>
                 {this.state.loaded ? <View>

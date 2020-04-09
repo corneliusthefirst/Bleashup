@@ -41,7 +41,7 @@ export default class ReportTabModal extends PureComponent {
                     }, 20)
                 }}
                 style={{
-                    height: screenheight * .9,
+                    height: screenheight * .95,
                     borderTopLeftRadius: 5, borderTopRightRadius: 5,
                     backgroundColor: '#FEFFDE', width: "100%"
                 }}

@@ -59,7 +59,7 @@ export default class ContactListModal extends PureComponent {
                     }, 100)
                 }}
                 style={{
-                    height: "90%",
+                    height: "95%",
                     borderRadius: 8,borderTopLeftRadius: 0,borderTopRightRadius: 0, backgroundColor: '#FEFFDE', width: "100%"
                 }}>
                 {!this.state.loaded ? <Spinner size={"small"}></Spinner> : <Container>

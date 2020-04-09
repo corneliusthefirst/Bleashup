@@ -559,7 +559,7 @@ export default class EventHighlights extends Component {
         this.setState({ newing: !this.state.newing,uploading:false, animateHighlight: false,})
       }}
       style={{
-        height: this.props.event_id ? "80%" : "100%", width: "100%", borderTopLeftRadius: 10, borderTopRightRadius: 10,
+        height: this.props.event_id ? "95%" : "100%", width: "100%", borderTopLeftRadius: 10, borderTopRightRadius: 10,
         backgroundColor: "#FEFFDE", borderColor: 'black', flexDirection: 'column'
       }}
       backButtonClose={true}
@@ -778,7 +778,7 @@ export default class EventHighlights extends Component {
                 newing: !this.state.newing,
                 searchImageState: false
               })
-              mother ? this.props.closeTeporary() : null
+              //mother ? this.props.closeTeporary() : null
             }} />
         </View>
         <View style={{ position: 'absolute' }}>

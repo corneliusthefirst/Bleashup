@@ -1,4 +1,3 @@
-import { observable } from 'mobx'
 import storage from './Storage'
 import { orderBy, filter, reject, findIndex, uniqBy } from "lodash"
 import autobind from 'autobind-decorator'
@@ -100,7 +99,7 @@ class ChatStore {
                         resolve(data)
                     })
                 } else {
-                    data = reject(data, {id: messageID})
+                    data = reject(data, { id: messageID })
                     this.messages = data
                     this.addToStore(data).then(() => {
                         resolve()
@@ -132,7 +131,7 @@ class ChatStore {
             })
         })
     }
-    @observable messages = [/*{
+    messages = [/*{
         id: '0',
         source: 'http://192.168.43.32:8555/sound/get/p2.mp3',
         file_name: 'p2.mp3',
@@ -299,7 +298,6 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
                 let newData = messages.concat(data);
                 newData = uniqBy(newData, "id")
                 this.addToStore(newData).then(() => {
-                    //this.messages = newData;
                     resolve()
                 })
             })
@@ -380,6 +378,18 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
                 } else {
                     resolve("not found")
                 }
+            })
+        })
+    }
+    deleteNewMessageIndicator() {
+        return new Promise((resolve, rejec) => {
+            this.readFromStore().then((data) => {
+                data = reject(data, { type: 'new_separator' });
+                this.addToStore(data).then(() => {
+                    this.messages = data
+                    resolve("ok")
+                })
+
             })
         })
     }

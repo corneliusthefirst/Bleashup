@@ -43,7 +43,7 @@ import { observer } from "mobx-react";
                     },50)
                 }}
                 style={{
-                    height: "90%",
+                    height: "95%",
                    width: "100%"
                 }}>{this.state.loaded?
                     <ContactList title={"Publishers List"} event_id={this.state.event_id}></ContactList>

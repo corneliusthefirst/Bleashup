@@ -458,7 +458,7 @@ class UpdatesDispatcher {
             event_id: update.event_id,
             changed: update.updater === update.new_value ? "Left The Activity" : "Removed Participant(s) From Main Activity",
             updater: update.updater,
-            new_value: { data: null, new_value: Array.isArray(update.new_value) ? update.new_value:[update.new_value] },
+            new_value: { data: null, new_value: Array.isArray(update.new_value) ? update.new_value : [update.new_value] },
             date: update.date,
             time: update.time
           };
@@ -905,7 +905,8 @@ class UpdatesDispatcher {
         RequestObject.h_id = update.new_value;
         tcpRequestData.getHighlight(RequestObject, update.new_value + "highlight").then(JSONData => {
           serverEventListener.sendRequest(JSONData, update.new_value + "highlight").then(Highlight => {
-            if (Highlight.data !== 'empty' && Highlight.data) {
+            if (Highlight.data !== 'empty' && Highlight.data.length > 0) {
+              Highlight.data = Array.isArray(Highlight.data) ? Highlight.data[0] : Highlight.data
               stores.Highlights.addHighlight(Highlight.data).then(() => {
                 stores.Events.addHighlight(
                   Highlight.data.event_id,
@@ -926,6 +927,7 @@ class UpdatesDispatcher {
                   stores.ChangeLogs.addChanges(Change).then(res => {
                     GState.newHightlight = true;
                     GState.eventUpdated = true;
+                    console.warn('resolving add highlight', res);
                     resolve("ok")
                   })
                 });
@@ -1486,7 +1488,7 @@ class UpdatesDispatcher {
         };
         stores.Events.addParticipant(update.event_id, Participant, true).then(
           (event) => {
-            this.infomCurrentRoom(Change,event, update.event_id)
+            this.infomCurrentRoom(Change, event, update.event_id)
             stores.ChangeLogs.addChanges(Change).then(() => {
               resolve();
             }

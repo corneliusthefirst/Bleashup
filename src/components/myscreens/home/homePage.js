@@ -33,7 +33,7 @@ import Chats from "../poteschat";
 import SettingView from "./../settings/index";
 import autobind from "autobind-decorator";
 import {
-   find
+  find
 } from "lodash"
 import { withInAppNotification } from 'react-native-in-app-notification';
 import stores from "../../../stores";
@@ -63,7 +63,7 @@ class Home extends Component {
       appState: 'active',
       isTabModalOpened: false,
       currentTab: 0,
-      setting:false
+      setting: false
     };
     this.permisssionListener()
   }
@@ -90,16 +90,14 @@ class Home extends Component {
       }
     })
   }
-  handleNotifications(data) {
+  navigateToChat(data) {
+    this.handleNotif(data)
+  }
+  handleNotif(data) {
     switch (data.type) {
       case "new_message_activity": {
         stores.Events.loadCurrentEvent(data.activity_id).then(event => {
-          //console.warn(event)
-          this.props.navigation.navigate('Event', {
-            tab: "EventChat",
-            Event: event,
-            isOpen: true
-          })
+          this.props.navigation.navigate('Event', { tab: 'EventChat', Event: event })
         })
         break;
       }
@@ -112,12 +110,17 @@ class Home extends Component {
         break
     }
   }
+  handleNotifications(data) {
+    this.handleNotif(data)
+  }
   initializeNotificationListeners() {
     this.removeNotificationOpenedListener = firebase.notifications().onNotificationOpened((notifiation) => {
-      console.warn(notifiation)
+      this.navigateToChat(notifiation.notification._data)
+      firebase.notifications().removeAllDeliveredNotifications()
     })
     this.removeNotificationListener = firebase.notifications().onNotification(notification => {
       console.warn(notification._data)
+      GState.currentCommitee !== notification._data.room_key && emitter.emit(notification._data.activity_id + '_refresh-commitee')
       emitter.emit("notify", { body: notification._body, title: notification._title, action: "new_message", data: notification._data })
     })
     this.removeNotificationDisplayedListener = firebase.notifications().onNotificationDisplayed(notification => {
@@ -249,22 +252,22 @@ class Home extends Component {
     scroll: true,
     currentTab: 0
   };
-  
 
-  setMenuRef = (ref)=>{
+
+  setMenuRef = (ref) => {
     this._menu = ref;
   }
   hideMenu = () => {
     this._menu.hide();
   };
- 
+
   showMenu = () => {
     this._menu.show();
   };
   settings = () => {
     this.hideMenu();
     this.props.navigation.navigate("Settings");
-    
+
   };
 
   handleURL = ({ url }) => {
@@ -307,24 +310,24 @@ class Home extends Component {
                 <Thumbnail small source={require("../../../../assets/ic_launcher_round.png")}></Thumbnail>
               </View>
 
-              <View style={{ alignItems:"center",justifyContent:"center" }}>
+              <View style={{ alignItems: "center", justifyContent: "center" }}>
                 <View style={{ alignSelf: "flex-end", display: 'flex', flexDirection: 'row', }}>
-                 <TouchableOpacity style={{height:40,alignItems:"center",justifyContent:"center",marginLeft:width/35}} onPress={() => this.navigateToInvitations()}>
-                  <Icon name="sc-telegram" active={true} type="EvilIcons" style={{ color: "#1FABAB", }} onPress={() => this.navigateToInvitations()} />
+                  <TouchableOpacity style={{ height: 40, alignItems: "center", justifyContent: "center", marginLeft: width / 35 }} onPress={() => this.navigateToInvitations()}>
+                    <Icon name="sc-telegram" active={true} type="EvilIcons" style={{ color: "#1FABAB", }} onPress={() => this.navigateToInvitations()} />
                   </TouchableOpacity>
 
-                  <TouchableOpacity style={{height:40,alignItems:"center",justifyContent:"center"}} onPress={this.showMenu}>
+                  <TouchableOpacity style={{ height: 40, alignItems: "center", justifyContent: "center" }} onPress={this.showMenu}>
                     <Menu
-                     ref={this.setMenuRef}
-                     button={<Icon name="gear" active={true} type="EvilIcons" style={{ color: "#1FABAB",marginLeft:width/35 }} onPress={this.showMenu} />}
-                     style={{ backgroundColor: "#FEFFDE" }}
-                     >
-                   <MenuItem onPress={this.settings}>settings</MenuItem>
-                  </Menu> 
+                      ref={this.setMenuRef}
+                      button={<Icon name="gear" active={true} type="EvilIcons" style={{ color: "#1FABAB", marginLeft: width / 35 }} onPress={this.showMenu} />}
+                      style={{ backgroundColor: "#FEFFDE" }}
+                    >
+                      <MenuItem onPress={this.settings}>settings</MenuItem>
+                    </Menu>
                   </TouchableOpacity>
 
                 </View>
-            
+
 
               </View>
             </View>

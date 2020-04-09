@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View } from "react-native";
+import { View,Dimensions } from "react-native";
 import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
 import { Text, Icon, Spinner, Toast } from "native-base";
 import BleashupFlatList from "../../BleashupFlatList";
@@ -16,6 +16,7 @@ import emitter from '../../../services/eventEmiter';
 import { findIndex, find, uniqBy } from 'lodash';
 import moment from "moment";
 import { dateDiff } from "../../../services/datesWriter";
+let { height, width } = Dimensions.get('window');
 
 export default class Votes extends Component {
   constructor(props) {
@@ -209,7 +210,7 @@ export default class Votes extends Component {
         //this.intializeVote()
       }}
       style={{
-        height: "90%",
+        height: height*.95,
         width: "100%",
         // backgroundColor: "#FEFFDE",
       }}

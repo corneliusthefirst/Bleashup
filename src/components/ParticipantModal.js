@@ -51,7 +51,7 @@ import ParticipantList from "./ParticipantList";
                     },100)
                 }}
                 style={{
-                    height: "90%",
+                    height: "95%",
                      width: "100%"
                 }}>
                 {this.state.loaded?

@@ -59,7 +59,7 @@ export default class ForeignEventsModal extends PureComponent {
                         }, 20)
                 }}
                 style={{
-                    height: "90%",borderTopLeftRadius: 8,borderTopRightRadius: 8
+                    height: "95%",borderTopLeftRadius: 8,borderTopRightRadius: 8
                     ,backgroundColor: '#FEFFDE', width: "100%"
                 }}>
                 <View>{this.state.loaded ?

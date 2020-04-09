@@ -27,26 +27,24 @@ export default class CommiteeItem extends Component {
     }
     state = {
 
-    } 
+    }
     shouldComponentUpdate(nextProps, nextState, nextContext) {
         return this.props.newMessagesCount !== nextProps.newMessagesCount ||
             this.state.newThing !== nextState.newThing || this.props.ImICurrentCommitee !== nextProps.ImICurrentCommitee ||
-            this.props.id !== nextProps.id || this.state.loaded !== nextState.loaded 
+            this.props.id !== nextProps.id || this.state.loaded !== nextState.loaded
     }
 
     componentDidMount() {
         if (this.props.commitee !== null) {
             let member = find(this.props.commitee.member, (ele) => ele !== null && ele.phone === this.props.phone)
-            if (this.props.commitee.name === "Generale") {
+            if (this.props.commitee.name === "General") {
                 emitter.once("current_commitee_changed_by_main", commiteeName => {
-                    
                     GState.currentCommitee = this.props.commitee.id
                     GState.generalNewMessages = []
                     this.setState({
                         newThing: !this.state.newThing,
                         commitee: { ...this.state.commitee, new_messages: [] }
                     })
-                    firebase.database().ref(`new_message/${phone}/${this.props.id}/new_messages`).set([])
                 })
             }
             setTimeout(() => {
@@ -80,7 +78,9 @@ export default class CommiteeItem extends Component {
                     let key = Object.keys(snapshooter.val())
                     value = snapshooter.val()
                     this.setState({
-                        commitee: { ...this.state.commitee, new_messages: snapshoot.val() },
+                        commitee: {
+                            ...this.state.commitee, new_messages: snapshoot.val()
+                        },
                         newThing: !this.state.newThing,
                         newest_message: value[key]
                     })
@@ -277,57 +277,74 @@ export default class CommiteeItem extends Component {
         }
     }
     render() {
+        let mainStyles = {
+            width: "98%",
+            ...shadower(1),
+            margin: '1%',
+            opacity: this.accessible ? 1 : 0.2,
+            borderBottomRightRadius: 5,
+            borderTopRightRadius: 5,
+            backgroundColor: this.props.ImICurrentCommitee ? "#54F5CA" : "#FEFFDE",
+
+        }
         this.accessible = this.state.joint || this.state.public
         return (
             this.state.loaded ? <View style={{
-                opacity: this.accessible ? 1 : 0.2,
-                borderBottomRightRadius: 5,
-                width: "90%",
-                ...shadower(1),
-                margin: '1%',
-                padding: '2%',
-                borderTopRightRadius: 5,
-                backgroundColor: this.props.ImICurrentCommitee ? "#54F5CA" : "#FEFFDE",
+                ...mainStyles
             }}>
                 <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                     if (GState.editingCommiteeName === false)
                         this.swappCommitee()
                 })}>
-                    <View style={{ display: 'flex', hieght: 100, width: "100%", flexDirection: "row", marginBottom: "2%", }}>
-                        <View style={{ margin: '1%', width: "70%", display: 'flex', flexDirection: 'column', }}>
-                            <Text elipsizeMode={'tail'} numberOfLines={1} style={{
-                                fontWeight: 'bold', fontSize: 14, color: GState.currentCommitee == this.state.commitee.id ? "#0A4E52" : "gray"
-                            }}>{this.state.commitee.name}</Text>
-                            {this.state.joint && this.state.newest_message ? <Text note>Latest Message :</Text> : null}
-                            {this.state.joint && this.state.newest_message ? this.writeLatestMessage(this.state.newest_message) : null}
+                    <View>
+                        <View style={{ display: 'flex', hieght: 100, width: "100%", flexDirection: "row", marginBottom: "2%", justifyContent: 'space-between', }}>
+                            <View style={{ margin: '1%', flex: 2, display: 'flex', flexDirection: 'column', }}>
+                                <Text elipsizeMode={'tail'} numberOfLines={1} style={{
+                                    fontWeight: 'bold', fontSize: 14, color: GState.currentCommitee == this.state.commitee.id ? "#0A4E52" : "gray"
+                                }}>{this.state.commitee.name}</Text>
+                                {this.state.joint && this.state.newest_message ? <Text note>Latest Message :</Text> : null}
+                            </View>
+                            <View style={{
+                                display: 'flex',
+                                flex: 1,
+                                margin: '2%',
+                                flexDirection: 'row',
+                                justifyContent: 'space-between',
+                                alignSelf: 'flex-end',
+                            }}>
+                                {
+                                    this.state.commitee &&
+                                        this.state.commitee.name &&
+                                        this.state.commitee.name.toLowerCase() === "General".toLowerCase() ? null :
+                                        this.state.master ?
+                                            <View style={{ marginTop: "-5%", }}>
+                                                <TouchableWithoutFeedback onPress={() => {
+                                                    GState.editingCommiteeName = true
+                                                    requestAnimationFrame(() => {
+                                                        this.setState({
+                                                            isEditNameModelOpened: true,
+                                                            newThing: !this.state.newThing
+                                                        })
+                                                        setTimeout(() => {
+                                                            GState.editingCommiteeName = false
+                                                        }, 300)
+                                                    })
+                                                }}>
+                                                    <View>{this.state.master ? <Icon style={{ fontSize: 30, color: "#0A4E52" }} name="pencil" type="EvilIcons" /> : null}</View>
+                                                </TouchableWithoutFeedback>
+                                            </View> : null}
+                                {this.state.joint && this.state.commitee.new_messages ? this.state.commitee.new_messages.length > 0 ? <Badge style={{
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                }} primary>
+                                    <Text style={{ display: 'flex', justifyContent: 'center', }}>
+                                        {this.state.commitee.new_messages.length}
+                                    </Text>
+                                </Badge> : null : null}
+                            </View>
                         </View>
-                        <View style={{ display: 'flex', flexDirection: 'row', marginTop: "6%", }}>
-                            {this.state.joint && this.state.commitee.new_messages ? this.state.commitee.new_messages.length > 0 ? <Badge primary>
-                                <Text style={{ marginTop: "30%", }}>
-                                    {this.state.commitee.new_messages.length}
-                                </Text>
-                            </Badge> : null : null}
-                            {
-                                this.state.commitee && 
-                                this.state.commitee.name && 
-                                this.state.commitee.name.toLowerCase() === "Generale".toLowerCase() ? null : 
-                                this.state.master ?
-                                <View style={{ marginTop: "-5%", marginRight: "15%", }}>
-                                    <TouchableWithoutFeedback onPress={() => {
-                                        GState.editingCommiteeName = true
-                                        requestAnimationFrame(() => {
-                                            this.setState({
-                                                isEditNameModelOpened: true,
-                                                newThing: !this.state.newThing
-                                            })
-                                            setTimeout(() => {
-                                                GState.editingCommiteeName = false
-                                            }, 300)
-                                        })
-                                    }}>
-                                        <View>{this.state.master ? <Icon style={{ fontSize: 30, color: "#0A4E52" }} name="pencil" type="EvilIcons" /> : null}</View>
-                                    </TouchableWithoutFeedback>
-                                </View> : null}
+                        <View style={{ margin: '2%', }}>
+                            {this.state.joint && this.state.newest_message ? this.writeLatestMessage(this.state.newest_message) : null}
                         </View>
                     </View>
                 </TouchableOpacity>
@@ -345,7 +362,11 @@ export default class CommiteeItem extends Component {
                 }
 
 
-            </View> : <Spinner size={"small"}></Spinner>
+            </View> : <View style={{
+                ...mainStyles,
+                height: 100
+            }}>
+                </View>
         );
     }
 }

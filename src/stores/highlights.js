@@ -10,7 +10,7 @@ import emitter from '../services/eventEmiter';
 export default class highlights {
   constructor() {
 
-  } 
+  }
   curentTemporalHighlight = []
   @observable highlights = [];
   saveKey = {
@@ -42,8 +42,9 @@ export default class highlights {
   replaceHighlights(Highlights, event_id) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(allHighlights => {
-        let allNewHighlights = allHighlights.filter(ele => ele.event_id !== event_id)
-        this.saveKey.data = Highlights.concat(allNewHighlights)
+        //let allNewHighlights = allHighlights.filter(ele => ele.event_id !== event_id)
+        // let allNewHighlights = 
+        this.saveKey.data = uniqBy(Highlights.concat(allHighlights), "id");// Highlights.concat(allNewHighlights)
         storage.save(this.saveKey).then(() => {
           this.highlights = this.saveKey.data
           resolve()

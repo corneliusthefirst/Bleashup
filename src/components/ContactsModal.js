@@ -36,7 +36,7 @@ import Contacts from './Contacts';
                     })
                 }}
                 style={{
-                    height: "90%",
+                    height: "95%",
                      width: "100%"
                 }}>
                 <Container>

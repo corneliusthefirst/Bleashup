@@ -362,7 +362,7 @@ export default class SettingsModal extends Component {
                 onOpened={() => {
                 }}
                 style={{
-                    height: "90%",
+                    height: "95%",
                     width: "100%",
                     backgroundColor: "#FEFFDE",
                 }}>

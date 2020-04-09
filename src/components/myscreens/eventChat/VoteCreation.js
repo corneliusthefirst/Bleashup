@@ -251,7 +251,7 @@ export default class VoteCreation extends Component {
             }}
             entry={'top'}
             style={{
-                height: '60%',
+                height: height*.95,
                 width: '100%',
                 backgroundColor: '#FEFFDE',
                 borderTopRightRadius: 8,

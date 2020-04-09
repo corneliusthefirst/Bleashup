@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, TouchableWithoutFeedback, PanResponder } from 'react-native';
-import { Text, Content, Icon, Spinner,Title } from 'native-base';
+import { Text, Content, Icon, Spinner, Title } from 'native-base';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import firebase from 'react-native-firebase';
 import stores from '../../../stores';
@@ -21,7 +21,7 @@ export default class Commitee extends Component {
     }
     state = {}
     componentWillMount() {
-        emitter.on('refresh-commitee', () => {
+        emitter.on(this.props.event_id + '_refresh-commitee', () => {
             this.refreshCommitees()
         })
         //console.warn(stores.CommiteeStore.commitees)
@@ -36,20 +36,21 @@ export default class Commitee extends Component {
     }
     generalCommitee = {
         id: this.props.event_id,
-        name: "Generale",
+        name: "General",
         member: this.props.participant,
         opened: true,
         public_state: true,
         creator: this.props.creator
     }
     componentWillUnmount() {
-        emitter.off('refresh-commitee')
+        emitter.off(this.props.event_id + '_refresh-commitee')
 
     }
     _keyExtractor(item, index) {
         return item
     }
     refreshCommitees() {
+        console.warn('refreshing committees')
         this.setState({
             refresh: true
         })
@@ -67,33 +68,34 @@ export default class Commitee extends Component {
                 <View style={{
                     borderTopRightRadius: 5, borderBottomRightRadius: 5,
                     backgroundColor: "#1FABAB", height: 35,
-                    width: "95%", display: 'flex', flexDirection: 'row', marginBottom: "5%", 
-                   ...shadower(1)
+                    width: "95%", display: 'flex', flexDirection: 'row', marginBottom: "5%",
+                    ...shadower(1)
                 }}>
-                <View style={{ width: "80%",}}>
+                    <View style={{ width: "80%", }}>
                         <Title style={{
                             color: "#9EEDD3",
                             fontWeight: 'bold',
                             alignSelf: 'flex-start',
                             fontStyle: 'normal',
-                            marginLeft: 10, 
+                            marginLeft: 10,
                             fontSize: 20,
                         }}>Committees</Title>
-                </View>
+                    </View>
                     <View>
                         <TouchableOpacity onPress={() => requestAnimationFrame(() => { this.props.showCreateCommiteeModal() })}>
-                            <Icon style={{ marginTop: "20%", color: "#FEFFDE",fontSize:22 }}
+                            <Icon style={{ marginTop: "20%", color: "#FEFFDE", fontSize: 22 }}
                                 name="pluscircle" type="AntDesign"></Icon></TouchableOpacity>
                     </View>
                 </View>
                 <View>{this.state.refresh ? null :
-                    <View style={{height:'97%',}}>
+                    <View style={{ height: '97%', }}>
                         <BleashupFlatList
-                        backgroundColor={'white'}
-                        style={{borderTopRightRadius: 5,
-                            width: '100%', borderBottomRightRadius: 1, 
-                            height: 700
-                        }}
+                            backgroundColor={'white'}
+                            style={{
+                                borderTopRightRadius: 5,
+                                width: '97%', borderBottomRightRadius: 1,
+                                height: 700
+                            }}
                             dataSource={union([this.generalCommitee], uniq(this.props.commitees))}
                             keyExtractor={(item, index) => index.toString()}
                             renderItem={(item, index) =>
@@ -101,7 +103,7 @@ export default class Commitee extends Component {
                                     computedMaster={this.props.computedMaster}
                                     key={index.toString()}
                                     ImICurrentCommitee={item.id && item.id === GState.currentCommitee ||
-                                         item === GState.currentCommitee}
+                                        item === GState.currentCommitee}
                                     master={this.props.master}
                                     event_id={this.props.event_id}
                                     join={(id) => { this.props.join(id) }}
@@ -113,6 +115,7 @@ export default class Commitee extends Component {
                                     editName={this.props.editName}
                                     swapChats={(commitee) => { this.props.swapChats(commitee) }}
                                     phone={this.props.phone}
+                                    event_id={this.props.event_id}
                                     newMessagesCount={4}
                                     id={item.id ? item.id : item} ></CommiteeItem>
                             }
