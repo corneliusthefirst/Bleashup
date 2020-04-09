@@ -32,13 +32,13 @@ export default class EventChat extends Component {
   }
   state = {}
   activity = {}
-  newMessageCount=0
+  newMessageCount = 0
   componentDidMount() {
     let user = stores.LoginStore.user
     let phone = user.phone.replace("00", "+")
     firebase.database().ref(`new_message/${this.props.activity_id}/${phone}/${this.props.roomID}/new_messages`).once('value', snapshoot => {
       this.newMessageCount = snapshoot.val() ? snapshoot.val().length : 0
-      if (this.props.newMessageCount > 0) {
+      if (this.newMessageCount > 0) {
         firebase.database().ref(`${this.props.roomID}`).limitToLast(this.newMessageCount).once('value', snapshoot => {
           firebase.database().ref(`new_message/${this.props.activity_id}/${phone}/${this.props.roomID}/new_messages`).set([])
           setTimeout(() => {
@@ -56,8 +56,14 @@ export default class EventChat extends Component {
             new_messages: [],
             loaded: true
           });
-        }, 12)
+        }, 1)
       }
+    }, () => {
+      this.setState({
+        user: user,
+        new_messages: [],
+        loaded: true
+      });
     })
   }
   newMessages = [{

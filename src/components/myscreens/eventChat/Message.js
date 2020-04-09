@@ -52,22 +52,28 @@ export default class Message extends Component {
     }
     placeHolder = {
         'audio': {
-            height: 50,
+            height: 150,
+            width:250
         },
         'photo': {
             height: 250,
+            width: 250
         },
         'video': {
             height: 250,
+            width: 250
         },
         'attachement': {
-            height: 50,
+            height: 150,
+            width: 250
         },
         'vote': {
-            height: 250,
+            height: 300,
+            width: 250
         },
         'text': {
             height: 100,
+            width: 200
         }
     }
     chooseComponent(data, index, sender) {
@@ -138,7 +144,7 @@ export default class Message extends Component {
             this.setState({
                 loaded: true
             })
-        }, 5 * this.props.delay)
+        }, 20 * this.props.delay)
     }
     slept = false
     openingSwipeout() {
@@ -298,7 +304,7 @@ export default class Message extends Component {
         }
         let color = this.isVote() ? "#FEFFDE" : this.state.sender ? '#D0FEEB' : '#9EEDD3'
         GeneralMessageBoxStyle = {
-            maxWidth: this.isVote() ? "96%" : 300, flexDirection: 'column', minWidth: 70,
+            maxWidth: this.isVote() ? "96%" : 300, flexDirection: 'column', minWidth: 120,
             minHeight: 20, overflow: 'hidden', borderBottomLeftRadius: 10, borderColor: color,
             borderTopLeftRadius: this.state.sender && !this.isVote() ? 0 : 10,
             // borderWidth: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text)?.7:0:0,
@@ -320,7 +326,7 @@ export default class Message extends Component {
             // backgroundColor: color,
         }
         placeholderStyle = {
-            ...topMostStyle, ... this.props.messagelayouts && this.props.messagelayouts[this.props.message.id] && this.props.messagelayouts[this.props.message.id].width ?
+            ...topMostStyle, ... this.props.messagelayouts && this.props.messagelayouts[this.props.message.id] ?
                 this.props.messagelayouts[this.props.message.id] :
                 this.placeHolder[this.props.message.type],
             backgroundColor: color, borderBottomLeftRadius: 10, borderColor: color,
@@ -328,8 +334,6 @@ export default class Message extends Component {
             backgroundColor: color, ...shadower(2),
             alignSelf: this.isVote() ? 'center' : this.state.sender ? 'flex-start' : 'flex-end',
             borderTopRightRadius: 10,
-
-            width: 200
         }
         nameTextStyle = { fontSize: 14, fontWeight: 'bold', color: "#1FABAB" }
         return (this.props.message.type == 'date_separator' ? <View style={{ marginTop: '2%', marginBottom: '2%', }}>
@@ -350,7 +354,10 @@ export default class Message extends Component {
                         }]}
                         style={{ backgroundColor: 'transparent', width: "100%" }}>
                         <View>
-                            <View onLayout={(e) => this.props.setCurrentLayout && this.props.setCurrentLayout(e.nativeEvent.layout)} style={GeneralMessageBoxStyle}>
+                            <View onLayout={(e) => {
+                                this.props.setCurrentLayout && this.props.setCurrentLayout(e.nativeEvent.layout)
+                            }
+                        } style={GeneralMessageBoxStyle}>
                                 <View>
                                     <View style={senderNameStyle}>
                                         <TouchableWithoutFeedback onLongPress={() => {

@@ -1237,8 +1237,6 @@ export default class ChatRoom extends Component {
             numberOfItems={this.room.messages.length}
             keyExtractor={(item, index) => item ? item.id : null}
             renderItem={(item, index) => {
-               //console.warn("item received",item.received,this.props.members,item.received.length >= this.props.members.length)
-
                 this.delay = this.delay >= 20 || (item && !item.sent) ? 0 : this.delay + 1
                 return item ? <Message
                     voteItem={(index, vote) => {
@@ -1249,7 +1247,7 @@ export default class ChatRoom extends Component {
                         //console.warn("setting layout for " , item.id)
                         this.messagelayouts[item.id] = layout
                     }}
-                    newCount={this.newMessages.length}
+                    newCount={this.props.newMessages}
                     index={index}
                     scrolling={this.scrolling}
                     computedMaster={this.props.computedMaster}
