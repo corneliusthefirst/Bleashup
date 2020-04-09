@@ -1247,7 +1247,7 @@ export default class ChatRoom extends Component {
                         //console.warn("setting layout for " , item.id)
                         this.messagelayouts[item.id] = layout
                     }}
-                    newCount={this.props.newMessages}
+                    newCount={this.props.newMessages.length}
                     index={index}
                     scrolling={this.scrolling}
                     computedMaster={this.props.computedMaster}

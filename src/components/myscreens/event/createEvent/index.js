@@ -105,12 +105,12 @@ export default class CreateEventView extends Component {
       CreateRequest.createEvent(newEvent).then((res) => {
         console.warn(res)
         stores.Events.delete("newEventId").then(() => {
-          firebase.database().ref(`rooms/${newEvent.id}/${newEvent.id}`).set({ name: 'General', members: newEvent.participant }).then(() => {
+          firebase.database().ref(`rooms/${res.id}/${res.id}`).set({ name: 'General', members: res.participant }).then(() => {
             this.setState({
               currentEvent: request.Event(),
               creating: false
             })
-            this.navigateToActivity(newEvent)
+            this.navigateToActivity(res)
           })
         });
       }).catch(() => {
