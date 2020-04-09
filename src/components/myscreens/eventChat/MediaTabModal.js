@@ -42,7 +42,7 @@ export default class MediaTabModal extends PureComponent {
                     }, 100)
                 }}
                 style={{
-                    height: '90%',
+                    height: screenheight*.95,
                     borderTopLeftRadius: 5, borderTopRightRadius: 5, backgroundColor: '#FEFFDE', width: "100%"
                 }}
             >

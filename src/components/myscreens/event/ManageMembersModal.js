@@ -90,7 +90,7 @@ export default class ManageMembersModal extends PureComponent {
                     })
                 }}
                 style={{
-                    height: "90%",
+                    height: "95%",
                     borderRadius: 8, borderTopLeftRadius: 0, borderTopRightRadius: 0, width: "100%"
                 }}>
                 <View>{this.state.loaded ? <View>

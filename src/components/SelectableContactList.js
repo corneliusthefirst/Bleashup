@@ -58,7 +58,7 @@ export default class SelectableContactList extends PureComponent {
                     })
                 }}
                 style={{
-                    height: this.state.inviteViaEmail ? "30%" : "90%",
+                    height: this.state.inviteViaEmail ? "30%" : "95%",
                     width: "100%"
                 }}
             ><View style={{ height:50 }}>

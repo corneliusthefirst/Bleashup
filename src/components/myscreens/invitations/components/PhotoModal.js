@@ -22,7 +22,7 @@ export default class PhotoModal extends Component {
                 isOpen={this.props.isOpen}
                 onClosed={this.props.onClosed}
                 style={{
-                    height: "90%", borderRadius: 15,
+                    height: "95%", borderRadius: 15,
                     backgroundColor: this.transparent, width: 410
                 }}
                 position={'center'}

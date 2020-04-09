@@ -485,7 +485,7 @@ export default class TasksCreation extends Component {
         isOpen={this.props.isOpen}
         onClosed={() => { this.props.onClosed() }}
         style={{
-          height: "85%", width: "100%", borderTopLeftRadius: 8, borderTopRightRadius: 8,
+          height: "95%", width: "100%", borderTopLeftRadius: 8, borderTopRightRadius: 8,
           backgroundColor: "#FEFFDE", borderColor: 'black', flexDirection: 'column'
         }}
         coverScreen={true}

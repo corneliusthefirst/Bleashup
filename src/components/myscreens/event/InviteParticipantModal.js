@@ -77,7 +77,7 @@ export default class InviteParticipantModal extends PureComponent {
                     })
                 }}
                 style={{
-                    height: "90%",
+                    height: "95%",
                     width: "100%"
                 }}>
                 <View>{this.state.loaded ? <View>

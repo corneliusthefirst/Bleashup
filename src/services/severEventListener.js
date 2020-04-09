@@ -150,7 +150,7 @@ class ServerEventListener {
       })
     });
     socket.on("data", datar => {
-      data = datar.toString()
+     let data = datar.toString()
       console.warn(data)
       if (data.includes("_end__start_")) {
         let dataX = data.split("_end__start_")
@@ -159,11 +159,13 @@ class ServerEventListener {
         } else {
           this.accumulator += dataX[0]
           this.dispatch(JSON.parse(this.accumulator))
+          this.accumulator = ''
         }
         for (i = 1; i < dataX.length; i++) {
           if (i == dataX.length - 1) {
             if (dataX[i].includes("_end_")) {
               this.dispatch(JSON.parse(dataX[i].replace("_end_", "")))
+              this.accumulator = ''
             } else {
               this.accumulator += dataX[i]
             }
@@ -175,9 +177,7 @@ class ServerEventListener {
         if (data.includes("_start_")) {
           let dataSub = data.replace("_start_", "")
           if (dataSub.includes("_end_")) {
-            this.accumulator = dataSub.replace("_end_", "")
-            this.dispatch(JSON.parse(this.accumulator))
-            this.accumulator = ""
+            this.dispatch(JSON.parse(dataSub.replace("_end_", "")))
           } else {
             this.accumulator += dataSub
           }

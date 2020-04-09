@@ -23,7 +23,7 @@ export default class Commitee extends Component {
     }
     state = {}
     componentWillMount() {
-        emitter.on('refresh-commitee', () => {
+        emitter.on(this.props.event_id + '_refresh-commitee', () => {
             this.refreshCommitees()
         })
         //console.warn(stores.CommiteeStore.commitees)
@@ -38,20 +38,21 @@ export default class Commitee extends Component {
     }
     generalCommitee = {
         id: this.props.event_id,
-        name: "Generale",
+        name: "General",
         member: this.props.participant,
         opened: true,
         public_state: true,
         creator: this.props.creator
     }
     componentWillUnmount() {
-        emitter.off('refresh-commitee')
+        emitter.off(this.props.event_id + '_refresh-commitee')
 
     }
     _keyExtractor(item, index) {
         return item
     }
     refreshCommitees() {
+        console.warn('refreshing committees')
         this.setState({
             refresh: true
         })
@@ -67,7 +68,7 @@ export default class Commitee extends Component {
         return (this.state.loaded ?
             <View style={{ height: "100%", width: "100%"}}>
                 
-              <View style={{height:45, width: "100%",flexDirection:'row',justifyContent:"space-between"}}>
+              <View style={{height:45, width: "100%",flexDirection:"row",justifyContent:"space-between"}}>
                 
                 <View style={{height:45,alignSelf: "flex-start",justifyContent:"center" }}>
                   <Thumbnail source={require("../../../../assets/committees.png")} style={{width:130,height:32}}></Thumbnail>
@@ -80,7 +81,7 @@ export default class Commitee extends Component {
              </View>
 
                 <View>{this.state.refresh ? null :
-                    <View style={{height:'97%',}}>
+                    <View style={{ height: '97%', }}>
                         <BleashupFlatList
                         backgroundColor={colorList.bodyBackground}
                         style={{borderTopRightRadius: 5,
@@ -94,7 +95,7 @@ export default class Commitee extends Component {
                                     computedMaster={this.props.computedMaster}
                                     key={index.toString()}
                                     ImICurrentCommitee={item.id && item.id === GState.currentCommitee ||
-                                         item === GState.currentCommitee}
+                                        item === GState.currentCommitee}
                                     master={this.props.master}
                                     event_id={this.props.event_id}
                                     join={(id) => { this.props.join(id) }}
@@ -106,6 +107,7 @@ export default class Commitee extends Component {
                                     editName={this.props.editName}
                                     swapChats={(commitee) => { this.props.swapChats(commitee) }}
                                     phone={this.props.phone}
+                                    event_id={this.props.event_id}
                                     newMessagesCount={4}
                                     id={item.id ? item.id : item} ></CommiteeItem>
                             }

@@ -42,8 +42,8 @@ export default class Message extends Component {
                 this.props.message.sender.nickname,
             sender: !(this.props.message.sender.phone == this.props.user),
             different: isDiff,
-            time: !isDiff && this.props.PreviousMessage && 
-            this.props.message && 
+            time: !isDiff && this.props.PreviousMessage &&
+                this.props.message &&
                 moment(this.props.message.created_at).format('X') - moment(this.props.PreviousMessage.created_at).format('X') < 60 ? "" : moment(this.props.message.created_at).format("HH:mm"),
             creator: (this.props.message.sender.phone == this.props.creator),
             replying: false,
@@ -52,21 +52,21 @@ export default class Message extends Component {
     }
     placeHolder = {
         'audio': {
-            height:50,
+            height: 50,
         },
         'photo': {
             height: 250,
         },
-        'video':{
+        'video': {
             height: 250,
         },
-        'attachement':{
+        'attachement': {
             height: 50,
         },
-        'vote':{
+        'vote': {
             height: 250,
         },
-        'text':{
+        'text': {
             height: 100,
         }
     }
@@ -292,13 +292,13 @@ export default class Message extends Component {
         topMostStyle = {
             marginLeft: this.state.sender && !this.isVote() ? '1%' : this.isVote ? '3.5%' : 0,
             marginRight: !this.state.sender && !this.isVote() ? '1%' : 0,
-            marginTop: this.state.different ? "4%" : '1.5%',
-            //marginBottom: "0.5%",
+            marginTop: this.state.different ? "4%" : '1.2%',
+            marginBottom: this.props.index <= 0 ? '2%' : 0,
             alignSelf: this.isVote() ? "center" : this.state.sender ? 'flex-start' : 'flex-end',
         }
         let color = this.isVote() ? "#FEFFDE" : this.state.sender ? '#D0FEEB' : '#9EEDD3'
         GeneralMessageBoxStyle = {
-            maxWidth: this.isVote() ? "96%" : 300, flexDirection: 'column', minWidth: 200,
+            maxWidth: this.isVote() ? "96%" : 300, flexDirection: 'column', minWidth: 70,
             minHeight: 20, overflow: 'hidden', borderBottomLeftRadius: 10, borderColor: color,
             borderTopLeftRadius: this.state.sender && !this.isVote() ? 0 : 10,
             // borderWidth: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text)?.7:0:0,
@@ -315,13 +315,14 @@ export default class Message extends Component {
         subNameStyle = {
             paddingBottom: 0,
             flexDirection: "row",
+            margin:'2%',
             backgroundColor: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text) ? color : 'transparent' : 'transparent',
             // backgroundColor: color,
         }
         placeholderStyle = {
-            ...topMostStyle, ... this.props.messagelayouts && this.props.messagelayouts[this.props.message.id] && this.props.messagelayouts[this.props.message.id].width ? 
-            this.props.messagelayouts[this.props.message.id] : 
-            this.placeHolder[this.props.message.type], 
+            ...topMostStyle, ... this.props.messagelayouts && this.props.messagelayouts[this.props.message.id] && this.props.messagelayouts[this.props.message.id].width ?
+                this.props.messagelayouts[this.props.message.id] :
+                this.placeHolder[this.props.message.type],
             backgroundColor: color, borderBottomLeftRadius: 10, borderColor: color,
             borderTopLeftRadius: this.state.sender ? 0 : 10,// borderWidth: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text)?.7:0:0,
             backgroundColor: color, ...shadower(2),
@@ -336,7 +337,7 @@ export default class Message extends Component {
             this.props.message.type == "new_separator" ? <View style={{
                 marginTop: '2%',
                 marginBottom: '2%'
-            }}><NewSeparator data={this.props.message.id}></NewSeparator></View> :
+            }}><NewSeparator newCount={this.props.newCount} data={this.props.message.id}></NewSeparator></View> :
                 !this.state.loaded ? <View style={placeholderStyle}></View> : <View style={topMostStyle}>
                     <Swipeout isMessage onPress={this.openingSwipeout()}
                         ref={'chatSwipeOut'} onOpen={() => { this.openingSwipeout() }}
@@ -396,6 +397,7 @@ export default class Message extends Component {
                                         }}>
                                             <View>
                                                 <View style={{
+                                                    margin: 3,
                                                     backgroundColor: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text) ? color : 'transparent' : 'transparent',
 
                                                 }}>
@@ -407,7 +409,6 @@ export default class Message extends Component {
                                                         }}>
                                                         {this.state.time}{"    "}</Text> : null}
                                                 </View>
-                                                <Text>{this.props.received.toString()} {JSON.stringify(this.props.message.received)}</Text>
                                                 <View style={{
                                                     backgroundColor: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text) ? color : 'transparent' : 'transparent',
                                                 }}>{!this.state.sender ? this.props.message.sent ? this.props.received ?

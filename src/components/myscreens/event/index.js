@@ -882,7 +882,7 @@ export default class Event extends Component {
     }
   }
   refreshCommitees() {
-    emitter.emit("refresh-commitee")
+    emitter.emit(this.event.id+"_refresh-commitee")
     //this.refs.swipperView.refreshCommitees()
   }
   saveRemoved(mem) {

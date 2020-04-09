@@ -159,7 +159,7 @@ export default class ChatRoom extends Component {
                     if (newMessage.sender.phone == this.props.user.phone) {
                         console.warn("adding new_message"," with cloud functions")
                         //!! example of cloud functions calling . 
-                        SendNotifications(this.props.user.name, newKey, newMessage.type, newMessage.text, this.props.firebaseRoom, this.props.user.phone, this.activity_name, this.props.activity_id, this.props.roomName, this.props.room_type).then(() => {
+                        SendNotifications(this.props.user.name, newKey, newMessage.type, newMessage.text, this.props.firebaseRoom, this.props.user.phone, this.props.activity_name, this.props.activity_id, this.props.roomName, this.props.room_type).then(() => {
                             this.setState({ newMessage: true })
                         })
                         // fetch(`https://us-central1-bleashup-1562173529011.cloudfunctions.net/informOthers?sender_name=${this.props.user.name}&message_key=${newKey}&message_type=${newMessage.type}&message=${newMessage.text}&room_key=${this.props.firebaseRoom}&sender_phone=${this.props.user.phone}&activity_name=${this.props.activity_name}&activity_id=${this.props.activity_id}&room_name=${this.props.roomName}`).then(response => {
@@ -282,7 +282,7 @@ export default class ChatRoom extends Component {
         firebase.database().ref(`current_room/${this.props.user.phone}`).set(this.props.firebaseRoom)
         this.formStorableData(this.props.newMessages).then(news => {
             this.newMessages = news
-            this.showMessage = this.newMessages.length > 0 ? [...this.newMessages, {
+            this.newMessages = this.newMessages.length > 0 ? [...this.newMessages, {
                 id: 'New Messages',
                 type: 'new_separator',
                 sender: {
@@ -299,11 +299,11 @@ export default class ChatRoom extends Component {
                         // replyContent: GState.reply ? GState.reply : null,
                         //replying: GState.reply ? true : false
                     })
-                if (this.props.newMessages.length > 0) {
-                    this.room.insertBulkMessages(this.newMessages).then(() => {
-                    })
-                }
             }, 100)
+            if (this.props.newMessages.length > 0) {
+                this.room.insertBulkMessages(this.newMessages).then(() => {
+                })
+            }
             this.fireRef.endAt().limitToLast(1).on('child_added', snapshot => {
                 console.warn("new_child", snapshot.val())
                 let message = snapshot.val()
@@ -354,11 +354,14 @@ export default class ChatRoom extends Component {
         setTimeout(() => {
             GState.reply && this._textInput.focus()
             this.refs.scrollViewRef.scrollToEnd({ animated: true, duration: 200 })
-            this.state.showCaption && this.refs.captionScrollViewRef.scrollToEnd({ animated: true, duration: 200 })
+            this.state.showCaption && 
+            this.refs.captionScrollViewRef.scrollToEnd({ animated: true, 
+                duration: 200 })
             this.temp ? GState.reply = JSON.parse(this.temp) : null
         })
     }
     markAsRead() {
+        this.room.deleteNewMessageIndicator().then(() => { })
         if (this.newMessages.length > 0) {
             this.room.messages = this.newMessages.concat(this.room.messages)
             this.room.messages = uniqBy(this.room.messages, "id")
@@ -1258,6 +1261,8 @@ export default class ChatRoom extends Component {
                         //console.warn("setting layout for " , item.id)
                         this.messagelayouts[item.id] = layout
                     }}
+                    newCount={this.newMessages.length}
+                    index={index}
                     scrolling={this.scrolling}
                     computedMaster={this.props.computedMaster}
                     showVoters={(voters) => this.showVoters(voters)}

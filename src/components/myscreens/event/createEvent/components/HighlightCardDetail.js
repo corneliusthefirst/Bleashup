@@ -33,7 +33,7 @@ export default class HighlightCardDetail extends Component {
         position={'bottom'}
         swipeToClose={true}
         style={{
-          height: "90%", 
+          height: "95%", 
           alignSelf: 'center',
           backgroundColor: "#FEFFDE", 
           borderTopLeftRadius: 8, 
