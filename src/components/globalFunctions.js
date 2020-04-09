@@ -18,5 +18,10 @@ export default class globalFunctions extends Component {
    })
   }
 
+  getOpponent = (event)=>{
+   return new Promise((resolve, reject) => {
+      
+   })
+  }
 
 } 

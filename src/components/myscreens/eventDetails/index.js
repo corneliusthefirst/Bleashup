@@ -223,7 +223,7 @@ export default class EventDetailView extends Component {
     a.created_at < b.created_at ? 1 : 0)
   render() {
     return (
-      !this.state.isMounted ? <View style={{height:colorList.containerHeight, backgroundColor:'#FEFFDE', width: '100%' }}></View> :
+      !this.state.isMounted ? <View style={{height:colorList.containerHeight, backgroundColor:colorList.bodyBackground, width: '100%' }}></View> :
         (this.state.EventData.type == "relation" ?
           (this.relationPost(this.state.EventData.id))
           :
@@ -371,8 +371,8 @@ export default class EventDetailView extends Component {
                   </View>
                     </View>
               </View>
-              <View style={{marginBottom:'3%',marginLeft: '2%',marginTop: '-1%',}}>
-                <Creator color={"#FEFFDE"} creator={this.props.Event.creator_phone}
+              <View style={{margin:'1%',marginLeft: '2%'}}>
+                <Creator color={colorList.bodyBackground} creator={this.props.Event.creator_phone}
                   created_at={this.props.Event.created_at} />
               </View>
             </View>

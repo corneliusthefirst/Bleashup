@@ -49,7 +49,7 @@ searchFilterFunction = (text)=>{
                style={{ color:colorList.bodyIcon,marginLeft:"2%",marginRight:"2%"}} type={"MaterialIcons"}name={"arrow-back"}></Icon>
                 
               <Icon type="EvilIcons" name="search" />
-               <Input placeholder="search @activity/relation"  onChangeText={text => this.searchFilterFunction(text)}  value={this.state.value} />
+               <Input style={{fontSize:15}} placeholder="search @activity/relation"  onChangeText={text => this.searchFilterFunction(text)}  value={this.state.value} />
               <Icon name="ios-people" style={{marginRight:"2%"}} />
         </View>
        </View>

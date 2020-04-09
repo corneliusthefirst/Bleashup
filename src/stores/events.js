@@ -45,7 +45,7 @@ export default class events {
       //console.warn("here3")
       this.createSearchdata(Events).then((array)=>{
           this.searchdata = array;
-          console.warn("here4",this.searchdata);
+          //console.warn("here4",this.searchdata);
       })
 
     });

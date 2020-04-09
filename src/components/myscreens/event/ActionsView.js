@@ -30,25 +30,9 @@ export default class ActionsView extends Component {
     render() {
 
         return (
-            <View style={{
-                height: 200,
-                display: 'flex',
-                flexDirection: 'column',
-                alignSelf: 'center', alignItems: 'center',
-            }}>
+            <View style={{height: 55,alignSelf: 'center'}}>
         
                 {this.props.event_type === "relation" ? null :
-                    <View style={{ height:50,width:50,borderRadius:30,...shadower(2),alignItems:"center",justifyContent:"center"}}>
-                        <Icon style={{
-                            color: colorList.bodyIcon,
-                            fontSize: 30,
-                        }} onPress={() => {
-                            this.refs.ActionMenu.showMenu()
-                        }} name="plus" type="AntDesign"></Icon>
-
-
-                    </View>
-                }
                         <View>
                            <ActionsMenu
                                 ref={'ActionMenu'}
@@ -65,6 +49,9 @@ export default class ActionsView extends Component {
                                 members={this.props.showMembers}
                           ></ActionsMenu>
                       </View>
+                      }
+
+
             </View>
         )
     }
