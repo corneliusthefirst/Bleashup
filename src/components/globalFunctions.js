@@ -20,7 +20,13 @@ export default class globalFunctions extends Component {
 
   getOpponent = (event)=>{
    return new Promise((resolve, reject) => {
-      
+      event.participant.forEach((participant)=>{
+         if( participant.phone != stores.LoginStore.user.phone){
+            stores.TemporalUsersStore.getUser(participant.phone).then((user)=>{
+               resolve(user);
+           })   
+         }
+      })
    })
   }
 

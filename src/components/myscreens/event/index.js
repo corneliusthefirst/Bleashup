@@ -1284,10 +1284,11 @@ export default class Event extends Component {
   }
   render() {
     StatusBar.setHidden(false, true)
-    return (<Drawer
+    return (<Drawer 
       useInteractionManager={true}
       tweenHandler={this.state.currentPage === 'EventChat' ? null : Drawer.tweenPresets.parallax}
       open={this.isOpen}
+      //type="overlay"
       //side="right"
       onOpen={() => {
         this.isOpen = true
@@ -1398,7 +1399,7 @@ export default class Event extends Component {
           //width={this.state.isChat ? this.normalWidth : this.currentWidth}
           event={this.event}
           master={this.master}
-          public={this.event.public} navigate={(page)=>{this.props.navigation.navigate(page)}}></SWView></View>}>
+          public={this.event.public} navigatePage={(page)=>{this.props.navigation.navigate(page)}} ></SWView></View>}>
       <View style={{
         height: "100%",
         backgroundColor:colorList.bodyBackground

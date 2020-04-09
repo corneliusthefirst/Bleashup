@@ -301,9 +301,9 @@ export default class CommiteeItem extends Component {
                             {this.state.joint && this.state.newest_message ? this.writeLatestMessage(this.state.newest_message) : null}
                         </View>
 
-                        <View style={{  flexDirection:"row",justifyContent:"center" }}>
-                            {this.state.joint && this.state.commitee.new_messages ? this.state.commitee.new_messages.length > 0 ? <Badge primary>
-                                <Text style={{}}>
+                        <View style={{  flexDirection:"row",justifyContent:"center",marginRight:"-3%" }}>
+                            {this.state.joint && this.state.commitee.new_messages ? this.state.commitee.new_messages.length > 0 ? <Badge style={{backgroundColor:"#54F5CA"}}>
+                                <Text style={{color:colorList.bodyText}}>
                                     {this.state.commitee.new_messages.length}
                                 </Text>
                             </Badge> : null : null}

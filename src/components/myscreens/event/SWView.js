@@ -107,7 +107,7 @@ export default class SWView extends Component {
    }
 
   onSearch = ()=>{
-    this.props.navigate("SearchView");
+    this.props.navigatePage("SearchView");
   }
 
     render() {
