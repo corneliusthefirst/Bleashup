@@ -1088,8 +1088,8 @@ export default class ChatRoom extends Component {
           behavior={Platform.Os == "ios" ? "padding" : "height"}
           style={{flex:1,justifyContent:"center",marginBottom:this.state.marginBottom,backgroundColor:'rgba(0,0,0,0.3)',
           }} >  */}             
-            <View style={{ height: "90%", }}>
-                <StatusBar animated={true} hidden={this.state.hideStatusBar} barStyle="dark-content" backgroundColor="#FEFFDE"></StatusBar>
+            <View style={{ height: "90%"}}>
+                <StatusBar animated={true} hidden={this.state.hideStatusBar} barStyle="dark-content" backgroundColor={colorList.headerBackground}></StatusBar>
                 {!this.state.loaded ? <Waiter></Waiter> : <View style={{}}><View style={{ width: "100%", alignSelf: 'center', }}>
                     <ScrollView keyboardShouldPersistTaps={"always"} showsVerticalScrollIndicator={false} scrollEnabled={false} inverted nestedScrollEnabled
                         ref="scrollViewRef">
@@ -1448,7 +1448,7 @@ export default class ChatRoom extends Component {
             headerStyles
         }}>
          
-                <View style={{ width: "65%", height: 50,flexDirection:"row",alignSelf:"flex-start", alignItems:"center",  }}>
+                <View style={{ width: "65%", height:colorList.headerHeight,flexDirection:"row",alignSelf:"flex-start", alignItems:"center",  }}>
                   
                         <Icon onPress={() => this.props.navigatePage("Home")}
                             style={{ color:colorList.headerIcon,marginLeft:"5%",marginRight:"5%"}}
@@ -1480,7 +1480,7 @@ export default class ChatRoom extends Component {
                     height: 50,
         
                 }}>
-                        <View style={{ height:50,marginLeft:"10%"  }}>
+                        <View style={{height:colorList.headerHeight,marginLeft:"10%"  }}>
                         <ChatRoomPlus
                             computedMaster={this.props.computedMaster}
                             master={this.props.master}
@@ -1498,7 +1498,7 @@ export default class ChatRoom extends Component {
                             addMembers={() => this.props.addMembers()}
                         ></ChatRoomPlus>
                         </View>
-                       <View style={{ height:50 }}>
+                       <View style={{height:colorList.headerHeight}}>
                         <ChatroomMenu
                             showMembers={() => this.showMembers()}
                             addMembers={() => this.props.addMembers()}
@@ -1514,7 +1514,7 @@ export default class ChatRoom extends Component {
                             public={this.props.public_state}
                             opened={this.props.opened}></ChatroomMenu>
                        </View>
-                       <View style={{ height:50,justifyContent:"center",marginRight:"10%" }}>
+                       <View style={{ height:colorList.headerHeight,justifyContent:"center",marginRight:"10%" }}>
                         <Icon onPress={() => {
                             this.props.openMenu()
                         }}

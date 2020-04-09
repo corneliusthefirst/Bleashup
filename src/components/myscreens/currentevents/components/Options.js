@@ -125,7 +125,7 @@ export default class Options extends Component {
                 width:'100%',
                 height:"100%",
             }}>
-             <TouchableOpacity style={{width:'50%',height:"100%",justifyContent:"center"}} onPress={() => requestAnimationFrame(() => this.navigateToReminds())}>
+             <TouchableOpacity style={{width:"50%",height:"100%",justifyContent:"center"}} onPress={() => requestAnimationFrame(() => this.navigateToReminds())}>
 
                         <View style={{ alignSelf: 'flex-end',}}>
                             <Icon onPress={() => requestAnimationFrame(() => this.navigateToReminds())} type="FontAwesome" name="bell-o" style={{alignSelf:'center' }}></Icon>
@@ -151,7 +151,7 @@ export default class Options extends Component {
                 </View>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={{width:'50%',height:"100%",justifyContent:"center",}} onPress={() => requestAnimationFrame(() => this.navigateToEventChat())} >
+                <TouchableOpacity style={{width:"50%",height:"100%",justifyContent:"center",}} onPress={() => requestAnimationFrame(() => this.navigateToEventChat())} >
    
                         <View style={{alignSelf:"flex-end"}}>
                             <Icon onPress={() => requestAnimationFrame(() => this.navigateToEventChat())} name="comments-o" type="FontAwesome" style={
@@ -178,11 +178,79 @@ export default class Options extends Component {
                           
                   </View>
                 </TouchableOpacity>
-                {/*<View
+
+
+            </View>
+        )
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ *                <View
                     style={{
                         width: this.width
                     }}
-                >
+                  >
                     <TouchableOpacity onPress={() => requestAnimationFrame(() => this.navigateToVotes())}>
                         <View style={this.others}>
                             <Icon type="FontAwesome5" name="poll" style={
@@ -239,8 +307,4 @@ export default class Options extends Component {
                         </View>
                     </TouchableOpacity>
                 </View>
-                            */}
-            </View>
-        )
-    }
-}
+                            */

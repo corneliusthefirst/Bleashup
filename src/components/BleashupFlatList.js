@@ -25,7 +25,7 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
     previousNewRender = 0
     previousRendered = 0
     componentDidMount() {
-        console.warn("BleashupFlatlist remounting")
+        //console.warn("BleashupFlatlist remounting")
     }
     _renderItems(array) {
         return array.map((element) => {

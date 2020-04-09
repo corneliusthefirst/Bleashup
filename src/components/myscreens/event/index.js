@@ -138,7 +138,7 @@ export default class Event extends Component {
       mounted: true
     })
   }
-  currentWidth = .4
+  currentWidth = .5
   //normalWidth = 
   isOpen = false
   renderMenu(NewMessages) {
@@ -1405,7 +1405,7 @@ export default class Event extends Component {
       }}>
         {this.state.fresh ? <View style={{
           height: '100%',
-          width: '100%',
+          width: "100%",
           backgroundColor: colorList.bodyBackground,
         }}></View> :
           this.renderMenu()

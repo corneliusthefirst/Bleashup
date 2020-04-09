@@ -18,7 +18,7 @@ import requestObject from "../services/requestObjects";
 import tcpRequest from "../services/tcpRequestData";
 import serverEventListener from "../services/severEventListener"
 import request from "../services/requestObjects";
-import stores from ".";
+import stores from "./index";
 
 export default class events {
   constructor() {
@@ -29,8 +29,10 @@ export default class events {
     console.warn("constructor called")
 
     this.readFromStore().then(Events => {
+      //console.warn("here1")
       let i = 0
       forEach(Events, (Event) => {
+        //console.warn("here2")
         Events[i].hiden = false
         if (i == Events.length - 1) {
           if (Events) {
@@ -39,14 +41,16 @@ export default class events {
         }
         i++
       })
-      /*
+
+      //console.warn("here3")
       this.createSearchdata(Events).then((array)=>{
           this.searchdata = array;
-          console.warn(this.searchdata);
-      })*/
+          console.warn("here4",this.searchdata);
+      })
 
     });
   }
+
   @observable currentEvents = [];
   @observable pastEvents = [];
   @observable events = []
@@ -59,6 +63,38 @@ export default class events {
     key: "Events",
     data: []
   };
+
+
+
+  @observable searchdata = [];
+  @observable array = [];
+  @action  createSearchdata(Events){
+    return new Promise((resolve, reject) => {
+        
+        Events.forEach((event)=>{
+          //console.warn("event is",event);
+           if(event.type && event.type == "relation"){
+                           //console.warn("here6")
+                  event.participant.forEach((participant)=>{
+                   if( participant.phone != stores.LoginStore.user.phone){
+                      stores.TemporalUsersStore.getUser(participant.phone).then((user)=>{
+                       obj = {id:event.id,name:user.name,image:user.profile,type:"relation"}
+                       this.array.unshift(obj);
+                     })   
+                   }
+                })
+               }else{
+                //console.warn("here5")
+                obj = {id:event.id,name:event.about.title,image:event.background,type:"activity"}
+                this.array.unshift(obj);
+
+           }
+        })
+         resolve(this.array);
+    })
+
+  }
+
 
 
   addEvent(NewEvent) {
@@ -1064,110 +1100,6 @@ export default class events {
 
 
 
-  @observable searchdata = [];
-
-  createSearchdata(Events){
-    return new Promise((resolve, reject) => {
-        array = [];
-        Events.forEach((event)=>{
-           if(event.type == "activity"){
-             obj = {id:event.id,name:event.about.title}
-             this.array.unshift(obj);
-            }else{
-              participant = findLast(event.participant,(n)=>{
-                  n.phone != stores.LoginStore.user.phone;
-              })
-              stores.TemporalUsersStore.getUser(participant.phone).then((user)=>{
-                  obj = {id:event.id,name:user.name}
-                  this.array.unshift(obj);
-              })
-           }
-        })
-         resolve(this.array);
-    })
-
-  }
-
-
-  @action  setSearchData(array) {
-    return new Promise((resolve, reject) => {
-      //console.warn("here1",newArray)
-      storage
-        .save({
-          key: "searchdata",
-          data: array
-        })
-        .then(() => {
-          this.searchdata = array;
-          resolve(array);
-        })
-        .catch(error => {
-          reject(error);
-        });
-    });
-  }
-
-
-
-  @action async updateSearchData(newarray) {
-    return new Promise((resolve, reject) => {
-      storage
-        .load({
-          key: "searchdata",
-          autoSync: true
-        })
-        .then(data => {
-              storage
-                .save({
-                  key: "searchdata",
-                  data: newArray
-                })
-                .then(() => {
-                  this.searchdata = data;
-                  resolve();
-                });
-        })
-        .catch(error => {
-          reject(error);
-        });
-    });
-  }
-
-
-  @action getSearchData() {
-     return new Promise((resolve, reject) => {
-     
-        storage
-          .load({
-            key:"searchdata",
-            autoSync: true
-          })
-          .then(data => {
-                 resolve(data);
-          })
-          .catch(error => {
-            this.setSearchData(this.searchdata).then((newArray)=>{ 
-              resolve(newArray);
-            })
-       });
-  })
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   @observable highlightData = [
     {
@@ -1240,3 +1172,131 @@ export default class events {
 
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * 
+  @action  setSearchData(array) {
+    return new Promise((resolve, reject) => {
+      //console.warn("here1",newArray)
+      storage
+        .save({
+          key: "searchdata",
+          data: array
+        })
+        .then(() => {
+          this.searchdata = array;
+          resolve(array);
+        })
+        .catch(error => {
+          reject(error);
+        });
+    });
+  }
+
+
+
+  @action async updateSearchData(newarray) {
+    return new Promise((resolve, reject) => {
+      storage
+        .load({
+          key: "searchdata",
+          autoSync: true
+        })
+        .then(data => {
+              storage
+                .save({
+                  key: "searchdata",
+                  data: newArray
+                })
+                .then(() => {
+                  this.searchdata = data;
+                  resolve();
+                });
+        })
+        .catch(error => {
+          reject(error);
+        });
+    });
+  }
+
+
+  @action getSearchData() {
+     return new Promise((resolve, reject) => {
+     
+        storage
+          .load({
+            key:"searchdata",
+            autoSync: true
+          })
+          .then(data => {
+                 resolve(data);
+          })
+          .catch(error => {
+            this.setSearchData(this.searchdata).then((newArray)=>{ 
+              resolve(newArray);
+            })
+       });
+  })
+}
+
+ */

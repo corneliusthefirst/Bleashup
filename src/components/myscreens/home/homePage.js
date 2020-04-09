@@ -204,7 +204,7 @@ class Home extends Component {
   exiting = false
   timeout = null
   componentWillUnmount() {
-    console.warn('home unmounting')
+    //console.warn('home unmounting')
     BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton.bind(this));
     this.removeNotificationDisplayedListener()
     Linking.removeEventListener('url', this.handleUrl);
@@ -291,7 +291,7 @@ class Home extends Component {
     StatusBar.setBarStyle('dark-content', true)
     StatusBar.setHidden(false, true)
     return (
-      <Container style={{ height:colorList.containerHeight,backgroundColor: colorList.containerBackground ,width:colorList.containerWidth }}>
+      <Container style={{ height:colorList.containerHeight,backgroundColor:colorList.containerBackground ,width:colorList.containerWidth }}>
         <View style={{ height: colorList.headerHeight,backgroundColor: colorList.headerBackground ,width:"100%", }}>
         
          

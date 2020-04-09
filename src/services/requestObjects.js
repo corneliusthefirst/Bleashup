@@ -391,7 +391,7 @@ class Request {
             likes: 0,
             reminds: [],
             recursiveFrequency: "None",
-            public: false,
+            public: false, 
             votes: [],
             highlights: [],
             contributions: [],
