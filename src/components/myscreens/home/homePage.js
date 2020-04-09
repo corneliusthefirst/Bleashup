@@ -304,37 +304,21 @@ class Home extends Component {
                 <Thumbnail source={require("../../../../assets/bleashuptitle.png")} style={{width:120}}></Thumbnail>
               </View>
 
-<<<<<<< HEAD
             
                 <View style={{ height:"100%",alignSelf: "flex-end", display: 'flex', flexDirection: 'row', marginRight:"2%"}}>
 
                  <TouchableOpacity style={{height:40,alignItems:"center",justifyContent:"center"}} onPress={() => this.navigateToInvitations()}>
                   <Icon name="sc-telegram" active={true} type="EvilIcons" style={{ color: "white", }} onPress={() => this.navigateToInvitations()} />
-=======
-              <View style={{ alignItems: "center", justifyContent: "center" }}>
-                <View style={{ alignSelf: "flex-end", display: 'flex', flexDirection: 'row', }}>
-                  <TouchableOpacity style={{ height: 40, alignItems: "center", justifyContent: "center", marginLeft: width / 35 }} onPress={() => this.navigateToInvitations()}>
-                    <Icon name="sc-telegram" active={true} type="EvilIcons" style={{ color: "#1FABAB", }} onPress={() => this.navigateToInvitations()} />
->>>>>>> 3e9b563d5827c3838b7eaad019f77ff2ddf3cee1
                   </TouchableOpacity>
 
                   <TouchableOpacity style={{ height: 40, alignItems: "center", justifyContent: "center" }} onPress={this.showMenu}>
                     <Menu
-<<<<<<< HEAD
                      ref={this.setMenuRef}
                      button={<Icon name="gear" active={true} type="EvilIcons" style={{ color: "white",marginLeft:width/35 }} onPress={this.showMenu} />}
-                     style={{ backgroundColor: "white" }}
+                     style={{ backgroundColor:colorList.bodyBackground }}
                      >
                    <MenuItem onPress={this.settings}>settings</MenuItem>
                   </Menu> 
-=======
-                      ref={this.setMenuRef}
-                      button={<Icon name="gear" active={true} type="EvilIcons" style={{ color: "#1FABAB", marginLeft: width / 35 }} onPress={this.showMenu} />}
-                      style={{ backgroundColor: "#FEFFDE" }}
-                    >
-                      <MenuItem onPress={this.settings}>settings</MenuItem>
-                    </Menu>
->>>>>>> 3e9b563d5827c3838b7eaad019f77ff2ddf3cee1
                   </TouchableOpacity>
 
                 </View>

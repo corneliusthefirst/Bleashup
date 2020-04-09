@@ -230,10 +230,7 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
       firebaseRoom={this.props.roomID} // relation_id
       members={this.props.members} // relation_members
       activity_id={this.props.activity_id} //reloation
-<<<<<<< HEAD
       navigatePage={(page)=>{this.props.navigation.navigate(page)}}//to navigate
-=======
->>>>>>> 3e9b563d5827c3838b7eaad019f77ff2ddf3cee1
       newMessages={this.state.new_messages}
       creator={this.props.creator} ></ChatRoom></View> : <Waiter dontshowSpinner={true}></Waiter>)
   }
