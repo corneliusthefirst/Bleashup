@@ -754,7 +754,7 @@ export default class TasksCreation extends Component {
             </SelectableContactList>
           </View>
           <View style={{ position: 'absolute', }}>
-            <Text style={{ margin: '7%', color: '#A91A84', fontWeight: 'bold' }} note>{!this.state.ownership ? "remind configs" : this.props.update ? "update remind" : "add remind"}</Text>
+            <Text style={{ margin: '7%', color: '#1F4237', fontWeight: 'bold' }} note>{!this.state.ownership ? "remind configs" : this.props.update ? "update remind" : "add remind"}</Text>
           </View>
         </View>
       </Modal>

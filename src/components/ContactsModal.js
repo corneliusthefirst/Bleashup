@@ -37,10 +37,10 @@ import Contacts from './Contacts';
                 }}
                 style={{
                     height: "95%",
-                     width: "100%"
+                    width: "100%"
                 }}>
                 <Container>
-                    <Contacts contacts={this.props.contacts} title={this.props.title ? this.props.title : "Seen By ..."}></Contacts>
+                    <Contacts contacts={(this.props.contacts && this.props.contacts) || []} title={this.props.title ? this.props.title : "Seen By ..."}></Contacts>
                 </Container>
             </Modal>
 

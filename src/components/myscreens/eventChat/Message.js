@@ -130,7 +130,7 @@ export default class Message extends Component {
                         ...data,
                         vote: {
                             ...this.props.votes &&
-                            find(this.props.votes, { id: data.vote.id }), option: data.vote.option
+                            find(this.props.votes, { id: data.vote.id }), voter: data.vote.voter
                         }
                     }}
                     room={this.props.room} index={data.id}></Voter>

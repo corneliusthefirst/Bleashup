@@ -116,18 +116,12 @@ export default class Votes extends Component {
           }
           this.props.startLoader()
          VoteRequest.vote(vote.event_id,
-            vote.id, index).then((response) => {
+            vote.id, index).then((newVote) => {
               this.intializeVote()
               this.props.stopLoader()
               let mess = {
                 ...meess,
-                vote: {
-                  id: vote.id,
-                  option: vote.option.map(ele => {
-                    return { ...ele, vote_count: ele.index === index ? ele.vote_count + 1 : ele.vote_count }
-                  }),
-                  voter: uniqBy([...vote.voter ? vote.voter : [], { phone: stores.LoginStore.user.phone, index: index }], "phone")
-                }
+                vote: newVote
               }
               //this.props.onClosed()
               this.props.voteItem(mess)
@@ -192,7 +186,7 @@ export default class Votes extends Component {
       coverScreen={true}
       entry={'bottom'}
       position={'bottom'}
-      backdropOpacity={0.7}
+      backdropOpacity={0.3}
       swipeToClose={false}
       backButtonClose={true}
       onClosed={() => {
@@ -210,7 +204,7 @@ export default class Votes extends Component {
         //this.intializeVote()
       }}
       style={{
-        height: height*.95,
+        height: height*.93,
         width: "100%",
         // backgroundColor: "#FEFFDE",
       }}
