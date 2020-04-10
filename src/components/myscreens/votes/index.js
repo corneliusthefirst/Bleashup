@@ -105,7 +105,9 @@ export default class Votes extends Component {
     if (!vote.period || dateDiff({ recurrence: vote.period }) < 0) {
       if (!haveIVoted()) {
         if (!this.props.working) {
-          let meess = foreign ? message : {
+          let meess = foreign ? {...message,
+            sender:this.props.sender
+          } : {
             text: vote.title,
             received: [{
               phone: stores.LoginStore.user.phone,
