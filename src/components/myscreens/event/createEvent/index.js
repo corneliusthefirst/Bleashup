@@ -128,8 +128,6 @@ export default class CreateEventView extends Component {
 
 
 
-
-
   //for photo
   TakePhotoFromCamera = ()=>{    
     Pickers.SnapPhoto(true).then(res => {
@@ -221,9 +219,6 @@ resetPhoto = () => {
         
      </View>
 
-
-             
-             
 
              <View style={{ height:colorList.containerHeight/16,alignItems:"flex-end",flexDirection:"row",justifyContent:'flex-end',alignItem:'center',marginRight:"8%"}}>
                 
