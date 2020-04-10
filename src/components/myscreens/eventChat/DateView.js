@@ -12,7 +12,7 @@ export default class DateView extends Component {
     render() {
         return (
             <View style={{ width: 150, height: 30, 
-                backgroundColor: this.props.backgroundColor ? this.props.backgroundColor : "#1FAFFBA", 
+                backgroundColor: "transparent", 
                 borderRadius: 10, alignSelf: 'center', borderWidth: 1,
                 justifyContent: 'center',
             display:'flex',

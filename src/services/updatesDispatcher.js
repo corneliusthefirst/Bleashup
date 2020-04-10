@@ -1118,7 +1118,7 @@ class UpdatesDispatcher {
         tcpRequestData.getVote(VoteID, update.new_value + "_get").then(JSONData => {
           serverEventListener.sendRequest(JSONData, update.new_value + '_get').then(Vote => {
             if (Vote.data && Vote.data !== 'empty') {
-              let vote = Vote.data
+              let vote = Array.isArray(Vote.data) ? Vote.data[0] : Vote.data
               console.warn(vote)
               stores.Votes.addVote(vote).then(() => {
                 stores.Events.addVote(vote.event_id, vote.id).then(() => {
@@ -1250,6 +1250,7 @@ class UpdatesDispatcher {
         stores.Votes.vote(update.new_value).then((vote) => {
           stores.CommiteeStore.imIInThisCommttee(stores.LoginStore.user.phone,
             vote.committee_id).then((state) => {
+              console.warn(state,"--")
               if (state || vote.published === 'public') {
                 let Change = {
                   id: uuid.v1(),
@@ -1884,7 +1885,7 @@ class UpdatesDispatcher {
               event_id: update.event_id,
               changed: `Created ${commitee.name} Committee`,
               updater: update.updater,
-              new_value: { data: commitee.id, new_value: update.new_value },
+              new_value: { data: commitee.id, new_value: commitee.name },
               date: update.date,
               time: update.time,
             };
