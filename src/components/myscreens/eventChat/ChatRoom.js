@@ -572,7 +572,9 @@ export default class ChatRoom extends Component {
             GState.reply = null
             messager = { ...messager, received: [{ phone: this.props.user.phone, date: moment().format() }] }
             this.fireRef.push(messager).then(() => {
-                console.warn("message sucessfully sent")
+                this.setState({
+                    newMessage:!this.state.newMessage
+                })
             })
             // !! update the latess message of the relation page
         }
