@@ -203,6 +203,7 @@ export default class Event extends Component {
           //activity_name={this.event.about.title}
           openMenu={() => this.openMenu()}
           showLoader={() => this.startLoader()}
+          working={this.state.working}
           addRemind={(members) => this.addRemindForCommittee(members)}
           stopLoader={() => this.stopLoader()}
           showProfile={(pro) => this.showProfile(pro)}
@@ -552,7 +553,7 @@ export default class Event extends Component {
     })
   }
   restore(data) {
-    if (!this.state.woking) {
+    if (!this.state.working) {
       switch (data.updated) {
         case "highlight_delete":
           this.restoreHighlight(data)

@@ -14,7 +14,7 @@ export default class Voter extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            totalVotes: this.props.message.vote.option ? this.props.message.vote.option.reduce((acc, item) => acc + item.vote_count, 0) : 0
+            totalVotes: (this.props.message.vote && this.props.message.vote.voter && this.props.message.vote.voter.length) || 0
         }
     }
     componentDidMount() {
@@ -22,7 +22,7 @@ export default class Voter extends Component {
             this.setState({
                 loaded: true
             })
-        }, this.props.delay * 60)
+        }, this.props.delay * 20)
     }
     shouldComponentUpdate(nextProps, nextState, nextContex) {
         return !isEqual(JSON.parse(this.previousVote), nextProps.message.vote) ||
@@ -54,6 +54,9 @@ export default class Voter extends Component {
     hasVoted() {
         return findIndex(this.props.message.vote.voter, (ele) => ele.phone === stores.LoginStore.user.phone) < 0
     }
+    returnOptionCount(index){
+        return (this.props.message.vote && this.props.message.vote.voter && this.props.message.vote.voter.filter(ele => ele.index === index).length) || 0
+    }
     returnOptionWithCount(item, index) {
         return <View style={{ flexDirection: 'row', width: '100%', height: 40, marginBottom: '8%', alignSelf: 'center', }}>
             <View style={{
@@ -66,19 +69,19 @@ export default class Voter extends Component {
             >{`${labler(index)}.`}</Text></View>
             <View style={{ width: '78%', height: '80%', }}>
                 <View style={{ width: '100%' }}>
-                    <Text style={{ color: '#555756', fontSize: 14 }} note>{`${item.name && item.name !== 'undefined' ? item.name : "none"}    ${this.calculateVotePercentage(item.vote_count, 0)}%`}</Text>
+                    <Text style={{ color: '#555756', fontSize: 14 }} note>{`${item.name && item.name !== 'undefined' ? item.name : "none"}    ${this.calculateVotePercentage(this.returnOptionCount(index), 0)}%`}</Text>
                     <View style={{ flexDirection: 'row', height: '60%' }}>
                         <View style={{
                             height: '110%', ...shadower(2),
                             backgroundColor: '#1FABAB',
-                            width: `${this.calculateVotePercentage(item.vote_count, 0)}%`,
-                            borderTopRightRadius: this.calculateVotePercentage(item.vote_count, 0) >= 99 ? 8 :
+                            width: `${this.calculateVotePercentage(this.returnOptionCount(index), 0)}%`,
+                            borderTopRightRadius: this.calculateVotePercentage(this.returnOptionCount(index), 0) >= 99 ? 8 :
                                 0,
-                            borderBottomRightRadius: this.calculateVotePercentage(item.vote_count, 0) >= 99 ? 8 : 0,
+                            borderBottomRightRadius: this.calculateVotePercentage(this.returnOptionCount(index), 0) >= 99 ? 8 : 0,
                         }}>
                         </View>
                         <View style={{
-                            width: `${this.calculateVotePercentage(item.vote_count, -1)}%`,
+                            width: `${this.calculateVotePercentage(this.returnOptionCount(index), -1)}%`,
                             height: '100%', ...shadower(2),
                             marginTop: '.4%',
                             borderTopRightRadius: 8, borderBottomRightRadius: 8,

@@ -1135,7 +1135,7 @@ export default class ChatRoom extends Component {
                         })
                         setTimeout(() => {
                             this._textInput.focus()
-                        }, 700)
+                        }, 200)
                     }}
                     computedMaster={this.props.computedMaster}
                     takeVote={(vote => this.createVote(vote))}
@@ -1143,6 +1143,7 @@ export default class ChatRoom extends Component {
                         this.perviousId = mess.id
                         this.replaceVote({ ...mess, id: uuid.v1() })
                     }}
+                    working={this.props.working}
                     isSingleVote={this.state.single_vote}
                     vote_id={this.state.vote_id}
                     startLoader={this.props.showLoader}
@@ -1185,7 +1186,7 @@ export default class ChatRoom extends Component {
     }
     replaceVote(vote) {
         this.room.removeMessage(this.perviousId).then(() => {
-            this.room.messages.unshift(vote)
+            //this.room.messages.unshift(vote)
             this.room.replaceNewMessage(vote).then(() => {
                 this.sendMessage(vote)
                 this.initialzeFlatList()

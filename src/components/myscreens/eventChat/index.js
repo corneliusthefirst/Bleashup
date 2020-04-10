@@ -215,6 +215,7 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
       openMenu={this.props.openMenu}
       showLoader={this.props.showLoader}
       stopLoader={this.props.stopLoader}
+      working={this.props.working}
       showProfile={(pro) => this.props.showProfile(pro)}
       activity_name={this.props.activity_name} // name_of_the_other_user
       close={() => this.props.close()}

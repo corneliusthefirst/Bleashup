@@ -161,19 +161,18 @@ export default class VoteCreation extends Component {
     }
     addVote() {
         let vote = this.state.vote
-        if (vote.option.length <= 1) {
-            this.showVoteOptionError()
-        } else if (!vote.description && !vote.title) {
-            this.showVoteContentError()
-        } if (!vote.period) {
-            this.showMustSpecifyVotePeriodError()
-        } else {
-            this.props.takeVote({ ...vote, voter: [] })
-            setTimeout(() => {
-                // this.setState({
-                //     vote: request.Vote()
-                // })
-            }, 1000)
+        if(this.props.working){
+            if (vote.option.length <= 1) {
+                this.showVoteOptionError()
+            } else if (!vote.description && !vote.title) {
+                this.showVoteContentError()
+            } if (!vote.period) {
+                this.showMustSpecifyVotePeriodError()
+            } else {
+                this.props.takeVote({ ...vote, voter: [] })
+            }
+        }else{
+            this.props.sayAppBusy()
         }
     }
     changeAlwaysShowState() {
@@ -244,6 +243,7 @@ export default class VoteCreation extends Component {
             backdropPressToClose={true}
             backButtonClose={true}
             coverScreen={true}
+            backdropOpacity={0.3}
             swipeToClose={false}
             isOpen={this.props.isOpen}
             onClosed={() => {
@@ -251,7 +251,7 @@ export default class VoteCreation extends Component {
             }}
             entry={'top'}
             style={{
-                height: height*.95,
+                height: height * .93,
                 width: '100%',
                 backgroundColor: '#FEFFDE',
                 borderTopRightRadius: 8,
@@ -262,14 +262,14 @@ export default class VoteCreation extends Component {
                 <View style={{ width: '98%', height: '6%', ...shadower(), margin: '1%', flexDirection: 'row', }}>
                     <View style={{ width: '35%' }}><Text note style={{
                         fontWeight: 'bold',
-                        color: '#A91A84',
+                        color: '#1F4237',
                         //margin: '2%'
-                    }}>{"new vote"}</Text></View>
+                    }}>{!this.props.update ? "new vote" : "update vote"}</Text></View>
                     {this.props.update ? <View style={{ width: '65%' }}><Text note style={{
                         fontWeight: 'bold',
                         color: '#555756',
                         //margin: '2%'
-                    }}>{"ony the voting end date is updated"}</Text></View> : null}
+                    }}>{"only the voting end date is updated"}</Text></View> : null}
                 </View>
                 <View style={{ height: '94%', }}>
                     <ScrollView showsVerticalScrollIndicator={false} style={{ height: '100%' }}>

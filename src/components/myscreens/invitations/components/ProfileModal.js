@@ -97,7 +97,7 @@ export default class ProfileModal extends Component {
 
                     {this.state.enlargeImage ? <PhotoViewer open={this.state.enlargeImage} hidePhoto={() => this.setState({ enlargeImage: false })} photo={this.props.profile.profile} /> : null}
                 </View>
-                    <View style={{ position: 'absolute', margin: '4%', }}><Text style={{ color: '#A91A84', fontWeight: 'bold'}} note>{"profile cart"}</Text></View>
+                    <View style={{ position: 'absolute', margin: '4%', }}><Text style={{ color: '#1F4237', fontWeight: 'bold'}} note>{"profile cart"}</Text></View>
                 </View>
             </Modal>
         ) : null
