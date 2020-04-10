@@ -152,6 +152,7 @@ export default class ChatRoom extends Component {
         if (this.room.messages.length > 0) {
             let index = findIndex(this.room.messages, { id: newMessage.id })
             let received = uniqBy(newMessage.received, "phone")
+            console.warn(index,newKey,"pppp")
             if (index >= 0 && this.room.messages[index].key !== newKey) {
                 this.room.messages[index] = { ...this.room.messages[index], key: newKey, sent: true, type: newMessage.type }
                 this.room.addNewMessage(newMessage, newKey, newMessage.type, true, true).then(() => {
@@ -168,7 +169,7 @@ export default class ChatRoom extends Component {
                     }
                 })
             } else {
-                //console.warn(newMessage, "PPPPPPPPPP")
+                console.warn(newMessage, "PPPPPPPPPP")
                 if (this.sender.phone == newMessage.sender.phone) {
 
                  } else {
@@ -568,7 +569,9 @@ export default class ChatRoom extends Component {
             GState.reply = null
             messager = { ...messager, received: [{ phone: this.props.user.phone, date: moment().format() }] }
             this.fireRef.push(messager).then(() => {
-                console.warn("message sucessfully sent")
+                this.setState({
+                    newMessage:!this.state.newMessage
+                })
             })
             // !! update the latess message of the relation page
         }

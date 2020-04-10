@@ -1283,7 +1283,7 @@ class UpdatesDispatcher {
                   title: `Update on ${vote.title} vote`,
                   changed: update.new_value.new_period && vote.period ? `Changed Voting End Date of ${vote.title} Vote To: ` :
                     update.new_value.new_period && !vote.period ? `Added Voting End Date To ${vote.title} Vote : ` :
-                      'Remove Voting End Date From ${vote.title} Vote',
+                      `Remove Voting End Date From ${vote.title} Vote`,
                   updater: update.updater,
                   new_value: {
                     data: null,

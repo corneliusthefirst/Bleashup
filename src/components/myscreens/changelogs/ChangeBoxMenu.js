@@ -53,6 +53,7 @@ export default class ChangeBoxMenu extends Component {
                             this.hideMenu()
                             this.props.restore()
                         }}>{"Restore"}</MenuItem></View> : null : null}
+                    <View></View>
                 </Menu>
             </View>
         ) : <ImageActivityIndicator />;
