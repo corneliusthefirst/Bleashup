@@ -7,7 +7,7 @@ import Swipeout from "react-native-swipeout";
 import InAppBrowser from 'react-native-inappbrowser-reborn';
 import Modal from 'react-native-modalbox';
 import autobind from "autobind-decorator";
-
+import colorList from '../../../../colorList';
 
 let { height, width } = Dimensions.get('window');
 export default class SearchImage extends Component {
@@ -97,10 +97,10 @@ open(url){
         isOpen={this.props.isOpen}
         onClosed={this.props.onClosed}
         style={{
-          height: height / 2, borderBottomLeftRadius: 15, borderBottomRightRadius: 15,
-          backgroundColor: "#FEFFDE", borderColor: 'black', width: "96%", flexDirection: 'column', marginRight: "2%"
+          height: 300, borderRadius: 10,
+          backgroundColor:colorList.bodyBackground, borderColor:'black', width: "75%", flexDirection: 'column', marginRight: "2%"
         }}
-        position={'top'}
+        position={'center'}
         //backdropPressToClose={false}
         //swipeToClose={false}
         entry={'top'}
@@ -124,14 +124,14 @@ open(url){
           </View>
           <Text style={{ alignSelf: "center", color: "#1FABAB", fontSize: 18 }}>Some suggested free sites</Text>
 
-          <Button style={{ alignSelf: 'center', width: "90%", borderRadius: 15, borderColor: "#1FABAB", backgroundColor: "transparent", justifyContent: 'center', alignItem: 'center', marginTop: "10%" }}
+          <Button style={{ alignSelf: 'center', width: "80%", borderRadius: 15, borderColor: "#1FABAB", backgroundColor: "transparent", justifyContent: 'center', alignItem: 'center', marginTop: "5%" }}
             onPress={() => {
               this.open("https://www.pixabay.com")
             }}>
             <Text style={{ alignSelf: "center" }}>Pixabay</Text>
           </Button>
 
-          <Button style={{ alignSelf: 'center', width: "90%", borderRadius: 15, borderColor: "#1FABAB", backgroundColor: "transparent", justifyContent: 'center', alignItem: 'center', marginTop: "10%" }}
+          <Button style={{ alignSelf: 'center', width: "80%", borderRadius: 15, borderColor: "#1FABAB", backgroundColor: "transparent", justifyContent: 'center', alignItem: 'center', marginTop: "5%" }}
             onPress={() => {
                this.open("https://www.pixels.com")
 
@@ -139,7 +139,7 @@ open(url){
             <Text style={{ alignSelf: "center" }}> Pixels </Text>
           </Button>
 
-          <Button style={{ alignSelf: 'center', width: "90%", borderRadius: 15, borderColor: "#1FABAB", backgroundColor: "transparent", justifyContent: 'center', alignItem: 'center', marginTop: "10%" }}
+          <Button style={{ alignSelf: 'center', width: "80%", borderRadius: 15, borderColor: "#1FABAB", backgroundColor: "transparent", justifyContent: 'center', alignItem: 'center', marginTop: "5%" }}
             onPress={() => {
                this.open("https://www.pexels.com")
 

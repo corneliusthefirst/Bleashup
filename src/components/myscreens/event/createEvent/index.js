@@ -51,7 +51,7 @@ export default class CreateEventView extends Component {
       participant: null,
       title:"",
       photo:"",
-      DefaultPhoto:require('../../../../../assets/default_event_image.jpeg'),
+      DefaultPhoto:require('../../../../../Images/activity.jpg'),
       searchImageState:false
     }
 
@@ -225,13 +225,14 @@ resetPhoto = () => {
      <View  style={{ height:colorList.containerHeight/9,alignItems:"center"}}>
         
           <Input  maxLength={40} placeholder='@Activity name' keyboardType='email-address' autoCapitalize="none" returnKeyType='next' inverse last
-           value={this.state.title}  style={{borderBottomWidth:1,borderColor:colorList.bodyIcon,width:"80%"}}    onChangeText={(value) => this.onChangedTitle(value)} />
+           value={this.state.title}  style={{borderBottomWidth:1,borderColor:colorList.bodyIcon,width:"79%",}}    onChangeText={(value) => this.onChangedTitle(value)} />
         
      </View>
 
 
              <View style={{ height:colorList.containerHeight/16,alignItems:"flex-end",flexDirection:"row",justifyContent:'flex-end',alignItem:'center',marginRight:"8%"}}>
                 
+                     <Text style={{left:0,position:'absolute',marginLeft:"12%",color:colorList.bodyText}}>@activity photo</Text>
                      <Icon name="camera" active={true} type="EvilIcons"
                         style={{color:colorList.bodyIcon,fontSize:36}}   onPress={()=>{this.TakePhotoFromCamera()}}/>
      
@@ -246,7 +247,7 @@ resetPhoto = () => {
                      style={{alignSelf:'center',height: "90%",width: "90%", borderRadius:10
               }} /> : <Thumbnail source={this.state.photo ? { uri: this.state.photo } : this.state.DefaultPhoto}
                 style={{
-                  alignSelf: 'center', height: "90%", width: "80%", borderRadius: 5
+                  alignSelf: 'center', height: "90%", width: "90%", borderRadius: 5
                 }}></Thumbnail>}
                 </TouchableOpacity>
                 {this.state.photo?<View style={{position:'absolute',alignSelf: 'flex-end',marginBottom: '60%',marginRight: '10%',}}>
