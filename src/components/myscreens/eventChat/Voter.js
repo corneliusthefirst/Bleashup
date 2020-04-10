@@ -109,7 +109,7 @@ export default class Voter extends Component {
             >{`${labler(index)}.`}</Text></View>
             <View style={{ width: '75%', height: '100%', flexDirection: 'row', }}>
                 <View style={{ width: '100%', justifyContent: 'center' }}>
-                    <Text style={{ color: '#1FABAB', fontWight: 'bold', fontSize: 24 }} >{`${item.name && item.name !== 'undefined' ? item.name : 'none'} `}</Text>
+                    <Text style={{ color: '#1FABAB', fontWeight: 'bold', fontSize: 24 }} >{`${item.name && item.name !== 'undefined' ? item.name : 'none'} `}</Text>
                 </View>
             </View>
             <View style={{ width: '15%', justifyContent: 'center', alignItems: 'center', }}>
@@ -127,7 +127,7 @@ export default class Voter extends Component {
         this.creator = creator
     }
     render() {
-        return !this.state.loaded ? <Spinner size={"small"}></Spinner> : <View style={{ margin: '1%', backgroundColor: '#FEFFDE', }}>
+        return !this.state.loaded ? <View style={{width:300,height:300}}></View> : <View style={{ margin: '1%', backgroundColor: '#FEFFDE', }}>
             <View style={{ alignSelf: 'center', margin: '2%', flexDirection: 'row', }}>
                 <View style={{ width: '70%',marginLeft: '2%', }}>
                     <Text style={{

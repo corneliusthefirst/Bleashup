@@ -16,6 +16,8 @@ import emitter from '../../../services/eventEmiter';
 import { findIndex, find, uniqBy } from 'lodash';
 import moment from "moment";
 import { dateDiff } from "../../../services/datesWriter";
+import labler from '../eventChat/labler';
+import formVoteOptions from '../../../services/formVoteOptions';
 let { height, width } = Dimensions.get('window');
 
 export default class Votes extends Component {
@@ -171,12 +173,12 @@ export default class Votes extends Component {
       sayAppBusy()
     }
   }
+  
   mentionVote(vote, creator) {
     this.props.replying({
       id: vote.id,
       type_extern: 'Votes',
-      sourcer: creator.profile,
-      title: `${vote.title} : \n ${vote.description}`,
+      title: `${vote.title} : \n ${vote.description} \n\n ${formVoteOptions(vote)} `,
       replyer_phone: stores.LoginStore.user.phone,
     })
   }

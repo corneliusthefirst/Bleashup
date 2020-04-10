@@ -340,13 +340,13 @@ export default class ChatRoom extends Component {
     }
     adjutRoomDisplay(dontToggle) {
         setTimeout(() => {
-            GState.reply && this._textInput.focus()
+            GState.reply && this.fucussTextInput()
             this.refs.scrollViewRef.scrollToEnd({ animated: true, duration: 200 })
             this.state.showCaption && 
             this.refs.captionScrollViewRef.scrollToEnd({ animated: true, 
                 duration: 200 })
             this.temp ? GState.reply = JSON.parse(this.temp) : null
-        })
+        },50)
     }
     markAsRead() {
         this.room.deleteNewMessageIndicator().then(() => { })
@@ -382,6 +382,7 @@ export default class ChatRoom extends Component {
         this.fireRef.off()
         this.typingRef.off()
         this.keyboardDidShowSub.remove();
+        this.markAsRead()
         GState.currentRoom = null
         firebase.database().ref(`current_room/${this.props.user.phone}`).set(null)
         this.keyboardDidHideSub.remove();
@@ -418,7 +419,7 @@ export default class ChatRoom extends Component {
 
     handleBackButton() {
         if (this.state.showEmojiInput) {
-            this._textInput.focus()
+            this.fucussTextInput()
             this.setState({
                 showEmojiInput: false
             })
@@ -562,11 +563,13 @@ export default class ChatRoom extends Component {
     }
     logOutZoomState = (event, gestureState, zoomableViewEventObject) => {    }
     sendMessage(messager) {
-        console.warn(messager)
+        console.warn(messager,"from message sender");
         if (messager) {
             GState.reply = null
             messager = { ...messager, received: [{ phone: this.props.user.phone, date: moment().format() }] }
-            this.fireRef.push(messager)
+            this.fireRef.push(messager).then(() => {
+                console.warn("message sucessfully sent")
+            })
             // !! update the latess message of the relation page
         }
     }
@@ -760,7 +763,7 @@ export default class ChatRoom extends Component {
             showCaption: false,
             showVideo: false
         })
-        this._textInput.focus()
+        this.fucussTextInput()
     }
     replaceMessage(newMessage) {
         this.room.replaceMessage(newMessage).then(() => {
@@ -913,7 +916,7 @@ export default class ChatRoom extends Component {
         GState.reply = null
         //!this.state.showEmojiInput ? 
         Keyboard.dismiss()
-        //: this._textInput.focus()
+        //: this.fucussTextInput()
         setTimeout(() => {
             this.setState({
                 showEmojiInput: !this.state.showEmojiInput,
@@ -958,7 +961,7 @@ export default class ChatRoom extends Component {
         })
     }
     replying(replyer, color) {
-        //this._textInput.focus()
+        // this.fucussTextInput()
         offset = this.state.replying ? 0.2 : 0
         this.setState({
             loaded: true,
@@ -968,7 +971,6 @@ export default class ChatRoom extends Component {
             photoHeight: screenheight * 0.80
         })
         this.adjutRoomDisplay()
-
     }
     options = ["Remove message", "Update message", "Seen by ...", "Copy to clipboard", "Cancel"]
     showActions(message) {
@@ -1128,15 +1130,15 @@ export default class ChatRoom extends Component {
                     this.initializeVotes(votes)
                 })}
                     replying={(reply) => {
+                        this.fucussTextInput()
                         this.replying(reply, null)
                         //Keyboard.show()
                         Vibration.vibrate(this.duration)
-                        this.setState({
-                            isVoteCreationModalOpened: false
-                        })
                         setTimeout(() => {
-                            this._textInput.focus()
-                        }, 200)
+                            this.setState({
+                                isVoteCreationModalOpened: false
+                            })
+                        },200)
                     }}
                     computedMaster={this.props.computedMaster}
                     takeVote={(vote => this.createVote(vote))}
@@ -1186,7 +1188,7 @@ export default class ChatRoom extends Component {
         return result
     }
     replaceVote(vote) {
-        this.room.removeMessage(this.perviousId).then(() => {
+        //this.room.removeMessage(this.perviousId).then(() => {
             this.room.messages.unshift(vote)
             this.room.replaceNewMessage(vote).then(() => {
                 this.sendMessage(vote)
@@ -1195,13 +1197,16 @@ export default class ChatRoom extends Component {
                     newMessage: true
                 })
             })
-        })
+      //  })
     }
     openVoteCreation() {
         this.setState({
             isVoteCreationModalOpened: true,
             single_vote: false
         })
+    }
+    fucussTextInput(){
+        this._textInput.focus()
     }
     delay = 1
     messageList() {
@@ -1244,7 +1249,7 @@ export default class ChatRoom extends Component {
                     replaceMessageVideo={(data) => this.replaceMessageVideo(data)}
                     showPhoto={(photo) => this.showPhoto(photo)}
                     replying={(replyer, color) => {
-                        this._textInput.focus()
+                        this.fucussTextInput()
                         this.replying(replyer, color)
                     }
                     }

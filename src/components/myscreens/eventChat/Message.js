@@ -26,6 +26,7 @@ import shadower from '../../shadower';
 import Voter from './Voter';
 import { find } from 'lodash';
 import { isEqual } from 'lodash';
+import formVoteOptions from '../../../services/formVoteOptions';
 
 export default class Message extends Component {
 
@@ -242,8 +243,7 @@ export default class Message extends Component {
                 this.props.replying({
                     id: vote.id,
                     type_extern: 'Votes',
-                    sourcer: this.voteCreator.profile,
-                    title: `${vote.title} : \n ${vote.description}`,
+                    title: `${vote.title} : \n ${vote.description} \n\n ${formVoteOptions(vote)}`,
                     replyer_phone: this.props.user.phone,
                 })
                 break;
@@ -252,6 +252,7 @@ export default class Message extends Component {
                 break
         }
     }
+
     prevVote = null
     shouldComponentUpdate(nextProps, nextState, nextContext) {
         peVote = this.prevVote ? JSON.parse(this.prevVote) : this.props.votes
