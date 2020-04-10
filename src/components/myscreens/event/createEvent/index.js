@@ -120,14 +120,14 @@ export default class CreateEventView extends Component {
     
       <View style={{flexDirection: "row",height: colorList.headerHeight,width: colorList.headerWidth,backgroundColor:colorList.headerBackground}}>
         
-        <View style={{flex:1,backgroundColor:colorList.headerBackground,flexDirection: "row", alignItems: "flex-end",justifyContent:"center"
+        <View style={{flex:1,backgroundColor:colorList.headerBackground,flexDirection: "row", alignItems: "flex-start",paddingLeft:"3%"
          }}>
-            <View>
+            <View style={{width:"10%",justifyContent:"center",height:"100%"}}>
              <Icon onPress={() => {this.props.navigation.navigate("Home")}}
-              style={{ color:colorList.headerIcon,marginLeft:"5%",marginRight:"5%"}} type={"MaterialIcons"}name={"arrow-back"}></Icon>
-           </View>
+              style={{ color:colorList.headerIcon}} type={"MaterialIcons"}name={"arrow-back"}></Icon>
+            </View>
 
-           <View style={{ alignSelf: "flex-start",justifyContent:"center",height:"98%",marginTop:"1%" }}>
+           <View style={{ justifyContent:"center",height:"100%",width:"37%" }}>
            <Title style={{color:colorList.headerText,fontSize:colorList.headerFontSize,fontWeight:colorList.headerFontweight ,
                                 
             }}>New Activity</Title>
@@ -137,14 +137,13 @@ export default class CreateEventView extends Component {
         
     </View>
 
-   <View style={{backgroundColor:"red"}}>
-
+   <View style={{}}>
+   <EventPhoto coverscreen event={this.state.currentEvent} isOpen={this.state.EventPhotoState} onsetImage={(background) => {
+        this.setState({currentEvent: {...this.state.currentEvent,background: background}}) }} 
+          onsetTitle={(title) => {this.state.currentEvent.about.title = title;
+          this.setState({currentEvent:this.state.currentEvent}) }} 
+          ref={"photo_ref"} /> 
    </View>
-
-
-
-
-
 
 
 

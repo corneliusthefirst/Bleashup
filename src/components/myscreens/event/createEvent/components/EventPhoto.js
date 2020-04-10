@@ -113,7 +113,7 @@ componentDidUpdate(prevProps,prevState){
                 position={'bottom'}
                 backButtonClose={true}
                 //backdropPressToClose={false}
-                coverScreen={true}
+                coverScreen={this.props.coversreen?false:true}
                 >
          <View style={{flex:1}}>
                  <View style={{justifyContent:'space-between',alignItem:'center'}}>
