@@ -38,7 +38,7 @@ export default class Votes extends Component {
     })
     emitter.on("vote-me", (index, message) => {
       let votex = find(this.state.votes, { id: message.vote.id })
-      this.votex(index, {vote:votex}, true)
+      this.votex(index, {...message,vote:votex}, true)
     }
     )
   }

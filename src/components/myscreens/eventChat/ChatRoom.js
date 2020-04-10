@@ -152,7 +152,7 @@ export default class ChatRoom extends Component {
                 this.room.messages[index] = { ...this.room.messages[index], key: newKey, sent: true, type: newMessage.type }
                 this.room.addNewMessage(newMessage, newKey, newMessage.type, true, true).then(() => {
                     firebase.database().ref(`${this.props.firebaseRoom}/${newKey}/received`).set(received)
-                    if (newMessage.sender.phone == this.props.user.phone) {
+                    if (newMessage.sender && newMessage.sender.phone == this.props.user.phone) {
                         console.warn("adding new_message"," with cloud functions")
                         //!! example of cloud functions calling . 
                         SendNotifications(this.props.user.name, newKey, newMessage.type, newMessage.text, this.props.firebaseRoom, this.props.user.phone, this.props.activity_name, this.props.activity_id, this.props.roomName, this.props.room_type).then(() => {
@@ -1205,11 +1205,10 @@ export default class ChatRoom extends Component {
                 this.delay = this.delay >= 20 || (item && !item.sent) ? 0 : this.delay + 1
                 return item ? <Message
                     voteItem={(index, vote) => {
-                        emitter.emit("vote-me", index, { ...item, vote: vote })
+                        emitter.emit("vote-me", index,vote)
                     }}
                     messagelayouts={this.messagelayouts}
                     setCurrentLayout={layout => {
-                        //console.warn("setting layout for " , item.id)
                         this.messagelayouts[item.id] = layout
                     }}
                     newCount={this.props.newMessages.length}

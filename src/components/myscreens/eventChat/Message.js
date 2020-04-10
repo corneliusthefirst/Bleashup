@@ -31,7 +31,7 @@ export default class Message extends Component {
 
     constructor(props) {
         super(props)
-        let isDiff = this.props.PreviousMessage && this.props.PreviousMessage.sender && this.props.PreviousMessage.sender.phone !== this.props.message.sender.phone
+        let isDiff = this.props.message.sender && this.props.PreviousMessage && this.props.PreviousMessage.sender && this.props.PreviousMessage.sender.phone !== this.props.message.sender.phone
         this.state = {
             showTime: false,
             disabledSwipeout: true,
@@ -40,12 +40,12 @@ export default class Message extends Component {
             sender_name: this.props.message &&
                 this.props.message.sender &&
                 this.props.message.sender.nickname,
-            sender: !(this.props.message.sender.phone == this.props.user),
+            sender: !(this.props.message.sender && this.props.message.sender.phone == this.props.user),
             different: isDiff,
             time: !isDiff && this.props.PreviousMessage &&
                 this.props.message &&
                 moment(this.props.message.created_at).format('X') - moment(this.props.PreviousMessage.created_at).format('X') < 60 ? "" : moment(this.props.message.created_at).format("HH:mm"),
-            creator: (this.props.message.sender.phone == this.props.creator),
+            creator: (this.props.message.sender && this.props.message.sender.phone == this.props.creator),
             replying: false,
             loaded: false
         }
@@ -121,7 +121,7 @@ export default class Message extends Component {
                 return <Voter computedMaster={this.props.computedMaster}
                     mention={() => this.handleReply()} takeCreator={(creator) => {
                         this.voteCreator = creator
-                    }} vote={this.props.voteItem}
+                    }} vote={(index,vote) => this.props.voteItem(index,this.props.message)}
                     pressingIn={() => {
                         this.replying = true
                     }}
