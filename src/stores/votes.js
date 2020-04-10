@@ -95,7 +95,7 @@ export default class votes {
                 Votes[voteIndex].option[optionIndex].vote_count =
                     Votes[voteIndex].option[optionIndex].vote_count + 1
                 Votes[voteIndex].voter = uniqBy([...Votes[voteIndex].voter ? Votes[voteIndex].voter : [],
-                { phone: voter, index: option }], ['phone'])
+                { phone: voter, index: option }], 'phone')
                 Votes[voteIndex].updated_at = moment().format()
                 storage.save({ ...this.saveKey, data: Votes }).then(() => {
                     this.votes = Votes

@@ -115,7 +115,7 @@ export default class Votes extends Component {
 
           }
           this.props.startLoader()
-          VoteRequest.vote(vote.event_id,
+         VoteRequest.vote(vote.event_id,
             vote.id, index).then((response) => {
               this.intializeVote()
               this.props.stopLoader()
@@ -126,7 +126,7 @@ export default class Votes extends Component {
                   option: vote.option.map(ele => {
                     return { ...ele, vote_count: ele.index === index ? ele.vote_count + 1 : ele.vote_count }
                   }),
-                  voter: uniqBy([...vote.voter ? vote.voter : [], { phone: stores.LoginStore.user.phone, index: index }], ["phone"])
+                  voter: uniqBy([...vote.voter ? vote.voter : [], { phone: stores.LoginStore.user.phone, index: index }], "phone")
                 }
               }
               //this.props.onClosed()
