@@ -1,7 +1,7 @@
 import storage from './Storage'
 import { orderBy, filter, reject, findIndex, uniqBy } from "lodash"
 import autobind from 'autobind-decorator'
-import moment, { months } from "moment";
+import moment from "moment";
 class ChatStore {
     constructor(key) {
 
@@ -11,9 +11,6 @@ class ChatStore {
 
         //})
         this.readFromStore().then(value => {
-            //value[0] = null 
-            //this.saveKey.data = value
-            //storage.save(this.saveKey).then(() => {})
             this.setProperties(value)
         })
 

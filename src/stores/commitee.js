@@ -164,11 +164,12 @@ export default class commitee {
         return new Promise((resolve, reject) => {
             this.readFromStore().then(commitees => {
                 let index = findIndex(commitees, { id: ID })
+                let previousCommittee = JSON.stringify(commitees[index])
                 commitees[index].name = name
                 commitees[index].updated_at = moment().format()
                 this.addToStore(commitees).then(() => {
                     this.setProperties()
-                    resolve(commitees[index])
+                    resolve(JSON.parse(previousCommittee))
                 })
             })
         })

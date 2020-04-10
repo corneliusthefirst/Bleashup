@@ -325,18 +325,6 @@ export default class ChatRoom extends Component {
                     })
                 }
             })
-            /* this.fireRef.endAt().limitToLast(1).once('value', snapshot => {
-                 //console.warn(snapshot)
-                 map(snapshot.val(), (ele, key) => {
-                     ele.received.unshift({ phone: this.props.user.phone, date: moment().format() })
-                     this.addNewMessage(ele, key)
-                 })
-                 setTimeout(() => {
-                     this.setState({
-                         newMessage: true
-                     })
-                 }, 1000)
-             })*/
             this.fireRef.on('child_removed', message => {
                 this.removeMessage(message)
             });
@@ -572,16 +560,7 @@ export default class ChatRoom extends Component {
             textValue: this.state.textValue + e
         })
     }
-    logOutZoomState = (event, gestureState, zoomableViewEventObject) => {
-        /*  console.log('');
-          console.log('');
-          console.log('-------------');
-          console.log('Event: ', event);
-          console.log('GestureState: ', gestureState);
-          console.log('ZoomableEventObject: ', zoomableViewEventObject);
-          console.log('');
-          console.log(`Zoomed from ${zoomableViewEventObject.lastZoomLevel} to  ${zoomableViewEventObject.zoomLevel}`);*/
-    }
+    logOutZoomState = (event, gestureState, zoomableViewEventObject) => {    }
     sendMessage(messager) {
         if (messager) {
             GState.reply = null
@@ -623,26 +602,12 @@ export default class ChatRoom extends Component {
                 this.setState({
                     newMessage: true
                 })
-                //if (GState.connected) {
-                //     this.sendMessage(messager)
-                // }
-                // this.initialzeFlatList()
-                // this.informMembers()
-                //console.warn("ok!!")
             })
             this._resetTextInput()
             this.setState({
                 textValue: '',
                 replying: false,
                 replyContent: null,
-                /*messageListHeight: this.state.keyboardOpened ? this.formHeight(this.messageListFactor - 0.01) :
-                    this.state.showEmojiInput ? this.formHeight(0.5) :
-                        this.formHeight(this.state.initialMessaListHeightFactor),
-                textInputHeight: this.state.keyboardOpened ? this.formHeight(this.textInputFactor + 0.01) :
-                    this.state.showEmojiInput ? this.formHeight(0.5) :
-                        this.formHeight(this.state.inittialTextInputHeightFactor),
-                textHeight: screenheight * 0.1,
-                photoHeight: screenheight * 0.9,*/
             })
         } else {
 
@@ -1249,8 +1214,6 @@ export default class ChatRoom extends Component {
             numberOfItems={this.room.messages.length}
             keyExtractor={(item, index) => item ? item.id : null}
             renderItem={(item, index) => {
-               //console.warn("item received",item.received,this.props.members,item.received.length >= this.props.members.length)
-
                 this.delay = this.delay >= 20 || (item && !item.sent) ? 0 : this.delay + 1
                 return item ? <Message
                     voteItem={(index, vote) => {
@@ -1261,7 +1224,7 @@ export default class ChatRoom extends Component {
                         //console.warn("setting layout for " , item.id)
                         this.messagelayouts[item.id] = layout
                     }}
-                    newCount={this.newMessages.length}
+                    newCount={this.props.newMessages.length}
                     index={index}
                     scrolling={this.scrolling}
                     computedMaster={this.props.computedMaster}
