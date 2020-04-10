@@ -50,9 +50,15 @@ export default class votes {
                     if (vote) {
                         resolve(vote)
                     } else {
-                        this.fetchVoteFromRemote(voteID).then((remoteVote) => {
-                            resolve(remoteVote)
-                        })
+                        if (voteID === request.Vote().id) {
+                            this.addVote(request.Vote()).then(() => {
+                                resolve(request.Vote())
+                            })
+                        } else {
+                            this.fetchVoteFromRemote(voteID).then((remoteVote) => {
+                                resolve(remoteVote)
+                            })
+                        }
                     }
                 } else {
                     this.fetchVoteFromRemote(voteID).then((remoteVote) => {
@@ -115,6 +121,7 @@ export default class votes {
         });
     }
     updateVoteTitle(NewVote, inform) {
+        console.warn(NewVote)
         return new Promise((resolve, reject) => {
             this.readFromStore().then(Votes => {
                 let index = findIndex(Votes, { id: NewVote.vote_id })

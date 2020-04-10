@@ -1168,7 +1168,7 @@ class UpdatesDispatcher {
             () => {
               stores.CommiteeStore.imIInThisCommttee(stores.LoginStore.user.phone,
                 vote.committee_id).then((state) => {
-                  if (sate || vote.published === 'public') {
+                  if (state || vote.published === 'public') {
                     let Change = {
                       id: uuid.v1(),
                       event_id: update.event_id,
@@ -1275,7 +1275,7 @@ class UpdatesDispatcher {
         stores.Votes.UpdateVotePeriod(update.new_value).then((vote) => {
           stores.CommiteeStore.imIInThisCommttee(stores.LoginStore.user.phone,
             vote.committee_id).then((state) => {
-              if (sate || votes.published === 'public') {
+              if (state || votes.published === 'public') {
                 let Change = {
                   id: uuid.v1(),
                   event_id: update.event_id,

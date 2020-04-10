@@ -562,6 +562,7 @@ export default class ChatRoom extends Component {
     }
     logOutZoomState = (event, gestureState, zoomableViewEventObject) => {    }
     sendMessage(messager) {
+        console.warn(messager)
         if (messager) {
             GState.reply = null
             messager = { ...messager, received: [{ phone: this.props.user.phone, date: moment().format() }] }
@@ -1186,7 +1187,7 @@ export default class ChatRoom extends Component {
     }
     replaceVote(vote) {
         this.room.removeMessage(this.perviousId).then(() => {
-            //this.room.messages.unshift(vote)
+            this.room.messages.unshift(vote)
             this.room.replaceNewMessage(vote).then(() => {
                 this.sendMessage(vote)
                 this.initialzeFlatList()
