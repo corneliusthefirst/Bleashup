@@ -97,7 +97,7 @@ open(url){
         isOpen={this.props.isOpen}
         onClosed={this.props.onClosed}
         style={{
-          height: 300, borderRadius: 10,
+          height: 290, borderRadius: 20,
           backgroundColor:colorList.bodyBackground, borderColor:'black', width: "75%", flexDirection: 'column', marginRight: "2%"
         }}
         position={'center'}
@@ -106,10 +106,10 @@ open(url){
         entry={'top'}
         coverScreen={true}
       >
-        <View style={{ flexDirection: "column", flex: 1, justifyContent: 'space-between', alignItem: 'center', margin: "3%" }}>
+        <View style={{ flexDirection: "column", flex: 1, justifyContent: 'space-between', alignItem: 'center', margin: "5%" }}>
           <View style={{ flexDirection: 'row', }}>
             <TouchableOpacity style={{ alignSelf: "flex-start", width: "100%" }} transparent>
-              <Icon style={{ fontSize: 20, fontWeight: "500" }} name={'close'} type={'EvilIcons'} onPress={() => { this.props.onClosed() }} ></Icon>
+              <Icon style={{ fontSize: 25, fontWeight: "500" }} name={'close'} type={'EvilIcons'} onPress={() => { this.props.onClosed() }} ></Icon>
             </TouchableOpacity>
 
             {/*<TouchableOpacity style={{ alignSelf: "flex-end", margin: "0%", }}>
@@ -122,7 +122,7 @@ open(url){
 
 
           </View>
-          <Text style={{ alignSelf: "center", color: "#1FABAB", fontSize: 18 }}>Some suggested free sites</Text>
+          <Text style={{ alignSelf: "center", color: "#1FABAB", fontSize: 15 }}>@Some suggested free sites</Text>
 
           <Button style={{ alignSelf: 'center', width: "80%", borderRadius: 15, borderColor: "#1FABAB", backgroundColor: "transparent", justifyContent: 'center', alignItem: 'center', marginTop: "5%" }}
             onPress={() => {
@@ -148,7 +148,7 @@ open(url){
           </Button>
 
           <TouchableOpacity>
-            <Text style={{ alignSelf: "flex-start", color: "darkturquoise", margin: "5%" }}
+            <Text style={{ alignSelf: "flex-start", color: "darkturquoise", margin: "5%",fontSize:16 }}
               onPress={() => {
                 this.open('https://www.google.com')
               }}>Others..</Text>
