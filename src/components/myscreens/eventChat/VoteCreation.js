@@ -64,7 +64,6 @@ export default class VoteCreation extends Component {
     }
     initializeVote() {
         stores.Votes.loadVote(request.Vote().id).then(vote => {
-            console.warn(vote, "voter vote")
             this.setState({
                 vote: !vote ? request.Vote() : vote
             })
@@ -161,18 +160,14 @@ export default class VoteCreation extends Component {
     }
     addVote() {
         let vote = this.state.vote
-        if(this.props.working){
-            if (vote.option.length <= 1) {
-                this.showVoteOptionError()
-            } else if (!vote.description && !vote.title) {
-                this.showVoteContentError()
-            } if (!vote.period) {
-                this.showMustSpecifyVotePeriodError()
-            } else {
-                this.props.takeVote({ ...vote, voter: [] })
-            }
-        }else{
-            this.props.sayAppBusy()
+        if (vote.option.length <= 1) {
+            this.showVoteOptionError()
+        } else if (!vote.description && !vote.title) {
+            this.showVoteContentError()
+        } if (!vote.period) {
+            this.showMustSpecifyVotePeriodError()
+        } else {
+            this.props.takeVote({ ...vote, voter: [] })
         }
     }
     changeAlwaysShowState() {
