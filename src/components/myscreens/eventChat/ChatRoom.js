@@ -1486,7 +1486,7 @@ export default class ChatRoom extends Component {
                         <Icon onPress={() => {
                             this.props.openMenu()
                         }}
-                            style={{ color: 'white',fontSize:35}}
+                            style={{ color:colorList.headerIcon,fontSize:35}}
                             type={"Ionicons"}
                             name={"ios-menu"}></Icon>
                       </View> 

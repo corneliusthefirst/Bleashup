@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import {
   Text, Icon, Header, Title, Spinner,
-  Button, Toast
+  Button, Toast,Thumbnail
 } from "native-base";
 
 import { StyleSheet, View, Image, TouchableOpacity, Dimensions, BackHandler } from 'react-native';
@@ -17,6 +17,7 @@ import request from "../../../../services/requestObjects";
 import stores from '../../../../stores/index';
 import CreateRequest from './CreateRequester';
 import  firebase  from 'react-native-firebase';
+import colorList from '../../../colorList';
 
 var uuid = require('react-native-uuid');
 uuid.v1({
@@ -27,15 +28,7 @@ uuid.v1({
 });
 
 
-var radio_props = [
-  { label: 'Add activity title', value: 0 },
-  { label: 'Add activity period', value: 1 },
-  { label: 'Add activity Photo', value: 2 },
-  { label: 'Add activity Description', value: 3 },
-  { label: 'Add activity Location', value: 4 },
-  { label: 'Add activity Hightlights', value: 5 }
 
-];
 
 let { height, width } = Dimensions.get('window');
 
@@ -103,7 +96,7 @@ export default class CreateEventView extends Component {
       let newEvent = event;
       newEvent.id = uuid.v1();
       CreateRequest.createEvent(newEvent).then((res) => {
-        console.warn(res)
+        //console.warn(res)
         stores.Events.delete("newEventId").then(() => {
           firebase.database().ref(`rooms/${res.id}/${res.id}`).set({ name: 'General', members: res.participant }).then(() => {
             this.setState({
@@ -123,7 +116,86 @@ export default class CreateEventView extends Component {
 
   render() {
     return (
+      <View style={{ flex:1, width: "100%" }}>
+    
+      <View style={{flexDirection: "row",height: colorList.headerHeight,width: colorList.headerWidth,backgroundColor:colorList.headerBackground}}>
+        
+        <View style={{flex:1,backgroundColor:colorList.headerBackground,flexDirection: "row", alignItems: "flex-end",justifyContent:"center"
+         }}>
+            <View>
+             <Icon onPress={() => {this.props.navigation.navigate("Home")}}
+              style={{ color:colorList.headerIcon,marginLeft:"5%",marginRight:"5%"}} type={"MaterialIcons"}name={"arrow-back"}></Icon>
+           </View>
 
+           <View style={{ alignSelf: "flex-start",justifyContent:"center",height:"98%",marginTop:"1%" }}>
+           <Title style={{color:colorList.headerText,fontSize:colorList.headerFontSize,fontWeight:colorList.headerFontweight ,
+                                
+            }}>New Activity</Title>
+           </View>
+
+        </View>
+        
+    </View>
+
+   <View style={{backgroundColor:"red"}}>
+
+   </View>
+
+
+
+
+
+
+
+
+
+</View>
+
+        
+    )
+  }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*   
+var radio_props = [
+  { label: 'Add activity title', value: 0 },
+  { label: 'Add activity period', value: 1 },
+  { label: 'Add activity Photo', value: 2 },
+  { label: 'Add activity Description', value: 3 },
+  { label: 'Add activity Location', value: 4 },
+  { label: 'Add activity Hightlights', value: 5 }
+
+];
+
+
+<TouchableOpacity style={{}} onPress={this.props.onClosed}>
+                        <Icon style={{ color: "#1FABAB", fontSize: 35 }} name="close" type="EvilIcons" />
+                    </TouchableOpacity>
+*/
+
+
+/**
+ * 
+      
       <View style={{ height: height, backgroundColor: "#FEFFDE" }}>
 
         <Header style={{ backgroundColor: "#FEFFDE", width: "100%", justifyContent: "flex-start" }}>
@@ -171,14 +243,98 @@ export default class CreateEventView extends Component {
               "radio-button-unchecked"} type={type = "MaterialIcons"}></Icon>
             <Text>{"Activity Location"}</Text>
           </Button>
-          {/*<Button transparent onPress={() => {
+        
+                  </View>
+
+
+                  <View style={{ alignSelf: 'flex-end' }}>
+                    <TouchableOpacity style={{ width: "35%", marginRight: "2%" }} >
+                      {this.state.creating ? <Spinner></Spinner> : <Button onPress={() => { this.creatEvent() }} rounded>
+                        <Text style={{ color: '#FEFFDE', fontWeight: 'bold', }}>Create</Text>
+                      </Button>}
+                    </TouchableOpacity>
+                  </View>
+          
+                  <EventTitle event={this.state.currentEvent} isOpen={this.state.EventTitleState} onClosed={(title) => {
+                    this.setState({
+                      EventTitleState: false,
+                      currentEvent: {
+                        ...this.state.currentEvent,
+                        about: { ...this.state.currentEvent.about, title: title }
+                      }
+                    });
+                  }} ref={"title_ref"} />
+          
+                  <EventPeriod event={this.state.currentEvent} isOpen={this.state.EventPeriodState} onClosed={(period) => {
+                    this.setState({
+                      EventPeriodState: false,
+                      currentEvent: { ...this.state.currentEvent, period: period }
+                    });
+                  }} ref={"period_ref"} />
+          
+          
+          
+                  <EventPhoto closeTemporarily={() => {
+                    this.setState({
+                      EventPhotoState: false,
+                    })
+                    setTimeout(() => {
+                      this.setState({
+                        EventPhotoState: true
+                      })
+                    }, 600)
+                  }}
+                    event={this.state.currentEvent} isOpen={this.state.EventPhotoState} onClosed={(background) => {
+                      this.setState({
+                        EventPhotoState: false,
+                        currentEvent: {
+                          ...this.state.currentEvent,
+                          background: background
+                        }
+                      }
+                      )
+                    }}
+                    ref={"photo_ref"} />
+          
+                  <EventDescription event={this.state.currentEvent} isOpen={this.state.EventDescriptionState}
+                    onClosed={(dec) => {
+                      this.setState({
+                        EventDescriptionState: false,
+                        currentEvent: {
+                          ...this.state.currentEvent,
+                          about: {
+                            ...this.state.currentEvent.about,
+                            description: dec
+                          }
+                        }
+                      })
+                    }}
+                    ref={"description_ref"} eventId={"newEventId"} updateDes={false} />
+          
+                  <EventLocation event={this.state.currentEvent} isOpen={this.state.EventLocationState} onClosed={(locat) => {
+                    this.setState({
+                      EventLocationState: false,
+                      currentEvent: {
+                        ...this.state.currentEvent,
+                        location: locat
+                      }
+                    })
+                  }}
+                    ref={"location_ref"} eventId={"newEventId"} updateLoc={false} />
+                </View>
+          
+ */
+
+   
+ 
+ /*<Button transparent onPress={() => {
              this.setState({ EventHighlightState: true })
            }}>
             <Icon name={this.state.currentEvent.highlights.length>0 ? "radio-button-checked" :
                "radio-button-unchecked"} type={type = "MaterialIcons"}></Icon>
              <Text>{"Activity Posts"}</Text>
-          </Button>*/}
-          {/*<RadioForm
+          </Button>*/
+          /*<RadioForm
                      radio_props={radio_props}
                      initial={0}
                      buttonColor={"#1FABAB"}
@@ -217,111 +373,4 @@ export default class CreateEventView extends Component {
                        }
                     }}
 
-                  />*/}
-        </View>
-
-
-        <View style={{ alignSelf: 'flex-end' }}>
-          <TouchableOpacity style={{ width: "35%", marginRight: "2%" }} >
-            {this.state.creating ? <Spinner></Spinner> : <Button onPress={() => { this.creatEvent() }} rounded>
-              <Text style={{ color: '#FEFFDE', fontWeight: 'bold', }}>Create</Text>
-            </Button>}
-          </TouchableOpacity>
-        </View>
-
-        <EventTitle event={this.state.currentEvent} isOpen={this.state.EventTitleState} onClosed={(title) => {
-          this.setState({
-            EventTitleState: false,
-            currentEvent: {
-              ...this.state.currentEvent,
-              about: { ...this.state.currentEvent.about, title: title }
-            }
-          });
-        }} ref={"title_ref"} />
-
-        <EventPeriod event={this.state.currentEvent} isOpen={this.state.EventPeriodState} onClosed={(period) => {
-          this.setState({
-            EventPeriodState: false,
-            currentEvent: { ...this.state.currentEvent, period: period }
-          });
-        }} ref={"period_ref"} />
-
-
-
-        <EventPhoto closeTemporarily={() => {
-          this.setState({
-            EventPhotoState: false,
-          })
-          setTimeout(() => {
-            this.setState({
-              EventPhotoState: true
-            })
-          }, 600)
-        }}
-          event={this.state.currentEvent} isOpen={this.state.EventPhotoState} onClosed={(background) => {
-            this.setState({
-              EventPhotoState: false,
-              currentEvent: {
-                ...this.state.currentEvent,
-                background: background
-              }
-            }
-            )
-          }}
-          ref={"photo_ref"} />
-
-        <EventDescription event={this.state.currentEvent} isOpen={this.state.EventDescriptionState}
-          onClosed={(dec) => {
-            this.setState({
-              EventDescriptionState: false,
-              currentEvent: {
-                ...this.state.currentEvent,
-                about: {
-                  ...this.state.currentEvent.about,
-                  description: dec
-                }
-              }
-            })
-          }}
-          ref={"description_ref"} eventId={"newEventId"} updateDes={false} />
-
-        <EventLocation event={this.state.currentEvent} isOpen={this.state.EventLocationState} onClosed={(locat) => {
-          this.setState({
-            EventLocationState: false,
-            currentEvent: {
-              ...this.state.currentEvent,
-              location: locat
-            }
-          })
-        }}
-          ref={"location_ref"} eventId={"newEventId"} updateLoc={false} />
-      </View>
-
-
-    )
-  }
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*                    <TouchableOpacity style={{}} onPress={this.props.onClosed}>
-                        <Icon style={{ color: "#1FABAB", fontSize: 35 }} name="close" type="EvilIcons" />
-                    </TouchableOpacity>
-*/
+                  />*/

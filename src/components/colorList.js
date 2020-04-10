@@ -12,8 +12,8 @@ containerWidth = width
 containerBackground = "#1FABAB"
 
 //header
- headerIcon = "white"
- headerText = "white"
+ headerIcon = "ivory"
+ headerText = "ivory"
  headerBlackText = "black"
  headerBackground = "#1FABAB"
  headerHeight = 50
