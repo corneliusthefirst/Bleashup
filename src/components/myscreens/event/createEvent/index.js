@@ -120,8 +120,13 @@ export default class CreateEventView extends Component {
     }
   }
 
+
+
+
+
   onChangedTitle = (value) => { 
-    this.setState({title:value});
+    this.state.currentEvent.title = value;
+    this.setState({title:value,currentEvent: this.state.currentEvent});
     stores.Events.updateTitle("newEventId",value,false).then(()=>{});
     
   }
@@ -136,6 +141,8 @@ export default class CreateEventView extends Component {
       })
       let exchanger = new FileExachange(res.source,'/Photo/',res.size,0,null,(newDir,path,total)=>{
         this.setState({ photo: path });
+        this.state.currentEvent.background = res.path;
+        this.setState({currentEvent: this.state.currentEvent});
         stores.Events.updateBackground("newEventId", path, false).then(() => {
           this.setState({
             uploading: false
@@ -156,6 +163,7 @@ export default class CreateEventView extends Component {
       exchanger.upload(0,res.size)
     });
 }
+
 resetPhoto = () => {
   let exchanger = new FileExachange()
   exchanger.deleteFile(this.state.photo)
@@ -175,6 +183,8 @@ resetPhoto = () => {
   }).then(response => {
     let res = head(response);     
     this.setState({photo: res.path});
+    this.state.currentEvent.background = res.path;
+    this.setState({currentEvent: this.state.currentEvent});
     stores.Events.updateBackground("newEventId",res.path,false).then(()=>{});
     resolve(res.path);
   });
@@ -230,7 +240,7 @@ resetPhoto = () => {
              </View>
 
 
-            <View style={{ height:colorList.containerHeight/4, flexDirection: 'column',justifyContent:'center',alignItem:'center'}}>
+            <View style={{ height:250, flexDirection: 'column',justifyContent:'center',alignItem:'center'}}>
                 <TouchableOpacity onPress={() => this.state.photo && testForURL(this.state.photo)?this.setState({ enlargeImage: true }):null} >
                     {this.state.photo && testForURL(this.state.photo)?<CacheImages thumbnails square  source={{uri:this.state.photo}}
                      style={{alignSelf:'center',height: "90%",width: "90%", borderRadius:10
@@ -239,7 +249,7 @@ resetPhoto = () => {
                   alignSelf: 'center', height: "90%", width: "80%", borderRadius: 5
                 }}></Thumbnail>}
                 </TouchableOpacity>
-                {this.state.photo?<View style={{position:'absolute',alignSelf: 'flex-end',marginBottom: '70%',marginRight: '5%',}}>
+                {this.state.photo?<View style={{position:'absolute',alignSelf: 'flex-end',marginBottom: '60%',marginRight: '10%',}}>
                 <TouchableOpacity onPress={() =>{
                   this.resetPhoto()
                 }}>
