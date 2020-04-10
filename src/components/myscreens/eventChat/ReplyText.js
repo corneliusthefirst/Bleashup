@@ -67,7 +67,7 @@ export default class ReplyText extends Component {
                                     name={this.props.reply.audio ? "audiotrack" : "file-document-box"} style={{ width: "14%", color: "#1FABAF" }}></Icon>
                                 {this.props.reply.type_extern && this.props.reply.audio ?
                                     <Text ellipsizeMode={'tail'} numberOfLines={4}
-                                        style={{ fontWeight: 'bold', fontSize: 12, color: "#A91A84", width: '83%' }}>
+                                        style={{ fontWeight: 'bold', fontSize: 12, color: "#1F4237", width: '83%' }}>
                                         {this.props.reply.replyer_name ? this.props.reply.title : this.props.reply.title.split(': \n')[1]}</Text>
                                     : <View style={{ marginTop: this.props.reply.audio ? "2%" : "0%", width: '83%' }}>{this.props.reply.audio ?
                                         <Text ellipsizeMode={'tail'} numberOfLines={1}>{(this.props.reply.url && this.props.reply.url.duration) || this.props.reply.duration ? converToHMS(this.props.reply.type_extern === 'Posts' ?
@@ -101,7 +101,7 @@ export default class ReplyText extends Component {
                                     width: this.props.reply.sourcer ? '76%' : '98%'
                                 }}>
                                     {this.props.reply.title ? <Text ellipsizeMode='tail' numberOfLines={this.props.reply.sourcer ?
-                                        this.props.reply.replyer_name ? 8 : 10 : 10} style={{ fontWeight: 'bold', fontSize: 12, color: "#A91A84", }}>{this.props.reply.replyer_name ? this.props.reply.title : this.props.reply.title.split(': \n')[1]}</Text>
+                                            this.props.reply.replyer_name ? 8 : 10 : 10} style={{ fontWeight: 'bold', fontSize: 12, color: "#1F4237", }}>{this.props.reply.replyer_name ? this.props.reply.title : this.props.reply.title.split(': \n')[1]}</Text>
                                         : this.props.reply.text ? <Text ellipsizeMode='tail' numberOfLines={this.props.reply.sourcer ?
                                             this.props.reply.replyer_name ? 7 : 8 : 8} style={{ color: "#81A8A0", fontSize: 12, }}>{this.props.reply.text}</Text> : null}
                                 </View>
