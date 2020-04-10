@@ -1,23 +1,32 @@
 import React, { Component } from "react";
 import {
   Text, Icon, Header, Title, Spinner,
-  Button, Toast,Thumbnail
+  Button, Toast,Thumbnail,Item,Input
 } from "native-base";
 
 import { StyleSheet, View, Image, TouchableOpacity, Dimensions, BackHandler } from 'react-native';
 import autobind from "autobind-decorator";
 import moment from "moment";
-import EventTitle from "./components/EventTitle"
-import EventPeriod from "./components/EventPeriod"
-import EventPhoto from "./components/EventPhoto"
-import EventLocation from "./components/EventLocation"
-import EventDescription from "./components/EventDescription"
 import { head, find, } from "lodash";
 import request from "../../../../services/requestObjects";
 import stores from '../../../../stores/index';
 import CreateRequest from './CreateRequester';
 import  firebase  from 'react-native-firebase';
 import colorList from '../../../colorList';
+
+//for photos
+import SearchImage from './components/SearchImage';
+import Pickers from '../../../../services/Picker';
+import FileExachange from '../../../../services/FileExchange';
+import testForURL from '../../../../services/testForURL';
+import PhotoViewer from '../PhotoViewer';
+import shadower from "../../../shadower";
+import CacheImages from '../../../CacheImages';
+
+
+
+
+
 
 var uuid = require('react-native-uuid');
 uuid.v1({
@@ -37,16 +46,13 @@ export default class CreateEventView extends Component {
     super(props)
 
     this.state = {
-      EventTitleState: false,
-      EventPeriodState: false,
-      EventPhotoState: false,
-      EventDescriptionState: false,
-      EventLocationState: false,
-      EventHighlightState: false,
       colorWhenChoosed: "#1FABAB",
       currentEvent: request.Event(),
-      participant: null
-
+      participant: null,
+      title:"",
+      photo:"",
+      DefaultPhoto:require('../../../../../assets/default_event_image.jpeg'),
+      searchImageState:false
     }
 
   }
@@ -65,24 +71,24 @@ export default class CreateEventView extends Component {
   componentDidMount() {
     stores.Events.readFromStore().then(Events => {
       let event = find(Events, { id: "newEventId" });
-      this.setState({ participant: head(event.participant), currentEvent: event })
-      /// TODO: please never remove the line below . it solves a bug which during erronous activity creation
-      this.setState({EventTitleState:true})
+      this.setState({ participant: head(event.participant), currentEvent: event ,
+      title:event.about.title,photo:event.background});
+      
     });
 
   }
 
-  @autobind
-  back() {
+  
+  back = ()=> {
     this.props.navigation.navigate('Home');
 
   }
-  navigateToActivity(event){
+  navigateToActivity = (event)=>{
     this.props.navigation.navigate('Event',{Event:event,tab:'EventDetails'})
   }
 
-  @autobind
-  creatEvent() {
+  
+  creatEvent = ()=> {
     if (!this.state.currentEvent.about.title) {
       Toast.show({ text: "The activity must have a name", duration: 4000 })
     } else {
@@ -114,6 +120,75 @@ export default class CreateEventView extends Component {
     }
   }
 
+  onChangedTitle = (value) => { 
+    this.setState({title:value});
+    stores.Events.updateTitle("newEventId",value,false).then(()=>{});
+    
+  }
+
+
+
+
+
+  //for photo
+  TakePhotoFromCamera = ()=>{    
+    Pickers.SnapPhoto(true).then(res => {
+      this.setState({
+        uploading:true
+      })
+      let exchanger = new FileExachange(res.source,'/Photo/',res.size,0,null,(newDir,path,total)=>{
+        this.setState({ photo: path });
+        stores.Events.updateBackground("newEventId", path, false).then(() => {
+          this.setState({
+            uploading: false
+          })
+         });
+      },() => {
+      Toast.show({text:'Unable To upload photo',position:'top'})
+      this.setState({
+        uploading:false
+      })
+      },(error) => {
+          Toast.show({ text: 'Unable To upload photo', position: 'top' })
+          this.setState({
+            uploading: false
+          })
+      },res.content_type,res.filename,'/photo')
+      this.state.photo?exchanger.deleteFile(this.state.photo):null
+      exchanger.upload(0,res.size)
+    });
+}
+resetPhoto = () => {
+  let exchanger = new FileExachange()
+  exchanger.deleteFile(this.state.photo)
+  stores.Events.updateBackground("newEventId",null).then(() =>{
+    this.setState({
+      photo:null
+    })
+  })
+}
+
+  TakePhotoFromLibrary = () => {
+  return new Promise((resolve, reject) => {
+
+  ImagePicker.openPicker({
+    cropping: true,
+    quality:"medium"
+  }).then(response => {
+    let res = head(response);     
+    this.setState({photo: res.path});
+    stores.Events.updateBackground("newEventId",res.path,false).then(()=>{});
+    resolve(res.path);
+  });
+
+  
+  })
+  
+}
+
+
+
+
   render() {
     return (
       <View style={{ flex:1, width: "100%" }}>
@@ -137,17 +212,75 @@ export default class CreateEventView extends Component {
         
     </View>
 
-   <View style={{}}>
-   <EventPhoto coverscreen event={this.state.currentEvent} isOpen={this.state.EventPhotoState} onsetImage={(background) => {
-        this.setState({currentEvent: {...this.state.currentEvent,background: background}}) }} 
-          onsetTitle={(title) => {this.state.currentEvent.about.title = title;
-          this.setState({currentEvent:this.state.currentEvent}) }} 
-          ref={"photo_ref"} /> 
-   </View>
+<View style={{height:"100%",flexDirection:"column"}}>
+
+     <View  style={{ height:colorList.containerHeight/9,alignItems:"center"}}>
+        
+          <Input  maxLength={40} placeholder='@Activity name' keyboardType='email-address' autoCapitalize="none" returnKeyType='next' inverse last
+           value={this.state.title}  style={{borderBottomWidth:1,borderColor:colorList.bodyIcon,width:"80%"}}    onChangeText={(value) => this.onChangedTitle(value)} />
+        
+     </View>
+
+
+             
+             
+
+             <View style={{ height:colorList.containerHeight/16,alignItems:"flex-end",flexDirection:"row",justifyContent:'flex-end',alignItem:'center',marginRight:"8%"}}>
+                
+                     <Icon name="camera" active={true} type="EvilIcons"
+                        style={{color:colorList.bodyIcon,fontSize:36}}   onPress={()=>{this.TakePhotoFromCamera()}}/>
+     
+                     <Icon name="download-outline" active={true} type="MaterialCommunityIcons"
+                        style={{color:colorList.bodyIcon}}  onPress={()=>{this.setState({ searchImageState:true})}}/>
+             </View>
+
+
+            <View style={{ height:colorList.containerHeight/4, flexDirection: 'column',justifyContent:'center',alignItem:'center'}}>
+                <TouchableOpacity onPress={() => this.state.photo && testForURL(this.state.photo)?this.setState({ enlargeImage: true }):null} >
+                    {this.state.photo && testForURL(this.state.photo)?<CacheImages thumbnails square  source={{uri:this.state.photo}}
+                     style={{alignSelf:'center',height: "90%",width: "90%", borderRadius:10
+              }} /> : <Thumbnail source={this.state.photo ? { uri: this.state.photo } : this.state.DefaultPhoto}
+                style={{
+                  alignSelf: 'center', height: "90%", width: "80%", borderRadius: 5
+                }}></Thumbnail>}
+                </TouchableOpacity>
+                {this.state.photo?<View style={{position:'absolute',alignSelf: 'flex-end',marginBottom: '70%',marginRight: '5%',}}>
+                <TouchableOpacity onPress={() =>{
+                  this.resetPhoto()
+                }}>
+                  <Icon name={'close'} type={'EvilIcons'} style={{color:'red'}}></Icon>
+                </TouchableOpacity>
+                </View>:null}
+                {this.state.uploading?<View style={{marginTop: "30%",marginLeft: "37%",position:'absolute'}}>
+                  <Spinner color={colorList.headerBackground}>
+                  </Spinner>
+                  </View>:null}
+            </View>
+
+             <View style={{height:"10%",width:"100%",alignItems:"flex-end",paddingRight: "10%"}}>
+                <TouchableOpacity style={{ width: "89%" }} >
+                  {this.state.creating ? <Spinner></Spinner> : <Button onPress={() => { this.creatEvent() }} style={{borderWidth:1,borderColor:colorList.bodyIcon,backgroundColor:colorList.bodyBackground,}} rounded>
+                   <View style={{width:"100%",alignItems:"center"}}>
+                   <Text style={{ color: colorList.bodyText, fontWeight: 'bold'}}>Create Activity</Text>
+                     </View> 
+                  </Button>}
+                </TouchableOpacity>
+              </View>
 
 
 
 
+
+
+             {this.state.enlargeImage?<PhotoViewer open={this.state.enlargeImage} 
+             hidePhoto={() => this.setState({ enlargeImage: false })}
+              photo={this.state.photo} />:null}
+             <SearchImage h_modal={true}  accessLibrary={()=>{this.TakePhotoFromCamera()}} isOpen={this.state.searchImageState} onClosed={(mother) => {
+               this.setState({ searchImageState: false })
+               }}  />
+  
+
+  </View>
 </View>
 
         
@@ -229,7 +362,7 @@ var radio_props = [
             <Text>{"Activity Description"}</Text>
           </Button>
           <Button transparent onPress={() => {
-            this.setState({ EventPhotoState: true })
+            this.setState({ photoState: true })
           }}>
             <Icon name={this.state.currentEvent.background ? "radio-button-checked" :
               "radio-button-unchecked"} type={type = "MaterialIcons"}></Icon>
@@ -273,19 +406,19 @@ var radio_props = [
           
           
           
-                  <EventPhoto closeTemporarily={() => {
+                  <photo closeTemporarily={() => {
                     this.setState({
-                      EventPhotoState: false,
+                      photoState: false,
                     })
                     setTimeout(() => {
                       this.setState({
-                        EventPhotoState: true
+                        photoState: true
                       })
                     }, 600)
                   }}
-                    event={this.state.currentEvent} isOpen={this.state.EventPhotoState} onClosed={(background) => {
+                    event={this.state.currentEvent} isOpen={this.state.photoState} onClosed={(background) => {
                       this.setState({
-                        EventPhotoState: false,
+                        photoState: false,
                         currentEvent: {
                           ...this.state.currentEvent,
                           background: background
@@ -351,7 +484,7 @@ var radio_props = [
                           this.setState({EventPeriodState:true})
                           break
                         case 2:
-                        this.setState({EventPhotoState:true})
+                        this.setState({photoState:true})
                         break
                         case 3:
                         this.setState({EventDescriptionState:true})

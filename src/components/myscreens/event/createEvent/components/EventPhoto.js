@@ -28,7 +28,7 @@ export default class EventPhoto extends Component {
         this.state={
           enlargeImage:false,
           EventPhoto:"",
-          DefaultPhoto:require('../../../../../../Images/eventphoto.jpg'),
+          DefaultPhoto:require('../../../../../../assets/default_event_image.jpeg'),
           searchImageState:false
         }
 
@@ -113,7 +113,7 @@ componentDidUpdate(prevProps,prevState){
                 position={'bottom'}
                 backButtonClose={true}
                 //backdropPressToClose={false}
-                coverScreen={this.props.coversreen?false:true}
+                coverScreen={true}
                 >
          <View style={{flex:1}}>
                  <View style={{justifyContent:'space-between',alignItem:'center'}}>
