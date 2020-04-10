@@ -423,8 +423,9 @@ const styles = StyleSheet.create({
         backgroundColor: defaultDotColor
     },
     title: {
-        fontSize: 16,
-        fontWeight: "800"
+        fontSize: 14,
+        fontWeight: "500",
+        marginLeft:4
     },
     details: {
         borderLeftWidth: defaultLineWidth,

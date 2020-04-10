@@ -23,6 +23,7 @@ export default class SearchView extends Component {
     }
 
 componentDidMount(){
+   console.warn(stores.Events.searchdata)
    this.setState({data:stores.Events.searchdata});
 }
 

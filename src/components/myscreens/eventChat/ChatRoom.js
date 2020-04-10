@@ -1121,7 +1121,7 @@ export default class ChatRoom extends Component {
 
                     {
                         // **********************New Message Indicator *****************//
-                        this.newMessages.length > 0 ? this.newMessageIndicator() : null
+                       // this.newMessages.length > 0 ? this.newMessageIndicator() : null
 
                     }
                     {
@@ -1365,12 +1365,12 @@ export default class ChatRoom extends Component {
                             value={this.state.textValue}
                             onChange={(event) => this._onChange(event)}
                             placeholder={'Your Message'}
-                            style={{ width: '80%', maxHeight: 200, minHeight: 45 }}
+                            style={{ width: '84%', maxHeight: 200, minHeight: 45,marginLeft:"3%" }}
                             placeholderTextColor='#66737C'
                             multiline={true}
                             enableScrollToCaret
                             ref={(r) => { this._textInput = r; }} />
-                    <View style={{flex:1, width: '20%', position:"absolute",bottom:0,right:0}}><Icon onPress={() => {
+                    <View style={{flex:1, width: '16%', position:"absolute",bottom:0,right:0}}><Icon onPress={() => {
                         this.toggleEmojiKeyboard();
                         this.markAsRead();
                     }} style={{ color: "gray",marginBottom:11 }}

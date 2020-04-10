@@ -40,7 +40,7 @@ import Event from "./components/myscreens/event";
 import Contributions from "./components/myscreens/contributions";
 import Votes from "./components/myscreens/votes";
 import Highlights from "./components/myscreens/highlights";
-import ChangeLogs from "./components/myscreens/changelogs";
+import ChangeLogs from "./components/myscreens/changelogs/index";
 import EventDetail from "./components/myscreens/eventDetails";
 import EventChat from "./components/myscreens/eventDetails";
 import Reminds from "./components/myscreens/reminds/index";
@@ -100,7 +100,7 @@ const AppNavigator = createStackNavigator(
 
   },
   {
-    initialRouteName: "Home",
+    initialRouteName: "LoginHome",
     headerMode: "none"
   }
 );

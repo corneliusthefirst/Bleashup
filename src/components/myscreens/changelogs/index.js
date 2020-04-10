@@ -70,9 +70,11 @@ export default class ChangeLogs extends Component {
       },)
     })
   }
+
+  /*
   @autobind goBack() {
     this.props.navigation.goBack()
-  }
+  }*/
 
   renderDetail(item, sectionID, rowID) {
     return (<View><Text>{item.changed}</Text></View>)
@@ -123,7 +125,7 @@ export default class ChangeLogs extends Component {
               <View style={{flex:1,paddingLeft: '1%', paddingRight: '1%',backgroundColor:colorList.headerBackground,
                  flexDirection: "row", alignItems: "center"}}>
                     <View style={{width:"10%",paddingLeft:"1%"}} >
-                     <Icon onPress={() => {this.props.navigation.navigate("Home")}}
+                     <Icon onPress={() => {this.props.navigatePage("Home")}}
                       style={{ color:colorList.headerIcon}} type={"MaterialIcons"}name={"arrow-back"}></Icon>
                    </View>
                    <View style={{ width: '70%', paddingLeft: '2%',justifyContent:"center" }}>

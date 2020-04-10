@@ -29,7 +29,10 @@ export default class events {
     console.warn("constructor called")
 
     this.readFromStore().then(Events => {
-      //console.warn("here1")
+        this.createSearchdata(Events).then((array)=>{
+          this.searchdata = array;
+        })
+
       let i = 0
       forEach(Events, (Event) => {
         //console.warn("here2")
@@ -42,11 +45,7 @@ export default class events {
         i++
       })
 
-      //console.warn("here3")
-      this.createSearchdata(Events).then((array)=>{
-          this.searchdata = array;
-          //console.warn("here4",this.searchdata);
-      })
+
 
     });
   }
@@ -72,25 +71,26 @@ export default class events {
     return new Promise((resolve, reject) => {
         
         Events.forEach((event)=>{
-          //console.warn("event is",event);
-           if(event.type && event.type == "relation"){
-                           //console.warn("here6")
-                  event.participant.forEach((participant)=>{
-                   if( participant.phone != stores.LoginStore.user.phone){
-                      stores.TemporalUsersStore.getUser(participant.phone).then((user)=>{
-                       obj = {id:event.id,name:user.name,image:user.profile,type:"relation"}
-                       this.array.unshift(obj);
-                     })   
-                   }
-                })
-               }else{
-                //console.warn("here5")
-                obj = {id:event.id,name:event.about.title,image:event.background,type:"activity"}
-                this.array.unshift(obj);
+          if(event.type){
+          if(event.type == "relation"){
+                 event.participant.forEach((participant)=>{
+                  if( participant.phone != stores.LoginStore.user.phone){
+                     stores.TemporalUsersStore.getUser(participant.phone).then((user)=>{
+                      obj = {id:event.id,name:user.name,image:user.profile,type:"relation"}
+                      this.array.unshift(obj);
+                    })   
+                  }
+               })
+              }else{
+               obj = {id:event.id,name:event.about.title,image:event.background,type:"activity"}
+               this.array.unshift(obj);
 
            }
+          }
+
         })
          resolve(this.array);
+         this.array = []
     })
 
   }

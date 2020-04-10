@@ -8,6 +8,9 @@ import shadower from "../../shadower";
 import ChangeBoxMenu from "./ChangeBoxMenu";
 import ProfileSimple from "../currentevents/components/ProfileViewSimple";
 import GState from '../../../stores/globalState/index';
+import colorList from '../../colorList';
+
+
 export default class ChangeBox extends Component {
     constructor(props) {
         super(props)
@@ -35,7 +38,7 @@ export default class ChangeBox extends Component {
                 })
         }, 60 * this.props.delayer)
     }
-    containerStyle = { margin: '2%', borderRadius: 6, backgroundColor: "#9EEDD3", ...shadower(4), height: 125 }
+    containerStyle = { margin: '2%', borderRadius: 3, backgroundColor: colorList.bodyBackground, ...shadower(3), height: 125 }
     render() {
         return (!this.state.loaded ? <View style={{ ...this.containerStyle, width: '95%', height: 120 }}></View> :
             <View>
@@ -62,7 +65,7 @@ export default class ChangeBox extends Component {
                                         replyer_name: this.state.changer.nickname
 
                                     })
-                                }} style={{ color: '#555756' }} type="Entypo" name="reply"></Icon></View>
+                                }} style={{ color: '#555756'}} type="Entypo" name="reply"></Icon></View>
                                 <View>{!this.props.replying ? <ChangeBoxMenu
                                     master={this.props.master}
                                     change={this.props.change}
@@ -82,10 +85,10 @@ export default class ChangeBox extends Component {
                             flexDirection: 'column',
                         }}>
                             <View style={{ flexDirection: 'row', }}>
-                                <Text ellipsizeMode='tail' style={{ fontSize: 16, fontWeight: 'bold', color: '#555756' }}
+                                <Text ellipsizeMode='tail' style={{ fontSize: 14, fontWeight: "800", color:colorList.bodyText }}
                                     numberOfLines={2}>{this.props.change.changed}</Text>
                             </View>
-                            <Text ellipsizeMode='tail' style={{ fontSize: 14, color: '#555756', fontStyle: 'italic', }}
+                            <Text ellipsizeMode='tail' style={{ fontSize: 13, color: '#555756', fontStyle: 'italic', }}
                                 numberOfLines={1}>{typeof this.props.change.new_value.new_value === "string"
                                     && !testForURL(this.props.change.new_value.new_value, true) ? this.props.change.new_value.new_value : ""}</Text>
                         </View>

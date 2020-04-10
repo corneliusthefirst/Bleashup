@@ -259,7 +259,8 @@ export default class Event extends Component {
           isM={this.state.isMe}
           activeMember={this.state.activeMember}
           forMember={this.state.forMember}
-          event_id={this.event.id}></ChangeLogs>
+          event_id={this.event.id} 
+          navigatePage={(page)=>{this.props.navigation.navigate(page)}}></ChangeLogs>
 
     }
   }
