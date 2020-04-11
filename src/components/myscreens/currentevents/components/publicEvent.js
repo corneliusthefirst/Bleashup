@@ -353,12 +353,13 @@ class PublicEvent extends Component {
       }}
       cardBody
     >
-      <View style={{ flex:1,flexDirection: 'row',alignItems:"center" }}>
-        <View style={{ flex:1,width:colorList.containerWidth,alignSelf:"flex-start" }}>{this.state.isMount ? <View style={{ alignSelf: 'flex-start' }}>
+      <View style={{ }}>
+        <View style={{ flex:1,width:colorList.containerWidth,alignSelf:"center",alignItems: 'center', }}>{this.state.isMount ? <View style={{ alignSelf: 'flex-start' }}>
           <PhotoView
             navigation={this.props.navigation} renderDelay={this.props.renderDelay} showPhoto={(url) => url ?
               this.showPhoto(url) : null} joined={() => this.join()}
-            isToBeJoint hasJoin={this.props.Event.joint || this.state.joint} onOpen={() => this.onOpenPhotoModal()} style={{}} photo={this.props.Event.background} event_id={this.props.Event.id} width={355} height={198} borderRadius={0} />
+            isToBeJoint hasJoin={this.props.Event.joint || this.state.joint} onOpen={() => this.onOpenPhotoModal()} style={{}} photo={this.props.Event.background}
+             event_id={this.props.Event.id} width={width-2} height={200} borderRadius={0} />
         </View> : null}</View>
       </View>
     </CardItem>)
@@ -396,7 +397,7 @@ renderFooter(){
   render() {
     //emitter.emit('notify', "santerss") 
     return (this.state.isMount ? <View style={{backgroundColor:colorList.bodyBackground,
-      width: colorList.containerWidth,alignSelf:"center" }}>
+      width: colorList.containerWidth,alignSelf:"flex-start" }}>
       <Swipeout {...this.props} onOpen={() => this.openSwipeOut()} onClose={() => this.onCloseSwipeout()} style={{
         width: "100%", ...shadower(1),
         backgroundColor: this.props.Event.new ? "#cdfcfc" : null

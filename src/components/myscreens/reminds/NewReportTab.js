@@ -41,20 +41,20 @@ export default class ReportTabModal extends PureComponent {
                     }, 20)
                 }}
                 style={{
-                    height: screenheight * .95,
+                    height: screenheight * .93,
                     borderTopLeftRadius: 5, borderTopRightRadius: 5,
-                    backgroundColor: '#FEFFDE', width: "100%"
+                     width: "100%"
                 }}
             >
                 <Container style={{ margin: "1%" }}>
-                    <Text style={{ margin: '1%', color:'#A91A84',fontWeight:'bold'}} note>report</Text>
+                    <Text style={{ margin: '1%', color:'#1F4237',fontWeight:'bold'}} note>report</Text>
                     <Tabs tabContainerStyle={{ borderRadius: 8, ...shadower(6) }}>
                         <Tab heading={
                             <TabHeading>
                                 <Text>Members</Text>
                             </TabHeading>
                         }>
-                            <View style={{ backgroundColor: '#FEFFDE', height:'100%'}}>
+                            <View style={{  height:'100%'}}>
                                 <ConcerneeList
                                     contacts={this.props.concernees}
                                     complexReport={false}
@@ -70,7 +70,7 @@ export default class ReportTabModal extends PureComponent {
                                 <Text>Done</Text>
                             </TabHeading>
                         }>
-                            <View style={{ backgroundColor: '#FEFFDE',height:'100%' }}>
+                            <View style={{ height:'100%' }}>
                             <DonnersList
                             donners={this.props.donners}
                             master={this.props.master}
@@ -85,7 +85,7 @@ export default class ReportTabModal extends PureComponent {
                                 <Text>Confirmed</Text>
                             </TabHeading>
                         }>
-                            <View style={{ backgroundColor: '#FEFFDE', height: '100%' }}>
+                            <View style={{  height: '100%' }}>
                                 <ConcerneeList
                                     master={this.props.master}
                                     contacts={this.props.confirmed}

@@ -149,7 +149,7 @@ export default class CurrentEvents extends Component {
 
         StatusBar.setHidden(false, true)
         return (
-            <View style={{ height: "100%",backgroundColor: '#FEFFDE',  }}>
+            <View style={{ height: "100%",  }}>
                 <BleashupFlatList
                 //backgroundColor={"white"} 
                     keyExtractor={(item, index) => item.id}

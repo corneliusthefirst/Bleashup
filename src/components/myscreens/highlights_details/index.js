@@ -14,6 +14,7 @@ import uuid from 'react-native-uuid';
 import ChatStore from '../../../stores/ChatStore';
 import shadower from '../../shadower';
 import { ScrollView, TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import ColorList from '../../colorList';
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenheight = Math.round(Dimensions.get('window').height);
 export default class HighLightsDetails extends Component {
@@ -234,15 +235,15 @@ export default class HighLightsDetails extends Component {
                     </View>
 
                     <View style={{
-                        position: 'absolute', backgroundColor: '#FEFEDE', width: '15%', ...shadower(8),
+                        position: 'absolute', width: '15%', ...shadower(8),
                         height: 30, opacity: 0.7, alignSelf: 'flex-end', marginTop: '2%',
-                        borderBottomLeftRadius: 8, borderTopLeftRadius: 8, borderRightWidth: 0,
+                        borderBottomLeftRadius: 8, borderTopLeftRadius: 8, backgroundColor: ColorList.bodyBackground, borderRightWidth: 0,
                         flexDirection: 'row',
                     }}>
                         <Text style={{ fontSize: 18, fontStyle: 'italic', marginBottom: "13%", fontWeight: 'bold', alignSelf: 'flex-end', marginLeft: '7%', width: '100%' }}>{"Posts"} </Text>
                     </View>
                     <View style={{
-                        position: 'absolute', backgroundColor: '#FEFEDE', width: '10%', ...shadower(8),
+                        position: 'absolute', backgroundColor: ColorList.bodyBackground, width: '10%', ...shadower(8),
                         height: 30, opacity: 0.7, alignSelf: 'flex-start', marginTop: '2%',
                         borderBottomRightRadius: 8, borderTopRightRadius: 8, borderRightWidth: 0,
                         flexDirection: 'row',

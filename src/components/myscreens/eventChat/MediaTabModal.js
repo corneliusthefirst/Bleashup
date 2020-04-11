@@ -43,7 +43,7 @@ export default class MediaTabModal extends PureComponent {
                 }}
                 style={{
                     height: screenheight*.95,
-                    borderTopLeftRadius: 5, borderTopRightRadius: 5, backgroundColor: '#FEFFDE', width: "100%"
+                    borderTopLeftRadius: 5, borderTopRightRadius: 5,  width: "100%"
                 }}
             >
                 <Container style={{ margin: "1%" }}>
@@ -53,7 +53,7 @@ export default class MediaTabModal extends PureComponent {
                                 <Text>Photos</Text>
                             </TabHeading>
                         }>
-                            <View style={{ backgroundColor: '#FEFFDE',height:'100%' }}>
+                            <View style={{ height:'100%' }}>
                             <Photo photo={this.props.photo}></Photo>
                             </View>
                         </Tab>
@@ -64,7 +64,7 @@ export default class MediaTabModal extends PureComponent {
                                 <Text>Videos</Text>
                             </TabHeading>
                         }>
-                            <View style={{ backgroundColor: '#FEFFDE',height:'100%' }}>
+                            <View style={{ height:'100%' }}>
                             <Video video={this.props.video}></Video>
                             </View>
                         </Tab>
@@ -73,7 +73,7 @@ export default class MediaTabModal extends PureComponent {
                                 <Text>Files</Text>
                             </TabHeading>
                         }>
-                            <View style={{ backgroundColor: '#FEFFDE',height:'100%' }}>
+                            <View style={{ height:'100%' }}>
                             <File file={this.props.file}></File>
                             </View></Tab>
                     </Tabs>:<Spinner size={'small'}></Spinner>}

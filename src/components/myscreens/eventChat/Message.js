@@ -303,7 +303,7 @@ export default class Message extends Component {
             marginBottom: this.props.index <= 0 ? '2%' : 0,
             alignSelf: this.isVote() ? "center" : this.state.sender ? 'flex-start' : 'flex-end',
         }
-        let color = this.isVote() ? "#FEFFDE" : this.state.sender ? '#D0FEEB' : '#9EEDD3'
+        let color = this.isVote() ? null : this.state.sender ? '#D0FEEB' : '#9EEDD3'
         GeneralMessageBoxStyle = {
             maxWidth: this.isVote() ? "96%" : 300, flexDirection: 'column', minWidth: 120,
             minHeight: 20, overflow: 'hidden', borderBottomLeftRadius: 10, borderColor: color,

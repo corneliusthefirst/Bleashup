@@ -210,7 +210,6 @@ export default class Votes extends Component {
       style={{
         height: height*.93,
         width: "100%",
-        // backgroundColor: "#FEFFDE",
       }}
     ><View>
         <View style={{ height: '7%', width: '100%' }}>
@@ -231,7 +230,7 @@ export default class Votes extends Component {
               renderItem={(item, index) => {
                 this.delay = index % this.renderPerbatch == 0 ? 0 : this.delay + 1
                 return <View key={index.toString()} style={{
-                  borderRadius: 5, backgroundColor: '#FEFFDE',
+                  borderRadius: 5,
                   margin: '2%',
                   ...shadower(1)
                 }}>

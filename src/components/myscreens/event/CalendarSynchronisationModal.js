@@ -27,7 +27,7 @@ export default class CalendarSynchronisationModal extends Component {
                     height: 160,
                     borderBottomLeftRadius: 8,
                     borderBottomRightRadius: 8,
-                    backgroundColor: '#FEFFDE', width: "70%"
+                     width: "70%"
                 }}
             >
                 <Content showsVerticalScrollIndicator={false} style={{

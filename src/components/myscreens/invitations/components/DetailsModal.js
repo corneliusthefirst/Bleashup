@@ -145,7 +145,7 @@ export default class DetailsModal extends Component {
                     borderRadius: 8,
                     borderTopLeftRadius: 0,
                     borderTopRightRadius: 0,
-                    backgroundColor: '#FEFFDE',
+                    
                 }}
                 onOpened={() => {
                     setTimeout(() =>

@@ -27,6 +27,7 @@ import { RNFFmpeg } from 'react-native-ffmpeg';
 import shadower from '../../../../shadower';
 import Requester from '../../Requester';
 import buttoner from "../../../../../services/buttoner";
+import ColorList from '../../../../colorList';
 
 //create an extension to toast so that it can work in my modal
 
@@ -560,7 +561,7 @@ export default class EventHighlights extends Component {
       }}
       style={{
         height: this.props.event_id ? "95%" : "100%", width: "100%", borderTopLeftRadius: 10, borderTopRightRadius: 10,
-        backgroundColor: "#FEFFDE", borderColor: 'black', flexDirection: 'column'
+        backgroundColor: ColorList.bodyBackground, borderColor: 'black', flexDirection: 'column'
       }}
       backButtonClose={true}
       coverScreen={true}
@@ -755,13 +756,13 @@ export default class EventHighlights extends Component {
                   {!this.props.updateState ? this.state.creating ? <Spinner></Spinner> :
                     <View style={{ alignSelf: 'flex-end', }}>
                       <Button onPress={() => { this.AddHighlight() }} rounded>
-                        <Text style={{ color: "#FEFFDE", fontWeight: 'bold', }}>{"Ok"}</Text>
+                          <Text style={{ color: ColorList.headerText, fontWeight: 'bold', }}>{"Ok"}</Text>
                       </Button>
                     </View> :
                     <View style={{ alignSelf: 'flex-end' }}>
                       <Button
                         onPress={() => { this.updateHighlight() }} rounded>
-                        <Text style={{ color: "#FEFFDE", fontWeight: 'bold', }}>{"Update"}</Text>
+                          <Text style={{ color: ColorList.headerText, fontWeight: 'bold', }}>{"Update"}</Text>
                       </Button>
                     </View>}
                 </View>

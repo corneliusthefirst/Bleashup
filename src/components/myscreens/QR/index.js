@@ -59,7 +59,7 @@ export default class QRScanner extends Component {
         this.props.navigation.goBack()
     }
     render() {
-        return <View style={{ height: '100%', backgroundColor: '#FEFFDE', }}>
+        return <View style={{ height: '100%',  }}>
             <QRCodeScanner
                 ref={(node) => { this.scanner = node }}
                 showMarker={true}

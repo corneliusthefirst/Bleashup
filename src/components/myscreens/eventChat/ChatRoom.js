@@ -209,7 +209,7 @@ export default class ChatRoom extends Component {
         })
     }
     toastStyle = {
-        backgroundColor: '#FEFFDE',
+        
         marginTop: "-10%",
         paddingTop: "3%",
     }
@@ -1065,7 +1065,7 @@ export default class ChatRoom extends Component {
             <View style={{ height: "90%"}}>
                 <StatusBar animated={true} hidden={this.state.hideStatusBar} barStyle="dark-content" backgroundColor={colorList.headerBackground}></StatusBar>
                 {!this.state.loaded ? <Waiter></Waiter> : <View style={{}}><View style={{ width: "100%", alignSelf: 'center', }}>
-                    <ScrollView keyboardShouldPersistTaps={"always"} showsVerticalScrollIndicator={false} scrollEnabled={false} inverted nestedScrollEnabled
+                        <ScrollView inverted={true} keyboardShouldPersistTaps={"always"} showsVerticalScrollIndicator={false} scrollEnabled={false} inverted nestedScrollEnabled
                         ref="scrollViewRef">
                         <View style={{ height: this.state.messageListHeight, marginBottom: "0.5%" }}>
                             <TouchableWithoutFeedback onPressIn={() => {
@@ -1508,7 +1508,7 @@ export default class ChatRoom extends Component {
             position: 'absolute', height: 40,
             marginTop: '5%', alignSelf: 'center'
         }}>
-            <View style={{ alignSelf: 'center', backgroundColor: '#FEFFDE', borderRadius: 10, margin: '2%', display: 'flex', flexDirection: 'row', }}>
+            <View style={{ alignSelf: 'center',  borderRadius: 10, margin: '2%', display: 'flex', flexDirection: 'row', }}>
                 <Text style={{ fontSize: 19, fontWeight: 'bold', color: "#00BE71" }}>{this.props.newMessages.length}{" new messages"}</Text>
                 <Icon type="EvilIcons" style={{ color: "#00BE71", marginTop: '3%', fontSize: 19 }} name="arrow-up"></Icon>
             </View>

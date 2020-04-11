@@ -4,6 +4,7 @@ import Modal from "react-native-modalbox"
 import { ScrollView } from 'react-native-gesture-handler';
 import moment from 'moment';
 import { Root } from 'native-base';
+import ColorList from '../../colorList';
 
 export default class RemindReportContent extends PureComponent {
     constructor(props) {
@@ -38,7 +39,7 @@ export default class RemindReportContent extends PureComponent {
                 }}
                 style={{
                     height: "50%",
-                    borderRadius: 8, backgroundColor: '#FEFFDE', width: "75%"
+                    borderRadius: 8, width: "75%"
                 }}
             >
                 <Root>
@@ -51,7 +52,7 @@ export default class RemindReportContent extends PureComponent {
                                     this.props.confirm()
                                     this.props.closed()
                                 }}>
-                                    <Icon style={{ color: '#FEFFDE', fontSize: 18 }} type="AntDesign" name="checkcircle"></Icon>
+                                    <Icon style={{ color: ColorList.headerIcon, fontSize: 18 }} type="AntDesign" name="checkcircle"></Icon>
                                 </Button>
                             </View> : null}
                         </View>

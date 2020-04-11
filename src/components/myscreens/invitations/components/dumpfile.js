@@ -48,7 +48,7 @@ export default class DetailsModal extends Component {
                 isOpen={this.props.isOpen}
                 onClosed={this.props.onClosed}
                 style={{
-                     height:this.props.accept||this.props.deny ? "95%": "98%",width:"98%", flexDirection: 'column',borderRadius: 8, backgroundColor: '#FEFFDE',marginTop:-5 }}
+                     height:this.props.accept||this.props.deny ? "95%": "98%",width:"98%", flexDirection: 'column',borderRadius: 8, marginTop:-5 }}
                 
             >
                 
@@ -205,7 +205,7 @@ export default class DetailModal extends Component {
                 isOpen={this.props.isOpen}
                 onClosed={this.props.onClosed}
                 style={{
-                     height:this.props.accept||this.props.deny ? "95%": "98%",width:"98%", flexDirection: 'column',borderRadius: 8, backgroundColor: '#FEFFDE',marginTop:-5 }}
+                     height:this.props.accept||this.props.deny ? "95%": "98%",width:"98%", flexDirection: 'column',borderRadius: 8, marginTop:-5 }}
                 
             >
                 

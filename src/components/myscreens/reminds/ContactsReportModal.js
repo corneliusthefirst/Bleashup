@@ -50,7 +50,7 @@ export default class ContactsReportModal extends PureComponent {
                 }}
                 style={{
                     height: "97%",
-                    borderRadius: 8, backgroundColor: '#FEFFDE', width: "100%"
+                    borderRadius: 8,  width: "100%"
                 }}>
                 {this.state.loaded ? <View>
                     <View style={{ width: "95%", margin: 4, height: '5%', flexDirection: 'row', }}>

@@ -61,7 +61,8 @@ export default class ProfileView extends Component {
                         color: "#0A4E52",
                         fontWeight: 'bold',
                     }}>{this.state.profile.phone === stores.LoginStore.user.phone ? "You" : this.state.profile.nickname}</Text>
-                   <Text ellipsizeMode={'tail'} numberOfLines={1} style={{ marginLeft: "2%", fontStyle: 'italic', }} note>{this.state.profile.status}</Text>
+                    <Text ellipsizeMode={'tail'} numberOfLines={1} style={{ alignSelf: 'flex-start',  fontStyle: 'italic', }} 
+                   note>{this.state.profile.status && this.state.profile.status !== 'undefined'  && this.state.profile.status}</Text>
                 </View>
                 {this.state.isModalOpened ? <ProfileModal
                     isOpen={this.state.isModalOpened}

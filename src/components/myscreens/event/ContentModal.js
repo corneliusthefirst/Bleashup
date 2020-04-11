@@ -52,7 +52,7 @@ export default class ContentModal extends PureComponent {
                 }}
                 style={{
                     height: "60%",
-                    borderRadius: 8, backgroundColor: '#FEFFDE', width: "90%"
+                    borderRadius: 8,  width: "90%"
                 }}
             >
                 {/*</View><Icon name={"close"} onPress={() => {

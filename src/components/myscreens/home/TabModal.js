@@ -38,7 +38,7 @@ export default class TabModal extends PureComponent {
                 }}
                 style={{
                     height:screenheight * .9 ,
-                    borderTopLeftRadius: 5,borderTopRightRadius: 5, backgroundColor: '#FEFFDE', width: "100%"
+                    borderTopLeftRadius: 5,borderTopRightRadius: 5,  width: "100%"
                 }}
             >
                 <Container style={{ margin: "1%" }}>
@@ -48,7 +48,7 @@ export default class TabModal extends PureComponent {
                        <Text>Photos</Text>
                        </TabHeading>
                    }>
-                            <View style={{ backgroundColor: '#FEFFDE', }}>
+                            <View style={{  }}>
                             </View>
                    </Tab>
                         <Tab tabStyle={{
@@ -58,7 +58,7 @@ export default class TabModal extends PureComponent {
                                 <Text>Videos</Text>
                             </TabHeading>
                         }>
-                        <View style={{backgroundColor: '#FEFFDE',}}>
+                        <View style={{}}>
                         </View>
                    </Tab>
                         <Tab heading={
@@ -66,7 +66,7 @@ export default class TabModal extends PureComponent {
                                 <Text>Files</Text>
                             </TabHeading>
                         }>
-                            <View style={{ backgroundColor: '#FEFFDE', }}>
+                            <View style={{  }}>
                             </View></Tab>
                    </Tabs>
                 </Container>
