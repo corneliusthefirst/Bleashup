@@ -55,7 +55,7 @@ export default class ActionsMenu extends Component {
                        </View>
                     }
                 >
-                    {this.props.event_type !== "relation" ? <View><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
+                    {this.props.event_type !== "relation" ? <View style={{flex:1}}><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
                         this.hideMenu()
                         this.props.publish()
                     }}>{"Publish"}</MenuItem>
@@ -66,28 +66,28 @@ export default class ActionsMenu extends Component {
                             this.props.inviteContacts()
                         }}>{"Invite Members"}</MenuItem> : null}
                         <MenuDivider color="#1FABAB" /></View>
-                    {this.props.event_type !== "relation" ? <View><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
+                    {this.props.event_type !== "relation" ? <View style={{flex:1}}><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
                         this.hideMenu()
                         this.props.members()
                     }}>{"Manage Members"}
                     </MenuItem>
                         <MenuDivider color="#1FABAB" /></View> : null}
-                    <View><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
+                    <View style={{flex:1}}><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
                         this.hideMenu()
                         this.props.ckeckMyActivty()
                     }}>{"My Activity"}</MenuItem>
                         <MenuDivider color="#1FABAB" /></View>
-                    <View><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
+                    <View style={{flex:1}}><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
                         this.hideMenu()
                         this.props.settings()
                     }}>{"Settings"}</MenuItem>
                         <MenuDivider color="#1FABAB" /></View>
-                    {this.props.event_type !== 'relation' && this.props.period ? <View><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
+                    {this.props.event_type !== 'relation' && this.props.period ? <View style={{flex:1}}><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
                         this.hideMenu()
                         this.props.sync()
                     }}>{this.props.calendared ? "Unsync" : "Sync"}</MenuItem>
                         <MenuDivider color="#1FABAB" /></View> : null}
-                    {this.props.event_type !== 'relation'?<View><MenuItem textStyle={{ color: "red" }} onPress={() => {
+                    {this.props.event_type !== 'relation'?<View style={{flex:1}}><MenuItem textStyle={{ color: "red" }} onPress={() => {
                         this.hideMenu()
                         this.props.leave()
                     }}>{"Leave Activity"}</MenuItem>

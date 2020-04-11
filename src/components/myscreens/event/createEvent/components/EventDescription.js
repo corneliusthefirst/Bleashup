@@ -9,6 +9,7 @@ import {View,TouchableOpacity,
 import Modal from 'react-native-modalbox';
 import autobind from "autobind-decorator";
 import  stores from '../../../../../stores/index';
+import colorList from '../../../../colorList';
 //import { TextInput } from "react-native-gesture-handler";
 
 
@@ -95,28 +96,24 @@ export default class EventDescription extends Component {
                 isOpen={this.props.isOpen}
                 onClosed={() => this.props.onClosed(this.state.description)}
                 style={{
-                    height: height/2-height/25, borderRadius: 15,marginTop:"-3%",
-                    backgroundColor:"#FEFFDE",borderColor:'black',borderWidth:1,width: "98%",
+                    height: height/2-height/22, borderRadius: 15,marginTop:"-3%",
+                    backgroundColor:colorList.bodyBackground,borderColor:'black',borderWidth:1,width: "88%",
                 }}
                 coverScreen={true}
-                position={'bottom'}
+                position={'center'}
                 backButtonClose={true}
                 //backdropPressToClose={false}
                 >
            
-                 <View  style={{flex:1,flexDirection:"column"}}>
+          <View  style={{flex:1,flexDirection:"column"}}>
 
-                   <View style={{height:"10%",margin: '1%',}}>
-                    <Text style={{alignSelf:'flex-start',marginLeft:"1%",marginTop:"4%",
-                    fontWeight:"500",fontSize:18}} >Activity Description </Text>              
-                   </View>
 
             <View style={{ height: "65%" }}>
               <Textarea containerStyle={{
-                width: "95%", margin: "1%",
+                width: "95%", margin: "1%",marginTop:"10%",
                 height: height / 3.6,
                 borderRadius: 10, borderWidth: 1,
-                borderColor: "#1FABAB",alignSelf: 'center',
+                borderColor:colorList.bodyText,alignSelf: 'center',
                 backgroundColor: "#f5fffa"
               }} maxLength={1000}
                style={{
@@ -126,20 +123,15 @@ export default class EventDescription extends Component {
                 height: "95%",
                 width: "98%"
               }}
-                placeholder="Activity Description" value={this.state.description} keyboardType="default"
+                placeholder="@activity Description" value={this.state.description} keyboardType="default"
                 onChangeText={(value) => this.onChangedEventDescription(value)} />
 
-            </View>
-            {this.state.update ? <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-              <View style={{ height: "10%", marginTop: "5%" }}>
-                <TouchableOpacity style={{ width: width / 4, height: height / 18, alignSelf: "flex-end", marginRight: "1%" }} >
-                  <Button style={{ borderRadius: 8, borderWidth: 1, marginRight: "2%", backgroundColor: "#FEFFDE", borderColor: '#1FABAB', alignSelf: 'flex-end', width: width / 4, height: height / 18, justifyContent: "center" }} onPress={() => { this.updateDescription() }}>
-                    <Text style={{ color: "#1FABAB" }}>Update</Text>
-                  </Button>
-                </TouchableOpacity>
+               </View>
+               <View style={{marginTop:"10%"}}>
+                  <Button style={{ borderRadius: 15, borderWidth: 1, backgroundColor:colorList.bodyBackground, borderColor:colorList.bodyIcon, alignSelf: 'center', width:"95%", justifyContent: "center" }} onPress={() => { this.updateDescription() }}>
+                    <Text style={{ color: "#1FABAB" }}>Update Description</Text>
+                  </Button>  
               </View>
-            </TouchableWithoutFeedback> : null}
-              
                </View>
         
           </Modal>

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import shadower from '../../shadower';
-import { View } from "react-native"
+import { View,Dimensions} from "react-native"
 import CacheImages from '../../CacheImages';
 import BleashupFlatList from '../../BleashupFlatList';
 import { TouchableOpacity, TouchableWithoutFeedback } from 'react-native-gesture-handler';
@@ -10,6 +10,7 @@ import moment from 'moment';
 import Pickers from '../../../services/Picker';
 import MediaSeparator from './MediaSeparator';
 
+let { height, width } = Dimensions.get('window');
 export default class File extends Component {
     constructor(props) {
         super(props)

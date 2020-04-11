@@ -9,6 +9,8 @@ import Modal from 'react-native-modalbox';
 import autobind from "autobind-decorator";
 import request from "../../../../../services/requestObjects";
 import  stores from '../../../../../stores/index';
+import colorList from '../../../../colorList';
+
 
 let {height, width} = Dimensions.get('window');
 
@@ -93,41 +95,36 @@ export default class EventLocation extends Component {
                 onClosed={() => this.props.onClosed(this.state.location)}
                 style={{
                     height: height/4, borderRadius: 15,
-                    backgroundColor:"#FEFFDE",borderColor:'black',borderWidth:1,width: "98%",
-                    flexDirection:'column',marginTop:"-3%"
+                    backgroundColor:colorList.bodyBackground,borderColor:'black',borderWidth:1,width: "70%",
+                    flexDirection:'column'
                   
                 }}
                 backButtonClose={true} 
                 coverScreen={true}
-                position={'bottom'}
+                position={'center'}
                //backdropPressToClose={false}
                 
                 >
 
 
-               <View  style={{height:"100%",width:"100%",justifyContent:'center'}}>
-                   <View>
-                   <Text style={{alignSelf:'flex-start',margin:"3%",fontWeight:"500",fontSize:18}} >Activity Location </Text>
-                    <Item  style={{borderColor:'black',width:"95%",alignSelf:'center'}} rounded>
-                <Input maxLength={20} placeholder='Activity Location' 
-                     keyboardType='email-address' autoCapitalize="none"
+               <View  style={{height:"100%",width:"100%",alignItems:"center"}}>
+
+                   <View style={{height:"50%",width:"90%"}}>
+                     <Input maxLength={20} placeholder='@activity Location adresse' 
+                       keyboardType='email-address' autoCapitalize="none"
                       returnKeyType='next' inverse last
                        value={this.state.location.string} 
-                       onChangeText={(value) => this.onChangedLocation(value)} />
-                     </Item>
+                       onChangeText={(value) => this.onChangedLocation(value)} 
+                       style={{borderBottomWidth:1,borderColor:colorList.bodyIcon}}/>
                     </View>
 
-              <TouchableWithoutFeedback  onPress={() => Keyboard.dismiss()}>      
-               {this.state.update?     
-                  <View style={{height:"20%",marginTop:"3%"}}>
-                   <TouchableOpacity style={{width:width/4,height:height/18,alignSelf:"flex-end",marginRight:"2%"}} >
-                   <Button style={{borderRadius:8,borderWidth:1,marginRight:"2%",backgroundColor:"#FEFFDE",borderColor:'#1FABAB',alignSelf:'flex-end',width:width/4,height:height/18,justifyContent:"center"}} onPress={()=>{this.updateLocation()}}>
-                   <Text style={{color:"#1FABAB"}}>Update</Text>
+                  
+                   <View style={{height:"20%",marginTop:"12%",width:"100%"}}>
+                 
+                   <Button style={{borderRadius:15,borderWidth:1,backgroundColor:colorList.bodyBackground,borderColor:colorList.bodyIcon,width:"90%",justifyContent:"center",alignSelf:"center"}} onPress={()=>{this.updateLocation()}}>
+                   <Text style={{color:colorList.bodyText}}>Update</Text>
                    </Button> 
-                   </TouchableOpacity>
                    </View> 
-                  : <View style={{height:"10%",marginTop:"3%"}}></View>}
-              </TouchableWithoutFeedback> 
 
                 </View>
 

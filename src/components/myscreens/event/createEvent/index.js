@@ -107,6 +107,7 @@ export default class CreateEventView extends Component {
           firebase.database().ref(`rooms/${res.id}/${res.id}`).set({ name: 'General', members: res.participant }).then(() => {
             this.setState({
               currentEvent: request.Event(),
+              //title:"",
               creating: false
             })
             this.navigateToActivity(res)

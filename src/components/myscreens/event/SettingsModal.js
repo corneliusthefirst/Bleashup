@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import ModalBox from 'react-native-modalbox';
 import { View, PermissionsAndroid, StatusBar, TouchableOpacity } from 'react-native';
-import { Text, Item, Button, Icon, Spinner, Label } from 'native-base'
+import { Text, Item, Button, Icon, Spinner, Label,Title } from 'native-base'
 import { Dropdown } from 'react-native-material-dropdown';
 import { TextInput, ScrollView } from 'react-native-gesture-handler';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -14,6 +14,9 @@ import { uniq } from 'lodash';
 import { frequencyType, daysOfWeeksDefault, nameToDataMapper, FrequencyReverser } from '../../../services/recurrenceConfigs';
 import { getDayMonth, getMonthDay } from '../../../services/datesWriter';
 import bleashupHeaderStyle from '../../../services/bleashupHeaderStyle';
+import colorList from '../../colorList';
+import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
+
 var event = null
 export default class SettingsModal extends Component {
     constructor(props) {
@@ -337,17 +340,41 @@ export default class SettingsModal extends Component {
             whoCanUpdate: val,
             newThing: !this.state.newThing
         })
+        this._menu.hide();
     }
     getCode(day) {
         return find(daysOfWeeksDefault, { day: day }).code
     }
+
+
+ //who can manage
+ 
+  //initialise menu
+  _menu = null;
+
+  setMenuRef = (ref) => {
+    this._menu = ref;
+  }
+  hideMenu = () => {
+    this._menu.hide();
+  };
+
+  showMenu = () => {
+    this._menu.show();
+  };
+
+
+
     render() {
         return (
             <ModalBox
                 coverScreen={true}
-                entry={'bottom'}
+                animationDuration={100}
+                entry={'center'}
                 position={'bottom'}
                 backdropOpacity={0.7}
+                //backdropToClose = {false}
+                swipeToClose = {false}
                 backButtonClose={true}
                 onClosed={() => {
                     this.props.onClosed()
@@ -362,44 +389,43 @@ export default class SettingsModal extends Component {
                 onOpened={() => {
                 }}
                 style={{
-                    height: "95%",
+                    height: "100%",
                     width: "100%",
-                    backgroundColor: "#FEFFDE",
+                    backgroundColor:colorList.bodyBackground,
                 }}>
                 {!this.state.loaded ? <Spinner size={'small'}></Spinner> : <View>
-                    <View style={{ height: 50 }}>
-                        <View style={{ flexDirection: 'row', ...bleashupHeaderStyle, padding: '2%', }}>
-                            <View style={{ width: '80%' }}>
-                                <Text
-                                    style={{ fontSize: 18, fontWeight: 'bold', width: '100%', }}>Activity Settings</Text>
-                            </View>
-                            <View style={{ width: '20%' }}>
-                                {this.props.computedMaster ? <TouchableOpacity onPress={() => this.saveConfigurations()}><Text style={{
-                                    fontWeight: 'bold',
-                                    fontSize: 20, color: '#1FABAB'
-                                }} >{"Save"}</Text></TouchableOpacity> : null}
-                            </View>
-                        </View>
+                   
+                    <View style={{ height:colorList.headerHeight,width:colorList.containerWidth,alignItems:"flex-start",backgroundColor:colorList.headerBackground }}>
+                        <View style={{  height:colorList.headerHeight,flexDirection: 'row',alignItems:"center" }}>
+                        <Icon onPress={() => {this.props.onClosed()}}  style={{ color:colorList.headerIcon,marginLeft:"5%",marginRight:"3%"}} type={"MaterialIcons"}name={"arrow-back"}></Icon>
+                        <Title style={{ color: colorList.headerText, fontWeight:"800" }}>@Activity Settings</Title>
+                     </View>
                     </View>
+
                     {!this.state.loaded ? <Spinner size={"small"}></Spinner> : <ScrollView style={{ height: '90%' }} showsVerticalScrollIndicator={false}>
                         <View style={{ marginLeft: '4%', flexDirection: 'column', }}>
-                            <View>
+                           
+                            <View style={{ width: '100%',flexDirection:"row",marginTop:"5%",headerHeight:colorList.headerHeight }}>
                                 {this.state.emptyNameError ? <Text style={{ color: '#A91A84' }} note>{'name cannot be empty'}</Text> : null}
                                 {this.state.tooLongNameError ? <Text style={{ color: '#A91A84' }} note>{'name is too long; the name should not be morethan 30 characters'}</Text> : null}
-                                <Item style={{ width: '100%' }}>
+                                <Icon name="edit" active={true} type="AntDesign" style={{ color: colorList.bodyIcon,alignSelf:"center",fontSize:32}} />
+                                <Item style={{ width: '75%',flexDirection:"row",height:"80%",marginLeft:"10%" }} >
+                                 
                                     <TextInput
                                         disabled={this.computedMaster}
                                         maxLength={20}
-                                        style={{ width: '100%', fontSize: 18, fontWeight: 'bold', }}
+                                        style={{ width: '80%', fontSize: 16,color:colorList.bodyText,fontWeight:"300" }}
                                         onChangeText={e => this.changeActivityName(e)}
                                         value={this.state.activityName} placeholder={"Activity Name"}>
                                     </TextInput>
                                 </Item>
                             </View>
-                            <View style={{ flexDirection: 'row', }} pointerEvents={this.props.computedMaster ? null : 'none'}>
-                                <Item style={{ width: "100%" }}>
-                                    <Button style={{ width: "90%" }} onPress={() => this.showDatePicker()} transparent>
-                                        <Text>{this.state.date ? `Starts On: ${moment(this.state.date).format('dddd, MMMM Do YYYY')}` : "select activity time"}</Text>
+
+                            <View style={{ width: '100%',flexDirection:"row",marginTop:"5%",headerHeight:colorList.headerHeight }} pointerEvents={this.props.computedMaster ? null : 'none'}>
+                            <Icon name="date-range" active={true} type="MaterialIcons" style={{ color: colorList.bodyIcon,alignSelf:"center",fontSize:32}} />
+                                    <Item style={{ width: '75%',flexDirection:"row",height:"80%",marginLeft:"10%" }}>
+                                    <Button style={{ width: "90%",marginLeft:"-5%" }} onPress={() => this.showDatePicker()} transparent>
+                                        <Text style={{color:colorList.bodyText}}>{this.state.date ? `Starts On: ${moment(this.state.date).format('dddd, MMMM Do YYYY')}` : "select activity time"}</Text>
                                     </Button>
                                     {this.state.date ? <Icon style={{ color: "red" }}
                                         onPress={() => this.resetDate()} name={"close"} type={"EvilIcons"}></Icon> : null}
@@ -410,12 +436,14 @@ export default class SettingsModal extends Component {
                                         onChange={(e, date) => this.changeActivityDate(e, date)}></DateTimePicker> : null}
                                 </Item>
                             </View>
-                            <View pointerEvents={this.props.computedMaster ? null : 'none'}>
-                                <Item>
-                                    <Button style={{ width: "90%" }} onPress={() => this.showTimePicker()} transparent>
-                                        <Text>{this.state.date ? `At: ${moment(this.state.date).format('hh:mm:s a')}` : "select activity time"}</Text>
+
+                            <View pointerEvents={this.props.computedMaster ? null : 'none'} style={{ width: '100%',flexDirection:"row",marginTop:"5%",headerHeight:colorList.headerHeight }}>
+                            <Icon name="ios-timer" active={true} type="Ionicons" style={{ color: colorList.bodyIcon,alignSelf:"center",fontSize:32}} />
+                                <Item style={{ width: '74%',flexDirection:"row",height:"80%",marginLeft:"12%" }}>
+                                    <Button style={{ width: "90%" ,marginLeft:"-5%"}} onPress={() => this.showTimePicker()} transparent>
+                                        <Text style={{color:colorList.bodyText}}>{this.state.date ? `At: ${moment(this.state.date).format('hh:mm:s a')}` : "select activity time"}</Text>
                                     </Button>
-                                    {this.state.date ? <Icon style={{ color: "red" }} onPress={() => this.resetTime()}
+                                    {this.state.date ? <Icon style={{ color: "red",marginLeft:2 }} onPress={() => this.resetTime()}
                                         name={"close"} type={"EvilIcons"}></Icon> : null}
                                     {this.state.show ? <DateTimePicker
                                         mode={this.state.mode}
@@ -424,25 +452,26 @@ export default class SettingsModal extends Component {
                                         onChange={(e, date) => this.changeActivityTime(e, date)}></DateTimePicker> : null}
                                 </Item>
                             </View>
-                            <View pointerEvents={this.props.computedMaster ? null : 'none'}>
-                                <Item style={{ width: "100%" }}>
+
+                            <View pointerEvents={this.props.computedMaster ? null : 'none'} >
+                                <Item  style={{ width: "85%",borderColor:colorList.bodyBackground,marginLeft:"13%" }}>
                                     <Button onPress={() => this.setRecurrencyState()}
                                         transparent>
                                         <Icon name={
                                             this.state.recurrent ? "radio-button-checked" :
                                                 "radio-button-unchecked"
-                                        } type={"MaterialIcons"}></Icon>
-                                        <Text style={{ fontWeight: 'bold', }}>Recurrence Configurations</Text>
+                                        } type={"MaterialIcons"} style={{color:colorList.bodyIcon}} ></Icon>
+                                        <Text style={{ fontWeight:this.state.recurrent?"600":"300",color:colorList.bodyText }}>Recurrence Configurations</Text>
                                     </Button>
                                 </Item>
                             </View>
                             {this.state.recurrent ?
                                 <View style={{ marginLeft: '1%', }}>
                                     <View style={{ flexDirection: 'column', marginLeft: "4%", }}>
-                                        <Item style={{ width: "100%", margin: '1%', height: 37 }}>
+                                        <Item style={{width:"85%",marginLeft:"12%"}}>
                                             <View style={{ flexDirection: 'column', marginTop: '-1%', }}>
-                                                <View style={{ marginLeft: '1%', flexDirection: 'row', }}>
-                                                    <Text style={{ fontStyle: 'italic', marginTop: 3, }}>Every  </Text>
+                                                <View style={{width:"100%",flexDirection:"row"}}>
+                                                    <Text style={{ fontStyle: 'italic', marginTop: 3,fontSize:16,color:colorList.bodyText,marginRight:"4%",marginLeft:"1%" }}>Every  </Text>
                                                     <View pointerEvents={this.props.computedMaster ? null : 'none'}>
                                                         <NumericInput value={this.state.interval}
                                                             onChange={value => this.setInterval(value)}
@@ -461,7 +490,7 @@ export default class SettingsModal extends Component {
                                                             totalHeight={30}
                                                         ></NumericInput>
                                                     </View>
-                                                    <View style={{ flexDirection: 'row', width: "50%", }}>
+                                                    <View style={{ flexDirection: 'column', width: "50%",marginLeft:"5%" }}>
                                                         <View pointerEvents={this.props.computedMaster ? null : 'none'}
                                                             style={{
                                                                 width: '60%',
@@ -470,14 +499,14 @@ export default class SettingsModal extends Component {
                                                             }}>
                                                             <Dropdown
                                                                 data={frequencyType}
-                                                                baseColor={"#1FABAB"}
+                                                                baseColor={colorList.bodyBackground}
                                                                 selectedItemColor={"#1FABAB"}
                                                                 labelFontSize={0}
                                                                 value={this.state.frequency ?
                                                                     FrequencyReverser[this.state.frequency] : 'none'}
                                                                 onChangeText={(val) => this.setRecursiveFrequency(val)}
-                                                                pickerStyle={{ width: "40%", borderRadius: 5, backgroundColor: "#FEFFDE", borderWidth: 0, borderColor: "#1FABAB" }}
-                                                                containerStyle={{ borderWidth: 0, borderColor: "gray", borderRadius: 6, justifyContent: "center", padding: 2, height: 38 }}
+                                                                pickerStyle={{ width: "40%", borderRadius: 5, backgroundColor:colorList.bodyBackground, borderColor: "white" }}
+                                                                containerStyle={{ borderWidth: 0, borderRadius: 6, justifyContent: "center", padding: 2, height: 38 }}
                                                             />
                                                         </View>
                                                         {this.state.frequency === 'weekly' ? <TouchableOpacity onPress={() => requestAnimationFrame(() => {
@@ -485,14 +514,14 @@ export default class SettingsModal extends Component {
                                                                 isSelectDaysModalOpened: true,
                                                                 newThing: !this.state.newThing
                                                             })
-                                                        })}><Text>{this.props.computedMaster ? "select days" : "view days"}</Text></TouchableOpacity> : this.state.frequency === 'monthly' ?
-                                                                <View pointerEvents={this.props.computedMaster ? null : 'none'}><TouchableOpacity onPress={() => requestAnimationFrame(() => {
+                                                        })}><Text >{this.props.computedMaster ? "select days" : "view days"}</Text></TouchableOpacity> : this.state.frequency === 'monthly' ?
+                                                                <View pointerEvents={this.props.computedMaster ? null : 'none'} ><TouchableOpacity onPress={() => requestAnimationFrame(() => {
                                                                     this.showDatePicker()
                                                                 })}>
-                                                                    <Text>{`on the ${getDayMonth(this.state.date)}`}</Text>
+                                                                    <Text style={{color:"#1FABAB"}}>{`on the ${getDayMonth(this.state.date)}`}</Text>
                                                                 </TouchableOpacity></View> : this.state.frequency === 'yearly' ? <View pointerEvents={this.props.computedMaster ? null : 'none'}><TouchableOpacity onPress={() => requestAnimationFrame(() => {
                                                                     this.showDatePicker()
-                                                                })}><Text>{`on ${getMonthDay(this.state.date)}`}</Text></TouchableOpacity></View> : <Text>{'(all days)'}</Text>}
+                                                                })}><Text style={{color:"#1FABAB"}}>{`on ${getMonthDay(this.state.date)}`}</Text></TouchableOpacity></View> : <Text style={{color:"#1FABAB"}}>{'(all days)'}</Text>}
                                                         {this.state.isSelectDaysModalOpened ? <SelectDays ownership={this.props.computedMaster} isOpen={this.state.isSelectDaysModalOpened} addCode={(code) => {
                                                             this.setState({
                                                                 daysOfWeek: uniq([code, ...this.state.daysOfWeek]),
@@ -517,11 +546,11 @@ export default class SettingsModal extends Component {
                                                 </View>
                                             </View>
                                         </Item>
-                                        <View pointerEvents={this.props.computedMaster ? null : 'none'}>
+                                        <View pointerEvents={this.props.computedMaster ? null : 'none'} style={{width:"80%",marginLeft:"12%"}}>
                                             <Item>
-                                                <Label>
+                                                <Label style={{fontSize:16,color:colorList.bodyText}}>
                                                     Ends
-                                        </Label>
+                                               </Label>
                                                 <Button style={{ width: "90%" }} onPress={() => this.showEndatePiker()} transparent>
                                                     <Text>{this.state.recurrence ? `On ${moment(this.state.recurrence).format('dddd, MMMM Do YYYY')}` : "Select Activity End Date"}</Text>
                                                 </Button>
@@ -533,27 +562,75 @@ export default class SettingsModal extends Component {
                                         </View>
                                     </View>
                                 </View> : null}
-                            <Item style={{ width: "100%" }}>
+
+                            <Item style={{ width: "85%",borderColor:colorList.bodyBackground,marginLeft:"13%" }}>
                                 <View pointerEvents={this.props.master ? null : 'none'}>
                                     <Button onPress={() => this.setPublic()} transparent>
                                         <Icon name={
                                             this.state.public ? "radio-button-checked" :
                                                 "radio-button-unchecked"
-                                        } type={"MaterialIcons"}></Icon>
-                                        <Text>{this.state.public ? "Public" : "Private"}</Text></Button>
+                                        } type={"MaterialIcons"} style={{color:colorList.bodyIcon}}></Icon>
+                                        <Text style={{color:colorList.bodyText}}>{this.state.public ? "Public" : "Private"}</Text></Button>
                                 </View>
                             </Item>
-                            <View pointerEvents={this.props.computedMaster ? null : 'none'}>
-                                <View style={{ flexDirection: 'row', }}>
-                                    <Text style={{ fontWeight: 'bold', fontStyle: 'italic', marginTop: '3%', }}>Notes</Text>
-                                    <Button onPress={() => this.addNewNote()} transparent><Icon name="pluscircle" type={"AntDesign"}></Icon></Button></View>
-                                <View style={{ marginLeft: '2%', }}>
-                                    {this.renderNotes()}
-                                </View>
-                            </View>
+
                         </View>
-                        <View pointerEvents={this.props.creator ? null : 'none'} style={{ margin: '5%', width: '70%' }}>
-                            <Dropdown
+
+                        <View pointerEvents={this.props.creator ? null : 'none'} style={{  width: '100%',flexDirection:"row" }}>
+
+                        <Icon name="account-group-outline" active={true} type="MaterialCommunityIcons" style={{ color: colorList.bodyIcon,margin: '4%' }} onPress={this.showMenu} />
+
+                    <TouchableOpacity style={{  justifyContent: "center" }} onPress={this.showMenu}>
+                       <Menu
+                       ref={this.setMenuRef}
+                       button={
+                       <View style={{flexDirection:"row"}}>
+                       <Text style={{marginLeft:"10%"}}>Can be managed by</Text>
+                       <Text style={{marginLeft:"2%",color:colorList.bodyText,fontWeight:"600"}}>{this.state.whoCanUpdate}</Text>
+                       </View>
+                    }
+                       style={{ backgroundColor:colorList.bodyBackground,marginLeft:"45%",width:0 }}
+                       >
+                   <MenuItem onPress={() => this.setWhoCanUpdate("anybody")}>anybody</MenuItem>
+                   <MenuItem onPress={() => this.setWhoCanUpdate("master")}>master</MenuItem>
+                   <MenuItem onPress={() => this.setWhoCanUpdate("creator")}>creator</MenuItem>
+                  </Menu> 
+                  </TouchableOpacity>
+
+
+
+
+
+
+                        </View>
+                        <View pointerEvents={this.props.creator ? null : 'none'} style={{ }}>
+                            <Button onPress={() => this.closeActiviy()} transparent><Icon name={this.state.closed ? 'door-open' :
+                                'poweroff'} type={this.state.closed ? 'FontAwesome5' :
+                                    'AntDesign'} style={{ color: this.state.closed ? 'black' : 'red' }}>
+                            </Icon><Text style={{ fontWeight: 'bold',color:colorList.bodyText ,marginLeft:"2.5%"}}>{this.state.closed ? "Open" : "Close"} Activiy</Text></Button>
+                        </View>
+
+                        <View style={{ width: '100%' }}>
+                          {this.props.computedMaster ?  <View style={{marginTop:"15%"}}>
+                          <Button style={{ borderRadius: 15, borderWidth: 1, backgroundColor:colorList.bodyBackground, borderColor:colorList.bodyIcon, alignSelf: 'flex-end', width:"18%",height:35,marginRight:"7%", justifyContent: "center" }} onPress={() => this.saveConfigurations()}>
+                          <Text style={{ color: colorList.bodyText }}>save</Text>
+                          </Button>  
+                          </View> : null}
+                        </View>
+
+
+                    </ScrollView>}
+                    
+  
+                </View>}
+            </ModalBox >
+        );
+    }
+}
+
+
+/**
+ *                             <Dropdown
                                 label="Who Can Manage"
                                 data={this.updatePossibilities}
                                 baseColor={"#1FABAB"}
@@ -564,16 +641,13 @@ export default class SettingsModal extends Component {
                                 pickerStyle={{ width: "40%", borderRadius: 5, backgroundColor: "#FEFFDE", borderWidth: 0, borderColor: "#1FABAB" }}
                                 containerStyle={{ borderWidth: 0, borderColor: "gray", borderRadius: 6, justifyContent: "center", padding: 2, height: 40 }}
                             />
-                        </View>
-                        <View pointerEvents={this.props.creator ? null : 'none'} style={{ marginTop: "10%", }}>
-                            <Button onPress={() => this.closeActiviy()} transparent><Icon name={this.state.closed ? 'door-open' :
-                                'poweroff'} type={this.state.closed ? 'FontAwesome5' :
-                                    'AntDesign'} style={{ color: this.state.closed ? '#1FABAB' : 'red' }}>
-                            </Icon><Text style={{ fontWeight: 'bold', }}>{this.state.closed ? "Open" : "Close"} Activiy</Text></Button>
-                        </View>
-                    </ScrollView>}
-                </View>}
-            </ModalBox >
-        );
-    }
-}
+
+                            <View pointerEvents={this.props.computedMaster ? null : 'none'}>
+                                <View style={{ flexDirection: 'row', }}>
+                                    <Text style={{ fontWeight: 'bold', fontStyle: 'italic', marginTop: '3%', }}>Notes</Text>
+                                    <Button onPress={() => this.addNewNote()} transparent><Icon name="pluscircle" type={"AntDesign"}></Icon></Button></View>
+                                <View style={{ marginLeft: '2%', }}>
+                                    {this.renderNotes()}
+                                </View>
+                            </View>
+ */
