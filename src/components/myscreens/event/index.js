@@ -1310,15 +1310,13 @@ export default class Event extends Component {
       //captureGestures={true}
       acceptDoubleTap={true}
       panOpenMask={.2}
-      elevation={this.state.isChat ? 7 : null}
+      elevation={this.state.isChat ? 16 : null}
       openDrawerOffset={this.state.isChat ? .23 : .815}
       type={this.state.isChat ? "overlay" : "static"}
       styles={
         {
           drawer: {
-            shadowColor: '#000000',
-            shadowOpacity: 0.8,
-            shadowRadius: 3,
+            shadowColor: '#000000', shadowOpacity: 0.8, shadowRadius: 3, 
           }
           ,
           main: {}

@@ -81,12 +81,11 @@ export default class Commitee extends Component {
              </View>
 
                 <View>{this.state.refresh ? null :
-                    <View style={{ height: '97%', }}>
+                    <View style={{ height: 600, }}>
                         <BleashupFlatList
                         backgroundColor={colorList.bodyBackground}
                         style={{borderTopRightRadius: 5,
                             width: '100%', borderBottomRightRadius: 1, 
-                            height: 700
                         }}
                             dataSource={union([this.generalCommitee], uniq(this.props.commitees))}
                             keyExtractor={(item, index) => index.toString()}
