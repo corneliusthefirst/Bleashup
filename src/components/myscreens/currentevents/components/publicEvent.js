@@ -303,7 +303,7 @@ class PublicEvent extends Component {
           paddingTop: 1,
           borderRadius: 5,
           height: height / 8,
-          width: colorList.containerWidth
+          width: "100%"
         }}
       >
         <View style={{ width: "100%", flexDirection: "row", alignItems: "center" }}>
@@ -329,7 +329,7 @@ class PublicEvent extends Component {
     return  ( <CardItem style={{
       marginBottom: '3%',
       backgroundColor:colorList.bodyBackground,
-      width: colorList.containerWidth
+      width: "100%"
     }}>
       <View style={{ flexDirection: 'row', width: '100%' }}>
         <View style={{ width: '90%',paddingLeft:6}}>
@@ -348,18 +348,18 @@ class PublicEvent extends Component {
         paddingTop: 4,
         paddingBottom: 6,
         backgroundColor:colorList.bodyBackground,
-        width: colorList.containerWidth,
+        width: "100%",
         height:200
       }}
       cardBody
     >
       <View style={{ }}>
-        <View style={{ flex:1,width:colorList.containerWidth,alignSelf:"center",alignItems: 'center', }}>{this.state.isMount ? <View style={{ alignSelf: 'flex-start' }}>
+        <View style={{ flex:1,width:"100%",alignSelf:"center",alignItems: 'center', }}>{this.state.isMount ? <View style={{ alignSelf: 'flex-start' }}>
           <PhotoView
             navigation={this.props.navigation} renderDelay={this.props.renderDelay} showPhoto={(url) => url ?
               this.showPhoto(url) : null} joined={() => this.join()}
             isToBeJoint hasJoin={this.props.Event.joint || this.state.joint} onOpen={() => this.onOpenPhotoModal()} style={{}} photo={this.props.Event.background}
-             event_id={this.props.Event.id} width={width-2} height={200} borderRadius={0} />
+             event_id={this.props.Event.id} width={colorList.containerWidth-10} height={200} borderRadius={0} />
         </View> : null}</View>
       </View>
     </CardItem>)
@@ -373,7 +373,7 @@ class PublicEvent extends Component {
  }
 renderFooter(){
   return (
-    <Footer style={{height:height/15,backgroundColor:colorList.bodyBackground, width: colorList.containerWidth}}>
+    <Footer style={{height:height/15,backgroundColor:colorList.bodyBackground, width: "100%"}}>
       <View style={{width:"100%", flexDirection: "row",}}>
 
       <View style={{alignSelf:"flex-start",width:"60%"}}>
@@ -397,7 +397,7 @@ renderFooter(){
   render() {
     //emitter.emit('notify', "santerss") 
     return (this.state.isMount ? <View style={{backgroundColor:colorList.bodyBackground,
-      width: colorList.containerWidth,alignSelf:"center" }}>
+      width: colorList.containerWidth - 10,alignSelf:"center" }}>
       <Swipeout {...this.props} onOpen={() => this.openSwipeOut()} onClose={() => this.onCloseSwipeout()} style={{
         width: "97%", ...shadower(1),
         backgroundColor: this.props.Event.new ? "#cdfcfc" : null
@@ -406,7 +406,10 @@ renderFooter(){
         //close={true}
         {...this.swipeOutSettings(this.state.master, this.state.joint)}>
         <Card
-          style={{ backgroundColor:colorList.bodyBackground,width:colorList.containerWidth}}
+          style={{ backgroundColor:colorList.bodyBackground,
+            width:"100%",
+            alignSelf: 'center',
+          }}
           bordered
         >
           {this.renderTitle()}
@@ -416,7 +419,7 @@ renderFooter(){
         </Card>
       </Swipeout>
     </View> : <View style={{}}><Card style={{ height: 300, alignSelf: 'center',backgroundColor:colorList.bodyBackground,
-      width: colorList.containerWidth}}></Card></View>
+      width: "100%"}}></Card></View>
     )
   }
 }

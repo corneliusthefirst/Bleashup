@@ -8,6 +8,7 @@ import TextContent from "./TextContent";
 import testForURL from '../../../services/testForURL';
 import FileExachange from "../../../services/FileExchange";
 import buttoner from "../../../services/buttoner";
+import ColorList from '../../colorList';
 
 
 export default class VideoMessage extends Component {
@@ -156,27 +157,27 @@ export default class VideoMessage extends Component {
                                     }>
                                     <Icon type="EvilIcons" name="play" style={{
                                         fontSize: 40,
-                                        color: "#FEFFDE"
+                                        color: ColorList.headerTextInverted
                                     }}></Icon>
                                 </TouchableOpacity>
                             </View>
                         </View>
-                        <View style={{ alignSelf: this.state.sender ? 'flex-start' : 'flex-end', margin: '2%', }}>
-                            {this.state.loaded ? <View style={{ marginTop: "-12%" }}><View style={{...buttoner,height:25,width:65}}><Text style={{ color: '#FEFFDE' }}>
+                        <View style={{ alignSelf: this.state.sender ? 'flex-start' : 'flex-end', margin: '2%',justifyContent: 'center', }}>
+                                {this.state.loaded ? <View style={{ marginTop: "-12%" }}><View style={{ ...buttoner, height: 25, width: 65 }}><Text style={{ color: ColorList.headerTextInverted }}>
                                 {this.toMB(this.state.total).toFixed(2)} {"Mb"}</Text></View></View> :
-                                <View style={{ marginTop: "-25%" }}>
+                                <View style={{ marginTop: "-25%", }}>
                                     <AnimatedCircularProgress size={40}
                                         width={2}
                                         fill={testForURL(this.props.message.source) ? this.state.downloadState : 100}
-                                        tintColor={this.state.error ? "red" : "#FEFFDE"}
+                                            tintColor={this.state.error ? "red" : ColorList.headerTextInverted}
                                         backgroundColor={this.transparent}>
                                         {
-                                            (fill) => (<View style={{...buttoner}}>
+                                            (fill) => (<View style={{...buttoner, alignSelf:'center'}}>
                                                 {this.state.downloading ? <TouchableWithoutFeedback onPress={() => this.cancelDownLoad(this.props.message.source)}>
-                                                    <Icon type="EvilIcons" style={{ color: "#FEFFDE" }} name="close">
+                                                    <Icon type="EvilIcons" style={{ color: ColorList.headerTextInverted }} name="close">
                                                     </Icon>
                                                 </TouchableWithoutFeedback> : <TouchableWithoutFeedback onPress={() => this.downloadVideo(this.props.message.source)}>
-                                                        <Icon type="EvilIcons" style={{ color: "#FEFFDE" }} name="arrow-down">
+                                                        <Icon type="EvilIcons" style={{ color: ColorList.headerTextInverted }} name="arrow-down">
                                                         </Icon>
                                                     </TouchableWithoutFeedback>}
                                             </View>)

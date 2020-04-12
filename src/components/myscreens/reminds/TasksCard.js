@@ -16,6 +16,7 @@ import { dateDiff, writeDateTime } from "../../../services/datesWriter";
 import { getCurrentDateInterval, getcurrentDateIntervals } from '../../../services/getCurrentDateInterval';
 import { format } from '../../../services/recurrenceConfigs';
 import { confirmedChecker } from "../../../services/mapper";
+import ColorList from '../../colorList';
 
 let { height, width } = Dimensions.get('window')
 
@@ -160,7 +161,7 @@ export default class EventTasksCard extends Component {
                 recurrence: this.state.correspondingDateInterval ?
                   moment(this.state.correspondingDateInterval.end, format).format() :
                   this.props.item.period
-              }) > 0 ? 'gray' : "#1FABAB",
+              }) > 0 ? ColorList.bodySubtext : ColorList.iconActive,
               alignSelf: 'flex-end',
             }}
               note>{`${writeDateTime(
@@ -183,8 +184,8 @@ export default class EventTasksCard extends Component {
                 <View style={{ flexDirection: 'row', marginTop: '3%', }}>
                   <Icon onPress={() => {
                     this.props.mention({ ...this.props.item, creator: this.state.creator })
-                  }} name={"reply"} style={{ color: '#555756', fontSize: 25, margin: '2%', }} type="Entypo"></Icon>
-                  <Icon style={{ color: '#555756', fontSize: 25, margin: '2%', }} onPress={() => {
+                  }} name={"reply"} style={{ color: ColorList.iconGray, fontSize: 25, margin: '2%', }} type="Entypo"></Icon>
+                  <Icon style={{ color: ColorList.iconGray, fontSize: 25, margin: '2%', }} onPress={() => {
                     this.props.showReport(this.props.item, this.state.currentDateIntervals, this.state.correspondingDateInterval)
                   }} name="ios-people" type="Ionicons" />
                 </View>
@@ -204,7 +205,7 @@ export default class EventTasksCard extends Component {
 
           <CardItem>
             <Left>
-              <Title style={{ fontWeight: "500", marginLeft: -1, fontSize: 20, color: "#696969" }}>{this.props.item.title}</Title>
+              <Title style={{ fontWeight: "500", marginLeft: -1, fontSize: 20, color: ColorList.darkGrayText }}>{this.props.item.title}</Title>
             </Left>
           </CardItem>
           <CardItem carBody>
@@ -221,9 +222,9 @@ export default class EventTasksCard extends Component {
           <CardItem style={{ width: "100%", marginTop: '2%', }}>
             {!member ?
               cannotAssign ? null :
-                <Button style={{ borderWidth: 2, borderRadius: 10, borderColor: "#1FABAB", width: "32%", alignItems: 'center', justifyContent: 'center', marginLeft: "67%" }}
+                <Button style={{ borderWidth: 2, borderRadius: 10, borderColor: ColorList.iconActive, width: "32%", alignItems: 'center', justifyContent: 'center', marginLeft: "67%" }}
                   onPress={() => this.assignToMe()} transparent >
-                  <Text style={{ fontWeight: "500", color: "#696969", fontSize: 11 }}>Assign To Me</Text>
+                  <Text style={{ fontWeight: "500", color: ColorList.darkGrayText, fontSize: 11 }}>Assign To Me</Text>
                 </Button>
               :
               (hasDoneForThisInterval ?

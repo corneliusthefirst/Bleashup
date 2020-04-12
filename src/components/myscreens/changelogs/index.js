@@ -120,9 +120,7 @@ export default class ChangeLogs extends Component {
 
       {this.state.hideHeader ? null : 
       <View style={{height: colorList.headerHeight,width: colorList.headerWidth,backgroundColor:colorList.headerBackground, position: "absolute"}}>
-             
-             
-              <View style={{flex:1,paddingLeft: '1%', paddingRight: '1%',backgroundColor:colorList.headerBackground,
+              <View style={{flex:1, ...bleashupHeaderStyle, paddingLeft: '1%', paddingRight: '1%',backgroundColor:colorList.headerBackground,
                  flexDirection: "row", alignItems: "center"}}>
                     <View style={{width:"10%",paddingLeft:"1%"}} >
                      <Icon onPress={() => {this.props.navigatePage("Home")}}

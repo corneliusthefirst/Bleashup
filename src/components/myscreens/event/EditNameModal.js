@@ -72,7 +72,6 @@ export default class EditNameModal extends PureComponent {
                     height: "55%",
                     borderBottomLeftRadius: 8,
                     borderBottomRightRadius: 8,
-                    backgroundColor: "#FEFFDE",
                     commiteeName: "",
                     width: "100%"
                 }}

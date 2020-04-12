@@ -13,6 +13,7 @@ import CacheImages from '../../../../CacheImages';
 import testForURL from '../../../../../services/testForURL';
 import shadower from "../../../../shadower";
 import HighLight from "../../../highlights_details/Highlight";
+import ColorList from '../../../../colorList';
 
 let { height, width } = Dimensions.get('window')
 
@@ -35,7 +36,7 @@ export default class HighlightCardDetail extends Component {
         style={{
           height: "95%", 
           alignSelf: 'center',
-          backgroundColor: "#FEFFDE", 
+          backgroundColor: ColorList.bodyBackground, 
           borderTopLeftRadius: 8, 
           borderTopRightRadius: 8,
           width: "100%", 
@@ -56,11 +57,11 @@ export default class HighlightCardDetail extends Component {
                 <HighLight 
                 shouldNotMention={this.props.shouldNotMention}
                  mention={() => this.props.mention(this.props.item)} 
-                 hideReplyer={true} color={"#FEFFDE"} 
+                 hideReplyer={true} color={ColorList.bodyBackground} 
                  showPhoto={(url) => this.props.showPhoto(url)} 
                  modal={true} 
                  showVideo={(url) => this.props.showVideo(url)} 
-                 background={"#FEFFDE"} 
+                 background={ColorList.bodyBackground} 
                  highlight={this.props.item}
                   disableSwipper={true}></HighLight>
                 {/*<View style={{alignItems:'center',justifyContent:'center',height:height/7}}>

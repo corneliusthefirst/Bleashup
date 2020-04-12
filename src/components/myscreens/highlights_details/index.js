@@ -184,7 +184,9 @@ export default class HighLightsDetails extends Component {
     render() {
         return (
             <View>
-                <ScrollView ref={"ScrollViewRefer"} keyboardShouldPersistTaps={"always"} showsVerticalScrollIndicator={false} scrollEnabled={false} nestedScrollEnabled >
+                <ScrollView ref={"ScrollViewRefer"} onScroll={() =>{
+                    this.adjutRoomDisplay()
+                }} keyboardShouldPersistTaps={"always"} showsVerticalScrollIndicator={false}  scrollEnabled={false} nestedScrollEnabled >
                     <View style={{
                         height: this.state.replying ? screenheight * .9 : screenheight,
                         width: "100%",

@@ -12,9 +12,12 @@ containerWidth = width
 containerBackground = "#1FABAB"
 
 //header
+iconGray ='#555756'
+iconActive="#1FABAB"
 iconInactive ="#ADE3D2"
 headerIcon = "#0A4E52"
 headerText = "#0A4E52"
+headerTextInverted="white"
  headerBlackText = "#0A4E52"
  headerBackground = "white"
  headerHeight = 50
@@ -28,7 +31,7 @@ headerText = "#0A4E52"
  bodyBackground = "white"
  bodySubtext = "gray"
  bodyDarkWhite = "#f4f6fc"
-  
+ darkGrayText = "#696969"
  //modal
 
 

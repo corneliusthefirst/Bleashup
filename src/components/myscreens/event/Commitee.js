@@ -12,6 +12,7 @@ import GState from '../../../stores/globalState';
 import emitter from '../../../services/eventEmiter';
 import shadower from '../../shadower';
 import colorList from '../../colorList';
+import bleashupHeaderStyle from '../../../services/bleashupHeaderStyle';
 
 export default class Commitee extends Component {
     constructor(props) {
@@ -68,7 +69,7 @@ export default class Commitee extends Component {
         return (this.state.loaded ?
             <View style={{ height: "100%", width: "100%"}}>
                 
-              <View style={{height:45, width: "100%",flexDirection:"row",justifyContent:"space-between"}}>
+                <View style={{ ...bleashupHeaderStyle, height:45, width: "100%",flexDirection:"row",justifyContent:"space-between"}}>
                 
                 <View style={{height:45,alignSelf: "flex-start",justifyContent:"center" }}>
                   <Thumbnail source={require("../../../../assets/committees.png")} style={{width:130,height:32}}></Thumbnail>

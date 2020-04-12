@@ -346,7 +346,7 @@ export default class ChatRoom extends Component {
             this.refs.scrollViewRef.scrollToEnd({ animated: true, duration: 200 })
             this.state.showCaption && 
             this.refs.captionScrollViewRef.scrollToEnd({ animated: true, 
-                duration: 200 })
+                duration: 5 })
             this.temp ? GState.reply = JSON.parse(this.temp) : null
         },30)
     }
@@ -1066,7 +1066,9 @@ export default class ChatRoom extends Component {
             <View style={{ height: "92.5%"}}>
                 <StatusBar animated={true} hidden={this.state.hideStatusBar} barStyle="dark-content" backgroundColor={colorList.headerBackground}></StatusBar>
                 {!this.state.loaded ? <Waiter></Waiter> : <View style={{}}><View style={{ width: "100%", alignSelf: 'center', }}>
-                        <ScrollView inverted={true} keyboardShouldPersistTaps={"always"} showsVerticalScrollIndicator={false} scrollEnabled={false} inverted nestedScrollEnabled
+                        <ScrollView onScroll={() => {
+                            this.adjutRoomDisplay()
+                        }} inverted={true} keyboardShouldPersistTaps={"always"} showsVerticalScrollIndicator={false} scrollEnabled={false} inverted nestedScrollEnabled
                         ref="scrollViewRef">
                         <View style={{ height: this.state.messageListHeight, marginBottom: "0.5%" }}>
                             <TouchableWithoutFeedback onPressIn={() => {
@@ -1212,6 +1214,10 @@ export default class ChatRoom extends Component {
     fucussTextInput(){
         this._textInput.focus()
     }
+    persistMessageLayout(id,layout){
+        console.warn("persisiting dimensions")
+        this.room.setMessageDimessions(id,layout)
+    }
     delay = 1
     messageList() {
         return <BleashupFlatList
@@ -1221,6 +1227,11 @@ export default class ChatRoom extends Component {
             ref="bleashupSectionListOut"
             inverted={true}
             renderPerBatch={20}
+            /*getItemLayout={(item, index) => {
+                return { 
+                index, 
+                length: (item.dimenssions && item.dimenssions.height) || this.messagelayouts[item.id].height, 
+                offset: this.room.messages.slice(0, index).reduce((a, c) => a.dimenssions.height + c.dimenssions.height, 0)}}}*/
             initialRender={20}
             numberOfItems={this.room.messages.length}
             keyExtractor={(item, index) => item ? item.id : null}
@@ -1233,6 +1244,7 @@ export default class ChatRoom extends Component {
                     messagelayouts={this.messagelayouts}
                     setCurrentLayout={layout => {
                         this.messagelayouts[item.id] = layout
+                       //!item.dimenssions && this.persistMessageLayout(item.id,layout)
                     }}
                     newCount={this.props.newMessages.length}
                     index={index}
@@ -1421,7 +1433,8 @@ export default class ChatRoom extends Component {
         </View>;
     }
     header(){
-        return <View style={{
+        return <View><View style={{
+            ...bleashupHeaderStyle,
             width: colorList.containerWidth,
             height: colorList.headerHeight,
             backgroundColor:colorList.headerBackground,
@@ -1502,7 +1515,8 @@ export default class ChatRoom extends Component {
                             type={"Ionicons"}
                             name={"ios-menu"}></Icon>
                       </View> 
-                      </View>  
+                      </View> 
+        </View> 
             </View>;
     }
 
