@@ -28,13 +28,15 @@ export default class ReplyText extends Component {
                 onLongPress={() => this.props.handLongPress ? this.props.handLongPress() : null}
                 onPress={() => this.props.openReply(this.props.reply)}>
                 <View style={{
-                    display: 'flex', flexDirection: 'row', borderBottomWidth: 0,
+                    display: 'flex', flexDirection: 'row', 
+                    borderBottomWidth: 0,
                     backgroundColor: this.props.color,
-                    ...shadower(2), //backgroundColor: "rgba(34, 0, 0, 0.1)",
-                    padding: "1%",//margin: '1%',
+                    ...shadower(1), //backgroundColor: "rgba(34, 0, 0, 0.1)",
+                    padding: "2%",//margin: '1%',
                     minHeight: 50,
-                    maxHeight: 200,
-                    borderRadius: 5,
+                    maxHeight: 300,
+                    borderTopLeftRadius: 20,
+                    borderTopRightRadius: 20,
                 }}>
                     {
                         /*<View style={{ /*width: "5%" }}><Icon type="FontAwesome"

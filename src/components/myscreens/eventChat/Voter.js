@@ -127,7 +127,7 @@ export default class Voter extends Component {
         this.creator = creator
     }
     render() {
-        return !this.state.loaded ? <View style={{width:300,height:300}}></View> : <View style={{ margin: '1%',  }}>
+        return !this.state.loaded ? <View style={{width:300,height:300,...this.props.placeHolder}}></View> : <View style={{ margin: '1%',  }}>
             <View style={{ alignSelf: 'center', margin: '2%', flexDirection: 'row', }}>
                 <View style={{ width: '70%',marginLeft: '2%', }}>
                     <Text style={{

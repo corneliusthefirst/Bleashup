@@ -126,6 +126,7 @@ export default class Message extends Component {
                     pressingIn={() => {
                         this.replying = true
                     }}
+                    placeHolder={this.placeholderStyle}
                     showVoters={this.props.showVoters}
                     message={{
                         ...data,
@@ -293,6 +294,9 @@ export default class Message extends Component {
     isVote() {
         return this.props.message.type === 'vote'
     }
+    placeholderStyle = this.props.messagelayouts && this.props.messagelayouts[this.props.message.id] ?
+        this.props.messagelayouts[this.props.message.id] :
+        this.placeHolder[this.props.message.type]
     render() {
         //console.warn("here",this.props.message.sent,this.props.received);
 
@@ -327,9 +331,7 @@ export default class Message extends Component {
             // backgroundColor: color,
         }
         placeholderStyle = {
-            ...topMostStyle, ... this.props.messagelayouts && this.props.messagelayouts[this.props.message.id] ?
-                this.props.messagelayouts[this.props.message.id] :
-                this.placeHolder[this.props.message.type],
+            ...topMostStyle, ...this.placeholderStyle ,
             backgroundColor: color, borderBottomLeftRadius: 10, borderColor: color,
             borderTopLeftRadius: this.state.sender ? 0 : 10,// borderWidth: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text)?.7:0:0,
             backgroundColor: color, ...shadower(2),

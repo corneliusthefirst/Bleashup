@@ -1062,7 +1062,7 @@ export default class ChatRoom extends Component {
           behavior={Platform.Os == "ios" ? "padding" : "height"}
           style={{flex:1,justifyContent:"center",marginBottom:this.state.marginBottom,backgroundColor:'rgba(0,0,0,0.3)',
           }} >  */}             
-            <View style={{ height: "90%"}}>
+            <View style={{ height: "92.5%"}}>
                 <StatusBar animated={true} hidden={this.state.hideStatusBar} barStyle="dark-content" backgroundColor={colorList.headerBackground}></StatusBar>
                 {!this.state.loaded ? <Waiter></Waiter> : <View style={{}}><View style={{ width: "100%", alignSelf: 'center', }}>
                         <ScrollView inverted={true} keyboardShouldPersistTaps={"always"} showsVerticalScrollIndicator={false} scrollEnabled={false} inverted nestedScrollEnabled
@@ -1306,9 +1306,6 @@ export default class ChatRoom extends Component {
             alignItems: 'center',
             borderColor: 'gray', padding: '1%', width: "99%"
         }}>
-            {
-                //* Reply Message caption */
-                this.state.replying ? this.replyMessageCaption() : null}
             <View style={{
                 flexDirection: 'row',alignSelf:"center",
                 alignSelf: 'center', width: colorList.containerWidth-8
@@ -1324,20 +1321,25 @@ export default class ChatRoom extends Component {
                     borderRadius: 10,
                 }}>
 
-                    <View style={{ height:45,width: '12%',alignItems:"center",justifyContent:"center",padding: '1%' }}><Icon onPress={() => this.openCamera()}
+                    <View style={{ height:45,
+                        width: '12%',alignItems:"center",justifyContent:"center",padding: '1%' }}><Icon onPress={() => this.openCamera()}
                         style={{ color: "#696969"}}
                         type={"MaterialCommunityIcons"}
                         name={"image-filter"}></Icon>
                     </View>  
 
-                    <Item style={{ width: '88%',marginLeft:"2%" }} rounded>
+                    <Item style={{ width: '88%',marginLeft:"2%",flexDirection: 'column', borderRadius: 20,}} rounded>
+                            {
+                                //* Reply Message caption */
+                                this.state.replying ? this.replyMessageCaption() : null
+                            }
                         <TextInput
                             onFocus={this.onFocus}
                             onEndEditing={this.onEndEditing}
                             value={this.state.textValue}
                             onChange={(event) => this._onChange(event)}
                             placeholder={'Your Message'}
-                            style={{ width: '84%', maxHeight: 200, minHeight: 45,marginLeft:"3%" }}
+                            style={{ width: '84%', maxHeight: 300, minHeight: 45,marginLeft:"3%" }}
                             placeholderTextColor='#66737C'
                             multiline={true}
                             enableScrollToCaret
@@ -1382,7 +1384,8 @@ export default class ChatRoom extends Component {
     }
 
     replyMessageCaption() {
-        return <View style={{ backgroundColor: this.state.replyerBackColor, alignSelf: 'center', width: '98%' }}><ReplyText compose={true} openReply={(replyer) => {
+        return <View style={{ backgroundColor: this.state.replyerBackColor, alignSelf: 'center', width: '100%' }}>
+        <ReplyText compose={true} openReply={(replyer) => {
             replyer.type_extern ?
                 this.handleReplyExtern(replyer) : this.setState({
                     replyer: replyer,
