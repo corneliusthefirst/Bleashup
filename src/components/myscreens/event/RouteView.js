@@ -97,7 +97,7 @@ export default class RouteView extends Component {
             <View style={{ width: this.width, height: '100%' }} transparent >
 
                 <TouchableOpacity style={{
-                    ...this.centerer, backgroundColor: this.props.currentPage == "EventDetails" && !this.props.isChat ? "#54F5CA" : colorList.bodyBackground,
+                    ...this.centerer, backgroundColor: this.props.currentPage == "EventDetails" && !this.props.isChat ? ColorList.bodyDarkWhite : colorList.bodyBackground,
                     width: "100%", ...shadower(2)
                 }} onPress={() => requestAnimationFrame(() => {
                     this.props.setCurrentPage("EventDetails")
@@ -114,7 +114,7 @@ export default class RouteView extends Component {
 
                 <TouchableOpacity style={{
                     ...this.centerer, width: '100%',
-                    backgroundColor: this.props.currentPage == "EventChat" || this.props.isChat ? "#54F5CA" : colorList.bodyBackground,
+                    backgroundColor: this.props.currentPage == "EventChat" || this.props.isChat ? ColorList.bodyDarkWhite : colorList.bodyBackground,
                     ...shadower(2)
                 }} onPress={() => requestAnimationFrame(() => {
                     this.props.setCurrentPage("EventChat")
@@ -135,7 +135,7 @@ export default class RouteView extends Component {
                 
                 <TouchableOpacity style={{
                     ...this.centerer, width: '100%',
-                    backgroundColor: this.props.currentPage == "Reminds" && !this.props.isChat ? "#54F5CA" : colorList.bodyBackground,
+                    backgroundColor: this.props.currentPage == "Reminds" && !this.props.isChat ? ColorList.bodyDarkWhite : colorList.bodyBackground,
                     ...shadower(2)
                 }} onPress={() => requestAnimationFrame(() => {
                     this.props.setCurrentPage("Reminds")
@@ -161,7 +161,7 @@ export default class RouteView extends Component {
                 </TouchableOpacity>
                 <TouchableOpacity style={{
                     width: '100%',
-                    ...this.centerer, backgroundColor: this.props.currentPage == "ChangeLogs"&& !this.props.isChat ? "#54F5CA" : colorList.bodyBackground, 
+                    ...this.centerer, backgroundColor: this.props.currentPage == "ChangeLogs" && !this.props.isChat ? ColorList.bodyDarkWhite : colorList.bodyBackground, 
                     ...shadower(2)
                 }} onPress={() => requestAnimationFrame(() => {
                     this.props.setCurrentPage("ChangeLogs")

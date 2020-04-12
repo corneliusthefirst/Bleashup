@@ -12,17 +12,18 @@ containerWidth = width
 containerBackground = "#1FABAB"
 
 //header
- headerIcon = "ivory"
- headerText = "ivory"
- headerBlackText = "black"
- headerBackground = "#1FABAB"
+iconInactive ="#ADE3D2"
+headerIcon = "#0A4E52"
+headerText = "#0A4E52"
+ headerBlackText = "#0A4E52"
+ headerBackground = "white"
  headerHeight = 50
  headerFontweight = "bold"
  headerFontSize = 20
 
 
 //body
- bodyIcon = "black"
+ bodyIcon = "#0A4E52"
  bodyText = "black"
  bodyBackground = "white"
  bodySubtext = "gray"

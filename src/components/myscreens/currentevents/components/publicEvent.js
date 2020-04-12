@@ -397,9 +397,9 @@ renderFooter(){
   render() {
     //emitter.emit('notify', "santerss") 
     return (this.state.isMount ? <View style={{backgroundColor:colorList.bodyBackground,
-      width: colorList.containerWidth,alignSelf:"flex-start" }}>
+      width: colorList.containerWidth,alignSelf:"center" }}>
       <Swipeout {...this.props} onOpen={() => this.openSwipeOut()} onClose={() => this.onCloseSwipeout()} style={{
-        width: "100%", ...shadower(1),
+        width: "97%", ...shadower(1),
         backgroundColor: this.props.Event.new ? "#cdfcfc" : null
       }}
         autoClose={true}

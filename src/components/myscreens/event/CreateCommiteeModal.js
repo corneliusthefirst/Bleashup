@@ -48,7 +48,7 @@ export default class CreateCommiteeModal extends PureComponent {
                 //swipeToClose={false}
                 backButtonClose={true}
                 entry={"top"}
-                position={"bottom"}
+                position={"top"}
                 coverScreen={true}
                 isOpen={this.props.isOpen}
                 onClosed={() => {

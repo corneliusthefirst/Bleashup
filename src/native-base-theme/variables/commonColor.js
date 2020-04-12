@@ -1,7 +1,7 @@
 // @flow
 
 import color from "color";
-
+import ColorList from '../../components/colorList';
 import {
     Platform,
     Dimensions,
@@ -237,10 +237,10 @@ export default {
     inverseSpinnerColor: "#305455",
 
     // Tab
-    tabDefaultBg: platform === "ios" ? "#1FABAB" : "#1FABAB",
-    topTabBarTextColor: platform === "ios" ? "#FFFFFF" : "#FFFFFF",
-    topTabBarActiveTextColor: platform === "ios" ? "#FFFFFF" : "#FFFFFF",
-    topTabBarBorderColor: platform === "ios" ? "#1FABAB" : "#1FABAB",
+    tabDefaultBg: platform === "ios" ? ColorList.headerBackground : ColorList.headerBackground,
+    topTabBarTextColor: platform === "ios" ? ColorList.iconInactive : ColorList.iconInactive,
+    topTabBarActiveTextColor: platform === "ios" ? ColorList.headerIcon : ColorList.headerIcon,
+    topTabBarBorderColor: platform === "ios" ? ColorList.headerIcon : ColorList.headerIcon,
     topTabBarActiveBorderColor: platform === "ios" ? "#1FABAB" : "#1FABAB",
 
     // Tabs

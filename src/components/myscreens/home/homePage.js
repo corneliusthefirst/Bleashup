@@ -290,15 +290,15 @@ class Home extends Component {
     setTimeout(() => {
       //this.launchAnimation()
     }, 1000)
-    StatusBar.setBackgroundColor("#1FABAB", true)
+    StatusBar.setBackgroundColor(colorList.headerBackground, true)
     StatusBar.setBarStyle('dark-content', true)
     StatusBar.setHidden(false, true)
     return (
       <Container style={{ height:colorList.containerHeight,backgroundColor:colorList.containerBackground ,width:colorList.containerWidth }}>
-        <View style={{ height: colorList.headerHeight,backgroundColor: colorList.headerBackground ,width:"100%", }}>
+        <View style={{ height: colorList.headerHeight, backgroundColor: colorList.headerBackground, width: "100%", }}>
         
          
-            <View style={{flex: 1, backgroundColor: colorList.headerBackground, flexDirection: "row",justifyContent: "space-between",width:"100%" }}>
+          <View style={{ flex: 1, backgroundColor: colorList.headerBackground, flexDirection: "row", justifyContent: "space-between", width: "100%", ...bleashupHeaderStyle }}>
              
               <View style={{ alignSelf: "flex-start",justifyContent:"center",height:"98%",marginLeft: '1%', }}>
               <Thumbnail small source={require("../../../../assets/Bleashup.png")}></Thumbnail>
@@ -308,13 +308,13 @@ class Home extends Component {
                 <View style={{ height:"100%",alignSelf: "flex-end", display: 'flex', flexDirection: 'row', marginRight:"2%"}}>
 
                  <TouchableOpacity style={{height:40,alignItems:"center",justifyContent:"center"}} onPress={() => this.navigateToInvitations()}>
-                  <Icon name="sc-telegram" active={true} type="EvilIcons" style={{ color: "white", }} onPress={() => this.navigateToInvitations()} />
+                  <Icon name="sc-telegram" active={true} type="EvilIcons" style={{ color: colorList.headerIcon, }} onPress={() => this.navigateToInvitations()} />
                   </TouchableOpacity>
 
                   <TouchableOpacity style={{ height: 40, alignItems: "center", justifyContent: "center" }} onPress={this.showMenu}>
                     <Menu
                      ref={this.setMenuRef}
-                     button={<Icon name="gear" active={true} type="EvilIcons" style={{ color: "white",marginLeft:width/35 }} onPress={this.showMenu} />}
+                  button={<Icon name="gear" active={true} type="EvilIcons" style={{ color: colorList.headerIcon ,marginLeft:width/35, }} onPress={this.showMenu} />}
                      style={{ backgroundColor:colorList.bodyBackground }}
                      >
                    <MenuItem onPress={this.settings}>settings</MenuItem>
@@ -336,7 +336,7 @@ class Home extends Component {
           }}
           tabBarPosition="bottom"
           tabBarUnderlineStyle={{
-            backgroundColor: colorList.headerBackground
+            backgroundColor: colorList.headerIcon
           }}
           onChangeTab={({ i }) => {
             this.setState({

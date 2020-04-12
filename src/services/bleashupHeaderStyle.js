@@ -6,7 +6,7 @@ export default {
     marginRight: '0%',
     borderBottomLeftRadius: 0,
     borderBottomRightRadius: 0,
-    ...shadower(),
+    ...shadower(2),
     backgroundColor: ColorList.bodyBackground,
     color:ColorList.headerText,
     width: "100%",
