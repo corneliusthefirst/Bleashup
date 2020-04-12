@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Animated, TouchableWithoutFeedback, Dimensions, PanResponder } from 'react-native';
+import { View, Animated, TouchableWithoutFeedback, Dimensions, PanResponder,StatusBar } from 'react-native';
 import { TouchableOpacity, ScrollView } from "react-native-gesture-handler";
 import UpdateStateIndicator from "../currentevents/components/updateStateIndicator";
 import { List, Icon, Label, Card, CardItem, Text, Header, Thumbnail, Title, Button } from 'native-base';
@@ -119,7 +119,7 @@ export default class SWView extends Component {
             borderBottomWidth: 0,
             //margin: "1%",
         }}>
-            
+            <StatusBar color={'white'}></StatusBar>
                 <View style={{ flexDirection: 'row',height:colorList.containerHeight}}>
 
                     <View style={{

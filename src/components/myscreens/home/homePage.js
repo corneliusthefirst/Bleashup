@@ -300,8 +300,8 @@ class Home extends Component {
          
             <View style={{flex: 1, backgroundColor: colorList.headerBackground, flexDirection: "row",justifyContent: "space-between",width:"100%" }}>
              
-              <View style={{ alignSelf: "flex-start",justifyContent:"center",height:"98%",marginTop:"1%" }}>
-                <Thumbnail source={require("../../../../assets/bleashuptitle.png")} style={{width:120}}></Thumbnail>
+              <View style={{ alignSelf: "flex-start",justifyContent:"center",height:"98%",marginLeft: '1%', }}>
+              <Thumbnail small source={require("../../../../assets/Bleashup.png")}></Thumbnail>
               </View>
 
             
