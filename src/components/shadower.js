@@ -4,6 +4,6 @@ export default shadower = (elevation) => {
         shadowOffset: {
             height: 1,
         },
-        shadowRadius: 10, elevation: elevation ? elevation : 6
+        shadowRadius: 1, elevation: elevation ? elevation : 6
     }
 }

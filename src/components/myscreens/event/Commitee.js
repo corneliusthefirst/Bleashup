@@ -91,7 +91,7 @@ export default class Commitee extends Component {
                             keyExtractor={(item, index) => index.toString()}
                             renderItem={(item, index) =>
                                 <CommiteeItem
-                                    //computedMaster={this.props.computedMaster}
+                                    computedMaster={this.props.computedMaster}
                                     key={index.toString()}
                                     ImICurrentCommitee={item.id && item.id === GState.currentCommitee ||
                                         item === GState.currentCommitee}

@@ -337,17 +337,18 @@ export default class ChatRoom extends Component {
         })
         setTimeout(() => {
             this.adjutRoomDisplay()
-        }, 500)
+        }, 200)
     }
     adjutRoomDisplay(dontToggle) {
         setTimeout(() => {
-            GState.reply && this.fucussTextInput()
+            GState.reply && !this.alreadyFocussed &&  this.fucussTextInput()
+            this.alreadyFocussed = true
             this.refs.scrollViewRef.scrollToEnd({ animated: true, duration: 200 })
             this.state.showCaption && 
             this.refs.captionScrollViewRef.scrollToEnd({ animated: true, 
                 duration: 200 })
             this.temp ? GState.reply = JSON.parse(this.temp) : null
-        },50)
+        },30)
     }
     markAsRead() {
         this.room.deleteNewMessageIndicator().then(() => { })
@@ -1434,16 +1435,15 @@ export default class ChatRoom extends Component {
                             style={{ color:colorList.headerIcon,marginLeft:"5%",marginRight:"5%"}}
                             type={"MaterialIcons"}
                             name={"arrow-back"}></Icon>
-                                            
-                      
-                            <Title style={{
-                                color:colorList.headerText,
-                                fontSize:colorList.headerFontSize,
-                                fontWeight:colorList.headerFontweight ,
-                                
-                            }}>{this.props.roomName}</Title>
-                            {this.state.typing && <TypingIndicator></TypingIndicator>}
-                       
+                            <View>
+                    <Title style={{
+                        color: colorList.headerText,
+                        fontSize: colorList.headerFontSize,
+                        fontWeight: colorList.headerFontweight,
+
+                    }}>{this.props.roomName}</Title>
+                    {this.state.typing && <TypingIndicator></TypingIndicator>}
+                            </View>                       
                    
                     {
                         //!! you can add the member last seen here if the room has just one member */

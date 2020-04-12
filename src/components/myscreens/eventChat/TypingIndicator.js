@@ -8,7 +8,7 @@ export default class TypingIndicator extends Component {
     }
     render(){
         return <View style={{alignSelf: 'flex-start',marginTop: '-10%',}}>
-        <DotIndicator size={7} color="#1FABAB"></DotIndicator>
+        <DotIndicator size={5} color="#1FABAB"></DotIndicator>
         </View>
     }
 }
