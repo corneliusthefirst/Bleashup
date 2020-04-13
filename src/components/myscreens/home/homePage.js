@@ -329,7 +329,7 @@ class Home extends Component {
 
           </View>
        
-        <Tabs
+       {/*<Tabs
           locked
           tabContainerStyle={{
              backgroundColor: colorList.headerBackground
@@ -344,7 +344,7 @@ class Home extends Component {
             })
           }}
         >
-          <Tab
+          {/*<Tab
             tabStyle={{
               borderRadius: 0,
             }}
@@ -355,9 +355,11 @@ class Home extends Component {
                 </View>
               </TabHeading>
             }
-          >
-            <CurrentEventView {...this.props}></CurrentEventView>
-          </Tab>
+          >*/}
+          <View style={{height:colorList.containerHeight - (colorList.headerHeight+25)}}>
+          <CurrentEventView {...this.props}></CurrentEventView>
+          </View>
+          {/*</Tab>
           <Tab
             heading={
               <TabHeading>
@@ -368,7 +370,7 @@ class Home extends Component {
             }
           >
             <Chats {...this.props} />
-          </Tab>
+          </Tab>*/}
           {/*<Tab
             heading={
               <TabHeading>
@@ -380,7 +382,7 @@ class Home extends Component {
           >
             <StatusView {...this.props} />
           </Tab>*/}
-        </Tabs>
+        {/*</Tabs>*/}
         {this.state.isForeignEventsModalOpened ? <ForeignEventsModal isOpen={this.state.isForeignEventsModalOpened} onClosed={() => {
           this.setState({
             isForeignEventsModalOpened: false,
