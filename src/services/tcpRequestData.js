@@ -14,7 +14,6 @@ class tcpRequestData {
     return this.sendData("get_all_update", requestObject.None(), "get_all_update")
   }
   UpdateCurrentEvent(phone, eventID, action, data, id) {
-    console.warn(data)
     let UpdateData = () => {
       let Update = requestObject.Update();
       if (action === "title") {
@@ -127,6 +126,12 @@ class tcpRequestData {
         Update.event_id = eventID;
         Update.recurrent_update = data
         Update.phone = phone
+        return Update
+      } else if(action == 'adds'){
+        Update.action = action;
+        Update.event_id = eventID;
+        Update.phone = phone;
+        Update.participant = data 
         return Update
       }
     };

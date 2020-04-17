@@ -112,7 +112,8 @@ export default class ChangeLogs extends Component {
             !GState.showingProfile ? this.props.propcessAndFoward(data) : null
           }}
           data={this.props.activeMember && this.props.activeMember !== null ?
-            this.changes.filter(ele => ele.updater.phone === this.props.activeMember ||
+            this.changes.filter(ele => ele.updater === this.props.activeMember || 
+              ele.updater.phone === this.props.activeMember ||
               ele.type === "date_separator") : this.changes}
         >
         </BleashupTimeLine>

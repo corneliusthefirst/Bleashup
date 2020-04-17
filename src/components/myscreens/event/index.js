@@ -56,6 +56,7 @@ import VideoViewer from '../highlights_details/VideoModal';
 import Drawer from 'react-native-drawer'
 import shadower from "../../shadower";
 import colorList from "../../colorList";
+import SettingsTabModal from "./SettingTabModal";
 
 const screenWidth = Math.round(Dimensions.get('window').width);
 
@@ -260,8 +261,8 @@ export default class Event extends Component {
           isM={this.state.isMe}
           activeMember={this.state.activeMember}
           forMember={this.state.forMember}
-          event_id={this.event.id} 
-          navigatePage={(page)=>{this.props.navigation.navigate(page)}}></ChangeLogs>
+          event_id={this.event.id}
+          navigatePage={(page) => { this.props.navigation.navigate(page) }}></ChangeLogs>
 
     }
   }
@@ -367,19 +368,12 @@ export default class Event extends Component {
   bandMember(members) {
     if (!this.state.working) {
       this.setState({
-        // isManagementModalOpened:false,
+        isManagementModalOpened:false,
         working: true
       })
       Requester.bandMembers(members, this.event.id).then((mem) => {
-        this.setState({
-          working: false
-        })
-        this.event.participant = reject(this.event.participant, ele => findIndex(members, { phone: ele.phone }) >= 0)
-        Toast.show({ text: "members successfully baned", type: "success", })
+        this.initializeMaster()
         emitter.emit("parti_removed")
-        RemoveParticipant(this.event.id, mem).then(() => {
-
-        })
       }).catch(e => {
         this.setState({
           working: false
@@ -395,11 +389,7 @@ export default class Event extends Component {
         working: true
       })
       Requester.changeEventMasterState(newState, this.event.id).then(() => {
-        this.setState({
-          working: false
-        })
-        this.event.participant = this.event.participant.map(e => e.phone == newState.phone ? newState : e)
-        Toast.show({ text: "master state successfully updated", type: "success" })
+        this.initializeMaster()
       }).catch((e) => {
         this.setState({
           isManagementModalOpened: false,
@@ -868,23 +858,31 @@ export default class Event extends Component {
         working: true,
         isInviteModalOpened: false
       })
-      Requester.invite(members, this.event.id).then(() => {
-        this.setState({
-          working: false
+      if (this.state.adding) {
+        Requester.addParticipants(this.event.id,members.map(ele => {return {...ele,status:'added'}})).then(() => {
+          this.initializeMaster()
+        }).catch(() => {
+          this.setState({
+            working: false
+          })
+          Toast.show({ message: "unable to connect to the server" })
         })
-      }).catch(err => {
-        this.setState({
-          working: false
+      } else {
+        Requester.invite(members, this.event.id).then(() => {
+          this.initializeMaster()
+        }).catch(err => {
+          this.setState({
+            working: false
+          })
+          Toast.show({ message: "unable to connect to the server" })
         })
-        Toast.show({ message: "unable to connect to the server" })
-      })
+      }
     } else {
-
       Toast.show({ message: "App is busy !" })
     }
   }
   refreshCommitees() {
-    emitter.emit(this.event.id+"_refresh-commitee")
+    emitter.emit(this.event.id + "_refresh-commitee")
     //this.refs.swipperView.refreshCommitees()
   }
   saveRemoved(mem) {
@@ -896,15 +894,15 @@ export default class Event extends Component {
           isSelectableListOpened: false
         })
         Requester.removeMembers(this.state.commitee_id, mem, this.event.id).then(() => {
-            RemoveMembers(this.event.id, this.state.commitee_id, mem).then(() => { })
-            this.setState({
-              commitee_id: null,
-              members: null,
-              roomMembers: this.state.roomMembers.filter(ele => (findIndex(mem, { phone: ele.phone }) < 0)),
-              removing: false,
-              working: false,
-              notcheckall: false
-            })
+          RemoveMembers(this.event.id, this.state.commitee_id, mem).then(() => { })
+          this.setState({
+            commitee_id: null,
+            members: null,
+            roomMembers: this.state.roomMembers.filter(ele => (findIndex(mem, { phone: ele.phone }) < 0)),
+            removing: false,
+            working: false,
+            notcheckall: false
+          })
 
           //this.refreshCommitees()
         }).catch(error => {
@@ -952,7 +950,7 @@ export default class Event extends Component {
           working: false
         })
         this.refreshCommitees()
-        AddMembers(this.event.id,id,[member]).then(() => {})
+        AddMembers(this.event.id, id, [member]).then(() => { })
       }).catch((error) => {
         this.setState({
           working: false
@@ -987,7 +985,7 @@ export default class Event extends Component {
         })
         emitter.emit('left')
         this.refreshCommitees()
-        RemoveMembers(this.event.id,id,[{phone:this.user.phone}]).then(() =>{})
+        RemoveMembers(this.event.id, id, [{ phone: this.user.phone }]).then(() => { })
       }).catch(() => {
         this.setState({
           working: false
@@ -1041,10 +1039,11 @@ export default class Event extends Component {
       Toast.show({ text: "no members selected" })
     }
   }
-  inviteContacts() {
+  inviteContacts(adding) {
     this.isOpen = false
     this.setState({
-      isInviteModalOpened: true
+      isInviteModalOpened: true,
+      adding: adding
     })
   }
   checkActivity(member) {
@@ -1053,8 +1052,8 @@ export default class Event extends Component {
     this.setState({
       currentPage: "ChangeLogs",
       isMe: member.phone === stores.LoginStore.user.phone ? true : false,
-      isManagementModalOpened: false,
       isChat: false,
+      isSettingsModalOpened: false,
       activeMember: member.phone,
       forMember: member.nickname
     })
@@ -1121,7 +1120,7 @@ export default class Event extends Component {
     if (!this.state.working) {
       this.setState({
         working: true,
-        isSettingsModalOpened: false
+        //isSettingsModalOpened: false
       })
       Requester.applyAllUpdate(original, newSettings).then((res) => {
         // console.warn(res)
@@ -1273,6 +1272,19 @@ export default class Event extends Component {
       }, 250)
     }
   }
+  preleaveActivity() {
+    this.isOpen = false
+    this.member ? this.setState({
+      isAreYouSureModalOpened: true,
+      warnDescription: "Are you sure you want to leave this activity ?",
+      warnTitle: "Leave activity",
+      callback: this.leaveActivity.bind(this)
+    }) : Toast.show({ text: "You are not a  member anymore !" })
+  }
+  startInvitation(adding) {
+    this.computedMaster || this.event.public ? this.inviteContacts(adding) :
+      Toast.show({ text: "You don't have enough priviledges to invite your contacts to this activity ", duration: 4000 })
+  }
   unsync() {
     this.setState({
       isSynchronisationModalOpned: false
@@ -1286,7 +1298,7 @@ export default class Event extends Component {
   }
   render() {
     StatusBar.setHidden(false, true)
-    return (<Drawer 
+    return (<Drawer
       useInteractionManager={true}
       tweenHandler={this.state.currentPage === 'EventChat' ? null : Drawer.tweenPresets.parallax}
       open={this.isOpen}
@@ -1316,7 +1328,7 @@ export default class Event extends Component {
       styles={
         {
           drawer: {
-            shadowColor: '#000000', shadowOpacity: 0.8, shadowRadius: 3, 
+            shadowColor: '#000000', shadowOpacity: 0.8, shadowRadius: 3,
           }
           ,
           main: {}
@@ -1331,78 +1343,70 @@ export default class Event extends Component {
       }} isOpen={this.isOpen}
       //initializeOpen={true}
       openMenuOffset={this.currentWidth}
-      content={<View style={{ backgroundColor:colorList.bodyBackground,width:"100%"}}><SWView
-          navigateHome={() => {
-            this.setState({
-              isChat: false
-            })
-            //this.goback()
-          }}
-          exitActivity={() => {
-            this.goback()
-          }}
-          hideMenu={() => {
-            this.isOpen = false
-            this.setState({
+      content={<View style={{ backgroundColor: colorList.bodyBackground, width: "100%" }}><SWView
+        navigateHome={() => {
+          this.setState({
+            isChat: false
+          })
+          //this.goback()
+        }}
+        exitActivity={() => {
+          this.goback()
+        }}
+        hideMenu={() => {
+          this.isOpen = false
+          this.setState({
 
+          })
+        }}
+        period={this.event.period}
+        calendared={this.event.calendar_id ? true : false}
+        /*handleSync={() => {
+          this.isOpen = false
+          this.event.period ? this.setState({
+            isSynchronisationModalOpned: true,
+          }) : Toast.show({ text: 'cannot sync this activity to your calendar', duration: 4000 })
+        }}*/
+        isChat={this.state.isChat}
+        computedMaster={this.computedMaster}
+        ref="swipperView"
+        publish={() => this.publish()}
+        showActivityPhotoAction={() => this.computedMaster ? this.openPhotoSelectorModal(this.event.background) : this.showPhoto(this.event.background)}
+        /*leaveActivity={() => {
+          this.preleaveActivity()
+        }}*/
+        openSettingsModal={() => this.openSettingsModal()}
+        /*ShowMyActivity={(a) => this.checkActivity({ phone: stores.LoginStore.user.phone })}
+        inviteContacts={() => this.startInvitation()}*/
+        //removeMember={(id, members) => { this.removeMembers(id, members) }}
+        addMembers={(id, currentMembers) => this.addCommiteeMembers(id, currentMembers)}
+        publishCommitee={(id, stater) => { this.publishCommitee(id, stater) }}
+        editName={(newName, id, currentName) => this.computedMaster ? this.editName(newName, id) : Toast.show({ text: "Connot Update This Commitee" })}
+        swapChats={(room) => this.swapChats(room)} phone={stores.LoginStore.user.phone}
+        commitees={this.event.commitee ? this.event.commitee : []}
+        showCreateCommiteeModal={() => {
+          //this.isOpen = false
+          if (!this.state.working && this.computedMaster) {
+            this.setState({
+              isCommiteeModalOpened: true
             })
-          }}
-          period={this.event.period}
-          calendared={this.event.calendar_id ? true : false}
-          handleSync={() => {
-            this.isOpen = false
-            this.event.period ? this.setState({
-              isSynchronisationModalOpned: true,
-            }) : Toast.show({ text: 'cannot sync this activity to your calendar', duration: 4000 })
-          }}
-          isChat={this.state.isChat}
-          computedMaster={this.computedMaster}
-          ref="swipperView"
-          publish={() => this.publish()}
-          showActivityPhotoAction={() => this.computedMaster ? this.openPhotoSelectorModal(this.event.background) : this.showPhoto(this.event.background)}
-          leaveActivity={() => {
-            this.isOpen = false
-            this.member ? this.setState({
-              isAreYouSureModalOpened: true,
-              warnDescription: "Are you sure you want to leave this activity ?",
-              warnTitle: "Leave activity",
-              callback: this.leaveActivity.bind(this)
-            }) : Toast.show({ text: "You are not a  member anymore !" })
-          }}
-          openSettingsModal={() => this.openSettingsModal()}
-          ShowMyActivity={(a) => this.checkActivity({ phone: stores.LoginStore.user.phone })}
-          inviteContacts={() => this.computedMaster || this.event.public ? this.inviteContacts() : Toast.show({ text: "You don't have enough priviledges to invite your contacts to this activity ", duration: 4000 })}
-          join={(id) => { this.joinCommitee(id) }}
-          leave={(id) => { this.leaveCommitee(id) }}
-          removeMember={(id, members) => { this.removeMembers(id, members) }}
-          addMembers={(id, currentMembers) => this.addCommiteeMembers(id, currentMembers)}
-          publishCommitee={(id, stater) => { this.publishCommitee(id, stater) }}
-          editName={(newName, id, currentName) => this.computedMaster ? this.editName(newName, id) : Toast.show({ text: "Connot Update This Commitee" })}
-          swapChats={(room) => this.swapChats(room)} phone={stores.LoginStore.user.phone}
-          commitees={this.event.commitee ? this.event.commitee : []}
-          showCreateCommiteeModal={() => {
-            //this.isOpen = false
-            if (!this.state.working && this.computedMaster) {
-              this.setState({
-                isCommiteeModalOpened: true
-              })
-            } else {
-              Toast.show({ text: "You don't have enough priviledges to add a commitee ", duration: 4000 })
-            }
-          }}
-          showMembers={() => this.showMembers()}
-          setCurrentPage={(page, data) => {
-            this.setCurrentPage(page, data)
+          } else {
+            Toast.show({ text: "You don't have enough priviledges to add a commitee ", duration: 4000 })
           }
-          }
-          currentPage={this.state.currentPage}
-          //width={this.state.isChat ? this.normalWidth : this.currentWidth}
-          event={this.event}
-          master={this.master}
-          public={this.event.public} navigatePage={(page)=>{this.props.navigation.navigate(page)}} ></SWView></View>}>
+        }}
+        //showMembers={() => this.showMembers()}
+        setCurrentPage={(page, data) => {
+          this.setCurrentPage(page, data)
+        }
+        }
+        currentPage={this.state.currentPage}
+        //width={this.state.isChat ? this.normalWidth : this.currentWidth}
+        event={this.event}
+        master={this.master}
+        public={this.event.public} navigatePage={(page) => { this.props.navigation.navigate(page) }} ></SWView></View>}>
       <View style={{
         height: "100%",
-        backgroundColor:colorList.bodyBackground
+        backgroundColor: colorList.bodyBackground
       }}>
         {this.state.fresh ? <View style={{
           height: '100%',
@@ -1507,6 +1511,7 @@ export default class Event extends Component {
           ok={this.state.okButtonText}
           message={this.state.warnDescription}></AreYouSure>}
         {!this.state.isInviteModalOpened ? null : <InviteParticipantModal
+          adding={this.state.adding}
           invite={(members) => this.invite(members)}
           onClosed={() => {
             this.setState({
@@ -1514,7 +1519,8 @@ export default class Event extends Component {
             })
           }} master={this.master} isOpen={this.state.isInviteModalOpened} participant={this.event.participant}>
         </InviteParticipantModal>}
-        {!this.state.isManagementModalOpened ? null : <ManageMembersModal isOpen={this.state.isManagementModalOpened}
+        {!this.state.isManagementModalOpened ? null : <ManageMembersModal
+          isOpen={this.state.isManagementModalOpened}
           checkActivity={(member) => this.checkActivity(member)}
           creator={this.event.creator_phone}
           participants={this.event.participant} master={this.master}
@@ -1524,28 +1530,6 @@ export default class Event extends Component {
               isManagementModalOpened: false
             })
           }}></ManageMembersModal>}
-        {this.state.isSettingsModalOpened ? <SettingsModal closeActivity={() => {
-          this.event.closed ? this.closeActivity() : this.setState({
-            isSettingsModalOpened: false,
-            isAreYouSureModalOpened: true,
-            callback: () => this.closeActivity(),
-            warnDescription: "Are You Sure Yo Want To Close This Activiy ?",
-            warnTitle: "Close Activity",
-            okButtonText: "Close"
-          })
-        }}
-          creator={this.event.creator_phone === this.user.phone}
-          computedMaster={this.computedMaster}
-          master={this.master}
-          event={this.event} saveSettings={(original, newSettings) => {
-            this.saveSettings(original, newSettings)
-          }} isOpen={this.state.isSettingsModalOpened} onClosed={() => {
-            this.markAsConfigured()
-            this.setState({
-              isSettingsModalOpened: false
-            })
-          }}>
-        </SettingsModal> : null}
         {this.state.isSynchronisationModalOpned ? <CalendarSynchronisationModal
           closed={() => {
             this.setState({
@@ -1660,6 +1644,39 @@ export default class Event extends Component {
             isHighlightDetailModalOpened: true
           })
         }}></VideoViewer> : null}
+        <SettingsTabModal
+          addMembers={() => this.startInvitation(true)}
+          invite={() => this.startInvitation()}
+          remove={() => this.showMembers()}
+          isOpen={this.state.isSettingsModalOpened}
+          currentPhone={this.user.phone}
+          leaveActivity={() => this.preleaveActivity()}
+          changeMasterState={(newState) => this.changeEventMasterState(newState)}
+          bandMembers={(selected) => this.bandMember(selected)}
+          checkActivity={(member) => this.checkActivity(member)}
+          closeActivity={() => {
+            this.event.closed ? this.closeActivity() : this.setState({
+              //isSettingsModalOpened: false,
+              isAreYouSureModalOpened: true,
+              callback: () => this.closeActivity(),
+              warnDescription: "Are You Sure Yo Want To Close This Activiy ?",
+              warnTitle: "Close Activity",
+              okButtonText: "Close"
+            })
+          }}
+          creator={this.event.creator_phone === this.user.phone}
+          computedMaster={this.computedMaster}
+          master={this.master}
+          event={this.event} saveSettings={(original, newSettings) => {
+            this.saveSettings(original, newSettings)
+          }}
+          closed={() => {
+            this.markAsConfigured()
+            this.setState({
+              isSettingsModalOpened: false
+            })
+          }}
+        ></SettingsTabModal>
       </View>
     </Drawer>
     );

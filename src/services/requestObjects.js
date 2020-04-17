@@ -32,7 +32,8 @@ class Request {
             location_update: this.LocationUpdate(),
             period_update: "",
             who_can_update_update: null,
-            background_update: ""
+            background_update: "",
+            participant: [this.Participant()]
         }
     }
     AboutUpdate() {

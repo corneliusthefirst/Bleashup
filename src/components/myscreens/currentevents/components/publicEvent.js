@@ -392,8 +392,6 @@ renderFooter(){
       </Footer>
     )
   }
-
-
   render() {
     //emitter.emit('notify', "santerss") 
     return (this.state.isMount ? <View style={{backgroundColor:colorList.bodyBackground,
@@ -402,6 +400,7 @@ renderFooter(){
         width: "97%", ...shadower(1),
         backgroundColor: this.props.Event.new ? "#cdfcfc" : null
       }}
+        disabled={!this.props.Event.public}
         autoClose={true}
         //close={true}
         {...this.swipeOutSettings(this.state.master, this.state.joint)}>

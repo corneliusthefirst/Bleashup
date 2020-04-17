@@ -69,12 +69,12 @@ export default class Commitee extends Component {
         return (this.state.loaded ?
             <View style={{ height: "100%", width: "100%"}}>
                 
-                <View style={{ ...bleashupHeaderStyle, height:45, width: "100%",flexDirection:"row",justifyContent:"space-between"}}>
+                <View style={{ ...bleashupHeaderStyle, height:colorList.headerHeight, width: "100%",flexDirection:"row",justifyContent:"space-between"}}>
                 
-                <View style={{height:45,alignSelf: "flex-start",justifyContent:"center" }}>
+                <View style={{height:colorList.headerHeight,alignSelf: "flex-start",justifyContent:"center" }}>
                   <Thumbnail source={require("../../../../assets/committees.png")} style={{width:130,height:32}}></Thumbnail>
                 </View>
-                <View  style={{height:45,justifyContent:"center",marginRight:"5%"}}>
+                <View  style={{height:colorList.headerHeight,justifyContent:"center",marginRight:"5%"}}>
                <TouchableOpacity onPress={() => requestAnimationFrame(() => { this.props.showCreateCommiteeModal() })}>
                   <Icon style={{ color: colorList.bodyIcon,fontSize:22, }}
                      name="plus" type="AntDesign"></Icon></TouchableOpacity>
@@ -82,7 +82,7 @@ export default class Commitee extends Component {
              </View>
 
                 <View>{this.state.refresh ? null :
-                    <View style={{ height: 600, }}>
+                    <View style={{ height: colorList.containerHeight - (colorList.headerHeight + 25), }}>
                         <BleashupFlatList
                         backgroundColor={colorList.bodyBackground}
                         style={{borderTopRightRadius: 5,

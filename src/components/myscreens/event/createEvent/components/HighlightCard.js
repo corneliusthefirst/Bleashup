@@ -18,6 +18,8 @@ import testForURL from '../../../../../services/testForURL';
 import CacheImages from '../../../../CacheImages';
 import shadower from "../../../../shadower";
 import PostMenu from "./PostMenu";
+import ColorList from '../../../../colorList';
+import buttoner from "../../../../../services/buttoner";
 
 
 let { height, width } = Dimensions.get('window')
@@ -61,15 +63,16 @@ export default class HighlightCard extends Component {
 
     return (
 
-      this.state.mounted ? <Card style={{ width: width / 2 - width / 40 }}>
-        <CardItem style={{ margin: 3, height: height / 30, }}>
-          <View style={{ flexDirection: 'row', }}>
-            <View style={{ width: '85%' }}>
+      this.state.mounted ?
+        <View style={{ width: ColorList.containerWidth * .9, ...shadower(1), margin: 3, borderRadius: 3, padding: 5 }}>
+          <View style={{ flexDirection: 'row',width:'98%', justifyContent: 'space-between', marginTop: 2, marginBottom: 2, height: height / 30,alignSelf: 'center', }}>
+            <View style={{ maxWidth: '85%' }}>
               <Title style={{
-                fontSize: 14, color: "#0A4E52", fontWeight: 'bold', marginLeft: '2%', alignSelf: 'flex-start',
-              }}>{this.props.item.title ? this.props.item.title : ""}</Title></View>
+                fontSize: 14, color: ColorList.headerBlackText, fontWeight: 'bold', alignSelf: 'flex-start',
+              }}>{this.props.item.title ? this.props.item.title : ""}</Title>
+            </View>
             <View>
-              {this.creator ? <View style={{ alignSelf: 'flex-end', marginLeft: '2%', }}>
+              {this.creator ? <View style={{ alignSelf: 'flex-end', justifyContent: 'flex-end', }}>
                 <PostMenu creator={this.creator} mention={() => this.props.mention(this.props.item)} delete={() => this.props.deleteHighlight(this.props.item)}
                   update={() => this.props.update(this.props.item.id)}
                   master={this.props.participant.master}>
@@ -77,64 +80,39 @@ export default class HighlightCard extends Component {
               </View> : null}
             </View>
           </View>
-        </CardItem>
-        <TouchableOpacity onPress={() => requestAnimationFrame(() => this.props.showItem(this.props.item))} >
-          {this.containsMedia() ? <CardItem style={{ width: "90%", backgroundColor: 'transparent', borderRadius: 8, ...shadower(7), alignSelf: 'center', }}>
-            <View style={{ width: "100%", height: height / 7, }}>
-              {this.props.item.url && this.props.item.url.photo && testForURL(this.props.item.url.photo) ? <CacheImages thumbnails square style={{ width: "106%", alignSelf: 'center', height: height / 7, borderRadius: 8, }} source={{ uri: this.props.item.url.photo }}></CacheImages> :
-                <Thumbnail source={{ uri: this.props.item.url.photo }} style={{
-                  flex: 1, width: null, height: null,
-                  borderRadius: 8
-                }} large ></Thumbnail>}
-              {this.props.item.url && (this.props.item.url.video || this.props.item.url.audio) ? <Icon onPress={() => {
-                this.props.showItem(this.props.item)
-              }} name={this.props.item.url.video ? "play" : "headset"} style={{
-                fontSize: 50, color: '#FEFFDE',
-                position: 'absolute', marginTop: '18%', marginLeft: '35%',
-              }} type={this.props.item.url.video ? "EvilIcons" : "MaterialIcons"}>
-              </Icon> : null}
+          <TouchableOpacity onPress={() => requestAnimationFrame(() => this.props.showItem(this.props.item))} >
+            {this.containsMedia() ? <View style={{ width: "97%", backgroundColor: 'transparent', borderRadius: 5, ...shadower(2), alignSelf: 'center', }}>
+              <View style={{ width: "100%", height: this.props.height * .695 }}>
+                {this.props.item.url && this.props.item.url.photo && testForURL(this.props.item.url.photo) ?
+                  <CacheImages thumbnails square style={{
+                    width: "103%",
+                    alignSelf: 'center', height: this.props.height * .7, borderRadius: 5,
+                  }} source={{ uri: this.props.item.url.photo }}></CacheImages> :
+                  <Thumbnail source={{ uri: this.props.item.url.photo }} style={{
+                    flex: 1, width: null, height: null,
+                    borderRadius: 8
+                  }} large ></Thumbnail>}
+              </View>
+            </View> : null}
+            <View style={{ height: this.containsMedia() ? (height / 18) : (height / 7), margin: '.5%', }}>
+              <Text ellipsizeMode='tail' style={{ fontSize: 12, }} numberOfLines={this.containsMedia() ? 2 : 10}>{this.props.item.description ? this.props.item.description : null}</Text>
             </View>
-          </CardItem> : null}
-          <CardItem style={{ height: this.containsMedia() ? (height / 18) : (height / 7), margin: '.5%', }}>
-            <Text ellipsizeMode='tail' style={{ fontSize: 12, }} numberOfLines={this.containsMedia() ? 2 : 10}>{this.props.item.description ? this.props.item.description : null}</Text>
-          </CardItem>
-        </TouchableOpacity>
-
-        {/*this.props.participant.master &&
-                <CardItem style={{height:height/18}}>
-                <Left>
-                 <TouchableOpacity onPress={() => requestAnimationFrame(() => this.props.update(this.props.item.id))}  style={{marginRight:"15%"}}>
-    
-                    {this.state.updating ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : 
-                    <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="update" type="MaterialCommunityIcons">
-                    </Icon>}
-                    <Label style={{ fontSize: 12, color: "#1FABAB" }}>Update</Label>
-                  </TouchableOpacity>
-                 </Left>
-                 <Right>
-                   <TouchableOpacity onPress={() =>  requestAnimationFrame(() => this.props.deleteHighlight(this.props.item) )} style={{marginRight:"15%"}}>
-    
-                    {this.state.deleting ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : 
-                    <Icon name="trash" style={{ fontSize: 16, color: "red" }} type="EvilIcons">
-                    </Icon>}
-                    <Label style={{ fontSize: 12, color: "red" }} >Delete</Label>
-                  </TouchableOpacity>
-                 </Right>
-           </CardItem> }
-      
-
-           {/*<HighlightCardDetail isOpen={this.state.isOpen} item={this.props.item} onClosed={()=>{this.setState({isOpen:false})}}/>*/}
-
-        {/*<BleashupAlert  title={"Delete Higlight"}   accept={"Yes"} refuse={"No"} message={" Are you sure you want to delete these highlight ?"} deleteFunction={this.delete} isOpen={this.state.check} onClosed={()=>{this.setState({check:false})}}/>*/}
-
-        {
-          /*this.props.ancien==true &&
-         <EventHighlights   isOpen={this.state.EventHighlightState} onClosed={()=>{this.setState({EventHighlightState:false})}}
-         parentComponent={this} ref={"highlights"} participant={this.props.participant} event_id={this.props.item.event_id} highlight_id={this.props.item.highlight_id}/>
-        */
-        }
-
-      </Card> : <Card style={{ width: width / 2 - width / 44, height: height / 4 }}></Card>
+          </TouchableOpacity>
+          {this.props.item.url && (this.props.item.url.video || this.props.item.url.audio) ?
+            <View style={{
+              position: 'absolute',
+              marginTop: '25%',
+              marginLeft: '35%',
+              ...buttoner,
+               height: 40,
+              width: 25,
+            }}><Icon onPress={() => {
+              this.props.showItem(this.props.item)
+            }} name={this.props.item.url.video ? "play" : "headset"} style={{
+              fontSize: 40, color: ColorList.headerBackground, margin: 'auto',
+            }} type={this.props.item.url.video ? "EvilIcons" : "MaterialIcons"}>
+              </Icon></View> : null}
+        </View> : <Card style={{ width: ColorList.containerWidth * .9, height: "100%" }}></Card>
 
     )
   }

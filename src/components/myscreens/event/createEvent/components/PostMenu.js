@@ -4,6 +4,7 @@ import {
 } from 'react-native';
 import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
 import { Icon, } from "native-base"
+import ColorList from '../../../../colorList';
 
 export default class PostMenu extends Component {
     constructor(props) {
@@ -38,21 +39,21 @@ export default class PostMenu extends Component {
         return this.state.isMount ? (
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                 <Menu
-                    style={{ backgroundColor: "#FEFFDE" }}
+                    style={{ backgroundColor: ColorList.bodyBackground }}
                     ref={this.setMenuRef}
                     button={<Icon style={{
-                        color: "#0A4E52",
+                        color: ColorList.headerIcon,
                         fontSize: 22,
                         marginTop: '10%'
                     }} onPress={this.showMenu} name="gear" type="EvilIcons"></Icon>}
                 >
-                    <MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
+                    <MenuItem textStyle={{ color: ColorList.headerIcon }} onPress={() => {
                         this.hideMenu()
                         return this.props.mention()
                     }
                     }>{"Reply"}</MenuItem>
                     {this.props.creator ?
-                        <View><MenuDivider color="#1FABAB" /><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
+                        <View><MenuDivider color="#1FABAB" /><MenuItem textStyle={{ color: ColorList.headerIcon }} onPress={() => {
                                 this.hideMenu()
                                 this.props.update()
                             }}>{"Update"}</MenuItem></View> : null}

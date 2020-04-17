@@ -9,6 +9,7 @@ import { isEqual } from "lodash"
 import Requesterer from '../currentevents/Requester';
 import { RemoveParticipant } from '../../../services/cloud_services';
 import CalendarServe from '../../../services/CalendarService';
+import MainUpdater from '../../../services/mainUpdater';
 
 class Request {
     constructor() {
@@ -366,7 +367,20 @@ class Request {
             })
         })
     }
-
+    addParticipants(eventID,participants){
+        return new Promise((resolve,reject) => {
+            let updater = stores.LoginStore.user.phone
+            tcpRequest.UpdateCurrentEvent(updater,
+                eventID,"adds",
+                participants,eventID + "_adds").then((JSONData) => {
+                serverEventListener.sendRequest(JSONData,eventID + '_adds').then(() => {
+                    resolve("ok")
+                    MainUpdater.addParticipants(eventID,participants,updater,"new_participants",moment().format()).then((Change) => {
+                    })
+                })
+            })
+        })
+    }
     storeInvitations(invitations) {
         return new Promise((resolve, reject) => {
             let func = (invitations) => {

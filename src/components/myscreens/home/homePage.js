@@ -48,7 +48,7 @@ import CreateEvent from '../event/createEvent/CreateEvent';
 import ForeignEventsModal from "./ForeignEventsModal";
 import DeepLinking from 'react-native-deep-linking';
 import shadower from "../../shadower";
-import TabModal from "./TabModal";
+import TabModal from "../../mainComponents/TabModal";
 import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
 import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
 import colorList from "../../colorList";
@@ -301,7 +301,7 @@ class Home extends Component {
           <View style={{ flex: 1, backgroundColor: colorList.headerBackground, flexDirection: "row", justifyContent: "space-between", width: "100%", ...bleashupHeaderStyle }}>
              
               <View style={{ alignSelf: "flex-start",justifyContent:"center",height:"98%",marginLeft: '1%', }}>
-              <Thumbnail small source={require("../../../../assets/Bleashup.png")}></Thumbnail>
+              {/*<Thumbnail small source={require("../../../../assets/Bleashup.png")}></Thumbnail>*/}
               </View>
 
             
@@ -356,7 +356,7 @@ class Home extends Component {
               </TabHeading>
             }
           >*/}
-          <View style={{height:colorList.containerHeight - (colorList.headerHeight+25)}}>
+          <View style={{height:colorList.containerHeight - (colorList.headerHeight+23)}}>
           <CurrentEventView {...this.props}></CurrentEventView>
           </View>
           {/*</Tab>

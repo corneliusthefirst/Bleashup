@@ -1,84 +1,61 @@
-import React, { PureComponent } from 'react';
-import { View, Dimensions } from "react-native"
-import { Content, Text, Item, Container, Tabs, Tab, TabHeading, Spinner } from 'native-base';
-import { map } from "lodash"
-import Modal from "react-native-modalbox"
-import shadower from '../../shadower';
-import Photo from './PhotoLister';
-import Video from './VideoLister';
-import File from './FileLister';
-const screenheight = Math.round(Dimensions.get('window').height);
-export default class MediaTabModal extends PureComponent {
-    constructor(props) {
-        super(props)
+import React from "react";
+import { View, Dimensions } from "react-native";
+import { Text, Spinner } from "native-base";
+import Photo from "./PhotoLister";
+import Video from "./VideoLister";
+import File from "./FileLister";
+import TabModal from "../../mainComponents/TabModal";
+const screenheight = Math.round(Dimensions.get("window").height);
+export default class MediaTabModal extends TabModal {
+    initialize() {
         this.state = {
-            content: null
-        }
+            content: null,
+            mounted: false
+        };
     }
-    state = {}
-    render() {
-        return (
-            <Modal
-                backdropOpacity={0.7}
-                backButtonClose={true}
-                position='bottom'
-                backButtonClose={true}
-                swipeToClose={false}
-                coverScreen={true}
-                isOpen={this.props.isOpen}
-                onClosed={() => {
-                    this.props.closed()
-                    this.setState({
-                        content: null,
-                        mounted:false
-                    })
-                }}
-                onOpened={() => {
-                    setTimeout(() => {
-                        this.setState({
-                            content: this.props.content,
-                            mounted:true
-                        })
-                    }, 100)
-                }}
-                style={{
-                    height: screenheight*.95,
-                    borderTopLeftRadius: 5, borderTopRightRadius: 5,  width: "100%"
-                }}
-            >
-                <Container style={{ margin: "1%" }}>
-                    {this.state.mounted?<Tabs tabContainerStyle={{ borderRadius: 8, ...shadower(6) }}>
-                        <Tab heading={
-                            <TabHeading>
-                                <Text>Photos</Text>
-                            </TabHeading>
-                        }>
-                            <View style={{ height:'100%' }}>
-                            <Photo photo={this.props.photo}></Photo>
-                            </View>
-                        </Tab>
-                        <Tab tabStyle={{
-                            borderRadius: 8
-                        }} heading={
-                            <TabHeading>
-                                <Text>Videos</Text>
-                            </TabHeading>
-                        }>
-                            <View style={{ height:'100%' }}>
-                            <Video video={this.props.video}></Video>
-                            </View>
-                        </Tab>
-                        <Tab heading={
-                            <TabHeading>
-                                <Text>Files</Text>
-                            </TabHeading>
-                        }>
-                            <View style={{ height:'100%' }}>
-                            <File file={this.props.file}></File>
-                            </View></Tab>
-                    </Tabs>:<Spinner size={'small'}></Spinner>}
-                </Container>
-            </Modal>
-        );
+    onClosedModal() {
+        this.props.closed();
+        this.setState({
+            content: null,
+            mounted: false,
+        });
     }
+    TabHeader() {
+        return null
+    }
+    onOpenModal() {
+        setTimeout(() => {
+            this.setState({
+                content: this.props.content,
+                mounted: true,
+            });
+        }, 100);
+    }
+    tabs = [
+        {
+            heading: () => <Text>Photos</Text>,
+            body: () => (
+                <View style={{ height: "100%" }}>
+                    {this.state.mounted ? <Photo photo={this.props.photo}></Photo> :
+                        <Spinner size="small"></Spinner>}
+                </View>
+            ),
+        },
+        {
+            heading: () => <Text>Videos</Text>,
+            body: () => (
+                <View style={{ height: "100%" }}>
+                    <Video video={this.props.video}></Video>
+                </View>
+            ),
+        },
+        {
+            heading: () => <Text>Files</Text>,
+            body: () => (
+                <View style={{ height: "100%" }}>
+                    <File file={this.props.file}></File>
+                </View>
+            ),
+        },
+    ];
 }

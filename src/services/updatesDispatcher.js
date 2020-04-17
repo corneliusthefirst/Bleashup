@@ -11,6 +11,7 @@ import uuid from 'react-native-uuid';
 import CalendarServe from './CalendarService';
 import { format } from './recurrenceConfigs';
 import request from "./requestObjects";
+import MainUpdater from './mainUpdater';
 class UpdatesDispatcher {
   constructor() { }
   dispatchUpdates(updates) {
@@ -19,7 +20,10 @@ class UpdatesDispatcher {
       return "ok";
     } else {
       let update = updates.pop()
-      this.dispatchUpdate(update).then(() => { this.dispatchUpdates(updates) });
+      this.dispatchUpdate(update).then(() => { 
+        console.warn("dipatching ", update)
+        this.dispatchUpdates(updates) 
+      });
     }
 
   }
@@ -322,6 +326,17 @@ class UpdatesDispatcher {
           }
         );
       });
+    },
+    adds : update => {
+      return new  Promise((resolve,reject) => {
+        MainUpdater.addParticipants(update.event_id,
+          update.new_value,
+          update.updater,update.updated,
+          update.date).then(Change => {
+            this.infomCurrentRoom(Change,update.event_id,update.event_id)
+            resolve()
+        })
+      })
     },
     unpublished: update => {
       return new Promise((resolve, reject) => {

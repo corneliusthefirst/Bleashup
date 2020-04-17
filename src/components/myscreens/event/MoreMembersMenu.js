@@ -7,7 +7,7 @@ import { Icon, } from "native-base"
 import emitter from '../../../services/eventEmiter';
 import ColorList from '../../colorList';
 
-export default class MemberActions extends Component {
+export default class MoreMembersMenu extends Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -57,15 +57,6 @@ export default class MemberActions extends Component {
     showMenu = () => {
         this._menu.show();
     };
-    publish() {
-        this._menu.hide();
-        return this.props.publish()
-    }
-    showPublishers = () => {
-        return this.props.showPublishers
-        //this._menu.hide()
-
-    }
     render() {
         return this.state.isMount ? (
             <View style={{}}>
@@ -74,25 +65,20 @@ export default class MemberActions extends Component {
                     ref={this.setMenuRef}
                     button={<Icon style={{
                         color: ColorList.headerIcon,
-                        fontSize: 25,
-                    }} onPress={this.showMenu} name="dots-three-vertical" type="Entypo"></Icon>}
+                        fontSize: 30,
+                    }} onPress={this.showMenu} name="circle-with-plus" type="Entypo"></Icon>}
                 >
-                    <View><MenuItem textStyle={{ color: ColorList.headerIcon}} onPress={() => {
+                    {this.props.master && <View><MenuItem textStyle={{ color: ColorList.headerIcon }} onPress={() => {
                         this.hideMenu()
-                        this.props.checkActivity()
-                    }}>{"Check Activites"}</MenuItem>
-                        <MenuDivider color={ColorList.iconActive} /></View>
-                     {this.props.mainMaster && this.props.creator !== this.props.phone ? <View>
-                        <MenuItem textStyle={{ color: ColorList.headerIcon }} onPress={() => {
-                            this.hideMenu()
-                            this.props.changeMasterState()
-                        }}>{this.props.master ? "Remove As Master" : "Add As Master"}</MenuItem>
-                        <MenuDivider color={ColorList.iconActive} /></View> : null}
-                    {this.props.currentPhone === this.props.phone && <View><MenuItem textStyle={{ color: "red" }} onPress={() => {
-                        this.hideMenu()
-                        this.props.leaveActivity()
-                    }}>{"Leave Activites"}</MenuItem>
+                        this.props.addMembers()
+                    }}>{"Add Members"}</MenuItem>
                         <MenuDivider color={ColorList.iconActive} /></View>}
+
+                    <View><MenuItem textStyle={{ color: ColorList.headerIcon }} onPress={() => {
+                        this.hideMenu()
+                        this.props.invite()
+                    }}>{"Invite Members"}</MenuItem>
+                        <MenuDivider color={ColorList.iconActive} /></View>
                 </Menu>
             </View>
         ) : <ImageActivityIndicator />;

@@ -1,7 +1,7 @@
 import React, { Component } from "react"
 import CacheImages from '../../../CacheImages';
 import { View } from "react-native";
-import { Body, Text, Accordion, Content, Thumbnail, Button,Title } from "native-base"
+import { Body, Text, Accordion, Content, Thumbnail, Button, Title } from "native-base"
 import ImageActivityIndicator from '../../currentevents/components/imageActivityIndicator';
 import ProfileIdicator from "../../currentevents/components/ProfilIndicator";
 import stores from "../../../../stores";
@@ -55,14 +55,15 @@ export default class ProfileView extends Component {
                 </Button>
                 <View style={{
                     alignItems: 'center',
-                    justifyContent: 'center', marginLeft: "4%", display: 'flex', fontWeight: 'bold', }}>
+                    justifyContent: 'center', marginLeft: "4%", display: 'flex', fontWeight: 'bold',
+                }}>
                     <Text ellipsizeMode={'tail'} numberOfLines={1} style={{
                         marginBottom: "2%",
                         color: "#0A4E52",
                         fontWeight: 'bold',
                     }}>{this.state.profile.phone === stores.LoginStore.user.phone ? "You" : this.state.profile.nickname}</Text>
-                    <Text ellipsizeMode={'tail'} numberOfLines={1} style={{ alignSelf: 'flex-start',  fontStyle: 'italic', }} 
-                   note>{this.state.profile.status && this.state.profile.status !== 'undefined'  && this.state.profile.status}</Text>
+                    {this.state.profile.status && this.state.profile.status !== 'undefined' && <Text ellipsizeMode={'tail'} numberOfLines={1} style={{ alignSelf: 'flex-start', fontStyle: 'italic', }}
+                        note>{this.state.profile.status}</Text>}
                 </View>
                 {this.state.isModalOpened ? <ProfileModal
                     isOpen={this.state.isModalOpened}

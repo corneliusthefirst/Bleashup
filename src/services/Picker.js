@@ -14,8 +14,7 @@ class Picker {
         return new Promise((resolve, reject) => {
             ImagePicker.openPicker({
                 cropping: crop ? true : false,
-                isCamera: "photo",
-                //mediaType: "photo",
+                mediaType: crop ? "photo" : "video",
                 //openCameraOnStart: true,
                 includeBase64: false,
                 returnAfterShot: true,
@@ -68,7 +67,7 @@ class Picker {
                 })
         })
     }
-    CancleCompression(){
+    CancleCompression() {
         RNFFmpeg.cancel()
     }
     SnapVideo() {

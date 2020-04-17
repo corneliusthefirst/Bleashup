@@ -50,8 +50,8 @@ export default class ActionsMenu extends Component {
                             color: colorList.bodyIcon,
                             fontSize: 30,
                         }} onPress={() => {
-                            this.showMenu()
-                        }} name="plus" type="AntDesign"></Icon>
+                            this.props.openSettings()
+                        }} name="gear" type="EvilIcons"></Icon>
                        </View>
                     }
                 >
