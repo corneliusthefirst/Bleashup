@@ -12,6 +12,7 @@ import GState from '../../../stores/globalState';
 import emitter from '../../../services/eventEmiter';
 import shadower from '../../shadower';
 import colorList from '../../colorList';
+import bleashupHeaderStyle from '../../../services/bleashupHeaderStyle';
 
 export default class Commitee extends Component {
     constructor(props) {
@@ -68,12 +69,12 @@ export default class Commitee extends Component {
         return (this.state.loaded ?
             <View style={{ height: "100%", width: "100%"}}>
                 
-              <View style={{height:45, width: "100%",flexDirection:"row",justifyContent:"space-between"}}>
+                <View style={{ ...bleashupHeaderStyle, height:colorList.headerHeight, width: "100%",flexDirection:"row",justifyContent:"space-between"}}>
                 
-                <View style={{height:45,alignSelf: "flex-start",justifyContent:"center" }}>
+                <View style={{height:colorList.headerHeight,alignSelf: "flex-start",justifyContent:"center" }}>
                   <Thumbnail source={require("../../../../assets/committees.png")} style={{width:130,height:32}}></Thumbnail>
                 </View>
-                <View  style={{height:45,justifyContent:"center",marginRight:"5%"}}>
+                <View  style={{height:colorList.headerHeight,justifyContent:"center",marginRight:"5%"}}>
                <TouchableOpacity onPress={() => requestAnimationFrame(() => { this.props.showCreateCommiteeModal() })}>
                   <Icon style={{ color: colorList.bodyIcon,fontSize:22, }}
                      name="plus" type="AntDesign"></Icon></TouchableOpacity>
@@ -81,18 +82,17 @@ export default class Commitee extends Component {
              </View>
 
                 <View>{this.state.refresh ? null :
-                    <View style={{ height: '97%', }}>
+                    <View style={{ height: colorList.containerHeight - (colorList.headerHeight + 25), }}>
                         <BleashupFlatList
                         backgroundColor={colorList.bodyBackground}
                         style={{borderTopRightRadius: 5,
                             width: '100%', borderBottomRightRadius: 1, 
-                            height: 700
                         }}
                             dataSource={union([this.generalCommitee], uniq(this.props.commitees))}
                             keyExtractor={(item, index) => index.toString()}
                             renderItem={(item, index) =>
                                 <CommiteeItem
-                                    //computedMaster={this.props.computedMaster}
+                                    computedMaster={this.props.computedMaster}
                                     key={index.toString()}
                                     ImICurrentCommitee={item.id && item.id === GState.currentCommitee ||
                                         item === GState.currentCommitee}

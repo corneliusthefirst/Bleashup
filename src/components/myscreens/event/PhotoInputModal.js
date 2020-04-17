@@ -61,7 +61,7 @@ export default class PhotoInputModal extends PureComponent {
                         borderRadius:5
                     }} thumbnails square></CacheImages>
                     </Button>
-                    <View style={{ margin: '2%',flexDirection: 'row', alignSelf: 'center',backgroundColor: '#FEFFDE',borderRadius: 4,}}>
+                    <View style={{ margin: '2%',flexDirection: 'row', alignSelf: 'center',borderRadius: 4,}}>
                         <Button onPress={() => this.props.openCamera()} transparent><Icon type={"MaterialIcons"} name={"insert-photo"}></Icon></Button>
                         <Button onPress={() => this.props.openInternet()} transparent><Icon type={"Foundation"} name={"web"}></Icon></Button>
                         {this.props.photo ? <Button danger onPress={() => this.props.removePhoto()}

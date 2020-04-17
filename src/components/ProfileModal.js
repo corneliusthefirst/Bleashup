@@ -46,7 +46,7 @@ export default class ProfileModal extends Component {
                 }
                 style={{
                     backgroundColor: this.transparent, justifyContent: 'center', alignItems: 'center',
-                    height: 380, borderRadius: 15, backgroundColor: '#FEFFDE', width: 350
+                    height: 380, borderRadius: 15,  width: 350
                 }}
                 position={'center'}
             >

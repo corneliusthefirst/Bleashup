@@ -37,7 +37,7 @@ export default class SelectDays extends Component {
                 style={{
                     width: '50%',
                     height: 400,
-                    backgroundColor: '#FEFFDE',
+                    
                     borderRadius: 8,borderTopLeftRadius: 0,borderTopRightRadius: 0,
                 }}
             >

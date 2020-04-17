@@ -223,159 +223,134 @@ export default class EventDetailView extends Component {
     a.created_at < b.created_at ? 1 : 0)
   render() {
     return (
-      !this.state.isMounted ? <View style={{height:colorList.containerHeight, backgroundColor:colorList.bodyBackground, width: '100%' }}></View> :
+      !this.state.isMounted ? <View style={{ height: colorList.containerHeight, backgroundColor: colorList.bodyBackground, width: '100%' }}></View> :
         (this.state.EventData.type == "relation" ?
           (this.relationPost(this.state.EventData.id))
           :
-          <View style={{ flex:1, width: "100%" }}>
-    
-            <View style={{flexDirection: "row",height: colorList.headerHeight,width: colorList.headerWidth,backgroundColor:colorList.headerBackground}}>
-              
-            <View style={{flex:1,
-            paddingLeft: '1%', paddingRight: '1%',backgroundColor:colorList.headerBackground,
-            flexDirection: "row", alignItems: "center",
-          }}>
-                  <View style={{width:"10%",paddingLeft:"1%"}} >
-                   <Icon onPress={() => {this.props.navigation.navigate("Home")}}
-                    style={{ color:colorList.headerIcon,marginLeft:"5%",marginRight:"5%"}} type={"MaterialIcons"}name={"arrow-back"}></Icon>
-                 </View>
+          <View style={{ flex: 1, width: "100%" }}>
 
-                 <View style={{ width: '70%', paddingLeft: '2%',justifyContent:"center" }}>
-                 <Title style={{ color: colorList.headerText, fontWeight: 'bold', alignSelf: 'flex-start' }}>{this.props.Event.about.title}</Title>
-                 </View>
+            <View style={{ flexDirection: "row", ...bleashupHeaderStyle, height: colorList.headerHeight, width: colorList.headerWidth, backgroundColor: colorList.headerBackground }}>
 
-                  <View style={{ width: '10%', paddingRight: '3%' }}>
-                  <Icon onPress={() => requestAnimationFrame(() => this.newHighlight())} type='AntDesign'
-                   name="plus" style={{ color: colorList.headerIcon, alignSelf: 'center', }} />
-                  </View>
-
-                  <View style={{ width: '10%', paddingLeft: '1%' }}>
-                    <Icon onPress={() => { this.props.openMenu()
-                     }} style={{ color:colorList.headerIcon }} type={"Ionicons"} name={"ios-menu"}></Icon>
-                  </View>
-
-              </View>
-        </View>
-
-
-
-            <View style={{ height: "90%", flexDirection: "column", width: "100%" }} >
-              <View style={{ height: this.state.highlightData.length == 0 ? 0 : "31%", width: "100%" }} >
-                {this.state.refresh ? <BleashupFlatList
-                  initialRender={4}
-                  showsHorizontalScrollIndicator={false}
-                  horizontal={true}
-                  renderPerBatch={5}
-                  firstIndex={0}
-                  refHorizontal={(ref) => { this.detail_flatlistRef = ref }}
-                  keyExtractor={this._keyExtractor}
-                  dataSource={this.state.highlightData.sort(this.sorter)}
-                  numberOfItems={this.state.highlightData.length}
-                  parentComponent={this}
-                  //getItemLayout={this._getItemLayout}
-                  renderItem={(item, index) => {
-                    this.delay = index >= 5 ? 0 : this.delay + 1
-                    return (
-                      <HighlightCard
-                        phone={stores.LoginStore.user.phone}
-                        delay={this.delay}
-                        update={(hid) => {
-                          this.setState({
-                            EventHighlightState: true,
-                            update: true,
-                            highlight_id: hid
-                          })
-                        }}
-                        mention={(replyer) => {
-                          this.mention(replyer)
-                        }}
-                        deleteHighlight={(item) => {
-                          this.setState({
-                            current_highlight: item,
-                            isAreYouSureModalOpened: true,
-                          })
-                        }}
-                        computedMaster={this.props.computedMaster}
-                        showItem={(item) => {
-                          this.props.showHighlight(item)
-                        }} participant={this.state.participant} parentComponent={this} item={item} ancien={true}
-                        ref={"higlightcard"} />
-                    );
-                  }}
-                >
-                </BleashupFlatList> : null}
-              </View>
-
-
-              <View style={{ height: !(this.state.highlightData &&
-                  this.state.highlightData.length) > 0 ? "100%" : "69%", borderTopLeftRadius: 5, borderTopRightRadius: 5, ...shadower(2), backgroundColor:colorList.bodyBackground,
+              <View style={{
+                flex: 1,
+                paddingLeft: '1%', paddingRight: '1%', backgroundColor: colorList.headerBackground,
+                flexDirection: "row", alignItems: "center",
               }}>
-                <View style={{
-                  height: "69%", width: colorList.containerWidth,
-                  borderRadius: 1,
-                  ...shadower(1),alignSelf:"center"
-                }}>
-
-                  {this.props.computedMaster ? <Icon name={"pencil"} type={"EvilIcons"} onPress={() => {
-                    this.setState({
-                      EventDescriptionState: true
-                    })
-                  }} style={{ alignSelf: 'flex-end',marginRight:"5%" }}></Icon> : null}
-
-                  <ScrollView style={{ width:"99%", }} showsVerticalScrollIndicator={false}>
-                    <View>
-                      {this.props.Event.about.description != "" ?
-                        <Hyperlink onPress={(url) => { Linking.openURL(url) }} linkStyle={{ color: '#48d1cc', fontSize: 16 }}>
-                          <Text dataDetectorType={'all'} style={{ fontSize: 16, fontWeight: "400", margin: "1%", color: '#555756' }} delayLongPress={800}>{this.props.Event.about.description}</Text>
-                        </Hyperlink> :
-                        <Text style={{
-                          fontWeight: "400", margin: "1%", fontSize:25,
-                          alignSelf: 'center', marginTop: (colorList.containerHeight) / 8
-                        }}
-                          delayLongPress={800}>{this.state.defaultDetail}</Text>}
-                    </View>
-                  </ScrollView>
-
+                <View style={{ width: "10%", paddingLeft: "1%" }} >
+                  <Icon onPress={() => { this.props.navigation.navigate("Home") }}
+                    style={{ color: colorList.headerIcon, marginLeft: "5%", marginRight: "5%" }} type={"MaterialIcons"} name={"arrow-back"}></Icon>
                 </View>
-                <View style={{ flexDirection: 'row', }}>
-                  <View style={{ flexDirection: "column", justifyContent: "space-between",
-                   bottom: 0, margin: '3%', 
-                   width: "56%" }}>
-                  <QRDisplayer code={this.props.Event.id} title={this.props.Event.about.title}></QRDisplayer>
-                  </View>
-                  <View style={{ width: '40%',alignItems: 'center',alignSelf: 'center',marginRight:"2%" }}>
-                  {this.props.Event.location.string ?
-                    <View style={{  width: '95%',marginRight:"5%",flexDirection: "column", height: height / 5, alignItems: "flex-end", marginRight: "3%", marginBottom: "5%", }}>
-                      {this.props.computedMaster ? <Icon name={"pencil"} type={"EvilIcons"} onPress={() => {
-                        this.setState({
-                          EventLocationState: true
-                        })
-                      }} style={{ alignSelf: 'flex-end', width:'30%'}}></Icon> : null}
-                      <MapView style={{width:'90%',alignSelf:"flex-start"}} card location={this.props.Event.location.string}></MapView>
-                    </View> :
-                    <TouchableOpacity style={{width:'60%'}} delayLongPress={1000} onLongPress={() => {
-                      if (this.state.participant.master == true) {
-                        this.setState({ EventLocationState: true })
-                      }
-                    }}>
-                      {this.props.computedMaster ? <Icon name={"pencil"} type={"EvilIcons"} onPress={() => {
-                        this.setState({
-                          EventLocationState: true
-                        })
-                      }} style={{ alignSelf: 'flex-end', }}></Icon> : null}
-                      <View style={{width:"100%"}}>
-                        <Text ellipsizeMode="clip" numberOfLines={3} style={{ alignSelf: 'flex-end', fontSize: 14, color: "#1FABAB", margin: "2%" }}>
-                          {this.state.defaultLocation}</Text>
-                      </View>
-                    </TouchableOpacity>}
-                  </View>
-                    </View>
-              </View>
-              <View style={{margin:'1%',marginLeft: '2%'}}>
-                <Creator color={colorList.bodyBackground} creator={this.props.Event.creator_phone}
-                  created_at={this.props.Event.created_at} />
+
+                <View style={{ width: '70%', paddingLeft: '2%', justifyContent: "center" }}>
+                  <Title style={{ color: colorList.headerText, fontWeight: 'bold', alignSelf: 'flex-start' }}>{this.props.Event.about.title}</Title>
+                </View>
+
+                <View style={{ width: '10%', paddingRight: '3%' }}>
+                  <Icon onPress={() => requestAnimationFrame(() => this.newHighlight())} type='AntDesign'
+                    name="plus" style={{ color: colorList.headerIcon, alignSelf: 'center', }} />
+                </View>
+
+                <View style={{ width: '10%', paddingLeft: '1%' }}>
+                  <Icon onPress={() => {
+                    this.props.openMenu()
+                  }} style={{ color: colorList.headerIcon }} type={"Ionicons"} name={"ios-menu"}></Icon>
+                </View>
+
               </View>
             </View>
+            <ScrollView nestedScrollEnabled>
+              <View style={{ minHeight: colorList.containerHeight - colorList.headerHeight, flexDirection: "column", width: "100%" }} >
+                <View style={{ height: this.state.highlightData.length == 0 ? 0 : colorList.containerHeight*.45, width: "95%",alignSelf: 'center',justifyContent: 'center', }} >
+                  {this.state.refresh ? <BleashupFlatList
+                    initialRender={4}
+                    showsHorizontalScrollIndicator={false}
+                    horizontal={true}
+                    renderPerBatch={5}
+                    firstIndex={0}
+                    refHorizontal={(ref) => { this.detail_flatlistRef = ref }}
+                    keyExtractor={this._keyExtractor}
+                    dataSource={this.state.highlightData.sort(this.sorter)}
+                    numberOfItems={this.state.highlightData.length}
+                    parentComponent={this}
+                    //getItemLayout={this._getItemLayout}
+                    renderItem={(item, index) => {
+                      this.delay = index >= 5 ? 0 : this.delay + 1
+                      return (
+                        <HighlightCard
+                          height={colorList.containerHeight*.45}
+                          phone={stores.LoginStore.user.phone}
+                          delay={this.delay}
+                          update={(hid) => {
+                            this.setState({
+                              EventHighlightState: true,
+                              update: true,
+                              highlight_id: hid
+                            })
+                          }}
+                          mention={(replyer) => {
+                            this.mention(replyer)
+                          }}
+                          deleteHighlight={(item) => {
+                            this.setState({
+                              current_highlight: item,
+                              isAreYouSureModalOpened: true,
+                            })
+                          }}
+                          computedMaster={this.props.computedMaster}
+                          showItem={(item) => {
+                            this.props.showHighlight(item)
+                          }} participant={this.state.participant} parentComponent={this} item={item} ancien={true}
+                          ref={"higlightcard"} />
+                      );
+                    }}
+                  >
+                  </BleashupFlatList> : null}
+                </View>
+
+
+                <View style={{
+                  height: colorList.containerHeight * .4,
+                  borderRaduis:5,
+                  ...shadower(2),
+                  margin: '1%', padding: '1.5%',
+                  marginBottom: '3%',
+                  backgroundColor: colorList.bodyBackground,
+                }}>
+                  <View style={{
+                    height: "100%", width: "100%",
+                    alignSelf: "center"
+                  }}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}><Text note>activity description</Text>
+                      {this.props.computedMaster ? <Icon name={"pencil"} type={"EvilIcons"} onPress={() => {
+                        this.setState({
+                          EventDescriptionState: true
+                        })
+                      }}></Icon> : null}</View>
+                    <ScrollView nestedScrollEnabled showsVerticalScrollIndicator={false}>
+                      <View>
+                        {this.props.Event.about.description != "" ?
+                          <Hyperlink onPress={(url) => { Linking.openURL(url) }} linkStyle={{ color: '#48d1cc', fontSize: 16 }}>
+                            <Text dataDetectorType={'all'} style={{ fontSize: 16, fontWeight: "400", margin: "1%", color: '#555756' }} delayLongPress={800}>{this.props.Event.about.description}</Text>
+                          </Hyperlink> :
+                          <Text style={{
+                            fontWeight: "400", fontSize: 25,
+                            alignSelf: 'center', marginTop: (colorList.containerHeight) / 8
+                          }}
+                            delayLongPress={800}>{this.state.defaultDetail}</Text>}
+                      </View>
+                    </ScrollView>
+
+                  </View>
+                </View>
+                <View style={{ flexDirection: 'row', justifyContent: "center", marginTop: 'auto', marginBottom: 'auto', height: colorList.containerHeight * .15 }}>
+                  <QRDisplayer code={this.props.Event.id} title={this.props.Event.about.title}></QRDisplayer>
+                </View>
+                <View style={{ margin: '1%', marginLeft: '2%' }}>
+                  <Creator color={colorList.bodyBackground} creator={this.props.Event.creator_phone}
+                    created_at={this.props.Event.created_at} />
+                </View>
+              </View>
+            </ScrollView>
             {this.state.EventDescriptionState ? <EventDescription updateDesc={(newDesc) => {
               this.props.updateDesc(newDesc)
             }} event={this.props.Event} isOpen={this.state.EventDescriptionState} onClosed={() => { this.setState({ EventDescriptionState: false }) }}
@@ -414,13 +389,13 @@ export default class EventDetailView extends Component {
                 this.reinitializeHighlightsList(newHighlight)
               }} isOpen={this.state.EventHighlightState} onClosed={() => {
                 this.setState({
-                  EventHighlightState: false, 
+                  EventHighlightState: false,
                   highlight_id: null
                 })
               }}
               update={(newHighlight, previousHighlight) => this.updateHighlight(newHighlight, previousHighlight)}
               participant={this.state.participant} parentComponent={this} ref={"highlights"} event_id={this.props.Event.id} />
-              
+
 
             {this.state.isAreYouSureModalOpened ? <BleashupAlert title={"Delete Higlight"} accept={"Yes"} refuse={"No"} message={" Are you sure you want to delete these highlight ?"}
               deleteFunction={() => this.deleteHighlight(this.state.current_highlight)}

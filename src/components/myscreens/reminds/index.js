@@ -360,11 +360,12 @@ export default class Reminds extends Component {
   delay = 1
   render() {
 
-    return !this.state.mounted ? <View style={{ width: '100%', height: '100%', backgroundColor: '#FEFFDE', }}></View> : (
+    return !this.state.mounted ? <View style={{ width: '100%', height: '100%', }}></View> : (
 
       <View>
-        <View style={{ height:colorList.headerHeight, width: '100%' }}>
-          <View style={{flex:1,
+        <View style={{ height:colorList.headerHeight, width: '100%', }}>
+          <View style={{
+            flex: 1, ...bleashupHeaderStyle,
             paddingLeft: '1%', paddingRight: '1%',backgroundColor:colorList.headerBackground,
             flexDirection: "row", alignItems: "center",
           }}>

@@ -5,6 +5,7 @@ import {
 import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
 import { Icon, } from "native-base"
 import emitter from '../../../services/eventEmiter';
+import ColorList from '../../colorList';
 
 export default class RemindsMenu extends Component {
     constructor(props) {
@@ -39,7 +40,7 @@ export default class RemindsMenu extends Component {
         return this.state.isMount ? (
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                 <Menu
-                    style={{ backgroundColor: "#FEFFDE" }}
+                    style={{ backgroundColor: ColorList.bodyBackground }}
                     ref={this.setMenuRef}
                     button={<Icon style={{
                         color: "#0A4E52",

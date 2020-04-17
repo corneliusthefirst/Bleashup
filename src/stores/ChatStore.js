@@ -40,6 +40,18 @@ class ChatStore {
             })
         })
     }
+    setMessageDimessions(id,dim){
+        return new Promise((resolve,reject) => {
+            this.readFromStore().then(messages => {
+                let index = findIndex(messages,{id:id})
+                messages[index].dimenssions = dim
+                this.addToStore(messages).then(() => {
+                    this.messages = messages
+                    resolve(messages)
+                })
+            })
+        })
+    }
     insetDateSeparator(messages, newMessage) {
         return new Promise((resolve, reject) => {
             let separator = { ...newMessage, id: moment(newMessage.created_at).format("YYYY/MM/DD"), type: "date_separator" }

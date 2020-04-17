@@ -22,6 +22,7 @@ import emitter from '../../../services/eventEmiter';
 import { frequencyType, FrequencyReverser, nameToDataMapper, daysOfWeeksDefault, formWeekIntervals, format, } from '../../../services/recurrenceConfigs';
 import SelectDays from "../event/SelectDaysModal";
 import { getMonthDay, getDayMonth, getDay } from "../../../services/datesWriter";
+import ColorList from '../../colorList';
 
 let { height, width } = Dimensions.get('window')
 
@@ -486,29 +487,15 @@ export default class TasksCreation extends Component {
         onClosed={() => { this.props.onClosed() }}
         style={{
           height: "95%", width: "100%", borderTopLeftRadius: 8, borderTopRightRadius: 8,
-          backgroundColor: "#FEFFDE", borderColor: 'black', flexDirection: 'column'
+          borderColor: 'black', flexDirection: 'column'
         }}
         coverScreen={true}
         backButtonClose={true}
         position={'bottom'}
         swipeToClose={true}
       >
-        <View style={{ height: "100%", backgroundColor: "#FEFFDE", width: "100%", borderRadius: 10 }}>
+        <View style={{ height: "100%", width: "100%", borderRadius: 10 }}>
           <View style={{ height: '98%', marginTop: '3%', }}>
-
-            {/*   <View style={{height:"8%",width:"96%",flexDirection:"row",backgroundColor:"#FEFFDE",alignItems:"center",marginLeft:"2%",marginRight:"2%"}}>
-           <View >
-             <TouchableOpacity>
-                <Icon  onPress={this.back} type='MaterialCommunityIcons' name="keyboard-backspace" style={{color:"#1FABAB"}} />
-             </TouchableOpacity>
-           </View>
-
-             <View style={{marginLeft:"20%"}}>
-               <Text style={{fontSize:16}}>New Tasks/Reminds</Text>
-             </View>
-
-         </View>*/}
-
             <ScrollView ref={"scrollView"} showsVerticalScrollIndicator={false}>
               {this.props.shouldRestore && this.props.canRestore ? <View style={{ width: '95%', alignItems: 'flex-end', }}><Button style={{ alignSelf: 'flex-end', margin: '2%', marginRight: '2%', }} onPress={() => {
                 this.props.onClosed()
@@ -611,7 +598,7 @@ export default class TasksCreation extends Component {
                                 value={this.state.currentRemind.recursive_frequency.frequency ?
                                   FrequencyReverser[this.state.currentRemind.recursive_frequency.frequency] : 'none'}
                                 onChangeText={this.setRecursiveFrequency}
-                                pickerStyle={{ width: "35%", margin: '1%', borderRadius: 5, backgroundColor: "#FEFFDE", borderWidth: 0.2, borderColor: "#1FABAB" }}
+                                pickerStyle={{ width: "35%", margin: '1%', borderRadius: 5, borderWidth: 0.2, borderColor: "#1FABAB" }}
                                 containerStyle={{ borderWidth: 0, borderColor: "gray", borderRadius: 6, justifyContent: "center", padding: "2%", height: 43 }}
                               />
                             </View>
@@ -718,12 +705,12 @@ export default class TasksCreation extends Component {
                 }}>
                   <Button
                     onPress={() => { this.addNewRemind() }} rounded>
-                    <Text style={{ color: "#FEFFDE" }}>{"Add"}</Text>
+                    <Text style={{ color: ColorList.headerText  }}>{"Add"}</Text>
                   </Button>
                 </View> : <View style={{ width: "22%", marginBottom: "1%", marginLeft: "72%", marginTop: "-8%" }}>
                   <Button style={{ width: "100%", borderRadius: 15, borderColor: "#1FABAB", backgroundColor: "#1FABAB", justifyContent: 'center', alignItem: 'center' }}
                     onPress={() => { this.updateRemind() }}>
-                    <Text style={{ color: "#FEFFDE", fontSize: 12 }}> Update </Text>
+                    <Text style={{ color: ColorList.headerText, fontSize: 12 }}> Update </Text>
                   </Button>
                 </View> : null : <Spinner></Spinner>
               }

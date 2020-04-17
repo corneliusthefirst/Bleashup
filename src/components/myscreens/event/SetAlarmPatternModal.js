@@ -97,7 +97,7 @@ export default class SetAlarmPatternModal extends Component {
                     borderRadius: 10,
                     borderTopLeftRadius: 0,
                     borderTopRightRadius: 0,
-                     backgroundColor: '#FEFFDE', width: "90%"
+                      width: "90%"
                 }}
             >
                 <View style={{ width: "100%", height: 50, }}>

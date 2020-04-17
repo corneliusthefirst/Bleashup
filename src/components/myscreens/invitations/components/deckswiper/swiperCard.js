@@ -33,7 +33,7 @@ export default class SwiperCard extends Component {
                     <Modal
                         isOpen={this.props.descriptionEnd}
                         onClosed={this.props.onClosed}
-                        style={{ padding: 20, alignItems: 'center', height: 220, flex: 1, borderRadius: 15, backgroundColor: '#FEFFDE', width: 330 }}
+                        style={{ padding: 20, alignItems: 'center', height: 220, flex: 1, borderRadius: 15,  width: 330 }}
                         swipeArea={210}
                         backdropOpacity={0.1}
                     >

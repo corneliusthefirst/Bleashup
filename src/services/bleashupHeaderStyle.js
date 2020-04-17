@@ -1,12 +1,14 @@
 import shadower from "../components/shadower";
+import ColorList from '../components/colorList';
 
 export default {
-    marginLeft: '1%',
-    marginRight: '1%',
-    borderBottomLeftRadius: 8,
-    borderBottomRightRadius: 8,
-    ...shadower(),
-    backgroundColor: "#FEFFDE",
-    width: "98%",
+    marginLeft: '0%',
+    marginRight: '0%',
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
+    ...shadower(5),
+    backgroundColor: ColorList.bodyBackground,
+    color:ColorList.headerText,
+    width: "100%",
     height: '100%',
 } 

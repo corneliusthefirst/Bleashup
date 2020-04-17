@@ -40,7 +40,7 @@ export default class AreYouSure extends PureComponent {
                     height: 200,
                     borderBottomLeftRadius: 8,
                     borderBottomRightRadius: 8,
-                    backgroundColor: '#FEFFDE',
+                    
                     width: 300
                 }}
             >

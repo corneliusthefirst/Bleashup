@@ -7,7 +7,7 @@ import emitter from '../../../services/eventEmiter';
 import firebase from 'react-native-firebase';
 import stores from '../../../stores';
 import { Badge } from "native-base"
-import colorList from '../../colorList';
+import ColorList from '../../colorList';
 
 const screenWidth = Math.round(Dimensions.get('window').width);
 
@@ -97,7 +97,7 @@ export default class RouteView extends Component {
             <View style={{ width: this.width, height: '100%' }} transparent >
 
                 <TouchableOpacity style={{
-                    ...this.centerer, backgroundColor: this.props.currentPage == "EventDetails" && !this.props.isChat ? "#54F5CA" : colorList.bodyBackground,
+                    ...this.centerer, backgroundColor: this.props.currentPage == "EventDetails" && !this.props.isChat ? ColorList.bodyDarkWhite : ColorList.bodyBackground,
                     width: "100%", ...shadower(2)
                 }} onPress={() => requestAnimationFrame(() => {
                     this.props.setCurrentPage("EventDetails")
@@ -106,7 +106,7 @@ export default class RouteView extends Component {
                 )}>
                     <View style={{ display: 'flex', width: "100%", marginTop: '10%', }}>
                         <Icon type="AntDesign" style={{
-                            alignSelf: 'center', fontSize: this.fontSize, color:colorList.bodyIcon
+                            alignSelf: 'center', fontSize: this.fontSize, color:ColorList.bodyIcon
                         }} name="appstore-o"></Icon>
                         {/*<Text style={{ padding: "1%", color: this.props.currentPage == "EventDetails" ? "#0A4E52" : "gray", width: "100%" }}>Details</Text>*/}
                     </View>
@@ -114,7 +114,7 @@ export default class RouteView extends Component {
 
                 <TouchableOpacity style={{
                     ...this.centerer, width: '100%',
-                    backgroundColor: this.props.currentPage == "EventChat" || this.props.isChat ? "#54F5CA" : colorList.bodyBackground,
+                    backgroundColor: this.props.currentPage == "EventChat" || this.props.isChat ? ColorList.bodyDarkWhite : ColorList.bodyBackground,
                     ...shadower(2)
                 }} onPress={() => requestAnimationFrame(() => {
                     this.props.setCurrentPage("EventChat")
@@ -125,7 +125,7 @@ export default class RouteView extends Component {
                         <View style={{}}><Icon type="FontAwesome" style={{
                             alignSelf: 'center',
                             fontSize: this.fontSize,
-                            color: colorList.bodyIcon
+                            color: ColorList.bodyIcon
                         }} name="comments-o"></Icon>
                             {/*<Text style={{ padding: "1%", color: this.props.currentPage == "EventChat" ? "#0A4E52" : "gray", width: "100%" }}>Discusion</Text>*/}</View>
                         {GState.generalNewMessages.length > 0 ? <Badge style={{ position: 'absolute' }}
@@ -135,7 +135,7 @@ export default class RouteView extends Component {
                 
                 <TouchableOpacity style={{
                     ...this.centerer, width: '100%',
-                    backgroundColor: this.props.currentPage == "Reminds" && !this.props.isChat ? "#54F5CA" : colorList.bodyBackground,
+                    backgroundColor: this.props.currentPage == "Reminds" && !this.props.isChat ? ColorList.bodyDarkWhite : ColorList.bodyBackground,
                     ...shadower(2)
                 }} onPress={() => requestAnimationFrame(() => {
                     this.props.setCurrentPage("Reminds")
@@ -144,7 +144,7 @@ export default class RouteView extends Component {
                     <View style={{ width: "100%", marginTop: '10%', }}>
                         <Icon type="FontAwesome" style={{ alignSelf: 'center', 
                             fontSize: this.fontSize,
-                             color: colorList.bodyIcon }} name="bell-o"></Icon>
+                             color: ColorList.bodyIcon }} name="bell-o"></Icon>
                         {/*<Text style={{ padding: "1%", color: this.props.currentPage == "Reminds" ? "#0A4E52" : "gray", width: "100%" }}>Reminds</Text>*?/}
                     </View>
                 </Button>
@@ -161,7 +161,7 @@ export default class RouteView extends Component {
                 </TouchableOpacity>
                 <TouchableOpacity style={{
                     width: '100%',
-                    ...this.centerer, backgroundColor: this.props.currentPage == "ChangeLogs"&& !this.props.isChat ? "#54F5CA" : colorList.bodyBackground, 
+                    ...this.centerer, backgroundColor: this.props.currentPage == "ChangeLogs" && !this.props.isChat ? ColorList.bodyDarkWhite : ColorList.bodyBackground, 
                     ...shadower(2)
                 }} onPress={() => requestAnimationFrame(() => {
                     this.props.setCurrentPage("ChangeLogs")
@@ -172,7 +172,7 @@ export default class RouteView extends Component {
                         <Icon type="AntDesign" style={{ 
                             alignSelf: 'center', 
                             fontSize: this.fontSize, 
-                            color: colorList.bodyIcon }} name="clockcircleo"></Icon>
+                            color: ColorList.bodyIcon }} name="clockcircleo"></Icon>
                         {/*<Text style={{ padding: "1%", color: this.props.currentPage == "ChangeLogs" ? "#0A4E52" : "gray", width: "100%" }}>{"Logs"}</Text>*/}
                     </View>
                 </TouchableOpacity>

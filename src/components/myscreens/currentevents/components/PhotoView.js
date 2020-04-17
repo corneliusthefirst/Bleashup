@@ -98,8 +98,8 @@ export default class PhotoView extends Component {
                             //parmenent={false}
                             style={{
                                 //...shadower(),
-                                height: this.props.height ? this.props.height : 150,
-                                width: this.props.width ? this.props.width : "100%",
+                                height: this.props.height ? this.props.height : 150,justifyContent: 'center',
+                                width: this.props.width ? this.props.width : "100%",alignSelf: 'center',
                                 borderRadius: this.props.borderRadius ? this.props.borderRadius : 0
                             }}
                             //resizeMode="contain"

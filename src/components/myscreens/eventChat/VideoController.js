@@ -1287,7 +1287,7 @@ const styles = {
             marginLeft: 7,
         },
         fill: {
-            backgroundColor: '#FEFFDE',
+            
             height: 1,
         },
         handle: {
@@ -1315,7 +1315,7 @@ const styles = {
             width: '100%'
         },
         fill: {
-            backgroundColor: '#FEFFDE',
+            
             height: 1,
             width: '100%'
         },

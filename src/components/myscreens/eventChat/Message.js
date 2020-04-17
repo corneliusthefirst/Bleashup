@@ -126,6 +126,7 @@ export default class Message extends Component {
                     pressingIn={() => {
                         this.replying = true
                     }}
+                    placeHolder={this.placeholderStyle}
                     showVoters={this.props.showVoters}
                     message={{
                         ...data,
@@ -201,7 +202,7 @@ export default class Message extends Component {
     handleReply() {
         Vibration.vibrate(this.duration)
         //console.warn(this.props.message)
-        let color = this.props.message.type === 'vote' ? "#FEFFDE" : this.state.sender ? '#DEDEDE' : '#9EEDD3'
+        let color = this.state.sender ? '#DEDEDE' : '#9EEDD3'
         switch (this.props.message.type) {
             case 'text':
                 tempMessage = this.props.message
@@ -293,25 +294,28 @@ export default class Message extends Component {
     isVote() {
         return this.props.message.type === 'vote'
     }
+    placeholderStyle = this.props.messagelayouts && this.props.messagelayouts[this.props.message.id] ?
+        this.props.messagelayouts[this.props.message.id] :
+        this.placeHolder[this.props.message.type]
     render() {
         //console.warn("here",this.props.message.sent,this.props.received);
 
         topMostStyle = {
-            marginLeft: this.state.sender && !this.isVote() ? '1%' : this.isVote ? '3.5%' : 0,
-            marginRight: !this.state.sender && !this.isVote() ? '1%' : 0,
+            marginLeft: this.state.sender  ? '1%' : 0,
+            marginRight: !this.state.sender ? '1%' : 0,
             marginTop: this.state.different ? "4%" : '1.2%',
             marginBottom: this.props.index <= 0 ? '2%' : 0,
-            alignSelf: this.isVote() ? "center" : this.state.sender ? 'flex-start' : 'flex-end',
+            alignSelf: this.state.sender ? 'flex-start' : 'flex-end',
         }
-        let color = this.isVote() ? "#FEFFDE" : this.state.sender ? '#D0FEEB' : '#9EEDD3'
+        let color = this.state.sender ? '#D0FEEB' : '#9EEDD3'
         GeneralMessageBoxStyle = {
-            maxWidth: this.isVote() ? "96%" : 300, flexDirection: 'column', minWidth: 120,
+            maxWidth:   300, flexDirection: 'column', minWidth: 120,
             minHeight: 20, overflow: 'hidden', borderBottomLeftRadius: 10, borderColor: color,
-            borderTopLeftRadius: this.state.sender && !this.isVote() ? 0 : 10,
+            borderTopLeftRadius: this.state.sender ? 0 : 10,
             // borderWidth: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text)?.7:0:0,
             backgroundColor: color, ...shadower(3),
             borderTopRightRadius: 10,
-            borderBottomRightRadius: this.state.sender || this.isVote() ? 10 :
+            borderBottomRightRadius: this.state.sender  ? 10 :
                 this.props.message.reply && this.props.message.reply.type_extern ? 10 : null,
         }
         senderNameStyle = {
@@ -327,13 +331,11 @@ export default class Message extends Component {
             // backgroundColor: color,
         }
         placeholderStyle = {
-            ...topMostStyle, ... this.props.messagelayouts && this.props.messagelayouts[this.props.message.id] ?
-                this.props.messagelayouts[this.props.message.id] :
-                this.placeHolder[this.props.message.type],
+            ...topMostStyle, ...this.placeholderStyle ,
             backgroundColor: color, borderBottomLeftRadius: 10, borderColor: color,
             borderTopLeftRadius: this.state.sender ? 0 : 10,// borderWidth: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text)?.7:0:0,
             backgroundColor: color, ...shadower(2),
-            alignSelf: this.isVote() ? 'center' : this.state.sender ? 'flex-start' : 'flex-end',
+            alignSelf: this.state.sender ? 'flex-start' : 'flex-end',
             borderTopRightRadius: 10,
         }
         nameTextStyle = { fontSize: 14, fontWeight: 'bold', color: "#1FABAB" }

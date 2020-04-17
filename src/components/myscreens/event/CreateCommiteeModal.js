@@ -66,7 +66,6 @@ export default class CreateCommiteeModal extends PureComponent {
                     height: 300,
                     borderBottomLeftRadius: 8,
                     borderBottomRightRadius: 8,
-                    backgroundColor: "#FEFFDE",
                     commiteeName: "",
                     width: "100%"
                 }}

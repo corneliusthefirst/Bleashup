@@ -28,13 +28,15 @@ export default class ReplyText extends Component {
                 onLongPress={() => this.props.handLongPress ? this.props.handLongPress() : null}
                 onPress={() => this.props.openReply(this.props.reply)}>
                 <View style={{
-                    display: 'flex', flexDirection: 'row', borderBottomWidth: 0,
+                    display: 'flex', flexDirection: 'row', 
+                    borderBottomWidth: 0,
                     backgroundColor: this.props.color,
-                    ...shadower(2), //backgroundColor: "rgba(34, 0, 0, 0.1)",
-                    padding: "1%",//margin: '1%',
+                    ...shadower(1), //backgroundColor: "rgba(34, 0, 0, 0.1)",
+                    padding: "2%",//margin: '1%',
                     minHeight: 50,
-                    maxHeight: 200,
-                    borderRadius: 5,
+                    maxHeight: 300,
+                    borderTopLeftRadius: 20,
+                    borderTopRightRadius: 20,
                 }}>
                     {
                         /*<View style={{ /*width: "5%" }}><Icon type="FontAwesome"
@@ -101,9 +103,9 @@ export default class ReplyText extends Component {
                                     width: this.props.reply.sourcer ? '76%' : '98%'
                                 }}>
                                     {this.props.reply.title ? <Text ellipsizeMode='tail' numberOfLines={this.props.reply.sourcer ?
-                                            this.props.reply.replyer_name ? 8 : 10 : 10} style={{ fontWeight: 'bold', fontSize: 12, color: "#1F4237", }}>{this.props.reply.replyer_name ? this.props.reply.title : this.props.reply.title.split(': \n')[1]}</Text>
+                                            this.props.reply.replyer_name ? 13 : 15 : 15} style={{ fontWeight: 'bold', fontSize: 12, color: "#1F4237", }}>{this.props.reply.replyer_name ? this.props.reply.title : this.props.reply.title.split(': \n')[1]}</Text>
                                         : this.props.reply.text ? <Text ellipsizeMode='tail' numberOfLines={this.props.reply.sourcer ?
-                                            this.props.reply.replyer_name ? 7 : 8 : 8} style={{ color: "#81A8A0", fontSize: 12, }}>{this.props.reply.text}</Text> : null}
+                                            this.props.reply.replyer_name ? 13 : 14 : 14} style={{ color: "#81A8A0", fontSize: 12, }}>{this.props.reply.text}</Text> : null}
                                 </View>
                             </View>
                                     {this.props.reply.change_date ? <Text note>{`On: ${moment(this.props.reply.change_date).format("dddd, MMMM Do YYYY, h:mm:ss a")}`}</Text> : null}

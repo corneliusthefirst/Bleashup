@@ -18,7 +18,7 @@ import colorList from '../../colorList';
 import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
 
 var event = null
-export default class SettingsModal extends Component {
+export default class Settings extends Component {
     constructor(props) {
         super(props)
         this.state = {

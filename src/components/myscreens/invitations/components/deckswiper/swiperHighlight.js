@@ -47,7 +47,7 @@ export default class SwiperHighlight extends Component {
                     onClosed={this.props.onClosed}
                     style={{
                         padding: 20, alignItems: 'center', height: 220, flex: 1, borderRadius: 15,
-                        backgroundColor: '#FEFFDE', width: 330
+                         width: 330
                     }}
                     position={'center'}
                     swipeArea={210}

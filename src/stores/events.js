@@ -29,9 +29,9 @@ export default class events {
     console.warn("constructor called")
 
     this.readFromStore().then(Events => {
-        this.createSearchdata(Events).then((array)=>{
-          this.searchdata = array;
-        })
+      this.createSearchdata(Events).then((array) => {
+        this.searchdata = array;
+      })
 
       let i = 0
       forEach(Events, (Event) => {
@@ -67,30 +67,30 @@ export default class events {
 
   @observable searchdata = [];
   @observable array = [];
-  @action  createSearchdata(Events){
+  @action createSearchdata(Events) {
     return new Promise((resolve, reject) => {
-        
-        Events.forEach((event)=>{
-          if(event.type){
-          if(event.type == "relation"){
-                 event.participant.forEach((participant)=>{
-                  if( participant.phone != stores.LoginStore.user.phone){
-                     stores.TemporalUsersStore.getUser(participant.phone).then((user)=>{
-                      obj = {id:event.id,name:user.name,image:user.profile,type:"relation"}
-                      this.array.unshift(obj);
-                    })   
-                  }
-               })
-              }else{
-               obj = {id:event.id,name:event.about.title,image:event.background,type:"activity"}
-               this.array.unshift(obj);
 
-           }
+      Events.forEach((event) => {
+        if (event.type) {
+          if (event.type == "relation") {
+            event.participant.forEach((participant) => {
+              if (participant.phone != stores.LoginStore.user.phone) {
+                stores.TemporalUsersStore.getUser(participant.phone).then((user) => {
+                  obj = { id: event.id, name: user.name, image: user.profile, type: "relation" }
+                  this.array.unshift(obj);
+                })
+              }
+            })
+          } else {
+            obj = { id: event.id, name: event.about.title, image: event.background, type: "activity" }
+            this.array.unshift(obj);
+
           }
+        }
 
-        })
-         resolve(this.array);
-         this.array = []
+      })
+      resolve(this.array);
+      this.array = []
     })
 
   }
@@ -408,8 +408,46 @@ export default class events {
           });
         } else {
           serverEventListener.GetData(EventID).then(event => {
-            event && event.participant ? event.participant[event.participant.length] = Participant : event.participant = [Participant];
-            event.participant = uniqBy(event.participant, "phone")
+            if (inform) {
+              event.participant_added = true;
+              event.updated = true;
+              event.updated_at = moment().format();
+              event.joint = true
+            }
+            else event.joint = true;
+            this.addEvent(event).then(() => {
+              resolve(event)
+            })
+          }).catch(error => {
+            serverEventListener.socket.write = undefined
+            console.error(error, "in load events")
+            reject(error)
+          })
+        }
+      });
+    });
+  }
+  @action addParticipants(EventID, Participants, inform) {
+    return new Promise((resolve, reject) => {
+      this.readFromStore().then(Events => {
+        let eventIndex = findIndex(Events, { id: EventID });
+        if (eventIndex >= 0) {
+          Events[eventIndex].participant = [...Events[eventIndex].participant, ...Participants];
+          Events[eventIndex].participant = uniqBy(Events[eventIndex].participant, "phone")
+          if (inform) {
+            Events[eventIndex].participant_added = true;
+            Events[eventIndex].updated = true;
+            Events[eventIndex].updated_at = moment().format();
+            Events[eventIndex].joint = true
+          }
+          else Events[eventIndex].joint = true;
+          this.saveKey.data = Events;
+          storage.save(this.saveKey).then(() => {
+            this.setProperties(this.saveKey.data, inform);
+            resolve(Events[eventIndex]);
+          });
+        } else {
+          serverEventListener.GetData(EventID).then(event => {
             if (inform) {
               event.participant_added = true;
               event.updated = true;
@@ -1234,7 +1272,7 @@ export default class events {
 
 
 /**
- * 
+ *
   @action  setSearchData(array) {
     return new Promise((resolve, reject) => {
       //console.warn("here1",newArray)
@@ -1282,7 +1320,7 @@ export default class events {
 
   @action getSearchData() {
      return new Promise((resolve, reject) => {
-     
+
         storage
           .load({
             key:"searchdata",
@@ -1292,7 +1330,7 @@ export default class events {
                  resolve(data);
           })
           .catch(error => {
-            this.setSearchData(this.searchdata).then((newArray)=>{ 
+            this.setSearchData(this.searchdata).then((newArray)=>{
               resolve(newArray);
             })
        });

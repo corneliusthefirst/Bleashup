@@ -209,7 +209,7 @@ export default class ChatRoom extends Component {
         })
     }
     toastStyle = {
-        backgroundColor: '#FEFFDE',
+        
         marginTop: "-10%",
         paddingTop: "3%",
     }
@@ -337,17 +337,18 @@ export default class ChatRoom extends Component {
         })
         setTimeout(() => {
             this.adjutRoomDisplay()
-        }, 500)
+        }, 200)
     }
     adjutRoomDisplay(dontToggle) {
         setTimeout(() => {
-            GState.reply && this.fucussTextInput()
+            GState.reply && !this.alreadyFocussed &&  this.fucussTextInput()
+            this.alreadyFocussed = true
             this.refs.scrollViewRef.scrollToEnd({ animated: true, duration: 200 })
             this.state.showCaption && 
             this.refs.captionScrollViewRef.scrollToEnd({ animated: true, 
-                duration: 200 })
+                duration: 5 })
             this.temp ? GState.reply = JSON.parse(this.temp) : null
-        },50)
+        },30)
     }
     markAsRead() {
         this.room.deleteNewMessageIndicator().then(() => { })
@@ -1062,10 +1063,12 @@ export default class ChatRoom extends Component {
           behavior={Platform.Os == "ios" ? "padding" : "height"}
           style={{flex:1,justifyContent:"center",marginBottom:this.state.marginBottom,backgroundColor:'rgba(0,0,0,0.3)',
           }} >  */}             
-            <View style={{ height: "90%"}}>
+            <View style={{ height: "92.5%"}}>
                 <StatusBar animated={true} hidden={this.state.hideStatusBar} barStyle="dark-content" backgroundColor={colorList.headerBackground}></StatusBar>
                 {!this.state.loaded ? <Waiter></Waiter> : <View style={{}}><View style={{ width: "100%", alignSelf: 'center', }}>
-                    <ScrollView keyboardShouldPersistTaps={"always"} showsVerticalScrollIndicator={false} scrollEnabled={false} inverted nestedScrollEnabled
+                        <ScrollView onScroll={() => {
+                            this.adjutRoomDisplay()
+                        }} inverted={true} keyboardShouldPersistTaps={"always"} showsVerticalScrollIndicator={false} scrollEnabled={false} inverted nestedScrollEnabled
                         ref="scrollViewRef">
                         <View style={{ height: this.state.messageListHeight, marginBottom: "0.5%" }}>
                             <TouchableWithoutFeedback onPressIn={() => {
@@ -1211,6 +1214,10 @@ export default class ChatRoom extends Component {
     fucussTextInput(){
         this._textInput.focus()
     }
+    persistMessageLayout(id,layout){
+        console.warn("persisiting dimensions")
+        this.room.setMessageDimessions(id,layout)
+    }
     delay = 1
     messageList() {
         return <BleashupFlatList
@@ -1220,6 +1227,11 @@ export default class ChatRoom extends Component {
             ref="bleashupSectionListOut"
             inverted={true}
             renderPerBatch={20}
+            /*getItemLayout={(item, index) => {
+                return { 
+                index, 
+                length: (item.dimenssions && item.dimenssions.height) || this.messagelayouts[item.id].height, 
+                offset: this.room.messages.slice(0, index).reduce((a, c) => a.dimenssions.height + c.dimenssions.height, 0)}}}*/
             initialRender={20}
             numberOfItems={this.room.messages.length}
             keyExtractor={(item, index) => item ? item.id : null}
@@ -1232,6 +1244,7 @@ export default class ChatRoom extends Component {
                     messagelayouts={this.messagelayouts}
                     setCurrentLayout={layout => {
                         this.messagelayouts[item.id] = layout
+                       //!item.dimenssions && this.persistMessageLayout(item.id,layout)
                     }}
                     newCount={this.props.newMessages.length}
                     index={index}
@@ -1306,9 +1319,6 @@ export default class ChatRoom extends Component {
             alignItems: 'center',
             borderColor: 'gray', padding: '1%', width: "99%"
         }}>
-            {
-                //* Reply Message caption */
-                this.state.replying ? this.replyMessageCaption() : null}
             <View style={{
                 flexDirection: 'row',alignSelf:"center",
                 alignSelf: 'center', width: colorList.containerWidth-8
@@ -1324,20 +1334,25 @@ export default class ChatRoom extends Component {
                     borderRadius: 10,
                 }}>
 
-                    <View style={{ height:45,width: '12%',alignItems:"center",justifyContent:"center",padding: '1%' }}><Icon onPress={() => this.openCamera()}
+                    <View style={{ height:45,
+                        width: '12%',alignItems:"center",justifyContent:"center",padding: '1%' }}><Icon onPress={() => this.openCamera()}
                         style={{ color: "#696969"}}
                         type={"MaterialCommunityIcons"}
                         name={"image-filter"}></Icon>
                     </View>  
 
-                    <Item style={{ width: '88%',marginLeft:"2%" }} rounded>
+                    <Item style={{ width: '88%',marginLeft:"2%",flexDirection: 'column', borderRadius: 20,}} rounded>
+                            {
+                                //* Reply Message caption */
+                                this.state.replying ? this.replyMessageCaption() : null
+                            }
                         <TextInput
                             onFocus={this.onFocus}
                             onEndEditing={this.onEndEditing}
                             value={this.state.textValue}
                             onChange={(event) => this._onChange(event)}
                             placeholder={'Your Message'}
-                            style={{ width: '84%', maxHeight: 200, minHeight: 45,marginLeft:"3%" }}
+                            style={{ width: '84%', maxHeight: 300, minHeight: 45,marginLeft:"3%" }}
                             placeholderTextColor='#66737C'
                             multiline={true}
                             enableScrollToCaret
@@ -1382,7 +1397,8 @@ export default class ChatRoom extends Component {
     }
 
     replyMessageCaption() {
-        return <View style={{ backgroundColor: this.state.replyerBackColor, alignSelf: 'center', width: '98%' }}><ReplyText compose={true} openReply={(replyer) => {
+        return <View style={{ backgroundColor: this.state.replyerBackColor, alignSelf: 'center', width: '100%' }}>
+        <ReplyText compose={true} openReply={(replyer) => {
             replyer.type_extern ?
                 this.handleReplyExtern(replyer) : this.setState({
                     replyer: replyer,
@@ -1417,7 +1433,8 @@ export default class ChatRoom extends Component {
         </View>;
     }
     header(){
-        return <View style={{
+        return <View><View style={{
+            ...bleashupHeaderStyle,
             width: colorList.containerWidth,
             height: colorList.headerHeight,
             backgroundColor:colorList.headerBackground,
@@ -1431,16 +1448,15 @@ export default class ChatRoom extends Component {
                             style={{ color:colorList.headerIcon,marginLeft:"5%",marginRight:"5%"}}
                             type={"MaterialIcons"}
                             name={"arrow-back"}></Icon>
-                                            
-                      
-                            <Title style={{
-                                color:colorList.headerText,
-                                fontSize:colorList.headerFontSize,
-                                fontWeight:colorList.headerFontweight ,
-                                
-                            }}>{this.props.roomName}</Title>
-                            {this.state.typing && <TypingIndicator></TypingIndicator>}
-                       
+                            <View>
+                    <Title style={{
+                        color: colorList.headerText,
+                        fontSize: colorList.headerFontSize,
+                        fontWeight: colorList.headerFontweight,
+
+                    }}>{this.props.roomName}</Title>
+                    {this.state.typing && <TypingIndicator></TypingIndicator>}
+                            </View>                       
                    
                     {
                         //!! you can add the member last seen here if the room has just one member */
@@ -1499,7 +1515,8 @@ export default class ChatRoom extends Component {
                             type={"Ionicons"}
                             name={"ios-menu"}></Icon>
                       </View> 
-                      </View>  
+                      </View> 
+        </View> 
             </View>;
     }
 
@@ -1508,7 +1525,7 @@ export default class ChatRoom extends Component {
             position: 'absolute', height: 40,
             marginTop: '5%', alignSelf: 'center'
         }}>
-            <View style={{ alignSelf: 'center', backgroundColor: '#FEFFDE', borderRadius: 10, margin: '2%', display: 'flex', flexDirection: 'row', }}>
+            <View style={{ alignSelf: 'center',  borderRadius: 10, margin: '2%', display: 'flex', flexDirection: 'row', }}>
                 <Text style={{ fontSize: 19, fontWeight: 'bold', color: "#00BE71" }}>{this.props.newMessages.length}{" new messages"}</Text>
                 <Icon type="EvilIcons" style={{ color: "#00BE71", marginTop: '3%', fontSize: 19 }} name="arrow-up"></Icon>
             </View>

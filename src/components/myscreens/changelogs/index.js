@@ -112,7 +112,8 @@ export default class ChangeLogs extends Component {
             !GState.showingProfile ? this.props.propcessAndFoward(data) : null
           }}
           data={this.props.activeMember && this.props.activeMember !== null ?
-            this.changes.filter(ele => ele.updater.phone === this.props.activeMember ||
+            this.changes.filter(ele => ele.updater === this.props.activeMember || 
+              ele.updater.phone === this.props.activeMember ||
               ele.type === "date_separator") : this.changes}
         >
         </BleashupTimeLine>
@@ -120,9 +121,7 @@ export default class ChangeLogs extends Component {
 
       {this.state.hideHeader ? null : 
       <View style={{height: colorList.headerHeight,width: colorList.headerWidth,backgroundColor:colorList.headerBackground, position: "absolute"}}>
-             
-             
-              <View style={{flex:1,paddingLeft: '1%', paddingRight: '1%',backgroundColor:colorList.headerBackground,
+              <View style={{flex:1, ...bleashupHeaderStyle, paddingLeft: '1%', paddingRight: '1%',backgroundColor:colorList.headerBackground,
                  flexDirection: "row", alignItems: "center"}}>
                     <View style={{width:"10%",paddingLeft:"1%"}} >
                      <Icon onPress={() => {this.props.navigatePage("Home")}}

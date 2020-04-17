@@ -18,6 +18,10 @@ export default class globalFunctions extends Component {
    })
   }
 
+  /*getOponentSimple(participant){
+     let oponent = participant.find(ele => ele.phone !== stores.LoginStore.user.phone)
+      return stores.TemporalUsersStore.User.find((ele) => ele.phone === oponent.phone)
+  }*/
   getOpponent = (event)=>{
    return new Promise((resolve, reject) => {
       event.participant.forEach((participant)=>{

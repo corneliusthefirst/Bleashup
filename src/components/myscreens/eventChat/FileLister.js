@@ -39,7 +39,7 @@ export default class File extends Component {
                     return item.type === 'date_separator' ? <MediaSeparator item={item}>
                     </MediaSeparator> : <View style={{
                         ...shadower(3), margin: '2%', borderRadius: 10,
-                        backgroundColor: '#FEFFDE', opacity: .8, alignSelf: 'center', width: '100%',
+                         opacity: .8, alignSelf: 'center', width: '100%',
                     }}>
                         <View style={{ flexDirection: 'row', }}>
                             <View style={{ width: "60%", height: '100%' }}>

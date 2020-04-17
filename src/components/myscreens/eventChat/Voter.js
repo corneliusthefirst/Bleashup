@@ -22,7 +22,7 @@ export default class Voter extends Component {
             this.setState({
                 loaded: true
             })
-        }, this.props.delay * 20)
+        }, this.props.delay * 5)
     }
     shouldComponentUpdate(nextProps, nextState, nextContex) {
         return !isEqual(JSON.parse(this.previousVote), nextProps.message.vote) ||
@@ -67,7 +67,7 @@ export default class Voter extends Component {
             }}><Text
                 style={{ color: '#1FABAB', fontSize: 23, fontWeight: '400', }}
             >{`${labler(index)}.`}</Text></View>
-            <View style={{ width: '78%', height: '80%', }}>
+            <View style={{ width: '75%', height: '80%', }}>
                 <View style={{ width: '100%' }}>
                     <Text style={{ color: '#555756', fontSize: 14 }} note>{`${item.name && item.name !== 'undefined' ? item.name : "none"}    ${this.calculateVotePercentage(this.returnOptionCount(index), 0)}%`}</Text>
                     <View style={{ flexDirection: 'row', height: '60%' }}>
@@ -90,7 +90,7 @@ export default class Voter extends Component {
                     </View>
                 </View>
             </View>
-            <View style={{ width: '11%', justifyContent: 'center', alignSelf: 'center', marginLeft: '1%', }}>
+            <View style={{ width: '14%', justifyContent: 'center', alignSelf: 'center', marginLeft: '1%', }}>
                 {!this.hasVoted() || dateDiff({ recurrence: this.props.message.vote.period }) > 0 ? null : <Icon onPress={() => this.vote(item.index)} name="vote-yea"
                     style={{ alignSelf: 'flex-end', marginTop: '25%', color: '#555756' }}
                     type={"FontAwesome5"}></Icon>}
@@ -127,7 +127,7 @@ export default class Voter extends Component {
         this.creator = creator
     }
     render() {
-        return !this.state.loaded ? <View style={{width:300,height:300}}></View> : <View style={{ margin: '1%', backgroundColor: '#FEFFDE', }}>
+        return !this.state.loaded ? <View style={{width:300,height:300,...this.props.placeHolder}}></View> : <View style={{ margin: '1%',  }}>
             <View style={{ alignSelf: 'center', margin: '2%', flexDirection: 'row', }}>
                 <View style={{ width: '70%',marginLeft: '2%', }}>
                     <Text style={{
@@ -137,8 +137,8 @@ export default class Voter extends Component {
                     }}>{this.props.message.vote.title}</Text>
                 </View>
                 <View style={{ flexDirection: 'row', width: '30%' }}>
-                    <View style={{ width: '33.33%', padding: '1%', }}><Icon onPress={() => this.reply()} name={"reply"}
-                        type={"Entypo"} style={{ color: '#555756',alignSelf:'flex-start',marginRight: '15%', }}></Icon></View>
+                    {this.props.configurable && <View style={{ width: '33.33%', padding: '1%', }}><Icon onPress={() => this.reply()} name={"reply"}
+                        type={"Entypo"} style={{ color: '#555756',alignSelf:'flex-start',marginRight: '15%', }}></Icon></View>}
                     {this.props.computedMaster ? <View style={{ width: '38.33%' }}><Icon
                         style={{ color: '#555756', padding: '1%' }}
                         onPress={() => {

@@ -14,10 +14,10 @@ export default class QRDisplayer extends Component{
     render(){
         return <View style={{flexDirection: 'row',}}>
             <QRCode
-                size={100}
+                size={110}
                 getRef={(c) => (this.svg = c)}
                 value={this.props.code}
-                color='#0A4E52'
+                color= {ColorList.headerIcon}
                 logo={require('../../../../assets/Bleashup.png')}
                 backgroundColor= {ColorList.bodyBackground}
             />
@@ -26,10 +26,10 @@ export default class QRDisplayer extends Component{
             <Icon onPress={() => {
                 this.svg.toDataURL(data => {
                     RNFetchBlob.fs.writeFile(RNFetchBlob.fs.dirs.DownloadDir + '/Bleashup/'+this.props.title + '_qrcode(Bleashup).jpeg', data, 'base64').then(status => {
-                        Toast.show({text:'QR Code save to downloads as image',type:'success',duration:3000})
+                        Toast.show({text:'QR Code save to Downloads/Bleashup',type:'success',duration:5000})
                     })
                 })
-                }} name="share-outline" type="MaterialCommunityIcons" style={{color:colorList.bodyIcon}}>
+                }} name="file-download" type="MaterialIcons" style={{color:colorList.bodyIcon}}>
             </Icon>
             </View>
         </View>

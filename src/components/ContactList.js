@@ -81,7 +81,7 @@ export default class ContactList extends Component {
                                             width: "45%"
                                         }}>
                                             <Text style={{
-                                            }} note>{this.writeDateTime(item.period.date)}</Text>
+                                            }} note>{item.period && this.writeDateTime(item.period.date)}</Text>
                                         </View>
                                     </View>
                                 </View>
