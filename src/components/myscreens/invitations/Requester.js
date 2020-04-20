@@ -57,8 +57,9 @@ class Requester {
                         Participant.status = "invited";
                         Participant.master = invitation.status;
                         Participant.host = stores.Session.SessionStore.host
-                        AddParticipant(invitation.event_id, [Participant]).then((res) => { })
-                        console.warn(res)
+                        AddParticipant(invitation.event_id, [Participant]).then((res) => {
+                            console.warn(res)
+                        })
                         stores.Events.addParticipant(invitation.event_id, Participant, true).then(() => {
                             let Change = {
                                 id: uuid.v1(),

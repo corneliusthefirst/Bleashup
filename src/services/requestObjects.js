@@ -114,6 +114,8 @@ class Request {
                 recurrence: null,
                 days_of_week: null
             },
+            location: "",
+            remind_url: this.URL(),
             status: "public",
             members: [],
             donners: [],
@@ -207,21 +209,21 @@ class Request {
             event_id: "",
             committee_id: "",
             title: "",
-            voter:[],
+            voter: [],
             created_at: moment().format(),
             updated_at: moment().format(),
-            always_show:false,
+            always_show: false,
             period: "",
-            option: [{index:0,name:'yes',vote_count:0},{index:1,name:'no',vote_count:0}],//this.supposed to be Option()
+            option: [{ index: 0, name: 'yes', vote_count: 0 }, { index: 1, name: 'no', vote_count: 0 }],//this.supposed to be Option()
             description: "",
             published: 'private',
             creator: stores.LoginStore.user.phone
         }
     }
-    goVote(){
+    goVote() {
         return {
-            event_id:'',
-            vote_id:'',
+            event_id: '',
+            vote_id: '',
             option: ''
         }
     }
@@ -308,17 +310,21 @@ class Request {
             id: "newHighlightId",
             creator: "",
             event_id: "",
-            public_state:'public',
+            public_state: 'public',
             created_at: moment().format(),
             updated_at: moment().format(),
             title: "",
             description: "",
-            url: {
-                audio: "",
-                photo: "",
-                video: "",
-                duration: ""
-            }
+            url: this.URL()
+        }
+    }
+    URL(){
+        return {
+            audio: "",
+            photo: "",
+            video_duration: "",
+            video: "",
+            duration: ""
         }
     }
     ContributionMean() {
@@ -392,7 +398,7 @@ class Request {
             likes: 0,
             reminds: [],
             recursiveFrequency: "None",
-            public: false, 
+            public: false,
             votes: [],
             highlights: [],
             contributions: [],
@@ -400,7 +406,7 @@ class Request {
             days_of_week: null,
             week_start: null,
             who_can_update: 'master',
-            type:"activity"
+            type: "activity"
         }
     }
     Period() {
@@ -563,40 +569,40 @@ class Request {
             event_id: "",
         }
     }
-    ContactStat(){
-      return{
-          id:"",
-          phone:"",
-          username:"",
-          profile:"",
-          updated_at:"",
-          stories:[]
-      }
-    }
-    EventStat(){
+    ContactStat() {
         return {
-            id:"",
-            event_id:"",
-            title:"",
-            profile:"",
-            updated_at:"",
-            stories:[]
+            id: "",
+            phone: "",
+            username: "",
+            profile: "",
+            updated_at: "",
+            stories: []
+        }
+    }
+    EventStat() {
+        return {
+            id: "",
+            event_id: "",
+            title: "",
+            profile: "",
+            updated_at: "",
+            stories: []
         }
     }
 
-    Story(){
+    Story() {
         return {
-            id:"",
-            stat_id:"",
-            creator:"",
-            url:"",
-            text:{string:"",background:"",fontStyle:""},
-            created_at:"",
-            type:"",
-            duration:"",
+            id: "",
+            stat_id: "",
+            creator: "",
+            url: "",
+            text: { string: "", background: "", fontStyle: "" },
+            created_at: "",
+            type: "",
+            duration: "",
             isSeen: false,
-            views:0
-            
+            views: 0
+
         }
     }
 

@@ -33,7 +33,7 @@ export default class SettingsTabModal extends BleashupModal {
             >
               <Icon
                 onPress={() => {
-                  this.onClosedModal();
+                  this.onClosedModal()
                 }}
                 style={{
                   color: ColorList.headerIcon,

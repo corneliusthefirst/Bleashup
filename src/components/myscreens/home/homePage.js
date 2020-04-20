@@ -297,8 +297,8 @@ class Home extends Component {
       <Container style={{ height:colorList.containerHeight,backgroundColor:colorList.containerBackground ,width:colorList.containerWidth }}>
         <View style={{ height: colorList.headerHeight, backgroundColor: colorList.headerBackground, width: "100%", }}>
         
-         
-          <View style={{ flex: 1, backgroundColor: colorList.headerBackground, flexDirection: "row", justifyContent: "space-between", width: "100%", ...bleashupHeaderStyle }}>
+          <View style={{ backgroundColor: colorList.headerBackground, 
+            flexDirection: "row", justifyContent: "space-between", }}>
              
               <View style={{ alignSelf: "flex-start",justifyContent:"center",height:"98%",marginLeft: '1%', }}>
               {/*<Thumbnail small source={require("../../../../assets/Bleashup.png")}></Thumbnail>*/}
@@ -326,7 +326,6 @@ class Home extends Component {
 
             
             </View>
-
           </View>
        
        {/*<Tabs
