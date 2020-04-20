@@ -17,6 +17,7 @@ import { getCurrentDateInterval, getcurrentDateIntervals } from '../../../servic
 import { format } from '../../../services/recurrenceConfigs';
 import { confirmedChecker } from "../../../services/mapper";
 import ColorList from '../../colorList';
+import MedaiView from "../event/createEvent/components/MediaView";
 
 let { height, width } = Dimensions.get('window')
 
@@ -64,7 +65,7 @@ export default class EventTasksCard extends Component {
                 correspondingDateInterval,
                 currentDateIntervals,
                 hasDoneForThisInterval,
-                newing:!this.state.newing
+                newing: !this.state.newing
               })
               resolve('ok')
             })
@@ -122,14 +123,14 @@ export default class EventTasksCard extends Component {
     content: null
   }
   render() {
-    console.warn(this.props.item.confirmed,this.props.item.title)
+    console.warn(this.props.item.confirmed, this.props.item.title)
     hasDoneForThisInterval = find(this.props.item.donners, (ele) =>
       ele.status.date &&
       this.state.correspondingDateInterval &&
       moment(ele.status.date).format("X") >
       moment(this.state.correspondingDateInterval.start,
         format).format("X") && moment(ele.status.date).format("X") <=
-      moment(this.state.correspondingDateInterval.end, format).format("X") && 
+      moment(this.state.correspondingDateInterval.end, format).format("X") &&
       ele.phone === stores.LoginStore.user.phone) ? true : false
     canBeDone = this.state.correspondingDateInterval ? true : false
     missed = dateDiff({
@@ -191,7 +192,7 @@ export default class EventTasksCard extends Component {
                 </View>
                 <View style={{ alignSelf: 'flex-end', }}>
                   <RemindsMenu
-                  update={() => this.props.updateRemind(this.props.item)}
+                    update={() => this.props.updateRemind(this.props.item)}
                     creator={this.state.creator}
                     addMembers={() => { this.props.addMembers(this.props.item.members, this.props.item) }}
                     removeMembers={() => this.props.removeMembers(this.props.item.members.filter(ele => this.state.creator ||
@@ -202,12 +203,24 @@ export default class EventTasksCard extends Component {
               </View>
             </Right>
           </CardItem>
-
+          {this.props.item.location ? <CardItem style={{ flexDirection: 'row', }}>
+            <Text style={{ fontWeight: 'bold', }}>{"At: "}</Text><Text>{this.props.item.location}</Text>
+          </CardItem> : null}
           <CardItem>
             <Left>
               <Title style={{ fontWeight: "500", marginLeft: -1, fontSize: 20, color: ColorList.darkGrayText }}>{this.props.item.title}</Title>
             </Left>
           </CardItem>
+          {this.props.item.remind_url &&
+            (this.props.item.remind_url.photo || this.props.item.remind_url.video)
+            && <CardItem style={{ alignItems: 'center', alignSelf: 'center',width:'100%' }}>
+              <MedaiView
+                height={ColorList.containerHeight * .42}
+                width={ColorList.containerWidth * .91}
+                url={this.props.item.remind_url}
+                showItem={this.props.showMedia}
+              ></MedaiView>
+            </CardItem>}
           <CardItem carBody>
             <TouchableOpacity onPress={() => {
               this.setState({

@@ -55,9 +55,9 @@ export default class PickersMenu extends Component {
           button={
             <View
               style={{
-                height: 50,
-                width: 50,
-                borderRadius: 30,
+                height: 25,
+                width: 25,
+                borderRadius: 22,
                 ...shadower(1),
                 alignItems: "center",
                 justifyContent: "center",
@@ -66,7 +66,7 @@ export default class PickersMenu extends Component {
               <Icon
                 style={{
                   color: ColorList.bodyIcon,
-                  fontSize: 30,
+                  fontSize: 15,
                 }}
                 onPress={this.showMenu}
                 name={this.props.icon.name}

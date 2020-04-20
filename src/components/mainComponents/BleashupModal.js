@@ -11,7 +11,7 @@ export default class BleashupModal extends PureComponent {
         this.initialize()
     }
     state = {}
-    initialize(){
+    initialize() {
     }
     onOpenModal() {
 
@@ -33,6 +33,7 @@ export default class BleashupModal extends PureComponent {
         return <View></View>
     }
     isOpened = false
+    entry = 'bottom'
     render() {
         return (
             <Modal
@@ -43,17 +44,19 @@ export default class BleashupModal extends PureComponent {
                 onOpened={() => {
                     this.onOpenModal()
                 }}
+                entry={this.entry || 'bottom'}
                 onClosed={() => {
                     this.onClosedModal()
                 }}
-                isOpen={this.props.isOpen}
-                coverScreen={this.coverScreen || true}
+                isOpen={this.props.isOpen ? true : this.props.open ? true : false}
+                coverScreen={true}
                 style={{
                     backgroundColor: this.modalBackground || '#FFFFFF',
                     height: this.modalHeight,
                     width: this.modalWidth || "100%",
                     borderTopLeftRadius: this.borderTopLeftRadius || 8,
                     borderTopRightRadius: this.borderTopRightRadius || 8,
+                    borderRadius:this.borderRadius
                 }}
             >
                 {this.modalBody()}

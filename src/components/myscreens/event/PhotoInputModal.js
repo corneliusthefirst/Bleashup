@@ -1,75 +1,55 @@
 import React, { PureComponent } from 'react';
 import { Content, Text, Button, Icon } from 'native-base';
 import { View } from "react-native"
-import Modal from "react-native-modalbox"
 import AreYouSure from './AreYouSureModal';
 import CacheImages from '../../CacheImages';
 import shadower from '../../shadower';
 import { CardItem } from 'native-base';
+import BleashupModal from '../../mainComponents/BleashupModal';
+import PickersUpload from './createEvent/components/PickerUpload';
 
-export default class PhotoInputModal extends PureComponent {
-    constructor(props) {
-        super(props)
+export default class PhotoInputModal extends BleashupModal {
+    initialize() {
         this.state = {
-            content: null
         }
     }
-    state = {}
-    render() {
+    onClosedModal() {
+        this.props.closed()
+        this.setState({
+            message: null,
+            title: null,
+            callback: null,
+        })
+    }
+    modalHeight = 340
+    modalWidth = 300
+    borderRadius = 5
+    position = "center"
+    modalBody() {
         return (
-            <Modal
-                backdropOpacity={0.7}
-                backButtonClose={true}
-                position='center'
-                coverScreen={true}
-                //animationDuration={0}
-                isOpen={this.props.isOpen}
-                onClosed={() => {
-                    this.props.closed()
-                    this.setState({
-                        message: null,
-                        title: null,
-                        callback: null,
-                    })
-                }}
-                onOpened={() => {
-                    setTimeout(() => {
-                        this.setState({
-                            content: this.props.content
-                        })
-                    }, 20)
-                }}
-                style={{
-                    height: 300,
-                    borderRadius: 5, 
-                    backgroundColor: 'transparent',
-                    width: 300
-                }}
-            >
-                <Content style={{  flexDirection: 'column',margin: '2%', }}>
-                    <Button onPress={() => this.props.showActivityPhoto()}  style={{
-                        backgroundColor: '#1FABAB',
-                        ...shadower(2),
-                        margin: '3%', 
-                        alignSelf: 'center',
-                        borderRadius: 5,
-                        height:200
-                    }}>
-                    <CacheImages source={{uri:this.props.photo}} style={{
-                        width:180,
-                        height:190,
-                        borderRadius:5
+            <Content showsVerticalScrollIndicator={false} style={{ flexDirection: 'column', }}>
+                <Button onPress={() => this.props.showActivityPhoto()} style={{
+                    backgroundColor: '#1FABAB',
+                    ...shadower(2),
+                    alignSelf: 'center',
+                    justifyContent: 'center',
+                    borderRadius: 5,
+                    width:300,
+                    height: 300
+                }}>
+                    <CacheImages source={{ uri: this.props.photo }} style={{
+                        width: 300,
+                        height: 290,
+                        borderRadius: 5
                     }} thumbnails square></CacheImages>
-                    </Button>
-                    <View style={{ margin: '2%',flexDirection: 'row', alignSelf: 'center',borderRadius: 4,}}>
-                        <Button onPress={() => this.props.openCamera()} transparent><Icon type={"MaterialIcons"} name={"insert-photo"}></Icon></Button>
-                        <Button onPress={() => this.props.openInternet()} transparent><Icon type={"Foundation"} name={"web"}></Icon></Button>
-                        {this.props.photo ? <Button danger onPress={() => this.props.removePhoto()}
-                            transparent><Icon style={{ color: 'red' }}
-                                name="trash" transparent type="EvilIcons"></Icon></Button> : null}
-                    </View>
-                </Content>
-            </Modal>
+                </Button>
+                <View style={{ margin: '2%', flexDirection: 'row', alignSelf: 'center', borderRadius: 4, }}>
+                    <PickersUpload currentURL={{ photo:this.props.photo }} saveMedia={(url) => this.props.saveBackground(url.photo)} creating={false} notVideo notAudio></PickersUpload>
+                    {this.props.photo ? <Button danger onPress={() => this.props.removePhoto()}
+                        transparent><Icon style={{ color: 'red',marginBottom: '30%', }}
+                            name="trash" transparent type="EvilIcons"></Icon></Button> : null}
+                </View>
+            </Content>
         );
     }
 }

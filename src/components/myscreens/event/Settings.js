@@ -70,17 +70,15 @@ export default class Settings extends Component {
   }
   componentDidMount() {
     setTimeout(() => {
-      event = JSON.stringify(this.props.event);
+      this.event = JSON.stringify(this.props.event);
       this.init();
-    }, 200);
+    }, 20);
   }
   init() {
     this.setState({
       activityName: this.props.event.about.title,
-      activityTime: this.props.event.period,
       public: this.props.event.public,
-      notes: this.props.event.notes ? this.props.event.notes : [],
-      closed: this.props.event.closed,
+      closed: this.props.event.closed ? true : false,
       whoCanUpdate: this.props.event.who_can_update,
       loaded: true,
     });
@@ -94,14 +92,17 @@ export default class Settings extends Component {
       this.init();
     }
     if (this.props.event.who_can_update !== prevProps.event.who_can_update) {
+      console.warn("updating who can update")
       this.init();
     }
     if (this.props.event.public !== prevProps.event.public) {
       this.init();
     }
     if (this.props.event.closed !== prevProps.event.closed) {
+      console.warn("updated from closed");
       this.init();
     }
+    this.event = JSON.stringify(this.props.event)
   }
   setPublic() {
     this.setState({
@@ -125,7 +126,7 @@ export default class Settings extends Component {
         who_can_update_new: this.state.whoCanUpdate,
         notes_new: this.props.event.notes,
       };
-      this.props.saveSettings(event, newConfig);
+      this.props.saveSettings(this.event, newConfig);
     }
   }
   isNotSame() {
@@ -326,7 +327,9 @@ export default class Settings extends Component {
               <Icon
                 name={this.state.closed ? "door-open" : "poweroff"}
                 type={this.state.closed ? "FontAwesome5" : "AntDesign"}
-                style={{ color: this.state.closed ? colorList.headerIcon : "red" }}
+                style={{
+                  color: this.state.closed ? colorList.headerIcon : "red",
+                }}
               ></Icon>
               <Text
                 style={{

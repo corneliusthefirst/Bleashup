@@ -66,7 +66,7 @@ export default class MoreMembersMenu extends Component {
                     button={<Icon style={{
                         color: ColorList.headerIcon,
                         fontSize: 30,
-                    }} onPress={this.showMenu} name="circle-with-plus" type="Entypo"></Icon>}
+                    }} onPress={this.showMenu} name="plus" type="AntDesign"></Icon>}
                 >
                     {this.props.master && <View><MenuItem textStyle={{ color: ColorList.headerIcon }} onPress={() => {
                         this.hideMenu()

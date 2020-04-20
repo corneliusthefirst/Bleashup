@@ -38,6 +38,8 @@ import ReportTabModal from './NewReportTab';
 import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
 import { dateDiff } from "../../../services/datesWriter";
 import colorList from '../../colorList';
+import PhotoViewer from '../event/PhotoViewer';
+import VideoViewer from "../highlights_details/VideoModal";
 //const MyTasksData = stores.Reminds.MyTasksData
 
 export default class Reminds extends Component {
@@ -363,20 +365,20 @@ export default class Reminds extends Component {
     return !this.state.mounted ? <View style={{ width: '100%', height: '100%', }}></View> : (
 
       <View>
-        <View style={{ height:colorList.headerHeight, width: '100%', }}>
+        <View style={{ height: colorList.headerHeight, width: '100%', }}>
           <View style={{
             flex: 1, ...bleashupHeaderStyle,
-            paddingLeft: '1%', paddingRight: '1%',backgroundColor:colorList.headerBackground,
+            paddingLeft: '1%', paddingRight: '1%', backgroundColor: colorList.headerBackground,
             flexDirection: "row", alignItems: "center",
           }}>
             <View style={{ width: '10%', paddingLeft: '1%', }}>
-            <Icon onPress={() => this.props.navigation.navigate("Home")}
-                style={{ color:colorList.headerIcon}}
+              <Icon onPress={() => this.props.navigation.navigate("Home")}
+                style={{ color: colorList.headerIcon }}
                 type={"MaterialIcons"} name={"arrow-back"}></Icon>
             </View>
 
-            <View style={{ width: '70%', paddingLeft: '2%',justifyContent:"center" }}>
-              <Title style={{ fontWeight: 'bold', alignSelf: 'flex-start',color:colorList.headerText }}>{"Reminds"}</Title>
+            <View style={{ width: '70%', paddingLeft: '2%', justifyContent: "center" }}>
+              <Title style={{ fontWeight: 'bold', alignSelf: 'flex-start', color: colorList.headerText }}>{"Reminds"}</Title>
             </View>
 
             <View style={{ width: '10%', paddingRight: '3%' }}>
@@ -387,7 +389,7 @@ export default class Reminds extends Component {
             <View style={{ width: '10%', paddingLeft: '1%', }}>
               <Icon onPress={() => {
                 this.props.openMenu()
-              }} style={{ color:colorList.headerIcon }} type={"Ionicons"} name={"ios-menu"}></Icon>
+              }} style={{ color: colorList.headerIcon }} type={"Ionicons"} name={"ios-menu"}></Icon>
             </View>
 
           </View>
@@ -408,6 +410,20 @@ export default class Reminds extends Component {
               return (
                 <View>
                   <TasksCard
+                    showMedia={(url) => {
+                      if (url.video) {
+                        console.warn("showing video")
+                        this.setState({
+                          showVideo: true,
+                          video: url.video
+                        })
+                      } else {
+                        this.setState({
+                          showPhoto: true,
+                          photo: url.photo
+                        })
+                      }
+                    }}
                     isLast={index === this.state.eventRemindData.length - 1}
                     phone={stores.LoginStore.user.phone}
                     mention={itemer => {
@@ -559,6 +575,17 @@ export default class Reminds extends Component {
           }}
           isOpen={this.state.isReportModalOpened}
         ></ReportTabModal> : null}
+        <PhotoViewer open={this.state.showPhoto} photo={this.state.photo} hidePhoto={() => {
+          this.setState({
+            showPhoto: false
+          })
+        }}>
+        </PhotoViewer>
+        <VideoViewer video={this.state.video} isOpen={this.state.showVideo} hideVideo={() => {
+          this.setState({
+            showVideo: false
+          })
+        }}></VideoViewer>
         {this.state.isAreYouModalOpened ? <AreYouSure isOpen={this.state.isAreYouModalOpened}
           title={'Delete Remind'} closed={() => {
             this.setState({

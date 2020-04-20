@@ -90,7 +90,8 @@ export default class CurrentEvents extends Component {
     };
     options = ["View Paricipants", "Shared By", "Cancel"]
     showActions(id) {
-        let participants = find(this.props.data, { id: id }).participant
+        let event = find(this.props.data, { id: id })
+        let participants = event.participant
         ActionSheet.show({
             options: this.options, title: "Select Action", cancelButtonIndex: 2,
             modalStyle: { backgroundColor: "#FEFFDE" }, actionSheetStyle: { backgroundColor: "#FEFEDE" }
@@ -99,6 +100,7 @@ export default class CurrentEvents extends Component {
             if (index === 0) {
                 this.setState({
                     event_id: id,
+                    currentCreator:event.creator_phone,
                     participant: participants,
                     isParticipantModalOpened: true
                 })
@@ -220,11 +222,11 @@ export default class CurrentEvents extends Component {
                         })
                     }}></PhotoViewer> : null
                 }
-                {!this.state.isParticipantModalOpened ? null : <ParticipantModal isOpen={this.state.isParticipantModalOpened} hideTitle={false} participants={this.state.participant} onClosed={() => {
+                <ParticipantModal creator={this.state.currentCreator} isOpen={this.state.isParticipantModalOpened} hideTitle={false} participants={this.state.participant} onClosed={() => {
                     this.setState({
                         isParticipantModalOpened: false
                     })
-                }}  ></ParticipantModal>}
+                }}  ></ParticipantModal>
                 {!this.state.isPublisherModalOpened ? null : <PublishersModal isOpen={this.state.isPublisherModalOpened} event_id={this.state.event_id} onClosed={() => {
                     this.setState({
                         isPublisherModalOpened: false

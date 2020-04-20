@@ -368,7 +368,7 @@ export default class Event extends Component {
   bandMember(members) {
     if (!this.state.working) {
       this.setState({
-        isManagementModalOpened:false,
+        isManagementModalOpened: false,
         working: true
       })
       Requester.bandMembers(members, this.event.id).then((mem) => {
@@ -859,7 +859,7 @@ export default class Event extends Component {
         isInviteModalOpened: false
       })
       if (this.state.adding) {
-        Requester.addParticipants(this.event.id,members.map(ele => {return {...ele,status:'added'}})).then(() => {
+        Requester.addParticipants(this.event.id, members.map(ele => { return { ...ele, status: 'added' } })).then(() => {
           this.initializeMaster()
         }).catch(() => {
           this.setState({
@@ -1066,6 +1066,7 @@ export default class Event extends Component {
     })
   }
   openPhotoSelectorModal(photo) {
+    this.isOpen = false
     this.setState({
       isSelectPhotoInputMethodModal: true,
       photo: photo
@@ -1120,14 +1121,9 @@ export default class Event extends Component {
     if (!this.state.working) {
       this.setState({
         working: true,
-        //isSettingsModalOpened: false
       })
       Requester.applyAllUpdate(original, newSettings).then((res) => {
-        // console.warn(res)
-        if (res)
-          //Toast.show({ text: 'All save completely applied !', type: 'success' })
-          this.initializeMaster()
-        else this.stopLoader()
+        this.initializeMaster()
       }).catch((erorr) => {
         Toast.show({ text: 'could not perform the request' })
         this.initializeMaster()
@@ -1147,7 +1143,6 @@ export default class Event extends Component {
       this.setState({
         working: true,
         isAreYouSureModalOpened: false,
-        isSettingsModalOpened: false
       })
       Requester.updateCloseActivity(this.event, !this.event.closed).then(() => {
         this.initializeMaster()
@@ -1193,15 +1188,10 @@ export default class Event extends Component {
     })
 
   }
-  openCamera(notCam) {
-    this.setState({
-      isSelectPhotoInputMethodModal: false
-    })
-    Pickers.SnapPhoto(true).then(snap => {
+  saveBackground(path) {
       this.setState({
         working: true
       })
-      let exchanger = new FileExachange(snap.source, '/Photo/', 0, 0, null, (newDir, path, filename) => {
         Requester.changeBackground(this.event.id, path).then(res => {
           this.initializeMaster()
         }).catch(err => {
@@ -1209,20 +1199,12 @@ export default class Event extends Component {
             working: false
           })
           Toast.show({ text: "Sorry, the action could not be performed" })
+          this.initializeMaster()
         })
-      }, null, (error) => {
-        console.warn("catching activity bacground Photo upload ", error)
-        this.setState({
-          working: false
-        })
-      }, snap.content_type, snap.filename, '/photo', false)
-      exchanger.upload(0, 0)
-    })
   }
   showPhoto(photo) {
     this.setState({
       showPhoto: true,
-      isSelectPhotoInputMethodModal: false,
       photo: photo
     })
   }
@@ -1361,24 +1343,12 @@ export default class Event extends Component {
         }}
         period={this.event.period}
         calendared={this.event.calendar_id ? true : false}
-        /*handleSync={() => {
-          this.isOpen = false
-          this.event.period ? this.setState({
-            isSynchronisationModalOpned: true,
-          }) : Toast.show({ text: 'cannot sync this activity to your calendar', duration: 4000 })
-        }}*/
         isChat={this.state.isChat}
         computedMaster={this.computedMaster}
         ref="swipperView"
         publish={() => this.publish()}
         showActivityPhotoAction={() => this.computedMaster ? this.openPhotoSelectorModal(this.event.background) : this.showPhoto(this.event.background)}
-        /*leaveActivity={() => {
-          this.preleaveActivity()
-        }}*/
         openSettingsModal={() => this.openSettingsModal()}
-        /*ShowMyActivity={(a) => this.checkActivity({ phone: stores.LoginStore.user.phone })}
-        inviteContacts={() => this.startInvitation()}*/
-        //removeMember={(id, members) => { this.removeMembers(id, members) }}
         addMembers={(id, currentMembers) => this.addCommiteeMembers(id, currentMembers)}
         publishCommitee={(id, stater) => { this.publishCommitee(id, stater) }}
         editName={(newName, id, currentName) => this.computedMaster ? this.editName(newName, id) : Toast.show({ text: "Connot Update This Commitee" })}
@@ -1555,10 +1525,10 @@ export default class Event extends Component {
             })
           }}></SetAlarmPatternModal> : null}
         {!this.state.isSelectPhotoInputMethodModal ? null : <PhotoInputModal
+          saveBackground={(url) => this.saveBackground(url)}
           removePhoto={() => {
             this.setState({
               isAreYouSureModalOpened: true,
-              isSelectPhotoInputMethodModal: false,
               warnTitle: "Remove Photo",
               warnDescription: "Are You Sure You Want To Remove This Photo",
               callback: this.removeActivityPhoto.bind(this),
@@ -1567,17 +1537,8 @@ export default class Event extends Component {
           }}
           photo={this.event.background}
           showActivityPhoto={() => {
-            this.event.background ? this.showPhoto(this.event.background) : this.setState({
-              isSelectPhotoInputMethodModal: false
-            })
+            this.event.background && this.showPhoto(this.event.background) 
           }}
-          openInternet={() => {
-            this.setState({
-              isSelectPhotoInputMethodModal: false,
-              isSearchImageModalOpened: true
-            })
-          }}
-          openCamera={() => this.openCamera()}
           isOpen={this.state.isSelectPhotoInputMethodModal}
           closed={() => this.setState({
             isSelectPhotoInputMethodModal: false
@@ -1597,11 +1558,6 @@ export default class Event extends Component {
           // the changeBox Component , the onPress function of the BleashupTimline Compoent is automatically 
           // triggered . so this is an attempt to restore the blocking done when that photo is being pressed
         }}></PhotoViewer> : null}
-        {!this.state.isSearchImageModalOpened ? null : <SearchImage accessLibrary={() => setTimeout(() => this.openCamera(true), 400)} isOpen={this.state.isSearchImageModalOpened} onClosed={() => {
-          this.setState({
-            isSearchImageModalOpened: false
-          })
-        }}></SearchImage>}
         {this.state.isHighlightDetailModalOpened ? <HighlightCardDetail
           mention={(item) => {
             this.mentionPost(item)
@@ -1659,7 +1615,7 @@ export default class Event extends Component {
               //isSettingsModalOpened: false,
               isAreYouSureModalOpened: true,
               callback: () => this.closeActivity(),
-              warnDescription: "Are You Sure Yo Want To Close This Activiy ?",
+              warnDescription: "Are You Sure You Want To Close This Activiy ?",
               warnTitle: "Close Activity",
               okButtonText: "Close"
             })
@@ -1671,10 +1627,11 @@ export default class Event extends Component {
             this.saveSettings(original, newSettings)
           }}
           closed={() => {
-            this.markAsConfigured()
             this.setState({
               isSettingsModalOpened: false
             })
+            console.warn("closing settings modal")
+            this.markAsConfigured()
           }}
         ></SettingsTabModal>
       </View>

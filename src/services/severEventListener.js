@@ -156,6 +156,7 @@ class ServerEventListener {
         if (dataX[0].includes("_start_")) {
           this.dispatch(JSON.parse(dataX[0].replace("_start_", "")))
         } else {
+          console.warn("this is part of the request, ",data);
           this.accumulator += dataX[0]
           this.dispatch(JSON.parse(this.accumulator))
           this.accumulator = ''

@@ -5,28 +5,21 @@ import {
 
 import { Linking, StyleSheet, View, Image, TouchableOpacity, FlatList, ScrollView, Dimensions } from 'react-native';
 import autobind from "autobind-decorator";
-import CacheImages from "../../CacheImages";
-import PhotoEnlargeModal from "../invitations/components/PhotoEnlargeModal";
-import ImagePicker from 'react-native-image-picker';
 import stores from '../../../stores/index';
 //import { observer } from 'mobx-react'
 import { filter, uniqBy, concat, head, orderBy, find, findIndex, reject, uniq, indexOf, forEach, dropWhile } from "lodash";
 import request from "../../../services/requestObjects";
 
-import EventTitle from "../event/createEvent/components/EventTitle";
-import EventPhoto from "../event/createEvent/components/EventPhoto";
 import EventLocation from "../event/createEvent/components/EventLocation";
 import EventDescription from "../event/createEvent/components/EventDescription";
 import EventHighlights from "../event/createEvent/components/EventHighlights";
 import Hyperlink from 'react-native-hyperlink';
 import moment from 'moment';
 import shadower from "../../shadower";
-import VideoViewer from "../highlights_details/VideoModal";
 import BleashupFlatList from '../../BleashupFlatList';
 import Requester from '../event/Requester';
 import BleashupAlert from '../event/createEvent/components/BleashupAlert';
 import emitter from '../../../services/eventEmiter';
-import PhotoViewer from "../event/PhotoViewer";
 import HighlightCard from "../event/createEvent/components/HighlightCard"
 import MapView from "../currentevents/components/MapView";
 import Creator from "../reminds/Creator";
@@ -259,12 +252,17 @@ export default class EventDetailView extends Component {
               </View>
             </View>
             <ScrollView nestedScrollEnabled>
-              <View style={{ minHeight: colorList.containerHeight - colorList.headerHeight, flexDirection: "column", width: "100%" }} >
-                <View style={{ height: this.state.highlightData.length == 0 ? 0 : colorList.containerHeight*.45, width: "95%",alignSelf: 'center',justifyContent: 'center', }} >
+              <View style={{ minHeight: colorList.containerHeight - colorList.headerHeight, flexDirection: "column", width: "100%",justifyContent: 'center', }} >
+                <View style={{ height: this.state.highlightData.length == 0 ? 0 : 
+                  colorList.containerHeight-colorList.headerHeight, 
+                  width: "95%",alignSelf: 'center',
+                  justifyContent: 'center', 
+                  alignItems: 'center',
+                  marginTop:"2%",}} >
+                <Text note>posts list</Text>
                   {this.state.refresh ? <BleashupFlatList
                     initialRender={4}
-                    showsHorizontalScrollIndicator={false}
-                    horizontal={true}
+                    horizontal={false}
                     renderPerBatch={5}
                     firstIndex={0}
                     refHorizontal={(ref) => { this.detail_flatlistRef = ref }}
@@ -318,7 +316,8 @@ export default class EventDetailView extends Component {
                 }}>
                   <View style={{
                     height: "100%", width: "100%",
-                    alignSelf: "center"
+                    alignSelf: "center",
+                    alignItems: 'center',
                   }}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}><Text note>activity description</Text>
                       {this.props.computedMaster ? <Icon name={"pencil"} type={"EvilIcons"} onPress={() => {
@@ -375,13 +374,6 @@ export default class EventDetailView extends Component {
                 this.props.startLoader()
               }} stopLoader={() => {
                 this.props.stopLoader()
-              }} playVideo={(vid) => {
-                //this.wasEventHiglightOpened = true
-                this.setState({
-                  showVideo: true,
-                  video: vid,
-                  //EventHighlightState: false
-                })
               }}
               updateState={this.state.update}
               highlight_id={this.state.highlight_id}
@@ -400,23 +392,6 @@ export default class EventDetailView extends Component {
             {this.state.isAreYouSureModalOpened ? <BleashupAlert title={"Delete Higlight"} accept={"Yes"} refuse={"No"} message={" Are you sure you want to delete these highlight ?"}
               deleteFunction={() => this.deleteHighlight(this.state.current_highlight)}
               isOpen={this.state.isAreYouSureModalOpened} onClosed={() => { this.setState({ isAreYouSureModalOpened: false }) }} /> : null}
-
-            {this.state.showPhoto ? <PhotoViewer photo={this.state.photo} open={this.state.showPhoto} hidePhoto={() => {
-              this.setState({
-                showPhoto: false,
-                isHighlightDetailsModalOpened: true
-              })
-            }}></PhotoViewer> : null}
-            {this.state.showVideo ? <VideoViewer open={this.state.showVideo} hideVideo={() => {
-              this.setState({
-                showVideo: false,
-                //EventHighlightState: this.wasEventHiglightOpened ? true : false,
-                isHighlightDetailsModalOpened: this.wasDetailOpened ? true : false,
-              })
-              this.wasEventHiglightOpened = false;
-              this.wasDetailOpened = false
-            }} video={this.state.video}
-            ></VideoViewer> : null}
           </View>
         )
 

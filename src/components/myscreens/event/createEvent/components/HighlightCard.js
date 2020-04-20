@@ -20,6 +20,7 @@ import shadower from "../../../../shadower";
 import PostMenu from "./PostMenu";
 import ColorList from '../../../../colorList';
 import buttoner from "../../../../../services/buttoner";
+import MedaiView from "./MediaView";
 
 
 let { height, width } = Dimensions.get('window')
@@ -64,7 +65,7 @@ export default class HighlightCard extends Component {
     return (
 
       this.state.mounted ?
-        <View style={{ width: ColorList.containerWidth * .9, ...shadower(1), margin: 3, borderRadius: 3, padding: 5 }}>
+        <View style={{ width: ColorList.containerWidth * .9, ...shadower(1), margin: 3, borderRadius: 3, padding: 5,justifyContent: 'center', }}>
           <View style={{ flexDirection: 'row',width:'98%', justifyContent: 'space-between', marginTop: 2, marginBottom: 2, height: height / 30,alignSelf: 'center', }}>
             <View style={{ maxWidth: '85%' }}>
               <Title style={{
@@ -80,38 +81,16 @@ export default class HighlightCard extends Component {
               </View> : null}
             </View>
           </View>
-          <TouchableOpacity onPress={() => requestAnimationFrame(() => this.props.showItem(this.props.item))} >
-            {this.containsMedia() ? <View style={{ width: "97%", backgroundColor: 'transparent', borderRadius: 5, ...shadower(2), alignSelf: 'center', }}>
-              <View style={{ width: "100%", height: this.props.height * .695 }}>
-                {this.props.item.url && this.props.item.url.photo && testForURL(this.props.item.url.photo) ?
-                  <CacheImages thumbnails square style={{
-                    width: "103%",
-                    alignSelf: 'center', height: this.props.height * .7, borderRadius: 5,
-                  }} source={{ uri: this.props.item.url.photo }}></CacheImages> :
-                  <Thumbnail source={{ uri: this.props.item.url.photo }} style={{
-                    flex: 1, width: null, height: null,
-                    borderRadius: 8
-                  }} large ></Thumbnail>}
-              </View>
-            </View> : null}
-            <View style={{ height: this.containsMedia() ? (height / 18) : (height / 7), margin: '.5%', }}>
-              <Text ellipsizeMode='tail' style={{ fontSize: 12, }} numberOfLines={this.containsMedia() ? 2 : 10}>{this.props.item.description ? this.props.item.description : null}</Text>
-            </View>
-          </TouchableOpacity>
-          {this.props.item.url && (this.props.item.url.video || this.props.item.url.audio) ?
-            <View style={{
-              position: 'absolute',
-              marginTop: '25%',
-              marginLeft: '35%',
-              ...buttoner,
-               height: 40,
-              width: 25,
-            }}><Icon onPress={() => {
-              this.props.showItem(this.props.item)
-            }} name={this.props.item.url.video ? "play" : "headset"} style={{
-              fontSize: 40, color: ColorList.headerBackground, margin: 'auto',
-            }} type={this.props.item.url.video ? "EvilIcons" : "MaterialIcons"}>
-              </Icon></View> : null}
+         <MedaiView
+
+            height={this.props.height}
+            showItem={this.props.showItem}
+            url={this.props.item.url}
+         >
+         </MedaiView>
+          <View style={{ height: this.containsMedia() ? (height / 18) : (height / 7), margin: '.5%', }}>
+            <Text ellipsizeMode='tail' style={{ fontSize: 12, }} numberOfLines={this.containsMedia() ? 2 : 10}>{this.props.description ? this.props.description : null}</Text>
+          </View>
         </View> : <Card style={{ width: ColorList.containerWidth * .9, height: "100%" }}></Card>
 
     )

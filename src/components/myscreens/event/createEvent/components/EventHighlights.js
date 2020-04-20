@@ -65,6 +65,10 @@ import ColorList from "../../../../colorList";
 import BleashupModal from "../../../../mainComponents/BleashupModal";
 import bleashupHeaderStyle from "../../../../../services/bleashupHeaderStyle";
 import PickersUpload from "./PickerUpload";
+import MediaPreviewer from "./MediaPeviewer";
+import CreationHeader from "./CreationHeader";
+import CreateButton from './ActionButton';
+import CreateTextInput from './CreateTextInput';
 
 //create an extension to toast so that it can work in my modal
 
@@ -336,17 +340,6 @@ export default class EventHighlights extends BleashupModal {
       //this.resetHighlight();
     }
   }
-  choseAction(url) {
-    if (url.video) {
-      this.props.playVideo(url.video);
-    } else {
-      this.setState({
-        newing: !this.state.newing,
-        enlargeImage: true,
-      });
-    }
-  }
-
   applySave(url) {
     this.setState({
       newing: !this.state.newing,
@@ -466,39 +459,11 @@ export default class EventHighlights extends BleashupModal {
   modalBody() {
     return this.state.isMounted ? (
       <View>
-        <View style={{ height: ColorList.headerHeight, width: "100%" }}>
-          <View
-            style={{
-              flex: 1,
-              flexDirection: "row",
-              ...bleashupHeaderStyle,
-              paddingLeft: "2%",
-            }}
-          >
-            <TouchableOpacity
-              style={{ width: "20%", marginTop: "auto", marginBottom: "auto" }}
-            >
-              <Icon
-                onPress={this.back}
-                type="MaterialCommunityIcons"
-                name="keyboard-backspace"
-                style={{ color: ColorList.headerIcon }}
-              />
-            </TouchableOpacity>
-            <Text
-              elipsizeMode={"tail"}
-              numberOfLines={1}
-              style={{
-                fontWeight: "500",
-                width: "80%",
-                marginTop: "auto",
-                marginBottom: "auto",
-              }}
-            >
-              {this.props.updateState ? "Update post" : "Add post"}
-            </Text>
-          </View>
-        </View>
+       <CreationHeader
+       back={this.back}
+        title={this.props.updateState ? "Update post" : "Add post"}
+       >
+       </CreationHeader>
         <View
           style={{
             height: ColorList.containerHeight - (ColorList.headerHeight + 10),
@@ -508,185 +473,18 @@ export default class EventHighlights extends BleashupModal {
         >
           <ScrollView showsVerticalScrollIndicator={false} ref={"scrollView"}>
             <View style={{ height: "100%" }}>
-              <View
-                style={{
-                  height: height / 14,
-                  alignItems: "center",
-                  margin: "2%",
-                }}
-              >
-                <Item
-                  style={{
-                    borderColor: "#1FABAB",
-                    width: "95%",
-                    margin: "2%",
-                    height: height / 17,
-                  }}
-                  rounded
-                >
-                  <TextInput
-                    maxLength={20}
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      margin: "2%",
-                      marginBottom: "5%",
-                    }}
-                    value={
-                      this.state.currentHighlight.title
-                        ? this.state.currentHighlight.title
-                        : ""
-                    }
-                    maxLength={40}
-                    placeholder="Post Title"
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                    returnKeyType="next"
-                    inverse
-                    last
-                    onChangeText={(value) => this.onChangedTitle(value)}
-                  />
-                </Item>
-              </View>
-              <View
-                style={{
-                  height: ColorList.containerHeight * .2,
-                  width: "90%",
-                  alignSelf: "center",
-                }}
-              >
-                <View
-                  style={{
-                    flex: 1,
-                    flexDirection: "column",
-                    justifyContent: "center",
-                    alignItem: "center",
-                  }}
-                >
-                  <TouchableOpacity
-                    onPress={() =>
-                      this.setState({
-                        newing: !this.state.newing,
-                        enlargeImage: true,
-                      })
-                    }
-                  >
-                    {this.state.currentHighlight.url &&
-                      this.state.currentHighlight.url.photo &&
-                      testForURL(this.state.currentHighlight.url.photo) ? (
-                        <CacheImages
-                          thumbnails
-                          source={{ uri: this.state.currentHighlight.url.photo }}
-                          style={{
-                            alignSelf: "center",
-                            height: "100%",
-                            width: "100%",
-                            borderColor: "#1FABAB",
-                            borderRadius:
-                              this.state.currentHighlight.url.photo ||
-                                this.state.currentHighlight.url.video
-                                ? 10
-                                : 100,
-                          }}
-                        />
-                      ) : (
-                        <Thumbnail
-                          square
-                          source={
-                            this.state.currentHighlight.url &&
-                              this.state.currentHighlight.url.photo
-                              ? {
-                                uri: this.state.currentHighlight.url.photo,
-                              }
-                              : this.state.defaultUrl
-                          }
-                          style={{
-                            alignSelf: "center",
-                            height: "100%",
-                            width: "100%",
-                            borderColor: "#1FABAB",
-                            borderRadius:
-                              this.state.currentHighlight.url.photo ||
-                                this.state.currentHighlight.url.video
-                                ? 10
-                                : 100,
-                          }}
-                        ></Thumbnail>
-                      )}
-                  </TouchableOpacity>
-                  {this.state.currentHighlight.url.video ? (
-                    <View
-                      style={{
-                        position: "absolute",
-                        marginTop: "15%",
-                        marginLeft: "36%",
-                        opacity: 0.9,
-                      }}
-                    >
-                      <Icon
-                        onPress={() => {
-                          this.choseAction(this.state.currentHighlight.url);
-                        }}
-                        name={
-                          this.state.currentHighlight.url.video
-                            ? "play"
-                            : "headset"
-                        }
-                        style={{
-                          backgroundColor: "black",
-                          opacity: 0.5,
-                          borderRadius: 30,
-                          fontSize: 50,
-                          color: this.state.currentHighlight.url.audio
-                            ? "yellow"
-                            : "#FEFFDE",
-                          alignSelf: "center",
-                        }}
-                        type={
-                          this.state.currentHighlight.url.video
-                            ? "EvilIcons"
-                            : "MaterialIcons"
-                        }
-                      ></Icon>
-                    </View>
-                  ) : null}
-                </View>
-                {this.state.currentHighlight.url.video ||
-                  this.state.currentHighlight.url.photo ? (
-                    <View
-                      style={{
-                        ...buttoner,
-                        position: "absolute",
-                        alignSelf: "flex-end",
-                      }}
-                    >
-                      <Icon
-                        name={"close"}
-                        type="EvilIcons"
-                        onPress={() => this.cleanMedia()}
-                        style={{
-                          color: "white",
-                          fontSize: 20,
-                        }}
-                      ></Icon>
-                    </View>
-                  ) : null}
-              </View>
-              {this.state.enlargeImage &&
-                this.state.currentHighlight.url.photo ? (
-                  <PhotoViewer
-                    open={this.state.enlargeImage}
-                    hidePhoto={() =>
-                      this.setState({
-                        newing: !this.state.newing,
-                        enlargeImage: false,
-                      })
-                    }
-                    photo={this.state.currentHighlight.url.photo}
-                  />
-                ) : null}
-              <View style={{ marginTop: 5, marginBottom: 5, marginLeft: '5%', }}>
+            <CreateTextInput
+            height={height/14}
+                value={this.state.currentHighlight.title
+                  ? this.state.currentHighlight.title
+                  : ""}
+                onChange={this.onChangedTitle}
+                placeholder={"Post Title"}
+            >
+            </CreateTextInput>
+              <View style={{ marginTop: 5, marginBottom: 5, marginLeft: '3%', }}>
                 <PickersUpload
+                  creating={!this.props.updateState}
                   currentURL={this.state.currentHighlight.url}
                   id={this.state.currentHighlight.id}
                   saveMedia={(url) => {
@@ -694,6 +492,12 @@ export default class EventHighlights extends BleashupModal {
                   }}
                 ></PickersUpload>
               </View>
+              <MediaPreviewer
+                height={ColorList.containerHeight * 0.2}
+                defaultPhoto={this.state.defaultUrl}
+                url={this.state.currentHighlight.url}
+                cleanMedia={() => this.cleanMedia()}
+              ></MediaPreviewer>
               {this.state.currentHighlight.url.audio ? (
                 <View
                   style={{
@@ -784,25 +588,11 @@ export default class EventHighlights extends BleashupModal {
               >
                 {this.state.creating ? (
                   <Spinner></Spinner>
-                ) : <View style={{ alignSelf: "flex-end" ,marginTop: 15,}}>
-                    <TouchableOpacity
-                      style={{ width: 100, minHeight: 40, borderRadius: 8, ...shadower(2), backgroundColor: ColorList.headerIcon, justifyContent: 'center', }}
-                      onPress={() => {
-                        !this.props.updateState ? this.AddHighlight() : this.updateHighlight();
-                      }}
-                    >
-                      <Text
-                        style={{
-                          alignSelf: 'center',
-                          color: ColorList.headerBackground,
-                          fontWeight: "bold",
-                          fontSize: 20,
-                        }}
-                      >
-                        {!this.state.updateState ? "Add Post" : "Update Post"}
-                      </Text>
-                    </TouchableOpacity>
-                  </View>}
+                ) :<CreateButton
+                    action={!this.props.updateState ? this.AddHighlight : this.updateHighlight}
+                    title={!this.state.updateState ? "Add Post" : "Update Post"}
+                >
+                </CreateButton>}
               </View>
             </View>
           </ScrollView>
