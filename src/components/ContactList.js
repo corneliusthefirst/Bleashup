@@ -9,6 +9,7 @@ import ProfileView from "./myscreens/invitations/components/ProfileView";
 import BleashupFlatList from './BleashupFlatList';
 import moment from "moment";
 import bleashupHeaderStyle from "../services/bleashupHeaderStyle";
+import CreationHeader from "./myscreens/event/createEvent/components/CreationHeader";
 export default class ContactList extends Component {
 
     constructor(props) {
@@ -50,14 +51,12 @@ export default class ContactList extends Component {
     render() {
         StatusBar.setBarStyle('dark-content', true)
         return <View style={{}}>
-            <View style={{ width: "100%", height: 44, }}>
-                <View style={{ flexDirection: 'row',...bleashupHeaderStyle ,padding: '2%',}}>
-                    <View style={{ width: "80%",}}><Text style={{
-                        fontSize: 20, 
-                        fontWeight: 'bold', 
-                    }}>{"Shared By "}</Text></View>
-                    <View style={{width:'20%'}}><Text note>{this.state.publishers.length}{" sharer(s)"}</Text></View>
-                </View></View>
+        <CreationHeader
+        back={this.props.back}
+        title={"Shared By "}
+        extra={<Text style={{marginTop: 'auto',marginBottom: 'auto',}} note>{this.state.publishers.length}{" sharer(s)"}</Text>}
+        >
+        </CreationHeader>
             {this.state.isloaded ? (
                 <View>
                     {this.state.isEmpty ? <Text style={{

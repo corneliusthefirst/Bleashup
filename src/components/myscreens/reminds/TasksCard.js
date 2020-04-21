@@ -190,13 +190,13 @@ export default class EventTasksCard extends Component {
                   <View style={{marginRight:"10%"}}>
                   <Icon onPress={() => {
                     this.props.mention({ ...this.props.item, creator: this.state.creator })
-                  }} name={"reply"} style={{ color: ColorList.iconGray, fontSize: 25 }} type="Entypo"></Icon>
+                  }} name={"reply"} style={{ color:ColorList.bodyIcon, fontSize: 25 }} type="Entypo"></Icon>
                   </View>
 
                   <View style={{marginRight:"10%"}}>
-                  <Icon style={{ color: ColorList.iconGray, fontSize: 25}} onPress={() => {
+                  <Icon style={{ color: ColorList.bodyIcon, fontSize: 25}} onPress={() => {
                     this.props.showReport(this.props.item, this.state.currentDateIntervals, this.state.correspondingDateInterval)
-                  }} name="ios-people" type="Ionicons" />
+                  }} name="account-group-outline" type="MaterialCommunityIcons" />
                   </View>
 
                  <View style={{marginRight:"-3%"}} >

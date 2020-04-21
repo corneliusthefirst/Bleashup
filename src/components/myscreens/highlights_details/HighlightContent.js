@@ -10,6 +10,7 @@ import shadower from '../../shadower';
 import CacheImages from '../../CacheImages';
 import testForURL from '../../../services/testForURL';
 import buttoner from '../../../services/buttoner';
+import ColorList from '../../colorList';
 
 export default class HighlightContent extends Component {
     constructor(props) {
@@ -60,7 +61,7 @@ export default class HighlightContent extends Component {
                                         <View style={{ position: 'absolute', marginTop: "25%", marginLeft: '43%', }}>
                                                <Icon onPress={() => {
                                                     this.props.showVideo(this.props.highlight.url.video)
-                                                }} style={{ fontSize: 50,color:'#FEFFDE',marginRight: '10%',
+                                                }} style={{ fontSize: 50,color:ColorList.headerBackground,marginRight: '10%',
                                             }} type={'EvilIcons'} name={'play'}></Icon>
                                         </View> : null
                                     }
@@ -79,7 +80,7 @@ export default class HighlightContent extends Component {
                                                 <Button onPress={() => {
                                                     this.props.highlight.url.video ? this.props.showVideo(this.props.highlight.url.video) : this.props.showPhoto(this.props.highlight.url.photo)
                                                 }} transparent>
-                                                    <Icon style={{ fontSize: 50,color:'#FEFFDE' }} type={'EvilIcons'} name={'play'}></Icon>
+                                                    <Icon style={{ fontSize: 50,color:ColorList.headerBackground }} type={'EvilIcons'} name={'play'}></Icon>
                                                 </Button>
                                             </View> : null
                                         }

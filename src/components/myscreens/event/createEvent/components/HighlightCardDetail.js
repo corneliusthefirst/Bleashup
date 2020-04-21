@@ -14,40 +14,30 @@ import testForURL from '../../../../../services/testForURL';
 import shadower from "../../../../shadower";
 import HighLight from "../../../highlights_details/Highlight";
 import ColorList from '../../../../colorList';
+import BleashupModal from "../../../../mainComponents/BleashupModal";
+import CreationHeader from "./CreationHeader";
 
 let { height, width } = Dimensions.get('window')
 
-export default class HighlightCardDetail extends Component {
+export default class HighlightCardDetail extends BleashupModal {
   constructor(props) {
     super(props)
     this.state = {
       enlargeImage: false
     }
   }
-
-  render() {
-    console.warn(this.props.item)
+onClosedModal(){
+  this.props.onClosed()
+}
+  modalBody() {
     return (
-      <Modal
-        backButtonClose={true}
-        isOpen={this.props.isOpen}
-        onClosed={this.props.onClosed}
-        position={'bottom'}
-        swipeToClose={true}
-        style={{
-          height: "95%", 
-          alignSelf: 'center',
-          backgroundColor: ColorList.bodyBackground, 
-          borderTopLeftRadius: 8, 
-          borderTopRightRadius: 8,
-          width: "100%", 
-          flexDirection: 'column'
-        }}
-
-        coverScreen={true}
-      >
         <View>
-          <View style={{ height: '100%' }}>
+        <CreationHeader
+          title={'Post Detail'}
+          back={() => this.onClosedModal()}
+        >
+        </CreationHeader>
+          <View style={{ height: ColorList.containerHeight - (ColorList.headerHeight + 20) }}>
             <ScrollView showsVerticalScrollIndicator={false} >
               <View style={{ flex: 1, ...shadower(6) }}>
                 {this.props.shouldRestore ? <View style={{ width: '95%', alignItems: 'flex-end', margin: '2%',height:'100%' }}><Button
@@ -65,27 +55,10 @@ export default class HighlightCardDetail extends Component {
                  background={ColorList.bodyBackground} 
                  highlight={this.props.item}
                   disableSwipper={true}></HighLight>
-                {/*<View style={{alignItems:'center',justifyContent:'center',height:height/7}}>
-               <Title style={{color:'#1FABAB',fontSize:23,fontWeight:"bold"}}>{this.props.item.title}</Title>
-            </View>
-            <View>
-                <TouchableOpacity style={{ ...shadower(5) }} onPress={()=>{this.setState({enlargeImage:true})}}>
-              {testForURL(this.props.item.url.photo)?<CacheImages thumbnails square source={{uri:this.props.item.url.photo}} style={{width:"92%",marginLeft:"4%",marginRight:"4%",marginBottom:"4%",borderRadius:5,height:height/3 + height/11}}>
-                  </CacheImages> : <Thumbnail square large source={{ uri: this.props.item.url.photo }} style={{ width: "92%", marginLeft: "4%", marginRight: "4%", marginBottom: "4%", borderRadius: 5, height: height / 3 + height / 11 }}></Thumbnail>}
-              </TouchableOpacity>
-            </View>
-            <View style={{margin:"5%",fontStyle:'italic'}}>
-             <Text>{this.props.item.description}</Text>
-              </View>*/}
               </View>
             </ScrollView>
-            <View style={{ position: 'absolute', margin: '1%', }}><Text style={{ margin: '2%', color: '#1F4237', fontWeight: 'bold' }} note>{'post'}</Text></View>
           </View>
         </View>
-      </Modal>
-
-
-
     )
   }
 }

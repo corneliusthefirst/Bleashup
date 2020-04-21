@@ -290,31 +290,31 @@ class Home extends Component {
     setTimeout(() => {
       //this.launchAnimation()
     }, 1000)
-    StatusBar.setBackgroundColor("#1FABAB", true)
+    StatusBar.setBackgroundColor(colorList.headerBackground, true)
     StatusBar.setBarStyle('dark-content', true)
     StatusBar.setHidden(false, true)
     return (
-      <Container style={{ height:colorList.containerHeight,backgroundColor:colorList.containerBackground ,width:colorList.containerWidth }}>
+      <View style={{ height:colorList.containerHeight,backgroundColor:colorList.containerBackground ,width:colorList.containerWidth }}>
         <View style={{ height: colorList.headerHeight,backgroundColor: colorList.headerBackground ,width:"100%", }}>
         
          
             <View style={{flex: 1, backgroundColor: colorList.headerBackground, flexDirection: "row",justifyContent: "space-between",width:"100%" }}>
              
-              <View style={{ alignSelf: "flex-start",justifyContent:"center",height:"98%",marginTop:"1%" }}>
-                <Thumbnail source={require("../../../../assets/bleashuptitle.png")} style={{width:120}}></Thumbnail>
+              <View style={{ alignSelf: "flex-start",justifyContent:"center",height:"100%" }}>
+                <Thumbnail source={require("../../../../assets/bleashuptitle1.png")} style={{width:120}}></Thumbnail>
               </View>
 
             
                 <View style={{ height:"100%",alignSelf: "flex-end", display: 'flex', flexDirection: 'row', marginRight:"2%"}}>
 
                  <TouchableOpacity style={{height:40,alignItems:"center",justifyContent:"center"}} onPress={() => this.navigateToInvitations()}>
-                  <Icon name="sc-telegram" active={true} type="EvilIcons" style={{ color: "white", }} onPress={() => this.navigateToInvitations()} />
+                  <Icon name="sc-telegram" active={true} type="EvilIcons" style={{ color: colorList.headerIcon, }} onPress={() => this.navigateToInvitations()} />
                   </TouchableOpacity>
 
                   <TouchableOpacity style={{ height: 40, alignItems: "center", justifyContent: "center" }} onPress={this.showMenu}>
                     <Menu
                      ref={this.setMenuRef}
-                     button={<Icon name="gear" active={true} type="EvilIcons" style={{ color: "white",marginLeft:width/35 }} onPress={this.showMenu} />}
+                     button={<Icon name="gear" active={true} type="EvilIcons" style={{ color: colorList.headerIcon,marginLeft:width/35 }} onPress={this.showMenu} />}
                      style={{ backgroundColor:colorList.bodyBackground }}
                      >
                    <MenuItem onPress={this.settings}>settings</MenuItem>
@@ -327,8 +327,25 @@ class Home extends Component {
             
             </View>
           </View>
-       
-        <Tabs
+         <View style={{marginBottom:100}}>
+          <CurrentEventView {...this.props}></CurrentEventView>
+          </View>
+
+      </View>
+    );
+  }
+}
+
+export default withInAppNotification(Home);
+
+
+
+
+
+
+
+
+       {/* <Tabs
           locked
           tabContainerStyle={{
              backgroundColor: colorList.headerBackground
@@ -378,8 +395,9 @@ class Home extends Component {
             }
           >
             <StatusView {...this.props} />
-          </Tab>*/}
+          </Tab>
         </Tabs>
+
         {this.state.isForeignEventsModalOpened ? <ForeignEventsModal isOpen={this.state.isForeignEventsModalOpened} onClosed={() => {
           this.setState({
             isForeignEventsModalOpened: false,
@@ -392,9 +410,3 @@ class Home extends Component {
             isTabModalOpened: false
           })
         }}></TabModal>*/}
-      </Container>
-    );
-  }
-}
-
-export default withInAppNotification(Home);

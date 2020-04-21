@@ -12,15 +12,18 @@ class colorlist {
     containerWidth = width
     containerBackground = "#1FABAB"
     redIcon='red'
+    containerBackground = "white"
+
     //header
     iconGray = '#555756'
     iconActive = "#1FABAB"
     iconInactive = "#ADE3D2"
-    headerTextInverted = "white"
+    
+    headerTextInverted = "black"
     headerIcon = "black"
-    headerText = "white"
+    headerText = "black"
     headerBlackText = "black"
-    headerBackground = "#1FABAB"
+    headerBackground = "white"
     headerHeight = 50
     headerFontweight = "bold"
     headerFontSize = 20
