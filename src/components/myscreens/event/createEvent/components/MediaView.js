@@ -15,18 +15,17 @@ export default class MedaiView extends Component {
         return this.props.url.video || this.props.url.audio || this.props.url.photo ? true : false
     }
     render() {
-        return <View style={{justifyContent:"center"}}>
+        return <View style={{justifyContent:"center",backgroundColor:"gray",width:this.props.width}}>
             <TouchableOpacity onPress={() => requestAnimationFrame(() => this.props.showItem(this.props.url))} >
-                {this.containsMedia() ? <View style={{ width: "99%", backgroundColor: 'transparent', borderRadius: 5, ...shadower(2), alignSelf: 'center',flex: 1, justifyContent: 'center', }}>
+                {this.containsMedia() ? <View style={{ width:"100%", backgroundColor: 'transparent', alignSelf: 'center',flex: 1, justifyContent: 'center', }}>
                     <View style={{ width: "100%", height: this.props.height * .695 }}>
                         {this.props.url && this.props.url.photo && testForURL(this.props.url.photo) ?
                             <CacheImages thumbnails square style={{
-                                width: this.props.width || "100%",
-                                alignSelf: 'center', height: this.props.height * .7, borderRadius: 5,
+                                width: this.props.width,
+                                alignSelf: 'center', height: this.props.height * .7
                             }} source={{ uri: this.props.url.photo }}></CacheImages> :
                             <Thumbnail source={{ uri: this.props.url.photo }} style={{
                                 flex: 1, width: null, height: null,
-                                borderRadius: 8
                             }} large ></Thumbnail>}
                     </View>
                 </View> : null}

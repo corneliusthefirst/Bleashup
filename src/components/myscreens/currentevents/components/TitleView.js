@@ -44,7 +44,7 @@ export default class TitleView extends Component {
                                 numberOfLines={1}
                                 style={{
                                     fontSize: 18,
-                                    fontWeight: "100",
+                                    fontWeight: "500",
                                     textTransform:"capitalize",
                                     color: "black",
                                     fontFamily: "Roboto",

@@ -148,16 +148,17 @@ export default class EventTasksCard extends Component {
     member = findIndex(this.props.item.members,
       { phone: stores.LoginStore.user.phone }) >= 0;
     return !this.state.mounted ? <Card style={{
-      width: '98%', height: 220,
-      marginLeft: "2%", marginRight: "2%",
+      width:ColorList.containerWidth, height: 220,
     }}>
     </Card> : (
         <Card style={{
-          marginLeft: "2%", marginRight: "2%", //marginBottom: this.props.isLast ? '25%' : '0%',
+          //marginLeft: "2%", marginRight: "2%", //marginBottom: this.props.isLast ? '25%' : '0%',
         }}>
           <CardItem>
-            <Left style={{ width: '68%' }}><Text style={{
-              width: '100%', fontWeight: "500", fontSize: 14,
+            <Left>
+              <View style={{width:"80%"}}>
+              <Text style={{
+              width: '100%', fontWeight: "300", fontSize: 14,color:ColorList.bodySubtext,
               color: dateDiff({
                 recurrence: this.state.correspondingDateInterval ?
                   moment(this.state.correspondingDateInterval.end, format).format() :
@@ -165,7 +166,7 @@ export default class EventTasksCard extends Component {
               }) > 0 ? ColorList.bodySubtext : ColorList.iconActive,
               alignSelf: 'flex-end',
             }}
-              note>{`${writeDateTime(
+              >{`${writeDateTime(
                 this.state.correspondingDateInterval ?
                   {
                     period: moment(this.state.correspondingDateInterval.end, format).format(),
@@ -179,18 +180,26 @@ export default class EventTasksCard extends Component {
                 replace("Starting", "Due").
                 replace("Ended", "Past").
                 replace("Started", "Past")}`}</Text>
+                </View>
             </Left>
+
             <Right>
-              <View style={{ flexDirection: 'row', alignSelf: 'flex-end', }}>
-                <View style={{ flexDirection: 'row', marginTop: '3%', }}>
+              <View style={{width:"75%" }}>
+                <View style={{ flexDirection: 'row',alignSelf:"flex-end" }}>
+                  
+                  <View style={{marginRight:"10%"}}>
                   <Icon onPress={() => {
                     this.props.mention({ ...this.props.item, creator: this.state.creator })
-                  }} name={"reply"} style={{ color: ColorList.iconGray, fontSize: 25, margin: '2%', }} type="Entypo"></Icon>
-                  <Icon style={{ color: ColorList.iconGray, fontSize: 25, margin: '2%', }} onPress={() => {
+                  }} name={"reply"} style={{ color: ColorList.iconGray, fontSize: 25 }} type="Entypo"></Icon>
+                  </View>
+
+                  <View style={{marginRight:"10%"}}>
+                  <Icon style={{ color: ColorList.iconGray, fontSize: 25}} onPress={() => {
                     this.props.showReport(this.props.item, this.state.currentDateIntervals, this.state.correspondingDateInterval)
                   }} name="ios-people" type="Ionicons" />
-                </View>
-                <View style={{ alignSelf: 'flex-end', }}>
+                  </View>
+
+                 <View style={{marginRight:"-3%"}} >
                   <RemindsMenu
                     update={() => this.props.updateRemind(this.props.item)}
                     creator={this.state.creator}
@@ -200,9 +209,13 @@ export default class EventTasksCard extends Component {
                     deleteRemind={() => this.props.deleteRemind(this.props.item)}
                   ></RemindsMenu>
                 </View>
+
+                </View>
+
               </View>
             </Right>
           </CardItem>
+
           {this.props.item.location ? <CardItem>
             <TouchableOpacity style={{ flexDirection: 'row', }} onPress={() => requestAnimationFrame(() => {
             let Query = { query: this.props.item.location };
@@ -213,20 +226,19 @@ export default class EventTasksCard extends Component {
           </CardItem> : null}
           <CardItem>
             <Left>
-              <Title style={{ fontWeight: "500", marginLeft: -1, fontSize: 20, color: ColorList.darkGrayText }}>{this.props.item.title}</Title>
+              <Title style={{ fontWeight: "500", marginBottom: "5%",marginLeft:"0%", fontSize: 17, color:ColorList.bodyText,textTransform:"capitalize", }}>{this.props.item.title}</Title>
             </Left>
           </CardItem>
           {this.props.item.remind_url &&
             (this.props.item.remind_url.photo || this.props.item.remind_url.video) ?
-            <View style={{ alignItems: 'center', alignSelf: 'center', width: '100%' }}>
-              <View style={{flex:1}}>
+            <View style={{flex:1, alignItems: 'center', alignSelf: 'center', width:ColorList.containerWidth }}>
               <MedaiView
                 height={ColorList.containerHeight * .39}
-                width={ColorList.containerWidth * .91}
+                width={ColorList.containerWidth *0.96}
                 url={this.props.item.remind_url}
                 showItem={this.props.showMedia}
               ></MedaiView>
-              </View>
+          
             </View> : null}
 
           <CardItem carBody>
@@ -236,7 +248,7 @@ export default class EventTasksCard extends Component {
                 newing: !this.state.newing
               })
             }}>
-              <Text note style={{ fontSize: 12, }} ellipsizeMode={!this.state.showAll ? 'tail' : null} numberOfLines={this.state.showAll ? null : 10}>{this.props.item.description}</Text>
+              <Text note style={{ fontSize: 12,marginTop:"2%", color:ColorList.bodyText }} ellipsizeMode={!this.state.showAll ? 'tail' : null} numberOfLines={this.state.showAll ? null : 10}>{this.props.item.description}</Text>
             </TouchableOpacity>
           </CardItem>
 
