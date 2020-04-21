@@ -37,11 +37,6 @@ export default class PhotoView extends Component {
                                 })
                                 this.counter = this.counter + 1
                             } else {
-                                this.setState({
-                                    image: this.props.photo,
-                                    video: false,
-                                    audio: false
-                                })
                                 this.counter = 0
                             }
                         }, 2000 + this.props.renderDelay)

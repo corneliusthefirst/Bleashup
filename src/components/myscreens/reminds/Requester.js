@@ -358,7 +358,6 @@ class Requester {
     }
 
     updateRemindURL(newURL, oldULR, remindID, eventID) {
-        console.error(newURL)
         return new Promise((resolve, reject) => {
             if (!isEqual(newURL, oldULR)) {
                 let newRemindName = request.RemindUdate()

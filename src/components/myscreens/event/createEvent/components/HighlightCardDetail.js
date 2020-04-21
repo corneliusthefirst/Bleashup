@@ -26,6 +26,7 @@ export default class HighlightCardDetail extends Component {
   }
 
   render() {
+    console.warn(this.props.item)
     return (
       <Modal
         backButtonClose={true}

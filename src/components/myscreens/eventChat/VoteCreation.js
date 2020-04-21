@@ -254,7 +254,7 @@ export default class VoteCreation extends BleashupModal {
                         color: '#555756',
                     }}>{"only the voting end date is updated"}</Text></View> : null
                 }
-                back={this.onClosedModal}
+                back={this.onClosedModal.bind(this)}
             >
             </CreationHeader>
             <View style={{ height: ColorList.containerHeight - (ColorList.headerHeight + 20), }}>

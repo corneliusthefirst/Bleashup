@@ -17,8 +17,8 @@ class colorlist {
     iconActive = "#1FABAB"
     iconInactive = "#ADE3D2"
     headerTextInverted = "white"
-    headerIcon = "ivory"
-    headerText = "ivory"
+    headerIcon = "black"
+    headerText = "white"
     headerBlackText = "black"
     headerBackground = "#1FABAB"
     headerHeight = 50
