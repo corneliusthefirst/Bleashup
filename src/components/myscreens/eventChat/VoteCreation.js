@@ -12,11 +12,13 @@ import { format } from '../../../services/recurrenceConfigs';
 import stores from '../../../stores';
 import { isEqual } from 'lodash';
 import request from '../../../services/requestObjects';
+import BleashupModal from '../../mainComponents/BleashupModal';
+import CreationHeader from '../event/createEvent/components/CreationHeader';
+import ColorList from '../../colorList';
 
 let { height, width } = Dimensions.get('window');
-export default class VoteCreation extends Component {
-    constructor(props) {
-        super(props)
+export default class VoteCreation extends BleashupModal {
+    initialize() {
         this.state = {
             vote: this.emptyVote,
             vote_id: ""
@@ -44,7 +46,7 @@ export default class VoteCreation extends Component {
         //  }
     }
     renderOptions() {
-        return this.state.vote.option.map((item, index) => this.Itemer(index))
+        return this.state.vote && this.state.vote.option.map((item, index) => this.Itemer(index))
     }
     setOption(value, index) {
         let options = this.state.vote.option
@@ -75,31 +77,31 @@ export default class VoteCreation extends Component {
             this.initializeVote()
         }
         if (!this.props.update) {
-            if (this.state.vote.title !== prevState.vote.title) {
+            if (this.state.vote && prevState.vote && this.state.vote.title !== prevState.vote.title) {
                 stores.Votes.updateVoteTitle({
                     new_title: this.state.vote.title,
                     vote_id: this.state.vote.id
                 }).then(() => { })
             }
-            if (this.state.vote.description !== prevState.vote.description) {
+            if (this.state.vote && prevState.vote && this.state.vote.description !== prevState.vote.description) {
                 stores.Votes.UpdateVoteDescription({
                     new_description: this.state.vote.description,
                     vote_id: this.state.vote.id
                 }).then(() => { })
             }
-            if (this.state.vote.published !== prevState.vote.published) {
+            if (this.state.vote && prevState.vote && this.state.vote.published !== prevState.vote.published) {
                 stores.Votes.PublishVote({
                     vote_id: this.state.vote.id,
                     new_public_state: this.state.vote.published
                 }).then(() => { })
             }
-            if (this.state.vote.period !== prevState.vote.period) {
+            if (this.state.vote && prevState.vote && this.state.vote.period !== prevState.vote.period) {
                 stores.Votes.UpdateVotePeriod({
                     new_period: this.state.vote.period,
                     vote_id: this.state.vote.id
                 }).then(() => { })
             }
-            if (this.state.vote.always_show !== prevState.vote.always_show) {
+            if (this.state.vote && prevState.vote && this.state.vote.always_show !== prevState.vote.always_show) {
                 stores.Votes.updateAlwayShowPercentage({
                     vote_id: this.state.vote.id,
                     new_always_show:
@@ -133,7 +135,7 @@ export default class VoteCreation extends Component {
         return (<Item>
             <Text style={{ fontWeight: 'bold', color: '#1FABAB' }}>{`${labler(index)} .`}</Text><TextInput
                 placeholder={'enter option name here'}
-                value={this.state.vote.option[index].name}
+                value={this.state.vote && this.state.vote.option[index].name}
                 onChangeText={val => this.setOption(val, index)}
                 style={{ width: '70%' }} ></TextInput>
             <Button onPress={() => this.removeNote(index)}
@@ -231,146 +233,136 @@ export default class VoteCreation extends Component {
     updateVote() {
         this.props.updateVote(this.previousVote, this.state.vote)
     }
+    onClosedModal() {
+        this.props.onClosed()
+    }
+    entry = 'top'
     state = {}
-    render() {
-        return <Modal
-            position={'bottom'}
-            backdropPressToClose={true}
-            backButtonClose={true}
-            coverScreen={true}
-            backdropOpacity={0.3}
-            swipeToClose={false}
-            isOpen={this.props.isOpen}
-            onClosed={() => {
-                this.props.onClosed()
-            }}
-            entry={'top'}
-            style={{
-                height: height * .93,
-                width: '100%',
-                
-                borderTopRightRadius: 8,
-                borderTopLeftRadius: 8,
-            }}
-        >
-       <KeyboardAvoidingView
-        behavior={Platform.OS == "ios" ? "padding" : "height"}
-        style={{flex:1}}
-        >
-            <View style={{ height: '100%', flexDirection: 'column',justifyContent:"flex-end" }}>
-                <View style={{ width: '98%', height: '6%', ...shadower(), margin: '1%', flexDirection: 'row', }}>
-                    <View style={{ width: '35%' }}><Text note style={{
-                        fontWeight: 'bold',
-                        color: '#1F4237',
-                        //margin: '2%'
-                    }}>{!this.props.update ? "new vote" : "update vote"}</Text></View>
-                    {this.props.update ? <View style={{ width: '65%' }}><Text note style={{
+    modalBody() {
+        return (
+            <KeyboardAvoidingView
+            behavior={Platform.OS == "ios" ? "padding" : "height"}
+            style={{flex:1}}
+            >
+            <ScrollView>
+           <View style={{ height: '100%', flexDirection: 'column',justifyContent:"flex-end" }}>
+            <CreationHeader
+                title={!this.props.update ? "new vote" : "update vote"}
+                extra={
+                    this.props.update ? <View style={{ width: '65%', marginTop: 'auto', marginBottom: 'auto', }}><Text note style={{
                         fontWeight: 'bold',
                         color: '#555756',
-                        //margin: '2%'
-                    }}>{"only the voting end date is updated"}</Text></View> : null}
-                </View>
-                <View style={{ height: '94%', }}>
-                    <ScrollView showsVerticalScrollIndicator={false} style={{ height: '100%' }}>
-                        <View style={{ margin: '3%', }}>
-                            {this.state.showVoteContentError ? <Text style={{ color: "#A91A84", fontWeight: 'bold', }} note>{"vote should at least have a title or a detail"}</Text> : null}
-                            {this.state.showVoteOptionError ? <Text style={{ color: "#A91A84", fontWeight: 'bold', }} note>{"vote should have at least a 2 options"}</Text> : null}
-                            {this.state.nowVotePeriod ? <Text style={{ color: "#A91A84", fontWeight: 'bold', }} note>{"you must specify the voting endate"}</Text> : null}
-                            <View style={{ height: height / 14, alignItems: 'center', margin: '2%', }}>
-                                <Item style={{ borderColor: '#1FABAB', width: "95%", margin: '2%', height: height / 17 }} rounded>
-                                    <TextInput maxLength={20} style={{ width: "100%", height: "100%", margin: '2%', marginBottom: '5%', }}
-                                        value={this.state.vote.title ? this.state.vote.title : ""}
-                                        maxLength={40} placeholder="Vote title" keyboardType='email-address' autoCapitalize="none" returnKeyType='next' inverse last
-                                        onChangeText={(text) =>
-                                            this.setState({
-                                                vote: { ...this.state.vote, title: text },
-                                                showVoteContentError: (!text || text.length <= 0) && !this.state.vote.description ? true : false
-                                            })
-                                        } />
-                                </Item>
-                            </View>
-                            <Textarea containerStyle={{
-                                width: "95%", margin: "1%",
-                                height: 150,
-                                borderRadius: 6, borderWidth: .7,
-                                borderColor: "#1FABAB", alignSelf: 'center',
-                                backgroundColor: "#f5fffa"
-                            }} maxLength={1000} style={{
-                                margin: 1,
-                                backgroundColor: "#f5fffa",
-                                height: "95%", width: "98%"
-                            }}
-                                placeholder="Vote details" value={this.state.vote.description} keyboardType="default"
-                                onChangeText={(value) => {
-                                    this.setState({
-                                        vote: { ...this.state.vote, description: value },
-                                        showVoteContentError: (!value || value.length <= 0) &&
-                                            !this.state.vote.title ? true : false
-                                    })
-                                }} />
-                            <Button onPress={() => this.changeAlwaysShowState()} transparent>
-                                <Icon name={this.state.vote.always_show ? "radio-button-checked" :
-                                    "radio-button-unchecked"} type={"MaterialIcons"}></Icon>
-                                <Text>{"always show vote percentages"}</Text></Button>
-                            {/*<Button transparent onPress={() => {
+                    }}>{"only the voting end date is updated"}</Text></View> : null
+                }
+                back={this.onClosedModal}
+            >
+            </CreationHeader>
+            <View style={{ height: ColorList.containerHeight - (ColorList.headerHeight + 20), }}>
+                <ScrollView showsVerticalScrollIndicator={false} style={{ height: '100%' }}>
+                    <View style={{ margin: '3%', }}>
+                        {this.state.showVoteContentError ? <Text style={{ color: "#A91A84", fontWeight: 'bold', }} note>{"vote should at least have a title or a detail"}</Text> : null}
+                        {this.state.showVoteOptionError ? <Text style={{ color: "#A91A84", fontWeight: 'bold', }} note>{"vote should have at least a 2 options"}</Text> : null}
+                        {this.state.nowVotePeriod ? <Text style={{ color: "#A91A84", fontWeight: 'bold', }} note>{"you must specify the voting endate"}</Text> : null}
+                        <View style={{ height: height / 14, alignItems: 'center', margin: '2%', }}>
+                            <Item style={{ borderColor: '#1FABAB', width: "95%", margin: '2%', height: height / 17 }} rounded>
+                                <TextInput maxLength={20} style={{ width: "100%", height: "100%", margin: '2%', marginBottom: '5%', }}
+                                    value={this.state.vote && this.state.vote.title ? this.state.vote.title : ""}
+                                    maxLength={40} placeholder="Vote title" keyboardType='email-address' autoCapitalize="none" returnKeyType='next' inverse last
+                                    onChangeText={(text) =>
+                                        this.setState({
+                                            vote: { ...this.state.vote, title: text },
+                                            showVoteContentError: (!text || text.length <= 0) && this.state.vote && !this.state.vote.description ? true : false
+                                        })
+                                    } />
+                            </Item>
+                        </View>
+                        <Textarea containerStyle={{
+                            width: "95%", margin: "1%",
+                            height: 150,
+                            borderRadius: 6, borderWidth: .7,
+                            borderColor: "#1FABAB", alignItems: 'center',
+                            backgroundColor: "#f5fffa"
+                        }} 
+                        style={{
+                            textAlignVertical: 'top',
+                            margin: 1,
+                            backgroundColor: "#f5fffa",
+                            height: "95%", width: "98%"
+                        }}
+                        maxLength={1000} 
+
+                        placeholder="Vote details" value={this.state.vote && this.state.vote.description} keyboardType="default"
+                        onChangeText={(value) => {
+                            this.setState({
+                            vote: { ...this.state.vote, description: value },
+                            showVoteContentError: (!value || value.length <= 0) &&
+                            !this.state.vote.title ? true : false
+                        })
+                            }} />
+                        <Button onPress={() => this.changeAlwaysShowState()} transparent>
+                            <Icon name={this.state.vote && this.state.vote.always_show ? "radio-button-checked" :
+                                "radio-button-unchecked"} type={"MaterialIcons"}></Icon>
+                            <Text>{"always show vote percentages"}</Text></Button>
+                        {/*<Button transparent onPress={() => {
                                 this.setState({
                                     vote: { ...this.state.vote, published: this.state.vote.published === 'public' ? 'private' : 'public' }
                                 })
                             }}><Icon name={this.state.vote.published === 'public' ? "radio-button-checked" :
                                 "radio-button-unchecked"} type={"MaterialIcons"}></Icon>
                         <Text>{`${this.state.vote.published}`}</Text></Button>*/}
-                            <Item>
-                                <View style={{ width: '90%' }}>
-                                    <Button onPress={() => {
-                                        this.setState({
-                                            showDatePicker: true
-                                        })
-                                    }} transparent><Text style={{ fontWeight: 'bold', }}>{"Ends: "}</Text><Text>{this.state.vote.period ?
-                                        moment(this.state.vote.period).format(format) :
-                                        'select voting end date'}</Text></Button>
-                                </View>{/*<View><Icon
+                        <Item>
+                            <View style={{ width: '90%' }}>
+                                <Button onPress={() => {
+                                    this.setState({
+                                        showDatePicker: true
+                                    })
+                                }} transparent><Text style={{ fontWeight: 'bold', }}>{"Ends: "}</Text><Text>{this.state.vote && this.state.vote.period ?
+                                    moment(this.state.vote.period).format(format) :
+                                    'select voting end date'}</Text></Button>
+                            </View>{/*<View><Icon
                                     type={"EvilIcons"} name={"close"} onPress={() => {
                                         this.setState({
                                             vote: { ...this.state.vote, period: null }
                                         })
                                     }} style={{ color: 'red' }}></Icon></View>*/}</Item>
-                            {this.state.showDatePicker ? <DateTimePicker
-                                value={this.state.period ? parseFloat(moment(this.state.vote.period).format('x')) : new Date()}
-                                is24Hour={true}
-                                mode={"default"}
-                                onChange={(e, date) => this.changeEndTime(e, date)}
-                            >
-                            </DateTimePicker> : null}
-                            {this.state.showTimePicker ? <DateTimePicker
-                                display={'clock'} value={this.state.period ? parseFloat(moment(this.state.vote.period).format('x')) : new Date()} onChange={(e, date) => this.changeTime(e, date)}
-                                mode={"time"} is24Hour={true}></DateTimePicker> : null}
-                            <View style={{ flexDirection: 'column', }}>
-                                <View style={{ flexDirection: 'row', }}>
-                                    <Button onPress={() => this.addOptions()} transparent>
-                                        <Text style={{ fontWeight: 'bold', fontStyle: 'italic', }}>{"Options"}</Text>
-                                        <Icon name="pluscircle" type={"AntDesign"}></Icon></Button>
-                                </View>
-                                <View style={{ marginLeft: '2%', }}>
-                                    {this.renderOptions()}
-                                </View>
+                        {this.state.showDatePicker ? <DateTimePicker
+                            value={this.state.vote && this.state.period ? parseFloat(moment(this.state.vote.period).format('x')) : new Date()}
+                            is24Hour={true}
+                            mode={"default"}
+                            onChange={(e, date) => this.changeEndTime(e, date)}
+                        >
+                        </DateTimePicker> : null}
+                        {this.state.showTimePicker ? <DateTimePicker
+                            display={'clock'} value={this.state.vote && this.state.period ? parseFloat(moment(this.state.vote.period).format('x')) : new Date()} onChange={(e, date) => this.changeTime(e, date)}
+                            mode={"time"} is24Hour={true}></DateTimePicker> : null}
+                        <View style={{ flexDirection: 'column', }}>
+                            <View style={{ flexDirection: 'row', }}>
+                                <Button onPress={() => this.addOptions()} transparent>
+                                    <Text style={{ fontWeight: 'bold', fontStyle: 'italic', }}>{"Options"}</Text>
+                                    <Icon name="pluscircle" type={"AntDesign"}></Icon></Button>
                             </View>
-                            <View style={{
-                                flexDirection: 'row',
-                                marginTop: '4%',
-                            }}>
-                                <View style={{ width: '80%' }}>
-                                </View>
-                                <View style={{ width: '20%',marginBottom:"10%" }}>
-                                    {this.props.update ? <Button onPress={() => this.updateVote()} rounded><Text
-                                        style={{ color: '#FEFFDE', fontWeight: 'bold', }} rounded>{"Update"}</Text></Button> : <Button onPress={() => this.addVote()} rounded><Text
-                                            style={{ color: '#FEFFDE', fontWeight: 'bold', }}>{"Add"}</Text></Button>}
-                                </View>
+                            <View style={{ marginLeft: '2%', }}>
+                                {this.renderOptions()}
                             </View>
                         </View>
-                    </ScrollView>
-                </View>
+                        <View style={{
+                            flexDirection: 'row',
+                            marginTop: '4%',
+                        }}>
+                            <View style={{ width: '80%' }}>
+                            </View>
+                            <View style={{ width: '20%',marginBottom:"10%" }}>
+                                {this.props.update ? <Button onPress={() => this.updateVote()} rounded><Text
+                                    style={{ color: '#FEFFDE', fontWeight: 'bold', }} rounded>{"Update"}</Text></Button> : <Button onPress={() => this.addVote()} rounded><Text
+                                        style={{ color: '#FEFFDE', fontWeight: 'bold', }}>{"Add"}</Text></Button>}
+                            </View>
+                        </View>
+                    </View>
+                </ScrollView>
             </View>
-            </KeyboardAvoidingView>
-        </Modal>
-    }
+          </View>
+          </ScrollView>
+        </KeyboardAvoidingView>)
+        }
+
 }

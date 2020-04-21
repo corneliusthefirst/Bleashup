@@ -5,6 +5,7 @@ import Modal from "react-native-modalbox"
 import { Icon } from 'native-base';
 import moment from 'moment';
 import { format } from '../../../services/recurrenceConfigs';
+import MediaPreviewer from './createEvent/components/MediaPeviewer';
 
 export default class ContentModal extends PureComponent {
     constructor(props) {
@@ -23,7 +24,7 @@ export default class ContentModal extends PureComponent {
         return map(content, (value, key) => <Item>
             <View style={{ flexDirection: 'row', }}>
                 <Text style={{ fontWeight: 'bold', fontStyle: 'italic', }}>{key}{": "}</Text>
-                <Text>{Array.isArray(value) ? value.join(',') : key === 'recurrence'? moment(value).format(format):value}</Text>
+                <Text>{Array.isArray(value) ? value.join(',') : key === 'recurrence' ? moment(value).format(format) : value}</Text>
             </View>
         </Item>)
     }
@@ -52,17 +53,22 @@ export default class ContentModal extends PureComponent {
                 }}
                 style={{
                     height: "60%",
-                    borderRadius: 8,  width: "90%"
+                    borderRadius: 8, width: "90%"
                 }}
             >
                 {/*</View><Icon name={"close"} onPress={() => {
                     this.props.closed()
                 }} type={"EvilIcons"}></Icon></View>*/}
                 <Content style={{ margin: "5%" }}>
-                    {typeof this.state.content === 'object' ?
-                        this.renderObject(this.state.content) : Array.isArray(this.state.content) ?
-                            this.renderContentItems(this.state.content) :
-                            <Text>{this.state.content}</Text>}
+                    {this.state.content && (this.state.content.photo || this.state.content.video) ?
+                        <MediaPreviewer
+                            height={300}
+                            url={this.state.content}
+                        ></MediaPreviewer> :
+                        typeof this.state.content === 'object' ?
+                            this.renderObject(this.state.content) : Array.isArray(this.state.content) ?
+                                this.renderContentItems(this.state.content) :
+                                <Text>{this.state.content}</Text>}
                 </Content>
             </Modal>
         );

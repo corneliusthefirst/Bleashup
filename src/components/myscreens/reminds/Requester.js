@@ -8,8 +8,9 @@ import { isEqual } from 'lodash';
 import moment from 'moment';
 import { findIndex } from 'lodash';
 import CalendarServe from '../../../services/CalendarService';
+import MainUpdater from '../../../services/mainUpdater';
 class Requester {
-    saveToCanlendar(remind,alarms){
+    saveToCanlendar(remind, alarms) {
         if (findIndex(remind.members, { phone: stores.LoginStore.user.phone }) >= 0) {
             CalendarServe.saveEvent(remind, alarms, 'reminds').then(calendar_id => {
                 stores.Reminds.updateCalendarID({ remind_id: remind.id, calendar_id: calendar_id }, alarms).then(() => {
@@ -173,7 +174,7 @@ class Requester {
         return new Promise((resolve, reject) => {
             if ((typeof newConfigs === "string" && newConfigs !== oldConfig) ||
                 (typeof newConfigs === "object" && !isEqual(newConfigs, oldConfig))) {
-                console.warn("saving ruccrence",newConfigs)
+                console.warn("saving ruccrence", newConfigs)
                 let newRemindName = request.RemindUdate()
                 newRemindName.action = 'recurrence'
                 newRemindName.data = newConfigs
@@ -334,6 +335,50 @@ class Requester {
             }
         })
     }
+    updateRemindLocation(newLocation, oldLocation, remindID, eventID) {
+        return new Promise((resolve, reject) => {
+            if (newLocation !== oldLocation) {
+                let newRemindName = request.RemindUdate()
+                newRemindName.action = 'location'
+                newRemindName.data = newLocation
+                newRemindName.event_id = eventID
+                newRemindName.remind_id = remindID
+                tcpRequest.updateRemind(newRemindName, remindID + '_location').then((JSONData) => {
+                    EventListener.sendRequest(JSONData, remindID + '_location').then((response) => {
+                        MainUpdater.updateRemindLocation(eventID, remindID,
+                            newLocation, moment().format(), stores.LoginStore.user.phone).then(() => {
+                                resolve("ok")
+                            })
+                    })
+                })
+            } else {
+                resolve()
+            }
+        })
+    }
+
+    updateRemindURL(newURL, oldULR, remindID, eventID) {
+        console.error(newURL)
+        return new Promise((resolve, reject) => {
+            if (!isEqual(newURL, oldULR)) {
+                let newRemindName = request.RemindUdate()
+                newRemindName.action = 'remind_url'
+                newRemindName.data = newURL
+                newRemindName.event_id = eventID
+                newRemindName.remind_id = remindID
+                tcpRequest.updateRemind(newRemindName, remindID + '_remind_url').then((JSONData) => {
+                    EventListener.sendRequest(JSONData, remindID + '_remind_url').then((response) => {
+                        MainUpdater.updateRemindURL(eventID, remindID,
+                            newURL, moment().format(), stores.LoginStore.user.phone).then(() => {
+                                resolve("ok")
+                            })
+                    })
+                })
+            } else {
+                resolve()
+            }
+        })
+    }
     addMembers(remind, alarms) {
         return new Promise((resolve, reject) => {
             let newRemindName = request.RemindUdate()
@@ -358,9 +403,9 @@ class Requester {
                             date: moment().format(),
                             time: null
                         }
-                        this.saveToCanlendar(remind,alarms)
+                        this.saveToCanlendar(remind, alarms)
                         stores.ChangeLogs.addChanges(Change).then(() => {
-                            
+
                         })
                         resolve('ok')
                     })
@@ -400,7 +445,7 @@ class Requester {
                                     time: null
                                 }
                                 if (oldRemind.calendar_id && findIndex(members, ele => ele === stores.LoginStore.user.phone) >= 0) {
-                                    CalendarServe.saveEvent({ ...oldRemind, period: null }, null, 'reminds',true).then(() => {
+                                    CalendarServe.saveEvent({ ...oldRemind, period: null }, null, 'reminds', true).then(() => {
                                         stores.Reminds.updateCalendarID({ remind_id: oldRemind.id, calendar_id: undefined }).then(() => {
                                             console.warn("calendar_id successfully removed")
                                         })
@@ -408,7 +453,7 @@ class Requester {
                                 }
                                 resolve('ok')
                                 stores.ChangeLogs.addChanges(Change).then(() => {
-                                    
+
                                 })
                             })
                         }).catch(error => {
@@ -432,9 +477,19 @@ class Requester {
                                             this.updateRemindRecurrentcyConfig(newRemind.recursive_frequency,
                                                 JSON.parse(previousRemind).recursive_frequency,
                                                 newRemind.id, newRemind.event_id).then((t5) => {
-                                                    this.updateMustRepot(newRemind.must_report, JSON.parse(previousRemind).must_report,
-                                                        newRemind.id, newRemind.event_id).then(t6 => {
-                                                            resolve(t1 + t2 + t3 + t4 + t5 + t6)
+                                                    this.updateRemindLocation(newRemind.location,
+                                                        JSON.parse(previousRemind).location, newRemind.id, newRemind.event_id).then((t6) => {
+                                                            this.updateRemindURL(newRemind.remind_url, JSON.parse(previousRemind).remind_url,
+                                                                newRemind.id, newRemind.event_id).then((t7) => {
+                                                                    this.updateMustRepot(newRemind.must_report, JSON.parse(previousRemind).must_report,
+                                                                        newRemind.id, newRemind.event_id).then(t8 => {
+                                                                            resolve(t1 + t2 + t3 + t4 + t5 + t6 + t7 + t8)
+                                                                        }).catch(r => {
+                                                                            reject(r)
+                                                                        })
+                                                                }).catch(() => {
+                                                                    reject(r)
+                                                                })
                                                         }).catch(r => {
                                                             reject(r)
                                                         })
@@ -483,14 +538,14 @@ class Requester {
                         }
                         if (oldRemind.calendar_id) {
                             //CalendarServe.saveEvent({ ...oldRemind, period: null }, null, 'reminds',false).then(() => {
-                             //   stores.Reminds.updateCalendarID({ remind_id: oldRemind.id, calendar_id: undefined }).then(() => {
-                                    console.warn("calendar_id successfully removed")
-                              //  })
-                          //  })
+                            //   stores.Reminds.updateCalendarID({ remind_id: oldRemind.id, calendar_id: undefined }).then(() => {
+                            console.warn("calendar_id successfully removed")
+                            //  })
+                            //  })
                         }
                         resolve('ok')
                         stores.ChangeLogs.addChanges(Change).then(() => {
-                            
+
                         })
                         resolve('ok')
                     })
@@ -529,7 +584,7 @@ class Requester {
                                 })
                             }
                             stores.ChangeLogs.addChanges(Change).then(() => {
-                               
+
                             })
                             resolve('ok')
                         })
@@ -571,7 +626,7 @@ class Requester {
                                 })
                             }
                             stores.ChangeLogs.addChanges(Change).then(() => {
-                               
+
                             })
                             resolve('ok')
                         })

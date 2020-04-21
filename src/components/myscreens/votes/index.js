@@ -18,14 +18,27 @@ import moment from "moment";
 import { dateDiff } from "../../../services/datesWriter";
 import labler from '../eventChat/labler';
 import formVoteOptions from '../../../services/formVoteOptions';
+import BleashupModal from '../../mainComponents/BleashupModal';
+import CreationHeader from "../event/createEvent/components/CreationHeader";
+import ColorList from '../../colorList';
 let { height, width } = Dimensions.get('window');
 
-export default class Votes extends Component {
-  constructor(props) {
-    super(props)
+export default class Votes extends BleashupModal {
+  initialize(){
     this.state = {
       votes: []
     }
+  }
+  state = {}
+  onClosedModal(){
+    this.props.onClosed()
+    this.setState({
+      //loaded: false,
+      isVoteCreationModalOpened: false
+
+    })
+    this.name = null
+    this.updated = null
   }
   state = {}
   componentDidMount() {
@@ -185,45 +198,16 @@ export default class Votes extends Component {
     })
   }
   renderPerbatch = 10
-  render() {
-    return <Modal
-      coverScreen={true}
-      entry={'bottom'}
-      position={'bottom'}
-      backdropOpacity={0.3}
-      swipeToClose={false}
-      backButtonClose={true}
-      onClosed={() => {
-        this.props.onClosed()
-        this.setState({
-          //loaded: false,
-          isVoteCreationModalOpened: false
-
-        })
-        this.name = null
-        this.updated = null
-      }}
-      isOpen={this.props.isOpen}
-      onOpened={() => {
-        //this.intializeVote()
-      }}
-      style={{
-        height: height*.93,
-        width: "100%",
-      }}
-    ><View>
-        <View style={{ height: '7%', width: '100%' }}>
-          <View style={{ flexDirection: 'row', ...bleashupHeaderStyle, padding: '2%', }}>
-            <View style={{ width: '90%' }}>
-              <Text style={{ fontWeight: 'bold', fontSize: 20, }}>{this.props.isSingleVote ? "Vote" : "Votes"}</Text>
-            </View>
-            <View style={{ width: '10%' }}>
-              {!this.props.isSingleVote && this.props.computedMaster && <Icon onPress={() => requestAnimationFrame(() => this.AddVote())} type='AntDesign'
-                name="pluscircle" style={{ color: "#1FABAB", alignSelf: 'center', }} />}
-            </View>
-          </View>
-        </View>
-        <View style={{ height: '93%' }}>
+  modalBody() {
+    return <View>
+      <CreationHeader 
+       back={this.onClosedModal}
+       title={this.props.isSingleVote ? "Vote" : "Votes"}
+        extra={!this.props.isSingleVote && this.props.computedMaster && <Icon onPress={() => requestAnimationFrame(() => this.AddVote())} type='AntDesign'
+          name="pluscircle" style={{ color: "#1FABAB", alignSelf: 'center',marginTop: 'auto',marginBottom: 'auto', }} />}
+       >
+    </CreationHeader>
+        <View style={{ height: ColorList.containerHeight - (ColorList.headerHeight + 20) }}>
           {!this.state.loaded ? <Spinner size="small"></Spinner> :
             <BleashupFlatList
               keyExtractor={(item, index) => index.toString()}
@@ -261,6 +245,5 @@ export default class Votes extends Component {
             })
           }}></VoteCreation>
       </View>
-    </Modal>
   }
 }
