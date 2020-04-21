@@ -198,10 +198,11 @@ export default class Votes extends BleashupModal {
     })
   }
   renderPerbatch = 10
+  swipeToClose=false
   modalBody() {
     return <View>
       <CreationHeader 
-       back={this.onClosedModal}
+       back={this.onClosedModal.bind(this)}
        title={this.props.isSingleVote ? "Vote" : "Votes"}
         extra={!this.props.isSingleVote && this.props.computedMaster && <Icon onPress={() => requestAnimationFrame(() => this.AddVote())} type='AntDesign'
           name="pluscircle" style={{ color: "#1FABAB", alignSelf: 'center',marginTop: 'auto',marginBottom: 'auto', }} />}

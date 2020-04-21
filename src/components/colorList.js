@@ -11,7 +11,7 @@ class colorlist {
     containerHeight = height
     containerWidth = width
     containerBackground = "#1FABAB"
-
+    redIcon='red'
     //header
     iconGray = '#555756'
     iconActive = "#1FABAB"

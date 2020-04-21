@@ -214,7 +214,7 @@ class Request {
             updated_at: moment().format(),
             always_show: false,
             period: "",
-            option: [{ index: 0, name: 'yes', vote_count: 0 }, { index: 1, name: 'no', vote_count: 0 }],//this.supposed to be Option()
+            option: [{ index: 0, name: 'yes', vote_url: {}, vote_count: 0 }, { index: 1, vote_url: {}, name: 'no', vote_count: 0 }],//this.supposed to be Option()
             description: "",
             published: 'private',
             creator: stores.LoginStore.user.phone
@@ -318,7 +318,7 @@ class Request {
             url: this.URL()
         }
     }
-    URL(){
+    URL() {
         return {
             audio: "",
             photo: "",

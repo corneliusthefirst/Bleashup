@@ -9,7 +9,6 @@ import { View, TouchableOpacity, Dimensions, Text, } from 'react-native';
 import Modal from 'react-native-modalbox';
 import autobind from "autobind-decorator";
 import Swipeout from 'react-native-swipeout';
-//import HighlightCardDetail from "./HighlightCardDetail";
 import moment from "moment"
 import { isEqual } from "lodash";
 //import EventHighlights from "./EventHighlights"
