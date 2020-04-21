@@ -34,21 +34,20 @@ export default class MedaiView extends Component {
             {this.props.url && (this.props.url.video || this.props.url.audio) ?
                 <View style={{
                     ...buttoner,
-                    alignSelf:"center",
-                    paddingLeft:15,
-                   position:"absolute"
                 }}>{this.props.url.video ?
                     <Icon onPress={() => {
                      this.props.showItem(this.props.url)
                     }} name="ios-play" style={{
-                        fontSize: 40, color: ColorList.bodyBackground
+                        fontSize: 43, color: ColorList.bodyBackground
                     }} type="Ionicons" />
                      :
+                 
                       <Icon onPress={() => {
                         this.props.showItem(this.props.url)
                     }} name= "headset" style={{
                         fontSize: 40, color: ColorList.bodyBackground
-                    }} type="MaterialIcons" /> }
+                    }} type="MaterialIcons" />
+                    }
                 </View> : null}
         </View>
     }
