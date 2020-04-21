@@ -75,8 +75,8 @@ export default class PhotoViewer extends BleashupModal {
     modalBackground = "black"
     modalBody() {
         return (
-            <View>
-                <StatusBarWhiter></StatusBarWhiter>
+               <View>
+               <StatusBarWhiter></StatusBarWhiter>
                 <View style={{ height: screenheight, width: screenWidth, backgroundColor: "black", }}>
                     <View style={{ alignSelf: 'center', width: screenWidth }}>
                         {testForURL(this.props.photo) ? <CacheImages style={{ alignSelf: 'center', }} resizeMode={"contain"} width={screenWidth} height={screenheight}
@@ -85,46 +85,45 @@ export default class PhotoViewer extends BleashupModal {
                                 width={screenWidth}
                                 height={screenheight}
                                 source={{ uri: this.props.photo }}></Image>}
-                        <View style={{ flexDirection: 'column', position: 'absolute', margin: '1%', width: screenWidth }}>
-                            <View style={{ flexDirection: 'row', margin: '2%', }}>
-                                <View style={{ width: '75%' }}>
-                                    <View style={{ ...buttoner }}>
+                        <View style={{ flexDirection: 'row', position: 'absolute', width: screenWidth }}>
+                
+                                    
+                                     <View style={{...buttoner,width:"15%"}} >
                                         <Icon type="EvilIcons" onPress={() => {
                                             this.props.hidePhoto()
                                         }} style={{
-                                            fontSize: 30, alignSelf: 'center', color: "#FEFFDE"
+                                            fontSize: 30, color: 'ivory'
                                         }} name={"close"}></Icon>
-                                    </View>
-                                </View>
-                                <View style={{ flexDirection: 'row', width: '25%' }}>
-                                    <View style={{ width: '60%' }}>
-                                        <View style={{ ...buttoner }}>
+                                       </View>
+
+                                        <View style={{...buttoner, width:"15%" ,marginLeft:"55%"}}>
                                             <Icon onPress={() => {
                                                 this.handleForwardImage()
-                                            }} style={{ margin: '3%', color: '#FEFFDE' }}
+                                            }} style={{color: 'ivory' }}
                                                 type={"Entypo"}
                                                 name={"forward"} >
                                             </Icon>
                                         </View>
-                                    </View>
-                                    <View style={{ ...buttoner }}>
+                                  
+
+                                    <View style={{...buttoner, width:"15%"}}>
                                         <Icon onPress={() => {
                                             this.downLoadImage()
-                                        }} style={{ margin: '3%', color: '#FEFFDE' }}
+                                        }} style={{ color: 'ivory' }}
                                             type={"AntDesign"}
                                             name={"clouddownload"}>
                                         </Icon>
-                                    </View>
-                                </View>
+                                    </View>                   
+
                             </View>
                             <View style={{ margin: '1%', ...buttoner, width: 130, height: 20 }}>
                                 {this.props.created_at ? <Text style={{ color: '#FEFFDE', marginBottom: 6, }} note>{moment(this.props.created_at).calendar()}</Text> : null}
                             </View>
                         </View>
+
                     </View>
 
-                </View>
-            </View>
+                </View>    
         );
     }
 }

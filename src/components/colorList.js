@@ -10,17 +10,18 @@ class colorlist {
     //container
     containerHeight = height
     containerWidth = width
-    containerBackground = "#1FABAB"
+    containerBackground = "white"
 
     //header
     iconGray = '#555756'
     iconActive = "#1FABAB"
     iconInactive = "#ADE3D2"
-    headerTextInverted = "white"
-    headerIcon = "ivory"
-    headerText = "ivory"
+    
+    headerTextInverted = "black"
+    headerIcon = "black"
+    headerText = "black"
     headerBlackText = "black"
-    headerBackground = "#1FABAB"
+    headerBackground = "white"
     headerHeight = 50
     headerFontweight = "bold"
     headerFontSize = 20

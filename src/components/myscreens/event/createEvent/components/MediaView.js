@@ -33,6 +33,8 @@ export default class MedaiView extends Component {
             {this.props.url && (this.props.url.video || this.props.url.audio) ?
                 <View style={{
                     ...buttoner,
+                    alignSelf:"center",
+                    position:"absolute",
                 }}>{this.props.url.video ?
                     <Icon onPress={() => {
                      this.props.showItem(this.props.url)
