@@ -2,8 +2,7 @@ import React, { Component } from "react";
 
 import imageCacheHoc from "react-native-image-cache-hoc";
 import ImageActivityIndicator from "./myscreens/currentevents/components/imageActivityIndicator";
-import { activityIndicatorStyle } from "react-native";
-import Image from 'react-native-scalable-image';
+import { activityIndicatorStyle ,Image} from "react-native";
 import { View } from 'react-native'
 
 import { Thumbnail } from "native-base"
