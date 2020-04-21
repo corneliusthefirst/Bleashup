@@ -60,7 +60,9 @@ export default class TasksCreation extends BleashupModal {
     this.props.onClosed()
   }
   calculateType(remind) {
-    return remind.location && remind.location.length > 0 || remind.url && remind.url.photo ? 'event' : 'reminder'
+    return (remind.location && remind.location.length > 0) || 
+    (remind.remind_url && remind.remind_url.photo) || 
+    (remind.remind_url && remind.remind_url.video) ? 'event' : 'reminder'
   }
   @autobind
   init() {
@@ -402,21 +404,20 @@ export default class TasksCreation extends BleashupModal {
 
   }
 
-  @autobind
   updateRemind() {
-    let newRemind = this.state.currentRemind
-    newRemind.period = this.state.date
-    this.props.updateRemind(JSON.stringify(newRemind));
+    let rem = this.state.currentRemind
+    rem.period = this.state.date
+    this.props.updateRemind(JSON.stringify(rem));
     this.resetRemind();
     this.back();
-
   }
 
   @autobind
   takecheckedResult(result) {
     console.warn(result, "ooo")
     this.setState({ currentMembers: uniqBy(result, "phone") })
-    !this.props.update && stores.Reminds.updateMembers({ remind_id: this.state.currentRemind.id, members: result }).then(() => { })
+    !this.props.update && stores.Reminds.updateMembers({ remind_id: this.state.currentRemind.id, 
+      members: result }).then(() => { })
   }
 
   showEndatePiker() {
@@ -468,12 +469,12 @@ export default class TasksCreation extends BleashupModal {
   }
   saveURL(url) {
     this.setState({
-      currentRemind: { ...this.state.currentRemind, remind_url: url }
+      currentRemind: { ...this.state.currentRemind, remind_url: url||request.Remind().remind_url }
     })
     !this.props.update && stores.Reminds.updateURL({
       remind_id:
         this.state.currentRemind.id,
-      url: url
+      url: url || request.Remind().remind_url
     }).then(() => { })
   }
   computeMax(remind) {
@@ -666,6 +667,7 @@ export default class TasksCreation extends BleashupModal {
                 <View style={{marginLeft: '-3%',marginBottom: '3%',}}>
                 {this.isEvent() && <CreateTextInput
                   height={height / 25}
+                  maxLength={25}
                   placeholder={'Venue'}
                   value={this.state.currentRemind.location}
                   onChange={this.setCurrentLocation.bind(this)}
@@ -713,7 +715,7 @@ export default class TasksCreation extends BleashupModal {
               </PickersUpload>
             </View>}
             {this.isEvent() && <MediaPreviewer
-              cleanMedia={this.saveURL.bind(this)}
+              cleanMedia={() => this.saveURL(request.Remind().remind_url)}
               height={height / 3.4}
               defaultPhoto={require("../../../../assets/new-event.png")}
               url={this.state.currentRemind.remind_url || {}}>
@@ -746,7 +748,7 @@ export default class TasksCreation extends BleashupModal {
             </View>
             {!this.state.creating ? this.state.ownership && <View style={{ margin: '2%', marginBottom: '4%', }}><CreateButton
               title={!this.props.update ? "Add Remind" : "Update Remind"}
-              action={!this.props.update ? this.addNewRemind : this.updateRemind}
+              action={() => !this.props.update ? this.addNewRemind() : this.updateRemind()}
             ></CreateButton></View> :
               <Spinner></Spinner>}
           </ScrollView>

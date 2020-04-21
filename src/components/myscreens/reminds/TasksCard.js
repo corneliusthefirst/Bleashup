@@ -8,7 +8,7 @@ import Modal from 'react-native-modalbox';
 import autobind from "autobind-decorator";
 import stores from '../../../stores/index';
 import moment from 'moment';
-import { find, isEqual, findIndex } from "lodash";
+import { find, isEqual, findIndex,uniqBy } from "lodash";
 import AccordionModule from '../invitations/components/Accordion';
 import Creator from "./Creator";
 import RemindsMenu from "./RemindsMenu";
@@ -18,6 +18,7 @@ import { format } from '../../../services/recurrenceConfigs';
 import { confirmedChecker } from "../../../services/mapper";
 import ColorList from '../../colorList';
 import MedaiView from "../event/createEvent/components/MediaView";
+import { createOpenLink } from "react-native-open-maps";
 
 let { height, width } = Dimensions.get('window')
 
@@ -123,7 +124,6 @@ export default class EventTasksCard extends Component {
     content: null
   }
   render() {
-    console.warn(this.props.item.confirmed, this.props.item.title)
     hasDoneForThisInterval = find(this.props.item.donners, (ele) =>
       ele.status.date &&
       this.state.correspondingDateInterval &&
@@ -194,17 +194,22 @@ export default class EventTasksCard extends Component {
                   <RemindsMenu
                     update={() => this.props.updateRemind(this.props.item)}
                     creator={this.state.creator}
-                    addMembers={() => { this.props.addMembers(this.props.item.members, this.props.item) }}
-                    removeMembers={() => this.props.removeMembers(this.props.item.members.filter(ele => this.state.creator ||
-                      ele.phone === stores.LoginStore.user.phone), this.props.item)}
+                    addMembers={() => { this.props.addMembers(uniqBy(this.props.item.members,"phone"), this.props.item) }}
+                    removeMembers={() => this.props.removeMembers(uniqBy(this.props.item.members.filter(ele => this.state.creator ||
+                      ele.phone === stores.LoginStore.user.phone),'phone'), this.props.item)}
                     deleteRemind={() => this.props.deleteRemind(this.props.item)}
                   ></RemindsMenu>
                 </View>
               </View>
             </Right>
           </CardItem>
-          {this.props.item.location ? <CardItem style={{ flexDirection: 'row', }}>
-            <Text style={{ fontWeight: 'bold', }}>{"At: "}</Text><Text>{this.props.item.location}</Text>
+          {this.props.item.location ? <CardItem>
+            <TouchableOpacity style={{ flexDirection: 'row', }} onPress={() => requestAnimationFrame(() => {
+            let Query = { query: this.props.item.location };
+            createOpenLink({...Query, zoom: 50 })();
+          })}>
+              <Text style={{ fontWeight: 'bold', }}>{"Venue: "}</Text><Text style={{ textDecorationLine: 'underline'}}>{this.props.item.location}</Text>
+          </TouchableOpacity>
           </CardItem> : null}
           <CardItem>
             <Left>
@@ -212,15 +217,15 @@ export default class EventTasksCard extends Component {
             </Left>
           </CardItem>
           {this.props.item.remind_url &&
-            (this.props.item.remind_url.photo || this.props.item.remind_url.video)
-            && <CardItem style={{ alignItems: 'center', alignSelf: 'center',width:'100%' }}>
+            (this.props.item.remind_url.photo || this.props.item.remind_url.video) ?
+            <CardItem style={{ alignItems: 'center', alignSelf: 'center', width: '100%' }}>
               <MedaiView
-                height={ColorList.containerHeight * .42}
+                height={ColorList.containerHeight * .39}
                 width={ColorList.containerWidth * .91}
                 url={this.props.item.remind_url}
                 showItem={this.props.showMedia}
               ></MedaiView>
-            </CardItem>}
+            </CardItem> : null}
           <CardItem carBody>
             <TouchableOpacity onPress={() => {
               this.setState({
@@ -249,11 +254,11 @@ export default class EventTasksCard extends Component {
                     marginLeft: "90%"
                   }}></Icon>
                 :
-                missed ? <Button style={{
+                missed ? /*<Button style={{
                   borderWidth: 2, marginTop: 5, borderRadius: 10,
                   width: "21%", alignItems: 'center', justifyContent: 'center',
                   marginLeft: "78%"
-                }} transparent><Text style={{ fontWeight: 'bold', color: 'red' }}>{"Missed"}</Text></Button>
+                }} transparent><Text style={{ fontWeight: 'bold', color: 'red' }}>{"Missed"}</Text></Button>*/ null
                   : canBeDone ? <Button style={{
                     borderWidth: 2, marginTop: 5, borderRadius: 10, borderColor: "#1FABAB",
                     width: "21%", alignItems: 'center', justifyContent: 'center',

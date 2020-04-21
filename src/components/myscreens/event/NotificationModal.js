@@ -13,6 +13,7 @@ import { indexOf, reject, concat, find } from "lodash"
 import CacheImages from '../../CacheImages';
 import testForURL from '../../../services/testForURL';
 import ProfileView from '../invitations/components/ProfileView';
+import ColorList from '../../colorList';
 export default class NotificationModal extends PureComponent {
     constructor(props) {
         super(props)
@@ -62,9 +63,9 @@ export default class NotificationModal extends PureComponent {
                     borderRadius: 10,
                     borderWidth: 1.5,
                     marginLeft: "14%",
-                    borderColor: "#1FABAB",
+                    borderColor: ColorList.bodyDarkWhite,
                     borderBottomRightRadius: 8,
-                    backgroundColor: "#FEFFDE",
+                    backgroundColor: ColorList.bodyBackground,
                     width: "70%"
                 }}
             >

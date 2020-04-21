@@ -312,7 +312,8 @@ export default class Event extends Component {
       this.showContacts(change.new_value.new_value)
     } else if (typeof change.new_value.new_value === "string" &&
       testForURL(change.new_value.new_value)) {
-      this.openPhoto(change.new_value.new_value)
+        this.showContent({photo:change.new_value.new_value})
+      //this.openPhoto(change.new_value.new_value)
     }
     else if (change.new_value &&
       change.new_value.new_value &&
@@ -1220,7 +1221,6 @@ export default class Event extends Component {
       id: replyer.id,
       video: replyer.url.video ? true : false,
       audio: !replyer.url.video && replyer.url.audio ? true : false,
-      video: replyer.url.video ? true : false,
       photo: !replyer.url.video && replyer.url.photo ? true : false,
       sourcer: replyer.url.video ?
         replyer.url.photo : replyer.url.photo ?

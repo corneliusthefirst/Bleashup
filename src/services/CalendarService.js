@@ -93,7 +93,7 @@ class CalendarService {
                     endDate: (new Date()).toISOString(),
                 }
             }*/
-            return RNCalendarEvents.saveEvent(type === 'reminds' ? `${Bevent.title} reminder` : Bevent.about.title, calendarEvent)
+            return RNCalendarEvents.saveEvent(type === 'reminds' ? `${Bevent.title}` : Bevent.about.title, calendarEvent)
         } else {
             return new Promise((resolve, reject) => {
                 if (Bevent.calendar_id) {
@@ -125,7 +125,7 @@ class CalendarService {
             },
             //recurrenceInterval:Bevent.recurrent? parseInt(Bevent.interval):null,
             alarms: alarms,
-            //location: Bevent.location.string,
+            location: Bevent.location,
             notes: Bevent.description,
             description: GState.DeepLinkURL + "event/" + Bevent.event_id
         } : {

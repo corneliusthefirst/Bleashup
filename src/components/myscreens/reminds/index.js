@@ -170,14 +170,14 @@ export default class Reminds extends Component {
     } else {
       Toast.show({ text: 'App is Busy' })
     }
-  }
+  } 
   refreshReminds() {
     console.warn('receiving updated remind message')
     stores.Reminds.loadReminds(this.props.event_id).then((Reminds) => {
       //console.warn(Reminds)
       this.setState({
         eventRemindData: Reminds,
-        currentTask: find(Reminds, { id: this.state.currentTask.id })
+        currentTask: this.state.currentTask && find(Reminds, { id: this.state.currentTask.id })
       });
     })
   }
@@ -346,7 +346,7 @@ export default class Reminds extends Component {
     let members = item.members.map(ele => ele.phone)
     this.setState({
       confirmed: this.flatterarray(confirmed, [], 0),
-      members: members,
+      members: uniqBy(members,'phone'),
       actualInterval: thisInterval,
       isReportModalOpened: true,
       currentTask: item,
@@ -430,7 +430,13 @@ export default class Reminds extends Component {
                       this.props.mention({
                         id: itemer.id,
                         replyer_phone: itemer.creator.phone,
-                        //replyer_name: itemer.creator.nickname,
+                        video: itemer.remind_url.video ? true : false,
+                        audio: !itemer.remind_url.video && itemer.remind_url.audio ? true : false,
+                        photo: !itemer.remind_url.video && itemer.remind_url.photo ? true : false,
+                        sourcer: itemer.remind_url.video ?
+                          itemer.remind_url.photo : itemer.remind_url.photo ?
+                            itemer.remind_url.photo : itemer.remind_url.audio ?
+                              itemer.remind_url.audio : null,
                         type_extern: 'Reminds ',
                         title: itemer.title + ': \n' + itemer.description
                       })

@@ -1550,6 +1550,26 @@ class UpdatesDispatcher {
         });
       });
     },
+    remind_location: update => {
+      return new Promise((resolve,reject) => {
+        MainUpdater.updateRemindLocation(update.event_id,
+          update.new_value.remind_id,
+          update.new_value.location,
+          update.date,update.updater).then(Change =>{
+            this.infomCurrentRoom(Change,update.new_value,update.event_id)
+        })
+      })
+    },
+    remind_url: update => {
+      return new Promise((resolve, reject) => {
+        MainUpdater.updateRemindURL(update.event_id,
+          update.new_value.remind_id,
+          update.new_value.url,
+          update.date, update.updater).then(Change => {
+            this.infomCurrentRoom(Change, update.new_value, update.event_id)
+          })
+      })
+    },
     remind_period_updated: update => {
       return new Promise((resolve, reject) => {
         stores.Reminds.updatePeriod(update.new_value, true).then((oldRemind) => {
