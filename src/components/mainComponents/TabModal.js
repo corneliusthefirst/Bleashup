@@ -11,7 +11,7 @@ export default class TabModal extends BleashupModal {
     return (
       <View style={{ height: ColorList.headerHeight }}>
         <View style={{ ...bleashupHeaderStyle }}>
-        {this.tabHeaderContent()}
+          {this.tabHeaderContent()}
         </View>
       </View>
     );
@@ -19,13 +19,13 @@ export default class TabModal extends BleashupModal {
   state = {
 
   }
-  initialize(){
-      this.state = {
+  initialize() {
+    this.state = {
 
-      }
+    }
   }
-  tabHeaderContent(){
-      return null
+  tabHeaderContent() {
+    return null
   }
   onOpenModal() {
     setTimeout(() => {
@@ -40,9 +40,11 @@ export default class TabModal extends BleashupModal {
       content: null,
     });
   }
-  isCurrentTab(index){
-     return this.state.currentTab === index
+  isCurrentTab(index) {
+    return this.state.currentTab === index
   }
+  borderTopLeftRadius = 1
+  borderTopRightRadius = 1
   tabs = [
     {
       heading: () => (
@@ -67,14 +69,14 @@ export default class TabModal extends BleashupModal {
     return (
       <Container style={{ margin: "1%" }}>
         {this.TabHeader()}
-            <Tabs onChangeTab={({ i }) => {
-                this.setState({
-                    currentTab: i
-                })
-            }} tabContainerStyle={{ 
-            ...shadower(8),
-            borderRadius: 8,            
-         }}>{this.renderTabs()}</Tabs>
+        <Tabs onChangeTab={({ i }) => {
+          this.setState({
+            currentTab: i
+          })
+        }} tabContainerStyle={{
+          ...shadower(8),
+          borderRadius: 8,
+        }}>{this.renderTabs()}</Tabs>
       </Container>
     );
   }
