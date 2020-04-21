@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import Modal from "react-native-modalbox"
-import { View, TextInput, Dimensions } from 'react-native';
+import { View, TextInput, Dimensions,ScrollView , KeyboardAvoidingView,Platform } from 'react-native';
 import { Text, Item, Button, Icon, Content } from 'native-base';
 import Textarea from 'react-native-textarea';
 import labler from './labler';
-import { ScrollView } from 'react-native-gesture-handler';
+//import { ScrollView } from 'react-native-gesture-handler';
 import shadower from '../../shadower'
 import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
@@ -239,7 +239,13 @@ export default class VoteCreation extends BleashupModal {
     entry = 'top'
     state = {}
     modalBody() {
-        return <View style={{ height: '100%', flexDirection: 'column', }}>
+        return (
+            <KeyboardAvoidingView
+            behavior={Platform.OS == "ios" ? "padding" : "height"}
+            style={{flex:1}}
+            >
+            <ScrollView>
+           <View style={{ height: '100%', flexDirection: 'column',justifyContent:"flex-end" }}>
             <CreationHeader
                 title={!this.props.update ? "new vote" : "update vote"}
                 extra={
@@ -274,20 +280,24 @@ export default class VoteCreation extends BleashupModal {
                             width: "95%", margin: "1%",
                             height: 150,
                             borderRadius: 6, borderWidth: .7,
-                            borderColor: "#1FABAB", alignSelf: 'center',
+                            borderColor: "#1FABAB", alignItems: 'center',
                             backgroundColor: "#f5fffa"
-                        }} maxLength={1000} style={{
+                        }} 
+                        style={{
+                            textAlignVertical: 'top',
                             margin: 1,
                             backgroundColor: "#f5fffa",
                             height: "95%", width: "98%"
                         }}
-                            placeholder="Vote details" value={this.state.vote && this.state.vote.description} keyboardType="default"
-                            onChangeText={(value) => {
-                                this.setState({
-                                    vote: { ...this.state.vote, description: value },
-                                    showVoteContentError: (!value || value.length <= 0) &&
-                                        !this.state.vote.title ? true : false
-                                })
+                        maxLength={1000} 
+
+                        placeholder="Vote details" value={this.state.vote && this.state.vote.description} keyboardType="default"
+                        onChangeText={(value) => {
+                            this.setState({
+                            vote: { ...this.state.vote, description: value },
+                            showVoteContentError: (!value || value.length <= 0) &&
+                            !this.state.vote.title ? true : false
+                        })
                             }} />
                         <Button onPress={() => this.changeAlwaysShowState()} transparent>
                             <Icon name={this.state.vote && this.state.vote.always_show ? "radio-button-checked" :
@@ -341,7 +351,7 @@ export default class VoteCreation extends BleashupModal {
                         }}>
                             <View style={{ width: '80%' }}>
                             </View>
-                            <View style={{ width: '20%' }}>
+                            <View style={{ width: '20%',marginBottom:"10%" }}>
                                 {this.props.update ? <Button onPress={() => this.updateVote()} rounded><Text
                                     style={{ color: '#FEFFDE', fontWeight: 'bold', }} rounded>{"Update"}</Text></Button> : <Button onPress={() => this.addVote()} rounded><Text
                                         style={{ color: '#FEFFDE', fontWeight: 'bold', }}>{"Add"}</Text></Button>}
@@ -350,6 +360,9 @@ export default class VoteCreation extends BleashupModal {
                     </View>
                 </ScrollView>
             </View>
-        </View>
-    }
+          </View>
+          </ScrollView>
+        </KeyboardAvoidingView>)
+        }
+
 }

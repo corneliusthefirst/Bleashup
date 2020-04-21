@@ -34,15 +34,9 @@ export default class TitleView extends Component {
         })
     }
     render() {
-        return <View>
-            <View style={{
-
-            }}>
-                <View>
-                    <TouchableOpacity onPress={() => requestAnimationFrame(() => {
-                        this.navigateToEventDetails()
-                    }
-                    )}>
+        return (<View style={{flex:1,marginTop:"2.5%"}}>
+                     <TouchableOpacity onPress={() => requestAnimationFrame(() => {
+                      this.navigateToEventDetails()} )}>
                         <View style={{ flexDirection: "column", alignItems: "flex-start" }}>
                             <Text
                                 adjustsFontSizeToFit={true}
@@ -58,6 +52,37 @@ export default class TitleView extends Component {
                             >
                                 {this.props.Event.about.title}{/*{" "}{this.props.Event.id}*/}
                             </Text>
+                        </View>
+                    </TouchableOpacity>
+            </View>)
+        
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ 
                             {this.props.Event.period ? <Text
                                 adjustsFontSizeToFit={true}
                                 ellipsizeMode={'tail'}
@@ -83,10 +108,4 @@ export default class TitleView extends Component {
                                         </Text>
                                     </View>
                                 }
-                        </View>
-                    </TouchableOpacity>
-                </View>
-            </View>
-        </View>
-    }
-}
+ */

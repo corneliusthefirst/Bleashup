@@ -6,9 +6,10 @@ import BleashupFlatList from '../../BleashupFlatList';
 import testForURL from '../../../services/testForURL';
 import stores from "../../../stores/index"
 import GlobalFunctions from "../../globalFunctions"
-import {uniq,concat} from "lodash";
+import {uniq,concat,find} from "lodash";
 import CacheImages from "../../CacheImages";
 import colorList from '../../colorList';
+import DetailsModal from "../../myscreens/invitations/components/DetailsModal";
 
 let globalFunctions = new GlobalFunctions();
 let { height, width } = Dimensions.get('window');
@@ -18,7 +19,9 @@ export default class SearchView extends Component {
         this.state = {
           data:[],
           loading:false,
-          value:""
+          value:"",
+          details: false,
+          event:null
         }
     }
 
@@ -37,11 +40,15 @@ searchFilterFunction = (text)=>{
     })
 }
 
+openDetails=(item) => {
+  event = find(stores.Events.events , { id:item.id});
+  this.setState({details:true,event:event});
+}
 
    render(){
        return(
         
-        <Container style={{height:"100%",width:colorList.containerWidth,backgroundColor:colorList.bodyBackground,alignItems:"center"}}>
+    <Container style={{height:"100%",width:colorList.containerWidth,backgroundColor:colorList.bodyBackground,alignItems:"center"}}>
        
        <View style={{height:65,width:"100%",alignItems:"center",backgroundColor:colorList.headerBackground}}>
         <View style={{flexDirection:"row",backgroundColor:colorList.bodyBackground,height:colorList.headerHeight,width:"95%",borderColor:"gray",borderWidth:1,justifyContent:"center",marginTop:"2%",alignItems:"center",borderRadius:15}}>
@@ -55,7 +62,7 @@ searchFilterFunction = (text)=>{
         </View>
        </View>
 
-        <View style={{flex:1,marginTop:10}}>
+      <View style={{flex:1,marginTop:10}}>
 
         {this.state.data.length == 0 ? null :
          (this.state.loading == true ?
@@ -85,7 +92,7 @@ searchFilterFunction = (text)=>{
                          </TouchableWithoutFeedback>
                          </View>
      
-                         <TouchableWithoutFeedback style={{width:(4*colorList.containerWidth)/5}} onPress={()=>{this.openDetail(item)}} >
+                         <TouchableWithoutFeedback style={{width:(4*colorList.containerWidth)/5}} onPress={()=>{this.openDetails(item)}} >
                          <View style={{width:(4*colorList.containerWidth)/5,flexDirection:"row"}}>
                          <View style={{flexDirection:"column",width:"76%"}}>
                                 <Title style={{alignSelf:"flex-start",marginLeft:2,fontSize:14}}>{item.name}</Title>
@@ -105,7 +112,20 @@ searchFilterFunction = (text)=>{
                 </BleashupFlatList>)
                 )}
         </View> 
-        
+        <DetailsModal goToActivity={() => {
+                    this.props.navigation.navigate('Event',
+                    {
+                        'tab':'EventDetails',
+                         Event:this.state.event
+                    })
+                  }} 
+                  isToBeJoint={true}
+                  event={this.state.event}
+                  isOpen={this.state.details}
+                  onClosed={() => {this.setState({details: false})}
+                  }>
+        </DetailsModal>
+
       </Container>
        )
    }

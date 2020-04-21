@@ -369,7 +369,6 @@ export default class Settings extends Component {
         return (
             <ModalBox
                 coverScreen={true}
-                animationDuration={100}
                 entry={'center'}
                 position={'bottom'}
                 backdropOpacity={0.7}

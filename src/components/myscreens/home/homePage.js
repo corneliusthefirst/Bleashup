@@ -48,7 +48,7 @@ import CreateEvent from '../event/createEvent/CreateEvent';
 import ForeignEventsModal from "./ForeignEventsModal";
 import DeepLinking from 'react-native-deep-linking';
 import shadower from "../../shadower";
-import TabModal from "../../mainComponents/TabModal";
+//import TabModal from "./TabModal";
 import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
 import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
 import colorList from "../../colorList";
@@ -290,31 +290,31 @@ class Home extends Component {
     setTimeout(() => {
       //this.launchAnimation()
     }, 1000)
-    StatusBar.setBackgroundColor(colorList.headerBackground, true)
+    StatusBar.setBackgroundColor("#1FABAB", true)
     StatusBar.setBarStyle('dark-content', true)
     StatusBar.setHidden(false, true)
     return (
       <Container style={{ height:colorList.containerHeight,backgroundColor:colorList.containerBackground ,width:colorList.containerWidth }}>
-        <View style={{ height: colorList.headerHeight, backgroundColor: colorList.headerBackground, width: "100%", }}>
+        <View style={{ height: colorList.headerHeight,backgroundColor: colorList.headerBackground ,width:"100%", }}>
         
-          <View style={{ backgroundColor: colorList.headerBackground, 
-            flexDirection: "row", justifyContent: "space-between", }}>
+         
+            <View style={{flex: 1, backgroundColor: colorList.headerBackground, flexDirection: "row",justifyContent: "space-between",width:"100%" }}>
              
-              <View style={{ alignSelf: "flex-start",justifyContent:"center",height:"98%",marginLeft: '1%', }}>
-              {/*<Thumbnail small source={require("../../../../assets/Bleashup.png")}></Thumbnail>*/}
+              <View style={{ alignSelf: "flex-start",justifyContent:"center",height:"98%",marginTop:"1%" }}>
+                <Thumbnail source={require("../../../../assets/bleashuptitle.png")} style={{width:120}}></Thumbnail>
               </View>
 
             
                 <View style={{ height:"100%",alignSelf: "flex-end", display: 'flex', flexDirection: 'row', marginRight:"2%"}}>
 
                  <TouchableOpacity style={{height:40,alignItems:"center",justifyContent:"center"}} onPress={() => this.navigateToInvitations()}>
-                  <Icon name="sc-telegram" active={true} type="EvilIcons" style={{ color: colorList.headerIcon, }} onPress={() => this.navigateToInvitations()} />
+                  <Icon name="sc-telegram" active={true} type="EvilIcons" style={{ color: "white", }} onPress={() => this.navigateToInvitations()} />
                   </TouchableOpacity>
 
                   <TouchableOpacity style={{ height: 40, alignItems: "center", justifyContent: "center" }} onPress={this.showMenu}>
                     <Menu
                      ref={this.setMenuRef}
-                  button={<Icon name="gear" active={true} type="EvilIcons" style={{ color: colorList.headerIcon ,marginLeft:width/35, }} onPress={this.showMenu} />}
+                     button={<Icon name="gear" active={true} type="EvilIcons" style={{ color: "white",marginLeft:width/35 }} onPress={this.showMenu} />}
                      style={{ backgroundColor:colorList.bodyBackground }}
                      >
                    <MenuItem onPress={this.settings}>settings</MenuItem>
@@ -328,14 +328,14 @@ class Home extends Component {
             </View>
           </View>
        
-       {/*<Tabs
+        <Tabs
           locked
           tabContainerStyle={{
              backgroundColor: colorList.headerBackground
           }}
           tabBarPosition="bottom"
           tabBarUnderlineStyle={{
-            backgroundColor: colorList.headerIcon
+            backgroundColor: colorList.headerBackground
           }}
           onChangeTab={({ i }) => {
             this.setState({
@@ -343,7 +343,7 @@ class Home extends Component {
             })
           }}
         >
-          {/*<Tab
+          <Tab
             tabStyle={{
               borderRadius: 0,
             }}
@@ -354,11 +354,9 @@ class Home extends Component {
                 </View>
               </TabHeading>
             }
-          >*/}
-          <View style={{height:colorList.containerHeight - (colorList.headerHeight+23)}}>
-          <CurrentEventView {...this.props}></CurrentEventView>
-          </View>
-          {/*</Tab>
+          >
+            <CurrentEventView {...this.props}></CurrentEventView>
+          </Tab>
           <Tab
             heading={
               <TabHeading>
@@ -369,7 +367,7 @@ class Home extends Component {
             }
           >
             <Chats {...this.props} />
-          </Tab>*/}
+          </Tab>
           {/*<Tab
             heading={
               <TabHeading>
@@ -381,7 +379,7 @@ class Home extends Component {
           >
             <StatusView {...this.props} />
           </Tab>*/}
-        {/*</Tabs>*/}
+        </Tabs>
         {this.state.isForeignEventsModalOpened ? <ForeignEventsModal isOpen={this.state.isForeignEventsModalOpened} onClosed={() => {
           this.setState({
             isForeignEventsModalOpened: false,
@@ -389,11 +387,11 @@ class Home extends Component {
           })
         }} events={this.state.foreignEvents}>
         </ForeignEventsModal> : null}
-        <TabModal isOpen={this.state.isTabModalOpened} closed={() => {
+        {/*<TabModal isOpen={this.state.isTabModalOpened} closed={() => {
           this.setState({
             isTabModalOpened: false
           })
-        }}></TabModal>
+        }}></TabModal>*/}
       </Container>
     );
   }
