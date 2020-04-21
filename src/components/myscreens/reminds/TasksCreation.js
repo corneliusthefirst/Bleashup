@@ -5,7 +5,7 @@ import {
   Button, Label
 } from "native-base";
 
-import { StyleSheet, TextInput, View, Image, TouchableOpacity, Dimensions, ScrollView } from 'react-native';
+import { StyleSheet, TextInput, View, Image, TouchableOpacity, Dimensions, ScrollView , KeyboardAvoidingView,Platform} from 'react-native';
 import autobind from "autobind-decorator";
 import { filter, find, findIndex, concat, uniqBy, uniq } from "lodash";
 import request from "../../../services/requestObjects";
@@ -501,7 +501,14 @@ export default class TasksCreation extends BleashupModal {
   modalBody() {
     let defaultDate = parseInt(moment(this.state.currentRemind.period).format("x"))
     return !this.state.mounted ? null : (
-      <View style={{ height: "100%", width: "100%", borderRadius: 10 }}>
+
+      < KeyboardAvoidingView
+      behavior={Platform.OS == "ios" ? "padding" : "height"}
+      style={{flex:1}}
+
+      >
+      <ScrollView>
+      <View style={{ flex: 1,justifyContent: "flex-end" }}>
         <CreationHeader
           back={this.props.onClosed}
           title={!this.state.ownership ? "Remind configs" : this.props.update ? "Update Remind" : "Add Remind"}
@@ -520,6 +527,7 @@ export default class TasksCreation extends BleashupModal {
           ></RemindsTypeMenu></View>}
         >
         </CreationHeader>
+
         <View style={{ height: ColorList.containerHeight - (ColorList.headerHeight + 20), marginTop: '3%', }}>
           <ScrollView ref={"scrollView"} showsVerticalScrollIndicator={false}>
             {this.props.shouldRestore && this.props.canRestore ? <View style={{ width: '95%', alignItems: 'flex-end', }}><Button style={{ alignSelf: 'flex-end', margin: '2%', marginRight: '2%', }} onPress={() => {
@@ -718,6 +726,7 @@ export default class TasksCreation extends BleashupModal {
               defaultPhoto={require("../../../../assets/new-event.png")}
               url={this.state.currentRemind.remind_url || {}}>
             </MediaPreviewer>}
+
             <View style={{ height: (height / (this.state.ownership ? 3.5 : 1.5)) + (height / 26), alignItems: 'flex-start', justifyContent: 'center' }}>
               <View pointerEvents={!this.state.ownership ? "none" : null} style={{ width: "100%", height: "100%" }}>
                 <Text style={{ alignSelf: 'flex-start', margin: "3%", fontWeight: "500", fontSize: 16 }} >Description</Text>
@@ -744,6 +753,8 @@ export default class TasksCreation extends BleashupModal {
 
               </View>
             </View>
+            
+
             {!this.state.creating ? this.state.ownership && <View style={{ margin: '2%', marginBottom: '4%', }}><CreateButton
               title={!this.props.update ? "Add Remind" : "Update Remind"}
               action={!this.props.update ? this.addNewRemind : this.updateRemind}
@@ -780,6 +791,9 @@ export default class TasksCreation extends BleashupModal {
           </RemindMembers>
         </View>
       </View>
+      </ScrollView>
+      </KeyboardAvoidingView>
+
     );
   }
 }

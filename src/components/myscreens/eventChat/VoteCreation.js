@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import Modal from "react-native-modalbox"
-import { View, TextInput, Dimensions } from 'react-native';
+import { View, TextInput, Dimensions,ScrollView , KeyboardAvoidingView,Platform } from 'react-native';
 import { Text, Item, Button, Icon, Content } from 'native-base';
 import Textarea from 'react-native-textarea';
 import labler from './labler';
-import { ScrollView } from 'react-native-gesture-handler';
+//import { ScrollView } from 'react-native-gesture-handler';
 import shadower from '../../shadower'
 import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
@@ -253,7 +253,11 @@ export default class VoteCreation extends Component {
                 borderTopLeftRadius: 8,
             }}
         >
-            <View style={{ height: '100%', flexDirection: 'column', }}>
+       <KeyboardAvoidingView
+        behavior={Platform.OS == "ios" ? "padding" : "height"}
+        style={{flex:1}}
+        >
+            <View style={{ height: '100%', flexDirection: 'column',justifyContent:"flex-end" }}>
                 <View style={{ width: '98%', height: '6%', ...shadower(), margin: '1%', flexDirection: 'row', }}>
                     <View style={{ width: '35%' }}><Text note style={{
                         fontWeight: 'bold',
@@ -356,7 +360,7 @@ export default class VoteCreation extends Component {
                             }}>
                                 <View style={{ width: '80%' }}>
                                 </View>
-                                <View style={{ width: '20%' }}>
+                                <View style={{ width: '20%',marginBottom:"10%" }}>
                                     {this.props.update ? <Button onPress={() => this.updateVote()} rounded><Text
                                         style={{ color: '#FEFFDE', fontWeight: 'bold', }} rounded>{"Update"}</Text></Button> : <Button onPress={() => this.addVote()} rounded><Text
                                             style={{ color: '#FEFFDE', fontWeight: 'bold', }}>{"Add"}</Text></Button>}
@@ -366,6 +370,7 @@ export default class VoteCreation extends Component {
                     </ScrollView>
                 </View>
             </View>
+            </KeyboardAvoidingView>
         </Modal>
     }
 }

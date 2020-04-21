@@ -214,12 +214,14 @@ export default class EventTasksCard extends Component {
           {this.props.item.remind_url &&
             (this.props.item.remind_url.photo || this.props.item.remind_url.video)
             && <CardItem style={{ alignItems: 'center', alignSelf: 'center',width:'100%' }}>
+              <View style={{flex:1}}>
               <MedaiView
                 height={ColorList.containerHeight * .42}
                 width={ColorList.containerWidth * .91}
                 url={this.props.item.remind_url}
                 showItem={this.props.showMedia}
               ></MedaiView>
+              </View>
             </CardItem>}
           <CardItem carBody>
             <TouchableOpacity onPress={() => {

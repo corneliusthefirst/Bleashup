@@ -15,13 +15,13 @@ export default class MedaiView extends Component {
         return this.props.url.video || this.props.url.audio || this.props.url.photo ? true : false
     }
     render() {
-        return <View>
+        return <View style={{justifyContent:"center"}}>
             <TouchableOpacity onPress={() => requestAnimationFrame(() => this.props.showItem(this.props.url))} >
-                {this.containsMedia() ? <View style={{ width: "97%", backgroundColor: 'transparent', borderRadius: 5, ...shadower(2), alignSelf: 'center',flex: 1, justifyContent: 'center', }}>
+                {this.containsMedia() ? <View style={{ width: "99%", backgroundColor: 'transparent', borderRadius: 5, ...shadower(2), alignSelf: 'center',flex: 1, justifyContent: 'center', }}>
                     <View style={{ width: "100%", height: this.props.height * .695 }}>
                         {this.props.url && this.props.url.photo && testForURL(this.props.url.photo) ?
                             <CacheImages thumbnails square style={{
-                                width: this.props.width || "103%",
+                                width: this.props.width || "100%",
                                 alignSelf: 'center', height: this.props.height * .7, borderRadius: 5,
                             }} source={{ uri: this.props.url.photo }}></CacheImages> :
                             <Thumbnail source={{ uri: this.props.url.photo }} style={{
@@ -33,19 +33,23 @@ export default class MedaiView extends Component {
             </TouchableOpacity>
             {this.props.url && (this.props.url.video || this.props.url.audio) ?
                 <View style={{
-                    position: 'absolute',
                     ...buttoner,
-                    paddingLeft: '-20%',
-                    marginTop: '20%',
-                    marginLeft: '35%',
-                    height: 40,
-                    width: 5,
-                }}><Icon onPress={() => {
-                    this.props.showItem(this.props.url)
-                }} name={this.props.url.video ? "play" : "headset"} style={{
-                    fontSize: 50, color: ColorList.headerBackground, margin: 'auto',
-                }} type={this.props.url.video ? "EvilIcons" : "MaterialIcons"}>
-                    </Icon></View> : null}
+                    alignSelf:"center",
+                    paddingLeft:15,
+                   position:"absolute"
+                }}>{this.props.url.video ?
+                    <Icon onPress={() => {
+                     this.props.showItem(this.props.url)
+                    }} name="ios-play" style={{
+                        fontSize: 40, color: ColorList.bodyBackground
+                    }} type="Ionicons" />
+                     :
+                      <Icon onPress={() => {
+                        this.props.showItem(this.props.url)
+                    }} name= "headset" style={{
+                        fontSize: 40, color: ColorList.bodyBackground
+                    }} type="MaterialIcons" /> }
+                </View> : null}
         </View>
     }
 }
