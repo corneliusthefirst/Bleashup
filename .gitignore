@@ -51,6 +51,6 @@ buck-out/
 */fastlane/report.xml
 */fastlane/Preview.html
 */fastlane/screenshots
-
+bleashup-server-config.json
 # Bundle artifact
 *.jsbundle

@@ -78,14 +78,14 @@ export default class ReplyText extends Component {
                             </View> : <View><View style={{ display: 'flex', flexDirection: 'row', }}>
                                 <View style={{ /*width: this.props.reply.sourcer ? "20%" : "0%",*/ marginRight: "1%", }}>
                                     {this.props.reply.sourcer ? <View>{testForURL(this.props.reply.sourcer) ? <CacheImages thumbnails square style={{
-                                        width: 60,
-                                        minHeight: this.state.currentHeight > 50 ? this.state.currentHeight : 50,
-                                        maxHeight: this.state.currentHeight > 50 ? this.state.currentHeight : 50,
+                                        width: 70,
+                                        minHeight: this.state.currentHeight > 50 ? this.state.currentHeight : 60,
+                                        maxHeight: this.state.currentHeight > 50 ? this.state.currentHeight : 60,
                                         borderBottomRightRadius: 5, borderTopRightRadius: 5,
                                     }} source={{ uri: this.props.reply.sourcer }}></CacheImages> : <Thumbnail thumbnails square style={{
-                                        width: 60,
-                                        minHeight: this.state.currentHeight > 50 ? this.state.currentHeight : 50,
-                                        maxHeight: this.state.currentHeight > 50 ? this.state.currentHeight : 50,
+                                        width: 70,
+                                        minHeight: this.state.currentHeight > 50 ? this.state.currentHeight : 60,
+                                        maxHeight: this.state.currentHeight > 50 ? this.state.currentHeight : 60,
                                         borderBottomRightRadius: 5, borderTopRightRadius: 5,
                                         height: this.state.currentHeight, borderRadius: 5,
                                     }} source={{ uri: this.props.reply.sourcer }}></Thumbnail>}

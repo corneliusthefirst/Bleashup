@@ -41,11 +41,7 @@ export default class ReportTabModal extends TabModal {
     }, 20);
   }
   TabHeader() {
-    return (
-      <Text style={{ margin: "1%", color: "#1F4237", fontWeight: "bold" }} note>
-        report
-      </Text>
-    );
+    return null
   }
   tabs = [
     {

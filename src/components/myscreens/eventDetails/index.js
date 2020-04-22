@@ -251,7 +251,7 @@ export default class EventDetailView extends Component {
 
               </View>
             </View>
-            <ScrollView nestedScrollEnabled>
+            <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled>
               <View style={{ minHeight: colorList.containerHeight - colorList.headerHeight, flexDirection: "column", width: "100%",justifyContent: 'center', }} >
                 <View style={{ height: this.state.highlightData.length == 0 ? 0 : 
                   colorList.containerHeight-colorList.headerHeight, 

@@ -1,15 +1,15 @@
-import React,{Component} from "react"
+import React, { Component } from "react"
 import { View, TouchableOpacity } from 'react-native';
 import ColorList from '../../../../colorList';
 import { Icon, Text } from "native-base";
 import bleashupHeaderStyle from "../../../../../services/bleashupHeaderStyle";
 
-export default class CreationHeader extends Component{
-    constructor(props){
+export default class CreationHeader extends Component {
+    constructor(props) {
         super(props)
     }
-    render(){
-       return <View style={{ height: ColorList.headerHeight, width: "100%" }}>
+    render() {
+        return <View style={{ height: ColorList.headerHeight, width: "100%" }}>
             <View
                 style={{
                     flex: 1,
@@ -33,6 +33,7 @@ export default class CreationHeader extends Component{
                     elipsizeMode={"tail"}
                     numberOfLines={1}
                     style={{
+                        color: ColorList.headerIcon,
                         fontWeight: "500",
                         width: "50%",
                         marginTop: "auto",
@@ -41,8 +42,8 @@ export default class CreationHeader extends Component{
                 >
                     {this.props.title}
                 </Text>
-               <View style={{width:'30%'}}>{this.props.extra}
-</View>
+                <View style={{ width: '30%' }}>{this.props.extra}
+                </View>
             </View>
         </View>
     }

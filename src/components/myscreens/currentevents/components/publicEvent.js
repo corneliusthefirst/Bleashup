@@ -334,16 +334,16 @@ class PublicEvent extends Component {
 
           <View style={{ flexDirection: 'row', width: '100%',alignItems:"center" }}>
         
-           <TouchableOpacity style={{ alignSelf:'flex-start',width: '15%',alignItems:"center",paddingTop:"2%" }}  onPress={()=>{this.setState({showPhoto:true}); console.warn("here",this.state.showPhoto) }} >
+           <TouchableOpacity style={{ alignSelf:'flex-start',width: '15%',alignItems:"center",paddingTop:"2%" }}  onPress={() => this.props.showPhoto(this.props.Event.background) } >
             <View  style={{ alignSelf: 'flex-start',width: '100%',alignItems:"center",paddingTop:"2%" }} >
-              { this.props.Event.background?  <CacheImages thumbnails square source={{ uri:this.props.Event.background }}
+              { this.props.Event.background?  <CacheImages small thumbnails square source={{ uri:this.props.Event.background }}
                  style={{ height:50,justifyContent: 'center', width:50,alignSelf: 'center',
-                  borderRadius:25 }}></CacheImages>:<View style={{flex:1}}><Thumbnail style={{height:50,width:50, borderRadius:35,}} medium source={require('../../../../../assets/default_event_image.jpeg')}></Thumbnail></View> 
+                  borderRadius:25 }}></CacheImages>:<View style={{flex:1}}><Thumbnail small style={{height:50,width:50, borderRadius:35,}} medium source={require('../../../../../assets/default_event_image.jpeg')}></Thumbnail></View> 
                 }
            </View>
            </TouchableOpacity>
 
-        <View style={{ width: '75%',paddingLeft:6}}>
+        <View style={{ width: '75%',paddingLeft:6,marginTop: '3%'}}>
           {this.state.isMount ? <TitleView openDetail={() => this.props.openDetails(this.props.Event)} join={() => this.join()} joint={this.state.joint} seen={() => this.markAsSeen()}
             {...this.props}></TitleView> : null}
         </View>

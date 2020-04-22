@@ -4,7 +4,8 @@ import { Content, List, ListItem, Body, Left, Right, Text, Container,Spinner } f
 import ImageActivityIndicator from "./myscreens/currentevents/components/imageActivityIndicator";
 import ContactList from "./ContactList";
 import { observer } from "mobx-react";
-@observer export default class PublishersModal extends PureComponent {
+import BleashupModal from "./mainComponents/BleashupModal";
+@observer export default class PublishersModal extends BleashupModal {
     constructor(props) {
         super(props)
         this.state = {
@@ -12,44 +13,28 @@ import { observer } from "mobx-react";
             loaded:false
         };
     }
-
+    onClosedModal(){
+        this.props.onClosed()
+        this.setState({
+            event_id: null,
+            loaded: false
+        })
+    }
+    onOpenModal(){
+        setTimeout(() => {
+            this.setState({
+                loaded: true,
+                event_id: this.props.event_id
+            })
+        }, 50)
+    }
     componentDidMount() {
 
     }
-    render() {
+    modalBody() {
         return (
-            <Modal
-                // backdropPressToClose={false}
-                //swipeToClose={false}
-                backdropOpacity={0.7}
-                backButtonClose={true}
-                position='bottom'
-                coverScreen={true}
-                isOpen={this.props.isOpen}
-                onClosed={() =>{
-                    this.props.onClosed()
-                    this.setState({
-                        event_id:null,
-                        loaded:false
-                    })
-                }
-                }
-                onOpened={() =>{
-                    setTimeout(() => {
-                        this.setState({
-                            loaded:true,
-                            event_id:this.props.event_id
-                        })
-                    },50)
-                }}
-                style={{
-                    height: "95%",
-                   width: "100%"
-                }}>{this.state.loaded?
-                    <ContactList title={"Publishers List"} event_id={this.state.event_id}></ContactList>
-                :<Spinner size={"small"}></Spinner>}
-            </Modal>
-
-        );
+              this.state.loaded?
+                    <ContactList back={() => this.onClosedModal()} title={"Publishers List"} event_id={this.state.event_id}></ContactList>
+                :<Spinner size={"small"}></Spinner>)
     }
 }

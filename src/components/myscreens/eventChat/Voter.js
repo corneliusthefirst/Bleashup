@@ -9,6 +9,7 @@ import { isEqual, findIndex, uniqBy } from 'lodash';
 import sayAppBusy from '../votes/sayAppBusy';
 import Creator from '../reminds/Creator';
 import { writeDateTime, dateDiff } from '../../../services/datesWriter';
+import VoteOptionPreviwer from './VoteOptionMediaPreviewer';
 
 export default class Voter extends Component {
     constructor(props) {
@@ -34,6 +35,9 @@ export default class Voter extends Component {
     state = {}
     componentDidUpdate(prevProps, preState, preContx) {
         this.previousVote = JSON.stringify(this.props.message.vote)
+    }
+    renderOptionMedia(url,index,name){
+        return <VoteOptionPreviwer optionName={name} url={url} vote={() => this.props.vote(index)} votable></VoteOptionPreviwer>
     }
     renderOptions() {
         return this.props.message.vote.option && this.props.message.vote.option.map((item, index) => {
@@ -69,7 +73,10 @@ export default class Voter extends Component {
             >{`${labler(index)}.`}</Text></View>
             <View style={{ width: '75%', height: '80%', }}>
                 <View style={{ width: '100%' }}>
-                    <Text style={{ color: '#555756', fontSize: 14 }} note>{`${item.name && item.name !== 'undefined' ? item.name : "none"}    ${this.calculateVotePercentage(this.returnOptionCount(index), 0)}%`}</Text>
+                <View style={{flexDirection: 'row',}}>
+                <Text style={{ color: '#555756', fontSize: 14 }} note>{`${item.name && item.name !== 'undefined' ? item.name : "none"}    ${this.calculateVotePercentage(this.returnOptionCount(index), 0)}%  `}</Text>
+                {this.renderOptionMedia(item.option_url,index,item.name)}
+                </View>
                     <View style={{ flexDirection: 'row', height: '60%' }}>
                         <View style={{
                             height: '110%', ...shadower(2),
@@ -105,16 +112,17 @@ export default class Voter extends Component {
                 alignItems: 'center',
                 height: '100%'
             }}><Text
-                style={{ color: '#1FABAB', fontSize: 23, fontWeight: '400', }}
+                style={{ color: '#1FABAB',  fontWeight: '400', }}
             >{`${labler(index)}.`}</Text></View>
             <View style={{ width: '75%', height: '100%', flexDirection: 'row', }}>
-                <View style={{ width: '100%', justifyContent: 'center' }}>
-                    <Text style={{ color: '#1FABAB', fontWeight: 'bold', fontSize: 24 }} >{`${item.name && item.name !== 'undefined' ? item.name : 'none'} `}</Text>
+                <View style={{ width: '100%', justifyContent: 'flex-start',flexDirection: 'row',marginTop: 'auto',marginBottom: 'auto', }}>
+                    <Text style={{ color: '#1FABAB', fontWeight: '400',  }} >{`${item.name && item.name !== 'undefined' ? item.name : 'none'} `}</Text>
+                    {this.renderOptionMedia(item.option_url, index, item.name)}
                 </View>
             </View>
             <View style={{ width: '15%', justifyContent: 'center', alignItems: 'center', }}>
                 {!this.hasVoted() || dateDiff({ recurrence: this.props.message.vote.period }) > 0 ? null : <Icon onPress={() => this.vote(item.index)} name="vote-yea"
-                    style={{ alignSelf: 'center', marginTop: '50%', color: '#555756' }}
+                    style={{ alignSelf: 'center', marginTop: 'auto',marginBottom: 'auto', color: '#555756' }}
                     type={"FontAwesome5"}></Icon>}
             </View>
         </View>

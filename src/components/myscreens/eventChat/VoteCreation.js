@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Modal from "react-native-modalbox"
-import { View, TextInput, Dimensions,ScrollView , KeyboardAvoidingView,Platform } from 'react-native';
+import { View, TextInput, Dimensions, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { Text, Item, Button, Icon, Content } from 'native-base';
 import Textarea from 'react-native-textarea';
 import labler from './labler';
@@ -15,6 +15,9 @@ import request from '../../../services/requestObjects';
 import BleashupModal from '../../mainComponents/BleashupModal';
 import CreationHeader from '../event/createEvent/components/CreationHeader';
 import ColorList from '../../colorList';
+import PickersUpload from '../event/createEvent/components/PickerUpload';
+import VoteOptionPreviwer from './VoteOptionMediaPreviewer';
+import CreateButton from '../event/createEvent/components/ActionButton';
 
 let { height, width } = Dimensions.get('window');
 export default class VoteCreation extends BleashupModal {
@@ -50,7 +53,15 @@ export default class VoteCreation extends BleashupModal {
     }
     setOption(value, index) {
         let options = this.state.vote.option
-        options[index] = { name: value, index, vote_count: 0 }
+        options[index] = { ...options[index], name: value, index, vote_count: 0 }
+        this.setState({
+            vote: { ...this.state.vote, option: options },
+        })
+        this.updateVoteOtions(options)
+    }
+    setOptionURL(value, index) {
+        let options = this.state.vote.option
+        options[index] = { ...options[index], option_url: value, index, vote_count: 0 }
         this.setState({
             vote: { ...this.state.vote, option: options },
         })
@@ -132,18 +143,42 @@ export default class VoteCreation extends BleashupModal {
         this.updateVoteOtions(options)
     }
     Itemer(index) {
-        return (<Item>
-            <Text style={{ fontWeight: 'bold', color: '#1FABAB' }}>{`${labler(index)} .`}</Text><TextInput
+        return (<View style={{ flexDirection: 'row', }}>
+            <Text style={{
+                fontWeight: 'bold',
+                color: '#1FABAB',
+                marginTop: 'auto',
+                marginBottom: 'auto',
+            }}>{`${labler(index)} .`}</Text><TextInput
                 placeholder={'enter option name here'}
                 value={this.state.vote && this.state.vote.option[index].name}
                 onChangeText={val => this.setOption(val, index)}
-                style={{ width: '70%' }} ></TextInput>
-            <Button onPress={() => this.removeNote(index)}
-                transparent>
-                <Icon name='minus'
+                style={{ width: '40%' }} ></TextInput>
+            <View style={{
+                width: '40%',
+                justifyContent: 'center',
+                marginBottom: 'auto',
+                marginTop: 'auto',
+                flexDirection: 'row',
+            }}>
+                <PickersUpload currentURL={(this.state.vote && this.state.vote.option[index].option_url) || {}}
+                    saveMedia={(option_url) => {
+                        this.setOptionURL(option_url, index)
+                    }} creating notAudio>
+                </PickersUpload>
+                <VoteOptionPreviwer
+                    trashable
+                    optionName={this.state.vote && this.state.vote.option[index].name}
+                    cleanMedia={() => {
+                        this.setOptionURL(null, index)
+                    }}
+                    url={this.state.vote && this.state.vote.option[index].option_url}></VoteOptionPreviwer>
+            </View>
+            <View style={{ width: '15%', justifyContent: 'center', }} >
+                <Icon style={{ alignSelf: 'flex-end', }} onPress={() => this.removeNote(index)} name='minus'
                     type='EvilIcons'>
-                </Icon></Button>
-        </Item>)
+                </Icon></View>
+        </View>)
     }
     showVoteOptionError() {
         this.setState({
@@ -238,131 +273,133 @@ export default class VoteCreation extends BleashupModal {
     }
     entry = 'top'
     state = {}
+    swipeToClose = false
     modalBody() {
         return (
             <KeyboardAvoidingView
-            behavior={Platform.OS == "ios" ? "padding" : "height"}
-            style={{flex:1}}
+                behavior={Platform.OS == "ios" ? "padding" : "height"}
+                style={{ flex: 1 }}
             >
-            <ScrollView>
-           <View style={{ height: '100%', flexDirection: 'column',justifyContent:"flex-end" }}>
-            <CreationHeader
-                title={!this.props.update ? "new vote" : "update vote"}
-                extra={
-                    this.props.update ? <View style={{ width: '65%', marginTop: 'auto', marginBottom: 'auto', }}><Text note style={{
-                        fontWeight: 'bold',
-                        color: '#555756',
-                    }}>{"only the voting end date is updated"}</Text></View> : null
-                }
-                back={this.onClosedModal}
-            >
-            </CreationHeader>
-            <View style={{ height: ColorList.containerHeight - (ColorList.headerHeight + 20), }}>
-                <ScrollView showsVerticalScrollIndicator={false} style={{ height: '100%' }}>
-                    <View style={{ margin: '3%', }}>
-                        {this.state.showVoteContentError ? <Text style={{ color: "#A91A84", fontWeight: 'bold', }} note>{"vote should at least have a title or a detail"}</Text> : null}
-                        {this.state.showVoteOptionError ? <Text style={{ color: "#A91A84", fontWeight: 'bold', }} note>{"vote should have at least a 2 options"}</Text> : null}
-                        {this.state.nowVotePeriod ? <Text style={{ color: "#A91A84", fontWeight: 'bold', }} note>{"you must specify the voting endate"}</Text> : null}
-                        <View style={{ height: height / 14, alignItems: 'center', margin: '2%', }}>
-                            <Item style={{ borderColor: '#1FABAB', width: "95%", margin: '2%', height: height / 17 }} rounded>
-                                <TextInput maxLength={20} style={{ width: "100%", height: "100%", margin: '2%', marginBottom: '5%', }}
-                                    value={this.state.vote && this.state.vote.title ? this.state.vote.title : ""}
-                                    maxLength={40} placeholder="Vote title" keyboardType='email-address' autoCapitalize="none" returnKeyType='next' inverse last
-                                    onChangeText={(text) =>
-                                        this.setState({
-                                            vote: { ...this.state.vote, title: text },
-                                            showVoteContentError: (!text || text.length <= 0) && this.state.vote && !this.state.vote.description ? true : false
-                                        })
-                                    } />
-                            </Item>
-                        </View>
-                        <Textarea containerStyle={{
-                            width: "95%", margin: "1%",
-                            height: 150,
-                            borderRadius: 6, borderWidth: .7,
-                            borderColor: "#1FABAB", alignItems: 'center',
-                            backgroundColor: "#f5fffa"
-                        }} 
-                        style={{
-                            textAlignVertical: 'top',
-                            margin: 1,
-                            backgroundColor: "#f5fffa",
-                            height: "95%", width: "98%"
-                        }}
-                        maxLength={1000} 
+                <ScrollView>
+                    <View style={{ height: '100%', flexDirection: 'column', justifyContent: "flex-end" }}>
+                        <CreationHeader
+                            title={!this.props.update ? "new vote" : "update vote"}
+                            extra={
+                                this.props.update ? <View style={{ width: '65%', marginTop: 'auto', marginBottom: 'auto', }}><Text note style={{
+                                    fontWeight: 'bold',
+                                    color: '#555756',
+                                }}>{"only the voting end date is updated"}</Text></View> : null
+                            }
+                            back={this.onClosedModal.bind(this)}
+                        >
+                        </CreationHeader>
+                        <View style={{ height: ColorList.containerHeight - (ColorList.headerHeight + 20), }}>
+                            <ScrollView showsVerticalScrollIndicator={false} style={{ height: '100%' }}>
+                                <View style={{ margin: '3%', }}>
+                                    {this.state.showVoteContentError ? <Text style={{ color: "#A91A84", fontWeight: 'bold', }} note>{"vote should at least have a title or a detail"}</Text> : null}
+                                    {this.state.showVoteOptionError ? <Text style={{ color: "#A91A84", fontWeight: 'bold', }} note>{"vote should have at least a 2 options"}</Text> : null}
+                                    {this.state.nowVotePeriod ? <Text style={{ color: "#A91A84", fontWeight: 'bold', }} note>{"you must specify the voting endate"}</Text> : null}
+                                    <View style={{ height: height / 14, alignItems: 'center', margin: '2%', }}>
+                                        <Item style={{ borderColor: '#1FABAB', width: "95%", margin: '2%', height: height / 17 }} rounded>
+                                            <TextInput maxLength={15} style={{ width: "100%", height: "100%", margin: '2%', marginBottom: '5%', }}
+                                                value={this.state.vote && this.state.vote.title ? this.state.vote.title : ""}
+                                                placeholder="Vote title" keyboardType='email-address' autoCapitalize="none" returnKeyType='next' inverse last
+                                                onChangeText={(text) =>
+                                                    this.setState({
+                                                        vote: { ...this.state.vote, title: text },
+                                                        showVoteContentError: (!text || text.length <= 0) && this.state.vote && !this.state.vote.description ? true : false
+                                                    })
+                                                } />
+                                        </Item>
+                                    </View>
+                                    <Textarea containerStyle={{
+                                        width: "95%", margin: "1%",
+                                        height: 150,
+                                        borderRadius: 6, borderWidth: .7,
+                                        borderColor: "#1FABAB", alignItems: 'center',
+                                        backgroundColor: "#f5fffa"
+                                    }}
+                                        style={{
+                                            textAlignVertical: 'top',
+                                            margin: 1,
+                                            backgroundColor: "#f5fffa",
+                                            height: "95%", width: "98%"
+                                        }}
+                                        maxLength={1000}
 
-                        placeholder="Vote details" value={this.state.vote && this.state.vote.description} keyboardType="default"
-                        onChangeText={(value) => {
-                            this.setState({
-                            vote: { ...this.state.vote, description: value },
-                            showVoteContentError: (!value || value.length <= 0) &&
-                            !this.state.vote.title ? true : false
-                        })
-                            }} />
-                        <Button onPress={() => this.changeAlwaysShowState()} transparent>
-                            <Icon name={this.state.vote && this.state.vote.always_show ? "radio-button-checked" :
-                                "radio-button-unchecked"} type={"MaterialIcons"}></Icon>
-                            <Text>{"always show vote percentages"}</Text></Button>
-                        {/*<Button transparent onPress={() => {
+                                        placeholder="Vote details" value={this.state.vote && this.state.vote.description} keyboardType="default"
+                                        onChangeText={(value) => {
+                                            this.setState({
+                                                vote: { ...this.state.vote, description: value },
+                                                showVoteContentError: (!value || value.length <= 0) &&
+                                                    !this.state.vote.title ? true : false
+                                            })
+                                        }} />
+                                    <Button onPress={() => this.changeAlwaysShowState()} transparent>
+                                        <Icon name={this.state.vote && this.state.vote.always_show ? "radio-button-checked" :
+                                            "radio-button-unchecked"} type={"MaterialIcons"}></Icon>
+                                        <Text>{"always show vote percentages"}</Text></Button>
+                                    {/*<Button transparent onPress={() => {
                                 this.setState({
                                     vote: { ...this.state.vote, published: this.state.vote.published === 'public' ? 'private' : 'public' }
                                 })
                             }}><Icon name={this.state.vote.published === 'public' ? "radio-button-checked" :
                                 "radio-button-unchecked"} type={"MaterialIcons"}></Icon>
                         <Text>{`${this.state.vote.published}`}</Text></Button>*/}
-                        <Item>
-                            <View style={{ width: '90%' }}>
-                                <Button onPress={() => {
-                                    this.setState({
-                                        showDatePicker: true
-                                    })
-                                }} transparent><Text style={{ fontWeight: 'bold', }}>{"Ends: "}</Text><Text>{this.state.vote && this.state.vote.period ?
-                                    moment(this.state.vote.period).format(format) :
-                                    'select voting end date'}</Text></Button>
-                            </View>{/*<View><Icon
+                                    <Item>
+                                        <View style={{ width: '90%' }}>
+                                            <Button onPress={() => {
+                                                this.setState({
+                                                    showDatePicker: true
+                                                })
+                                            }} transparent><Text style={{ fontWeight: 'bold', }}>{"Ends: "}</Text><Text>{this.state.vote && this.state.vote.period ?
+                                                moment(this.state.vote.period).format(format) :
+                                                'select voting end date'}</Text></Button>
+                                        </View>{/*<View><Icon
                                     type={"EvilIcons"} name={"close"} onPress={() => {
                                         this.setState({
                                             vote: { ...this.state.vote, period: null }
                                         })
                                     }} style={{ color: 'red' }}></Icon></View>*/}</Item>
-                        {this.state.showDatePicker ? <DateTimePicker
-                            value={this.state.vote && this.state.period ? parseFloat(moment(this.state.vote.period).format('x')) : new Date()}
-                            is24Hour={true}
-                            mode={"default"}
-                            onChange={(e, date) => this.changeEndTime(e, date)}
-                        >
-                        </DateTimePicker> : null}
-                        {this.state.showTimePicker ? <DateTimePicker
-                            display={'clock'} value={this.state.vote && this.state.period ? parseFloat(moment(this.state.vote.period).format('x')) : new Date()} onChange={(e, date) => this.changeTime(e, date)}
-                            mode={"time"} is24Hour={true}></DateTimePicker> : null}
-                        <View style={{ flexDirection: 'column', }}>
-                            <View style={{ flexDirection: 'row', }}>
-                                <Button onPress={() => this.addOptions()} transparent>
-                                    <Text style={{ fontWeight: 'bold', fontStyle: 'italic', }}>{"Options"}</Text>
-                                    <Icon name="pluscircle" type={"AntDesign"}></Icon></Button>
-                            </View>
-                            <View style={{ marginLeft: '2%', }}>
-                                {this.renderOptions()}
-                            </View>
-                        </View>
-                        <View style={{
-                            flexDirection: 'row',
-                            marginTop: '4%',
-                        }}>
-                            <View style={{ width: '80%' }}>
-                            </View>
-                            <View style={{ width: '20%',marginBottom:"10%" }}>
-                                {this.props.update ? <Button onPress={() => this.updateVote()} rounded><Text
-                                    style={{ color: '#FEFFDE', fontWeight: 'bold', }} rounded>{"Update"}</Text></Button> : <Button onPress={() => this.addVote()} rounded><Text
-                                        style={{ color: '#FEFFDE', fontWeight: 'bold', }}>{"Add"}</Text></Button>}
-                            </View>
+                                    {this.state.showDatePicker ? <DateTimePicker
+                                        value={this.state.vote && this.state.period ? parseFloat(moment(this.state.vote.period).format('x')) : new Date()}
+                                        is24Hour={true}
+                                        mode={"default"}
+                                        onChange={(e, date) => this.changeEndTime(e, date)}
+                                    >
+                                    </DateTimePicker> : null}
+                                    {this.state.showTimePicker ? <DateTimePicker
+                                        display={'clock'} value={this.state.vote && this.state.period ? parseFloat(moment(this.state.vote.period).format('x')) : new Date()} onChange={(e, date) => this.changeTime(e, date)}
+                                        mode={"time"} is24Hour={true}></DateTimePicker> : null}
+                                    <View style={{ flexDirection: 'column', }}>
+                                        <View style={{ flexDirection: 'row', }}>
+                                            <Button onPress={() => this.addOptions()} transparent>
+                                                <Text style={{ fontWeight: 'bold', fontStyle: 'italic', }}>{"Options"}</Text>
+                                                <Icon name="pluscircle" type={"AntDesign"}></Icon></Button>
+                                        </View>
+                                        <View style={{ marginLeft: '2%', }}>
+                                            {this.renderOptions()}
+                                        </View>
+                                    </View>
+                                    <View style={{
+                                        flexDirection: 'row',
+                                        marginTop: '4%',
+                                    }}>
+                                        <View style={{ width: '80%' }}>
+                                        </View>
+                                        <View style={{ width: '20%', marginBottom: "10%" }}>
+                                            <CreateButton
+                                                title={this.props.update ? "update" : "add"}
+                                                action={() => this.props.update ? this.updateVote() : this.addVote()}
+                                            ></CreateButton>
+                                        </View>
+                                    </View>
+                                </View>
+                            </ScrollView>
                         </View>
                     </View>
                 </ScrollView>
-            </View>
-          </View>
-          </ScrollView>
-        </KeyboardAvoidingView>)
-        }
+            </KeyboardAvoidingView>)
+    }
 
 }

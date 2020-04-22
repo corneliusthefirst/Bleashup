@@ -239,8 +239,8 @@ export default {
     // Tab
     tabDefaultBg: platform === "ios" ? ColorList.headerBackground : ColorList.headerBackground,
     topTabBarTextColor: platform === "ios" ? ColorList.iconInactive : ColorList.iconInactive,
-    topTabBarActiveTextColor: platform === "ios" ? ColorList.headerIcon : ColorList.headerIcon,
-    topTabBarBorderColor: platform === "ios" ? ColorList.headerIcon : ColorList.headerIcon,
+    topTabBarActiveTextColor: platform === "ios" ? ColorList.iconActive : ColorList.iconActive,
+    topTabBarBorderColor: platform === "ios" ? ColorList.iconActive : ColorList.iconActive,
     topTabBarActiveBorderColor: platform === "ios" ? "#1FABAB" : "#1FABAB",
 
     // Tabs

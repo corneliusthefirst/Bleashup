@@ -23,6 +23,7 @@ import Menu, { MenuDivider, MenuItem } from "react-native-material-menu";
 import bleashupHeaderStyle from "../services/bleashupHeaderStyle";
 import BleashupModal from "./mainComponents/BleashupModal";
 import ColorList from "./colorList";
+import CreationHeader from "./myscreens/event/createEvent/components/CreationHeader";
 
 export default class SelectableContactList extends BleashupModal {
     initialize() {
@@ -66,52 +67,36 @@ export default class SelectableContactList extends BleashupModal {
         return item ? item.phone : null;
     };
     delay = 0;
+    swipeToClose=false
     modalBody() {
         return (
             <View>
-                <View style={{ height: ColorList.headerHeight }}>
-                    <View
-                        style={{
-                            flexDirection: "row",
-                            ...bleashupHeaderStyle,
-                            padding: "2%",
-                        }}
-                    >
-                        <View style={{ width: "85%" }}>
+                <CreationHeader
+                    title={this.props.title || "select members"}
+                    back={this.onClosedModal.bind(this)}
+                    extra={<View style={{ marginBottom: 'auto', marginTop: 'auto', }}>
+                        <TouchableOpacity
+                            onPress={() =>
+                                requestAnimationFrame(() => {
+                                    this.props.removing
+                                        ? this.props.saveRemoved(this.state.checked)
+                                        : this.props.adding
+                                            ? this.props.addMembers(this.state.checked)
+                                            : this.props.takecheckedResult(this.state.checked);
+                                    this.setState({ checked: [] });
+                                    this.props.close();
+                                })
+                            }
+                        >
                             <Text
-                                style={{
-                                    fontWeight: "bold",
-                                    fontStyle: "italic",
-                                    fontSize: 20,
-                                }}
+                                style={{ fontWeight: "bold", color: "#1FABAB", fontSize: 22 }}
                             >
-                                {this.props.title}
+                                {"OK"}
                             </Text>
-                        </View>
-                        <View>
-                            <TouchableOpacity
-                                onPress={() =>
-                                    requestAnimationFrame(() => {
-                                        this.props.removing
-                                            ? this.props.saveRemoved(this.state.checked)
-                                            : this.props.adding
-                                                ? this.props.addMembers(this.state.checked)
-                                                : this.props.takecheckedResult(this.state.checked);
-                                        this.setState({ checked: [] });
-                                        this.props.close();
-                                    })
-                                }
-                            >
-                                <Text
-                                    style={{ fontWeight: "bold", color: "#1FABAB", fontSize: 22 }}
-                                >
-                                    {"OK"}
-                                </Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                </View>
-                <View style={{ height: "91%" }}>
+                        </TouchableOpacity>
+                    </View>}
+                ></CreationHeader>
+                <View style={{ height: ColorList.containerHeight - (ColorList.headerHeight + 20) }}>
                     {this.state.members.length <= 0 ? (
                         <Text
                             style={{

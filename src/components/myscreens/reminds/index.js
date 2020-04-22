@@ -170,7 +170,7 @@ export default class Reminds extends Component {
     } else {
       Toast.show({ text: 'App is Busy' })
     }
-  } 
+  }
   refreshReminds() {
     console.warn('receiving updated remind message')
     stores.Reminds.loadReminds(this.props.event_id).then((Reminds) => {
@@ -346,7 +346,7 @@ export default class Reminds extends Component {
     let members = item.members.map(ele => ele.phone)
     this.setState({
       confirmed: this.flatterarray(confirmed, [], 0),
-      members: uniqBy(members,'phone'),
+      members: uniqBy(members, 'phone'),
       actualInterval: thisInterval,
       isReportModalOpened: true,
       currentTask: item,
@@ -412,34 +412,51 @@ export default class Reminds extends Component {
                   <TasksCard
                     showMedia={(url) => {
                       if (url.video) {
-                        console.warn("showing video")
+                        console.warn("showing video");
                         this.setState({
                           showVideo: true,
-                          video: url.video
-                        })
+                          video: url.video,
+                        });
                       } else {
                         this.setState({
                           showPhoto: true,
-                          photo: url.photo
-                        })
+                          photo: url.photo,
+                        });
                       }
                     }}
                     isLast={index === this.state.eventRemindData.length - 1}
                     phone={stores.LoginStore.user.phone}
-                    mention={itemer => {
+                    mention={(itemer) => {
                       this.props.mention({
                         id: itemer.id,
                         replyer_phone: itemer.creator.phone,
-                        video: itemer.remind_url.video ? true : false,
-                        audio: !itemer.remind_url.video && itemer.remind_url.audio ? true : false,
-                        photo: !itemer.remind_url.video && itemer.remind_url.photo ? true : false,
-                        sourcer: itemer.remind_url.video ?
-                          itemer.remind_url.photo : itemer.remind_url.photo ?
-                            itemer.remind_url.photo : itemer.remind_url.audio ?
-                              itemer.remind_url.audio : null,
-                        type_extern: 'Reminds ',
-                        title: itemer.title + ': \n' + itemer.description
-                      })
+                        video:
+                          itemer.remind_url && itemer.remind_url.video
+                            ? true
+                            : false,
+                        audio:
+                          itemer.remind_url &&
+                            !itemer.remind_url.video &&
+                            itemer.remind_url.audio
+                            ? true
+                            : false,
+                        photo:
+                          itemer.remind_url &&
+                            !itemer.remind_url.video &&
+                            itemer.remind_url.photo
+                            ? true
+                            : false,
+                        sourcer:
+                          itemer.remind_url && itemer.remind_url.video
+                            ? itemer.remind_url.photo
+                            : itemer.remind_url && itemer.remind_url.photo
+                              ? itemer.remind_url.photo
+                              : itemer.remind_url && itemer.remind_url.audio
+                                ? itemer.remind_url.audio
+                                : null,
+                        type_extern: "Reminds ",
+                        title: itemer.title + ": \n" + itemer.description,
+                      });
                     }}
                     master={this.props.master}
                     markAsDone={(item) => this.markAsDone(item)}
@@ -447,14 +464,15 @@ export default class Reminds extends Component {
                     calendar_id={this.props.event.calendar_id}
                     delay={this.delay}
                     addMembers={(currentMembers, item) =>
-                      this.addMembers(currentMembers, item)}
+                      this.addMembers(currentMembers, item)
+                    }
                     showMembers={(members) => {
                       this.setState({
                         contacts: members,
                         isContactsModalOpened: true,
-                        title: 'Concernees',
-                        complexReport: false
-                      })
+                        title: "Concernees",
+                        complexReport: false,
+                      });
                     }}
                     showReport={this.showReport}
                     removeMembers={(currentMembers, item) => {
@@ -465,7 +483,7 @@ export default class Reminds extends Component {
                         adding: false,
                         removing: true,
                         notcheckAll: true,
-                      })
+                      });
                     }}
                     updateRemind={(item) => this.updateRemind(item)}
                     update={(data) => this.updateRemind(data)}
@@ -473,10 +491,11 @@ export default class Reminds extends Component {
                       this.setState({
                         currentTask: item,
                         isAreYouModalOpened: true,
-                      })
+                      });
                     }}
-                    item={item} key={index}>
-                  </TasksCard>
+                    item={item}
+                    key={index}
+                  ></TasksCard>
                 </View>
               );
             }}

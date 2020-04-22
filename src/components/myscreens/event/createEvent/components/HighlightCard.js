@@ -9,7 +9,6 @@ import { View, TouchableOpacity, Dimensions, Text, } from 'react-native';
 import Modal from 'react-native-modalbox';
 import autobind from "autobind-decorator";
 import Swipeout from 'react-native-swipeout';
-//import HighlightCardDetail from "./HighlightCardDetail";
 import moment from "moment"
 import { isEqual } from "lodash";
 //import EventHighlights from "./EventHighlights"
@@ -82,9 +81,9 @@ export default class HighlightCard extends Component {
             </View>
           </View>
          <MedaiView
-
+            width={ColorList.containerWidth*.875}
             height={this.props.height}
-            showItem={this.props.showItem}
+            showItem={() => this.props.showItem(this.props.item)}
             url={this.props.item.url}
          >
          </MedaiView>
