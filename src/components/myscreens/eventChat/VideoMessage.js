@@ -28,7 +28,6 @@ export default class VideoMessage extends Component {
     }
     transparent = "rgba(52, 52, 52, 0.3)";
     componentDidMount() {
-        console.warn(this.props.message.received, this.props.message.total, "--")
         let downloadState = (this.props.message.received / this.props.message.total) * 100
         this.setState({
             text: this.props.message.text,

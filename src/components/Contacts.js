@@ -9,6 +9,8 @@ import BleashupFlatList from './BleashupFlatList';
 import moment from "moment";
 import dateDisplayer from '../services/dates_displayer';
 import bleashupHeaderStyle from "../services/bleashupHeaderStyle";
+import CreationHeader from "./myscreens/event/createEvent/components/CreationHeader";
+import ColorList from './colorList';
 export default class Contacts extends Component {
 
     constructor(props) {
@@ -43,15 +45,12 @@ export default class Contacts extends Component {
     _keyExtractor = (item, index) => item.phone
     render() {
         return <View>
-            <View style={{width:'100%',height:44}}>
-                <View style={{ ...bleashupHeaderStyle, padding: '2%', }}>
-                    <Title style={{fontWeight: 'bold',}}>
-                        {this.props.title}
-                    </Title>
-                </View>
-            </View>
+        <CreationHeader
+        back={this.props.close}
+        title={this.props.title}
+        ></CreationHeader>
             {this.state.isloaded ? (
-                <View>
+                <View style={{height:ColorList.containerHeight - (ColorList.headerHeight + 20)}}>
                     {this.state.isEmpty ? <Text style={{
                         margin: '10%',
                     }} note>{"sory! there's no connction to the server"}</Text> : <BleashupFlatList
