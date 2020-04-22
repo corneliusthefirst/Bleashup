@@ -355,7 +355,8 @@ export default class EventHighlights extends BleashupModal {
       ).then(() => { });
     }
   }
-
+  
+  swipeToClose=false
   cleanAudio() {
     if (!this.props.updateState) {
       stores.Highlights.updateHighlightUrl({
@@ -484,6 +485,7 @@ export default class EventHighlights extends BleashupModal {
             </CreateTextInput>
               <View style={{ marginTop: 5, marginBottom: 5, marginLeft: '3%', }}>
                 <PickersUpload
+                notAudio
                   creating={!this.props.updateState}
                   currentURL={this.state.currentHighlight.url}
                   id={this.state.currentHighlight.id}

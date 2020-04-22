@@ -17,6 +17,7 @@ import CreationHeader from '../event/createEvent/components/CreationHeader';
 import ColorList from '../../colorList';
 import PickersUpload from '../event/createEvent/components/PickerUpload';
 import VoteOptionPreviwer from './VoteOptionMediaPreviewer';
+import CreateButton from '../event/createEvent/components/ActionButton';
 
 let { height, width } = Dimensions.get('window');
 export default class VoteCreation extends BleashupModal {
@@ -160,20 +161,20 @@ export default class VoteCreation extends BleashupModal {
                 marginTop: 'auto',
                 flexDirection: 'row',
             }}>
-                <PickersUpload  currentURL={(this.state.vote && this.state.vote.option[index].option_url) || {}} 
-                saveMedia={(option_url) => {
-                    this.setOptionURL(option_url, index)
-                }} creating notAudio>
+                <PickersUpload currentURL={(this.state.vote && this.state.vote.option[index].option_url) || {}}
+                    saveMedia={(option_url) => {
+                        this.setOptionURL(option_url, index)
+                    }} creating notAudio>
                 </PickersUpload>
-               <VoteOptionPreviwer 
-               trashable
-                optionName={this.state.vote && this.state.vote.option[index].name}
-               cleanMedia={() => {
-                   this.setOptionURL(null, index)
-               }}
-               url={this.state.vote && this.state.vote.option[index].option_url}></VoteOptionPreviwer>
+                <VoteOptionPreviwer
+                    trashable
+                    optionName={this.state.vote && this.state.vote.option[index].name}
+                    cleanMedia={() => {
+                        this.setOptionURL(null, index)
+                    }}
+                    url={this.state.vote && this.state.vote.option[index].option_url}></VoteOptionPreviwer>
             </View>
-            <View style={{width:'15%',justifyContent: 'center',}} >
+            <View style={{ width: '15%', justifyContent: 'center', }} >
                 <Icon style={{ alignSelf: 'flex-end', }} onPress={() => this.removeNote(index)} name='minus'
                     type='EvilIcons'>
                 </Icon></View>
@@ -272,7 +273,7 @@ export default class VoteCreation extends BleashupModal {
     }
     entry = 'top'
     state = {}
-    swipeToClose=false
+    swipeToClose = false
     modalBody() {
         return (
             <KeyboardAvoidingView
@@ -387,9 +388,10 @@ export default class VoteCreation extends BleashupModal {
                                         <View style={{ width: '80%' }}>
                                         </View>
                                         <View style={{ width: '20%', marginBottom: "10%" }}>
-                                            {this.props.update ? <Button onPress={() => this.updateVote()} rounded><Text
-                                                style={{ color: '#FEFFDE', fontWeight: 'bold', }} rounded>{"Update"}</Text></Button> : <Button onPress={() => this.addVote()} rounded><Text
-                                                    style={{ color: '#FEFFDE', fontWeight: 'bold', }}>{"Add"}</Text></Button>}
+                                            <CreateButton
+                                                title={this.props.update ? "update" : "add"}
+                                                action={() => this.props.update ? this.updateVote() : this.addVote()}
+                                            ></CreateButton>
                                         </View>
                                     </View>
                                 </View>

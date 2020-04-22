@@ -7,7 +7,10 @@ import BarIndicat from '../../BarIndicat';
 import { BarIndicator } from "react-native-indicators"
 import converToHMS from './convertToHMS';
 import { Text, Icon, Right } from "native-base"
-
+import Pickers from '../../../services/Picker';
+import FileExachange from '../../../services/FileExchange';
+import rnFetchBlob from 'rn-fetch-blob';
+const AppDir = rnFetchBlob.fs.dirs.SDCardDir + '/Bleashup'
 
 export default class SimpleAudioPlayer extends Component {
     constructor(props) {
@@ -57,42 +60,63 @@ export default class SimpleAudioPlayer extends Component {
         return new Promise((resolve, reject) => {
             this.player ? this.player.stop() : null
             this.player = new Sound(source, '', (error) => {
-                console.warn(error)
+                if (error) this.error = true
                 resolve(error)
             })
         })
     }
+    openFile(url) {
+        Pickers.openFile(url)
+    }
+    
     play(url) {
-        this.setState({
-            playing: true
-        })
-        if (url.duration) {
-            let refreshID = setInterval(() => {
-                this.player.getCurrentTime(time => {
-                    if (this.previousTime == time) clearInterval(refreshID)
-                    else {
-                        this.previousTime = time
-                        this.setState({
-                            currentPosition: time / url.duration,
-                            currentTime: time
-                        })
-                    }
-                })
-            }, 1000)
-        }
-        this.player.play((success) => {
-            console.warn(success, 'ppppp')
-            if (success) {
-                this.player.getCurrentTime((seconds) => {
-                    url.duration = Math.floor(seconds)
-                    this.setState({
-                        playing: false,
-                        currentPosition: seconds / url.duration,
-                        currentTime: seconds
+       let file = this.props.url.audio.split('/').pop()
+       let file_name = '/Others/' + this.file
+       let full_path = AppDir + this.file_name
+        if (this.error) {
+            rnFetchBlob.fs.exists(full_path).then(stat => {
+                if (stat) {
+                    this.openFile(full_path)
+                } else {
+                    let exch = new FileExachange(url.audio, file_name, 0, 0, null, (dir, total, received) => {
+                        this.openFile(dir)
+                   })
+                    exch.download(0, 0)
+                }
+            })
+
+        } else {
+            this.setState({
+                playing: true
+            })
+            if (url.duration) {
+                let refreshID = setInterval(() => {
+                    this.player.getCurrentTime(time => {
+                        if (this.previousTime == time) clearInterval(refreshID)
+                        else {
+                            this.previousTime = time
+                            this.setState({
+                                currentPosition: time / url.duration,
+                                currentTime: time
+                            })
+                        }
                     })
-                })
+                }, 1000)
             }
-        })
+            this.player.play((success) => {
+                console.warn(success, 'ppppp')
+                if (success) {
+                    this.player.getCurrentTime((seconds) => {
+                        url.duration = Math.floor(seconds)
+                        this.setState({
+                            playing: false,
+                            currentPosition: seconds / url.duration,
+                            currentTime: seconds
+                        })
+                    })
+                }
+            })
+        }
     }
     plays() {
         this.play(this.props.url)
@@ -126,7 +150,7 @@ export default class SimpleAudioPlayer extends Component {
                         </View>
                     </View> : <View style={{ textStyleD }}>{/*!this.state.playing ? <BarIndicat animating={false}
                     color={"#1FABAB"} size={30} count={20} ></BarIndicat> : <BarIndicator color={"#1FABAB"} size={30} count={20}></BarIndicator>*/}</View>}
-                    <View style={{ margin: '4%'}}>
+                    <View style={{ margin: '4%' }}>
                         {!this.state.playing ? <TouchableOpacity
                             onPress={() => requestAnimationFrame(() => this.plays())}>
                             <Icon type="FontAwesome5" style={{ color: "#0A4E52", fontSize: 20 }} name="play">

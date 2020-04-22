@@ -11,6 +11,7 @@ export default class RemindMembers extends BleashupModal {
         })
         this.props.onClosed()
     }
+    swipeToClose=false
     modalBody() {
         return (
             <View>

@@ -499,6 +499,7 @@ export default class TasksCreation extends BleashupModal {
   isEvent() {
     return this.calculateType(this.state.currentRemind) && this.state.type === 'event'
   }
+  swipeToClose=false
   modalBody() {
     let defaultDate = parseInt(moment(this.state.currentRemind.period).format("x"))
     return !this.state.mounted ? null : (
