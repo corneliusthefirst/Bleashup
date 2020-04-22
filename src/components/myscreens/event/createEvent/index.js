@@ -127,7 +127,7 @@ export default class CreateEventView extends Component {
 
   onChangedTitle = (value) => { 
     this.state.currentEvent.title = value;
-    this.setState({title:value,currentEvent: this.state.currentEvent});
+    this.setState({title:value,currentEvent:this.state.currentEvent});
     stores.Events.updateTitle("newEventId",value,false).then(()=>{});
     
   }

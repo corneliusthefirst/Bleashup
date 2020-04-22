@@ -22,7 +22,7 @@ class colorlist {
     headerText = "black"
     headerBlackText = "black"
     headerBackground = "white"
-    headerHeight = 50
+    headerHeight = 55
     headerFontweight = "bold"
     headerFontSize = 20
 

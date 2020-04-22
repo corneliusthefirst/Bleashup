@@ -8,6 +8,8 @@ import shadower from "../../../shadower";
 import stores from '../../../../stores';
 import emitter from '../../../../services/eventEmiter';
 import GState from '../../../../stores/globalState';
+import buttoner from "../../../../services/buttoner";
+import ColorList from '../../../colorList';
 
 export default class PhotoView extends Component {
     constructor(props) {
@@ -84,21 +86,24 @@ export default class PhotoView extends Component {
     }
     render() {
         return (<View>
-            <View style={{ ...this.props.style }}>
+
+                
                 <TouchableOpacity style={{ ...shadower() }} onPress={() => requestAnimationFrame(() => {
                     this.props.video ? this.playVideo(this.state.video) : this.showPhoto(this.state.image)
                 })}>
+                  <View style={{ ...this.props.style,alignItems:"center",justifyContent:"center", height: this.props.height ? this.props.height : 150 }}>
+                    <View style={{flex:1}}>
                     {!this.state.image ? <Thumbnail style={{
                         //...shadower(),
                         height: this.props.height ? this.props.height : 150,
-                        width: this.props.width ? this.props.width : "100%",
+                        width: this.props.width ? this.props.width : "100%",alignSelf: 'center',
                         borderRadius: this.props.borderRadius ? this.props.borderRadius : 0
                     }} square source={require('../../../../../assets/default_event_image.jpeg')}></Thumbnail> :
                         <CacheImages thumbnails square source={{ uri: this.state.image }}
                             //parmenent={false}
                             style={{
                                 //...shadower(),
-                                height: this.props.height ? this.props.height : 150,justifyContent: 'center',
+                                height: this.props.height ? this.props.height : 150,
                                 width: this.props.width ? this.props.width : "100%",alignSelf: 'center',
                                 borderRadius: this.props.borderRadius ? this.props.borderRadius : 0
                             }}
@@ -106,7 +111,40 @@ export default class PhotoView extends Component {
                             width={this.props.width}
                         ></CacheImages>
                     }
-                    {this.state.video || this.state.audio ? <View 
+                      </View>
+                   
+                  
+                    {this.state.video || this.state.audio ?
+                            <View
+                                style={{
+                                  ...buttoner,
+                                  position:"absolute",
+                                }}
+                              >
+                                  {this.state.video ?
+                                      <Icon onPress={() => {
+                                        this.showPhoto(this.state.image)
+                                      }} name="ios-play" style={{marginLeft:12,
+                                          fontSize: 42, color: ColorList.bodyBackground
+                                      }} type="Ionicons" />
+                                       :
+                                        <Icon onPress={() => {
+                                         this.showPhoto(this.state.image)
+                                      }} name= "headset" style={{marginRight:5,
+                                          fontSize: 36, color: ColorList.bodyBackground
+                                      }} type="MaterialIcons" />
+                                    }
+                  
+                              </View> : null}
+
+                          </View>
+                </TouchableOpacity>
+
+        </View>)
+    }
+}
+
+/**                    <View 
                         style={{ width: '100%', position: 'absolute',}}>
                         <Icon onPress={() => {
                             this.showPhoto(this.state.image)
@@ -115,9 +153,4 @@ export default class PhotoView extends Component {
                             marginTop: '18%', alignSelf: 'center',
                         }} type={this.state.video ? "EvilIcons" : "MaterialIcons"}>
                         </Icon>
-                        </View> : null}
-                </TouchableOpacity>
-            </View>
-        </View>)
-    }
-}
+                        </View> */

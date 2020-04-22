@@ -50,7 +50,7 @@ openDetails=(item) => {
         
     <Container style={{height:"100%",width:colorList.containerWidth,backgroundColor:colorList.bodyBackground,alignItems:"center"}}>
        
-       <View style={{height:65,width:"100%",alignItems:"center",backgroundColor:colorList.headerBackground}}>
+       <View style={{height:colorList.headerHeight,width:"100%",alignItems:"center",backgroundColor:colorList.headerBackground}}>
         <View style={{flexDirection:"row",backgroundColor:colorList.bodyBackground,height:colorList.headerHeight,width:"95%",borderColor:"gray",borderWidth:1,justifyContent:"center",marginTop:"2%",alignItems:"center",borderRadius:15}}>
           
               <Icon onPress={() => {this.props.navigation.goBack()}}
