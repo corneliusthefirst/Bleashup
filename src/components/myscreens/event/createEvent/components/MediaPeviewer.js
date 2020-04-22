@@ -6,6 +6,7 @@ import testForURL from "../../../../../services/testForURL";
 import PhotoViewer from "../../PhotoViewer";
 import VideoViewer from "../../../highlights_details/VideoModal";
 import buttoner from "../../../../../services/buttoner";
+import ColorList from '../../../../colorList';
 
 export default class MediaPreviewer extends Component {
   constructor(props) {
@@ -81,30 +82,30 @@ export default class MediaPreviewer extends Component {
           {this.props.url && this.props.url.video ? (
             <View
               style={{
-                position: "absolute",
-                marginTop: "15%",
-                marginLeft: "36%",
-                opacity: 0.9,
+                ...buttoner,
+                alignSelf:"center",
+                position:"absolute",
               }}
             >
-              <Icon
-                onPress={() => {
-                  this.choseAction(this.props.url);
-                }}
-                name={this.props.url.video ? "play" : "headset"}
-                style={{
-                  backgroundColor: "black",
-                  opacity: 0.5,
-                  borderRadius: 30,
-                  fontSize: 50,
-                  color: this.props.url.audio ? "yellow" : "#FEFFDE",
-                  alignSelf: "center",
-                }}
-                type={this.props.url.video ? "EvilIcons" : "MaterialIcons"}
-              ></Icon>
+                   {this.props.url.video ?
+                    <Icon onPress={() => {
+                      this.choseAction(this.props.url);
+                    }} name="ios-play" style={{
+                        fontSize: 43, color: ColorList.bodyBackground
+                    }} type="Ionicons" />
+                     :
+                 
+                      <Icon onPress={() => {
+                        this.choseAction(this.props.url);
+                    }} name= "headset" style={{
+                        fontSize: 40, color: ColorList.bodyBackground
+                    }} type="MaterialIcons" />
+                    }
+
             </View>
           ) : null}
         </View>
+
         {this.props.url && (this.props.url.video || this.props.url.photo) ? (
           <View
             style={{
@@ -127,6 +128,7 @@ export default class MediaPreviewer extends Component {
             ></Icon>
           </View>
         ) : null}
+
         {this.state.enlargeImage && this.props.url && this.props.url.photo ? (
           <PhotoViewer
             open={this.state.enlargeImage}
@@ -153,3 +155,21 @@ export default class MediaPreviewer extends Component {
     );
   }
 }
+
+
+/**              <Icon
+                onPress={() => {
+                  
+                }}
+                name={this.props.url.video ? "play" : "headset"}
+                style={{
+                  backgroundColor: "black",
+                  opacity: 0.5,
+                  borderRadius: 30,
+                  fontSize: 50,
+                  color: this.props.url.audio ? "yellow" : "#FEFFDE",
+                  alignSelf: "center",
+                }}
+                type={this.props.url.video ? "EvilIcons" : "MaterialIcons"}
+              ></Icon>
+ */
