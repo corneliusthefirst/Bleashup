@@ -245,7 +245,7 @@ resetPhoto = () => {
             <View style={{ height:250, flexDirection: 'column',justifyContent:'center',alignItem:'center'}}>
                 <TouchableOpacity onPress={() => this.state.photo && testForURL(this.state.photo)?this.setState({ enlargeImage: true }):null} >
                     {this.state.photo && testForURL(this.state.photo)?<CacheImages thumbnails square  source={{uri:this.state.photo}}
-                     style={{alignSelf:'center',height: "90%",width: "90%", borderRadius:10
+                     style={{alignSelf:'center',height: "90%",width: "83%", borderRadius:10
               }} /> : <Thumbnail source={this.state.photo ? { uri: this.state.photo } : this.state.DefaultPhoto}
                 style={{
                   alignSelf: 'center', height: "90%", width: "90%", borderRadius: 5
