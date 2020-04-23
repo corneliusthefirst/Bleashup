@@ -20,6 +20,7 @@ import PostMenu from "./PostMenu";
 import ColorList from '../../../../colorList';
 import buttoner from "../../../../../services/buttoner";
 import MedaiView from "./MediaView";
+import Social from "./Social";
 
 
 let { height, width } = Dimensions.get('window')
@@ -90,7 +91,10 @@ export default class HighlightCard extends Component {
           <View style={{ height: this.containsMedia() ? (height / 18) : (height / 7), margin: '.5%', }}>
             <Text ellipsizeMode='tail' style={{ fontSize: 12, }} numberOfLines={this.containsMedia() ? 2 : 10}>{this.props.description ? this.props.description : null}</Text>
           </View>
-        </View> : <Card style={{ width: ColorList.containerWidth * .98, height: "100%" }}></Card>
+          <View style={{width:'90%'}}>
+          <Social id={this.props.item.id}></Social>
+          </View>
+        </View > : <Card style={{ width: ColorList.containerWidth * .98, height: "100%" }}></Card>
 
     )
   }

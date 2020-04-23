@@ -45,11 +45,10 @@ openDetails=(event) => {
 }
 
 navigateToEventDetails = (item) => {
-  event = find(stores.Events.events , { id:item.id});
-  stores.Events.isParticipant(event.id, stores.Session.SessionStore.phone).then(status => {
+  let event = find(stores.Events.events , { id:item.id});
+  stores.Events.isParticipant(item.id, stores.Session.SessionStore.phone).then(status => {
       if (status) {
-          console.warn("here",event);
-          this.props.navigation.navigate("Event", {
+          this.props.navigation.push("Event", {
               Event: event,
               tab: "EventDetails"
           });
