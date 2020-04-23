@@ -134,7 +134,7 @@ export default class SimpleAudioPlayer extends Component {
         }
         return (
             <View>
-                <View style={{ disply: 'flex', flexDirection: 'row', minWidth: 283, maxWidth: "86%", minHeight: 50, }}>
+                <View style={{ disply: 'flex', flexDirection: 'row', minWidth: 283, maxWidth: "90%", minHeight: 50, }}>
                     {this.props.url.duration ? <View style={textStyle}>
                         <View><Slider value={isNaN(this.state.currentPosition) ? 0 : this.state.currentPosition} onValueChange={(value) => {
                             this.player.setCurrentTime(value * this.props.url.duration)

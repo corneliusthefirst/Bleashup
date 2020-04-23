@@ -49,7 +49,7 @@ export default class HighlightContent extends Component {
                                     this.props.showVideo(this.props.highlight.url.video) :
                                     this.props.showPhoto(this.props.highlight.url.photo))}>
                                 <View style={{
-                                    borderRadius: 10, alignSelf: 'center', margin: '4%', ...shadower()
+                                    borderRadius: 10, alignSelf: 'center', margin: '4%', justifyContent:"center",alignItems:"center"
                                 }}>
                                     {this.props.highlight.url.photo && testForURL(this.props.highlight.url.photo) ? <CacheImages thumbnails square style={{
                                         width: '97%',
@@ -58,17 +58,17 @@ export default class HighlightContent extends Component {
                                     }} source={{ uri: this.props.highlight.url.photo }} width={360}>
                                     </CacheImages> : null}
                                     {this.props.highlight.url.video && testForURL(this.props.highlight.url.video)  ?
-                                        <View style={{ position: 'absolute', marginTop: "25%", marginLeft: '43%', }}>
+                                        <View style={{ position: 'absolute',...buttoner }}>
                                                <Icon onPress={() => {
                                                     this.props.showVideo(this.props.highlight.url.video)
-                                                }} style={{ fontSize: 50,color:ColorList.headerBackground,marginRight: '10%',
-                                            }} type={'EvilIcons'} name={'play'}></Icon>
+                                                }} style={{ fontSize: 43,color:ColorList.headerBackground
+                                            }} type={'Ionicons'} name={'ios-play'}></Icon>
                                         </View> : null
                                     }
                                 </View>
                             </TouchableWithoutFeedback> : <TouchableOpacity onPress={() => requestAnimationFrame(() => this.props.highlight.url.video ? this.props.showVideo(this.props.highlight.url.video) : this.props.showPhoto(this.props.highlight.url.photo))}>
                                     <View style={{
-                                        borderRadius: 10, alignSelf: 'center', margin: '4%', ...shadower()
+                                        borderRadius: 10, alignSelf: 'center', margin: '4%',justifyContent:"center",alignItems:"center"
                                     }}>
                                         <CacheImages thumbnails square style={{
                                             width: '97%',
@@ -76,14 +76,13 @@ export default class HighlightContent extends Component {
                                             borderRadius: 8,
                                         }} source={{ uri: this.props.highlight.url.photo ? this.props.highlight.url.photo : this.props.highlight.url.video }} width={360}></CacheImages>
                                         {this.props.highlight.url.video ?
-                                            <View style={{ position: 'absolute', marginTop: "25%", marginLeft: '43%', }}>
-                                                <Button onPress={() => {
+                                            <View style={{ position: 'absolute',...buttoner  }}>
+                                                    <Icon style={{ fontSize: 43,color:ColorList.bodyBackground }} type="Ionicons" name="ios-play" onPress={() => {
                                                     this.props.highlight.url.video ? this.props.showVideo(this.props.highlight.url.video) : this.props.showPhoto(this.props.highlight.url.photo)
-                                                }} transparent>
-                                                    <Icon style={{ fontSize: 50,color:ColorList.headerBackground }} type={'EvilIcons'} name={'play'}></Icon>
-                                                </Button>
-                                            </View> : null
-                                        }
+                                                }}></Icon>
+                                            </View> : 
+                                            null}
+
                                     </View>
                                 </TouchableOpacity> : null
                         }
