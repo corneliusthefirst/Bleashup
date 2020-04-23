@@ -34,6 +34,7 @@ export default class BleashupModal extends PureComponent {
     }
     isOpened = false
     entry = 'bottom'
+
     render() {
         return (
             <Modal

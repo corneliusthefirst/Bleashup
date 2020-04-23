@@ -249,18 +249,21 @@ export default class EventDetailView extends Component {
 
               </View>
             </View>
-            <View style={{height:ColorList.headerHeight,flexDirection:"row",alignItems:"center",justifyContent:"space-between",width:"100%"}}>
 
-            <View style={{height:35,width:35,borderRadius:25,borderColor:ColorList.bodyIcon,borderWidth:1,alignItems:"center",justifyContent:"center",marginLeft:"2%",backgroundColor:"salmon"}}>
+            <View style={{height:ColorList.headerHeight,flexDirection:"row",alignItems:"center",justifyContent:"flex-end",width:"100%",paddingRight:"3%"}}>
+              
+               <View style={{height:35,width:35,borderRadius:25,borderColor:ColorList.bodyIcon,borderWidth:1,alignItems:"center",justifyContent:"center",marginRight:"2%",}}>
                   <Icon onPress={() => requestAnimationFrame(() => this.newHighlight())} type='AntDesign'
                     name="plus" style={{ color: colorList.headerIcon, alignSelf: 'center', }} />
                 </View>
 
-                 <View style={{height:35,width:35,borderRadius:25,borderColor:ColorList.bodyIcon,borderWidth:1,alignItems:"center",justifyContent:"center",marginRight:"2.2%"}}>
+                 <View style={{height:35,width:35,borderRadius:25,borderColor:ColorList.bodyIcon,borderWidth:1,alignItems:"center",justifyContent:"center",marginLeft:"2%"}}>
                      <TouchableOpacity onPress={()=>{this.setState({viewdetail:true})}}>
                      <Text style={{fontSize:26}}>D</Text>
                      </TouchableOpacity>
                  </View>
+
+
             </View>
 
             <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled>

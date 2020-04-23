@@ -12,7 +12,7 @@ export default class QRDisplayer extends Component{
         super(props)
     }
     render(){
-        return <View style={{flexDirection: 'row',}}>
+        return <View style={{flexDirection: 'row',marginBottom:"6%"}}>
             <QRCode
                 size={70}
                 getRef={(c) => (this.svg = c)}

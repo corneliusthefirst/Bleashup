@@ -26,7 +26,7 @@ import ColorList from '../../colorList';
 import BleashupModal from '../../mainComponents/BleashupModal';
 import CreationHeader from "../event/createEvent/components/CreationHeader";
 import CreateButton from "../event/createEvent/components/ActionButton";
-import CreateTextInput from "../event/createEvent/components/CreateTextInput";
+import CreateTextInput from "../event/createEvent/components/CreateTextInput"; 
 import RemindMembers from "./RemindMembers";
 import RemindsTypeMenu from './RemindTypeMenu';
 import PickersUpload from "../event/createEvent/components/PickerUpload";

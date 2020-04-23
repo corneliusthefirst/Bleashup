@@ -36,8 +36,8 @@ export default class Creator extends Component {
                         showCreatorModal: true
                     })
                 })}>
-                    <View style={{width:50,alignItems:"flex-end"}}>
-                    <Icon name={"info-with-circle"} type={"Entypo"} style={{color:'gray',fontSize: 12,}}></Icon>
+                    <View style={{width:40,alignItems:"center"}}>
+                    <Icon name={"info-with-circle"} type={"Entypo"} style={{color:'gray',fontSize: 12}}></Icon>
                     </View>
                  </TouchableOpacity>
                 {this.state.showCreatorModal ? <CreatorModal isOpen={this.state.showCreatorModal} onClosed={() => {
