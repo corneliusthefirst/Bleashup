@@ -210,7 +210,7 @@ export default class CurrentEvents extends Component {
                     }}
                     firstIndex={0}
                     renderPerBatch={this.renderPerbatch}
-                    initialRender={3}
+                    initialRender={6}
                     numberOfItems={this.props.data.length}
                 >
                 </BleashupFlatList>
