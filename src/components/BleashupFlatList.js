@@ -111,7 +111,7 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
                     maxToRenderPerBatch={this.props.renderPerBatch ? this.props.renderPerBatch : this.props.inverted ? 5 : this.state.endReached ? 1 : 3}
                     //updateCellsBatchingPeriod={10}
                     showsHorizontalScrollIndicator={false}
-                    showsVerticalScrollIndicator={true}
+                    showsVerticalScrollIndicator={false}
                     keyExtractor={this.props.keyExtractor}
                     data={this.renderNewData().concat(this.extractData())}
                     renderItem={({ item, index }) => this.props.renderItem(item, index)}

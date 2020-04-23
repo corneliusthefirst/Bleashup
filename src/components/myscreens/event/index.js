@@ -588,6 +588,8 @@ export default class Event extends Component {
     }
   }
   componentDidMount() {
+    //Requester.saveContacts();
+
     if (!this.event.calendared && this.event.period) {
       this.addToCalendar()
     }/* else if (!this.event.configured) {

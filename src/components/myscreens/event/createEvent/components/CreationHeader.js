@@ -20,12 +20,12 @@ export default class CreationHeader extends Component {
                 }}
             >
                 <TouchableOpacity
-                    style={{ width: "20%", marginTop: "auto", marginBottom: "auto" }}
+                    style={{ width: "7%", marginTop: "auto", marginBottom: "auto" }}
                 >
                     <Icon
                         onPress={this.props.back}
-                        type="MaterialCommunityIcons"
-                        name="keyboard-backspace"
+                        type="MaterialIcons"
+                        name="arrow-back"
                         style={{ color: ColorList.headerIcon }}
                     />
                 </TouchableOpacity>

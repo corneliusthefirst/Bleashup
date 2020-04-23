@@ -70,9 +70,12 @@ export default class CreateEventView extends Component {
 
   componentDidMount() {
     stores.Events.readFromStore().then(Events => {
-     /* Events.forEach(element => {
-         if(element.about.title=='g' ){
-          stores.Events.delete(element.id).then(() => {console.warn("deleted")})
+    /* Events.forEach(element => {
+         if(element.about.title=="active1" ){
+          //stores.Events.delete(element.id).then(() => {console.warn("deleted")})
+          element.type = "relation"
+          element.about.title = "relation"
+          stores.Events.addEvent(element).then(() => { console.warn("element added")})
          }
       });*/
       let event = find(Events, { id: "newEventId" });
@@ -231,7 +234,7 @@ resetPhoto = () => {
      <View  style={{ height:colorList.containerHeight/9,alignItems:"center"}}>
         
           <Input  maxLength={40} placeholder='@Activity name' keyboardType='email-address' autoCapitalize="none" returnKeyType='next' inverse last
-           value={this.state.title}  style={{borderBottomWidth:1,borderColor:colorList.bodyIcon,width:"79%",}}    onChangeText={(value) => this.onChangedTitle(value)} />
+           value={this.state.title} autoCapitalize="sentences"  style={{borderBottomWidth:1,borderColor:colorList.bodyIcon,width:"79%",}}    onChangeText={(value) => this.onChangedTitle(value)} />
         
      </View>
 

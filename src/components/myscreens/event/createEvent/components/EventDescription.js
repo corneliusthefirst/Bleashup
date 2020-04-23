@@ -96,42 +96,41 @@ export default class EventDescription extends Component {
                 isOpen={this.props.isOpen}
                 onClosed={() => this.props.onClosed(this.state.description)}
                 style={{
-                    height: height/2-height/22, borderRadius: 15,marginTop:"-3%",
-                    backgroundColor:colorList.bodyBackground,borderColor:'black',borderWidth:1,width: "88%",
+                    height: 290, borderRadius: 25,
+                    backgroundColor:colorList.bodyBackground,borderColor:'black',borderWidth:1,width: "82%",
                 }}
                 coverScreen={true}
                 position={'center'}
                 backButtonClose={true}
-                //backdropPressToClose={false}
                 >
            
-          <View  style={{flex:1,flexDirection:"column"}}>
+          <View  style={{height:"100%",flexDirection:"column"}}>
 
 
-            <View style={{ height: "65%" }}>
+            <View style={{ height: "70%",borderRadius: 25,marginTop:"5%" }}>
               <Textarea containerStyle={{
-                width: "95%", margin: "1%",marginTop:"10%",
-                height: height / 3.6,
-                borderRadius: 10, borderWidth: 1,
+                width: "96%", 
+                height: "100%",
+                borderWidth: 1,borderRadius: 25,
                 borderColor:colorList.bodyText,alignSelf: 'center',
-                backgroundColor: "#f5fffa"
+                backgroundColor: "mintcream"
               }} maxLength={1000}
                style={{
                 margin: 1,
                 textAlignVertical: 'top',  // hack android
-                backgroundColor: "#f5fffa",
-                height: "95%",
-                width: "98%"
+                backgroundColor: "#f5fffa",borderRadius: 25,
               }}
                 placeholder="@activity Description" value={this.state.description} keyboardType="default"
                 onChangeText={(value) => this.onChangedEventDescription(value)} />
 
                </View>
-               <View style={{marginTop:"10%"}}>
-                  <Button style={{ borderRadius: 15, borderWidth: 1, backgroundColor:colorList.bodyBackground, borderColor:colorList.bodyIcon, alignSelf: 'center', width:"95%", justifyContent: "center" }} onPress={() => { this.updateDescription() }}>
-                    <Text style={{ color: "#1FABAB" }}>Update Description</Text>
+
+               <View style={{height:"25%",justifyContent:"center"}}>
+                  <Button style={{ borderRadius: 15, borderWidth: 1, backgroundColor:colorList.bodyBackground, borderColor:colorList.bodyIcon, alignSelf: 'center', width:"90%", justifyContent: "center" }} onPress={() => { this.updateDescription() }}>
+                    <Text style={{ color: colorList.bodyText }}>Update Description</Text>
                   </Button>  
               </View>
+
                </View>
         
           </Modal>

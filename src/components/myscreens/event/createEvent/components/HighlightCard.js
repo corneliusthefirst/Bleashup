@@ -64,9 +64,9 @@ export default class HighlightCard extends Component {
     return (
 
       this.state.mounted ?
-        <View style={{ width: ColorList.containerWidth * .9, ...shadower(1), margin: 3, borderRadius: 3, padding: 5,justifyContent: 'center', }}>
+        <View style={{ width: ColorList.containerWidth*0.95,alignSelf:"center", ...shadower(1), borderRadius: 3, padding: 5,justifyContent: 'center',marginTop:"1%" }}>
           <View style={{ flexDirection: 'row',width:'98%', justifyContent: 'space-between', marginTop: 2, marginBottom: 2, height: height / 30,alignSelf: 'center', }}>
-            <View style={{ maxWidth: '85%' }}>
+            <View style={{ maxWidth: '100%' }}>
               <Title style={{
                 fontSize: 14, color: ColorList.headerBlackText, fontWeight: 'bold', alignSelf: 'flex-start',
               }}>{this.props.item.title ? this.props.item.title : ""}</Title>
@@ -81,7 +81,7 @@ export default class HighlightCard extends Component {
             </View>
           </View>
          <MedaiView
-            width={ColorList.containerWidth*.875}
+            width={ColorList.containerWidth*.950}
             height={this.props.height}
             showItem={() => this.props.showItem(this.props.item)}
             url={this.props.item.url}
@@ -90,7 +90,7 @@ export default class HighlightCard extends Component {
           <View style={{ height: this.containsMedia() ? (height / 18) : (height / 7), margin: '.5%', }}>
             <Text ellipsizeMode='tail' style={{ fontSize: 12, }} numberOfLines={this.containsMedia() ? 2 : 10}>{this.props.description ? this.props.description : null}</Text>
           </View>
-        </View> : <Card style={{ width: ColorList.containerWidth * .9, height: "100%" }}></Card>
+        </View> : <Card style={{ width: ColorList.containerWidth * .98, height: "100%" }}></Card>
 
     )
   }
