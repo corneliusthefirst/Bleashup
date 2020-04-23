@@ -40,10 +40,24 @@ searchFilterFunction = (text)=>{
     })
 }
 
-openDetails=(item) => {
-  event = find(stores.Events.events , { id:item.id});
+openDetails=(event) => {
   this.setState({details:true,event:event});
 }
+
+navigateToEventDetails = (item) => {
+  let event = find(stores.Events.events , { id:item.id});
+  stores.Events.isParticipant(item.id, stores.Session.SessionStore.phone).then(status => {
+      if (status) {
+          this.props.navigation.push("Event", {
+              Event: event,
+              tab: "EventDetails"
+          });
+      } else {
+         this.openDetails(event);
+      }
+  })
+}
+
 
    render(){
        return(
@@ -92,7 +106,7 @@ openDetails=(item) => {
                          </TouchableWithoutFeedback>
                          </View>
      
-                         <TouchableWithoutFeedback style={{width:(4*colorList.containerWidth)/5}} onPress={()=>{this.openDetails(item)}} >
+                         <TouchableWithoutFeedback style={{width:(4*colorList.containerWidth)/5}} onPress={()=>{this.navigateToEventDetails(item)}} >
                          <View style={{width:(4*colorList.containerWidth)/5,flexDirection:"row"}}>
                          <View style={{flexDirection:"column",width:"76%"}}>
                                 <Title style={{alignSelf:"flex-start",marginLeft:2,fontSize:14}}>{item.name}</Title>
@@ -112,7 +126,8 @@ openDetails=(item) => {
                 </BleashupFlatList>)
                 )}
         </View> 
-        <DetailsModal goToActivity={() => {
+       
+         <DetailsModal goToActivity={() => {
                     this.props.navigation.navigate('Event',
                     {
                         'tab':'EventDetails',

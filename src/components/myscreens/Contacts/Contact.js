@@ -16,7 +16,9 @@ import {find,uniqBy,uniq,filter,concat} from "lodash";
 import request from '../../../services/requestObjects';
 import autobind from "autobind-decorator";
 import Invite from './invite';
-import moment from "moment"
+import moment from "moment";
+import ColorList from '../../colorList';
+
 //import CreateRequest from '../event/createEvent/CreateRequester';
 import firebase from 'react-native-firebase';
 
@@ -189,46 +191,21 @@ createRelation = (user)=>{
 
 render(){
     return (
-      <Container style={{ backgroundColor: "#FEFFDE",flexDirection:"column",width:width }}>
-         <View style={{ height:40, }}>
-           <View style={{
-                ...bleashupHeaderStyle,
-                
-              }}>
-                 <View style={{flexDirection:"row",width:width/3,marginLeft:width/25,justifyContent:"space-between",alignItems:"center"}}>
-                 <Icon name="arrow-back" active={true} type="MaterialIcons" style={{ color: "#1FABAB", }} onPress={() => this.props.navigation.navigate("Home")} />
-                 <Text style={{fontSize:18,fontWeight:"bold",marginLeft:"16%"}}>Contacts</Text>
+      <Container style={{ backgroundColor: ColorList.bodyBackground,flexDirection:"column",width:ColorList.containerWidth}}>
+        
+         <View style={{ height:ColorList.headerHeight,backgroundColor:ColorList.headerBackground ,}}>
+
+                 <View style={{flex:1,flexDirection:"row",...bleashupHeaderStyle,alignItems:"center"}}>
+                 <Icon name="arrow-back" active={true} type="MaterialIcons" style={{ color: ColorList.headerIcon,marginLeft:"4%" }} onPress={() => this.props.navigation.navigate("Home")} />
+                 <Text style={{fontSize:18,fontWeight:"bold",marginLeft:"3%"}}>Contacts</Text>
                  </View>
-          </View>
          </View>
-         { this.state.isMount? 
-        <View style={  this.state.user!=null?
-          <View style={{flexDirection:"row",margin:"3%",width:"100%"}}>
-          <View style={{width:"17%"}}>
-          <TouchableWithoutFeedback onPress={() => {
-                 requestAnimationFrame(() => {
-                     GState.showingProfile = true
-                     setTimeout(() => {
-                         GState.showingProfile = false
-                     }, 50)
-                 });
-             }}>
-                 {this.state.user.profile && testForURL(this.state.user.profile) ? <CacheImages small thumbnails {...this.props}
-                     source={{ uri:this.state.user.profile}} /> :
-                     <Thumbnail  small source={require("../../../../Images/images.jpeg")} ></Thumbnail>}
-             </TouchableWithoutFeedback>
-             </View>
 
-             <View style={{flexDirection:"column",width:"82%"}}>
-                    <Title style={{alignSelf:"flex-start"}}>{this.state.user.nickname}</Title>
-                    <Title style={{color:"gray",alignSelf:"flex-start",fontSize:15}}>{this.state.user.status}</Title>
-             </View>
-        </View>:{flexDirection:"column",height:height - height/19,width:"100%"}}>
-
-        <TouchableOpacity style={{flex:1}} onPress={() => this.props.navigation.navigate("NewContact")} >  
+        
+        <TouchableOpacity style={{flex:1,marginLeft:"5%",}} onPress={() => this.props.navigation.navigate("NewContact")} >  
         <View style={{flex:1,flexDirection:"row",alignItems:"center"}} >
-            <View style={{width:width/8,height:height/16,borderRadius:32,backgroundColor:"#1FABAB",alignItems:"center",justifyContent:"center",marginLeft:"2%"}} >
-               <Icon name="person-add" active={true} type="MaterialIcons" style={{ color: "#FEFFDE",paddingRight:6 }} />
+            <View style={{width:45,height:45,borderRadius:32,borderColor:ColorList.bodyIcon,borderWidth:1,alignItems:"center",justifyContent:"center",marginLeft:"2%"}} >
+               <Icon name="person-add" active={true} type="MaterialIcons" style={{ color: ColorList.bodyIcon,paddingRight:6 }} />
             </View>
             <View style={{marginLeft:"5%"}}>
                <Text>New Contact</Text>
@@ -237,10 +214,10 @@ render(){
   
         </TouchableOpacity> 
 
-        <TouchableOpacity style={{flex:1}} onPress={this.invite} >  
+        <TouchableOpacity style={{flex:1,marginLeft:"5%"}} onPress={this.invite} >  
         <View style={{flex:1,flexDirection:"row",alignItems:"center"}} >
             <View style={{width:width/8,height:height/16,borderRadius:32,alignItems:"center",justifyContent:"center",marginLeft:"2%"}} >
-               <Icon name="share" active={true} type="MaterialIcons" style={{ color: "#1FABAB",paddingRight:6 }} />
+               <Icon name="share" active={true} type="MaterialIcons" style={{ color: ColorList.bodyIcon,paddingRight:6 }} />
             </View>
             <View style={{marginLeft:"5%"}}>
                <Text>Invite Friends</Text>
@@ -249,12 +226,13 @@ render(){
   
         </TouchableOpacity>  
 
+      { this.state.isMount? 
         <View style={{flex:8}}>
        
                <BleashupFlatList
                     initialRender={10}
                     renderPerBatch={5}
-                    style={{backgroundColor:"#FEFFDE"}}
+                    style={{backgroundColor:ColorList.bodyBackground}}
                     firstIndex={0}
                     //extraData={this.state}
                     keyExtractor={(item,index)=>item.recordID}
@@ -299,9 +277,7 @@ render(){
                 </BleashupFlatList>
                     <Invite isOpen={this.state.invite} onClosed={()=>{this.setState({invite:false})}} />
              </View>
-
-         </View>
-         :null}
+            :null}
 
         </Container>
     );
@@ -309,7 +285,28 @@ render(){
 
 }
 
+/**        <View style={  this.state.user!=null?
+          <View style={{flexDirection:"row",margin:"3%",width:"100%"}}>
+          <View style={{width:"17%",marginLeft:"2%"}}>
+          <TouchableWithoutFeedback onPress={() => {
+                 requestAnimationFrame(() => {
+                     GState.showingProfile = true
+                     setTimeout(() => {
+                         GState.showingProfile = false
+                     }, 50)
+                 });
+             }}>
+                 {this.state.user.profile && testForURL(this.state.user.profile) ? <CacheImages small thumbnails {...this.props}
+                     source={{ uri:this.state.user.profile}} /> :
+                     <Thumbnail  small source={require("../../../../Images/images.jpeg")} ></Thumbnail>}
+             </TouchableWithoutFeedback>
+             </View>
 
+             <View style={{flexDirection:"column",width:"82%"}}>
+                    <Title style={{alignSelf:"flex-start"}}>{this.state.user.nickname}</Title>
+                    <Title style={{color:"gray",alignSelf:"flex-start",fontSize:15}}>{this.state.user.status}</Title>
+             </View>
+        </View>:{flexDirection:"column",height:height - height/19,width:"100%"}}> */
 
 
 

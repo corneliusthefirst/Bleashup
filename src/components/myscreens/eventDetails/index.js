@@ -3,7 +3,7 @@ import {
   Content, Card, CardItem, Toast, Text, Spinner, Title, Icon
 } from "native-base";
 
-import { Linking, StyleSheet, View, Image, TouchableOpacity, FlatList, ScrollView, Dimensions } from 'react-native';
+import {  StyleSheet, View, Image, TouchableOpacity, FlatList, ScrollView, Dimensions } from 'react-native';
 import autobind from "autobind-decorator";
 import stores from '../../../stores/index';
 //import { observer } from 'mobx-react'
@@ -13,7 +13,6 @@ import request from "../../../services/requestObjects";
 import EventLocation from "../event/createEvent/components/EventLocation";
 import EventDescription from "../event/createEvent/components/EventDescription";
 import EventHighlights from "../event/createEvent/components/EventHighlights";
-import Hyperlink from 'react-native-hyperlink';
 import moment from 'moment';
 import shadower from "../../shadower";
 import BleashupFlatList from '../../BleashupFlatList';
@@ -28,6 +27,8 @@ import HighLightsDetails from '../highlights_details/index';
 import QRDisplayer from "../QR/QRCodeDisplayer";
 import colorList from '../../colorList'
 import { round } from "react-native-reanimated";
+import ColorList from "../../colorList";
+import DescriptionModal from './descriptionModal';
 
 let { height, width } = Dimensions.get('window');
 
@@ -55,7 +56,8 @@ export default class EventDetailView extends Component {
       creation_time: "",
       participant: request.Participant(),
       EventHighlightState: false,
-      updateTitleState: false
+      updateTitleState: false,
+      viewdetail:false,
 
     }
 
@@ -229,37 +231,47 @@ export default class EventDetailView extends Component {
                 paddingLeft: '1%', paddingRight: '1%', backgroundColor: colorList.headerBackground,
                 flexDirection: "row", alignItems: "center",
               }}>
-                <View style={{ width: "10%", paddingLeft: "1%" }} >
+                <View style={{ width: "10%",marginLeft:"1%" }} >
                   <Icon onPress={() => { this.props.navigation.navigate("Home") }}
-                    style={{ color: colorList.headerIcon, marginLeft: "5%", marginRight: "5%" }} type={"MaterialIcons"} name={"arrow-back"}></Icon>
+                    style={{ color: colorList.headerIcon,}} type={"MaterialIcons"} name={"arrow-back"}></Icon>
                 </View>
 
-                <View style={{ width: '70%', paddingLeft: '2%', justifyContent: "center" }}>
+                <View style={{ width: '69%', paddingLeft: '2%', justifyContent: "center" }}>
                   <Title style={{ color: colorList.headerText, fontWeight: 'bold', alignSelf: 'flex-start' }}>{this.props.Event.about.title}</Title>
                 </View>
 
-                <View style={{ width: '10%', paddingRight: '3%' }}>
-                  <Icon onPress={() => requestAnimationFrame(() => this.newHighlight())} type='AntDesign'
-                    name="plus" style={{ color: colorList.headerIcon, alignSelf: 'center', }} />
-                </View>
 
-                <View style={{ width: '10%', paddingLeft: '1%' }}>
+                <View style={{ width: '20%',alignItems:"flex-end" }}>
                   <Icon onPress={() => {
                     this.props.openMenu()
-                  }} style={{ color: colorList.headerIcon }} type={"Ionicons"} name={"ios-menu"}></Icon>
+                  }} style={{ color: colorList.headerIcon ,marginRight:"18%"}} type={"Ionicons"} name={"ios-menu"}></Icon>
                 </View>
 
               </View>
             </View>
+            <View style={{height:ColorList.headerHeight,flexDirection:"row",alignItems:"center",justifyContent:"space-between",width:"100%"}}>
+
+            <View style={{height:35,width:35,borderRadius:25,borderColor:ColorList.bodyIcon,borderWidth:1,alignItems:"center",justifyContent:"center",marginLeft:"2%",backgroundColor:"salmon"}}>
+                  <Icon onPress={() => requestAnimationFrame(() => this.newHighlight())} type='AntDesign'
+                    name="plus" style={{ color: colorList.headerIcon, alignSelf: 'center', }} />
+                </View>
+
+                 <View style={{height:35,width:35,borderRadius:25,borderColor:ColorList.bodyIcon,borderWidth:1,alignItems:"center",justifyContent:"center",marginRight:"2.2%"}}>
+                     <TouchableOpacity onPress={()=>{this.setState({viewdetail:true})}}>
+                     <Text style={{fontSize:26}}>D</Text>
+                     </TouchableOpacity>
+                 </View>
+            </View>
+
             <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled>
               <View style={{ minHeight: colorList.containerHeight - colorList.headerHeight, flexDirection: "column", width: "100%",justifyContent: 'center', }} >
                 <View style={{ height: this.state.highlightData.length == 0 ? 0 : 
                   colorList.containerHeight-colorList.headerHeight, 
-                  width: "95%",alignSelf: 'center',
+                  width: "100%",alignSelf: 'center',
                   justifyContent: 'center', 
                   alignItems: 'center',
-                  marginTop:"2%",}} >
-                <Text note>posts list</Text>
+                  }} >
+               
                   {this.state.refresh ? <BleashupFlatList
                     initialRender={4}
                     horizontal={false}
@@ -306,50 +318,12 @@ export default class EventDetailView extends Component {
                 </View>
 
 
-                <View style={{
-                  height: colorList.containerHeight * .4,
-                  borderRaduis:5,
-                  ...shadower(2),
-                  margin: '1%', padding: '1.5%',
-                  marginBottom: '3%',
-                  backgroundColor: colorList.bodyBackground,
-                }}>
-                  <View style={{
-                    height: "100%", width: "100%",
-                    alignSelf: "center",
-                    alignItems: 'center',
-                  }}>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}><Text note>activity description</Text>
-                      {this.props.computedMaster ? <Icon name={"pencil"} type={"EvilIcons"} onPress={() => {
-                        this.setState({
-                          EventDescriptionState: true
-                        })
-                      }}></Icon> : null}</View>
-                    <ScrollView nestedScrollEnabled showsVerticalScrollIndicator={false}>
-                      <View>
-                        {this.props.Event.about.description != "" ?
-                          <Hyperlink onPress={(url) => { Linking.openURL(url) }} linkStyle={{ color: '#48d1cc', fontSize: 16 }}>
-                            <Text dataDetectorType={'all'} style={{ fontSize: 16, fontWeight: "400", margin: "1%", color: '#555756' }} delayLongPress={800}>{this.props.Event.about.description}</Text>
-                          </Hyperlink> :
-                          <Text style={{
-                            fontWeight: "400", fontSize: 25,
-                            alignSelf: 'center', marginTop: (colorList.containerHeight) / 8
-                          }}
-                            delayLongPress={800}>{this.state.defaultDetail}</Text>}
-                      </View>
-                    </ScrollView>
-
-                  </View>
-                </View>
-                <View style={{ flexDirection: 'row', justifyContent: "center", marginTop: 'auto', marginBottom: 'auto', height: colorList.containerHeight * .15 }}>
-                  <QRDisplayer code={this.props.Event.id} title={this.props.Event.about.title}></QRDisplayer>
-                </View>
-                <View style={{ margin: '1%', marginLeft: '2%' }}>
-                  <Creator color={colorList.bodyBackground} creator={this.props.Event.creator_phone}
-                    created_at={this.props.Event.created_at} />
-                </View>
               </View>
+
             </ScrollView>
+
+            <DescriptionModal Event={this.props.Event} isOpen={this.state.viewdetail} onClosed={()=>{this.setState({viewdetail:false})}} parent={this}></DescriptionModal>
+
             {this.state.EventDescriptionState ? <EventDescription updateDesc={(newDesc) => {
               this.props.updateDesc(newDesc)
             }} event={this.props.Event} isOpen={this.state.EventDescriptionState} onClosed={() => { this.setState({ EventDescriptionState: false }) }}

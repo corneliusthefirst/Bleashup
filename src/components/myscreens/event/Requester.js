@@ -309,7 +309,7 @@ class Request {
     getCommitee(id) {
 
     }
-    /*saveContacts(){
+    saveContacts(){
      let contacts =  request.many_contact()
         contacts = [{phone:"00237609894330",host:"192.168.43.32"},
             {phone:"00237609854563",host:"192.168.43.32"},
@@ -330,10 +330,10 @@ class Request {
             {phone:"00237623385236478409706",host:"192.168.43.32"}]
     tcpRequest.add_many_contacts(contacts,"conatacter").then(JSONData =>{
         serverEventListener.sendRequest(JSONData).then((response) =>{
-            console.warn(response)
+            console.warn(response,"saved")
         })
     })
-    }*/
+    }
     invite(members, even_id) {
         return new Promise((resolve, reject) => {
             let invitees = members.map(ele => {

@@ -14,7 +14,7 @@ export default class QRDisplayer extends Component{
     render(){
         return <View style={{flexDirection: 'row',}}>
             <QRCode
-                size={110}
+                size={70}
                 getRef={(c) => (this.svg = c)}
                 value={this.props.code}
                 color= {ColorList.headerIcon}
@@ -29,7 +29,7 @@ export default class QRDisplayer extends Component{
                         Toast.show({text:'QR Code save to Downloads/Bleashup',type:'success',duration:5000})
                     })
                 })
-                }} name="file-download" type="MaterialIcons" style={{color:colorList.bodyIcon}}>
+                }} name="download-outline" type="MaterialCommunityIcons" style={{color:colorList.bodyIcon}}>
             </Icon>
             </View>
         </View>
