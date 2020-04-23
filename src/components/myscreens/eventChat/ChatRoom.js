@@ -103,7 +103,7 @@ export default class ChatRoom extends Component {
             showPhoto: false,
             playing: true,
             replyContent: null,
-            marginBottom:"0%",
+          
         };
         this.BackHandler = null
     }
@@ -1050,21 +1050,22 @@ export default class ChatRoom extends Component {
         headerStyles = {
             flexDirection: 'row', ... (!this.state.showVideo && !this.state.showPhoto && !this.state.showRepliedMessage && !this.state.showCaption)
         }
-        return (
+    return (
+        <View style={{ height:"100%",justifyContent:"flex-end" }}>
 
-            <View style={{ height:"100%" }}>
-               
-                    {
-                        // **********************Header************************ //
-                        this.state.showHeader ? this.header() : null
-                    }
-            
-        {/* <KeyboardAvoidingView 
-          behavior={Platform.Os == "ios" ? "padding" : "height"}
-          style={{flex:1,justifyContent:"center",marginBottom:this.state.marginBottom,backgroundColor:'rgba(0,0,0,0.3)',
-          }} >  */}             
+        
+             <View style={{height:"7.5%"}}>
+                {
+                  // **********************Header************************ //
+                  this.state.showHeader ? this.header() : null
+                }
+             </View>
+          
             <View style={{ height: "92.5%"}}>
-                <StatusBar animated={true} hidden={this.state.hideStatusBar} barStyle="dark-content" backgroundColor={colorList.headerBackground}></StatusBar>
+             <View style={{ height:"100%",justifyContent:"flex-end" }}>
+               <KeyboardAvoidingView 
+                    behavior={Platform.Os == "ios" ? "padding" : "height"}
+                    style={{flex:1}} > 
                 {!this.state.loaded ? <Waiter></Waiter> : <View style={{}}><View style={{ width: "100%", alignSelf: 'center', }}>
                         <ScrollView onScroll={() => {
                             this.adjutRoomDisplay()
@@ -1176,11 +1177,11 @@ export default class ChatRoom extends Component {
                 }}></ContactsModal> : null}
                 {//</ImageBackground>
                 }
-                  
-               </View>
-             {/*</KeyboardAvoidingView> */}
-        </View>
-        
+                    </KeyboardAvoidingView> 
+                    </View>  
+               </View>    
+      
+     </View>
         )
     }
 
@@ -1306,16 +1307,11 @@ export default class ChatRoom extends Component {
         this.toggleAudioRecorder();
         this.markAsRead();
     }
-     onFocus = ()=>{
-         this.setState({marginBottom:"5%"})
-     }
-     onEndEditing = ()=>{
-        this.setState({marginBottom:"0%"})
-     }
+
     keyboardView() {
         return (
        <View style={{
-            marginBottom:this.state.marginBottom,
+         
             alignItems: 'center',
             borderColor: 'gray', padding: '1%', width: "99%"
         }}>
@@ -1347,8 +1343,7 @@ export default class ChatRoom extends Component {
                                 this.state.replying ? this.replyMessageCaption() : null
                             }
                         <TextInput
-                            onFocus={this.onFocus}
-                            onEndEditing={this.onEndEditing}
+
                             value={this.state.textValue}
                             onChange={(event) => this._onChange(event)}
                             placeholder={'Your Message'}

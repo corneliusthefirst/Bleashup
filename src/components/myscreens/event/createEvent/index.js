@@ -70,6 +70,11 @@ export default class CreateEventView extends Component {
 
   componentDidMount() {
     stores.Events.readFromStore().then(Events => {
+      /*Events.forEach(element => {
+         if(element.about.title.charAt(0)=='n' ){
+          stores.Events.delete(element.id).then(() => {console.warn("deleted")})
+         }
+      });*/
       let event = find(Events, { id: "newEventId" });
       this.setState({ participant: head(event.participant), currentEvent: event ,
       title:event.about.title,photo:event.background});
@@ -98,7 +103,7 @@ export default class CreateEventView extends Component {
       let event = this.state.currentEvent
       event.created_at = moment().format()
       event.updated_at = moment().format()
-      event.recurrence = moment(event.period).add(1, "hours").format()
+      //event.recurrence = moment(event.period).add(1, "hours").format()
       let newEvent = event;
       newEvent.id = uuid.v1();
       CreateRequest.createEvent(newEvent).then((res) => {
@@ -107,7 +112,7 @@ export default class CreateEventView extends Component {
           firebase.database().ref(`rooms/${res.id}/${res.id}`).set({ name: 'General', members: res.participant }).then(() => {
             this.setState({
               currentEvent: request.Event(),
-              //title:"",
+              title:"",
               creating: false
             })
             this.navigateToActivity(res)

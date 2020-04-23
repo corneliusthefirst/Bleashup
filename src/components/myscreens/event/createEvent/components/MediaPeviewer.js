@@ -94,8 +94,7 @@ export default class MediaPreviewer extends Component {
                         fontSize: 43, color: ColorList.bodyBackground
                     }} type="Ionicons" />
                      :
-                 
-                      <Icon onPress={() => {
+                  <Icon onPress={() => {
                         this.choseAction(this.props.url);
                     }} name= "headset" style={{
                         fontSize: 40, color: ColorList.bodyBackground
