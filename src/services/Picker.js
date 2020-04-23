@@ -13,8 +13,8 @@ class Picker {
     SnapPhoto(crop) {
         return new Promise((resolve, reject) => {
             ImagePicker.openPicker({
-                cropping: crop ? true : false,
-                mediaType: crop ? "photo" : "video",
+                cropping: crop === 'all' ? false : crop ? true : false,
+                mediaType: crop == 'all'?undefined:crop?"photo":  "video",
                 //openCameraOnStart: true,
                 includeBase64: false,
                 returnAfterShot: true,

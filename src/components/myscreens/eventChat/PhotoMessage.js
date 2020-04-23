@@ -8,6 +8,8 @@ import { Text } from 'native-base';
 import TextContent from "./TextContent";
 import Image from 'react-native-scalable-image';
 import CacheImages from '../../CacheImages';
+import FileExachange from '../../../services/FileExchange';
+import testForURL from '../../../services/testForURL';
 
 export default class PhotoMessage extends Component {
     constructor(props) {
@@ -23,6 +25,7 @@ export default class PhotoMessage extends Component {
     }
 
     componentDidMount() {
+        console.warn(this.props.message.filename)
         this.setState({
             text: this.props.message.text,
             url: this.props.message.photo,
@@ -31,7 +34,22 @@ export default class PhotoMessage extends Component {
             time: this.props.message.created_at.split(" ")[1],
             creator: (this.props.message.sender.phone == this.props.creator)
         })
+        if(testForURL(this.props.message.photo)){
+            this.exchanger = new FileExachange(this.props.message.photo,this.path,0,0,(received,total) => {
+
+            },(dir,received,total) => {
+                this.props.room.replaceMessage({...this.props.message,photo:'file://' + dir}).then(() => {
+
+                })
+            },(error) => {
+                console.warn(error)
+            })
+            this.exchanger.download(0,0)
+        }else{
+            console.warn(this.props.message.photo)
+        }
     }
+    path = '/Photo/' + this.props.message.filename
     render() {
         return (
             <View style={{ minHeight: 250,width:300 }}>

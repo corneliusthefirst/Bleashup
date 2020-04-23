@@ -218,26 +218,29 @@ export default class CommiteeItem extends Component {
         mb = 1000 * 1000
         return (data / mb).toFixed(2).toString() + "MB";
     }
-    writeText(text){
-        return text && <Text elipsizeMode={'tail'} numberOfLines={1} style={{ fontSize: 14, marginTop: "1%", alignSelf: 'flex-start', }}>{" : "}{text}</Text>
+    writeText(text) {
+        return text ? <Text elipsizeMode={'tail'} numberOfLines={1} style={{ fontSize: 14, marginTop: "1%", alignSelf: 'flex-start', }}>{" : "}{text}</Text> : null
     }
     writeLatestMessage(message) {
         switch (message.type) {
             case "text":
                 return <View style={{ display: 'flex', flexDirection: 'row', }}>
-                    <Text elipsizeMode={'tail'} numberOfLines={1}  style={{ fontWeight: "bold", fontSize: 16, color: "#0A4E52",width:'20%' }}>{this.formNickName(message.sender)}</Text>
-                    <View style={{width:'80%',alignSelf: 'flex-start',}}>
+                    <Text elipsizeMode={'tail'} numberOfLines={1} style={{ fontWeight: "bold", fontSize: 16, color: "#0A4E52", width: '20%' }}>{this.formNickName(message.sender)}</Text>
+                    <View style={{ width: '80%', alignSelf: 'flex-start', }}>
                         {this.writeText(message.text)}
                     </View>
                 </View>
             case "photo":
                 return <View style={{ display: 'flex', flexDirection: 'row', }}>
-                    <Text elipsizeMode={'tail'} numberOfLines={1} style={{ fontWeight: "bold", fontSize: 16, color: "#0A4E52",width:'30%', alignSelf: 'flex-start', }}>{this.formNickName(message.sender)}</Text>
-                    <View style={{ display: 'flex', flexDirection: 'row', marginTop: "1%", width:'70%'}}>
-                    <View style={{width:'70%',alignSelf: 'flex-start',}}>
-                        {this.writeText(message.text)}
-                    </View>
-                    <View style={{ alignSelf: 'flex-end', marginTop: "-8%", borderRadius: 8,width:'30%' }}>
+                    <Text elipsizeMode={'tail'} numberOfLines={1} style={{
+                        fontWeight: "bold", fontSize: 16,
+                        color: "#0A4E52", width: '30%', alignSelf: 'flex-start',
+                    }}>{this.formNickName(message.sender)}</Text>
+                    <View style={{ display: 'flex', flexDirection: 'row', marginTop: "1%", width: '70%' }}>
+                        <View style={{ width: '70%', alignSelf: 'flex-start', }}>
+                            {this.writeText(message.text)}
+                        </View>
+                        <View style={{ alignSelf: 'flex-end', marginTop: "-8%", borderRadius: 8, width: '30%' }}>
                             {testForURL(message.photo) ?
                                 <CacheImages source={{ uri: message.photo }} thumbnails square small></CacheImages> :
                                 <Thumbnail style={{ borderRadius: 5, }} square small source={{ uri: message.photo }}></Thumbnail>}

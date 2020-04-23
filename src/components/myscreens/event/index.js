@@ -1546,7 +1546,6 @@ export default class Event extends Component {
         {this.state.showPhoto ? <PhotoViewer open={this.state.showPhoto} photo={this.state.photo} hidePhoto={() => {
           this.setState({
             showPhoto: false,
-            isSelectPhotoInputMethodModal: false,
             woking: true
           })
           setTimeout(() => {
