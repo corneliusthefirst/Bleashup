@@ -70,8 +70,8 @@ export default class CreateEventView extends Component {
 
   componentDidMount() {
     stores.Events.readFromStore().then(Events => {
-      /*Events.forEach(element => {
-         if(element.about.title.charAt(0)=='n' ){
+     /* Events.forEach(element => {
+         if(element.about.title=='g' ){
           stores.Events.delete(element.id).then(() => {console.warn("deleted")})
          }
       });*/
@@ -131,7 +131,7 @@ export default class CreateEventView extends Component {
 
 
   onChangedTitle = (value) => { 
-    this.state.currentEvent.title = value;
+    this.state.currentEvent.about.title = value;
     this.setState({title:value,currentEvent:this.state.currentEvent});
     stores.Events.updateTitle("newEventId",value,false).then(()=>{});
     
@@ -147,7 +147,7 @@ export default class CreateEventView extends Component {
       })
       let exchanger = new FileExachange(res.source,'/Photo/',res.size,0,null,(newDir,path,total)=>{
         this.setState({ photo: path });
-        this.state.currentEvent.background = res.path;
+        this.state.currentEvent.background = path;
         this.setState({currentEvent: this.state.currentEvent});
         stores.Events.updateBackground("newEventId", path, false).then(() => {
           this.setState({

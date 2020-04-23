@@ -14,7 +14,7 @@ class CreateRequester {
                 EventListener.sendRequest(JSONData,event.id).then(response => {
                     console.warn("activity created, ",response )
                     let newEvent = {...event,id:response.event_id}
-                    stores.Events.addEvent(newEvent).then(() => {
+                     stores.Events.addEvent(newEvent).then(() => {
                         console.warn("creating activity completed")
                         let Change = {
                             id: uuid.v1(),
