@@ -44,30 +44,14 @@ export default class Like extends Component {
         })
     }
     componentDidMount() {
-        stores.Likes.loadLikes(this.props.id).then(likes => {
-            this.didILiked(likes, this.props.id).then(result => {
-                this.setState({
-                    likes: likes && likes.likers ? likes.likers.length : 0,
-                    liked: result.status,
-                    likers: likes && likes.likers ? likes.likers : [],
-                    loaded: true
-                })
-                emitter.on(`liked_${this.props.id}`, () => {
-                    stores.Likes.loadLikes(this.props.id).then(likes => {
-                        this.didILiked(likes, this.props.id).then(result => {
-                            this.setState({
-                                likes: likes.likers.length,
-                                liked: result.status,
-                                newWing: !this.state.newWing,
-                                likers: likes.likers,
-                                loaded: true
-                            })
-                        })
-                    })
-                })
-                this.likers = this.state.likers
-                this.likes = this.state.likers.length
+        stores.Likes.getLikesFromRemote(this.props.id, "count", 0, 0).then(data => {
+            this.props.setLikesCount && this.props.setLikesCount(data)
+            console.warn("likes count", data)
+            this.setState({
+                likesCount: data,
+                loaded: true
             })
+            //stores.
         })
     }
     likes = 0
@@ -81,10 +65,8 @@ export default class Like extends Component {
                 this.liking = false;
                 this.setState({
                     liked: true,
-                    likes: this.likes + 1,
-                    likers: uniq([stores.Session.SessionStore.phone].concat(this.likers))
-
                 })
+                this.props.setLikesCount && this.props.setLikesCount(1)
                 this.likes = this.state.likes
                 this.likers = this.state.likers
                 this.props.end
@@ -105,9 +87,8 @@ export default class Like extends Component {
                 this.unliking = false
                 this.setState({
                     liked: false,
-                    likes: this.likes - 1,
-                    likers: dropWhile(this.likers, element => element == stores.Session.SessionStore.phone)
                 })
+                this.props.setLikesCount && this.props.setLikesCount(-1)
                 this.likers = this.state.likers
                 this.likes = this.state.likes
             }).catch(error => {
@@ -174,12 +155,8 @@ export default class Like extends Component {
 
                 </View>
                 <View>
-                    <TouchableOpacity onPress={() => requestAnimationFrame(() => {this.props.showLikers(this.state.likers ? this.state.likers : [])})}>
+                    <TouchableOpacity onPress={() => requestAnimationFrame(() => { this.props.showLikers(this.state.likers ? this.state.likers : []) })}>
                         <View style={{ marginTop: 5 }}>
-                            <Text style={{
-                                color: this.state.liked ? "#54F5CA" :
-                                    "#bfc6ea", fontSize: 18,
-                            }} note>{" "} {this.state.likes} {"liker(s)"} </Text>
                         </View>
                     </TouchableOpacity>
                 </View>

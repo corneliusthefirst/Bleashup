@@ -40,8 +40,8 @@ export default class likes {
             resolve(like);
           } else {
             this.getLikesFromRemote(id).then(Like => {
-              likes && likes.length > 0?
-              likes.unshift(Like):likes = [Like];
+              likes && likes.length > 0 ?
+                likes.unshift(Like) : likes = [Like];
               this.saveKey.data = likes
               storage.save(this.saveKey).then(() => {
                 resolve(Like)
@@ -63,17 +63,20 @@ export default class likes {
       });
     });
   }
-  getLikesFromRemote(id) {
+  getLikesFromRemote(id, action, start, end) {
     return new Promise((resolve, reject) => {
       let ID = request.EventID();
       ID.event_id = id;
+      ID.action = action;
+      ID.start = start;
+      ID.end = end
       tcpRequest.getLikes(ID, id + "get_likes").then(DataJSON => {
         ServerEventListener.sendRequest(DataJSON, id + "get_likes").then(Like => {
-          if (Like == 'empty') Like = { event_id: id, likes: 0, likers: [] }
-          Like.likers = uniq(Like.likers)
-          resolve(Like.data)
+          if (Like.data == 'empty') resolve(0)
+          else if (Like.data.likers) resolove(Like.data.likers)
+          else resolve(Like.data)
         }).catch(error => {
-          serverEventListener.socket.write = undefined
+          //serverEventListener.socket.write = undefined
           reject(error)
         })
       })
