@@ -156,27 +156,27 @@ export default class VideoMessage extends Component {
                                     }>
                                     <Icon type="EvilIcons" name="play" style={{
                                         fontSize: 40,
-                                        color: ColorList.headerTextInverted
+                                        color: ColorList.bodyBackground
                                     }}></Icon>
                                 </TouchableOpacity>
                             </View>
                         </View>
                         <View style={{ alignSelf: this.state.sender ? 'flex-start' : 'flex-end', margin: '2%',justifyContent: 'center', }}>
-                                {this.state.loaded ? <View style={{ marginTop: "-12%" }}><View style={{ ...buttoner, height: 25, width: 65 }}><Text style={{ color: ColorList.headerTextInverted }}>
+                                {this.state.loaded ? <View style={{ marginTop: "-12%" }}><View style={{ ...buttoner, height: 25, width: 65 }}><Text style={{ color: ColorList.bodyBackground }}>
                                 {this.toMB(this.state.total).toFixed(2)} {"Mb"}</Text></View></View> :
                                 <View style={{ marginTop: "-25%", }}>
                                     <AnimatedCircularProgress size={40}
                                         width={2}
                                         fill={testForURL(this.props.message.source) ? this.state.downloadState : 100}
-                                            tintColor={this.state.error ? "red" : ColorList.headerTextInverted}
+                                            tintColor={this.state.error ? "red" : ColorList.bodyBackground}
                                         backgroundColor={this.transparent}>
                                         {
                                             (fill) => (<View style={{...buttoner, alignSelf:'center'}}>
                                                 {this.state.downloading ? <TouchableWithoutFeedback onPress={() => this.cancelDownLoad(this.props.message.source)}>
-                                                    <Icon type="EvilIcons" style={{ color: ColorList.headerTextInverted }} name="close">
+                                                    <Icon type="EvilIcons" style={{ color: ColorList.bodyBackground }} name="close">
                                                     </Icon>
                                                 </TouchableWithoutFeedback> : <TouchableWithoutFeedback onPress={() => this.downloadVideo(this.props.message.source)}>
-                                                        <Icon type="EvilIcons" style={{ color: ColorList.headerTextInverted }} name="arrow-down">
+                                                        <Icon type="EvilIcons" style={{ color: ColorList.bodyBackground }} name="arrow-down">
                                                         </Icon>
                                                     </TouchableWithoutFeedback>}
                                             </View>)

@@ -8,6 +8,7 @@ import GState from '../../../stores/globalState';
 import FileExachange from '../../../services/FileExchange.js';
 import rnFetchBlob from 'rn-fetch-blob';
 import buttoner from '../../../services/buttoner';
+import ColorList from '../../colorList';
 const { fs } = rnFetchBlob
 export default class PhotoUploader extends Component {
     constructor(props) {
@@ -28,7 +29,6 @@ export default class PhotoUploader extends Component {
             this.props.message.content_type,
             this.props.message.filename, '/photo')
         this.uploaderPhoto()
-
     }
     task = null
     uploaderPhoto() {
@@ -58,22 +58,23 @@ export default class PhotoUploader extends Component {
         this.setState({
             uploading: true
         })
-        this.exchanger.upload(this.state.written,this.state.total)
-        
+        this.exchanger.upload(this.state.written, this.state.total)
+
     }
     onSuccess(newDir, path) {
+        console.warn("successfully uploaded",newDir)
         this.setState({
             uploadState: 100,
             uploading: false,
             loaded: true
         })
         this.props.message.type = 'photo'
-        this.props.message.photo = path //this.props.message.source
+        this.props.message.photo = newDir //this.props.message.source
         this.props.message.source = path
-        fs.unlink(newDir).then(() => {
+        //fs.unlink(newDir).then(() => {
             this.props.replaceMessage(this.props.message)
             GState.downlading = false
-        })
+       // })
     }
     toMB(data) {
         mb = 1000 * 1000
@@ -83,7 +84,7 @@ export default class PhotoUploader extends Component {
         this.exchanger.task.cancel((err, taskID) => {
             GState.downlading = false
             this.setState({
-                uploading:false
+                uploading: false
             })
         })
     }
@@ -99,28 +100,28 @@ export default class PhotoUploader extends Component {
                             }} source={{ uri: this.props.message.source }} height={340}></Image>
                         </TouchableOpacity>
                     </View>
-                    <View style={{ alignSelf: 'center', position: 'absolute',marginTop: '45%', }}>
+                    <View style={{ alignSelf: 'center', position: 'absolute', marginTop: '45%', }}>
                         {this.state.loaded ? <View style={{ marginTop: 0 }}><View><Text
                             style={{ color: this.state.sender ? '#F8F7EE' : '#E1F8F9' }}>
                             {this.state.total.toFixed(2)} {"Mb"}</Text></View></View> :
                             <View style={{ marginTop: 1, }}>
-                                <View style={{ ...buttoner,alignSelf: 'center',}}><AnimatedCircularProgress size={40}
+                                <View style={{ ...buttoner, alignSelf: 'center', }}><AnimatedCircularProgress size={40}
                                     width={2}
                                     fill={this.state.uploadState}
-                                    tintColor={this.state.error ? "red" : "#FEFFDE"}
+                                    tintColor={this.state.error ? "red" : ColorList.bodyBackground}
                                     backgroundColor={this.transparent}>
                                     {
                                         (fill) => (<View>
                                             {this.state.uploading ? <TouchableWithoutFeedback onPress={() => this.cancelUpLoad(this.props.message.source)}>
                                                 <View>
-                                                    <Icon type="EvilIcons" style={{ color: "#FEFFDE" }} name="close">
+                                                    <Icon type="EvilIcons" style={{ color: ColorList.bodyBackground }} name="close">
                                                     </Icon>
                                                     <Spinner style={{ position: 'absolute', marginTop: "-136%", marginLeft: "-15%", }}>
                                                     </Spinner>
                                                 </View>
                                             </TouchableWithoutFeedback> : <TouchableWithoutFeedback onPress={() => this.uploadPhoto()}>
                                                     <View>
-                                                        <Icon type="EvilIcons" style={{ color: "FEFFDE" }} name="arrow-up">
+                                                        <Icon type="EvilIcons" style={{ color: ColorList.bodyBackground }} name="arrow-up">
                                                         </Icon>
                                                     </View>
 
@@ -128,7 +129,7 @@ export default class PhotoUploader extends Component {
                                         </View>)
                                     }
                                 </AnimatedCircularProgress></View>
-                                <View style={{ marginTop: "15%",...buttoner,width:75,height:25, }}><Text style={{ color: '#FEFFDE' }} note>{"("}{this.toMB(this.state.received).toFixed(1)}{"/"}
+                                <View style={{ marginTop: "15%", ...buttoner, width: 75, height: 25, }}><Text style={{ color: '#FEFFDE' }} note>{"("}{this.toMB(this.state.received).toFixed(1)}{"/"}
                                     {this.toMB(this.state.total).toFixed(1)}{")Mb"}</Text></View></View>}</View>
                 </View>
                 <View>

@@ -94,7 +94,7 @@ export default class ChatRoom extends Component {
             showCaption: false,
             showEmojiInputCaption: false,
             replyerOffset: 0.1,
-            messageListHeight: this.formHeight(((screenheight - 67) / screenheight)),
+            messageListHeight: this.formHeight(((screenheight - 70) / screenheight)),
             textInputHeight: this.formHeight((67 / screenheight)),
             inittialTextInputHeightFactor: 67 / screenheight,
             initialMessaListHeightFactor: (screenheight - 67) / screenheight,
@@ -346,7 +346,7 @@ export default class ChatRoom extends Component {
             this.refs.scrollViewRef.scrollToEnd({ animated: true, duration: 200 })
             this.state.showCaption && 
             this.refs.captionScrollViewRef.scrollToEnd({ animated: true, 
-                duration: 5 })
+                duration: 200 })
             this.temp ? GState.reply = JSON.parse(this.temp) : null
         },30)
     }
@@ -668,7 +668,7 @@ export default class ChatRoom extends Component {
     }
     openCamera() {
         //Keyboard.dismiss();
-        Pickers.SnapPhoto().then(snap => {
+        Pickers.SnapPhoto("all").then(snap => {
             let isVideo = snap.content_type.includes("video") ? true : false
             this.setState({
                 video: snap.source,
@@ -784,7 +784,7 @@ export default class ChatRoom extends Component {
             this.setState({
                 newMessage: true
             })
-            this.sendMessage({ ...newMessage, source: newMessage.temp })
+            this.sendMessage({ ...newMessage, source: newMessage.temp, cancled: undefined })
             this.informMembers()
             //send message to the server here
         });
@@ -1058,11 +1058,7 @@ export default class ChatRoom extends Component {
                         // **********************Header************************ //
                         this.state.showHeader ? this.header() : null
                     }
-            
-        {/* <KeyboardAvoidingView 
-          behavior={Platform.Os == "ios" ? "padding" : "height"}
-          style={{flex:1,justifyContent:"center",marginBottom:this.state.marginBottom,backgroundColor:'rgba(0,0,0,0.3)',
-          }} >  */}             
+                
             <View style={{ height: "92.5%"}}>
                 <StatusBar animated={true} hidden={this.state.hideStatusBar} barStyle="dark-content" backgroundColor={colorList.headerBackground}></StatusBar>
                 {!this.state.loaded ? <Waiter></Waiter> : <View style={{}}><View style={{ width: "100%", alignSelf: 'center', }}>
@@ -1315,7 +1311,6 @@ export default class ChatRoom extends Component {
     keyboardView() {
         return (
        <View style={{
-            marginBottom:this.state.marginBottom,
             alignItems: 'center',
             borderColor: 'gray', padding: '1%', width: "99%"
         }}>

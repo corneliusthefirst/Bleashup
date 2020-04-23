@@ -65,7 +65,6 @@ export default class FileExachange {
                 this.errorHandlerFunc ? this.errorHandlerFunc(error) : null
             })
             this.task.then((res) => {
-                console.warn(res)
                 res.info().headers.Duration ? this.duration = Math.floor(res.info().headers.Duration) : null
                 temp1 = this.received / 1000
                 temp2 = this.total / 1000
@@ -122,10 +121,11 @@ export default class FileExachange {
                     temp1 = Math.floor(temper1)
                     temp2 = Math.floor(temper2)
                     temp3 = Math.ceil(temper2)
-                    let newDir = `file://` + AppDir + this.base + response.data
+                    console.warn(this.url,response.data)
+                    let newDir = `file://` + AppDir + this.base + this.filename
                     !this.store ? fs.writeFile(newDir.split(`file://`)[1], this.url.split(`file://`)[1], 'uri').then((status) => {
                         this.successFunc ? this.successFunc(newDir, this.baseURL + response.data, response.data, this.baseURL) : null
-                    }) : this.successFunc(this.url, this.baseURL + response.data, response.data, this.baseURL)
+                    }) : this.successFunc(newDir, this.baseURL + response.data, response.data, this.baseURL)
                 }
             })
             this.task.catch((error) => {

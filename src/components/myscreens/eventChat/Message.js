@@ -88,7 +88,7 @@ export default class Message extends Component {
                 return <TextMessageSnder sendMessage={(message) => this.props.sendMessage(message)} firebaseRoom={this.props.firebaseRoom}
                     user={2} sender={sender} index={index} creator={3} message={data}></TextMessageSnder>
             case "photo":
-                return <PhotoMessage handleLongPress={() => this.handLongPress()} pressingIn={() => {
+                return <PhotoMessage room={this.props.room} handleLongPress={() => this.handLongPress()} pressingIn={() => {
                     this.replying = true;
                     // this.props.hideAndshow()
                 }} firebaseRoom={this.props.firebaseRoom} showPhoto={(url) => this.props.showPhoto(url)} user={2} sender={sender} index={index} creator={2} message={data}></PhotoMessage>
