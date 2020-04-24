@@ -10,6 +10,8 @@ import sayAppBusy from '../votes/sayAppBusy';
 import Creator from '../reminds/Creator';
 import { writeDateTime, dateDiff } from '../../../services/datesWriter';
 import VoteOptionPreviwer from './VoteOptionMediaPreviewer';
+import PickersMenu from '../event/createEvent/components/PickerMenu';
+import ColorList from '../../colorList';
 
 export default class Voter extends Component {
     constructor(props) {
@@ -36,7 +38,7 @@ export default class Voter extends Component {
     componentDidUpdate(prevProps, preState, preContx) {
         this.previousVote = JSON.stringify(this.props.message.vote)
     }
-    renderOptionMedia(url,index,name){
+    renderOptionMedia(url, index, name) {
         return <VoteOptionPreviwer optionName={name} url={url} vote={() => this.props.vote(index)} votable></VoteOptionPreviwer>
     }
     renderOptions() {
@@ -58,7 +60,7 @@ export default class Voter extends Component {
     hasVoted() {
         return findIndex(this.props.message.vote.voter, (ele) => ele.phone === stores.LoginStore.user.phone) < 0
     }
-    returnOptionCount(index){
+    returnOptionCount(index) {
         return (this.props.message.vote && this.props.message.vote.voter && this.props.message.vote.voter.filter(ele => ele.index === index).length) || 0
     }
     returnOptionWithCount(item, index) {
@@ -73,10 +75,10 @@ export default class Voter extends Component {
             >{`${labler(index)}.`}</Text></View>
             <View style={{ width: '75%', height: '80%', }}>
                 <View style={{ width: '100%' }}>
-                <View style={{flexDirection: 'row',}}>
-                <Text style={{ color: '#555756', fontSize: 14 }} note>{`${item.name && item.name !== 'undefined' ? item.name : "none"}    ${this.calculateVotePercentage(this.returnOptionCount(index), 0)}%  `}</Text>
-                {this.renderOptionMedia(item.option_url,index,item.name)}
-                </View>
+                    <View style={{ flexDirection: 'row', }}>
+                        <Text style={{ color: '#555756', fontSize: 14 }} note>{`${item.name && item.name !== 'undefined' ? item.name : "none"}    ${this.calculateVotePercentage(this.returnOptionCount(index), 0)}%  `}</Text>
+                        {this.renderOptionMedia(item.option_url, index, item.name)}
+                    </View>
                     <View style={{ flexDirection: 'row', height: '60%' }}>
                         <View style={{
                             height: '110%', ...shadower(2),
@@ -98,11 +100,18 @@ export default class Voter extends Component {
                 </View>
             </View>
             <View style={{ width: '14%', justifyContent: 'center', alignSelf: 'center', marginLeft: '1%', }}>
-                {!this.hasVoted() || dateDiff({ recurrence: this.props.message.vote.period }) > 0 ? null : <Icon onPress={() => this.vote(item.index)} name="vote-yea"
-                    style={{ alignSelf: 'flex-end', marginTop: '25%', color: '#555756' }}
-                    type={"FontAwesome5"}></Icon>}
+                {!this.hasVoted() || dateDiff({ recurrence: this.props.message.vote.period }) > 0 ? null : this.optionVoter(item.index,true)}
             </View>
         </View>
+    }
+    optionVoter(index,toper) {
+        return <View style={{ marginBottom: toper && '30%', }}><PickersMenu color={ColorList.darkGrayText} icon={{ name: 'check', type: 'FontAwesome' }} menu={[
+            {
+                title: 'Vote',
+                callback: () => this.vote(index),
+                condition: true
+            }
+        ]} ></PickersMenu></View>
     }
     returnOptionWithoutCount(item, index) {
         return <View style={{ flexDirection: 'row', width: '100%', height: 40, marginBottom: '8%', }}>
@@ -112,18 +121,16 @@ export default class Voter extends Component {
                 alignItems: 'center',
                 height: '100%'
             }}><Text
-                style={{ color: '#1FABAB',  fontWeight: '400', }}
+                style={{ color: '#1FABAB', fontWeight: '400', }}
             >{`${labler(index)}.`}</Text></View>
             <View style={{ width: '75%', height: '100%', flexDirection: 'row', }}>
-                <View style={{ width: '100%', justifyContent: 'flex-start',flexDirection: 'row',marginTop: 'auto',marginBottom: 'auto', }}>
-                    <Text style={{ color: '#1FABAB', fontWeight: '400',  }} >{`${item.name && item.name !== 'undefined' ? item.name : 'none'} `}</Text>
+                <View style={{ width: '100%', justifyContent: 'flex-start', flexDirection: 'row', marginTop: 'auto', marginBottom: 'auto', }}>
+                    <Text style={{ color: '#1FABAB', fontWeight: '400', }} >{`${item.name && item.name !== 'undefined' ? item.name : 'none'} `}</Text>
                     {this.renderOptionMedia(item.option_url, index, item.name)}
                 </View>
             </View>
             <View style={{ width: '15%', justifyContent: 'center', alignItems: 'center', }}>
-                {!this.hasVoted() || dateDiff({ recurrence: this.props.message.vote.period }) > 0 ? null : <Icon onPress={() => this.vote(item.index)} name="vote-yea"
-                    style={{ alignSelf: 'center', marginTop: 'auto',marginBottom: 'auto', color: '#555756' }}
-                    type={"FontAwesome5"}></Icon>}
+                {!this.hasVoted() || dateDiff({ recurrence: this.props.message.vote.period }) > 0 ? null : this.optionVoter(item.index)}
             </View>
         </View>
     }
@@ -135,9 +142,11 @@ export default class Voter extends Component {
         this.creator = creator
     }
     render() {
-        return !this.state.loaded ? <View style={{width:300,height:300,...this.props.placeHolder}}></View> : <View style={{ margin: '1%',  }}>
+        return !this.state.loaded ? <View style={{ width: 300, height: 300, 
+            ...this.props.placeHolder }}></View> : 
+        <View style={{ margin: '1%', }}>
             <View style={{ alignSelf: 'center', margin: '2%', flexDirection: 'row', }}>
-                <View style={{ width: '70%',marginLeft: '2%', }}>
+                <View style={{ width: '70%', marginLeft: '2%', }}>
                     <Text style={{
                         alignSelf: 'flex-start',
                         fontWeight: 'bold',
@@ -146,7 +155,7 @@ export default class Voter extends Component {
                 </View>
                 <View style={{ flexDirection: 'row', width: '30%' }}>
                     {this.props.configurable && <View style={{ width: '33.33%', padding: '1%', }}><Icon onPress={() => this.reply()} name={"reply"}
-                        type={"Entypo"} style={{ color: '#555756',alignSelf:'flex-start',marginRight: '15%', }}></Icon></View>}
+                        type={"Entypo"} style={{ color: '#555756', alignSelf: 'flex-start', marginRight: '15%', }}></Icon></View>}
                     {this.props.computedMaster ? <View style={{ width: '38.33%' }}><Icon
                         style={{ color: '#555756', padding: '1%' }}
                         onPress={() => {

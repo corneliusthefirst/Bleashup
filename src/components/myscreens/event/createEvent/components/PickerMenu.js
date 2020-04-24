@@ -19,6 +19,7 @@ export default class PickersMenu extends Component {
   };
 
   showMenu = () => {
+    console.warn("showing menu")
     this._menu.show();
   };
   renderMenuItems() {
@@ -28,7 +29,7 @@ export default class PickersMenu extends Component {
           <View>
             <MenuDivider color="#1FABAB" />
             <MenuItem
-              textStyle={{ color: ColorList.headerIcon }}
+              textStyle={{ color:ColorList.headerIcon }}
               onPress={() => {
                 this.hideMenu();
                 ele.callback();
@@ -65,7 +66,7 @@ export default class PickersMenu extends Component {
             >
               <Icon
                 style={{
-                  color: ColorList.bodyIcon,
+                  color: this.props.color ||  ColorList.bodyIcon,
                   fontSize: 15,
                 }}
                 onPress={this.showMenu}
