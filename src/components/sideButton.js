@@ -25,6 +25,7 @@ export default class SideButton extends Component {
         degrees={90}
         offsetY={this.props.offsetY}
         shadowStyle={this.props.shadowStyle}
+        renderIcon={this.props.renderIcon}
         >
         </ActionButton>
 

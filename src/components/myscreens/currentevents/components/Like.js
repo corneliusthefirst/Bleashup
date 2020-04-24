@@ -185,13 +185,13 @@ export default class Like extends Component {
                     >
                         <Animated.View style={{ transform: [{ scale: this.cardScale }] }}>
                             <Icon
-                                name="thumbs-up"
-                                type="Entypo"
+                                name="like"
+                                type="EvilIcons"
                                 style={{
                                     color: this.state.liked
                                         ? ColorList.likeActive
                                         : ColorList.likeInactive,
-                                    fontSize: 30,
+                                    fontSize: 45,
                                 }}
                             />
                         </Animated.View>

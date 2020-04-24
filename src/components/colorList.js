@@ -43,8 +43,8 @@ class colorlist {
     popMenuBackground = "white"
 
     //likes 
-    likeActive = "#54F5CA"
-    likeInactive = "#bfc6ea"
+    likeActive = "#1FABAB"
+    likeInactive = "black"
 
 
 }

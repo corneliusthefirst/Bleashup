@@ -43,7 +43,8 @@ export default class Social extends Component {
                     >{`${this.state.likesCount} like(s), ${this.state.commentCount} comment(s), ${this.state.supportCount} supports`}</Text>
                 </TouchableOpacity>
                 <View style={{ flexDirection: "row",justifyContent: 'space-between', }}>
-                    <View style={{ flex: 3, flexDirection: "row" }}>
+
+                    <View style={{ width:"55%", flexDirection: "row" }}>
                         <View style={this.itemStyle}>
                             <Like
                                 setLikesCount={(count) => {
@@ -55,19 +56,24 @@ export default class Social extends Component {
                             ></Like>
                         </View>
                         <View style={this.itemStyle}>
-                            <Icon style={{color:ColorList.headerIcon,fontSize: 18,}} type={"FontAwesome"} name={"comment"}>
+                            <Icon style={{color:ColorList.headerIcon,fontSize: 30,}} type={"FontAwesome"} name={"comments-o"}>
                         </Icon>
                         </View>
                         <View style={this.itemStyle}>
-                            <Icon style={{ color: ColorList.headerIcon, fontSize: 18, }} type={"FontAwesome"} name={"support"}>
+                            <View style={{ flexDirection:"row",justifyContent:"center"}}>
+                            <Icon style={{ color: ColorList.headerIcon, fontSize: 22, }} type={"MaterialIcons"} name={"attach-money"}>
                             </Icon>
+                            <Text>support</Text>
+                            </View>
                         </View>
                     </View>
+
                     <View
                         style={{
-                            flex: 1,
+                            width:"25%",
+                            alignItems:"center",
                             flexDirection: "row",
-                            justifyContent: "space-between",
+                            //justifyContent: "space-between",
                         }}
                     >
                         <View style={this.itemStyle}>
@@ -88,11 +94,12 @@ export default class Social extends Component {
                                 ]}
                             ></PickersMenu>
                         </View>
+
                         <View style={this.itemStyle}>
                             <PickersMenu
                                 icon={{
-                                    type: "Ionicons",
-                                    name: "md-share-alt",
+                                    type: "MaterialCommunityIcons",
+                                    name: "share-outline",
                                 }}
                                 menu={[
                                     {
@@ -119,6 +126,7 @@ export default class Social extends Component {
                                 ]}
                             ></PickersMenu>
                         </View>
+
                     </View>
                 </View>
                 <SocialTabModal
