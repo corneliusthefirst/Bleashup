@@ -11,7 +11,12 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
     return layoutMeasurement.height + contentOffset.y >=
         ((contentSize.height - paddingToBottom) * (0.70));
 };
- export default class BleashupFlatList extends Component {
+const isTooCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
+    const paddingToBottom = 20;
+    return layoutMeasurement.height + contentOffset.y >=
+        ((contentSize.height - paddingToBottom) * (0.95));
+};
+export default class BleashupFlatList extends Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -85,9 +90,12 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
                     this.props.backgroundColor : "#ffffff",
                 ...this.props.style
             }}>
-            {this.props.marginTop?<View style={{height:30}}></View>:null}
+                {this.props.marginTop ? <View style={{ height: 30 }}></View> : null}
                 <FlatList
                     onScrollEndDrag={({ nativeEvent }) => {
+                        if (isTooCloseToBottom(nativeEvent)) {
+                            this.props.loadMoreFromRemote && this.props.loadMoreFromRemote()
+                        }
                         if (isCloseToBottom(nativeEvent)) {
                             this.continueScrollDown()
                         } else if (ifCloseToTop(nativeEvent)) {
@@ -119,7 +127,7 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
                         this.state.currentRender >= this.props.numberOfItems - 1 ? null : <CardItem style={{ width: "100%", height: 25 }} >
                             {this.state.endReached ? <Text style={{
                                 marginLeft: "35%"
-                            }}>no more data to load</Text> : (this.props.noSpinner?null:<Spinner size={"small"}></Spinner>)}
+                            }}>no more data to load</Text> : (this.props.noSpinner ? null : <Spinner size={"small"}></Spinner>)}
                         </CardItem>
                     }
                 >

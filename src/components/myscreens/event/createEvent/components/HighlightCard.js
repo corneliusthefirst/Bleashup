@@ -82,19 +82,19 @@ export default class HighlightCard extends Component {
             </View>
           </View>
          <MedaiView
-            width={ColorList.containerWidth*.950}
+            width={ColorList.containerWidth*.925}
             height={this.props.height}
             showItem={() => this.props.showItem(this.props.item)}
             url={this.props.item.url}
          >
          </MedaiView>
-          <View style={{ height: this.containsMedia() ? (height / 18) : (height / 7), margin: '.5%', }}>
-            <Text ellipsizeMode='tail' style={{ fontSize: 12, }} numberOfLines={this.containsMedia() ? 2 : 10}>{this.props.description ? this.props.description : null}</Text>
-          </View>
-          <View style={{width:'90%'}}>
+          <TouchableOpacity onPress={() => requestAnimationFrame(() =>  this.props.showItem(this.props.item))} style={{ height: this.containsMedia() ? (height / 18) : (height / 7), margin: '.5%', }}>
+            <Text ellipsizeMode='tail' style={{ fontSize: 12, }} numberOfLines={this.containsMedia() ? 3 : 13}>{this.props.item.description ? this.props.item.description : null}</Text>
+          </TouchableOpacity>
+          <View style={{width:'70%'}}>
           <Social id={this.props.item.id}></Social>
           </View>
-        </View > : <Card style={{ width: ColorList.containerWidth * .98, height: "100%" }}></Card>
+        </View > : <Card style={{ width: ColorList.containerWidth * .90, height: "100%" }}></Card>
 
     )
   }

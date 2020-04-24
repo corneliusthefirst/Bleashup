@@ -64,12 +64,14 @@ export default class TabModal extends BleashupModal {
       );
     });
   }
+  activeTextStyle = null
+  underlineStyle = null
   isOpened = this.props.isOpen;
   modalBody() {
     return (
       <Container style={{ margin: "1%" }}>
         {this.TabHeader()}
-        <Tabs onChangeTab={({ i }) => {
+        <Tabs tabBarUnderlineStyle={this.underlineStyle} onChangeTab={({ i }) => {
           this.setState({
             currentTab: i
           })

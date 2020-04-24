@@ -13,13 +13,13 @@ class Requester {
         this.currentUserPhone = stores.Session.SessionStore.phone;
     }
     currentUserPhone = ""
-    like(event_id) {
+    like(event_id,likesCount) {
         return new Promise((resolve, reject) => {
             let eventID = requestObject.EventID()
             eventID.event_id = event_id;
             requestData.likeEvent(eventID, event_id + "like").then(JSONData => {
                 serverEventListener.sendRequest(JSONData, event_id + "like").then(SuccessMessage => {
-                    stores.Likes.like(event_id, stores.Session.SessionStore.phone).then(() => {
+                    stores.Likes.like(event_id, stores.Session.SessionStore.phone,likesCount).then(() => {
                         resolve("ok");
                     })
                 }).catch(error => {
@@ -48,13 +48,13 @@ class Requester {
             })
         })
     }
-    unlike(event_id) {
+    unlike(event_id,likesCount) {
         return new Promise((resolve, reject) => {
             let eventID = requestObject.EventID()
             eventID.event_id = event_id;
             requestData.unlikeEvent(eventID, event_id + "unlike").then((JSONData) => {
                 serverEventListener.sendRequest(JSONData, event_id + "unlike").then(SuccessMessage => {
-                    stores.Likes.unlike(event_id, stores.Session.SessionStore.phone).then(() => {
+                    stores.Likes.unlike(event_id, stores.Session.SessionStore.phone,likesCount).then(() => {
                         resolve("ok");
                     })
                 }).catch(error => {
