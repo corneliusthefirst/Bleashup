@@ -45,7 +45,7 @@ export default class PostMenu extends Component {
                         color: ColorList.headerIcon,
                         fontSize: 22,
                         marginTop: '10%'
-                    }} onPress={this.showMenu} name="gear" type="EvilIcons"></Icon>}
+                    }} onPress={this.showMenu} name="dots-three-vertical" type="Entypo"></Icon>}
                 >
                     <MenuItem textStyle={{ color: ColorList.headerIcon }} onPress={() => {
                         this.hideMenu()

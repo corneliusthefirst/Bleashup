@@ -52,7 +52,7 @@ export default class MediaPreviewer extends Component {
                 style={{
                   alignSelf: "center",
                   height: "100%",
-                  width: "100%",
+                  width: "88%",
                   borderColor: "#1FABAB",
                   borderRadius:
                     this.props.url.photo || this.props.url.video ? 10 : 100,
@@ -71,10 +71,9 @@ export default class MediaPreviewer extends Component {
                 style={{
                   alignSelf: "center",
                   height: "100%",
-                  width: "100%",
+                  width: "88%",
                   borderColor: "#1FABAB",
-                  borderRadius:
-                    this.props.url.photo || this.props.url.video ? 10 : 100,
+                  borderRadius:this.props.url.photo || this.props.url.video ? 10 : 5,
                 }}
               ></Thumbnail>
             )}
@@ -156,19 +155,3 @@ export default class MediaPreviewer extends Component {
 }
 
 
-/**              <Icon
-                onPress={() => {
-                  
-                }}
-                name={this.props.url.video ? "play" : "headset"}
-                style={{
-                  backgroundColor: "black",
-                  opacity: 0.5,
-                  borderRadius: 30,
-                  fontSize: 50,
-                  color: this.props.url.audio ? "yellow" : "#FEFFDE",
-                  alignSelf: "center",
-                }}
-                type={this.props.url.video ? "EvilIcons" : "MaterialIcons"}
-              ></Icon>
- */

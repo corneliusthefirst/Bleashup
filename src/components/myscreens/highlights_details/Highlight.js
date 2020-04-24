@@ -6,6 +6,8 @@ import HighlightContent from './HighlightContent';
 import moment from 'moment';
 import stores from '../../../stores';
 import Creator from '../reminds/Creator';
+
+
 export default class HighLight extends Component {
     constructor(props) {
         super(props)

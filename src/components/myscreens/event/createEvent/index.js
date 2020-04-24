@@ -22,9 +22,9 @@ import testForURL from '../../../../services/testForURL';
 import PhotoViewer from '../PhotoViewer';
 import shadower from "../../../shadower";
 import CacheImages from '../../../CacheImages';
-
-
-
+import CreateTextInput from '../../event/createEvent/components/CreateTextInput';
+import bleashupHeaderStyle from "../../../../services/bleashupHeaderStyle";
+import CreateButton from '../../event/createEvent/components/ActionButton';
 
 
 
@@ -51,7 +51,7 @@ export default class CreateEventView extends Component {
       participant: null,
       title:"",
       photo:"",
-      DefaultPhoto:require('../../../../../Images/activity.jpg'),
+      DefaultPhoto:require('../../../../../Images/activity_post.png'),
       searchImageState:false
     }
 
@@ -212,7 +212,7 @@ resetPhoto = () => {
     
       <View style={{flexDirection: "row",height: colorList.headerHeight,width: colorList.headerWidth,backgroundColor:colorList.headerBackground}}>
         
-        <View style={{flex:1,backgroundColor:colorList.headerBackground,flexDirection: "row", alignItems: "flex-start",paddingLeft:"3%"
+        <View style={{flex:1,backgroundColor:colorList.headerBackground,flexDirection: "row", alignItems: "flex-start",paddingLeft:"3%",...bleashupHeaderStyle
          }}>
             <View style={{width:"10%",justifyContent:"center",height:"100%"}}>
              <Icon onPress={() => {this.props.navigation.navigate("Home")}}
@@ -231,17 +231,19 @@ resetPhoto = () => {
 
 <View style={{height:"100%",flexDirection:"column"}}>
 
-     <View  style={{ height:colorList.containerHeight/9,alignItems:"center"}}>
-        
-          <Input  maxLength={40} placeholder='@Activity name' keyboardType='email-address' autoCapitalize="none" returnKeyType='next' inverse last
-           value={this.state.title} autoCapitalize="sentences"  style={{borderBottomWidth:1,borderColor:colorList.bodyIcon,width:"79%",}}    onChangeText={(value) => this.onChangedTitle(value)} />
-        
-     </View>
+
+          <CreateTextInput
+                height={height/12}
+                value={this.state.title}
+                onChange={this.onChangedTitle}
+                placeholder={"@Activity name"}
+            >
+          </CreateTextInput>
 
 
              <View style={{ height:colorList.containerHeight/16,alignItems:"flex-end",flexDirection:"row",justifyContent:'flex-end',alignItem:'center',marginRight:"8%"}}>
                 
-                     <Text style={{left:0,position:'absolute',marginLeft:"12%",color:colorList.bodyText}}>@activity photo</Text>
+                     <Text style={{left:0,position:'absolute',marginLeft:"12.5%",color:colorList.bodyText}}>@activity photo</Text>
                      <Icon name="camera" active={true} type="EvilIcons"
                         style={{color:colorList.bodyIcon,fontSize:36}}   onPress={()=>{this.TakePhotoFromCamera()}}/>
      
@@ -250,13 +252,13 @@ resetPhoto = () => {
              </View>
 
 
-            <View style={{ height:250, flexDirection: 'column',justifyContent:'center',alignItem:'center'}}>
+            <View style={{ height:250,justifyContent:'center'}}>
                 <TouchableOpacity onPress={() => this.state.photo && testForURL(this.state.photo)?this.setState({ enlargeImage: true }):null} >
                     {this.state.photo && testForURL(this.state.photo)?<CacheImages thumbnails square  source={{uri:this.state.photo}}
-                     style={{alignSelf:'center',height: "90%",width: "83%", borderRadius:10
+                     style={{height: "90%",width: "81%", borderRadius:5,alignSelf:"center",
               }} /> : <Thumbnail source={this.state.photo ? { uri: this.state.photo } : this.state.DefaultPhoto}
                 style={{
-                  alignSelf: 'center', height: "90%", width: "90%", borderRadius: 5
+                   alignSelf:"center",height: "90%", width: "81%", borderRadius: 5
                 }}></Thumbnail>}
                 </TouchableOpacity>
                 {this.state.photo?<View style={{position:'absolute',alignSelf: 'flex-end',marginBottom: '60%',marginRight: '10%',}}>
@@ -272,17 +274,13 @@ resetPhoto = () => {
                   </View>:null}
             </View>
 
-             <View style={{height:"10%",width:"100%",alignItems:"flex-end",paddingRight: "10%"}}>
-                <TouchableOpacity style={{ width: "89%" }} >
-                  {this.state.creating ? <Spinner></Spinner> : <Button onPress={() => { this.creatEvent() }} style={{borderWidth:1,borderColor:colorList.bodyIcon,backgroundColor:colorList.bodyBackground,}} rounded>
-                   <View style={{width:"100%",alignItems:"center"}}>
-                   <Text style={{ color: colorList.bodyText, fontWeight: 'bold'}}>Create Activity</Text>
-                     </View> 
-                  </Button>}
-                </TouchableOpacity>
-              </View>
 
-
+               {this.state.creating ? <Spinner></Spinner> :<CreateButton
+                    action={this.creatEvent}
+                    title={"Create Activity"}
+                    width={"80%"}
+                >
+                </CreateButton>}
 
 
 

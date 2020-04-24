@@ -103,7 +103,7 @@ export default class EventHighlights extends BleashupModal {
       title: "",
       description: "",
       url: "",
-      defaultUrl: require("../../../../../../Images/highlightphoto.jpg"),
+      defaultUrl: require("../../../../../../Images/post.png"),
       initialScrollIndex: 2,
       highlightData: [],
       animateHighlight: false,
@@ -462,7 +462,7 @@ export default class EventHighlights extends BleashupModal {
       <View>
        <CreationHeader
        back={this.back}
-        title={this.props.updateState ? "Update post" : "Add post"}
+        title={this.props.updateState ? "Update Post" : "Add New Post"}
        >
        </CreationHeader>
         <View
@@ -475,15 +475,39 @@ export default class EventHighlights extends BleashupModal {
           <ScrollView showsVerticalScrollIndicator={false} ref={"scrollView"}>
             <View style={{ height: "100%" }}>
             <CreateTextInput
-            height={height/14}
+                height={height/11}
                 value={this.state.currentHighlight.title
                   ? this.state.currentHighlight.title
                   : ""}
                 onChange={this.onChangedTitle}
-                placeholder={"Post Title"}
+                placeholder={"@title"}
             >
             </CreateTextInput>
-              <View style={{ marginTop: 5, marginBottom: 5, marginLeft: '3%', }}>
+
+            <CreateTextInput
+                height={height/8}
+                value={this.state.currentHighlight.description
+                  ? this.state.currentHighlight.description
+                  : ""}
+                onChange={this.onChangedDescription}
+                placeholder={"@description"}
+                maxLength={3000}
+                numberOfLines={5}
+                multiline={true}
+            >
+            </CreateTextInput>
+
+
+
+        
+
+
+
+
+
+
+
+              <View style={{ marginTop: 5, marginBottom: 5,width:"80%",alignSelf:"center",alignItems:"flex-end" }}>
                 <PickersUpload
                 notAudio
                   creating={!this.props.updateState}
@@ -494,12 +518,14 @@ export default class EventHighlights extends BleashupModal {
                   }}
                 ></PickersUpload>
               </View>
+
               <MediaPreviewer
-                height={ColorList.containerHeight * 0.2}
+                height={ColorList.containerHeight * 0.22}
                 defaultPhoto={this.state.defaultUrl}
                 url={this.state.currentHighlight.url}
                 cleanMedia={() => this.cleanMedia()}
               ></MediaPreviewer>
+
               {this.state.currentHighlight.url.audio ? (
                 <View
                   style={{
@@ -514,6 +540,7 @@ export default class EventHighlights extends BleashupModal {
                   <SimpleAudioPlayer
                     url={this.state.currentHighlight.url}
                   ></SimpleAudioPlayer>
+
                   <Icon
                     name={"close"}
                     type="EvilIcons"
@@ -527,41 +554,8 @@ export default class EventHighlights extends BleashupModal {
                   ></Icon>
                 </View>
               ) : null}
-              <View
-                style={{
-                  height: height / 4.5,
-                  alignItems: "flex-start",
-                  justifyContent: "center",
-                }}
-              >
-                <View
-                  style={{ width: "90%", height: "90%", alignSelf: "center" }}
-                >
-                  {/* <Text style={{alignSelf:'flex-start',margin:"3%",fontWeight:"500",fontSize:16}} >Description :</Text>*/}
-                  <Textarea
-                    value={this.state.currentHighlight.description}
-                    containerStyle={{
-                      width: "100%",
-                      margin: "1%",
-                      height: 130,
-                      borderRadius: 10,
-                      borderWidth: 1,
-                      borderColor: "#1FABAB",
-                      backgroundColor: "#f5fffa",
-                    }}
-                    placeholder="Post Content"
-                    style={{
-                      textAlignVertical: "top", // hack android
-                      height: "100%",
-                      fontSize: 14,
-                      color: "#333",
-                    }}
-                    maxLength={3000}
-                    onChangeText={(value) => this.onChangedDescription(value)}
-                  />
-                </View>
-              </View>
-              <Button
+              
+              <TouchableOpacity
                 transparent
                 onPress={() => {
                   this.onchangeHighLightPublicState(
@@ -570,6 +564,7 @@ export default class EventHighlights extends BleashupModal {
                       : "public"
                   );
                 }}
+                style={{marginLeft:"9%",marginTop:"5%",flexDirection:"row",height:40,alignItems:"center"}}
               >
                 <Icon
                   name={
@@ -578,24 +573,21 @@ export default class EventHighlights extends BleashupModal {
                       : "radio-button-unchecked"
                   }
                   type={"MaterialIcons"}
+                  style={{fontSize:22}}
                 ></Icon>
-                <Text>{`${this.state.currentHighlight.public_state}`}</Text>
-              </Button>
-              <View
-                style={{
-                  height: height / 10,
-                  justifyContent: "space-between",
-                  alignItem: "center",
-                }}
-              >
+                <Text style={{color:ColorList.bodyText,marginLeft:"3%"}}>{`${this.state.currentHighlight.public_state}`}</Text>
+              </TouchableOpacity>
+
+
                 {this.state.creating ? (
                   <Spinner></Spinner>
                 ) :<CreateButton
                     action={!this.props.updateState ? this.AddHighlight : this.updateHighlight}
-                    title={!this.state.updateState ? "Add Post" : "Update Post"}
+                    title={!this.state.updateState ? "Add New Post" : "Update Post"}
+                    width={"80%"}
                 >
                 </CreateButton>}
-              </View>
+             
             </View>
           </ScrollView>
         </View>

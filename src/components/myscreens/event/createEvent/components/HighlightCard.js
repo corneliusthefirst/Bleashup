@@ -65,11 +65,11 @@ export default class HighlightCard extends Component {
     return (
 
       this.state.mounted ?
-        <View style={{ width: ColorList.containerWidth*0.95,alignSelf:"center", ...shadower(1), borderRadius: 3, padding: 5,justifyContent: 'center',marginTop:"1%" }}>
-          <View style={{ flexDirection: 'row',width:'98%', justifyContent: 'space-between', marginTop: 2, marginBottom: 2, height: height / 30,alignSelf: 'center', }}>
+        <View style={{ width: ColorList.containerWidth,alignSelf:"center", ...shadower(1),justifyContent: 'center',marginTop:"1%",borderBottomWidth:0.2,borderColor:"ivory" }}>
+          <View style={{ flexDirection: 'row',width:'92%', justifyContent: 'space-between', marginTop: 2, marginBottom: 2, height:ColorList.containerHeight/20,alignSelf: 'center', }}>
             <View style={{ maxWidth: '100%' }}>
               <Title style={{
-                fontSize: 14, color: ColorList.headerBlackText, fontWeight: 'bold', alignSelf: 'flex-start',
+                fontSize: 14, color: ColorList.headerBlackText, fontWeight: 'bold', marginTop:"10%",
               }}>{this.props.item.title ? this.props.item.title : ""}</Title>
             </View>
             <View>
@@ -82,7 +82,7 @@ export default class HighlightCard extends Component {
             </View>
           </View>
          <MedaiView
-            width={ColorList.containerWidth*.950}
+            width={ColorList.containerWidth}
             height={this.props.height}
             showItem={() => this.props.showItem(this.props.item)}
             url={this.props.item.url}

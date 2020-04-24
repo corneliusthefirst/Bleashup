@@ -378,7 +378,7 @@ class PublicEvent extends Component {
             navigation={this.props.navigation} renderDelay={this.props.renderDelay} showPhoto={(url) => url ?
               this.showPhoto(url) : null} joined={() => this.join()}
             isToBeJoint hasJoin={this.props.Event.joint || this.state.joint} onOpen={() => this.onOpenPhotoModal()} style={{}} photo={this.props.Event.background}
-             event_id={this.props.Event.id} width={colorList.containerWidth-10} height={200} borderRadius={0} />
+             event_id={this.props.Event.id} width={colorList.containerWidth} height={200} borderRadius={0} />
         </View> : null}</View>
       </View>
     </CardItem>)
@@ -414,7 +414,7 @@ renderFooter(){
   render() {
     //emitter.emit('notify', "santerss") 
     return (this.state.isMount ? <View style={{backgroundColor:colorList.bodyBackground,
-      width: colorList.containerWidth - 10,alignSelf:"center" }}>
+      width: colorList.containerWidth ,alignSelf:"center" }}>
       <Swipeout {...this.props} onOpen={() => this.openSwipeOut()} onClose={() => this.onCloseSwipeout()} style={{
         width: "97%", ...shadower(1),
         backgroundColor: this.props.Event.new ? "#cdfcfc" : null

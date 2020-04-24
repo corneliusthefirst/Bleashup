@@ -190,59 +190,14 @@ export default class PickersUpload extends Component {
   }
   render() {
     return (
-      <View>
+      <View style={{width: 120, alignItems:"flex-end"}}>
         <View
           style={{
+            flex:1,
             flexDirection: "row",
-            flexWrap: "wrap",
-            width: 100,
-            justifyContent: "space-between",
           }}
         >
-          <View style={{ width: "33.333%" }}>
-            <PickersMenu
-              menu={[
-                {
-                  title: "Gallery",
-                  condition: true,
-                  callback: () => this.TakePhotoFromLibrary(false),
-                },
-              ]}
-              icon={{
-                name: "photo-camera",
-                type: "MaterialIcons",
-              }}
-            ></PickersMenu>
-          </View>
-          <View style={{ width: "33.333%", justifyContent: "flex-end" }}>
-            <PickersMenu
-              menu={[
-                {
-                  title: "Download Photo",
-                  condition: true,
-                  callback: () =>
-                    this.setState({
-                      searchImageState: true,
-                    }),
-                },
-                {
-                  title: "Video",
-                  condition: this.props.notVideo ? false : true,
-                  callback: () => this.TakePhotoFromLibrary(true),
-                },
-                {
-                  title: "Add Audio",
-                  condition: this.props.notAudio ? false : true,
-                  callback: () => this.takeAudio(),
-                },
-              ]}
-              icon={{
-                name: "plus",
-                type: "Octicons",
-              }}
-            ></PickersMenu>
-          </View>
-          <View style={{ width: "33.333%", justifyContent: "center" }}>
+          <View style={{ width: "33.333%",justifyContent: "center",alignItems:"flex-end" }}>
             {this.state.uploading && (
               <View style={{}}>
                 <AnimatedCircularProgress
@@ -268,6 +223,54 @@ export default class PickersUpload extends Component {
               </View>
             )}
           </View>
+
+          <View style={{ width: "33.333%",justifyContent: "center",alignItems:"flex-end" }}>
+            <PickersMenu
+              menu={[
+                {
+                  title: "Gallery",
+                  condition: true,
+                  callback: () => this.TakePhotoFromLibrary(false),
+                },
+              ]}
+              icon={{
+                name: "camera",
+                type: "EvilIcons",
+              }}
+            ></PickersMenu>
+          </View>
+
+          <View style={{ width: "33.333%", justifyContent: "center",alignItems:"flex-end",paddingRight:5 }}>
+            <PickersMenu
+              menu={[
+                {
+                  title: "Download Photo",
+                  condition: true,
+                  callback: () =>
+                    this.setState({
+                      searchImageState: true,
+                    }),
+                },
+                {
+                  title: "Video",
+                  condition: this.props.notVideo ? false : true,
+                  callback: () => this.TakePhotoFromLibrary(true),
+                },
+                {
+                  title: "Add Audio",
+                  condition: this.props.notAudio ? false : true,
+                  callback: () => this.takeAudio(),
+                },
+              ]}
+              icon={{
+                name: "plus-small",
+                type: "Octicons",
+              }}
+            ></PickersMenu>
+          </View>
+
+
+
         </View>
         <SearchImage
           openPicker={() => {

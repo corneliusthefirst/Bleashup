@@ -1,6 +1,7 @@
 import React ,{Component} from "react"
 import { View, TextInput } from 'react-native';
-import { Item } from "native-base";
+import { Input } from 'native-base';
+import colorList from './../../../../colorList';
 
 export default class CreateTextInput extends Component{
     constructor(props){
@@ -9,39 +10,38 @@ export default class CreateTextInput extends Component{
     render(){
         return <View
             style={{
-                height: this.props.height,
+                height: this.props.height?this.props.height:colorList.containerHeight/9,
                 alignItems: "center",
-                margin: "2%",
-                width:'100%'
+                width:'100%',
+                
             }}
         >
-            <Item
-                style={{
-                    borderColor: "#1FABAB",
-                    width: "95%",
-                    margin: "2%",
-                    height: "90%",
-                }}
-                rounded
-            >
-                <TextInput
+
+                <Input
                     style={{
-                        width: "100%",
+                        width: "80%",
                         height: "100%",
-                        margin: "2%",
-                        marginBottom: "5%",
+                        borderBottomWidth:1,
+                        borderColor:colorList.bodyIcon ,
+                        color:colorList.bodyText,
+                        textAlignVertical: "top",
+                        
                     }}
                     value={this.props.value }
                     maxLength={this.props.maxLength||100}
                     placeholder={this.props.placeholder}
                     keyboardType="email-address"
-                    autoCapitalize="none"
+                    autoCapitalize="sentences"
                     returnKeyType="next"
                     inverse
                     last
                     onChangeText={this.props.onChange}
+                    multiline={this.props.multiline?this.props.multiline:false}
+                    numberOfLines={this.props.numberOfLines?this.props.numberOfLines:1}
                 />
-            </Item>
+            
         </View>
     }
 }
+
+

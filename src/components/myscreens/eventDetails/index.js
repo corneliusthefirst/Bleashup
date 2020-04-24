@@ -29,6 +29,8 @@ import colorList from '../../colorList'
 import { round } from "react-native-reanimated";
 import ColorList from "../../colorList";
 import DescriptionModal from './descriptionModal';
+import Drawer from '../../draggableView';
+import SideButton from '../../sideButton';
 
 let { height, width } = Dimensions.get('window');
 
@@ -216,6 +218,7 @@ export default class EventDetailView extends Component {
   delay = 1
   sorter = (a, b) => (a.created_at > b.created_at ? -1 :
     a.created_at < b.created_at ? 1 : 0)
+
   render() {
     return (
       !this.state.isMounted ? <View style={{ height: colorList.containerHeight, backgroundColor: colorList.bodyBackground, width: '100%' }}></View> :
@@ -223,9 +226,9 @@ export default class EventDetailView extends Component {
           (this.relationPost(this.state.EventData.id))
           :
           <View style={{ flex: 1, width: "100%" }}>
-
+  
             <View style={{ flexDirection: "row", ...bleashupHeaderStyle, height: colorList.headerHeight, width: colorList.headerWidth, backgroundColor: colorList.headerBackground }}>
-
+  
               <View style={{
                 flex: 1,
                 paddingLeft: '1%', paddingRight: '1%', backgroundColor: colorList.headerBackground,
@@ -235,37 +238,23 @@ export default class EventDetailView extends Component {
                   <Icon onPress={() => { this.props.navigation.navigate("Home") }}
                     style={{ color: colorList.headerIcon,}} type={"MaterialIcons"} name={"arrow-back"}></Icon>
                 </View>
-
+  
                 <View style={{ width: '69%', paddingLeft: '2%', justifyContent: "center" }}>
                   <Title style={{ color: colorList.headerText, fontWeight: 'bold', alignSelf: 'flex-start' }}>{this.props.Event.about.title}</Title>
                 </View>
-
-
+  
+  
                 <View style={{ width: '20%',alignItems:"flex-end" }}>
                   <Icon onPress={() => {
                     this.props.openMenu()
                   }} style={{ color: colorList.headerIcon ,marginRight:"18%"}} type={"Ionicons"} name={"ios-menu"}></Icon>
                 </View>
-
+  
               </View>
             </View>
+  
 
-            <View style={{height:ColorList.headerHeight,flexDirection:"row",alignItems:"center",justifyContent:"flex-end",width:"100%",paddingRight:"3%"}}>
-              
-               <View style={{height:35,width:35,borderRadius:25,borderColor:ColorList.bodyIcon,borderWidth:1,alignItems:"center",justifyContent:"center",marginRight:"2%",}}>
-                  <Icon onPress={() => requestAnimationFrame(() => this.newHighlight())} type='AntDesign'
-                    name="plus" style={{ color: colorList.headerIcon, alignSelf: 'center', }} />
-                </View>
-
-                 <View style={{height:35,width:35,borderRadius:25,borderColor:ColorList.bodyIcon,borderWidth:1,alignItems:"center",justifyContent:"center",marginLeft:"2%"}}>
-                     <TouchableOpacity onPress={()=>{this.setState({viewdetail:true})}}>
-                     <Text style={{fontSize:26}}>D</Text>
-                     </TouchableOpacity>
-                 </View>
-
-
-            </View>
-
+  
             <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled>
               <View style={{ minHeight: colorList.containerHeight - colorList.headerHeight, flexDirection: "column", width: "100%",justifyContent: 'center', }} >
                 <View style={{ height: this.state.highlightData.length == 0 ? 0 : 
@@ -319,61 +308,90 @@ export default class EventDetailView extends Component {
                   >
                   </BleashupFlatList> : null}
                 </View>
-
-
+  
+  
               </View>
-
+  
             </ScrollView>
-
+  
+            <EventHighlights
+        closeTeporary={() => {
+          this.setState({
+            EventHighlightState: false,
+          })
+          setTimeout(() => {
+            this.setState({
+              EventHighlightState: true
+            })
+          }, 600)
+        }}
+        startLoader={() => {
+          this.props.startLoader()
+        }} stopLoader={() => {
+          this.props.stopLoader()
+        }}
+        updateState={this.state.update}
+        highlight_id={this.state.highlight_id}
+        reinitializeHighlightsList={(newHighlight) => {
+          this.reinitializeHighlightsList(newHighlight)
+        }} isOpen={this.state.EventHighlightState} onClosed={() => {
+          this.setState({
+            EventHighlightState: false,
+            highlight_id: null
+          })
+        }}
+        update={(newHighlight, previousHighlight) => this.updateHighlight(newHighlight, previousHighlight)}
+        participant={this.state.participant} parentComponent={this} ref={"highlights"} event_id={this.props.Event.id} />
+  
+  
             <DescriptionModal Event={this.props.Event} isOpen={this.state.viewdetail} onClosed={()=>{this.setState({viewdetail:false})}} parent={this}></DescriptionModal>
-
+  
             {this.state.EventDescriptionState ? <EventDescription updateDesc={(newDesc) => {
               this.props.updateDesc(newDesc)
             }} event={this.props.Event} isOpen={this.state.EventDescriptionState} onClosed={() => { this.setState({ EventDescriptionState: false }) }}
               ref={"description_ref"} eventId={this.props.Event.id} updateDes={true} parentComp={this} /> : null}
-
+  
             {this.state.EventLocationState ? <EventLocation updateLocation={(newLoc) => {
               this.props.updateLocation(newLoc)
             }} event={this.props.Event} isOpen={this.state.EventLocationState} onClosed={() => { this.setState({ EventLocationState: false }) }}
               ref={"location_ref"} updateLoc={true} eventId={this.props.Event.id} parentComp={this} /> : null}
-            <EventHighlights
-              closeTeporary={() => {
-                this.setState({
-                  EventHighlightState: false,
-                })
-                setTimeout(() => {
-                  this.setState({
-                    EventHighlightState: true
-                  })
-                }, 600)
-              }}
-              startLoader={() => {
-                this.props.startLoader()
-              }} stopLoader={() => {
-                this.props.stopLoader()
-              }}
-              updateState={this.state.update}
-              highlight_id={this.state.highlight_id}
-              reinitializeHighlightsList={(newHighlight) => {
-                this.reinitializeHighlightsList(newHighlight)
-              }} isOpen={this.state.EventHighlightState} onClosed={() => {
-                this.setState({
-                  EventHighlightState: false,
-                  highlight_id: null
-                })
-              }}
-              update={(newHighlight, previousHighlight) => this.updateHighlight(newHighlight, previousHighlight)}
-              participant={this.state.participant} parentComponent={this} ref={"highlights"} event_id={this.props.Event.id} />
-
-
+  
+  
             {this.state.isAreYouSureModalOpened ? <BleashupAlert title={"Delete Higlight"} accept={"Yes"} refuse={"No"} message={" Are you sure you want to delete these highlight ?"}
               deleteFunction={() => this.deleteHighlight(this.state.current_highlight)}
               isOpen={this.state.isAreYouSureModalOpened} onClosed={() => { this.setState({ isAreYouSureModalOpened: false }) }} /> : null}
+
+
+           <SideButton
+            buttonColor={"salmon"}
+            position={"right"}
+            text={"D"}
+            action={()=>{this.setState({viewdetail:true})}}
+            buttonTextStyle={{color:colorList.bodyIcon}}
+            offsetX={10}
+            size={40}
+            offsetY={30}
+            shadowStyle={{...shadower(5)}}
+           />
+           <SideButton
+            buttonColor={"#1FABAB"}
+            position={"right"}
+            text={"+"}
+            action={() => requestAnimationFrame(() => this.newHighlight())}
+            buttonTextStyle={{color:"white"}}
+            size={40}
+            offsetX={10}
+            offsetY={90}
+           />
+
+          
+
           </View>
         )
-
+  
     )
   }
+
 
 }
 
