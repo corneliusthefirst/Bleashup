@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import Menu, { MenuItem, MenuDivider } from "react-native-material-menu";
 import { Icon } from "native-base";
-import { View } from "react-native";
+import { View ,TouchableOpacity} from "react-native";
 import ColorList from "../../../../colorList";
 import shadower from "../../../../shadower";
 export default class PickersMenu extends Component {
@@ -19,6 +19,7 @@ export default class PickersMenu extends Component {
   };
 
   showMenu = () => {
+    console.warn("showing menu")
     this._menu.show();
   };
   renderMenuItems() {
@@ -28,7 +29,7 @@ export default class PickersMenu extends Component {
           <View>
             <MenuDivider color="#1FABAB" />
             <MenuItem
-              textStyle={{ color: ColorList.headerIcon }}
+              textStyle={{ color:ColorList.headerIcon }}
               onPress={() => {
                 this.hideMenu();
                 ele.callback();
@@ -59,11 +60,9 @@ export default class PickersMenu extends Component {
                   color: ColorList.bodyIcon,
                   fontSize: 35,
                 }}
-                onPress={this.showMenu}
                 name={this.props.icon.name}
                 type={this.props.icon.type}
-              ></Icon>
-          
+              ></Icon>    
           }
         >
           {this.renderMenuItems()}

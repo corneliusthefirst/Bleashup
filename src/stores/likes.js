@@ -7,18 +7,18 @@ import {
   indexOf,
   uniqBy,
   uniq,
-  reject
+  reject,
 } from "lodash";
 import storage from "./Storage";
 import request from "../services/requestObjects";
 import tcpRequest from "../services/tcpRequestData";
-import ServerEventListener from "../services/severEventListener"
+import ServerEventListener from "../services/severEventListener";
 import stores from ".";
 export default class likes {
   constructor() {
-    this.readFromStore().then(likes => {
-      this.setPropties(likes)
-    })
+    this.readFromStore().then((likes) => {
+      this.setPropties(likes);
+    });
     /*storage.remove({
       key: 'likes'
     });*/
@@ -26,39 +26,23 @@ export default class likes {
   @observable likes = [];
   saveKey = {
     key: "likes",
-    data: [{}]
+    data: [{}],
   };
   @action loadLikes(id) {
     return new Promise((resolve, reject) => {
-      this.readFromStore().then(likes => {
-        if (likes) {
-          like = find(likes, {
-            event_id: id
-          })
+      this.readFromStore().then((likes) => {
+        if (likes && likes.length > 0) {
+          let like = find(likes, {
+            event_id: id,
+          });
           if (like) {
-            like.likers = uniq(like.likers)
+            like.likers = uniq(like.likers);
             resolve(like);
           } else {
-            this.getLikesFromRemote(id).then(Like => {
-              likes && likes.length > 0 ?
-                likes.unshift(Like) : likes = [Like];
-              this.saveKey.data = likes
-              storage.save(this.saveKey).then(() => {
-                resolve(Like)
-              })
-            }).catch(error => {
-              console.warn("unable to send request deu to ", error)
-            })
+            resolve({ event_id: id, likers: [] });
           }
         } else {
-          this.getLikesFromRemote(id).then(Like => {
-            this.saveKey.data = [Like]
-            storage.save(this.saveKey).then(() => {
-              resolve(Like)
-            })
-          }).catch(error => {
-            console.warn("unable to send request deu to ", error)
-          })
+          resolve({ event_id: id, likers: [] });
         }
       });
     });
@@ -69,105 +53,90 @@ export default class likes {
       ID.event_id = id;
       ID.action = action;
       ID.start = start;
-      ID.end = end
-      tcpRequest.getLikes(ID, id + "get_likes").then(DataJSON => {
-        ServerEventListener.sendRequest(DataJSON, id + "get_likes").then(Like => {
-          if (Like.data == 'empty') resolve(0)
-          else if (Like.data.likers) resolove(Like.data.likers)
-          else resolve(Like.data)
-        }).catch(error => {
-          //serverEventListener.socket.write = undefined
-          reject(error)
-        })
-      })
-    })
-  }
-  @action like(ID, Liker, inform) {
-    return new Promise((resolve, reject) => {
-      this.readFromStore().then(Likes => {
-        if (Likes.length !== 0) {
-          let likeIndex = findIndex(Likes, { event_id: ID });
-          if (likeIndex >= 0) {
-            Likes[likeIndex].likers ? Likes[likeIndex].likers.unshift(Liker) : Likes[likeIndex].likers = [Liker];
-            Likes[likeIndex].likers = uniq(Likes[likeIndex].likers)
-            Likes[likeIndex].likes = Likes[likeIndex].likers.length;
-            Likes = uniqBy(Likes, "event_id");
-            this.saveKey.data = Likes;
-            storage.save(this.saveKey).then(() => {
-              if (inform) this.setPropties(this.saveKey.data)
-              resolve();
-            });
-          } else {
-            this.getLikesFromRemote(ID).then(Like => {
-              this.addLike(Likes, Like).then(() => {
-                resolve();
-              })
-            })
-          }
-        } else {
-          this.getLikesFromRemote(ID).then(Likes => {
-            this.addLike([], Likes).then(() => {
-              resolve()
-            })
+      ID.end = end;
+      tcpRequest.getLikes(ID, id + "get_likes").then((DataJSON) => {
+        ServerEventListener.sendRequest(DataJSON, id + "get_likes")
+          .then((Like) => {
+            if (Like.data == "empty")
+              resolve(action == "count" ? { liked: false, count: 0 } : []);
+            else if (Like.data.likers) resolve(Like.data.likers);
+            else resolve(Like.data);
           })
+          .catch((error) => {
+            console.warn("error from remote like catch")
+            reject(error);
+          });
+      });
+    });
+  }
+  @action like(ID, Liker, likesCount, inform) {
+    return new Promise((resolve, reject) => {
+      this.readFromStore().then((Likes) => {
+        if (Likes && Likes.length > 0) {
+          this.addLike(Likes, {
+            event_id: ID,
+            likers: [Liker],
+            likes: likesCount,
+          }).then(() => {
+            resolve();
+          });
+        } else {
+          this.addLike([], {
+            event_id: ID,
+            likers: [Liker],
+            likes: likesCount,
+          }).then(() => {
+            resolve();
+          });
         }
       });
     });
   }
   @action setPropties(data) {
-    this.likes = data
+    this.likes = data;
   }
   @action addLike(Likes, Like) {
     return new Promise((resolve, reject) => {
       Likes.push(Like);
       this.saveKey.data = uniqBy(Likes, "event_id");
       storage.save(this.saveKey).then(() => {
-        this.setPropties(this.saveKey.data)
-        resolve()
-      })
-    })
+        this.setPropties(this.saveKey.data);
+        resolve();
+      });
+    });
   }
-  @action unlike(ID, phone, inform) {
-    return new Promise((resolve, reject) => {
-      this.readFromStore().then(Likes => {
+  @action unlike(ID, phone, likesCount, inform) {
+    return new Promise((resolve, rejec) => {
+      this.readFromStore().then((Likes) => {
         if (Likes.length !== 0) {
-          let likeIndex = findIndex(Likes, { event_id: ID });
-          if (likeIndex >= 0) {
-            if (indexOf(Likes[likeIndex].likers, phone) >= 0) {
-              Likes[likeIndex].likers.splice(indexOf(Likes[likeIndex].likers, phone), 1);
-              Likes[likeIndex].likes = Likes[likeIndex].likers.length;
-              this.saveKey.data = Likes;
-              storage.save(this.saveKey).then(() => {
-                if (inform)
-                  this.setPropties(this.saveKey.data)
-                resolve();
-              });
-            }
-          } else {
-            this.getLikesFromRemote(ID).then(Like => {
-              this.addLike(Likes, Like).then(() => {
-                resolve()
-              })
-            })
-          }
+          Likes = reject(Likes, { event_id: ID });
+          this.addLike(Likes, {
+            event_id: ID,
+            likers: [],
+            likes: likesCount,
+          }).then(() => {
+            resolve();
+          });
         } else {
-          this.getLikesFromRemote(ID).then(Like => {
-            this.addLike([], Like).then(() => {
-              resolve()
-            })
-          })
+          this.addLike([], {
+            event_id: ID,
+            likers: [],
+            likes: likesCount,
+          }).then(() => {
+            resolve();
+          });
         }
       });
     });
   }
   loadAllLikes() {
     this.readFromStore().then((likes) => {
-      this.setPropties(likes)
-    })
+      this.setPropties(likes);
+    });
   }
   @action UpdateEventLikes(EvenID, NewLikes) {
     return new Promise((resolve, reject) => {
-      this.readFromStore().then(Likes => {
+      this.readFromStore().then((Likes) => {
         Likes = reject(Likes, ["event_id", EvenID]);
         Likes = Likes.concat(NewLikes);
         this.saveKey.data = Likes;
@@ -182,12 +151,12 @@ export default class likes {
       storage
         .load({
           key: "likes",
-          autoSync: true
+          autoSync: true,
         })
-        .then(Likes => {
+        .then((Likes) => {
           resolve(Likes);
         })
-        .catch(error => {
+        .catch((error) => {
           resolve([]);
         });
     });
