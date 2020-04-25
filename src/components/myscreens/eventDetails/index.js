@@ -363,7 +363,7 @@ export default class EventDetailView extends Component {
 
 
            <SideButton
-            //buttonColor={"salmon"}
+            buttonColor={'rgba(52, 52, 52, 0.8)'}
             position={"right"}
             //text={"D"}
             renderIcon={()=>{
@@ -374,10 +374,10 @@ export default class EventDetailView extends Component {
             offsetX={10}
             size={40}
             offsetY={30}
-            shadowStyle={{...shadower(5)}}
+           
            />
            <SideButton
-            //buttonColor={"#1FABAB"}
+            buttonColor={'rgba(52, 52, 52, 0.8)'}
             position={"right"}
             text={"+"}
             action={() => requestAnimationFrame(() => this.newHighlight())}
@@ -385,7 +385,7 @@ export default class EventDetailView extends Component {
             size={40}
             offsetX={10}
             offsetY={90}
-            shadowStyle={{...shadower(3)}}
+            
            />
 
           
