@@ -16,6 +16,7 @@ export default class PickersUpload extends Component {
     super(props);
     this.state = {
       downloadProgess: 0,
+      uploading:true,
     };
   }
   componentDidMount() {
@@ -190,20 +191,15 @@ export default class PickersUpload extends Component {
   }
   render() {
     return (
-      <View style={{width: 120, alignItems:"flex-end"}}>
-        <View
-          style={{
-            flex:1,
-            flexDirection: "row",
-          }}
-        >
-          <View style={{ width: "33.333%",justifyContent: "center",alignItems:"flex-end" }}>
+      <View style={{flexDirection:"row",width:"100%",height:ColorList.headerHeight,justifyContent:"flex-end"}}>
+         
+          <View style={{position:"absolute",left:0,width: "15%",height:"100%",justifyContent: "center",alignItems:"center" }}>
             {this.state.uploading && (
               <View style={{}}>
                 <AnimatedCircularProgress
                   size={30}
                   width={2}
-                  backgroundColor={ColorList.headerBackground}
+                  backgroundColor={ColorList.headerIcon}
                   tintColor={
                     !this.state.uploadError ? ColorList.iconActive : "red"
                   }
@@ -211,10 +207,11 @@ export default class PickersUpload extends Component {
                 >
                   {(fill) => (
                     <View>
+                      
                       <Icon
                         name="close"
                         onPress={() => this.cancelAllTasks()}
-                        style={{ color: ColorList.headerIcon }}
+                        style={{ color: ColorList.headerIcon,fontSize:20 }}
                         type={"EvilIcons"}
                       ></Icon>
                     </View>
@@ -224,7 +221,16 @@ export default class PickersUpload extends Component {
             )}
           </View>
 
-          <View style={{ width: "33.333%",justifyContent: "center",alignItems:"flex-end" }}>
+
+        <View
+          style={{
+            height:"100%",
+            width:"30%",
+            flexDirection: "row",
+          }}
+        >
+
+          <View style={{ height:"100%",width: "50%",justifyContent: "center",alignItems:"flex-end" }}>
             <PickersMenu
               menu={[
                 {
@@ -240,7 +246,7 @@ export default class PickersUpload extends Component {
             ></PickersMenu>
           </View>
 
-          <View style={{ width: "33.333%", justifyContent: "center",alignItems:"flex-end",paddingRight:5 }}>
+          <View style={{ width: "50%", justifyContent: "center",alignItems:"flex-end",paddingRight:10 }}>
             <PickersMenu
               menu={[
                 {

@@ -1,3 +1,3 @@
 export default {
-    backgroundColor: 'black', opacity: 0.5, borderRadius: 30, width: 54, height: 53,alignItems:"center",justifyContent:"center"
+    backgroundColor: 'rgba(52, 52, 52, 0.9)', borderRadius: 30, width: 50, height: 50,alignItems:"center",justifyContent:"center"
 }

@@ -101,7 +101,12 @@ export default class CreateEvent extends Component {
     return (
 
  
-        <ActionButton buttonColor="#1FABAB" position="right" backgroundTappable={true} btnOutRange="green" size={57} useNativeFeedback={false}>
+        <ActionButton buttonColor='rgba(52, 52, 52, 0.9)' position="right" backgroundTappable={true} btnOutRange="black" size={57} 
+        useNativeFeedback={false}
+        renderIcon={()=>{
+          return <Icon name="plus" type="AntDesign" style={{color:"white",fontSize:37}} />
+        }}
+        >
 
           <ActionButton.Item buttonColor='#1CDBAB' title="New Relation" onPress={()=>{this.onClickNewContact()}} size={75}>
             <Icon name="person-add" active={true} type="MaterialIcons" style={styles.actionButtonIcon} />

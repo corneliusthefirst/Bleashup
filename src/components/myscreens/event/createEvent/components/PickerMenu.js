@@ -58,7 +58,7 @@ export default class PickersMenu extends Component {
               <Icon
                 style={{
                   color: ColorList.bodyIcon,
-                  fontSize: 35,
+                  fontSize: 30,
                 }}
                 name={this.props.icon.name}
                 type={this.props.icon.type}

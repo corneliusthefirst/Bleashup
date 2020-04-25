@@ -116,6 +116,7 @@ export default class CurrentEvents extends Component {
     delay = 0
     renderPerbatch = 5
     componentDidMount() {
+        
         //console.warn(this.props.data);
         //  let id1="cc28b850-2555-11ea-9234-4fbde55a1fd4";
         //let id1="e761ac10-252f-11ea-9234-dd23f4cef77f"
