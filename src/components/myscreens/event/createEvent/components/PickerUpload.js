@@ -191,46 +191,11 @@ export default class PickersUpload extends Component {
   }
   render() {
     return (
-      <View style={{flexDirection:"row",width:"100%",height:ColorList.headerHeight,justifyContent:"flex-end"}}>
+  
+      <View style={{flex:1,flexDirection:'row'}}>
          
-          <View style={{position:"absolute",left:0,width: "15%",height:"100%",justifyContent: "center",alignItems:"center" }}>
-            {this.state.uploading && (
-              <View style={{}}>
-                <AnimatedCircularProgress
-                  size={30}
-                  width={2}
-                  backgroundColor={ColorList.headerIcon}
-                  tintColor={
-                    !this.state.uploadError ? ColorList.iconActive : "red"
-                  }
-                  fill={parseFloat(this.state.downloadProgess * 100)}
-                >
-                  {(fill) => (
-                    <View>
-                      
-                      <Icon
-                        name="close"
-                        onPress={() => this.cancelAllTasks()}
-                        style={{ color: ColorList.headerIcon,fontSize:20 }}
-                        type={"EvilIcons"}
-                      ></Icon>
-                    </View>
-                  )}
-                </AnimatedCircularProgress>
-              </View>
-            )}
-          </View>
-
-
-        <View
-          style={{
-            height:"100%",
-            width:"30%",
-            flexDirection: "row",
-          }}
-        >
-
-          <View style={{ height:"100%",width: "50%",justifyContent: "center",alignItems:"flex-end" }}>
+        
+          <View style={{width:35}}>
             <PickersMenu
               menu={[
                 {
@@ -244,9 +209,9 @@ export default class PickersUpload extends Component {
                 type: "EvilIcons",
               }}
             ></PickersMenu>
-          </View>
+           </View>
 
-          <View style={{ width: "50%", justifyContent: "center",alignItems:"flex-end",paddingRight:10 }}>
+           <View style={{width:35,}}>
             <PickersMenu
               menu={[
                 {
@@ -273,11 +238,34 @@ export default class PickersUpload extends Component {
                 type: "Octicons",
               }}
             ></PickersMenu>
-          </View>
-
-
-
-        </View>
+         </View>
+      
+         {this.state.uploading && (
+                <View style={{flex:1,justifyContent:"center",alignItems:"flex-end",paddingRight:5}}>
+                <AnimatedCircularProgress
+                  size={26}
+                  width={2}
+                  backgroundColor={ColorList.headerIcon}
+                  tintColor={
+                    !this.state.uploadError ? ColorList.iconActive : "red"
+                  }
+                  fill={parseFloat(this.state.downloadProgess * 100)}
+                >
+                  {(fill) => (
+                    <View>
+                      
+                      <Icon
+                        name="close"
+                        onPress={() => this.cancelAllTasks()}
+                        style={{ color: ColorList.headerIcon,fontSize:20 }}
+                        type={"EvilIcons"}
+                      ></Icon>
+                    </View>
+                  )}
+                </AnimatedCircularProgress>
+                </View>
+            )}
+            
         <SearchImage
           openPicker={() => {
             this.TakePhotoFromLibrary();
@@ -291,6 +279,7 @@ export default class PickersUpload extends Component {
           }}
         />
       </View>
+  
     );
   }
 }
