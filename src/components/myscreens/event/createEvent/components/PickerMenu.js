@@ -54,7 +54,9 @@ export default class PickersMenu extends Component {
         <Menu
           ref={this.setMenuRef}
           button={
-
+            <TouchableOpacity
+            onPress={() => requestAnimationFrame(this.showMenu)}
+            >
               <Icon
                 style={{
                   color: ColorList.bodyIcon,
@@ -63,6 +65,7 @@ export default class PickersMenu extends Component {
                 name={this.props.icon.name}
                 type={this.props.icon.type}
               ></Icon>    
+            </TouchableOpacity>
           }
         >
           {this.renderMenuItems()}

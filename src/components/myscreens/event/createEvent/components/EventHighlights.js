@@ -507,7 +507,7 @@ export default class EventHighlights extends BleashupModal {
 
 
 
-              <View style={{ marginTop: 5, marginBottom: 5,width:"80%",alignSelf:"center",alignItems:"flex-end" }}>
+              <View style={{ marginTop: 5, marginBottom: 5,width:"40%",alignSelf:"center",alignItems:"flex-end" }}>
                 <PickersUpload
                 notAudio
                   creating={!this.props.updateState}

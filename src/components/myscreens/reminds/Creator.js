@@ -36,7 +36,7 @@ export default class Creator extends Component {
                         showCreatorModal: true
                     })
                 })}>
-                    <View style={{width:40,alignItems:"center"}}>
+                    <View style={{width:40,alignItems:"flex-start"}}>
                     <Icon name={"info-with-circle"} type={"Entypo"} style={{color:'gray',fontSize: 12}}></Icon>
                     </View>
                  </TouchableOpacity>

@@ -33,7 +33,7 @@ import Orientation from 'react-native-orientation-locker';
 import ReactNativeZoomableView from '@dudigital/react-native-zoomable-view/src/ReactNativeZoomableView';
 import BleashupFlatList from '../../BleashupFlatList';
 import Message from "./Message";
-import { find, orderBy, reject, findIndex, map, uniqBy, groupBy } from "lodash"
+import { find, orderBy, reject, findIndex, map, uniqBy, groupBy, values } from "lodash"
 import moment from "moment";
 import { PulseIndicator } from 'react-native-indicators';
 import ReplyText from "./ReplyText";
@@ -47,7 +47,7 @@ import EmojiSelector from 'react-native-emoji-selector';
 import ChatroomMenu from "./ChatroomMenu";
 import uuid from 'react-native-uuid';
 import dateDisplayer from '../../../services/dates_displayer';
-import { SendNotifications } from '../../../services/cloud_services';
+import { SendNotifications, LoadMoreComments } from '../../../services/cloud_services';
 import Pickers from '../../../services/Picker';
 import converToHMS from '../highlights_details/convertToHMS';
 import Waiter from "../loginhome/Waiter";
@@ -83,7 +83,7 @@ export default class ChatRoom extends Component {
             textValue: '',
             image: null,
             isModalOpened: false,
-            showHeader: true,
+            showHeader: !this.props.isComment,
             previousMessageHeight: this.formHeight(((screenheight - 67) / screenheight)),
             previousTextHeight: this.formHeight((67 / screenheight)),
             replying: false,
@@ -103,7 +103,7 @@ export default class ChatRoom extends Component {
             showPhoto: false,
             playing: true,
             replyContent: null,
-          
+
         };
         this.BackHandler = null
     }
@@ -148,34 +148,32 @@ export default class ChatRoom extends Component {
     textInputFactor = 0.15
     fireRef = null
     newMessages = []
-    addNewMessage(newMessage, newKey) {
+    informRemote(newMessage, newKey, received) {
+        firebase.database().ref(`${this.props.firebaseRoom}/${newKey}/received`).set(received)
+        if (newMessage.sender && newMessage.sender.phone == this.props.user.phone) {
+            //!! example of cloud functions calling . 
+            SendNotifications(this.props.user.name, newKey, newMessage.type, newMessage.text, this.props.firebaseRoom, this.props.user.phone, this.props.activity_name, this.props.activity_id, this.props.roomName, this.props.room_type).then(() => {
+                this.setState({ newMessage: !this.state.newMessage })
+            })
+            // fetch(`https://us-central1-bleashup-1562173529011.cloudfunctions.net/informOthers?sender_name=${this.props.user.name}&message_key=${newKey}&message_type=${newMessage.type}&message=${newMessage.text}&room_key=${this.props.firebaseRoom}&sender_phone=${this.props.user.phone}&activity_name=${this.props.activity_name}&activity_id=${this.props.activity_id}&room_name=${this.props.roomName}`).then(response => {
+
+            //})
+        }
+    }
+    addNewMessageForMessaging(newMessage, newKey) {
         if (this.room.messages.length > 0) {
             let index = findIndex(this.room.messages, { id: newMessage.id })
             let received = uniqBy(newMessage.received, "phone")
-            console.warn(index,newKey,"pppp")
             if (index >= 0 && this.room.messages[index].key !== newKey) {
-                this.room.messages[index] = { ...this.room.messages[index], key: newKey, sent: true, type: newMessage.type }
                 this.room.addNewMessage(newMessage, newKey, newMessage.type, true, true).then(() => {
-                    firebase.database().ref(`${this.props.firebaseRoom}/${newKey}/received`).set(received)
-                    if (newMessage.sender && newMessage.sender.phone == this.props.user.phone) {
-                        console.warn("adding new_message"," with cloud functions")
-                        //!! example of cloud functions calling . 
-                        SendNotifications(this.props.user.name, newKey, newMessage.type, newMessage.text, this.props.firebaseRoom, this.props.user.phone, this.props.activity_name, this.props.activity_id, this.props.roomName, this.props.room_type).then(() => {
-                            this.setState({ newMessage: true })
-                        })
-                        // fetch(`https://us-central1-bleashup-1562173529011.cloudfunctions.net/informOthers?sender_name=${this.props.user.name}&message_key=${newKey}&message_type=${newMessage.type}&message=${newMessage.text}&room_key=${this.props.firebaseRoom}&sender_phone=${this.props.user.phone}&activity_name=${this.props.activity_name}&activity_id=${this.props.activity_id}&room_name=${this.props.roomName}`).then(response => {
-
-                        //})
-                    }
+                    this.informRemote(newMessage, newKey, received)
                 })
             } else {
-                console.warn(newMessage, "PPPPPPPPPP")
                 if (this.sender.phone == newMessage.sender.phone) {
 
-                 } else {
+                } else {
                     firebase.database().ref(`${this.props.firebaseRoom}/${newKey}/received`).set(received).then(() => {
                         this.newMessages.length !== 0 ? this.newMessages.unshift(newMessage) : null
-                        console.warn("saving new messagess")
                         this.room.addNewMessage(newMessage, newKey, newMessage.type, true, this.newMessages.length == 0).then(() => {
                             this.setState({
                                 newMessage: true
@@ -186,6 +184,9 @@ export default class ChatRoom extends Component {
             }
         }
     }
+    addNewMessage(newMessage, newKey) {
+        this.addNewMessageForMessaging(newMessage, newKey)
+    }
     insetDateSeparator(messages, newMessage) {
         return new Promise((resolve, reject) => {
             let separator = { ...newMessage, id: "New Messages", type: "new_separator" }
@@ -195,10 +196,7 @@ export default class ChatRoom extends Component {
         })
     }
     removeMessage(message) {
-        //console.warn(message)
         this.room.addAndReadFromStore(message).then(value => {
-            //this.room.messages = reject(this.room.messages, { id: value.id });
-            //let index = findIndex(this.room.messages, { id: value.id })
             this.room.removeMessage(value.id).then(() => {
                 firebase.database().ref(`${this.props.firebaseRoom}/${message.key}`).remove((error) => {
                     this.setState({
@@ -209,7 +207,7 @@ export default class ChatRoom extends Component {
         })
     }
     toastStyle = {
-        
+
         marginTop: "-10%",
         paddingTop: "3%",
     }
@@ -244,29 +242,29 @@ export default class ChatRoom extends Component {
         this.typingTimeout && clearTimeout(this.typingTimeout)
         // console.warn(this.currentTyper)
         this.setState({
-            typing:true
+            typing: true
         })
-       this.typingTimeout = setTimeout(() => {
+        this.typingTimeout = setTimeout(() => {
             this.setState({
-                typing:false
+                typing: false
             })
-        },1000)
+        }, 1000)
         //Toast.show({ text: `typing ...`, position: "top", textStyle: this.toastTextStyles, style: this.toastStyle })
     }
     setTyingState(typer) {
         this.typingRef.set([typer, moment().format()])
     }
     formStorableData(messages) {
+        messages = uniqBy(messages, 'id').sort(this.dateSorter)
         let result = [];
         return new Promise((resolve, reject) => {
             this.room.readFromStore().then(data => {
-                //    console.warn(data)
-                messages.reverse().map(element => {
+                messages.map(element => {
                     let date = moment(element.created_at).format('YYYY/MM/DD')
                     index = findIndex(data, { id: date })
                     index2 = findIndex(result, { id: date })
                     if (index < 0 && index2 < 0) {
-                        result.push({ ...element, id: date, type: 'date_separator' })
+                        result.unshift({ ...element, id: date, type: 'date_separator' })
                         result.unshift(element)
                     } else {
                         result.unshift(element)
@@ -278,77 +276,129 @@ export default class ChatRoom extends Component {
 
     }
     showMessage = []
-    componentDidMount() {
-        GState.currentRoom = this.props.firebaseRoom
-        firebase.database().ref(`current_room/${this.props.user.phone}`).set(this.props.firebaseRoom)
-        this.formStorableData(this.props.newMessages).then(news => {
-            this.newMessages = news
-            this.newMessages = this.newMessages.length > 0 ? [...this.newMessages, {
-                id: 'New Messages',
-                type: 'new_separator',
-                sender: {
-                    phone: 3,
-                    nickname: "Sokeng Kamga"
-                },
-                duration: Math.floor(0),
-                created_at: "2014-03-30 12:32",
-            }] : []
-            setTimeout(() => {
-                GState.reply ? this.replying(GState.reply, null) :
+    loadComments() {
+        if (!this.room.messages || this.room.messages.length <= 0) {
+            this.fireRef.orderByKey().limitToLast(50).once("value", snapshot => {
+                if (snapshot.val()) {
+                    this.formStorableData(values(snapshot.val())).then(newVal => {
+                        this.room.messages = newVal
+                        this.setState({
+                            newMessage: !this.state.newMessage,
+                            commentLoaded: true,
+                            loaded: true
+
+                        })
+                        this.adjutRoomDisplay()
+                    })
+                } else {
                     this.setState({
-                        loaded: true,
-                        // replyContent: GState.reply ? GState.reply : null,
-                        //replying: GState.reply ? true : false
+                        commentLoaded: true,
+                        loaded: true
                     })
-            }, 100)
-            if (this.props.newMessages.length > 0) {
-                this.room.insertBulkMessages(this.newMessages).then(() => {
-                })
-            }
-            this.fireRef.endAt().limitToLast(1).on('child_added', snapshot => {
-                console.warn("new_child", snapshot.val())
-                let message = snapshot.val()
-                message.received && message.received.length > 0 ? message.received.unshift({
-                    phone:
-                        this.props.user.phone, date: moment().format()
-                }) : message.received = [{phone:this.props.user.phone, date: moment().format()}]
-                message.received = uniqBy(message.received, "phone");
-                console.warn("here we are",message.received)
-                this.addNewMessage(message, snapshot.key)
-            })
-            this.fireRef.on('child_changed', snapshot => {
-                console.warn(snapshot.val(),"snapshot from seen")
-                let index = find(this.room.messages, { key: snapshot.key })
-                if (index >= 0) {
-                    this.room.messages[index] = snapshot.val()
-                    this.room.addNewMessage(snapshot.val(), snapshot.key, true, true).then(() => {
-                        this.setState({ newMessage: true })
-                    })
+                    this.adjutRoomDisplay()
                 }
             })
-            this.fireRef.on('child_removed', message => {
-                this.removeMessage(message)
-            });
-            this.typingRef.on('child_changed', newChild => {
-                //console.warn(newChild)
-                let typer = newChild.phone ? newChild.nickname : newChild
-                this.showTypingToast(typer)
+        } else {
+            LoadMoreComments(this.props.firebaseRoom, this.room.messages.length, this.room.messages.length + 50).then(res => {
+                res.json().then(data => {
+                    data && data.length > 0 && this.formStorableData(data).then(mess => {
+                        this.room.messages = uniqBy(this.room.messages.concat(mess), 'id')
+                        this.setState({
+                            newMessage: !this.state.newMessage,
+                            loaded: true
+                        })
+                        this.adjutRoomDisplay()
+                    })
+                })
+            })
+        }
+    }
+    initializeNewMessageForRoom() {
+        return new Promise((resolve, reject) => {
+            this.formStorableData(this.props.newMessages).then(news => {
+                this.newMessages = news
+                this.newMessages = this.newMessages.length > 0 ? [...this.newMessages, {
+                    id: 'New Messages',
+                    type: 'new_separator',
+                    sender: {
+                        phone: 3,
+                        nickname: "Sokeng Kamga"
+                    },
+                    duration: Math.floor(0),
+                    created_at: "2014-03-30 12:32",
+                }] : []
+                setTimeout(() => {
+                    GState.reply ? this.replying(GState.reply, null) :
+                        this.setState({
+                            loaded: true
+                        })
+                    this.adjutRoomDisplay()
+                }, 100)
+                if (this.props.newMessages.length > 0) {
+                    this.room.insertBulkMessages(this.newMessages).then(() => {
+                        resolve()
+                    })
+                } else {
+                    resolve()
+                }
             })
         })
-        setTimeout(() => {
-            this.adjutRoomDisplay()
-        }, 200)
+    }
+    dateSorter(a, b) {
+        let acreated = moment(a.created_at).format("X")
+        let bcreated = moment(b.created_at).format('X')
+        return acreated < bcreated ? -1 : bcreated < acreated ? 1 : 0
+    }
+    initializeRoomListeners() {
+        this.fireRef.orderByKey().limitToLast(1).on('child_added', snapshot => {
+            let message = snapshot.val()
+            console.warn(message)
+            this.addNewMessage(message, snapshot.key)
+        })
+        this.fireRef.on('child_changed', snapshot => {
+            let index = find(this.room.messages, { key: snapshot.key })
+            if (index >= 0) {
+                this.room.messages[index] = snapshot.val()
+                this.room.addNewMessage(snapshot.val(), snapshot.key, true, true).then(() => {
+                    this.setState({ newMessage: true })
+                })
+            }
+        })
+        this.fireRef.on('child_removed', message => {
+            this.removeMessage(message)
+        });
+        this.typingRef.on('child_changed', newChild => {
+            //console.warn(newChild)
+            let typer = newChild.phone ? newChild.nickname : newChild
+            this.showTypingToast(typer)
+        })
+    }
+    componentDidMount() {
+        console.error(this.props.firebaseRoom)
+        GState.currentRoom = this.props.firebaseRoom
+        firebase.database().ref(`current_room/${this.props.user.phone}`).set(this.props.firebaseRoom)
+        if (this.props.isComment) {
+            this.loadComments()
+            this.initializeRoomListeners()
+        } else {
+            this.initializeNewMessageForRoom().then(() => {
+                this.initializeRoomListeners()
+
+            })
+        }
     }
     adjutRoomDisplay(dontToggle) {
         setTimeout(() => {
-            GState.reply && !this.alreadyFocussed &&  this.fucussTextInput()
+            GState.reply && !this.alreadyFocussed && this.fucussTextInput()
             this.alreadyFocussed = true
             this.refs.scrollViewRef.scrollToEnd({ animated: true, duration: 200 })
-            this.state.showCaption && 
-            this.refs.captionScrollViewRef.scrollToEnd({ animated: true, 
-                duration: 200 })
+            this.state.showCaption &&
+                this.refs.captionScrollViewRef.scrollToEnd({
+                    animated: true,
+                    duration: 200
+                })
             this.temp ? GState.reply = JSON.parse(this.temp) : null
-        },30)
+        }, 30)
     }
     markAsRead() {
         this.room.deleteNewMessageIndicator().then(() => { })
@@ -371,7 +421,7 @@ export default class ChatRoom extends Component {
 
 
         firebase.database().ref(`current_room/${this.props.user.phone}`).onDisconnect().set(null)
-        this.room = new ChatStore(this.props.firebaseRoom) //!! example of chat store initialization
+        this.room = new ChatStore(this.props.firebaseRoom, this.props.isComment) //!! example of chat store initialization
         this.keyboardDidShowSub = Keyboard.addListener('keyboardDidShow', this.handleKeyboardDidShow);
         this.keyboardDidHideSub = Keyboard.addListener('keyboardDidHide', this.handleKeyboardDidHide);
         if (this.BackHandler) this.BackHandler.remove()
@@ -563,15 +613,15 @@ export default class ChatRoom extends Component {
             textValue: this.state.textValue + e
         })
     }
-    logOutZoomState = (event, gestureState, zoomableViewEventObject) => {    }
+    logOutZoomState = (event, gestureState, zoomableViewEventObject) => { }
     sendMessage(messager) {
-        console.warn(messager,"from message sender");
+        console.warn(messager, "from message sender");
         if (messager) {
             GState.reply = null
-            messager = { ...messager, received: [{ phone: this.props.user.phone, date: moment().format() }] }
+            messager = { ...messager, received: [{ phone: this.props.user.phone, date: moment().format() }], sent: true }
             this.fireRef.push(messager).then(() => {
                 this.setState({
-                    newMessage:!this.state.newMessage
+                    newMessage: !this.state.newMessage
                 })
             })
             // !! update the latess message of the relation page
@@ -581,8 +631,6 @@ export default class ChatRoom extends Component {
     sendTextMessage(newMessage) {
         if (GState.connected) {
             this.scrollToEnd()
-            this.room.messages = reject(this.room.messages, { id: newMessage.id })
-            this.room.messages.unshift(newMessage)
             this.room.replaceMessage(newMessage).then(() => {
                 this.sendMessage(newMessage)
             });
@@ -604,9 +652,9 @@ export default class ChatRoom extends Component {
                 creator: this.creator,
                 created_at: moment().format()
             }
-            this.room.messages.length == 0 ? this.room.messages[0] = messager : this.room.messages.unshift(messager)
             this.scrollToEnd()
-            this.room.addMessageToStore(messager).then(() => {
+            this.room.addMessageToStore(messager).then((data) => {
+                this.room.messages = data
                 this.setState({
                     newMessage: true
                 })
@@ -649,11 +697,6 @@ export default class ChatRoom extends Component {
                 let tobeSent = [...this.captionMessages]
                 this.captionMessages = []
                 tobeSent.map(newMessage => {
-                    this.room.messages = reject(this.room.messages, { id: newMessage.id })
-                    this.room.messages.unshift(newMessage)
-                    this.setState({
-                        newMessage: true
-                    })
                     this.room.replaceMessage(newMessage).then(() => {
                         this.sendMessage({ ...newMessage, photo: newMessage.source })
                         this.informMembers()
@@ -710,7 +753,6 @@ export default class ChatRoom extends Component {
                     filename: res.filename,
                     text: this.state.captionText
                 }
-                this.room.messages.unshift(message)
                 this.room.addMessageToStore(message).then(() => {
                     this.setState({
                         newMessage: true
@@ -748,8 +790,6 @@ export default class ChatRoom extends Component {
             filename: this.state.filename,
             text: this.state.textValue
         }
-
-        this.room.messages.unshift(message)
         this.room.addMessageToStore(message).then(() => {
             this.setState({
                 newMessage: true
@@ -771,9 +811,6 @@ export default class ChatRoom extends Component {
     }
     replaceMessage(newMessage) {
         this.room.replaceMessage(newMessage).then(() => {
-            this.setState({
-                newMessage: true
-            })
             this.sendMessage({ ...newMessage, photo: newMessage.source })
             this.informMembers()
             //send message to the server here
@@ -781,9 +818,6 @@ export default class ChatRoom extends Component {
     }
     replaceMessageVideo(newMessage) {
         this.room.replaceMessage(newMessage).then(() => {
-            this.setState({
-                newMessage: true
-            })
             this.sendMessage({ ...newMessage, source: newMessage.temp, cancled: undefined })
             this.informMembers()
             //send message to the server here
@@ -791,9 +825,6 @@ export default class ChatRoom extends Component {
     }
     replaceMessageFile(newMessage) {
         this.room.replaceMessage(newMessage).then(() => {
-            this.setState({
-                newMessage: true
-            })
             this.sendMessage({ ...newMessage, source: newMessage.temp })
             this.informMembers()
             //send message to the server here
@@ -801,9 +832,6 @@ export default class ChatRoom extends Component {
     }
     replaceAudioMessage(newMessage) {
         this.room.replaceMessage(newMessage).then((messages) => {
-            this.setState({
-                newMessage: true
-            })
             this.sendMessage({ ...newMessage, source: newMessage.temp })
             this.informMembers()
             //send message to the server here
@@ -836,7 +864,6 @@ export default class ChatRoom extends Component {
             total: res.size,
             created_at: moment().format(),
         }
-        this.room.messages.unshift(message)
         this.room.addMessageToStore(message).then((data) => {
             this.setState({
                 newMessage: true
@@ -899,13 +926,11 @@ export default class ChatRoom extends Component {
                 file_name: 'test.mp3',
                 created_at: moment().format()
             }
-            this.room.messages.unshift(message)
             this.room.addMessageToStore(message).then(() => {
                 this.setState({
                     newMessage: true
                 })
                 this.initialzeFlatList()
-                //this.sendMessage(message)
             })
             this.setState({
                 newMessage: true,
@@ -946,8 +971,6 @@ export default class ChatRoom extends Component {
             sender: this.sender
         }
         this.room.addMessageToStore(message).then(() => {
-            this.sendMessage(message)
-            this.room.messages.unshift(message)
             this.setState({
                 //isVoteCreationModalOpened: false,
                 newMessage: true
@@ -956,6 +979,7 @@ export default class ChatRoom extends Component {
             // this.informMembers()
             this.initialzeFlatList()
         })
+        this.sendMessage(message)
     }
     verifyNumber(code) {
         stores.TempLoginStore.confirmCode.confirm(code).then(success => {
@@ -992,8 +1016,8 @@ export default class ChatRoom extends Component {
                 }
             } else if (index == 2) {
                 firebase.database().ref(`${this.props.firebaseRoom}/${message.key}/received`).once('value', snapshot => {
-                    console.warn("here ",snapshot)
-                    snapshot.val() !== null ? this.props.showContacts(snapshot.val().map(ele => { return ele.phone.replace("+", "00") }),"Seen by") :
+                    console.warn("here ", snapshot)
+                    snapshot.val() !== null ? this.props.showContacts(snapshot.val().map(ele => { return ele.phone.replace("+", "00") }), "Seen by") :
                         this.props.showContacts(message.received.map(ele => { return { ...ele, phone: ele.phone.replace("+", "00") } }), "Seen by")
                 })
             } else if (index == 3) {
@@ -1029,7 +1053,7 @@ export default class ChatRoom extends Component {
             }
         })
     }
-    messagelayouts={}
+    messagelayouts = {}
     showRoomMedia() {
         this.setState({
             isMediaModalOpened: true,
@@ -1046,142 +1070,139 @@ export default class ChatRoom extends Component {
     transparent = "rgba(50, 51, 53, 0.8)";
 
     render() {
-        //console.warn("messages are",this.room.messages)
         headerStyles = {
             flexDirection: 'row', ... (!this.state.showVideo && !this.state.showPhoto && !this.state.showRepliedMessage && !this.state.showCaption)
         }
-    return (
-        <View style={{ height:"100%",justifyContent:"flex-end" }}>
-
-        
-             <View style={{height:"7.5%"}}>
+        return (
+            <View style={{ height: "100%", justifyContent: "flex-end" }}>
                 {
-                  // **********************Header************************ //
-                  this.state.showHeader ? this.header() : null
+                    // **********************Header************************ //
+                    this.state.showHeader ? <View style={{ height: "7.5%" }}>
+                        {this.header()}
+                    </View> : null
                 }
-             </View>
-          
-            <View style={{ height: "92.5%"}}>
-             <View style={{ height:"100%",justifyContent:"flex-end" }}>
-               <KeyboardAvoidingView 
-                    behavior={Platform.Os == "ios" ? "padding" : "height"}
-                    style={{flex:1}} > 
-                {!this.state.loaded ? <Waiter></Waiter> : <View style={{}}><View style={{ width: "100%", alignSelf: 'center', }}>
-                        <ScrollView onScroll={() => {
-                            this.adjutRoomDisplay()
-                        }} inverted={true} keyboardShouldPersistTaps={"always"} showsVerticalScrollIndicator={false} scrollEnabled={false} inverted nestedScrollEnabled
-                        ref="scrollViewRef">
-                        <View style={{ height: this.state.messageListHeight, marginBottom: "0.5%" }}>
-                            <TouchableWithoutFeedback onPressIn={() => {
-                                // Keyboard.dismiss()
-                                this.scrolling = false
-                                this.adjutRoomDisplay()
-                                //this.hideAndShowHeader()
-                            }}>
+
+                <View style={{ height: this.state.showHeader ? "92.5%" : "100%" }}>
+                    <View style={{ height: "100%", justifyContent: "flex-end" }}>
+                        <KeyboardAvoidingView
+                            behavior={Platform.Os == "ios" ? "padding" : "height"}
+                            style={{ flex: 1 }} >
+                            {!this.state.loaded ? <Waiter></Waiter> : <View style={{}}><View style={{ width: "100%", alignSelf: 'center', }}>
+                                <ScrollView onScroll={() => {
+                                    this.adjutRoomDisplay()
+                                }} inverted={true} keyboardShouldPersistTaps={"always"} showsVerticalScrollIndicator={false} scrollEnabled={false} inverted nestedScrollEnabled
+                                    ref="scrollViewRef">
+                                    <View style={{ height: this.state.messageListHeight, marginBottom: "0.5%" }}>
+                                        <TouchableWithoutFeedback onPressIn={() => {
+                                            // Keyboard.dismiss()
+                                            this.scrolling = false
+                                            this.adjutRoomDisplay()
+                                            //this.hideAndShowHeader()
+                                        }}>
+                                            {
+                                                this.messageList()
+                                            }
+                                        </TouchableWithoutFeedback>
+                                    </View>
+                                    <View>
+                                        {!this.props.opened || !this.props.generallyMember ? <Text style={{ fontStyle: 'italic', marginLeft: "3%", }} note>{"This commitee has been closed for you"}</Text> :
+                                            // ***************** KeyBoard Displayer *****************************
+
+                                            this.keyboardView()
+
+                                        }
+                                    </View>
+                                </ScrollView>
+                            </View>
+
                                 {
-                                    this.messageList()
+                                    // **********************New Message Indicator *****************//
+                                    // this.newMessages.length > 0 ? this.newMessageIndicator() : null
+
                                 }
-                            </TouchableWithoutFeedback>
-                        </View>
-                        <View>
-                            {!this.props.opened || !this.props.generallyMember ? <Text style={{ fontStyle: 'italic', marginLeft: "3%", }} note>{"This commitee has been closed for you"}</Text> :
-                                // ***************** KeyBoard Displayer *****************************
+                                {
+                                    // **************Captions messages handling ***********************//
 
-                                 this.keyboardView()
-                            
+                                    this.state.showCaption ? this.captionMessageHandler() : null}
+                                {
+
+                                    //******  Reply Message onClick See Reply handler View ********/
+
+
+                                    this.state.showRepliedMessage ? this.replyMessageViewer() : null}
+                                {
+                                    // ******************Photo Viewer View ***********************//
+                                    this.state.showPhoto ?
+                                        this.PhotoShower() : null
+                                }
+                                {
+                                    //** ####### Vidoe PLayer View ################ */
+
+                                    this.state.showVideo ? this.VideoShower() : null}
+                            </View>
                             }
-                        </View>
-                   </ScrollView>
+                            <VerificationModal isOpened={this.state.isModalOpened}
+                                verifyCode={(code) => this.verifyNumber(code)}
+                                phone={this.props.user.phone}></VerificationModal>
+                            {this.state.isMediaModalOpened ? <MediaTabModal video={this.groupByWeek(JSON.parse(this.state.messages).filter(ele => ele &&
+                                ele.type === 'video' && !testForURL(ele.source)))}
+                                photo={this.groupByWeek(JSON.parse(this.state.messages).filter(ele => ele && ele.type === 'photo'))}
+                                file={this.groupByWeek(JSON.parse(this.state.messages).filter(ele => ele && ele.type === "attachement" && !testForURL(ele.source)))}
+                                isOpen={this.state.isMediaModalOpened}
+                                closed={() => {
+                                    this.setState({
+                                        isMediaModalOpened: false
+                                    })
+                                }}></MediaTabModal> : null}
+                            {<Votes takeVotes={(votes => {
+                                this.initializeVotes(votes)
+                            })}
+                                replying={(reply) => {
+                                    this.fucussTextInput()
+                                    this.replying(reply, null)
+                                    //Keyboard.show()
+                                    Vibration.vibrate(this.duration)
+                                    setTimeout(() => {
+                                        this.setState({
+                                            isVoteCreationModalOpened: false
+                                        })
+                                    }, 200)
+                                }}
+                                computedMaster={this.props.computedMaster}
+                                takeVote={(vote => this.createVote(vote))}
+                                voteItem={mess => {
+                                    this.perviousId = mess.id
+                                    this.replaceVote({ ...mess, id: uuid.v1() })
+                                }}
+                                working={this.props.working}
+                                isSingleVote={this.state.single_vote}
+                                vote_id={this.state.vote_id}
+                                startLoader={this.props.showLoader}
+                                showVoters={(voters) => {
+                                    this.showVoters(voters)
+                                }}
+                                stopLoader={this.props.stopLoader}
+                                committee_id={this.props.firebaseRoom}
+                                event_id={this.props.activity_id}
+                                isOpen={this.state.isVoteCreationModalOpened}
+                                sender={this.sender}
+                                onClosed={() => {
+                                    this.setState({
+                                        isVoteCreationModalOpened: false
+                                    })
+                                }}></Votes>}
+                            {this.state.showContacts ? <ContactsModal title={this.state.title} contacts={this.state.voters} isOpen={this.state.showContacts} onClosed={() => {
+                                this.setState({
+                                    showContacts: false
+                                })
+                            }}></ContactsModal> : null}
+                            {//</ImageBackground>
+                            }
+                        </KeyboardAvoidingView>
+                    </View>
                 </View>
 
-                    {
-                        // **********************New Message Indicator *****************//
-                       // this.newMessages.length > 0 ? this.newMessageIndicator() : null
-
-                    }
-                    {
-                        // **************Captions messages handling ***********************//
-
-                        this.state.showCaption ? this.captionMessageHandler() : null}
-                    {
-
-                        //******  Reply Message onClick See Reply handler View ********/
-
-
-                        this.state.showRepliedMessage ? this.replyMessageViewer() : null}
-                    {
-                        // ******************Photo Viewer View ***********************//
-                        this.state.showPhoto ?
-                            this.PhotoShower() : null
-                    }
-                    {
-                        //** ####### Vidoe PLayer View ################ */
-
-                        this.state.showVideo ? this.VideoShower() : null}
-                </View>
-                }
-                <VerificationModal isOpened={this.state.isModalOpened}
-                    verifyCode={(code) => this.verifyNumber(code)}
-                    phone={this.props.user.phone}></VerificationModal>
-                {this.state.isMediaModalOpened ? <MediaTabModal video={this.groupByWeek(JSON.parse(this.state.messages).filter(ele => ele &&
-                    ele.type === 'video' && !testForURL(ele.source)))}
-                    photo={this.groupByWeek(JSON.parse(this.state.messages).filter(ele => ele && ele.type === 'photo'))}
-                    file={this.groupByWeek(JSON.parse(this.state.messages).filter(ele => ele && ele.type === "attachement" && !testForURL(ele.source)))}
-                    isOpen={this.state.isMediaModalOpened}
-                    closed={() => {
-                        this.setState({
-                            isMediaModalOpened: false
-                        })
-                    }}></MediaTabModal> : null}
-                {<Votes takeVotes={(votes => {
-                    this.initializeVotes(votes)
-                })}
-                    replying={(reply) => {
-                        this.fucussTextInput()
-                        this.replying(reply, null)
-                        //Keyboard.show()
-                        Vibration.vibrate(this.duration)
-                        setTimeout(() => {
-                            this.setState({
-                                isVoteCreationModalOpened: false
-                            })
-                        },200)
-                    }}
-                    computedMaster={this.props.computedMaster}
-                    takeVote={(vote => this.createVote(vote))}
-                    voteItem={mess => {
-                        this.perviousId = mess.id
-                        this.replaceVote({ ...mess, id: uuid.v1() })
-                    }}
-                    working={this.props.working}
-                    isSingleVote={this.state.single_vote}
-                    vote_id={this.state.vote_id}
-                    startLoader={this.props.showLoader}
-                    showVoters={(voters) => {
-                        this.showVoters(voters)
-                    }}
-                    stopLoader={this.props.stopLoader}
-                    committee_id={this.props.firebaseRoom}
-                    event_id={this.props.activity_id}
-                    isOpen={this.state.isVoteCreationModalOpened}
-                    sender={this.sender}
-                    onClosed={() => {
-                        this.setState({
-                            isVoteCreationModalOpened: false
-                        })
-                    }}></Votes>}
-                {this.state.showContacts ? <ContactsModal title={this.state.title} contacts={this.state.voters} isOpen={this.state.showContacts} onClosed={() => {
-                    this.setState({
-                        showContacts: false
-                    })
-                }}></ContactsModal> : null}
-                {//</ImageBackground>
-                }
-                    </KeyboardAvoidingView> 
-                    </View>  
-               </View>    
-      
-     </View>
+            </View>
         )
     }
 
@@ -1195,16 +1216,14 @@ export default class ChatRoom extends Component {
         return result
     }
     replaceVote(vote) {
-        //this.room.removeMessage(this.perviousId).then(() => {
-            this.room.messages.unshift(vote)
-            this.room.replaceNewMessage(vote).then(() => {
-                this.sendMessage(vote)
-                this.initialzeFlatList()
-                this.setState({
-                    newMessage: true
-                })
+        this.room.replaceNewMessage(vote).then(() => {
+            this.sendMessage(vote)
+            this.initialzeFlatList()
+            this.setState({
+                newMessage: !this.state.newMessage
             })
-      //  })
+        })
+        //  })
     }
     openVoteCreation() {
         this.setState({
@@ -1212,27 +1231,22 @@ export default class ChatRoom extends Component {
             single_vote: false
         })
     }
-    fucussTextInput(){
+    fucussTextInput() {
         this._textInput.focus()
     }
-    persistMessageLayout(id,layout){
+    persistMessageLayout(id, layout) {
         console.warn("persisiting dimensions")
-        this.room.setMessageDimessions(id,layout)
+        this.room.setMessageDimessions(id, layout)
     }
     delay = 1
     messageList() {
         return <BleashupFlatList
-            //backgroundColor={"transparent"}
             marginTop
             firstIndex={0}
             ref="bleashupSectionListOut"
             inverted={true}
+            loadMoreFromRemote={() => this.props.isComment && this.loadComments()}
             renderPerBatch={20}
-            /*getItemLayout={(item, index) => {
-                return { 
-                index, 
-                length: (item.dimenssions && item.dimenssions.height) || this.messagelayouts[item.id].height, 
-                offset: this.room.messages.slice(0, index).reduce((a, c) => a.dimenssions.height + c.dimenssions.height, 0)}}}*/
             initialRender={20}
             numberOfItems={this.room.messages.length}
             keyExtractor={(item, index) => item ? item.id : null}
@@ -1240,12 +1254,11 @@ export default class ChatRoom extends Component {
                 this.delay = this.delay >= 20 || (item && !item.sent) ? 0 : this.delay + 1
                 return item ? <Message
                     voteItem={(index, vote) => {
-                        emitter.emit("vote-me", index,vote)
+                        emitter.emit("vote-me", index, vote)
                     }}
                     messagelayouts={this.messagelayouts}
                     setCurrentLayout={layout => {
                         this.messagelayouts[item.id] = layout
-                       //!item.dimenssions && this.persistMessageLayout(item.id,layout)
                     }}
                     newCount={this.props.newMessages.length}
                     index={index}
@@ -1310,97 +1323,99 @@ export default class ChatRoom extends Component {
 
     keyboardView() {
         return (
-       <View style={{
-         
-            alignItems: 'center',
-            borderColor: 'gray', padding: '1%', width: "99%"
-        }}>
             <View style={{
-                flexDirection: 'row',alignSelf:"center",
-                alignSelf: 'center', width: colorList.containerWidth-8
+
+                alignItems: 'center',
+                borderColor: 'gray', padding: '1%', width: "99%"
             }}>
                 <View style={{
-                    width: "86%",
-                    fontSize: 17,
-                    //height: 40,
-                    flexDirection: 'row',
-                    justifyContent:"space-around",
-                    borderColor: "#1FABAB",
-                    borderWidth: 0,
-                    borderRadius: 10,
+                    flexDirection: 'row', alignSelf: "center",
+                    alignSelf: 'center', width: colorList.containerWidth - 8
                 }}>
+                    <View style={{
+                        width: "86%",
+                        fontSize: 17,
+                        //height: 40,
+                        flexDirection: 'row',
+                        justifyContent: "space-around",
+                        borderColor: "#1FABAB",
+                        borderWidth: 0,
+                        borderRadius: 10,
+                    }}>
 
-                    <View style={{ height:45,
-                        width: '12%',alignItems:"center",justifyContent:"center",padding: '1%' }}><Icon onPress={() => this.openCamera()}
-                        style={{ color: "#696969"}}
-                        type={"MaterialCommunityIcons"}
-                        name={"image-filter"}></Icon>
-                    </View>  
+                        <View style={{
+                            height: 45,
+                            width: '12%', alignItems: "center", justifyContent: "center", padding: '1%'
+                        }}><Icon onPress={() => this.openCamera()}
+                            style={{ color: "#696969" }}
+                            type={"MaterialCommunityIcons"}
+                            name={"image-filter"}></Icon>
+                        </View>
 
-                    <Item style={{ width: '88%',marginLeft:"2%",flexDirection: 'column', borderRadius: 20,}} rounded>
+                        <Item style={{ width: '88%', marginLeft: "2%", flexDirection: 'column', borderRadius: 20, }} rounded>
                             {
                                 //* Reply Message caption */
                                 this.state.replying ? this.replyMessageCaption() : null
                             }
-                        <TextInput
+                            <TextInput
 
-                            value={this.state.textValue}
-                            onChange={(event) => this._onChange(event)}
-                            placeholder={'Your Message'}
-                            style={{ width: '84%', maxHeight: 300, minHeight: 45,marginLeft:"3%" }}
-                            placeholderTextColor='#66737C'
-                            multiline={true}
-                            enableScrollToCaret
-                            ref={(r) => { this._textInput = r; }} />
-                    <View style={{flex:1, width: '16%', position:"absolute",bottom:0,right:0}}><Icon onPress={() => {
-                        this.toggleEmojiKeyboard();
-                        this.markAsRead();
-                    }} style={{ color: "gray",marginBottom:11 }}
-                        type="Entypo" name="emoji-flirt"></Icon></View></Item>
+                                value={this.state.textValue}
+                                onChange={(event) => this._onChange(event)}
+                                placeholder={'Your Message'}
+                                style={{ width: '84%', maxHeight: 300, minHeight: 45, marginLeft: "3%" }}
+                                placeholderTextColor='#66737C'
+                                multiline={true}
+                                enableScrollToCaret
+                                ref={(r) => { this._textInput = r; }} />
+                            <View style={{ flex: 1, width: '16%', position: "absolute", bottom: 0, right: 0 }}><Icon onPress={() => {
+                                this.toggleEmojiKeyboard();
+                                this.markAsRead();
+                            }} style={{ color: "gray", marginBottom: 11 }}
+                                type="Entypo" name="emoji-flirt"></Icon></View></Item>
 
-                </View>
+                    </View>
 
-                <View style={{
-                    width: "12%",
-                    marginLeft: '2%',
-                    paddingTop: '2.5%',
-                    padding: '1%',
-                }}>
-                    {!this.state.textValue && !this.state.showAudioRecorder ? <Icon style={{
-                        color: "#0A4E52", alignSelf: 'flex-end'
-                    }} onPress={() => {
-                        this.showAudio()
-                    }} type={"FontAwesome5"} name={"microphone-alt"}></Icon> : <Icon onPress={() => {
-                        requestAnimationFrame(() => {
-                            return this.sendMessageText(this.state.textValue);
-                        });
-                    }} style={{ color: "#0A4E52", alignSelf: 'flex-end' }}
-                        name="md-send" type="Ionicons">
-                        </Icon>}
+                    <View style={{
+                        width: "12%",
+                        marginLeft: '2%',
+                        paddingTop: '2.5%',
+                        padding: '1%',
+                    }}>
+                        {!this.state.textValue && !this.state.showAudioRecorder ? <Icon style={{
+                            color: "#0A4E52", alignSelf: 'flex-end'
+                        }} onPress={() => {
+                            this.showAudio()
+                        }} type={"FontAwesome5"} name={"microphone-alt"}></Icon> : <Icon onPress={() => {
+                            requestAnimationFrame(() => {
+                                return this.sendMessageText(this.state.textValue);
+                            });
+                        }} style={{ color: "#0A4E52", alignSelf: 'flex-end' }}
+                            name="md-send" type="Ionicons">
+                            </Icon>}
+                    </View>
+                    {
+                        // ******************** Audio Recorder Input ************************//
+
+                        this.audioRecorder()}
                 </View>
                 {
-                    // ******************** Audio Recorder Input ************************//
-
-                    this.audioRecorder()}
+                    // ***************** Emoji keyBoard Input ***********************//
+                    this.state.showEmojiInput ? this.imojiInput() : null}
             </View>
-            {
-                // ***************** Emoji keyBoard Input ***********************//
-                this.state.showEmojiInput ? this.imojiInput() : null}
-        </View>
         )
-        
+
     }
 
     replyMessageCaption() {
         return <View style={{ backgroundColor: this.state.replyerBackColor, alignSelf: 'center', width: '100%' }}>
-        <ReplyText compose={true} openReply={(replyer) => {
-            replyer.type_extern ?
-                this.handleReplyExtern(replyer) : this.setState({
-                    replyer: replyer,
-                    showRepliedMessage: true
-                });
-        }}
-            pressingIn={() => { }} showProfile={(pro) => this.props.showProfile(pro)} reply={this.state.replyContent}></ReplyText>
+            <ReplyText compose={true} openReply={(replyer) => {
+                replyer.type_extern ?
+                    this.handleReplyExtern(replyer) : this.setState({
+                        replyer: replyer,
+                        showRepliedMessage: true
+                    });
+            }}
+                pressingIn={() => { }} showProfile={(pro) => this.props.showProfile(pro)} reply={this.state.replyContent}></ReplyText>
             <Button onPress={() => this.cancleReply()
             } style={{ position: "absolute", alignSelf: 'flex-end', }} rounded transparent><Icon name={"close"} type={"EvilIcons"} style={{ color: '#1FABAB' }}></Icon></Button>
         </View>;
@@ -1427,23 +1442,23 @@ export default class ChatRoom extends Component {
             <EmojiSelector onEmojiSelected={(emoji) => this.handleEmojiSelected(emoji)} enableSearch={false} ref={emojiInput => this._emojiInput = emojiInput} resetSearch={this.state.reset} showSearchBar={false} loggingFunction={this.verboseLoggingFunction.bind(this)} verboseLoggingFunction={true} filterFunctions={[this.filterFunctionByUnicode]}></EmojiSelector>
         </View>;
     }
-    header(){
+    header() {
         return <View><View style={{
             ...bleashupHeaderStyle,
             width: colorList.containerWidth,
             height: colorList.headerHeight,
-            backgroundColor:colorList.headerBackground,
-            flexDirection:"row",
+            backgroundColor: colorList.headerBackground,
+            flexDirection: "row",
             headerStyles
         }}>
-         
-                <View style={{ width: "65%", height:colorList.headerHeight,flexDirection:"row",alignSelf:"flex-start", alignItems:"center",  }}>
-                  
-                        <Icon onPress={() => this.props.navigatePage("Home")}
-                            style={{ color:colorList.headerIcon,marginLeft:"5%",marginRight:"5%"}}
-                            type={"MaterialIcons"}
-                            name={"arrow-back"}></Icon>
-                            <View>
+
+            <View style={{ width: "65%", height: colorList.headerHeight, flexDirection: "row", alignSelf: "flex-start", alignItems: "center", }}>
+
+                <Icon onPress={() => this.props.navigatePage("Home")}
+                    style={{ color: colorList.headerIcon, marginLeft: "5%", marginRight: "5%" }}
+                    type={"MaterialIcons"}
+                    name={"arrow-back"}></Icon>
+                <View>
                     <Title style={{
                         color: colorList.headerText,
                         fontSize: colorList.headerFontSize,
@@ -1451,68 +1466,68 @@ export default class ChatRoom extends Component {
 
                     }}>{this.props.roomName}</Title>
                     {this.state.typing && <TypingIndicator></TypingIndicator>}
-                            </View>                       
-                   
-                    {
-                        //!! you can add the member last seen here if the room has just one member */
-                    }
                 </View>
 
-               
-                <View style={{
-                    width: "35%",
-                    flexDirection: 'row',
-                    alignSelf: 'flex-end',
-                    alignItems:"center",
-                    justifyContent:"space-between",
-                    height: 50,
-        
-                }}>
-                        <View style={{height:colorList.headerHeight,marginLeft:"10%"  }}>
-                        <ChatRoomPlus
-                            computedMaster={this.props.computedMaster}
-                            master={this.props.master}
-                            eventID={this.props.activity_id}
-                            roomID={this.props.firebaseRoom}
-                            public={this.props.public_state}
-                            addAudio={() => {
-                                this.openAudioPicker();
-                                this.markAsRead();
-                            }}
-                            addFile={() => this.openFilePicker()}
-                            showVote={() => this.openVoteCreation()}
-                            showReminds={() => { this.props.addRemind(this.props.members) }}
-                            addPhotos={() => this.openPhotoSelector()}
-                            addMembers={() => this.props.addMembers()}
-                        ></ChatRoomPlus>
-                        </View>
-                       <View style={{height:colorList.headerHeight}}>
-                        <ChatroomMenu
-                            showMembers={() => this.showMembers()}
-                            addMembers={() => this.props.addMembers()}
-                            closeCommitee={() => this.props.close()}
-                            openCommitee={() => this.props.open()}
-                            leaveCommitee={() => this.props.leave()}
-                            showRoomMedia={() => this.showRoomMedia()}
-                            removeMembers={() => this.props.removeMembers()}
-                            publishCommitee={() => this.props.publish()}
-                            master={this.props.master}
-                            eventID={this.props.activity_id}
-                            roomID={this.props.firebaseRoom}
-                            public={this.props.public_state}
-                            opened={this.props.opened}></ChatroomMenu>
-                       </View>
-                       <View style={{ height:colorList.headerHeight,justifyContent:"center",marginRight:"10%" }}>
-                        <Icon onPress={() => {
-                            this.props.openMenu()
+                {
+                    //!! you can add the member last seen here if the room has just one member */
+                }
+            </View>
+
+
+            <View style={{
+                width: "35%",
+                flexDirection: 'row',
+                alignSelf: 'flex-end',
+                alignItems: "center",
+                justifyContent: "space-between",
+                height: 50,
+
+            }}>
+                <View style={{ height: colorList.headerHeight, marginLeft: "10%" }}>
+                    <ChatRoomPlus
+                        computedMaster={this.props.computedMaster}
+                        master={this.props.master}
+                        eventID={this.props.activity_id}
+                        roomID={this.props.firebaseRoom}
+                        public={this.props.public_state}
+                        addAudio={() => {
+                            this.openAudioPicker();
+                            this.markAsRead();
                         }}
-                            style={{ color:colorList.headerIcon,fontSize:35}}
-                            type={"Ionicons"}
-                            name={"ios-menu"}></Icon>
-                      </View> 
-                      </View> 
-        </View> 
-            </View>;
+                        addFile={() => this.openFilePicker()}
+                        showVote={() => this.openVoteCreation()}
+                        showReminds={() => { this.props.addRemind(this.props.members) }}
+                        addPhotos={() => this.openPhotoSelector()}
+                        addMembers={() => this.props.addMembers()}
+                    ></ChatRoomPlus>
+                </View>
+                <View style={{ height: colorList.headerHeight }}>
+                    <ChatroomMenu
+                        showMembers={() => this.showMembers()}
+                        addMembers={() => this.props.addMembers()}
+                        closeCommitee={() => this.props.close()}
+                        openCommitee={() => this.props.open()}
+                        leaveCommitee={() => this.props.leave()}
+                        showRoomMedia={() => this.showRoomMedia()}
+                        removeMembers={() => this.props.removeMembers()}
+                        publishCommitee={() => this.props.publish()}
+                        master={this.props.master}
+                        eventID={this.props.activity_id}
+                        roomID={this.props.firebaseRoom}
+                        public={this.props.public_state}
+                        opened={this.props.opened}></ChatroomMenu>
+                </View>
+                <View style={{ height: colorList.headerHeight, justifyContent: "center", marginRight: "10%" }}>
+                    <Icon onPress={() => {
+                        this.props.openMenu()
+                    }}
+                        style={{ color: colorList.headerIcon, fontSize: 35 }}
+                        type={"Ionicons"}
+                        name={"ios-menu"}></Icon>
+                </View>
+            </View>
+        </View>
+        </View>;
     }
 
     newMessageIndicator() {
@@ -1520,7 +1535,7 @@ export default class ChatRoom extends Component {
             position: 'absolute', height: 40,
             marginTop: '5%', alignSelf: 'center'
         }}>
-            <View style={{ alignSelf: 'center',  borderRadius: 10, margin: '2%', display: 'flex', flexDirection: 'row', }}>
+            <View style={{ alignSelf: 'center', borderRadius: 10, margin: '2%', display: 'flex', flexDirection: 'row', }}>
                 <Text style={{ fontSize: 19, fontWeight: 'bold', color: "#00BE71" }}>{this.props.newMessages.length}{" new messages"}</Text>
                 <Icon type="EvilIcons" style={{ color: "#00BE71", marginTop: '3%', fontSize: 19 }} name="arrow-up"></Icon>
             </View>

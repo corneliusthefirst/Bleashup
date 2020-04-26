@@ -22,3 +22,7 @@ export function RemoveMembers(activityID,committeeID,members){
     return fetch(`${CloudURL}/removeMembers?committee_id=${committeeID}&event_id=${activityID}&members=${JSON.stringify(members)}`)
 
 }
+
+export function LoadMoreComments(roomKey,lower,upper){
+    return fetch(`${CloudURL}/loadMoreComments?room_key=${roomKey}&lower=${lower}&upper=${upper}`);
+}

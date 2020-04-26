@@ -131,7 +131,7 @@ export default class VideoUploader extends Component {
                                                     }
                                                 </AnimatedCircularProgress>
                                             </View>
-                                            {this.state.compressing ? <Text note>{"compressing ..."}</Text> : <View style={{ marginTop: "15%", 
+                                            {this.state.compressing ? <Text note>{"compressing ..."}</Text> : <View style={{ 
                                             ...buttoner, width: 70, height: 25 }}><Text style={{ color: ColorList.bodyBackground }} 
                                             note>{"("}{this.toMB(this.state.received).toFixed(1)}{"/"}
                                                 {this.toMB(this.state.total).toFixed(1)}{")Mb"}</Text></View>}</View>}

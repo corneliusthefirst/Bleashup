@@ -233,8 +233,8 @@ export default {
     segmentBorderColorMain: platform === "ios" ? "#a7a6ab" : "#1FABAB",
 
     // Spinner
-    defaultSpinnerColor: "#20B29E",
-    inverseSpinnerColor: "#305455",
+    defaultSpinnerColor: ColorList.indicatorColor,
+    inverseSpinnerColor: ColorList.indicatorInverted,
 
     // Tab
     tabDefaultBg: platform === "ios" ? ColorList.headerBackground : ColorList.headerBackground,

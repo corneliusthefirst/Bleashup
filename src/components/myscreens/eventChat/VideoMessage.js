@@ -162,9 +162,10 @@ export default class VideoMessage extends Component {
                             </View>
                         </View>
                         <View style={{ alignSelf: this.state.sender ? 'flex-start' : 'flex-end', margin: '2%',justifyContent: 'center', }}>
-                                {this.state.loaded ? <View style={{ marginTop: "-12%" }}><View style={{ ...buttoner, height: 25, width: 65 }}><Text style={{ color: ColorList.bodyBackground }}>
+                                {this.state.loaded ? <View style={{ marginTop: "-20%" }}><View style={{ ...buttoner, height: 25, width: 65 }}><Text style={{ color: ColorList.bodyBackground }}>
                                 {this.toMB(this.state.total).toFixed(2)} {"Mb"}</Text></View></View> :
-                                <View style={{ marginTop: "-25%", }}>
+                                <View style={{ marginTop: "-30%",flexDirection: 'column',alignItems: 'center', }}>
+                                <View style={{height:43}}>
                                     <AnimatedCircularProgress size={40}
                                         width={2}
                                         fill={testForURL(this.props.message.source) ? this.state.downloadState : 100}
@@ -182,7 +183,8 @@ export default class VideoMessage extends Component {
                                             </View>)
                                         }
                                     </AnimatedCircularProgress>
-                                    <View style={{ marginTop: "10%",...buttoner,height:15,width:75 }}><Text style={{marginBottom: 7,}} note>{"("}{this.toMB(this.state.received).toFixed(1)}{"/"}
+                                    </View>
+                                    <View style={{ marginTop: "5%",...buttoner,height:25,width:75 }}><Text style={{marginBottom: 7,}} note>{"("}{this.toMB(this.state.received).toFixed(1)}{"/"}
                                         {this.toMB(this.state.total).toFixed(1)}{")Mb"}</Text></View></View>}</View>
                     </View>
                     {this.props.message.text ? <View style={{ marginTop: "-5%", padding: "2%" }}>

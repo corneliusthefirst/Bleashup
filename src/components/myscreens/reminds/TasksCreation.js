@@ -675,7 +675,7 @@ export default class TasksCreation extends BleashupModal {
                 </View></Item> : null}
                 <View style={{marginLeft: '-3%',marginBottom: '3%',}}>
                 {this.isEvent() && <CreateTextInput
-                  height={height / 25}
+                  height={height / 20}
                   maxLength={25}
                   placeholder={'Venue'}
                   value={this.state.currentRemind.location}

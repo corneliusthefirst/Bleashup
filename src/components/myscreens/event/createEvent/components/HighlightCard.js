@@ -94,7 +94,7 @@ export default class HighlightCard extends Component {
           <View style={{width:'100%'}}>
           <Social id={this.props.item.id}></Social>
           </View>
-        </View > : <Card style={{ width: ColorList.containerWidth * .90, height: "100%" }}></Card>
+        </View > : <Card style={{ width: ColorList.containerWidth * 1, height: "100%" }}></Card>
 
     )
   }

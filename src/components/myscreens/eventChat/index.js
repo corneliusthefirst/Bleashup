@@ -39,7 +39,7 @@ export default class EventChat extends Component {
     firebase.database().ref(`new_message/${this.props.activity_id}/${phone}/${this.props.roomID}/new_messages`).once('value', snapshoot => {
       this.newMessageCount = snapshoot.val() ? snapshoot.val().length : 0
       if (this.newMessageCount > 0) {
-        firebase.database().ref(`${this.props.roomID}`).limitToLast(this.newMessageCount).once('value', snapshoot => {
+        firebase.database().ref(`${this.props.roomID}`).orderByKey().limitToLast(this.newMessageCount).once('value', snapshoot => {
           firebase.database().ref(`new_message/${this.props.activity_id}/${phone}/${this.props.roomID}/new_messages`).set([])
           setTimeout(() => {
             this.setState({
@@ -213,6 +213,7 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
         this.props.handleReplyExtern(reply)
       }}
       openMenu={this.props.openMenu}
+      isComment={false}
       showLoader={this.props.showLoader}
       stopLoader={this.props.stopLoader}
       working={this.props.working}

@@ -73,7 +73,6 @@ export default class Like extends Component {
             }
         ).catch(() => {
             stores.Likes.loadLikes(this.props.id).then((like) => {
-                console.warn(like)
                 if(like){
                     this.setLikesCount(parseInt(like.likes))
                     this.setState({
