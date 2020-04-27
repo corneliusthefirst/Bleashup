@@ -225,7 +225,7 @@ export default class CommiteeItem extends Component {
         switch (message.type) {
             case "text":
                 return <View style={{ display: 'flex', flexDirection: 'row', }}>
-                    <Text elipsizeMode={'tail'} numberOfLines={1} style={{ fontWeight: "bold", fontSize: 16, color: "#0A4E52", width: '20%' }}>{this.formNickName(message.sender)}</Text>
+                    <Text elipsizeMode={'tail'} numberOfLines={1} style={{ fontWeight: "bold", fontSize: 16, color: ColorList.bodyText, width: '20%' }}>{this.formNickName(message.sender)}</Text>
                     <View style={{ width: '80%', alignSelf: 'flex-start', }}>
                         {this.writeText(message.text)}
                     </View>
@@ -234,7 +234,7 @@ export default class CommiteeItem extends Component {
                 return <View style={{ display: 'flex', flexDirection: 'row', }}>
                     <Text elipsizeMode={'tail'} numberOfLines={1} style={{
                         fontWeight: "bold", fontSize: 16,
-                        color: "#0A4E52", width: '30%', alignSelf: 'flex-start',
+                        color: ColorList.bodyText, width: '30%', alignSelf: 'flex-start',
                     }}>{this.formNickName(message.sender)}</Text>
                     <View style={{ display: 'flex', flexDirection: 'row', marginTop: "1%", width: '70%' }}>
                         <View style={{ width: '70%', alignSelf: 'flex-start', }}>
@@ -249,36 +249,36 @@ export default class CommiteeItem extends Component {
                 </View>
             case "audio":
                 return <View style={{ display: 'flex', flexDirection: 'row', }}>
-                    <Title style={{ fontWeight: "bold", fontSize: 16, color: "#0A4E52" }}>{this.formNickName(message.sender)}{": "}</Title>
+                    <Title style={{ fontWeight: "bold", fontSize: 16, color: ColorList.bodyText }}>{this.formNickName(message.sender)}{": "}</Title>
                     <View style={{ display: 'flex', flexDirection: 'row' }}>
                         <Text style={{ fontSize: 14, marginLeft: "3%", marginTop: "1%", width: "70%" }}>{message.text ?
                             message.text.slice(0, 15) + message.text.length < 15 ? "..." : "" :
                             message.duration ? this.convertToHMS(message.duration) :
                                 message.total ? this.toMB(message.total) : ""}</Text>
                         <View style={{ alignSelf: 'flex-end', marginTop: "-2%", }}>
-                            <Icon type={"Entypo"} name={"mic"} style={{ fontSize: 30, color: "#0A4E52" }}></Icon>
+                            <Icon type={"Entypo"} name={"mic"} style={{ fontSize: 30, color: ColorList.bodyText }}></Icon>
                         </View>
                     </View>
                 </View>
             case "video":
                 return <View style={{ display: 'flex', flexDirection: 'row', }}>
-                    <Title style={{ fontWeight: "bold", fontSize: 16, color: "#0A4E52" }}>{this.formNickName(message.sender)}{": "}</Title>
+                    <Title style={{ fontWeight: "bold", fontSize: 16, color: ColorList.bodyText }}>{this.formNickName(message.sender)}{": "}</Title>
                     <View style={{ display: 'flex', flexDirection: 'row', marginTop: "1%", }}>
                         <Text style={{ fontSize: 14, marginLeft: "3%", width: "70%" }}>{message.text ?
                             message.text.slice(0, 15) : message.duration ? message.duration : message.total ? this.toMB(message.total) : ""}</Text>
                         <View style={{ alignSelf: 'flex-end', marginTop: "-2%" }}>
-                            <Icon type={"AntDesign"} name={"videocamera"} style={{ fontSize: 30, color: "#0A4E52" }}></Icon>
+                            <Icon type={"AntDesign"} name={"videocamera"} style={{ fontSize: 30, color: ColorList.bodyText }}></Icon>
                         </View>
                     </View>
                 </View>
             case "attachement":
                 return <View style={{ display: 'flex', flexDirection: 'row', }}>
-                    <Title style={{ fontWeight: "bold", fontSize: 16, color: "#0A4E52" }}>{this.formNickName(message.sender)}{": "}</Title>
+                    <Title style={{ fontWeight: "bold", fontSize: 16, color: ColorList.bodyText }}>{this.formNickName(message.sender)}{": "}</Title>
                     <View style={{ display: 'flex', flexDirection: 'row', }}>
                         <Text style={{ fontSize: 14, marginLeft: "3%", alignSelf: 'flex-start', fontWeight: 'bold', width: "70%" }}>{message.file_name.split(".")
                         [message.file_name.split(".").length - 1].toUpperCase()}</Text>
                         <View style={{ alignSelf: 'flex-end', marginTop: "-2%", }}>
-                            <Icon type={"Octicons"} name={"file"} style={{ fontSize: 30, color: "#0A4E52" }}></Icon>
+                            <Icon type={"Octicons"} name={"file"} style={{ fontSize: 30, color: ColorList.bodyText }}></Icon>
                         </View>
                     </View>
                 </View>
@@ -341,7 +341,7 @@ export default class CommiteeItem extends Component {
                                                         }, 300)
                                                     })
                                                 }}>
-                                                    <View><Icon style={{ fontSize: 30, color: "#0A4E52" }} name="pencil" type="EvilIcons" /></View>
+                                                    <View><Icon style={{ fontSize: 30, color: ColorList.bodyText }} name="pencil" type="EvilIcons" /></View>
                                                 </TouchableWithoutFeedback>
                                             </View> : null}
                                 {this.state.joint && this.state.commitee.new_messages ? this.state.commitee.new_messages.length > 0 ? <Badge style={{

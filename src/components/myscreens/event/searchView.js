@@ -65,7 +65,8 @@ navigateToEventDetails = (item) => {
     <Container style={{height:"100%",width:colorList.containerWidth,backgroundColor:colorList.bodyBackground,alignItems:"center"}}>
        
        <View style={{height:colorList.headerHeight,width:"100%",alignItems:"center",backgroundColor:colorList.headerBackground}}>
-        <View style={{flexDirection:"row",backgroundColor:colorList.bodyBackground,height:colorList.headerHeight,width:"95%",borderColor:"gray",borderWidth:1,justifyContent:"center",marginTop:"2%",alignItems:"center",borderRadius:15}}>
+        <View style={{flexDirection:"row",backgroundColor:colorList.bodyBackground,height:colorList.headerHeight,width:"95%",borderColor:"gray",borderWidth:1,
+        justifyContent:"center",alignItems:"center",borderRadius:15}}>
           
               <Icon onPress={() => {this.props.navigation.goBack()}}
                style={{ color:colorList.bodyIcon,marginLeft:"2%",marginRight:"2%"}} type={"MaterialIcons"}name={"arrow-back"}></Icon>
@@ -96,7 +97,7 @@ navigateToEventDetails = (item) => {
 
                      return(
                   
-                     <View style={{flexDirection:"row",width:"100%",marginBottom:"5%"}}>
+                     <View style={{flexDirection:"row",width:"100%",marginBottom:"2%",marginTop: '2%',}}>
                       
                       <View style={{width:colorList.containerWidth/5,alignItems:"center"}}>
                       <TouchableWithoutFeedback>
@@ -106,7 +107,7 @@ navigateToEventDetails = (item) => {
                          </TouchableWithoutFeedback>
                          </View>
      
-                         <TouchableWithoutFeedback style={{width:(4*colorList.containerWidth)/5}} onPress={()=>{this.navigateToEventDetails(item)}} >
+                         <TouchableOpacity style={{width:(4*colorList.containerWidth)/5,marginTop: '2.2%',}} onPress={()=>{requestAnimationFrame(() => this.navigateToEventDetails(item))}} >
                          <View style={{width:(4*colorList.containerWidth)/5,flexDirection:"row"}}>
                          <View style={{flexDirection:"column",width:"76%"}}>
                                 <Title style={{alignSelf:"flex-start",marginLeft:2,fontSize:14}}>{item.name}</Title>
@@ -115,7 +116,7 @@ navigateToEventDetails = (item) => {
                                 <Text style={{alignSelf:"flex-start",fontSize:14}}>{item.type=="relation"?"@relation":"@activity"}</Text>
                          </View>
                          </View>
-                         </TouchableWithoutFeedback>
+                         </TouchableOpacity>
                         </View>
 
                       )

@@ -279,8 +279,11 @@ export default class EventDetailView extends Component {
                       this.delay = index >= 5 ? 0 : this.delay + 1
                       return (
                         <HighlightCard
+                        navigation={this.props.navigation}
                           height={colorList.containerHeight*.45}
                           phone={stores.LoginStore.user.phone}
+                          activity_id={this.props.Event.id}
+                          activity_name={this.props.Event.about.title}
                           delay={this.delay}
                           update={(hid) => {
                             this.setState({

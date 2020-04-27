@@ -43,6 +43,7 @@ class colorlist {
     popMenuBackground = "white"
 
     //likes 
+    heartColor = '#FE1D1D'
     likeActive = "#1FABAB"
     likeInactive = "black"
     indicatorColor = "#3D3E3E"

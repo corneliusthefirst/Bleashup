@@ -57,7 +57,7 @@ export default class ReplyText extends Component {
                                         this.props.reply.type_extern}</Text>
                                     {this.props.reply.type_extern ? <View style={{ flexDirection: 'row', }}>
                                         {/*<Icon type={"Entypo"} name={'dot-single'} style={{ color: '#1FABAB',  }}></Icon>*/}
-                                        <Text note style={{ fontWeight: 'bold', fontStyle: 'italic', }}>{`:  ${this.props.reply.replyer_name ?
+                                        <Text  style={{ fontWeight: 'bold',fontSize: 12, }}>{`:  ${this.props.reply.replyer_name ?
                                             this.props.reply.type_extern : this.props.reply.title.split(': \n')[0]}`}</Text>
                                     </View> : null}
                                 </View>

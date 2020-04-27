@@ -30,7 +30,7 @@ export default class TextMessage extends Component {
     pattern = [1000, 0, 0]
     render() {
         return (
-            <View style={{alignSelf: 'center',margin: 3,}}>
+            <View style={{alignSelf: 'center',}}>
                 <TextContent onLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null} pressingIn={() => this.props.pressingIn()} text={this.props.message.text}></TextContent>
             </View>
         );

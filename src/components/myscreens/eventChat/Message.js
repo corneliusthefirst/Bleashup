@@ -303,7 +303,7 @@ export default class Message extends Component {
         topMostStyle = {
             marginLeft: this.state.sender  ? '1%' : 0,
             marginRight: !this.state.sender ? '1%' : 0,
-            marginTop: this.state.different ? "4%" : '1.2%',
+            marginTop: this.state.different ? "3%" : '1%',
             marginBottom: this.props.index <= 0 ? '2%' : 0,
             alignSelf: this.state.sender ? 'flex-start' : 'flex-end',
         }

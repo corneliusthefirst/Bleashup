@@ -238,9 +238,9 @@ export default {
 
     // Tab
     tabDefaultBg: platform === "ios" ? ColorList.headerBackground : ColorList.headerBackground,
-    topTabBarTextColor: platform === "ios" ? ColorList.iconInactive : ColorList.iconInactive,
-    topTabBarActiveTextColor: platform === "ios" ? ColorList.iconActive : ColorList.iconActive,
-    topTabBarBorderColor: platform === "ios" ? ColorList.iconActive : ColorList.iconActive,
+    topTabBarTextColor: platform === "ios" ? ColorList.bodyIcon : ColorList.bodyIcon,
+    topTabBarActiveTextColor: platform === "ios" ? ColorList.bodyIcon : ColorList.bodyIcon,
+    topTabBarBorderColor: platform === "ios" ? ColorList.bodyIcon : ColorList.bodyIcon,
     topTabBarActiveBorderColor: platform === "ios" ? "#1FABAB" : "#1FABAB",
 
     // Tabs
@@ -259,8 +259,8 @@ export default {
     titleFontfamily: platform === "ios" ? "System" : "Roboto_medium",
     titleFontSize: platform === "ios" ? 17 : 19,
     subTitleFontSize: platform === "ios" ? 11 : 14,
-    subtitleColor: platform === "ios" ? "#000" : "#0A4E52",
-    titleFontColor: platform === "ios" ? "#000" : "#0A4E52",
+    subtitleColor: platform === "ios" ? ColorList.bodyIcon : ColorList.bodyIcon,
+    titleFontColor: platform === "ios" ? ColorList.bodyIcon : ColorList.bodyIcon,
 
     // Other
     borderRadiusBase: platform === "ios" ? 5 : 2,

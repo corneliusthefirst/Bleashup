@@ -16,6 +16,7 @@ import TemporalUsersStore from "./temporalUsersStore"
 import commitee from './commitee';
 import  StoriesStore from './StoriesStore';
 import  StatusStore from './StatusStore';
+import comments from './comments';
 
 export default { 
 
@@ -33,6 +34,7 @@ export default {
   ChangeLogs: new ChangeLogs(),
   Likes: new Likes(),
   Publishers: new Publishers(),
+  comments: new comments(),
   TemporalUsersStore: new TemporalUsersStore(),
   CommiteeStore : new commitee(),
   StoriesStore: new   StoriesStore(),

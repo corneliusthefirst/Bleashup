@@ -41,6 +41,16 @@ export default class Like extends Component {
         });
     }
     componentDidMount() {
+        stores.Likes.loadLikes(this.props.id).then((like) => {
+            if (like) {
+                this.setLikesCount(parseInt(like.likes))
+                this.setState({
+                    liked: findIndex(like.likers, ele => ele === stores.LoginStore.user.phone) >= 0,
+                    likesCount: like.likes,
+                    loaded: true
+                })
+            }
+        })
         stores.Likes.getLikesFromRemote(this.props.id, "count", 0, 0).then(
             (data) => {
                 this.setLikesCount(data.count)
@@ -65,22 +75,13 @@ export default class Like extends Component {
 
             }
         ).catch(() => {
-            stores.Likes.loadLikes(this.props.id).then((like) => {
-                if (like) {
-                    this.setLikesCount(parseInt(like.likes))
-                    this.setState({
-                        liked: findIndex(like.likers, ele => ele === stores.LoginStore.user.phone) >= 0,
-                        likesCount: like.likes,
-                        loaded: true
-                    })
-                }
-            })
+           
         });
     }
     setLikesCount(count) {
         this.props.setLikesCount && this.props.setLikesCount(count)
         this.setState({
-            likesCount: this.state.likesCount + count
+            likesCount:  count
         })
     }
     likes = 0;
@@ -96,7 +97,7 @@ export default class Like extends Component {
                     this.setState({
                         liked: true,
                     });
-                    this.setLikesCount(1)
+                    this.setLikesCount(this.state.likesCount + 1)
                     this.likes = this.state.likes;
                     this.likers = this.state.likers;
                     this.props.end;
@@ -120,7 +121,7 @@ export default class Like extends Component {
                     this.setState({
                         liked: false,
                     });
-                    this.setLikesCount(-1)
+                    this.setLikesCount(this.state.likesCount -1)
                     this.likers = this.state.likers;
                     this.likes = this.state.likes;
                 })
@@ -157,7 +158,7 @@ export default class Like extends Component {
         return <View>
             <View>
                 <TouchableWithoutFeedback
-                    onPressIn={() => {
+                    onPress={() => {
                         this.scaleValue.setValue(0);
                         Animated.timing(this.scaleValue, {
                             toValue: 1,
@@ -178,13 +179,13 @@ export default class Like extends Component {
                 >
                     <Animated.View style={{ transform: [{ scale: this.cardScale }] }}>
                         <Icon
-                            name="like"
-                            type="EvilIcons"
+                            name={this.props.icon.name}
+                            type={this.props.icon.type}
                             style={{
                                 color: this.state.liked
-                                    ? ColorList.likeActive
+                                    ? this.props.likedColor
                                     : ColorList.likeInactive,
-                                fontSize: 45,
+                                fontSize: this.props.size,
                             }}
                         />
                       {/*  <Text note>{`${this.state.likesCount} likes`}</Text>*/}

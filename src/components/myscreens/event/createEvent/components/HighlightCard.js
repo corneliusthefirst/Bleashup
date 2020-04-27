@@ -91,8 +91,14 @@ export default class HighlightCard extends Component {
           <TouchableOpacity onPress={() => requestAnimationFrame(() =>  this.props.showItem(this.props.item))} style={{ height: this.containsMedia() ? (height / 18) : (height / 7), margin: '.5%', }}>
             <Text ellipsizeMode='tail' style={{ fontSize: 12, }} numberOfLines={this.containsMedia() ? 3 : 13}>{this.props.item.description ? this.props.item.description : null}</Text>
           </TouchableOpacity>
-          <View style={{width:'100%'}}>
-          <Social id={this.props.item.id}></Social>
+          <View style={{width:'90%',alignSelf: 'center',alignItems: 'center',}}>
+          <Social 
+          navigation={this.props.navigation}
+          title={this.props.item.title} 
+          activity_name={this.props.activity_name}
+          creator={this.props.item.creator} 
+          activity_id={this.props.activity_id} 
+          id={this.props.item.id}></Social>
           </View>
         </View > : <Card style={{ width: ColorList.containerWidth * 1, height: "100%" }}></Card>
 

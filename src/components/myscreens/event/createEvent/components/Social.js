@@ -45,19 +45,31 @@ export default class Social extends Component {
                     >{`${this.state.likesCount} like(s), ${this.state.commentCount} comment(s), ${this.state.supportCount} supports`}</Text>
                 </TouchableOpacity>
                 <View style={{ flexDirection: "row", }}>
-                    <View style={{ width:"70%", flexDirection: "row" }}>
-                        <View style={this.itemStyle}>
+                    <View style={{ width:"60%", flexDirection: "row",alignSelf: 'center',justifyContent: 'space-between', }}>
+                        <View style={{...this.itemStyle,width:'20%'}}>
                             <Like
+                            icon={{ 
+                                    type:"AntDesign",
+                                    name:'hearto'
+                             }}
+                             size={25}
+                             likedColor={ColorList.heartColor}
                                 setLikesCount={(count) => {
                                     this.setState({
-                                        likesCount: this.state.likesCount + count,
+                                        likesCount: count,
                                     });
                                 }}
                                 id={this.props.id}
                             ></Like>
                         </View>
                         <View style={this.itemStyle}>
-                        <Comments setCommentsCount={(val) => {
+                        <Comments
+                        navigation={this.props.navigation} 
+                        activity_id={this.props.activity_id}
+                        activity_name={this.props.activity_name}
+                        title={this.props.title}
+                        creator={this.props.creator}
+                        setCommentsCount={(val) => {
                             this.setState({
                                 commentCount:val
                             })
@@ -65,9 +77,8 @@ export default class Social extends Component {
                         </View>
                         <View style={this.itemStyle}>
                             <View style={{ flexDirection:"row",justifyContent:"center"}}>
-                            <Icon style={{ color: ColorList.headerIcon, fontSize: 22, }} type={"MaterialIcons"} name={"attach-money"}>
+                                <Icon style={{ color: ColorList.headerIcon, fontSize: 22, }} type={"FontAwesome"} name={"support"}>
                             </Icon>
-                            <Text note>support</Text>
                             </View>
                         </View>
                     </View>
@@ -75,9 +86,9 @@ export default class Social extends Component {
                     <View
                         style={{
                             width:"25%",
-                            alignItems:"center",
                             flexDirection: "row",
-                            //justifyContent: "space-between",
+                            alignSelf: 'flex-end',
+                            justifyContent: "space-between",
                         }}
                     >
                         <View style={this.itemStyle}>

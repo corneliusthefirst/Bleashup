@@ -47,7 +47,7 @@ import EmojiSelector from 'react-native-emoji-selector';
 import ChatroomMenu from "./ChatroomMenu";
 import uuid from 'react-native-uuid';
 import dateDisplayer from '../../../services/dates_displayer';
-import { SendNotifications, LoadMoreComments } from '../../../services/cloud_services';
+import { SendNotifications, LoadMoreComments, AddMembers } from '../../../services/cloud_services';
 import Pickers from '../../../services/Picker';
 import converToHMS from '../highlights_details/convertToHMS';
 import Waiter from "../loginhome/Waiter";
@@ -374,7 +374,6 @@ export default class ChatRoom extends Component {
         })
     }
     componentDidMount() {
-        console.error(this.props.firebaseRoom)
         GState.currentRoom = this.props.firebaseRoom
         firebase.database().ref(`current_room/${this.props.user.phone}`).set(this.props.firebaseRoom)
         if (this.props.isComment) {
@@ -415,7 +414,7 @@ export default class ChatRoom extends Component {
     componentWillMount() {
         this.fireRef = this.getRef(this.props.firebaseRoom);
         this.setTypingRef(this.props.firebaseRoom)
-
+        this.props.isComment && AddMembers(this.props.activity_id,this.props.firebaseRoom,[{phone:stores.LoginStore.user.phone}])
         //!! handle user peer user disconnection here listen to something like 'current_room/${peer_user_phone}' to know wether the user is connected or not
         // !! this will only be valid for a when there is just one user in a room .
 
@@ -905,6 +904,7 @@ export default class ChatRoom extends Component {
             textHeight: screenheight * 0.1,
             photoHeight: screenheight * 0.9,
         })
+    this.adjutRoomDisplay()
     }
     sendAudioMessge(filename, duration, dontsend) {
         this.setState({
@@ -1275,7 +1275,7 @@ export default class ChatRoom extends Component {
                     firebaseRoom={this.props.firebaseRoom}
                     roomName={this.props.roomName}
                     sendMessage={message => this.sendTextMessage(message)}
-                    received={item.received ? item.received.length >= this.props.members.length : false}
+                    received={item.received && this.props.members ? item.received.length >= this.props.members.length : false}
                     replaceMessageVideo={(data) => this.replaceMessageVideo(data)}
                     showPhoto={(photo) => this.showPhoto(photo)}
                     replying={(replyer, color) => {
@@ -1382,14 +1382,14 @@ export default class ChatRoom extends Component {
                         padding: '1%',
                     }}>
                         {!this.state.textValue && !this.state.showAudioRecorder ? <Icon style={{
-                            color: "#0A4E52", alignSelf: 'flex-end'
+                            color: colorList.bodyIcon, alignSelf: 'flex-end'
                         }} onPress={() => {
                             this.showAudio()
                         }} type={"FontAwesome5"} name={"microphone-alt"}></Icon> : <Icon onPress={() => {
                             requestAnimationFrame(() => {
                                 return this.sendMessageText(this.state.textValue);
                             });
-                        }} style={{ color: "#0A4E52", alignSelf: 'flex-end' }}
+                        }} style={{ color: colorList.bodyIcon, alignSelf: 'flex-end' }}
                             name="md-send" type="Ionicons">
                             </Icon>}
                     </View>
@@ -1588,7 +1588,7 @@ export default class ChatRoom extends Component {
                     }} type="Entypo" name="emoji-flirt" style={{ color: "#0A4E52", marginTop: "3%", width: "8%" }}>
                     </Icon><TextInput multiline={true} enableScrollToCaret ref={(r) => { this._captionTextInput = r; }} value={this.state.textValue} onChange={(data) => this._onChangeCaption(data)}
                         style={{ left: 0, right: 0, minHeight: 50, maxHeight: 200, width: "84%" }} placeholder={'Enter your text!'} />
-                    <Icon style={{ color: "#0A4E52", marginTop: "3%", width: "8%" }} onPress={() => this._sendCaptionMessage()} type={"Ionicons"} name={"md-send"}></Icon>
+                    <Icon style={{ color: colorList.bodyIcon, marginTop: "3%", width: "8%" }} onPress={() => this._sendCaptionMessage()} type={"Ionicons"} name={"md-send"}></Icon>
                 </View>
                 {
                     //********** Caption Emoji Keyboard *******************************/
@@ -1646,7 +1646,7 @@ export default class ChatRoom extends Component {
                                 this.props.handleReplyExtern(reply)
                             }}
                             showProfile={(pro) => this.props.showProfile(pro)} replying={() => { }}
-                            received={this.state.replyer.received ?
+                            received={this.state.replyer.received && this.props.members ?
                                 this.state.replyer.received.length >=
                                 this.props.members.length : false}
                             showPhoto={(photo) => this.showPhoto(photo)}
