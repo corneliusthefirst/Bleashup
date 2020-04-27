@@ -14,6 +14,7 @@ import { BarIndicator } from "react-native-indicators"
 import testForURL from '../../../services/testForURL';
 import converToHMS from '../highlights_details/convertToHMS';
 import FileExachange from '../../../services/FileExchange';
+import ColorList from '../../colorList';
 export default class AudioMessage extends Component {
     constructor(props) {
         super(props);
@@ -231,15 +232,15 @@ export default class AudioMessage extends Component {
                             size={40}
                             width={3}
                             fill={testForURL(this.props.message.source) ? this.state.downloadState : 100}
-                            tintColor={"#1FABAB"}
-                            backgroundColor={'#F8F7EE'}>
+                            tintColor={ColorList.indicatorColor}
+                            backgroundColor={ColorList.indicatorInverted}>
                             {
                                 (fill) => (
                                     <View style={{ marginTop: "-5%" }}>
                                         <TouchableOpacity onPress={() => this.state.downloading ? this.cancelDownLoad(this.props.message.source) :
                                             this.downloadAudio(this.props.message.source)}>
                                             <View>
-                                                <Icon style={{ color: "#0A4E52" }} type="EvilIcons"
+                                                <Icon style={{ color: ColorList.bodyText }} type="EvilIcons"
                                                     name={this.state.downloading ? "close" : "arrow-down"}></Icon>
                                             </View>
                                             <View style={{ position: 'absolute', marginTop: '-103%', marginLeft: '-14%', }}>
@@ -251,10 +252,10 @@ export default class AudioMessage extends Component {
                             }
                         </AnimatedCircularProgress> : !this.state.playing ? <TouchableOpacity
                             onPress={() => requestAnimationFrame(() => this.plays())}>
-                            <Icon type="FontAwesome5" style={{ color: "#0A4E52", fontSize: 20 }} name="play">
+                            <Icon type="FontAwesome5" style={{ color: ColorList.bodyText, fontSize: 20 }} name="play">
                             </Icon>
                         </TouchableOpacity> : <TouchableOpacity onPress={() => requestAnimationFrame(() => this.pause())}>
-                                    <Icon type="FontAwesome5" style={{ color: "#0A4E52", fontSize: 20 }} name="pause">
+                                    <Icon type="FontAwesome5" style={{ color: ColorList.bodyText, fontSize: 20 }} name="pause">
                                     </Icon>
                                 </TouchableOpacity>}</View>
                 </View>

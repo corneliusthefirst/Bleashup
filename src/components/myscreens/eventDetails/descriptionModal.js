@@ -62,7 +62,7 @@ modalBody(){
    <View style={{ flexDirection: 'row', justifyContent: "center", marginTop: 'auto', marginBottom: 'auto' }}>
     <QRDisplayer code={this.props.Event.id} title={this.props.Event.about.title}></QRDisplayer>
    </View>
-   <View style={{marginTop:"22%"}}>
+   <View style={{marginTop:"22%",width:'5%'}}>
      <Creator color={colorList.bodyBackground} creator={this.props.Event.creator_phone}
       created_at={this.props.Event.created_at} />
     </View>

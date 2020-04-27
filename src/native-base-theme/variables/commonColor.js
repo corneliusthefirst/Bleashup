@@ -108,12 +108,12 @@ export default {
     CheckboxIconSize: platform === "ios" ? 21 : 16,
     CheckboxIconMarginTop: platform === "ios" ? undefined : 1,
     CheckboxFontSize: platform === "ios" ? 23 / 0.9 : 17,
-    checkboxBgColor: "#1FABAB",
+    checkboxBgColor: ColorList.bodyIcon,
     checkboxSize: 20,
     checkboxTickColor: "#FFFFFF",
 
     // Color
-    brandPrimary: platform === "ios" ? "#33BDBD" : "#1FABAB",
+    brandPrimary: platform === "ios" ? ColorList.bodyIcon : ColorList.bodyIcon,
     brandInfo: "#62B1F6",
     brandSuccess: "#5cb85c",
     brandDanger: "#d9534f",
@@ -153,11 +153,11 @@ export default {
     activeTab: platform === "ios" ? "#33BDBD" : "#FFFFFF",
     sTabBarActiveTextColor: "#33BDBD",
     tabBarActiveTextColor: platform === "ios" ? "#2874F0" : "#FFFFFF",
-    tabActiveBgColor: platform === "ios" ? "#cde1f9" : "#1FABAB",
+    tabActiveBgColor: platform === "ios" ? "#cde1f9" : ColorList.bodyIcon,
 
     // Header
     toolbarBtnColor: platform === "ios" ? "#FFFFFF" : "#FFFFFF",
-    toolbarDefaultBg: platform === "ios" ? "#1FABAB" : "#1FABAB",
+    toolbarDefaultBg: platform === "ios" ? ColorList.bodyIcon : ColorList.bodyIcon,
     toolbarHeight: platform === "ios" ? 64 : 56,
     toolbarSearchIconSize: platform === "ios" ? 20 : 23,
     toolbarInputColor: platform === "ios" ? "#FFFFFF" : "#FFFFFF",
@@ -165,7 +165,7 @@ export default {
     searchBarInputHeight: platform === "ios" ? 30 : 50,
     toolbarBtnTextColor: platform === "ios" ? "#FFFFFF" : "#FFFFFF",
     iosStatusbar: "dark-content",
-    toolbarDefaultBorder: platform === "ios" ? "#1FABAB" : "#1FABAB",
+    toolbarDefaultBorder: platform === "ios" ? ColorList.bodyIcon : ColorList.bodyIcon,
     get statusBarColor() {
         return color("#FFFFFF")
             .darken(0)
@@ -210,7 +210,7 @@ export default {
     listItemPadding: platform === "ios" ? 10 : 12,
     listNoteColor: "#808080",
     listNoteSize: 13,
-    listItemSelected: platform === "ios" ? "#33BDBD" : "#1FABAB",
+    listItemSelected: platform === "ios" ? "#33BDBD" : ColorList.bodyIcon,
 
     // Progress Bar
     defaultProgressColor: "#E4202D",
@@ -218,19 +218,19 @@ export default {
 
     // Radio Button
     radioBtnSize: platform === "ios" ? 25 : 23,
-    radioSelectedColorAndroid: "#1FABAB",
+    radioSelectedColorAndroid: ColorList.bodyIcon,
     radioBtnLineHeight: platform === "ios" ? 29 : 24,
     get radioColor() {
         return this.brandPrimary;
     },
 
     // Segment
-    segmentBackgroundColor: platform === "ios" ? "#1FABAB" : "#1FABAB",
+    segmentBackgroundColor: platform === "ios" ? ColorList.bodyIcon : ColorList.bodyIcon,
     segmentActiveBackgroundColor: platform === "ios" ? "#33BDBD" : "#FFFFFF",
     segmentTextColor: platform === "ios" ? "#33BDBD" : "#FFFFFF",
-    segmentActiveTextColor: platform === "ios" ? "#FFFFFF" : "#1FABAB",
+    segmentActiveTextColor: platform === "ios" ? "#FFFFFF" : ColorList.bodyIcon,
     segmentBorderColor: platform === "ios" ? "#33BDBD" : "#FFFFFF",
-    segmentBorderColorMain: platform === "ios" ? "#a7a6ab" : "#1FABAB",
+    segmentBorderColorMain: platform === "ios" ? "#a7a6ab" : ColorList.bodyIcon,
 
     // Spinner
     defaultSpinnerColor: ColorList.indicatorColor,
@@ -241,10 +241,10 @@ export default {
     topTabBarTextColor: platform === "ios" ? ColorList.bodyIcon : ColorList.bodyIcon,
     topTabBarActiveTextColor: platform === "ios" ? ColorList.bodyIcon : ColorList.bodyIcon,
     topTabBarBorderColor: platform === "ios" ? ColorList.bodyIcon : ColorList.bodyIcon,
-    topTabBarActiveBorderColor: platform === "ios" ? "#1FABAB" : "#1FABAB",
+    topTabBarActiveBorderColor: platform === "ios" ? ColorList.bodyIcon : ColorList.bodyIcon,
 
     // Tabs
-    tabBgColor: "#1FABAB",
+    tabBgColor: ColorList.bodyIcon,
     tabFontSize: 16,
 
     // Text

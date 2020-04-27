@@ -47,7 +47,7 @@ class colorlist {
     likeActive = "#1FABAB"
     likeInactive = "black"
     indicatorColor = "#3D3E3E"
-    indicatorInverted = '#D8DEDC'
+    indicatorInverted = "#F3F8F7"
 
 
 }

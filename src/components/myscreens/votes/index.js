@@ -205,7 +205,7 @@ export default class Votes extends BleashupModal {
        back={this.onClosedModal.bind(this)}
        title={this.props.isSingleVote ? "Vote" : "Votes"}
         extra={!this.props.isSingleVote && this.props.computedMaster && <Icon onPress={() => requestAnimationFrame(() => this.AddVote())} type='AntDesign'
-          name="pluscircle" style={{ color: "#1FABAB", alignSelf: 'center',marginTop: 'auto',marginBottom: 'auto', }} />}
+          name="plus" style={{ color: ColorList.bodyIcon, alignSelf: 'center',marginTop: 'auto',marginBottom: 'auto', }} />}
        >
     </CreationHeader>
         <View style={{ height: ColorList.containerHeight - (ColorList.headerHeight + 20) }}>

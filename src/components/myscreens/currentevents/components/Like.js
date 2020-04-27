@@ -166,6 +166,7 @@ export default class Like extends Component {
                             easing: Easing.linear,
                             userNativeDriver: true,
                         }).start();
+                        return this.action();
                     }}
                     onPressOut={() => {
                         Animated.timing(this.scaleValue, {
@@ -174,7 +175,7 @@ export default class Like extends Component {
                             easing: Easing.linear,
                             userNativeDriver: true,
                         }).start();
-                        return this.action();
+                        
                     }}
                 >
                     <Animated.View style={{ transform: [{ scale: this.cardScale }] }}>

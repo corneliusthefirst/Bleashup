@@ -27,6 +27,7 @@ import Voter from './Voter';
 import { find } from 'lodash';
 import { isEqual } from 'lodash';
 import formVoteOptions from '../../../services/formVoteOptions';
+import ColorList from '../../colorList';
 
 export default class Message extends Component {
 
@@ -276,7 +277,7 @@ export default class Message extends Component {
     }
     iconStyles = {
         fontSize: 12,
-        color: "#1FABAB",
+        color: ColorList.bodyText,
         marginLeft: 5,
         paddingTop: 1,
         //marginTop: "-2%",
@@ -303,11 +304,11 @@ export default class Message extends Component {
         topMostStyle = {
             marginLeft: this.state.sender  ? '1%' : 0,
             marginRight: !this.state.sender ? '1%' : 0,
-            marginTop: this.state.different ? "3%" : '1%',
+            marginTop: this.state.different ? "4%" : '1.2%',
             marginBottom: this.props.index <= 0 ? '2%' : 0,
             alignSelf: this.state.sender ? 'flex-start' : 'flex-end',
         }
-        let color = this.state.sender ? '#D0FEEB' : '#9EEDD3'
+        let color = this.state.sender ? ColorList.bodyBackground : ColorList.indicatorInverted
         GeneralMessageBoxStyle = {
             maxWidth:   300, flexDirection: 'column', minWidth: 120,
             minHeight: 20, overflow: 'hidden', borderBottomLeftRadius: 10, borderColor: color,
@@ -338,7 +339,7 @@ export default class Message extends Component {
             alignSelf: this.state.sender ? 'flex-start' : 'flex-end',
             borderTopRightRadius: 10,
         }
-        nameTextStyle = { fontSize: 14, fontWeight: 'bold', color: "#1FABAB" }
+        nameTextStyle = { fontSize: 14, fontWeight: 'bold', color: ColorList.bodyText }
         return (this.props.message.type == 'date_separator' ? <View style={{ marginTop: '2%', marginBottom: '2%', }}>
             <DateView date={this.props.message.id}></DateView></View> :
             this.props.message.type == "new_separator" ? <View style={{
@@ -376,7 +377,7 @@ export default class Message extends Component {
                                                 note>{" "}{this.state.sender_name}</Text> : <Text>{"         "}</Text>}</TouchableOpacity> : null}<Right>
                                                     {!this.state.sender ? <Text note
                                                         style={{
-                                                            color: this.state.sender ? null : '#1FABAB',
+                                                            color: this.state.sender ? null : ColorList.bodyText,
                                                             fontSize: 13, marginRight: "2%", marginTop: "1%",
                                                         }}>
                                                         {this.state.time}{"    "}</Text> : null}</Right></View></TouchableWithoutFeedback>
@@ -414,7 +415,7 @@ export default class Message extends Component {
                                                     {this.state.sender ? <Text note
                                                         style={{
                                                             marginLeft: "5%",
-                                                            color: this.state.sender ? null : '#1FABAB',
+                                                            color: this.state.sender ? null : ColorList.bodyText,
                                                             fontSize: 13, marginRight: "2%", marginTop: "1%",
                                                         }}>
                                                         {this.state.time}{"    "}</Text> : null}

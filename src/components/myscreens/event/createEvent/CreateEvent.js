@@ -8,6 +8,7 @@ import stores from '../../../../stores/index';
 import request from '../../../../services/requestObjects';
 import { filter,uniqBy,orderBy,find,findIndex,reject,uniq,indexOf,forEach,dropWhile } from "lodash";
 import moment from "moment";
+import ColorList from '../../../colorList';
 
 export default class CreateEvent extends Component {
   constructor(props){
@@ -101,10 +102,10 @@ export default class CreateEvent extends Component {
     return (
 
  
-        <ActionButton buttonColor='rgba(52, 52, 52, 0.9)' position="right" backgroundTappable={true} btnOutRange="black" size={55} 
+        <ActionButton buttonColor='rgba(52, 52, 52, 0.9)' position="right" backgroundTappable={true} btnOutRange={ColorList.bodyBackground} size={55} 
         useNativeFeedback={false}
         renderIcon={()=>{
-          return <Icon name="pluscircle" type="AntDesign" style={{color:"white",fontSize:53}} />
+          return <Icon name="plus" type="AntDesign" style={{color:ColorList.bodyBackground,fontSize:53}} />
         }}
         >
 

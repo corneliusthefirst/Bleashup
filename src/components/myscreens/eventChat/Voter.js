@@ -71,7 +71,7 @@ export default class Voter extends Component {
                 alignItems: 'center',
                 height: '100%'
             }}><Text
-                style={{ color: '#1FABAB', fontSize: 23, fontWeight: '400', }}
+                style={{ color: ColorList.bodyText, fontSize: 23, fontWeight: '400', }}
             >{`${labler(index)}.`}</Text></View>
             <View style={{ width: '75%', height: '80%', }}>
                 <View style={{ width: '100%' }}>
@@ -82,7 +82,7 @@ export default class Voter extends Component {
                     <View style={{ flexDirection: 'row', height: '60%' }}>
                         <View style={{
                             height: '110%', ...shadower(2),
-                            backgroundColor: '#1FABAB',
+                            backgroundColor: ColorList.indicatorColor,
                             width: `${this.calculateVotePercentage(this.returnOptionCount(index), 0)}%`,
                             borderTopRightRadius: this.calculateVotePercentage(this.returnOptionCount(index), 0) >= 99 ? 8 :
                                 0,
@@ -94,7 +94,7 @@ export default class Voter extends Component {
                             height: '100%', ...shadower(2),
                             marginTop: '.4%',
                             borderTopRightRadius: 8, borderBottomRightRadius: 8,
-                            backgroundColor: '#fff',
+                            backgroundColor: ColorList.indicatorInverted,
                         }}></View>
                     </View>
                 </View>
