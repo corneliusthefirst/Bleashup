@@ -26,3 +26,7 @@ export function RemoveMembers(activityID,committeeID,members){
 export function LoadMoreComments(roomKey,lower,upper){
     return fetch(`${CloudURL}/loadMoreComments?room_key=${roomKey}&lower=${lower}&upper=${upper}`);
 }
+
+export function countComments(roomKey){
+    return fetch(`${CloudURL}/countComments?room_key=${roomKey}`);
+}

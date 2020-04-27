@@ -30,8 +30,11 @@ export default class MediaPreviewer extends Component {
       <View
         style={{
           height: this.props.height || "90%",
-          width: "90%",
+          width: "80%",
           alignSelf: "center",
+          borderColor:"black",
+          borderWidth:0.4,
+          borderRadius:10
         }}
       >
         <View
@@ -52,7 +55,7 @@ export default class MediaPreviewer extends Component {
                 style={{
                   alignSelf: "center",
                   height: "100%",
-                  width: "88%",
+                  width: "100%",
                   borderColor: "#1FABAB",
                   borderRadius:
                     this.props.url.photo || this.props.url.video ? 10 : 100,
@@ -71,7 +74,7 @@ export default class MediaPreviewer extends Component {
                 style={{
                   alignSelf: "center",
                   height: "100%",
-                  width: "88%",
+                  width: "100%",
                   borderColor: "#1FABAB",
                   borderRadius:this.props.url.photo || this.props.url.video ? 10 : 5,
                 }}
@@ -105,14 +108,14 @@ export default class MediaPreviewer extends Component {
         </View>
 
         {this.props.url && (this.props.url.video || this.props.url.photo) ? (
+          <View style={{position: "absolute",alignSelf: "flex-end", height:30,  width:30,margin:"1%",}}>
           <View
             style={{
               ...buttoner,
-              position: "absolute",
-              alignSelf: "flex-end",
               width:30,
               height:30,
               borderRadius: 20,
+              
             }}
           >
             <Icon
@@ -124,6 +127,7 @@ export default class MediaPreviewer extends Component {
                 fontSize: 30,
               }}
             ></Icon>
+          </View>
           </View>
         ) : null}
 

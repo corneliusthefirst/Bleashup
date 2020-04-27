@@ -485,7 +485,7 @@ export default class EventHighlights extends BleashupModal {
             </CreateTextInput>
 
             <CreateTextInput
-                height={height/8}
+                height={height/6}
                 value={this.state.currentHighlight.description
                   ? this.state.currentHighlight.description
                   : ""}
@@ -494,20 +494,10 @@ export default class EventHighlights extends BleashupModal {
                 maxLength={3000}
                 numberOfLines={5}
                 multiline={true}
+                backgroundColor={"#fbfafd"}
             >
             </CreateTextInput>
-
-
-
-        
-
-
-
-
-
-
-
-              <View style={{ marginTop: 5, marginBottom: 5,width:"40%",alignSelf:"center",alignItems:"flex-end" }}>
+              <View style={{ marginTop: 5, marginBottom: 5,width:"80%",alignSelf:"center",alignItems:"flex-start" }}>
                 <PickersUpload
                 notAudio
                   creating={!this.props.updateState}
@@ -534,7 +524,7 @@ export default class EventHighlights extends BleashupModal {
                     backgroundColor: ColorList.bodyDarkWhite,
                     ...shadower(2),
                     margin: "3%",
-                    width: "80%",
+                    width: "80%", 
                   }}
                 >
                   <SimpleAudioPlayer

@@ -298,7 +298,7 @@ class Home extends Component {
         <View style={{ height: colorList.headerHeight,backgroundColor: colorList.headerBackground ,width:"100%", }}>
         
          
-            <View style={{flex: 1, backgroundColor: colorList.headerBackground, flexDirection: "row",justifyContent: "space-between",width:"100%" }}>
+            <View style={{flex: 1, backgroundColor: colorList.headerBackground, flexDirection: "row",justifyContent: "space-between",width:"100%",...bleashupHeaderStyle }}>
              
               <View style={{ alignSelf: "flex-start",justifyContent:"center",height:"100%" }}>
                 <Thumbnail source={require("../../../../assets/bleashuptitle1.png")} style={{width:120}}></Thumbnail>

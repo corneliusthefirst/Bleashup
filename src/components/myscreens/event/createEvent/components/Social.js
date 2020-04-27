@@ -7,6 +7,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import SocialTabModal from "./SocialTabModal";
 import ActionsMenu from "../../ActionsMenu";
 import PickersMenu from "./PickerMenu";
+import Comments from "./Comment";
 
 export default class Social extends Component {
     constructor(props) {
@@ -22,6 +23,7 @@ export default class Social extends Component {
         flex: 1,
         marginBottom: "auto",
         marginTop: "auto",
+        width:'33.33%',
         alignSelf: "center",
         justifyContent: "center",
     };
@@ -42,9 +44,8 @@ export default class Social extends Component {
                         note
                     >{`${this.state.likesCount} like(s), ${this.state.commentCount} comment(s), ${this.state.supportCount} supports`}</Text>
                 </TouchableOpacity>
-                <View style={{ flexDirection: "row",justifyContent: 'space-between', }}>
-
-                    <View style={{ width:"55%", flexDirection: "row" }}>
+                <View style={{ flexDirection: "row", }}>
+                    <View style={{ width:"70%", flexDirection: "row" }}>
                         <View style={this.itemStyle}>
                             <Like
                                 setLikesCount={(count) => {
@@ -56,14 +57,17 @@ export default class Social extends Component {
                             ></Like>
                         </View>
                         <View style={this.itemStyle}>
-                            <Icon style={{color:ColorList.headerIcon,fontSize: 30,}} type={"FontAwesome"} name={"comments-o"}>
-                        </Icon>
+                        <Comments setCommentsCount={(val) => {
+                            this.setState({
+                                commentCount:val
+                            })
+                        }} id={this.props.id}></Comments>
                         </View>
                         <View style={this.itemStyle}>
                             <View style={{ flexDirection:"row",justifyContent:"center"}}>
                             <Icon style={{ color: ColorList.headerIcon, fontSize: 22, }} type={"MaterialIcons"} name={"attach-money"}>
                             </Icon>
-                            <Text>support</Text>
+                            <Text note>support</Text>
                             </View>
                         </View>
                     </View>

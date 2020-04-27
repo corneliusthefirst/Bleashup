@@ -166,13 +166,16 @@ export default class VoteCreation extends BleashupModal {
                         this.setOptionURL(option_url, index)
                     }} creating notAudio>
                 </PickersUpload>
+                <View style={{marginTop: '3%',}}> 
                 <VoteOptionPreviwer
                     trashable
                     optionName={this.state.vote && this.state.vote.option[index].name}
                     cleanMedia={() => {
                         this.setOptionURL(null, index)
                     }}
-                    url={this.state.vote && this.state.vote.option[index].option_url}></VoteOptionPreviwer>
+                    url={this.state.vote && this.state.vote.option[index].option_url}>
+                    </VoteOptionPreviwer>
+                </View>
             </View>
             <View style={{ width: '15%', justifyContent: 'center', }} >
                 <Icon style={{ alignSelf: 'flex-end', }} onPress={() => this.removeNote(index)} name='minus'
