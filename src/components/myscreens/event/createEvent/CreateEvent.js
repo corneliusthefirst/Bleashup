@@ -102,7 +102,7 @@ export default class CreateEvent extends Component {
     return (
 
  
-        <ActionButton buttonColor='rgba(52, 52, 52, 0.9)' position="right" backgroundTappable={true} btnOutRange={ColorList.bodyBackground} size={55} 
+        <ActionButton buttonColor='rgba(52, 52, 52, 0.9)' position="right" backgroundTappable={true} btnOutRange={ColorList.bodyText} size={55} 
         useNativeFeedback={false}
         renderIcon={()=>{
           return <Icon name="plus" type="AntDesign" style={{color:ColorList.bodyBackground,fontSize:53}} />
