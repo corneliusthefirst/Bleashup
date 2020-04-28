@@ -321,11 +321,6 @@ export default class Message extends Component {
             borderBottomRightRadius: this.state.sender ? 5 :
                 this.props.message.reply && this.props.message.reply.type_extern ? 5 : null,
         }
-        senderNameStyle = {
-            maxWidth: "100%",
-            //margin: this.state.sender ? 0 : 4,
-            borderBottomLeftRadius: 40,
-        }
         subNameStyle = {
             paddingBottom: 0,
             flexDirection: "row",
