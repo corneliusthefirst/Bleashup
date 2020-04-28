@@ -48,6 +48,10 @@ class colorlist {
     likeInactive = "black"
     indicatorColor = "#3D3E3E"
     indicatorInverted = "#F3F8F7"
+    
+    //messages 
+    senTBoxColor = "#F3F8F7"
+    receivedBox = "#FFFFFF"
 
 
 }

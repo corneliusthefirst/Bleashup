@@ -310,7 +310,7 @@ export default class Message extends Component {
             marginBottom: this.props.index <= 0 ? '2%' : 0,
             alignSelf: this.state.sender ? 'flex-start' : 'flex-end',
         }
-        let color = this.state.sender ? ColorList.bodyBackground : ColorList.indicatorInverted
+        let color = this.state.sender ? ColorList.receivedBox : ColorList.senTBoxColor
         GeneralMessageBoxStyle = {
             maxWidth: 300, flexDirection: 'column', minWidth: 100,
             minHeight: 20, overflow: 'hidden', borderBottomLeftRadius: 5, borderColor: color,
@@ -335,11 +335,11 @@ export default class Message extends Component {
         }
         placeholderStyle = {
             ...topMostStyle, ...this.placeholderStyle,
-            backgroundColor: color, borderBottomLeftRadius: 10, borderColor: color,
-            borderTopLeftRadius: this.state.sender ? 0 : 10,// borderWidth: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text)?.7:0:0,
+            backgroundColor: color, borderBottomLeftRadius: 5, borderColor: color,
+            borderTopLeftRadius: this.state.sender ? 0 : 5,// borderWidth: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text)?.7:0:0,
             backgroundColor: color, ...shadower(2),
             alignSelf: this.state.sender ? 'flex-start' : 'flex-end',
-            borderTopRightRadius: 10,
+            borderTopRightRadius: 5,
         }
         nameTextStyle = { fontSize: 14, fontWeight: 'bold', color: ColorList.bodyText }
         return (this.props.message.type == 'date_separator' ? <View style={{ marginTop: '2%', marginBottom: '2%', }}>
