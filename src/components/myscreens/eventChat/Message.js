@@ -45,8 +45,10 @@ export default class Message extends Component {
             sender: !(this.props.message.sender && this.props.message.sender.phone == this.props.user),
             different: isDiff,
             time: !isDiff && this.props.PreviousMessage &&
+                this.props.PreviousMessage.type !== "date_separator" &&
                 this.props.message &&
-                moment(this.props.message.created_at).format('X') - moment(this.props.PreviousMessage.created_at).format('X') < 60 ? "" : moment(this.props.message.created_at).format("HH:mm"),
+                moment(this.props.message.created_at).format('X') - moment(this.props.PreviousMessage.created_at).format('X') < 60 ? "" :
+                moment(this.props.message.created_at).format("HH:mm"),
             creator: (this.props.message.sender && this.props.message.sender.phone == this.props.creator),
             replying: false,
             loaded: false
@@ -55,7 +57,7 @@ export default class Message extends Component {
     placeHolder = {
         'audio': {
             height: 150,
-            width:250
+            width: 250
         },
         'photo': {
             height: 250,
@@ -74,8 +76,8 @@ export default class Message extends Component {
             width: 250
         },
         'text': {
-            height: 100,
-            width: 200
+            height: 50,
+            width: 100
         }
     }
     chooseComponent(data, index, sender) {
@@ -123,7 +125,7 @@ export default class Message extends Component {
                 return <Voter computedMaster={this.props.computedMaster}
                     mention={() => this.handleReply()} takeCreator={(creator) => {
                         this.voteCreator = creator
-                    }} vote={(index,vote) => this.props.voteItem(index,this.props.message)}
+                    }} vote={(index, vote) => this.props.voteItem(index, this.props.message)}
                     pressingIn={() => {
                         this.replying = true
                     }}
@@ -277,7 +279,7 @@ export default class Message extends Component {
     }
     iconStyles = {
         fontSize: 12,
-        color: ColorList.bodyText,
+        color: "#1FABAB",
         marginLeft: 5,
         paddingTop: 1,
         //marginTop: "-2%",
@@ -302,7 +304,7 @@ export default class Message extends Component {
         //console.warn("here",this.props.message.sent,this.props.received);
 
         topMostStyle = {
-            marginLeft: this.state.sender  ? '1%' : 0,
+            marginLeft: this.state.sender ? '1%' : 0,
             marginRight: !this.state.sender ? '1%' : 0,
             marginTop: this.state.different ? "4%" : '1.2%',
             marginBottom: this.props.index <= 0 ? '2%' : 0,
@@ -310,14 +312,14 @@ export default class Message extends Component {
         }
         let color = this.state.sender ? ColorList.bodyBackground : ColorList.indicatorInverted
         GeneralMessageBoxStyle = {
-            maxWidth:   300, flexDirection: 'column', minWidth: 120,
-            minHeight: 20, overflow: 'hidden', borderBottomLeftRadius: 10, borderColor: color,
-            borderTopLeftRadius: this.state.sender ? 0 : 10,
+            maxWidth: 300, flexDirection: 'column', minWidth: 100,
+            minHeight: 20, overflow: 'hidden', borderBottomLeftRadius: 5, borderColor: color,
+            borderTopLeftRadius: this.state.sender ? 0 : 5,
             // borderWidth: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text)?.7:0:0,
             backgroundColor: color, ...shadower(3),
-            borderTopRightRadius: 10,
-            borderBottomRightRadius: this.state.sender  ? 10 :
-                this.props.message.reply && this.props.message.reply.type_extern ? 10 : null,
+            borderTopRightRadius: 5,
+            borderBottomRightRadius: this.state.sender ? 5 :
+                this.props.message.reply && this.props.message.reply.type_extern ? 5 : null,
         }
         senderNameStyle = {
             maxWidth: "100%",
@@ -327,12 +329,12 @@ export default class Message extends Component {
         subNameStyle = {
             paddingBottom: 0,
             flexDirection: "row",
-            margin:'2%',
+            margin: '2%',
             backgroundColor: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text) ? color : 'transparent' : 'transparent',
             // backgroundColor: color,
         }
         placeholderStyle = {
-            ...topMostStyle, ...this.placeholderStyle ,
+            ...topMostStyle, ...this.placeholderStyle,
             backgroundColor: color, borderBottomLeftRadius: 10, borderColor: color,
             borderTopLeftRadius: this.state.sender ? 0 : 10,// borderWidth: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text)?.7:0:0,
             backgroundColor: color, ...shadower(2),
@@ -361,75 +363,45 @@ export default class Message extends Component {
                             <View onLayout={(e) => {
                                 this.props.setCurrentLayout && this.props.setCurrentLayout(e.nativeEvent.layout)
                             }
-                        } style={GeneralMessageBoxStyle}>
+                            } style={GeneralMessageBoxStyle}>
                                 <View>
-                                    <View style={senderNameStyle}>
-                                        <TouchableWithoutFeedback onLongPress={() => {
-                                            this.handLongPress()
-                                        }} onPressIn={() => {
-                                            this.replying = true
-                                        }}><View style={subNameStyle}>{this.state.sender ?
-                                            <TouchableOpacity onLongPress={() => {
-                                                this.handLongPress()
-                                            }} onPress={() => {
-                                                this.props.showProfile(this.props.message.sender.phone.replace("+", "00"))
-                                            }}>{this.state.different ? <Text style={nameTextStyle}
-                                                note>{" "}{this.state.sender_name}</Text> : <Text>{"         "}</Text>}</TouchableOpacity> : null}<Right>
-                                                    {!this.state.sender ? <Text note
-                                                        style={{
-                                                            color: this.state.sender ? null : ColorList.bodyText,
-                                                            fontSize: 13, marginRight: "2%", marginTop: "1%",
-                                                        }}>
-                                                        {this.state.time}{"    "}</Text> : null}</Right></View></TouchableWithoutFeedback>
-                                        <View>
-                                            {this.props.message.reply ? <View style={{ borderRadius: 10, padding: '1%', marginTop: ".4%", width: "100%" }}>
-                                                <ReplyText handLongPress={() => this.handLongPress()} showProfile={(pro) => this.props.showProfile(pro)} pressingIn={() => {
-                                                    this.replying = true
-                                                }} openReply={(replyer) => {
-                                                    replyer.isThisUser = !this.state.sender
-                                                    this.props.message.reply && this.props.message.reply.type_extern ? this.props.handleReplyExtern(this.props.message.reply) : this.props.openReply(replyer)
-                                                }} reply={this.props.message.reply}></ReplyText></View> : null}
-                                            <TouchableWithoutFeedback onPressIn={() => {
+                                    {this.state.sender && this.state.different ? <TouchableOpacity onPress={()=> requestAnimationFrame(() => {
+                                        this.props.showProfile(this.props.message.sender.phone)
+                                    })}><Text style={{ marginLeft: '2%', color: ColorList.iconActive }} note ellipsizeMode="tail" numberOfLines={1}>{this.state.sender_name}</Text></TouchableOpacity>:null}
+                                    <View>
+                                        {this.props.message.reply ? <View style={{ borderRadius: 10, padding: '1%', marginTop: ".4%", width: "100%" }}>
+                                            <ReplyText handLongPress={() => this.handLongPress()} showProfile={(pro) => this.props.showProfile(pro)} pressingIn={() => {
                                                 this.replying = true
-                                            }} onPress={() => {
-                                                this.replying = false
-                                            }} onLongPress={() => {
-                                                this.handLongPress()
-                                            }} >
-                                                <View style={{ margin: '1%', }}>
-                                                    {this.chooseComponent(this.props.message, this.props.message.id, this.state.sender)}
-                                                </View>
-                                            </TouchableWithoutFeedback>
-                                        </View>
+                                            }} openReply={(replyer) => {
+                                                replyer.isThisUser = !this.state.sender
+                                                this.props.message.reply && this.props.message.reply.type_extern ? this.props.handleReplyExtern(this.props.message.reply) : this.props.openReply(replyer)
+                                            }} reply={this.props.message.reply}></ReplyText></View> : null}
                                         <TouchableWithoutFeedback onPressIn={() => {
                                             this.replying = true
+                                        }} onPress={() => {
+                                            this.replying = false
                                         }} onLongPress={() => {
                                             this.handLongPress()
-                                        }}>
-                                            <View>
-                                                <View style={{
-                                                    margin: 3,
-                                                    backgroundColor: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text) ? color : 'transparent' : 'transparent',
-
-                                                }}>
-                                                    {this.state.sender ? <Text note
-                                                        style={{
-                                                            marginLeft: "5%",
-                                                            color: this.state.sender ? null : ColorList.bodyText,
-                                                            fontSize: 13, marginRight: "2%", marginTop: "1%",
-                                                        }}>
-                                                        {this.state.time}{"    "}</Text> : null}
-                                                </View>
-                                                <View style={{
-                                                    backgroundColor: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text) ? color : 'transparent' : 'transparent',
-                                                }}>{!this.state.sender ? this.props.message.sent ? this.props.received ?
-                                                    <Icon style={this.iconStyles} type="Ionicons" name="ios-checkmark-circle">
-                                                    </Icon> : <Icon style={this.iconStyles} type={"EvilIcons"} name="check">
-                                                    </Icon> : <Icon style={{ ...this.iconStyles, color: "#FFF" }} type="MaterialCommunityIcons"
-                                                        name="progress-check"></Icon> : null}</View>
+                                        }} >
+                                            <View style={{ marginLeft: this.state.sender ? "2%" : 0, marginRight: this.state.sender ? 0 : "2%", }}>
+                                                {this.chooseComponent(this.props.message, this.props.message.id, this.state.sender)}
                                             </View>
                                         </TouchableWithoutFeedback>
                                     </View>
+                                    <TouchableWithoutFeedback onPressIn={() => {
+                                        this.replying = true
+                                    }} onLongPress={() => {
+                                        this.handLongPress()
+                                    }}>
+                                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
+                                            <View>{!this.state.sender ? this.props.message.sent ? this.props.received ?
+                                                <Icon style={this.iconStyles} type="Ionicons" name="ios-checkmark-circle">
+                                                </Icon> : <Icon style={this.iconStyles} type={"EvilIcons"} name="check">
+                                                </Icon> : <Icon style={{ ...this.iconStyles, color: "#FFF" }} type="MaterialCommunityIcons"
+                                                    name="progress-check"></Icon> : null}
+                                            </View><View style={{ marginRight: "4%", }}><Text note>{this.state.time}</Text></View>
+                                        </View>
+                                    </TouchableWithoutFeedback>
                                 </View>
                             </View>
                         </View>

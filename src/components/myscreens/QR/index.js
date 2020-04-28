@@ -7,6 +7,7 @@ import stores from '../../../stores';
 import DetailsModal from '../invitations/components/DetailsModal';
 import { findIndex } from 'lodash';
 import { Toast } from 'native-base';
+import ColorList from '../../colorList';
 
 export default class QRScanner extends Component {
     constructor(props) {
@@ -74,7 +75,7 @@ export default class QRScanner extends Component {
                 }
                 bottomContent={
                     <Button onPress={() => this.goback()}>
-                        <Icon name="md-arrow-round-back" type='Ionicons'></Icon><Text>{"Go Back"}</Text>
+                        <Icon style={{ color: ColorList.bodyBackground }} name="md-arrow-round-back" type='Ionicons'></Icon><Text style={{ color: ColorList.bodyBackground }}>{"Go Back"}</Text>
                     </Button>
                 }
             />
