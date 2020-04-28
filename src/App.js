@@ -53,9 +53,10 @@ import LocalTasksCreation from './components/myscreens/MyTasks/localTasksCreatio
 import TasksCreation from './components/myscreens/reminds/TasksCreation'
 import QRCode from "./components/myscreens/QR"
 import SearchView from './components/myscreens/event/searchView';
+import MessageBox from './components/myscreens/eventChat/messageBox';
 /*
 let {height, width} = Dimensions.get('window');
-EStyleSheet.build({
+EStyleSheet.build({ 
   $rem: width > 340 ? 18 : 16
 });*/
 
@@ -97,10 +98,11 @@ const AppNavigator = createStackNavigator(
     LocalTasksCreation: { screen: LocalTasksCreation },
     TasksCreation: { screen: TasksCreation },
     SearchView  : {screen: SearchView },
+    MessageBox  : {screen: MessageBox },
 
   },
   {
-    initialRouteName: "LoginHome",
+    initialRouteName: "Home",
     headerMode: "none"
   }
 );
