@@ -56,7 +56,7 @@ export default class SignInView extends Component {
   }
   componentWillMount() {
     firebase.auth().onAuthStateChanged(user => {
-      if (user) {
+      if (user && this.state.password) {
         this.login()
       }
     });
@@ -94,7 +94,7 @@ export default class SignInView extends Component {
   }
   verifyNumber(code) {
     stores.TempLoginStore.confirmCode.confirm(code).then(success => {
-      this.login()
+    this.state.password &&  this.login()
     })
   }
   login() {

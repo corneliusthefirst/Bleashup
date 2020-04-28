@@ -33,7 +33,7 @@ export default class ReplyText extends Component {
                     borderBottomWidth: 0,
                     backgroundColor: this.props.color,
                      backgroundColor: "rgba(34, 0, 0, 0.1)",
-                    padding: "2%",//margin: '1%',
+                    padding: "1%",//margin: '1%',
                     minHeight: 50,
                     maxHeight: 300,
                     borderTopLeftRadius: 5,

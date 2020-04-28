@@ -73,7 +73,7 @@ export default class ContentModal extends PureComponent {
                                 this.renderContentItems(this.state.content) :
                                 <Text>{this.state.content}</Text>}
                     {this.props.votable ? <Button onPress={this.props.vote} style={{alignSelf: 'flex-end',margin:'5%',
-                    borderRadius: 5,height:30}}><Text style={{marginBottom: 'auto',}}>Vote</Text></Button> :this.props.trashable?<Icon onPress={this.props.cleanMedia} style={{color:ColorList.redIcon,alignSelf: 'flex-end',margin: '5%',}} name={'trash'} type="EvilIcons"></Icon> :null}
+                    borderRadius: 5,height:30}}><Text style={{marginBottom: 'auto',color:ColorList.bodyBackground}}>Vote</Text></Button> :this.props.trashable?<Icon onPress={this.props.cleanMedia} style={{color:ColorList.redIcon,alignSelf: 'flex-end',margin: '5%',}} name={'trash'} type="EvilIcons"></Icon> :null}
                 </Content>
             </Modal>
         );
