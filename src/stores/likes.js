@@ -119,6 +119,7 @@ export default class likes {
             event_id: ID,
             likers: [],
             likes: likesCount,
+            liked:false
           }).then(() => {
             resolve();
           });
@@ -126,6 +127,7 @@ export default class likes {
           this.addLike([], {
             event_id: ID,
             likers: [],
+            liked:false,
             likes: likesCount,
           }).then(() => {
             resolve();

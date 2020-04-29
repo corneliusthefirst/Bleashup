@@ -312,7 +312,7 @@ export default class Message extends Component {
         }
         let color = this.state.sender ? ColorList.receivedBox : ColorList.senTBoxColor
         GeneralMessageBoxStyle = {
-            maxWidth: 300, flexDirection: 'column', minWidth: 100,
+            maxWidth: 300, flexDirection: 'column', minWidth: 60,
             minHeight: 20, overflow: 'hidden', borderBottomLeftRadius: 5, borderColor: color,
             borderTopLeftRadius: this.state.sender ? 0 : 5,
             // borderWidth: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text)?.7:0:0,

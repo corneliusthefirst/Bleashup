@@ -65,7 +65,7 @@ export default class HighlightCard extends Component {
     return (
 
       this.state.mounted ?
-        <View style={{ width: ColorList.containerWidth,alignSelf:"center", ...shadower(1),justifyContent: 'center',marginTop:"1%",borderBottomWidth:0.2,borderColor:"ivory" }}>
+        <View style={{ width: ColorList.containerWidth,alignSelf:"center", ...shadower(1),justifyContent: 'center',marginTop:"1%",borderBottomWidth:0.5,borderColor:"ivory" }}>
           <View style={{ flexDirection: 'row',width:'92%', justifyContent: 'space-between', marginTop: 2, marginBottom: 2, height:ColorList.containerHeight/20,alignSelf: 'center', }}>
             <View style={{ maxWidth: '100%' }}>
               <Title style={{
@@ -88,7 +88,7 @@ export default class HighlightCard extends Component {
             url={this.props.item.url}
          >
          </MedaiView>
-          <TouchableOpacity onPress={() => requestAnimationFrame(() =>  this.props.showItem(this.props.item))} style={{ height: this.containsMedia() ? (height / 18) : (height / 7), margin: '.5%', }}>
+          <TouchableOpacity onPress={() => requestAnimationFrame(() =>  this.props.showItem(this.props.item))} style={{ height: this.containsMedia() ? (height / 18) : (height / 7), margin: '2%', }}>
             <Text ellipsizeMode='tail' style={{ fontSize: 12, }} numberOfLines={this.containsMedia() ? 3 : 13}>{this.props.item.description ? this.props.item.description : null}</Text>
           </TouchableOpacity>
           <View style={{width:'90%',alignSelf: 'center',alignItems: 'center',}}>

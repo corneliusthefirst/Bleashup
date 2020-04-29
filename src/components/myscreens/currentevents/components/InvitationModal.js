@@ -34,9 +34,13 @@ import Menu, { MenuDivider, MenuItem } from 'react-native-material-menu';
 import Mailer from 'react-native-mail';
 import uuid from 'react-native-uuid';
 import bleashupHeaderStyle from "../../../../services/bleashupHeaderStyle";
-export default class InvitationModal extends PureComponent {
+import BleashupModal from '../../../mainComponents/BleashupModal';
+import CreationHeader from "../../event/createEvent/components/CreationHeader";
+export default class InvitationModal extends BleashupModal {
   constructor(props) {
     super(props);
+  }
+  initialize(){
     this.state = {
       inviteViaEmail: false,
       contacts: [],
@@ -86,10 +90,6 @@ export default class InvitationModal extends PureComponent {
       }
     }
   }
-  componentDidMount() {
-
-  }
-
   inviteWithEmail(email, status) {
     Mailer.mail({
       subject: 'need help',
@@ -149,71 +149,46 @@ export default class InvitationModal extends PureComponent {
   }
   delay = 0
   _keyExtractor = (item, index) => item.phone;
-  render() {
-    return <Modal
-      //backdropPressToClose={false}
-      //swipeToClose={false}
-      backdropOpacity={0.7}
-      backButtonClose={true}
-      //entry={"top"}
-      position='bottom'
-      coverScreen={true}
-      isOpen={this.props.isOpen}
-      onClosed={() => {
-        this.props.close()
-        this.setState({
-          contacts: null,
-          check: [],
-          loading: true
-        })
-      }
-      }
-      onOpened={() => {
-        setTimeout(() => {
-          stores.Contacts.getContacts(stores.Session.SessionStore.phone).then(
-            contacts => {
-              if (contacts == "empty") {
-                this.setState({
-                  isEmpty: true,
-                  loading: false
-                })
-              } else {
-                this.setState({ contacts: contacts, loading: false });
-              }
-            }
-          );
-        }, 20)
-      }}
-      style={{
-        height: "95%",
-        width: "100%"
-      }}
-    ><View>
-        <View style={{ width: "100%",  height: 44 }}>
-          <View style={{ flexDirection: 'row',...bleashupHeaderStyle,padding: '2%',}}>
-            <View style={{ width: "85%" }}>
-              <Text
-                style={{
-                  fontSize: 20,
-                  fontWeight: "bold",
-                  //color: "#1FABAB"
-                }}
-              >
-                Quick Invite
-              </Text>
-            </View>
-            {this.state.checked.length > 0 ? <View style={{ width: "15%" }}>
-              <Icon onPress={() => requestAnimationFrame(() => {
-                this.invite(this.state.checked, false)
-              })} type="EvilIcons"
-                style={{
-                  fontSize: 45,
-                  //fontWeight: "bold",
-                  color: "#1FABAB"
-                }} name="sc-telegram"></Icon>
-            </View> : null}
-          </View>
-        </View>{this.state.loading ? <Spinner size={"small"}></Spinner> :
+  swipeToClose=false
+  backdropOpacity=false
+  onOpenModal(){
+    setTimeout(() => {
+      stores.Contacts.getContacts(stores.Session.SessionStore.phone).then(
+        contacts => {
+          if (contacts == "empty") {
+            this.setState({
+              isEmpty: true,
+              loading: false
+            })
+          } else {
+            this.setState({ contacts: contacts, loading: false });
+          }
+        }
+      );
+    }, 20)
+  }
+  onClosedModal(){
+    this.props.close()
+    this.setState({
+      contacts: null,
+      check: [],
+      loading: true
+    })
+  }
+  modalBody() {
+    return <View>
+      <CreationHeader back={this.onClosedModal.bind(this)} title={"Quick Invite"} 
+      extra={this.state.checked.length > 0 ? <View style={{ width: "100%",marginTop: 'auto',marginBottom: 'auto', }}>
+        <Icon onPress={() => requestAnimationFrame(() => {
+          this.invite(this.state.checked, false)
+        })} type="EvilIcons"
+          style={{
+            fontSize: 45,
+            //fontWeight: "bold",
+            color: "#1FABAB"
+          }} name="sc-telegram"></Icon>
+      </View> : null}></CreationHeader>
+       {this.state.loading ? <Spinner size={"small"}></Spinner> :
           <View>
             {this.state.isEmpty ? <Text style={{
               margin: '10%',
@@ -247,6 +222,5 @@ export default class InvitationModal extends PureComponent {
             ></BleashupFlatList></View>}
           </View>}
       </View>
-    </Modal>
   }
 }

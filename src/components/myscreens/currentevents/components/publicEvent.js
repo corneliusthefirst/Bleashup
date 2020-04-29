@@ -437,13 +437,13 @@ class PublicEvent extends Component {
           bordered
         >
           {this.renderTitle()}
-          {this.props.Event.highlights.length == 0 ? null : this.renderBody()}
+          {!this.props.Event.highlights || this.props.Event.highlights.length <  1 ? null : this.renderBody()}
           {this.renderFooter()}
 
         </Card>
       </Swipeout>
     </View> : <View style={{}}><Card style={{
-      height: this.props.Event.highlights && this.props.Event.highlights.length > 0 ? 310 : 125, alignSelf: 'center', backgroundColor: colorList.bodyBackground,
+      height: this.props.Event.highlights && this.props.Event.highlights.length > 0 ? 310 : 130, alignSelf: 'center', backgroundColor: colorList.bodyBackground,
       width: "100%"
     }}></Card></View>
     )

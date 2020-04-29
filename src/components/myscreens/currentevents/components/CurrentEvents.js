@@ -217,34 +217,31 @@ export default class CurrentEvents extends Component {
                 </BleashupFlatList>
                 {
                     // ******************Photo Viewer View ***********************//
-                    this.state.showPhoto ? <PhotoViewer photo={this.state.photo} open={this.state.showPhoto} hidePhoto={() => {
+                    <PhotoViewer photo={this.state.photo} open={this.state.showPhoto} hidePhoto={() => {
                         this.setState({
                             showPhoto: false
                         })
-                    }}></PhotoViewer> : null
+                    }}></PhotoViewer>
                 }
                 <ParticipantModal creator={this.state.currentCreator} isOpen={this.state.isParticipantModalOpened} hideTitle={false} participants={this.state.participant} onClosed={() => {
                     this.setState({
                         isParticipantModalOpened: false
                     })
                 }}  ></ParticipantModal>
-                {!this.state.isPublisherModalOpened ? null : <PublishersModal isOpen={this.state.isPublisherModalOpened} event_id={this.state.event_id} onClosed={() => {
+                 <PublishersModal isOpen={this.state.isPublisherModalOpened} event_id={this.state.event_id} onClosed={() => {
                     this.setState({
                         isPublisherModalOpened: false
                     })
-                }}></PublishersModal>}
-                {!this.state.likers ? null : <LikerssModal likers={this.state.likers} isOpen={this.state.isLikersModalOpened} onClosed={() => this.setState({
-                    isLikersModalOpened: false
-                })}></LikerssModal>}
-                {this.state.isInvitationModalOpened ? <InvitationModal
+                }}></PublishersModal>
+                <InvitationModal
                     isOpen={this.state.isInvitationModalOpened}
-                    public={this.state.event.public}
+                    public={this.state.event && this.state.event.public}
                     master={this.state.master}
-                    eventID={this.state.event.id} close={() => {
+                    eventID={this.state.event && this.state.event.id} close={() => {
                         this.setState({
                             isInvitationModalOpened: false
                         })
-                    }}></InvitationModal> : null}
+                    }}></InvitationModal>
                 {this.state.isDetailsModalOpened ? <DetailsModal goToActivity={() => {
                     this.props.navigation.navigate('Event',
                     {

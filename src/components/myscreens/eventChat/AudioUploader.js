@@ -76,7 +76,7 @@ export default class AudioUploader extends Component {
                     this.props.replaceMessage(this.props.message)
                 })
             }
-        })
+       })
     }
     downloadID = null
     uploadAudio(url) {

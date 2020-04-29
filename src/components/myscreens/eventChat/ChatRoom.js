@@ -414,7 +414,7 @@ export default class ChatRoom extends Component {
     componentWillMount() {
         this.fireRef = this.getRef(this.props.firebaseRoom);
         this.setTypingRef(this.props.firebaseRoom)
-        this.props.isComment && AddMembers(this.props.activity_id,this.props.firebaseRoom,[{phone:stores.LoginStore.user.phone}])
+        this.props.isComment && AddMembers(this.props.activity_id, this.props.firebaseRoom, [{ phone: stores.LoginStore.user.phone }])
         //!! handle user peer user disconnection here listen to something like 'current_room/${peer_user_phone}' to know wether the user is connected or not
         // !! this will only be valid for a when there is just one user in a room .
 
@@ -904,7 +904,7 @@ export default class ChatRoom extends Component {
             textHeight: screenheight * 0.1,
             photoHeight: screenheight * 0.9,
         })
-    this.adjutRoomDisplay()
+        this.adjutRoomDisplay()
     }
     sendAudioMessge(filename, duration, dontsend) {
         this.setState({
@@ -1465,7 +1465,8 @@ export default class ChatRoom extends Component {
                         fontWeight: colorList.headerFontweight,
 
                     }}>{this.props.roomName}</Title>
-                    {this.state.typing && <TypingIndicator></TypingIndicator>}
+                    <View style={{ height: 10,position:'absolute', }}>{this.state.typing && <TypingIndicator></TypingIndicator>}
+                    </View>
                 </View>
 
                 {
@@ -1634,7 +1635,7 @@ export default class ChatRoom extends Component {
                         <Text style={{
                             color: "#FEFFDE", alignSelf: 'center',
                             fontWeight: 'bold',
-                        }}>{dateDisplayer(moment( message && message.created_at).format("YYYY/MM/DD"))}</Text>
+                        }}>{dateDisplayer(moment(message && message.created_at).format("YYYY/MM/DD"))}</Text>
                         {<Message computedMaster={this.props.computedMaster}
                             openReply={(replyer) => {
                                 console.warn("replying", replyer);

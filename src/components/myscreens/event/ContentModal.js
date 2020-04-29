@@ -63,11 +63,11 @@ export default class ContentModal extends PureComponent {
                 <Content style={{ margin: "5%" }}>
                 {this.props.title?<Text style={{margin: '5%',}}>{this.props.title}</Text>:null}
                     {this.state.content && (this.state.content.photo || this.state.content.video) ?
-                        <MediaPreviewer
+                        <View style={{width:'90%',alignSelf: 'center',}}><MediaPreviewer
                             height={280}
                             cleanMedia={this.props.closed}
                             url={this.state.content}
-                        ></MediaPreviewer> :
+                        ></MediaPreviewer></View> :
                         typeof this.state.content === 'object' ?
                             this.renderObject(this.state.content) : Array.isArray(this.state.content) ?
                                 this.renderContentItems(this.state.content) :

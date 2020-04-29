@@ -30,7 +30,7 @@ export default class MediaPreviewer extends Component {
       <View
         style={{
           height: this.props.height || "90%",
-          width: "80%",
+          width: "100%",
           alignSelf: "center",
           borderColor:"black",
           borderWidth:0.4,
