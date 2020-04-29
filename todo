@@ -61,13 +61,13 @@ see: https://github.com/wmcmahan/react-native-calendar-events/issues/12
 
 [*] implement checking base on the conditions listed above . 
 
-[ ] attarchement message ar not able to be opened after reopening the app after sending it .
+[*] attarchement message ar not able to be opened after reopening the app after sending it .
     this is deu to a permission issues. i dought if this happens on all devices. but it 
     happened on my own. this happens for photo and media . the way i solved it now it by reading the 
     media directly from the file server after uploading it . 
     so consequently, an upload must be completed in the instance it's lunched 
 
-[ ] add likes to posts.
+[*] add likes to posts.
 [ ] add and handle the concept of public and private post. 
 [ ] make sound recorder as component so that it should be working for both message and reminds report. 
 [ ] add recorder audio possibility to remind reports.
@@ -95,23 +95,23 @@ see: https://github.com/wmcmahan/react-native-calendar-events/issues/12
 [ ] Change the Button on the different pages where we have create/update using <Button/> component to use 
     <TouchableOpacity/> so as to have a better experience that to avoid the issue of having to press the button 2 times before the action is triggered. 
 [ ] adjust the hightlight Display on the HighlightCard Component when there is only title and description in the post so that it should appear nicely . 
-[ ] when adding a users to a reminder, the experince is not the best . it needs to be such a way thay , when a 
+[*] when adding a users to a reminder, the experince is not the best . it needs to be such a way thay , when a 
     shows all the list of users anded and those who are not yet added but added users should have a tick on them . 
 [ ] The networking part of the app should be well handle so as to ensure auto reconnection in case of various connection errors. 
 [ ] Redesigning the Authentification pages so that they should follow the current app design . 
 [ ] add fetching of all events related to a user if his events store is empty . 
-[ ] change the handling of the indication of the current committee . the current approach is too complex for nothing . 
+[*] change the handling of the indication of the current committee . the current approach is too complex for nothing . 
 [ ] well handle the indication of new messages  in the chatroom .
 [ ] Handle well notifications in the whole app . 
 [ ] handle new indicator . 
-[ ] some times, you might click two times on an audio before they can play.
-[ ] some time, when you update a post an download an image and you comeback on post addition page, 
-[ ] the update will change to create . that's an issue that i don't yet know the cause . 
+[*] some times, you might click two times on an audio before they can play.
+[*] some time, when you update a post an download an image and you comeback on post addition page, 
+[*] the update will change to create . that's an issue that i don't yet know the cause . 
     this happened when the post didn't have a photo in the first place .
-[ ] some times fetchingHighlights fails with error un processable entry . 
-[ ] unable to fetch all reminds for an activity it fails with error please represence your account. 
+[*] some times fetchingHighlights fails with error un processable entry . 
+[*] unable to fetch all reminds for an activity it fails with error please represence your account. 
 [ ] the background image of the activity doesnot save permanently in the server
-[ ] the detail modal appears empty when there's no description provided . there should be something 
+[*] the detail modal appears empty when there's no description provided . there should be something 
     indicating that the desription is not provided or event change the display something else smaller
     which is going to aprear nicer. 
 [ ] backpresses are not working on none of the auth pages
