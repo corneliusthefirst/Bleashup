@@ -515,8 +515,8 @@ export default class TasksCreation extends BleashupModal {
               title={!this.state.ownership ? "Remind configs" : this.props.update ? "Update Remind" : "Add Remind"}
               extra={this.state.ownership && <View style={{ flexDirection: 'row', justifyContent: 'space-between', flexWrap: 'wrap', marginBottom: 'auto', marginTop: 'auto', }}>
                 <View><TouchableOpacity onPress={() => requestAnimationFrame(() => this.setState({ selectMemberState: true }))} style={{ flexDirection: 'row', }}>
-                  <Icon name="ios-people" type="Ionicons" style={{ color: ColorList.bodyIcon }} />
-                  <Text style={{ fontWeight: 'bold', marginBottom: 'auto', marginTop: 'auto', }}>{` (${this.state.currentMembers.length})`}</Text>
+                  <Icon name="ios-people" type="Ionicons" style={{ color: ColorList.likeActive }} />
+                  <Text style={{ fontWeight: 'bold', marginBottom: 'auto', marginTop: 'auto',color:ColorList.likeActive }}>{` (${this.state.currentMembers.length})`}</Text>
                 </TouchableOpacity></View>
                 <View>
                   <RemindsTypeMenu
