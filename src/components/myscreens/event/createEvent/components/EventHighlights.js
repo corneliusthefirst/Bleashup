@@ -581,7 +581,7 @@ export default class EventHighlights extends BleashupModal {
                   <Spinner></Spinner>
                 ) :<CreateButton
                     action={!this.props.updateState ? this.AddHighlight : this.updateHighlight}
-                    title={!this.state.updateState ? "Add New Post" : "Update Post"}
+                    title={!this.props.updateState ? "Add New Post" : "Update Post"}
                     width={this.width}
                 >
                 </CreateButton>}
