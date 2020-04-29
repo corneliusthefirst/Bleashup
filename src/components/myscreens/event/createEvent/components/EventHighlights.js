@@ -457,6 +457,8 @@ export default class EventHighlights extends BleashupModal {
       animateHighlight: false,
     });
   }
+  center={marginBottom: 'auto',marginTop: 'auto',}
+  width='90%'
   modalBody() {
     return this.state.isMounted ? (
       <View>
@@ -468,36 +470,39 @@ export default class EventHighlights extends BleashupModal {
         <View
           style={{
             height: ColorList.containerHeight - (ColorList.headerHeight + 10),
-            width: "90%",
+            width: '100%',
             alignSelf: "center",
           }}
         >
           <ScrollView showsVerticalScrollIndicator={false} ref={"scrollView"}>
             <View style={{ height: "100%" }}>
+            <View style={{width:this.width,alignSelf: 'center',}}>
             <CreateTextInput
                 height={height/11}
                 value={this.state.currentHighlight.title
                   ? this.state.currentHighlight.title
                   : ""}
                 onChange={this.onChangedTitle}
-                placeholder={"@title"}
+                placeholder={"title"}
             >
             </CreateTextInput>
-
+            </View>
+            <View style={{width:this.width,alignSelf: 'center',}}>
             <CreateTextInput
                 height={height/6}
                 value={this.state.currentHighlight.description
                   ? this.state.currentHighlight.description
                   : ""}
                 onChange={this.onChangedDescription}
-                placeholder={"@description"}
+                placeholder={"description"}
                 maxLength={3000}
                 numberOfLines={5}
                 multiline={true}
                 backgroundColor={"#fbfafd"}
             >
             </CreateTextInput>
-              <View style={{ marginTop: 5, marginBottom: 5,width:"80%",alignSelf:"center",alignItems:"flex-start" }}>
+              </View>
+              <View style={{ marginTop: 5, marginBottom: 5,width:this.width,alignSelf:"center",alignItems:"flex-start" }}>
                 <PickersUpload
                 notAudio
                   creating={!this.props.updateState}
@@ -508,14 +513,14 @@ export default class EventHighlights extends BleashupModal {
                   }}
                 ></PickersUpload>
               </View>
-
+                <View style={{width:this.width,alignSelf: 'center',}}>
               <MediaPreviewer
                 height={ColorList.containerHeight * 0.22}
                 defaultPhoto={this.state.defaultUrl}
                 url={this.state.currentHighlight.url}
                 cleanMedia={() => this.cleanMedia()}
               ></MediaPreviewer>
-
+              </View>
               {this.state.currentHighlight.url.audio ? (
                 <View
                   style={{
@@ -524,7 +529,7 @@ export default class EventHighlights extends BleashupModal {
                     backgroundColor: ColorList.bodyDarkWhite,
                     ...shadower(2),
                     margin: "3%",
-                    width: "80%", 
+                    width: this.width, 
                   }}
                 >
                   <SimpleAudioPlayer
@@ -554,7 +559,10 @@ export default class EventHighlights extends BleashupModal {
                       : "public"
                   );
                 }}
-                style={{marginLeft:"9%",marginTop:"5%",flexDirection:"row",height:40,alignItems:"center"}}
+                style={{marginTop:"3%",flexDirection:"row",height:40,alignItems:"center",
+                width:this.width,
+                alignSelf: 'center',
+                marginBottom: '3%',}}
               >
                 <Icon
                   name={
@@ -563,9 +571,9 @@ export default class EventHighlights extends BleashupModal {
                       : "radio-button-unchecked"
                   }
                   type={"MaterialIcons"}
-                  style={{fontSize:22}}
+                  style={{fontSize:22,width:'15%',...this.center}}
                 ></Icon>
-                <Text style={{color:ColorList.bodyText,marginLeft:"3%"}}>{`${this.state.currentHighlight.public_state}`}</Text>
+                <Text style={{color:ColorList.bodyText,...this.center}}>{`${this.state.currentHighlight.public_state}`}</Text>
               </TouchableOpacity>
 
 
@@ -574,7 +582,7 @@ export default class EventHighlights extends BleashupModal {
                 ) :<CreateButton
                     action={!this.props.updateState ? this.AddHighlight : this.updateHighlight}
                     title={!this.state.updateState ? "Add New Post" : "Update Post"}
-                    width={"80%"}
+                    width={this.width}
                 >
                 </CreateButton>}
              

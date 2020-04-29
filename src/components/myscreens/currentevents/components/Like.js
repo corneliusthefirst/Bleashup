@@ -91,7 +91,7 @@ export default class Like extends Component {
     like() {
         if (!this.liking) {
             this.liking = true;
-            Requester.like(this.props.id, this.state.likesCount)
+            Requester.like(this.props.id, this.state.likesCount+1)
                 .then((response) => {
                     this.liking = false;
                     this.setState({

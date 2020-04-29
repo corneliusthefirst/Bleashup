@@ -249,14 +249,11 @@ export default class AudioMessage extends Component {
                                         </View>
                                     )
                                 }
-                            </AnimatedCircularProgress> : !this.state.playing ? <TouchableOpacity style={this.playIconStyle}
-                                onPress={() => requestAnimationFrame(() => this.plays())}>
-                                <Icon type="FontAwesome5" style={{ color: ColorList.bodyText, fontSize: 20 }} name="play">
+                            </AnimatedCircularProgress> :  <TouchableOpacity style={this.playIconStyle}
+                                    onPress={() => requestAnimationFrame(() => !this.state.playing ? this.plays() : this.pause())}>
+                                    <Icon type="FontAwesome5" style={{ color: ColorList.bodyText, fontSize: 20 }} name={!this.state.playing?"play":"pause"}>
                                 </Icon>
-                            </TouchableOpacity> : <TouchableOpacity style={this.playIconStyley}  onPress={() => requestAnimationFrame(() => this.pause())}>
-                                        <Icon type="FontAwesome5" style={{ color: ColorList.bodyText, fontSize: 20 }} name="pause">
-                                        </Icon>
-                                    </TouchableOpacity>}
+                            </TouchableOpacity>}
                         </View>
                     </View>
                 </TouchableWithoutFeedback>

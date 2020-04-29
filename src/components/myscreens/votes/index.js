@@ -110,7 +110,7 @@ export default class Votes extends BleashupModal {
   }
 
   votex(index, message, foreign) {
-    let vote = message.vote
+    let vote = message.vote 
     const haveIVoted = () => {
       let v = find(this.state.votes, { id: vote.id })
       return findIndex(v.voter, { phone: stores.LoginStore.user.phone }) >= 0
@@ -158,7 +158,6 @@ export default class Votes extends BleashupModal {
     }
   }
   voteItem(message) {
-    console.warn("initializing vote item")
     this.intializeVote()
     this.props.voteItem(message)
   }
@@ -176,7 +175,6 @@ export default class Votes extends BleashupModal {
     if (!this.props.working) {
       this.props.startLoader()
       VoteRequest.applyAllUpdate(currentVote, previousVote).then((re) => {
-        console.warn(re)
         if (re) {
           this.props.stopLoader()
           this.intializeVote()

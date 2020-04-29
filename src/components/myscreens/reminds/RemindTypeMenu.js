@@ -28,7 +28,7 @@ export default class RemindsTypeMenu extends Component {
         this._menu.show();
     };
     render() {
-        return <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: '10%', }}>
+        return <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: '3%', }}>
             <Menu
                 style={{ backgroundColor: ColorList.bodyBackground }}
                 ref={this.setMenuRef}

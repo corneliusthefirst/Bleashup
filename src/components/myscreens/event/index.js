@@ -1328,6 +1328,7 @@ export default class Event extends Component {
       //initializeOpen={true}
       openMenuOffset={this.currentWidth}
       content={<View style={{ backgroundColor: colorList.bodyBackground, width: "100%" }}><SWView
+      join={this.joinCommitee.bind(this)}
         navigateHome={() => {
           this.setState({
             isChat: false

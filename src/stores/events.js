@@ -71,8 +71,7 @@ export default class events {
     return new Promise((resolve, reject) => {
 
       Events.forEach((event) => {
-        if (event.type) {
-          if (event.type == "relation") {
+          if (event.type && event.type == "relation") {
             event.participant.forEach((participant) => {
               if (participant.phone != stores.LoginStore.user.phone) {
                 stores.TemporalUsersStore.getUser(participant.phone).then((user) => {
@@ -81,13 +80,11 @@ export default class events {
                 })
               }
             })
-          } else {
+          } else if(event.participant) {
             obj = { id: event.id, name: event.about.title, image: event.background, type: "activity" }
             this.array.unshift(obj);
 
           }
-        }
-
       })
       resolve(this.array);
       this.array = []

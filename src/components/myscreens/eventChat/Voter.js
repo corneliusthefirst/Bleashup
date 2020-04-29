@@ -39,7 +39,7 @@ export default class Voter extends Component {
         this.previousVote = JSON.stringify(this.props.message.vote)
     }
     renderOptionMedia(url, index, name) {
-        return <VoteOptionPreviwer optionName={name} url={url} vote={() => this.props.vote(index)} votable></VoteOptionPreviwer>
+        return <VoteOptionPreviwer optionName={name} url={url} vote={() => this.vote(index)} votable></VoteOptionPreviwer>
     }
     renderOptions() {
         return this.props.message.vote.option && this.props.message.vote.option.map((item, index) => {

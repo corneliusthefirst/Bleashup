@@ -1,6 +1,6 @@
 import React ,{Component} from "react"
 import { View, TextInput } from 'react-native';
-import { Input } from 'native-base';
+import { Input,Text } from 'native-base';
 import colorList from './../../../../colorList';
 
 export default class CreateTextInput extends Component{
@@ -18,19 +18,21 @@ export default class CreateTextInput extends Component{
         >
 
                 <Input
+                disabled={this.props.disabled}
                     style={{
-                        width: "80%",
+                        width: "100%",
                         height: "100%",
+    
                         borderBottomWidth:1,
                         borderColor:colorList.bodyIcon ,
                         color:colorList.bodyText,
                         textAlignVertical: "top",
                         borderRadius:5,
-                        backgroundColor:this.props.backgroundColor?this.props.backgroundColor:"white"
+                        backgroundColor:this.props.backgroundColor?this.props.backgroundColor:colorList.bodyDarkWhite
                     }}
                     value={this.props.value }
                     maxLength={this.props.maxLength||100}
-                    placeholder={this.props.placeholder}
+                    placeholder={`@${this.props.placeholder}`}
                     keyboardType="email-address"
                     autoCapitalize="sentences"
                     returnKeyType="next"
@@ -40,7 +42,7 @@ export default class CreateTextInput extends Component{
                     multiline={this.props.multiline?this.props.multiline:false}
                     numberOfLines={this.props.numberOfLines?this.props.numberOfLines:1}
                 />
-            
+            <View style={{position:'absolute',alignSelf: 'flex-end',margin: '2%',}}><Text>{`${this.props.value && this.props.value.length} / ${this.props.maxLength||100}`}</Text></View>
         </View>
     }
 }

@@ -29,7 +29,7 @@ export default class QRScanner extends Component {
     }
     goToActivity(event) {
         //console.error("navigating")
-        this.props.navigation.navigate("Event", {
+        this.props.navigation.push("Event", {
             Event: event,
             tab: "EventDetails"
         });

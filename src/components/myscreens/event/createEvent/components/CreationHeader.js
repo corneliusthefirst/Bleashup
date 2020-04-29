@@ -35,14 +35,14 @@ export default class CreationHeader extends Component {
                     style={{
                         color: ColorList.headerIcon,
                         fontWeight: "500",
-                        width: "50%",
                         marginTop: "auto",
                         marginBottom: "auto",
+                        maxWidth: '50%',
                     }}
                 >
                     {this.props.title}
                 </Text>
-                <View style={{ width: '30%' }}>{this.props.extra}
+                <View style={{ minWidth: '40%', justifyContent:'flex-end'}}>{this.props.extra}
                 </View>
             </View>
         </View>

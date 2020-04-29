@@ -61,7 +61,7 @@ export default class SignInView extends Component {
   }
   componentWillMount() {
     firebase.auth().onAuthStateChanged(user => {
-      if (user && this.state.password) {
+      if (user) {
         this.login()
       }
     });

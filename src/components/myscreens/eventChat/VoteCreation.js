@@ -18,6 +18,7 @@ import ColorList from '../../colorList';
 import PickersUpload from '../event/createEvent/components/PickerUpload';
 import VoteOptionPreviwer from './VoteOptionMediaPreviewer';
 import CreateButton from '../event/createEvent/components/ActionButton';
+import CreateTextInput from '../event/createEvent/components/CreateTextInput';
 
 let { height, width } = Dimensions.get('window');
 export default class VoteCreation extends BleashupModal {
@@ -166,14 +167,14 @@ export default class VoteCreation extends BleashupModal {
                         this.setOptionURL(option_url, index)
                     }} creating notAudio>
                 </PickersUpload>
-                <View style={{marginTop: '3%',}}> 
-                <VoteOptionPreviwer
-                    trashable
-                    optionName={this.state.vote && this.state.vote.option[index].name}
-                    cleanMedia={() => {
-                        this.setOptionURL(null, index)
-                    }}
-                    url={this.state.vote && this.state.vote.option[index].option_url}>
+                <View style={{ marginTop: '3%', }}>
+                    <VoteOptionPreviwer
+                        trashable
+                        optionName={this.state.vote && this.state.vote.option[index].name}
+                        cleanMedia={() => {
+                            this.setOptionURL(null, index)
+                        }}
+                        url={this.state.vote && this.state.vote.option[index].option_url}>
                     </VoteOptionPreviwer>
                 </View>
             </View>
@@ -271,6 +272,7 @@ export default class VoteCreation extends BleashupModal {
     updateVote() {
         this.props.updateVote(this.previousVote, this.state.vote)
     }
+    width = '90%'
     onClosedModal() {
         this.props.onClosed()
     }
@@ -298,46 +300,40 @@ export default class VoteCreation extends BleashupModal {
                         </CreationHeader>
                         <View style={{ height: ColorList.containerHeight - (ColorList.headerHeight + 20), }}>
                             <ScrollView showsVerticalScrollIndicator={false} style={{ height: '100%' }}>
-                                <View style={{ margin: '3%', }}>
+                                <View style={{ width: this.width, alignSelf: 'center', }}>
                                     {this.state.showVoteContentError ? <Text style={{ color: "#A91A84", fontWeight: 'bold', }} note>{"vote should at least have a title or a detail"}</Text> : null}
                                     {this.state.showVoteOptionError ? <Text style={{ color: "#A91A84", fontWeight: 'bold', }} note>{"vote should have at least a 2 options"}</Text> : null}
                                     {this.state.nowVotePeriod ? <Text style={{ color: "#A91A84", fontWeight: 'bold', }} note>{"you must specify the voting endate"}</Text> : null}
                                     <View style={{ height: height / 14, alignItems: 'center', margin: '2%', }}>
-                                        <Item style={{ borderColor: '#1FABAB', width: "95%", margin: '2%', height: height / 17 }} rounded>
-                                            <TextInput maxLength={15} style={{ width: "100%", height: "100%", margin: '2%', marginBottom: '5%', }}
-                                                value={this.state.vote && this.state.vote.title ? this.state.vote.title : ""}
-                                                placeholder="Vote title" keyboardType='email-address' autoCapitalize="none" returnKeyType='next' inverse last
-                                                onChangeText={(text) =>
-                                                    this.setState({
-                                                        vote: { ...this.state.vote, title: text },
-                                                        showVoteContentError: (!text || text.length <= 0) && this.state.vote && !this.state.vote.description ? true : false
-                                                    })
-                                                } />
-                                        </Item>
+                                        <CreateTextInput
+                                            maxLength={70}
+                                            height={height / 14}
+                                            value={this.state.vote && this.state.vote.title ? this.state.vote.title : ""}
+                                            placeholder={'vote'}
+                                            onChange={(text) => {
+                                                this.setState({
+                                                    vote: { ...this.state.vote, title: text },
+                                                    showVoteContentError: (!text || text.length <= 0) && this.state.vote && !this.state.vote.description ? true : false
+                                                })
+                                            }}
+                                        ></CreateTextInput>
                                     </View>
-                                    <Textarea containerStyle={{
-                                        width: "95%", margin: "1%",
-                                        height: 150,
-                                        borderRadius: 6, borderWidth: .7,
-                                        borderColor: "#1FABAB", alignItems: 'center',
-                                        backgroundColor: "#f5fffa"
-                                    }}
-                                        style={{
-                                            textAlignVertical: 'top',
-                                            margin: 1,
-                                            backgroundColor: "#f5fffa",
-                                            height: "95%", width: "98%"
-                                        }}
-                                        maxLength={1000}
-
-                                        placeholder="Vote details" value={this.state.vote && this.state.vote.description} keyboardType="default"
-                                        onChangeText={(value) => {
-                                            this.setState({
-                                                vote: { ...this.state.vote, description: value },
-                                                showVoteContentError: (!value || value.length <= 0) &&
-                                                    !this.state.vote.title ? true : false
-                                            })
-                                        }} />
+                                    <View style={{ width: this.width, alignSelf: 'center', }}>
+                                        <CreateTextInput
+                                            height={150}
+                                            maxLength={1000}
+                                            multiline
+                                            numberOfLines={30}
+                                            placeholder="details"
+                                            value={this.state.vote && this.state.vote.description}
+                                            onChange={(value) => {
+                                                this.setState({
+                                                    vote: { ...this.state.vote, description: value },
+                                                    showVoteContentError: (!value || value.length <= 0) &&
+                                                        !this.state.vote.title ? true : false
+                                                })
+                                            }} />
+                                    </View>
                                     <Button onPress={() => this.changeAlwaysShowState()} transparent>
                                         <Icon name={this.state.vote && this.state.vote.always_show ? "radio-button-checked" :
                                             "radio-button-unchecked"} type={"MaterialIcons"}></Icon>
@@ -349,21 +345,15 @@ export default class VoteCreation extends BleashupModal {
                             }}><Icon name={this.state.vote.published === 'public' ? "radio-button-checked" :
                                 "radio-button-unchecked"} type={"MaterialIcons"}></Icon>
                         <Text>{`${this.state.vote.published}`}</Text></Button>*/}
-                                    <Item>
-                                        <View style={{ width: '90%' }}>
-                                            <Button onPress={() => {
-                                                this.setState({
-                                                    showDatePicker: true
-                                                })
-                                            }} transparent><Text style={{ fontWeight: 'bold', }}>{"Ends: "}</Text><Text>{this.state.vote && this.state.vote.period ?
-                                                moment(this.state.vote.period).format(format) :
-                                                'select voting end date'}</Text></Button>
-                                        </View>{/*<View><Icon
-                                    type={"EvilIcons"} name={"close"} onPress={() => {
-                                        this.setState({
-                                            vote: { ...this.state.vote, period: null }
-                                        })
-                                    }} style={{ color: 'red' }}></Icon></View>*/}</Item>
+                                    <View style={{ width: this.width }}>
+                                        <Button onPress={() => {
+                                            this.setState({
+                                                showDatePicker: true
+                                            })
+                                        }} transparent><Text style={{ fontWeight: 'bold', }}>{"Ends: "}</Text><Text>{this.state.vote && this.state.vote.period ?
+                                            moment(this.state.vote.period).format(format) :
+                                            'select voting end date'}</Text></Button>
+                                    </View>
                                     {this.state.showDatePicker ? <DateTimePicker
                                         value={this.state.vote && this.state.period ? parseFloat(moment(this.state.vote.period).format('x')) : new Date()}
                                         is24Hour={true}

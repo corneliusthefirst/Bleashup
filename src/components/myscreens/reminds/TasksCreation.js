@@ -5,7 +5,7 @@ import {
   Button, Label
 } from "native-base";
 
-import { StyleSheet, TextInput, View, Image, TouchableOpacity, Dimensions, ScrollView , KeyboardAvoidingView,Platform} from 'react-native';
+import { StyleSheet, TextInput, View, Image, TouchableOpacity, Dimensions, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import autobind from "autobind-decorator";
 import { filter, find, findIndex, concat, uniqBy, uniq } from "lodash";
 import request from "../../../services/requestObjects";
@@ -26,11 +26,12 @@ import ColorList from '../../colorList';
 import BleashupModal from '../../mainComponents/BleashupModal';
 import CreationHeader from "../event/createEvent/components/CreationHeader";
 import CreateButton from "../event/createEvent/components/ActionButton";
-import CreateTextInput from "../event/createEvent/components/CreateTextInput"; 
+import CreateTextInput from "../event/createEvent/components/CreateTextInput";
 import RemindMembers from "./RemindMembers";
 import RemindsTypeMenu from './RemindTypeMenu';
 import PickersUpload from "../event/createEvent/components/PickerUpload";
 import MediaPreviewer from "../event/createEvent/components/MediaPeviewer";
+import TaskCreationExtra from "./TaskCreationExtra";
 
 let { height, width } = Dimensions.get('window')
 
@@ -60,9 +61,9 @@ export default class TasksCreation extends BleashupModal {
     this.props.onClosed()
   }
   calculateType(remind) {
-    return (remind.location && remind.location.length > 0) || 
-    (remind.remind_url && remind.remind_url.photo) || 
-    (remind.remind_url && remind.remind_url.video) ? 'event' : 'reminder'
+    return remind.location ||
+      (remind.remind_url && remind.remind_url.photo) || remind.description
+        (remind.remind_url && remind.remind_url.video) ? 'event' : 'reminder'
   }
   @autobind
   init() {
@@ -82,7 +83,8 @@ export default class TasksCreation extends BleashupModal {
       });
     }) : stores.Reminds.loadRemind(this.props.remind_id ?
       this.props.remind_id : "newRemindId").then(rem => {
-        console.warn("remind from render ....", remind)
+        if (!rem) stores.Reminds.addReminds(request.Remind())
+        console.warn("remind from render ....", rem)
         let remind = rem ? rem : request.Remind()
         this.setState({
           currentRemind: remind,
@@ -177,7 +179,7 @@ export default class TasksCreation extends BleashupModal {
         moment().startOf("day").add(moment.duration(1, 'hours')).toISOString().split("T")[1]
       let dateTime = newDate + "T" + currentTime
       //deactivate the date picker before setting the obtain time     
-      this.setState({ date: dateTime, isDateTimePickerVisible: false });
+      this.setState({ date: dateTime, isDateTimePickerVisible: false, show: true });
       this.props.update ? null : stores.Reminds.updatePeriod({ remind_id: "newRemindId", period: dateTime }, false).then(() => { });
     } else {
       this.setState({
@@ -216,30 +218,20 @@ export default class TasksCreation extends BleashupModal {
 
   @autobind
   onChangedDescription(value) {
-   this.setState({ currentRemind: {...this.state.currentRemind,description:value} });
+    this.setState({ currentRemind: { ...this.state.currentRemind, description: value } });
     let NewRemind = { remind_id: this.state.currentRemind.id, description: value }
     if (!this.props.update) {
       stores.Reminds.updateDescription(NewRemind, false).then(() => { });
     }
   }
 
-  onChangedStatus() {
-    if (this.state.currentRemind.status == "public") {
-      this.state.currentRemind.status = "private";
-      this.setState({ currentRemind: this.state.currentRemind });
-      let NewRemind = { remind_id: this.state.currentRemind.id, status: this.state.currentRemind.status }
-      if (!this.props.update) {
-        stores.Reminds.updateStatus(NewRemind, false).then(() => { });
-      }
-    } else {
-      this.state.currentRemind.status = "public";
-      this.setState({ currentRemind: this.state.currentRemind });
-      let NewRemind = { remind_id: this.state.currentRemind.id, status: this.state.currentRemind.status }
-      if (!this.props.update) {
-        stores.Reminds.updateStatus(NewRemind, false).then(() => { });
-      }
+  onChangedStatus(status) {
+    let newstatus = status
+    this.setState({ currentRemind: { ...this.state.currentRemind, status: newstatus } });
+    let NewRemind = { remind_id: this.state.currentRemind.id, status: newstatus }
+    if (!this.props.update) {
+      stores.Reminds.updateStatus(NewRemind, false).then(() => { });
     }
-
   }
 
   @autobind
@@ -250,6 +242,9 @@ export default class TasksCreation extends BleashupModal {
 
   @autobind
   back() {
+    this.setState({
+      isExtra:false
+    })
     this.props.onClosed();
   }
   @autobind
@@ -318,7 +313,7 @@ export default class TasksCreation extends BleashupModal {
           currentRemind: {
             ...this.state.currentRemind, must_report:
               this.state.currentRemind.must_report ?
-                !this.state.currentRemind.must_report : true
+                false : true
           }
         })
       }) : this.setState({
@@ -353,6 +348,9 @@ export default class TasksCreation extends BleashupModal {
     if (!this.props.working) {
       if (!this.state.date || !this.state.currentRemind.title) {
         this.props.onClosed()
+        this.setState({
+          isExtra:false
+        })
         Toast.show({
           text: "Remind Must Have Atleat a Title and Data/Time",
           buttonText: "Okay",
@@ -414,10 +412,11 @@ export default class TasksCreation extends BleashupModal {
 
   @autobind
   takecheckedResult(result) {
-    console.warn(result, "ooo")
     this.setState({ currentMembers: uniqBy(result, "phone") })
-    !this.props.update && stores.Reminds.updateMembers({ remind_id: this.state.currentRemind.id, 
-      members: result }).then(() => { })
+    !this.props.update && stores.Reminds.updateMembers({
+      remind_id: this.state.currentRemind.id,
+      members: result
+    }).then(() => { })
   }
 
   showEndatePiker() {
@@ -469,7 +468,7 @@ export default class TasksCreation extends BleashupModal {
   }
   saveURL(url) {
     this.setState({
-      currentRemind: { ...this.state.currentRemind, remind_url: url||request.Remind().remind_url }
+      currentRemind: { ...this.state.currentRemind, remind_url: url || request.Remind().remind_url }
     })
     !this.props.update && stores.Reminds.updateURL({
       remind_id:
@@ -499,307 +498,265 @@ export default class TasksCreation extends BleashupModal {
   isEvent() {
     return this.calculateType(this.state.currentRemind) && this.state.type === 'event'
   }
-  swipeToClose=false
+  swipeToClose = false
   modalBody() {
     let defaultDate = parseInt(moment(this.state.currentRemind.period).format("x"))
     return !this.state.mounted ? null : (
 
-
-      <View style={{ flex: 1,justifyContent:"flex-start" }}>
-        <View>
-        <CreationHeader
-          back={this.props.onClosed}
-          title={!this.state.ownership ? "Remind configs" : this.props.update ? "Update Remind" : "Add Remind"}
-          extra={<View><RemindsTypeMenu
-            type={this.isEvent() ? 'Event' : 'Reminder'}
-            reminder={() => {
-              this.setState({
-                type: 'reminder'
-              })
-            }}
-            event={() => {
-              this.setState({
-                type: 'event'
-              })
-            }}
-          ></RemindsTypeMenu></View>}
-        >
-        </CreationHeader>
-        </View>
-
       < KeyboardAvoidingView
-      behavior={Platform.OS == "ios" ? "padding" : "height"}
-      style={{flex:1}}
+        behavior={Platform.OS == "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
 
       >
-      <ScrollView>
-
-        <View style={{ flex:1,justifyContent:"flex-end" }}>
-          <ScrollView ref={"scrollView"} showsVerticalScrollIndicator={false}>
-            {this.props.shouldRestore && this.props.canRestore ? <View style={{ width: '95%', alignItems: 'flex-end', }}><Button style={{ alignSelf: 'flex-end', margin: '2%', marginRight: '2%', }} onPress={() => {
-              this.props.onClosed()
-              this.props.restore(this.props.remind)
-            }} rounded><Text>{"Restore"}</Text></Button></View> : null}
-            <View pointerEvents={this.state.ownership ? null : 'none'} style={{ height: height / 12, alignItems: 'center',justifyContent:"center" }}>
-              <CreateTextInput
-                height={height / 15}
-                value={this.state.currentRemind.title}
-                placeholder={'Remind Title'}
-                onChange={this.onChangedTitle}
-              ></CreateTextInput>
-            </View>
-            <View style={{ flexDirection: "column", justifyContent: "space-between" }}>
-              <Item rounded style={{ flexDirection: "row", height: height / 17, margin: '2%' }} >
-                <View pointerEvents={this.state.ownership ? null : 'none'} style={{ width: "12%" }} >
-                  <TouchableOpacity onPress={() => requestAnimationFrame(this.showDateTimePicker)}>
-                    <Icon
-                      active
-                      type="MaterialIcons"
-                      name="date-range"
-                      style={{ color: "#1FABAB", }}
-                    />
-                  </TouchableOpacity>
-                </View>
-                <View pointerEvents={this.state.ownership ? null : 'none'}>
-                  <Text style={{ color: "#696969" }}>
-                    {this.state.date ? moment(this.state.date).format("dddd, MMMM Do YYYY") : 'set remind date'}
-                  </Text>
-                </View>
-
-                {this.state.isDateTimePickerVisible && <DateTimePicker
-                  mode="date"
-                  value={defaultDate}
-                  onChange={this.handleDatePicked}
-                />
-                }
-
-              </Item>
-
-              <Item rounded style={{ flexDirection: "row", height: height / 17, marginLeft: "1%", marginRight: "1%" }}  >
-                <View pointerEvents={this.state.ownership ? null : 'none'} style={{ width: "12%" }} >
-                  <TouchableOpacity onPress={() => requestAnimationFrame(this.timepicker)}>
-                    <Icon
-                      active
-                      type="Ionicons"
-                      name="ios-clock"
-                      style={{ color: "#1FABAB" }}
-                    />
-                  </TouchableOpacity>
-                </View>
-                <View pointerEvents={this.state.ownership ? null : 'none'} >
-                  <Text style={{ color: "#696969" }}>{this.state.date ? moment(this.state.date).format('hh:mm:s a') : 'add remind time'}</Text>
-                </View>
-
-                {this.state.show && <DateTimePicker mode="time" value={defaultDate} display="default" onChange={this.setTime} />}
-
-              </Item>
-              <Item style={{ width: "100%" }}>
-                <Button pointerEvents={this.state.ownership ? null : 'none'} onPress={() => this.setRecurrencyState()}
-                  transparent>
-                  <Icon name={
-                    this.state.recurrent ? "radio-button-checked" :
-                      "radio-button-unchecked"
-                  } type={"MaterialIcons"}></Icon>
-                  <Text style={{ fontWeight: 'bold', }}>Recurrence Configurations</Text>
-                </Button>
-              </Item>
-              {this.state.recurrent ?
-                <Item style={{ marginLeft: '4%' }}><View style={{ width: "95%", flexDirection: "column", justifyContent: "space-between", marginTop: "1%" }}>
-
-                  <View>
-                    <Item style={{ width: "100%", marginLeft: '3%', padding: '1%' }}>
-                      <View style={{ flexDirection: 'column', }}>
-                        <View style={{ marginLeft: '1%', flexDirection: 'row', }}>
-                          <Text style={{ fontStyle: 'italic', marginTop: 3, }}>Every  </Text>
-                          <View pointerEvents={this.state.ownership ? null : 'none'}>
-                            <NumericInput value={this.state.currentRemind.recursive_frequency.interval ?
-                              this.state.currentRemind.recursive_frequency.interval : 0}
-                              onChange={value => this.setInterval(value)}
-                              totalWidth={70}
-                              rounded
-                              borderColor={'#FEFFDE'}
-                              maxValue={this.computeMax(this.state.currentRemind)}
-                              initValue={this.state.currentRemind.recursive_frequency.interval ? this.state.currentRemind.recursive_frequency.interval : 1}
-                              reachMaxIncIconStyle={{ color: 'red' }}
-                              reachMinDecIconStyle={{ color: 'red' }}
-                              minValue={1}
-                              sepratorWidth={0}
-                              iconStyle={{ color: '#FEFFDE' }}
-                              rightButtonBackgroundColor='#1FABAB'
-                              leftButtonBackgroundColor='#1FABAB'
-                              totalHeight={30}
-                            ></NumericInput>
-                          </View>
-                          <View pointerEvents={this.state.ownership ? null : 'none'} style={{ width: "30%", marginTop: '-6%', margin: '2%', }}>
-                            <Dropdown
-                              data={frequencyType}
-                              baseColor={"#1FABAB"}
-                              selectedItemColor={"#1FABAB"}
-                              value={this.state.currentRemind.recursive_frequency.frequency ?
-                                FrequencyReverser[this.state.currentRemind.recursive_frequency.frequency] : 'none'}
-                              onChangeText={this.setRecursiveFrequency}
-                              pickerStyle={{ width: "35%", margin: '1%', borderRadius: 5, borderWidth: 0.2, borderColor: "#1FABAB" }}
-                              containerStyle={{ borderWidth: 0, borderColor: "gray", borderRadius: 6, justifyContent: "center", padding: "2%", height: 43 }}
-                            />
-                          </View>
-                          {this.state.currentRemind.recursive_frequency.frequency === 'weekly' ? <TouchableOpacity onPress={() => requestAnimationFrame(() => {
-                            this.setState({
-                              isSelectDaysModalOpened: true
-                            })
-                          })
-                          }><Text>{this.state.ownership ? "select days" : "view days"}</Text></TouchableOpacity> :
-                            this.state.currentRemind.recursive_frequency.frequency === 'monthly' ?
-                              <View pointerEvents={this.state.ownership ? null : 'none'} >
-                                <TouchableOpacity onPress={() => {
-                                  this.showDateTimePicker()
-                                }}><Text>{` on the ${getDayMonth(this.state.date)}`}</Text>
-                                </TouchableOpacity></View> : this.state.currentRemind.recursive_frequency.frequency === 'yearly' ?
-                                <View pointerEvents={this.state.ownership ? null : 'none'}>
-                                  <TouchableOpacity onPress={() => {
-                                    this.showDateTimePicker()
-                                  }}><Text>{`on ${getMonthDay(this.state.date)}`}</Text></TouchableOpacity></View> : <Text>{this.state.currentRemind.recursive_frequency.interval === 1 ? '(all days)' : `(${this.state.currentRemind.recursive_frequency.interval} days)`}</Text>}
-                        </View>
-                      </View>
-                    </Item>
-                    <Item pointerEvents={this.state.ownership ? null : 'none'} style={{ marginLeft: '4%' }}>
-                      <Label>
-                        Ends
-                    </Label>
-                      <Button pointerEvents={this.state.ownership ? null : 'none'} style={{ width: "90%" }} onPress={() => this.showEndatePiker()} transparent>
-                        <Text>{this.state.date && this.state.currentRemind.recursive_frequency.recurrence ? `On ${moment(this.state.currentRemind.recursive_frequency.recurrence).format('dddd, MMMM Do YYYY')}` : "Select Recurrence Stop Date"}</Text>
-                      </Button>
-                      {this.state.showEndatePiker ? <DateTimePicker value={this.state.currentRemind.recursive_frequency.recurrence ?
-                        parseInt(moment(this.state.currentRemind.recursive_frequency.recurrence).format("x")) :
-                        new Date()}
-                        display={this.state.display}
-                        mode={this.state.mode}
-                        onChange={(e, date) => this.changeEndDate(e, date)}></DateTimePicker> : null}
-                    </Item>
+        <ScrollView>
+          <View style={{ flex: 1, justifyContent: "flex-end" }}>
+            <CreationHeader
+              back={this.props.onClosed}
+              title={!this.state.ownership ? "Remind configs" : this.props.update ? "Update Remind" : "Add Remind"}
+              extra={this.state.ownership && <View style={{ flexDirection: 'row', justifyContent: 'space-between', flexWrap: 'wrap', marginBottom: 'auto', marginTop: 'auto', }}>
+                <View><TouchableOpacity onPress={() => requestAnimationFrame(() => this.setState({ selectMemberState: true }))} style={{ flexDirection: 'row', }}>
+                  <Icon name="ios-people" type="Ionicons" style={{ color: ColorList.likeActive }} />
+                  <Text style={{ fontWeight: 'bold', marginBottom: 'auto', marginTop: 'auto',color:ColorList.likeActive }}>{` (${this.state.currentMembers.length})`}</Text>
+                </TouchableOpacity></View>
+                <View>
+                  <RemindsTypeMenu
+                    type={this.isEvent() ? 'Event' : 'Reminder'}
+                    reminder={() => {
+                      this.setState({
+                        type: 'reminder'
+                      })
+                    }}
+                    event={() => {
+                      this.setState({
+                        type: 'event'
+                      })
+                    }}
+                  ></RemindsTypeMenu></View></View>}
+            >
+            </CreationHeader>
+            <View style={{ height: ColorList.containerHeight - (ColorList.headerHeight + 20), marginTop: '3%', }}>
+              <ScrollView ref={"scrollView"} showsVerticalScrollIndicator={false}>
+                {this.props.shouldRestore && this.props.canRestore ? <View style={{ width: '95%', alignItems: 'flex-end', }}><Button style={{ alignSelf: 'flex-end', margin: '2%', marginRight: '2%', }} onPress={() => {
+                  this.props.onClosed()
+                  this.props.restore(this.props.remind)
+                }} rounded><Text>{"Restore"}</Text></Button></View> : null}
+                <View pointerEvents={this.state.ownership ? null : 'none'} style={{ height: height / 12, alignItems: 'center' }}>
+                  <View style={{ width: '90%', alignSelf: 'center', }}>
+                    <CreateTextInput
+                      height={height / 20}
+                      value={this.state.currentRemind.title}
+                      placeholder={'remind'}
+                      onChange={this.onChangedTitle}
+                    ></CreateTextInput>
                   </View>
-                </View></Item> : null}
-                <View style={{marginLeft: '-3%',marginBottom: '3%',}}>
-                {this.isEvent() && <CreateTextInput
-                  height={height / 20}
-                  maxLength={25}
-                  placeholder={'Venue'}
-                  value={this.state.currentRemind.location}
-                  onChange={this.setCurrentLocation.bind(this)}
-                ></CreateTextInput>}
                 </View>
-              <View>
-                <Item>
-                  <View pointerEvents={this.state.ownership ? null : 'none'} style={{ width: '40%' }}>
-                    {this.state.currentRemind.status === "public" ?
-                      <Button onPress={() => this.onChangedStatus()} transparent>
-                        <Icon name="md-radio-button-on" //active={true}  type="Ionicons" style={{ color: "#0A4E52", alignSelf: "center", marginTop: "1%" }} 
-                        />
-                        <Text>Public</Text>
-                      </Button> :
-                      <Button onPress={() => this.onChangedStatus()} transparent>
-                        <Icon name="md-radio-button-on" //active={true} type="Ionicons" style={{ color: "#0A4E52", alignSelf: "center" }} 
-                        />
-                        <Text>Private</Text>
-                      </Button>}
-                  </View>
-                  {!this.props.update ?
-                    <Button pointerEvents={this.state.ownership ? null : 'none'} onPress={() => { this.setState({ selectMemberState: true }) }} transparent>
-                      <Icon name="ios-people" type="Ionicons" style={{ fontSize: 25 }} />
-                      <Text style={{ fontWeight: 'bold', }}>{`Members (${this.state.currentMembers.length})`}</Text>
-                    </Button> : null}
-                </Item>
-                <Item pointerEvents={this.state.ownership ? null : 'none'}>
-                  <Button pointerEvents={this.state.ownership ? null : 'none'} onPress={() => this.updateRequestReportOnComplete()}
-                    transparent>
-                    <Icon name={
-                      this.state.currentRemind.must_report ? "radio-button-checked" :
-                        "radio-button-unchecked"
-                    } type={"MaterialIcons"}></Icon>
-                    <Text style={{ fontWeight: 'bold', }}>Request Report On Task done</Text>
-                  </Button>
-                </Item>
-              </View>
-            </View>
-           {this.isEvent() && <View style={{ margin: '2%', }}>
-              <PickersUpload
-                currentURL={this.state.currentRemind.remind_url || {}}
-                saveMedia={this.saveURL.bind(this)}
-                creating={!this.props.update}
-                notAudio>
-              </PickersUpload>
-            </View>}
-            {this.isEvent() && <MediaPreviewer
-              cleanMedia={() => this.saveURL(request.Remind().remind_url)}
-              height={height / 3.4}
-              defaultPhoto={require("../../../../assets/new-event.png")}
-              url={this.state.currentRemind.remind_url || {}}>
-            </MediaPreviewer>}
-
-            <View style={{ height: (height / (this.state.ownership ? 3.5 : 1.5)) + (height / 26), alignItems: 'flex-start', justifyContent: 'center' }}>
-              <View pointerEvents={!this.state.ownership ? "none" : null} style={{ width: "100%", height: "100%" }}>
-                <Text style={{ alignSelf: 'flex-start', margin: "3%", fontWeight: "500", fontSize: 16 }} >Description</Text>
-                <Textarea
-                  disabled={!this.state.ownership}
-                  value={this.state.currentRemind.description}
-                  containerStyle={{
-                    width: "94%", margin: "1%",
-                    height: '70%',
+                <View style={{ flexDirection: "column", justifyContent: "space-between" }}>
+                  <View style={{
+                    flexDirection: "row", height: 30,
+                    width: '90%',
                     alignSelf: 'center',
-                    borderRadius: 15, borderWidth: 1,
-                    borderColor: "#9E9E9E",
-                    backgroundColor: "#f5fffa"
-                  }}
-                  placeholder="Task / Remind Description"
-                  style={{
-                    textAlignVertical: 'top',  // hack android
-                    height: "100%",
-                    fontSize: 14,
-                    color: '#333',
-                  }}
-                  maxLength={1000}
-                  onChangeText={(value) => this.onChangedDescription(value)} />
+                  }} >
+                    <View pointerEvents={this.state.ownership ? null : 'none'} style={{ width: "12%" }} >
+                      <TouchableOpacity style={{ marginBottom: 'auto', marginTop: 'auto', }} onPress={() => requestAnimationFrame(this.showDateTimePicker)}>
+                        <Icon
+                          active
+                          type="MaterialIcons"
+                          name="date-range"
+                          style={{ color: "#1FABAB", }}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                    <View pointerEvents={this.state.ownership ? null : 'none'}>
+                      <TouchableOpacity style={{ marginTop: 'auto', marginBottom: 'auto', }} onPress={() => requestAnimationFrame(this.showDateTimePicker)}>
+                        <Text style={{ color: ColorList.bodyText }}>
+                          {this.state.date ? `${moment(this.state.date).format("dddd, MMMM Do YYYY")} at ${moment(this.state.date).format('hh:mm a')}` : 'set remind date'}
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
 
-              </View>
+                    {this.state.isDateTimePickerVisible && <DateTimePicker
+                      mode="date"
+                      value={defaultDate}
+                      onChange={this.handleDatePicked}
+                    />
+                    }
+                    {this.state.show && <DateTimePicker mode="time" value={defaultDate} display="default" onChange={this.setTime} />}
+                  </View>
+                  <View pointerEvents={this.state.ownership ? null : 'none'} style={{ width: "90%", alignSelf: 'center', height: 50 }}>
+                    <TouchableOpacity style={{ flexDirection: 'row', marginTop: 'auto', marginBottom: 'auto', }} onPress={() => requestAnimationFrame(() => this.setRecurrencyState())}>
+                      <Icon style={{ width: '15%', color: ColorList.bodyIcon }} name={
+                        this.state.recurrent ? "arrow-up" :
+                          "arrow-down"
+                      } type={"EvilIcons"}></Icon>
+                      <Text style={{ fontWeight: 'bold', }}>{"Repeat"}</Text>
+                    </TouchableOpacity>
+                  </View>
+                  {this.state.recurrent ?
+                    <Item style={{ marginLeft: '4%' }}><View style={{ width: "95%", flexDirection: "column", justifyContent: "space-between", marginTop: "1%" }}>
+
+                      <View>
+                        <Item style={{ width: "100%", marginLeft: '3%', padding: '1%' }}>
+                          <View style={{ flexDirection: 'column', }}>
+                            <View style={{ marginLeft: '1%', flexDirection: 'row', }}>
+                              <Text style={{ fontStyle: 'italic', marginTop: 3, }}>Every  </Text>
+                              <View pointerEvents={this.state.ownership ? null : 'none'}>
+                                <NumericInput value={this.state.currentRemind.recursive_frequency.interval ?
+                                  this.state.currentRemind.recursive_frequency.interval : 0}
+                                  onChange={value => this.setInterval(value)}
+                                  totalWidth={70}
+                                  rounded
+                                  borderColor={'#FEFFDE'}
+                                  maxValue={this.computeMax(this.state.currentRemind)}
+                                  initValue={this.state.currentRemind.recursive_frequency.interval ? this.state.currentRemind.recursive_frequency.interval : 1}
+                                  reachMaxIncIconStyle={{ color: 'red' }}
+                                  reachMinDecIconStyle={{ color: 'red' }}
+                                  minValue={1}
+                                  sepratorWidth={0}
+                                  iconStyle={{ color: '#FEFFDE' }}
+                                  rightButtonBackgroundColor='#1FABAB'
+                                  leftButtonBackgroundColor='#1FABAB'
+                                  totalHeight={30}
+                                ></NumericInput>
+                              </View>
+                              <View pointerEvents={this.state.ownership ? null : 'none'} style={{ width: "30%", marginTop: '-6%', margin: '2%', }}>
+                                <Dropdown
+                                  data={frequencyType}
+                                  baseColor={"#1FABAB"}
+                                  selectedItemColor={"#1FABAB"}
+                                  value={this.state.currentRemind.recursive_frequency.frequency ?
+                                    FrequencyReverser[this.state.currentRemind.recursive_frequency.frequency] : 'none'}
+                                  onChangeText={this.setRecursiveFrequency}
+                                  pickerStyle={{ width: "35%", margin: '1%', borderRadius: 5, borderWidth: 0.2, borderColor: "#1FABAB" }}
+                                  containerStyle={{ borderWidth: 0, borderColor: "gray", borderRadius: 6, justifyContent: "center", padding: "2%", height: 43 }}
+                                />
+                              </View>
+                              {this.state.currentRemind.recursive_frequency.frequency === 'weekly' ? <TouchableOpacity onPress={() => requestAnimationFrame(() => {
+                                this.setState({
+                                  isSelectDaysModalOpened: true
+                                })
+                              })
+                              }><Text>{this.state.ownership ? "select days" : "view days"}</Text></TouchableOpacity> :
+                                this.state.currentRemind.recursive_frequency.frequency === 'monthly' ?
+                                  <View pointerEvents={this.state.ownership ? null : 'none'} >
+                                    <TouchableOpacity onPress={() => {
+                                      this.showDateTimePicker()
+                                    }}><Text>{` on the ${getDayMonth(this.state.date)}`}</Text>
+                                    </TouchableOpacity></View> : this.state.currentRemind.recursive_frequency.frequency === 'yearly' ?
+                                    <View pointerEvents={this.state.ownership ? null : 'none'}>
+                                      <TouchableOpacity onPress={() => {
+                                        this.showDateTimePicker()
+                                      }}><Text>{`on ${getMonthDay(this.state.date)}`}</Text></TouchableOpacity></View> : <Text>{this.state.currentRemind.recursive_frequency.interval === 1 ? '(all days)' : `(${this.state.currentRemind.recursive_frequency.interval} days)`}</Text>}
+                            </View>
+                          </View>
+                        </Item>
+                        <Item pointerEvents={this.state.ownership ? null : 'none'} style={{ marginLeft: '4%' }}>
+                          <Label>
+                            Ends
+                    </Label>
+                          <Button pointerEvents={this.state.ownership ? null : 'none'} style={{ width: "90%" }} onPress={() => this.showEndatePiker()} transparent>
+                            <Text>{this.state.date && this.state.currentRemind.recursive_frequency.recurrence ? `On ${moment(this.state.currentRemind.recursive_frequency.recurrence).format('dddd, MMMM Do YYYY')}` : "Select Recurrence Stop Date"}</Text>
+                          </Button>
+                          {this.state.showEndatePiker ? <DateTimePicker value={this.state.currentRemind.recursive_frequency.recurrence ?
+                            parseInt(moment(this.state.currentRemind.recursive_frequency.recurrence).format("x")) :
+                            new Date()}
+                            display={this.state.display}
+                            mode={this.state.mode}
+                            onChange={(e, date) => this.changeEndDate(e, date)}></DateTimePicker> : null}
+                        </Item>
+                      </View>
+                    </View></Item> : null}
+                  {this.isEvent() && <View pointerEvents={this.state.ownership ? null : 'none'} style={{ width: '90%', alignSelf: 'center', marginTop: '2%', marginBottom: '2%'}}>
+                    <CreateTextInput
+                      height={height / 20}
+                      maxLength={70}
+                      placeholder={'Venue'}
+                      value={this.state.currentRemind.location}
+                      onChange={this.setCurrentLocation.bind(this)}
+                    ></CreateTextInput></View>}
+                </View>
+                {this.isEvent() && this.state.ownership && <View style={{ width:'90%',alignSelf: 'center', }}>
+                  <PickersUpload
+                    currentURL={this.state.currentRemind.remind_url || {}}
+                    saveMedia={this.saveURL.bind(this)}
+                    creating={!this.props.update}
+                    notAudio>
+                  </PickersUpload>
+                </View>}
+                {this.isEvent() && <View style={{ width: '90%', alignSelf: 'center', }}><MediaPreviewer
+                  cleanMedia={() => this.saveURL(request.Remind().remind_url)}
+                  height={height / 3.4}
+                  defaultPhoto={require("../../../../assets/new-event.png")}
+                  url={this.state.currentRemind.remind_url || {}}>
+                </MediaPreviewer></View>}
+                {this.isEvent() && <View pointerEvents={!this.state.ownership ? "none" : null} style={{ width: "90%", alignSelf: 'center', marginTop: '1%', }}>
+                  <CreateTextInput
+                    multiline
+                    numberOfLines={30}
+                    height={(height / (this.state.ownership ? 3.5 : 1.5)) * .7}
+                    disabled={!this.state.ownership}
+                    value={this.state.currentRemind.description}
+                    placeholder="details"
+                    style={{
+                      textAlignVertical: 'top',  // hack android
+                      height: "100%",
+                      fontSize: 14,
+                      color: '#333',
+                    }}
+                    maxLength={2000}
+                    onChange={(value) => this.onChangedDescription(value)} />
+
+                </View>}
+                {!this.state.creating ? this.state.ownership && <View style={{ margin: '2%', marginBottom: '4%', }}><CreateButton
+                  title={!this.props.update ? "Add Remind" : "Update Remind"}
+                  action={() => this.setState({
+                    isExtra: true
+                  })}
+                ></CreateButton></View> :
+                  <Spinner></Spinner>}
+              </ScrollView>
+              <SelectDays daysOfWeek={daysOfWeeksDefault}
+                addCode={code => {
+                  this.computeDaysOfWeek(uniq([code, ...this.state.currentRemind.recursive_frequency.days_of_week]))
+                }}
+                removeCode={code => {
+                  this.computeDaysOfWeek(this.state.currentRemind.recursive_frequency.days_of_week.filter(ele => ele !== code))
+                }}
+                ownership={this.state.ownership}
+                daysSelected={this.state.currentRemind.recursive_frequency.days_of_week}
+                isOpen={this.state.isSelectDaysModalOpened} onClosed={() => {
+
+                  this.setState({
+                    isSelectDaysModalOpened: false,
+                  })
+                }}></SelectDays>
+              <RemindMembers
+                isOpen={this.state.selectMemberState}
+                currentMembers={this.state.currentMembers}
+                participants={this.props.event.participant}
+                creator={this.props.event.creator_phone}
+                onClosed={() => {
+                  this.setState({
+                    selectMemberState: false,
+                  })
+                }}
+                takecheckedResult={members => this.takecheckedResult(members)}
+              >
+              </RemindMembers>
+              <TaskCreationExtra
+                proceed={!this.props.update ? this.addNewRemind : this.updateRemind}
+                onChangedStatus={this.onChangedStatus.bind(this)}
+                currentRemind={this.state.currentRemind}
+                onComplete={this.updateRequestReportOnComplete.bind(this)}
+                isOpen={this.state.isExtra} onClosed={() => {
+                  this.setState({
+                    isExtra: false
+                  })
+                }}></TaskCreationExtra>
             </View>
-            
-
-            {!this.state.creating ? this.state.ownership && <View style={{height:80,margin:"2%" }}><CreateButton
-              title={!this.props.update ? "Add Remind" : "Update Remind"}
-              action={() => !this.props.update ? this.addNewRemind() : this.updateRemind()}
-            ></CreateButton></View> :
-              <Spinner></Spinner>}
-          </ScrollView>
-          <SelectDays daysOfWeek={daysOfWeeksDefault}
-            addCode={code => {
-              this.computeDaysOfWeek(uniq([code, ...this.state.currentRemind.recursive_frequency.days_of_week]))
-            }}
-            removeCode={code => {
-              this.computeDaysOfWeek(this.state.currentRemind.recursive_frequency.days_of_week.filter(ele => ele !== code))
-            }}
-            ownership={this.state.ownership}
-            daysSelected={this.state.currentRemind.recursive_frequency.days_of_week}
-            isOpen={this.state.isSelectDaysModalOpened} onClosed={() => {
-
-              this.setState({
-                isSelectDaysModalOpened: false,
-              })
-            }}></SelectDays>
-          <RemindMembers
-            isOpen={this.state.selectMemberState}
-            currentMembers={this.state.currentMembers}
-            participants={this.props.event.participant}
-            creator={this.props.event.creator_phone}
-            onClosed={() => {
-              this.setState({
-                selectMemberState: false,
-              })
-            }}
-            takecheckedResult={members => this.takecheckedResult(members)}
-          >
-          </RemindMembers>
-        </View>
+          </View>
         </ScrollView>
       </KeyboardAvoidingView>
-      </View>
+    
 
 
     );
