@@ -34,37 +34,37 @@ export default class PhotoMessage extends Component {
             time: this.props.message.created_at.split(" ")[1],
             creator: (this.props.message.sender.phone == this.props.creator)
         })
-        if(testForURL(this.props.message.photo)){
-            this.exchanger = new FileExachange(this.props.message.photo,this.path,0,0,(received,total) => {
+        if (testForURL(this.props.message.photo)) {
+            this.exchanger = new FileExachange(this.props.message.photo, this.path, 0, 0, (received, total) => {
 
-            },(dir,received,total) => {
-                this.props.room.replaceMessage({...this.props.message,photo:'file://' + dir}).then(() => {
+            }, (dir, received, total) => {
+                this.props.room.replaceMessage({ ...this.props.message, photo: 'file://' + dir }).then(() => {
 
                 })
-            },(error) => {
+            }, (error) => {
                 console.warn(error)
             })
-            this.exchanger.download(0,0)
-        }else{
+            this.exchanger.download(0, 0)
+        } else {
             console.warn(this.props.message.photo)
         }
     }
     path = '/Photo/' + this.props.message.filename
     render() {
         return (
-            <View style={{ minHeight: 250,width:300 }}>
-                <TouchableWithoutFeedback 
-                onLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null}
-                onPressIn={() => {
-                    this.props.pressingIn()
-                }} 
-                onPress={() => this.props.showPhoto(this.props.message.photo)}>
-                    <CacheImages  hasJoin onOpen={() => { }}
-                        source={{ uri: this.props.message.photo }} square thumbnails style={{ alignSelf: 'flex-start', width:295,height: 248, }} borderRadius={5}>
+            <View style={{ minHeight: 250, width: 300, marginLeft: this.props.sender ? "-1.2%" : "1%",marginTop: '1%', }}>
+                <TouchableWithoutFeedback
+                    onLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null}
+                    onPressIn={() => {
+                        this.props.pressingIn()
+                    }}
+                    onPress={() => this.props.showPhoto(this.props.message.photo)}>
+                    <CacheImages hasJoin onOpen={() => { }}
+                        source={{ uri: this.props.message.photo }} square thumbnails style={{ alignSelf: 'flex-start', width: 295, height: 248, }} borderRadius={5}>
                     </CacheImages>
                 </TouchableWithoutFeedback>
                 {this.props.message.text ?
-                    <View style={{ marginBottom: "2%",marginTop: '2%', }}>
+                    <View style={{ marginBottom: "2%", marginTop: '2%', alignSelf: this.props.sender ? "flex-start" : "flex-end", }}>
                         <TextContent onLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null} pressingIn={() => this.props.pressingIn()} text={this.props.message.text}></TextContent>
                     </View> : null}
 

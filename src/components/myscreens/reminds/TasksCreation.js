@@ -504,12 +504,7 @@ export default class TasksCreation extends BleashupModal {
     let defaultDate = parseInt(moment(this.state.currentRemind.period).format("x"))
     return !this.state.mounted ? null : (
 
-      < KeyboardAvoidingView
-      behavior={Platform.OS == "ios" ? "padding" : "height"}
-      style={{flex:1}}
 
-      >
-      <ScrollView>
       <View style={{ flex: 1,justifyContent: "flex-end" }}>
         <CreationHeader
           back={this.props.onClosed}
@@ -530,7 +525,15 @@ export default class TasksCreation extends BleashupModal {
         >
         </CreationHeader>
 
-        <View style={{ height: ColorList.containerHeight - (ColorList.headerHeight + 20), marginTop: '3%', }}>
+     <View style={{flex:1,width:"100%"}}>
+      < KeyboardAvoidingView
+      behavior={Platform.OS == "ios" ? "padding" : "height"}
+      style={{flex:1}}
+
+      >
+      <ScrollView>
+
+        <View style={{ flex:1, marginTop: '3%', }}>
           <ScrollView ref={"scrollView"} showsVerticalScrollIndicator={false}>
             {this.props.shouldRestore && this.props.canRestore ? <View style={{ width: '95%', alignItems: 'flex-end', }}><Button style={{ alignSelf: 'flex-end', margin: '2%', marginRight: '2%', }} onPress={() => {
               this.props.onClosed()
@@ -793,9 +796,10 @@ export default class TasksCreation extends BleashupModal {
           >
           </RemindMembers>
         </View>
-      </View>
-      </ScrollView>
+        </ScrollView>
       </KeyboardAvoidingView>
+    </View>
+  </View>
 
     );
   }

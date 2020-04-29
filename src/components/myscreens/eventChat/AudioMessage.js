@@ -200,66 +200,67 @@ export default class AudioMessage extends Component {
             downloading: false
         })
     }
+    playIconStyle = {
+        marginTop: 'auto', marginBottom: 'auto',
+    }
     render() {
         textStyle = {
-            width: "80%", display: 'flex', alignSelf: 'center',
-            flexDirection: 'column',
-        }
-        textStyleD = {
-            width: "80%", paddingLeft: '10%', paddingRight: '20%', display: 'flex', alignSelf: 'center',
+            width: "80%", display: 'flex', alignSelf: this.props.sender ? "flex-start" : "flex-end",
             flexDirection: 'column',
         }
         return (
-            <TouchableWithoutFeedback onLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null} onPressIn={() => this.props.pressingIn()}>
-                <View style={{ disply: 'flex', flexDirection: 'row', minWidth: 300, maxWidth: 300, minHeight: 50, }}>
-                    {this.props.message.duration ? <View style={textStyle}>
-                        <View><Slider value={this.state.currentPosition} onValueChange={(value) => {
-                            this.player.setCurrentTime(value * this.props.message.duration)
-                            this.setState({
-                                currentPosition: value,
-                                currentTime: value * this.props.message.duration
-                            })
-                        }}></Slider>
-                            <View style={{ display: 'flex', flexDirection: 'row', alignContent: 'space-between', }}>
-                                <Text>{converToHMS(Math.floor(this.state.currentTime))}</Text>
-                                <Right><Text>{converToHMS(this.props.message.duration)}</Text></Right>
+            <View>
+                <TouchableWithoutFeedback onLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null} onPressIn={() => this.props.pressingIn()}>
+                    <View style={{ flexDirection: 'row', minWidth: 300, maxWidth: 300, minHeight: 50,marginLeft: '2%',justifyContent: 'space-between', }}>
+                        {this.props.message.duration ? <View style={textStyle}>
+                            <View><Slider value={this.state.currentPosition} onValueChange={(value) => {
+                                this.player.setCurrentTime(value * this.props.message.duration)
+                                this.setState({
+                                    currentPosition: value,
+                                    currentTime: value * this.props.message.duration
+                                })
+                            }}></Slider>
+                                <View style={{ display: 'flex', flexDirection: 'row', alignContent: 'space-between', }}>
+                                    <Text>{converToHMS(Math.floor(this.state.currentTime))}</Text>
+                                    <Right><Text>{converToHMS(this.props.message.duration)}</Text></Right>
+                                </View>
                             </View>
+                        </View> : null}
+                        <View style={{ margin: "2%",width:"15%"}}>
+                            {testForURL(this.props.message.source) ? <AnimatedCircularProgress
+                                size={40}
+                                width={3}
+                                fill={testForURL(this.props.message.source) ? this.state.downloadState : 100}
+                                tintColor={ColorList.indicatorColor}
+                                backgroundColor={ColorList.indicatorInverted}>
+                                {
+                                    (fill) => (
+                                        <View style={{ marginTop: "-5%" }}>
+                                            <TouchableOpacity onPress={() => this.state.downloading ? this.cancelDownLoad(this.props.message.source) :
+                                                this.downloadAudio(this.props.message.source)}>
+                                                <View>
+                                                    <Icon style={{ color: ColorList.bodyText }} type="EvilIcons"
+                                                        name={this.state.downloading ? "close" : "arrow-down"}></Icon>
+                                                </View>
+                                                <View style={{ position: 'absolute', marginTop: '-103%', marginLeft: '-14%', }}>
+                                                    {/*this.state.downloading ? <Spinner></Spinner> : null*/}
+                                                </View>
+                                            </TouchableOpacity>
+                                        </View>
+                                    )
+                                }
+                            </AnimatedCircularProgress> : !this.state.playing ? <TouchableOpacity style={this.playIconStyle}
+                                onPress={() => requestAnimationFrame(() => this.plays())}>
+                                <Icon type="FontAwesome5" style={{ color: ColorList.bodyText, fontSize: 20 }} name="play">
+                                </Icon>
+                            </TouchableOpacity> : <TouchableOpacity style={this.playIconStyley}  onPress={() => requestAnimationFrame(() => this.pause())}>
+                                        <Icon type="FontAwesome5" style={{ color: ColorList.bodyText, fontSize: 20 }} name="pause">
+                                        </Icon>
+                                    </TouchableOpacity>}
                         </View>
-                    </View> : <View style={{ textStyleD }}>{/*!this.state.playing ? <BarIndicat animating={false}
-                    color={"#1FABAB"} size={30} count={20} ></BarIndicat> : <BarIndicator color={"#1FABAB"} size={30} count={20}></BarIndicator>*/}</View>}
-                    <View style={{ margin:  "2%"  }}>
-                        {testForURL(this.props.message.source) ? <AnimatedCircularProgress
-                            size={40}
-                            width={3}
-                            fill={testForURL(this.props.message.source) ? this.state.downloadState : 100}
-                            tintColor={ColorList.indicatorColor}
-                            backgroundColor={ColorList.indicatorInverted}>
-                            {
-                                (fill) => (
-                                    <View style={{ marginTop: "-5%" }}>
-                                        <TouchableOpacity onPress={() => this.state.downloading ? this.cancelDownLoad(this.props.message.source) :
-                                            this.downloadAudio(this.props.message.source)}>
-                                            <View>
-                                                <Icon style={{ color: ColorList.bodyText }} type="EvilIcons"
-                                                    name={this.state.downloading ? "close" : "arrow-down"}></Icon>
-                                            </View>
-                                            <View style={{ position: 'absolute', marginTop: '-103%', marginLeft: '-14%', }}>
-                                                {/*this.state.downloading ? <Spinner></Spinner> : null*/}
-                                            </View>
-                                        </TouchableOpacity>
-                                    </View>
-                                )
-                            }
-                        </AnimatedCircularProgress> : !this.state.playing ? <TouchableOpacity
-                            onPress={() => requestAnimationFrame(() => this.plays())}>
-                            <Icon type="FontAwesome5" style={{ color: ColorList.bodyText, fontSize: 20 }} name="play">
-                            </Icon>
-                        </TouchableOpacity> : <TouchableOpacity onPress={() => requestAnimationFrame(() => this.pause())}>
-                                    <Icon type="FontAwesome5" style={{ color: ColorList.bodyText, fontSize: 20 }} name="pause">
-                                    </Icon>
-                                </TouchableOpacity>}</View>
-                </View>
-            </TouchableWithoutFeedback>
+                    </View>
+                </TouchableWithoutFeedback>
+            </View>
         );
     }
 }

@@ -32,12 +32,12 @@ export default class ReplyText extends Component {
                     display: 'flex', flexDirection: 'row', 
                     borderBottomWidth: 0,
                     backgroundColor: this.props.color,
-                    ...shadower(1), //backgroundColor: "rgba(34, 0, 0, 0.1)",
-                    padding: "2%",//margin: '1%',
+                     backgroundColor: "rgba(34, 0, 0, 0.1)",
+                    padding: "1%",//margin: '1%',
                     minHeight: 50,
                     maxHeight: 300,
-                    borderTopLeftRadius: 20,
-                    borderTopRightRadius: 20,
+                    borderTopLeftRadius: 5,
+                    borderTopRightRadius: 5,
                 }}>
                     {
                         /*<View style={{ /*width: "5%" }}><Icon type="FontAwesome"
@@ -54,7 +54,7 @@ export default class ReplyText extends Component {
                             })
                             }>
                                 <View style={{ flexDirection: 'row', }}>
-                                    <Text note style={{ marginBottom: "1%", color: ColorList.indicatorColor }}>{this.props.reply.replyer_name ? this.props.reply.replyer_name :
+                                    <Text note style={{ marginBottom: "1%",fontWeight: 'bold', color: ColorList.indicatorColor }}>{this.props.reply.replyer_name ? this.props.reply.replyer_name :
                                         this.props.reply.type_extern}</Text>
                                     {this.props.reply.type_extern ? <View style={{ flexDirection: 'row', }}>
                                         {/*<Icon type={"Entypo"} name={'dot-single'} style={{ color: '#1FABAB',  }}></Icon>*/}
@@ -101,12 +101,12 @@ export default class ReplyText extends Component {
                                     })
                                 }} style={{ /*width: this.props.reply.sourcer ? "79%" : "100%",*/ alignSelf: 'center',
                                     marginLeft: this.props.reply.sourcer ? '1%' : null,
-                                    width: this.props.reply.sourcer ? '76%' : '98%'
+                                    width: this.props.reply.sourcer ? '74%' : '94%'
                                 }}>
                                     {this.props.reply.title ? <Text ellipsizeMode='tail' numberOfLines={this.props.reply.sourcer ?
-                                            this.props.reply.replyer_name ? 13 : 15 : 15} style={{ fontWeight: 'bold', fontSize: 12, color: "#1F4237", }}>{this.props.reply.replyer_name ? this.props.reply.title : this.props.reply.title.split(': \n')[1]}</Text>
+                                            this.props.reply.replyer_name ? 13 : 15 : 15} style={{ fontSize: 12, color: "#1F4237", }}>{this.props.reply.replyer_name ? this.props.reply.title : this.props.reply.title.split(': \n')[1]}</Text>
                                         : this.props.reply.text ? <Text ellipsizeMode='tail' numberOfLines={this.props.reply.sourcer ?
-                                            this.props.reply.replyer_name ? 13 : 14 : 14} style={{ color: "#81A8A0", fontSize: 12, }}>{this.props.reply.text}</Text> : null}
+                                            this.props.reply.replyer_name ? 13 : 14 : 14} style={{ fontSize: 12, }}>{this.props.reply.text}</Text> : null}
                                 </View>
                             </View>
                                     {this.props.reply.change_date ? <Text note>{`On: ${moment(this.props.reply.change_date).format("dddd, MMMM Do YYYY, h:mm:ss a")}`}</Text> : null}

@@ -1614,6 +1614,8 @@ export default class ChatRoom extends Component {
     }
     duration = 10
     replyMessageViewer() {
+        let message = find(this.room.messages,
+            { id: this.state.replyer.id })
         return <View style={{
             height: 1000,
             position: "absolute", backgroundColor: this.transparent,
@@ -1632,8 +1634,7 @@ export default class ChatRoom extends Component {
                         <Text style={{
                             color: "#FEFFDE", alignSelf: 'center',
                             fontWeight: 'bold',
-                        }}>{dateDisplayer(moment(find(this.room.messages,
-                            { id: this.state.replyer.id }).created_at).format("YYYY/MM/DD"))}</Text>
+                        }}>{dateDisplayer(moment( message && message.created_at).format("YYYY/MM/DD"))}</Text>
                         {<Message computedMaster={this.props.computedMaster}
                             openReply={(replyer) => {
                                 console.warn("replying", replyer);
@@ -1652,8 +1653,7 @@ export default class ChatRoom extends Component {
                             showPhoto={(photo) => this.showPhoto(photo)}
                             playVideo={(source) => this.playVideo(source)}
                             creator={2} user={this.sender.phone}
-                            message={find(this.room.messages,
-                                { id: this.state.replyer.id })} />}
+                            message={message || {}} />}
                     </View>
                 </ScrollView>
                 {!(this.state.replyer.sender.phone == this.sender.phone) ? <TouchableOpacity onPress={() => {

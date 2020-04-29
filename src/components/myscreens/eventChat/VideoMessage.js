@@ -56,7 +56,7 @@ export default class VideoMessage extends Component {
         let newTotal = this.state.total && this.state.total > 0 && this.state.total > total ? this.state.total : total
         newTotal = parseInt(newTotal)
         this.setState({
-            error:false,
+            error: false,
             downloadState: (newReceived / newTotal) * 100,
             total: newTotal, received: newReceived
         })
@@ -139,57 +139,57 @@ export default class VideoMessage extends Component {
                     this.props.pressingIn()
                 }} onLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null}>
                     <View>
-                    <View>
-                        <Image style={{
-                            marginTop: "2%",
-                            marginLeft: "1.2%",
-                        }} 
-                        borderRadius={5} 
-                        source={{ uri: this.props.message.thumbnailSource }} 
-                        photo={this.props.message.thumbnailSource}
-                            width={290} height={200}>
-                        </Image>
-                        <View style={{ position: 'absolute', marginTop: "25%", marginLeft: "45%", }}>
-                            <View style={{...buttoner}}>
-                                <TouchableOpacity
-                                    onPress={() => this.props.playVideo(this.props.message.source)
-                                    }>
-                                    <Icon type="EvilIcons" name="play" style={{
-                                        fontSize: 40,
-                                        color: ColorList.bodyBackground
-                                    }}></Icon>
-                                </TouchableOpacity>
+                        <View>
+                            <Image style={{
+                                marginTop: "2%",
+                                marginLeft: "1.2%",
+                            }}
+                                borderRadius={5}
+                                source={{ uri: this.props.message.thumbnailSource }}
+                                photo={this.props.message.thumbnailSource}
+                                width={290} height={200}>
+                            </Image>
+                            <View style={{ position: 'absolute', marginTop: "25%", marginLeft: "45%", }}>
+                                <View style={{ ...buttoner }}>
+                                    <TouchableOpacity
+                                        onPress={() => this.props.playVideo(this.props.message.source)
+                                        }>
+                                        <Icon type="EvilIcons" name="play" style={{
+                                            fontSize: 40,
+                                            color: ColorList.bodyBackground
+                                        }}></Icon>
+                                    </TouchableOpacity>
+                                </View>
                             </View>
-                        </View>
-                        <View style={{ alignSelf: this.state.sender ? 'flex-start' : 'flex-end', margin: '2%',justifyContent: 'center', }}>
+                            <View style={{ alignSelf: this.state.sender ? 'flex-start' : 'flex-end', margin: '2%', justifyContent: 'center', }}>
                                 {this.state.loaded ? <View style={{ marginTop: "-20%" }}><View style={{ ...buttoner, height: 25, width: 65 }}><Text style={{ color: ColorList.bodyBackground }}>
-                                {this.toMB(this.state.total).toFixed(2)} {"Mb"}</Text></View></View> :
-                                <View style={{ marginTop: "-30%",flexDirection: 'column',alignItems: 'center', }}>
-                                <View style={{height:43}}>
-                                    <AnimatedCircularProgress size={40}
-                                        width={2}
-                                        fill={testForURL(this.props.message.source) ? this.state.downloadState : 100}
-                                            tintColor={this.state.error ? "red" : ColorList.bodyBackground}
-                                        backgroundColor={this.transparent}>
-                                        {
-                                            (fill) => (<View style={{...buttoner, alignSelf:'center'}}>
-                                                {this.state.downloading ? <TouchableWithoutFeedback onPress={() => this.cancelDownLoad(this.props.message.source)}>
-                                                    <Icon type="EvilIcons" style={{ color: ColorList.bodyBackground }} name="close">
-                                                    </Icon>
-                                                </TouchableWithoutFeedback> : <TouchableWithoutFeedback onPress={() => this.downloadVideo(this.props.message.source)}>
-                                                        <Icon type="EvilIcons" style={{ color: ColorList.bodyBackground }} name="arrow-down">
-                                                        </Icon>
-                                                    </TouchableWithoutFeedback>}
-                                            </View>)
-                                        }
-                                    </AnimatedCircularProgress>
-                                    </View>
-                                    <View style={{ marginTop: "5%",...buttoner,height:25,width:75 }}><Text style={{marginBottom: 7,}} note>{"("}{this.toMB(this.state.received).toFixed(1)}{"/"}
-                                        {this.toMB(this.state.total).toFixed(1)}{")Mb"}</Text></View></View>}</View>
-                    </View>
-                    {this.props.message.text ? <View style={{ marginTop: "-5%", padding: "2%" }}>
-                        <TextContent onLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null} pressingIn={() => this.props.pressingIn()} text={this.props.message.text}></TextContent>
-                    </View> : null}
+                                    {this.toMB(this.state.total).toFixed(2)} {"Mb"}</Text></View></View> :
+                                    <View style={{ marginTop: "-30%", flexDirection: 'column', alignItems: 'center', }}>
+                                        <View style={{ height: 43 }}>
+                                            <AnimatedCircularProgress size={40}
+                                                width={2}
+                                                fill={testForURL(this.props.message.source) ? this.state.downloadState : 100}
+                                                tintColor={this.state.error ? "red" : ColorList.bodyBackground}
+                                                backgroundColor={this.transparent}>
+                                                {
+                                                    (fill) => (<View style={{ ...buttoner, alignSelf: 'center' }}>
+                                                        {this.state.downloading ? <TouchableWithoutFeedback onPress={() => this.cancelDownLoad(this.props.message.source)}>
+                                                            <Icon type="EvilIcons" style={{ color: ColorList.bodyBackground }} name="close">
+                                                            </Icon>
+                                                        </TouchableWithoutFeedback> : <TouchableWithoutFeedback onPress={() => this.downloadVideo(this.props.message.source)}>
+                                                                <Icon type="EvilIcons" style={{ color: ColorList.bodyBackground }} name="arrow-down">
+                                                                </Icon>
+                                                            </TouchableWithoutFeedback>}
+                                                    </View>)
+                                                }
+                                            </AnimatedCircularProgress>
+                                        </View>
+                                        <View style={{ marginTop: "5%", ...buttoner, height: 25, width: 75 }}><Text style={{ marginBottom: 7, }} note>{"("}{this.toMB(this.state.received).toFixed(1)}{"/"}
+                                            {this.toMB(this.state.total).toFixed(1)}{")Mb"}</Text></View></View>}</View>
+                        </View>
+                        {this.props.message.text ? <View style={{ marginTop: "-5%", padding: "2%", alignSelf: this.props.sender ? "flex-start" : "flex-end", }}>
+                            <TextContent onLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null} pressingIn={() => this.props.pressingIn()} text={this.props.message.text}></TextContent>
+                        </View> : null}
                     </View>
                 </TouchableWithoutFeedback>
             </View>

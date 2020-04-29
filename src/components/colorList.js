@@ -46,8 +46,12 @@ class colorlist {
     heartColor = '#FE1D1D'
     likeActive = "#1FABAB"
     likeInactive = "black"
-    indicatorColor = "#3D3E3E"
-    indicatorInverted = "#F3F8F7"
+    indicatorColor = "#057D74"
+    indicatorInverted = "#DDECE9"
+    
+    //messages 
+    senTBoxColor = "#F3F8F7"
+    receivedBox = "#FFFFFF"
 
 
 }

@@ -32,7 +32,7 @@ class CacheImages extends Component {
     return (
       testForURL(this.props.source.uri) ? this.state.CacheableImages ?
         <this.state.CacheableImages {...this.props} /> :
-        <ImageActivityIndicator rect={this.props.thumbnails && this.props.square} /> :
+        <View style={{ ...this.props.style,justifyContent: 'center', }}><ImageActivityIndicator rect={this.props.thumbnails && this.props.square} /></View> :
         this.props.thumbnails ? <Thumbnail {...this.props}></Thumbnail> :
           <Image {...this.props}></Image>
     )

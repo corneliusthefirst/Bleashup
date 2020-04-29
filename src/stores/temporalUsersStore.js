@@ -6,7 +6,7 @@ export default class TemporalUsersStore {
         this.loadFromStore().then(users => {
             this.Users = users;
         })
-
+        storage.remove(this.saveKey)
     }
     Users = []
     saveKey = {
