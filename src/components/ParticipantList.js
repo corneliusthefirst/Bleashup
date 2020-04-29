@@ -139,7 +139,7 @@ export default class ParticipantList extends Component {
                                 style={{ color: ColorList.headerIcon }}
                             ></Icon>
                         </View>}
-                        <Text style={{marginTop: '1%',}} note>
+                        <Text style={{marginTop: '2%',}} note>
                             {this.state.participants ? this.state.participants.length : 0}
                             {" member(s)"}
                         </Text>
