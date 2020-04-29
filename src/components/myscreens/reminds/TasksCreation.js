@@ -505,7 +505,8 @@ export default class TasksCreation extends BleashupModal {
     return !this.state.mounted ? null : (
 
 
-      <View style={{ flex: 1,justifyContent: "flex-end" }}>
+      <View style={{ flex: 1,justifyContent:"flex-start" }}>
+        <View>
         <CreationHeader
           back={this.props.onClosed}
           title={!this.state.ownership ? "Remind configs" : this.props.update ? "Update Remind" : "Add Remind"}
@@ -524,8 +525,8 @@ export default class TasksCreation extends BleashupModal {
           ></RemindsTypeMenu></View>}
         >
         </CreationHeader>
+        </View>
 
-     <View style={{flex:1,width:"100%"}}>
       < KeyboardAvoidingView
       behavior={Platform.OS == "ios" ? "padding" : "height"}
       style={{flex:1}}
@@ -533,15 +534,15 @@ export default class TasksCreation extends BleashupModal {
       >
       <ScrollView>
 
-        <View style={{ flex:1, marginTop: '3%', }}>
+        <View style={{ flex:1,justifyContent:"flex-end" }}>
           <ScrollView ref={"scrollView"} showsVerticalScrollIndicator={false}>
             {this.props.shouldRestore && this.props.canRestore ? <View style={{ width: '95%', alignItems: 'flex-end', }}><Button style={{ alignSelf: 'flex-end', margin: '2%', marginRight: '2%', }} onPress={() => {
               this.props.onClosed()
               this.props.restore(this.props.remind)
             }} rounded><Text>{"Restore"}</Text></Button></View> : null}
-            <View pointerEvents={this.state.ownership ? null : 'none'} style={{ height: height / 12, alignItems: 'center' }}>
+            <View pointerEvents={this.state.ownership ? null : 'none'} style={{ height: height / 12, alignItems: 'center',justifyContent:"center" }}>
               <CreateTextInput
-                height={height / 20}
+                height={height / 15}
                 value={this.state.currentRemind.title}
                 placeholder={'Remind Title'}
                 onChange={this.onChangedTitle}
@@ -761,7 +762,7 @@ export default class TasksCreation extends BleashupModal {
             </View>
             
 
-            {!this.state.creating ? this.state.ownership && <View style={{ margin: '2%', marginBottom: '4%', }}><CreateButton
+            {!this.state.creating ? this.state.ownership && <View style={{height:80,margin:"2%" }}><CreateButton
               title={!this.props.update ? "Add Remind" : "Update Remind"}
               action={() => !this.props.update ? this.addNewRemind() : this.updateRemind()}
             ></CreateButton></View> :
@@ -798,8 +799,8 @@ export default class TasksCreation extends BleashupModal {
         </View>
         </ScrollView>
       </KeyboardAvoidingView>
-    </View>
-  </View>
+      </View>
+
 
     );
   }
