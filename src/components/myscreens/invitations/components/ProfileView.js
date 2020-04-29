@@ -8,6 +8,7 @@ import stores from "../../../../stores";
 import ProfileModal from "./ProfileModal";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import testForURL from '../../../../services/testForURL';
+import ColorList from '../../../colorList';
 
 export default class ProfileView extends Component {
     constructor(props) {
@@ -59,7 +60,7 @@ export default class ProfileView extends Component {
                 }}>
                     <Text ellipsizeMode={'tail'} numberOfLines={1} style={{
                         marginBottom: "2%",
-                        color: "#0A4E52",
+                        color: ColorList.bodyText,
                         fontWeight: 'bold',
                     }}>{this.state.profile.phone === stores.LoginStore.user.phone ? "You" : this.state.profile.nickname}</Text>
                     {this.state.profile.status && this.state.profile.status !== 'undefined' && <Text ellipsizeMode={'tail'} numberOfLines={1} style={{ alignSelf: 'flex-start', fontStyle: 'italic', }}

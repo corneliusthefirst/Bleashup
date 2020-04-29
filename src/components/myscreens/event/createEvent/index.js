@@ -208,7 +208,7 @@ resetPhoto = () => {
 
   render() {
     return (
-      <View style={{ flex:1, width: "100%" }}>
+      <View style={{ height:"100%", width: "100%" }}>
     
       <View style={{flexDirection: "row",height: colorList.headerHeight,width: colorList.headerWidth,backgroundColor:colorList.headerBackground}}>
         
@@ -229,9 +229,9 @@ resetPhoto = () => {
         
     </View>
 
-<View style={{height:"100%",flexDirection:"column"}}>
+<View style={{height:"92%",flexDirection:"column"}}>
 
-
+        <View style={{marginTop:"5%"}}>
           <CreateTextInput
                 height={height/12}
                 value={this.state.title}
@@ -239,7 +239,7 @@ resetPhoto = () => {
                 placeholder={"@Activity name"}
             >
           </CreateTextInput>
-
+        </View>
 
              <View style={{ height:colorList.containerHeight/16,alignItems:"flex-end",flexDirection:"row",justifyContent:'flex-end',alignItem:'center',marginRight:"8%"}}>
                 

@@ -3,21 +3,24 @@ import { orderBy, filter, reject, findIndex, uniqBy } from "lodash"
 import autobind from 'autobind-decorator'
 import moment from "moment";
 class ChatStore {
-    constructor(key) {
+    constructor(key, comment) {
 
         this.storeAccessKey.key = key
         this.saveKey.key = key
         // storage.remove({key:key}).then(()=>{
 
         //})
+        this.commenting = comment
         this.readFromStore().then(value => {
-            this.setProperties(value)
+           !this.commenting && this.setProperties(value)
         })
 
     }
+    commenting = false
     addToStore(data) {
         this.saveKey.data = data;
-        return storage.save(this.saveKey)
+        this.setProperties(data)
+        return !this.commenting && storage.save(this.saveKey)
     }
     loadLatestMessage(key) {
         return new Promise((resolve, reject) => {
@@ -29,26 +32,23 @@ class ChatStore {
     addMessageToStore(newMessage) {
         return new Promise((resolve, reject) => {
             this.readFromStore().then(olddata => {
-                this.insetDateSeparator(olddata, newMessage).then(data => {
-                    //console.warn(data,"....")
+                this.insetDateSeparator(this.commenting ? this.messages : olddata, newMessage).then(data => {
                     data.unshift(newMessage)
-                    return this.addToStore(data).then(() => {
-                        this.messages = data
+                    this.addToStore(data)
+                    this.setProperties(data)
                         resolve(data)
-                    })
                 })
             })
         })
     }
-    setMessageDimessions(id,dim){
-        return new Promise((resolve,reject) => {
+    setMessageDimessions(id, dim) {
+        return new Promise((resolve, reject) => {
             this.readFromStore().then(messages => {
-                let index = findIndex(messages,{id:id})
+                let index = findIndex(messages, { id: id })
                 messages[index].dimenssions = dim
-                this.addToStore(messages).then(() => {
-                    this.messages = messages
-                    resolve(messages)
-                })
+                this.addToStore(messages)
+                this.setProperties(messages)
+                resolve(messages)
             })
         })
     }
@@ -67,18 +67,14 @@ class ChatStore {
                     let index = findIndex(data, { id: newMessage.id });
                     if (index >= 0) {
                         data[index] = { ...data[index], received: newMessage.received, key: newKey, sent: sent, type: type };
-                        this.addToStore(data).then(() => {
-                            this.messages = data
-                            resolve(data)
-                        })
-                        newing ? this.messages = data : null
+                        this.addToStore(data)
+                        this.setProperties(data)
+                        resolve(data)
                     } else {
-                        data.unshift({ ...newMessage, key: newKey, sent: sent, type: type, received: newMessage.received })
-                        newing ? this.messages = data : null
-                        this.addToStore(data).then(() => {
-                            this.messages = data
-                            resolve(data)
-                        })
+                        data.unshift({ ...newMessage, key: newKey, })
+                        this.addToStore(data)
+                        this.setProperties(data)
+                        resolve(data)
                     }
                 })
             })
@@ -103,16 +99,14 @@ class ChatStore {
                     let otherID = data[index + 1].id
                     data = reject(data, { id: messageID })
                     data = reject(data, { id: otherID })
-                    this.addToStore(data).then(() => {
-                        this.messages = data
-                        resolve(data)
-                    })
+                    this.addToStore(data)
+                    this.setProperties(data)
+                    resolve(data)
                 } else {
                     data = reject(data, { id: messageID })
-                    this.messages = data
-                    this.addToStore(data).then(() => {
-                        resolve()
-                    })
+                    this.addToStore(data)
+                    this.setProperties(data)
+                    resolve()
                 }
             })
         })
@@ -122,9 +116,9 @@ class ChatStore {
             this.readFromStore().then(data => {
                 data = reject(data, { id: newMessage.id })
                 data.unshift(newMessage)
-                this.addToStore(data).then(() => {
-                    resolve("ok")
-                })
+                this.addToStore(data)
+                this.setProperties(data)
+                resolve("ok")
             })
         })
     }
@@ -133,10 +127,9 @@ class ChatStore {
             this.readFromStore().then(data => {
                 index = findIndex(data, { id: newMessage.id })
                 data[index] = newMessage
-                this.messages = data
-                this.addToStore(data).then(() => {
-                    resolve(data)
-                })
+                this.addToStore(data)
+                this.setProperties(data)
+                resolve(data)
             })
         })
     }
@@ -289,10 +282,10 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
             storage
                 .load(this.storeAccessKey)
                 .then(chats => {
-                    resolve(chats);
+                    resolve(!this.commenting && chats && chats.length > 0 ? chats : this.messages);
                 })
                 .catch(error => {
-                    resolve([]);
+                    resolve(this.messages);
                 });
         });
     }
@@ -306,9 +299,9 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
             this.readFromStore().then(data => {
                 let newData = messages.concat(data);
                 newData = uniqBy(newData, "id")
-                this.addToStore(newData).then(() => {
-                    resolve()
-                })
+                this.addToStore(newData)
+                this.setProperties(newData)
+                resolve()
             })
         })
     }
@@ -318,9 +311,9 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
                 let index = findIndex(data, { id: id })
                 if (data[index]) {
                     data[index].duration = duration;
-                    this.addToStore(data).then(() => {
-                        resolve("ok")
-                    })
+                    this.addToStore(data)
+                    this.setProperties(data)
+                    resolve("ok")
                 } else {
                     resolve("not found")
                 }
@@ -335,9 +328,9 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
                     data[index].total = total;
                     data[index].received = received
                     data[index].source = path
-                    this.addToStore(data).then(() => {
-                        resolve("ok")
-                    })
+                    this.addToStore(data)
+                    this.setProperties(data)
+                    resolve("ok")
                 } else {
                     resolve("not found")
                 }
@@ -366,9 +359,9 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
                     data[index].total = total;
                     data[index].received = recieved
                     data[index].duration = duration
-                    this.addToStore(data).then(() => {
-                        resolve("ok")
-                    })
+                    this.addToStore(data)
+                    this.setProperties(data)
+                    resolve("ok")
                 } else {
                     resolve("not found")
                 }
@@ -381,9 +374,9 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
                 let index = findIndex(data, { id: id })
                 if (data[index]) {
                     data[index].cancled = true;
-                    this.addToStore(data).then(() => {
-                        resolve("ok")
-                    })
+                    this.addToStore(data)
+                    this.setProperties(data)
+                    resolve("ok")
                 } else {
                     resolve("not found")
                 }
@@ -394,10 +387,9 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
         return new Promise((resolve, rejec) => {
             this.readFromStore().then((data) => {
                 data = reject(data, { type: 'new_separator' });
-                this.addToStore(data).then(() => {
-                    this.messages = data
-                    resolve("ok")
-                })
+                this.addToStore(data)
+                this.setProperties(data)
+                resolve("ok")
 
             })
         })
@@ -408,9 +400,9 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
                 let index = findIndex(data, { id: id })
                 if (data[index]) {
                     data[index].source = url;
-                    this.addToStore(data).then(() => {
-                        resolve("ok")
-                    })
+                    this.addToStore(data)
+                    this.setProperties(data)
+                    resolve("ok")
                 } else {
                     resolve("not found")
                 }

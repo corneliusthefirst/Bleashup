@@ -25,14 +25,7 @@ export default class Like extends Component {
         inputRange: [0, 0.5, 1],
         outputRange: [1, 1.15, 1.2],
     });
-    shouldComponentUpdate(nextProps, nextState, nextContext) {
-        return (
-            this.state.loaded !== nextState.loaded ||
-            this.state.liked !== nextState.liked ||
-            this.state.isOpen !== nextState.isOpen ||
-            this.state.newWing !== nextState.newWing
-        );
-    }
+
     didILiked(likes, id) {
         return new Promise((resolve, reject) => {
             if (likes) {
@@ -48,11 +41,21 @@ export default class Like extends Component {
         });
     }
     componentDidMount() {
+        stores.Likes.loadLikes(this.props.id).then((like) => {
+            if (like) {
+                this.setLikesCount(parseInt(like.likes))
+                this.setState({
+                    liked: findIndex(like.likers, ele => ele === stores.LoginStore.user.phone) >= 0,
+                    likesCount: like.likes,
+                    loaded: true
+                })
+            }
+        })
         stores.Likes.getLikesFromRemote(this.props.id, "count", 0, 0).then(
             (data) => {
-               this.setLikesCount(data.count)
+                this.setLikesCount(data.count)
                 this.setState({
-                    likesCount:data.count,
+                    likesCount: data.count,
                     liked: data.liked,
                     loaded: true,
                 });
@@ -69,24 +72,17 @@ export default class Like extends Component {
                         stores.LoginStore.user.phone,
                         this.state.likesCount
                     ).then(() => { });
-                
+
             }
         ).catch(() => {
-            stores.Likes.loadLikes(this.props.id).then((like) => {
-                console.warn(like)
-                if(like){
-                    this.setLikesCount(parseInt(like.likes))
-                    this.setState({
-                        liked: findIndex(like.likers, ele => ele === stores.LoginStore.user.phone) >= 0,
-                        likesCount: like.likes,
-                        loaded:true
-                    })
-                }
-            }) 
+           
         });
     }
-    setLikesCount(count){
+    setLikesCount(count) {
         this.props.setLikesCount && this.props.setLikesCount(count)
+        this.setState({
+            likesCount:  count
+        })
     }
     likes = 0;
     liking = false;
@@ -95,13 +91,13 @@ export default class Like extends Component {
     like() {
         if (!this.liking) {
             this.liking = true;
-            Requester.like(this.props.id,this.state.likesCount)
+            Requester.like(this.props.id, this.state.likesCount)
                 .then((response) => {
                     this.liking = false;
                     this.setState({
                         liked: true,
                     });
-                    this.setLikesCount(1)
+                    this.setLikesCount(this.state.likesCount + 1)
                     this.likes = this.state.likes;
                     this.likers = this.state.likers;
                     this.props.end;
@@ -119,13 +115,13 @@ export default class Like extends Component {
     unlike() {
         if (!this.unliking) {
             this.unliking = true;
-            Requester.unlike(this.props.id,this.state.likesCount - 1)
+            Requester.unlike(this.props.id, this.state.likesCount - 1)
                 .then((response) => {
                     this.unliking = false;
                     this.setState({
                         liked: false,
                     });
-                    this.setLikesCount(-1)
+                    this.setLikesCount(this.state.likesCount -1)
                     this.likers = this.state.likers;
                     this.likes = this.state.likes;
                 })
@@ -159,46 +155,45 @@ export default class Like extends Component {
         }
     }
     render() {
-        console.warn(this.props.id, this.state.liked);
-        return this.state.loaded ? (
-            <View style={{ flexDirection: "row" }}>
-                <View>
-                    <TouchableWithoutFeedback
-                        onPressIn={() => {
-                            this.scaleValue.setValue(0);
-                            Animated.timing(this.scaleValue, {
-                                toValue: 1,
-                                duration: 300,
-                                easing: Easing.linear,
-                                userNativeDriver: true,
-                            }).start();
-                        }}
-                        onPressOut={() => {
-                            Animated.timing(this.scaleValue, {
-                                toValue: 1,
-                                duration: 200,
-                                easing: Easing.linear,
-                                userNativeDriver: true,
-                            }).start();
-                            return this.action();
-                        }}
-                    >
-                        <Animated.View style={{ transform: [{ scale: this.cardScale }] }}>
-                            <Icon
-                                name="like"
-                                type="EvilIcons"
-                                style={{
-                                    color: this.state.liked
-                                        ? ColorList.likeActive
-                                        : ColorList.likeInactive,
-                                    fontSize: 45,
-                                }}
-                            />
-                        </Animated.View>
-                    </TouchableWithoutFeedback>
-                </View>
-                <View></View>
+        return <View>
+            <View>
+                <TouchableWithoutFeedback
+                    onPress={() => {
+                        this.scaleValue.setValue(0);
+                        Animated.timing(this.scaleValue, {
+                            toValue: 1,
+                            duration: 300,
+                            easing: Easing.linear,
+                            userNativeDriver: true,
+                        }).start();
+                        return this.action();
+                    }}
+                    onPressOut={() => {
+                        Animated.timing(this.scaleValue, {
+                            toValue: 1,
+                            duration: 200,
+                            easing: Easing.linear,
+                            userNativeDriver: true,
+                        }).start();
+                        
+                    }}
+                >
+                    <Animated.View style={{ transform: [{ scale: this.cardScale }] }}>
+                        <Icon
+                            name={this.props.icon.name}
+                            type={this.props.icon.type}
+                            style={{
+                                color: this.state.liked
+                                    ? this.props.likedColor
+                                    : ColorList.likeInactive,
+                                fontSize: this.props.size,
+                            }}
+                        />
+                      {/*  <Text note>{`${this.state.likesCount} likes`}</Text>*/}
+                    </Animated.View>
+                </TouchableWithoutFeedback>
             </View>
-        ) : null;
+            <View></View>
+        </View>
     }
 }

@@ -3,6 +3,7 @@ import Modal from 'react-native-modalbox';
 import { View, TouchableOpacity } from 'react-native'
 import { Button, Text, Icon } from 'native-base'
 import CacheImages from './CacheImages'
+import ColorList from './colorList';
 
 export default class ProfileModal extends Component {
     constructor(props) {
@@ -45,7 +46,7 @@ export default class ProfileModal extends Component {
                 }
                 }
                 style={{
-                    backgroundColor: this.transparent, justifyContent: 'center', alignItems: 'center',
+                    backgroundColor: ColorList.bodyBackground, justifyContent: 'center', alignItems: 'center',
                     height: 380, borderRadius: 15,  width: 350
                 }}
                 position={'center'}
@@ -56,7 +57,7 @@ export default class ProfileModal extends Component {
                             return this.props.onClosed()
                         })
                     } transparent>
-                        <Icon style={{ color: "#1FABAB", fontSize: 35 }} name="close" type="EvilIcons" />
+                        <Icon style={{ color: ColorList.bodyIcon, fontSize: 35 }} name="close" type="EvilIcons" />
                     </TouchableOpacity>
                 </View>
                 <Text style={{ fontSize: 18, fontWeight: '600', marginLeft: -220 }}>{this.state.profile.nickname}</Text>

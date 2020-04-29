@@ -33,7 +33,7 @@ import TitleView from "./TitleView";
 import SwipeOutView from "./SwipeOutView";
 import emitter from "../../../../services/eventEmiter";
 import Swipeout from '../../../SwipeOut';
-import { findIndex, isEqual,find } from "lodash"
+import { findIndex, isEqual, find } from "lodash"
 import InvitationModal from './InvitationModal';
 import ProfileSimple from './ProfileViewSimple';
 import shadower from "../../../shadower";
@@ -72,7 +72,7 @@ class PublicEvent extends Component {
       isPublisherModalOpened: false,
       currentUser: undefined,
       opponent: null,
-      showPhoto:false,
+      showPhoto: false,
     };
   }
 
@@ -92,19 +92,19 @@ class PublicEvent extends Component {
   swipperComponent = null
   componentDidMount() {
     //this is done to use as default for my test
-    if(this.props.Event.type == "relation"){
-        //console.warn("here2",this.props.Event.participant);
-        this.props.Event.participant.forEach((participant)=>{
-             if(participant.phone !=  stores.LoginStore.user.phone){
-               stores.TemporalUsersStore.Users.forEach((user)=>{
-                  if(participant.phone == user.phone){
-                    this.setState({ opponent:user});
-                  }
-               })
+    if (this.props.Event.type == "relation") {
+      //console.warn("here2",this.props.Event.participant);
+      this.props.Event.participant.forEach((participant) => {
+        if (participant.phone != stores.LoginStore.user.phone) {
+          stores.TemporalUsersStore.Users.forEach((user) => {
+            if (participant.phone == user.phone) {
+              this.setState({ opponent: user });
+            }
+          })
 
-             }
-        })
-    
+        }
+      })
+
     }
 
     setTimeout(() => {
@@ -140,7 +140,7 @@ class PublicEvent extends Component {
             }
             join={() => this.join()}
             hide={() => this.hide()} {...this.props} ></SwipeOutView >,
-            backgroundColor: colorList.bodyBackground,
+          backgroundColor: colorList.bodyBackground,
         }
       ],
     }
@@ -329,77 +329,80 @@ class PublicEvent extends Component {
   }
 
 
-  renderTitle(){
-    return  (<CardItem style={{ marginBottom: '3%',backgroundColor:colorList.bodyBackground,width: "100%" }}>
+  renderTitle() {
+    return (<CardItem style={{ marginBottom: '3%', backgroundColor: colorList.bodyBackground, width: "100%" }}>
 
-          <View style={{ flexDirection: 'row', width: '100%',alignItems:"center" }}>
-        
-           <TouchableOpacity style={{ alignSelf:'flex-start',width: '15%',alignItems:"center",paddingTop:"2%" }}  onPress={() => this.props.showPhoto(this.props.Event.background) } >
-            <View  style={{ alignSelf: 'flex-start',width: '100%',alignItems:"center",paddingTop:"2%" }} >
-              { this.props.Event.background?  <CacheImages small thumbnails square source={{ uri:this.props.Event.background }}
-                 style={{ height:50,justifyContent: 'center', width:50,alignSelf: 'center',
-                  borderRadius:25 }}></CacheImages>:<View style={{flex:1}}><Thumbnail small style={{height:50,width:50, borderRadius:35,}} medium source={require('../../../../../assets/default_event_image.jpeg')}></Thumbnail></View> 
-                }
-           </View>
-           </TouchableOpacity>
+      <View style={{ flexDirection: 'row', width: '100%', alignItems: "center" }}>
 
-        <View style={{ width: '75%',paddingLeft:6,marginTop: '3%'}}>
+        <TouchableOpacity style={{ alignSelf: 'flex-start', width: '15%', alignItems: "center", paddingTop: "2%" }} onPress={() => this.props.Event.background && this.props.showPhoto(this.props.Event.background)} >
+          <View style={{ alignSelf: 'flex-start', width: '100%', alignItems: "center", paddingTop: "2%" }} >
+            {this.props.Event.background ? <CacheImages small thumbnails square source={{ uri: this.props.Event.background }}
+              style={{
+                height: 50, justifyContent: 'center', width: 50, alignSelf: 'center',
+                borderRadius: 25
+              }}></CacheImages> : <View style={{ flex: 1 }}><Thumbnail small style={{ height: 50, width: 50, borderRadius: 35, }} medium source={require('../../../../../assets/default_event_image.jpeg')}></Thumbnail></View>
+            }
+          </View>
+        </TouchableOpacity>
+
+        <View style={{ width: '75%', paddingLeft: 6, marginTop: '3%' }}>
           {this.state.isMount ? <TitleView openDetail={() => this.props.openDetails(this.props.Event)} join={() => this.join()} joint={this.state.joint} seen={() => this.markAsSeen()}
             {...this.props}></TitleView> : null}
         </View>
 
-        <View style={{ width: '10%', justifyContent: 'flex-end', alignItems: 'flex-end',marginLeft:"2%" ,alignItems:"center"}}>
-          <Icon onPress={() => this.props.showActions(this.props.Event.id)} type="Entypo" style={{ fontSize: 24, color: "#555756", alignSelf: 'flex-end',marginBottom:10 }} name="dots-three-vertical"></Icon>
+        <View style={{ width: '10%', justifyContent: 'flex-end', alignItems: 'flex-end', marginLeft: "2%", alignItems: "center" }}>
+          <Icon onPress={() => this.props.showActions(this.props.Event.id)} type="Entypo" style={{ fontSize: 24, color: "#555756", alignSelf: 'flex-end', marginBottom: 10 }} name="dots-three-vertical"></Icon>
         </View>
 
-        
+
       </View>
       <PhotoViewer open={this.state.showPhoto} photo={this.props.Event.background}
-        hidePhoto={() => { this.setState({showPhoto: false})}} ></PhotoViewer>
-        
+        hidePhoto={() => { this.setState({ showPhoto: false }) }} ></PhotoViewer>
+
     </CardItem>
-    
-    )}
+
+    )
+  }
 
   renderBody() {
     return (<CardItem
       style={{
         paddingTop: 4,
         paddingBottom: 6,
-        backgroundColor:colorList.bodyBackground,
+        backgroundColor: colorList.bodyBackground,
         width: "100%",
-        height:200
+        height: 200
       }}
       cardBody
     >
-      <View style={{ }}>
-        <View style={{ flex:1,width:"100%",alignSelf:"center",alignItems: 'center', }}>{this.state.isMount ? <View style={{ alignSelf: 'flex-start' }}>
+      <View style={{}}>
+        <View style={{ flex: 1, width: "100%", alignSelf: "center", alignItems: 'center', }}>{this.state.isMount ? <View style={{ alignSelf: 'flex-start' }}>
           <PhotoView
             navigation={this.props.navigation} renderDelay={this.props.renderDelay} showPhoto={(url) => url ?
               this.showPhoto(url) : null} joined={() => this.join()}
             isToBeJoint hasJoin={this.props.Event.joint || this.state.joint} onOpen={() => this.onOpenPhotoModal()} style={{}} photo={this.props.Event.background}
-             event_id={this.props.Event.id} width={colorList.containerWidth} height={200} borderRadius={0} />
+            event_id={this.props.Event.id} width={colorList.containerWidth} height={200} borderRadius={0} />
         </View> : null}</View>
       </View>
     </CardItem>)
   }
 
- renderMarkAsSeen(){
-   return (         
-      <CardItem style={{backgroundColor:colorList.bodyBackground}}>
+  renderMarkAsSeen() {
+    return (
+      <CardItem style={{ backgroundColor: colorList.bodyBackground }}>
         {this.state.isMount ? <Options seen={() => this.markAsSeen()} {...this.props}></Options> : null}
       </CardItem>)
- }
-renderFooter(){
-  return (
-    <Footer style={{height:height/15,backgroundColor:colorList.bodyBackground, width: "100%"}}>
-      <View style={{width:"100%", flexDirection: "row",}}>
+  }
+  renderFooter() {
+    return (
+      <Footer style={{ height: height / 15, backgroundColor: colorList.bodyBackground, width: "100%" }}>
+        <View style={{ width: "100%", flexDirection: "row", }}>
 
-      <View style={{alignSelf:"flex-start",width:"60%"}}>
-        <View style={{width:"35%"}}>
-        {this.state.isMount && !this.state.fresh ? <Join event={this.props.Event} refreshJoint={() => this.refreshJoint()}></Join> : null}
-        </View>
-      </View>
+          <View style={{ alignSelf: "flex-start", width: "60%" }}>
+            <View style={{ width: "35%" }}>
+              {this.state.isMount && !this.state.fresh ? <Join event={this.props.Event} refreshJoint={() => this.refreshJoint()}></Join> : null}
+            </View>
+          </View>
 
 
           {this.state.isMount ? <View style={{ flexDirection: "row", width: "40%" }}>
@@ -413,8 +416,10 @@ renderFooter(){
   }
   render() {
     //emitter.emit('notify', "santerss") 
-    return (this.state.isMount ? <View style={{backgroundColor:colorList.bodyBackground,
-      width: colorList.containerWidth ,alignSelf:"center" }}>
+    return (this.state.isMount ? <View style={{
+      backgroundColor: colorList.bodyBackground,
+      width: colorList.containerWidth, alignSelf: "center"
+    }}>
       <Swipeout {...this.props} onOpen={() => this.openSwipeOut()} onClose={() => this.onCloseSwipeout()} style={{
         width: "97%", ...shadower(1),
         backgroundColor: this.props.Event.new ? "#cdfcfc" : null
@@ -424,20 +429,23 @@ renderFooter(){
         //close={true}
         {...this.swipeOutSettings(this.state.master, this.state.joint)}>
         <Card
-          style={{ backgroundColor:colorList.bodyBackground,
-            width:"100%",
+          style={{
+            backgroundColor: colorList.bodyBackground,
+            width: "100%",
             alignSelf: 'center',
           }}
           bordered
         >
           {this.renderTitle()}
-          {this.props.Event.highlights.length == 0?null:this.renderBody()}
+          {this.props.Event.highlights.length == 0 ? null : this.renderBody()}
           {this.renderFooter()}
 
         </Card>
       </Swipeout>
-    </View> : <View style={{}}><Card style={{ height: 300, alignSelf: 'center',backgroundColor:colorList.bodyBackground,
-      width: "100%"}}></Card></View>
+    </View> : <View style={{}}><Card style={{
+      height: this.props.Event.highlights && this.props.Event.highlights.length > 0 ? 310 : 125, alignSelf: 'center', backgroundColor: colorList.bodyBackground,
+      width: "100%"
+    }}></Card></View>
     )
   }
 }

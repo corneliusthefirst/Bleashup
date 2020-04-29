@@ -3,7 +3,11 @@ import UserSevices from "../services/userHttpServices";
 import storage from "./Storage";
 
 export default class TempLoginStore {
-  constructor() {}
+  constructor() {
+      /*storage.remove({
+      key: 'temploginStore'
+      });*/
+  }
   @observable phonenumber = "";
   @observable resetCode = "";
   @observable confirmCode = {};

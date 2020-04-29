@@ -51,8 +51,8 @@ export default class MessageBox extends Component {
     }
 
     componentDidMount(){
-        this.setDimensions();
-        this.setState({isMount:true})
+        //this.setDimensions();
+        //this.setState({isMount:true})
     }
    
 
@@ -65,7 +65,7 @@ export default class MessageBox extends Component {
             <View  style={{flex:1,flexDirection:"column",justifyContent:"center"}}>
 
              
-              <View  style={{width:"80%",backgroundColor:"#dddddd",alignSelf:"flex-end",borderRadius:8,marginRight:"5%",marginTop:3}}>
+              <View  style={{minWidth:"30%",maxWidth:"80%",backgroundColor:"#dddddd",alignSelf:"flex-end",borderRadius:8,marginRight:"5%",marginTop:3}}>
                 <Text style={{padding:5}} >For example, you can use this property to center a child.</Text>
 
                    <View style={{flexDirection:"row",width:60,height:20,alignSelf:"flex-end",padding:2}}>
@@ -84,14 +84,13 @@ export default class MessageBox extends Component {
 
                     </View>
 
-                <View style={{alignSelf:"flex-start",backgroundColor:"white",height:12,width:"98%",borderRadius:3}}>
-                   
-                </View>
+                    <View style={{alignSelf:"flex-start",backgroundColor:"white",height:12,width:"98%",borderRadius:3}}>
+                    </View>
                
               </View>
 
 
-            <View  style={{width:this.state.width,backgroundColor:"#1FABAB",alignSelf:"flex-start",borderRadius:8,marginLeft:"5%",marginTop:3}}>
+            <View  style={{minWidth:"30%",maxWidth:"80%",backgroundColor:"#1FABAB",alignSelf:"flex-start",borderRadius:8,marginLeft:"5%",marginTop:3}}>
                
                      <Text style={{paddingTop:5,paddingLeft:5,paddingRight:5}}>{this.state.text}</Text>
 

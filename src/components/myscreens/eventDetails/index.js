@@ -279,8 +279,11 @@ export default class EventDetailView extends Component {
                       this.delay = index >= 5 ? 0 : this.delay + 1
                       return (
                         <HighlightCard
+                        navigation={this.props.navigation}
                           height={colorList.containerHeight*.45}
                           phone={stores.LoginStore.user.phone}
+                          activity_id={this.props.Event.id}
+                          activity_name={this.props.Event.about.title}
                           delay={this.delay}
                           update={(hid) => {
                             this.setState({
@@ -367,21 +370,28 @@ export default class EventDetailView extends Component {
             position={"right"}
             //text={"D"}
             renderIcon={()=>{
-              return <Icon name="file-text" type="Feather" style={{color:ColorList.bodyBackground,fontSize:22}} />
-            }}
+              return <View style={{backgroundColor:ColorList.bodyBackground,height:40,width:40,borderRadius:30,justifyContent:"center",alignItems:"center",...shadower(4)}}>
+                       <Icon name="file-text" type="Feather" style={{color:ColorList.bodyIcon,fontSize:22}} />
+                     </View>
+              }}
             action={()=>{this.setState({viewdetail:true})}}
             //buttonTextStyle={{color:colorList.bodyBackground}}
             offsetX={10}
             size={40}
             offsetY={30}
-           
            />
+
            <SideButton
-            buttonColor={'rgba(52, 52, 52, 0.8)'}
+            //buttonColor={'rgba(52, 52, 52, 0.8)'}
             position={"right"}
-            text={"+"}
+            //text={"+"}
             action={() => requestAnimationFrame(() => this.newHighlight())}
             buttonTextStyle={{color:"white"}}
+            renderIcon={()=>{
+              return <View style={{backgroundColor:ColorList.bodyBackground,height:40,width:40,borderRadius:30,justifyContent:"center",alignItems:"center",...shadower(4)}}>
+                       <Icon name="plus" type="AntDesign" style={{color:ColorList.bodyIcon,fontSize:22}} />
+                     </View>
+              }}
             size={40}
             offsetX={10}
             offsetY={90}

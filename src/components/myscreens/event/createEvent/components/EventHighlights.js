@@ -497,18 +497,7 @@ export default class EventHighlights extends BleashupModal {
                 backgroundColor={"#fbfafd"}
             >
             </CreateTextInput>
-
-
-
-        
-
-
-
-
-
-
-
-              <View style={{ marginTop: 5, marginBottom: 5,width:"80%",alignSelf:"center" }}>
+              <View style={{ marginTop: 5, marginBottom: 5,width:"80%",alignSelf:"center",alignItems:"flex-start" }}>
                 <PickersUpload
                 notAudio
                   creating={!this.props.updateState}

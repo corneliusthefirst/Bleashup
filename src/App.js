@@ -54,6 +54,8 @@ import TasksCreation from './components/myscreens/reminds/TasksCreation'
 import QRCode from "./components/myscreens/QR"
 import SearchView from './components/myscreens/event/searchView';
 import MessageBox from './components/myscreens/eventChat/messageBox';
+import CommentsPage from './components/myscreens/event/createEvent/components/CommentsPage';
+import ColorList from './components/colorList';
 /*
 let {height, width} = Dimensions.get('window');
 EStyleSheet.build({ 
@@ -75,6 +77,7 @@ const AppNavigator = createStackNavigator(
     Invitation: { screen: InvitationView },
     PotesChat: { screen: PotesChat },
     Login: { screen: LoginView },
+    Comment:{screen:CommentsPage},
     ForgotPassword: { screen: ForgotPasswordView },
     ResetCode: { screen: ResetCodeView },
     ResetPassword: { screen: ResetPasswordView },
@@ -102,7 +105,7 @@ const AppNavigator = createStackNavigator(
 
   },
   {
-    initialRouteName: "Home",
+    initialRouteName: "LoginHome",
     headerMode: "none"
   }
 );
@@ -114,7 +117,7 @@ const AppContainer = createAppContainer(AppNavigator);
 export default () => (
   <Root>
     <InAppNotificationProvider closeInterval={4000} height={80} openCloseDuration={1000}
-      iconApp={require('../assets/BleashupIcon.png')} backgroundColour={"#9EEDD3"}>
+      iconApp={require('../assets/BleashupIcon.png')} backgroundColour={ColorList.indicatorInverted}>
       <StyleProvider style={getTheme(CommonColor)}>
         <Provider app={app}>
           <AppContainer />

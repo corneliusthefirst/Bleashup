@@ -27,6 +27,7 @@ import Voter from './Voter';
 import { find } from 'lodash';
 import { isEqual } from 'lodash';
 import formVoteOptions from '../../../services/formVoteOptions';
+import ColorList from '../../colorList';
 
 export default class Message extends Component {
 
@@ -276,7 +277,7 @@ export default class Message extends Component {
     }
     iconStyles = {
         fontSize: 12,
-        color: "#1FABAB",
+        color: ColorList.bodyText,
         marginLeft: 5,
         paddingTop: 1,
         //marginTop: "-2%",
@@ -307,7 +308,7 @@ export default class Message extends Component {
             marginBottom: this.props.index <= 0 ? '2%' : 0,
             alignSelf: this.state.sender ? 'flex-start' : 'flex-end',
         }
-        let color = this.state.sender ? '#D0FEEB' : '#9EEDD3'
+        let color = this.state.sender ? ColorList.bodyBackground : ColorList.indicatorInverted
         GeneralMessageBoxStyle = {
             maxWidth:   300, flexDirection: 'column', minWidth: 120,
             minHeight: 20, overflow: 'hidden', borderBottomLeftRadius: 10, borderColor: color,
@@ -338,7 +339,7 @@ export default class Message extends Component {
             alignSelf: this.state.sender ? 'flex-start' : 'flex-end',
             borderTopRightRadius: 10,
         }
-        nameTextStyle = { fontSize: 14, fontWeight: 'bold', color: "#1FABAB" }
+        nameTextStyle = { fontSize: 14, fontWeight: 'bold', color: ColorList.bodyText }
         return (this.props.message.type == 'date_separator' ? <View style={{ marginTop: '2%', marginBottom: '2%', }}>
             <DateView date={this.props.message.id}></DateView></View> :
             this.props.message.type == "new_separator" ? <View style={{
@@ -356,6 +357,7 @@ export default class Message extends Component {
                             }
                         }]}
                         style={{ backgroundColor: 'transparent', width: "100%" }}>
+
                         <View>
                             <View onLayout={(e) => {
                                 this.props.setCurrentLayout && this.props.setCurrentLayout(e.nativeEvent.layout)
@@ -376,11 +378,13 @@ export default class Message extends Component {
                                                 note>{" "}{this.state.sender_name}</Text> : <Text>{"         "}</Text>}</TouchableOpacity> : null}<Right>
                                                     {!this.state.sender ? <Text note
                                                         style={{
-                                                            color: this.state.sender ? null : '#1FABAB',
+                                                            color: this.state.sender ? null : ColorList.bodyText,
                                                             fontSize: 13, marginRight: "2%", marginTop: "1%",
                                                         }}>
                                                         {this.state.time}{"    "}</Text> : null}</Right></View></TouchableWithoutFeedback>
+                                      
                                         <View>
+
                                             {this.props.message.reply ? <View style={{ borderRadius: 10, padding: '1%', marginTop: ".4%", width: "100%" }}>
                                                 <ReplyText handLongPress={() => this.handLongPress()} showProfile={(pro) => this.props.showProfile(pro)} pressingIn={() => {
                                                     this.replying = true
@@ -388,6 +392,7 @@ export default class Message extends Component {
                                                     replyer.isThisUser = !this.state.sender
                                                     this.props.message.reply && this.props.message.reply.type_extern ? this.props.handleReplyExtern(this.props.message.reply) : this.props.openReply(replyer)
                                                 }} reply={this.props.message.reply}></ReplyText></View> : null}
+
                                             <TouchableWithoutFeedback onPressIn={() => {
                                                 this.replying = true
                                             }} onPress={() => {
@@ -399,13 +404,16 @@ export default class Message extends Component {
                                                     {this.chooseComponent(this.props.message, this.props.message.id, this.state.sender)}
                                                 </View>
                                             </TouchableWithoutFeedback>
+
                                         </View>
+
                                         <TouchableWithoutFeedback onPressIn={() => {
                                             this.replying = true
                                         }} onLongPress={() => {
                                             this.handLongPress()
                                         }}>
                                             <View>
+
                                                 <View style={{
                                                     margin: 3,
                                                     backgroundColor: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text) ? color : 'transparent' : 'transparent',
@@ -414,11 +422,12 @@ export default class Message extends Component {
                                                     {this.state.sender ? <Text note
                                                         style={{
                                                             marginLeft: "5%",
-                                                            color: this.state.sender ? null : '#1FABAB',
+                                                            color: this.state.sender ? null : ColorList.bodyText,
                                                             fontSize: 13, marginRight: "2%", marginTop: "1%",
                                                         }}>
                                                         {this.state.time}{"    "}</Text> : null}
                                                 </View>
+
                                                 <View style={{
                                                     backgroundColor: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text) ? color : 'transparent' : 'transparent',
                                                 }}>{!this.state.sender ? this.props.message.sent ? this.props.received ?
@@ -426,12 +435,15 @@ export default class Message extends Component {
                                                     </Icon> : <Icon style={this.iconStyles} type={"EvilIcons"} name="check">
                                                     </Icon> : <Icon style={{ ...this.iconStyles, color: "#FFF" }} type="MaterialCommunityIcons"
                                                         name="progress-check"></Icon> : null}</View>
+
                                             </View>
                                         </TouchableWithoutFeedback>
+
                                     </View>
                                 </View>
                             </View>
                         </View>
+
                     </Swipeout>
                 </View>
         )

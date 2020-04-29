@@ -5,6 +5,9 @@ import storage from "./Storage";
 export default class LoginStore {
   constructor() {
     this.getStatusOptions().then((options)=>{this.statusOptions = options });
+      /*storage.remove({
+      key: 'loginStore'
+      });*/
   }
 
   @observable phonenumber = "";
@@ -21,14 +24,14 @@ export default class LoginStore {
     updated_at: "",
     password:"",
     profile:"",
-    profile_ext:""
+    profile_ext:"",
+    country_code:""
   }; 
 
   @action getUser() {
     return new Promise((resolve, reject) => {
       if (this.user.phone == "" || this.user.password == "") {
-        storage
-          .load({
+        storage.load({
             key: "loginStore",
             autoSync: true
           })
@@ -44,7 +47,8 @@ export default class LoginStore {
               updated_at: data.updated_at,
               password: data.password,
               profile: "https://www.whatsappprofiledpimages.com/wp-content/uploads/2019/01/Profile-Pic-Images-4-300x300.jpg", //data.profile,
-              profile_ext: data.profile_ext
+              profile_ext: data.profile_ext,
+              country_code:data.country_code
             };
             resolve(this.user);
           })
@@ -70,7 +74,8 @@ export default class LoginStore {
         updated_at: newUser.updated_at,
         password: newUser.password,
         profile: newUser.profile,
-        profile_ext: newUser.profile_ext
+        profile_ext: newUser.profile_ext,
+        country_code:newUser.country_code
       };
       storage
         .save({

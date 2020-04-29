@@ -18,7 +18,7 @@ export default class Waiter extends Component{
         }}>
             <StatusBar animated={true} backgroundColor={ColorList.headerBackground} barStyle="dark-content"></StatusBar>
             <Image resizeMode={"contain"} source={require("../../../../assets/Bleashup.png")}></Image>
-            {!this.props.dontshowSpinner?<Spinner size="small" color="#1FABAB" />:null}
+            {!this.props.dontshowSpinner?<Spinner size="small" color={ColorList.indicatorColor} />:null}
         </View>
     }
 }

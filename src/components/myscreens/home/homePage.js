@@ -170,6 +170,10 @@ class Home extends Component {
   }
   realNew = []
   componentDidMount() {
+    stores.LoginStore.getUser().then((user)=>{
+      console.warn('home unmounting',user)
+    })
+
     stores.Highlights.initializeGetHighlightsListener()
     emitter.on("notify", (event) => {
       {
@@ -207,7 +211,7 @@ class Home extends Component {
   exiting = false
   timeout = null
   componentWillUnmount() {
-    //console.warn('home unmounting')
+    
     BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton.bind(this));
     this.removeNotificationDisplayedListener()
     Linking.removeEventListener('url', this.handleUrl);
@@ -298,7 +302,7 @@ class Home extends Component {
         <View style={{ height: colorList.headerHeight,backgroundColor: colorList.headerBackground ,width:"100%", }}>
         
          
-            <View style={{flex: 1, backgroundColor: colorList.headerBackground, flexDirection: "row",justifyContent: "space-between",width:"100%" }}>
+            <View style={{flex: 1, backgroundColor: colorList.headerBackground, flexDirection: "row",justifyContent: "space-between",width:"100%",...bleashupHeaderStyle }}>
              
               <View style={{ alignSelf: "flex-start",justifyContent:"center",height:"100%" }}>
                 <Thumbnail source={require("../../../../assets/bleashuptitle1.png")} style={{width:120}}></Thumbnail>

@@ -9,6 +9,7 @@ import shadower from "../../shadower";
 import testForURL from '../../../services/testForURL';
 import ProfileModal from "../invitations/components/ProfileModal";
 import buttoner from "../../../services/buttoner";
+import ColorList from '../../colorList';
 let stores = null
 export default class ReplyText extends Component {
     constructor(props) {
@@ -53,11 +54,11 @@ export default class ReplyText extends Component {
                             })
                             }>
                                 <View style={{ flexDirection: 'row', }}>
-                                    <Text note style={{ marginBottom: "1%", color: "#1FABAF" }}>{this.props.reply.replyer_name ? this.props.reply.replyer_name :
+                                    <Text note style={{ marginBottom: "1%", color: ColorList.indicatorColor }}>{this.props.reply.replyer_name ? this.props.reply.replyer_name :
                                         this.props.reply.type_extern}</Text>
                                     {this.props.reply.type_extern ? <View style={{ flexDirection: 'row', }}>
                                         {/*<Icon type={"Entypo"} name={'dot-single'} style={{ color: '#1FABAB',  }}></Icon>*/}
-                                        <Text note style={{ fontWeight: 'bold', fontStyle: 'italic', }}>{`:  ${this.props.reply.replyer_name ?
+                                        <Text  style={{ fontWeight: 'bold',fontSize: 12, }}>{`:  ${this.props.reply.replyer_name ?
                                             this.props.reply.type_extern : this.props.reply.title.split(': \n')[0]}`}</Text>
                                     </View> : null}
                                 </View>
@@ -66,7 +67,7 @@ export default class ReplyText extends Component {
                             </View>
                             {this.props.reply.audio || this.props.reply.file ? <View style={{ display: "flex", flexDirection: 'row', }}>
                                 <Icon type={this.props.reply.audio ? "MaterialIcons" : "MaterialCommunityIcons"}
-                                    name={this.props.reply.audio ? "audiotrack" : "file-document-box"} style={{ width: "14%", color: "#1FABAF" }}></Icon>
+                                    name={this.props.reply.audio ? "audiotrack" : "file-document-box"} style={{ width: "14%", color: ColorList.indicatorColor }}></Icon>
                                 {this.props.reply.type_extern && this.props.reply.audio ?
                                     <Text ellipsizeMode={'tail'} numberOfLines={4}
                                         style={{ fontWeight: 'bold', fontSize: 12, color: "#1F4237", width: '83%' }}>
@@ -90,7 +91,7 @@ export default class ReplyText extends Component {
                                         height: this.state.currentHeight, borderRadius: 5,
                                     }} source={{ uri: this.props.reply.sourcer }}></Thumbnail>}
                                             {this.props.reply.video ? <View style={{ ...buttoner, position: "absolute", marginTop: "7%", marginLeft: "18%",}}><Icon type={"EvilIcons"} name={"play"} style={{
-                                             color: "#FEFFDE",
+                                             color: ColorList.bodyBackground,
                                         }}></Icon></View> : null}</View> : null}
 
                                 </View>

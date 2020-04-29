@@ -25,7 +25,9 @@ export default class TabModal extends BleashupModal {
     }
   }
   tabHeaderContent() {
-    return null
+    return {
+      backgroundColor: 'transparent',
+    }
   }
   onOpenModal() {
     setTimeout(() => {
@@ -65,7 +67,9 @@ export default class TabModal extends BleashupModal {
     });
   }
   activeTextStyle = null
-  underlineStyle = null
+  underlineStyle = {
+    backgroundColor: ColorList.bodyIcon,
+  }
   isOpened = this.props.isOpen;
   modalBody() {
     return (

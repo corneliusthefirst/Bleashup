@@ -7,6 +7,7 @@ import PhotoEnlargeModal from './PhotoEnlargeModal';
 import PhotoViewer from '../../event/PhotoViewer';
 import shadower from '../../../shadower';
 import testForURL from '../../../../services/testForURL';
+import ColorList from '../../../colorList';
 
 
 export default class ProfileModal extends Component {
@@ -27,7 +28,7 @@ export default class ProfileModal extends Component {
                 isOpen={this.props.isOpen}
                 onClosed={this.props.onClosed}
                 style={{
-                    backgroundColor: this.props.color ? this.props.color : "#FEFFDE",
+                    backgroundColor: this.props.color ? this.props.color : ColorList.bodyBackground,
                     height: "80%", borderTopLeftRadius: 8, borderTopRightRadius: 8, width: "100%"
                 }}
                 position={'bottom'}
@@ -36,7 +37,7 @@ export default class ProfileModal extends Component {
                 <View style={{ margin: '3%', height: '95%', width: '95%' }}>
                     <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                         <TouchableOpacity style={{}} onPress={this.props.onClosed} transparent>
-                            <Icon style={{ color: "#1FABAB", fontSize: 35 }} name="close" type="EvilIcons" />
+                            <Icon style={{ color: ColorList.bodyIcon, fontSize: 35 }} name="close" type="EvilIcons" />
                         </TouchableOpacity>
                     </View>
 
@@ -48,10 +49,10 @@ export default class ProfileModal extends Component {
                         <TouchableOpacity onPress={() => requestAnimationFrame(() => { this.setState({ enlargeImage: true }) })} >
                            {this.props.profile.profile && testForURL(this.props.profile.profile)? <CacheImages thumbnails source={{ uri: this.props.profile.profile }}
                                 square style={{ height: "100%", width: "100%", 
-                                        borderColor: "#1FABAB", borderRadius: 8,
+                                        borderColor: ColorList.bodyIcon, borderRadius: 8,
                                     }} /> : <Thumbnail square style={{
                                         height: "100%", width: "100%",
-                                        borderColor: "#1FABAB", borderRadius: 8,
+                                        borderColor: ColorList.bodyIcon, borderRadius: 8,
                                     }} source={require("../../../../../Images/images.jpeg")}></Thumbnail>}
                         </TouchableOpacity>
                     </View>

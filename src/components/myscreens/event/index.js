@@ -1404,7 +1404,7 @@ export default class Event extends Component {
             })
           }} isOpen={this.state.showNotifiation}></NotificationModal>
           <View style={{ marginRight: "95%", width: "100%", marginBottom: "5%", }}>
-            <Spinner size={"small"}></Spinner>
+            <Spinner  size={"small"}></Spinner>
           </View>
         </View> : null}
         {this.state.working ? <View style={{ position: "absolute", marginTop: "-8%", }}><Spinner size={"small"}></Spinner></View> : null}

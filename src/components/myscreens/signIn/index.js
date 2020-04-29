@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 //import { StyleSheet,Button,Text, TouchableOpacity , View } from 'react-native';
 import autobind from "autobind-decorator";
-import { Image, TouchableOpacity, BackHandler } from "react-native";
+import { Image, TouchableOpacity, BackHandler,View ,ScrollView} from "react-native";
 import Modal from 'react-native-modalbox';
 import { observer } from "mobx-react";
 import {
@@ -30,6 +30,11 @@ import globalState from "../../../stores/globalState";
 import firebase from 'react-native-firebase';
 import VerificationModal from "../invitations/components/VerificationModal";
 import connect from '../../../services/tcpConnect';
+import HeaderHome from '../login/header';
+import ColorList from "../../colorList";
+
+
+
 @observer
 export default class SignInView extends Component {
   constructor(props) {
@@ -56,7 +61,7 @@ export default class SignInView extends Component {
   }
   componentWillMount() {
     firebase.auth().onAuthStateChanged(user => {
-      if (user) {
+      if (user.password) {
         this.login()
       }
     });
@@ -64,7 +69,7 @@ export default class SignInView extends Component {
 
   }
 
-  user = null
+  user = {}
   exiting = false
   timeout = null
   componentWillUnmount() {
@@ -111,11 +116,13 @@ export default class SignInView extends Component {
       });
     });
   }
-  @autobind
-  SignIn() {
+
+  signIn = () => {
     globalState.loading = true;
     this.loginStore.getUser().then(user => {
+
       this.user = user;
+      console.warn(user)
       UserService.login(user.phone, this.state.password).then(response => {
         if (response === "true") {
           firebase.auth().signInWithPhoneNumber(user.phone.replace("00", "+")).then(confirmCode => {
@@ -137,19 +144,20 @@ export default class SignInView extends Component {
   }
   render() {
     return (
-      <Container>
-        <Content>
-          <Header>
-            <Left><Button onPress={this.back} transparent>
-              <Icon type="Ionicons" name="md-arrow-round-back" />
-            </Button></Left>
-            <Body>
-              <Title>Bleashup </Title>
-            </Body>
-            <Right>
-            </Right>
-          </Header>
-          <Card>
+      <View style={{height:"100%",width:"100%",alignItems:"center"}}>
+
+        <View style={{ height:ColorList.headerHeight,backgroundColor:ColorList.headerBackground,...shadower(3),flexDirection:"row",width:"100%" }}>
+              <View style={{marginLeft:"5%", justifyContent:"center",height:"95%"}}>
+                  <Icon type="MaterialIcons" name="arrow-back" onPress={this.back} style={{color:ColorList.headerIcon}}/>
+              </View> 
+              <View style={{ justifyContent:"center",height:"95%",marginLeft:"5%" }}>
+                  <Text style={{fontSize:17,color:ColorList.bodyText}}>Sign In</Text>
+              </View>
+
+          </View>
+       
+        <ScrollView style={{flex:1,width:"100%"}}  showsVerticalScrollIndicator={false}>
+          <Card style={{width:"100%"}}>
             <CardItem>
               <Left>
                 <Thumbnail source={this.loginStore.user.profile} />
@@ -168,8 +176,9 @@ export default class SignInView extends Component {
 
             <CardItem style={{ height: 60 }} />
           </Card>
+
           <TouchableOpacity
-            style={{ paddingLeft: 220, marginBottom: -22 }}
+            style={{ alignSelf:"flex-end",marginRight:"5%" }}
             onPress={this.forgotPassword}
           >
             <Text style={{ color: "#1FABAB", fontSize: 14 }}>
@@ -177,7 +186,8 @@ export default class SignInView extends Component {
             </Text>
           </TouchableOpacity>
 
-          <Item rounded style={styles.input} error={globalState.error}>
+       <View style={{marginTop:"10%",alignSelf:"center"}}>
+          <Item rounded style={{width:"90%",height:45}} error={globalState.error}>
             <Icon active type="FontAwesome" name="unlock" />
             <Input
               secureTextEntry
@@ -199,25 +209,28 @@ export default class SignInView extends Component {
                 />
               )}
           </Item>
+          </View>
 
+       <View style={{marginTop:"15%",marginBottom:"7%"}}>
           <Button
             block
             rounded
-            style={styles.buttonstyle}
-            onPress={() => {
-              this.SignIn();
-            }}
+            style={{width:"45%",alignSelf:"center",backgroundColor:ColorList.bodyBackground,borderWidth:0.7}}
+            onPress={this.signIn}
           >
             {globalState.loading ? (
-              <Spinner color="#FEFFDE" />
+              <Spinner color={ColorList.bodyIcon} />
             ) : (
                 <Text> SignIn </Text>
               )}
           </Button>
-        </Content>
+          </View>
+       </ScrollView>
+
         <VerificationModal isOpened={this.state.isModalOpened} phone={this.phone}
         verifyCode={(code) => this.verifyNumber(code)}></VerificationModal>
-      </Container>
+
+      </View>
     );
   }
 }

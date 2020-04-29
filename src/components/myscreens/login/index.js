@@ -42,12 +42,16 @@ import { observer, extendObservable, inject } from "mobx-react";
 import styles from "./styles";
 import stores from "../../../stores";
 import { functionDeclaration } from "@babel/types";
-
+ 
 import PhoneInput from "react-native-phone-input";
 import CountryPicker from "react-native-country-picker-modal";
 import UserService from "../../../services/userHttpServices";
 import globalState from "../../../stores/globalState";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import ColorList from '../../colorList';
+import shadower from '../../shadower';
+import HeaderHome from './header'
+
 
 @observer
 export default class LoginView extends Component {
@@ -128,8 +132,7 @@ export default class LoginView extends Component {
             if (response.response !== "unknown_user" && response.response !== "wrong server_key") {
 
 
-              this.loginStore
-                .setUser({
+              this.loginStore.setUser({
                   phone: this.state.value.replace(/\s/g, "").replace("+", "00"),
                   password: "",
                   profile: response.profile,
@@ -139,7 +142,9 @@ export default class LoginView extends Component {
                   created_at: response.created_at,
                   updated_at: response.updated_at,
                   birth_date: response.birth_date,
-                  email: response.email
+                  email: response.email,
+                  country_code:this.state.cca2
+
                 })
                 .then(() => {
                   this.setState({
@@ -189,13 +194,9 @@ export default class LoginView extends Component {
       <Container>
         <KeyboardAwareScrollView>
         <Content>
-          <Header style={{ marginBottom: 450 }}>
-            <Body>
-              <Title >Bleashup</Title>
-            </Body>
-          </Header>
 
-          <H3 style={styles.H3}>Phone number</H3>
+          <HeaderHome></HeaderHome>
+          <H3 style={{...styles.H3,color:ColorList.bodyText,marginTop:"30%"}}>Phone number</H3>
 
           <Item style={styles.phoneinput} rounded>
             <PhoneInput
@@ -214,13 +215,13 @@ export default class LoginView extends Component {
           <Button
             block
             rounded
-            style={styles.buttonstyle}
+            style={{...styles.buttonstyle,backgroundColor:ColorList.bodyBackground,borderWidth:0.6}}
             onPress={() => {
               this.onClickContinue();
             }}
           >
             {this.state.loading ? (
-              <Spinner color="#FEFFDE" />
+              <Spinner color={ColorList.bodyText} />
             ) : (
               <Text> Continue </Text>
             )}

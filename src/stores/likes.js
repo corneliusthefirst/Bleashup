@@ -97,7 +97,12 @@ export default class likes {
   }
   @action addLike(Likes, Like) {
     return new Promise((resolve, reject) => {
-      Likes.push(Like);
+      let index = findIndex(Likes, { event_id: Like.event_id })
+      if (index >= 0) {
+        Likes[index] = Like
+      } else {
+        Likes.push(Like);
+      }
       this.saveKey.data = uniqBy(Likes, "event_id");
       storage.save(this.saveKey).then(() => {
         this.setPropties(this.saveKey.data);

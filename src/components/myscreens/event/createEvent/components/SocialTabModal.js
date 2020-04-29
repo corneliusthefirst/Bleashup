@@ -29,11 +29,7 @@ activeTextStyle={color:ColorList.likeActive}
           body : () =>  <Likers id={this.props.id}></Likers>
       },
       {
-          heading: () => <Icon name="comment-alt" type={"FontAwesome5"} style={{ fontSize: this.returnFontSize(1)}}></Icon>,
-          body : () => <View></View>
-      }, 
-      {
-          heading: () => <Icon name={"support"} type={"FontAwesome"} style={{ fontSize: this.returnFontSize(2)}}></Icon>,
+          heading: () => <Icon name={"support"} type={"FontAwesome"} style={{ fontSize: this.returnFontSize(1)}}></Icon>,
           body : () => <View></View>
       }
   ]

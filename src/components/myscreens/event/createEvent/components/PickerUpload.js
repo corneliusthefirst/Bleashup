@@ -16,7 +16,7 @@ export default class PickersUpload extends Component {
     super(props);
     this.state = {
       downloadProgess: 0,
-      uploading:true,
+      uploading:false,
     };
   }
   componentDidMount() {
@@ -192,7 +192,7 @@ export default class PickersUpload extends Component {
   render() {
     return (
   
-      <View style={{flex:1,flexDirection:'row'}}>
+      <View style={{flex:1,flexDirection:'row',alignSelf: 'flex-start',}}>
          
         
           <View style={{width:35}}>
@@ -245,9 +245,9 @@ export default class PickersUpload extends Component {
                 <AnimatedCircularProgress
                   size={26}
                   width={2}
-                  backgroundColor={ColorList.headerIcon}
+                  backgroundColor={ColorList.indicatorInverted}
                   tintColor={
-                    !this.state.uploadError ? ColorList.iconActive : "red"
+                    !this.state.uploadError ? ColorList.indicatorColor : "red"
                   }
                   fill={parseFloat(this.state.downloadProgess * 100)}
                 >

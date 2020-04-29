@@ -97,6 +97,7 @@ getValidUsers(contacts){
    })
 
    this.array = uniq(this.array);
+   console.warn("array is",this.array)
    userArray=[];
    //get valid users from temporal user store
    this.array.forEach((phone)=>{
@@ -106,6 +107,7 @@ getValidUsers(contacts){
      }
    })
    this.setState({contacts:userArray});
+   console.warn("users are",userArray,stores.TemporalUsersStore.Users)
 }
 
 
@@ -193,7 +195,7 @@ render(){
     return (
       <Container style={{ backgroundColor: ColorList.bodyBackground,flexDirection:"column",width:ColorList.containerWidth}}>
         
-         <View style={{ height:ColorList.headerHeight,backgroundColor:ColorList.headerBackground ,}}>
+         <View style={{ height:ColorList.headerHeight,backgroundColor:ColorList.headerBackground ,marginTop:"2%"}}>
 
                  <View style={{flex:1,flexDirection:"row",...bleashupHeaderStyle,alignItems:"center"}}>
                  <Icon name="arrow-back" active={true} type="MaterialIcons" style={{ color: ColorList.headerIcon,marginLeft:"4%" }} onPress={() => this.props.navigation.navigate("Home")} />
@@ -202,7 +204,7 @@ render(){
          </View>
 
         
-        <TouchableOpacity style={{flex:1,marginLeft:"5%",}} onPress={() => this.props.navigation.navigate("NewContact")} >  
+        <TouchableOpacity style={{height:ColorList.headerHeight,backgroundColor:"red",paddingLeft:"2%",}} onPress={() => this.props.navigation.navigate("NewContact")} >  
         <View style={{flex:1,flexDirection:"row",alignItems:"center"}} >
             <View style={{width:45,height:45,borderRadius:32,borderColor:ColorList.bodyIcon,borderWidth:1,alignItems:"center",justifyContent:"center",marginLeft:"2%"}} >
                <Icon name="person-add" active={true} type="MaterialIcons" style={{ color: ColorList.bodyIcon,paddingRight:6 }} />
@@ -214,7 +216,7 @@ render(){
   
         </TouchableOpacity> 
 
-        <TouchableOpacity style={{flex:1,marginLeft:"5%"}} onPress={this.invite} >  
+        <TouchableOpacity style={{height:ColorList.headerHeight,paddingLeft:"2%"}} onPress={this.invite} >  
         <View style={{flex:1,flexDirection:"row",alignItems:"center"}} >
             <View style={{width:width/8,height:height/16,borderRadius:32,alignItems:"center",justifyContent:"center",marginLeft:"2%"}} >
                <Icon name="share" active={true} type="MaterialIcons" style={{ color: ColorList.bodyIcon,paddingRight:6 }} />
@@ -227,7 +229,7 @@ render(){
         </TouchableOpacity>  
 
       { this.state.isMount? 
-        <View style={{flex:8}}>
+        <View style={{height:"80%",backgroundColor:"blue"}}>
        
                <BleashupFlatList
                     initialRender={10}
