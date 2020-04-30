@@ -231,12 +231,12 @@ resetPhoto = () => {
 
 <View style={{height:"92%",flexDirection:"column"}}>
 
-        <View style={{marginTop:"5%"}}>
+        <View style={{marginTop:"5%",width:"80%",alignSelf:"center"}}>
           <CreateTextInput
                 height={height/12}
                 value={this.state.title}
                 onChange={this.onChangedTitle}
-                placeholder={"@Activity name"}
+                placeholder={"Activity name"}
             >
           </CreateTextInput>
         </View>

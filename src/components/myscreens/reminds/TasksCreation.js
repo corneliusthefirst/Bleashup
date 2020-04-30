@@ -44,7 +44,7 @@ export default class TasksCreation extends BleashupModal {
       currentRemind: request.Remind(),
       //currentParticipant:null,
       date: "",
-      mounted: false,
+      mounted: this.props.isOpen,
       time: "",
       defaultDate: new Date(),
       defaultTime: new Date(),
@@ -534,6 +534,7 @@ export default class TasksCreation extends BleashupModal {
                   ></RemindsTypeMenu></View></View>}
             >
             </CreationHeader>
+
             <View style={{ height: ColorList.containerHeight - (ColorList.headerHeight + 20), marginTop: '3%', }}>
               <ScrollView ref={"scrollView"} showsVerticalScrollIndicator={false}>
                 {this.props.shouldRestore && this.props.canRestore ? <View style={{ width: '95%', alignItems: 'flex-end', }}><Button style={{ alignSelf: 'flex-end', margin: '2%', marginRight: '2%', }} onPress={() => {
@@ -756,8 +757,6 @@ export default class TasksCreation extends BleashupModal {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
-    
-
 
     );
   }

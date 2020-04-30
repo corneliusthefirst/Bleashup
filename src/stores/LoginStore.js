@@ -5,6 +5,10 @@ import storage from "./Storage";
 export default class LoginStore {
   constructor() {
     this.getStatusOptions().then((options)=>{this.statusOptions = options });
+    this.loadFromStore().then(user => {
+      console.warn("user is",user)
+      this.user = user;
+    })
       /*storage.remove({
       key: 'loginStore'
       });*/
@@ -27,6 +31,17 @@ export default class LoginStore {
     profile_ext:"",
     country_code:""
   }; 
+
+  loadFromStore() {
+    //console.warn("iuygtfrdesz")
+    return new Promise((resolve, reject) => {
+        this.getUser().then(user => {
+            resolve(user)
+        }).catch((error => {
+            resolve({})
+        }))
+    })
+}
 
   @action getUser() {
     return new Promise((resolve, reject) => {

@@ -52,7 +52,7 @@ export default class ProfileSimple extends Component {
                     </TouchableWithoutFeedback>
                     <View style={{
                         alignItems: 'center',
-                        justifyContent: 'center',marginLeft: "3%", flexDirection: "column" }}>
+                        justifyContent: 'center',marginLeft: "7%", flexDirection: "column" }}>
                         <Text ellipsizeMode={'tail'} numberOfLines={1} style={{ marginBottom: "2%", 
                         fontWeight: 'bold', alignSelf: "flex-start", color: "#696969" }}>{this.props.profile.phone === stores.LoginStore.user.phone ? "You " : this.props.profile.nickname}</Text>
                         {this.props.profile.status && this.props.profile.status !== 'undefined' ? <Title style={{ fontStyle: 'italic',width:130, alignSelf: "flex-start",fontSize:12 ,color:"gray"}} >{this.props.profile.status}</Title> : null}

@@ -12,15 +12,19 @@ import CacheImages from '../../CacheImages';
 import stores from "../../../stores";
 import { functionDeclaration } from "@babel/types";
 import testForURL from '../../../services/testForURL';
-import {find,uniqBy,uniq,filter,concat} from "lodash";
+import {find,uniqBy,uniq,filter,concat,reject} from "lodash";
 import request from '../../../services/requestObjects';
 import autobind from "autobind-decorator";
 import Invite from './invite';
 import moment from "moment";
 import ColorList from '../../colorList';
+import countries from '../login/countries';
+import ProfileView from "../invitations/components/ProfileView";
+
 
 //import CreateRequest from '../event/createEvent/CreateRequester';
 import firebase from 'react-native-firebase';
+import shadower from "../../shadower";
 
 var uuid = require('react-native-uuid');
 uuid.v1({
@@ -43,7 +47,7 @@ constructor(props){
       contacts:null,
       user:null,
       invite:false,
-      alreadyCreated:false
+      alreadyCreated:false,
   }
 }  
 
@@ -80,11 +84,17 @@ componentDidMount(){
 
 array = [];
 getValidUsers(contacts){
-  
-   contacts.forEach((contact)=>{
+
+    console.warn("user is",stores.LoginStore.user)
+    let codeObj = find(countries,{id: stores.LoginStore.user.country_code})
+    console.warn("code",codeObj)
+
+    contacts.forEach((contact)=>{
       contact.phoneNumbers.forEach((subcontact)=>{
          if(subcontact.number.charAt(0)!="+"){
-           subcontact.number = "+33"+subcontact.number;
+           subcontact.number = "00"+codeObj.code+subcontact.number;
+          }else{
+            subcontact.number = subcontact.number.replace("+","00");
           }
            this.array.push(subcontact.number);
       })
@@ -101,13 +111,15 @@ getValidUsers(contacts){
    userArray=[];
    //get valid users from temporal user store
    this.array.forEach((phone)=>{
-     user = find(stores.TemporalUsersStore.Users, { phone: phone});
-     if(user){
-       userArray.push(user);
-     }
+    // user = find(stores.TemporalUsersStore.Users, { phone: phone});
+     //if(user){
+      // console.warn("here boy")
+        userArray.push({phone});
+    // }
    })
    this.setState({contacts:userArray});
-   console.warn("users are",userArray,stores.TemporalUsersStore.Users)
+   //console.warn("users are",userArray,stores.TemporalUsersStore.Users)
+
 }
 
 
@@ -193,21 +205,21 @@ createRelation = (user)=>{
 
 render(){
     return (
-      <Container style={{ backgroundColor: ColorList.bodyBackground,flexDirection:"column",width:ColorList.containerWidth}}>
+      <View style={{ flex:1,backgroundColor: ColorList.bodyBackground,flexDirection:"column",width:"100%"}}>
         
-         <View style={{ height:ColorList.headerHeight,backgroundColor:ColorList.headerBackground ,marginTop:"2%"}}>
-
-                 <View style={{flex:1,flexDirection:"row",...bleashupHeaderStyle,alignItems:"center"}}>
-                 <Icon name="arrow-back" active={true} type="MaterialIcons" style={{ color: ColorList.headerIcon,marginLeft:"4%" }} onPress={() => this.props.navigation.navigate("Home")} />
+         <View style={{height:"7%" }}>
+                 <View style={{height:ColorList.headerHeight,width:"100%",flexDirection:"row",alignItems:"center",paddingLeft:"4%",...bleashupHeaderStyle}}>
+                 <Icon name="arrow-back" active={true} type="MaterialIcons" style={{ color: ColorList.headerIcon }} onPress={() => this.props.navigation.navigate("Home")} />
                  <Text style={{fontSize:18,fontWeight:"bold",marginLeft:"3%"}}>Contacts</Text>
                  </View>
          </View>
 
         
-        <TouchableOpacity style={{height:ColorList.headerHeight,backgroundColor:"red",paddingLeft:"2%",}} onPress={() => this.props.navigation.navigate("NewContact")} >  
-        <View style={{flex:1,flexDirection:"row",alignItems:"center"}} >
-            <View style={{width:45,height:45,borderRadius:32,borderColor:ColorList.bodyIcon,borderWidth:1,alignItems:"center",justifyContent:"center",marginLeft:"2%"}} >
-               <Icon name="person-add" active={true} type="MaterialIcons" style={{ color: ColorList.bodyIcon,paddingRight:6 }} />
+        <TouchableOpacity style={{height:"9%"}} onPress={() => this.props.navigation.navigate("NewContact")} >  
+       
+        <View style={{flex:1,width:"100%",paddingLeft:"2%",flexDirection:"row",alignItems:"center"}} >
+            <View style={{width:45,height:45,alignItems:"center",justifyContent:"center",marginLeft:"2%"}} >
+               <Icon name="adduser" active={true} type="AntDesign" style={{ color: ColorList.bodyIcon,paddingRight:6 }} />
             </View>
             <View style={{marginLeft:"5%"}}>
                <Text>New Contact</Text>
@@ -216,10 +228,10 @@ render(){
   
         </TouchableOpacity> 
 
-        <TouchableOpacity style={{height:ColorList.headerHeight,paddingLeft:"2%"}} onPress={this.invite} >  
-        <View style={{flex:1,flexDirection:"row",alignItems:"center"}} >
+        <TouchableOpacity style={{height:"9%"}} onPress={this.invite} >  
+        <View style={{flex:1,width:"100%",paddingLeft:"2%",flexDirection:"row",alignItems:"center"}} >
             <View style={{width:width/8,height:height/16,borderRadius:32,alignItems:"center",justifyContent:"center",marginLeft:"2%"}} >
-               <Icon name="share" active={true} type="MaterialIcons" style={{ color: ColorList.bodyIcon,paddingRight:6 }} />
+               <Icon name="sharealt" active={true} type="AntDesign" style={{ color: ColorList.bodyIcon,paddingRight:6 }} />
             </View>
             <View style={{marginLeft:"5%"}}>
                <Text>Invite Friends</Text>
@@ -229,24 +241,49 @@ render(){
         </TouchableOpacity>  
 
       { this.state.isMount? 
-        <View style={{height:"80%",backgroundColor:"blue"}}>
+        <View style={{height:"74%",paddingLeft:"2%"}}>
        
                <BleashupFlatList
                     initialRender={10}
                     renderPerBatch={5}
                     style={{backgroundColor:ColorList.bodyBackground}}
                     firstIndex={0}
-                    //extraData={this.state}
-                    keyExtractor={(item,index)=>item.recordID}
+                    extraData={this.state}
+                    keyExtractor={(item,index)=>item.phone}
                     dataSource={this.state.contacts}
                     noSpinner = {true}
                     renderItem={(item,index) =>{
-                    
-                    //console.warn(user);
+
+                      this.delay = this.delay >= 10 ? 0:this.delay + 1
+                      //console.warn(user);
 
                    return(
+
+                    <View style={{ width: "100%",paddingLeft:"1.3%" }}>
+                      <ProfileView delay={this.delay} phone={item.phone} hideMe={()=>{this.setState({contacts:reject(this.state.contacts,{phone:item.phone})}) }}></ProfileView>
+                    </View>
                      
-                      <View style={{flexDirection:"row",margin:"3%",width:"100%",height:50}}>
+                     )
+                    }
+                    }
+
+                >
+                </BleashupFlatList>
+                    <Invite isOpen={this.state.invite} onClosed={()=>{this.setState({invite:false})}} />
+             </View>
+            :null}
+
+        </View>
+    );
+}
+
+}
+
+
+
+
+
+/**                      <View style={{flexDirection:"row",margin:"3%",width:"100%",height:50}}>
                       <View style={{width:width/6,height:50}}>
                       <TouchableWithoutFeedback onPress={() => {
                              requestAnimationFrame(() => {
@@ -269,23 +306,24 @@ render(){
                          </View>
                         </TouchableOpacity>
                     </View>
-                            
+                         */
 
-                      )
-                    }
-                    }
 
-                >
-                </BleashupFlatList>
-                    <Invite isOpen={this.state.invite} onClosed={()=>{this.setState({invite:false})}} />
-             </View>
-            :null}
 
-        </Container>
-    );
-}
 
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**        <View style={  this.state.user!=null?
           <View style={{flexDirection:"row",margin:"3%",width:"100%"}}>

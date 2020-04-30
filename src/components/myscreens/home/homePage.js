@@ -299,12 +299,13 @@ class Home extends Component {
     StatusBar.setHidden(false, true)
     return (
       <View style={{ height:colorList.containerHeight,backgroundColor:colorList.containerBackground ,width:colorList.containerWidth }}>
+        
         <View style={{ height: colorList.headerHeight,backgroundColor: colorList.headerBackground ,width:"100%", }}>
         
          
-            <View style={{flex: 1, backgroundColor: colorList.headerBackground, flexDirection: "row",justifyContent: "space-between",width:"100%",...bleashupHeaderStyle }}>
+            <View style={{flex: 1, backgroundColor: colorList.headerBackground, flexDirection: "row",justifyContent: "space-between",width:"100%",borderBottomWidth:0.5,borderColor:'rgba(52, 52, 52, 0.3)'}}>
              
-              <View style={{ alignSelf: "flex-start",justifyContent:"center",height:"100%" }}>
+              <View style={{ alignSelf: "flex-start",justifyContent:"center",height:"95%" }}>
                 <Thumbnail source={require("../../../../assets/bleashuptitle1.png")} style={{width:120}}></Thumbnail>
               </View>
 

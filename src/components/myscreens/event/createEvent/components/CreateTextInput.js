@@ -13,6 +13,7 @@ export default class CreateTextInput extends Component{
                 height: this.props.height?this.props.height:colorList.containerHeight/9,
                 alignItems: "center",
                 width:'100%',
+                justifyContent:"center"
                 
             }}
         >

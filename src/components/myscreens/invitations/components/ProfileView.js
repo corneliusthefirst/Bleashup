@@ -17,7 +17,7 @@ export default class ProfileView extends Component {
     state = { profile: undefined, isMount: false, hide: false }
     componentDidMount() {
         setTimeout(() => stores.TemporalUsersStore.getUser(this.props.phone).then(user => {
-            console.warn("user gotten")
+            console.warn("user gotten",user)
             if (user.response == "unknown_user") {
                 this.props.hideMe ? this.props.hideMe() : null
                 this.setState({
@@ -56,7 +56,7 @@ export default class ProfileView extends Component {
                 </Button>
                 <View style={{
                     alignItems: 'center',
-                    justifyContent: 'center', marginLeft: "4%", display: 'flex', fontWeight: 'bold',
+                    justifyContent: 'center', marginLeft: "7%", display: 'flex', fontWeight: 'bold',
                 }}>
                     <Text ellipsizeMode={'tail'} numberOfLines={1} style={{
                         marginBottom: "2%",

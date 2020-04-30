@@ -25,7 +25,7 @@ export default class BleashupModal extends PureComponent {
     position = 'bottom'
     modalBackground = '#FFFFFF'
     modalWidth = '100%'
-    modalHeight = screenheight
+    modalHeight = '100%'
     borderTopLeftRadius = 8
     borderTopRightRadius = 8
     height = screenheight
