@@ -18,13 +18,12 @@ export default class ProfileView extends Component {
     componentDidMount() {
         setTimeout(() => stores.TemporalUsersStore.getUser(this.props.phone).then(user => {
             console.warn("user gotten",user)
-            if (user.response == "unknown_user") {
+            if (user.response == "unknown_user" || user.response === 'wrong server_key') {
                 this.props.hideMe ? this.props.hideMe() : null
                 this.setState({
                     hide: true
                 })
             } else {
-                console.warn(user);
                 this.setState({
                     profile: user,
                     isModalOpened: false,
