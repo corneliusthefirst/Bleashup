@@ -1,14 +1,14 @@
 import React, { Component } from "react"
 import CacheImages from '../../../CacheImages';
-import { View } from "react-native";
+import { View,TouchableOpacity } from "react-native";
 import { Body, Text, Accordion, Content, Thumbnail, Button, Title } from "native-base"
 import ImageActivityIndicator from '../../currentevents/components/imageActivityIndicator';
 import ProfileIdicator from "../../currentevents/components/ProfilIndicator";
 import stores from "../../../../stores";
 import ProfileModal from "./ProfileModal";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import testForURL from '../../../../services/testForURL';
 import ColorList from '../../../colorList';
+import ProfileSimple from '../../currentevents/components/ProfileViewSimple';
 
 export default class ProfileView extends Component {
     constructor(props) {
@@ -17,14 +17,21 @@ export default class ProfileView extends Component {
     state = { profile: undefined, isMount: false, hide: false }
     componentDidMount() {
         setTimeout(() => stores.TemporalUsersStore.getUser(this.props.phone).then(user => {
-            console.warn("user gotten",user)
+            //console.warn("user gotten",user)
             if (user.response == "unknown_user") {
                 this.props.hideMe ? this.props.hideMe() : null
                 this.setState({
                     hide: true
                 })
             } else {
-                console.warn(user);
+                //console.warn("here we are boy",user);
+                stores.Contacts.addContact({phone:user.phone,host:user.current_host}).then(()=>{
+                    //console.warn("contact added")
+                })
+                this.props.updateContact(user);
+          
+               
+
                 this.setState({
                     profile: user,
                     isModalOpened: false,
@@ -40,9 +47,9 @@ export default class ProfileView extends Component {
         })
     }
     render() {
-        return this.state.hide ? null : this.state.isMount ? (
+        return this.state.hide ?<View style={{marginBottom:"2%"}}><ProfileSimple profile={this.props.phoneInfo} /></View>  : this.state.isMount ? (
 
-            <View style={{ flexDirection: "row", margin: '1%', }}>
+            <View style={{ flexDirection: "row",marginBottom: "2%",}}>
                 <Button onPress={() => {
                     requestAnimationFrame(() => {
                         this.setState({
@@ -54,9 +61,11 @@ export default class ProfileView extends Component {
                         source={{ uri: this.state.profile.profile }} /> :
                         <Thumbnail small source={require("../../../../../Images/images.jpeg")}></Thumbnail>}
                 </Button>
+
+                <TouchableOpacity onPress={() => {requestAnimationFrame(() => {this.props.action(this.state.profile);}) } }>
                 <View style={{
                     alignItems: 'center',
-                    justifyContent: 'center', marginLeft: "7%", display: 'flex', fontWeight: 'bold',
+                    justifyContent: 'center', marginLeft: "10%", display: 'flex', fontWeight: 'bold',
                 }}>
                     <Text ellipsizeMode={'tail'} numberOfLines={1} style={{
                         marginBottom: "2%",
@@ -66,6 +75,8 @@ export default class ProfileView extends Component {
                     {this.state.profile.status && this.state.profile.status !== 'undefined' && <Text ellipsizeMode={'tail'} numberOfLines={1} style={{ alignSelf: 'flex-start', fontStyle: 'italic', }}
                         note>{this.state.profile.status}</Text>}
                 </View>
+                </TouchableOpacity>
+
                 {this.state.isModalOpened ? <ProfileModal
                     isOpen={this.state.isModalOpened}
                     hasJoin={this.props.hasJoin}

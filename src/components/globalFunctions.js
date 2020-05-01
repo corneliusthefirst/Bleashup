@@ -18,6 +18,18 @@ export default class globalFunctions extends Component {
    })
   }
 
+  bleashupSearchUser = (fieldArray,text) => {
+   return new Promise((resolve, reject) => {
+      const newData = fieldArray.filter(function(item) {
+         const itemData = item.nickname ? item.nickname.toUpperCase() : ''.toUpperCase();
+         const textData = text.toUpperCase();
+         return itemData.indexOf(textData) > -1;
+       });   
+        resolve(newData);
+   })
+  }
+
+
   /*getOponentSimple(participant){
      let oponent = participant.find(ele => ele.phone !== stores.LoginStore.user.phone)
       return stores.TemporalUsersStore.User.find((ele) => ele.phone === oponent.phone)
