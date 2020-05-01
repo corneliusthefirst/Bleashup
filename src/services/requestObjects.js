@@ -392,7 +392,7 @@ class Request {
             participant: [{
                 phone: stores.LoginStore.user.phone,
                 master: true,
-                status: 'creator',
+                status: "creator",
                 host: stores.Session.SessionStore.host
             }],
             likes: 0,

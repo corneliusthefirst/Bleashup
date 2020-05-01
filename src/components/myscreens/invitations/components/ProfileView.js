@@ -17,7 +17,7 @@ export default class ProfileView extends Component {
     state = { profile: undefined, isMount: false, hide: false }
     componentDidMount() {
         setTimeout(() => stores.TemporalUsersStore.getUser(this.props.phone).then(user => {
-            console.warn("user gotten",user)
+            //console.warn("user gotten",user)
             if (user.response == "unknown_user" || user.response === 'wrong server_key') {
                 this.props.hideMe ? this.props.hideMe() : null
                 this.setState({
@@ -45,9 +45,10 @@ export default class ProfileView extends Component {
         })
     }
     render() {
-        return this.state.hide ?<View style={{marginBottom:"2%"}}><ProfileSimple profile={this.props.phoneInfo} /></View>  : this.state.isMount ? (
+        return this.state.hide ?<View style={{marginBottom:"2%"}}><ProfileSimple profile={this.props.phoneInfo} invite /></View>  : this.state.isMount ? (
 
             <View style={{ flexDirection: "row",marginBottom: "2%",}}>
+              
                 <Button onPress={() => {
                     requestAnimationFrame(() => {
                         this.setState({
@@ -60,18 +61,19 @@ export default class ProfileView extends Component {
                         <Thumbnail small source={require("../../../../../Images/images.jpeg")}></Thumbnail>}
                 </Button>
 
-                <TouchableOpacity onPress={() => {requestAnimationFrame(() => {this.props.action(this.state.profile);}) } }>
+                <TouchableOpacity onPress={() => {requestAnimationFrame(() => {if(this.props.action){this.props.action(this.state.profile);}}) } }>
                 <View style={{
                     alignItems: 'center',
-                    justifyContent: 'center', marginLeft: "10%", display: 'flex', fontWeight: 'bold',
+                    justifyContent: 'center', paddingLeft: "10%", display: 'flex', fontWeight: 'bold',
                 }}>
                     <Text ellipsizeMode={'tail'} numberOfLines={1} style={{
                         marginBottom: "2%",
                         color: ColorList.bodyText,
                         fontWeight: 'bold',
                     }}>{this.state.profile.phone === stores.LoginStore.user.phone ? "You" : this.state.profile.nickname}</Text>
-                    {this.state.profile.status && this.state.profile.status !== 'undefined' && <Text ellipsizeMode={'tail'} numberOfLines={1} style={{ alignSelf: 'flex-start', fontStyle: 'italic', }}
-                        note>{this.state.profile.status}</Text>}
+
+                      <Text ellipsizeMode={'tail'} numberOfLines={1} style={{ alignSelf: 'flex-start', fontStyle: 'italic', }}
+                        note>{this.state.profile.status && this.state.profile.status != "undefined"? this.state.profile.status:null}</Text>
                 </View>
                 </TouchableOpacity>
 

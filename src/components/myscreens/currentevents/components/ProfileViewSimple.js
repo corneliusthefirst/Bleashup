@@ -31,7 +31,7 @@ export default class ProfileSimple extends Component {
 
                 <View style={{ flexDirection: "row", width:"100%",alignItems:"center",marginBottom:"4%"}}>
 
-                      <View style={{width:"15%"}}>
+                      <View style={{width:this.props.invite ?"15%":"23%" ,paddingLeft:this.props.relation ?"4%":"0%"}}>
                         {this.props.profile.profile && testForURL(this.props.profile.profile) ? 
                                             <TouchableWithoutFeedback onPress={() => {
                                                 requestAnimationFrame(() => {
@@ -46,23 +46,23 @@ export default class ProfileSimple extends Component {
                                                <CacheImages small  thumbnails {...this.props} source={{ uri: this.props.profile.profile }} /> 
                                             </TouchableWithoutFeedback> :
 
-                                       <Thumbnail small  source={require("../../../../../Images/images.jpeg")} ></Thumbnail>}
+                                       <Thumbnail small style={this.props.style?this.props.style:{}} source={require("../../../../../Images/images.jpeg")} ></Thumbnail>}
                             </View>
 
 
                     <View style={{
-                        alignItems: 'center',
-                        justifyContent: 'center',width: "67%", flexDirection: "column",paddingLeft:"1.7%" }}>
+                    
+                        justifyContent: 'center',width:this.props.invite && !this.props.profile.found  ? "67%":"77%", flexDirection: "column",paddingLeft:this.props.relation ?"11.6%":"1.7%" }}>
                         <Text ellipsizeMode={'tail'} numberOfLines={1} style={{ marginBottom: "2%", 
-                        fontWeight: 'bold', alignSelf: "flex-start", color:this.props.profile.found?"black":"#696969",fontSize:16 }}>{this.props.profile.phone === stores.LoginStore.user.phone ? "You " : this.props.profile.nickname}</Text>
-                        {this.props.profile.status && this.props.profile.status !== 'undefined' ? <Title style={{ fontStyle: 'italic',width:130, alignSelf: "flex-start",fontSize:12 ,color:"gray"}} >{this.props.profile.status}</Title> : null}
+                        fontWeight: 'bold', alignSelf: "flex-start", color:this.props.profile.found||this.props.relation?"black":"#616161",fontSize:16 }}>{this.props.profile.phone === stores.LoginStore.user.phone ? "You " : this.props.profile.nickname}</Text>
+                        {this.props.profile.status && this.props.profile.status !== 'undefined' ? <Title style={{ fontStyle: 'italic', alignSelf: "flex-start",fontSize:12 ,color:"gray"}} >{this.props.profile.status}</Title>:null}
         
                     </View>
 
 
 
-                    {!this.props.profile.found ?
-                    <View style={{width:"18%"}}>
+                    { this.props.invite && !this.props.profile.found ?
+                    <View style={{width:"17%"}}>
                     <TouchableWithoutFeedback onPress={() => {requestAnimationFrame(() => {
                         this.setState({invite:true})
                     })}} >

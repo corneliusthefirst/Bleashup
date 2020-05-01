@@ -9,7 +9,7 @@ export default class Relation extends PublicEvent {
     super(props)
     this.state = {}
   }
-  state = {}
+  state = {} 
   renderTitle() {
     return null
   }

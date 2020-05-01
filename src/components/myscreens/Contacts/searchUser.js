@@ -81,7 +81,7 @@ searchFilterFunction = (text)=>{
                     renderItem={(item,index) =>{
 
                      return(
-                         <ProfileSimple profile={item}></ProfileSimple>
+                         <ProfileSimple profile={item} invite ></ProfileSimple>
                       )
                     }
                     }

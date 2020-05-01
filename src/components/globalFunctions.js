@@ -46,4 +46,5 @@ export default class globalFunctions extends Component {
    })
   }
 
+
 } 

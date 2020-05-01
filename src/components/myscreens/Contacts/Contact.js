@@ -2,8 +2,7 @@ import React, { Component } from "react";
 import { View, Vibration,FlatList, TouchableWithoutFeedback, Dimensions, TouchableOpacity,PermissionsAndroid,ScrollView} from 'react-native';
 
 import {
-  Card,CardItem,Text,Label,Spinner,Button,Container,Icon,Thumbnail,Title, Item
-} from 'native-base';
+  Card,CardItem,Text,Label,Spinner,Button,Container,Icon,Thumbnail,Title, Item} from 'native-base';
 import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
 import Contacts from 'react-native-contacts';
 import BleashupFlatList from '../../BleashupFlatList';
@@ -20,9 +19,7 @@ import moment from "moment";
 import ColorList from '../../colorList';
 import countries from '../login/countries';
 import ProfileView from "../invitations/components/ProfileView";
-
-
-//import CreateRequest from '../event/createEvent/CreateRequester';
+import CreateRequest from '../event/createEvent/CreateRequester';
 import firebase from 'react-native-firebase';
 import shadower from "../../shadower";
 import BeNavigator from "../../../services/navigationServices";
@@ -49,7 +46,8 @@ constructor(props){
       user:null,
       invite:false,
       alreadyCreated:false,
-      searchArray:[]
+      searchArray:[],
+      creating:false
   }
 }  
 
@@ -155,9 +153,7 @@ invite = ()=>{
 }
 
 findIn = (arrayOfObjects,object)=>{
-
    // //console.warn("here bro",arrayOfObjects,object);
-
     arrayOfObjects.forEach((element)=>{
         if(element.phone == object.phone){
           return true;
@@ -176,7 +172,7 @@ createRelation = (user)=>{
       relations.forEach(relation => {
          if(this.findIn(relation.participant,currentUser)&&this.findIn(relation.participant,user)){
              this.setState({alreadyCreated:true});
-             //console.warn("relation exist");
+             console.warn("relation exist");
          }
      });
    
@@ -185,17 +181,12 @@ createRelation = (user)=>{
         //set it type
         relation.type = "relation";
         //push participants
-        relation.participant = [];
-        let participant1 = request.Participant();
-        participant1.phone = currentUser.phone;
-        participant1.status = currentUser.status;
-        participant1.master = true;
-        relation.participant.push(participant1);
-        let participant2 = request.Participant();
-        participant2.phone = user.phone;
-        participant2.status = user.status;
-        participant2.master = true;
-        relation.participant.push(participant2);
+         let opponent = request.Participant();
+         opponent.phone =  user.phone;
+         opponent.master = true;
+         relation.participant.push(opponent);
+
+
         //supply it an id 
         var arr = new Array(32);
         let num = Math.floor(Math.random() * 16)
@@ -203,26 +194,26 @@ createRelation = (user)=>{
         let New_id = uuid.unparse(arr, num);
         //give this id to the relation
         relation.id = New_id;
-        //add the new highlights to global highlights
-        relation.creator_phone = currentUser.phone;
-        relation.created_at = moment().format();
-        console.warn(relation);
+        console.warn("relation is",relation);
         //stores.Events.addEvent(relation).then(()=>{});
         //CreateRequest.createEvent(relation).then((res) => {})
        
-       /* CreateRequest.createEvent(newEvent).then((res) => {
-          //console.warn(res)
+        CreateRequest.createEvent(relation).then((res) => {
+          console.warn("res here",res)
           stores.Events.delete("newEventId").then(() => {
+            console.warn("newEventId deleted")
             firebase.database().ref(`rooms/${res.id}/${res.id}`).set({ name: 'General', members: res.participant }).then(() => {
+              console.warn("room created",res)
               this.setState({creating: false })
-              BeNavigator.navigateToActivity({tab:'EventChat',event:res})
+              BeNavigator.navigateToActivity('EventChat',res)
+             
             })
           });
         }).catch(() => {
           this.setState({
             creating: false
           })
-        })*/
+        })
 
      }else{
        this.setState({alreadyCreated:false})
@@ -287,7 +278,7 @@ render(){
   
         </TouchableOpacity> 
 
-        <TouchableOpacity style={{height:"9%"}} onPress={this.invite} >  
+        <TouchableOpacity style={{height:"8%"}} onPress={this.invite} >  
         <View style={{flex:1,width:"100%",paddingLeft:"2%",flexDirection:"row",alignItems:"center"}} >
             <View style={{width:width/8,height:height/16,borderRadius:32,alignItems:"center",justifyContent:"center",marginLeft:"2%"}} >
                <Icon name="sharealt" active={true} type="AntDesign" style={{ color: ColorList.bodyIcon,paddingRight:6 }} />
@@ -299,9 +290,12 @@ render(){
   
         </TouchableOpacity>  
 
+        <View style={{height:"5%",justifyContent:"center",alignItems:"flex-end",paddingRight:"5%"}}>
+           {this.state.creating ? <Spinner></Spinner>:null}
+        </View>
 
       {this.state.isMount? 
-        <View style={{height:"70%",paddingLeft:"2%",marginTop:"3%"}}>
+        <View style={{height:"70%",paddingLeft:"2%"}}>
        
                <BleashupFlatList
                     initialRender={15}
@@ -331,7 +325,7 @@ render(){
                 </BleashupFlatList>
                     <Invite isOpen={this.state.invite} onClosed={()=>{this.setState({invite:false})}} />
              </View>
-            :null}
+            :<Spinner></Spinner>}
 
 
 

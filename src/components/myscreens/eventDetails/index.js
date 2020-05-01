@@ -245,12 +245,12 @@ export default class EventDetailView extends Component {
               paddingLeft: '1%', paddingRight: '1%', backgroundColor: colorList.headerBackground,
               flexDirection: "row", alignItems: "center",
             }}>
-              <View style={{ width: "10%", marginLeft: "1%" }} >
+              <View style={{ width: "10%", paddingLeft: "3%" }} >
                 <Icon onPress={() => { BeNavigator.goBack() }}
                   style={{ color: colorList.headerIcon, }} type={"MaterialIcons"} name={"arrow-back"}></Icon>
               </View>
 
-              <View style={{ width: '69%', paddingLeft: '2%', justifyContent: "center" }}>
+              <View style={{ width: '69%', paddingLeft: '9%', justifyContent: "center" }}>
                 <Title style={{ color: colorList.headerText, fontWeight: 'bold', alignSelf: 'flex-start' }}>{this.props.Event.about.title}</Title>
               </View>
               <View style={{ width: '20%', alignItems: "flex-end" }}>
