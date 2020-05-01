@@ -5,6 +5,7 @@ import { countComments } from '../../../../../services/cloud_services';
 import ColorList from '../../../../colorList';
 import { TouchableOpacity } from "react-native-gesture-handler";
 import stores from '../../../../../stores';
+import BeNavigator from '../../../../../services/navigationServices';
 
 export default class Comments extends Component {
     constructor(props) {
@@ -37,7 +38,7 @@ export default class Comments extends Component {
         })
     }
     openComments() {
-        this.props.navigation.push('Comment', { 
+        BeNavigator.pushTo('Comment', { 
             activity_id: this.props.activity_id, 
             activity_name: this.props.activity_name,
             title: this.props.title,

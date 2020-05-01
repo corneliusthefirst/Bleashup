@@ -57,6 +57,7 @@ import Drawer from 'react-native-drawer'
 import shadower from "../../shadower";
 import colorList from "../../colorList";
 import SettingsTabModal from "./SettingTabModal";
+import BeNavigator from '../../../services/navigationServices';
 
 const screenWidth = Math.round(Dimensions.get('window').width);
 
@@ -68,6 +69,7 @@ var swipeoutBtns = [
 export default class Event extends Component {
   constructor(props) {
     super(props);
+    GState.nav = this.props.navigation
     const { initialPage } = this.props;
     this.state = {
       currentPage: "",
@@ -87,7 +89,6 @@ export default class Event extends Component {
       showNotifiation: false,
     };
     this.backHandler = null
-    //this.props.Event = this.props.navigation.getParam("Event");
   }
   state = {
     Event: undefined /*{ about: { title: "Event title" }, updated: true }*/,
@@ -140,10 +141,8 @@ export default class Event extends Component {
     })
   }
   currentWidth = .5
-  //normalWidth = 
   isOpen = false
   renderMenu(NewMessages) {
-    //console.error(this.props.navigation.getParam("Event").participant)
     switch (this.state.currentPage) {
       case "EventDetails":
         return <EventDetails startLoader={() => {
@@ -262,7 +261,7 @@ export default class Event extends Component {
           activeMember={this.state.activeMember}
           forMember={this.state.forMember}
           event_id={this.event.id}
-          navigatePage={(page) => { this.props.navigation.navigate(page) }}></ChangeLogs>
+          navigatePage={(page) => { BeNavigator.navigateTo(page) }}></ChangeLogs>
 
     }
   }
@@ -565,7 +564,6 @@ export default class Event extends Component {
       this.handleActivityUpdates(change, newValue)
     })
     this.initializeMaster()
-    //this.event = this.props.navigation.getParam("Event")
     if (this.backHandler)
       this.backHandler.remove();
     this.backHandler = BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this))
@@ -639,14 +637,16 @@ export default class Event extends Component {
       Toast.show({ text: 'App is busy' })
     }
   }
-  componentWillUnmount() {
+  unInitialize(){
     this.unmounted = true
     Pickers.CleanAll()
     GState.reply = null
-    console.warn("unMounting")
+    emitter.off(`event_updated_${this.event.id}`)
     GState.currentCommitee = null
     this.backHandler.remove()
-
+  }
+  componentWillUnmount() {
+    this.unInitialize()
   }
   _allowScroll(scrollEnabled) {
     this.setState({ scrollEnabled: scrollEnabled })
@@ -1240,20 +1240,8 @@ export default class Event extends Component {
         isChat: true
       })
     } else {
-      this.isOpen = false
-      this.setState({
-        isOpen: !this.state.isOpen
-      })
-      setTimeout(() => {
-        this.setState({
-          currentPage: page,
-          activeMember: null,
-          isChat: false,
-          fresh: false,
-          isMe: false,
-          forMember: null
-        })
-      }, 250)
+      this.unInitialize()
+      BeNavigator.pushActivity(this.event,page)
     }
   }
   preleaveActivity() {
@@ -1278,7 +1266,7 @@ export default class Event extends Component {
     })
   }
   goback() {
-    this.props.navigation.goBack()
+    BeNavigator.navigateTo('Home')
   }
   render() {
     StatusBar.setHidden(false, true)
@@ -1376,7 +1364,8 @@ export default class Event extends Component {
         //width={this.state.isChat ? this.normalWidth : this.currentWidth}
         event={this.event}
         master={this.master}
-        public={this.event.public} navigatePage={(page) => { this.props.navigation.navigate(page) }} ></SWView></View>}>
+        public={this.event.public} 
+        navigatePage={(page) => { BeNavigator.navigateTo(page) }} ></SWView></View>}>
       <View style={{
         height: "100%",
         backgroundColor: colorList.bodyBackground
@@ -1585,7 +1574,8 @@ export default class Event extends Component {
         {this.state.isremindConfigurationModal ? <TasksCreation
           shouldRestore={this.state.shouldRestore}
           canRestore={this.state.remind && this.state.remind.creator === this.user.phone}
-          restore={(item) => this.restoreRemind({ new_value: { new_value: item } })} isOpen={this.state.isremindConfigurationModal} onClosed={() => {
+          restore={(item) => this.restoreRemind({ new_value: { new_value: item } })} isOpen={this.state.isremindConfigurationModal} 
+          onClosed={() => {
             this.setState({
               isremindConfigurationModal: false,
               shouldRestore: false

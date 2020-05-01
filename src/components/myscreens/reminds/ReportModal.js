@@ -48,11 +48,11 @@ export default class RemindReportContent extends PureComponent {
                             <View style={{ width: '80%' }}>
                             </View>
                             {this.props.master ? <View>
-                                <Button rounded style={{ flexDirection: 'column', }} onPress={() => {
+                                <Button style={{ flexDirection: 'column', backgroundColor: ColorList.indicatorColor,justifyContent: 'center',height:35}} onPress={() => {
                                     this.props.confirm()
                                     this.props.closed()
                                 }}>
-                                    <Icon style={{ color: ColorList.headerIcon, fontSize: 18 }} type="AntDesign" name="checkcircle"></Icon>
+                                    <Icon style={{ color: ColorList.bodyBackground, fontSize: 26 }} type="AntDesign" name="checkcircle"></Icon>
                                 </Button>
                             </View> : null}
                         </View>

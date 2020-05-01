@@ -8,6 +8,8 @@ import Textarea from 'react-native-textarea';
 import { View, Dimensions, Keyboard } from 'react-native';
 import Modal from 'react-native-modalbox';
 import { ScrollView } from 'react-native-gesture-handler';
+import ColorList from '../../colorList';
+import CreateTextInput from '../event/createEvent/components/CreateTextInput';
 
 let { height, width } = Dimensions.get('window');
 
@@ -34,7 +36,7 @@ export default class AddReport extends Component {
             onClosed={() => this.props.onClosed(this.state.description)}
             style={{
                 height: height / 3, borderRadius: 15, marginTop: "-3%",
-                backgroundColor: "#FEFFDE", borderColor: 'black', borderWidth: 1, width: "98%",
+                backgroundColor: ColorList.bodyBackground, borderColor: 'black', borderWidth: 1, width: "98%",
             }}
             coverScreen={true}
             position={'bottom'}
@@ -50,19 +52,12 @@ export default class AddReport extends Component {
                 </View>
 
                 <View style={{ height: "65%" }}>
-                    <Textarea containerStyle={{
-                        width: "95%", margin: "1%",
-                        height: 150,
-                        borderRadius: 6, borderWidth: .7,
-                        borderColor: "#1FABAB", alignSelf: 'center',
-                        backgroundColor: "#f5fffa"
-                    }} maxLength={200} style={{
-                        margin: 1,
-                        backgroundColor: "#f5fffa",
-                        height: "95%", width: "98%"
-                    }}
-                        placeholder="Short Report Of Your Task/Remind" value={this.state.description} keyboardType="default"
-                        onChangeText={(value) => this.onChangedEventDescription(value)} />
+                    <CreateTextInput
+                    height={150}
+                    maxLength={200} 
+                    placeholder="Short Report Of Your Task/Remind" 
+                    value={this.state.description} keyboardType="default"
+                    onChange={(value) => this.onChangedEventDescription(value)} />
 
                 </View>
                 {this.state.description ? <View style={{ height: "10%", marginTop: ".5%" }}>
@@ -72,11 +67,11 @@ export default class AddReport extends Component {
                     }} >
                         <Button onPress={() => this.props.report(this.state.description)} style={{
                             borderRadius: 8,
-                            borderWidth: 1, marginRight: "2%", backgroundColor: "#FEFFDE",
-                            borderColor: '#1FABAB', alignSelf: 'flex-end',
+                            borderWidth: 1, marginRight: "2%", backgroundColor: ColorList.bodyBackground,
+                            borderColor: ColorList.bodyIcon, alignSelf: 'flex-end',
                             width: width / 4, height: height / 18, justifyContent: "center"
                         }}>
-                            <Text style={{ color: "#1FABAB" }}>Report</Text>
+                            <Text style={{ color: ColorList.bodyIcon }}>Report</Text>
                         </Button>
                     </View>
                 </View> : null}

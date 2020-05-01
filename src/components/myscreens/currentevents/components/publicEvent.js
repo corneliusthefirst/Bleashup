@@ -40,6 +40,7 @@ import shadower from "../../../shadower";
 import colorList from "../../../colorList";
 import CacheImages from "../../../CacheImages";
 import PhotoViewer from "../../event/PhotoViewer"
+import ActivityProfile from "./ActivityProfile";
 
 
 let { height, width } = Dimensions.get('window');
@@ -333,23 +334,16 @@ class PublicEvent extends Component {
     return (<CardItem style={{ marginBottom: '3%', backgroundColor: colorList.bodyBackground, width: "100%" }}>
 
       <View style={{ flexDirection: 'row', width: '100%', alignItems: "center" }}>
-
-        <TouchableOpacity style={{ alignSelf: 'flex-start', width: '15%', alignItems: "center", paddingTop: "2%" }} onPress={() => this.props.Event.background && this.props.showPhoto(this.props.Event.background)} >
-          <View style={{ alignSelf: 'flex-start', width: '100%', alignItems: "center", paddingTop: "2%" }} >
-            {this.props.Event.background ? <CacheImages small thumbnails square source={{ uri: this.props.Event.background }}
-              style={{
-                height: 50, justifyContent: 'center', width: 50, alignSelf: 'center',
-                borderRadius: 25
-              }}></CacheImages> : <View style={{ flex: 1 }}><Thumbnail small style={{ height: 50, width: 50, borderRadius: 35, }} medium source={require('../../../../../assets/default_event_image.jpeg')}></Thumbnail></View>
-            }
-          </View>
-        </TouchableOpacity>
-
-        <View style={{ width: '75%', paddingLeft: 6, marginTop: '3%' }}>
-          {this.state.isMount ? <TitleView openDetail={() => this.props.openDetails(this.props.Event)} join={() => this.join()} joint={this.state.joint} seen={() => this.markAsSeen()}
-            {...this.props}></TitleView> : null}
+        <View style={{ width: '90%' }}>
+          <ActivityProfile
+            join={this.join.bind(this)}
+            showPhoto={this.props.showPhoto}
+            joint={this.state.joint}
+            openDetails={this.props.openDetails}
+            markAsSeen={this.markAsSeen.bind(this)}
+            Event={this.props.Event||{}}
+            ></ActivityProfile>
         </View>
-
         <View style={{ width: '10%', justifyContent: 'flex-end', alignItems: 'flex-end', marginLeft: "2%", alignItems: "center" }}>
           <Icon onPress={() => this.props.showActions(this.props.Event.id)} type="Entypo" style={{ fontSize: 24, color: "#555756", alignSelf: 'flex-end', marginBottom: 10 }} name="dots-three-vertical"></Icon>
         </View>
@@ -437,7 +431,7 @@ class PublicEvent extends Component {
           bordered
         >
           {this.renderTitle()}
-          {!this.props.Event.highlights || this.props.Event.highlights.length <  1 ? null : this.renderBody()}
+          {!this.props.Event.highlights || this.props.Event.highlights.length < 1 ? null : this.renderBody()}
           {this.renderFooter()}
 
         </Card>

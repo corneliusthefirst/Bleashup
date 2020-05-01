@@ -43,8 +43,6 @@ import firebase from 'react-native-firebase';
 import GState from '../../../stores/globalState';
 import CreateEvent from '../event/createEvent/CreateEvent';
 
-
-
 import ForeignEventsModal from "./ForeignEventsModal";
 import DeepLinking from 'react-native-deep-linking';
 import shadower from "../../shadower";
@@ -52,6 +50,7 @@ import shadower from "../../shadower";
 import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
 import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
 import colorList from "../../colorList";
+import BeNavigator from '../../../services/navigationServices';
 
 let { height, width } = Dimensions.get('window');
 
@@ -97,7 +96,7 @@ class Home extends Component {
     switch (data.type) {
       case "new_message_activity": {
         stores.Events.loadCurrentEvent(data.activity_id).then(event => {
-          this.props.navigation.navigate('Event', { tab: 'EventChat', Event: event })
+          BeNavigator.navigateToActivity('EventChat', event)
         })
         break;
       }
@@ -129,12 +128,8 @@ class Home extends Component {
   }
   navigateToEventDetails(id) {
     let event = find(stores.Events.events, { id: id })
-    console.warn(event, id)
     if (event) {
-      this.props.navigation.navigate("Event", {
-        Event: event,
-        tab: "EventDetails"
-      });
+      BeNavigator.navigateToActivity("EventDetails", event);
     }
   }
   componentWillMount() {
@@ -170,8 +165,8 @@ class Home extends Component {
   }
   realNew = []
   componentDidMount() {
-    stores.LoginStore.getUser().then((user)=>{
-      console.warn('home unmounting',user)
+    stores.LoginStore.getUser().then((user) => {
+      console.warn('home unmounting', user)
     })
 
     stores.Highlights.initializeGetHighlightsListener()
@@ -211,7 +206,7 @@ class Home extends Component {
   exiting = false
   timeout = null
   componentWillUnmount() {
-    
+
     BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton.bind(this));
     this.removeNotificationDisplayedListener()
     Linking.removeEventListener('url', this.handleUrl);
@@ -270,7 +265,7 @@ class Home extends Component {
   };
   settings = () => {
     this.hideMenu();
-    this.props.navigation.navigate("Settings");
+    BeNavigator.navigateTo("Settings");
 
   };
 
@@ -283,7 +278,7 @@ class Home extends Component {
     })
   }
   navigateToInvitations() {
-    this.props.navigation.navigate("Invitation")
+    BeNavigator.navigateTo("Invitation")
   }
   render() {
     const { concat, cos } = Animated
@@ -298,43 +293,43 @@ class Home extends Component {
     StatusBar.setBarStyle('dark-content', true)
     StatusBar.setHidden(false, true)
     return (
-      <View style={{ height:colorList.containerHeight,backgroundColor:colorList.containerBackground ,width:colorList.containerWidth }}>
-        
-        <View style={{ height: colorList.headerHeight,backgroundColor: colorList.headerBackground ,width:"100%", }}>
-        
-         
-            <View style={{flex: 1, backgroundColor: colorList.headerBackground, flexDirection: "row",justifyContent: "space-between",width:"100%",borderBottomWidth:0.5,borderColor:'rgba(52, 52, 52, 0.3)'}}>
-             
-              <View style={{ alignSelf: "flex-start",justifyContent:"center",height:"95%" }}>
-                <Thumbnail source={require("../../../../assets/bleashuptitle1.png")} style={{width:120}}></Thumbnail>
-              </View>
+      <View style={{ height: colorList.containerHeight, backgroundColor: colorList.containerBackground, width: colorList.containerWidth }}>
 
-            
-                <View style={{ height:"100%",alignSelf: "flex-end", display: 'flex', flexDirection: 'row', marginRight:"2%"}}>
-
-                 <TouchableOpacity style={{height:40,alignItems:"center",justifyContent:"center"}} onPress={() => this.navigateToInvitations()}>
-                  <Icon name="sc-telegram" active={true} type="EvilIcons" style={{ color: colorList.headerIcon, }} onPress={() => this.navigateToInvitations()} />
-                  </TouchableOpacity>
-
-                  <TouchableOpacity style={{ height: 40, alignItems: "center", justifyContent: "center" }} onPress={this.showMenu}>
-                    <Menu
-                     ref={this.setMenuRef}
-                     button={<Icon name="gear" active={true} type="EvilIcons" style={{ color: colorList.headerIcon,marginLeft:width/35 }} onPress={this.showMenu} />}
-                     style={{ backgroundColor:colorList.bodyBackground }}
-                     >
-                   <MenuItem onPress={this.settings}>settings</MenuItem>
-                  </Menu> 
-                  </TouchableOpacity>
-
-                </View>
+        <View style={{ height: colorList.headerHeight, backgroundColor: colorList.headerBackground, width: "100%", }}>
 
 
-            
+          <View style={{ flex: 1, backgroundColor: colorList.headerBackground, flexDirection: "row", justifyContent: "space-between", width: "100%", borderBottomWidth: 0.5, borderColor: 'rgba(52, 52, 52, 0.3)' }}>
+
+            <View style={{ alignSelf: "flex-start", justifyContent: "center", height: "95%" }}>
+              <Thumbnail source={require("../../../../assets/bleashuptitle1.png")} style={{ width: 120 }}></Thumbnail>
             </View>
+
+
+            <View style={{ height: "100%", alignSelf: "flex-end", display: 'flex', flexDirection: 'row', marginRight: "2%" }}>
+
+              <TouchableOpacity style={{ height: 40, alignItems: "center", justifyContent: "center" }} onPress={() => this.navigateToInvitations()}>
+                <Icon name="sc-telegram" active={true} type="EvilIcons" style={{ color: colorList.headerIcon, }} onPress={() => this.navigateToInvitations()} />
+              </TouchableOpacity>
+
+              <TouchableOpacity style={{ height: 40, alignItems: "center", justifyContent: "center" }} onPress={this.showMenu}>
+                <Menu
+                  ref={this.setMenuRef}
+                  button={<Icon name="gear" active={true} type="EvilIcons" style={{ color: colorList.headerIcon, marginLeft: width / 35 }} onPress={this.showMenu} />}
+                  style={{ backgroundColor: colorList.bodyBackground }}
+                >
+                  <MenuItem onPress={this.settings}>settings</MenuItem>
+                </Menu>
+              </TouchableOpacity>
+
+            </View>
+
+
+
           </View>
-         <View style={{marginBottom:100}}>
+        </View>
+        <View style={{ marginBottom: 100 }}>
           <CurrentEventView {...this.props}></CurrentEventView>
-          </View>
+        </View>
 
       </View>
     );
@@ -350,7 +345,7 @@ export default withInAppNotification(Home);
 
 
 
-       {/* <Tabs
+{/* <Tabs
           locked
           tabContainerStyle={{
              backgroundColor: colorList.headerBackground

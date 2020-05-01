@@ -23,12 +23,12 @@ export default class DonnersList extends Component{
             <BleashupFlatList
                 firstIndex={0}
                 renderPerBatch={7}
-                initialRender={15}
+                initialRender={20}
                 numberOfItems={this.props.donners.length}
                 keyExtractor={this._keyExtractor}
                 dataSource={this.props.donners}
                 renderItem={(item, index) => {
-                    this.delay = this.delay >= 15 ? 0 : this.delay + 1
+                    this.delay = this.delay >= 20 ? 0 : this.delay + 1
                     return (item.type ? <IntervalSeparator
                         actualInterval={this.props.actualInterval && item.from === this.props.actualInterval.start &&
                             item.to === this.props.actualInterval.end} first={index == 0 ? true : false} from={item.from} to={item.to}></IntervalSeparator> 

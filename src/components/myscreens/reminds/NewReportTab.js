@@ -16,6 +16,7 @@ import shadower from "../../shadower";
 import ConcerneeList from "./ConcerneeList";
 import DonnersList from "./DonnersList";
 import TabModal from "../../mainComponents/TabModal";
+import CreationHeader from "../event/createEvent/components/CreationHeader";
 const screenheight = Math.round(Dimensions.get("window").height);
 export default class ReportTabModal extends TabModal {
   initialize() {
@@ -25,12 +26,16 @@ export default class ReportTabModal extends TabModal {
       mounted: false,
     };
   }
+  swipeToClose=false
   onClosedModal() {
     this.props.onClosed();
     this.setState({
       content: null,
     });
   }
+ tabHeaderContent(){
+   return <CreationHeader back={this.onClosedModal.bind(this)} title={"Remind Report"}></CreationHeader>
+ } 
   onOpenModal() {
     setTimeout(() => {
       this.setState({
@@ -39,9 +44,6 @@ export default class ReportTabModal extends TabModal {
       });
       this.props.stopLoader();
     }, 20);
-  }
-  TabHeader() {
-    return null
   }
   tabs = [
     {

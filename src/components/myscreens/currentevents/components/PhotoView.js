@@ -10,6 +10,7 @@ import emitter from '../../../../services/eventEmiter';
 import GState from '../../../../stores/globalState';
 import buttoner from "../../../../services/buttoner";
 import ColorList from '../../../colorList';
+import BeNavigator from '../../../../services/navigationServices';
 
 export default class PhotoView extends Component {
     constructor(props) {
@@ -77,7 +78,7 @@ export default class PhotoView extends Component {
     }
     showPhoto(url) {
         url === this.props.photo && !this.state.audio ? this.props.showPhoto(url) :
-            this.props.navigation.navigate("HighLightsDetails", { event_id: this.props.event_id })
+            BeNavigator.navigateTo("HighLightsDetails", { event_id: this.props.event_id })
     }
     render() {
         return (<View>

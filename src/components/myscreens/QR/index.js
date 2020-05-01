@@ -8,6 +8,7 @@ import DetailsModal from '../invitations/components/DetailsModal';
 import { findIndex } from 'lodash';
 import { Toast } from 'native-base';
 import ColorList from '../../colorList';
+import BeNavigator from '../../../services/navigationServices';
 
 export default class QRScanner extends Component {
     constructor(props) {
@@ -29,10 +30,7 @@ export default class QRScanner extends Component {
     }
     goToActivity(event) {
         //console.error("navigating")
-        this.props.navigation.push("Event", {
-            Event: event,
-            tab: "EventDetails"
-        });
+        BeNavigator.pushActivity(event)
         this.scanner.reactivate()
         //this.props.onClosed()
     }
