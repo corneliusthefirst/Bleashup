@@ -64,7 +64,6 @@ export default class Social extends Component {
                         </View>
                         <View style={this.itemStyle}>
                         <Comments
-                        navigation={this.props.navigation} 
                         activity_id={this.props.activity_id}
                         activity_name={this.props.activity_name}
                         title={this.props.title}

@@ -9,11 +9,9 @@ const screenheight = Math.round(Dimensions.get("window").height);
 export default class TabModal extends BleashupModal {
   TabHeader() {
     return (
-      <View style={{ height: ColorList.headerHeight }}>
-        <View style={{ ...bleashupHeaderStyle }}>
+        <View>
           {this.tabHeaderContent()}
         </View>
-      </View>
     );
   }
   state = {

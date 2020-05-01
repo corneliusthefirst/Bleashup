@@ -22,6 +22,7 @@ export default class globalState {
   @observable currentRoomNewMessages;
   @observable passwordError = false;
   @observable newPasswordError = false;
+  @observable nav = {}
   @observable nameError = false;
   @observable newEvent = false;
   @observable emailError = false;

@@ -13,7 +13,6 @@ export default class CreateTextInput extends Component{
                 height: this.props.height?this.props.height:colorList.containerHeight/9,
                 alignItems: "center",
                 width:'100%',
-                justifyContent:"center"
                 
             }}
         >
@@ -43,7 +42,7 @@ export default class CreateTextInput extends Component{
                     multiline={this.props.multiline?this.props.multiline:false}
                     numberOfLines={this.props.numberOfLines?this.props.numberOfLines:1}
                 />
-            <View style={{position:'absolute',alignSelf: 'flex-end',margin: '2%',}}><Text>{`${this.props.value && this.props.value.length} / ${this.props.maxLength||100}`}</Text></View>
+            <View style={{ position: 'absolute', alignSelf: 'flex-end', marginRight: '1%', }}><Text note>{`${this.props.value && this.props.value.length||0} / ${this.props.maxLength||100}`}</Text></View>
         </View>
     }
 }

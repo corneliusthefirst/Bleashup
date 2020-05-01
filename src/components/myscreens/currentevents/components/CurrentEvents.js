@@ -19,8 +19,7 @@ import InvitationModal from './InvitationModal.js';
 import DetailsModal from '../../invitations/components/DetailsModal.js';
 import PhotoViewer from '../../event/PhotoViewer.js';
 import CreateEvent from '../../event/createEvent/CreateEvent';
-
-
+import BeNavigator from "../../../../services/navigationServices"
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenheight = Math.round(Dimensions.get('window').height);
 
@@ -243,11 +242,7 @@ export default class CurrentEvents extends Component {
                         })
                     }}></InvitationModal>
                 {this.state.isDetailsModalOpened ? <DetailsModal goToActivity={() => {
-                    this.props.navigation.navigate('Event',
-                    {
-                        'tab':'EventDetails',
-                        Event:this.state.event
-                })
+                    BeNavigator.navigateToActivity('EventDetails', this.state.event);
                 }} isToBeJoint event={this.state.event}
                     isOpen={this.state.isDetailsModalOpened}
                     onClosed={() => {
@@ -572,6 +567,7 @@ import { RecyclerListView, DataProvider, LayoutProvider } from "recyclerlistview
 import { Spinner } from "native-base";
 import { forEach } from "lodash";
 import Relation from './Relation';
+import Navigator from '../../../../services/navigationServices';
 class CurrentEvents extends Component {
     constructor(props) {
         super(props)

@@ -93,7 +93,6 @@ export default class HighlightCard extends Component {
           </TouchableOpacity>
           <View style={{width:'90%',alignSelf: 'center',alignItems: 'center',}}>
           <Social 
-          navigation={this.props.navigation}
           title={this.props.item.title} 
           activity_name={this.props.activity_name}
           creator={this.props.item.creator} 

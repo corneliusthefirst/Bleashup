@@ -10,6 +10,7 @@ import {
   createStackNavigator,
   createAppContainer
 } from "react-navigation";
+import { navigationRef, isMountedRef } from './RootNave';
 import getTheme from "./native-base-theme/components";
 import Materials from "./native-base-theme/variables/material";
 import CommonColor from "./native-base-theme/variables/commonColor";
@@ -72,14 +73,14 @@ const AppNavigator = createStackNavigator(
     QR: { screen: QRCode },
     Settings: { screen: SettingView },
     Contacts: { screen: ContactView },
-    NewContact:{ screen: NewContactView },
+    NewContact: { screen: NewContactView },
     Profile: { screen: ProfileView },
-    Actu:{screen:ActuView},
-    Status: { screen:  StatusView },
+    Actu: { screen: ActuView },
+    Status: { screen: StatusView },
     Invitation: { screen: InvitationView },
     PotesChat: { screen: PotesChat },
     Login: { screen: LoginView },
-    Comment:{screen:CommentsPage},
+    Comment: { screen: CommentsPage },
     ForgotPassword: { screen: ForgotPasswordView },
     ResetCode: { screen: ResetCodeView },
     ResetPassword: { screen: ResetPasswordView },
@@ -116,18 +117,23 @@ app.use(routerActions(), "routerActions");
 
 const AppContainer = createAppContainer(AppNavigator);
 
-export default () => (
-  <Root>
+export default () => {
+  React.useEffect(() => {
+    isMountedRef.current = true;
+
+    return () => (isMountedRef.current = false);
+  }, []);
+  return <Root>
     <InAppNotificationProvider closeInterval={4000} height={80} openCloseDuration={1000}
       iconApp={require('../assets/BleashupIcon.png')} backgroundColour={ColorList.indicatorInverted}>
       <StyleProvider style={getTheme(CommonColor)}>
         <Provider app={app}>
-          <AppContainer />
+          <AppContainer ref={navigationRef} />
         </Provider>
       </StyleProvider>
     </InAppNotificationProvider>
   </Root>
-);
+};
 
 //Todo : Expo app setup
 /*export default class App extends React.Component {

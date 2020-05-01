@@ -1416,8 +1416,27 @@ export default class ChatRoom extends Component {
                     });
             }}
                 pressingIn={() => { }} showProfile={(pro) => this.props.showProfile(pro)} reply={this.state.replyContent}></ReplyText>
-            <Button onPress={() => this.cancleReply()
-            } style={{ position: "absolute", alignSelf: 'flex-end', }} rounded transparent><Icon name={"close"} type={"EvilIcons"} style={{ color: '#1FABAB' }}></Icon></Button>
+            <TouchableOpacity 
+            onPress={() => requestAnimationFrame(this.cancleReply.bind(this))}
+            style={{
+                position: "absolute", marginRight: 2,
+                marginTop: 1,
+                alignSelf: 'flex-end',
+            }}>
+            <Button 
+                style={{
+                    backgroundColor: this.transparent,
+                    width: 30,
+                    height: 30,
+                    borderRadius: 20,
+                    justifyContent: 'center',
+                }} rounded><Icon
+                    name={"close"}
+                    type={"EvilIcons"}
+                    style={{
+                        position: 'absolute',
+                        color: colorList.bodyBackground,
+                        }}></Icon></Button></TouchableOpacity>
         </View>;
     }
 
@@ -1465,7 +1484,7 @@ export default class ChatRoom extends Component {
                         fontWeight: colorList.headerFontweight,
 
                     }}>{this.props.roomName}</Title>
-                    <View style={{ height: 10,position:'absolute', }}>{this.state.typing && <TypingIndicator></TypingIndicator>}
+                    <View style={{ height: 10, position: 'absolute', }}>{this.state.typing && <TypingIndicator></TypingIndicator>}
                     </View>
                 </View>
 

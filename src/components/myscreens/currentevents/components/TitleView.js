@@ -7,6 +7,7 @@ import DetailsModal from "../../invitations/components/DetailsModal";
 import { forEach, find } from "lodash"
 import moment from "moment";
 import { writeInterval, writeDateTime, dateDiff } from '../../../../services/datesWriter';
+import BeNavigator from '../../../../services/navigationServices';
 export default class TitleView extends Component {
     constructor(props) {
         super(props)
@@ -20,42 +21,40 @@ export default class TitleView extends Component {
     }
     navigateToEventDetails() {
         stores.Events.isParticipant(
-            this.props.Event.id, 
+            this.props.Event.id,
             stores.Session.SessionStore.phone).then(status => {
-            if (status) {
-                this.props.navigation.navigate("Event", {
-                    Event: find(stores.Events.events, { id: this.props.Event.id }),
-                    tab: "EventDetails"
-                });
-            } else {
-               this.props.openDetail && this.props.openDetail()
-            }
-            this.props.seen && this.props.seen()
-        })
+                if (status) {
+                    BeNavigator.navigateToActivity("EventDetails", find(stores.Events.events, { id: this.props.Event.id }))
+                } else {
+                    this.props.openDetail && this.props.openDetail()
+                }
+                this.props.seen && this.props.seen()
+            })
     }
     render() {
-        return (<View style={{flex:1,marginTop:"2.5%"}}>
-                     <TouchableOpacity onPress={() => requestAnimationFrame(() => {
-                      this.navigateToEventDetails()} )}>
-                        <View style={{ flexDirection: "column", alignItems: "flex-start" }}>
-                            <Text
-                                adjustsFontSizeToFit={true}
-                                ellipsizeMode={'tail'}
-                                numberOfLines={1}
-                                style={{
-                                    fontSize: 18,
-                                    fontWeight: "500",
-                                    textTransform:"capitalize",
-                                    color: "black",
-                                    fontFamily: "Roboto",
-                                }}
-                            >
-                                {this.props.Event.about.title}{/*{" "}{this.props.Event.id}*/}
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
-            </View>)
-        
+        return (<View style={{ flex: 1, marginTop: "2.5%" }}>
+            <TouchableOpacity onPress={() => requestAnimationFrame(() => {
+                this.navigateToEventDetails()
+            })}>
+                <View style={{ flexDirection: "column", alignItems: "flex-start" }}>
+                    <Text
+                        adjustsFontSizeToFit={true}
+                        ellipsizeMode={'tail'}
+                        numberOfLines={1}
+                        style={{
+                            fontSize: 18,
+                            fontWeight: "500",
+                            textTransform: "capitalize",
+                            color: "black",
+                            fontFamily: "Roboto",
+                        }}
+                    >
+                        {this.props.Event.about.title}{/*{" "}{this.props.Event.id}*/}
+                    </Text>
+                </View>
+            </TouchableOpacity>
+        </View>)
+
     }
 }
 
@@ -82,7 +81,7 @@ export default class TitleView extends Component {
 
 
 /**
- 
+
                             {this.props.Event.period ? <Text
                                 adjustsFontSizeToFit={true}
                                 ellipsizeMode={'tail'}

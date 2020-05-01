@@ -62,7 +62,7 @@ export default class TasksCreation extends BleashupModal {
   }
   calculateType(remind) {
     return remind.location ||
-      (remind.remind_url && remind.remind_url.photo) || remind.description
+      (remind.remind_url && remind.remind_url.photo) || remind.description ||
         (remind.remind_url && remind.remind_url.video) ? 'event' : 'reminder'
   }
   @autobind
@@ -505,11 +505,11 @@ export default class TasksCreation extends BleashupModal {
 
       < KeyboardAvoidingView
         behavior={Platform.OS == "ios" ? "padding" : "height"}
-        style={{ flex: 1 }}
+        style={{ flex: 1 ,height: '100%' }}
 
       >
-        <ScrollView>
-          <View style={{ flex: 1, justifyContent: "flex-end" }}>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <View style={{ flex: 1, justifyContent: "flex-end",}}>
             <CreationHeader
               back={this.props.onClosed}
               title={!this.state.ownership ? "Remind configs" : this.props.update ? "Update Remind" : "Add Remind"}
@@ -535,7 +535,7 @@ export default class TasksCreation extends BleashupModal {
             >
             </CreationHeader>
 
-            <View style={{ height: ColorList.containerHeight - (ColorList.headerHeight + 20), marginTop: '3%', }}>
+            <View style={{ marginTop: '3%', }}>
               <ScrollView ref={"scrollView"} showsVerticalScrollIndicator={false}>
                 {this.props.shouldRestore && this.props.canRestore ? <View style={{ width: '95%', alignItems: 'flex-end', }}><Button style={{ alignSelf: 'flex-end', margin: '2%', marginRight: '2%', }} onPress={() => {
                   this.props.onClosed()
@@ -544,7 +544,7 @@ export default class TasksCreation extends BleashupModal {
                 <View pointerEvents={this.state.ownership ? null : 'none'} style={{ height: height / 12, alignItems: 'center' }}>
                   <View style={{ width: '90%', alignSelf: 'center', }}>
                     <CreateTextInput
-                      height={height / 20}
+                      height={height / 15}
                       value={this.state.currentRemind.title}
                       placeholder={'remind'}
                       onChange={this.onChangedTitle}
@@ -697,12 +697,6 @@ export default class TasksCreation extends BleashupModal {
                     disabled={!this.state.ownership}
                     value={this.state.currentRemind.description}
                     placeholder="details"
-                    style={{
-                      textAlignVertical: 'top',  // hack android
-                      height: "100%",
-                      fontSize: 14,
-                      color: '#333',
-                    }}
                     maxLength={2000}
                     onChange={(value) => this.onChangedDescription(value)} />
 
@@ -744,7 +738,7 @@ export default class TasksCreation extends BleashupModal {
               >
               </RemindMembers>
               <TaskCreationExtra
-                proceed={!this.props.update ? this.addNewRemind : this.updateRemind}
+                proceed={!this.props.update ? this.addNewRemind.bind(this) : this.updateRemind.bind(this)}
                 onChangedStatus={this.onChangedStatus.bind(this)}
                 currentRemind={this.state.currentRemind}
                 onComplete={this.updateRequestReportOnComplete.bind(this)}

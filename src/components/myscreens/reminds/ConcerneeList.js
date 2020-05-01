@@ -18,12 +18,12 @@ export default class ConcerneeList extends Component{
         <BleashupFlatList
                 firstIndex={0}
                 renderPerBatch={5}
-                initialRender={10}
+                initialRender={20}
                 numberOfItems={this.props.contacts.length}
                 keyExtractor={this._keyExtractor}
                 dataSource={this.props.contacts}
                 renderItem={(item, index) => {
-                    this.delay = this.delay >= 15 ? 0 : this.delay + 1
+                    this.delay = this.delay >= 20 ? 0 : this.delay + 1
                     return (this.props.complexReport ? <View key={index.toString()}>
                         {item.type === 'interval' ? <IntervalSeparator to={item.to}
                             actualInterval={this.props.actualInterval &&

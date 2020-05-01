@@ -60,7 +60,7 @@ export default class ContactsReportModal extends PureComponent {
                         <BleashupFlatList
                             firstIndex={0}
                             renderPerBatch={7}
-                            initialRender={15}
+                            initialRender={20}
                             numberOfItems={this.props.members.length}
                             keyExtractor={this._keyExtractor}
                             dataSource={this.props.members}

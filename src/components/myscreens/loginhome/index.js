@@ -10,6 +10,7 @@ import rnFetchBlob from 'rn-fetch-blob';
 import Waiter from "./Waiter";
 import Voter from "../eventChat/Voter";
 import GState from '../../../stores/globalState/index';
+import BeNavigator from '../../../services/navigationServices';
 const AppDir = rnFetchBlob.fs.dirs.SDCardDir + '/Bleashup'
 const PhotoDir = AppDir + '/Photo'
 const SounDir = AppDir + '/Sound'
@@ -19,6 +20,7 @@ const { fs } = rnFetchBlob
 export default class LoginHomeView extends Component {
   constructor(props) {
     super(props);
+    GState.nav = this.props.navigation
     this.state = {
       vote: {
         id: "1",
@@ -72,15 +74,15 @@ In this article, we show you how to solve the error message “URL blocked: This
            if(route !== "Login"){
              connection.init().then(socket => {
                globalState.loading = false;
-               this.props.navigation.navigate(route);
+               BeNavigator.navigateTo(route);
              }).catch((error) => {
                GState.connected = false
                console.warn("error while connecting socket",error)
              })
-             setTimeout(() => this.props.navigation.navigate(route), 500)
+             setTimeout(() => BeNavigator.navigateTo(route), 500)
            }else{
              globalState.loading = false;
-             this.props.navigation.navigate(route);
+             BeNavigator.navigateTo(route);
            }
          });
        }

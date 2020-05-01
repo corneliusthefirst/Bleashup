@@ -17,17 +17,15 @@ export default class ProfileView extends Component {
     state = { profile: undefined, isMount: false, hide: false }
     componentDidMount() {
         setTimeout(() => stores.TemporalUsersStore.getUser(this.props.phone).then(user => {
-            //console.warn("user gotten",user)
-            if (user.response == "unknown_user") {
+            console.warn("user gotten",user)
+            if (user.response == "unknown_user" || user.response === 'wrong server_key') {
                 this.props.hideMe ? this.props.hideMe() : null
                 this.setState({
                     hide: true
                 })
             } else {
                 //console.warn("here we are boy",user);
-                stores.Contacts.addContact({phone:user.phone,host:user.current_host}).then(()=>{
-                    //console.warn("contact added")
-                })
+                stores.Contacts.addContact({phone:user.phone,host:user.current_host}).then(()=>{})
                 this.props.updateContact(user);
           
                

@@ -1,7 +1,12 @@
-
-import React, { Component } from 'react'
-import Modal from 'react-native-modalbox';
-import { View, Text, TouchableOpacity, DeviceEventEmitter, Image } from 'react-native'
+import React, { Component } from "react";
+import Modal from "react-native-modalbox";
+import {
+    View,
+    Text,
+    TouchableOpacity,
+    DeviceEventEmitter,
+    Image,
+} from "react-native";
 import {
     Button,
     Icon,
@@ -15,25 +20,29 @@ import {
     Footer,
     Container,
     Toast,
-    Title
-} from 'native-base';
-import CacheImages from '../../../CacheImages'
-import autobind from 'autobind-decorator';
-import { TouchableHighlight, ScrollView } from 'react-native-gesture-handler';
-import ImageActivityIndicator from '../../currentevents/components/imageActivityIndicator';
-import DeckSwiperModule from './deckswiper/index';
-import MapView from '../../currentevents/components/MapView';
-import stores from '../../../../stores';
-import moment from "moment"
-import { forEach, findIndex } from "lodash"
-import bleashupHeaderStyle from '../../../../services/bleashupHeaderStyle';
-import PhotoViewer from '../../event/PhotoViewer';
-import Request from '../../currentevents/Requester';
-import TitleView from '../../currentevents/components/TitleView';
-import Creator from '../../reminds/Creator';
-export default class DetailsModal extends Component {
+    Title,
+} from "native-base";
+import CacheImages from "../../../CacheImages";
+import autobind from "autobind-decorator";
+import { TouchableHighlight, ScrollView } from "react-native-gesture-handler";
+import ImageActivityIndicator from "../../currentevents/components/imageActivityIndicator";
+import DeckSwiperModule from "./deckswiper/index";
+import MapView from "../../currentevents/components/MapView";
+import stores from "../../../../stores";
+import moment from "moment";
+import { forEach, findIndex } from "lodash";
+import bleashupHeaderStyle from "../../../../services/bleashupHeaderStyle";
+import PhotoViewer from "../../event/PhotoViewer";
+import Request from "../../currentevents/Requester";
+import TitleView from "../../currentevents/components/TitleView";
+import Creator from "../../reminds/Creator";
+import BleashupModal from "../../../mainComponents/BleashupModal";
+export default class DetailsModal extends BleashupModal {
     constructor(props) {
         super(props);
+    }
+    state = {};
+    initialize() {
         this.state = {
             details: undefined,
             isOpen: false,
@@ -43,191 +52,217 @@ export default class DetailsModal extends Component {
             isJoining: false,
             isToBeJoint: false,
             id: undefined,
-            loaded: false
-        }
-    }
-    state = {
-
+            loaded: false,
+        };
     }
     transparent = "rgba(52, 52, 52, 0.0)";
-    details = []
+    details = [];
     created_date = "";
-    event_organiser_name = ""
-    location = ""
-    isToBeJoint = false
-    id = ""
+    event_organiser_name = "";
+    location = "";
+    isToBeJoint = false;
+    id = "";
     componentDidMount() {
-        this.props.parent ? this.props.parent.onSeen() : null
+        this.props.parent ? this.props.parent.onSeen() : null;
     }
     componentWillReceiveProps(nextProps) {
         this.setState({
             details: nextProps.details ? nextProps.details : this.details,
             isOpen: nextProps.isOpen,
             location: this.props.location ? this.props.location : this.location,
-            isToBeJoint: this.props.isToBeJoint ? this.props.isToBeJoint : this.isToBeJoint,
-            id: this.props.id ? this.props.id : this.id
-        })
+            isToBeJoint: this.props.isToBeJoint
+                ? this.props.isToBeJoint
+                : this.isToBeJoint,
+            id: this.props.id ? this.props.id : this.id,
+        });
     }
     formCreator() {
         return new Promise((resolve, reject) => {
-            stores.TemporalUsersStore.getUser(this.props.event.creator_phone).then((user) => {
-                resolve({ name: user.nickname, status: user.status, image: user.profile })
-            })
-        })
+            stores.TemporalUsersStore.getUser(this.props.event.creator_phone).then(
+                (user) => {
+                    resolve({
+                        name: user.nickname,
+                        status: user.status,
+                        image: user.profile,
+                    });
+                }
+            );
+        });
     }
 
     formDetailModal(event) {
         return new Promise((resolve, reject) => {
-            stores.Highlights.fetchHighlights(event.id).then(highlights => {
-                let card = [];
-                highlights = []
-                let i = 0;
-                Description = { event_title: event.about.title, event_description: event.about.description }
-                card.push(Description)
-                if (highlights.length !== 0) {
-                    forEach(highlights, hightlight => {
-                        card.push(hightlight);
-                        if (i === highlights.length - 1) {
-                            resolve(card)
-                        }
-                        i++
-                    })
-                } else {
-                    resolve(card)
-                }
-            })
-        })
+            let card = [];
+            Description = {
+                event_title: event.about.title,
+                event_description: event.about.description,
+            };
+            card.push(Description);
+            resolve(card);
+        });
     }
     join() {
-        if (findIndex(this.state.event.participant, { phone: stores.LoginStore.user.phone }) < 0) {
+        if (
+            findIndex(this.state.event.participant, {
+                phone: stores.LoginStore.user.phone,
+            }) < 0
+        ) {
             this.setState({
-                isJoining: true
-            })
-            Request.join(this.state.event.id, this.state.event.event_host).then((status) => {
-                this.setState({
-                    isJoining: false
+                isJoining: true,
+            });
+            Request.join(this.state.event.id, this.state.event.event_host)
+                .then((status) => {
+                    this.setState({
+                        isJoining: false,
+                    });
+                    this.props.onClosed();
                 })
-                this.props.goToActivity()
-                this.props.onClosed()
-                console.warn('joint successfully')
-                //emitter.emit(`left_${this.state.event.id}`)
-            }).catch((error) => {
-                console.warn(error," error which occured while joining ")
-                this.setState({ isJoining: false })
-                Toast.show({
-                    text: 'unable to perform this action',
-                    buttonText: 'Okay'
-                    , position: 'top', duration: 4000
-                })
-            })
+                .catch((error) => {
+                    console.warn(error, " error which occured while joining ");
+                    this.setState({ isJoining: false });
+                    Toast.show({
+                        text: "unable to perform this action",
+                        buttonText: "Okay",
+                        position: "top",
+                        duration: 4000,
+                    });
+                });
         } else {
-            this.props.goToActivity()
-            this.props.onClosed()
+            this.props.goToActivity();
+            this.props.onClosed();
         }
     }
-    render() {
-        const accept = this.state.accept
-        const deny = this.state.deny
-        return (
-            <Modal
-                backdropPressToClose={true}
-                swipeToClose={false}
-                backdropOpacity={0.3}
-                backButtonClose={true}
-                position='bottom'
-                coverScreen={true}
-                isOpen={this.props.isOpen}
-                onClosed={() => {
-                    this.props.onClosed()
-                }}
-                style={{
-                    height: 420, width: "100%", flexDirection: 'column',
-                    borderRadius: 8,
-                    borderTopLeftRadius: 0,
-                    borderTopRightRadius: 0,
-                    
-                }}
-                onOpened={() => {
-                    setTimeout(() =>
-                        this.formDetailModal(this.props.event).then(details => {
-                            this.formCreator().then((creator) => {
-                                this.setState({
-                                    event: this.props.event,
-                                    details: details,
-                                    creator: creator,
-                                    loaded: true,
-                                    location: this.props.event.location
-                                })
-                            })
-                        })
-                        , 100)
-                }}
-
-            >
-                {!this.state.loaded ? <Spinner size={'small'}></Spinner> : <Content showsVerticalScrollIndicator={false}>
-                    <View style={{ height: "98%", }}>
+    backdropOpacity = 0.3;
+    onClosedModal() {
+        this.props.onClosed();
+    }
+    onOpenModal() {
+        setTimeout(
+            () =>
+                this.formDetailModal(this.props.event).then((details) => {
+                    this.formCreator().then((creator) => {
+                        this.setState({
+                            event: this.props.event,
+                            details: details,
+                            creator: creator,
+                            loaded: true,
+                            location: this.props.event.location,
+                        });
+                    });
+                }),
+            100
+        );
+    }
+    modalHeight = this.height * 0.4;
+    modalBody() {
+        const accept = this.state.accept;
+        const deny = this.state.deny;
+        return !this.state.loaded ? (
+            <Spinner size={"small"}></Spinner>
+        ) : (
+                <Content showsVerticalScrollIndicator={false}>
+                    <View style={{ height: "98%" }}>
                         <View style={{ height: 65 }}>
-                            <View style={{ ...bleashupHeaderStyle, padding: '1%', flexDirection: 'row', }}>
-                                <TouchableOpacity style={{ width: '30%' }}
+                            <View
+                                style={{
+                                    ...bleashupHeaderStyle,
+                                    padding: "1%",
+                                    flexDirection: "row",
+                                }}
+                            >
+                                <TouchableOpacity
+                                    style={{ width: "30%" }}
                                     onPress={() =>
                                         requestAnimationFrame(() => {
                                             this.setState({
                                                 showPhoto: true,
-                                            })
+                                            });
                                         })
-                                    }>
-                                    <CacheImages thumbnails
-                                        source={{ uri: this.state.event.background }}>
-                                    </CacheImages>
+                                    }
+                                >
+                                    <CacheImages
+                                        thumbnails
+                                        source={{ uri: this.state.event.background }}
+                                    ></CacheImages>
                                 </TouchableOpacity>
-                                <View style={{ width: '80%' }}>
-                                   <TitleView Event={this.state.event}></TitleView> 
+                                <View style={{ width: "80%" }}>
+                                    <TitleView Event={this.state.event}></TitleView>
                                 </View>
                             </View>
                         </View>
                         <DeckSwiperModule details={this.state.details} />
                         <CardItem>
-                            <Left>{this.props.isToBeJoint && this.state.event.public ? (<View>
-                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
-                                    {this.state.isJoining ? <Spinner></Spinner> : <Button onPress={this.props.join} style={{
-                                        alignItems: 'center',
-                                        width: 100,
-                                        marginTop: 4,
-                                        marginBottom: 10,
-                                        borderRadius: 5
-                                    }}
-                                        onPress={() => this.props.join ? this.props.join() : this.join()} success ><Text
+                            <Left>
+                                {this.props.isToBeJoint && this.state.event.public ? (
+                                    <View>
+                                        <View
                                             style={{
-                                                fontSize: 18,
-                                                fontWeight: "500",
-                                                marginLeft: 31
-                                            }}>Join</Text>
-                                    </Button>}
-                                    <View style={{ flexDirection: 'column' }}></View>
-                                </View></View>) : null}
+                                                flexDirection: "row",
+                                                justifyContent: "space-between",
+                                            }}
+                                        >
+                                            {this.state.isJoining ? (
+                                                <Spinner></Spinner>
+                                            ) : (
+                                                    <Button
+                                                        onPress={this.props.join}
+                                                        style={{
+                                                            alignItems: "center",
+                                                            width: 100,
+                                                            marginTop: 4,
+                                                            marginBottom: 10,
+                                                            borderRadius: 5,
+                                                        }}
+                                                        onPress={() =>
+                                                            this.props.join ? this.props.join() : this.join()
+                                                        }
+                                                        success
+                                                    >
+                                                        <Text
+                                                            style={{
+                                                                fontSize: 18,
+                                                                fontWeight: "500",
+                                                                marginLeft: 31,
+                                                            }}
+                                                        >
+                                                            Join
+                        </Text>
+                                                    </Button>
+                                                )}
+                                            <View style={{ flexDirection: "column" }}></View>
+                                        </View>
+                                    </View>
+                                ) : null}
                             </Left>
                             <Right>
-                                {this.state.location && this.state.location.string ? <MapView card location={this.state.location.string} >
-                                </MapView> : null}
+                                {this.state.location && this.state.location.string ? (
+                                    <MapView card location={this.state.location.string}></MapView>
+                                ) : null}
                             </Right>
                         </CardItem>
-                        <View style={{marginLeft:'2%',marginTop: '-1%',}}>
-                            {<Creator creator={this.state.event.creator_phone} created_at={this.state.event.created_at}></Creator>}
+                        <View style={{ marginLeft: "2%", marginTop: "-1%" }}>
+                            {
+                                <Creator
+                                    creator={this.state.event.creator_phone}
+                                    created_at={this.state.event.created_at}
+                                ></Creator>
+                            }
                         </View>
                     </View>
-                    {this.state.showPhoto ? <PhotoViewer open={this.state.showPhoto} photo={this.state.event.background} hidePhoto={() => {
-                        this.setState({
-                            showPhoto: false
-                        })
-                    }}></PhotoViewer> : null}
-                </Content>}
-            </Modal>
-        )
+                    {this.state.showPhoto ? (
+                        <PhotoViewer
+                            open={this.state.showPhoto}
+                            photo={this.state.event.background}
+                            hidePhoto={() => {
+                                this.setState({
+                                    showPhoto: false,
+                                });
+                            }}
+                        ></PhotoViewer>
+                    ) : null}
+                </Content>
+            );
     }
 }
-
-
-
-
 
 /*marginTop:this.props.location.length > 19?15:this.props.location.length > 38?5:35*/

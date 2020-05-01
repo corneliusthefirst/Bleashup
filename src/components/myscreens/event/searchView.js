@@ -10,6 +10,7 @@ import {uniq,concat,find} from "lodash";
 import CacheImages from "../../CacheImages";
 import colorList from '../../colorList';
 import DetailsModal from "../../myscreens/invitations/components/DetailsModal";
+import BeNavigator from '../../../services/navigationServices';
 
 let globalFunctions = new GlobalFunctions();
 let { height, width } = Dimensions.get('window');
@@ -26,7 +27,6 @@ export default class SearchView extends Component {
     }
 
 componentDidMount(){
-   console.warn(stores.Events.searchdata)
    this.setState({data:stores.Events.searchdata});
 }
 
@@ -48,10 +48,7 @@ navigateToEventDetails = (item) => {
   let event = find(stores.Events.events , { id:item.id});
   stores.Events.isParticipant(item.id, stores.Session.SessionStore.phone).then(status => {
       if (status) {
-          this.props.navigation.push("Event", {
-              Event: event,
-              tab: "EventDetails"
-          });
+       BeNavigator.pushActivity(event)
       } else {
          this.openDetails(event);
       }

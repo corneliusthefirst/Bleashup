@@ -226,7 +226,7 @@ export default class EventTasksCard extends Component {
           </CardItem> : null}
           <CardItem>
             <Left>
-              <Title style={{ fontWeight: "500", marginBottom: "5%",marginLeft:"0%", fontSize: 17, color:ColorList.bodyText,textTransform:"capitalize", }}>{this.props.item.title}</Title>
+              <Text ellipsizeMode={'tail'} numberOfLines={3} style={{ fontWeight: "500", marginBottom: "5%",marginLeft:"0%", fontSize: 17, color:ColorList.bodyText,textTransform:"capitalize", }}>{this.props.item.title}</Text>
             </Left>
           </CardItem>
           {this.props.item.remind_url &&

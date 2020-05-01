@@ -214,4 +214,53 @@ export function datesIntervalflaterner(period, datesInterval, result, i) {
             }]]
         return datesIntervalflaterner(period, datesInterval, result, i + 1)
     }
+
+   function convertDate(data, newDate) {
+        newDate.start_date = parseInt(this.getUnixTimeStamp(newDate.start_date), 10)
+        newDate.end_date = parseInt(this.getUnixTimeStamp(newDate.end_date), 10)
+        let newDateDifference = parseInt(newDate.end_date - newDate.start_date, 10);
+        data.start_date = parseInt(this.getUnixTimeStamp(data.start_date), 10);
+        data.end_date = parseInt(this.getUnixTimeStamp(data.end_date), 10);
+        let dateDifference = parseInt(data.end_date - data.start_date, 10);
+
+        let mapper = (date) => {
+            let date1 = (parseInt(this.getUnixTimeStamp(date.start_date), 10) -
+                parseInt(this.getUnixTimeStamp(data.start_date), 10)) / dateDifference;
+
+            let newDate1 = Math.floor(date1 * newDateDifference)
+            newDate1 = moment(newDate1 + newDate.start_date).format()
+            let date2 = (parseInt(this.getUnixTimeStamp(date.end_date), 10) -
+                parseInt(this.getUnixTimeStamp(data.start_date), 10)) / dateDifference;
+            let newDate2 = Math.floor(date2 * newDateDifference)
+            newDate2 = moment(newDate2 + newDate.start_date).format()
+            date.start_date = newDate1
+            date.end_date = newDate2
+            return date
+        }
+        let GsystemMapper = (dataParam) => {
+            if (!dataParam.configurations) return dataParam
+            if (dataParam.configurations.includes("timeline")) {
+                dataParam.configurations = JSON.parse(dataParam.configurations)
+                let date = {
+                    start_date: dataParam.configurations.timeline[0],
+                    end_date: dataParam.configurations.timeline[1]
+                }
+                date = mapper(date, newDate);
+                dataParam.configurations.timeline = [date.start_date, date.end_date]
+                dataParam.configurations = JSON.stringify(dataParam.configurations)
+                return dataParam
+            } else {
+                return dataParam
+            }
+        }
+        data.rounds = data.rounds.map(mapper);
+        data.grading_systems = data.grading_systems.map(GsystemMapper)
+        return {
+            ...data, start_date: moment(newDate.start_date).format(),
+            end_date: moment(newDate.end_date).format()
+        };
+    }
+   function getUnixTimeStamp(dateTime) {
+        return moment(dateTime).format("x");
+    }
 }

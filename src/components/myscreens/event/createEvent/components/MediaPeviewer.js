@@ -123,7 +123,7 @@ export default class MediaPreviewer extends Component {
               type="EvilIcons"
               onPress={this.props.cleanMedia}
               style={{
-                color: "white",
+                color: ColorList.bodyBackground,
                 fontSize: 30,
               }}
             ></Icon>

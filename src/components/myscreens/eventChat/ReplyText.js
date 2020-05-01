@@ -35,7 +35,7 @@ export default class ReplyText extends Component {
                      backgroundColor: "rgba(34, 0, 0, 0.1)",
                     padding: "1%",//margin: '1%',
                     minHeight: 50,
-                    maxHeight: 300,
+                    maxHeight: 350,
                     borderTopLeftRadius: 5,
                     borderTopRightRadius: 5,
                 }}>
@@ -50,15 +50,13 @@ export default class ReplyText extends Component {
                         <View style={{ margin: "1%", }}>
                             <TouchableOpacity onPressIn={() => this.props.pressingIn()} onPress={() => requestAnimationFrame(() => {
                                 this.props.reply.replyer_name && (this.props.reply.replyer_phone ||
-                                    this.props.reply.sender.phone) ? this.showReplyer() : null
+                                    this.props.reply.sender.phone) ? this.showReplyer() : this.props.openReply(this.props.reply)
                             })
                             }>
                                 <View style={{ flexDirection: 'row', }}>
-                                    <Text note style={{ marginBottom: "1%",fontWeight: 'bold', color: ColorList.indicatorColor }}>{this.props.reply.replyer_name ? this.props.reply.replyer_name :
-                                        this.props.reply.type_extern}</Text>
-                                    {this.props.reply.type_extern ? <View style={{ flexDirection: 'row', }}>
-                                        {/*<Icon type={"Entypo"} name={'dot-single'} style={{ color: '#1FABAB',  }}></Icon>*/}
-                                        <Text  style={{ fontWeight: 'bold',fontSize: 12, }}>{`:  ${this.props.reply.replyer_name ?
+                                    <Text note ellipsizeMode={'tail'} numberOfLines={1} style={{ marginBottom: "1%",fontWeight: 'bold', color: ColorList.indicatorColor,maxWidth: '25%' }}>{`${this.props.reply.replyer_name ? this.props.reply.replyer_name : this.props.reply.type_extern}: `}</Text>
+                                    {this.props.reply.type_extern ? <View style={{ flexDirection: 'row',minWidth: '75%',maxWidth:'80%', }}>
+                                        <Text ellipsizeMode={'tail'} numberOfLines={3}  style={{ fontWeight: 'bold',fontSize: 12, width:'100%'}}>{`${this.props.reply.replyer_name ?
                                             this.props.reply.type_extern : this.props.reply.title.split(': \n')[0]}`}</Text>
                                     </View> : null}
                                 </View>
@@ -112,8 +110,6 @@ export default class ReplyText extends Component {
                                     {this.props.reply.change_date ? <Text note>{`On: ${moment(this.props.reply.change_date).format("dddd, MMMM Do YYYY, h:mm:ss a")}`}</Text> : null}
                                 </View>}
                         </View>
-                        {/*<View style={{ /*width: "5%" }}><Icon type="FontAwesome"
-                                    style={{ fontSize: 12, color: "#1FABAB" }} name="quote-right"></Icon></View>*/}
                     </View>
                 </View>
             </TouchableWithoutFeedback>
