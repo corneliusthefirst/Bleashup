@@ -25,6 +25,7 @@ import ProfileView from "../invitations/components/ProfileView";
 //import CreateRequest from '../event/createEvent/CreateRequester';
 import firebase from 'react-native-firebase';
 import shadower from "../../shadower";
+import BeNavigator from "../../../services/navigationServices";
 
 var uuid = require('react-native-uuid');
 uuid.v1({
@@ -208,6 +209,21 @@ createRelation = (user)=>{
         console.warn(relation);
         //stores.Events.addEvent(relation).then(()=>{});
         //CreateRequest.createEvent(relation).then((res) => {})
+       
+       /* CreateRequest.createEvent(newEvent).then((res) => {
+          //console.warn(res)
+          stores.Events.delete("newEventId").then(() => {
+            firebase.database().ref(`rooms/${res.id}/${res.id}`).set({ name: 'General', members: res.participant }).then(() => {
+              this.setState({creating: false })
+              BeNavigator.navigateToActivity({tab:'EventChat',event:res})
+            })
+          });
+        }).catch(() => {
+          this.setState({
+            creating: false
+          })
+        })*/
+
      }else{
        this.setState({alreadyCreated:false})
      }
