@@ -34,7 +34,6 @@ import SideButton from '../../sideButton';
 import Share from '../../../stores/share';
 import BeNavigator from '../../../services/navigationServices';
 import ShareFrame from "../../mainComponents/ShareFram";
-import { stores } from '.';
 
 let { height, width } = Dimensions.get('window');
 
