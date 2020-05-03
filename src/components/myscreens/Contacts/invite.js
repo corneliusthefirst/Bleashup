@@ -100,7 +100,8 @@ export default class Invite extends Component {
                <TouchableOpacity  onPress={this.openWhatsapp} >
                <View style={{flexDirection:"column",alignItems:"center"}} >
                <View style={{height:height/17,width:width/8,borderRadius:25,margin:"5%",backgroundColor:"limegreen",justifyContent:"center",alignItems:"center"}}>
-               <Icon name="whatsapp" active={true} type="FontAwesome" style={{ color: "white", }} onPress={() => {}} />
+               {/* <Icon name="whatsapp" active={true} type="FontAwesome" style={{ color: "white", }} onPress={() => {}} />*/}
+               <Thumbnail source={require("../../../../Images/whatsapp.png")} style={{ width: 120 }}></Thumbnail>
                </View>
                <Text  note>whatsapp</Text>
                </View>

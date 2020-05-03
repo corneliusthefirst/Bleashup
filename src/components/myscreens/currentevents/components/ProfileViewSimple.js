@@ -51,8 +51,7 @@ export default class ProfileSimple extends Component {
 
 
                     <View style={{
-                    
-                        justifyContent: 'center',width:this.props.invite && !this.props.profile.found  ? "67%":"77%", flexDirection: "column",paddingLeft:this.props.relation ?"11.6%":"1.7%" }}>
+                        justifyContent:'center',width:this.props.invite && !this.props.profile.found  ? "67%":"77%", flexDirection: "column",paddingLeft:this.props.relation ?"11.6%":"1.7%" }}>
                         <Text ellipsizeMode={'tail'} numberOfLines={1} style={{ marginBottom: "2%", 
                         fontWeight: 'bold', alignSelf: "flex-start", color:this.props.profile.found||this.props.relation?"black":"#616161",fontSize:16 }}>{this.props.profile.phone === stores.LoginStore.user.phone ? "You " : this.props.profile.nickname}</Text>
                         {this.props.profile.status && this.props.profile.status !== 'undefined' ? <Title style={{ fontStyle: 'italic', alignSelf: "flex-start",fontSize:12 ,color:"gray"}} >{this.props.profile.status}</Title>:null}
