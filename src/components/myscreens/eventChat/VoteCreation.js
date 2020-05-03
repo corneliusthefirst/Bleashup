@@ -304,7 +304,7 @@ export default class VoteCreation extends BleashupModal {
                                     {this.state.showVoteContentError ? <Text style={{ color: "#A91A84", fontWeight: 'bold', }} note>{"vote should at least have a title or a detail"}</Text> : null}
                                     {this.state.showVoteOptionError ? <Text style={{ color: "#A91A84", fontWeight: 'bold', }} note>{"vote should have at least a 2 options"}</Text> : null}
                                     {this.state.nowVotePeriod ? <Text style={{ color: "#A91A84", fontWeight: 'bold', }} note>{"you must specify the voting endate"}</Text> : null}
-                                    <View style={{ height: height / 14, alignItems: 'center', margin: '2%', }}>
+                                    <View style={{ height: height / 14, alignItems: 'center', margin: '2%',width:'90%' ,alignSelf: 'center',}}>
                                         <CreateTextInput
                                             maxLength={70}
                                             height={height / 14}

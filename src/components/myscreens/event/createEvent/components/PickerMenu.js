@@ -55,7 +55,7 @@ export default class PickersMenu extends Component {
           ref={this.setMenuRef}
           button={
             <TouchableOpacity
-            onPress={() => requestAnimationFrame(this.showMenu)}
+            onPress={() => requestAnimationFrame(this.showMenu.bind(this))}
             >
               <Icon
                 style={{

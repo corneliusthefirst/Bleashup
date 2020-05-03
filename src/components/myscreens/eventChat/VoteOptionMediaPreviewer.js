@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { TouchableOpacity,View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import { Text } from "native-base";
 import converToHMS from "../highlights_details/convertToHMS";
 import ContentModal from "../event/ContentModal";
@@ -22,24 +22,24 @@ export default class VoteOptionPreviwer extends Component {
                         })
                     }
                 >
-                    <Text style={{fontWeight: 'bold',}}>
+                    <Text style={{ fontWeight: 'bold', }}>
                         {this.props.url.video
                             ? "Video " +
-                            `(${converToHMS(this.props.url.video_duration)})`: " Photo"}
+                            `(${converToHMS(this.props.url.video_duration)})` : this.props.url.photo ? " Photo" : null}
                     </Text>
                 </TouchableOpacity>
                 <ContentModal
-                title={this.props.optionName}
-                cleanMedia={() => {
-                    this.setState({
-                        isContentModalOpened:false
-                    })
-                    this.props.cleanMedia()
-                }}
-                vote={() => {
-                    this.setState({isContentModalOpened:false})
-                    this.props.vote()
-                }}
+                    title={this.props.optionName}
+                    cleanMedia={() => {
+                        this.setState({
+                            isContentModalOpened: false
+                        })
+                        this.props.cleanMedia()
+                    }}
+                    vote={() => {
+                        this.setState({ isContentModalOpened: false })
+                        this.props.vote()
+                    }}
                     isOpen={this.state.isContentModalOpened}
                     content={this.props.url}
                     closed={() => {

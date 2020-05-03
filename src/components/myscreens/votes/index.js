@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View,Dimensions } from "react-native";
+import { View, Dimensions } from "react-native";
 import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
 import { Text, Icon, Spinner, Toast } from "native-base";
 import BleashupFlatList from "../../BleashupFlatList";
@@ -21,16 +21,18 @@ import formVoteOptions from '../../../services/formVoteOptions';
 import BleashupModal from '../../mainComponents/BleashupModal';
 import CreationHeader from "../event/createEvent/components/CreationHeader";
 import ColorList from '../../colorList';
+import ShareFrame from "../../mainComponents/ShareFram";
+import Share from "../../../stores/share";
 let { height, width } = Dimensions.get('window');
 
 export default class Votes extends BleashupModal {
-  initialize(){
+  initialize() {
     this.state = {
       votes: []
     }
   }
   state = {}
-  onClosedModal(){
+  onClosedModal() {
     this.props.onClosed()
     this.setState({
       //loaded: false,
@@ -42,7 +44,30 @@ export default class Votes extends BleashupModal {
   }
   state = {}
   componentDidMount() {
-    this.intializeVote()
+    !this.props.shared ? this.intializeVote() : this.initializeSharedVote()
+  }
+  initializeSharedVote() {
+    this.shareStore = new Share(this.props.share.id)
+    this.shareStore.readFromStore().then(() => {
+      this.shareStore.share && this.shareStore.share.vent ? this.setState({
+        loaded: true
+      }) : null
+    })
+    stores.Votes.fetchVoteFromRemote(this.props.share.item_id, true).then((vote) => {
+      stores.Events.loadCurrentEventFromRemote(this.props.share.event_id).then(event => {
+        this.shareStore.saveCurrentState({
+          ...this.props.share,
+          event,
+          vote: Array.isArray(vote)
+            ? vote[0]
+            : vote
+        }).then(() => {
+          this.setState({
+            loaded: true
+          })
+        })
+      })
+    })
   }
   componentWillMount() {
     emitter.on("votes-updated", (committee_id) => {
@@ -53,12 +78,14 @@ export default class Votes extends BleashupModal {
     })
     emitter.on("vote-me", (index, message) => {
       let votex = find(this.state.votes, { id: message.vote.id })
-      this.votex(index, {...message,vote:votex}, true)
+      this.votex(index, { ...message, vote: votex }, true)
     }
     )
   }
   intializeVote() {
-    stores.Votes.fetchVotes(this.props.event_id,
+    this.props.shared ? stores.Votes.fetchVoteFromRemote(this.props.share.item_id,true).then((vote) => {
+      this.shareStore.saveCurrentState({ ...this.shareStore.share, vote: Array.isArray(vote) ? vote[0] : vote })
+    }) : stores.Votes.fetchVotes(this.props.event_id,
       this.props.committee_id).then((votes) => {
         this.setState({
           votes: votes,
@@ -110,29 +137,30 @@ export default class Votes extends BleashupModal {
   }
 
   votex(index, message, foreign) {
-    let vote = message.vote 
+    let vote = message.vote
     const haveIVoted = () => {
-      let v = find(this.state.votes, { id: vote.id })
+      let v = this.props.shared ? this.shareStore.share.vote : find(this.state.votes, { id: vote.id })
       return findIndex(v.voter, { phone: stores.LoginStore.user.phone }) >= 0
     }
     if (!vote.period || dateDiff({ recurrence: vote.period }) < 0) {
       if (!haveIVoted()) {
         if (!this.props.working) {
-          let meess = foreign ? {...message,
-            sender:this.props.sender
+          let meess = foreign ? {
+            ...message,
+            sender: this.props.sender
           } : {
-            text: vote.title,
-            received: [{
-              phone: stores.LoginStore.user.phone,
-              date: moment().format()
-            }],
-            type: 'vote',
-            sender: this.props.sender,
-            create_at: moment().format(),
+              text: vote.title,
+              received: [{
+                phone: stores.LoginStore.user.phone,
+                date: moment().format()
+              }],
+              type: 'vote',
+              sender: this.props.sender,
+              create_at: moment().format(),
 
-          }
+            }
           this.props.startLoader()
-         VoteRequest.vote(vote.event_id,
+          VoteRequest.vote(vote.event_id,
             vote.id, index).then((newVote) => {
               this.intializeVote()
               this.props.stopLoader()
@@ -186,7 +214,7 @@ export default class Votes extends BleashupModal {
       sayAppBusy()
     }
   }
-  
+
   mentionVote(vote, creator) {
     this.props.replying({
       id: vote.id,
@@ -196,53 +224,82 @@ export default class Votes extends BleashupModal {
     })
   }
   renderPerbatch = 10
-  swipeToClose=false
+  swipeToClose = false
+
+  renderVotes() {
+    return <View>
+      <CreationHeader
+        back={this.onClosedModal.bind(this)}
+        title={this.props.isSingleVote ? "Vote" : "Votes"}
+        extra={!this.props.isSingleVote && this.props.computedMaster && <Icon onPress={() => requestAnimationFrame(() => this.AddVote())} type='AntDesign'
+          name="plus" style={{ color: ColorList.bodyIcon, alignSelf: 'center', marginTop: 'auto', marginBottom: 'auto', }} />}
+      >
+      </CreationHeader>
+      <View style={{ height: ColorList.containerHeight - (ColorList.headerHeight + 20) }}>
+        {!this.state.loaded ? <Spinner size="small"></Spinner> :
+          <BleashupFlatList
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={(item, index) => {
+              this.delay = index % this.renderPerbatch == 0 ? 0 : this.delay + 1
+              return <View key={index.toString()} style={{
+                borderRadius: 5,
+                margin: '2%',
+                ...shadower(1)
+              }}>
+                <Voter computedMaster={this.props.computedMaster} mention={(vote, creator) => this.mentionVote(vote, creator)} updateVote={(vote) => {
+                  this.updateVote(vote)
+                }} showVoters={this.props.showVoters} configurable key={index} vote={(option, voter) => this.votex(option, { vote: voter })} startLoader={this.props.startLoader}
+                  stopLoader={this.props.stopLoader} delay={this.delay} message={{ vote: item }} voteItem={(mess) => {
+                    this.voteItem(mess)
+                  }}></Voter></View>
+            }}
+            renderPerBatch={this.renderPerbatch}
+            firstIndex={0}
+            initialRender={7}
+            dataSource={this.state.votes.filter(ele => (this.props.vote_id && ele.id === this.props.vote_id) || !this.props.isSingleVote)}
+            numberOfItems={this.props.isSingleVote ? 1 : this.state.votes.length}
+          >
+          </BleashupFlatList>}
+      </View>
+    </View>
+  }
+  renderSharedVote() {
+    return <ShareFrame
+      share={this.shareStore && this.shareStore.share}
+      date={this.props.share.date}
+      sharer={this.props.share.sharer}
+      content={() => <View style={{
+        width:'100%',
+        borderRadius: 3,
+        ...shadower(1)
+      }}>
+        <Voter mention={(vote, creator) => this.mentionVote(vote, creator)} updateVote={(vote) => {
+          this.updateVote(vote)
+        }} showVoters={this.props.showVoters} configurable vote={(option, voter) => this.votex(option, { vote: voter })} startLoader={this.props.startLoader}
+          stopLoader={this.props.stopLoader} delay={this.delay} message={{ vote: this.shareStore.share.vote || {} }} voteItem={(mess) => {
+            this.voteItem(mess)
+          }}></Voter></View>}
+    >
+
+    </ShareFrame>
+  }
+  borderTopLeftRadius = 0
+  borderTopRightRadius = 0
   modalBody() {
     return <View>
-      <CreationHeader 
-       back={this.onClosedModal.bind(this)}
-       title={this.props.isSingleVote ? "Vote" : "Votes"}
-        extra={!this.props.isSingleVote && this.props.computedMaster && <Icon onPress={() => requestAnimationFrame(() => this.AddVote())} type='AntDesign'
-          name="plus" style={{ color: ColorList.bodyIcon, alignSelf: 'center',marginTop: 'auto',marginBottom: 'auto', }} />}
-       >
-    </CreationHeader>
-        <View style={{ height: ColorList.containerHeight - (ColorList.headerHeight + 20) }}>
-          {!this.state.loaded ? <Spinner size="small"></Spinner> :
-            <BleashupFlatList
-              keyExtractor={(item, index) => index.toString()}
-              renderItem={(item, index) => {
-                this.delay = index % this.renderPerbatch == 0 ? 0 : this.delay + 1
-                return <View key={index.toString()} style={{
-                  borderRadius: 5,
-                  margin: '2%',
-                  ...shadower(1)
-                }}>
-                  <Voter computedMaster={this.props.computedMaster} mention={(vote, creator) => this.mentionVote(vote, creator)} updateVote={(vote) => {
-                    this.updateVote(vote)
-                  }} showVoters={this.props.showVoters} configurable key={index} vote={(option, voter) => this.votex(option, { vote: voter })} startLoader={this.props.startLoader}
-                    stopLoader={this.props.stopLoader} delay={this.delay} message={{ vote: item }} voteItem={(mess) => {
-                      this.voteItem(mess)
-                    }}></Voter></View>
-              }}
-              renderPerBatch={this.renderPerbatch}
-              firstIndex={0}
-              initialRender={7}
-              dataSource={this.state.votes.filter(ele => (this.props.vote_id && ele.id === this.props.vote_id) || !this.props.isSingleVote)}
-              numberOfItems={this.props.isSingleVote ? 1 : this.state.votes.length}
-            >
-            </BleashupFlatList>}
-        </View>
-        <VoteCreation takeVote={(vote) => {
-          this.createVote(vote)
-        }}
-          vote={this.state.vote}
-          updateVote={(prev, newV) => this.appdateVote(prev, newV)}
-          update={this.state.update} vote_id={this.state.vote_id}
-          isOpen={this.state.isVoteCreationModalOpened} onClosed={() => {
-            this.setState({
-              isVoteCreationModalOpened: false
-            })
-          }}></VoteCreation>
-      </View>
+      {!this.props.shared ? this.renderVotes() : this.renderSharedVote()}
+      <VoteCreation takeVote={(vote) => {
+        this.createVote(vote)
+      }}
+        vote={this.state.vote}
+        computedMaster={this.props.computedMaster}
+        updateVote={(prev, newV) => this.appdateVote(prev, newV)}
+        update={this.state.update} vote_id={this.state.vote_id}
+        isOpen={this.state.isVoteCreationModalOpened} onClosed={() => {
+          this.setState({
+            isVoteCreationModalOpened: false
+          })
+        }}></VoteCreation>
+    </View>
   }
 }

@@ -124,9 +124,6 @@ getValidUsers(contacts){
 
 
 invite = ()=>{
-  firebase.auth().signInWithPhoneNumber("+237698683806").then(confirmCode => {
-    console.warn(confirmCode)
-  })
   /*.catch(e => {
     alert("Unable To Verify Your Account", "Please Check Your Internet Connection")
     console.warn(e, "errr here!!!")

@@ -31,7 +31,7 @@ export default class CreatorModal extends BleashupModal {
                     showProfileModal: true
                 })
             }}>
-                <Text style={{ fontWeight: 'bold', fontSize: 11, margin: 1, }} note></Text>
+                <Text style={{ fontWeight: 'bold', fontSize: 11, margin: '1%', }} note>{this.props.intro && this.props.intro}</Text>
                 {this.props.creator.nickname ? <Text style={{ margin: "1%", fontSize: 11, fontStyle: 'normal', }} note>by {this.props.creator.nickname} </Text> : null}
                 <Text style={{ margin: "1%", fontSize: 11, color: "gray" }} >{"On "}{moment(this.props.created_at).format(format)}</Text>
             </TouchableOpacity>

@@ -66,6 +66,7 @@ var swipeoutBtns = [
     text: 'Button'
   }
 ]
+
 export default class Event extends Component {
   constructor(props) {
     super(props);
@@ -145,7 +146,16 @@ export default class Event extends Component {
   renderMenu(NewMessages) {
     switch (this.state.currentPage) {
       case "EventDetails":
-        return <EventDetails startLoader={() => {
+        return <EventDetails
+        shared
+        share={{ 
+            id:'1434',
+            date:moment().format(),
+            sharer:stores.LoginStore.user.phone,
+            item_id: "740a5530-8b20-11ea-9234-9b01561bce6b",
+            event_id: this.event.id
+         }}
+        startLoader={() => {
           this.setState({
             working: true
           })
@@ -169,7 +179,16 @@ export default class Event extends Component {
           showHighlight={(h) => this.showHighlightDetails(h)}
           Event={this.event}></EventDetails>
       case "Reminds":
-        return <Remind startLoader={() => {
+        return <Remind 
+        shared
+          share={{
+            id: '456322',
+            date: moment().format(),
+            sharer: stores.LoginStore.user.phone,
+            item_id: "a7f976f0-8cd8-11ea-9234-ebf9c3b94af7",
+            event_id: this.event.id
+          }}
+        startLoader={() => {
           this.setState({
             working: true
           })
@@ -586,15 +605,9 @@ export default class Event extends Component {
     }
   }
   componentDidMount() {
-    //Requester.saveContacts();
-
     if (!this.event.calendared && this.event.period) {
       this.addToCalendar()
-    }/* else if (!this.event.configured) {
-      this.setState({
-        isSettingsModalOpened: true
-      })
-    }*/
+    }
     let page = this.props.navigation.getParam("tab")
     this.setState({
       isChat: page === 'EventChat' ? true : false,
