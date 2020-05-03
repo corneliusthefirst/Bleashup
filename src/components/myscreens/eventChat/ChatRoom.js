@@ -1154,9 +1154,17 @@ export default class ChatRoom extends Component {
                                         isMediaModalOpened: false
                                     })
                                 }}></MediaTabModal> : null}
-                            {<Votes takeVotes={(votes => {
+                            {<Votes takeVotes={votes => {
                                 this.initializeVotes(votes)
-                            })}
+                            }}
+                            shared
+                                share={{
+                                    id: '45xerfds',
+                                    date: moment().format(),
+                                    sharer: stores.LoginStore.user.phone,
+                                    item_id: "6d1d14f0-8d1a-11ea-9234-8b09069818ca",
+                                    event_id: this.props.activity_id
+                                }}
                                 replying={(reply) => {
                                     this.fucussTextInput()
                                     this.replying(reply, null)

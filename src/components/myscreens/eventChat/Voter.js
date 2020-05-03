@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 import TextContent from './TextContent';
 import { Text, Icon, Spinner, Toast } from 'native-base';
 import labler from './labler';
@@ -100,18 +100,18 @@ export default class Voter extends Component {
                 </View>
             </View>
             <View style={{ width: '14%', justifyContent: 'center', alignSelf: 'center', marginLeft: '1%', }}>
-                {!this.hasVoted() || dateDiff({ recurrence: this.props.message.vote.period }) > 0 ? null : this.optionVoter(item.index,true)}
+                {!this.hasVoted() || dateDiff({ recurrence: this.props.message.vote.period }) > 0 ? null : this.optionVoter(item.index, true)}
             </View>
         </View>
     }
-    optionVoter(index,toper) {
-        return <View style={{ marginBottom: toper && '30%', }}><PickersMenu color={ColorList.darkGrayText} icon={{ name: 'check', type: 'FontAwesome' }} menu={[
+    optionVoter(index, toper) {
+        return <PickersMenu color={ColorList.darkGrayText} icon={{ name: 'check', type: 'FontAwesome' }} menu={[
             {
                 title: 'Vote',
                 callback: () => this.vote(index),
                 condition: true
             }
-        ]} ></PickersMenu></View>
+        ]} ></PickersMenu>
     }
     returnOptionWithoutCount(item, index) {
         return <View style={{ flexDirection: 'row', width: '100%', height: 40, marginBottom: '8%', }}>
@@ -142,47 +142,50 @@ export default class Voter extends Component {
         this.creator = creator
     }
     render() {
-        return !this.state.loaded ? <View style={{ width: 300, height: 300, 
-            ...this.props.placeHolder }}></View> : 
-        <View style={{ margin: '1%', }}>
-            <View style={{ alignSelf: 'center', margin: '2%', flexDirection: 'row', }}>
-                <View style={{ width: '70%', marginLeft: '2%', }}>
-                    <Text style={{
-                        alignSelf: 'flex-start',
-                        fontWeight: 'bold',
-                        fontSize: 21,
-                    }}>{this.props.message.vote.title}</Text>
+        return !this.state.loaded ? <View style={{
+            width: 300, height: 300,
+            ...this.props.placeHolder
+        }}></View> :
+            <View style={{ margin: '1%', }}>
+                <View style={{ alignSelf: 'center', margin: '2%', flexDirection: 'row', }}>
+                    <View style={{ width: '70%', marginLeft: '2%', }}>
+                        <Text style={{
+                            alignSelf: 'flex-start',
+                            fontWeight: 'bold',
+                            fontSize: 21,
+                        }}>{this.props.message.vote.title}</Text>
+                    </View>
+                    <View style={{ flexDirection: 'row', width: '30%' }}>
+                        {this.props.configurable && <View style={{ width: '33.33%', padding: '1%', }}><Icon onPress={() => this.reply()} name={"reply"}
+                            type={"Entypo"} style={{ color: '#555756', alignSelf: 'flex-start', marginRight: '15%', }}></Icon></View>}
+                        {this.props.computedMaster ? <View style={{ width: '38.33%' }}><Icon
+                            style={{ color: '#555756', padding: '1%' }}
+                            onPress={() => {
+                                this.props.showVoters(this.props.message.vote.voter)
+                            }}
+                            name={'ios-people'} type={"Ionicons"}></Icon></View> : null}
+                        {this.props.configurable && this.creator && <TouchableOpacity
+                            onPress={() => requestAnimationFrame(() => this.props.updateVote(this.props.message.vote))}><Icon
+                                style={{ color: '#555756', marginTop: '13%', }} name="gear"
+                                type="EvilIcons"></Icon></TouchableOpacity>}</View>
                 </View>
-                <View style={{ flexDirection: 'row', width: '30%' }}>
-                    {this.props.configurable && <View style={{ width: '33.33%', padding: '1%', }}><Icon onPress={() => this.reply()} name={"reply"}
-                        type={"Entypo"} style={{ color: '#555756', alignSelf: 'flex-start', marginRight: '15%', }}></Icon></View>}
-                    {this.props.computedMaster ? <View style={{ width: '38.33%' }}><Icon
-                        style={{ color: '#555756', padding: '1%' }}
-                        onPress={() => {
-                            this.props.showVoters(this.props.message.vote.voter)
-                        }}
-                        name={'ios-people'} type={"Ionicons"}></Icon></View> : null}
-                    {this.props.configurable && this.creator && <View><Icon onPress={() => this.props.updateVote(this.props.message.vote)}
-                        style={{ color: '#555756', marginTop: '13%', }} name="gear"
-                        type="EvilIcons"></Icon></View>}</View>
+                {this.props.message.vote.period ? <View style={{ margin: '4%', alignItems: 'flex-start', }}><Text style={{ color: dateDiff({ recurrence: this.props.message.vote.period }) > 0 ? "gray" : "#1FABAB" }}>{`${writeDateTime({
+                    period: this.props.message.vote.period,
+                    recurrence: this.props.message.vote.period
+                }).replace("Starting", "Ends")}`}</Text></View> : null}
+                <View style={{ margin: '4%', }}>
+                    <TextContent
+                        pressingIn={() => this.props.pressingIn ? this.props.pressingIn() : null}
+                        handleLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null}
+                        pressingIn={() => this.props.pressingIn ? this.props.pressingIn() : null}
+                        text={this.props.message.vote.description}></TextContent>
+                </View>
+                <View>
+                    {this.renderOptions()}
+                </View>
+                <View><Creator created_at={this.props.message.vote.created_at} pressingIn={() => this.props.pressingIn ? this.props.pressingIn() : null} giveCreator={(creator) => {
+                    this.props.takeCreator ? this.props.takeCreator(creator) : this.takeCreator(creator)
+                }} creator={this.props.message.vote.creator}></Creator></View>
             </View>
-            {this.props.message.vote.period ? <View style={{ margin: '4%', alignItems: 'flex-start', }}><Text style={{ color: dateDiff({ recurrence: this.props.message.vote.period }) > 0 ? "gray" : "#1FABAB" }}>{`${writeDateTime({
-                period: this.props.message.vote.period,
-                recurrence: this.props.message.vote.period
-            }).replace("Starting", "Ends")}`}</Text></View> : null}
-            <View style={{ margin: '4%', }}>
-                <TextContent
-                    pressingIn={() => this.props.pressingIn ? this.props.pressingIn() : null}
-                    handleLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null}
-                    pressingIn={() => this.props.pressingIn ? this.props.pressingIn() : null}
-                    text={this.props.message.vote.description}></TextContent>
-            </View>
-            <View>
-                {this.renderOptions()}
-            </View>
-            <View><Creator created_at={this.props.message.vote.created_at} pressingIn={() => this.props.pressingIn ? this.props.pressingIn() : null} giveCreator={(creator) => {
-                this.props.takeCreator ? this.props.takeCreator(creator) : this.takeCreator(creator)
-            }} creator={this.props.message.vote.creator}></Creator></View>
-        </View>
     }
 }

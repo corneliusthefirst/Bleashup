@@ -40,6 +40,9 @@ import { dateDiff } from "../../../services/datesWriter";
 import colorList from '../../colorList';
 import PhotoViewer from '../event/PhotoViewer';
 import VideoViewer from "../highlights_details/VideoModal";
+import ShareFrame from "../../mainComponents/ShareFram";
+import Share from "../../../stores/share";
+import request from "../../../services/requestObjects";
 //const MyTasksData = stores.Reminds.MyTasksData
 
 export default class Reminds extends Component {
@@ -103,8 +106,36 @@ export default class Reminds extends Component {
       }, ...this.state.eventRemindData]
     });
   }
-
   componentDidMount() {
+    !this.props.shared ? this.initReminds() : this.initShared()
+  }
+  initShared() {
+    this.shareStore = new Share(this.props.share.id)
+    this.shareStore.readFromStore().then(() => {
+      this.shareStore
+        && this.shareStore.share
+        && this.shareStore.share.event
+        ? this.setState({
+          mounted: true
+        }) : null
+    })
+    stores.Reminds.loadRemindFromRemote(this.props.share.item_id).
+      then((remind) => {
+        stores.Events.loadCurrentEventFromRemote(this.props.share.event_id).then((event) => {
+          this.shareStore.saveCurrentState({
+            ...this.props.share,
+            remind: Array.isArray(remind) ? remind[0] : remind,
+            event
+          }).then(() => {
+            this.setState({
+              mountedx: true,
+              mounted: true
+            })
+          })
+        })
+      })
+  }
+  initReminds() {
     emitter.on('remind-updated', () => {
       this.refreshReminds()
     })
@@ -172,14 +203,20 @@ export default class Reminds extends Component {
     }
   }
   refreshReminds() {
-    console.warn('receiving updated remind message')
-    stores.Reminds.loadReminds(this.props.event_id).then((Reminds) => {
-      //console.warn(Reminds)
-      this.setState({
-        eventRemindData: Reminds,
-        currentTask: this.state.currentTask && find(Reminds, { id: this.state.currentTask.id })
-      });
-    })
+    this.props.shared ?
+      stores.Reminds.loadRemindFromRemote(this.props.share.item_id).then(remind => {
+        this.shareStore.saveCurrentState({ ...this.shareStore.share, remind: Array.isArray(remind) ? remind[0] : remind }).then(() =>{
+          this.setState({
+            mountedx:!this.state.mountedx
+          })
+        })
+      }) :
+      stores.Reminds.loadReminds(this.props.event_id).then((Reminds) => {
+        this.setState({
+          eventRemindData: Reminds,
+          currentTask: this.state.currentTask && find(Reminds, { id: this.state.currentTask.id })
+        });
+      })
   }
 
   updateRemind(data) {
@@ -234,7 +271,9 @@ export default class Reminds extends Component {
       Toast.show({ text: 'App is Busy' })
     } else {
 
-      if (findIndex(this.state.currentTask.confirmed, ele => confirmedChecker(ele, user.data.phone, { start: user.start, end: user.end })) >= 0) {
+      if (findIndex(this.state.currentTask.confirmed,
+        ele => confirmedChecker(ele, user.data.phone,
+          { start: user.start, end: user.end })) >= 0) {
         let msg = "confirmed already!"
         if (Platform.OS === 'android') {
           ToastAndroid.show(msg, ToastAndroid.SHORT)
@@ -243,12 +282,14 @@ export default class Reminds extends Component {
         }
       } else {
         this.props.startLoader()
-        RemindRequest.confirm([user.data], this.state.currentTask.id, this.state.currentTask.event_id).then((res) => {
-          this.refreshReminds()
-          this.props.stopLoader()
-        }).catch(() => {
-          this.props.stopLoader()
-        })
+        RemindRequest.confirm([user.data],
+          this.state.currentTask.id,
+          this.state.currentTask.event_id).then((res) => {
+            this.refreshReminds()
+            this.props.stopLoader()
+          }).catch(() => {
+            this.props.stopLoader()
+          })
       }
     }
   }
@@ -281,12 +322,13 @@ export default class Reminds extends Component {
   deleteRemind() {
     if (!this.props.working) {
       this.props.startLoader()
-      RemindRequest.deleteRemind(this.state.currentTask.id, this.state.currentTask.event_id).then(() => {
-        this.refreshReminds()
-        this.props.stopLoader()
-      }).catch(() => {
-        this.props.stopLoader()
-      })
+      RemindRequest.deleteRemind(this.state.currentTask.id,
+        this.state.currentTask.event_id).then(() => {
+          this.refreshReminds()
+          this.props.stopLoader()
+        }).catch(() => {
+          this.props.stopLoader()
+        })
     } else {
       Toast.show({ text: 'App is Busy' })
     }
@@ -297,8 +339,12 @@ export default class Reminds extends Component {
     } else {
       this.props.startLoader()
       RemindRequest.addMembers({
-        ...this.state.currentTask, members: [find(this.props.event.participant,
-          { phone: stores.LoginStore.user.phone })]
+        ...this.state.currentTask, members: [this.props.shared ? {...request.Participant(),
+          phone: stores.LoginStore.user.phone,
+          master: false, status: 'joint', host: stores.Session.SessionStore.host
+        } :
+          find(this.props.event.participant,
+            { phone: stores.LoginStore.user.phone })]
       }, alarms).then(() => {
         this.props.stopLoader()
         this.refreshReminds()
@@ -360,10 +406,225 @@ export default class Reminds extends Component {
   }
   _keyExtractor = (item, index) => item.id
   delay = 1
+  renderSharedRemind() {
+    return this.state.mounted && <ShareFrame
+      share={this.shareStore && this.shareStore.share}
+      sharer={this.shareStore && this.shareStore.share && this.shareStore.share.sharer}
+      date={this.shareStore && this.shareStore.share && this.shareStore.share.date}
+      content={() => <View>
+        <TasksCard
+          showMedia={this.showMedia.bind(this)}
+          phone={stores.LoginStore.user.phone}
+          mention={(itemer) => {
+            this.mention(itemer);
+          }}
+          delay={this.delay}
+          markAsDone={(item) => this.markAsDone(item)}
+          assignToMe={(item) => this.assignToMe(item)}
+          showMembers={this.showMembers.bind(this)}
+          showReport={this.showReport.bind(this)}
+          removeMembers={this.removeMembers}
+          updateRemind={(item) => this.updateRemind(item)}
+          update={(data) => this.updateRemind(data)}
+          deleteRemind={this.removeRemind.bind(this)}
+          item={this.shareStore && this.shareStore.share && this.shareStore.share.remind}
+        ></TasksCard>
+      </View>}
+    ></ShareFrame>
+  }
   render() {
-
+    return <View>
+      {!this.props.shared ? this.renderReminds() : this.renderSharedRemind()}
+      <TasksCreation
+        master={this.props.master}
+        event_id={this.props.event_id}
+        update={this.state.update}
+        RemindRequest={RemindRequest}
+        remind_id={this.state.remind_id}
+        updateData={(newRem) => this.updateData(newRem)}
+        updateRemind={(data) => this.sendUpdate(data)}
+        isOpen={this.state.RemindCreationState}
+        onClosed={() => {
+          this.props.clearCurrentMembers()
+          this.setState({
+            RemindCreationState: false, update: false,
+            remind_id: null, remind: null
+          })
+        }}
+        reinitializeList={() => this.scrollRemindListToTop()}
+        working={this.props.working}
+        currentMembers={this.props.currentMembers}
+        stopLoader={this.props.stopLoader}
+        startLoader={this.props.startLoader}
+        event={this.props.event}
+        eventRemindData={this.state.eventRemindData}></TasksCreation>
+      {this.state.isSelectAlarmPatternModalOpened ? <SetAlarmPatternModal save={(alarms) => this.saveAlarms(alarms)} isOpen={this.state.isSelectAlarmPatternModalOpened} closed={() => {
+        this.setState({
+          isSelectAlarmPatternModalOpened: false
+        })
+      }}></SetAlarmPatternModal> : null}
+      {this.state.showReportModal ? <AddReport report={(report) => {
+        this.markAsDoneWithReport(report)
+      }} onClosed={() => {
+        this.setState({
+          showReportModal: false
+        })
+      }} isOpen={this.state.showReportModal}></AddReport> : null}
+      {this.state.isSelectableContactsModalOpened ? <SelectableContactList
+        adding={this.state.adding}
+        removing={this.state.removing}
+        addMembers={(members) => {
+          this.saveAddMembers(members)
+        }}
+        saveRemoved={(members) => this.saveRemoved(members)}
+        members={this.state.contacts && this.state.contacts.length > 0 ? this.state.contacts : []}
+        notcheckall={this.state.notcheckAll}
+        isOpen={this.state.isSelectableContactsModalOpened} close={() => {
+          this.setState({
+            isSelectableContactsModalOpened: false
+          })
+        }}></SelectableContactList> : null}
+      {this.state.isContactsModalOpened ? <ContactListModal
+        title={this.state.title}
+        isOpen={this.state.isContactsModalOpened}
+        onClosed={() => {
+          this.setState({
+            isContactsModalOpened: false
+          })
+        }}
+        complexReport={this.state.complexReport}
+        actualInterval={this.state.actualInterval}
+        contacts={this.state.contacts ? this.state.contacts : []}></ContactListModal> : null}
+      {this.state.iscontactReportModalOpened ? <ContactsReportModal
+        actualInterval={this.state.actualInterval}
+        must_report={this.state.currentTask.must_report}
+        master={stores.LoginStore.user.phone === this.state.currentTask.creator}
+        confirm={(user) => this.confirm(user)}
+        isOpen={this.state.iscontactReportModalOpened}
+        members={this.state.contacts}
+        onClosed={() => {
+          this.setState({
+            iscontactReportModalOpened: false
+          })
+        }}></ContactsReportModal> : null}
+      {this.state.isReportModalOpened ? <ReportTabModal
+        concernees={this.state.members}
+        confirmed={this.state.confirmed}
+        donners={this.state.donners}
+        confirm={e => this.confirm(e)}
+        master={stores.LoginStore.user.phone === this.state.currentTask.creator}
+        must_report={this.state.currentTask.must_report}
+        stopLoader={() => this.props.stopLoader()}
+        actualInterval={this.state.actualInterval}
+        complexReport={this.state.complexReport}
+        changeComplexReport={() => {
+          this.setState({
+            complexReport: !this.state.complexReport
+          })
+        }}
+        onClosed={() => {
+          this.setState({
+            isReportModalOpened: false
+          })
+        }}
+        isOpen={this.state.isReportModalOpened}
+      ></ReportTabModal> : null}
+      <PhotoViewer open={this.state.showPhoto} photo={this.state.photo} hidePhoto={() => {
+        this.setState({
+          showPhoto: false
+        })
+      }}>
+      </PhotoViewer>
+      <VideoViewer video={this.state.video} isOpen={this.state.showVideo} hideVideo={() => {
+        this.setState({
+          showVideo: false
+        })
+      }}></VideoViewer>
+      {this.state.isAreYouModalOpened ? <AreYouSure isOpen={this.state.isAreYouModalOpened}
+        title={'Delete Remind'} closed={() => {
+          this.setState({
+            isAreYouModalOpened: false
+          })
+        }}
+        ok={"Delete"}
+        callback={() => {
+          this.deleteRemind()
+        }}
+        message={"Are you sure you want to delete this remind?"}></AreYouSure> : null}
+    </View>
+  }
+  mention(itemer) {
+    this.props.mention({
+      id: itemer.id,
+      replyer_phone: itemer.creator.phone,
+      video:
+        itemer.remind_url && itemer.remind_url.video
+          ? true
+          : false,
+      audio:
+        itemer.remind_url &&
+          !itemer.remind_url.video &&
+          itemer.remind_url.audio
+          ? true
+          : false,
+      photo:
+        itemer.remind_url &&
+          !itemer.remind_url.video &&
+          itemer.remind_url.photo
+          ? true
+          : false,
+      sourcer:
+        itemer.remind_url && itemer.remind_url.video
+          ? itemer.remind_url.photo
+          : itemer.remind_url && itemer.remind_url.photo
+            ? itemer.remind_url.photo
+            : itemer.remind_url && itemer.remind_url.audio
+              ? itemer.remind_url.audio
+              : null,
+      type_extern: "Reminds ",
+      title: itemer.title + ": \n" + itemer.description,
+    })
+  }
+  showMedia = (url) => {
+    if (url.video) {
+      console.warn("showing video");
+      this.setState({
+        showVideo: true,
+        video: url.video,
+      });
+    } else {
+      this.setState({
+        showPhoto: true,
+        photo: url.photo,
+      });
+    }
+  }
+  showMembers = (members) => {
+    this.setState({
+      contacts: members,
+      isContactsModalOpened: true,
+      title: "Concernees",
+      complexReport: false,
+    });
+  }
+  removeMembers = (currentMembers, item) => {
+    this.setState({
+      isSelectableContactsModalOpened: true,
+      currentTask: item,
+      contacts: currentMembers,
+      adding: false,
+      removing: true,
+      notcheckAll: true,
+    });
+  }
+  removeRemind = (item) => {
+    this.setState({
+      currentTask: item,
+      isAreYouModalOpened: true,
+    });
+  }
+  renderReminds() {
     return !this.state.mounted ? <View style={{ width: '100%', height: '100%', }}></View> : (
-
       <View>
         <View style={{ height: colorList.headerHeight, width: '100%', }}>
           <View style={{
@@ -410,53 +671,11 @@ export default class Reminds extends Component {
               return (
                 <View>
                   <TasksCard
-                    showMedia={(url) => {
-                      if (url.video) {
-                        console.warn("showing video");
-                        this.setState({
-                          showVideo: true,
-                          video: url.video,
-                        });
-                      } else {
-                        this.setState({
-                          showPhoto: true,
-                          photo: url.photo,
-                        });
-                      }
-                    }}
+                    showMedia={this.showMedia.bind(this)}
                     isLast={index === this.state.eventRemindData.length - 1}
                     phone={stores.LoginStore.user.phone}
                     mention={(itemer) => {
-                      this.props.mention({
-                        id: itemer.id,
-                        replyer_phone: itemer.creator.phone,
-                        video:
-                          itemer.remind_url && itemer.remind_url.video
-                            ? true
-                            : false,
-                        audio:
-                          itemer.remind_url &&
-                            !itemer.remind_url.video &&
-                            itemer.remind_url.audio
-                            ? true
-                            : false,
-                        photo:
-                          itemer.remind_url &&
-                            !itemer.remind_url.video &&
-                            itemer.remind_url.photo
-                            ? true
-                            : false,
-                        sourcer:
-                          itemer.remind_url && itemer.remind_url.video
-                            ? itemer.remind_url.photo
-                            : itemer.remind_url && itemer.remind_url.photo
-                              ? itemer.remind_url.photo
-                              : itemer.remind_url && itemer.remind_url.audio
-                                ? itemer.remind_url.audio
-                                : null,
-                        type_extern: "Reminds ",
-                        title: itemer.title + ": \n" + itemer.description,
-                      });
+                      this.mention(itemer);
                     }}
                     master={this.props.master}
                     markAsDone={(item) => this.markAsDone(item)}
@@ -466,33 +685,12 @@ export default class Reminds extends Component {
                     addMembers={(currentMembers, item) =>
                       this.addMembers(currentMembers, item)
                     }
-                    showMembers={(members) => {
-                      this.setState({
-                        contacts: members,
-                        isContactsModalOpened: true,
-                        title: "Concernees",
-                        complexReport: false,
-                      });
-                    }}
-                    showReport={this.showReport}
-                    removeMembers={(currentMembers, item) => {
-                      this.setState({
-                        isSelectableContactsModalOpened: true,
-                        currentTask: item,
-                        contacts: currentMembers,
-                        adding: false,
-                        removing: true,
-                        notcheckAll: true,
-                      });
-                    }}
+                    showMembers={this.showMembers.bind(this)}
+                    showReport={this.showReport.bind(this)}
+                    removeMembers={this.removeMembers}
                     updateRemind={(item) => this.updateRemind(item)}
                     update={(data) => this.updateRemind(data)}
-                    deleteRemind={(item) => {
-                      this.setState({
-                        currentTask: item,
-                        isAreYouModalOpened: true,
-                      });
-                    }}
+                    deleteRemind={this.removeRemind.bind(this)}
                     item={item}
                     key={index}
                   ></TasksCard>
@@ -502,126 +700,7 @@ export default class Reminds extends Component {
             numberOfItems={this.state.eventRemindData.length}
           >
           </BleashupFlatList>
-
-
         </View>
-
-        <TasksCreation
-          master={this.props.master}
-          event_id={this.props.event_id}
-          update={this.state.update}
-          RemindRequest={RemindRequest}
-          remind_id={this.state.remind_id}
-          updateData={(newRem) => this.updateData(newRem)}
-          updateRemind={(data) => this.sendUpdate(data)}
-          isOpen={this.state.RemindCreationState}
-          onClosed={() => {
-            this.props.clearCurrentMembers()
-            this.setState({
-              RemindCreationState: false, update: false,
-              remind_id: null, remind: null
-            })
-          }}
-          reinitializeList={() => this.scrollRemindListToTop()}
-          working={this.props.working}
-          currentMembers={this.props.currentMembers}
-          stopLoader={this.props.stopLoader}
-          startLoader={this.props.startLoader}
-          event={this.props.event}
-          eventRemindData={this.state.eventRemindData}></TasksCreation>
-        {this.state.isSelectAlarmPatternModalOpened ? <SetAlarmPatternModal save={(alarms) => this.saveAlarms(alarms)} isOpen={this.state.isSelectAlarmPatternModalOpened} closed={() => {
-          this.setState({
-            isSelectAlarmPatternModalOpened: false
-          })
-        }}></SetAlarmPatternModal> : null}
-        {this.state.showReportModal ? <AddReport report={(report) => {
-          this.markAsDoneWithReport(report)
-        }} onClosed={() => {
-          this.setState({
-            showReportModal: false
-          })
-        }} isOpen={this.state.showReportModal}></AddReport> : null}
-        {this.state.isSelectableContactsModalOpened ? <SelectableContactList
-          adding={this.state.adding}
-          removing={this.state.removing}
-          addMembers={(members) => {
-            this.saveAddMembers(members)
-          }}
-          saveRemoved={(members) => this.saveRemoved(members)}
-          members={this.state.contacts && this.state.contacts.length > 0 ? this.state.contacts : []}
-          notcheckall={this.state.notcheckAll}
-          isOpen={this.state.isSelectableContactsModalOpened} close={() => {
-            this.setState({
-              isSelectableContactsModalOpened: false
-            })
-          }}></SelectableContactList> : null}
-        {this.state.isContactsModalOpened ? <ContactListModal
-          title={this.state.title}
-          isOpen={this.state.isContactsModalOpened}
-          onClosed={() => {
-            this.setState({
-              isContactsModalOpened: false
-            })
-          }}
-          complexReport={this.state.complexReport}
-          actualInterval={this.state.actualInterval}
-          contacts={this.state.contacts ? this.state.contacts : []}></ContactListModal> : null}
-        {this.state.iscontactReportModalOpened ? <ContactsReportModal
-          actualInterval={this.state.actualInterval}
-          must_report={this.state.currentTask.must_report}
-          master={stores.LoginStore.user.phone === this.state.currentTask.creator}
-          confirm={(user) => this.confirm(user)}
-          isOpen={this.state.iscontactReportModalOpened}
-          members={this.state.contacts}
-          onClosed={() => {
-            this.setState({
-              iscontactReportModalOpened: false
-            })
-          }}></ContactsReportModal> : null}
-        {this.state.isReportModalOpened ? <ReportTabModal
-          concernees={this.state.members}
-          confirmed={this.state.confirmed}
-          donners={this.state.donners}
-          confirm={e => this.confirm(e)}
-          master={stores.LoginStore.user.phone === this.state.currentTask.creator}
-          must_report={this.state.currentTask.must_report}
-          stopLoader={() => this.props.stopLoader()}
-          actualInterval={this.state.actualInterval}
-          complexReport={this.state.complexReport}
-          changeComplexReport={() => {
-            this.setState({
-              complexReport: !this.state.complexReport
-            })
-          }}
-          onClosed={() => {
-            this.setState({
-              isReportModalOpened: false
-            })
-          }}
-          isOpen={this.state.isReportModalOpened}
-        ></ReportTabModal> : null}
-        <PhotoViewer open={this.state.showPhoto} photo={this.state.photo} hidePhoto={() => {
-          this.setState({
-            showPhoto: false
-          })
-        }}>
-        </PhotoViewer>
-        <VideoViewer video={this.state.video} isOpen={this.state.showVideo} hideVideo={() => {
-          this.setState({
-            showVideo: false
-          })
-        }}></VideoViewer>
-        {this.state.isAreYouModalOpened ? <AreYouSure isOpen={this.state.isAreYouModalOpened}
-          title={'Delete Remind'} closed={() => {
-            this.setState({
-              isAreYouModalOpened: false
-            })
-          }}
-          ok={"Delete"}
-          callback={() => {
-            this.deleteRemind()
-          }}
-          message={"Are you sure you want to delete this remind?"}></AreYouSure> : null}
       </View>
 
 

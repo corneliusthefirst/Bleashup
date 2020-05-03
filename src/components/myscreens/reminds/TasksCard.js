@@ -8,7 +8,7 @@ import Modal from 'react-native-modalbox';
 import autobind from "autobind-decorator";
 import stores from '../../../stores/index';
 import moment from 'moment';
-import { find, isEqual, findIndex,uniqBy } from "lodash";
+import { find, isEqual, findIndex, uniqBy } from "lodash";
 import AccordionModule from '../invitations/components/Accordion';
 import Creator from "./Creator";
 import RemindsMenu from "./RemindsMenu";
@@ -79,11 +79,6 @@ export default class EventTasksCard extends Component {
         mounted: true
       })
     })
-    /*setTimeout(() => {
-     this.loadIntervals().then(() => {
-      console.warn('done loading')
-     })
-    }, 20 + 20 * this.props.delay)*/
   }
 
   @autobind
@@ -124,6 +119,7 @@ export default class EventTasksCard extends Component {
     content: null
   }
   render() {
+    console.warn(this.props.item.members)
     hasDoneForThisInterval = find(this.props.item.donners, (ele) =>
       ele.status.date &&
       this.state.correspondingDateInterval &&
@@ -148,7 +144,7 @@ export default class EventTasksCard extends Component {
     member = findIndex(this.props.item.members,
       { phone: stores.LoginStore.user.phone }) >= 0;
     return !this.state.mounted ? <Card style={{
-      width:ColorList.containerWidth, height: 220,
+      width: ColorList.containerWidth, height: 220,
     }}>
     </Card> : (
         <Card style={{
@@ -156,59 +152,59 @@ export default class EventTasksCard extends Component {
         }}>
           <CardItem>
             <Left>
-              <View style={{width:"80%"}}>
-              <Text style={{
-              width: '100%', fontWeight: "300", fontSize: 14,color:ColorList.bodySubtext,
-              color: dateDiff({
-                recurrence: this.state.correspondingDateInterval ?
-                  moment(this.state.correspondingDateInterval.end, format).format() :
-                  this.props.item.period
-              }) > 0 ? ColorList.bodySubtext : ColorList.iconActive,
-              alignSelf: 'flex-end',
-            }}
-              >{`${writeDateTime(
-                this.state.correspondingDateInterval ?
-                  {
-                    period: moment(this.state.correspondingDateInterval.end, format).format(),
-                    recurrence: moment(this.state.correspondingDateInterval.end, format).format(),
-                    title: this.props.item.title
-                  } : {
-                    period: moment(this.state.currentDateIntervals[this.state.currentDateIntervals.length - 1].end, format).format(),
-                    recurrence: moment(this.state.currentDateIntervals[this.state.currentDateIntervals.length - 1].end, format).format(),
-                    title: this.props.item.title
-                  }).
-                replace("Starting", "Due").
-                replace("Ended", "Past").
-                replace("Started", "Past")}`}</Text>
-                </View>
+              <View style={{ width: "80%" }}>
+                <Text style={{
+                  width: '100%', fontWeight: "300", fontSize: 14, color: ColorList.bodySubtext,
+                  color: dateDiff({
+                    recurrence: this.state.correspondingDateInterval ?
+                      moment(this.state.correspondingDateInterval.end, format).format() :
+                      this.props.item.period
+                  }) > 0 ? ColorList.bodySubtext : ColorList.iconActive,
+                  alignSelf: 'flex-end',
+                }}
+                >{`${writeDateTime(
+                  this.state.correspondingDateInterval ?
+                    {
+                      period: moment(this.state.correspondingDateInterval.end, format).format(),
+                      recurrence: moment(this.state.correspondingDateInterval.end, format).format(),
+                      title: this.props.item.title
+                    } : {
+                      period: moment(this.state.currentDateIntervals[this.state.currentDateIntervals.length - 1].end, format).format(),
+                      recurrence: moment(this.state.currentDateIntervals[this.state.currentDateIntervals.length - 1].end, format).format(),
+                      title: this.props.item.title
+                    }).
+                  replace("Starting", "Due").
+                  replace("Ended", "Past").
+                  replace("Started", "Past")}`}</Text>
+              </View>
             </Left>
 
             <Right>
-              <View style={{width:"75%" }}>
-                <View style={{ flexDirection: 'row',alignSelf:"flex-end" }}>
-                  
-                  <View style={{marginRight:"10%"}}>
-                  <Icon onPress={() => {
-                    this.props.mention({ ...this.props.item, creator: this.state.creator })
-                  }} name={"reply"} style={{ color:ColorList.bodyIcon, fontSize: 25 }} type="Entypo"></Icon>
+              <View style={{ width: "75%" }}>
+                <View style={{ flexDirection: 'row', alignSelf: "flex-end" }}>
+
+                  <View style={{ marginRight: "10%" }}>
+                    <Icon onPress={() => {
+                      this.props.mention({ ...this.props.item, creator: this.state.creator })
+                    }} name={"reply"} style={{ color: ColorList.bodyIcon, fontSize: 25 }} type="Entypo"></Icon>
                   </View>
 
-                  <View style={{marginRight:"10%"}}>
-                  <Icon style={{ color: ColorList.bodyIcon, fontSize: 25}} onPress={() => {
-                    this.props.showReport(this.props.item, this.state.currentDateIntervals, this.state.correspondingDateInterval)
-                  }} name="account-group-outline" type="MaterialCommunityIcons" />
+                  <View style={{ marginRight: "10%" }}>
+                    <Icon style={{ color: ColorList.bodyIcon, fontSize: 25 }} onPress={() => {
+                      this.props.showReport(this.props.item, this.state.currentDateIntervals, this.state.correspondingDateInterval)
+                    }} name="account-group-outline" type="MaterialCommunityIcons" />
                   </View>
 
-                 <View style={{marginRight:"-3%"}} >
-                  <RemindsMenu
-                    update={() => this.props.updateRemind(this.props.item)}
-                    creator={this.state.creator}
-                    addMembers={() => { this.props.addMembers(uniqBy(this.props.item.members,"phone"), this.props.item) }}
-                    removeMembers={() => this.props.removeMembers(uniqBy(this.props.item.members.filter(ele => this.state.creator ||
-                      ele.phone === stores.LoginStore.user.phone),'phone'), this.props.item)}
-                    deleteRemind={() => this.props.deleteRemind(this.props.item)}
-                  ></RemindsMenu>
-                </View>
+                  <View style={{ marginRight: "-3%" }} >
+                    <RemindsMenu
+                      update={() => this.props.updateRemind(this.props.item)}
+                      creator={this.state.creator}
+                      addMembers={() => { this.props.addMembers(uniqBy(this.props.item.members, "phone"), this.props.item) }}
+                      removeMembers={() => this.props.removeMembers(uniqBy(this.props.item.members.filter(ele => this.state.creator ||
+                        ele.phone === stores.LoginStore.user.phone), 'phone'), this.props.item)}
+                      deleteRemind={() => this.props.deleteRemind(this.props.item)}
+                    ></RemindsMenu>
+                  </View>
 
                 </View>
 
@@ -218,27 +214,27 @@ export default class EventTasksCard extends Component {
 
           {this.props.item.location ? <CardItem>
             <TouchableOpacity style={{ flexDirection: 'row', }} onPress={() => requestAnimationFrame(() => {
-            let Query = { query: this.props.item.location };
-            createOpenLink({...Query, zoom: 50 })();
-          })}>
-              <Text style={{ fontWeight: 'bold', }}>{"Venue: "}</Text><Text style={{ textDecorationLine: 'underline'}}>{this.props.item.location}</Text>
-          </TouchableOpacity>
+              let Query = { query: this.props.item.location };
+              createOpenLink({ ...Query, zoom: 50 })();
+            })}>
+              <Text style={{ fontWeight: 'bold', }}>{"Venue: "}</Text><Text style={{ textDecorationLine: 'underline' }}>{this.props.item.location}</Text>
+            </TouchableOpacity>
           </CardItem> : null}
           <CardItem>
             <Left>
-              <Text ellipsizeMode={'tail'} numberOfLines={3} style={{ fontWeight: "500", marginBottom: "5%",marginLeft:"0%", fontSize: 17, color:ColorList.bodyText,textTransform:"capitalize", }}>{this.props.item.title}</Text>
+              <Text ellipsizeMode={'tail'} numberOfLines={3} style={{ fontWeight: "500", marginBottom: "5%", marginLeft: "0%", fontSize: 17, color: ColorList.bodyText, textTransform: "capitalize", }}>{this.props.item.title}</Text>
             </Left>
           </CardItem>
           {this.props.item.remind_url &&
             (this.props.item.remind_url.photo || this.props.item.remind_url.video) ?
-            <View style={{flex:1, alignItems: 'center', alignSelf: 'center', width:ColorList.containerWidth }}>
+            <View style={{ flex: 1, alignItems: 'center', alignSelf: 'center', width: ColorList.containerWidth }}>
               <MedaiView
                 height={ColorList.containerHeight * .39}
-                width={ColorList.containerWidth *0.96}
+                width={ColorList.containerWidth * 0.96}
                 url={this.props.item.remind_url}
                 showItem={this.props.showMedia}
               ></MedaiView>
-          
+
             </View> : null}
 
           <CardItem carBody>
@@ -248,7 +244,7 @@ export default class EventTasksCard extends Component {
                 newing: !this.state.newing
               })
             }}>
-              <Text note style={{ fontSize: 12,marginTop:"2%", color:ColorList.bodyText }} ellipsizeMode={!this.state.showAll ? 'tail' : null} numberOfLines={this.state.showAll ? null : 10}>{this.props.item.description}</Text>
+              <Text note style={{ fontSize: 12, marginTop: "2%", color: ColorList.bodyText }} ellipsizeMode={!this.state.showAll ? 'tail' : null} numberOfLines={this.state.showAll ? null : 10}>{this.props.item.description}</Text>
             </TouchableOpacity>
           </CardItem>
 

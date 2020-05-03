@@ -107,13 +107,18 @@ export default class EventDetailView extends Component {
   }
   initShare() {
     this.sharStore = new Share(this.props.share.id)
-    stores.Highlights.loadHighlight(this.props.share.post_id).
+    this.sharStore.readFromStore().then(()=>{
+      this.setState({
+        isMounted:true
+      })
+    })
+    stores.Highlights.loadHighlightFromRemote(this.props.share.item_id).
       then((post) => {
-        stores.Events.loadCurrentEventFromRemote(this.props.share.event_id).
+        stores.Events.loadCurrentEventFromRemote(this.props.share.event_id,true).
           then((event) => {
-            this.sharStore.saveCurrentState({...this.props.share,post,event}).then(() => {
+            this.sharStore.saveCurrentState({ ...this.props.share, post: Array.isArray(post) && post[0] || post, event }).then(() => {
               this.setState({
-                loaded:true
+                isMountedSec: true
               })
             })
           })
@@ -170,7 +175,6 @@ export default class EventDetailView extends Component {
           this.props.stopLoader()
         })
       }
-      //console.warn("inside if 5....");
     } else {
       Toast.show({ text: 'App is Busy' })
     }
@@ -419,17 +423,27 @@ export default class EventDetailView extends Component {
     )
   }
   renderSharedPost() {
-    return <ShareFrame
+    return this.state.isMounted && <ShareFrame
       share={this.sharStore.share}
-    >
-      content={<HighlightCard
+      sharer={this.sharStore.share.sharer}
+      date={this.sharStore.share.date}
+      content={() => <HighlightCard
         height={colorList.containerHeight * .45}
+        shadowless
         phone={stores.LoginStore.user.phone}
+        showItem={this.props.showHighlight}
         activity_id={this.props.Event.id}
         activity_name={this.props.Event.about.title}
         delay={this.delay}
-        item={this.sharStore.post}
+        item={this.sharStore.share.post}
+        participant={this.sharStore.share &&
+          this.sharStore.share.event &&
+          this.sharStore.share.event.participant &&
+          find(this.sharStore.share.event.participant,
+            (ele => ele.phone === stores.LoginStore.user.phone))
+          || {phone:stores.LoginStore.user.phone,master:false}}
       ></HighlightCard>}
+    >
     </ShareFrame>
   }
   renderBody() {

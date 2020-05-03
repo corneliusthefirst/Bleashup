@@ -88,20 +88,20 @@ export default class events {
     return new Promise((resolve, reject) => {
 
       Events.forEach((event) => {
-          if (event.type && event.type == "relation") {
-            event.participant.forEach((participant) => {
-              if (participant.phone != stores.LoginStore.user.phone) {
-                stores.TemporalUsersStore.getUser(participant.phone).then((user) => {
-                  obj = { id: event.id, name: user.name, image: user.profile, type: "relation" }
-                  this.array.unshift(obj);
-                })
-              }
-            })
-          } else if(event.participant) {
-            obj = { id: event.id, name: event.about.title, image: event.background, type: "activity" }
-            this.array.unshift(obj);
+        if (event.type && event.type == "relation") {
+          event.participant.forEach((participant) => {
+            if (participant.phone != stores.LoginStore.user.phone) {
+              stores.TemporalUsersStore.getUser(participant.phone).then((user) => {
+                obj = { id: event.id, name: user.name, image: user.profile, type: "relation" }
+                this.array.unshift(obj);
+              })
+            }
+          })
+        } else if (event.participant) {
+          obj = { id: event.id, name: event.about.title, image: event.background, type: "activity" }
+          this.array.unshift(obj);
 
-          }
+        }
       })
       resolve(this.array);
       this.array = []
@@ -112,7 +112,6 @@ export default class events {
 
 
   addEvent(NewEvent) {
-    console.warn("calling create activity, -----")
     if (NewEvent == 'no_such_key') {
       resolve()
     } else {
@@ -250,12 +249,16 @@ export default class events {
       });
     });
   }
-  loadCurrentEventFromRemote(EventID) {
+  loadCurrentEventFromRemote(EventID, simple) {
     return new Promise((resolve, reject) => {
       serverEventListener.GetData(EventID).then(event => {
-        this.addEvent(event).then(() => {
-          resolve(event)
-        })
+        if (event === "no_such_key") {
+          reject()
+        } else {
+          !simple && this.addEvent(event).then(() => {
+            resolve(event)
+          }) || resolve(event)
+        }
       }).catch(error => {
         serverEventListener.socket.write = undefined
         console.warn(error, "in load events")

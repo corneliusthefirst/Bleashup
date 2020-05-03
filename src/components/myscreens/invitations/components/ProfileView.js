@@ -25,8 +25,8 @@ export default class ProfileView extends Component {
                 })
             } else {
                 //console.warn("here we are boy",user);
-                stores.Contacts.addContact({phone:user.phone,host:user.current_host}).then(()=>{})
-                this.props.updateContact(user);
+               this.props.contact && stores.Contacts.addContact({phone:user.phone,host:user.current_host}).then(()=>{})
+               this.props.contact && this.props.updateContact(user);
           
                
 

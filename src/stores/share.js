@@ -2,7 +2,7 @@ import storage from './Storage';
 export default class Share {
     constructor(key){
         this.saveKey.key = key
-        this.storeAccessKey = key
+        this.storeAccessKey.key = key
     }
     saveKey = {
         key: "shares",

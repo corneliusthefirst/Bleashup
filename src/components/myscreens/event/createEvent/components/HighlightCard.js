@@ -51,6 +51,7 @@ export default class HighlightCard extends Component {
   containsMedia() {
     return this.props.item.url.video || this.props.item.url.audio || this.props.item.url.photo ? true : false
   }
+  
   componentDidMount() {
     setTimeout(() => {
       this.setState({
@@ -65,7 +66,7 @@ export default class HighlightCard extends Component {
     return (
 
       this.state.mounted ?
-        <View style={{ width: ColorList.containerWidth,alignSelf:"center", ...shadower(1),justifyContent: 'center',marginTop:"1%",borderBottomWidth:0.5,borderColor:"ivory" }}>
+        <View style={{ width: ColorList.containerWidth, alignSelf: "center", ...shadower(1),justifyContent: 'center',marginTop:"1%",borderBottomWidth:0.5,borderColor:"ivory" }}>
           <View style={{ flexDirection: 'row',width:'92%', justifyContent: 'space-between', marginTop: 2, marginBottom: 2, height:ColorList.containerHeight/20,alignSelf: 'center', }}>
             <View style={{ maxWidth: '100%' }}>
               <Title style={{

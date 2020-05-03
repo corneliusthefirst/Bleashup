@@ -40,7 +40,7 @@ export default class Creator extends Component {
                     <Icon name={"info-with-circle"} type={"Entypo"} style={{color:'gray',fontSize: 12}}></Icon>
                     </View>
                  </TouchableOpacity>
-                {this.state.showCreatorModal ? <CreatorModal isOpen={this.state.showCreatorModal} onClosed={() => {
+                {this.state.showCreatorModal ? <CreatorModal intro={this.props.intro} isOpen={this.state.showCreatorModal} onClosed={() => {
                     this.setState({
                         showCreatorModal: false
                     })

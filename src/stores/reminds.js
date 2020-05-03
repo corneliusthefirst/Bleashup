@@ -410,28 +410,38 @@ export default class Reminds {
       });
     });
   }
+  loadRemindFromRemote(id) {
+    return new Promise((resolve, reject) => {
+      let RemindID = request.RemindID();
+      RemindID.remind_id = id;
+      tcpRequest.getRemind(RemindID, id + "_get_remind").then(JSONData => {
+        EventListener.sendRequest(JSONData, id + "_get_remind").then(Remind => {
+          console.warn(Remind)
+          if (Remind.data !== 'empty') {
+            resolve(Remind.data)
+          } else {
+            reject()
+          }
+        })
+      })
+    })
+  }
   loadRemind(id) {
-    console.warn("loading remind")
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Rems => {
         let rem = find(Rems, { id: id })
         if (rem) {
           resolve(rem)
         } else {
-          let RemindID = request.RemindID();
-          RemindID.remind_id = id;
-          tcpRequest.getRemind(RemindID, id + "_get_remind").then(JSONData => {
-            EventListener.sendRequest(JSONData, id + "_get_remind").then(Remind => {
-              if (Remind.data !== 'empty') {
-                this.addReminds(Remind.data).then(() => {
-                  resolve(Remind.data)
-                })
-              } else {
-                resolve()
-              }
+          this.loadRemindFromRemote(id).
+          then(remind => {
+            this.addReminds(remind).then(() => {
+              resolve(Remind.data)
             }).catch(() => {
               resolve()
             })
+          }).catch(() => {
+            resolve()
           })
         }
       })
@@ -452,105 +462,4 @@ export default class Reminds {
         });
     });
   }
-
-
-  @observable MyTasksData = [
-    {
-      id: '1',
-      event_id: "",
-      creator: '',
-      title: 'help the child to do the homework',
-      description: "Don 't forget helping the child to do his homeWork Tomorow",
-      period: { time: "17:31", date: "07/09/2018" },
-      isDone: false
-    },
-    {
-      id: '2',
-      event_id: "",
-      creator: '',
-      title: 'help the child to do the homework',
-      description: "Correct out the error in the second projet code before sunday,thank",
-      period: { time: "08:02", date: "05/09/2019" },
-      isDone: false
-    },
-    {
-      id: '3',
-      event_id: "",
-      creator: '',
-      title: 'ERROR IN CODE',
-      description: "Correct out the error in the second projet code before sunday,thank",
-      period: { time: "16:41", date: "11/02/2018" },
-      isDone: false
-    },
-    {
-      id: '4',
-      event_id: "",
-      creator: '',
-      title: 'Wash the church',
-      description: "Need to wash the church on satursday morning",
-      period: { time: "11:00", date: "06/05/2018" },
-      isDone: false
-    },
-
-    {
-      id: '5',
-      event_id: "",
-      creator: '',
-      title: 'Go to phamarcie',
-      description: "Go to pharmacie after work tomorow to buy constipation medcine",
-      period: { time: "15:20", date: "05/08/2018" },
-      isDone: false
-    },
-
-    {
-      id: '6',
-      event_id: "",
-      creator: '',
-      title: 'Rendevou Prefecture',
-      description: "Rendevou a la prefecture pour le titre de sejour mecredi le septembre",
-      period: { time: "12:10", date: "14/04/2018" },
-      isDone: false
-    },
-    {
-      id: '7',
-      event_id: "",
-      creator: '',
-      title: 'HKEN Medication',
-      description: "Give HKen his medication at 7pm",
-      period: { time: "13:16", date: "12/07/2018" },
-      isDone: false
-    },
-    {
-      id: '8',
-      event_id: "",
-      creator: '',
-      title: 'Achete le sacs de Marie',
-      description: "Achete le sac de Marie au durant le voyage,un sacs bleu",
-      period: { time: "12:10", date: "04/06/2018" },
-      isDone: false
-    },
-    {
-      id: '9',
-      event_id: "",
-      creator: '',
-      title: '',
-      description: "Correct out the error in the second projet code before sunday,thank",
-      period: { time: "14:03", date: "23/01/2018" },
-      isDone: false
-    },
-    {
-      id: '10',
-      event_id: "",
-      creator: '',
-      title: 'Meeting With Global Union',
-      description: "Meeting with Global group on thursday,We will be receiving our chinese patners at 9 am",
-      period: { time: "10:11", date: "10/09/2018" },
-      isDone: false
-    }
-
-  ]
-
-
-
-
 }

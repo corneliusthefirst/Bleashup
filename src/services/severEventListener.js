@@ -231,18 +231,16 @@ class ServerEventListener {
   }
   sendRequest(data, id) {
     return new Promise((resolve, reject) => {
-      //setTimeout(()=>{
-      //  reject("request timedout!")
-      // },6000)
       emitter.once("successful_" + id, (response) => {
+        console.warn("result response",response)
         resolve(response);
       });
       emitter.once("unsuccessful_" + id, (response) => {
         console.warn("unsuccessful, " + response)
         reject(response);
       });
-      console.warn("writing socket",data)
       if (this.socket.write) {
+        console.warn("writing socket", data)
         this.socket.write(data)
       } else {
         this.socket.write = tcpConnect.socket.write

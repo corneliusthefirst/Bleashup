@@ -287,8 +287,8 @@ export default class highlights {
     return new Promise((resolve, reject) => {
       let RequestObject = request.HID();
       RequestObject.h_id = id;
-      tcpRequest.getHighlight(RequestObject, update.new_value + "highlight").then(JSONData => {
-        serverEventListener.sendRequest(JSONData, update.new_value + "highlight").then(Highlight => {
+      tcpRequest.getHighlight(RequestObject, id + "highlight").then(JSONData => {
+        serverEventListener.sendRequest(JSONData, id + "highlight").then(Highlight => {
           if (Highlight.data && Highlight.data !== 'empty') {
             resolve(Highlight.data)
           } else {

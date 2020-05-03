@@ -22,18 +22,17 @@ export default class votes {
         key: "votes",
         data: []
     };
-    fetchVoteFromRemote(voteID) {
+    fetchVoteFromRemote(voteID, simple) {
         return new Promise((resolve, reject) => {
             let Vid = request.VID()
             Vid.vote_id = voteID
             tcpRequest.getVote(Vid, voteID + "_get_vote").then(JSONData => {
                 EventListener.sendRequest(JSONData, voteID + "_get_vote").then(vote => {
-                    console.warn(vote)
-                    if (vote === 'empty' || !response) {
+                    if (vote.data === 'empty' || !vote.data) {
                         resolve(undefined)
                     } else {
-                        this.addVote(vote).then(() => {
-                            resolve(vote)
+                        simple ? resolve(vote.data) : this.addVote(vote.data).then(() => {
+                            resolve(vote.data)
                         })
                     }
                 }).catch(() => {
