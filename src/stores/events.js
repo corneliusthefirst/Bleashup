@@ -27,6 +27,23 @@ export default class events {
       key: 'Events'
     });*/
     console.warn("constructor called")
+    /*this.readFromStore().then(Events => {
+      var newEvents = [];
+      Events.forEach((event)=>{
+        if(event.id){
+           newEvents.push(event);
+        }
+      })
+      this.saveKey.data =  newEvents
+      console.warn("here is our data", newEvents)
+      storage.save(this.saveKey).then(() => {
+        this.setProperties(this.saveKey.data, true);
+        resolve();
+      });
+  
+    })*/
+
+
 
     this.readFromStore().then(Events => {
       this.createSearchdata(Events).then((array) => {

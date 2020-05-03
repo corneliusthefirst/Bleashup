@@ -2,8 +2,7 @@ import React, { Component } from "react";
 import { View, Vibration,FlatList, TouchableWithoutFeedback, Dimensions, TouchableOpacity,PermissionsAndroid,ScrollView} from 'react-native';
 
 import {
-  Card,CardItem,Text,Label,Spinner,Button,Container,Icon,Thumbnail,Title, Item
-} from 'native-base';
+  Card,CardItem,Text,Label,Spinner,Button,Container,Icon,Thumbnail,Title, Item} from 'native-base';
 import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
 import Contacts from 'react-native-contacts';
 import BleashupFlatList from '../../BleashupFlatList';
@@ -12,7 +11,7 @@ import CacheImages from '../../CacheImages';
 import stores from "../../../stores";
 import { functionDeclaration } from "@babel/types";
 import testForURL from '../../../services/testForURL';
-import {find,uniqBy,uniq,filter,concat,reject} from "lodash";
+import {find,uniqBy,uniq,filter,concat,reject,uniqWith,findIndex} from "lodash";
 import request from '../../../services/requestObjects';
 import autobind from "autobind-decorator";
 import Invite from './invite';
@@ -20,11 +19,10 @@ import moment from "moment";
 import ColorList from '../../colorList';
 import countries from '../login/countries';
 import ProfileView from "../invitations/components/ProfileView";
-
-
-//import CreateRequest from '../event/createEvent/CreateRequester';
+import CreateRequest from '../event/createEvent/CreateRequester';
 import firebase from 'react-native-firebase';
 import shadower from "../../shadower";
+import BeNavigator from "../../../services/navigationServices";
 
 var uuid = require('react-native-uuid');
 uuid.v1({
@@ -44,10 +42,12 @@ constructor(props){
   super(props)
   this.state={
       isMount:false,
-      contacts:null,
+      contacts:[],
       user:null,
       invite:false,
       alreadyCreated:false,
+      searchArray:[],
+      creating:false
   }
 }  
 
@@ -85,40 +85,58 @@ componentDidMount(){
 array = [];
 getValidUsers(contacts){
 
-    console.warn("user is",stores.LoginStore.user)
-    let codeObj = find(countries,{id: stores.LoginStore.user.country_code})
-    console.warn("code",codeObj)
+     //first push contacts from contacts store
+       stores.Contacts.contacts.forEach((contact)=>{
+        if(contact.phone){
+          //console.warn("the contact is",contact)
+          let phoneUser = {nickname:"",phone:contact.phone,profile:"",status:"",found:true}
+          //console.warn("a contact user",phoneUser)
+          this.array.push(phoneUser);
+         }
+      })
+  
 
+    //console.warn("user is",stores.LoginStore.user)
+    let codeObj = find(countries,{id: stores.LoginStore.user.country_code})
+    //console.warn("code",codeObj)
+    //console.warn("contacts are ",contacts)
+
+    //then push those from the phone
     contacts.forEach((contact)=>{
+      var phoneUser = {nickname:contact.displayName,phone:"",profile:contact.thumbnailPath,status:"",found:false}
+
       contact.phoneNumbers.forEach((subcontact)=>{
          if(subcontact.number.charAt(0)!="+"){
            subcontact.number = "00"+codeObj.code+subcontact.number;
           }else{
             subcontact.number = subcontact.number.replace("+","00");
           }
-           this.array.push(subcontact.number);
+           phoneUser.phone = subcontact.number;
+           this.array.push( phoneUser);
       })
    })
 
-   stores.Contacts.readFromStore().then((store_contacts)=>{
-     store_contacts.forEach((contact)=>{
-        this.array.push(contact.phone);
-     })
-   })
 
+ /*
+   //console.warn("array before",this.array.length,this.array)
+   //console.warn("new array ",uniq(this.array).length)
+   //console.warn("new array 1 ",uniq(contacts).length)
+ 
    this.array = uniq(this.array);
-   console.warn("array is",this.array)
+   //console.warn("array is",this.array)
    userArray=[];
    //get valid users from temporal user store
    this.array.forEach((phone)=>{
     // user = find(stores.TemporalUsersStore.Users, { phone: phone});
      //if(user){
-      // console.warn("here boy")
+      // //console.warn("here boy")
         userArray.push({phone});
     // }
-   })
-   this.setState({contacts:userArray});
-   //console.warn("users are",userArray,stores.TemporalUsersStore.Users)
+   })*/
+    //console.warn("range",uniqBy(this.array,'phone').length)
+    this.setState({contacts:uniqBy(this.array,'phone')});
+    this.setState({searchArray:this.state.contacts});
+    //console.warn("search array are",this.state.searchArray)
 
 }
 
@@ -126,15 +144,13 @@ getValidUsers(contacts){
 invite = ()=>{
   /*.catch(e => {
     alert("Unable To Verify Your Account", "Please Check Your Internet Connection")
-    console.warn(e, "errr here!!!")
+    //console.warn(e, "errr here!!!")
   })*/
   //this.setState({invite:true});
 }
 
 findIn = (arrayOfObjects,object)=>{
-
-   // console.warn("here bro",arrayOfObjects,object);
-
+   // //console.warn("here bro",arrayOfObjects,object);
     arrayOfObjects.forEach((element)=>{
         if(element.phone == object.phone){
           return true;
@@ -151,9 +167,6 @@ createRelation = (user)=>{
       currentUser = stores.LoginStore.user;
 
       relations.forEach(relation => {
-
-
-
          if(this.findIn(relation.participant,currentUser)&&this.findIn(relation.participant,user)){
              this.setState({alreadyCreated:true});
              console.warn("relation exist");
@@ -165,14 +178,12 @@ createRelation = (user)=>{
         //set it type
         relation.type = "relation";
         //push participants
-        relation.participant = [];
-        let participant = request.Participant();
-        participant.phone = currentUser.phone;
-        participant.status = currentUser.status;
-        relation.participant.push(participant1);
-        participant.phone = user.phone;
-        participant.status = user.status;
-        relation.participant.push(participant);
+         let opponent = request.Participant();
+         opponent.phone =  user.phone;
+         opponent.master = true;
+         relation.participant.push(opponent);
+
+
         //supply it an id 
         var arr = new Array(32);
         let num = Math.floor(Math.random() * 16)
@@ -180,12 +191,27 @@ createRelation = (user)=>{
         let New_id = uuid.unparse(arr, num);
         //give this id to the relation
         relation.id = New_id;
-        //add the new highlights to global highlights
-        relation.creator_phone = currentUser.phone;
-        relation.created_at = moment().format();
-        //console.warn(relation);
-        stores.Events.addEvent(relation).then(()=>{});
+        console.warn("relation is",relation);
+        //stores.Events.addEvent(relation).then(()=>{});
         //CreateRequest.createEvent(relation).then((res) => {})
+       
+        CreateRequest.createEvent(relation).then((res) => {
+          console.warn("res here",res)
+          stores.Events.delete("newEventId").then(() => {
+            console.warn("newEventId deleted")
+            firebase.database().ref(`rooms/${res.id}/${res.id}`).set({ name: 'General', members: res.participant }).then(() => {
+              console.warn("room created",res)
+              this.setState({creating: false })
+              BeNavigator.navigateToActivity('EventChat',res)
+             
+            })
+          });
+        }).catch(() => {
+          this.setState({
+            creating: false
+          })
+        })
+
      }else{
        this.setState({alreadyCreated:false})
      }
@@ -195,8 +221,19 @@ createRelation = (user)=>{
 }
 
 
+updateContact = (user)=>{
+  let index = findIndex(this.state.searchArray, {phone: user.phone});
+  this.state.searchArray[index].nickname = user.nickname;
+  this.state.searchArray[index].profile = user.profile;
+  this.state.searchArray[index].status = user.status;
 
+  //console.warn("contacts are hmm",this.state.searchArray)
+}
 
+searchUser = ()=>{
+  //console.warn("here")
+  this.props.navigation.navigate('SearchUser',{userdata:this.state.searchArray});
+}
 
 
 
@@ -204,11 +241,24 @@ render(){
     return (
       <View style={{ flex:1,backgroundColor: ColorList.bodyBackground,flexDirection:"column",width:"100%"}}>
         
-         <View style={{height:"7%" }}>
-                 <View style={{height:ColorList.headerHeight,width:"100%",flexDirection:"row",alignItems:"center",paddingLeft:"4%",...bleashupHeaderStyle}}>
+         <View style={{height:"8%" }}>
+                
+                 <View style={{height:ColorList.headerHeight,width:"100%",flexDirection:"row",alignItems:"center",...bleashupHeaderStyle}}>
+              
+                 <View style={{width:"85%",paddingLeft:"6%",flexDirection:"row"}}>
                  <Icon name="arrow-back" active={true} type="MaterialIcons" style={{ color: ColorList.headerIcon }} onPress={() => this.props.navigation.navigate("Home")} />
-                 <Text style={{fontSize:18,fontWeight:"bold",marginLeft:"3%"}}>Contacts</Text>
+                 <Text style={{fontSize:18,fontWeight:"bold",marginLeft:"9%"}}>Contacts</Text>
                  </View>
+
+                 <View style={{width:"15%"}}>
+                   <TouchableOpacity>
+                   <Icon name="search"  type="EvilIcons" style={{ color: ColorList.headerIcon }} onPress={this.searchUser} />
+                   </TouchableOpacity>
+                 </View>
+              
+                 
+                 </View>
+
          </View>
 
         
@@ -218,30 +268,34 @@ render(){
             <View style={{width:45,height:45,alignItems:"center",justifyContent:"center",marginLeft:"2%"}} >
                <Icon name="adduser" active={true} type="AntDesign" style={{ color: ColorList.bodyIcon,paddingRight:6 }} />
             </View>
-            <View style={{marginLeft:"5%"}}>
+            <View style={{marginLeft:"4%"}}>
                <Text>New Contact</Text>
             </View>
         </View>
   
         </TouchableOpacity> 
 
-        <TouchableOpacity style={{height:"9%"}} onPress={this.invite} >  
+        <TouchableOpacity style={{height:"8%"}} onPress={this.invite} >  
         <View style={{flex:1,width:"100%",paddingLeft:"2%",flexDirection:"row",alignItems:"center"}} >
             <View style={{width:width/8,height:height/16,borderRadius:32,alignItems:"center",justifyContent:"center",marginLeft:"2%"}} >
                <Icon name="sharealt" active={true} type="AntDesign" style={{ color: ColorList.bodyIcon,paddingRight:6 }} />
             </View>
-            <View style={{marginLeft:"5%"}}>
+            <View style={{marginLeft:"4%"}}>
                <Text>Invite Friends</Text>
             </View>
         </View>
   
         </TouchableOpacity>  
 
-      { this.state.isMount? 
-        <View style={{height:"74%",paddingLeft:"2%"}}>
+        <View style={{height:"5%",justifyContent:"center",alignItems:"flex-end",paddingRight:"5%"}}>
+           {this.state.creating ? <Spinner></Spinner>:null}
+        </View>
+
+      {this.state.isMount? 
+        <View style={{height:"70%",paddingLeft:"2%"}}>
        
                <BleashupFlatList
-                    initialRender={10}
+                    initialRender={15}
                     renderPerBatch={5}
                     style={{backgroundColor:ColorList.bodyBackground}}
                     firstIndex={0}
@@ -252,12 +306,12 @@ render(){
                     renderItem={(item,index) =>{
 
                       this.delay = this.delay >= 10 ? 0:this.delay + 1
-                      //console.warn(user);
+                      ////console.warn(user);
 
                    return(
 
                     <View style={{ width: "100%",paddingLeft:"1.3%" }}>
-                      <ProfileView delay={this.delay} phone={item.phone} hideMe={()=>{this.setState({contacts:reject(this.state.contacts,{phone:item.phone})}) }}></ProfileView>
+                      <ProfileView contact phoneInfo={item} delay={this.delay} phone={item.phone} updateContact={this.updateContact} action={this.createRelation} ></ProfileView>
                     </View>
                      
                      )
@@ -268,13 +322,58 @@ render(){
                 </BleashupFlatList>
                     <Invite isOpen={this.state.invite} onClosed={()=>{this.setState({invite:false})}} />
              </View>
-            :null}
+            :<Spinner></Spinner>}
+
+
+
+
 
         </View>
     );
 }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -414,13 +513,13 @@ render(){
 
 /**
  *       stores.LoginStore.getUser().then((user)=>{
-        console.warn(user);
+        //console.warn(user);
         this.users.push(user);
-        console.warn(this.users);
+        //console.warn(this.users);
        stores.TemporalUsersStore.addUser(user).then(()=>{
-          console.warn("here bro")
+          //console.warn("here bro")
           stores.TemporalUsersStore.loadFromStore().then((users)=>{
-               console.warn("users are :",users)
+               //console.warn("users are :",users)
                
           })
         })
@@ -520,7 +619,7 @@ checkUser(phoneNumbers){
      user = find(stores.TemporalUsersStore.Users, { phone: phone.number });
     
       if(user){
-         //console.warn("user is",user);
+         ////console.warn("user is",user);
          return user;
       }
      

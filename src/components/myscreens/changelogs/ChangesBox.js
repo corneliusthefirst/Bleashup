@@ -44,13 +44,13 @@ export default class ChangeBox extends Component {
             <View>
                 <View style={this.containerStyle}>
                     {!this.props.change ? null : <View style={{ flexDirection: 'column', margin: '2%', }}>
-                        <View style={{ flexDirection: 'row', height: '45%' }}>
+                        <View style={{ flexDirection: 'row', height: '45%'}}>
                         <View style={{ width: '80%', height: '100%' }}><ProfileSimple showPhoto={(url) => {
                                 this.props.showPhoto(url)
                             }} delay={this.props.delayer}
                                 profile={this.state.changer}></ProfileSimple>
                         </View>
-                            <View style={{ alignSelf: 'flex-start', marginTop: "-2%", flexDirection: 'row', }}>
+                            <View style={{ alignSelf: 'flex-start', flexDirection: 'row',alignItems:"center" }}>
                                 <View style={{}}><Icon onPress={() => {
                                     this.props.mention({
                                         id: this.props.change.id,

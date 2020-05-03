@@ -56,7 +56,9 @@ import QRCode from "./components/myscreens/QR"
 import SearchView from './components/myscreens/event/searchView';
 import MessageBox from './components/myscreens/eventChat/messageBox';
 import CommentsPage from './components/myscreens/event/createEvent/components/CommentsPage';
+import SearchUser from './components/myscreens/Contacts/searchUser'
 import ColorList from './components/colorList';
+
 /*
 let {height, width} = Dimensions.get('window');
 EStyleSheet.build({ 
@@ -101,9 +103,9 @@ const AppNavigator = createStackNavigator(
     EventDetailView: { screen: EventDetailView },
     LocalTasksCreation: { screen: LocalTasksCreation },
     TasksCreation: { screen: TasksCreation },
-    SearchView: { screen: SearchView },
-    MessageBox: { screen: MessageBox },
-
+    SearchView  : {screen: SearchView },
+    MessageBox  : {screen: MessageBox },
+    SearchUser  : {screen: SearchUser },
   },
   {
     initialRouteName: "LoginHome",

@@ -6,6 +6,8 @@ import { Title ,Text,Label,Input,Icon,Button} from "native-base";
 //import { TextInput } from "react-native-gesture-handler";
 import { filter,map,find} from "lodash";
 import Message from "../eventChat/Message";
+import colorList from '../../colorList';
+import ColorList from "../../colorList";
 
 let { height, width } = Dimensions.get('window');
 
@@ -37,17 +39,20 @@ export default class Invite extends Component {
     whatsappMsg = "Here is bleashup,my service for all my social activities.Come here:https://bleashup.com/dl/";
     Linking.openURL(`whatsapp://send?text=${whatsappMsg}`);
     //Linking.openURL(`https://discordapp.com/channels/send?text=${whatsappMsg}`);
+    this.props.onClosed();
    }
 
    openGmail = ()=>{
     mailsubject = "Bleashup : Android + iPhone";
     mailbody = "Bleashup is a fast application,easy and sure which i use to communicate with my relations,manage my activities(events,meetings,groups etc) with it amazing reminds,supports and contribution system.It also deeply facilate cruising through it discovery page,just come and see.Download freely here:https://www.bleashup.co/download/."
     Linking.openURL(`mailto:subject=${mailsubject}&body=${mailbody}`);
+    this.props.onClosed();
    }
 
   openMessage = ()=>{
     message = "Here is bleashup,my service for all my social activities.Come here:https://bleashup.com/dl/";
     Linking.openURL(`sms:?addresses=null&body=${message}`);
+    this.props.onClosed();
    }
 
 
@@ -61,8 +66,8 @@ export default class Invite extends Component {
             isOpen={this.props.isOpen}
             onClosed={this.props.onClosed}
             style={{
-                backgroundColor:"#FEFFDE",alignItems:"center",
-                height: height/5, borderTopLeftRadius: 8, borderTopRightRadius: 8, width:width
+                backgroundColor:ColorList.bodyBackground,alignItems:"center",
+                height:height/5, borderTopLeftRadius: 8, borderTopRightRadius: 8, width:width
             }}
 
             position={'bottom'}
@@ -103,8 +108,8 @@ export default class Invite extends Component {
 
              </View>
               <View>
-                 <Button style={{height:40,width:width-width/5,justifyContent:"center",alignItems:"center",borderWidth:1,borderColor:"gray",backgroundColor:"#1FABAB",borderRadius:10}} onPress={this.props.onClosed}>
-                   <Text>cancel</Text>
+                 <Button style={{height:40,width:width-width/5,justifyContent:"center",alignItems:"center",borderWidth:1,borderColor:"gray",backgroundColor:ColorList.bodyBackground,borderRadius:25}} onPress={this.props.onClosed}>
+                   <Text style={{fontSize:14,fontWeight:"400",color:"red"}}>CANCEL</Text>
                  </Button>
                    
               </View>

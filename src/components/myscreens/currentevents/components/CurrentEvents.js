@@ -141,7 +141,7 @@ export default class CurrentEvents extends Component {
            
    
            })*/
-        //console.warn("all highlights",this.state.newData)
+           console.warn("all events",stores.Events.events)
 
         //  })
 

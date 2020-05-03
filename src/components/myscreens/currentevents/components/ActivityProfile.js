@@ -35,3 +35,4 @@ export default class ActivityProfile extends Component {
         </View>
     }
 }
+                    

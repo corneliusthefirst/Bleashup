@@ -392,7 +392,7 @@ class Request {
             participant: [{
                 phone: stores.LoginStore.user.phone,
                 master: true,
-                status: 'creator',
+                status: "creator",
                 host: stores.Session.SessionStore.host
             }],
             likes: 0,
@@ -466,12 +466,12 @@ class Request {
     }
     Contact() {
         return {
-            contact: "",
+            phone: "",
             host: ""
         }
     }
     many_contact() {
-        return [{ phone: "", host: "" }]
+        return []
     }
     Field() {
         return {

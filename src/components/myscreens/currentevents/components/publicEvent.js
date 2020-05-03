@@ -41,8 +41,9 @@ import colorList from "../../../colorList";
 import CacheImages from "../../../CacheImages";
 import PhotoViewer from "../../event/PhotoViewer"
 import ActivityProfile from "./ActivityProfile";
+import GlobalFunctions from '../../../globalFunctions';
 
-
+let globalFunctions = new GlobalFunctions();
 let { height, width } = Dimensions.get('window');
 class PublicEvent extends Component {
   constructor(props) {
@@ -91,19 +92,11 @@ class PublicEvent extends Component {
       this.state.fresh !== nextState.fresh
   }
   swipperComponent = null
-  componentDidMount() {
+  componentDidMount() { 
     //this is done to use as default for my test
     if (this.props.Event.type == "relation") {
-      //console.warn("here2",this.props.Event.participant);
-      this.props.Event.participant.forEach((participant) => {
-        if (participant.phone != stores.LoginStore.user.phone) {
-          stores.TemporalUsersStore.Users.forEach((user) => {
-            if (participant.phone == user.phone) {
-              this.setState({ opponent: user });
-            }
-          })
-
-        }
+      globalFunctions.getOpponent(this.props.Event).then((user)=>{
+        this.setState({ opponent: user });
       })
 
     }
@@ -300,7 +293,7 @@ class PublicEvent extends Component {
         location={this.props.Event.location.string}></MapView></View> : null
   }
   renderprofile() {
-
+    //console.warn("opponent is",this.state.opponent)
     return (
       <CardItem
         style={{
@@ -316,7 +309,9 @@ class PublicEvent extends Component {
           {this.state.opponent ? <View style={{ width: "60%" }}>
             <ProfileSimple showPhoto={(url) =>
               this.props.showPhoto(url)}
-              profile={this.state.opponent}>
+              profile={this.state.opponent}
+              relation
+              >
             </ProfileSimple>
           </View> : null}
 
@@ -334,7 +329,8 @@ class PublicEvent extends Component {
     return (<CardItem style={{ marginBottom: '3%', backgroundColor: colorList.bodyBackground, width: "100%" }}>
 
       <View style={{ flexDirection: 'row', width: '100%', alignItems: "center" }}>
-        <View style={{ width: '90%' }}>
+        
+        <View style={{ width: '90%'}}>
           <ActivityProfile
             join={this.join.bind(this)}
             showPhoto={this.props.showPhoto}
@@ -344,8 +340,9 @@ class PublicEvent extends Component {
             Event={this.props.Event||{}}
             ></ActivityProfile>
         </View>
-        <View style={{ width: '10%', justifyContent: 'flex-end', alignItems: 'flex-end', marginLeft: "2%", alignItems: "center" }}>
-          <Icon onPress={() => this.props.showActions(this.props.Event.id)} type="Entypo" style={{ fontSize: 24, color: "#555756", alignSelf: 'flex-end', marginBottom: 10 }} name="dots-three-vertical"></Icon>
+
+        <View style={{ width: '10%', justifyContent: 'center', marginLeft: "2%",marginTop:"2%" }}>
+          <Icon onPress={() => this.props.showActions(this.props.Event.id)} type="Entypo" style={{ fontSize: 24, color: "#555756"}} name="dots-three-vertical"></Icon>
         </View>
 
 
@@ -431,7 +428,7 @@ class PublicEvent extends Component {
           bordered
         >
           {this.renderTitle()}
-          {!this.props.Event.highlights || this.props.Event.highlights.length < 1 ? null : this.renderBody()}
+          {!this.props.Event.highlights || this.props.Event.highlights.length < 1 ? (this.props.Event.type=="relation"? this.renderBody():null) : this.renderBody()}
           {this.renderFooter()}
 
         </Card>
