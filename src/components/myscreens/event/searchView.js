@@ -61,8 +61,8 @@ navigateToEventDetails = (item) => {
         
     <Container style={{height:"100%",width:colorList.containerWidth,backgroundColor:colorList.bodyBackground,alignItems:"center"}}>
        
-       <View style={{height:colorList.headerHeight,width:"100%",alignItems:"center",backgroundColor:colorList.headerBackground}}>
-        <View style={{flexDirection:"row",backgroundColor:colorList.bodyBackground,height:colorList.headerHeight,width:"95%",borderColor:"gray",borderWidth:1,
+       <View style={{height:colorList.headerHeight-10,width:"100%",alignItems:"center",backgroundColor:colorList.headerBackground,marginTop:"5%"}}>
+        <View style={{flexDirection:"row",backgroundColor:colorList.bodyBackground,height:colorList.headerHeight-10,width:"94%",borderColor:"gray",borderWidth:1,
         justifyContent:"center",alignItems:"center",borderRadius:15}}>
           
               <Icon onPress={() => {this.props.navigation.goBack()}}
@@ -74,7 +74,7 @@ navigateToEventDetails = (item) => {
         </View>
        </View>
 
-      <View style={{flex:1,marginTop:10}}>
+       <View style={{flex:1,marginTop:"5%",marginLeft:"-3%"}}>
 
         {this.state.data.length == 0 ? null :
          (this.state.loading == true ?

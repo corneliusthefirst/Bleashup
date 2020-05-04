@@ -24,7 +24,7 @@ export default class ProfileView extends Component {
                     hide: true
                 })
             } else {
-                //console.warn("here we are boy",user);
+                
                this.props.contact && stores.Contacts.addContact({phone:user.phone,host:user.current_host}).then(()=>{})
                this.props.contact && this.props.updateContact(user);
           
@@ -45,7 +45,7 @@ export default class ProfileView extends Component {
         })
     }
     render() {
-        return this.state.hide ?<View style={{marginBottom:"2%"}}><ProfileSimple profile={this.props.phoneInfo} invite /></View>  : this.state.isMount ? (
+        return this.state.hide ?<View style={{marginBottom:"2%"}}><ProfileSimple profile={this.props.phoneInfo} invite  /></View>  : this.state.isMount ? (
 
             <View style={{ flexDirection: "row",marginBottom: "2%",}}>
               
@@ -67,13 +67,13 @@ export default class ProfileView extends Component {
                     justifyContent: 'center', paddingLeft: "10%", display: 'flex', fontWeight: 'bold',
                 }}>
                     <Text ellipsizeMode={'tail'} numberOfLines={1} style={{
-                        marginBottom: "2%",
+                        //marginBottom: "2%",
                         color: ColorList.bodyText,
                         fontWeight: 'bold',
                     }}>{this.state.profile.phone === stores.LoginStore.user.phone ? "You" : this.state.profile.nickname}</Text>
 
-                      <Text ellipsizeMode={'tail'} numberOfLines={1} style={{ alignSelf: 'flex-start', fontStyle: 'italic', }}
-                        note>{this.state.profile.status && this.state.profile.status != "undefined"? this.state.profile.status:null}</Text>
+                    {this.state.profile.status && this.state.profile.status != "undefined"&& !this.state.profile.status.isEmpty()?<Text ellipsizeMode={'tail'} numberOfLines={1} style={{ alignSelf: 'flex-start', fontStyle: 'italic', }}
+                     note>{this.state.profile.status}</Text>:null}
                 </View>
                 </TouchableOpacity>
 

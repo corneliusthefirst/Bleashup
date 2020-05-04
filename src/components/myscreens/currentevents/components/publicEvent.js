@@ -306,16 +306,17 @@ class PublicEvent extends Component {
       >
         <View style={{ width: "100%", flexDirection: "row", alignItems: "center" }}>
 
-          {this.state.opponent ? <View style={{ width: "60%" }}>
+          {this.state.opponent ? <View style={{ width: "65%" }}>
             <ProfileSimple showPhoto={(url) =>
               this.props.showPhoto(url)}
               profile={this.state.opponent}
               relation
+              style={{height:50,width:50,borderRadius:25}}
               >
             </ProfileSimple>
           </View> : null}
 
-          <View style={{ height: "100%", width: "40%", ...shadower() }}>
+          <View style={{ height: "100%", width: "35%" }}>
             {this.state.isMount ? <Options seen={() => this.markAsSeen()} {...this.props}></Options> : null}
           </View>
 
