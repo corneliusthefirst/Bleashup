@@ -1,6 +1,7 @@
 import React, { PureComponent } from "react";
 import { Dimensions, View } from "react-native"
 import Modal from "react-native-modalbox";
+import ColorList from '../colorList';
 
 const screenheight = Math.round(Dimensions.get('window').height);
 
@@ -23,7 +24,7 @@ export default class BleashupModal extends PureComponent {
     backButtonClose = false
     swipeToClose = true
     position = 'bottom'
-    modalBackground = '#FFFFFF'
+    modalBackground = ColorList.bodyBackground
     modalWidth = '100%'
     modalHeight = '100%'
     borderTopLeftRadius = 8

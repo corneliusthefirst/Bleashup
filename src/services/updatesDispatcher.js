@@ -47,6 +47,10 @@ class UpdatesDispatcher {
     }
   }
   UpdatePossibilities = {
+    blocked: update => MainUpdater.blocked(update.updater),
+    un_blocked: update => MainUpdater.unBlocked(update.updater),
+    muted: update => MainUpdater.muted(update.updater),
+    un_muted:updater => MainUpdater.unMuted(update.updater),
     title: update => {
       return new Promise((resolve, reject) => {
         stores.Events.updateTitle(update.event_id, update.new_value, true).then((Eve) => {

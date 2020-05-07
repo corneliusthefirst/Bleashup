@@ -17,6 +17,7 @@ import commitee from './commitee';
 import  StoriesStore from './StoriesStore';
 import  StatusStore from './StatusStore';
 import comments from './comments';
+import PrivacyStore from './PrivacyStore';
 
 export default { 
 
@@ -38,6 +39,7 @@ export default {
   TemporalUsersStore: new TemporalUsersStore(),
   CommiteeStore : new commitee(),
   StoriesStore: new   StoriesStore(),
+  Privacy:new PrivacyStore(),
   StatusStore : new StatusStore()
 
 

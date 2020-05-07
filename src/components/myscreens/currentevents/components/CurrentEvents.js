@@ -116,35 +116,6 @@ export default class CurrentEvents extends Component {
     renderPerbatch = 5
     componentDidMount() {
         
-        //console.warn(this.props.data);
-        //  let id1="cc28b850-2555-11ea-9234-4fbde55a1fd4";
-        //let id1="e761ac10-252f-11ea-9234-dd23f4cef77f"
-        // let id2="71e57d50-252e-11ea-9234-dd23f4cef77f"
-
-        //let id1="69e364e0-256b-11ea-9234-df4ca56abe45";
-        //let id2="e7b468b0-256b-11ea-9234-df4ca56abe45"
-        //  stores.Events.readFromStore().then((Events)=>{
-        //    let event1 = find(Events, { id:id1 });
-        //      let event2 = find(Events, { id:id2 });
-        //    this.state.newData.push(event1);
-        //    this.state.newData.push(event2);
-        //    this.setState({newData:this.state.newData});
-
-        /*   stores.Highlights.readFromStore().then((Highlights)=>{
-               //console.warn("all highlights",Highlights)
-               //console.warn("second event",event2)
-               //console.warn("first event",event1)
-               let h1 = find(Highlights, { id:event1.highlights[0] });
-               let h2 = find(Highlights, { id:event1.highlights[1] });
-               console.warn("highlight 1",h1)
-               console.warn("highlight 2",h2)
-           
-   
-           })*/
-           console.warn("all events",stores.Events.events)
-
-        //  })
-
     }
 
     render() {
