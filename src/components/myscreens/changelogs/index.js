@@ -128,7 +128,7 @@ export default class ChangeLogs extends Component {
                       style={{ color:colorList.headerIcon}} type={"MaterialIcons"}name={"arrow-back"}></Icon>
                    </View>
                    <View style={{ width: '70%', paddingLeft: '2%',justifyContent:"center" }}>
-                   <Title style={{ color: colorList.headerText, fontWeight: 'bold', alignSelf: 'flex-start' }}>{"History"}</Title>
+                   <Title style={{ color: colorList.headerText,fontSize:colorList.fontSize, fontWeight: colorList.headerFontweight, alignSelf: 'flex-start' }}>{"History"}</Title>
                    </View>
   
                    <View style={{ width: '10%', paddingRight: '3%' }}>

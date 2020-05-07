@@ -1491,7 +1491,7 @@ export default class ChatRoom extends Component {
             <View style={{ width: "65%", height: colorList.headerHeight, flexDirection: "row", alignSelf: "flex-start", alignItems: "center", }}>
 
                 <Icon onPress={() => this.props.navigatePage("Home")}
-                    style={{ color: colorList.headerIcon, marginLeft: "5%", marginRight: "5%" }}
+                    style={{ color: colorList.headerIcon, marginLeft: "6%", marginRight: "7%" }}
                     type={"MaterialIcons"}
                     name={"arrow-back"}></Icon>
                 <View>

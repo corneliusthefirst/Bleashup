@@ -26,7 +26,7 @@ class colorlist {
     headerBackground = "white"
     headerHeight = 55
     headerFontweight = "bold"
-    headerFontSize = 20
+    headerFontSize = 17
 
 
     //body

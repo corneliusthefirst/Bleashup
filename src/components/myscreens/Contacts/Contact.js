@@ -47,9 +47,12 @@ constructor(props){
       invite:false,
       alreadyCreated:false,
       searchArray:[],
-      creating:false
+      creating:false,
   }
+  
 }  
+
+codeObj=find(countries,{id: stores.LoginStore.user.country_code})
 
 init = ()=>{
 
@@ -85,60 +88,31 @@ componentDidMount(){
 array = [];
 getValidUsers(contacts){
 
-     //first push contacts from contacts store
-       stores.Contacts.contacts.forEach((contact)=>{
+    //first push contacts from contacts store
+    stores.Contacts.contacts.forEach((contact)=>{
         if(contact.phone){
-          //console.warn("the contact is",contact)
           let phoneUser = {nickname:"",phone:contact.phone,profile:"",status:"",found:true}
-          //console.warn("a contact user",phoneUser)
           this.array.push(phoneUser);
          }
-      })
-  
-
-    //console.warn("user is",stores.LoginStore.user)
-    let codeObj = find(countries,{id: stores.LoginStore.user.country_code})
-    //console.warn("code",codeObj)
-    //console.warn("contacts are ",contacts)
+    })
 
     //then push those from the phone
     contacts.forEach((contact)=>{
       var phoneUser = {nickname:contact.displayName,phone:"",profile:contact.thumbnailPath,status:"",found:false}
-
       contact.phoneNumbers.forEach((subcontact)=>{
-         if(subcontact.number.charAt(0)!="+"){
-           subcontact.number = "00"+codeObj.code+subcontact.number;
-          }else{
-            subcontact.number = subcontact.number.replace("+","00");
-          }
-           phoneUser.phone = subcontact.number;
-           this.array.push( phoneUser);
+         subcontact.number.charAt(0)!="+" ? subcontact.number = "00"+this.codeObj.code+subcontact.number:subcontact.number = subcontact.number.replace("+","00");
+         phoneUser.phone = subcontact.number;
+         this.array.push( phoneUser); 
       })
-   })
-
-
- /*
-   //console.warn("array before",this.array.length,this.array)
-   //console.warn("new array ",uniq(this.array).length)
-   //console.warn("new array 1 ",uniq(contacts).length)
- 
-   this.array = uniq(this.array);
-   //console.warn("array is",this.array)
-   userArray=[];
-   //get valid users from temporal user store
-   this.array.forEach((phone)=>{
-    // user = find(stores.TemporalUsersStore.Users, { phone: phone});
-     //if(user){
-      // //console.warn("here boy")
-        userArray.push({phone});
-    // }
-   })*/
-    //console.warn("range",uniqBy(this.array,'phone').length)
+    })
     this.setState({contacts:uniqBy(this.array,'phone')});
     this.setState({searchArray:this.state.contacts});
-    //console.warn("search array are",this.state.searchArray)
 
 }
+
+
+
+
 
 
 invite = ()=>{
@@ -245,9 +219,9 @@ render(){
                 
                  <View style={{height:ColorList.headerHeight,width:"100%",flexDirection:"row",alignItems:"center",...bleashupHeaderStyle}}>
               
-                 <View style={{width:"85%",paddingLeft:"6%",flexDirection:"row"}}>
+                 <View style={{width:"85%",paddingLeft:"4%",flexDirection:"row",alignItems:"center"}}>
                  <Icon name="arrow-back" active={true} type="MaterialIcons" style={{ color: ColorList.headerIcon }} onPress={() => this.props.navigation.navigate("Home")} />
-                 <Text style={{fontSize:18,fontWeight:"bold",marginLeft:"9%"}}>Contacts</Text>
+                 <Text style={{fontSize:ColorList.headerFontSize,fontWeight:"bold",marginLeft:"7%"}}>Contacts</Text>
                  </View>
 
                  <View style={{width:"15%"}}>

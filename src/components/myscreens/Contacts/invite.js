@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import stores from "../../../stores";
 import Modal from 'react-native-modalbox';
 import { View,Dimensions,TouchableWithoutFeedback,TouchableOpacity,Image,TextInput,Linking} from "react-native";
-import { Title ,Text,Label,Input,Icon,Button} from "native-base";
+import { Title ,Text,Label,Input,Icon,Button,Thumbnail} from "native-base";
 //import { TextInput } from "react-native-gesture-handler";
 import { filter,map,find} from "lodash";
 import Message from "../eventChat/Message";
@@ -39,20 +39,20 @@ export default class Invite extends Component {
     whatsappMsg = "Here is bleashup,my service for all my social activities.Come here:https://bleashup.com/dl/";
     Linking.openURL(`whatsapp://send?text=${whatsappMsg}`);
     //Linking.openURL(`https://discordapp.com/channels/send?text=${whatsappMsg}`);
-    this.props.onClosed();
+    //this.props.onClosed();
    }
 
    openGmail = ()=>{
     mailsubject = "Bleashup : Android + iPhone";
     mailbody = "Bleashup is a fast application,easy and sure which i use to communicate with my relations,manage my activities(events,meetings,groups etc) with it amazing reminds,supports and contribution system.It also deeply facilate cruising through it discovery page,just come and see.Download freely here:https://www.bleashup.co/download/."
-    Linking.openURL(`mailto:subject=${mailsubject}&body=${mailbody}`);
-    this.props.onClosed();
+    Linking.openURL(`mailto:""?subject=${mailsubject}&body=${mailbody}`);
+    //this.props.onClosed();
    }
 
   openMessage = ()=>{
     message = "Here is bleashup,my service for all my social activities.Come here:https://bleashup.com/dl/";
     Linking.openURL(`sms:?addresses=null&body=${message}`);
-    this.props.onClosed();
+    //this.props.onClosed();
    }
 
 
@@ -80,27 +80,27 @@ export default class Invite extends Component {
             <View style={{flexDirection:"column"}}>
              <View  style={{flexDirection:"row",height:"70%",alignItems:"center",justifyContent:"space-between"}}>
               
-             <TouchableOpacity  onPress={this.openMessage} >
-               <View style={{flexDirection:"column",alignItems:"center"}}>
-               <View style={{height:height/17,width:width/8,borderRadius:25,margin:"5%",backgroundColor:"dodgerblue",justifyContent:"center",alignItems:"center"}}>
-               <Icon name="message" active={true} type="MaterialIcons" style={{color: "white",marginTop:4 }} onPress={() => {}} />
+             <TouchableOpacity onPress={()=>{this.openMessage()}}  >
+               <View style={{flexDirection:"column",alignItems:"center"}} >
+               <View style={{height:height/17,width:width/8,borderRadius:25,margin:"5%",backgroundColor:"dodgerblue",justifyContent:"center",alignItems:"center"}} >
+               <Icon name="message" active={true} type="MaterialIcons" style={{color: "white",marginTop:4 }} onPress={()=>{this.openMessage()}}  />
                </View>
                <Text note>message</Text>
                </View>
               </TouchableOpacity>
 
-              <TouchableOpacity  onPress={this.openGmail} >
-               <View style={{margin:"5%",flexDirection:"column",alignItems:"center"}}>
-               <Icon name="email" active={true} type="MaterialCommunityIcons" style={{ color: "indianred",fontSize:45}} onPress={() => {}} />
+              <TouchableOpacity onPress={()=>{this.openGmail()}}>
+               <View style={{margin:"5%",flexDirection:"column",alignItems:"center"}} >
+               <Icon name="email" active={true} type="MaterialCommunityIcons" style={{ color: "indianred",fontSize:45}} onPress={()=>{this.openGmail()}} />
                <Text  note>email</Text>
                </View>
                </TouchableOpacity>
 
                {this.state.whatsapp?
-               <TouchableOpacity  onPress={this.openWhatsapp} >
-               <View style={{flexDirection:"column",alignItems:"center"}} >
+               <TouchableOpacity   onPress={()=>{this.openWhatsapp()}}>
+               <View style={{flexDirection:"column",alignItems:"center"}}>
                <View style={{height:height/17,width:width/8,borderRadius:25,margin:"5%",backgroundColor:"limegreen",justifyContent:"center",alignItems:"center"}}>
-               <Icon name="whatsapp" active={true} type="FontAwesome" style={{ color: "white", }} onPress={() => {}} />
+                <Icon name="whatsapp" active={true} type="FontAwesome" style={{ color: "white", }}  onPress={()=>{this.openWhatsapp()}}/>
                </View>
                <Text  note>whatsapp</Text>
                </View>
