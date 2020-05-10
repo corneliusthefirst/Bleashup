@@ -284,7 +284,7 @@ render(){
 
                    return(
 
-                    <View style={{ width: "100%",paddingLeft:"1.3%" }}>
+                    <View style={{ height:60,width: "100%",paddingLeft:"1.3%" }}>
                       <ProfileView contact phoneInfo={item} delay={this.delay} phone={item.phone} updateContact={this.updateContact} action={this.createRelation} ></ProfileView>
                     </View>
                      

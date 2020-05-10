@@ -15,6 +15,7 @@ import PhotoViewer from '../event/PhotoViewer';
 import CacheImages from '../../CacheImages';
 import EditUserModal from "./editUserModal";
 import shadower from "../../../components/shadower";
+import ColorList from '../../colorList';
 
 let { height, width } = Dimensions.get('window');
 export default class ProfileView extends Component {
@@ -36,6 +37,7 @@ export default class ProfileView extends Component {
   init = ()=>{
     setTimeout(() => {
       this.setState({isMount:true,userInfo:this.props.navigation.getParam("userInfo")})
+     // console.warn(this.state.userInfo)
   }, 50)
    
   }
@@ -56,14 +58,15 @@ export default class ProfileView extends Component {
   
   render() {
     return (
-      <Container style={{ backgroundColor: "#FEFFDE",flexDirection:"column",width:width }}>
-        <View style={{ height: 40, }}>
+      <Container style={{ backgroundColor: ColorList.bodyBackground,flexDirection:"column",width:ColorList.containerWidth,height:ColorList.containerHeight }}>
+
+        <View style={{ height:ColorList.headerHeight, }}>
            <View style={{
                 ...bleashupHeaderStyle,
-                
+                height:ColorList.headerHeight
               }}>
-                 <View style={{flexDirection:"row",width:width/3,marginLeft:width/25,justifyContent:"space-between",alignItems:"center"}}>
-                 <Icon name="arrow-back" active={true} type="MaterialIcons" style={{ color: "#1FABAB", }} onPress={() => this.props.navigation.navigate("Settings")} />
+                 <View style={{flex:1,flexDirection:"row",width:width/3,marginLeft:width/25,justifyContent:"space-between",alignItems:"center"}}>
+                 <Icon name="arrow-back" active={true} type="MaterialIcons" style={{ color: ColorList.headerIcon, }} onPress={() => this.props.navigation.navigate("Settings")} />
                  <Text style={{fontSize:18,fontWeight:"bold",marginRight:"16%"}}>Profile</Text>
                  </View>
           </View>
@@ -75,7 +78,7 @@ export default class ProfileView extends Component {
        <View style={{width:"100%",justifyContent:"center",height:height/8,flexDirection:"row",marginTop:height/30}}>
           <View style={{width:"80%",flexDirection:"row"}}>
             <View style={{width:"10%"}}>
-            <Icon name="user" active={true} type="AntDesign" style={{ color: "#1FABAB", }}/>
+            <Icon name="user" active={true} type="AntDesign" style={{ color: ColorList.headerIcon, }}/>
             </View>
             <View style={{width:"65%",marginLeft:"5%",flexDirection:"column"}}>
                <Text style={{alignSelf:"flex-start"}} note>Name</Text>
@@ -84,43 +87,44 @@ export default class ProfileView extends Component {
           </View>
 
           <View style={{width:"10%"}}>
-             <Icon name="edit" active={true} type="MaterialIcons" style={{ color: "gray" }} onPress={this.updateName}/>
+             <Icon name="edit" active={true} type="MaterialIcons" style={{ color:ColorList.bodySubtext }} onPress={this.updateName}/>
           </View>
         </View>
 
-        <View>
+      
 
 
-            <View style={{width:"100%",justifyContent:"center",alignItems:"center"}}>
-                  <TouchableWithoutFeedback onPress={() => {
-                        requestAnimationFrame(() => {
-                           this.setState({enlarge:true})
-                        });
-                    }}>
-                        {this.state.userInfo.profile  && testForURL(this.state.userInfo.profile ) ? <CacheImages   {...this.props}
-                            source={{ uri: this.state.userInfo.profile }} /> :
-                            <Image source={require("../../../../Images/profile-icon.webp")} style={{height:height/3+height/14,width:width-width/9,borderRadius:14}} ></Image>}
-                    </TouchableWithoutFeedback>
-                    <View style={{...shadower(),height:height/13,width:width/6,borderRadius:30,backgroundColor:"#1FABAB",alignItems:"center",justifyContent:"center",alignSelf:"flex-end",marginTop:-height/20,marginRight:width/25,borderWidth:3,borderColor:"#FEFFDE"}}>
-                    <Icon name="add-a-photo" active={true} type="MaterialIcons" style={{ color: "white" }}/>
-                    </View>
-            </View>
+       <View style={{height:ColorList.containerHeight/3,width:"100%",justifyContent:"center",alignItems:"center"}}>
+          
+            <TouchableWithoutFeedback onPress={() => {
+                requestAnimationFrame(() => {this.setState({enlarge:true})});
+            }}>
+              {this.state.userInfo.profile  && testForURL(this.state.userInfo.profile ) ? <CacheImages   {...this.props}
+                  source={{ uri: this.state.userInfo.profile }} style={{ width:ColorList.containerWidth-ColorList.containerWidth/8, height:ColorList.containerHeight/3,borderRadius:30 }} /> :
+               <Image source={require("../../../../Images/profile.png")} style={{height:ColorList.containerHeight/3,width:width-width/9,borderRadius:14}} ></Image>}
+            </TouchableWithoutFeedback>
+
+              <View style={{...shadower(),height:height/13,width:width/6,borderRadius:30,backgroundColor:"#1FABAB",alignItems:"center",justifyContent:"center",alignSelf:"flex-end",marginTop:-height/20,marginRight:width/25,borderWidth:2,borderColor:ColorList.bodyBackground}}>
+                <Icon name="add-a-photo" active={true} type="MaterialIcons" style={{ color:ColorList.bodyBackground }}/>
+              </View>
         </View>
+            
+     
 
         <View style={{width:"100%",justifyContent:"center",flexDirection:"row",marginTop:height/30}}>
           <View style={{width:"90%",flexDirection:"column"}}>
             <View style={{flexDirection:"row",justifyContent:"flex-start"}}>
-            <Icon name="infocirlceo" active={true} type="AntDesign" style={{ color: "#1FABAB", }}/>
+            <Icon name="infocirlceo" active={true} type="AntDesign" style={{ color:ColorList.headerIcon, }}/>
             <Text style={{alignSelf:"flex-start",marginLeft:"3%"}} note>Actu</Text>
             </View>
 
             <View style={{width:"92%",marginLeft:"12%",flexDirection:"row"}}>
               <View style={{width:"75%"}}>
-               <Title style={{alignSelf:"flex-start"}} numberOfLines={1}  >{this.state.userInfo.status}</Title>
-               </View>
+              <Title style={{alignSelf:"flex-start"}} numberOfLines={1}  >{this.state.userInfo.status}</Title>
+            </View>
 
                <View style={{width:"20%",marginLeft:"7%"}}>
-               <Icon name="edit" active={true} type="MaterialIcons" style={{ color: "gray" }} onPress={this.editActu}/>
+               <Icon name="edit" active={true} type="MaterialIcons" style={{ color:ColorList.bodySubtext }} onPress={this.editActu}/>
                </View>
             </View>
 
@@ -133,7 +137,7 @@ export default class ProfileView extends Component {
         <View style={{width:"100%",justifyContent:"center",flexDirection:"row",marginTop:height/30}}>
           <View style={{width:"90%",flexDirection:"row"}}>
             <View style={{width:"10%"}}>
-            <Icon name="phone" active={true} type="FontAwesome" style={{ color: "#1FABAB", }}/>
+            <Icon name="phone" active={true} type="FontAwesome" style={{ color:ColorList.headerIcon }}/>
             </View>
             <View style={{width:"65%",marginLeft:"2%",flexDirection:"column"}}>
                <Text style={{alignSelf:"flex-start"}} note>Telephone</Text>

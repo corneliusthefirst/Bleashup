@@ -49,31 +49,31 @@ export default class ProfileView extends Component {
 
             <View style={{ flexDirection: "row",marginBottom: "2%",}}>
               
+               <View style={{height:"100%",justifyContent:"center"}}>
                 <Button onPress={() => {
                     requestAnimationFrame(() => {
-                        this.setState({
-                            isModalOpened: true
-                        })
+                        this.setState({isModalOpened: true})
                     });
                 }} transparent>
                     {testForURL(this.state.profile.profile) ? <CacheImages small thumbnails {...this.props}
                         source={{ uri: this.state.profile.profile }} /> :
                         <Thumbnail small source={require("../../../../../Images/images.jpeg")}></Thumbnail>}
                 </Button>
+                </View>
 
                 <TouchableOpacity onPress={() => {requestAnimationFrame(() => {if(this.props.action){this.props.action(this.state.profile);}}) } }>
                 <View style={{
-                    alignItems: 'center',
-                    justifyContent: 'center', paddingLeft: "10%", display: 'flex', fontWeight: 'bold',
+                    justifyContent:"center",flexDirection:"column",height:"100%",
+                    paddingLeft: "10%", display: 'flex', fontWeight: 'bold',
                 }}>
                     <Text ellipsizeMode={'tail'} numberOfLines={1} style={{
-                        //marginBottom: "2%",
                         color: ColorList.bodyText,
                         fontWeight: 'bold',
                     }}>{this.state.profile.phone === stores.LoginStore.user.phone ? "You" : this.state.profile.nickname}</Text>
 
                     {this.state.profile.status && this.state.profile.status != "undefined"&& !this.state.profile.status.isEmpty()?<Text ellipsizeMode={'tail'} numberOfLines={1} style={{ alignSelf: 'flex-start', fontStyle: 'italic', }}
                      note>{this.state.profile.status}</Text>:null}
+
                 </View>
                 </TouchableOpacity>
 

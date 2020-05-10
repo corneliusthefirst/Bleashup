@@ -11,6 +11,7 @@ import { functionDeclaration } from "@babel/types";
 import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
 import testForURL from '../../../services/testForURL';
 import GState from '../../../stores/globalState/index';
+import ColorList from '../../colorList';
 
 let { height, width } = Dimensions.get('window');
 
@@ -38,22 +39,23 @@ export default class SettingView extends Component {
 
   render() {
     return (
-      <Container style={{ backgroundColor: "#FEFFDE",height:height}}>
-        <View style={{ height: 40, }}>
+      <Container style={{ backgroundColor:ColorList.bodyBackground,height:ColorList.containerHeight}}>
+        
+        <View style={{ height:ColorList.headerHeight, }}>
            <View style={{
                 ...bleashupHeaderStyle,
-                
+                height:ColorList.headerHeight
               }}>
-                 <View style={{flexDirection:"row",width:width/3,marginLeft:width/25,justifyContent:"space-between",alignItems:"center"}}>
-                 <Icon name="arrow-back" active={true} type="MaterialIcons" style={{ color: "#1FABAB", }} onPress={() => this.props.navigation.navigate("Home")} />
+                 <View style={{flex:1,flexDirection:"row",width:width/3,marginLeft:width/25,justifyContent:"space-between",alignItems:"center"}}>
+                 <Icon name="arrow-back" active={true} type="MaterialIcons" style={{ color:ColorList.headerIcon, }} onPress={() => this.props.navigation.navigate("Home")} />
                  <Text style={{fontSize:18,fontWeight:"bold",marginRight:"8%"}}>Settings</Text>
                  </View>
           </View>
         </View>
 
-      { this.state.isMount? <View style={{flexDirection:"column",height:height - height/10,width:width}}>
+      { this.state.isMount? <View style={{flexDirection:"column",height:ColorList.containerHeight/7,width:width}}>
 
-          <View style={{flexDirection:"row",margin:"3%",width:"100%"}}>
+          <View style={{flex:1,flexDirection:"row",margin:"3%",width:"100%",alignItems:"center"}}>
               <View style={{width:"25%"}}>
                  <TouchableWithoutFeedback onPress={() => {
                         requestAnimationFrame(() => {
@@ -75,8 +77,6 @@ export default class SettingView extends Component {
                            <Title style={{color:"gray",alignSelf:"flex-start",fontSize:15}}>{this.state.userInfo.status}</Title>
                     </View>
           </View>
-           <Item></Item>
-
           
         </View>
        :null}

@@ -13,6 +13,8 @@ import EditUserModal from "./editUserModal";
 import shadower from "../../../components/shadower";
 //import BleashupFlatList from '../../BleashupFlatList';
 import { filter,map,find} from "lodash";
+import ColorList from '../../colorList';
+
 
 let { height, width } = Dimensions.get('window');
 export default class ActuView extends Component {
@@ -72,9 +74,11 @@ edit = ()=>{
 }
   render(){
       return(
-          <View style={{width:width,height:height}}>
+          <View style={{width:ColorList.containerWidth,height:ColorList.containerHeight}}>
+
             <View style={{width:"100%",height:"100%"}}>
-              <View style={{ height: 40, }}>
+
+              <View style={{ height:ColorList.headerHeight, }}>
               <View style={{
                   ...bleashupHeaderStyle,
                  }}>
