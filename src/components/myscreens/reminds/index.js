@@ -625,35 +625,39 @@ export default class Reminds extends Component {
   }
   renderReminds() {
     return !this.state.mounted ? <View style={{ width: '100%', height: '100%', }}></View> : (
-      <View>
-        <View style={{ height: colorList.headerHeight, width: '100%', }}>
+      <View style={{ width: '100%', height: '100%', }}>
+      
+        <View style={{ height: colorList.headerHeight, width: '100%',paddingLeft: '1%', paddingRight: '1%',  }}>
+          
           <View style={{
             flex: 1, ...bleashupHeaderStyle,
-            paddingLeft: '1%', paddingRight: '1%', backgroundColor: colorList.headerBackground,
+            backgroundColor: colorList.headerBackground,
             flexDirection: "row", alignItems: "center",
           }}>
-            <View style={{ width: '10%', paddingLeft: '3%', }}>
+
+            <View style={{ width: '10%', paddingLeft: '3%',backgroundColor:"red",height:"100%",justifyContent:"center" }}>
               <Icon onPress={() => this.props.navigation.navigate("Home")}
                 style={{ color: colorList.headerIcon }}
                 type={"MaterialIcons"} name={"arrow-back"}></Icon>
             </View>
 
-            <View style={{ width: '67%', paddingLeft: '9%', justifyContent: "center" }}>
+            <View style={{ width: '67%', paddingLeft: '9%', justifyContent: "center",backgroundColor:"yellow",height:"100%",justifyContent:"center" }}>
               <Title style={{ fontWeight: 'bold', alignSelf: 'flex-start', color: colorList.headerText }}>{"Reminds"}</Title>
             </View>
 
-            <View style={{ width: '13%', paddingRight: '3%' }}>
+            <View style={{ width: '13%', paddingRight: '3%',backgroundColor:"green",height:"100%",justifyContent:"center" }}>
               <Icon onPress={() => requestAnimationFrame(() => this.AddRemind())} type='AntDesign'
                 name="plus" style={{ color: colorList.headerIcon, alignSelf: 'center', }} />
             </View>
 
-            <View style={{ width: '10%', paddingLeft: '1%', }}>
+            <View style={{ width: '10%', paddingLeft: '1%',backgroundColor:"pink",height:"100%",justifyContent:"center" }}>
               <Icon onPress={() => {
                 this.props.openMenu()
               }} style={{ color: colorList.headerIcon }} type={"Ionicons"} name={"ios-menu"}></Icon>
             </View>
 
           </View>
+          
         </View>
 
         <View style={{ height: "93%", }}>

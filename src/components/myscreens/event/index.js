@@ -180,7 +180,7 @@ export default class Event extends Component {
           Event={this.event}></EventDetails>
       case "Reminds":
         return <Remind 
-        shared
+        //shared={false}
           share={{
             id: '456322',
             date: moment().format(),
