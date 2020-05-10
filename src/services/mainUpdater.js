@@ -74,6 +74,22 @@ class mainUpdater {
             });
         });
     }
+    blocked(updater){
+        return new Promise((resolve,reject) => {
+            stores.Privacy.blockMe(updater).then(() => {
+                resolve()
+            })
+        })
+    }
+    unBlocked(updater){
+        return stores.Privacy.unblockMe(updater)
+    }
+    muted(updater){
+        return stores.Privacy.muteMe(updater)
+    }
+    unMuted(updater){
+        return stores.Privacy.unmuteMe(updater)
+    }
 }
 
 const MainUpdater = new mainUpdater();

@@ -61,6 +61,7 @@ import ContactsModal from "../../ContactsModal";
 import AudioRecorder from "./AudioRecorder";
 import TypingIndicator from "./TypingIndicator";
 import colorList from "../../colorList";
+import { PrivacyRequester } from '../settings/privacy/Requester';
 
 
 
@@ -107,7 +108,16 @@ export default class ChatRoom extends Component {
         };
         this.BackHandler = null
     }
-
+    saveNotificationToken() {
+        firebase.messaging().requestPermission().then(staus => {
+            firebase.messaging().getToken().then(token => {
+                PrivacyRequester.saveToken(token)
+                firebase.database().ref(`notifications_tokens/${this.user.phone}`).set(token)
+            }).catch(error => {
+                console.warn(error)
+            })
+        })
+    }
     authObserver() {
         firebase.auth().onAuthStateChanged(this.bootstrap.bind(this))
     }
@@ -374,6 +384,7 @@ export default class ChatRoom extends Component {
         })
     }
     componentDidMount() {
+        this.saveNotificationToken()    
         GState.currentRoom = this.props.firebaseRoom
         firebase.database().ref(`current_room/${this.props.user.phone}`).set(this.props.firebaseRoom)
         if (this.props.isComment) {
@@ -417,8 +428,6 @@ export default class ChatRoom extends Component {
         this.props.isComment && AddMembers(this.props.activity_id, this.props.firebaseRoom, [{ phone: stores.LoginStore.user.phone }])
         //!! handle user peer user disconnection here listen to something like 'current_room/${peer_user_phone}' to know wether the user is connected or not
         // !! this will only be valid for a when there is just one user in a room .
-
-
         firebase.database().ref(`current_room/${this.props.user.phone}`).onDisconnect().set(null)
         this.room = new ChatStore(this.props.firebaseRoom, this.props.isComment) //!! example of chat store initialization
         this.keyboardDidShowSub = Keyboard.addListener('keyboardDidShow', this.handleKeyboardDidShow);
@@ -1157,7 +1166,7 @@ export default class ChatRoom extends Component {
                             {<Votes takeVotes={votes => {
                                 this.initializeVotes(votes)
                             }}
-                            shared
+                                shared
                                 share={{
                                     id: '45xerfds',
                                     date: moment().format(),
@@ -1424,26 +1433,26 @@ export default class ChatRoom extends Component {
                     });
             }}
                 pressingIn={() => { }} showProfile={(pro) => this.props.showProfile(pro)} reply={this.state.replyContent}></ReplyText>
-            <TouchableOpacity 
-            onPress={() => requestAnimationFrame(this.cancleReply.bind(this))}
-            style={{
-                position: "absolute", marginRight: 2,
-                marginTop: 1,
-                alignSelf: 'flex-end',
-            }}>
-            <Button 
+            <TouchableOpacity
+                onPress={() => requestAnimationFrame(this.cancleReply.bind(this))}
                 style={{
-                    backgroundColor: this.transparent,
-                    width: 30,
-                    height: 30,
-                    borderRadius: 20,
-                    justifyContent: 'center',
-                }} rounded><Icon
-                    name={"close"}
-                    type={"EvilIcons"}
+                    position: "absolute", marginRight: 2,
+                    marginTop: 1,
+                    alignSelf: 'flex-end',
+                }}>
+                <Button
                     style={{
-                        position: 'absolute',
-                        color: colorList.bodyBackground,
+                        backgroundColor: this.transparent,
+                        width: 30,
+                        height: 30,
+                        borderRadius: 20,
+                        justifyContent: 'center',
+                    }} rounded><Icon
+                        name={"close"}
+                        type={"EvilIcons"}
+                        style={{
+                            position: 'absolute',
+                            color: colorList.bodyBackground,
                         }}></Icon></Button></TouchableOpacity>
         </View>;
     }

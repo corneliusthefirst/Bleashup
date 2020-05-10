@@ -474,6 +474,9 @@ class tcpRequestData {
   add_many_contacts(data, id) {
     return this.sendData('add_many_contacts', data, id);
   }
+  update_privacy(data,id){
+    return this.sendData('privacy',data,id)
+  }
 }
 
 const tcpRequest = new tcpRequestData();

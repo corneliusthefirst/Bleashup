@@ -606,6 +606,12 @@ class Request {
 
         }
     }
+    Privacy(){
+        return {
+            action:"",
+            data: ""
+        }
+    }
 
 
 }

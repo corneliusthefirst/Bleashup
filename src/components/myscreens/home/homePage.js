@@ -51,6 +51,7 @@ import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
 import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
 import colorList from "../../colorList";
 import BeNavigator from '../../../services/navigationServices';
+import { PrivacyRequester } from '../settings/privacy/Requester';
 
 let { height, width } = Dimensions.get('window');
 
@@ -164,11 +165,17 @@ class Home extends Component {
     this.animating = true
   }
   realNew = []
+  testers(){
+    setTimeout(() => {
+      /*PrivacyRequester.muted("650594616").then((res) => {
+        console.warn("privacy test response", res)
+      })*/
+    },1000)
+  }
   componentDidMount() {
+    this.testers()
     stores.LoginStore.getUser().then((user) => {
-      console.warn('home unmounting', user)
     })
-
     stores.Highlights.initializeGetHighlightsListener()
     emitter.on("notify", (event) => {
       {

@@ -270,7 +270,7 @@ render(){
        
                <BleashupFlatList
                     initialRender={15}
-                    renderPerBatch={5}
+                    renderPerBatch={15}
                     style={{backgroundColor:ColorList.bodyBackground}}
                     firstIndex={0}
                     extraData={this.state}
@@ -279,7 +279,7 @@ render(){
                     noSpinner = {true}
                     renderItem={(item,index) =>{
 
-                      this.delay = this.delay >= 10 ? 0:this.delay + 1
+                      this.delay = this.delay >= 15 ? 0:this.delay + 1
                       ////console.warn(user);
 
                    return(
