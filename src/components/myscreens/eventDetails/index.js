@@ -122,6 +122,8 @@ export default class EventDetailView extends Component {
               })
             })
           })
+      }).catch((error) => {
+        console.warn("ERROR: ",error)
       })
   }
   init() {
@@ -361,7 +363,11 @@ export default class EventDetailView extends Component {
               })
             }}
             update={(newHighlight, previousHighlight) => this.updateHighlight(newHighlight, previousHighlight)}
-            participant={this.state.participant} parentComponent={this} ref={"highlights"} event_id={this.props.Event.id} />
+            participant={this.state.participant} 
+            parentComponent={this} 
+            ref={"highlights"} 
+            event={this.props.Event} 
+            event_id={this.props.Event.id} />
 
 
           <DescriptionModal Event={this.props.Event} isOpen={this.state.viewdetail} onClosed={() => { this.setState({ viewdetail: false }) }} parent={this}></DescriptionModal>
@@ -427,7 +433,7 @@ export default class EventDetailView extends Component {
       share={this.sharStore.share}
       sharer={this.sharStore.share.sharer}
       date={this.sharStore.share.date}
-      content={() => <HighlightCard
+      content={() => <View style={{width:'98%',height:300}}><HighlightCard
         height={colorList.containerHeight * .45}
         shadowless
         phone={stores.LoginStore.user.phone}
@@ -442,7 +448,7 @@ export default class EventDetailView extends Component {
           find(this.sharStore.share.event.participant,
             (ele => ele.phone === stores.LoginStore.user.phone))
           || {phone:stores.LoginStore.user.phone,master:false}}
-      ></HighlightCard>}
+      ></HighlightCard></View>}
     >
     </ShareFrame>
   }

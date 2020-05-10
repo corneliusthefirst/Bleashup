@@ -447,9 +447,7 @@ export default class Event extends Component {
         emitter.emit("open-close", commitee.opened)
         emitter.emit('publish-unpublish', commitee.public_state)
         if (!this.unmounted) this.setState({
-          //roomID: commitee.id,
           roomName: commitee.name,
-          //opened:commitee.opened,
           public_state: commitee.public_state,
           opened: commitee.opened,
           newMessageCount: GState.currentRoomNewMessages ? GState.currentRoomNewMessages.length : 0,
@@ -457,7 +455,6 @@ export default class Event extends Component {
         })
       }
     } else if ((change.changed.toLowerCase().includes("participant") || change.changed.toLowerCase().includes("activity"))) {
-      ///this.event = newValue
       this.event = find(stores.Events.events, { id: this.event.id })
       this.initializeMaster()
       this.refreshCommitees()
@@ -509,7 +506,6 @@ export default class Event extends Component {
   duration = 10
   mention(data) {
     GState.reply = data
-    //GState.currentCommitee = this.event.id
     Vibration.vibrate(this.duration)
     this.isOpen = true
     emitter.emit('mentioning')
@@ -517,7 +513,6 @@ export default class Event extends Component {
       currentPage: 'EventChat',
       isChat: true
     })
-    //this.swapChats(this.generalCommitee(this.event))
   }
   startLoader() {
     this.setState({
@@ -579,7 +574,6 @@ export default class Event extends Component {
   componentWillMount() {
     this.unmounted = false
     emitter.on(`event_updated_${this.event.id}`, (change, newValue) => {
-      //console.warn(change)
       this.handleActivityUpdates(change, newValue)
     })
     this.initializeMaster()
@@ -673,7 +667,6 @@ export default class Event extends Component {
     })
   }
   processResult(data) {
-    //console.warn(data)
     this.setState({
       isSelectableListOpened: true,
       isCommiteeModalOpened: false,
@@ -683,7 +676,6 @@ export default class Event extends Component {
       tempCommiteeName: data.commiteeName,
       tempPublicState: data.publicState
     })
-    //console.warn(data)
   }
   createCommitee(data) {
     if (!this.state.working) {
@@ -692,12 +684,10 @@ export default class Event extends Component {
         notcheckall: false,
         creating: true,
         working: true
-        // members: null
       })
       let creator = find(this.event.participant, { phone: this.event.creator_phone })
       let currentCreator = find(this.event.participant, { phone: stores.LoginStore.user.phone })
       let arr = [creator, currentCreator]
-      //console.warn(arr,data)
       let commitee = {
         id: uuid.v1(),
         creator: this.user.phone,
@@ -709,15 +699,11 @@ export default class Event extends Component {
         event_id: this.event.id,
         opened: true
       }
-      //console.error(commitee.id)
-
-      //commitee.member = uniqBy(commitee.member, "phone");
-      Requester.addCommitee(commitee).then(() => {
+      Requester.addCommitee(commitee,this.event.about.title).then(() => {
         firebase.database().ref(`rooms/${this.event.id}/${commitee.id}`).set({ name: commitee.name, members: commitee.member }).then(() => {
           !this.event.commitee || this.event.commitee.length <= 0 ? this.event.commitee = [commitee.id] :
             this.event.commitee.unshift(commitee.id)
           this.swapChats(commitee)
-          //console.warn('marking as not working!!')
           this.setState({
             newCommitee: true,
             working: false
@@ -764,7 +750,7 @@ export default class Event extends Component {
       this.setState({
         working: true
       })
-      Requester.publishCommitee(id, this.event.id, state).then(() => {
+      Requester.publishCommitee(id, this.event.id, state,this.state.roomName).then(() => {
         emitter.emit('publish-unpublish', state)
         this.setState({
           working: false,
@@ -781,7 +767,6 @@ export default class Event extends Component {
     }
   }
   addCommiteeMembers(id, currentMembers) {
-    //console.warn(currentMembers)
     this.setState({
       isSelectableListOpened: true,
       title: "Add Participant To this Commitee",
@@ -1120,7 +1105,7 @@ export default class Event extends Component {
         working: true
       })
       if (this.event.public) {
-        Requester.publish(this.event.id).then(() => {
+        Requester.publish(this.event.id,this.event.about.title).then(() => {
           this.initializeMaster()
         })
       } else {
@@ -1359,7 +1344,6 @@ export default class Event extends Component {
         swapChats={(room) => this.swapChats(room)} phone={stores.LoginStore.user.phone}
         commitees={this.event.commitee ? this.event.commitee : []}
         showCreateCommiteeModal={() => {
-          //this.isOpen = false
           if (!this.state.working && this.computedMaster) {
             this.setState({
               isCommiteeModalOpened: true
@@ -1617,7 +1601,6 @@ export default class Event extends Component {
           checkActivity={(member) => this.checkActivity(member)}
           closeActivity={() => {
             this.event.closed ? this.closeActivity() : this.setState({
-              //isSettingsModalOpened: false,
               isAreYouSureModalOpened: true,
               callback: () => this.closeActivity(),
               warnDescription: "Are You Sure You Want To Close This Activiy ?",

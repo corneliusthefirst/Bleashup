@@ -66,7 +66,7 @@ export default class HighlightCard extends Component {
     return (
 
       this.state.mounted ?
-        <View style={{ width: ColorList.containerWidth, alignSelf: "center", ...shadower(1),justifyContent: 'center',marginTop:"1%",borderBottomWidth:0.5,borderColor:"ivory" }}>
+        <View style={{ width: ColorList.containerWidth, alignSelf: "center", ...!this.props.shadowless && shadower(1),justifyContent: 'center',marginTop:"1%",borderBottomWidth:0.5,borderColor:"ivory" }}>
           <View style={{ flexDirection: 'row',width:'92%', justifyContent: 'space-between', marginTop: 2, marginBottom: 2, height:ColorList.containerHeight/20,alignSelf: 'center', }}>
             <View style={{ maxWidth: '100%' }}>
               <Title style={{
@@ -100,7 +100,7 @@ export default class HighlightCard extends Component {
           activity_id={this.props.activity_id} 
           id={this.props.item.id}></Social>
           </View>
-        </View > : <Card style={{ width: ColorList.containerWidth * 1, height: "100%" }}></Card>
+        </View > : <View style={{ width: ColorList.containerWidth * 1, height: "100%",...!this.props.shadowless && shadower(1) }}></View>
 
     )
   }

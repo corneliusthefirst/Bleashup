@@ -10,17 +10,23 @@ import Requesterer from '../currentevents/Requester';
 import { RemoveParticipant } from '../../../services/cloud_services';
 import CalendarServe from '../../../services/CalendarService';
 import MainUpdater from '../../../services/mainUpdater';
+import toTitleCase from '../../../services/toTitle';
 
 class Request {
     constructor() {
 
     }
 
-    addCommitee(commitee) {
+    addCommitee(commitee, activityName) {
         return new Promise((resolve, reject) => {
+            let notif = request.Notification()
+            notif.notification.title = commitee.name
+            notif.notification.body = toTitleCase(stores.LoginStore.user.nickname) + ' @ ' + toTitleCase(activityName) + ' Added a Committee'
+            notif.data.activity_id = commitee.event_id
             let Commitee = request.createCommitee()
             Commitee.event_id = commitee.event_id,
                 Commitee.commitee = commitee
+            Commitee.notif = notif
             tcpRequest.addcommitee(Commitee, commitee.id).then(JSONData => {
                 serverEventListener.sendRequest(JSONData, commitee.id).then(response => {
                     stores.CommiteeStore.addCommitee(commitee).then(() => {
@@ -37,7 +43,6 @@ class Request {
                                 time: null
                             }
                             stores.ChangeLogs.addChanges(Change).then(() => {
-                                //Toast.show({ text: "commitee successfully added !", type: "success" })
                             })
                             resolve()
                         })
@@ -82,12 +87,16 @@ class Request {
             })
         })
     }
-    publishCommitee(id, event_id, state) {
+    publishCommitee(id, event_id, state, roomName) {
         return new Promise((resolve, reject) => {
             let publish = request.updateCommiteeState()
             publish.commitee_id = id;
             publish.event_id = event_id;
             publish.state = state;
+            let notif = request.Notification()
+            notif.title = toTitleCase(roomName) + 'Is now Public'
+            notif.notification.body = toTitleCase(stores.LoginStore.user.nickname) + " Made The Committee Public"
+            publish.notif = state ? notif : []
             tcpRequest.update_commitee_public_state(publish, id + "_publish").then(JSONData => {
                 serverEventListener.sendRequest(JSONData, id + "_publish").then(response => {
                     stores.CommiteeStore.updateCommiteeState(id, state).then((commitee) => {
@@ -309,32 +318,32 @@ class Request {
     getCommitee(id) {
 
     }
-    saveContacts(){
-     let contacts =  request.many_contact()
-        contacts = [{phone:"00237609894330",host:"192.168.43.32"},
-            {phone:"00237609854563",host:"192.168.43.32"},
-            {phone:"00237604385006",host:"192.168.43.32"},
-            {phone:"002376043852206",host:"192.168.43.32"},
-            {phone:"0023762338523306",host:"192.168.43.32"},
-            {phone:"0023762338521235",host:"192.168.43.32"},
-            {phone:"00237623398863306",host:"192.168.43.32"},
-            {phone:"0023762239523306",host:"192.168.43.32"},
-            {phone:"0023762338523309756",host:"192.168.43.32"},
-            {phone:"002376233834566873306",host:"192.168.43.32"},
-            {phone:"002376233852567798",host:"192.168.43.32"},
-            {phone:"00237623312309723306",host:"192.168.43.32"},
-            {phone:"00237623385233068765",host:"192.168.43.32"},
-            {phone:"0023762338508764323306",host:"192.168.43.32"},
-            {phone:"002376233852330698776",host:"192.168.43.32"},
-            {phone:"002376233852330098765",host:"192.168.43.32"},
-            {phone:"00237623385236478409706",host:"192.168.43.32"}]
-    tcpRequest.add_many_contacts(contacts,"conatacter").then(JSONData =>{
-        serverEventListener.sendRequest(JSONData).then((response) =>{
-            console.warn(response,"saved")
+    saveContacts() {
+        let contacts = request.many_contact()
+        contacts = [{ phone: "00237609894330", host: "192.168.43.32" },
+        { phone: "00237609854563", host: "192.168.43.32" },
+        { phone: "00237604385006", host: "192.168.43.32" },
+        { phone: "002376043852206", host: "192.168.43.32" },
+        { phone: "0023762338523306", host: "192.168.43.32" },
+        { phone: "0023762338521235", host: "192.168.43.32" },
+        { phone: "00237623398863306", host: "192.168.43.32" },
+        { phone: "0023762239523306", host: "192.168.43.32" },
+        { phone: "0023762338523309756", host: "192.168.43.32" },
+        { phone: "002376233834566873306", host: "192.168.43.32" },
+        { phone: "002376233852567798", host: "192.168.43.32" },
+        { phone: "00237623312309723306", host: "192.168.43.32" },
+        { phone: "00237623385233068765", host: "192.168.43.32" },
+        { phone: "0023762338508764323306", host: "192.168.43.32" },
+        { phone: "002376233852330698776", host: "192.168.43.32" },
+        { phone: "002376233852330098765", host: "192.168.43.32" },
+        { phone: "00237623385236478409706", host: "192.168.43.32" }]
+        tcpRequest.add_many_contacts(contacts, "conatacter").then(JSONData => {
+            serverEventListener.sendRequest(JSONData).then((response) => {
+                console.warn(response, "saved")
+            })
         })
-    })
     }
-    invite(members, even_id) {
+    invite(members, event_id) {
         return new Promise((resolve, reject) => {
             let invitees = members.map(ele => {
                 return {
@@ -346,14 +355,14 @@ class Request {
                         invitation_id: uuid.v1(),
                         host: stores.Session.SessionStore.host,
                         period: moment().format(),
-                        event_id: even_id,
+                        event_id: event_id,
                         status: ele.master
                     }
                 }
 
             })
-            tcpRequest.invite_many(invitees, even_id + "_invitees").then(JSONData => {
-                serverEventListener.sendRequest(JSONData, even_id + "_invitees").then(SuccessMessage => {
+            tcpRequest.invite_many(invitees, event_id + "_invitees").then(JSONData => {
+                serverEventListener.sendRequest(JSONData, event_id + "_invitees").then(SuccessMessage => {
                     this.storeInvitations(invitees).then((res) => {
                         console.warn(res)
                         //console.warn("invitations gone!!")
@@ -367,18 +376,18 @@ class Request {
             })
         })
     }
-    addParticipants(eventID,participants){
-        return new Promise((resolve,reject) => {
+    addParticipants(eventID, participants) {
+        return new Promise((resolve, reject) => {
             let updater = stores.LoginStore.user.phone
             tcpRequest.UpdateCurrentEvent(updater,
-                eventID,"adds",
-                participants,eventID + "_adds").then((JSONData) => {
-                serverEventListener.sendRequest(JSONData,eventID + '_adds').then(() => {
-                    resolve("ok")
-                    MainUpdater.addParticipants(eventID,participants,updater,"new_participants",moment().format()).then((Change) => {
+                eventID, "adds",
+                participants, eventID + "_adds").then((JSONData) => {
+                    serverEventListener.sendRequest(JSONData, eventID + '_adds').then(() => {
+                        resolve("ok")
+                        MainUpdater.addParticipants(eventID, participants, updater, "new_participants", moment().format()).then((Change) => {
+                        })
                     })
                 })
-            })
         })
     }
     storeInvitations(invitations) {
@@ -495,9 +504,13 @@ class Request {
                 })
         })
     }
-    publish(event_id) {
+    publish(event_id, name) {
         return new Promise((resolve, reject) => {
-            tcpRequest.publishEvent({ event_id: event_id }, event_id + "_publish").then(JSONData => {
+            let notif = request.Notification()
+            notif.notification.title = toTitleCase(name) + "Activity is Now Public"
+            notif.notification.body = stores.LoginStore.user.nickname + " @ " + toTitleCase(name) + " Published the activity"
+            notif.data.activity_id = event_id
+            tcpRequest.publishEvent({ event_id: event_id, notif }, event_id + "_publish").then(JSONData => {
                 serverEventListener.sendRequest(JSONData, event_id + "_publish").then(() => {
                     Toast.show({ text: "Published Successfully", type: "success" })
                     stores.Events.publishEvent(event_id).then(() => {
@@ -876,7 +889,7 @@ class Request {
                             }).then((t4) => {
                                 event = JSON.parse(event)
                                 if (event.public !== settings.public_new && settings.public_new)
-                                    this.publish(event.id).then((t5) => {
+                                    this.publish(event.id, event.about.title).then((t5) => {
                                         resolve(t1 + t2 + t3 + t4 + t5 + t6)
                                     }).catch(e => {
                                         reject(e)
@@ -911,7 +924,6 @@ class Request {
             tcpRequest.UpdateCurrentEvent(stores.LoginStore.user.phone, event_id,
                 'background', background, event_id + "_background").then(JSONData => {
                     serverEventListener.sendRequest(JSONData, event_id + "_background").then(response => {
-                        console.warn(response)
                         stores.Events.updateBackground(event_id, background, false).then(() => {
                             let Change = {
                                 id: uuid.v1(),
@@ -935,11 +947,17 @@ class Request {
                 })
         })
     }
-    createHighlight(newHighlight) {
+    createHighlight(newHighlight, activityName) {
         return new Promise((resolve, reject) => {
+            let notif = request.Notification()
+            notif.notification.body = toTitleCase(stores.LoginStore.user.nickname).split(' ') + 'Add a new Post'
+            notif.notification.title = 'New Post @ ' + activityName
+            notif.notification.image = newHighlight.url.photo
+            notif.data.activity_id = newHighlight.event_id
+            notif.data.id = newHighlight.id
+            newHighlight.notif = notif
             tcpRequest.addHighlight(newHighlight, newHighlight.id).then(JSONData => {
                 serverEventListener.sendRequest(JSONData, newHighlight.id).then(response => {
-                    console.warn(response)
                     stores.Events.addHighlight(newHighlight.event_id, newHighlight.id).then(res => {
                         stores.Highlights.addHighlight(newHighlight).then(res => {
                             let Change = {
@@ -1219,10 +1237,10 @@ class Request {
             })
         })
     }
-    unsyncActivity(event){
-        return new Promise((resolve,reject) => {
-            CalendarServe.saveEvent({...event,period:null}).then(() => {
-                stores.Events.markAsCalendared(event.id,null,null).then(() => {
+    unsyncActivity(event) {
+        return new Promise((resolve, reject) => {
+            CalendarServe.saveEvent({ ...event, period: null }).then(() => {
+                stores.Events.markAsCalendared(event.id, null, null).then(() => {
                     resolve()
                 })
             })

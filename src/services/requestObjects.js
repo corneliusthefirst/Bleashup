@@ -467,7 +467,7 @@ class Request {
     Contact() {
         return {
             phone: "",
-            host: ""
+            host: "",
         }
     }
     many_contact() {
@@ -491,7 +491,7 @@ class Request {
             profile: "",
             profile_ext: "",
             password: "",
-            country_code:""
+            country_code: ""
         }
     }
     None() {
@@ -606,10 +606,35 @@ class Request {
 
         }
     }
-    Privacy(){
+    Privacy() {
         return {
-            action:"",
+            action: "",
             data: ""
+        }
+    }
+    Notification() {
+        return {
+            project_id: "bleashup-1562173529011",
+            notification:{
+                title: "Bleashup",
+                android_channel_id: "bleashup_share",
+                body: "This is a bleashup notification",
+                sound: "default",
+            },
+            registration_ids: [],
+            android: {
+                content_available: true,
+                collapse_key: 'shares',
+                priority: 'high',
+            },
+            data: {
+                activity_id: "",
+                id: ""
+            },
+            ios: {
+
+            }
+
         }
     }
 

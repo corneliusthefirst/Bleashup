@@ -303,7 +303,7 @@ export default class EventHighlights extends BleashupModal {
         this.setState({
           creating: true,
         });
-        Requester.createHighlight(newHighlight)
+        Requester.createHighlight(newHighlight,this.props.event.about.title)
           .then(() => {
             this.props.reinitializeHighlightsList(newHighlight);
             this.resetHighlight();

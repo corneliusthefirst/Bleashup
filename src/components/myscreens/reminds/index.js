@@ -132,6 +132,8 @@ export default class Reminds extends Component {
               mounted: true
             })
           })
+        }).catch(() => {
+          console.warn("unable to fetch activity")
         })
       })
   }
@@ -411,7 +413,7 @@ export default class Reminds extends Component {
       share={this.shareStore && this.shareStore.share}
       sharer={this.shareStore && this.shareStore.share && this.shareStore.share.sharer}
       date={this.shareStore && this.shareStore.share && this.shareStore.share.date}
-      content={() => <View>
+      content={() => <View style={{width:"100%"}}>
         <TasksCard
           showMedia={this.showMedia.bind(this)}
           phone={stores.LoginStore.user.phone}

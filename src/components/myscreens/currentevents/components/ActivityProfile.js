@@ -22,8 +22,8 @@ export default class ActivityProfile extends Component{
                 </View>
             </TouchableOpacity>
 
-            <View style={{ width: '75%', paddingLeft: 6, marginTop: '3%',paddingLeft:"6%" }}>
-            <TitleView Event={this.props.Event||{}} openDetail={() => this.props.openDetails && this.props.openDetails(this.props.Event)} join={() => this.props.join && this.props.join()} joint={this.props.joint} seen={() => this.props.markAsSeen && markAsSeen()}
+            <View style={{ width: '75%', paddingLeft: 6, marginTop: '4.75%',paddingLeft:"6%" }}>
+            <TitleView Event={this.props.Event||{}} openDetail={() => this.props.openDetails && this.props.openDetails(this.props.Event)} join={() => this.props.join && this.props.join()} joint={this.props.joint} seen={() => this.props.markAsSeen && this.props.markAsSeen()}
             ></TitleView>
             </View>
 

@@ -31,9 +31,9 @@ export default class ShareFrame extends Component {
     render() {
         return <View>
             <Card style={{ flexDirection: "column", width: '100%',alignSelf:'flex-start',alignItems: 'flex-start', }}>
-                <CardItem>
+                {/*<CardItem>
                     <ProfileView phone={this.props.sharer}></ProfileView>
-                </CardItem>
+                </CardItem>*/}
                 <CardItem
                     style={{
                         width: "90%",
@@ -84,9 +84,13 @@ export default class ShareFrame extends Component {
                     flexDirection: 'column',
                     width: '90%',
                     alignSelf: 'center',
+                    justifyContent: 'flex-start',
                     paddingLeft: 2,
                     paddingTop: 3,
                 }}>
+                <View style={{alignSelf: 'flex-start',}}>
+                    <Creator intro={"Shared"} creator={this.props.share.sharer} date={this.props.share.created_at}></Creator>
+                </View>
                 </CardItem>
             </Card>
             <PhotoViewer

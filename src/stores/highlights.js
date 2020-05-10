@@ -292,11 +292,11 @@ export default class highlights {
           if (Highlight.data && Highlight.data !== 'empty') {
             resolve(Highlight.data)
           } else {
-            reject()
+            reject(Highlight)
           }
+        }).catch((error) => {
+          reject(error)
         })
-      }).catch(() => {
-        reject()
       })
     })
   }
