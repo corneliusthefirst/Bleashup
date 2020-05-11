@@ -147,7 +147,7 @@ export default class Event extends Component {
     switch (this.state.currentPage) {
       case "EventDetails":
         return <EventDetails
-        shared
+        shared={false}
         share={{ 
             id:'1434',
             date:moment().format(),

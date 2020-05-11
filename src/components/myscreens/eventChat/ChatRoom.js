@@ -1166,7 +1166,7 @@ export default class ChatRoom extends Component {
                             {<Votes takeVotes={votes => {
                                 this.initializeVotes(votes)
                             }}
-                                shared
+                                shared={false}
                                 share={{
                                     id: '45xerfds',
                                     date: moment().format(),

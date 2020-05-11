@@ -49,7 +49,7 @@ export default class TitleView extends Component {
                             fontFamily: "Roboto",
                         }}
                     >
-                        {this.props.Event.about.title}{/*{" "}{this.props.Event.id}*/}
+                        {this.props.Event.about.title}
                     </Text>
                 </View>
             </TouchableOpacity>

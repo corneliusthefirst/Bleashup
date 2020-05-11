@@ -398,7 +398,6 @@ class PublicEvent extends Component {
 
 
           {this.state.isMount ? <View style={{ flexDirection: "row", width: "40%" }}>
-            {/*<Like showLikers={(likers) => this.props.showLikers(likers)} id={this.props.Event.id} end={() => this.markAsSeen()} />*/}
             {this.renderMarkAsSeen()}
           </View> : null}
 

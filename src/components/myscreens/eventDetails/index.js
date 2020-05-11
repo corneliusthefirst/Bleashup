@@ -188,7 +188,7 @@ export default class EventDetailView extends Component {
   _getItemLayout = (data, index) => (
     { length: 100, offset: 100 * index, index }
   )
-  _keyExtractor = (item, index) => item.id.toString();
+  _keyExtractor = (item, index) => index.toString();
 
   updateHighlight(newHighlight, previousHighlight) {
     if (!this.props.working) {
@@ -196,7 +196,6 @@ export default class EventDetailView extends Component {
       Requester.applyAllHighlightsUpdate(newHighlight,
         previousHighlight).then((response) => {
           if (response) {
-            //Toast.show({ text: 'aupdate was successful', type: 'success' })
             let index = findIndex(this.state.highlightData, { id: newHighlight.id })
             this.state.highlightData[index] = newHighlight
             this.setState({
@@ -290,7 +289,6 @@ export default class EventDetailView extends Component {
                   dataSource={this.state.highlightData.sort(this.sorter)}
                   numberOfItems={this.state.highlightData.length}
                   parentComponent={this}
-                  //getItemLayout={this._getItemLayout}
                   renderItem={(item, index) => {
                     this.delay = index >= 5 ? 0 : this.delay + 1
                     return (

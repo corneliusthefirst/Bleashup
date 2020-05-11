@@ -94,7 +94,7 @@ class Request {
             publish.event_id = event_id;
             publish.state = state;
             let notif = request.Notification()
-            notif.title = toTitleCase(roomName) + 'Is now Public'
+            notif.notification.title = toTitleCase(roomName) + 'Is now Public'
             notif.notification.body = toTitleCase(stores.LoginStore.user.nickname) + " Made The Committee Public"
             publish.notif = state ? notif : []
             tcpRequest.update_commitee_public_state(publish, id + "_publish").then(JSONData => {
@@ -112,7 +112,6 @@ class Request {
                             time: null
                         }
                         stores.ChangeLogs.addChanges(Change).then(() => {
-                            //Toast.show({ text: "Commitee accessibility was successfully !", type: "success" })
                         })
                         resolve()
                     })

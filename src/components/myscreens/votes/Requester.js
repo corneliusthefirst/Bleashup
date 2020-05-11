@@ -9,14 +9,13 @@ import { format } from '../../../services/recurrenceConfigs';
 import toTitleCase from '../../../services/toTitle';
 
 class Requester {
-    createVote(Vote, commieeName, activityName) {
+    createVote(Vote, commieeName, activityName) { 
         return new Promise((resolve, reject) => {
             let notif = request.Notification()
             notif.notification.title = "New Vote (" + toTitleCase(Vote.title) + ") @ " + commieeName
             notif.notification.body = toTitleCase(stores.LoginStore.user.nickname) + " @ " + activityName + "Added a new Vote"
             notif.data.activity_id = Vote.event_id 
             notif.data.id = Vote.id 
-            notif.data.committee_id = vote.committee_id
             Vote.notif = notif
             tcpRequest.CreateVote(Vote, Vote.id + '_create').then((JSData) => {
                 EventListener.sendRequest(JSData, Vote.id + '_create').then((response) => {
