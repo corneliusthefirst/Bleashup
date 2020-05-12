@@ -9,6 +9,7 @@ import moment from 'moment';
 import { findIndex } from 'lodash';
 import CalendarServe from '../../../services/CalendarService';
 import MainUpdater from '../../../services/mainUpdater';
+import toTitleCase from '../../../services/toTitle';
 class Requester {
     saveToCanlendar(remind, alarms) {
         if (findIndex(remind.members, { phone: stores.LoginStore.user.phone }) >= 0) {
@@ -18,8 +19,14 @@ class Requester {
             })
         }
     }
-    CreateRemind(Remind) {
+    CreateRemind(Remind, activityName) {
         return new Promise((resolve, reject) => {
+            let notif = request.Notification()
+            notif.notification.body = toTitleCase(stores.LoginStore.user.nickname) + " @ " + activityName + ' Added a new Remind'
+            notif.notification.title = Remind.title
+            notif.data.activity_id = Remind.event_id
+            notif.data.id = Remind.id
+            Remind.notif = notif
             tcpRequest.addRemind(Remind,
                 Remind.event_id + '_currence').then(JSONData => {
                     EventListener.sendRequest(JSONData,

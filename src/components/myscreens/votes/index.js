@@ -121,7 +121,7 @@ export default class Votes extends BleashupModal {
         committee_id: this.props.committee_id,
         event_id: this.props.event_id,
       }
-      VoteRequest.createVote(newVote).then(() => {
+      VoteRequest.createVote(newVote,this.props.activity_name,this.props.roomName).then(() => {
         this.props.stopLoader()
         stores.Votes.clearVoteCreation().
           then(() => {

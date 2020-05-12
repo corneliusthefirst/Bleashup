@@ -1166,7 +1166,7 @@ export default class ChatRoom extends Component {
                             {<Votes takeVotes={votes => {
                                 this.initializeVotes(votes)
                             }}
-                                shared
+                                shared={false}
                                 share={{
                                     id: '45xerfds',
                                     date: moment().format(),
@@ -1195,10 +1195,12 @@ export default class ChatRoom extends Component {
                                 isSingleVote={this.state.single_vote}
                                 vote_id={this.state.vote_id}
                                 startLoader={this.props.showLoader}
+                                roomName={this.props.roomName}
                                 showVoters={(voters) => {
                                     this.showVoters(voters)
                                 }}
                                 stopLoader={this.props.stopLoader}
+                                activity_name={this.props.activity_name}
                                 committee_id={this.props.firebaseRoom}
                                 event_id={this.props.activity_id}
                                 isOpen={this.state.isVoteCreationModalOpened}

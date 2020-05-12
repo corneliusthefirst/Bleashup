@@ -182,28 +182,6 @@ export default class SWView extends Component {
                         backgroundColor: 'white',
                         ...shadower(2),
                     }}>
-                        {/*<View style={{ height: 60, alignItems: "flex-start", padding: "2%" }}>
-
-                            <Title style={{ fontWeight: 'bold', fontSize: 18, color: colorList.headerBlackText }}>{this.props.event.about.title}</Title>
-
-                            {this.props.event.period ? <Title style={{
-                                alignSelf: 'flex-start',
-                                fontWeight: this.props.event.closed ? "bold" : "400",
-                                color: this.props.event.closed ? "red" : dateDiff(this.props.event) > 0 ? "gray" : "#1FABAB", fontSize: 12,
-                            }}>{this.props.event.closed ? "Closed" : writeDateTime(this.props.event)}</Title> : null}
-
-                            {/*this.props.event.interval > 1 && this.props.event.frequency !== 'yearly' && this.dateDiff(this.props.event) < 0 ?
-                       <Text style={{
-                           color: "#1FABAB"
-                       }} note>
-                           {`after every ${this.props.event.interval > 1 ? this.props.event.interval :
-                               null} ${this.writeInterval(this.props.event.frequency)} till 
-                                    ${moment(this.props.event.recurrence ? this.props.event.recurrence :
-                                   null).format("dddd, MMMM Do YYYY")}`}
-                                    </Text> : null
-
-                                </View>*/}
-
                         <Commitee
                             computedMaster={this.props.computedMaster}
                             master={this.props.master}

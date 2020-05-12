@@ -129,7 +129,6 @@ export default class CurrentEvents extends Component {
                     dataSource={this.props.data}
                     onScroll={this._onScroll}
                     renderItem={(item, index) => {
-                        console.warn(item)
                         this.delay = index % this.renderPerbatch == 0 ? 0 : this.delay + 1
                         return item.type && item.type == "relation" ?<Relation
                         key={item.id}
