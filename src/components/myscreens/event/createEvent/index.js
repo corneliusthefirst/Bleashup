@@ -17,7 +17,7 @@ import colorList from '../../../colorList';
 //for photos
 import SearchImage from './components/SearchImage';
 import Pickers from '../../../../services/Picker';
-import FileExachange from '../../../../services/FileExchange';
+import FileExchange from '../../../../services/FileExchange';
 import testForURL from '../../../../services/testForURL';
 import PhotoViewer from '../PhotoViewer';
 import shadower from "../../../shadower";
@@ -148,7 +148,7 @@ export default class CreateEventView extends Component {
       this.setState({
         uploading:true
       })
-      let exchanger = new FileExachange(res.source,'/Photo/',res.size,0,null,(newDir,path,total)=>{
+      let exchanger = new FileExchange(res.source,'/Photo/',res.size,0,null,(newDir,path,total)=>{
         this.setState({ photo: path });
         this.state.currentEvent.background = path;
         this.setState({currentEvent: this.state.currentEvent});
@@ -174,7 +174,7 @@ export default class CreateEventView extends Component {
 }
 
 resetPhoto = () => {
-  let exchanger = new FileExachange()
+  let exchanger = new FileExchange()
   exchanger.deleteFile(this.state.photo)
   stores.Events.updateBackground("newEventId",null).then(() =>{
     this.setState({
@@ -182,6 +182,7 @@ resetPhoto = () => {
     })
   })
 }
+
 
   TakePhotoFromLibrary = () => {
   return new Promise((resolve, reject) => {

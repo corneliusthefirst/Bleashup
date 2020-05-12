@@ -486,7 +486,7 @@ class Request {
             name: "",
             current_host: "",
             email: "",
-            birth_date: "",
+            age: "",
             status: "",
             profile: "",
             profile_ext: "",

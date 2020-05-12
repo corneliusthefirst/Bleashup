@@ -6,6 +6,8 @@ import { Title ,Text,Label,Input} from "native-base";
 //import { TextInput } from "react-native-gesture-handler";
 import { filter,map,find} from "lodash";
 import autobind from "autobind-decorator";
+import ColorList from '.././../colorList';
+import CreateTextInput from '../event/createEvent/components/CreateTextInput';
 
 let { height, width } = Dimensions.get('window');
 
@@ -109,8 +111,8 @@ export default class EditUserModal extends Component {
             isOpen={this.props.isOpen}
             onClosed={this.props.onClosed}
             style={{
-                backgroundColor:"#FEFFDE",alignItems:"center",
-                height: height/4, borderTopLeftRadius: 8, borderTopRightRadius: 8, width:width
+                backgroundColor:ColorList.bodyBackground,alignItems:"center",
+                height: height/4, borderTopLeftRadius: 8, borderTopRightRadius: 8, width:"100%"
             }}
             position={this.props.position}
             coverScreen={this.props.coverscreen}
@@ -119,9 +121,14 @@ export default class EditUserModal extends Component {
           <View style={{flexDirection:"column",width:"90%",margin:"5%"}}>
             <Title style={{alignSelf:"flex-start"}}>{this.props.title}</Title>
 
-            <View style={{flexDirection:"row",borderColor:"#1FABAB",borderBottomWidth:2,alignItems:"center",justifyContent:"space-between"}} >
-              <Input  autoCapitalize="none" style={{alignSelf:"flex-start"}} value={this.state.value} style={{}} onChangeText={this.textChanged} maxLength={this.state.textLength} ></Input>
-             <Label>{this.state.textLength}</Label>
+            <View style={{flexDirection:"row",alignItems:"center",justifyContent:"space-between"}} >
+            <CreateTextInput
+                height={height/12}
+                value={this.state.value}
+                onChange={this.textChanged}
+                //placeholder={"Activity name"}
+            >
+          </CreateTextInput>
             </View>
             <View style={{flexDirection:"row",alignSelf:"flex-end",width:"50%",justifyContent:"space-between",marginTop:height/30}}>
                 <TouchableWithoutFeedback style={{height:height/20}}><Text onPress={this.cancel}>cancel</Text></TouchableWithoutFeedback>
@@ -139,3 +146,6 @@ export default class EditUserModal extends Component {
 
 
 }
+
+/**              <Input  autoCapitalize="none" style={{alignSelf:"flex-start"}} value={this.state.value} style={{}} onChangeText={this.textChanged} maxLength={this.state.textLength} ></Input>
+             <Label>{this.state.textLength}</Label> */

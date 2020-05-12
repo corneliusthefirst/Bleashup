@@ -630,7 +630,7 @@ export default class Reminds extends Component {
         <View style={{ height: colorList.headerHeight, width: '100%',paddingLeft: '1%', paddingRight: '1%',  }}>
           
           <View style={{
-            flex: 1, ...bleashupHeaderStyle,
+            ...bleashupHeaderStyle,
             backgroundColor: colorList.headerBackground,
             flexDirection: "row", alignItems: "center",
           }}>

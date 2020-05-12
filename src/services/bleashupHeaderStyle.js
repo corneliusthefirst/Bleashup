@@ -10,6 +10,7 @@ export default {
     backgroundColor: ColorList.bodyBackground,
     color:ColorList.headerText,
     width: "100%",
-    flexWrap: 'wrap',
+    flex:1,
+    //flexWrap: 'wrap',
     //height: '100%',
 } 

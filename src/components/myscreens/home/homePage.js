@@ -299,13 +299,14 @@ class Home extends Component {
     StatusBar.setBackgroundColor(colorList.headerBackground, true)
     StatusBar.setBarStyle('dark-content', true)
     StatusBar.setHidden(false, true)
+    
     return (
       <View style={{ height: colorList.containerHeight, backgroundColor: colorList.containerBackground, width: colorList.containerWidth }}>
 
-        <View style={{ height: colorList.headerHeight, backgroundColor: colorList.headerBackground, width: "100%", }}>
+        <View style={{ height: colorList.headerHeight, backgroundColor: colorList.headerBackground, width: "100%",marginBottom:5 }}>
 
 
-          <View style={{ flex: 1, backgroundColor: colorList.headerBackground, flexDirection: "row", justifyContent: "space-between", width: "100%", borderBottomWidth: 0.5, borderColor: 'rgba(52, 52, 52, 0.3)' }}>
+          <View style={{ ...bleashupHeaderStyle, backgroundColor: colorList.headerBackground, flexDirection: "row", justifyContent: "space-between", width: "100%", }}>
 
             <View style={{ alignSelf: "flex-start", justifyContent: "center", height: "95%" }}>
               <Thumbnail source={require("../../../../assets/bleashuptitle1.png")} style={{ width: 120 }}></Thumbnail>
@@ -333,7 +334,9 @@ class Home extends Component {
 
 
           </View>
+          
         </View>
+
         <View style={{ marginBottom: 100 }}>
           <CurrentEventView {...this.props}></CurrentEventView>
         </View>

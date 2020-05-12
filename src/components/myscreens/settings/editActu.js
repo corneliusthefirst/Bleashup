@@ -39,6 +39,7 @@ export default class ActuView extends Component {
   })
   setTimeout(() => {
     this.setState({userInfo:this.props.navigation.getParam("userInfo"),isMount:true});
+    console.warn(this.state.userInfo)
    }, 50)
  }
 
@@ -66,6 +67,7 @@ updateOptions = (item)=>{
     stores.LoginStore.updateStatusOptions(this.state.data).then(()=>{
         this.state.userInfo.status = item.name;
         this.setState({userInfo:this.state.userInfo});
+        
     })} )
 }
 
@@ -74,35 +76,35 @@ edit = ()=>{
 }
   render(){
       return(
-          <View style={{width:ColorList.containerWidth,height:ColorList.containerHeight}}>
-
+        
             <View style={{width:"100%",height:"100%"}}>
 
               <View style={{ height:ColorList.headerHeight, }}>
-              <View style={{
+                <View style={{
                   ...bleashupHeaderStyle,
+                  height:ColorList.headerHeight
                  }}>
-                 <View style={{flexDirection:"row",width:width/3,marginLeft:width/25,justifyContent:"space-between",alignItems:"center"}}>
-                 <Icon name="arrow-back" active={true} type="MaterialIcons" style={{ color: "#1FABAB", }} onPress={this.edit} />
+                 <View style={{height:"100%",flexDirection:"row",width:width/3,marginLeft:width/25,justifyContent:"space-between",alignItems:"center"}}>
+                 <Icon name="arrow-back" active={true} type="MaterialIcons" style={{ color:ColorList.headerIcon, }} onPress={this.edit} />
                  <Text style={{fontSize:18,fontWeight:"bold",marginRight:"30%"}}>Actu</Text>
                  </View>
                </View>
              </View>
 
              { this.state.isMount? 
-             <View style={{flexDirection:"column",height:height - height/10,width:"100%",backgroundColor:"#FEFFDE"}}>
+             <View style={{flexDirection:"column",height:height - height/10,width:"100%",backgroundColor:ColorList.bodyBackground}}>
                      
     
               <View style={{width:"100%",justifyContent:"center",flexDirection:"row",flex:2,marginTop:height/30}}>
                 <View style={{width:"90%",flexDirection:"column"}}>
                 <View style={{flexDirection:"row",justifyContent:"flex-start"}}>
-                <Icon name="infocirlceo" active={true} type="AntDesign" style={{ color: "#1FABAB", }}/>
+                <Icon name="infocirlceo" active={true} type="AntDesign" style={{ color:ColorList.bodyIcon, }}/>
                 <Text style={{alignSelf:"flex-start",marginLeft:"3%"}} note>Actu</Text>
               </View>
 
                <View style={{width:"92%",marginLeft:"12%",flexDirection:"row"}}>
                 <ScrollView style={{width:"80%",height:height/8}} showsVerticalScrollIndicator={false}>
-                 <Text style={{alignSelf:"flex-start"}}   >{this.state.userInfo.status}</Text>
+                 <Text style={{alignSelf:"flex-start",color:this.state.userInfo.status?"black":"gray"}}   >{this.state.userInfo.status?this.state.userInfo.status:"@No status update here"}</Text>
                 </ScrollView>
 
                  <View style={{width:"10%",marginLeft:"5%"}}>
@@ -161,7 +163,7 @@ edit = ()=>{
             </View>
             
 
-          </View>
+          
       )
   }
 
