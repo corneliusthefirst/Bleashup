@@ -147,7 +147,7 @@ export default class Votes extends BleashupModal {
         if (!this.props.working) {
           let meess = foreign ? {
             ...message,
-            sender: this.props.sender
+            sender: this.props.sender,
           } : {
               text: vote.title,
               received: [{
@@ -156,7 +156,6 @@ export default class Votes extends BleashupModal {
               }],
               type: 'vote',
               sender: this.props.sender,
-              create_at: moment().format(),
 
             }
           this.props.startLoader()

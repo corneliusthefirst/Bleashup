@@ -127,6 +127,7 @@ class mainUpdater {
             this.returnItemTitle(share.type, share.item_id, share.activity_id).then((title) => {
                 console.warn(title,share)
                 let shareTitle = this.choseShareTitle(share.type)
+                let scope = toTitleCase(share.scope)
                 let change = {
                     id: uuid.v1(),
                     date: date,
@@ -135,8 +136,8 @@ class mainUpdater {
                     title: 'Updates on Main Activity',
                     event_id: eventID,
                     changed: 'Shared ' + toTitleCase(title.item_title) + ' (' +
-                        shareTitle + ') to his ' +
-                        toTitleCase(share.scope).toLowerCase() === 'some' ? 'Contacts' : toTitleCase(share.scope),
+                        shareTitle + ') to his ' +(
+                    scope === 'Some' ? 'Contacts' : scope),
                     new_value:{data:share.id,new_value:title.item_title}
                 }
                 stores.Events.addEvent(share).then(() => {

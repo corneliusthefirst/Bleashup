@@ -67,7 +67,7 @@ export default class ChangeLogs extends Component {
           newThing: !this.state.newThing,
           loaded: true
         })
-      },)
+      })
     })
   }
 
@@ -79,72 +79,77 @@ export default class ChangeLogs extends Component {
   renderDetail(item, sectionID, rowID) {
     return (<View><Text>{item.changed}</Text></View>)
   }
-  
+
   render() {
     //console.warn(this.props.forMember, "poo")
-    return (!this.state.loaded ? <View style={{width:'100%',height:'100%',
-    backgroundColor: colorList.bodyBackground,}}></View>: 
-    
-    <View style={{ height:"100%",width: "100%"}}>
+    return (!this.state.loaded ? <View style={{
+      width: '100%', height: '100%',
+      backgroundColor: colorList.bodyBackground,
+    }}></View> :
 
-      <View style={{ flex:1, width: "100%" }} >     
-        <BleashupTimeLine
-          circleSize={20}
-          showPhoto={url => this.props.openPhoto(url)}
-          master={this.props.master}
-          mention={(data) => this.props.mention(data)}
-          restore={(data) => this.props.restore(data)}
-          circleColor='white'
-          lineColor='#1FABAB'
-          timeContainerStyle={{ minWidth: 52, backgroundColor: colorList.bodyBackground, opacity: .8 }}
-          timeStyle={{
-            marginLeft: "4%",
-            textAlign: 'center',
-            backgroundColor: colorList.bodyBackground,
-            padding: 4,
-            borderRadius: 6,
-            color: "#1FABAB",
-            //borderWidth: .7,
-            //borderColor: "#1FABAB",
-          }}
-          descriptionStyle={{ color:colorList.bodyText }}
-          onEventPress={(data) => {
-            !GState.showingProfile ? this.props.propcessAndFoward(data) : null
-          }}
-          data={this.props.activeMember && this.props.activeMember !== null ?
-            this.changes.filter(ele => ele.updater === this.props.activeMember || 
-              ele.updater.phone === this.props.activeMember ||
-              ele.type === "date_separator") : this.changes}
-        >
-        </BleashupTimeLine>
-    </View>
+      <View style={{ height: "100%", width: "100%" }}>
 
-      {this.state.hideHeader ? null : 
-      <View style={{height: colorList.headerHeight,width: colorList.headerWidth,backgroundColor:colorList.headerBackground, position: "absolute"}}>
-              <View style={{flex:1, ...bleashupHeaderStyle, paddingLeft: '1%', paddingRight: '1%',backgroundColor:colorList.headerBackground,
-                 flexDirection: "row", alignItems: "center"}}>
-                    <View style={{width:"10%",paddingLeft:"1%"}} >
-                     <Icon onPress={() => {this.props.navigatePage("Home")}}
-                      style={{ color:colorList.headerIcon}} type={"MaterialIcons"}name={"arrow-back"}></Icon>
-                   </View>
-                   <View style={{ width: '70%', paddingLeft: '2%',justifyContent:"center" }}>
-                   <Title style={{ color: colorList.headerText,fontSize:colorList.fontSize, fontWeight: colorList.headerFontweight, alignSelf: 'flex-start' }}>{"History"}</Title>
-                   </View>
-  
-                   <View style={{ width: '10%', paddingRight: '3%' }}>
-                    <Icon  
-                     name={"gear"} type="EvilIcons" style={{ color: colorList.headerIcon, alignSelf: 'center', }} />
-                    </View>
-  
-                    <View style={{ width: '10%', paddingLeft: '1%', }}>
-                      <Icon onPress={() => { this.props.openMenu()
-                       }} style={{ color:colorList.headerIcon }} type={"Ionicons"} name={"ios-menu"}></Icon>
-                    </View>
-  
-                </View>
+        <View style={{ flex: 1, width: "100%" }} >
+          <BleashupTimeLine
+            circleSize={20}
+            showPhoto={url => this.props.openPhoto(url)}
+            master={this.props.master}
+            mention={(data) => this.props.mention(data)}
+            restore={(data) => this.props.restore(data)}
+            circleColor='white'
+            lineColor='#1FABAB'
+            timeContainerStyle={{ minWidth: 52, backgroundColor: colorList.bodyBackground, opacity: .8 }}
+            timeStyle={{
+              marginLeft: "4%",
+              textAlign: 'center',
+              backgroundColor: colorList.bodyBackground,
+              padding: 4,
+              borderRadius: 6,
+              color: "#1FABAB",
+              //borderWidth: .7,
+              //borderColor: "#1FABAB",
+            }}
+            descriptionStyle={{ color: colorList.bodyText }}
+            onEventPress={(data) => {
+              !GState.showingProfile ? this.props.propcessAndFoward(data) : null
+            }}
+            data={this.props.activeMember && this.props.activeMember !== null ?
+              this.changes.filter(ele => ele && ele.updater === this.props.activeMember ||
+                ele && ele.updater && ele.updater.phone === this.props.activeMember ||
+                ele.type === "date_separator") : this.changes}
+          >
+          </BleashupTimeLine>
+        </View>
+
+        {this.state.hideHeader ? null :
+          <View style={{ height: colorList.headerHeight, width: colorList.headerWidth, backgroundColor: colorList.headerBackground, position: "absolute" }}>
+            <View style={{
+              flex: 1, ...bleashupHeaderStyle, paddingLeft: '1%', paddingRight: '1%', backgroundColor: colorList.headerBackground,
+              flexDirection: "row", alignItems: "center"
+            }}>
+              <View style={{ width: "10%", paddingLeft: "1%" }} >
+                <Icon onPress={() => { this.props.navigatePage("Home") }}
+                  style={{ color: colorList.headerIcon }} type={"MaterialIcons"} name={"arrow-back"}></Icon>
+              </View>
+              <View style={{ width: '70%', paddingLeft: '2%', justifyContent: "center" }}>
+                <Title style={{ color: colorList.headerText, fontSize: colorList.headerFontSize, fontWeight: colorList.headerFontweight, alignSelf: 'flex-start' }}>{"History"}</Title>
+              </View>
+
+              <View style={{ width: '10%', paddingRight: '3%' }}>
+                <Icon
+                  name={"gear"} type="EvilIcons" style={{ color: colorList.headerIcon, alignSelf: 'center', }} />
+              </View>
+
+              <View style={{ width: '10%', paddingLeft: '1%', }}>
+                <Icon onPress={() => {
+                  this.props.openMenu()
+                }} style={{ color: colorList.headerIcon }} type={"Ionicons"} name={"ios-menu"}></Icon>
+              </View>
+
+            </View>
           </View>}
 
-    </View>
+      </View>
     )
   }
 }

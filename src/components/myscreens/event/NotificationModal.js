@@ -65,7 +65,7 @@ export default class NotificationModal extends PureComponent {
                     marginLeft: "14%",
                     borderColor: ColorList.bodyDarkWhite,
                     borderBottomRightRadius: 8,
-                    backgroundColor: ColorList.bodyBackground,
+                    backgroundColor: ColorList.indicatorInverted,
                     width: "70%"
                 }}
             >
@@ -87,7 +87,7 @@ export default class NotificationModal extends PureComponent {
                                             </View>
                                             <View style={{ marginTop: "3%", marginLeft: "4%", flexDirection: 'column', width: "65%" }}>
                                                 <Text ellipsizeMode={'tail'} numberOfLines={1} style={{ marginBottom: "2%", fontWeight: 'bold', }}>{this.props.change.updater.nickname}</Text>
-                                                {this.props.change.updater.status && this.props.change.updater.status !== 'undefined'?<Text ellipsizeMode={'tail'} 
+                                                {this.props.change && this.props.change.updater && this.props.change.updater.status && this.props.change.updater.status !== 'undefined'?<Text ellipsizeMode={'tail'} 
                                                 numberOfLines={1} style={{ marginLeft: "2%" }} note>{this.props.change.updater.status}</Text>:null}
                                             </View>
                                         </View>}
@@ -105,7 +105,7 @@ export default class NotificationModal extends PureComponent {
                                 flexDirection: 'column',
                             }}>
                                 <View style={{ flexDirection: 'row',marginBottom: "2%", }}>
-                                    <Text ellipsizeMode='tail' numberOfLines={1} style={{ fontWeight: 'bold', }}>{this.props.change.changed}</Text>
+                                    <Text ellipsizeMode='tail' numberOfLines={1} style={{ fontWeight: 'bold', }}>{this.props.change && this.props.change.changed}</Text>
                                 </View>
                                 <Text ellipsizeMode='tail' style={{ fontSize: 12, fontStyle: 'italic', }} numberOfLines={1}>{typeof this.props.change.new_value.new_value === "string" ? this.props.change.new_value.new_value : ""}</Text>
                             </View>

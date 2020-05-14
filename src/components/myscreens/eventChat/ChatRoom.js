@@ -384,7 +384,7 @@ export default class ChatRoom extends Component {
         })
     }
     componentDidMount() {
-        this.saveNotificationToken()    
+        this.saveNotificationToken()
         GState.currentRoom = this.props.firebaseRoom
         firebase.database().ref(`current_room/${this.props.user.phone}`).set(this.props.firebaseRoom)
         if (this.props.isComment) {
@@ -1189,7 +1189,11 @@ export default class ChatRoom extends Component {
                                 takeVote={(vote => this.createVote(vote))}
                                 voteItem={mess => {
                                     this.perviousId = mess.id
-                                    this.replaceVote({ ...mess, id: uuid.v1() })
+                                    this.replaceVote({
+                                        ...mess,
+                                        id: uuid.v1(),
+                                        created_at: moment().format()
+                                    })
                                 }}
                                 working={this.props.working}
                                 isSingleVote={this.state.single_vote}
@@ -1371,7 +1375,10 @@ export default class ChatRoom extends Component {
                             name={"image-filter"}></Icon>
                         </View>
 
-                        <Item style={{ width: '88%', marginLeft: "2%", flexDirection: 'column', borderRadius: 20, }} rounded>
+                        <Item style={{
+                            width: '88%', marginLeft: "2%", flexDirection: 'column', borderRadius: 20, 
+                            borderTopLeftRadius: this.state.replying ? 5 : 20,
+                            borderTopRightRadius: this.state.replying ? 5 : 20}} rounded>
                             {
                                 //* Reply Message caption */
                                 this.state.replying ? this.replyMessageCaption() : null

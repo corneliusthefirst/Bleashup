@@ -439,7 +439,7 @@ export default class Event extends Component {
         change: change,
         showNotifiation: true
       })
-    if (change.changed.toLowerCase().includes("committee")) {
+    if (change && change.changed && change.changed.toLowerCase().includes("committee")) {
       if (change.changed.toLowerCase().includes("created")) this.event.commitee.unshift(change.new_value.new_value)
       this.refreshCommitees()
       let commitee = newValue
@@ -454,16 +454,16 @@ export default class Event extends Component {
           roomMembers: commitee.member
         })
       }
-    } else if ((change.changed.toLowerCase().includes("participant") || change.changed.toLowerCase().includes("activity"))) {
+    } else if ((change && change.changed && change.changed.toLowerCase().includes("participant") || change.changed.toLowerCase().includes("activity"))) {
       this.event = find(stores.Events.events, { id: this.event.id })
       this.initializeMaster()
       this.refreshCommitees()
     }
-    if (change.changed.toLowerCase().includes('remind') ||
+    if (change && change.changed && change.changed.toLowerCase().includes('remind') ||
       change.title.toLowerCase().includes('remind')) {
       console.warn('includes reminds')
       emitter.emit('remind-updated')
-    } if (change.changed.toLowerCase().includes("vote") ||
+    } if (change && change.changed && change.changed.toLowerCase().includes("vote") ||
       change.title.toLowerCase().includes('vote')) {
       console.warn("including vote")
       emitter.emit("votes-updated", newValue.committee_id)
