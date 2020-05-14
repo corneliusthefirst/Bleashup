@@ -55,12 +55,14 @@ export default class votes {
                             })
                         } else {
                             this.fetchVoteFromRemote(voteID).then((remoteVote) => {
+                                console.warn("votes fetched from remote", remoteVote)
                                 resolve(remoteVote)
                             })
                         }
                     }
                 } else {
                     this.fetchVoteFromRemote(voteID).then((remoteVote) => {
+                        console.warn("votes fetched from remote",remoteVote)
                         resolve(remoteVote)
                     })
                 }

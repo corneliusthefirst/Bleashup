@@ -20,9 +20,9 @@ class UpdatesDispatcher {
       return "ok";
     } else {
       let update = updates.pop()
-      this.dispatchUpdate(update).then(() => { 
+      this.dispatchUpdate(update).then(() => {
         console.warn("dipatching ", update)
-        this.dispatchUpdates(updates) 
+        this.dispatchUpdates(updates)
       });
     }
 
@@ -50,7 +50,7 @@ class UpdatesDispatcher {
     blocked: update => MainUpdater.blocked(update.updater),
     un_blocked: update => MainUpdater.unBlocked(update.updater),
     muted: update => MainUpdater.muted(update.updater),
-    un_muted:updater => MainUpdater.unMuted(update.updater),
+    un_muted: updater => MainUpdater.unMuted(update.updater),
     title: update => {
       return new Promise((resolve, reject) => {
         stores.Events.updateTitle(update.event_id, update.new_value, true).then((Eve) => {
@@ -331,14 +331,39 @@ class UpdatesDispatcher {
         );
       });
     },
-    adds : update => {
-      return new  Promise((resolve,reject) => {
+    adds: update => {
+      return new Promise((resolve, reject) => {
         MainUpdater.addParticipants(update.event_id,
           update.new_value,
-          update.updater,update.updated,
+          update.updater, update.updated,
           update.date).then(Change => {
-            this.infomCurrentRoom(Change,update.event_id,update.event_id)
+            this.infomCurrentRoom(Change, update.event_id, update.event_id)
             resolve()
+          })
+      })
+    },
+    shared_item: update => {
+      return new Promise((resolve, reject) => {
+        MainUpdater.saveShares(update.event_id, update.new_value,
+          update.updater, update.date).then((change) => {
+            this.infomCurrentRoom(change, update.new_value, update.event_id)
+            resolve()
+          })
+      })
+    },
+    following: update =>{
+      return new Promise((resolve, reject) => {
+        stores.Contacts.addFollower(update.updater,"").then(() => {
+          console.warn("following successfully stored")
+          resolve()
+        })
+      })
+    },
+    unfollowing : update => {
+      return new Promise((resolve, reject) => {
+        stores.Contacts.removeFollower(update.updater).then(() => {
+          console.warn("unfollowing successfully stored")
+          resolve()
         })
       })
     },
@@ -1269,7 +1294,7 @@ class UpdatesDispatcher {
         stores.Votes.vote(update.new_value).then((vote) => {
           stores.CommiteeStore.imIInThisCommttee(stores.LoginStore.user.phone,
             vote.committee_id).then((state) => {
-              console.warn(state,"--")
+              console.warn(state, "--")
               if (state || vote.published === 'public') {
                 let Change = {
                   id: uuid.v1(),
@@ -1555,13 +1580,13 @@ class UpdatesDispatcher {
       });
     },
     remind_location: update => {
-      return new Promise((resolve,reject) => {
+      return new Promise((resolve, reject) => {
         MainUpdater.updateRemindLocation(update.event_id,
           update.new_value.remind_id,
           update.new_value.location,
-          update.date,update.updater).then(Change =>{
-            this.infomCurrentRoom(Change,update.new_value,update.event_id)
-        })
+          update.date, update.updater).then(Change => {
+            this.infomCurrentRoom(Change, update.new_value, update.event_id)
+          })
       })
     },
     remind_url: update => {

@@ -3,6 +3,9 @@ import tcpRequest from "../../../../services/tcpRequestData";
 import EventListener from "../../../../services/severEventListener";
 import uuid from 'react-native-uuid';
 import stores from "../../../../stores";
+import toTitleCase from '../../../../services/toTitle';
+import MainUpdater from '../../../../services/mainUpdater';
+import moment  from 'moment';
 
 export const storeToken = "save_token";
 export const block = "block";
@@ -14,7 +17,14 @@ export const muted = "muted"
 export const meBlocked = "me_blocked"
 export const meMuted = "me_muted"
 export const get = "get"
-class Requster {
+export const shared_post = 'post-share'
+export const shared_remind = 'remind-share'
+export const shared_votes = 'vote-share'
+export const contacts_scope = 'contacts'
+export const follewers_scope = 'follow'
+export const some = 'some'
+export
+    class Requster {
     saveToken(token, phone) {
         return new Promise((resolve, reject) => {
             this.sendPrivacyUpdate(token, storeToken).then((res) => {
@@ -53,7 +63,7 @@ class Requster {
     blocked(member) {
         return new Promise((resolve, reject) => {
             this.sendPrivacyUpdate(member, blocked).then((res) => {
-                if(res.data) stores.Privacy.block(member).then(() => {
+                if (res.data) stores.Privacy.block(member).then(() => {
                     resolve(res.data)
                 })
                 else stores.Privacy.unblock(member).then(() => {
@@ -65,7 +75,7 @@ class Requster {
     muted(member) {
         return new Promise((resolve, reject) => {
             this.sendPrivacyUpdate(member, muted).then((res) => {
-                if(res.data) stores.Privacy.mute(member).then(() => {
+                if (res.data) stores.Privacy.mute(member).then(() => {
                     resolve(res.data)
                 })
                 else stores.Privacy.unmute(member).then(() => {
@@ -77,7 +87,7 @@ class Requster {
     meMuted(member) {
         return new Promise((resolve, reject) => {
             this.sendPrivacyUpdate(member, meMuted).then(res => {
-                if(res.data) stores.Privacy.muteMe(member).then(() => {
+                if (res.data) stores.Privacy.muteMe(member).then(() => {
                     resolve(res.data)
                 })
                 else stores.Privacy.unmuteMe(member).then(() => {
@@ -89,7 +99,7 @@ class Requster {
     meBlocked(member) {
         return new Promise((resolve, reject) => {
             this.sendPrivacyUpdate(member, meBlocked).then(res => {
-                if(res.data) stores.Privacy.blockMe(member).then(() => {
+                if (res.data) stores.Privacy.blockMe(member).then(() => {
                     resolve(res.data)
                 })
                 else stores.Privacy.unblockMe(member).then(() => {
@@ -149,6 +159,99 @@ class Requster {
                 });
         })
     }
+    formShareNotifTitle(action) {
+        if (action == shared_post) {
+            return "Post"
+        } else if (action == shared_remind) {
+            return 'Remind'
+        } else {
+            return 'Vote'
+        }
+    }
+    prepareRequest(scop, data, id) {
+        return new Promise((resolve, reject) => {
+            if (scop.includes('contact')) {
+                return tcpRequest.share_with_contacts(data, id).then((JSONData) => {
+                    resolve(JSONData)
+                })
+            } else if (scop.includes('follow')) {
+                return tcpRequest.share_with_followers(data, id).then(JSONData => {
+                    resolve(JSONData)
+                })
+            } else if (scop.includes('some')) {
+                tcpRequest.share_with_some(data, id).then(JSONData => {
+                    resolve(JSONData)
+                })
+            }
+        })
+    }
+    shareWithContacts(eventID, itemID, type, activtyName, itemTitle, photo) {
+        return this.sendShare(eventID, itemID, type, activtyName, itemTitle, contacts_scope, photo)
+    }
+    shareWithFollowers(eventID, itemID, type, activtyName, itemTitle, photo) {
+        return this.sendShare(eventID, itemID, type, activtyName, itemTitle, follewers_scope, photo)
+    }
+    shareWithSome(eventID, itemID, type, activtyName, itemTitle, photo, members) {
+        return this.sendShare(eventID, itemID, type, activtyName, itemTitle, some, photo, members)
+    }
+    sendShare(eventID, itemID, type, activityName, itemTitle, scope, photo, members) {
+        return new Promise((resolve, reject) => {
+            let share = request.Share()
+            share.event_id = eventID
+            share.share.activity_id = eventID
+            share.share.id = uuid.v1()
+            share.share.item_id = itemID
+            share.members = members
+            share.share.type = type
+            share.share.scope = scope
+            share.notif.notification.title = 'New ' + this.formShareNotifTitle(type) + ' Share';
+            share.notif.notification.body = toTitleCase(stores.LoginStore.user.nickname) + ' @ ' + toTitleCase(activityName) + ' Shared ' + toTitleCase(itemTitle)
+            share.notif.notification.image = photo
+            this.prepareRequest(scope, share, itemID + type).then(JSONData => {
+                EventListener.sendRequest(JSONData, itemID + type).then((response) => {
+                    MainUpdater.saveShares(eventID, share.share, stores.LoginStore.user, moment().format()).then((change) => {
+                        resolve(change)
+                    })
+                })
+            })
+        })
+    }
+    followContact(contact){
+        return new Promise((resolve,reject) => {
+            let update = {
+                phone:contact,
+                host:stores.Session.SessionStore.host,
+            }
+            let notif = request.Notification()
+            notif.notification.title = "New Follower";
+            notif.notification.body = toTitleCase(stores.LoginStore.user.nickname) + ' Is now Following you'; 
+            notif.notification.image = stores.LoginStore.user.profile
+            update.notif = notif
+            tcpRequest.follow(update,contact+' follow').then(JSONData => {
+                EventListener.sendRequest(JSONData,contact + ' follow').then((response) => {
+                    stores.Contacts.addFollowing(update.phone,update.host).then(() => {
+                        resolve()
+                    })
+                })
+            })
+        })
+    }
+    unfollowContact(contact) {
+        return new Promise((resolve,reject) => {
+            let update = {
+                phone: contact,
+            }
+            tcpRequest.unfollow(update, contact + ' unfollow').then(JSONData => {
+                EventListener.sendRequest(JSONData, contact + ' unfollow').then((response) => {
+                    stores.Contacts.removeFollowing(update.phone).then(() => {
+                        resolve()
+                    })
+                })
+            })
+        })
+    }
+
 }
+
 
 export const PrivacyRequester = new Requster();

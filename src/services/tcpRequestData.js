@@ -23,7 +23,7 @@ class tcpRequestData {
         Update.about_update.action = action;
         Update.about_update.title = data;
         return Update;
-      }else if(action === 'who_can_update'){
+      } else if (action === 'who_can_update') {
         Update.action = "who_can_update";
         Update.phone = phone;
         Update.event_id = eventID;
@@ -109,29 +109,29 @@ class tcpRequestData {
         Update.event_id = eventID
         Update.closed = data
         return Update
-      } else if (action === 'close'){
+      } else if (action === 'close') {
         Update.action = 'open';
         Update.event_id = eventID;
         Update.closed = data
         Update.phone = phone
         return Update;
-      } else if (action === 'calendar_id'){
+      } else if (action === 'calendar_id') {
         Update.action = action;
         Update.event_id = eventID;
         Update.calendar_id = data
         Update.phone = phone
         return Update
-      } else if (action === 'recurrency'){
+      } else if (action === 'recurrency') {
         Update.action = action;
         Update.event_id = eventID;
         Update.recurrent_update = data
         Update.phone = phone
         return Update
-      } else if(action == 'adds'){
+      } else if (action == 'adds') {
         Update.action = action;
         Update.event_id = eventID;
         Update.phone = phone;
-        Update.participant = data 
+        Update.participant = data
         return Update
       }
     };
@@ -269,8 +269,8 @@ class tcpRequestData {
   CreateVote(data, id) {
     return this.sendData("create_vote", data, id);
   }
-  RestoreVote(data,id){
-    return this.sendData("restore_vote",data,id)
+  RestoreVote(data, id) {
+    return this.sendData("restore_vote", data, id)
   }
 
   //My data is requestObject.Voter()
@@ -423,8 +423,8 @@ class tcpRequestData {
   addRemind(data, id) {
     return this.sendData("add_remind", data, id);
   }
-  getReminds(data,id) {
-    return this.sendData("get_reminds", data,id);
+  getReminds(data, id) {
+    return this.sendData("get_reminds", data, id);
   }
   getRemind(data, id) {
     return this.sendData("get_remind", data, id);
@@ -474,8 +474,23 @@ class tcpRequestData {
   add_many_contacts(data, id) {
     return this.sendData('add_many_contacts', data, id);
   }
-  update_privacy(data,id){
-    return this.sendData('privacy',data,id)
+  update_privacy(data, id) {
+    return this.sendData('privacy', data, id)
+  }
+  share_with_contacts(data, id) {
+    return this.sendData('share_with_contacts', data, id);
+  }
+  share_with_followers(data, id) {
+    return this.sendData('share_with_followers', data, id);
+  }
+  share_with_some(data, id) {
+    return this.sendData('share_with_some', data, id);
+  }
+  follow(data, id) {
+    return this.sendData('follow', data, id)
+  }
+  unfollow(data, id) {
+    return this.sendData('unfollow', data, id)
   }
 }
 

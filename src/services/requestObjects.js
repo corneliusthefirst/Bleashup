@@ -614,12 +614,12 @@ class Request {
     }
     Notification() {
         return {
-            project_id: "bleashup-1562173529011",
-            notification:{
+            notification: {
                 title: "Bleashup",
                 android_channel_id: "bleashup_share",
                 body: "This is a bleashup notification",
                 sound: "default",
+                image:""
             },
             registration_ids: [],
             android: {
@@ -637,7 +637,23 @@ class Request {
 
         }
     }
-
+    Share() {
+        return {
+            event_id: "",
+            members:[],
+            share: {
+                type: 'post-share',
+                id: "",
+                item_id: "",
+                activity_id: "",
+                message:"Hello guys! Take a look at this",
+                sharer: stores.LoginStore.user.phone,
+                date: moment().format(),
+                scope:'contacts'
+            },
+            notif: this.Notification()
+        }
+    }
 
 }
 const request = new Request()
