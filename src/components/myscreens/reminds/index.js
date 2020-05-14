@@ -644,7 +644,7 @@ export default class Reminds extends Component {
             </View>
 
             <View style={{ width: '67%', paddingLeft: '9%', justifyContent: "center",backgroundColor:"yellow",height:"100%",justifyContent:"center" }}>
-              <Title style={{ fontWeight: 'bold', alignSelf: 'flex-start', color: colorList.headerText }}>{"Reminds"}</Title>
+              <Title style={{ fontWeight: 'bold', alignSelf: 'flex-start', color: colorList.headerText,fontSize: colorList.headerFontSize, }}>{"Reminds"}</Title>
             </View>
 
             <View style={{ width: '13%', paddingRight: '3%',backgroundColor:"green",height:"100%",justifyContent:"center" }}>

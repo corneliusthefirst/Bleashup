@@ -10,6 +10,7 @@ class colorlist {
     //container
     containerHeight = height
     containerWidth = width
+    headerTextSize = 14
     containerBackground = "#1FABAB"
     redIcon='red'
     containerBackground = "white"
@@ -26,7 +27,7 @@ class colorlist {
     headerBackground = "white"
     headerHeight = 55
     headerFontweight = "bold"
-    headerFontSize = 17
+    headerFontSize = 16
 
 
     //body

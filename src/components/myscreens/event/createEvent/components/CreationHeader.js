@@ -36,6 +36,7 @@ export default class CreationHeader extends Component {
                         color: ColorList.headerIcon,
                         fontWeight: "500",
                         marginTop: "auto",
+                        fontSize: ColorList.headerFontSize,
                         marginBottom: "auto",
                         maxWidth: '50%',
                     }}
