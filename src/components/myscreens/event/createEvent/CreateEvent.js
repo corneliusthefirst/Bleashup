@@ -26,7 +26,7 @@ export default class CreateEvent extends Component {
 
     stores.Events.readFromStore().then(Events =>{
      let event = find(Events, { id:"newEventId" });
-      console.warn(Events);
+      //console.warn(Events);
 
 
      if(!event){
@@ -77,12 +77,12 @@ export default class CreateEvent extends Component {
   return new Promise((resolve, rejectPromise) => {
 
   stores.Reminds.readFromStore().then(Reminds =>{
-    console.warn("remind are",Reminds);
+    //console.warn("remind are",Reminds);
     let remind = find(Reminds,{ id:"newRemindId" }); 
-    console.warn("remind it is",remind);
+    //console.warn("remind it is",remind);
 
     if(!remind){
-      console.warn("here")
+      //console.warn("here")
       remind =  request.Remind();
       remind.id = "newRemindId";
       stores.Reminds.addReminds(remind).then(()=>{});

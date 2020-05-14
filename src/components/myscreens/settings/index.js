@@ -39,7 +39,7 @@ export default class SettingView extends Component {
 
   render() {
     return (
-      <Container style={{ backgroundColor:ColorList.bodyBackground,height:ColorList.containerHeight}}>
+      <Container style={{ backgroundColor:ColorList.bodyBackground,height:"100%",width:"100%"}}>
         
         <View style={{ height:ColorList.headerHeight, }}>
            <View style={{

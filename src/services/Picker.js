@@ -34,6 +34,7 @@ class Picker {
             })
         })
     }
+    
     CompressVideo(response) {
         return new Promise((resolve, reject) => {
             let size = 0

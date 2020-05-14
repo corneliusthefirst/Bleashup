@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import autobind from "autobind-decorator";
 import {
-  Content, Text,  Container, Right,Icon,Thumbnail,Card,CardItem,Left,Title,
+  Content, Text,  Container, Right,Icon,Thumbnail,Card,CardItem,Left,Title,Toast,Spinner
 } from "native-base";
 import { Button,View,Dimensions,TouchableWithoutFeedback,Image} from "react-native";
 
@@ -16,6 +16,9 @@ import CacheImages from '../../CacheImages';
 import EditUserModal from "./editUserModal";
 import shadower from "../../../components/shadower";
 import ColorList from '../../colorList';
+import Pickers from '../../../services/Picker';
+import FileExchange from '../../../services/FileExchange';
+
 
 let { height, width } = Dimensions.get('window');
 export default class ProfileView extends Component {
@@ -28,7 +31,9 @@ export default class ProfileView extends Component {
       update:false,
       updatetitle:"",
       position:"",
-      coverscreen:true
+      coverscreen:true,
+      uploading:false,
+      photo:"",
     }
     if(this.props.navigation.getParam("update")==true){
          this.init
@@ -37,7 +42,7 @@ export default class ProfileView extends Component {
   init = ()=>{
     setTimeout(() => {
       this.setState({isMount:true,userInfo:this.props.navigation.getParam("userInfo")})
-     // console.warn(this.state.userInfo)
+      this.setState({photo:this.state.userInfo.profile})
   }, 50)
    
   }
@@ -55,10 +60,35 @@ export default class ProfileView extends Component {
   editActu = ()=>{
     this.props.navigation.navigate("Actu",{userInfo:this.state.userInfo});
   }
+
+    //for photo
+    TakePhotoFromCamera = ()=>{    
+      Pickers.SnapPhoto(true).then(res => {
+        this.setState({uploading:true})
+        let exchanger = new FileExchange(res.source,'/Photo/',res.size,0,null,(newDir,path,total)=>{
+          this.state.userInfo.profile = path;
+          this.setState({photo:path});
+          this.setState({userInfo: this.state.userInfo});
+          stores.LoginStore.updateProfile(path).then(()=>{
+            this.setState({uploading: false})
+          })
+        },() => {
+        Toast.show({text:'Unable To upload photo',position:'top'})
+        this.setState({uploading:false})
+        },(error) => {
+            Toast.show({ text: 'Unable To upload photo', position: 'top' })
+            this.setState({uploading: false})
+        },res.content_type,res.filename,'/photo')
+        this.state.photo?exchanger.deleteFile(this.state.photo):null
+        exchanger.upload(0,res.size)
+      });
+  }
+
+
   
   render() {
     return (
-      <Container style={{ backgroundColor: ColorList.bodyBackground,flexDirection:"column",width:ColorList.containerWidth,height:ColorList.containerHeight }}>
+      <Container style={{ backgroundColor: ColorList.bodyBackground,flexDirection:"column",width:"100%",height:"100%" }}>
 
         <View style={{ height:ColorList.headerHeight, }}>
            <View style={{
@@ -85,29 +115,36 @@ export default class ProfileView extends Component {
                <Title style={{alignSelf:"flex-start"}}>{this.state.userInfo.nickname}</Title>
             </View>
           </View>
-
+         
           <View style={{width:"10%"}}>
-             <Icon name="edit" active={true} type="MaterialIcons" style={{ color:ColorList.bodySubtext }} onPress={this.updateName}/>
+             <Icon name="edit" active={true} type="MaterialIcons" style={{ color:ColorList.bodySubtext }} onPress={this.updateName} />
           </View>
+         
+
         </View>
 
       
 
-
-       <View style={{height:ColorList.containerHeight/3,width:"100%",justifyContent:"center",alignItems:"center"}}>
+      {this.state.uploading?<Spinner/>:
+             <View style={{height:ColorList.containerHeight/3,width:"100%",justifyContent:"center",alignItems:"center"}}>
           
-            <TouchableWithoutFeedback onPress={() => {
-                requestAnimationFrame(() => {this.setState({enlarge:true})});
-            }}>
-              {this.state.userInfo.profile  && testForURL(this.state.userInfo.profile ) ? <CacheImages   {...this.props}
-                  source={{ uri: this.state.userInfo.profile }} style={{ width:ColorList.containerWidth-ColorList.containerWidth/8, height:ColorList.containerHeight/3,borderRadius:30 }} /> :
-               <Image source={require("../../../../Images/profile.png")} style={{height:ColorList.containerHeight/3,width:width-width/9,borderRadius:14}} ></Image>}
-            </TouchableWithoutFeedback>
+             <TouchableWithoutFeedback onPress={() => {
+                 requestAnimationFrame(() => {this.setState({enlarge:true})});
+             }}>
+               {this.state.userInfo.profile  && testForURL(this.state.userInfo.profile ) ? <CacheImages   {...this.props}
+                   source={{ uri: this.state.userInfo.profile }} style={{ width:ColorList.containerWidth-ColorList.containerWidth/8, height:ColorList.containerHeight/3,borderRadius:30 }} /> :
+                <Image source={require("../../../../Images/profile.png")} style={{height:ColorList.containerHeight/3,width:width-width/9,borderRadius:14}} ></Image>}
+             </TouchableWithoutFeedback>
+ 
+             <TouchableWithoutFeedback  onPress={this.TakePhotoFromCamera} >
+               <View style={{...shadower(),height:height/13,width:width/6,borderRadius:30,backgroundColor:"#1FABAB",alignItems:"center",justifyContent:"center",alignSelf:"flex-end",marginTop:-height/20,marginRight:width/25,borderWidth:2,borderColor:ColorList.bodyBackground}}>
+                 <Icon name="add-a-photo" active={true} type="MaterialIcons" style={{ color:ColorList.bodyBackground }}  onPress={this.TakePhotoFromCamera} />
+               </View>
+             </TouchableWithoutFeedback>
+ 
+         </View>
+      }
 
-              <View style={{...shadower(),height:height/13,width:width/6,borderRadius:30,backgroundColor:"#1FABAB",alignItems:"center",justifyContent:"center",alignSelf:"flex-end",marginTop:-height/20,marginRight:width/25,borderWidth:2,borderColor:ColorList.bodyBackground}}>
-                <Icon name="add-a-photo" active={true} type="MaterialIcons" style={{ color:ColorList.bodyBackground }}/>
-              </View>
-        </View>
             
      
 

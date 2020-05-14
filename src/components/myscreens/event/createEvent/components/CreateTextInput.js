@@ -28,7 +28,7 @@ export default class CreateTextInput extends Component{
                         color:colorList.bodyText,
                         textAlignVertical: "top",
                         borderRadius:5,
-                        backgroundColor:this.props.backgroundColor?this.props.backgroundColor:colorList.bodyDarkWhite
+                        backgroundColor:this.props.backgroundColor?this.props.backgroundColor:colorList.bodyBackground
                     }}
                     value={this.props.value }
                     maxLength={this.props.maxLength||100}
