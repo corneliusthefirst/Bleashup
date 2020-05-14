@@ -21,7 +21,7 @@ import ActuView from "./components/myscreens/settings/editActu";
 import CurrentEventView from "./components/myscreens/currentevents/index";
 import InvitationView from "./components/myscreens/invitations/index";
 import PotesChat from "./components/myscreens/poteschat/index";
-import StatusView from "./components/myscreens/status/index";
+import Viewer from "./components/myscreens/Viewer/index";
 import ContactView from "./components/myscreens/Contacts/Contact";
 import NewContactView from "./components/myscreens/Contacts/NewContact";
 
@@ -76,7 +76,7 @@ const AppNavigator = createStackNavigator(
     NewContact: { screen: NewContactView },
     Profile: { screen: ProfileView },
     Actu: { screen: ActuView },
-    Status: { screen: StatusView },
+    Viewer: { screen: Viewer },
     Invitation: { screen: InvitationView },
     PotesChat: { screen: PotesChat },
     Login: { screen: LoginView },

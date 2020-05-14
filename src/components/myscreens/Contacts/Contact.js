@@ -18,11 +18,14 @@ import Invite from './invite';
 import moment from "moment";
 import ColorList from '../../colorList';
 import countries from '../login/countries';
-import ProfileView from "../invitations/components/ProfileView";
 import CreateRequest from '../event/createEvent/CreateRequester';
 import firebase from 'react-native-firebase';
 import shadower from "../../shadower";
 import BeNavigator from "../../../services/navigationServices";
+import ProfileViewCall from './ProfileViewCall';
+
+
+
 
 var uuid = require('react-native-uuid');
 uuid.v1({
@@ -87,7 +90,6 @@ componentDidMount(){
 
 array = [];
 getValidUsers(contacts){
-
     //first push contacts from contacts store
     stores.Contacts.contacts.forEach((contact)=>{
         if(contact.phone){
@@ -95,7 +97,6 @@ getValidUsers(contacts){
           this.array.push(phoneUser);
          }
     })
-
     //then push those from the phone
     contacts.forEach((contact)=>{
       var phoneUser = {nickname:contact.displayName,phone:"",profile:contact.thumbnailPath,status:"",found:false}
@@ -105,9 +106,9 @@ getValidUsers(contacts){
          this.array.push( phoneUser); 
       })
     })
+    console.warn(this.array)
     this.setState({contacts:uniqBy(this.array,'phone')});
-    this.setState({searchArray:this.state.contacts});
-
+    this.setState({searchArray:this.state.contacts})
 }
 
 
@@ -124,7 +125,6 @@ invite = ()=>{
 }
 
 findIn = (arrayOfObjects,object)=>{
-   // //console.warn("here bro",arrayOfObjects,object);
     arrayOfObjects.forEach((element)=>{
         if(element.phone == object.phone){
           return true;
@@ -134,12 +134,10 @@ findIn = (arrayOfObjects,object)=>{
 }
 
 createRelation = (user)=>{
- 
   this.setState({alreadyCreated:false});
   stores.Events.readFromStore().then((events) =>{
       relations =  filter(events,{type:"relation"});
       currentUser = stores.LoginStore.user;
-
       relations.forEach(relation => {
          if(this.findIn(relation.participant,currentUser)&&this.findIn(relation.participant,user)){
              this.setState({alreadyCreated:true});
@@ -156,25 +154,17 @@ createRelation = (user)=>{
          opponent.phone =  user.phone;
          opponent.master = true;
          relation.participant.push(opponent);
-
-
-        //supply it an id 
-        var arr = new Array(32);
-        let num = Math.floor(Math.random() * 16)
-        uuid.v1(null, arr, num);
-        let New_id = uuid.unparse(arr, num);
-        //give this id to the relation
-        relation.id = New_id;
-        console.warn("relation is",relation);
-        //stores.Events.addEvent(relation).then(()=>{});
-        //CreateRequest.createEvent(relation).then((res) => {})
+         //supply it an id 
+         var arr = new Array(32);
+         let num = Math.floor(Math.random() * 16)
+         uuid.v1(null, arr, num);
+         let New_id = uuid.unparse(arr, num);
+         //give this id to the relation
+         relation.id = New_id;
        
-        CreateRequest.createEvent(relation).then((res) => {
-          console.warn("res here",res)
+         CreateRequest.createEvent(relation).then((res) => {
           stores.Events.delete("newEventId").then(() => {
-            console.warn("newEventId deleted")
             firebase.database().ref(`rooms/${res.id}/${res.id}`).set({ name: 'General', members: res.participant }).then(() => {
-              console.warn("room created",res)
               this.setState({creating: false })
               BeNavigator.navigateToActivity('EventChat',res)
              
@@ -190,8 +180,6 @@ createRelation = (user)=>{
        this.setState({alreadyCreated:false})
      }
   })
-
-
 }
 
 
@@ -200,12 +188,9 @@ updateContact = (user)=>{
   this.state.searchArray[index].nickname = user.nickname;
   this.state.searchArray[index].profile = user.profile;
   this.state.searchArray[index].status = user.status;
-
-  //console.warn("contacts are hmm",this.state.searchArray)
 }
 
 searchUser = ()=>{
-  //console.warn("here")
   this.props.navigation.navigate('SearchUser',{userdata:this.state.searchArray});
 }
 
@@ -268,7 +253,7 @@ render(){
       {this.state.isMount? 
         <View style={{height:"70%",paddingLeft:"2%"}}>
        
-               <BleashupFlatList
+                 <BleashupFlatList
                     initialRender={15}
                     renderPerBatch={15}
                     style={{backgroundColor:ColorList.bodyBackground}}
@@ -280,14 +265,12 @@ render(){
                     renderItem={(item,index) =>{
 
                       this.delay = this.delay >= 15 ? 0:this.delay + 1
-                      ////console.warn(user);
-
+                    
                    return(
-
+                   
                     <View style={{ height:60,width: "100%",paddingLeft:"1.3%" }}>
-                      <ProfileView contact phoneInfo={item} delay={this.delay} phone={item.phone} updateContact={this.updateContact} action={this.createRelation} ></ProfileView>
+                      <ProfileViewCall phoneInfo={item} delay={this.delay} phone={item.phone} updateContact={this.updateContact} createRelation={() => {this.createRelation(item)}}></ProfileViewCall>
                     </View>
-                     
                      )
                     }
                     }
@@ -310,7 +293,7 @@ render(){
 
 
 
-
+//action={this.createRelation}
 
 
 
