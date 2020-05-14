@@ -27,7 +27,7 @@ import {
   Thumbnail
 } from 'native-base';
 import NetInfo from "@react-native-community/netinfo";
-import StatusView from "./../status/index";
+//import StatusView from "./../Viewer/index";
 import InvitationView from "./../invitations/index";
 import Chats from "../poteschat";
 import SettingView from "./../settings/index";
@@ -299,7 +299,7 @@ class Home extends Component {
     StatusBar.setBackgroundColor(colorList.headerBackground, true)
     StatusBar.setBarStyle('dark-content', true)
     StatusBar.setHidden(false, true)
-    
+
     return (
       <View style={{ height: colorList.containerHeight, backgroundColor: colorList.containerBackground, width: colorList.containerWidth }}>
 

@@ -13,23 +13,23 @@ import ProfileSimple from '../../currentevents/components/ProfileViewSimple';
 export default class ProfileView extends Component {
     constructor(props) {
         super(props)
+       
     }
+
     state = { profile: undefined, isMount: false, hide: false }
+
     componentDidMount() {
         setTimeout(() => stores.TemporalUsersStore.getUser(this.props.phone).then(user => {
-            //console.warn("user gotten",user)
             if (user.response == "unknown_user" || user.response === 'wrong server_key') {
-                this.props.hideMe ? this.props.hideMe() : null
-                this.setState({
-                    hide: true
-                })
+
+                this.setState({ hide: true }) //this.state.hide = true;
+                this.props.hideMe ? this.props.hideMe(this.state.hide) : null
+
             } else {
                 
                this.props.contact && stores.Contacts.addContact({phone:user.phone,host:user.current_host}).then(()=>{})
                this.props.contact && this.props.updateContact(user);
           
-               
-
                 this.setState({
                     profile: user,
                     isModalOpened: false,
@@ -38,44 +38,49 @@ export default class ProfileView extends Component {
                 this.props.setContact ? this.props.setContact(user) : null
             }
         }), 20 * this.props.delay ? this.props.delay : 2)
-    }
-    openModal() {
-        this.setState({
-            isModalOpened: true
-        })
-    }
-    render() {
-        return this.state.hide ?<View style={{marginBottom:"2%"}}><ProfileSimple profile={this.props.phoneInfo} invite  /></View>  : this.state.isMount ? (
 
-            <View style={{ flexDirection: "row",marginBottom: "2%",}}>
+        //small method fro testing
+        /*if(this.props.phone != "00237650594616"){
+            console.warn("here we are")
+            this.state.hide = true;
+            this.props.hideMe(this.state.hide)
+        }*/
+    }
+
+    openModal() {
+        this.setState({  isModalOpened: true })
+    }
+
+    render() {
+        return !this.state.hide && this.state.isMount ? (
+
+            <View style={{ flexDirection: "row"}}>
               
-               <View style={{height:"100%",justifyContent:"center"}}>
-                <Button onPress={() => {
-                    requestAnimationFrame(() => {
-                        this.setState({isModalOpened: true})
-                    });
-                }} transparent>
+               <TouchableOpacity  onPress={() => {
+                    requestAnimationFrame(() => { this.openModal() });
+                }} >
+                <View style={{alignSelf:"center"}} transparent>
                     {testForURL(this.state.profile.profile) ? <CacheImages small thumbnails {...this.props}
                         source={{ uri: this.state.profile.profile }} /> :
                         <Thumbnail small source={require("../../../../../Images/images.jpeg")}></Thumbnail>}
-                </Button>
                 </View>
+                </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => {requestAnimationFrame(() => {if(this.props.action){this.props.action(this.state.profile);}}) } }>
+              
                 <View style={{
-                    justifyContent:"center",flexDirection:"column",height:"100%",
-                    paddingLeft: "10%", display: 'flex', fontWeight: 'bold',
+                   alignSelf:"center", marginLeft:this.props.contact? "6.5%": "4%", fontWeight: 'bold'
                 }}>
                     <Text ellipsizeMode={'tail'} numberOfLines={1} style={{
                         color: ColorList.bodyText,
                         fontWeight: 'bold',
+                        //marginTop: "4%",
                     }}>{this.state.profile.phone === stores.LoginStore.user.phone ? "You" : this.state.profile.nickname}</Text>
 
                     {this.state.profile.status && this.state.profile.status != "undefined"&& !this.state.profile.status.isEmpty()?<Text ellipsizeMode={'tail'} numberOfLines={1} style={{ alignSelf: 'flex-start', fontStyle: 'italic', }}
                      note>{this.state.profile.status}</Text>:null}
 
                 </View>
-                </TouchableOpacity>
+             
 
                 {this.state.isModalOpened ? <ProfileModal
                     isOpen={this.state.isModalOpened}
@@ -89,7 +94,9 @@ export default class ProfileView extends Component {
                     }
                     profile={this.state.profile}
                 ></ProfileModal> : null}
+
             </View>
         ) : <ProfileIdicator />
     }
 }
+

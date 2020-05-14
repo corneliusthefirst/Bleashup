@@ -57,13 +57,12 @@ searchFilterFunction = (text)=>{
                style={{ color:colorList.bodyIcon,marginLeft:"2%",marginRight:"2%"}} type={"MaterialIcons"}name={"arrow-back"}></Icon>
                 
               <Icon type="EvilIcons" name="search" />
-               <Input style={{fontSize:15}} placeholder="search @user"  onChangeText={text => this.searchFilterFunction(text)}  value={this.state.value} />
-              <Icon name="ios-people" style={{marginRight:"2%"}} />
+               <Input style={{fontSize:15}} placeholder=" @search for user"  onChangeText={text => this.searchFilterFunction(text)}  value={this.state.value} />
+              <Icon name="user" type="AntDesign" style={{marginRight:"2%"}} />
         </View>
        </View>
      
       <View style={{flex:1,marginTop:"5%",marginLeft:"4%"}}>
-
         {this.state.data.length == 0 ? null :
          (this.state.loading == true ?
             <Container style={{ flex: 1, alignItems: 'center', justifyContent: 'center',backgroundColor:colorList.bodyBackground }}>

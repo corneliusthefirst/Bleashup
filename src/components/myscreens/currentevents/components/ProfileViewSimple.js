@@ -21,7 +21,7 @@ export default class ProfileSimple extends Component {
     }
 
     openModal() {
-        this.setState({
+        this.setState({ 
             isModalOpened: true
         })
     }
