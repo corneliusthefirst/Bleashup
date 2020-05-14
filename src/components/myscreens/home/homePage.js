@@ -51,7 +51,7 @@ import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
 import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
 import colorList from "../../colorList";
 import BeNavigator from '../../../services/navigationServices';
-import { PrivacyRequester } from '../settings/privacy/Requester';
+import { PrivacyRequester, shared_post } from '../settings/privacy/Requester';
 
 let { height, width } = Dimensions.get('window');
 
@@ -167,13 +167,16 @@ class Home extends Component {
   realNew = []
   testers(){
     setTimeout(() => {
-      /*PrivacyRequester.muted("650594616").then((res) => {
+      PrivacyRequester.shareWithSome("vKgCzYsA6iOzc2SJBujwSnlHlETWjhAbIa7",
+      "740a5530-8b20-11ea-9234-9b01561bce6b",
+      shared_post,
+      "Pink Pink","Filbee","",[{phone:'002375465643933',host:""},{phone:'00335345645323',host:""}]).then((res) => {
         console.warn("privacy test response", res)
-      })*/
+      })
     },1000)
   }
   componentDidMount() {
-    this.testers()
+    //this.testers()
     stores.LoginStore.getUser().then((user) => {
     })
     stores.Highlights.initializeGetHighlightsListener()

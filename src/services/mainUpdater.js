@@ -1,6 +1,8 @@
 import stores from "../stores";
 import uuid from "react-native-uuid";
 import CalendarServe from "./CalendarService";
+import toTitleCase from './toTitle';
+import { shared_post, shared_remind } from '../components/myscreens/settings/privacy/Requester';
 class mainUpdater {
     addParticipants(eventID, participants, updater, updated, date) {
         return new Promise((resolve, reject) => {
@@ -74,21 +76,75 @@ class mainUpdater {
             });
         });
     }
-    blocked(updater){
-        return new Promise((resolve,reject) => {
+    blocked(updater) {
+        return new Promise((resolve, reject) => {
             stores.Privacy.blockMe(updater).then(() => {
                 resolve()
             })
         })
     }
-    unBlocked(updater){
+    unBlocked(updater) {
         return stores.Privacy.unblockMe(updater)
     }
-    muted(updater){
+    muted(updater) {
         return stores.Privacy.muteMe(updater)
     }
-    unMuted(updater){
+    unMuted(updater) {
         return stores.Privacy.unmuteMe(updater)
+    }
+    choseShareTitle(type) {
+        if (type === shared_post) {
+            return 'Post'
+        } else if (type === shared_remind) {
+            return 'Remind'
+        } else {
+            'Vote'
+        }
+    }
+    returnItemTitle(type, itemID, eventID) {
+        return new Promise((resolve, reject) => {
+            stores.Events.loadCurrentEvent(eventID).then(event => {
+                if (type == shared_remind) {
+                    stores.Reminds.loadRemind(itemID).then((remind) => {
+                        resolve({ item_title: remind && remind.title, activity_name: event && event.about && event.about.title });
+                    })
+                } else if (type === shared_post) {
+                    stores.Highlights.loadHighlight(itemID).then(post => {
+                        resolve({ item_title: post && post.title, activity_name: event && event.about && event.about.title })
+                    })
+                } else {
+                    stores.Votes.loadVote(itemID).then(vote => {
+                        console.warn(vote,itemID)
+                        resolve({ item_title: vote && vote.title, activity_name: event && event.about && event.about.title })
+                    })
+                }
+            })
+        })
+    }
+
+    saveShares(eventID, share, updater, date) {
+        return new Promise((resolve, reject) => {
+            this.returnItemTitle(share.type, share.item_id, share.activity_id).then((title) => {
+                console.warn(title,share)
+                let shareTitle = this.choseShareTitle(share.type)
+                let change = {
+                    id: uuid.v1(),
+                    date: date,
+                    updated: share.type,
+                    updater :updater,
+                    title: 'Updates on Main Activity',
+                    event_id: eventID,
+                    changed: 'Shared ' + toTitleCase(title.item_title) + ' (' +
+                        shareTitle + ') to his ' +
+                        toTitleCase(share.scope).toLowerCase() === 'some' ? 'Contacts' : toTitleCase(share.scope),
+                    new_value:{data:share.id,new_value:title.item_title}
+                }
+                stores.Events.addEvent(share).then(() => {
+                    resolve(change)
+                    stores.ChangeLogs.addChanges(change)
+                })
+            })
+        })
     }
 }
 

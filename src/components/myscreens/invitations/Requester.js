@@ -6,6 +6,7 @@ import { AddParticipant } from '../../../services/cloud_services';
 import uuid from 'react-native-uuid';
 import firebase from 'react-native-firebase';
 import { uniqBy } from 'lodash';
+import moment from "moment";
 class Requester {
     seen(invitation) {
         return new Promise((resolve, reject) => {
@@ -69,7 +70,7 @@ class Requester {
                                 updater: invitation.inviter,
                                 changed: `Invited You To Ths Activity`,
                                 new_value: { data: null, new_value: [Participant] },
-                                date: event.created_at,
+                                date: moment().format(),
                                 time: null
                             }
                             stores.ChangeLogs.addChanges(Change).then(res => {

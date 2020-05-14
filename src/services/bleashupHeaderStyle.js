@@ -11,5 +11,5 @@ export default {
     color:ColorList.headerText,
     width: "100%",
     flexWrap: 'wrap',
-    //height: '100%',
+    height: '100%',
 } 

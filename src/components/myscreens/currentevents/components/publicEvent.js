@@ -78,10 +78,6 @@ class PublicEvent extends Component {
     };
   }
 
-  /*state = {
-    master: true
-  }*/
-
   shouldComponentUpdate(nextProps, nextState, nextContext) {
     return this.state.isMount !== nextState.isMount ||
       nextState.joint !== this.state.joint ||
@@ -100,7 +96,6 @@ class PublicEvent extends Component {
       })
 
     }
-
     setTimeout(() => {
       this.setState({
         isMount: true,
@@ -293,7 +288,6 @@ class PublicEvent extends Component {
         location={this.props.Event.location.string}></MapView></View> : null
   }
   renderprofile() {
-    //console.warn("opponent is",this.state.opponent)
     return (
       <CardItem
         style={{
