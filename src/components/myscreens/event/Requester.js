@@ -949,7 +949,7 @@ class Request {
     createHighlight(newHighlight, activityName) {
         return new Promise((resolve, reject) => {
             let notif = request.Notification()
-            notif.notification.body = toTitleCase(stores.LoginStore.user.nickname).split(' ') + 'Add a new Post'
+            notif.notification.body = toTitleCase(stores.LoginStore.user.nickname) + 'Add a new Post'
             notif.notification.title = 'New Post @ ' + activityName
             notif.notification.image = newHighlight.url.photo
             notif.data.activity_id = newHighlight.event_id
