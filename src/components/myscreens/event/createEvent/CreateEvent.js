@@ -32,41 +32,12 @@ export default class CreateEvent extends Component {
      if(!event){
       event =  request.Event();
       event.id = "newEventId";
-
-       stores.LoginStore.getUser().then((user)=>{
-
-        event.creator_phone = user.phone;
-        //we add the creator as first participant 
-        let Participant=request.Participant();
-        Participant.phone = user.phone;
-        Participant.master = true;
-        Participant.status = user.status;
         stores.Events.addEvent(event).then(()=>{});
-        stores.Events.addParticipant(event.id, Participant,false).then(()=>{})
-
-      })
 
      }
-
-    //stores.Highlights.removeHighlight("newHighlightId").then(()=>{console.warn("highlight removed")})   
-    stores.Highlights.readFromStore().then(Highlights =>{
-      
-     let highlight = find(Highlights, { id:"newHighlightId" }); 
-     //let highlight1 = find(Highlights, { id:"1dad9df0-fbc4-11e9-9234-25e415964302" });
-     //console.warn("here is highlight",highlight);
-
-     if(!highlight){
-       highlight =  request.Highlight();
-       highlight.id = "newHighlightId";
-       
-       stores.Highlights.addHighlight(highlight).then(()=>{}); 
-     }    
      this.props.navigation.navigate("CreateEventView");
      resolve();
 
-    });
-      
-    
     });
       
   });

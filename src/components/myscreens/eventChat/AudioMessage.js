@@ -15,6 +15,7 @@ import testForURL from '../../../services/testForURL';
 import converToHMS from '../highlights_details/convertToHMS';
 import FileExachange from '../../../services/FileExchange';
 import ColorList from '../../colorList';
+import stores from '../../../stores';
 export default class AudioMessage extends Component {
     constructor(props) {
         super(props);
@@ -64,8 +65,8 @@ export default class AudioMessage extends Component {
     setAfterSuccess(path) {
         GState.downlading = false
         this.props.message.source = Platform.OS === 'android' ? path + "/" : '' + path
-        this.props.room.addStaticFilePath(this.props.message.source, this.props.message.id).then(() => {
-            this.props.room.addAudioSizeProperties(this.props.message.id, this.state.total,
+        stores.Messages.addStaticFilePath(this.props.room,this.props.message.source, this.props.message.id).then(() => {
+            stores.Messages.addAudioSizeProperties(this.props.room,this.props.message.id, this.state.total,
                 this.state.received, this.props.message.duration).then(() => {
                     this.initialisePlayer(this.props.message.source)
                     this.setState({
@@ -121,7 +122,7 @@ export default class AudioMessage extends Component {
         })
         this.props.message.received = this.state.received
         this.props.message.total = this.state.total
-        this.props.room.addAudioSizeProperties(this.props.message.id, this.state.total,
+        stores.Messages.addAudioSizeProperties(this.props.room,this.props.message.id, this.state.total,
             this.state.received, this.props.message.duration).then(() => {
                 this.setState({})
             })
@@ -173,7 +174,7 @@ export default class AudioMessage extends Component {
                         currentPosition: seconds / this.props.message.duration,
                         currentTime: seconds
                     })
-                    this.props.room.addDuration(seconds).then(status => {
+                    stores.Messages.addDuration(this.props.room,seconds).then(status => {
                         //this.player.release()
                     })
                 })
@@ -195,7 +196,7 @@ export default class AudioMessage extends Component {
             this.exchanger.task.cancel((err, taskID) => {
             })
         }
-        this.props.room.SetCancledState(this.props.message.id)
+        stores.Messages.SetCancledState(this.props.room,this.props.message.id)
         this.setState({
             downloading: false
         })

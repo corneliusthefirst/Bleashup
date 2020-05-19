@@ -62,12 +62,14 @@ import AudioRecorder from "./AudioRecorder";
 import TypingIndicator from "./TypingIndicator";
 import colorList from "../../colorList";
 import { PrivacyRequester } from '../settings/privacy/Requester';
+import { observer } from "mobx-react";
+import { toJS } from "mobx";
 
 
 
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenheight = Math.round(Dimensions.get('window').height);
-export default class ChatRoom extends Component {
+@observer class ChatRoom extends Component {
     constructor(props) {
         super(props);
         this.authObserver()
@@ -158,6 +160,7 @@ export default class ChatRoom extends Component {
     textInputFactor = 0.15
     fireRef = null
     newMessages = []
+    roomID = this.props.firebaseRoom
     informRemote(newMessage, newKey, received) {
         firebase.database().ref(`${this.props.firebaseRoom}/${newKey}/received`).set(received)
         if (newMessage.sender && newMessage.sender.phone == this.props.user.phone) {
@@ -171,11 +174,12 @@ export default class ChatRoom extends Component {
         }
     }
     addNewMessageForMessaging(newMessage, newKey) {
-        if (this.room.messages.length > 0) {
-            let index = findIndex(this.room.messages, { id: newMessage.id })
+        //if (stores.Messages.messages[this.roomID] &&
+        //    stores.Messages.messages[this.roomID].length > 0) {
+            let index = findIndex(stores.Messages.messages[this.roomID], { id: newMessage.id })
             let received = uniqBy(newMessage.received, "phone")
-            if (index >= 0 && this.room.messages[index].key !== newKey) {
-                this.room.addNewMessage(newMessage, newKey, newMessage.type, true, true).then(() => {
+            if (index >= 0 && stores.Messages.messages[this.roomID][index].key !== newKey) {
+                stores.Messages.addNewMessage(this.roomID, newMessage, newKey, newMessage.type, true, true).then(() => {
                     this.informRemote(newMessage, newKey, received)
                 })
             } else {
@@ -184,14 +188,14 @@ export default class ChatRoom extends Component {
                 } else {
                     firebase.database().ref(`${this.props.firebaseRoom}/${newKey}/received`).set(received).then(() => {
                         this.newMessages.length !== 0 ? this.newMessages.unshift(newMessage) : null
-                        this.room.addNewMessage(newMessage, newKey, newMessage.type, true, this.newMessages.length == 0).then(() => {
+                        stores.Messages.addNewMessage(this.roomID, newMessage, newKey, newMessage.type, true, this.newMessages.length == 0).then(() => {
                             this.setState({
                                 newMessage: true
                             })
                         })
                     })
                 }
-            }
+          //  }
         }
     }
     addNewMessage(newMessage, newKey) {
@@ -206,8 +210,8 @@ export default class ChatRoom extends Component {
         })
     }
     removeMessage(message) {
-        this.room.addAndReadFromStore(message).then(value => {
-            this.room.removeMessage(value.id).then(() => {
+        stores.Messages.addAndReadFromStore(this.roomID, message).then(value => {
+            stores.Messages.removeMessage(this.roomID, value.id).then(() => {
                 firebase.database().ref(`${this.props.firebaseRoom}/${message.key}`).remove((error) => {
                     this.setState({
                         newMessage: true
@@ -268,12 +272,13 @@ export default class ChatRoom extends Component {
         messages = uniqBy(messages, 'id').sort(this.dateSorter)
         let result = [];
         return new Promise((resolve, reject) => {
-            this.room.readFromStore().then(data => {
-                messages.map(element => {
+            stores.Messages.readFromStore().then(data => {
+                messages.forEach(element => {
                     let date = moment(element.created_at).format('YYYY/MM/DD')
-                    index = findIndex(data, { id: date })
+                    index = data[this.roomID] &&
+                        findIndex(data[this.roomID], { id: date })
                     index2 = findIndex(result, { id: date })
-                    if (index < 0 && index2 < 0) {
+                    if ((!index && index2 < 0) || (index < 0 && index2 < 0)) {
                         result.unshift({ ...element, id: date, type: 'date_separator' })
                         result.unshift(element)
                     } else {
@@ -287,11 +292,12 @@ export default class ChatRoom extends Component {
     }
     showMessage = []
     loadComments() {
-        if (!this.room.messages || this.room.messages.length <= 0) {
+        if (!stores.Messages.messages[this.roomID] ||
+            stores.Messages.messages[this.roomID].length <= 0) {
             this.fireRef.orderByKey().limitToLast(50).once("value", snapshot => {
                 if (snapshot.val()) {
                     this.formStorableData(values(snapshot.val())).then(newVal => {
-                        this.room.messages = newVal
+                        stores.Messages.messages[this.roomID] = newVal
                         this.setState({
                             newMessage: !this.state.newMessage,
                             commentLoaded: true,
@@ -309,23 +315,26 @@ export default class ChatRoom extends Component {
                 }
             })
         } else {
-            LoadMoreComments(this.props.firebaseRoom, this.room.messages.length, this.room.messages.length + 50).then(res => {
-                res.json().then(data => {
-                    data && data.length > 0 && this.formStorableData(data).then(mess => {
-                        this.room.messages = uniqBy(this.room.messages.concat(mess), 'id')
-                        this.setState({
-                            newMessage: !this.state.newMessage,
-                            loaded: true
+            LoadMoreComments(this.props.firebaseRoom,
+                stores.Messages.messages[this.roomID].length,
+                stores.Messages.messages[this.roomID].length + 50).then(res => {
+                    res.json().then(data => {
+                        data && data.length > 0 && this.formStorableData(data).then(mess => {
+                            stores.Messages.messages[this.roomID] = uniqBy(stores.Messages.messages[this.roomID].concat(mess), 'id')
+                            this.setState({
+                                newMessage: !this.state.newMessage,
+                                loaded: true
+                            })
+                            this.adjutRoomDisplay()
                         })
-                        this.adjutRoomDisplay()
                     })
                 })
-            })
         }
     }
     initializeNewMessageForRoom() {
         return new Promise((resolve, reject) => {
             this.formStorableData(this.props.newMessages).then(news => {
+                console.warn("transformed messages",findIndex(news,{type:"date_separator"}))
                 this.newMessages = news
                 this.newMessages = this.newMessages.length > 0 ? [...this.newMessages, {
                     id: 'New Messages',
@@ -345,7 +354,7 @@ export default class ChatRoom extends Component {
                     this.adjutRoomDisplay()
                 }, 100)
                 if (this.props.newMessages.length > 0) {
-                    this.room.insertBulkMessages(this.newMessages).then(() => {
+                    stores.Messages.insertBulkMessages(this.roomID, this.newMessages).then(() => {
                         resolve()
                     })
                 } else {
@@ -362,14 +371,14 @@ export default class ChatRoom extends Component {
     initializeRoomListeners() {
         this.fireRef.orderByKey().limitToLast(1).on('child_added', snapshot => {
             let message = snapshot.val()
-            console.warn(message)
             this.addNewMessage(message, snapshot.key)
         })
         this.fireRef.on('child_changed', snapshot => {
-            let index = find(this.room.messages, { key: snapshot.key })
-            if (index >= 0) {
-                this.room.messages[index] = snapshot.val()
-                this.room.addNewMessage(snapshot.val(), snapshot.key, true, true).then(() => {
+            let index = stores.Messages.messages[this.roomID] &&
+                find(stores.Messages.messages[this.roomID], { key: snapshot.key })
+            if (index && index >= 0) {
+                stores.Messages.messages[this.roomID][index] = snapshot.val()
+                stores.Messages.addNewMessage(this.roomID, snapshot.val(), snapshot.key, true, true).then(() => {
                     this.setState({ newMessage: true })
                 })
             }
@@ -380,6 +389,7 @@ export default class ChatRoom extends Component {
         this.typingRef.on('child_changed', newChild => {
             //console.warn(newChild)
             let typer = newChild.phone ? newChild.nickname : newChild
+            this.props.setTyper && this.props.setTyper()
             this.showTypingToast(typer)
         })
     }
@@ -411,10 +421,12 @@ export default class ChatRoom extends Component {
         }, 30)
     }
     markAsRead() {
-        this.room.deleteNewMessageIndicator().then(() => { })
+        stores.Messages.deleteNewMessageIndicator(this.roomID).then(() => { })
         if (this.newMessages.length > 0) {
-            this.room.messages = this.newMessages.concat(this.room.messages)
-            this.room.messages = uniqBy(this.room.messages, "id")
+            stores.Messages.messages[this.roomID] =
+                this.newMessages.concat(stores.Messages.messages[this.roomID])
+            stores.Messages.messages[this.roomID] =
+                uniqBy(stores.Messages.messages[this.roomID], "id")
             this.newMessages = []
             this.showMessage = []
             this.setState({
@@ -425,11 +437,11 @@ export default class ChatRoom extends Component {
     componentWillMount() {
         this.fireRef = this.getRef(this.props.firebaseRoom);
         this.setTypingRef(this.props.firebaseRoom)
-        this.props.isComment && AddMembers(this.props.activity_id, this.props.firebaseRoom, [{ phone: stores.LoginStore.user.phone }])
+        //this.props.isComment && AddMembers(this.props.activity_id, this.props.firebaseRoom, [{ phone: stores.LoginStore.user.phone }])
         //!! handle user peer user disconnection here listen to something like 'current_room/${peer_user_phone}' to know wether the user is connected or not
         // !! this will only be valid for a when there is just one user in a room .
         firebase.database().ref(`current_room/${this.props.user.phone}`).onDisconnect().set(null)
-        this.room = new ChatStore(this.props.firebaseRoom, this.props.isComment) //!! example of chat store initialization
+        this.props.isComment ? stores.Messages.messages[this.roomID] = []:null
         this.keyboardDidShowSub = Keyboard.addListener('keyboardDidShow', this.handleKeyboardDidShow);
         this.keyboardDidHideSub = Keyboard.addListener('keyboardDidHide', this.handleKeyboardDidHide);
         if (this.BackHandler) this.BackHandler.remove()
@@ -459,7 +471,6 @@ export default class ChatRoom extends Component {
             showEmojiInputCaption: false
         })
         this.adjutRoomDisplay()
-        this.markAsRead()
     }
 
     handleKeyboardDidHide = () => {
@@ -639,7 +650,7 @@ export default class ChatRoom extends Component {
     sendTextMessage(newMessage) {
         if (GState.connected) {
             this.scrollToEnd()
-            this.room.replaceMessage(newMessage).then(() => {
+            stores.Messages.replaceMessage(this.roomID,newMessage).then(() => {
                 this.sendMessage(newMessage)
             });
         }
@@ -661,11 +672,7 @@ export default class ChatRoom extends Component {
                 created_at: moment().format()
             }
             this.scrollToEnd()
-            this.room.addMessageToStore(messager).then((data) => {
-                this.room.messages = data
-                this.setState({
-                    newMessage: true
-                })
+            stores.Messages.addMessageToStore(this.roomID,messager).then((data) => {
             })
             this._resetTextInput()
             this.setState({
@@ -680,12 +687,12 @@ export default class ChatRoom extends Component {
     user = this.props.user;
     creator = 1
     showPhoto(photo) {
-        Keyboard.dismiss()
         this.setState({
             photo: photo,
             showPhoto: true,
             //hideStatusBar: true
         })
+            Keyboard.dismiss()
     }
     captionMessages = []
     sendingCaptionMessages = false
@@ -705,7 +712,7 @@ export default class ChatRoom extends Component {
                 let tobeSent = [...this.captionMessages]
                 this.captionMessages = []
                 tobeSent.map(newMessage => {
-                    this.room.replaceMessage(newMessage).then(() => {
+                stores.Messages.replaceMessage(this.roomID,newMessage).then(() => {
                         this.sendMessage({ ...newMessage, photo: newMessage.source })
                         this.informMembers()
                         //send message to the server here
@@ -761,7 +768,7 @@ export default class ChatRoom extends Component {
                     filename: res.filename,
                     text: this.state.captionText
                 }
-                this.room.addMessageToStore(message).then(() => {
+                stores.Messages.addMessageToStore(this.roomID,message).then(() => {
                     this.setState({
                         newMessage: true
                     })
@@ -798,7 +805,7 @@ export default class ChatRoom extends Component {
             filename: this.state.filename,
             text: this.state.textValue
         }
-        this.room.addMessageToStore(message).then(() => {
+        stores.Messages.addMessageToStore(this.roomID,message).then(() => {
             this.setState({
                 newMessage: true
             })
@@ -818,28 +825,28 @@ export default class ChatRoom extends Component {
         this.fucussTextInput()
     }
     replaceMessage(newMessage) {
-        this.room.replaceMessage(newMessage).then(() => {
+        stores.Messages.replaceMessage(this.roomID,newMessage).then(() => {
             this.sendMessage({ ...newMessage, photo: newMessage.source })
             this.informMembers()
             //send message to the server here
         });
     }
     replaceMessageVideo(newMessage) {
-        this.room.replaceMessage(newMessage).then(() => {
+        stores.Messages.replaceMessage(this.roomID,newMessage).then(() => {
             this.sendMessage({ ...newMessage, source: newMessage.temp, cancled: undefined })
             this.informMembers()
             //send message to the server here
         });
     }
     replaceMessageFile(newMessage) {
-        this.room.replaceMessage(newMessage).then(() => {
+        stores.Messages.replaceMessage(this.roomID,newMessage).then(() => {
             this.sendMessage({ ...newMessage, source: newMessage.temp })
             this.informMembers()
             //send message to the server here
         });
     }
     replaceAudioMessage(newMessage) {
-        this.room.replaceMessage(newMessage).then((messages) => {
+        stores.Messages.replaceMessage(this.roomID,newMessage).then((messages) => {
             this.sendMessage({ ...newMessage, source: newMessage.temp })
             this.informMembers()
             //send message to the server here
@@ -872,7 +879,7 @@ export default class ChatRoom extends Component {
             total: res.size,
             created_at: moment().format(),
         }
-        this.room.addMessageToStore(message).then((data) => {
+        stores.Messages.addMessageToStore(this.roomID, message).then((data) => {
             this.setState({
                 newMessage: true
             })
@@ -935,7 +942,7 @@ export default class ChatRoom extends Component {
                 file_name: 'test.mp3',
                 created_at: moment().format()
             }
-            this.room.addMessageToStore(message).then(() => {
+            stores.Messages.addMessageToStore(this.roomID,message).then(() => {
                 this.setState({
                     newMessage: true
                 })
@@ -979,7 +986,7 @@ export default class ChatRoom extends Component {
             received: [{ phone: stores.LoginStore.phone, date: moment().format() }],
             sender: this.sender
         }
-        this.room.addMessageToStore(message).then(() => {
+        stores.Messages.addMessageToStore(this.roomID,message).then(() => {
             this.setState({
                 //isVoteCreationModalOpened: false,
                 newMessage: true
@@ -1015,7 +1022,7 @@ export default class ChatRoom extends Component {
             if (index === 0) {
                 if (GState.connected) {
                     let messageRef = this.fireRef.child(message.key)
-                    this.room.removeMessage(message.id).then(() => {
+                    stores.Messages.removeMessage(this.roomID,message.id).then(() => {
                         this.setState({ newMessage: true })
                         if (message.sender.phone == this.sender.phone) {
                             messageRef.remove()
@@ -1066,7 +1073,8 @@ export default class ChatRoom extends Component {
     showRoomMedia() {
         this.setState({
             isMediaModalOpened: true,
-            messages: JSON.stringify(this.room.messages)
+            messages: stores.Messages.messages[this.roomID] &&
+             JSON.stringify(stores.Messages.messages[this.roomID])
         })
     }
     showVoters(voters) {
@@ -1099,7 +1107,7 @@ export default class ChatRoom extends Component {
                             {!this.state.loaded ? <Waiter></Waiter> : <View style={{}}><View style={{ width: "100%", alignSelf: 'center', }}>
                                 <ScrollView onScroll={() => {
                                     this.adjutRoomDisplay()
-                                }} inverted={true} keyboardShouldPersistTaps={"always"} showsVerticalScrollIndicator={false} scrollEnabled={false} inverted nestedScrollEnabled
+                                }} inverted={false} keyboardShouldPersistTaps={"always"} showsVerticalScrollIndicator={false} scrollEnabled={false} inverted nestedScrollEnabled
                                     ref="scrollViewRef">
                                     <View style={{ height: this.state.messageListHeight, marginBottom: "0.5%" }}>
                                         <TouchableWithoutFeedback onPressIn={() => {
@@ -1239,7 +1247,7 @@ export default class ChatRoom extends Component {
         return result
     }
     replaceVote(vote) {
-        this.room.replaceNewMessage(vote).then(() => {
+        stores.Messages.replaceNewMessage(this.roomID, vote).then(() => {
             this.sendMessage(vote)
             this.initialzeFlatList()
             this.setState({
@@ -1259,7 +1267,7 @@ export default class ChatRoom extends Component {
     }
     persistMessageLayout(id, layout) {
         console.warn("persisiting dimensions")
-        this.room.setMessageDimessions(id, layout)
+        stores.Messages.setMessageDimessions(this.roomID, id, layout)
     }
     delay = 1
     messageList() {
@@ -1271,7 +1279,8 @@ export default class ChatRoom extends Component {
             loadMoreFromRemote={() => this.props.isComment && this.loadComments()}
             renderPerBatch={20}
             initialRender={20}
-            numberOfItems={this.room.messages.length}
+            numberOfItems={stores.Messages.messages[this.roomID] ?
+                stores.Messages.messages[this.roomID].length:0}
             keyExtractor={(item, index) => item ? item.id : null}
             renderItem={(item, index) => {
                 this.delay = this.delay >= 20 || (item && !item.sent) ? 0 : this.delay + 1
@@ -1291,9 +1300,12 @@ export default class ChatRoom extends Component {
                     votes={this.state.votes}
                     showProfile={(pro) => this.props.showProfile(pro)}
                     delay={this.delay}
-                    room={this.room}
-                    PreviousMessage={this.room.messages[index >= 0 ? index + 1 : 0] &&
-                        this.room.messages[index >= 0 ? index + 1 : 0]}
+                    room={this.roomID}
+                    PreviousMessage={
+                        stores.Messages.messages[this.roomID] &&
+                        stores.Messages.messages[this.roomID][index >= 0 ? index + 1 : 0] &&
+                        stores.Messages.messages[this.roomID] &&
+                        stores.Messages.messages[this.roomID][index >= 0 ? index + 1 : 0]}
                     showActions={(message) => this.showActions(message)}
                     firebaseRoom={this.props.firebaseRoom}
                     roomName={this.props.roomName}
@@ -1323,7 +1335,8 @@ export default class ChatRoom extends Component {
                     replaceMessageFile={(data) => this.replaceMessageFile(data)}
                     playVideo={(source) => this.playVideo(source)}></Message> : null;
             }}
-            dataSource={this.room.messages}
+            dataSource={toJS(stores.Messages.messages[this.roomID] && 
+                stores.Messages.messages[this.roomID] || [])}
             newData={this.showMessage}
             newDataLength={this.showMessage.length}>
         </BleashupFlatList>;
@@ -1358,9 +1371,8 @@ export default class ChatRoom extends Component {
                     <View style={{
                         width: "86%",
                         fontSize: 17,
-                        //height: 40,
                         flexDirection: 'row',
-                        justifyContent: "space-around",
+                        justifyContent: "space-between",
                         borderColor: "#1FABAB",
                         borderWidth: 0,
                         borderRadius: 10,
@@ -1368,36 +1380,60 @@ export default class ChatRoom extends Component {
 
                         <View style={{
                             height: 45,
-                            width: '12%', alignItems: "center", justifyContent: "center", padding: '1%'
-                        }}><Icon onPress={() => this.openCamera()}
+                            width: '12%', 
+                            alignItems: "center", 
+                            justifyContent: "center", 
+                            padding: '1%'
+                        }}><Icon 
+                            onPress={() => this.openCamera()}
                             style={{ color: "#696969" }}
                             type={"MaterialCommunityIcons"}
                             name={"image-filter"}></Icon>
                         </View>
-
-                        <Item style={{
-                            width: '88%', marginLeft: "2%", flexDirection: 'column', borderRadius: 20, 
+                        <Item 
+                        style={{
+                            width: '88%',
+                            flexDirection: 'column', 
+                            borderRadius: 20,
                             borderTopLeftRadius: this.state.replying ? 5 : 20,
-                            borderTopRightRadius: this.state.replying ? 5 : 20}} rounded>
+                            borderTopRightRadius: this.state.replying ? 5 : 20
+                        }} rounded>
                             {
                                 //* Reply Message caption */
                                 this.state.replying ? this.replyMessageCaption() : null
                             }
                             <TextInput
-
                                 value={this.state.textValue}
                                 onChange={(event) => this._onChange(event)}
                                 placeholder={'Your Message'}
-                                style={{ width: '84%', maxHeight: 300, minHeight: 45, marginLeft: "3%" }}
-                                placeholderTextColor='#66737C'
+                                style={{
+                                alignSelf: 'flex-start',
+                                width: '84%', 
+                                maxHeight: 300, 
+                                minHeight: 45,
+                                marginLeft: "3%" 
+                                }}
+                                placeholderTextColor = '#66737C'
                                 multiline={true}
                                 enableScrollToCaret
-                                ref={(r) => { this._textInput = r; }} />
-                            <View style={{ flex: 1, width: '16%', position: "absolute", bottom: 0, right: 0 }}><Icon onPress={() => {
+                                ref={(r) => { this._textInput = r; }}
+                            />
+                            <View style={{
+                                flex: 1, 
+                                width: '16%', 
+                                position: "absolute",
+                                bottom: 0, 
+                                right: 0 
+                            }}
+                        >
+                            <Icon onPress={() => {
                                 this.toggleEmojiKeyboard();
                                 this.markAsRead();
                             }} style={{ color: "gray", marginBottom: 11 }}
-                                type="Entypo" name="emoji-flirt"></Icon></View></Item>
+                                type="Entypo" name="emoji-flirt">
+                            </Icon>
+                            </View>
+                            </Item>
 
                     </View>
 
@@ -1660,8 +1696,9 @@ export default class ChatRoom extends Component {
     }
     duration = 10
     replyMessageViewer() {
-        let message = find(this.room.messages,
-            { id: this.state.replyer.id })
+        let message = stores.Messages.messages[this.roomID] &&
+            find(stores.Messages.messages[this.roomID],
+                { id: this.state.replyer.id })
         return <View style={{
             height: 1000,
             position: "absolute", backgroundColor: this.transparent,
@@ -1769,3 +1806,4 @@ export default class ChatRoom extends Component {
         </View>;
     }
 }
+export default ChatRoom

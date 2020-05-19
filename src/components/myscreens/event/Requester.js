@@ -375,12 +375,16 @@ class Request {
             })
         })
     }
-    addParticipants(eventID, participants) {
+    addParticipants(eventID, participants,activity_name) {
         return new Promise((resolve, reject) => {
+            let notif = request.Notification()
+            notif.notification.title = "New Activity" 
+            notif.notification.body = toTitleCase(stores.LoginStore.user.nickname) + ' Added you to ' + activity_name
+            notif.data.activity_id = eventID 
             let updater = stores.LoginStore.user.phone
             tcpRequest.UpdateCurrentEvent(updater,
                 eventID, "adds",
-                participants, eventID + "_adds").then((JSONData) => {
+                participants, eventID + "_adds",notif).then((JSONData) => {
                     serverEventListener.sendRequest(JSONData, eventID + '_adds').then(() => {
                         resolve("ok")
                         MainUpdater.addParticipants(eventID, participants, updater, "new_participants", moment().format()).then((Change) => {

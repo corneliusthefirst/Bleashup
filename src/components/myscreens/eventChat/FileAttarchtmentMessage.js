@@ -11,6 +11,7 @@ import GState from '../../../stores/globalState';
 import testForURL from '../../../services/testForURL';
 import FileExachange from '../../../services/FileExchange';
 import Pickers from '../../../services/Picker';
+import stores from '../../../stores';
 
 export default class FileAttarchementMessaege extends Component {
     constructor(props) {
@@ -26,8 +27,8 @@ export default class FileAttarchementMessaege extends Component {
     setAfterSuccess(path) {
         GState.downlading = false
         this.props.message.source = Platform.OS === 'android' ? path + "/" : '' + path
-        this.props.room.addStaticFilePath(this.props.message.source, this.props.message.id).then(() => {
-            this.props.room.addAudioSizeProperties(this.props.message.id, this.props.message.total,
+        stores.Messages.addStaticFilePath(this.props.room,this.props.message.source, this.props.message.id).then(() => {
+            stores.Messages.addAudioSizeProperties(this.props.room,this.props.message.id, this.props.message.total,
                 this.props.message.received, this.props.message.duration).then(() => {
                     this.setState({
                         loaded: true,
@@ -84,7 +85,7 @@ export default class FileAttarchementMessaege extends Component {
         this.exchanger.task.cancel((err, taskID) => {
             this.setState({ downloading: false })
         })
-        this.props.room.SetCancledState(this.props.message.id)
+        stores.Messages.SetCancledState(this.props.room,this.props.message.id)
     }
     toMB(data) {
         mb = 1000 * 1000
@@ -109,7 +110,7 @@ export default class FileAttarchementMessaege extends Component {
         GState.downlading = false
         this.props.message.received = received
         this.props.message.total = total
-        this.props.room.addAudioSizeProperties(this.props.message.id,
+        stores.Messages.addAudioSizeProperties(this.props.room,this.props.message.id,
             total, received).then(() => {
                 console.warn("setting failed state")
                 this.setState({

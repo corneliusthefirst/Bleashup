@@ -28,7 +28,8 @@ export default class VideoUploader extends Component {
     task = null
     uploadVideo() {
         this.setState({
-            compressing: false
+            compressing: false,
+            uploading:true
         })
         /*Pickers.CompressVideo({
             source: this.props.message.source,
@@ -85,14 +86,14 @@ export default class VideoUploader extends Component {
         return data / mb
     }
     cancelUpLoad() {
-        Pickers.CancleCompression()
+        //Pickers.CancleCompression()
         this.exchanger.task && this.exchanger.task.cancel((err, taskID) => {
         })
     }
     render() {
         return (
             <View>
-                <View style={{ padding: "1.5%" }}>
+                <View style={{ padding: "1.5%" ,minWidth: 190,}}>
                     <View>
                         <TouchableOpacity onPress={() => this.props.showPhoto(this.props.message.source)}>
                             <View resizeMode={'contain'} style={{
@@ -120,7 +121,7 @@ export default class VideoUploader extends Component {
                                                                 </Icon>
                                                                     <Spinner style={{ position: 'absolute', marginTop: "-136%", marginLeft: "-15%", }}></Spinner>
                                                                 </View>
-                                                            </TouchableWithoutFeedback> : <TouchableWithoutFeedback onPress={() => this.uploadVideo()}>
+                                                            </TouchableWithoutFeedback> : <TouchableWithoutFeedback onPress={() => !this.state.uploading && this.uploadVideo()}>
                                                                     <View>
                                                                         <Icon type="EvilIcons" style={{ color: ColorList.bodyBackground }} name="arrow-up">
                                                                         </Icon>

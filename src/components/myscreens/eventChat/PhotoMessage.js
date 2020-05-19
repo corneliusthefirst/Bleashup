@@ -10,6 +10,7 @@ import Image from 'react-native-scalable-image';
 import CacheImages from '../../CacheImages';
 import FileExachange from '../../../services/FileExchange';
 import testForURL from '../../../services/testForURL';
+import stores from "../../../stores";
 
 export default class PhotoMessage extends Component {
     constructor(props) {
@@ -38,7 +39,7 @@ export default class PhotoMessage extends Component {
             this.exchanger = new FileExachange(this.props.message.photo, this.path, 0, 0, (received, total) => {
 
             }, (dir, received, total) => {
-                this.props.room.replaceMessage({ ...this.props.message, photo: 'file://' + dir }).then(() => {
+                stores.Messages.replaceMessage(this.props.room,{ ...this.props.message, photo: 'file://' + dir }).then(() => {
 
                 })
             }, (error) => {

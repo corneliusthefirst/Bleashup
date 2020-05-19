@@ -2,7 +2,6 @@ import tcpRequest from '../../../services/tcpRequestData';
 import EventListener from '../../../services/severEventListener';
 import stores from '../../../stores';
 import uuid from 'react-native-uuid';
-import { Toast } from 'native-base';
 import request from '../../../services/requestObjects';
 import { isEqual } from 'lodash';
 import moment from 'moment';
@@ -169,7 +168,6 @@ class Requester {
                         resolve('ok')
                     })
                 }).catch(error => {
-                    Toast.show({ text: 'Unable to perform network request' })
                     console.warn(error)
                     reject(error)
                 })

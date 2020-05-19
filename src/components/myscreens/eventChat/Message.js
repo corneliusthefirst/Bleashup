@@ -38,7 +38,6 @@ export default class Message extends Component {
             showTime: false,
             disabledSwipeout: true,
             openRight: true,
-            time: "",
             sender_name: this.props.message &&
                 this.props.message.sender &&
                 this.props.message.sender.nickname,
@@ -47,7 +46,7 @@ export default class Message extends Component {
             time: !isDiff && this.props.PreviousMessage &&
                 this.props.PreviousMessage.type !== "date_separator" &&
                 this.props.message &&
-                moment(this.props.message.created_at).format('X') - moment(this.props.PreviousMessage.created_at).format('X') < 60 ? "" :
+                moment(this.props.message.created_at).format('X') - moment(this.props.PreviousMessage.created_at).format('X') < 1 ? "" :
                 moment(this.props.message.created_at).format("HH:mm"),
             creator: (this.props.message.sender && this.props.message.sender.phone == this.props.creator),
             replying: false,
@@ -396,7 +395,7 @@ export default class Message extends Component {
                                                 </Icon> : <Icon style={this.iconStyles} type={"EvilIcons"} name="check">
                                                 </Icon> : <Icon style={{ ...this.iconStyles, color: "#FFF" }} type="MaterialCommunityIcons"
                                                     name="progress-check"></Icon> : null}
-                                            </View><View style={{ marginRight: "4%", }}><Text note>{this.state.time}</Text></View>
+                                            </View>{this.state.time ? <View style={{ marginRight: "4%", }}><Text note>{this.state.time}</Text></View>:null}
                                         </View>
                                     </TouchableWithoutFeedback>
                                 </View>

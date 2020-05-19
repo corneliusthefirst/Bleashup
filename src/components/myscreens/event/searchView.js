@@ -82,8 +82,8 @@ navigateToEventDetails = (item) => {
                <ActivityIndicator />
             </Container> : (
                <BleashupFlatList
-                    initialRender={10}
-                    renderPerBatch={5}
+                    initialRender={20}
+                    renderPerBatch={20}
                     style={{backgroundColor:colorList.bodyBackground}}
                     firstIndex={0}
                     //extraData={this.state}

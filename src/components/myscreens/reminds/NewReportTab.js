@@ -9,6 +9,7 @@ import {
   Tab,
   TabHeading,
   Spinner,
+  Icon,
 } from "native-base";
 import { map } from "lodash";
 import Modal from "react-native-modalbox";
@@ -17,6 +18,7 @@ import ConcerneeList from "./ConcerneeList";
 import DonnersList from "./DonnersList";
 import TabModal from "../../mainComponents/TabModal";
 import CreationHeader from "../event/createEvent/components/CreationHeader";
+import ColorList from '../../colorList';
 const screenheight = Math.round(Dimensions.get("window").height);
 export default class ReportTabModal extends TabModal {
   initialize() {
@@ -26,16 +28,13 @@ export default class ReportTabModal extends TabModal {
       mounted: false,
     };
   }
-  swipeToClose=false
+  swipeToClose = false
   onClosedModal() {
     this.props.onClosed();
     this.setState({
       content: null,
     });
   }
- tabHeaderContent(){
-   return <CreationHeader back={this.onClosedModal.bind(this)} title={"Remind Report"}></CreationHeader>
- } 
   onOpenModal() {
     setTimeout(() => {
       this.setState({
@@ -45,51 +44,60 @@ export default class ReportTabModal extends TabModal {
       this.props.stopLoader();
     }, 20);
   }
-  tabs = [
-    {
-      heading: () => <Text>Members</Text>,
-      body: () => (
-        <View style={{ height: "100%" }}>
-          {this.state.mounted ? (
-            <ConcerneeList
-              contacts={this.props.concernees}
-              complexReport={false}
-              must_report={this.props.must_report}
-              actualInterval={this.props.actualInterval}
-            ></ConcerneeList>
-          ) : (
-            <Spinner size="small"></Spinner>
-          )}
-        </View>
-      ),
-    },
-    {
-      heading: () => <Text>Done</Text>,
-      body: () => (
-        <View style={{ height: "100%" }}>
-          <DonnersList
-            donners={this.props.donners}
-            master={this.props.master}
-            actualInterval={this.props.actualInterval}
-            confirm={(e) => this.props.confirm(e)}
-            must_report={this.props.must_report}
-          ></DonnersList>
-        </View>
-      ),
-    },
-    {
-      heading: () => <Text>Confirmed</Text>,
-      body: () => (
-        <View style={{ height: "100%" }}>
+  inialPage=1
+  tabs = [{
+    heading: () => <Icon
+      onPress={this.onClosedModal.bind(this)}
+      type="MaterialIcons"
+      name="arrow-back"
+      style={{ color: ColorList.headerIcon }}
+    ></Icon>,
+    body: () => null
+  },
+  {
+    heading: () => <Text>Members</Text>,
+    body: () => (
+      <View style={{ height: "100%" }}>
+        {this.state.mounted ? (
           <ConcerneeList
-            master={this.props.master}
-            contacts={this.props.confirmed}
-            complexReport={true}
+            contacts={this.props.concernees}
+            complexReport={false}
             must_report={this.props.must_report}
             actualInterval={this.props.actualInterval}
           ></ConcerneeList>
-        </View>
-      ),
-    },
+        ) : (
+            <Spinner size="small"></Spinner>
+          )}
+      </View>
+    ),
+  },
+  {
+    heading: () => <Text>Done</Text>,
+    body: () => (
+      <View style={{ height: "100%" }}>
+        <DonnersList
+          donners={this.props.donners}
+          master={this.props.master}
+          actualInterval={this.props.actualInterval}
+          confirm={(e) => this.props.confirm(e)}
+          must_report={this.props.must_report}
+        ></DonnersList>
+      </View>
+    ),
+  },
+  {
+    heading: () => <Text>Confirmed</Text>,
+    body: () => (
+      <View style={{ height: "100%" }}>
+        <ConcerneeList
+          master={this.props.master}
+          contacts={this.props.confirmed}
+          complexReport={true}
+          must_report={this.props.must_report}
+          actualInterval={this.props.actualInterval}
+        ></ConcerneeList>
+      </View>
+    ),
+  },
   ];
 }

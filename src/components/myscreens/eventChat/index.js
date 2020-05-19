@@ -176,8 +176,7 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
 `,
     duration: Math.floor(0),
     created_at: moment().format(),
-  },
-    , {
+  },{
     id: Math.random().toString(),
     source: 'http://192.168.43.32:8555/video/get/Black M - Le prince Aladin (Clip officiel) ft. Kev Adams.mp4',
     file_name: 'bm6lgk013ult9gc75vmg_bm6lgk013ult9gc75vn0_bm6lgk013ult9gc75vng.mp4',

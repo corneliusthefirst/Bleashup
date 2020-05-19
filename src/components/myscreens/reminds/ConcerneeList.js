@@ -31,12 +31,12 @@ export default class ConcerneeList extends Component{
                                 item.to === this.props.actualInterval.end}
                             first={index === 0 ? true : false}
                             from={item.from}></IntervalSeparator> :
-                            <Item style={{ width:'90%',alignSelf:'center' }} key={index.toString()}><View style={{ display: 'flex', flexDirection: 'row', }}>
+                            <Item style={{ width: '90%', alignSelf: 'center', minHeight: 53, }} key={index.toString()}><View style={{ display: 'flex', flexDirection: 'row', }}>
                                 <View style={{ alignSelf: 'center', }}><ProfileView delay={this.delay} phone={item.data.phone}></ProfileView>
                                 </View>
                             </View></Item>}
                     </View> :
-                        <Item style={{margin: '1%',}} key={index.toString()}><View style={{ display: 'flex', flexDirection: 'row', }}>
+                        <Item style={{margin: '1%',minHeight: 53,}} key={index.toString()}><View style={{ display: 'flex', flexDirection: 'row', }}>
                                 <View style={{ margin: '2%',alignSelf: 'center', }}><ProfileView delay={this.delay} phone={item}></ProfileView>
                                 </View>
                         </View></Item>)

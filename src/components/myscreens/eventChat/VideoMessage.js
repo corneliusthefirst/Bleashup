@@ -9,6 +9,7 @@ import testForURL from '../../../services/testForURL';
 import FileExachange from "../../../services/FileExchange";
 import buttoner from "../../../services/buttoner";
 import ColorList from '../../colorList';
+import stores from "../../../stores";
 
 
 export default class VideoMessage extends Component {
@@ -81,7 +82,7 @@ export default class VideoMessage extends Component {
         this.props.message.duration = this.exchanger.duration
         this.props.message.received = received
         this.props.message.total = total
-        this.props.room.addVideoSizeProperties(this.props.message.id, total, received)
+        stores.Messages.addVideoSizeProperties(this.props.room,this.props.message.id, total, received)
         this.setState({
             downloading: false
         })
@@ -108,7 +109,7 @@ export default class VideoMessage extends Component {
         this.downloadID = setInterval(() => this.download(url), 500)
     }
     setAfterSuccess(res, cap, received) {
-        this.props.room.addVideoProperties(this.props.message.id, this.props.message.source, cap, received).then(() => {
+        stores.Messages.addVideoProperties(this.props.room,this.props.message.id, this.props.message.source, cap, received).then(() => {
             this.setState({
                 loaded: true,
                 downloading: false,
@@ -120,7 +121,7 @@ export default class VideoMessage extends Component {
         this.exchanger.task.cancel((err, taskID) => {
             this.setState({ downloading: false })
         })
-        this.props.room.SetCancledState(this.props.message.id)
+        stores.Messages.SetCancledState(this.props.room,this.props.message.id)
         this.setState({
             downloading: false
         })

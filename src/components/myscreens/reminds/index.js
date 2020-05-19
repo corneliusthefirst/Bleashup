@@ -268,6 +268,13 @@ export default class Reminds extends Component {
       }
     }
   }
+  showToastMessage(message){
+    if (Platform.OS === 'android') {
+      ToastAndroid.show(message, ToastAndroid.SHORT)
+    } else {
+      AlertIOS.alert(message);
+    }
+  }
   confirm(user) {
     if (this.props.working) {
       Toast.show({ text: 'App is Busy' })
@@ -276,12 +283,8 @@ export default class Reminds extends Component {
       if (findIndex(this.state.currentTask.confirmed,
         ele => confirmedChecker(ele, user.data.phone,
           { start: user.start, end: user.end })) >= 0) {
-        let msg = "confirmed already!"
-        if (Platform.OS === 'android') {
-          ToastAndroid.show(msg, ToastAndroid.SHORT)
-        } else {
-          AlertIOS.alert(msg);
-        }
+        this.showToastMessage("confirmed already!")
+      
       } else {
         this.props.startLoader()
         RemindRequest.confirm([user.data],
@@ -290,6 +293,7 @@ export default class Reminds extends Component {
             this.refreshReminds()
             this.props.stopLoader()
           }).catch(() => {
+            this.showToastMessage('Unable to perform network request')
             this.props.stopLoader()
           })
       }
@@ -394,7 +398,7 @@ export default class Reminds extends Component {
     let members = item.members.map(ele => ele.phone)
     this.setState({
       confirmed: this.flatterarray(confirmed, [], 0),
-      members: uniqBy(members, 'phone'),
+      members: uniq(members),
       actualInterval: thisInterval,
       isReportModalOpened: true,
       currentTask: item,

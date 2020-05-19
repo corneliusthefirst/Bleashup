@@ -31,7 +31,6 @@ export default class HighLightsDetails extends Component {
         }
     }
     componentWillMount() {
-        this.room = new ChatStore(this.event_id)
         this.keyboardDidShowSub = Keyboard.addListener('keyboardDidShow', this.handleKeyboardDidShow.bind(this));
         this.keyboardDidHideSub = Keyboard.addListener('keyboardDidHide', this.handleKeyboardDidHide.bind(this));
         this.BackHandler = BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this));
@@ -112,9 +111,9 @@ export default class HighLightsDetails extends Component {
                     messageListHeight: '100%',
                     inputsHeight: 0
                 })
-                this.room ? this.room.addNewMessage(message).then(() => {
+                stores.Messages.addNewMessage(this.event_id,message).then(() => {
                     Toast.show({ text: 'Reaction Sent', type: 'success' })
-                }) : null
+                })
                 this.refs.inputView._clean()
             }
         }))

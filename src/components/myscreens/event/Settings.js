@@ -362,7 +362,7 @@ export default class Settings extends Component {
               onPress={this.cancelUpdate.bind(this)}
             ></Icon>
             <Icon
-              style={{ color: colorList.headerIcon }}
+              style={{ color: colorList.indicatorColor }}
               type="EvilIcons"
               onPress={this.saveConfigurations.bind(this)}
               name="check"

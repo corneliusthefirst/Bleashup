@@ -163,7 +163,7 @@ export default class AudioUploader extends Component {
                         currentPosition: seconds / this.props.message.duration,
                         currentTime: seconds
                     })
-                    this.props.room.addDuration(this.props.message.id, seconds).then(status => {
+                    stores.Messages.addDuration(this.props.room,this.props.message.id, seconds).then(status => {
                         //this.player.release()
                     })
                 })
@@ -183,7 +183,7 @@ export default class AudioUploader extends Component {
     cancelUpLoad(url) {
         this.exchanger.task.cancel((err, taskID) => {
         })
-        this.props.room.SetCancledState(this.props.message.id).then(() => {
+        stores.Messages.SetCancledState(this.props.room,this.props.message.id).then(() => {
 
         })
         GState.downlading = false

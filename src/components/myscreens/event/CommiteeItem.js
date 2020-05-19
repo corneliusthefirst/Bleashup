@@ -87,8 +87,8 @@ export default class CommiteeItem extends Component {
                     })
                 })
             } else {
-                let room = new ChatStore(this.props.id)
-                room.loadLatestMessage().then(message => {
+                
+                stores.Messages.loadLatestMessage(this.props.id).then(message => {
                     this.setState({
                         newThing: !this.state.newThing,
                         newest_message: message

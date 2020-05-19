@@ -89,7 +89,6 @@ class PublicEvent extends Component {
   }
   swipperComponent = null
   componentDidMount() { 
-    //this is done to use as default for my test
     if (this.props.Event.type == "relation") {
       globalFunctions.getOpponent(this.props.Event).then((user)=>{
         this.setState({ opponent: user });

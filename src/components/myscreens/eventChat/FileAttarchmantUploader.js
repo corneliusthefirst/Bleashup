@@ -11,6 +11,7 @@ import GState from '../../../stores/globalState';
 import FileViewer from 'react-native-file-viewer';
 import FileExachange from '../../../services/FileExchange';
 import rnFetchBlob from 'rn-fetch-blob';
+import stores from '../../../stores';
 const { fs } = rnFetchBlob
 export default class FileAttarchementUploader extends Component {
     constructor(props) {
@@ -93,7 +94,7 @@ export default class FileAttarchementUploader extends Component {
         this.exchanger.task.cancel((err, taskID) => {
             this.setState({ downloading: false })
         })
-        this.props.room.SetCancledState(this.props.message.id).then(() => {
+        stores.Messages.SetCancledState(this.props.room,this.props.message.id).then(() => {
 
         })
         this.setState({

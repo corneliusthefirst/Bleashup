@@ -113,7 +113,7 @@ export default class CurrentEvents extends Component {
     }
 
     delay = 0
-    renderPerbatch = 5
+    renderPerbatch = 10
     componentDidMount() {
         
     }

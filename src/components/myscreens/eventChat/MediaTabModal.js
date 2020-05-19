@@ -1,16 +1,17 @@
 import React from "react";
 import { View, Dimensions } from "react-native";
-import { Text, Spinner } from "native-base";
+import { Text, Spinner ,Icon} from "native-base";
 import Photo from "./PhotoLister";
 import Video from "./VideoLister";
 import File from "./FileLister";
 import TabModal from "../../mainComponents/TabModal";
+import ColorList from '../../colorList';
 const screenheight = Math.round(Dimensions.get("window").height);
 export default class MediaTabModal extends TabModal {
     initialize() {
         this.state = {
             content: null,
-            mounted: false
+            mounted: false,
         };
     }
     onClosedModal() {
@@ -21,8 +22,9 @@ export default class MediaTabModal extends TabModal {
         });
     }
     TabHeader() {
-        return null
+        return null;
     }
+    swipeToClose=false
     onOpenModal() {
         setTimeout(() => {
             this.setState({
@@ -31,13 +33,28 @@ export default class MediaTabModal extends TabModal {
             });
         }, 100);
     }
+    inialPage=1
     tabs = [
+        {
+            heading: () => (
+                <Icon
+                    onPress={this.onClosedModal.bind(this)}
+                    type="MaterialIcons"
+                    name="arrow-back"
+                    style={{ color: ColorList.headerIcon }}
+                ></Icon>
+            ),
+            body: () => null,
+        },
         {
             heading: () => <Text>Photos</Text>,
             body: () => (
                 <View style={{ height: "100%" }}>
-                    {this.state.mounted ? <Photo photo={this.props.photo}></Photo> :
-                        <Spinner size="small"></Spinner>}
+                    {this.state.mounted ? (
+                        <Photo photo={this.props.photo}></Photo>
+                    ) : (
+                            <Spinner size="small"></Spinner>
+                        )}
                 </View>
             ),
         },
