@@ -399,14 +399,13 @@ export default class Message extends Component {
                     this.props.showReacters(element.reaction,element.reacters)
                 })}
                     style={{
-                        ...rounder(20),
+                        ...rounder(20,true),
                         marginTop: sender ? "-25%" : 0,
                         marginBottom: !sender ? "-25%" : 0,
                         borderWidth: 1,
                         borderColor: sender
                             ? ColorList.senTBoxColor
                             : ColorList.receivedBox,
-                        backgroundColor: ColorList.indicatorColor,
                         flexDirection: "row",
                     }}
                 >
@@ -424,7 +423,7 @@ export default class Message extends Component {
                                     fontSize: 7,
                                     fontWeight: "italic",
                                     fontWeight: "bold",
-                                    color: ColorList.bodyBackground,
+                                    color: ColorList.indicatorColor,
                                 }}
                                 note
                             >{`+${element.count}`}</Text>
