@@ -31,8 +31,7 @@ export default class ReplyText extends Component {
                 <View style={{
                     display: 'flex', flexDirection: 'row', 
                     borderBottomWidth: 0,
-                    backgroundColor: this.props.color,
-                     backgroundColor: "rgba(34, 0, 0, 0.1)",
+                    backgroundColor: "rgba(34, 0, 0, 0.1)",
                     padding: "1%",//margin: '1%',
                     minHeight: 50,
                     maxHeight: 350,

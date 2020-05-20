@@ -64,6 +64,7 @@ import colorList from "../../colorList";
 import { PrivacyRequester } from '../settings/privacy/Requester';
 import { observer } from "mobx-react";
 import { toJS } from "mobx";
+import PublishersModal from "../../PublishersModal";
 
 
 
@@ -176,26 +177,26 @@ const screenheight = Math.round(Dimensions.get('window').height);
     addNewMessageForMessaging(newMessage, newKey) {
         //if (stores.Messages.messages[this.roomID] &&
         //    stores.Messages.messages[this.roomID].length > 0) {
-            let index = findIndex(stores.Messages.messages[this.roomID], { id: newMessage.id })
-            let received = uniqBy(newMessage.received, "phone")
-            if (index >= 0 && stores.Messages.messages[this.roomID][index].key !== newKey) {
-                stores.Messages.addNewMessage(this.roomID, newMessage, newKey, newMessage.type, true, true).then(() => {
-                    this.informRemote(newMessage, newKey, received)
-                })
-            } else {
-                if (this.sender.phone == newMessage.sender.phone) {
+        let index = findIndex(stores.Messages.messages[this.roomID], { id: newMessage.id })
+        let received = uniqBy(newMessage.received, "phone")
+        if (index >= 0 && stores.Messages.messages[this.roomID][index].key !== newKey) {
+            stores.Messages.addNewMessage(this.roomID, newMessage, newKey, newMessage.type, true, true).then(() => {
+                this.informRemote(newMessage, newKey, received)
+            })
+        } else {
+            if (this.sender.phone == newMessage.sender.phone) {
 
-                } else {
-                    firebase.database().ref(`${this.props.firebaseRoom}/${newKey}/received`).set(received).then(() => {
-                        this.newMessages.length !== 0 ? this.newMessages.unshift(newMessage) : null
-                        stores.Messages.addNewMessage(this.roomID, newMessage, newKey, newMessage.type, true, this.newMessages.length == 0).then(() => {
-                            this.setState({
-                                newMessage: true
-                            })
+            } else {
+                firebase.database().ref(`${this.props.firebaseRoom}/${newKey}/received`).set(received).then(() => {
+                    this.newMessages.length !== 0 ? this.newMessages.unshift(newMessage) : null
+                    stores.Messages.addNewMessage(this.roomID, newMessage, newKey, newMessage.type, true, this.newMessages.length == 0).then(() => {
+                        this.setState({
+                            newMessage: true
                         })
                     })
-                }
-          //  }
+                })
+            }
+            //  }
         }
     }
     addNewMessage(newMessage, newKey) {
@@ -334,7 +335,7 @@ const screenheight = Math.round(Dimensions.get('window').height);
     initializeNewMessageForRoom() {
         return new Promise((resolve, reject) => {
             this.formStorableData(this.props.newMessages).then(news => {
-                console.warn("transformed messages",findIndex(news,{type:"date_separator"}))
+                console.warn("transformed messages", findIndex(news, { type: "date_separator" }))
                 this.newMessages = news
                 this.newMessages = this.newMessages.length > 0 ? [...this.newMessages, {
                     id: 'New Messages',
@@ -441,7 +442,7 @@ const screenheight = Math.round(Dimensions.get('window').height);
         //!! handle user peer user disconnection here listen to something like 'current_room/${peer_user_phone}' to know wether the user is connected or not
         // !! this will only be valid for a when there is just one user in a room .
         firebase.database().ref(`current_room/${this.props.user.phone}`).onDisconnect().set(null)
-        this.props.isComment ? stores.Messages.messages[this.roomID] = []:null
+        this.props.isComment ? stores.Messages.messages[this.roomID] = [] : null
         this.keyboardDidShowSub = Keyboard.addListener('keyboardDidShow', this.handleKeyboardDidShow);
         this.keyboardDidHideSub = Keyboard.addListener('keyboardDidHide', this.handleKeyboardDidHide);
         if (this.BackHandler) this.BackHandler.remove()
@@ -639,7 +640,7 @@ const screenheight = Math.round(Dimensions.get('window').height);
     sendTextMessage(newMessage) {
         if (GState.connected) {
             this.scrollToEnd()
-            stores.Messages.replaceMessage(this.roomID,newMessage).then(() => {
+            stores.Messages.replaceMessage(this.roomID, newMessage).then(() => {
                 this.sendMessage(newMessage)
             });
         }
@@ -661,7 +662,7 @@ const screenheight = Math.round(Dimensions.get('window').height);
                 created_at: moment().format()
             }
             this.scrollToEnd()
-            stores.Messages.addMessageToStore(this.roomID,messager).then((data) => {
+            stores.Messages.addMessageToStore(this.roomID, messager).then((data) => {
             })
             this._resetTextInput()
             this.setState({
@@ -681,7 +682,7 @@ const screenheight = Math.round(Dimensions.get('window').height);
             showPhoto: true,
             //hideStatusBar: true
         })
-            Keyboard.dismiss()
+        Keyboard.dismiss()
     }
     captionMessages = []
     sendingCaptionMessages = false
@@ -701,7 +702,7 @@ const screenheight = Math.round(Dimensions.get('window').height);
                 let tobeSent = [...this.captionMessages]
                 this.captionMessages = []
                 tobeSent.map(newMessage => {
-                stores.Messages.replaceMessage(this.roomID,newMessage).then(() => {
+                    stores.Messages.replaceMessage(this.roomID, newMessage).then(() => {
                         this.sendMessage({ ...newMessage, photo: newMessage.source })
                         this.informMembers()
                         //send message to the server here
@@ -757,7 +758,7 @@ const screenheight = Math.round(Dimensions.get('window').height);
                     filename: res.filename,
                     text: this.state.captionText
                 }
-                stores.Messages.addMessageToStore(this.roomID,message).then(() => {
+                stores.Messages.addMessageToStore(this.roomID, message).then(() => {
                     this.setState({
                         newMessage: true
                     })
@@ -794,7 +795,7 @@ const screenheight = Math.round(Dimensions.get('window').height);
             filename: this.state.filename,
             text: this.state.textValue
         }
-        stores.Messages.addMessageToStore(this.roomID,message).then(() => {
+        stores.Messages.addMessageToStore(this.roomID, message).then(() => {
             this.setState({
                 newMessage: true
             })
@@ -814,28 +815,28 @@ const screenheight = Math.round(Dimensions.get('window').height);
         this.fucussTextInput()
     }
     replaceMessage(newMessage) {
-        stores.Messages.replaceMessage(this.roomID,newMessage).then(() => {
+        stores.Messages.replaceMessage(this.roomID, newMessage).then(() => {
             this.sendMessage({ ...newMessage, photo: newMessage.source })
             this.informMembers()
             //send message to the server here
         });
     }
     replaceMessageVideo(newMessage) {
-        stores.Messages.replaceMessage(this.roomID,newMessage).then(() => {
+        stores.Messages.replaceMessage(this.roomID, newMessage).then(() => {
             this.sendMessage({ ...newMessage, source: newMessage.temp, cancled: undefined })
             this.informMembers()
             //send message to the server here
         });
     }
     replaceMessageFile(newMessage) {
-        stores.Messages.replaceMessage(this.roomID,newMessage).then(() => {
+        stores.Messages.replaceMessage(this.roomID, newMessage).then(() => {
             this.sendMessage({ ...newMessage, source: newMessage.temp })
             this.informMembers()
             //send message to the server here
         });
     }
     replaceAudioMessage(newMessage) {
-        stores.Messages.replaceMessage(this.roomID,newMessage).then((messages) => {
+        stores.Messages.replaceMessage(this.roomID, newMessage).then((messages) => {
             this.sendMessage({ ...newMessage, source: newMessage.temp })
             this.informMembers()
             //send message to the server here
@@ -931,7 +932,7 @@ const screenheight = Math.round(Dimensions.get('window').height);
                 file_name: 'test.mp3',
                 created_at: moment().format()
             }
-            stores.Messages.addMessageToStore(this.roomID,message).then(() => {
+            stores.Messages.addMessageToStore(this.roomID, message).then(() => {
                 this.setState({
                     newMessage: true
                 })
@@ -975,7 +976,7 @@ const screenheight = Math.round(Dimensions.get('window').height);
             received: [{ phone: stores.LoginStore.phone, date: moment().format() }],
             sender: this.sender
         }
-        stores.Messages.addMessageToStore(this.roomID,message).then(() => {
+        stores.Messages.addMessageToStore(this.roomID, message).then(() => {
             this.setState({
                 //isVoteCreationModalOpened: false,
                 newMessage: true
@@ -1011,7 +1012,7 @@ const screenheight = Math.round(Dimensions.get('window').height);
             if (index === 0) {
                 if (GState.connected) {
                     let messageRef = this.fireRef.child(message.key)
-                    stores.Messages.removeMessage(this.roomID,message.id).then(() => {
+                    stores.Messages.removeMessage(this.roomID, message.id).then(() => {
                         this.setState({ newMessage: true })
                         if (message.sender.phone == this.sender.phone) {
                             messageRef.remove()
@@ -1063,7 +1064,7 @@ const screenheight = Math.round(Dimensions.get('window').height);
         this.setState({
             isMediaModalOpened: true,
             messages: stores.Messages.messages[this.roomID] ?
-             JSON.stringify(stores.Messages.messages[this.roomID]):JSON.stringify([])
+                JSON.stringify(stores.Messages.messages[this.roomID]) : JSON.stringify([])
         })
     }
     showVoters(voters) {
@@ -1216,6 +1217,17 @@ const screenheight = Math.round(Dimensions.get('window').height);
                                     showContacts: false
                                 })
                             }}></ContactsModal> : null}
+                            {this.state.showReacters ? <PublishersModal
+                                isOpen={this.state.showReacters}
+                                onClosed={() => {
+                                    this.setState({
+                                        showReacters:false
+                                    })
+                                }}
+                                reaction={this.state.currentReaction}
+                                reacters={this.state.currentReacters}
+                                >
+                            </PublishersModal> : null}
                             {//</ImageBackground>
                             }
                         </KeyboardAvoidingView>
@@ -1245,6 +1257,9 @@ const screenheight = Math.round(Dimensions.get('window').height);
         })
         //  })
     }
+    reactToMessage(reaction) {
+
+    }
     openVoteCreation() {
         this.setState({
             isVoteCreationModalOpened: true,
@@ -1258,6 +1273,13 @@ const screenheight = Math.round(Dimensions.get('window').height);
         console.warn("persisiting dimensions")
         stores.Messages.setMessageDimessions(this.roomID, id, layout)
     }
+    showReacters(reaction,reacters){
+        this.setState({
+            showReacters:true,
+            currentReaction:reaction,
+            currentReacters:reacters
+        })
+    }
     delay = 1
     messageList() {
         return <BleashupFlatList
@@ -1269,7 +1291,7 @@ const screenheight = Math.round(Dimensions.get('window').height);
             renderPerBatch={20}
             initialRender={20}
             numberOfItems={stores.Messages.messages[this.roomID] ?
-                stores.Messages.messages[this.roomID].length:0}
+                stores.Messages.messages[this.roomID].length : 0}
             keyExtractor={(item, index) => item ? item.id : null}
             renderItem={(item, index) => {
                 this.delay = this.delay >= 20 || (item && !item.sent) ? 0 : this.delay + 1
@@ -1277,6 +1299,8 @@ const screenheight = Math.round(Dimensions.get('window').height);
                     voteItem={(index, vote) => {
                         emitter.emit("vote-me", index, vote)
                     }}
+                    react={this.reactToMessage.bind(this)}
+                    showReacters={this.showReacters.bind(this)}
                     messagelayouts={this.messagelayouts}
                     setCurrentLayout={layout => {
                         this.messagelayouts[item.id] = layout
@@ -1324,7 +1348,7 @@ const screenheight = Math.round(Dimensions.get('window').height);
                     replaceMessageFile={(data) => this.replaceMessageFile(data)}
                     playVideo={(source) => this.playVideo(source)}></Message> : null;
             }}
-            dataSource={toJS(stores.Messages.messages[this.roomID] && 
+            dataSource={toJS(stores.Messages.messages[this.roomID] &&
                 stores.Messages.messages[this.roomID] || [])}
             newData={this.showMessage}
             newDataLength={this.showMessage.length}>
@@ -1369,24 +1393,24 @@ const screenheight = Math.round(Dimensions.get('window').height);
 
                         <View style={{
                             height: 45,
-                            width: '12%', 
-                            alignItems: "center", 
-                            justifyContent: "center", 
+                            width: '12%',
+                            alignItems: "center",
+                            justifyContent: "center",
                             padding: '1%'
-                        }}><Icon 
+                        }}><Icon
                             onPress={() => this.openCamera()}
                             style={{ color: "#696969" }}
                             type={"MaterialCommunityIcons"}
                             name={"image-filter"}></Icon>
                         </View>
-                        <Item 
-                        style={{
-                            width: '88%',
-                            flexDirection: 'column', 
-                            borderRadius: 20,
-                            borderTopLeftRadius: this.state.replying ? 5 : 20,
-                            borderTopRightRadius: this.state.replying ? 5 : 20
-                        }} rounded>
+                        <Item
+                            style={{
+                                width: '88%',
+                                flexDirection: 'column',
+                                borderRadius: 20,
+                                borderTopLeftRadius: this.state.replying ? 5 : 20,
+                                borderTopRightRadius: this.state.replying ? 5 : 20
+                            }} rounded>
                             {
                                 //* Reply Message caption */
                                 this.state.replying ? this.replyMessageCaption() : null
@@ -1396,33 +1420,33 @@ const screenheight = Math.round(Dimensions.get('window').height);
                                 onChange={(event) => this._onChange(event)}
                                 placeholder={'Your Message'}
                                 style={{
-                                alignSelf: 'flex-start',
-                                width: '84%', 
-                                maxHeight: 300, 
-                                minHeight: 45,
-                                marginLeft: "3%" 
+                                    alignSelf: 'flex-start',
+                                    width: '84%',
+                                    maxHeight: 300,
+                                    minHeight: 45,
+                                    marginLeft: "3%"
                                 }}
-                                placeholderTextColor = '#66737C'
+                                placeholderTextColor='#66737C'
                                 multiline={true}
                                 enableScrollToCaret
                                 ref={(r) => { this._textInput = r; }}
                             />
                             <View style={{
-                                flex: 1, 
-                                width: '16%', 
+                                flex: 1,
+                                width: '16%',
                                 position: "absolute",
-                                bottom: 0, 
-                                right: 0 
+                                bottom: 0,
+                                right: 0
                             }}
-                        >
-                            <Icon onPress={() => {
-                                this.toggleEmojiKeyboard();
-                                this.markAsRead();
-                            }} style={{ color: "gray", marginBottom: 11 }}
-                                type="Entypo" name="emoji-flirt">
-                            </Icon>
+                            >
+                                <Icon onPress={() => {
+                                    this.toggleEmojiKeyboard();
+                                    this.markAsRead();
+                                }} style={{ color: "gray", marginBottom: 11 }}
+                                    type="Entypo" name="emoji-flirt">
+                                </Icon>
                             </View>
-                            </Item>
+                        </Item>
 
                     </View>
 

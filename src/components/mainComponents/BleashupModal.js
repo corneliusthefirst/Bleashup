@@ -20,7 +20,9 @@ export default class BleashupModal extends PureComponent {
     onClosedModal() {
 
     }
+    jusify = false
     backdropOpacity = 0.7
+    borderRadius = 0
     backButtonClose = false
     swipeToClose = true
     position = 'bottom'
@@ -57,6 +59,7 @@ export default class BleashupModal extends PureComponent {
                     backgroundColor: this.modalBackground || '#FFFFFF',
                     height: this.modalHeight,
                     width: this.modalWidth || "100%",
+                    justifyContent: this.jusify?'center':null,
                     borderTopLeftRadius: this.borderTopLeftRadius || 8,
                     borderTopRightRadius: this.borderTopRightRadius || 8,
                     borderRadius:this.borderRadius
