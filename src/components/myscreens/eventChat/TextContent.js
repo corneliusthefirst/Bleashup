@@ -21,13 +21,13 @@ export default class TextContent extends Component {
     render() {
         //console.warn(this.props.text.length,this.props.text)
         return (
-            <TouchableOpacity onPressIn={() => {
+            <TouchableOpacity onLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null} onPressIn={() => {
                 this.props.pressingIn ? this.props.pressingIn() : null
             }} onPress={() =>
                 this.setState({
                     notShowingAll: !this.state.notShowingAll
                 })
-            } onLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null}>
+            }>
                 <View>
                     <Hyperlink linkStyle={{ color: '#2980b9', }} linkDefault={true}>
                         <Text ellipsizeMode={this.state.notShowingAll ? 'tail' : null} numberOfLines={this.state.notShowingAll ? 25 : null} style={{

@@ -312,7 +312,6 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
     }
     readFromStore() {
         return new Promise((resolve, reject) => {
-            console.warn(this.messages)
             resolve(this.messages);
         });
     }

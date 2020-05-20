@@ -28,6 +28,7 @@ import { find } from 'lodash';
 import { isEqual } from 'lodash';
 import formVoteOptions from '../../../services/formVoteOptions';
 import ColorList from '../../colorList';
+import ReactionModal from './ReactionsModal';
 
 export default class Message extends Component {
 
@@ -184,26 +185,13 @@ export default class Message extends Component {
     closing = 0
     perviousTime = 0
     closingSwipeout() {
-        /*   if (this.replying) {
-               if(!this.closed){
-                   this.closing++
-                   this.closed = true
-   
-                   this.closing = 0
-                   Vibration.vibrate(this.duration)
-                   setTimeout(() => {
-                       this.closed = false
-                   }, 1000)
-               }
-               this.replying = false
-           }*/
+
     }
     duration = 10
     longPressDuration = 50
     pattern = [1000, 0, 0]
     handleReply() {
         Vibration.vibrate(this.duration)
-        //console.warn(this.props.message)
         let color = this.state.sender ? '#DEDEDE' : '#9EEDD3'
         switch (this.props.message.type) {
             case 'text':
@@ -274,7 +262,8 @@ export default class Message extends Component {
             voter || votePeriod ||
             this.state.loaded !== nextState.loaded ||
             this.props.messagelayouts && this.props.messagelayouts[this.props.message.id] !== nextProps.messagelayouts[nextProps.message.id] ||
-            this.props.message.id !== nextProps.message.id
+            this.props.message.id !== nextProps.message.id ||
+            this.state.isReacting !== nextState.isReacting
     }
     iconStyles = {
         fontSize: 12,
@@ -296,6 +285,13 @@ export default class Message extends Component {
     isVote() {
         return this.props.message.type === 'vote'
     }
+    openReaction() {
+        requestAnimationFrame(() => {
+            this.setState({
+                isReacting: true
+            })
+        })
+    }
     placeholderStyle = this.props.messagelayouts && this.props.messagelayouts[this.props.message.id] ?
         this.props.messagelayouts[this.props.message.id] :
         this.placeHolder[this.props.message.type]
@@ -315,7 +311,7 @@ export default class Message extends Component {
             minHeight: 20, overflow: 'hidden', borderBottomLeftRadius: 5, borderColor: color,
             borderTopLeftRadius: this.state.sender ? 0 : 5,
             // borderWidth: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text)?.7:0:0,
-            backgroundColor: color, ...shadower(3),
+            backgroundColor: color, ...shadower(1),
             borderTopRightRadius: 5,
             borderBottomRightRadius: this.state.sender ? 5 :
                 this.props.message.reply && this.props.message.reply.type_extern ? 5 : null,
@@ -331,9 +327,15 @@ export default class Message extends Component {
             ...topMostStyle, ...this.placeholderStyle,
             backgroundColor: color, borderBottomLeftRadius: 5, borderColor: color,
             borderTopLeftRadius: this.state.sender ? 0 : 5,// borderWidth: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text)?.7:0:0,
-            backgroundColor: color, ...shadower(2),
+            backgroundColor: color, ...shadower(1),
             alignSelf: this.state.sender ? 'flex-start' : 'flex-end',
             borderTopRightRadius: 5,
+        }
+        reactionContanerStyle = {
+            marginTop: 'auto',
+            marginBottom: 'auto',
+            width: 20,
+            justifyContent: 'center',
         }
         nameTextStyle = { fontSize: 14, fontWeight: 'bold', color: ColorList.bodyText }
         return (this.props.message.type == 'date_separator' ? <View style={{ marginTop: '2%', marginBottom: '2%', }}>
@@ -342,7 +344,7 @@ export default class Message extends Component {
                 marginTop: '2%',
                 marginBottom: '2%'
             }}><NewSeparator newCount={this.props.newCount} data={this.props.message.id}></NewSeparator></View> :
-                !this.state.loaded ? <View style={placeholderStyle}></View> : <View style={topMostStyle}>
+                !this.state.loaded ? <View style={placeholderStyle}></View> : <View><View style={topMostStyle}>
                     <Swipeout isMessage onPress={this.openingSwipeout()}
                         ref={'chatSwipeOut'} onOpen={() => { this.openingSwipeout() }}
                         onClose={() => { this.closingSwipeout() }} autoClose={true} close={true}
@@ -354,15 +356,22 @@ export default class Message extends Component {
                         }]}
                         style={{ backgroundColor: 'transparent', width: "100%" }}>
 
-                        <View>
+                        <View style={{ flexDirection: 'row', }}>
+                            {!this.state.sender ? <TouchableOpacity onLongPress={this.handLongPress.bind(this)} onPress={() => this.openReaction()} style={reactionContanerStyle}><Icon
+                                style={{ fontSize: 12, color: 'gray' }}
+                                type={"AntDesign"}
+                                name={"meh"}></Icon></TouchableOpacity> : null}
                             <View onLayout={(e) => {
+                                this.setState({
+                                    containerDims : e.nativeEvent.layout
+                                })
                                 this.props.setCurrentLayout && this.props.setCurrentLayout(e.nativeEvent.layout)
                             }
                             } style={GeneralMessageBoxStyle}>
                                 <View>
-                                    {this.state.sender && this.state.different ? <TouchableOpacity onPress={()=> requestAnimationFrame(() => {
+                                    {this.state.sender && this.state.different ? <TouchableOpacity onLongPress={this.handLongPress.bind(this)} onPress={() => requestAnimationFrame(() => {
                                         this.props.showProfile(this.props.message.sender.phone)
-                                    })}><Text style={{ marginLeft: '2%', color: ColorList.iconActive }} note ellipsizeMode="tail" numberOfLines={1}>{this.state.sender_name}</Text></TouchableOpacity>:null}
+                                    })}><Text style={{ marginLeft: '2%', color: ColorList.iconActive }} note ellipsizeMode="tail" numberOfLines={1}>{this.state.sender_name}</Text></TouchableOpacity> : null}
                                     <View>
                                         {this.props.message.reply ? <View style={{ borderRadius: 10, padding: '1%', marginTop: ".4%", width: "100%" }}>
                                             <ReplyText handLongPress={() => this.handLongPress()} showProfile={(pro) => this.props.showProfile(pro)} pressingIn={() => {
@@ -395,14 +404,26 @@ export default class Message extends Component {
                                                 </Icon> : <Icon style={this.iconStyles} type={"EvilIcons"} name="check">
                                                 </Icon> : <Icon style={{ ...this.iconStyles, color: "#FFF" }} type="MaterialCommunityIcons"
                                                     name="progress-check"></Icon> : null}
-                                            </View>{this.state.time ? <View style={{ marginRight: "4%", }}><Text note>{this.state.time}</Text></View>:null}
+                                            </View>{this.state.time ? <View style={{ marginRight: "4%", }}><Text note>{this.state.time}</Text></View> : null}
                                         </View>
                                     </TouchableWithoutFeedback>
                                 </View>
                             </View>
+                            {this.state.sender ? <TouchableOpacity onLongPress={this.handLongPress.bind(this)} onPress={this.openReaction.bind(this)} style={{ ...reactionContanerStyle }}><Icon
+                                style={{ fontSize: 12, color: 'gray', alignSelf: 'flex-end', }}
+                                type={"AntDesign"}
+                                name={"meh"}></Icon></TouchableOpacity> : null}
                         </View>
 
                     </Swipeout>
+                </View>
+                    <View style={{ position: 'absolute', width:  '100%', height: this.state.containerDims ? this.state.containerDims.height+10 : 40 }}>
+                        <ReactionModal isOpen={this.state.isReacting} onClosed={() => {
+                            this.setState({
+                                isReacting: false
+                            })
+                        }}></ReactionModal>
+                    </View>
                 </View>
         )
     }

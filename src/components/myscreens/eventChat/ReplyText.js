@@ -48,7 +48,7 @@ export default class ReplyText extends Component {
                         width: this.props.compose ? '100%' : null,
                     }}>
                         <View style={{ margin: "1%", }}>
-                            <TouchableOpacity onPressIn={() => this.props.pressingIn()} onPress={() => requestAnimationFrame(() => {
+                            <TouchableOpacity onLongPress={this.props.handLongPress} onPressIn={() => this.props.pressingIn()} onPress={() => requestAnimationFrame(() => {
                                 this.props.reply.replyer_name && (this.props.reply.replyer_phone ||
                                     this.props.reply.sender.phone) ? this.showReplyer() : this.props.openReply(this.props.reply)
                             })

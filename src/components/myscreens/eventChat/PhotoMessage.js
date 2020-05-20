@@ -26,7 +26,6 @@ export default class PhotoMessage extends Component {
     }
 
     componentDidMount() {
-        console.warn(this.props.message.filename)
         this.setState({
             text: this.props.message.text,
             url: this.props.message.photo,
@@ -47,7 +46,6 @@ export default class PhotoMessage extends Component {
             })
             this.exchanger.download(0, 0)
         } else {
-            console.warn(this.props.message.photo)
         }
     }
     path = '/Photo/' + this.props.message.filename

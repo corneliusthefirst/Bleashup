@@ -500,18 +500,10 @@ const screenheight = Math.round(Dimensions.get('window').height);
                 showRepliedMessage: false
             })
             return true
-        } /*else if (this.state.replying) {
-            this.setState({
-                replying: false,
-                replyContent: null,
-            })
-            return true
-        }*/ else if (this.state.showVideo) {
+        } else if (this.state.showVideo) {
             this.setState({
                 showVideo: false,
                 showCaption: false,
-                //fullScreen: false,
-                ///hideStatusBar: false
             })
             Orientation.lockToPortrait()
             return true
@@ -519,7 +511,6 @@ const screenheight = Math.round(Dimensions.get('window').height);
             this.setState({
                 showPhoto: false,
                 showCaption: false
-                //hideStatusBar: false
             })
             return true
         } else if (this.state.showEmojiInputCaption) {
@@ -529,12 +520,10 @@ const screenheight = Math.round(Dimensions.get('window').height);
             })
             return true
         } else if (this.state.showCaption) {
-            //Keyboard.dismiss()
             this.setState({
                 showCaption: false,
                 showVideo: false
             })
-            //this._resetCaptionInput()
             return true
         } else if (this.state.showAudioRecorder) {
             this.refs.AudioRecorder.stopRecord(true)
@@ -1073,8 +1062,8 @@ const screenheight = Math.round(Dimensions.get('window').height);
     showRoomMedia() {
         this.setState({
             isMediaModalOpened: true,
-            messages: stores.Messages.messages[this.roomID] &&
-             JSON.stringify(stores.Messages.messages[this.roomID])
+            messages: stores.Messages.messages[this.roomID] ?
+             JSON.stringify(stores.Messages.messages[this.roomID]):JSON.stringify([])
         })
     }
     showVoters(voters) {

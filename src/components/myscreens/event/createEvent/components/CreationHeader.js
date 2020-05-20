@@ -19,7 +19,7 @@ export default class CreationHeader extends Component {
                     paddingLeft: "2%",
                 }}
             >
-                <TouchableOpacity
+               {this.props.back && <TouchableOpacity
                     style={{ width: "7%", marginTop: "auto", marginBottom: "auto" }}
                 >
                     <Icon
@@ -28,7 +28,7 @@ export default class CreationHeader extends Component {
                         name="arrow-back"
                         style={{ color: ColorList.headerIcon }}
                     />
-                </TouchableOpacity>
+                </TouchableOpacity>}
                 <Text
                     elipsizeMode={"tail"}
                     numberOfLines={1}
