@@ -13,8 +13,10 @@ import emitter from '../../../services/eventEmiter';
 import shadower from '../../shadower';
 import colorList from '../../colorList';
 import bleashupHeaderStyle from '../../../services/bleashupHeaderStyle';
+import { observer } from 'mobx-react';
 
-export default class Commitee extends Component {
+
+@observer class Commitee extends Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -53,19 +55,16 @@ export default class Commitee extends Component {
         return item
     }
     refreshCommitees() {
-        console.warn('refreshing committees')
-        this.setState({
+        /*this.setState({
             refresh: true
         })
         setTimeout(() => {
             this.setState({
                 refresh: false
             })
-        }, 100)
+        }, 100)*/
     }
     render() {
-        //console.warn(this.props.commitees,this.props.commitees.length)
-
         return (this.state.loaded ?
             <View style={{ height: "100%", width: "100%"}}>
                 
@@ -88,7 +87,7 @@ export default class Commitee extends Component {
                         style={{borderTopRightRadius: 5,
                             width: '100%', borderBottomRightRadius: 1, 
                         }}
-                            dataSource={union([this.generalCommitee], uniq(this.props.commitees))}
+                            dataSource={union([this.generalCommitee], stores.CommiteeStore.commitees[this.props.event_id])}
                             keyExtractor={(item, index) => index.toString()}
                             renderItem={(item, index) =>
                                 <CommiteeItem
@@ -114,10 +113,12 @@ export default class Commitee extends Component {
                             firstIndex={0}
                             renderPerBatch={7}
                             initialRender={14}
-                            numberOfItems={this.props.commitees.length}
+                            numberOfItems={stores.CommiteeStore.commitees[this.props.event_id]?
+                                stores.CommiteeStore.commitees[this.props.event_id].length:0}
                         /></View>}
                 </View>
             </View> : <Spinner></Spinner>
         );
     }
 }
+export default Commitee

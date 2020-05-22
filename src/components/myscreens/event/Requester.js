@@ -29,7 +29,7 @@ class Request {
             Commitee.notif = notif
             tcpRequest.addcommitee(Commitee, commitee.id).then(JSONData => {
                 serverEventListener.sendRequest(JSONData, commitee.id).then(response => {
-                    stores.CommiteeStore.addCommitee(commitee).then(() => {
+                    stores.CommiteeStore.addCommitee(commitee.event_id, commitee).then(() => {
                         stores.Events.addEventCommitee(commitee.event_id, commitee.id).then(() => {
                             let Change = {
                                 id: uuid.v1(),
@@ -63,7 +63,7 @@ class Request {
             updateName.name = newName
             tcpRequest.update_commitee_name(updateName, ID + "_name").then(JSONData => {
                 serverEventListener.sendRequest(JSONData, ID + "_name").then(response => {
-                    stores.CommiteeStore.updateCommiteeName(ID, newName).then((commitee) => {
+                    stores.CommiteeStore.updateCommiteeName(eventID, ID, newName).then((commitee) => {
                         let Change = {
                             id: uuid.v1(),
                             title: "Update On Committees",
@@ -99,7 +99,7 @@ class Request {
             publish.notif = state ? notif : []
             tcpRequest.update_commitee_public_state(publish, id + "_publish").then(JSONData => {
                 serverEventListener.sendRequest(JSONData, id + "_publish").then(response => {
-                    stores.CommiteeStore.updateCommiteeState(id, state).then((commitee) => {
+                    stores.CommiteeStore.updateCommiteeState(event_id, id, state).then((commitee) => {
                         let Change = {
                             id: uuid.v1(),
                             title: "Update On Committees",
@@ -130,7 +130,7 @@ class Request {
             addMembers.event_id = event_id
             tcpRequest.add_member_to_commitee(addMembers, id + "_members").then(JSONData => {
                 serverEventListener.sendRequest(JSONData, id + "_members").then(response => {
-                    stores.CommiteeStore.addMembers(id, members).then((commitee) => {
+                    stores.CommiteeStore.addMembers(event_id, id, members).then((commitee) => {
                         let Change = {
                             id: uuid.v1(),
                             title: "Update On Committees",
@@ -161,7 +161,7 @@ class Request {
             CEID.event_id = event_id;
             tcpRequest.open_commitee(CEID, id + "_open").then((JSONData) => {
                 serverEventListener.sendRequest(JSONData, id + "_open").then((reponse) => {
-                    stores.CommiteeStore.changeCommiteeOpenedState(id, true).then((commitee) => {
+                    stores.CommiteeStore.changeCommiteeOpenedState(event_id, id, true).then((commitee) => {
                         let Change = {
                             id: uuid.v1(),
                             title: "Update On Committees",
@@ -192,7 +192,7 @@ class Request {
             CEID.event_id = event_id;
             tcpRequest.close_commitee(CEID, id + "_close").then((JSONData) => {
                 serverEventListener.sendRequest(JSONData, id + "_close").then((reponse) => {
-                    stores.CommiteeStore.changeCommiteeOpenedState(id, false).then((commitee) => {
+                    stores.CommiteeStore.changeCommiteeOpenedState(event_id, id, false).then((commitee) => {
                         let Change = {
                             id: uuid.v1(),
                             title: "Update On Committees",
@@ -225,7 +225,7 @@ class Request {
             removeMember.member_phone = memberPhone;
             tcpRequest.remove_member_from_commitee(removeMember, id + "_members").then(JSON => {
                 serverEventListener.sendRequest(JSON, id + "_members").then(response => {
-                    stores.CommiteeStore.removeMember(id, memberPhone).then((commitee) => {
+                    stores.CommiteeStore.removeMember(event_id, id, memberPhone).then((commitee) => {
                         let Change = {
                             id: uuid.v1(),
                             title: "Update On Committees",
@@ -257,7 +257,7 @@ class Request {
             member.member_phone = [memberItem]
             tcpRequest.join_commitee(member, id + "_join").then(JSONData => {
                 serverEventListener.sendRequest(JSONData, id + "_join").then((response) => {
-                    stores.CommiteeStore.addMembers(id, member.member_phone).then((commitee) => {
+                    stores.CommiteeStore.addMembers(event_id, id, member.member_phone).then((commitee) => {
                         let Change = {
                             id: uuid.v1(),
                             title: "Update On Committees",
@@ -290,7 +290,7 @@ class Request {
             member.member_phone = [stores.LoginStore.user.phone]
             tcpRequest.leave_commitee(member, id + "_leave").then(JSONData => {
                 serverEventListener.sendRequest(JSONData, id + "_leave").then(response => {
-                    stores.CommiteeStore.removeMember(id, member.member_phone).then((commitee) => {
+                    stores.CommiteeStore.removeMember(event_id, id, member.member_phone).then((commitee) => {
                         let Change = {
                             id: uuid.v1(),
                             title: "Update On Committees",
@@ -375,16 +375,16 @@ class Request {
             })
         })
     }
-    addParticipants(eventID, participants,activity_name) {
+    addParticipants(eventID, participants, activity_name) {
         return new Promise((resolve, reject) => {
             let notif = request.Notification()
-            notif.notification.title = "New Activity" 
+            notif.notification.title = "New Activity"
             notif.notification.body = toTitleCase(stores.LoginStore.user.nickname) + ' Added you to ' + activity_name
-            notif.data.activity_id = eventID 
+            notif.data.activity_id = eventID
             let updater = stores.LoginStore.user.phone
             tcpRequest.UpdateCurrentEvent(updater,
                 eventID, "adds",
-                participants, eventID + "_adds",notif).then((JSONData) => {
+                participants, eventID + "_adds", notif).then((JSONData) => {
                     serverEventListener.sendRequest(JSONData, eventID + '_adds').then(() => {
                         resolve("ok")
                         MainUpdater.addParticipants(eventID, participants, updater, "new_participants", moment().format()).then((Change) => {

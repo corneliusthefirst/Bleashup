@@ -425,13 +425,8 @@ export default class Event extends Component {
   }
   refreshePage() {
     this.setState({
-      fresh: true
+      fresh: false
     })
-    setTimeout(() => {
-      this.setState({
-        fresh: false
-      })
-    }, 100)
   }
   handleActivityUpdates(change, newValue) {
     if (!this.unmounted)
@@ -572,6 +567,7 @@ export default class Event extends Component {
   }
   master = false
   componentWillMount() {
+    GState.currentCommitee = this.event.id
     this.unmounted = false
     emitter.on(`event_updated_${this.event.id}`, (change, newValue) => {
       this.handleActivityUpdates(change, newValue)

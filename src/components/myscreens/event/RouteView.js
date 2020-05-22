@@ -36,43 +36,10 @@ export default class RouteView extends Component {
     height = 50
     original = "#1FABAB"
     previous = this.props.event_id
-    // This function resetSelectedCommitee will emite an event to the currently listening commiteeItem to adjust its highlightColor
-    // because the selected tab has changed
-    resetSelectedCommitee() {
-    GState.reply = null
-        if (GState.currentCommitee !== null) {
-            GState.previousCommitee = GState.currentCommitee
-            GState.currentCommitee = null;
-            emitter.emit("current_commitee_changed", GState.previousCommitee)
-        } else {
-            emitter.emit("current_commitee_changed", GState.previousCommitee)
-        }
-    }
     centerer = {
         height: this.height, alignItems: 'center',
         borderRadius: 6, marginBottom: '6%',
         justifyContent: 'center'
-    }
-    resetCommiteeForGeneral() {
-        GState.currentCommitee = GState.previousCommitee;
-        emitter.emit("current_commitee_changed_by_main", GState.previousCommitee)
-        this.setState({
-            newMessagesCount: 0,
-            updating: !this.state.updating
-        })
-    }
-    componentWillMount() {
-        emitter.on('mentioning', () => {
-            this.resetCommiteeForGeneral()
-        })
-        emitter.on("leave-chat", () => {
-            //emitted when a new remind is added from the chat
-            this.resetSelectedCommitee()
-        })
-    }
-    componentWillUnmount() {
-        emitter.off('mentioning')
-        emitter.off("leave-chat")
     }
     componentDidMount() {
         let phone = stores.LoginStore.user.phone.replace("00", "+");
@@ -81,11 +48,6 @@ export default class RouteView extends Component {
             this.setState({
                 updating: !this.state.updating
             })
-            if (this.props.currentPage !== "EventChat") {
-                this.resetSelectedCommitee()
-            } else {
-                this.resetCommiteeForGeneral()
-            }
         })
     };
     width = screenWidth * .15
@@ -101,7 +63,6 @@ export default class RouteView extends Component {
                     width: "100%", ...shadower(2)
                 }} onPress={() => requestAnimationFrame(() => {
                     this.props.setCurrentPage("EventDetails")
-                    this.resetSelectedCommitee()
                 }
                 )}>
                     <View style={{ display: 'flex', width: "100%", marginTop: '10%', }}>
@@ -139,24 +100,11 @@ export default class RouteView extends Component {
                     ...shadower(2)
                 }} onPress={() => requestAnimationFrame(() => {
                     this.props.setCurrentPage("Reminds")
-                    this.resetSelectedCommitee()
                 })}>
                     <View style={{ width: "100%", marginTop: '10%', }}>
                         <Icon type="FontAwesome" style={{ alignSelf: 'center', 
                             fontSize: this.fontSize,
                              color: ColorList.bodyIcon }} name="bell-o"></Icon>
-                        {/*<Text style={{ padding: "1%", color: this.props.currentPage == "Reminds" ? "#0A4E52" : "gray", width: "100%" }}>Reminds</Text>*?/}
-                    </View>
-                </Button>
-                <Button style={{ ...this.centerer, height: this.height, backgroundColor: this.props.currentPage == "ChangeLogs" ? "#54F5CA" : "#FEFFDE", ...shadower(2) }} onPress={() => requestAnimationFrame(() => {
-                    this.props.setCurrentPage("ChangeLogs")
-                    this.resetSelectedCommitee()
-                }
-                )}>
-                    <View style={{ display: 'flex', flexDirection: 'row', width: "100%" }}>
-                        <Icon type="Entypo" style={{ color: this.props.currentPage == "ChangeLogs" ? "#0A4E52" : this.original }} name="clock"></Icon>
-                        {/*<Text style={{ padding: "1%", color: this.props.currentPage == "ChangeLogs" ? 
-                "#0A4E52" : "gray", width: "100%" }}>{"Logs"}</Text>*/}
                     </View>
                 </TouchableOpacity>
                 <TouchableOpacity style={{
@@ -165,7 +113,6 @@ export default class RouteView extends Component {
                     ...shadower(2)
                 }} onPress={() => requestAnimationFrame(() => {
                     this.props.setCurrentPage("ChangeLogs")
-                    this.resetSelectedCommitee()
                 }
                 )}>
                     <View style={{ marginTop: '10%', width: "100%" }}>

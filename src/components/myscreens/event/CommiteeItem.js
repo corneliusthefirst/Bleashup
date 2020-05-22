@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { Text, Badge, Icon, Label, Spinner, Toast, Thumbnail } from 'native-base';
+import { Text, Badge, Icon, Label, Spinner, Toast, Thumbnail, Title } from 'native-base';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import stores from '../../../stores';
 import { View, TouchableWithoutFeedback } from 'react-native';
-import { find } from "lodash"
+import { find,isEqual } from "lodash"
 import EditNameModal from './EditNameModal';
 import emitter from '../../../services/eventEmiter';
 import { observer } from 'mobx-react';
@@ -14,9 +14,9 @@ import CacheImages from '../../CacheImages';
 import ChatStore from '../../../stores/ChatStore';
 import testForURL from '../../../services/testForURL';
 import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
-import { Title } from 'native-base';
 import shadower from '../../shadower';
 import ColorList from '../../colorList';
+import convertToHMS from '../highlights_details/convertToHMS';
 
 export default class CommiteeItem extends Component {
     constructor(props) {
@@ -32,95 +32,50 @@ export default class CommiteeItem extends Component {
     shouldComponentUpdate(nextProps, nextState, nextContext) {
         return this.props.newMessagesCount !== nextProps.newMessagesCount ||
             this.state.newThing !== nextState.newThing || this.props.ImICurrentCommitee !== nextProps.ImICurrentCommitee ||
-            this.props.id !== nextProps.id || this.state.loaded !== nextState.loaded
+            this.props.commitee && this.props.commitee.name !== nextProps.commitee.name || 
+            this.props.commitee && nextProps.commitee && this.props.commitee.public_state !== nextProps.commitee.public_state ||
+            this.props.commitee && nextProps.commitee && this.props.commitee.member && 
+            nextProps.commitee.member && this.props.commitee.member.length !== nextProps.commitee.member.length 
+             || this.state.loaded !== nextState.loaded
     }
-
+    componentDidUpdate() {
+        this.calculateCommittee()
+    }
     componentDidMount() {
-        if (this.props.commitee !== null) {
-            let member = find(this.props.commitee.member, (ele) => ele !== null && ele.phone === this.props.phone)
-            if (this.props.commitee.name === "General") {
-                emitter.once("current_commitee_changed_by_main", commiteeName => {
-                    GState.currentCommitee = this.props.commitee.id
-                    GState.generalNewMessages = []
-                    this.setState({
-                        newThing: !this.state.newThing,
-                        commitee: { ...this.state.commitee, new_messages: [] }
-                    })
-                })
-            }
-            setTimeout(() => {
-                this.setState({
-                    commitee: this.props.commitee,
-                    public: this.props.commitee.public_state,
-                    master: member ? this.props.computedMaster : false,
-                    loaded: true,
-                    member: member,
-                    joint: true
-                })
-            }, 50)
-        } else {
-            stores.CommiteeStore.getCommitee(this.props.id).then(commitee => {
-                let member = find(commitee.member, (ele) => ele !== null && ele.phone === this.props.phone)
-                setTimeout(() => {
-                    this.setState({
-                        commitee: commitee,
-                        public: commitee.public_state,
-                        master: member ? this.props.computedMaster : false,
-                        loaded: true,
-                        joint: member ? true : false
-                    })
-                }, 50)
+        this.calculateCommittee()
+    }
+    calculateCommittee() {
+        let member = this.props.commitee &&
+            this.props.commitee.member &&
+            find(this.props.commitee.member, (ele) => ele !== null &&
+                ele.phone === this.props.phone)
+        setTimeout(() => {
+            this.setState({
+                master: member ? this.props.computedMaster : false,
+                loaded: true,
+                joint: member ? true : false
             })
-        }
-        let phone = stores.LoginStore.user.phone.replace("00", "+");
-        firebase.database().ref(`new_message/${this.props.event_id}/${phone}/${this.props.id}/new_messages`).once('value', snapshoot => {
-            if (snapshoot.val()) {
-                firebase.database().ref(`${this.props.id}`).orderByKey().limitToLast(1).once('value', snapshooter => {
-                    let key = Object.keys(snapshooter.val())
-                    value = snapshooter.val()
-                    this.setState({
-                        commitee: {
-                            ...this.state.commitee, new_messages: snapshoot.val()
-                        },
-                        newThing: !this.state.newThing,
-                        newest_message: value[key]
-                    })
-                })
-            } else {
-                
-                stores.Messages.loadLatestMessage(this.props.id).then(message => {
-                    this.setState({
-                        newThing: !this.state.newThing,
-                        newest_message: message
-                    })
-                })
-            }
-        }).catch(error => {
-            console.warn(error)
-        })
+        }, 50)
     }
     revertName() {
         // console.warn("edit failed message recieved!!")
         this.setState({
-            commitee: { ...this.state.commitee, name: this.previousName },
             newThing: !this.state.newThing
         })
         this.swap()
     }
     publish() {
-        this.props.publishCommitee(this.state.commitee.id, !this.state.commitee.public_state)
-        emitter.once('published', state => {
+        this.props.publishCommitee(this.props.commitee.id, !this.props.commitee.public_state)
+        /*emitter.once('published', state => {
             this.setState({
-                commitee: { ...this.state.commitee, public_state: state },
-                public: state,
                 newThing: !this.state.newThing
             })
-        })
+        })*/
     }
     join() {
         return new Promise((resolve, reject) => {
-            if (this.state.public && !this.state.joint) {
-                this.props.join(this.state.commitee.id)
+            if (this.props.commitee.public_state && !this.state.joint) {
+                this.props.join(this.props.commitee.id)
                 emitter.on("joint", () => {
                     this.setState({
                         joint: true
@@ -136,7 +91,7 @@ export default class CommiteeItem extends Component {
     }
     leave() {
         if (this.state.joint) {
-            this.props.leave(this.state.commitee.id)
+            this.props.leave(this.props.commitee.id)
             emitter.on("left", () => {
                 this.setState({
                     left: true
@@ -145,35 +100,31 @@ export default class CommiteeItem extends Component {
         }
     }
     addMembers() {
-        this.props.addMembers(this.state.commitee.id, this.state.commitee.member)
-        //this._accordion.setSelected(-1)
+        this.props.addMembers(this.props.commitee.id, this.props.commitee.member)
     }
     removeCommitee() {
-        this.props.removeMember(this.state.commitee.id, this.state.commitee.member)
-        //this._accordion.setSelected(-1)
+        this.props.removeMember(this.props.commitee.id, this.props.commitee.member)
     }
     editName(newName) {
-        this.previousName = this.state.commitee.name
+        /*this.previousName = this.props.commitee.name
         this.setState({
-            commitee: { ...this.state.commitee, name: newName },
+            commitee: { ...this.props.commitee, name: newName },
             isEditNameModelOpened: false,
             newThing: !this.state.newThing
-        })
-        this.props.editName(newName, this.state.commitee.id)
-        //this.swap()
-        emitter.once("edit-failed", () => {
+        })*/
+        this.props.editName(newName, this.props.commitee.id)
+        /*emitter.once("edit-failed", () => {
             this.revertName()
-        })
+        })*/
     }
     swap() {
-        GState.currentRoomNewMessages = this.state.commitee.new_messages
-        //GState.currentCommitee = this.state.commitee.id
-        this.props.swapChats(this.state.commitee)
+        GState.currentRoomNewMessages = this.props.commitee.new_messages
+        //GState.currentCommitee = this.props.commitee.id
+        this.props.swapChats(this.props.commitee)
         //emitter.emit("current_commitee_changed", this.props.id)
         let phone = stores.LoginStore.user.phone.replace("00", "+");
         firebase.database().ref(`new_message/${phone}/${this.props.id}/new_messages`).set([])
         this.setState({
-            commitee: { ...this.state.commitee, new_messages: [] },
             newThing: !this.state.newThing
         })
     }
@@ -190,29 +141,17 @@ export default class CommiteeItem extends Component {
     }
     setActionPercentage() {
         actionsNumber = () => {
-            if (this.state.master && this.state.public) {
+            if (this.state.master && this.props.commitee.public_state) {
                 return 5
-            } else if (!this.state.master && !this.state.public) {
+            } else if (!this.state.master && !this.props.commitee.public_state) {
                 return 1
-            } else if (!this.state.master && this.state.public && !this.state.joint) {
+            } else if (!this.state.master && this.props.commitee.public_state && !this.state.joint) {
                 return 2
             }
         }
     }
     formNickName(user) {
         return user.phone == stores.LoginStore.user.phone.replace("00", "+") ? "You" : user.nickname
-    }
-    convertToHMS(secs) {
-        var sec_num = parseInt(secs, 10)
-        var hours = Math.floor(sec_num / 3600)
-        var minutes = Math.floor(sec_num / 60) % 60
-        var seconds = sec_num % 60
-
-        return [hours, minutes, seconds]
-            .map(v => v < 10 ? "0" + v : v)
-            .filter((v, i) => v !== "00" || i > 0)
-            .join(":")
-
     }
     toMB(data) {
         mb = 1000 * 1000
@@ -253,7 +192,7 @@ export default class CommiteeItem extends Component {
                     <View style={{ display: 'flex', flexDirection: 'row' }}>
                         <Text style={{ fontSize: 14, marginLeft: "3%", marginTop: "1%", width: "70%" }}>{message.text ?
                             message.text.slice(0, 15) + message.text.length < 15 ? "..." : "" :
-                            message.duration ? this.convertToHMS(message.duration) :
+                            message.duration ? convertToHMS(message.duration) :
                                 message.total ? this.toMB(message.total) : ""}</Text>
                         <View style={{ alignSelf: 'flex-end', marginTop: "-2%", }}>
                             <Icon type={"Entypo"} name={"mic"} style={{ fontSize: 30, color: ColorList.bodyText }}></Icon>
@@ -297,7 +236,7 @@ export default class CommiteeItem extends Component {
             backgroundColor: this.props.ImICurrentCommitee ? ColorList.bodyDarkWhite : ColorList.bodyBackground,
 
         }
-        this.accessible = this.state.joint || this.state.public
+        this.accessible = this.state.joint || this.props.commitee.public_state
         return (
             this.state.loaded ? <View style={{
                 ...mainStyles
@@ -311,9 +250,9 @@ export default class CommiteeItem extends Component {
                             <View style={{ margin: '1%', flex: 2, display: 'flex', flexDirection: 'column', }}>
                                 <Text elipsizeMode={'tail'} numberOfLines={1} style={{
                                     fontWeight: 'bold', fontSize: 14,
-                                    color: GState.currentCommitee == this.state.commitee.id ? ColorList.headerIcon : "gray"
-                                }}>{this.state.commitee.name}</Text>
-                                {this.state.joint && this.state.newest_message ? <Text note>Latest Message :</Text> : null}
+                                    color: GState.currentCommitee == this.props.commitee.id ? ColorList.headerIcon : "gray"
+                                }}>{this.props.commitee.name}</Text>
+                                {this.state.joint && this.props.commitee.newest_message ? <Text note>Latest Message :</Text> : null}
                             </View>
                             <View style={{
                                 display: 'flex',
@@ -324,9 +263,9 @@ export default class CommiteeItem extends Component {
                                 alignSelf: 'flex-end',
                             }}>
                                 {
-                                    this.state.commitee &&
-                                        this.state.commitee.name &&
-                                        this.state.commitee.name.toLowerCase() === "General".toLowerCase() ? null :
+                                    this.props.commitee &&
+                                        this.props.commitee.name &&
+                                        this.props.commitee.name.toLowerCase() === "General".toLowerCase() ? null :
                                         this.state.master ?
                                             <View style={{ marginTop: "-5%", }}>
                                                 <TouchableWithoutFeedback onPress={() => {
@@ -344,22 +283,22 @@ export default class CommiteeItem extends Component {
                                                     <View><Icon style={{ fontSize: 30, color: ColorList.bodyText }} name="pencil" type="EvilIcons" /></View>
                                                 </TouchableWithoutFeedback>
                                             </View> : null}
-                                {this.state.joint && this.state.commitee.new_messages ? this.state.commitee.new_messages.length > 0 ? <Badge style={{
+                                {this.state.joint && this.props.commitee.new_messages ? this.props.commitee.new_messages.length > 0 ? <Badge style={{
                                     display: 'flex',
                                     justifyContent: 'center',
                                 }} primary>
                                     <Text style={{ display: 'flex', justifyContent: 'center', }}>
-                                        {this.state.commitee.new_messages.length}
+                                        {this.props.commitee.new_messages.length}
                                     </Text>
                                 </Badge> : null : null}
                             </View>
                         </View>
                         <View style={{ margin: '2%', }}>
-                            {this.state.joint && this.state.newest_message ? this.writeLatestMessage(this.state.newest_message) : null}
+                            {this.state.joint && this.props.commitee.newest_message ? this.writeLatestMessage(this.props.commitee.newest_message) : null}
                         </View>
                     </View>
                 </TouchableOpacity>
-                {this.state.isEditNameModelOpened ? <EditNameModal value={this.state.commitee.name} isOpen={this.state.isEditNameModelOpened} close={() => {
+                {this.state.isEditNameModelOpened ? <EditNameModal value={this.props.commitee.name} isOpen={this.state.isEditNameModelOpened} close={() => {
                     this.setState({
                         isEditNameModelOpened: false,
                         newThing: !this.state.newThing
@@ -375,7 +314,7 @@ export default class CommiteeItem extends Component {
 
             </View> : <View style={{
                 ...mainStyles,
-                height: 100
+                height: this.props.commitee.newest_message?100:50
             }}>
                 </View>
         );

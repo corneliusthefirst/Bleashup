@@ -41,7 +41,7 @@ class UpdatesDispatcher {
       return "done"
     } else {
       let id = ids.pop()
-      stores.CommiteeStore.replaceCommiteeParticipant(id, participant).then((c) => {
+      stores.CommiteeStore.replaceCommiteeParticipant(e, id, participant).then((c) => {
         this.applyToAllCommitees(ids, participant, e)
       })
     }
@@ -351,15 +351,15 @@ class UpdatesDispatcher {
           })
       })
     },
-    following: update =>{
+    following: update => {
       return new Promise((resolve, reject) => {
-        stores.Contacts.addFollower(update.updater,"").then(() => {
+        stores.Contacts.addFollower(update.updater, "").then(() => {
           console.warn("following successfully stored")
           resolve()
         })
       })
     },
-    unfollowing : update => {
+    unfollowing: update => {
       return new Promise((resolve, reject) => {
         stores.Contacts.removeFollower(update.updater).then(() => {
           console.warn("unfollowing successfully stored")
@@ -1166,7 +1166,7 @@ class UpdatesDispatcher {
               console.warn(vote)
               stores.Votes.addVote(vote).then(() => {
                 stores.Events.addVote(vote.event_id, vote.id).then(() => {
-                  stores.CommiteeStore.imIInThisCommttee(stores.LoginStore.user.phone,
+                  stores.CommiteeStore.imIInThisCommttee(update.event_id, stores.LoginStore.user.phone,
                     vote.committee_id).then((state) => {
                       console.warn(state)
                       if (state || vote.published === 'public') {
@@ -1210,7 +1210,7 @@ class UpdatesDispatcher {
         stores.Votes.removeVote(update.new_value).then((vote) => {
           stores.Events.removeVote(update.event_id, update.new_value).then(
             () => {
-              stores.CommiteeStore.imIInThisCommttee(stores.LoginStore.user.phone,
+              stores.CommiteeStore.imIInThisCommttee(update.event_id, stores.LoginStore.user.phone,
                 vote.committee_id).then((state) => {
                   if (state || vote.published === 'public') {
                     let Change = {
@@ -1240,7 +1240,7 @@ class UpdatesDispatcher {
     restored_vote: update => new Promise((resolve, reject) => {
       stores.Votes.addVote(update.new_value).then(() => {
         stores.Events.addVote(update.event_id, update.new_value.id).then(() => {
-          stores.CommiteeStore.imIInThisCommttee(stores.LoginStore.user.phone, update.new_value.committee_id).then((state) => {
+          stores.CommiteeStore.imIInThisCommttee(update.event_id, stores.LoginStore.user.phone, update.new_value.committee_id).then((state) => {
             if (update.published === 'public' || state) {
               let Change = {
                 id: uuid.v1(),
@@ -1292,7 +1292,7 @@ class UpdatesDispatcher {
     vote: update => {
       return new Promise((resolve, reject) => {
         stores.Votes.vote(update.new_value).then((vote) => {
-          stores.CommiteeStore.imIInThisCommttee(stores.LoginStore.user.phone,
+          stores.CommiteeStore.imIInThisCommttee(update.event_id, stores.LoginStore.user.phone,
             vote.committee_id).then((state) => {
               console.warn(state, "--")
               if (state || vote.published === 'public') {
@@ -1317,7 +1317,7 @@ class UpdatesDispatcher {
     vote_period_updated: update => {
       return new Promise((resolve, reject) => {
         stores.Votes.UpdateVotePeriod(update.new_value).then((vote) => {
-          stores.CommiteeStore.imIInThisCommttee(stores.LoginStore.user.phone,
+          stores.CommiteeStore.imIInThisCommttee(update.event_id, stores.LoginStore.user.phone,
             vote.committee_id).then((state) => {
               if (state || votes.published === 'public') {
                 let Change = {
@@ -1940,7 +1940,7 @@ class UpdatesDispatcher {
     },
     new_commitee: update => {
       return new Promise((resolve, reject) => {
-        stores.CommiteeStore.getCommitee(update.new_value).then(commitee => {
+        stores.CommiteeStore.getCommitee(update.event_id, update.new_value).then(commitee => {
           stores.Events.addEventCommitee(update.event_id, update.new_value).then(() => {
             let Change = {
               id: uuid.v1(),
@@ -1964,7 +1964,7 @@ class UpdatesDispatcher {
     commitee_opened: update => {
       return new Promise((resolve, reject) => {
         return new Promise((resolve, reject) => {
-          stores.CommiteeStore.changeCommiteeOpenedState(update.new_value, true).then(commitee => {
+          stores.CommiteeStore.changeCommiteeOpenedState(update.event_id, update.new_value, true).then(commitee => {
             let Change = {
               id: uuid.v1(),
               updated: update.updated,
@@ -1987,7 +1987,7 @@ class UpdatesDispatcher {
     commitee_closed: update => {
       return new Promise((resolve, reject) => {
         return new Promise((resolve, reject) => {
-          stores.CommiteeStore.changeCommiteeOpenedState(update.new_value, false).then(commitee => {
+          stores.CommiteeStore.changeCommiteeOpenedState(update.event_id, update.new_value, false).then(commitee => {
             let Change = {
               id: uuid.v1(),
               updated: update.updated,
@@ -2008,7 +2008,7 @@ class UpdatesDispatcher {
     },
     removed_commitee: update => {
       return new Promise((resolve, reject) => {
-        stores.CommiteeStore.removeCommitee(update.new_value).then(commitee => {
+        stores.CommiteeStore.removeCommitee(update.event_id, update.new_value).then(commitee => {
           stores.Events.removeCommitee(update.event_id, update.new_value).then(() => {
             let Change = {
               id: uuid.v1(),
@@ -2032,7 +2032,7 @@ class UpdatesDispatcher {
     },
     added_commitee_member: update => {
       return new Promise((resolve, reject) => {
-        stores.CommiteeStore.addMembers(update.new_value.id, update.new_value.member).then((commitee) => {
+        stores.CommiteeStore.addMembers(update.event_id, update.new_value.id, update.new_value.member).then((commitee) => {
           let Change = {
             id: uuid.v1(),
             updated: update.updated,
@@ -2053,7 +2053,7 @@ class UpdatesDispatcher {
     },
     removed_commitee_member: update => {
       return new Promise((resolve, reject) => {
-        stores.CommiteeStore.removeMember(update.new_value.id, update.new_value.phone).then((commitee) => {
+        stores.CommiteeStore.removeMember(update.event_id, update.new_value.id, update.new_value.phone).then((commitee) => {
           let Change = {
             id: uuid.v1(),
             updated: update.updated,
@@ -2074,8 +2074,8 @@ class UpdatesDispatcher {
     },
     commitee_name_updated: update => {
       return new Promise((resolve, reject) => {
-        stores.CommiteeStore.getCommitee(update.new_value.id).then(oldCommitee => {
-          stores.CommiteeStore.updateCommiteeName(update.new_value.id, update.new_value.name).then(commitee => {
+        stores.CommiteeStore.getCommitee(update.event_id, update.new_value.id).then(oldCommitee => {
+          stores.CommiteeStore.updateCommiteeName(update.event_id, update.new_value.id, update.new_value.name).then(commitee => {
             let Change = {
               id: uuid.v1(),
               updated: update.updated,
@@ -2097,7 +2097,7 @@ class UpdatesDispatcher {
     },
     updated_commitee_public_status: update => {
       return new Promise((resolve, reject) => {
-        stores.CommiteeStore.updateCommiteeState(update.new_value.id, update.new_value.state).then((commitee) => {
+        stores.CommiteeStore.updateCommiteeState(update.event_id,update.new_value.id, update.new_value.state).then((commitee) => {
           //console.warn(update.updater)
           let Change = {
             id: uuid.v1(),

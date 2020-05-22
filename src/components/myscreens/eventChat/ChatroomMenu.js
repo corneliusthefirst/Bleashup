@@ -18,27 +18,6 @@ export default class ChatroomMenu extends Component {
             isPublisherModalOpened: false
         }
     }
-    componentDidMount() {
-        this.setState({
-            public: this.props.public,
-            opened: this.props.opened
-        })
-        emitter.on("open-close", (newState) => {
-            console.warn("receiving closed !!")
-            this.setState({
-                opened: newState
-            })
-        })
-        emitter.on("publish-unpublish", (newState) => {
-            this.setState({
-                public: newState
-            })
-        })
-    }
-    componentWillUnmount() {
-        emitter.off('open-close')
-        emitter.off('publish-unpublish')
-    }
     componentWillReceiveProps(nextProps) {
         if (nextProps.hide) {
             this._menu.hide()
@@ -92,16 +71,16 @@ export default class ChatroomMenu extends Component {
                         }}>Remove Members</MenuItem>
                         <MenuDivider color="#1FABAB" /></View>}
                     {this.props.roomID == this.props.eventID ? null : !this.props.master ? null :
-                        <View><MenuItem textStyle={{ color: this.state.opened ? "red" : "green" }} onPress={() => {
+                        <View><MenuItem textStyle={{ color: this.props.opened ? "red" : "green" }} onPress={() => {
                             this.hideMenu()
-                            this.state.opened ? this.props.closeCommitee() : this.props.openCommitee()
-                        }}>{this.state.opened ? "Close Committee" : "Open Committee"}</MenuItem>
+                            this.props.opened ? this.props.closeCommitee() : this.props.openCommitee()
+                        }}>{this.props.opened ? "Close Committee" : "Open Committee"}</MenuItem>
                             <MenuDivider color="#1FABAB" /></View>}
                     {this.props.roomID === this.props.eventID ? null : !this.props.master ? null :
                         <View><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
                             this.hideMenu()
-                            this.state.public ? this.props.publishCommitee() : this.props.publishCommitee()
-                        }}>{this.props.roomID == this.props.eventID ? null : this.state.public ?
+                            this.props.public ? this.props.publishCommitee() : this.props.publishCommitee()
+                        }}>{this.props.roomID == this.props.eventID ? null : this.props.public ?
                             "Unpublish Committee" : "Publish Committee"}</MenuItem>
                             <MenuDivider color="#1FABAB" /></View>}
                     {this.props.roomID == this.props.eventID ? null :

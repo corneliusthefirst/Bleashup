@@ -492,6 +492,9 @@ class tcpRequestData {
   unfollow(data, id) {
     return this.sendData('unfollow', data, id)
   }
+  messaging(data, id) {
+    return this.sendData("messaging", data, id)
+  }
 }
 
 const tcpRequest = new tcpRequestData();

@@ -1348,8 +1348,9 @@ const screenheight = Math.round(Dimensions.get('window').height);
                     replaceMessageFile={(data) => this.replaceMessageFile(data)}
                     playVideo={(source) => this.playVideo(source)}></Message> : null;
             }}
-            dataSource={toJS(stores.Messages.messages[this.roomID] &&
-                stores.Messages.messages[this.roomID] || [])}
+            dataSource={stores.Messages.messages[this.roomID] && 
+                stores.Messages.messages[this.roomID].length > 0 ?
+                stores.Messages.messages[this.roomID] : []}
             newData={this.showMessage}
             newDataLength={this.showMessage.length}>
         </BleashupFlatList>;
