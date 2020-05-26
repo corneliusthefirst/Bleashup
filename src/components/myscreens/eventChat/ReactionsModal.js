@@ -48,7 +48,10 @@ export default class ReactionModal extends BleashupModal {
     renderReactions() {
         return this.reactions.map((ele) => (
             <TouchableOpacity
-                onPress={() => requestAnimationFrame(() => this.props.react(ele))}
+                onPress={() => requestAnimationFrame(() => {
+                    this.props.react(ele)
+                    this.props.onClosed()
+                })}
                 style={{
                     ...rounder(40),
                     backgroundColor: ColorList.bodyBackground,

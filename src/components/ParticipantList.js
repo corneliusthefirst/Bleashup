@@ -172,7 +172,7 @@ export default class ParticipantList extends Component {
                                         renderItem={(item, index) => {
                                             this.delay = this.delay >= 15 ? 0 : this.delay + 1;
                                             return item.phone && !(this.state.hidden && this.state.hidden[item.phone]) ? (
-                                                <View style={{ margin: "3%" }}>
+                                                <View style={{ margin: '2%', }}>
                                                     <View style={{ display: "flex", flexDirection: "row" }}>
                                                         <View style={{}}>
                                                             <ProfileView
@@ -218,7 +218,6 @@ export default class ParticipantList extends Component {
                                                             </Text>
                                                         </View>
                                                     </View>
-                                                    <MenuDivider color="#1FABAB" />
                                                 </View>
                                             ) : null;
                                         }}

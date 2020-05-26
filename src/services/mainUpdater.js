@@ -114,7 +114,7 @@ class mainUpdater {
                     })
                 } else {
                     stores.Votes.loadVote(itemID).then(vote => {
-                        console.warn(vote,itemID)
+                        console.warn(vote, itemID)
                         resolve({ item_title: vote && vote.title, activity_name: event && event.about && event.about.title })
                     })
                 }
@@ -125,24 +125,78 @@ class mainUpdater {
     saveShares(eventID, share, updater, date) {
         return new Promise((resolve, reject) => {
             this.returnItemTitle(share.type, share.item_id, share.activity_id).then((title) => {
-                console.warn(title,share)
+                console.warn(title, share)
                 let shareTitle = this.choseShareTitle(share.type)
                 let scope = toTitleCase(share.scope)
                 let change = {
                     id: uuid.v1(),
                     date: date,
                     updated: share.type,
-                    updater :updater,
+                    updater: updater,
                     title: 'Updates on Main Activity',
                     event_id: eventID,
                     changed: 'Shared ' + toTitleCase(title.item_title) + ' (' +
-                        shareTitle + ') to his ' +(
-                    scope === 'Some' ? 'Contacts' : scope),
-                    new_value:{data:share.id,new_value:title.item_title}
+                        shareTitle + ') to his ' + (
+                            scope === 'Some' ? 'Contacts' : scope),
+                    new_value: { data: share.id, new_value: title.item_title }
                 }
                 stores.Events.addEvent(share).then(() => {
                     resolve(change)
                     stores.ChangeLogs.addChanges(change)
+                })
+            })
+        })
+    }
+    saveMessage(message, eventID, committeeID, me) {
+        return new Promise((resolve, reject) => {
+            !me ? stores.Messages.addNewMessage(committeeID, message) : null
+            this.informCommitteeAndEvent(message, committeeID, eventID).then(() => {
+                resolve()
+            })
+        })
+    }
+    receiveMessage(messageID, commiteeID, receiver) {
+        return stores.Messages.receiveMessage(commiteeID, receiver, messageID)
+    }
+    updateMessage(messageID, commiteeID, eventID, text) {
+        return new Promise((resolve, reject) => {
+            stores.Messages.updateMessageText(commiteeID, messageID, text).then(() => {
+                stores.CommiteeStore.updateLatestMessageText(messageID, text, commiteeID, eventID).then(() => {
+                    resolve()
+                })
+            })
+        })
+    }
+    playedMessage(messageID, committeeID, eventID, player) {
+        return stores.Messages.playedMessage(committeeID, messageID, player)
+    }
+    seenMessage(messageID, committeeID, eventID, seer) {
+        return stores.Messages.seenMessage(committeeID, messageID, seer)
+    }
+    reactToMessage(messageID, commiteeID, eventID, reaction) {
+        return stores.Messages.reactToMessage(commiteeID, messageID, reaction)
+    }
+    deleteMessage(messageID, commiteeID, eventID) {
+        return new Promise((resolve, reject) => {
+            stores.Messages.removeMessage(commiteeID, messageID).then(() => {
+                stores.CommiteeStore.removeNewMessage(messageID, eventID, commiteeID).then(() => {
+                    stores.Events.removeNewMessage(eventID, messageID, commiteeID).then(() => {
+                        resolve()
+                    })
+                })
+            })
+        })
+    }
+    sayTyping(commiteeID, typer) {
+        return new Promise((resolve, reject) => {
+            resolve()
+        })
+    }
+    informCommitteeAndEvent(message, committeeID, eventID) {
+        return new Promise((resolve, reject) => {
+            stores.CommiteeStore.addNewMessage(message, eventID,committeeID).then(() => {
+                stores.Events.addNewMessage(eventID, message.id, committeeID).then(() => {
+                    resolve()
                 })
             })
         })

@@ -79,7 +79,6 @@ const screenheight = Math.round(Dimensions.get('window').height);
             user: 2,
             splicer: 500,
             creator: true,
-            newMessage:false,
             hideStatusBar: false,
             showEmojiInput: false,
             showAudioRecorder: false,
@@ -541,10 +540,14 @@ const screenheight = Math.round(Dimensions.get('window').height);
             if (messager) {
                 GState.reply = null
                 this.fireRef.push(messager).then((key) => {
-                    messager = { ...messager, key: key.key,sent:true }
+                    messager = { ...messager, key: key.key }
                     Requester.sendMessage(messager, this.roomID,
                         this.props.activity_id).then((response) => {
+                            console.warn("message sent", response)
                             resolve(messager)
+                            this.setState({
+                                newMessage: true
+                            })
                         })
                 })
             } else {
@@ -559,9 +562,7 @@ const screenheight = Math.round(Dimensions.get('window').height);
             this.scrollToEnd()
             newMessage = { ...newMessage, received: this.received, sent: true }
             this.sendMessage(newMessage).then(mess => {
-                stores.Messages.replaceMessage(this.roomID, mess).then(() => {
-                    this.initRoom()
-                })
+                stores.Messages.replaceMessage(this.roomID, mess)
             })
         }
     }
@@ -581,12 +582,12 @@ const screenheight = Math.round(Dimensions.get('window').height);
             }
             this.scrollToEnd()
             stores.Messages.addMessageToStore(this.roomID, messager).then((data) => {
-                this._resetTextInput()
-                this.setState({
-                    textValue: '',
-                    replying: false,
-                    replyContent: null,
-                })
+            })
+            this._resetTextInput()
+            this.setState({
+                textValue: '',
+                replying: false,
+                replyContent: null,
             })
         } else {
 
@@ -725,17 +726,10 @@ const screenheight = Math.round(Dimensions.get('window').height);
         })
         this.fucussTextInput()
     }
-    initRoom(){
-        console.warn("initing room")
-        this.setState({
-            newMessage: !this.state.newMessage
-        })
-    }
     replaceMessage(newMessage) {
         newMessage = { ...newMessage, received: this.received, sent: true }
         this.sendMessage({ ...newMessage, photo: newMessage.source }).then(mess => {
             stores.Messages.replaceMessage(this.roomID, { ...newMessage, key: mess.key }).then(() => {
-                this.initRoom()
             })
         });
     }
@@ -743,7 +737,6 @@ const screenheight = Math.round(Dimensions.get('window').height);
         newMessage = { ...newMessage, received: this.received, sent: true }
         this.sendMessage({ ...newMessage, source: newMessage.temp, cancled: undefined }).then(mess => {
             stores.Messages.replaceMessage(this.roomID, { ...newMessage, key: mess.key }).then(() => {
-                this.initRoom()
             });
         })
     }
@@ -751,7 +744,6 @@ const screenheight = Math.round(Dimensions.get('window').height);
         newMessage = { ...newMessage, received: this.received, sent: true }
         this.sendMessage({ ...newMessage, source: newMessage.temp }).then(mess => {
             stores.Messages.replaceMessage(this.roomID, { ...newMessage, key: mess.key }).then(() => {
-                this.initRoom()
             })
 
         });
@@ -760,7 +752,7 @@ const screenheight = Math.round(Dimensions.get('window').height);
         newMessage = { ...newMessage, received: this.received, sent: true }
         this.sendMessage({ ...newMessage, source: newMessage.temp }).then(mess => {
             stores.Messages.replaceMessage(this.roomID, { ...newMessage, key: mess.key }).then((messages) => {
-                this.initRoom()
+
             })
 
         });

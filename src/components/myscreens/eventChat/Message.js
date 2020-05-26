@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, PureComponent } from "react";
 import {
     View,
     TouchableOpacity,
@@ -32,6 +32,7 @@ import ReactionModal from "./ReactionsModal";
 import { ScrollView } from "react-native-gesture-handler";
 import stores from '../../../stores';
 import rounder from "../../../services/rounder";
+import emitter from '../../../services/eventEmiter';
 
 export default class Message extends Component {
     constructor(props) {
@@ -44,6 +45,7 @@ export default class Message extends Component {
             this.props.message.sender.phone;
         this.state = {
             showTime: false,
+            refresh:false,
             disabledSwipeout: true,
             openRight: true,
             sender_name:
@@ -99,7 +101,6 @@ export default class Message extends Component {
         },
     };
     chooseComponent(data, index, sender) {
-        //console.warn(data.type)
         switch (data.type) {
             case "text":
                 return (
@@ -264,7 +265,7 @@ export default class Message extends Component {
             this.setState({
                 loaded: true,
             });
-        }, 20 * this.props.delay);
+        }, 10 * this.props.delay);
     }
     slept = false;
     openingSwipeout() {
@@ -361,18 +362,7 @@ export default class Message extends Component {
                 break;
         }
     }
-    testReactions = [
-        {
-            reaction: "💕",
-            count: 2,
-            reacters:[
-                {
-                    phone:stores.LoginStore.user.phone,
-                    period:moment().format()
-                }
-            ]
-        },
-    ];
+    testReactions = [];
     renderMessageReactions(sender) {
         return this.props.message.reaction
             ? this.props.message.reaction.map((ele) => this.reaction(sender, ele))
@@ -459,15 +449,36 @@ export default class Message extends Component {
         return (
             this.props.message.sent !== nextProps.message.sent ||
             this.props.received !== nextProps.received ||
-            voter ||
-            votePeriod ||
+            voter || votePeriod ||
             this.state.loaded !== nextState.loaded ||
             (this.props.messagelayouts &&
                 this.props.messagelayouts[this.props.message.id] !==
                 nextProps.messagelayouts[nextProps.message.id]) ||
             this.props.message.id !== nextProps.message.id ||
+            this.props.message.sent !== nextProps.message.sent ||
+            this.state.refresh !== nextState.refresh ||
             this.state.isReacting !== nextState.isReacting
         );
+    }
+    previousMessage = JSON.stringify(this.props.message)
+    componentDidUpdate(previousProsps,prevState){
+        this.previousMessage = JSON.stringify(this.props.message)
+    }
+    refresh(){
+        this.setState({
+            refresh:!this.state.refresh
+        })
+    }
+    event = "updated" + this.props.message.id
+    componentWillMount(){
+        emitter.on(this.event,() => {
+            this.refresh()
+        })
+    }
+    componentWillUnmount(){
+        emitter.off(this.event,() => {
+            this.refresh()
+        })
     }
     iconStyles = {
         fontSize: 12,
@@ -514,8 +525,6 @@ export default class Message extends Component {
             ? this.props.messagelayouts[this.props.message.id]
             : this.placeHolder[this.props.message.type];
     render() {
-        //console.warn("here",this.props.message.sent,this.props.received);
-
         topMostStyle = {
             marginLeft: this.state.sender ? "1%" : 0,
             marginRight: !this.state.sender ? "1%" : 0,
@@ -814,7 +823,7 @@ export default class Message extends Component {
                                         pressingIn={() => {
                                             this.startReactionShowTimer()
                                         }}
-                                        react={this.props.react}
+                                        react={(reaction) => this.props.react(this.props.message.id,reaction)}
                                         isOpen={this.state.isReacting}
                                         onClosed={() => {
                                             this.setState({

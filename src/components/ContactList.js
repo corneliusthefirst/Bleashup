@@ -68,7 +68,7 @@ export default class ContactList extends Component {
                     justifyContent: 'center',
                 }}><View style={{marginTop: '-10%',}}><View style={{ alignSelf: 'center', backgroundColor: ColorList.bodyBackground,
                         alignSelf: 'center', ...rounder(100)}}>
-                        <Text style={{textAlign:'center',fontSize: 70,}}>{this.props.reaction}
+                        <Text style={{textAlign:'center',fontSize: 75,}}>{this.props.reaction}
                         </Text></View></View></View>}
             {this.state.isloaded ? (
                 <View style={{height:this.props.reaction?'85%':'93%'}}>
@@ -94,7 +94,7 @@ export default class ContactList extends Component {
                                             justifyContent: 'center',
                                         }}>
                                             <Text style={{
-                                            }} note>{item.period && this.writeDateTime(item.period.date)}</Text>
+                                            }} note>{this.writeDateTime(item.date) || item.period && this.writeDateTime(item.period.date)}</Text>
                                         </View>
                                     </View>
                                 </View>

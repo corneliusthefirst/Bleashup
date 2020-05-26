@@ -42,16 +42,17 @@ export default class SelectableContactsMaster extends Component {
             checked: (!this.state.checked && !this.state.masterchecked) ? !this.state.checked : this.state.checked
         }) : null
     }
+    margin={marginTop: 'auto',marginBottom: 'auto',}
     render() {
         return !this.state.hiden ? (
             <View style={{ flexDirection: 'column', margin: '2%', }}>
                 <Button transparent onPress={() => requestAnimationFrame(() => this.selectContact())}>
                     <View style={{ width: "90%", flexDirection: 'row', alignSelf: 'flex-start', }}>
-                        <View style={{ width: "20%", marginTop: "5%", }}>
+                        <View style={{ width: "20%", ...this.margin }}>
                             <Icon name={this.state.checked ? "radio-button-checked" :
                                 "radio-button-unchecked"} type="MaterialIcons"></Icon>
                         </View>
-                        <View style={{ width: "80%", color: "#0A4E52" }}>
+                        <View style={{ width: "80%", color: "#0A4E52",...this.margin }}>
                             <ProfileView delay={this.props.delay} hideMe={() => {
                                 this.setState({
                                     hiden: true

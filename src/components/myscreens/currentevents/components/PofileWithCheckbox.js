@@ -18,6 +18,7 @@ export default class ProfileWithCheckBox extends PureComponent {
             checked: this.props.checked
         })
     }
+    margin = { marginTop: 'auto', marginBottom: 'auto', }
     render() {
         return this.state.hide ? null : (
             <TouchableOpacity onPress={() => requestAnimationFrame(() => {
@@ -31,10 +32,12 @@ export default class ProfileWithCheckBox extends PureComponent {
                 })
             })
             }>
-                <View style={{ display: 'flex', flexDirection: 'row', }}>
-                    <Icon style={{ marginTop: "5%", color: "#1FABAB" }} name={this.state.checked ? "radio-button-checked" :
+                <View style={{ display: 'flex', flexDirection: 'row',justifyContent: 'space-between',marginTop: '1%', marginBottom: '5%',alignSelf: 'center',}}>
+                <View style={{...this.margin,width:"10%"}}>
+                    <Icon style={{ color: "#1FABAB" }} name={this.state.checked ? "radio-button-checked" :
                         "radio-button-unchecked"} type="MaterialIcons"></Icon>
-                    <View style={{ margin: '2%', }}>
+                    </View>
+                    <View style={{...this.margin,width:'90%'}}>
                         <ProfileView delay={this.props.delay} hideMe={() => {
                             this.setState({ hide: true })
                         }} phone={this.props.phone}></ProfileView>

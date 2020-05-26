@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { Text, Badge, Icon, Label, Spinner, Toast, Thumbnail, Title } from 'native-base';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import stores from '../../../stores';
 import { View, TouchableWithoutFeedback } from 'react-native';
-import { find,isEqual } from "lodash"
+import { find, isEqual } from "lodash"
 import EditNameModal from './EditNameModal';
 import emitter from '../../../services/eventEmiter';
 import { observer } from 'mobx-react';
@@ -18,7 +18,7 @@ import shadower from '../../shadower';
 import ColorList from '../../colorList';
 import convertToHMS from '../highlights_details/convertToHMS';
 
-export default class CommiteeItem extends Component {
+export default class CommiteeItem extends PureComponent {
     constructor(props) {
         super(props)
         this.state = {
@@ -29,33 +29,29 @@ export default class CommiteeItem extends Component {
     state = {
 
     }
-    shouldComponentUpdate(nextProps, nextState, nextContext) {
-        return this.props.newMessagesCount !== nextProps.newMessagesCount ||
-            this.state.newThing !== nextState.newThing || this.props.ImICurrentCommitee !== nextProps.ImICurrentCommitee ||
-            this.props.commitee && this.props.commitee.name !== nextProps.commitee.name || 
-            this.props.commitee && nextProps.commitee && this.props.commitee.public_state !== nextProps.commitee.public_state ||
-            this.props.commitee && nextProps.commitee && this.props.commitee.member && 
-            nextProps.commitee.member && this.props.commitee.member.length !== nextProps.commitee.member.length 
+    /*shouldComponentUpdate(nextProps, nextState, nextContext) {
+        console.warn("updated ats",this.props.commitee.updated_at,nextProps.commitee.updated_at)
+        return this.props.commitee.updated_at !== nextProps.commitee.updated_at 
              || this.state.loaded !== nextState.loaded
-    }
+    }*/
     componentDidUpdate() {
         this.calculateCommittee()
     }
     componentDidMount() {
-        this.calculateCommittee()
+        setTimeout(() => {
+            this.calculateCommittee()
+        })
     }
     calculateCommittee() {
         let member = this.props.commitee &&
             this.props.commitee.member &&
             find(this.props.commitee.member, (ele) => ele !== null &&
                 ele.phone === this.props.phone)
-        setTimeout(() => {
-            this.setState({
-                master: member ? this.props.computedMaster : false,
-                loaded: true,
-                joint: member ? true : false
-            })
-        }, 50)
+        this.master = member ? this.props.computedMaster : false,
+            this.joint = member ? true : false
+        this.setState({
+            loaded: true,
+        })
     }
     revertName() {
         // console.warn("edit failed message recieved!!")
@@ -74,7 +70,7 @@ export default class CommiteeItem extends Component {
     }
     join() {
         return new Promise((resolve, reject) => {
-            if (this.props.commitee.public_state && !this.state.joint) {
+            if (this.props.commitee.public_state && !this.joint) {
                 this.props.join(this.props.commitee.id)
                 emitter.on("joint", () => {
                     this.setState({
@@ -90,7 +86,7 @@ export default class CommiteeItem extends Component {
         })
     }
     leave() {
-        if (this.state.joint) {
+        if (this.joint) {
             this.props.leave(this.props.commitee.id)
             emitter.on("left", () => {
                 this.setState({
@@ -130,7 +126,7 @@ export default class CommiteeItem extends Component {
     }
     swappCommitee() {
         if (this.accessible) {
-            if (!this.state.joint) {
+            if (!this.joint) {
                 this.join().then(() => {
                     this.swap()
                 })
@@ -141,11 +137,11 @@ export default class CommiteeItem extends Component {
     }
     setActionPercentage() {
         actionsNumber = () => {
-            if (this.state.master && this.props.commitee.public_state) {
+            if (this.master && this.props.commitee && this.props.commitee.public_state) {
                 return 5
-            } else if (!this.state.master && !this.props.commitee.public_state) {
+            } else if (!this.master && (!this.props.commitee || !this.props.commitee.public_state)) {
                 return 1
-            } else if (!this.state.master && this.props.commitee.public_state && !this.state.joint) {
+            } else if (!this.master && this.props.commitee && this.props.commitee.public_state && !this.joint) {
                 return 2
             }
         }
@@ -158,24 +154,30 @@ export default class CommiteeItem extends Component {
         return (data / mb).toFixed(2).toString() + "MB";
     }
     writeText(text) {
-        return text ? <Text elipsizeMode={'tail'} numberOfLines={1} style={{ fontSize: 14, marginTop: "1%", alignSelf: 'flex-start', }}>{" : "}{text}</Text> : null
+        return text ? <Text elipsizeMode={'tail'} numberOfLines={1} style={{ fontSize: 14, marginTop: "1%", alignSelf: 'flex-start', }}>{text}</Text> : null
     }
     writeLatestMessage(message) {
         switch (message.type) {
             case "text":
-                return <View style={{ display: 'flex', flexDirection: 'row', }}>
-                    <Text elipsizeMode={'tail'} numberOfLines={1} style={{ fontWeight: "bold", fontSize: 16, color: ColorList.bodyText, width: '20%' }}>{this.formNickName(message.sender)}</Text>
-                    <View style={{ width: '80%', alignSelf: 'flex-start', }}>
+                return <View style={{ display: 'flex', flexDirection: 'column', }}>
+                    <View style={{ width: '95%' }}>
+                        <Text elipsizeMode={'tail'} numberOfLines={1}
+                            style={{
+                                fontWeight: "bold", fontSize: 16, color:
+                                    ColorList.bodyText, width: '20%'
+                            }}>{this.formNickName(message.sender)}</Text>
+                    </View>
+                    <View style={{ width: '95%', alignSelf: 'flex-start', }}>
                         {this.writeText(message.text)}
                     </View>
                 </View>
             case "photo":
-                return <View style={{ display: 'flex', flexDirection: 'row', }}>
+                return <View style={{ display: 'flex', flexDirection: 'column', }}>
                     <Text elipsizeMode={'tail'} numberOfLines={1} style={{
                         fontWeight: "bold", fontSize: 16,
-                        color: ColorList.bodyText, width: '30%', alignSelf: 'flex-start',
+                        color: ColorList.bodyText, width: '95%', alignSelf: 'flex-start',
                     }}>{this.formNickName(message.sender)}</Text>
-                    <View style={{ display: 'flex', flexDirection: 'row', marginTop: "1%", width: '70%' }}>
+                    <View style={{ display: 'flex', flexDirection: 'row', marginTop: "1%", width: '100%' }}>
                         <View style={{ width: '70%', alignSelf: 'flex-start', }}>
                             {this.writeText(message.text)}
                         </View>
@@ -187,8 +189,8 @@ export default class CommiteeItem extends Component {
                     </View>
                 </View>
             case "audio":
-                return <View style={{ display: 'flex', flexDirection: 'row', }}>
-                    <Title style={{ fontWeight: "bold", fontSize: 16, color: ColorList.bodyText }}>{this.formNickName(message.sender)}{": "}</Title>
+                return <View style={{ display: 'flex', flexDirection: 'column', }}>
+                    <Title style={{ fontWeight: "bold", fontSize: 16, color: ColorList.bodyText,alignSelf:'flex-start' }}>{this.formNickName(message.sender)}</Title>
                     <View style={{ display: 'flex', flexDirection: 'row' }}>
                         <Text style={{ fontSize: 14, marginLeft: "3%", marginTop: "1%", width: "70%" }}>{message.text ?
                             message.text.slice(0, 15) + message.text.length < 15 ? "..." : "" :
@@ -200,10 +202,10 @@ export default class CommiteeItem extends Component {
                     </View>
                 </View>
             case "video":
-                return <View style={{ display: 'flex', flexDirection: 'row', }}>
-                    <Title style={{ fontWeight: "bold", fontSize: 16, color: ColorList.bodyText }}>{this.formNickName(message.sender)}{": "}</Title>
+                return <View style={{ display: 'flex', flexDirection: 'column', }}>
+                    <Title style={{ fontWeight: "bold", fontSize: 16, color: ColorList.bodyText,alignSelf:'flex-start' }}>{this.formNickName(message.sender)}</Title>
                     <View style={{ display: 'flex', flexDirection: 'row', marginTop: "1%", }}>
-                        <Text style={{ fontSize: 14, marginLeft: "3%", width: "70%" }}>{message.text ?
+                        <Text style={{ fontSize: 14, marginLeft: "0%", width: "80%" }}>{message.text ?
                             message.text.slice(0, 15) : message.duration ? message.duration : message.total ? this.toMB(message.total) : ""}</Text>
                         <View style={{ alignSelf: 'flex-end', marginTop: "-2%" }}>
                             <Icon type={"AntDesign"} name={"videocamera"} style={{ fontSize: 30, color: ColorList.bodyText }}></Icon>
@@ -211,10 +213,10 @@ export default class CommiteeItem extends Component {
                     </View>
                 </View>
             case "attachement":
-                return <View style={{ display: 'flex', flexDirection: 'row', }}>
-                    <Title style={{ fontWeight: "bold", fontSize: 16, color: ColorList.bodyText }}>{this.formNickName(message.sender)}{": "}</Title>
+                return <View style={{ display: 'flex', flexDirection: 'column', }}>
+                    <Title style={{ fontWeight: "bold", fontSize: 16, color: ColorList.bodyText, alignSelf: 'flex-start' }}>{this.formNickName(message.sender)}</Title>
                     <View style={{ display: 'flex', flexDirection: 'row', }}>
-                        <Text style={{ fontSize: 14, marginLeft: "3%", alignSelf: 'flex-start', fontWeight: 'bold', width: "70%" }}>{message.file_name.split(".")
+                        <Text style={{ fontSize: 14, marginLeft: "3%", alignSelf: 'flex-start', fontWeight: 'bold', width: "95%" }}>{message.file_name.split(".")
                         [message.file_name.split(".").length - 1].toUpperCase()}</Text>
                         <View style={{ alignSelf: 'flex-end', marginTop: "-2%", }}>
                             <Icon type={"Octicons"} name={"file"} style={{ fontSize: 30, color: ColorList.bodyText }}></Icon>
@@ -236,7 +238,7 @@ export default class CommiteeItem extends Component {
             backgroundColor: this.props.ImICurrentCommitee ? ColorList.bodyDarkWhite : ColorList.bodyBackground,
 
         }
-        this.accessible = this.state.joint || this.props.commitee.public_state
+        this.accessible = this.joint || (this.props.commitee && this.props.commitee.public_state)
         return (
             this.state.loaded ? <View style={{
                 ...mainStyles
@@ -252,7 +254,7 @@ export default class CommiteeItem extends Component {
                                     fontWeight: 'bold', fontSize: 14,
                                     color: GState.currentCommitee == this.props.commitee.id ? ColorList.headerIcon : "gray"
                                 }}>{this.props.commitee.name}</Text>
-                                {this.state.joint && this.props.commitee.newest_message ? <Text note>Latest Message :</Text> : null}
+                                {this.joint && this.props.commitee.newest_message ? <Text note>Latest Message :</Text> : null}
                             </View>
                             <View style={{
                                 display: 'flex',
@@ -262,11 +264,11 @@ export default class CommiteeItem extends Component {
                                 justifyContent: 'space-between',
                                 alignSelf: 'flex-end',
                             }}>
-                                {
+                                {/*
                                     this.props.commitee &&
                                         this.props.commitee.name &&
                                         this.props.commitee.name.toLowerCase() === "General".toLowerCase() ? null :
-                                        this.state.master ?
+                                        this.master ?
                                             <View style={{ marginTop: "-5%", }}>
                                                 <TouchableWithoutFeedback onPress={() => {
                                                     GState.editingCommiteeName = true
@@ -282,8 +284,8 @@ export default class CommiteeItem extends Component {
                                                 }}>
                                                     <View><Icon style={{ fontSize: 30, color: ColorList.bodyText }} name="pencil" type="EvilIcons" /></View>
                                                 </TouchableWithoutFeedback>
-                                            </View> : null}
-                                {this.state.joint && this.props.commitee.new_messages ? this.props.commitee.new_messages.length > 0 ? <Badge style={{
+                                            </View> : null*/}
+                                {this.joint && this.props.commitee.new_messages ? this.props.commitee.new_messages.length > 0 ? <Badge style={{
                                     display: 'flex',
                                     justifyContent: 'center',
                                 }} primary>
@@ -294,7 +296,7 @@ export default class CommiteeItem extends Component {
                             </View>
                         </View>
                         <View style={{ margin: '2%', }}>
-                            {this.state.joint && this.props.commitee.newest_message ? this.writeLatestMessage(this.props.commitee.newest_message) : null}
+                            {this.joint && this.props.commitee.newest_message ? this.writeLatestMessage(this.props.commitee.newest_message) : null}
                         </View>
                     </View>
                 </TouchableOpacity>
@@ -314,7 +316,7 @@ export default class CommiteeItem extends Component {
 
             </View> : <View style={{
                 ...mainStyles,
-                height: this.props.commitee.newest_message?100:50
+                height: this.props.commitee.newest_message ? 100 : 50
             }}>
                 </View>
         );

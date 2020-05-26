@@ -49,68 +49,31 @@ class PublicEvent extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      fetching: true,
       isMount: false,
-      isMounting: true,
-      public: false,
-      notPressing: false,
-      publishing: false,
-      //event: this.props.Event,
+      joint:true,
       swipeClosed: true,
-      attempt_to_puplish: false,
-      public: false,
-      liking: false,
-      participant: false,
       master: false,
-      hiding: false,
-      openInviteModal: false,
-      deleting: false,
-      swipeOutSettings: null,
-      hiden: false,
-      joint: false,
-      unliking: false,
-      liked: false,
-      likeIncrelment: 0,
-      isPublisherModalOpened: false,
-      currentUser: undefined,
-      opponent: null,
-      showPhoto: false,
     };
   }
 
   shouldComponentUpdate(nextProps, nextState, nextContext) {
     return this.state.isMount !== nextState.isMount ||
-      nextState.joint !== this.state.joint ||
-      nextState.openInviteModal !== this.state.openInviteModal ||
-      this.props.Event.joint !== nextProps.Event.joint ||
-      this.state.master !== nextState.master ||
       !isEqual(this.props.Event, nextProps.Event) ||
       this.state.fresh !== nextState.fresh
   }
   swipperComponent = null
   componentDidMount() { 
+    setTimeout(() => {
+      this.setState({
+        isMount: true,
+      })
+    }, this.props.renderDelay)
     if (this.props.Event.type == "relation") {
       globalFunctions.getOpponent(this.props.Event).then((user)=>{
         this.setState({ opponent: user });
       })
 
     }
-    setTimeout(() => {
-      this.setState({
-        isMount: true,
-      })
-    }, this.props.renderDelay + 20)
-    setTimeout(() => {
-      stores.TemporalUsersStore.getUser(this.props.Event.creator_phone).then(creator => {
-        stores.Events.isMaster(this.props.Event.id, stores.LoginStore.user.phone).then(master => {
-          this.setState({
-            master: master,
-            joint: findIndex(this.props.Event.participant, { phone: stores.LoginStore.user.phone }) > 0 ? true : false,
-            creator: this.state.creator == null ? creator : this.state.creator,
-          })
-        })
-      })
-    }, this.props.renderDelay + 20)
   }
   counter = 0
   swipeOutSettings(master, joint) {
@@ -143,7 +106,9 @@ class PublicEvent extends Component {
   }
 
   invite() {
-    this.props.quickInvite({ event: this.props.Event, master: this.state.master })
+    stores.Events.isMaster(this.props.Event.id, stores.LoginStore.user.phone).then(mas => {
+    this.props.quickInvite({ event: this.props.Event, master: mas })
+    })
   }
 
   publish() {
@@ -186,7 +151,6 @@ class PublicEvent extends Component {
     }, 150)
   }
   onOpenPhotoModal() {
-    //  this.markAsSeen()
   }
   onOpenDetaiProfileModal() {
     this.markAsSeen()
@@ -328,7 +292,6 @@ class PublicEvent extends Component {
           <ActivityProfile
             join={this.join.bind(this)}
             showPhoto={this.props.showPhoto}
-            joint={this.state.joint}
             openDetails={this.props.openDetails}
             markAsSeen={this.markAsSeen.bind(this)}
             Event={this.props.Event||{}}
@@ -338,14 +301,8 @@ class PublicEvent extends Component {
         <View style={{ width: '10%', justifyContent: 'center', marginLeft: "2%",marginTop:"2%" }}>
           <Icon onPress={() => this.props.showActions(this.props.Event.id)} type="Entypo" style={{ fontSize: 24, color: "#555756"}} name="dots-three-vertical"></Icon>
         </View>
-
-
       </View>
-      <PhotoViewer open={this.state.showPhoto} photo={this.props.Event.background}
-        hidePhoto={() => { this.setState({ showPhoto: false }) }} ></PhotoViewer>
-
     </CardItem>
-
     )
   }
 
@@ -360,7 +317,7 @@ class PublicEvent extends Component {
       }}
       cardBody
     >
-      <View style={{}}>
+      {/*<View style={{}}>
         <View style={{ flex: 1, width: "100%", alignSelf: "center", alignItems: 'center', }}>{this.state.isMount ? <View style={{ alignSelf: 'flex-start' }}>
           <PhotoView
             navigation={this.props.navigation} renderDelay={this.props.renderDelay} showPhoto={(url) => url ?
@@ -368,7 +325,7 @@ class PublicEvent extends Component {
             isToBeJoint hasJoin={this.props.Event.joint || this.state.joint} onOpen={() => this.onOpenPhotoModal()} style={{}} photo={this.props.Event.background}
             event_id={this.props.Event.id} width={colorList.containerWidth} height={200} borderRadius={0} />
         </View> : null}</View>
-      </View>
+            </View>*/}
     </CardItem>)
   }
 
@@ -421,13 +378,14 @@ class PublicEvent extends Component {
           bordered
         >
           {this.renderTitle()}
-          {!this.props.Event.highlights || this.props.Event.highlights.length < 1 ? (this.props.Event.type=="relation"? this.renderBody():null) : this.renderBody()}
+          {//!this.props.Event.highlights || this.props.Event.highlights.length < 1 ? (this.props.Event.type=="relation"? this.renderBody():null) : this.renderBody()
+        }
           {this.renderFooter()}
 
         </Card>
       </Swipeout>
     </View> : <View style={{}}><Card style={{
-      height: this.props.Event.highlights && this.props.Event.highlights.length > 0 ? 310 : 130, alignSelf: 'center', backgroundColor: colorList.bodyBackground,
+      height: 130, alignSelf: 'center', backgroundColor: colorList.bodyBackground,
       width: "100%"
     }}></Card></View>
     )

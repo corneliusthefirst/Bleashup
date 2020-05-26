@@ -152,7 +152,7 @@ export default class CurrentEvents extends Component {
                                 })
                             }}
                             showActions={(event_id) => this.showActions(event_id)}
-                            renderDelay={this.delay * 100}
+                            renderDelay={this.delay * 25}
                             showPhoto={(url) => this.showPhoto(url)} key={item.id}  {...this.props} Event={item} />
                             
                             :<PublicEvent
@@ -177,7 +177,7 @@ export default class CurrentEvents extends Component {
                                     })
                                 }}
                                 showActions={(event_id) => this.showActions(event_id)}
-                                renderDelay={this.delay * 100}
+                                renderDelay={this.delay * 25}
                                 showPhoto={(url) => this.showPhoto(url)} key={item.id}  {...this.props} Event={item} />
                     }}
                     firstIndex={0}

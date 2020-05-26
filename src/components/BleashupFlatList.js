@@ -9,7 +9,7 @@ const ifCloseToTop = ({ layoutMeasurement, contentOffset, contentSize }) => {
 const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
     const paddingToBottom = 20;
     return layoutMeasurement.height + contentOffset.y >=
-        ((contentSize.height - paddingToBottom) * (0.70));
+        ((contentSize.height - paddingToBottom) * (0.20));
 };
 const isTooCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
     const paddingToBottom = 20;

@@ -1,5 +1,5 @@
 import React, { Component } from "react"
-import { View,TouchableOpacity } from "react-native"
+import { View, TouchableOpacity } from "react-native"
 import { Button, Icon, Text } from "native-base"
 import MemberActions from "./MemberActions"
 import ProfileView from '../invitations/components/ProfileView';
@@ -33,17 +33,26 @@ export default class SelectableProfileWithOptions extends Component {
         })
 
     }
+    margin = { marginBottom: 'auto', marginTop: 'auto', }
     render() {
         return !this.state.hiden ? (
-            <View style={{ height: 70, width: "100%" }}>
-                <View style={{ flexDirection: 'row',justifyContent: 'space-between', marginTop: 10, }}>
-                    <TouchableOpacity transparent onPress={() => requestAnimationFrame(() => !this.props.simplyMembers && this.selectContact())}>
-                        <View style={{ flexDirection: 'row', alignSelf: 'flex-start', }}>
-                             {!this.props.simplyMembers && <View style={{ width: "6%", marginTop: '3.5%', }}>
-                                {this.props.mainMaster && this.props.contact.phone !== this.props.creator ? <Icon style={{color:'#1FABAB'}} name={this.state.checked ? "radio-button-checked" :
-                                    "radio-button-unchecked"} type="MaterialIcons"></Icon> : null}
-                            </View>}
-                            <View style={{ width: "80%", color: "#0A4E52" }}>
+            <View style={{ width: "98%",alignSelf: 'center', }}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: '1%', marginBottom: '3%', }}>
+                    <View style={{ width: '60%' }}>
+                        <TouchableOpacity transparent style={{
+                            width: '100%', ...this.margin,
+                            alignSelf: 'flex-start', flexDirection: 'row', justifyContent: 'space-between',
+                        }}
+                            onPress={() => requestAnimationFrame(() => !this.props.simplyMembers && this.selectContact())}
+                        >
+                            {!this.props.simplyMembers ? <View style={{ width: "20%",...this.margin }}>
+                                {this.props.mainMaster && this.props.contact.phone !== this.props.creator ?
+                                    <Icon style={{ color: '#1FABAB' }} name={this.state.checked ? "radio-button-checked" :
+                                        "radio-button-unchecked"}
+                                        type="MaterialIcons"></Icon> : null
+                                }
+                            </View> : null}
+                            <View style={{ width: this.props.simplyMembers ? "100%" : "80%", color: "#0A4E52",...this.margin }}>
                                 <ProfileView setContact={(con) => {
                                     this.setState({
                                         con: con
@@ -54,12 +63,12 @@ export default class SelectableProfileWithOptions extends Component {
                                     })
                                 }} phone={this.props.contact.phone}></ProfileView>
                             </View>
-                        </View>
-                    </TouchableOpacity>
-                    <View style={{margin: '2%',}}>
-                        <View style={{ flexDirection: 'row',  }}>
+                        </TouchableOpacity>
+                    </View>
+                    <View style={{ ...this.margin, width: '40%', justifyContent: 'flex-end', }}>
+                        <View style={{ flexDirection: 'row', justifyContent: 'flex-end', }}>
                             <Text note style={{
-                                marginTop: "12%", marginRight: "10%", fontWeight: this.props.creator === this.props.contact.phone ? 'bold' : "normal", color:
+                                ...this.margin, marginRight: "10%", fontWeight: this.props.creator === this.props.contact.phone ? 'bold' : "normal", color:
                                     this.props.creator === this.props.contact.phone ? "#54F5CA" : this.props.contact.master ? "#1FABAB" : "gray"
                             }}>{this.props.creator === this.props.contact.phone ? "Creator" : this.props.contact.master ? "Master " : "Member"}</Text><View style={{ alignItems: 'flex-end' }}>
                                 {this.props.simplyMembers && <MemberActions

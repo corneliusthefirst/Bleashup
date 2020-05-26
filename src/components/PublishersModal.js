@@ -20,6 +20,7 @@ import BleashupModal from "./mainComponents/BleashupModal";
             loaded: false
         })
     }
+    swipeToClose = this.props.reaction ? false : true
     modalHeight = this.props.reaction ? 550 : this.modalHeight
     modalWidth = this.props.reaction ? "80%" : this.modalWidth
     position = this.props.reaction ? 'center' : 'top'

@@ -64,6 +64,7 @@ import { observer } from 'mobx-react';
             })
         }, 100)*/
     }
+    delay = 0
     render() {
         return (this.state.loaded ?
             <View style={{ height: "100%", width: "100%"}}>
@@ -87,10 +88,12 @@ import { observer } from 'mobx-react';
                         style={{borderTopRightRadius: 5,
                             width: '100%', borderBottomRightRadius: 1, 
                         }}
-                            dataSource={union([this.generalCommitee], stores.CommiteeStore.commitees[this.props.event_id])}
+                            dataSource={union([{...stores.CommiteeStore.generals[this.props.event_id], ...this.generalCommitee}], stores.CommiteeStore.commitees[this.props.event_id])}
                             keyExtractor={(item, index) => index.toString()}
-                            renderItem={(item, index) =>
-                                <CommiteeItem
+                            renderItem={(item, index) =>{
+                                this.delay = index >= 7 ? 0:this.delay + 1
+                               return <CommiteeItem
+                                    delay={this.delay}
                                     computedMaster={this.props.computedMaster}
                                     key={index.toString()}
                                     ImICurrentCommitee={item.id && item.id === GState.currentCommitee ||
@@ -109,6 +112,7 @@ import { observer } from 'mobx-react';
                                     event_id={this.props.event_id}
                                     newMessagesCount={4}
                                     id={item.id ? item.id : item} ></CommiteeItem>
+                            }
                             }
                             firstIndex={0}
                             renderPerBatch={7}

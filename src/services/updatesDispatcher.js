@@ -47,6 +47,32 @@ class UpdatesDispatcher {
     }
   }
   UpdatePossibilities = {
+    message_reaction: update => MainUpdater.reactToMessage(update.new_value.data.message_id,
+      update.new_value.committee_id,
+      update.event_id,
+      update.new_value.data.reaction),
+    played_message: update => MainUpdater.
+      playedMessage(update.new_value.data.message_id,
+        update.new_value.committee_id,
+        update.event_id,
+        update.new_value.data.player),
+    new_message: update => MainUpdater.saveMessage(update.new_value.data,
+      update.event_id, update.new_value.
+      committee_id),
+    received_message: update => MainUpdater.receiveMessage(update.new_value.data.message_id,
+      update.new_value.committee_id,
+      update.new_value.data.recieved),
+    update_message: update => MainUpdater.updateMessage(update.new_value.data.message_id,
+      update.new_value.committee_id,
+      update.event_id, update.new_value.data.text),
+    deleted_message: update => MainUpdater.deleteMessage(update.new_value.message_id,
+      update.new_value.committee_id,
+      update.event),
+    seen_message: update => MainUpdater.seenMessage(update.new_value.data.message_id,
+      update.new_value.committee_id,
+      update.event_id,update.new_value.seer),
+    typing_message: update => MainUpdater.sayTyping(update.new_value.committee_id,
+      update.new_value.data.typer),
     blocked: update => MainUpdater.blocked(update.updater),
     un_blocked: update => MainUpdater.unBlocked(update.updater),
     muted: update => MainUpdater.muted(update.updater),
@@ -2097,7 +2123,7 @@ class UpdatesDispatcher {
     },
     updated_commitee_public_status: update => {
       return new Promise((resolve, reject) => {
-        stores.CommiteeStore.updateCommiteeState(update.event_id,update.new_value.id, update.new_value.state).then((commitee) => {
+        stores.CommiteeStore.updateCommiteeState(update.event_id, update.new_value.id, update.new_value.state).then((commitee) => {
           //console.warn(update.updater)
           let Change = {
             id: uuid.v1(),
