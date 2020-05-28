@@ -1641,7 +1641,8 @@ class ChatRoom extends Component {
                             />
                             <View
                                 style={{
-                                    flex: 1,
+                                    marginTop:'auto',
+                                    marginBottom: 'auto', 
                                     width: "16%",
                                     position: "absolute",
                                     bottom: 0,
@@ -1653,7 +1654,7 @@ class ChatRoom extends Component {
                                         this.toggleEmojiKeyboard();
                                         this.markAsRead();
                                     }}
-                                    style={{ color: "gray", marginBottom: 11 }}
+                                    style={{ color: "gray", marginBottom: 11 ,alignSelf: 'flex-end',marginRight: '8%',}}
                                     type="Entypo"
                                     name="emoji-flirt"
                                 ></Icon>

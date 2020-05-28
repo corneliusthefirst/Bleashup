@@ -3,6 +3,7 @@ import { uniqBy, find, forEach } from "lodash"
 import userHttpServices from "../services/userHttpServices"
 import moment from 'moment';
 import GState from './globalState/index';
+import stores from ".";
 
 export const check_user_error_1 = "unknown_user"
 export const check_user_error_2 = "wrong server_key"
@@ -66,16 +67,21 @@ export default class TemporalUsersStore {
             })
         })
     }
+    towDayMillisec() {
+        return 1000 * 60 * 60 * 24 * 2
+    }
     getUser(phone) {
         return new Promise((resolve, reject) => {
-            if (this.Users[phone]) {
+            if (this.Users[phone] && (!this.Users[phone].updated_at ||
+                (moment().format("X") - momment(this.Users[phone].updated_at).format("X")) <
+                this.towDayMillisec())) {
                 resolve(this.Users[phone])
             } else {
                 userHttpServices.checkUser(phone).then(profile => {
                     if (profile.message) {
                         reject(profile.message)
                     } else {
-                        this.Users[phone] = profile
+                        this.Users[phone] = { profile, updated_at: moment().format() }
                         this.setPropterties(this.Users);
                         resolve(profile)
                     }
@@ -90,7 +96,8 @@ export default class TemporalUsersStore {
                 this.getUsers(phones, result)
             })
         } else {
-            GState.searchableMembers = result.filter(ele => !ele.response )
+            GState.searchableMembers = result.filter(ele => !ele.response &&
+                ele.phone !== stores.LoginStore.user.phone)
         }
     }
     /*getUsers(phones) {
