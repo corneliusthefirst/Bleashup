@@ -18,28 +18,29 @@ export default class SelectableContactsMaster extends Component {
         //console.warn(this.props.contact)
     }
     shouldComponentUpdate(nextProps, nextState, nextContext) {
-        return this.state.checked !== nextState.checked || this.state.masterchecked !== nextState.masterchecked
+        return this.props.checked !== nextProps.checked || 
+        this.props.masterchecked !== nextProps.masterchecked
     }
     state = {}
     selectContact() {
-        this.state.checked && this.state.masterchecked ? this.props.toggleMaster(this.props.contact.phone) : null
-        this.state.checked ? this.props.unselected(this.props.contact.phone) :
+        this.props.checked && this.props.masterchecked ? this.props.toggleMaster(this.props.contact.phone) : null
+        this.props.checked ? this.props.unselected(this.props.contact.phone) :
             this.props.selected({ phone: this.props.contact.phone, master: false, host: this.props.contact.host, status: "invited" })
-        this.setState({
-            checked: !this.state.checked,
-            masterchecked: this.state.checked && this.state.masterchecked ? !this.state.masterchecked : this.masterchecked
-        })
+        //this.setState({
+        //    checked: !this.props.checked,
+         //   masterchecked: this.props.checked && this.props.masterchecked ? !this.props.masterchecked : this.masterchecked
+      //  })
     }
     setMaster() {
-        //this.state.checked && this.state.masterchecked ? this.props.unselected(this.props.contact.phone) : null
-        this.props.master ? !this.state.checked && !this.state.masterchecked ? this.props.selected({
+        //this.props.checked && this.props.masterchecked ? this.props.unselected(this.props.contact.phone) : null
+        this.props.master ? !this.props.checked && !this.props.masterchecked ? this.props.selected({
             phone: this.props.contact.phone,
             master: true, host: this.props.contact.host, status: "invited"
         }) :
             this.props.toggleMaster(this.props.contact.phone) : null
         this.props.master ? this.setState({
-            masterchecked: !this.state.masterchecked,
-            checked: (!this.state.checked && !this.state.masterchecked) ? !this.state.checked : this.state.checked
+            masterchecked: !this.props.masterchecked,
+            checked: (!this.props.checked && !this.props.masterchecked) ? !this.props.checked : this.props.checked
         }) : null
     }
     margin={marginTop: 'auto',marginBottom: 'auto',}
@@ -49,7 +50,7 @@ export default class SelectableContactsMaster extends Component {
                 <Button transparent onPress={() => requestAnimationFrame(() => this.selectContact())}>
                     <View style={{ width: "90%", flexDirection: 'row', alignSelf: 'flex-start', }}>
                         <View style={{ width: "20%", ...this.margin }}>
-                            <Icon name={this.state.checked ? "radio-button-checked" :
+                            <Icon name={this.props.checked ? "radio-button-checked" :
                                 "radio-button-unchecked"} type="MaterialIcons"></Icon>
                         </View>
                         <View style={{ width: "80%", color: "#0A4E52",...this.margin }}>
@@ -66,7 +67,7 @@ export default class SelectableContactsMaster extends Component {
                         <Button onPress={() => requestAnimationFrame(() => this.setMaster())} transparent>
                             <View>
                                 <View style={{ width: "90%", alignSelf: 'flex-end', flexDirection: 'row', }}>
-                                    <Icon name={this.state.masterchecked ? "radio-button-checked" :
+                                    <Icon name={this.props.masterchecked ? "radio-button-checked" :
                                         "radio-button-unchecked"} type="MaterialIcons"></Icon>
                                     <Text style={{
                                         fontStyle: 'italic',

@@ -35,6 +35,7 @@ export default class ProfileView extends Component {
         setTimeout(
             () =>
                 stores.TemporalUsersStore.getUser(this.props.phone).then((user) => {
+                    console.warn("profile view user",user)
                     if (
                         user.response == check_user_error_1 ||
                         user.response === check_user_error_2

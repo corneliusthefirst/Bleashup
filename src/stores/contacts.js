@@ -3,18 +3,14 @@ import { observable, action } from "mobx";
 import { find, findIndex, uniq, sortBy, reject } from "lodash";
 import tcpRequest from "../services/tcpRequestData";
 import serverEventListener from "../services/severEventListener";
+import moment from 'moment';
 export default class contacts {
   constructor() {
-    
-    /*storage.remove({
-      key: "contacts",
-      autoSync: true
-    }).then(()=>{})*/
-    
-    this.readFromStore().then((Contacts) => {
-      if (Contacts) this.contacts = Contacts;
-      else this.contacts = {};
-    });
+    //storage.remove(this.saveKey).then(() =>{})
+    this.initializeStore()
+    this.intervaler = setInterval(() => {
+      this.currentTime !== this.previousTime ? this.save() : null
+    }, this.saveInterval)
   }
 
   @observable contacts = {};
@@ -22,16 +18,14 @@ export default class contacts {
     key: "contacts",
     data: {},
   };
-
+  saveInterval = 2000
+  intervaler
   @action addContact(NewContact) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then((Contacts) => {
         Contacts.contacts = uniq(Contacts.contacts.concat([NewContact]), "phone");
-        this.saveKey.data = Contacts;
-        storage.save(this.saveKey).then(() => {
-          this.contacts = this.saveKey.data;
-          resolve();
-        });
+        this.setProperties(Contacts)
+        resolve();
       });
     });
   }
@@ -39,14 +33,24 @@ export default class contacts {
   @action removeContact(phone) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then((Contacts) => {
-        Contacts = reject(Contacts.contacts, ["phone", phone]);
-        this.saveKey.data = Contacts;
-        storage.save(this.saveKey).then(() => {
-          this.contacts = this.saveKey.data;
-          resolve();
-        });
+        Contacts.contacts = reject(Contacts.contacts, ["phone", phone]);
+        this.setProperties(Contacts)
+        resolve();
       });
     });
+  }
+  save() {
+    this.saveKey.data = this.contacts
+    storage.save(this.saveKey).then(() => {
+      console.warn("saving contacts")
+      this.previousTime = this.currentTime
+    })
+  }
+  currentTime = moment().format()
+  previousTime = moment().format()
+  setProperties(newValue) {
+    this.currentTime = moment().format()
+    this.contacts = newValue
   }
   getContacts(phone) {
     return new Promise((resolve, reject) => {
@@ -57,13 +61,10 @@ export default class contacts {
               .sendRequest(JSONData, phone + "_contacts")
               .then((conts) => {
                 contacts.contacts = conts
-                this.saveKey.data = contacts;
-                storage.save(this.saveKey).then(() => {
-                  resolve(conts);
-                });
+                this.setProperties(contacts)
+                resolve(contacts.contacts)
               })
               .catch((error) => {
-                serverEventListener.socket.write = undefined;
                 resolve("empty");
               });
           });
@@ -98,11 +99,8 @@ export default class contacts {
         });
         Contact.name = Newcontact.name;
         Contacts.contacts.splice(index, 1, Contact);
-        this.saveKey.data = Contacts;
-        storage.save(this.saveKey).then(() => {
-          this.contacts = this.saveKey.data;
-          resolve();
-        });
+        this.setProperties(Contacts)
+        resolve();
       });
     });
   }
@@ -117,11 +115,8 @@ export default class contacts {
         });
         Contact.host = Newcontact.host;
         Contacts.contacts.splice(index, 1, Contact);
-        this.saveKey.data = Contacts;
-        storage.save(this.saveKey).then(() => {
-          this.contacts = this.saveKey.data;
-          resolve();
-        });
+        this.setProperties(Contacts)
+        resolve();
       });
     });
   }
@@ -135,11 +130,8 @@ export default class contacts {
               "phone"
             )
             : [{ phone, host }];
-        this.saveKey.data = contact
-        storage.save(this.saveKey).then(() => {
-          console.warn(contact)
-          resolve()
-        })
+        this.setProperties(contact)
+        resolve()
       });
     });
   }
@@ -153,10 +145,8 @@ export default class contacts {
               "phone"
             )
             : [{ phone, host }];
-        this.saveKey.data = contact
-        storage.save(this.saveKey).then(() => {
-          resolve()
-        })
+            this.setProperties(contact)
+           resolve()
       });
     });
   }
@@ -164,21 +154,17 @@ export default class contacts {
     return new Promise((resolve, rejec) => {
       this.readFromStore().then((contacts) => {
         contacts.following = reject(contacts.following, { phone })
-        this.saveKey.data = contacts
-        storage.save(this.saveKey).then(() => {
-          resolve()
-        })
+        this.setProperties(contacts)
+         resolve()
       })
     })
   }
-  removeFollower(phone){
-    return new Promise((resolve,rejec) => {
+  removeFollower(phone) {
+    return new Promise((resolve, rejec) => {
       this.readFromStore().then((contacts) => {
         contacts.followers = reject(contacts.followers, { phone })
-        this.saveKey.data = contacts
-        storage.save(this.saveKey).then(() => {
-          resolve()
-        })
+        this.setProperties(contacts)
+         resolve()
       })
     })
   }
@@ -193,15 +179,12 @@ export default class contacts {
         });
         Contact.profile = Newcontact.profile;
         Contacts.contacts.splice(index, 1, Contact);
-        this.saveKey.data = Contacts;
-        storage.save(this.saveKey).then(() => {
-          this.contacts = this.saveKey.data;
-          resolve();
-        });
+        this.setProperties(Contacts)
+             resolve();
       });
     });
   }
-  readFromStore() {
+  initializeStore() {
     return new Promise((resolve, rejevt) => {
       storage
         .load({
@@ -209,11 +192,17 @@ export default class contacts {
           autoSync: true,
         })
         .then((Contacts) => {
-          resolve(Contacts);
+          this.contacts = Contacts
+          resolve()
         })
         .catch((error) => {
           resolve({});
         });
     });
+  }
+  readFromStore() {
+    return new Promise((resolve, reject) => {
+      resolve(this.contacts)
+    })
   }
 }

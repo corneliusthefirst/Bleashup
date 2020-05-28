@@ -63,16 +63,18 @@ class PublicEvent extends Component {
   }
   swipperComponent = null
   componentDidMount() { 
-    setTimeout(() => {
-      this.setState({
-        isMount: true,
-      })
-    }, this.props.renderDelay)
     if (this.props.Event.type == "relation") {
-      globalFunctions.getOpponent(this.props.Event).then((user)=>{
-        this.setState({ opponent: user });
-      })
-
+      setTimeout(() => {
+        globalFunctions.getOpponent(this.props.Event).then((user) => {
+          this.setState({ opponent: user, isMount: true, });
+        })
+      },this.props.delay)
+    }else{
+      setTimeout(() => {
+        this.setState({
+          isMount: true,
+        })
+      }, this.props.renderDelay)
     }
   }
   counter = 0

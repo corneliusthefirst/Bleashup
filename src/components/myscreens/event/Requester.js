@@ -389,6 +389,10 @@ class Request {
                         resolve("ok")
                         MainUpdater.addParticipants(eventID, participants, updater, "new_participants", moment().format()).then((Change) => {
                         })
+                    }).catch((error) => {
+                        console.warn(error)
+                        Toast.show({text:'unable to perform request'})
+                        resolve()
                     })
                 })
         })

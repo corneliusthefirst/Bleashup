@@ -73,15 +73,15 @@ export default class TemporalUsersStore {
     getUser(phone) {
         return new Promise((resolve, reject) => {
             if (this.Users[phone] && (!this.Users[phone].updated_at ||
-                (moment().format("X") - momment(this.Users[phone].updated_at).format("X")) <
+                (moment().format("X") - moment(this.Users[phone].updated_at).format("X")) <
                 this.towDayMillisec())) {
                 resolve(this.Users[phone])
             } else {
                 userHttpServices.checkUser(phone).then(profile => {
-                    if (profile.message) {
-                        reject(profile.message)
+                    if (profile.message || profile.response) {
+                        resolve(profile)
                     } else {
-                        this.Users[phone] = { profile, updated_at: moment().format() }
+                        this.Users[phone] = { ...profile, updated_at: moment().format() }
                         this.setPropterties(this.Users);
                         resolve(profile)
                     }

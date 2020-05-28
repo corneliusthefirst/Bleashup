@@ -81,16 +81,16 @@ export default class CreateEvent extends Component {
         }}
         >
 
-          <ActionButton.Item buttonColor='#1CDBAB' title="New Relation" onPress={()=>{this.onClickNewContact()}} size={75}>
-            <Icon name="person-add" active={true} type="MaterialIcons" style={styles.actionButtonIcon} />
+          <ActionButton.Item buttonColor='#1CDBAB' /*title="New Relation"*/ onPress={()=>{this.onClickNewContact()}} size={75}>
+          <Icon name="chat-bubble" active={true} type="MaterialIcons" style={styles.actionButtonIcon} />
           </ActionButton.Item>   
-          <ActionButton.Item buttonColor='#9b59b6' title=" New Activity  " onPress={()=>{this.onClickNewEvent().then(()=>{})}} size={65}>
+          <ActionButton.Item buttonColor='#9b59b6' /*title=" New Activity  "*/ onPress={()=>{this.onClickNewEvent().then(()=>{})}} size={65}>
             <Icon name="md-create" style={styles.actionButtonIcon} />
           </ActionButton.Item>   
-        <ActionButton.Item buttonColor='#3D90E3' title="Join Activity" onPress={() => { this.navigateToQRScanner() }} size={55}>
+        <ActionButton.Item buttonColor='#3D90E3' /*title="Join Activity"*/ onPress={() => { this.navigateToQRScanner() }} size={55}>
           <Icon name="barcode-scan" active={true} type="MaterialCommunityIcons" style={{ color: "#FEFFDE", }} />
         </ActionButton.Item> 
-          <ActionButton.Item buttonColor='#1abc9c' title="My Tasks" onPress={() => {this.onClickNewRemind()}} size={45}>
+          <ActionButton.Item buttonColor='#1abc9c' /*title="My Tasks"*/ onPress={() => {this.onClickNewRemind()}} size={45}>
             <Icon name="tasks" type="FontAwesome" style={styles.actionButtonIcon} />
           </ActionButton.Item>
 
@@ -103,7 +103,7 @@ export default class CreateEvent extends Component {
 
 const styles = StyleSheet.create({
   actionButtonIcon: {
-    fontSize: 20,
+    fontSize: 23,
     height: 22,
     color: 'white'
   }

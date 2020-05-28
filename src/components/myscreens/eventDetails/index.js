@@ -230,14 +230,19 @@ export default class EventDetailView extends Component {
     }) : null
   }
   relationPost(id) {
-    return BeNavigator.navigateTo("HighLightsDetails", { event_id: id });
+     //BeNavigator.navigateTo("HighLightsDetails", { event_id: id })
+     return null;
   }
   delay = 1
   sorter = (a, b) => (a.created_at > b.created_at ? -1 :
     a.created_at < b.created_at ? 1 : 0)
 
   renderPosts() {
-    return (!this.state.isMounted ? <View style={{ height: colorList.containerHeight, backgroundColor: colorList.bodyBackground, width: '100%' }}></View> :
+    return (!this.state.isMounted ? <View style={{ 
+      height: colorList.containerHeight, 
+      backgroundColor: colorList.bodyBackground, 
+      width: '100%' 
+    }}></View> :
       (this.state.EventData.type == "relation" ?
         (this.relationPost(this.state.EventData.id))
         :

@@ -95,7 +95,6 @@ export default class CurrentEvents extends Component {
             options: this.options, title: "Select Action", cancelButtonIndex: 2,
             modalStyle: { backgroundColor: "#FEFFDE" }, actionSheetStyle: { backgroundColor: "#FEFEDE" }
         }, (index) => {
-            console.warn(index)
             if (index === 0) {
                 this.setState({
                     event_id: id,

@@ -115,7 +115,7 @@ export default class InviteParticipantModal extends BleashupModal {
                       )
                     }
                   >
-                    {this.props.adding ? <Icon type="Entypo" style={this.saveStyles} name="check"></Icon>:<Icon
+                    {this.props.adding ? <Icon type="Entypo" style={this.saveStyles} name="check"></Icon> : <Icon
                       type={"EvilIcons"}
                       style={this.saveStyles}
                       name={"sc-telegram"}
@@ -127,15 +127,18 @@ export default class InviteParticipantModal extends BleashupModal {
             <View style={{ height: "90%" }}>
               <BleashupFlatList
                 firstIndex={0}
-                renderPerBatch={5}
+                renderPerBatch={20}
                 initialRender={10}
                 numberOfItems={this.state.contacts.length}
                 keyExtractor={this._keyExtractor}
                 dataSource={this.state.contacts}
                 renderItem={(item, index) => {
+                  let me = this.state.selected.find(ele => ele.phone === item.phone)
                   this.delay = this.delay >= 15 ? 0 : this.delay + 1;
                   return (
                     <SelectableContactsMaster
+                      checked={me && me.phone ? true : false}
+                      masterchecked={me && me.phone && me.master ? true : false}
                       master={this.props.master}
                       delay={this.delay}
                       toggleMaster={(member) => this.toggleMaster(member)}
@@ -152,8 +155,8 @@ export default class InviteParticipantModal extends BleashupModal {
             </View>
           </View>
         ) : (
-          <Spinner size={"small"}></Spinner>
-        )}
+            <Spinner size={"small"}></Spinner>
+          )}
       </View>
     );
   }

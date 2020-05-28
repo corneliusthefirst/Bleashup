@@ -1625,7 +1625,6 @@ class ChatRoom extends Component {
                                 value={this.state.textValue}
                                 onChange={(event) => this._onChange(event)}
                                 placeholder={"Your Message"}
-                                autoFocus={true}
                                 style={{
                                     alignSelf: "flex-start",
                                     width: "84%",
