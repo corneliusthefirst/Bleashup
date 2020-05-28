@@ -186,11 +186,11 @@ export default class CommiteeItem extends PureComponent {
         mb = 1000 * 1000;
         return (data / mb).toFixed(2).toString() + "MB";
     }
-    writeText(text,tags) {
+    writeText(text, tags) {
         return text ? (
             <View>
                 <TextContent
-                tags={tags}
+                    tags={tags}
                     style={{
                         fontSize: 14,
                         alignSelf: "flex-start",
@@ -223,7 +223,7 @@ export default class CommiteeItem extends PureComponent {
                             </Text>
                         </View>
                         <View style={{ width: "95%", alignSelf: "flex-start" }}>
-                            {this.writeText(message.text,message.tags)}
+                            {this.writeText(message.text, message.tags)}
                         </View>
                     </View>
                 );
@@ -251,15 +251,15 @@ export default class CommiteeItem extends PureComponent {
                                 width: "100%",
                             }}
                         >
-                            <View style={{ width: "70%", alignSelf: "flex-start" }}>
-                                {this.writeText(message.text,message.tags)}
+                            <View style={{ width: "80%", alignSelf: "flex-start" }}>
+                                {this.writeText(message.text, message.tags)}
                             </View>
                             <View
                                 style={{
                                     alignSelf: "flex-end",
                                     marginTop: "-8%",
                                     borderRadius: 8,
-                                    width: "30%",
+                                    width: "20%",
                                 }}
                             >
                                 {testForURL(message.photo) ? (
@@ -295,27 +295,28 @@ export default class CommiteeItem extends PureComponent {
                             {this.formNickName(message.sender)}
                         </Title>
                         <View style={{ display: "flex", flexDirection: "row" }}>
-                            <TextContent
-                                numberOfLines={2}
-                                style={{
-                                    fontSize: 14,
-                                    marginLeft: "3%",
-                                    marginTop: "1%",
-                                    width: "70%",
-                                }}
-                                tags={message.tags}
-                                text={
-                                    message.text
-                                        ? message.text.slice(0, 15) + message.text.length < 15
-                                            ? "..."
-                                            : ""
-                                        : message.duration
-                                            ? convertToHMS(message.duration)
-                                            : message.total
-                                                ? this.toMB(message.total)
-                                                : ""
-                                }
-                            ></TextContent>
+                            <View style={{
+                                marginLeft: "3%",
+                                marginTop: "1%",
+                                width: "80%",
+                            }}>
+                                <TextContent
+                                    numberOfLines={2}
+                                    style={{
+                                        fontSize: 14,
+                                    }}
+                                    tags={message.tags}
+                                    text={
+                                        message.text
+                                            ? message.text
+                                            : message.duration
+                                                ? convertToHMS(message.duration)
+                                                : message.total
+                                                    ? this.toMB(message.total)
+                                                    : ""
+                                    }
+                                ></TextContent>
+                            </View>
                             <View style={{ alignSelf: "flex-end", marginTop: "-2%" }}>
                                 <Icon
                                     type={"Entypo"}
@@ -342,20 +343,22 @@ export default class CommiteeItem extends PureComponent {
                         <View
                             style={{ display: "flex", flexDirection: "row", marginTop: "1%" }}
                         >
-                            <TextContent
-                                numberOfLines={2}
-                                style={{ fontSize: 14, marginLeft: "0%", width: "80%" }}
-                                tags={message.tags}
-                                text={
-                                    message.text
-                                        ? message.text.slice(0, 15)
-                                        : message.duration
-                                            ? message.duration
-                                            : message.total
-                                                ? this.toMB(message.total)
-                                                : ""
-                                }
-                            ></TextContent>
+                            <View style={{ marginLeft: "0%", width: "80%" }}>
+                                <TextContent
+                                    numberOfLines={2}
+                                    style={{ fontSize: 14, }}
+                                    tags={message.tags}
+                                    text={
+                                        message.text
+                                            ? message.text
+                                            : message.duration
+                                                ? message.duration
+                                                : message.total
+                                                    ? this.toMB(message.total)
+                                                    : ""
+                                    }
+                                ></TextContent>
+                            </View>
                             <View style={{ alignSelf: "flex-end", marginTop: "-2%" }}>
                                 <Icon
                                     type={"AntDesign"}
@@ -380,20 +383,22 @@ export default class CommiteeItem extends PureComponent {
                             {this.formNickName(message.sender)}
                         </Title>
                         <View style={{ display: "flex", flexDirection: "row" }}>
-                            <TextContent
-                                numberOfLines={2}
-                                style={{
-                                    fontSize: 14,
-                                    marginLeft: "3%",
-                                    alignSelf: "flex-start",
-                                    fontWeight: "bold",
-                                    width: "95%",
-                                }}
-                                tags={message.tags}
-                                text={message.file_name
-                                    .split(".")
-                                [message.file_name.split(".").length - 1].toUpperCase()}
-                            ></TextContent>
+                            <View style={{
+                                marginLeft: "2%", width: "95%"
+                            }}>
+                                <TextContent
+                                    numberOfLines={2}
+                                    style={{
+                                        fontSize: 14,
+                                        alignSelf: "flex-start",
+                                        fontWeight: "bold",
+                                    }}
+                                    tags={message.tags}
+                                    text={message.file_name
+                                        .split(".")
+                                    [message.file_name.split(".").length - 1].toUpperCase()}
+                                ></TextContent>
+                            </View>
                             <View style={{ alignSelf: "flex-end", marginTop: "-2%" }}>
                                 <Icon
                                     type={"Octicons"}
