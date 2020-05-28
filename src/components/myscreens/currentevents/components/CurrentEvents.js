@@ -177,12 +177,12 @@ export default class CurrentEvents extends Component {
                                     })
                                 }}
                                 showActions={(event_id) => this.showActions(event_id)}
-                                renderDelay={this.delay * 25}
+                                renderDelay={this.delay * 15}
                                 showPhoto={(url) => this.showPhoto(url)} key={item.id}  {...this.props} Event={item} />
                     }}
                     firstIndex={0}
                     renderPerBatch={this.renderPerbatch}
-                    initialRender={6}
+                    initialRender={20}
                     numberOfItems={this.props.data.length}
                 >
                 </BleashupFlatList>

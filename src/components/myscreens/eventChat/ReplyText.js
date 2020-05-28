@@ -10,6 +10,7 @@ import testForURL from '../../../services/testForURL';
 import ProfileModal from "../invitations/components/ProfileModal";
 import buttoner from "../../../services/buttoner";
 import ColorList from '../../colorList';
+import TextContent from './TextContent';
 let stores = null
 export default class ReplyText extends Component {
     constructor(props) {
@@ -52,8 +53,9 @@ export default class ReplyText extends Component {
                                     this.props.reply.sender.phone) ? this.showReplyer() : this.props.openReply(this.props.reply)
                             })
                             }>
-                                <View style={{ flexDirection: 'row', }}>
-                                    <Text note ellipsizeMode={'tail'} numberOfLines={1} style={{ marginBottom: "1%",fontWeight: 'bold', color: ColorList.indicatorColor,maxWidth: '25%' }}>{`${this.props.reply.replyer_name ? this.props.reply.replyer_name : this.props.reply.type_extern}: `}</Text>
+                                <View style={{ flexDirection: 'column', }}>
+                                    <Text note ellipsizeMode={'tail'} numberOfLines={1} style={{ marginBottom: "1%",fontWeight: 'bold', color: ColorList.indicatorColor,maxWidth: '25%' }}>
+                                    {`${this.props.reply.replyer_name ? this.props.reply.replyer_name : this.props.reply.type_extern}`}</Text>
                                     {this.props.reply.type_extern ? <View style={{ flexDirection: 'row',minWidth: '75%',maxWidth:'80%', }}>
                                         <Text ellipsizeMode={'tail'} numberOfLines={3}  style={{ fontWeight: 'bold',fontSize: 12, width:'100%'}}>{`${this.props.reply.replyer_name ?
                                             this.props.reply.type_extern : this.props.reply.title.split(': \n')[0]}`}</Text>
@@ -70,7 +72,8 @@ export default class ReplyText extends Component {
                                         style={{ fontWeight: 'bold', fontSize: 12, color: "#1F4237", width: '83%' }}>
                                         {this.props.reply.replyer_name ? this.props.reply.title : this.props.reply.title.split(': \n')[1]}</Text>
                                     : <View style={{ marginTop: this.props.reply.audio ? "2%" : "0%", width: '83%' }}>{this.props.reply.audio ?
-                                        <Text ellipsizeMode={'tail'} numberOfLines={1}>{(this.props.reply.url && this.props.reply.url.duration) || this.props.reply.duration ? converToHMS(this.props.reply.type_extern === 'Posts' ?
+                                        <Text ellipsizeMode={'tail'} numberOfLines={1}>{(this.props.reply.url && this.props.reply.url.duration) || this.props.reply.duration ? 
+                                            converToHMS(this.props.reply.type_extern === 'Posts' ?
                                             this.props.reply.url.duration : this.props.reply.duration) : null}</Text> :
                                         <Text ellipsizeMode={'tail'} numberOfLines={1} style={{ fontSize: 30, }}>{"."}{this.props.reply.typer.toUpperCase()}</Text>}</View>}
                             </View> : <View><View style={{ display: 'flex', flexDirection: 'row', }}>
@@ -100,10 +103,11 @@ export default class ReplyText extends Component {
                                     marginLeft: this.props.reply.sourcer ? '1%' : null,
                                     width: this.props.reply.sourcer ? '74%' : '94%'
                                 }}>
-                                    {this.props.reply.title ? <Text ellipsizeMode='tail' numberOfLines={this.props.reply.sourcer ?
-                                            this.props.reply.replyer_name ? 13 : 15 : 15} style={{ fontSize: 12, color: "#1F4237", }}>{this.props.reply.replyer_name ? this.props.reply.title : this.props.reply.title.split(': \n')[1]}</Text>
-                                        : this.props.reply.text ? <Text ellipsizeMode='tail' numberOfLines={this.props.reply.sourcer ?
-                                            this.props.reply.replyer_name ? 13 : 14 : 14} style={{ fontSize: 12, }}>{this.props.reply.text}</Text> : null}
+                                    {this.props.reply.title ? <TextContent tags={this.props.reply.tags} ellipsizeMode='tail' numberOfLines={this.props.reply.sourcer ?
+                                            this.props.reply.replyer_name ? 13 : 15 : 15} style={{ fontSize: 12, color: "#1F4237", }} text={this.props.reply.replyer_name ? this.props.reply.title :
+                                                this.props.reply.title.split(': \n')[1]}></TextContent>
+                                        : this.props.reply.text ? <TextContent tags={this.props.reply.tags} ellipsizeMode='tail' numberOfLines={this.props.reply.sourcer ?
+                                                this.props.reply.replyer_name ? 13 : 14 : 14} style={{ fontSize: 12, }} text={this.props.reply.text}></TextContent> : null}
                                 </View>
                             </View>
                                     {this.props.reply.change_date ? <Text note>{`On: ${moment(this.props.reply.change_date).format("dddd, MMMM Do YYYY, h:mm:ss a")}`}</Text> : null}

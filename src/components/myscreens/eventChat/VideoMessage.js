@@ -189,7 +189,7 @@ export default class VideoMessage extends Component {
                                             {this.toMB(this.state.total).toFixed(1)}{")Mb"}</Text></View></View>}</View>
                         </View>
                         {this.props.message.text ? <View style={{ marginTop: "-5%", padding: "2%", alignSelf: this.props.sender ? "flex-start" : "flex-end", }}>
-                            <TextContent onLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null} pressingIn={() => this.props.pressingIn()} text={this.props.message.text}></TextContent>
+                            <TextContent tags={this.props.tags} onLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null} pressingIn={() => this.props.pressingIn()} text={this.props.message.text}></TextContent>
                         </View> : null}
                     </View>
                 </TouchableWithoutFeedback>

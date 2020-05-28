@@ -12,7 +12,7 @@ import colorList from '../../colorList';
 import ProfileSimple from '../currentevents/components/ProfileViewSimple';
 import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
 
-let globalFunctions = new GlobalFunctions();
+let globalFunctions = GlobalFunctions;
 let { height, width } = Dimensions.get('window');
 export default class SearchUser extends Component {
     constructor(props) {

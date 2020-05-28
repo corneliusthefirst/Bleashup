@@ -36,7 +36,7 @@ export default class TextMessageSnder extends PureComponent {
         return (
             <TouchableWithoutFeedback onPressIn={()=> this.senderMessage}>
             <View style={{ alignSelf: 'center', }}>
-                <TextContent text={this.props.message.text}></TextContent>
+                <TextContent tags={this.props.message.tags} text={this.props.message.text}></TextContent>
                 </View></TouchableWithoutFeedback>
         );
     }

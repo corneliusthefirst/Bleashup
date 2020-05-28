@@ -1,6 +1,6 @@
 import React from "react";
 import { View, ScrollView } from "react-native";
-import { Icon,Title,Text } from "native-base";
+import { Icon,Title,Text,Spinner } from "native-base";
 import Settings from "./Settings";
 import Members from "./Members";
 import MoreMembersMenu from "./MoreMembersMenu";
@@ -12,6 +12,11 @@ import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
 export default class SettingsTabModal extends BleashupModal {
   onClosedModal() {
     this.props.closed();
+  }
+  onOpenModal(){
+      this.setState({
+        isMounted:true
+      })
   }
   swipeToClose = false
   modalBody() {
@@ -62,6 +67,7 @@ export default class SettingsTabModal extends BleashupModal {
           </View>
           <View style={{ height: this.height - ColorList.headerHeight }}>
           {this.TabHeader()}
+          {this.state.isMounted ?
             <Members
               currentPhone={this.props.currentPhone}
               leaveActivity={this.props.leaveActivity}
@@ -70,7 +76,7 @@ export default class SettingsTabModal extends BleashupModal {
               participants={this.props.event.participant}
               master={this.props.master}
               changeMasterState={this.props.changeMasterState}
-            ></Members>
+            ></Members>:<Spinner size={"small"} ></Spinner>}
           </View>
         </ScrollView>
       </View>

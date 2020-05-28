@@ -986,9 +986,9 @@ export default class events {
   currentTime = moment().format()
   previousTime = moment().format()
   setProperties(Events, inform) {
-    //this.currentTime = moment().format()
     Events = orderBy(Events, ["updated_at"], ["desc"]);
     this.events = Events;
+    this.currentTime = moment().format()
   }
   addEventCommitee(EventID, CommiteeID) {
     return new Promise((resolve, reject) => {

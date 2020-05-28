@@ -83,9 +83,12 @@ export default class BleashupFlatList extends Component {
         return this.props.newData ? this.props.newData : [];
     }
     render() {
+        if (this.props.dataSource.length <= 0) {
+            this.props.empty ? this.props.empty() : null
+        }
         return (
             <View style={{
-                flexDirection: 'column', height: '100%',
+                flexDirection: 'column', height: this.props.fit ? null : '100%',
                 backgroundColor: this.props.backgroundColor ?
                     this.props.backgroundColor : "#ffffff",
                 ...this.props.style

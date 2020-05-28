@@ -12,7 +12,7 @@ import colorList from '../../colorList';
 import DetailsModal from "../../myscreens/invitations/components/DetailsModal";
 import BeNavigator from '../../../services/navigationServices';
 
-let globalFunctions = new GlobalFunctions();
+let globalFunctions =  GlobalFunctions;
 let { height, width } = Dimensions.get('window');
 export default class SearchView extends Component {
     constructor(props) {

@@ -7,6 +7,7 @@ export default class globalState {
   @observable isScrolling = true;
   @observable loading = false;
   showingProfile = false
+  @observable searchableMembers = []
   editingCommiteeName = false
   @observable error = false;
   @observable downlading = false

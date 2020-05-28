@@ -347,10 +347,10 @@ export default class TasksCreation extends BleashupModal {
   addNewRemind() {
     if (!this.props.working) {
       if (!this.state.date || !this.state.currentRemind.title) {
-        this.props.onClosed()
         this.setState({
-          isExtra:false
+          isExtra: false
         })
+        this.props.onClosed()
         Toast.show({
           text: "Remind Must Have Atleat a Title and Data/Time",
           buttonText: "Okay",

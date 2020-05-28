@@ -119,7 +119,6 @@ export default class EventTasksCard extends Component {
     content: null
   }
   render() {
-    console.warn(this.props.item.members)
     hasDoneForThisInterval = find(this.props.item.donners, (ele) =>
       ele.status.date &&
       this.state.correspondingDateInterval &&

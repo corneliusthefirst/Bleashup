@@ -58,7 +58,7 @@ export default class InviteParticipantModal extends BleashupModal {
           loaded: true,
           hideTitle: this.props.hideTitle,
         });
-      }, 20);
+      });
     });
   }
   saveStyles = { fontSize: 40, color: "#1FABAB" }

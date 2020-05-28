@@ -147,19 +147,19 @@ export default class Event extends Component {
     switch (this.state.currentPage) {
       case "EventDetails":
         return <EventDetails
-        shared={false}
-        share={{ 
-            id:'1434',
-            date:moment().format(),
-            sharer:stores.LoginStore.user.phone,
+          shared={false}
+          share={{
+            id: '1434',
+            date: moment().format(),
+            sharer: stores.LoginStore.user.phone,
             item_id: "740a5530-8b20-11ea-9234-9b01561bce6b",
             event_id: this.event.id
-         }}
-        startLoader={() => {
-          this.setState({
-            working: true
-          })
-        }}
+          }}
+          startLoader={() => {
+            this.setState({
+              working: true
+            })
+          }}
           openMenu={() => {
             this.openMenu()
           }}
@@ -179,8 +179,8 @@ export default class Event extends Component {
           showHighlight={(h) => this.showHighlightDetails(h)}
           Event={this.event}></EventDetails>
       case "Reminds":
-        return <Remind 
-        //shared={false}
+        return <Remind
+          //shared={false}
           share={{
             id: '456322',
             date: moment().format(),
@@ -188,15 +188,15 @@ export default class Event extends Component {
             item_id: "a7f976f0-8cd8-11ea-9234-ebf9c3b94af7",
             event_id: this.event.id
           }}
-        startLoader={() => {
-          this.setState({
-            working: true
-          })
-        }} stopLoader={() => {
-          this.setState({
-            working: false
-          })
-        }}
+          startLoader={() => {
+            this.setState({
+              working: true
+            })
+          }} stopLoader={() => {
+            this.setState({
+              working: false
+            })
+          }}
           openMenu={() => this.openMenu()}
           clearCurrentMembers={() => {
             this.setState({
@@ -330,7 +330,7 @@ export default class Event extends Component {
       this.showContacts(change.new_value.new_value)
     } else if (typeof change.new_value.new_value === "string" &&
       testForURL(change.new_value.new_value)) {
-        this.showContent({photo:change.new_value.new_value})
+      this.showContent({ photo: change.new_value.new_value })
       //this.openPhoto(change.new_value.new_value)
     }
     else if (change.new_value &&
@@ -567,7 +567,6 @@ export default class Event extends Component {
   }
   master = false
   componentWillMount() {
-    GState.currentCommitee = this.event.id
     this.unmounted = false
     emitter.on(`event_updated_${this.event.id}`, (change, newValue) => {
       this.handleActivityUpdates(change, newValue)
@@ -599,12 +598,14 @@ export default class Event extends Component {
       this.addToCalendar()
     }
     let page = this.props.navigation.getParam("tab")
+    let isEventCurrentPage = page === 'EventChat'
+    isEventCurrentPage ? GState.currentCommitee = this.event.id : null
     this.setState({
-      isChat: page === 'EventChat' ? true : false,
+      isChat: isEventCurrentPage ? true : false,
       currentPage: page,
       mounted: true
     })
-    this.isOpen = page === 'EventChat' ? true : false
+    this.isOpen = isEventCurrentPage ? true : false
 
     this.refreshePage()
   }
@@ -640,7 +641,7 @@ export default class Event extends Component {
       Toast.show({ text: 'App is busy' })
     }
   }
-  unInitialize(){
+  unInitialize() {
     this.unmounted = true
     Pickers.CleanAll()
     GState.reply = null
@@ -695,7 +696,7 @@ export default class Event extends Component {
         event_id: this.event.id,
         opened: true
       }
-      Requester.addCommitee(commitee,this.event.about.title).then(() => {
+      Requester.addCommitee(commitee, this.event.about.title).then(() => {
         firebase.database().ref(`rooms/${this.event.id}/${commitee.id}`).set({ name: commitee.name, members: commitee.member }).then(() => {
           !this.event.commitee || this.event.commitee.length <= 0 ? this.event.commitee = [commitee.id] :
             this.event.commitee.unshift(commitee.id)
@@ -746,7 +747,7 @@ export default class Event extends Component {
       this.setState({
         working: true
       })
-      Requester.publishCommitee(id, this.event.id, state,this.state.roomName).then(() => {
+      Requester.publishCommitee(id, this.event.id, state, this.state.roomName).then(() => {
         emitter.emit('publish-unpublish', state)
         this.setState({
           working: false,
@@ -1101,7 +1102,7 @@ export default class Event extends Component {
         working: true
       })
       if (this.event.public) {
-        Requester.publish(this.event.id,this.event.about.title).then(() => {
+        Requester.publish(this.event.id, this.event.about.title).then(() => {
           this.initializeMaster()
         })
       } else {
@@ -1186,18 +1187,18 @@ export default class Event extends Component {
 
   }
   saveBackground(path) {
+    this.setState({
+      working: true
+    })
+    Requester.changeBackground(this.event.id, path).then(res => {
+      this.initializeMaster()
+    }).catch(err => {
       this.setState({
-        working: true
+        working: false
       })
-        Requester.changeBackground(this.event.id, path).then(res => {
-          this.initializeMaster()
-        }).catch(err => {
-          this.setState({
-            working: false
-          })
-          Toast.show({ text: "Sorry, the action could not be performed" })
-          this.initializeMaster()
-        })
+      Toast.show({ text: "Sorry, the action could not be performed" })
+      this.initializeMaster()
+    })
   }
   showPhoto(photo) {
     this.setState({
@@ -1235,7 +1236,7 @@ export default class Event extends Component {
       })
     } else {
       this.unInitialize()
-      BeNavigator.pushActivity(this.event,page)
+      BeNavigator.pushActivity(this.event, page)
     }
   }
   preleaveActivity() {
@@ -1310,7 +1311,7 @@ export default class Event extends Component {
       //initializeOpen={true}
       openMenuOffset={this.currentWidth}
       content={<View style={{ backgroundColor: colorList.bodyBackground, width: "100%" }}><SWView
-      join={this.joinCommitee.bind(this)}
+        join={this.joinCommitee.bind(this)}
         navigateHome={() => {
           this.setState({
             isChat: false
@@ -1357,7 +1358,7 @@ export default class Event extends Component {
         //width={this.state.isChat ? this.normalWidth : this.currentWidth}
         event={this.event}
         master={this.master}
-        public={this.event.public} 
+        public={this.event.public}
         navigatePage={(page) => { BeNavigator.navigateTo(page) }} ></SWView></View>}>
       <View style={{
         height: "100%",
@@ -1387,7 +1388,7 @@ export default class Event extends Component {
             })
           }} isOpen={this.state.showNotifiation}></NotificationModal>
           <View style={{ marginRight: "95%", width: "100%", marginBottom: "5%", }}>
-            <Spinner  size={"small"}></Spinner>
+            <Spinner size={"small"}></Spinner>
           </View>
         </View> : null}
         {this.state.working ? <View style={{ position: "absolute", marginTop: "-8%", }}><Spinner size={"small"}></Spinner></View> : null}
@@ -1522,7 +1523,7 @@ export default class Event extends Component {
           }}
           photo={this.event.background}
           showActivityPhoto={() => {
-            this.event.background && this.showPhoto(this.event.background) 
+            this.event.background && this.showPhoto(this.event.background)
           }}
           isOpen={this.state.isSelectPhotoInputMethodModal}
           closed={() => this.setState({
@@ -1567,7 +1568,7 @@ export default class Event extends Component {
         {this.state.isremindConfigurationModal ? <TasksCreation
           shouldRestore={this.state.shouldRestore}
           canRestore={this.state.remind && this.state.remind.creator === this.user.phone}
-          restore={(item) => this.restoreRemind({ new_value: { new_value: item } })} isOpen={this.state.isremindConfigurationModal} 
+          restore={(item) => this.restoreRemind({ new_value: { new_value: item } })} isOpen={this.state.isremindConfigurationModal}
           onClosed={() => {
             this.setState({
               isremindConfigurationModal: false,

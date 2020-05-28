@@ -124,10 +124,10 @@ export default class AudioRecorder extends Component{
     state = {}
     audioRecorder() {
         return <View style={{
-            position: "absolute", width: '87%', opacity: 0.97,
+            width: '100%', opacity: 0.97,alignSelf: 'center',margin: 'auto',
             // marginTop: "1%",
             backgroundColor: '#5CB99E', height: 50, display: 'flex', flexDirection: 'row',
-            marginLeft: 2, borderRadius: 10,
+             borderTopLeftRadius: 5,borderTopRightRadius: 5,
         }}><Left><TouchableOpacity onPress={() => this.props.toggleAudioRecorder()}><Icon type={'EvilIcons'} 
         name={'close'} style={{ color: "#FEFFDE" }}></Icon>
         </TouchableOpacity></Left>{this.state.recording ? 

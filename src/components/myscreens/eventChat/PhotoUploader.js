@@ -9,6 +9,7 @@ import FileExachange from '../../../services/FileExchange.js';
 import rnFetchBlob from 'rn-fetch-blob';
 import buttoner from '../../../services/buttoner';
 import ColorList from '../../colorList';
+import TextContent from './TextContent';
 const { fs } = rnFetchBlob
 export default class PhotoUploader extends Component {
     constructor(props) {
@@ -133,7 +134,8 @@ export default class PhotoUploader extends Component {
                                     {this.toMB(this.state.total).toFixed(1)}{")Mb"}</Text></View></View>}</View>
                 </View>
                 <View>
-                    {this.props.message.text ? <Text style={{ margin: '3%', }}>{this.props.message.text}</Text> : null}
+                    {this.props.message.text ? <TextContent text={this.props.message.text} 
+                    tags={this.props.message.tags} style={{ margin: '2%', }}></TextContent> : null}
                 </View>
             </View>
         );

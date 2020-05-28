@@ -43,7 +43,7 @@ import PhotoViewer from "../../event/PhotoViewer"
 import ActivityProfile from "./ActivityProfile";
 import GlobalFunctions from '../../../globalFunctions';
 
-let globalFunctions = new GlobalFunctions();
+let globalFunctions =  GlobalFunctions;
 let { height, width } = Dimensions.get('window');
 class PublicEvent extends Component {
   constructor(props) {
@@ -298,9 +298,9 @@ class PublicEvent extends Component {
             ></ActivityProfile>
         </View>
 
-        <View style={{ width: '10%', justifyContent: 'center', marginLeft: "2%",marginTop:"2%" }}>
+       {/*<View style={{ width: '10%', justifyContent: 'center', marginLeft: "2%",marginTop:"2%" }}>
           <Icon onPress={() => this.props.showActions(this.props.Event.id)} type="Entypo" style={{ fontSize: 24, color: "#555756"}} name="dots-three-vertical"></Icon>
-        </View>
+  </View>*/}
       </View>
     </CardItem>
     )
@@ -342,7 +342,7 @@ class PublicEvent extends Component {
 
           <View style={{ alignSelf: "flex-start", width: "60%" }}>
             <View style={{ width: "35%" }}>
-              {this.state.isMount && !this.state.fresh ? <Join event={this.props.Event} refreshJoint={() => this.refreshJoint()}></Join> : null}
+              {/*this.state.isMount && !this.state.fresh ? <Join event={this.props.Event} refreshJoint={() => this.refreshJoint()}></Join> : null*/}
             </View>
           </View>
 
@@ -361,14 +361,14 @@ class PublicEvent extends Component {
       backgroundColor: colorList.bodyBackground,
       width: colorList.containerWidth, alignSelf: "center"
     }}>
-      <Swipeout {...this.props} onOpen={() => this.openSwipeOut()} onClose={() => this.onCloseSwipeout()} style={{
+      {/*<Swipeout {...this.props} onOpen={() => this.openSwipeOut()} onClose={() => this.onCloseSwipeout()} style={{
         width: "97%", ...shadower(1),
         backgroundColor: this.props.Event.new ? "#cdfcfc" : null
       }}
         disabled={!this.props.Event.public}
         autoClose={true}
         //close={true}
-        {...this.swipeOutSettings(this.state.master, this.state.joint)}>
+    {...this.swipeOutSettings(this.state.master, this.state.joint)}>*/}
         <Card
           style={{
             backgroundColor: colorList.bodyBackground,
@@ -383,9 +383,9 @@ class PublicEvent extends Component {
           {this.renderFooter()}
 
         </Card>
-      </Swipeout>
+      {/*</Swipeout>*/}
     </View> : <View style={{}}><Card style={{
-      height: 130, alignSelf: 'center', backgroundColor: colorList.bodyBackground,
+      height: 120, alignSelf: 'center', backgroundColor: colorList.bodyBackground,
       width: "100%"
     }}></Card></View>
     )

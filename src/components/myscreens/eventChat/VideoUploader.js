@@ -9,6 +9,7 @@ import Pickers from '../../../services/Picker';
 import rnFetchBlob from 'rn-fetch-blob';
 import buttoner from '../../../services/buttoner';
 import ColorList from '../../colorList';
+import TextContent from './TextContent';
 const { fs } = rnFetchBlob
 export default class VideoUploader extends Component {
     constructor(props) {
@@ -154,7 +155,7 @@ export default class VideoUploader extends Component {
                     </View>
                 </View>
                 <View>
-                    {this.props.message.text ? <Text style={{ margin: '3%', }}>{this.props.message.text}</Text> : null}
+                    {this.props.message.text ? <TextContent tags={this.props.message.tags} style={{ margin: '2%', }} text={this.props.message.text}></TextContent> : null}
                 </View>
             </View>
         );
