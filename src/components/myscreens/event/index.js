@@ -503,6 +503,7 @@ export default class Event extends Component {
     GState.reply = data
     Vibration.vibrate(this.duration)
     this.isOpen = true
+    !GState.currentCommitee ? GState.currentCommitee = this.event.id : null
     emitter.emit('mentioning')
     this.setState({
       currentPage: 'EventChat',

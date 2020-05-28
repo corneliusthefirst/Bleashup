@@ -42,13 +42,10 @@ export default class RouteView extends Component {
         justifyContent: 'center'
     }
     componentDidMount() {
-        let phone = stores.LoginStore.user.phone.replace("00", "+");
-        firebase.database().ref(`new_message/${phone}/${this.props.event_id}/new_messages`).once('value', snapshoot => {
-            GState.generalNewMessages = snapshoot.val() !== null ? snapshoot.val() : []
-            this.setState({
-                updating: !this.state.updating
-            })
+        this.setState({
+            updating: !this.state.updating
         })
+
     };
     width = screenWidth * .15
     render() {
@@ -67,7 +64,7 @@ export default class RouteView extends Component {
                 )}>
                     <View style={{ display: 'flex', width: "100%", marginTop: '10%', }}>
                         <Icon type="AntDesign" style={{
-                            alignSelf: 'center', fontSize: this.fontSize, color:ColorList.bodyIcon
+                            alignSelf: 'center', fontSize: this.fontSize, color: ColorList.bodyIcon
                         }} name="appstore-o"></Icon>
                         {/*<Text style={{ padding: "1%", color: this.props.currentPage == "EventDetails" ? "#0A4E52" : "gray", width: "100%" }}>Details</Text>*/}
                     </View>
@@ -93,7 +90,7 @@ export default class RouteView extends Component {
                             primary><Text style={{ marginTop: "30%", }}>{GState.generalNewMessages.length}</Text></Badge> : <View></View>}
                     </View>
                 </TouchableOpacity>
-                
+
                 <TouchableOpacity style={{
                     ...this.centerer, width: '100%',
                     backgroundColor: this.props.currentPage == "Reminds" && !this.props.isChat ? ColorList.bodyDarkWhite : ColorList.bodyBackground,
@@ -102,24 +99,27 @@ export default class RouteView extends Component {
                     this.props.setCurrentPage("Reminds")
                 })}>
                     <View style={{ width: "100%", marginTop: '10%', }}>
-                        <Icon type="FontAwesome" style={{ alignSelf: 'center', 
+                        <Icon type="FontAwesome" style={{
+                            alignSelf: 'center',
                             fontSize: this.fontSize,
-                             color: ColorList.bodyIcon }} name="bell-o"></Icon>
+                            color: ColorList.bodyIcon
+                        }} name="bell-o"></Icon>
                     </View>
                 </TouchableOpacity>
                 <TouchableOpacity style={{
                     width: '100%',
-                    ...this.centerer, backgroundColor: this.props.currentPage == "ChangeLogs" && !this.props.isChat ? ColorList.bodyDarkWhite : ColorList.bodyBackground, 
+                    ...this.centerer, backgroundColor: this.props.currentPage == "ChangeLogs" && !this.props.isChat ? ColorList.bodyDarkWhite : ColorList.bodyBackground,
                     ...shadower(2)
                 }} onPress={() => requestAnimationFrame(() => {
                     this.props.setCurrentPage("ChangeLogs")
                 }
                 )}>
                     <View style={{ marginTop: '10%', width: "100%" }}>
-                        <Icon type="AntDesign" style={{ 
-                            alignSelf: 'center', 
-                            fontSize: this.fontSize, 
-                            color: ColorList.bodyIcon }} name="clockcircleo"></Icon>
+                        <Icon type="AntDesign" style={{
+                            alignSelf: 'center',
+                            fontSize: this.fontSize,
+                            color: ColorList.bodyIcon
+                        }} name="clockcircleo"></Icon>
                         {/*<Text style={{ padding: "1%", color: this.props.currentPage == "ChangeLogs" ? "#0A4E52" : "gray", width: "100%" }}>{"Logs"}</Text>*/}
                     </View>
                 </TouchableOpacity>
