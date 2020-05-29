@@ -14,7 +14,7 @@ const seen = "seen";
 const react = "reaction";
 const typing = "typing";
 class MessageRequest {
-    sendMessage(message, CommitteeID, EventID) {
+    sendMessage(message, CommitteeID, EventID, notme) {
         return new Promise((resolve, reject) => {
             let messageData = request.MessageAction();
             messageData.action = newMes;
@@ -23,10 +23,10 @@ class MessageRequest {
             messageData.event_id = EventID;
             tcpRequest.messaging(messageData, message.id).then((JSONdata) => {
                 EventListener.sendRequest(JSONdata, message.id).then((response) => {
-                    MainUpdater.saveMessage(message, EventID, CommitteeID,true).then(() => {
+                    MainUpdater.saveMessage(message, EventID, CommitteeID, notme ? false : true).then(() => {
                         console.warn(response)
                         resolve(response);
-                     });
+                    });
                 });
             });
         });
@@ -166,7 +166,7 @@ class MessageRequest {
     reactMessage(messageID, committeeID, reactio, eventID) {
         return new Promise((resolve, reject) => {
             let reactPhone = { phone: stores.LoginStore.user.phone, date: moment().format() }
-            let reaction = { reaction:reactio, reacter: reactPhone }
+            let reaction = { reaction: reactio, reacter: reactPhone }
             let reacter = { message_id: messageID, reaction }
             let messageData = request.MessageAction()
             messageData.action = react
@@ -184,20 +184,20 @@ class MessageRequest {
 
         })
     }
-    sayTyping(committeeID,eventID){
-        return new Promise((resolve,reject) => {
+    sayTyping(committeeID, eventID) {
+        return new Promise((resolve, reject) => {
             let messageData = request.MessageAction()
             let typer = {
                 phone: stores.LoginStore.user.phone,
                 name: stores.LoginStore.user.nickname
             }
             messageData.action = typing,
-            messageData.data = typer
-            messageData.committee_id = committeeID 
-            messageData.event_id = eventID 
-            tcpRequest.messaging(messageData,committeeID+typing).then(JSONdata => {
-                EventListener.sendRequest(JSONdata,committeeID + typing).then((res) => {
-                    MainUpdater.sayTyping(committeeID,typer).then(() => {
+                messageData.data = typer
+            messageData.committee_id = committeeID
+            messageData.event_id = eventID
+            tcpRequest.messaging(messageData, committeeID + typing).then(JSONdata => {
+                EventListener.sendRequest(JSONdata, committeeID + typing).then((res) => {
+                    MainUpdater.sayTyping(committeeID, typer).then(() => {
                         resolve()
                     })
                 })

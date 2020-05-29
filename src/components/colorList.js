@@ -19,7 +19,7 @@ class colorlist {
     iconGray = '#555756'
     iconActive = "#1FABAB"
     iconInactive = "#ADE3D2"
-    
+    replyBackground = "rgba(34, 0, 0, 0.1)"
     headerTextInverted = "black"
     headerIcon = "black"
     headerText = "black"
@@ -27,8 +27,13 @@ class colorlist {
     headerBackground = "white"
     headerHeight = 55
     headerFontweight = "bold"
+    buttonerBackground = 'rgba(52, 52, 52, 0.6)'
     headerFontSize = 16
-
+    reminds = "#2DDFD5"
+    post = "yellow"
+    vote = "#4B6CF7"
+    copy = "#92E578"
+    delete = "red"
 
     //body
     bodyIcon = "black"

@@ -63,6 +63,13 @@ export default class BleashupFlatList extends Component {
              })
          }*/
     }
+    scrollToIndex(index){
+        console.warn(index)
+        this.setState({
+            currentRender: this.props.dataSource.length
+        })
+        this.refs.bleashupFlatlist.scrollToIndex({animated:true,index:index})
+    }
     scrollToEnd() {
         this.refs.bleashupFlatlist.scrollToOffset({ animated: true, offset: 0 })
     }

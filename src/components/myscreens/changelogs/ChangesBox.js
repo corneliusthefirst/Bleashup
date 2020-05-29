@@ -9,6 +9,7 @@ import ChangeBoxMenu from "./ChangeBoxMenu";
 import ProfileSimple from "../currentevents/components/ProfileViewSimple";
 import GState from '../../../stores/globalState/index';
 import colorList from '../../colorList';
+import replies from '../eventChat/reply_extern';
 
 
 export default class ChangeBox extends Component {
@@ -54,15 +55,15 @@ export default class ChangeBox extends Component {
                                 <View style={{}}><Icon onPress={() => {
                                     this.props.mention({
                                         id: this.props.change.id,
-                                        title: `${this.props.change.changed}`,
-                                        type_extern: this.props.change.title,
+                                        title: `${this.props.change.title}: \n ${this.props.change.changed}`,
+                                        type_extern: this.state.changer.nickname,
                                         new_value: this.props.change.new_value,
                                         updated: this.props.change.updated,
                                         photo: true,
                                         change_date: this.props.change.date,
                                         sourcer: this.state.changer.profile,
                                         replyer_phone: this.state.changer.phone,
-                                        replyer_name: this.state.changer.nickname
+                                        replyer_name: replies.changes 
 
                                     })
                                 }} style={{ color: '#555756'}} type="Entypo" name="reply"></Icon></View>
@@ -72,14 +73,6 @@ export default class ChangeBox extends Component {
                                     restore={() => this.props.restore(this.props.change)}
                                 ></ChangeBoxMenu> : null}</View>
                             </View>
-                            {/*<View style={{ width: "13%" }}>
-                                <TouchableOpacity onPress={() => requestAnimationFrame(() => {
-                                    console.warn("pressing !!!")
-                                    this.props.close()
-                                })}>
-                                    <View></View>
-                                </TouchableOpacity>
-                            </View>*/}
                         </View>
                         <View style={{
                             flexDirection: 'column',

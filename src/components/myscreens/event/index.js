@@ -58,6 +58,7 @@ import shadower from "../../shadower";
 import colorList from "../../colorList";
 import SettingsTabModal from "./SettingTabModal";
 import BeNavigator from '../../../services/navigationServices';
+import replies from '../eventChat/reply_extern';
 
 const screenWidth = Math.round(Dimensions.get('window').width);
 
@@ -1227,7 +1228,7 @@ export default class Event extends Component {
       title: `${replyer.title} : \n ${replyer.description}`,
       replyer_phone: stores.LoginStore.user.phone,
       //replyer_name: stores.LoginStore.user.name,
-      type_extern: 'Posts',
+      type_extern: replies.posts,
     })
   }
   setCurrentPage(page, data) {

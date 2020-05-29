@@ -60,9 +60,9 @@ export default class BleashupModal extends PureComponent {
                     height: this.modalHeight,
                     width: this.modalWidth || "100%",
                     justifyContent: this.jusify?'center':null,
-                    borderTopLeftRadius: this.borderTopLeftRadius || 8,
-                    borderTopRightRadius: this.borderTopRightRadius || 8,
-                    borderRadius:this.borderRadius
+                    borderRadius:this.borderRadius,
+                    borderTopLeftRadius: this.borderTopLeftRadius ,
+                    borderTopRightRadius: this.borderTopRightRadius ,
                 }}
             >
                 {this.modalBody()}

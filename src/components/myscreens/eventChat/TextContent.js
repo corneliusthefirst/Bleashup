@@ -72,7 +72,7 @@ export default class TextContent extends Component {
             <TouchableOpacity onLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null} onPressIn={() => {
                 this.props.pressingIn ? this.props.pressingIn() : null
             }} onPress={() =>
-                this.setState({
+                this.props.onPress ? this.props.onPress() : this.setState({
                     notShowingAll: !this.state.notShowingAll
                 })
             }>

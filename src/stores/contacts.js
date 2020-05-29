@@ -1,9 +1,11 @@
 import storage from "./Storage";
 import { observable, action } from "mobx";
-import { find, findIndex, uniq, sortBy, reject } from "lodash";
+import { find, findIndex, uniqBy, sortBy, reject } from "lodash";
 import tcpRequest from "../services/tcpRequestData";
 import serverEventListener from "../services/severEventListener";
 import moment from 'moment';
+import request from '../services/requestObjects';
+import EventListener from "../services/severEventListener";
 export default class contacts {
   constructor() {
     //storage.remove(this.saveKey).then(() =>{})
@@ -23,10 +25,24 @@ export default class contacts {
   @action addContact(NewContact) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then((Contacts) => {
-        Contacts.contacts = uniq(Contacts.contacts.concat([NewContact]), "phone");
-        this.setProperties(Contacts)
-        resolve();
-      });
+        if (!Contacts || !Contacts.contacts ||
+          findIndex(Contacts.contacts, { phone: NewContact.phone }) < 0) {
+          let newCon = request.Contact()
+          newCon = NewContact
+          tcpRequest.addContact(newCon, newCon.phone + "new-contact").then((JSONData) => {
+            EventListener.sendRequest(JSONData, newCon.phone + "new-contact").then((response) => {
+              console.warn(response)
+              Contacts.contacts = Contacts && Contacts.contacts ?
+                uniqBy(Contacts.contacts.push(NewContact), "phone") :
+                [NewContact];
+              this.setProperties(Contacts)
+              resolve();
+            });
+          })
+        } else {
+          resolve()
+        }
+      })
     });
   }
 
@@ -60,7 +76,7 @@ export default class contacts {
             serverEventListener
               .sendRequest(JSONData, phone + "_contacts")
               .then((conts) => {
-                contacts.contacts = conts
+                contacts.contacts = uniqBy(conts,"phone")
                 this.setProperties(contacts)
                 resolve(contacts.contacts)
               })
@@ -145,8 +161,8 @@ export default class contacts {
               "phone"
             )
             : [{ phone, host }];
-            this.setProperties(contact)
-           resolve()
+        this.setProperties(contact)
+        resolve()
       });
     });
   }
@@ -155,7 +171,7 @@ export default class contacts {
       this.readFromStore().then((contacts) => {
         contacts.following = reject(contacts.following, { phone })
         this.setProperties(contacts)
-         resolve()
+        resolve()
       })
     })
   }
@@ -164,7 +180,7 @@ export default class contacts {
       this.readFromStore().then((contacts) => {
         contacts.followers = reject(contacts.followers, { phone })
         this.setProperties(contacts)
-         resolve()
+        resolve()
       })
     })
   }
@@ -180,7 +196,7 @@ export default class contacts {
         Contact.profile = Newcontact.profile;
         Contacts.contacts.splice(index, 1, Contact);
         this.setProperties(Contacts)
-             resolve();
+        resolve();
       });
     });
   }

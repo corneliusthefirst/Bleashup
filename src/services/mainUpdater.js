@@ -195,7 +195,7 @@ class mainUpdater {
     informCommitteeAndEvent(message, committeeID, eventID) {
         return new Promise((resolve, reject) => {
             stores.CommiteeStore.addNewMessage(message, eventID,committeeID).then(() => {
-                stores.Events.addNewMessage(eventID, message.id, committeeID).then(() => {
+                stores.Events.addNewMessage(eventID, message, committeeID).then(() => {
                     resolve()
                 })
             })

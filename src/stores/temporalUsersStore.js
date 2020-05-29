@@ -89,15 +89,15 @@ export default class TemporalUsersStore {
             }
         })
     }
-    getUsers(phones, result) {
+    getUsers(phones, result,setter) {
         if (phones.length !== result.length) {
             this.getUser(phones[result.length]).then(user => {
                 result.push(user)
-                this.getUsers(phones, result)
+                this.getUsers(phones, result,setter)
             })
         } else {
-            GState.searchableMembers = result.filter(ele => !ele.response &&
-                ele.phone !== stores.LoginStore.user.phone)
+              setter(result.filter(ele => !ele.response &&
+                ele.phone !== stores.LoginStore.user.phone))
         }
     }
     /*getUsers(phones) {

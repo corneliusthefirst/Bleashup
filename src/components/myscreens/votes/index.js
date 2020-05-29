@@ -23,6 +23,7 @@ import CreationHeader from "../event/createEvent/components/CreationHeader";
 import ColorList from '../../colorList';
 import ShareFrame from "../../mainComponents/ShareFram";
 import Share from "../../../stores/share";
+import replies from '../eventChat/reply_extern';
 let { height, width } = Dimensions.get('window');
 
 export default class Votes extends BleashupModal {
@@ -217,7 +218,7 @@ export default class Votes extends BleashupModal {
   mentionVote(vote, creator) {
     this.props.replying({
       id: vote.id,
-      type_extern: 'Votes',
+      type_extern: replies.votes,
       title: `${vote.title} : \n ${vote.description} \n\n ${formVoteOptions(vote)} `,
       replyer_phone: stores.LoginStore.user.phone,
     })

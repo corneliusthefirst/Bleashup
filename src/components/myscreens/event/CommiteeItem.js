@@ -480,7 +480,6 @@ export default class CommiteeItem extends PureComponent {
                             <View
                                 style={{
                                     display: "flex",
-                                    flex: 1,
                                     margin: "2%",
                                     flexDirection: "row",
                                     justifyContent: "space-between",

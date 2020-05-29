@@ -16,6 +16,8 @@ import ProfileModal from "../invitations/components/ProfileModal";
 import buttoner from "../../../services/buttoner";
 import ColorList from "../../colorList";
 import TextContent from "./TextContent";
+import replies from "./reply_extern";
+import rounder from '../../../services/rounder';
 let stores = null;
 export default class ReplyText extends Component {
   constructor(props) {
@@ -26,8 +28,66 @@ export default class ReplyText extends Component {
   showReplyer() {
     this.props.showProfile(
       this.props.reply.replyer_phone ||
-        this.props.reply.sender.phone.replace("+", "00")
+      this.props.reply.sender.phone.replace("+", "00")
     );
+  }
+  reply_font = 10;
+  renderReplyIcon(type) {
+  return type ? (
+      type === replies.posts ? (
+        <Icon
+          name={"star"}
+          type={"AntDesign"}
+          style={{
+            fontSize: this.reply_font,
+            color: ColorList.post,
+          }}
+        ></Icon>
+      ) : type === replies.reminds ? (
+        <Icon
+          name={"bell"}
+          type={"Entypo"}
+          style={{
+            fontSize: this.reply_font,
+            color: ColorList.reminds,
+          }}
+        ></Icon>
+      ) : type === replies.votes ? (
+        <Icon
+          name={"vote-yea"}
+          type={"FontAwesome5"}
+          style={{
+            fontSize: this.reply_font,
+            color: ColorList.votes,
+          }}
+        ></Icon>
+      ) : (
+              <Icon
+                name={"history"}
+                type={"MaterialIcons"}
+                style={{
+                  fontSize: this.reply_font,
+                  color: ColorList.darkGrayText,
+                }}
+              ></Icon>
+            )
+    ) : (
+        <Icon
+          name={"chat-bubble"}
+          type={"MaterialIcons"}
+          style={{
+            color: ColorList.bodyIcon,
+            fontSize: this.reply_font,
+          }}
+        ></Icon>
+      );
+  }
+  handleReply(){
+    this.props.reply.replyer_name &&
+      (this.props.reply.replyer_phone ||
+        this.props.reply.sender.phone)
+      ? this.showReplyer()
+      : this.props.openReply(this.props.reply);
   }
   render() {
     return (
@@ -36,14 +96,14 @@ export default class ReplyText extends Component {
         onLongPress={() =>
           this.props.handLongPress ? this.props.handLongPress() : null
         }
-        onPress={() => this.props.openReply(this.props.reply)}
+        onPress={() => requestAnimationFrame(() => this.props.openReply(this.props.reply))}
       >
         <View
           style={{
             display: "flex",
             flexDirection: "row",
             borderBottomWidth: 0,
-            backgroundColor: "rgba(34, 0, 0, 0.1)",
+            backgroundColor: ColorList.replyBackground,
             padding: "1%", //margin: '1%',
             minHeight: 50,
             maxHeight: 350,
@@ -51,9 +111,6 @@ export default class ReplyText extends Component {
             borderTopRightRadius: 5,
           }}
         >
-          {/*<View style={{ /*width: "5%" }}><Icon type="FontAwesome"
-                            style={{ fontSize: 12, color: "#1FABAB" }} name="quote-left"></Icon>
-                        </View>*/}
           <View
             style={{
               /* width: "90%",*/ width: this.props.compose ? "100%" : null,
@@ -65,38 +122,46 @@ export default class ReplyText extends Component {
                 onPressIn={() => this.props.pressingIn()}
                 onPress={() =>
                   requestAnimationFrame(() => {
-                    this.props.reply.replyer_name &&
-                    (this.props.reply.replyer_phone ||
-                      this.props.reply.sender.phone)
-                      ? this.showReplyer()
-                      : this.props.openReply(this.props.reply);
+                   this.handleReply()
                   })
                 }
               >
                 <View style={{ flexDirection: "column" }}>
-                  <Text
-                    note
-                    ellipsizeMode={"tail"}
-                    numberOfLines={1}
-                    style={{
-                      marginBottom: "1%",
-                      fontWeight: "bold",
-                      color: ColorList.indicatorColor,
-                      maxWidth: "25%",
-                    }}
-                  >
-                    {`${
-                      this.props.reply.replyer_name
-                        ? this.props.reply.replyer_name
-                        : this.props.reply.type_extern
-                    }`}
-                  </Text>
+                  {this.props.reply.forwarded ? (
+                    <Text style={{ fontSize: 10, fontStyle: "italic" }} note>
+                      {"(forwarded)"}
+                    </Text>
+                  ) : null}
+                  <View style={{ flexDirection: "row" }}>
+                    <View style={{width:13,justifyContent: 'flex-start',flexDirection: 'row',
+                    marginBottom: 'auto',
+                    marginTop: 'auto',}}>
+                    {this.renderReplyIcon(this.props.reply.type_extern)}</View>
+                    <View style={{width:"93%"}}>
+                      <Text
+                        note
+                        ellipsizeMode={"tail"}
+                        numberOfLines={1}
+                        style={{
+                          fontWeight: "bold",
+                          color: ColorList.indicatorColor,
+                          maxWidth: "90%",
+                        }}
+                      >
+                        {`${
+                          this.props.reply.replyer_name
+                            ? this.props.reply.replyer_name
+                            : this.props.reply.type_extern
+                          }`}
+                      </Text>
+                    </View>
+                  </View>
                   {this.props.reply.type_extern ? (
                     <View
                       style={{
                         flexDirection: "row",
                         minWidth: "75%",
-                        maxWidth: "80%",
+                        maxWidth: "90%",
                       }}
                     >
                       <Text
@@ -111,7 +176,7 @@ export default class ReplyText extends Component {
                         this.props.reply.replyer_name
                           ? this.props.reply.type_extern
                           : this.props.reply.title.split(": \n")[0]
-                      }`}</Text>
+                        }`}</Text>
                     </View>
                   ) : null}
                 </View>
@@ -148,167 +213,171 @@ export default class ReplyText extends Component {
                         : this.props.reply.title.split(": \n")[1]}
                     </Text>
                   ) : (
-                    <View
-                      style={{
-                        marginTop: this.props.reply.audio ? "2%" : "0%",
-                        width: "83%",
-                      }}
-                    >
-                      {this.props.reply.audio ? (
-                        <Text ellipsizeMode={"tail"} numberOfLines={1}>
-                          {(this.props.reply.url &&
-                            this.props.reply.url.duration) ||
-                          this.props.reply.duration
-                            ? converToHMS(
+                      <View
+                        style={{
+                          marginTop: this.props.reply.audio ? "2%" : "0%",
+                          width: "83%",
+                        }}
+                      >
+                        {this.props.reply.audio ? (
+                          <Text ellipsizeMode={"tail"} numberOfLines={1}>
+                            {(this.props.reply.url &&
+                              this.props.reply.url.duration) ||
+                              this.props.reply.duration
+                              ? converToHMS(
                                 this.props.reply.type_extern === "Posts"
                                   ? this.props.reply.url.duration
                                   : this.props.reply.duration
                               )
-                            : null}
-                        </Text>
-                      ) : (
-                        <Text
-                          ellipsizeMode={"tail"}
-                          numberOfLines={1}
-                          style={{ fontSize: 30 }}
-                        >
-                          {"."}
-                          {this.props.reply.typer.toUpperCase()}
-                        </Text>
-                      )}
-                    </View>
-                  )}
+                              : null}
+                          </Text>
+                        ) : (
+                            <Text
+                              ellipsizeMode={"tail"}
+                              numberOfLines={1}
+                              style={{ fontSize: 30 }}
+                            >
+                              {"."}
+                              {this.props.reply.typer.toUpperCase()}
+                            </Text>
+                          )}
+                      </View>
+                    )}
                 </View>
               ) : (
-                <View>
-                  <View style={{ display: "flex", flexDirection: "row" }}>
-                    <View
-                      style={{
-                        /*width: this.props.reply.sourcer ? "20%" : "0%",*/ marginRight:
-                          "1%",
-                      }}
-                    >
+                  <View>
+                    <View style={{ display: "flex", flexDirection: "row" }}>
                       {this.props.reply.sourcer ? (
-                        <View>
-                          {testForURL(this.props.reply.sourcer) ? (
-                            <CacheImages
-                              thumbnails
-                              square
-                              style={{
-                                width: 70,
-                                minHeight:
-                                  this.state.currentHeight > 50
-                                    ? this.state.currentHeight
-                                    : 60,
-                                maxHeight:
-                                  this.state.currentHeight > 50
-                                    ? this.state.currentHeight
-                                    : 60,
-                                borderBottomRightRadius: 5,
-                                borderTopRightRadius: 5,
-                              }}
-                              source={{ uri: this.props.reply.sourcer }}
-                            ></CacheImages>
-                          ) : (
-                            <Thumbnail
-                              thumbnails
-                              square
-                              style={{
-                                width: 70,
-                                minHeight:
-                                  this.state.currentHeight > 50
-                                    ? this.state.currentHeight
-                                    : 60,
-                                maxHeight:
-                                  this.state.currentHeight > 50
-                                    ? this.state.currentHeight
-                                    : 60,
-                                borderBottomRightRadius: 5,
-                                borderTopRightRadius: 5,
-                                height: this.state.currentHeight,
-                                borderRadius: 5,
-                              }}
-                              source={{ uri: this.props.reply.sourcer }}
-                            ></Thumbnail>
-                          )}
+                      <View
+                        style={{
+                        /*width: this.props.reply.sourcer ? "20%" : "0%",*/ marginRight:
+                            "1%",
+                        }}
+                      >
+                          <View>
+                            {testForURL(this.props.reply.sourcer) ? (
+                              <CacheImages
+                                thumbnails
+                                square
+                                style={{
+                                  width: 70,
+                                  minHeight:
+                                    this.state.currentHeight > 50
+                                      ? this.state.currentHeight
+                                      : 60,
+                                  maxHeight:
+                                    this.state.currentHeight > 50
+                                      ? this.state.currentHeight
+                                      : 60,
+                                  borderBottomRightRadius: 5,
+                                  borderTopRightRadius: 5,
+                                }}
+                                source={{ uri: this.props.reply.sourcer }}
+                              ></CacheImages>
+                            ) : (
+                                <Thumbnail
+                                  thumbnails
+                                  square
+                                  style={{
+                                    width: 70,
+                                    minHeight:
+                                      this.state.currentHeight > 50
+                                        ? this.state.currentHeight
+                                        : 60,
+                                    maxHeight:
+                                      this.state.currentHeight > 50
+                                        ? this.state.currentHeight
+                                        : 60,
+                                    borderBottomRightRadius: 5,
+                                    borderTopRightRadius: 5,
+                                    height: this.state.currentHeight,
+                                    borderRadius: 5,
+                                  }}
+                                  source={{ uri: this.props.reply.sourcer }}
+                                ></Thumbnail>
+                              )}
+                          </View>
                           {this.props.reply.video ? (
                             <View
                               style={{
-                                ...buttoner,
-                                position: "absolute",
-                                marginTop: "7%",
-                                marginLeft: "18%",
+                                ...rounder(30, ColorList.buttonerBackground),
+                                position: 'absolute',
+                                marginBottom: this.state.currentHeight/2 || 60,
+                                marginTop: this.state.currentHeight/2  || 60,
+                                marginLeft: 20,
                               }}
                             >
                               <Icon
                                 type={"EvilIcons"}
                                 name={"play"}
                                 style={{
+                                  alignSelf: 'center',
                                   color: ColorList.bodyBackground,
                                 }}
                               ></Icon>
-                            </View>
-                          ) : null}
-                        </View>
+                            </View>) : null}
+                      </View>
                       ) : null}
-                    </View>
-                    <View
-                      onLayout={(e) => {
-                        this.setState({
-                          currentHeight: e.nativeEvent.layout.height,
-                        });
-                      }}
-                      style={{
-                        /*width: this.props.reply.sourcer ? "79%" : "100%",*/ alignSelf:
-                          "center",
-                        marginLeft: this.props.reply.sourcer ? "1%" : null,
-                        width: this.props.reply.sourcer ? "74%" : "94%",
-                      }}
-                    >
-                      {this.props.reply.title ? (
-                        <TextContent
-                          pressingIn={() => this.props.pressingIn()}
-                          tags={this.props.reply.tags}
-                          ellipsizeMode="tail"
-                          numberOfLines={
-                            this.props.reply.sourcer
-                              ? this.props.reply.replyer_name
-                                ? 13
+                      <View
+                        onLayout={(e) => {
+                          this.setState({
+                            currentHeight: e.nativeEvent.layout.height,
+                          });
+                        }}
+                        style={{
+                          alignSelf:"flex-end",
+                          marginLeft: this.props.reply.sourcer ? "1%" : null,
+                          width: this.props.reply.sourcer ? "74%" : "94%",
+                        }}
+                      >
+                        {this.props.reply.title ? (
+                          <TextContent
+                            onPress={() => this.props.openReply(this.props.reply)}
+                            handleLongPress={this.props.handLongPress}
+                            pressingIn={() => this.props.pressingIn()}
+                            tags={this.props.reply.tags}
+                            ellipsizeMode="tail"
+                            numberOfLines={
+                              this.props.reply.sourcer
+                                ? this.props.reply.replyer_name
+                                  ? 13
+                                  : 15
                                 : 15
-                              : 15
-                          }
-                          style={{ fontSize: 12, color: "#1F4237" }}
-                          text={
-                            this.props.reply.replyer_name
-                              ? this.props.reply.title
-                              : this.props.reply.title.split(": \n")[1]
-                          }
-                        ></TextContent>
-                      ) : this.props.reply.text ? (
-                        <TextContent
-                          pressingIn={() => this.props.pressingIn()}
-                          tags={this.props.reply.tags}
-                          ellipsizeMode="tail"
-                          numberOfLines={
-                            this.props.reply.sourcer
-                              ? this.props.reply.replyer_name
-                                ? 13
+                            }
+                            style={{ fontSize: 12, color: "#1F4237" }}
+                            text={
+                              this.props.reply.replyer_name
+                                ? this.props.reply.title
+                                : this.props.reply.title.split(": \n")[1]
+                            }
+                          ></TextContent>
+                        ) : this.props.reply.text ? (
+                          <TextContent
+                            onPress={() => this.props.openReply(this.props.reply)}
+                            handleLongPress={this.props.handLongPress}
+                            pressingIn={() => this.props.pressingIn()}
+                            tags={this.props.reply.tags}
+                            ellipsizeMode="tail"
+                            numberOfLines={
+                              this.props.reply.sourcer
+                                ? this.props.reply.replyer_name
+                                  ? 13
+                                  : 14
                                 : 14
-                              : 14
-                          }
-                          style={{ fontSize: 12 }}
-                          text={this.props.reply.text}
-                        ></TextContent>
-                      ) : null}
+                            }
+                            style={{ fontSize: 12 }}
+                            text={this.props.reply.text}
+                          ></TextContent>
+                        ) : null}
+                      </View>
                     </View>
+                    {this.props.reply.change_date ? (
+                      <Text note>{`On: ${moment(
+                        this.props.reply.change_date
+                      ).format("dddd, MMMM Do YYYY, h:mm:ss a")}`}</Text>
+                    ) : null}
                   </View>
-                  {this.props.reply.change_date ? (
-                    <Text note>{`On: ${moment(
-                      this.props.reply.change_date
-                    ).format("dddd, MMMM Do YYYY, h:mm:ss a")}`}</Text>
-                  ) : null}
-                </View>
-              )}
+                )}
             </View>
           </View>
         </View>

@@ -43,6 +43,7 @@ import VideoViewer from "../highlights_details/VideoModal";
 import ShareFrame from "../../mainComponents/ShareFram";
 import Share from "../../../stores/share";
 import request from "../../../services/requestObjects";
+import replies from '../eventChat/reply_extern';
 //const MyTasksData = stores.Reminds.MyTasksData
 
 export default class Reminds extends Component {
@@ -587,7 +588,7 @@ export default class Reminds extends Component {
             : itemer.remind_url && itemer.remind_url.audio
               ? itemer.remind_url.audio
               : null,
-      type_extern: "Reminds ",
+      type_extern: replies.reminds,
       title: itemer.title + ": \n" + itemer.description,
     })
   }

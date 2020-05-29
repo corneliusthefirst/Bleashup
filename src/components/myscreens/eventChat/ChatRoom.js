@@ -82,8 +82,11 @@ import { observer } from "mobx-react";
 import PublishersModal from "../../PublishersModal";
 import Requester from "./Requester";
 import ProfileSimple from "../currentevents/components/ProfileViewSimple";
-import globalFunctions from '../../globalFunctions';
-import toTitleCase from '../../../services/toTitle';
+import globalFunctions from "../../globalFunctions";
+import toTitleCase from "../../../services/toTitle";
+import ShareWithYourContacts from "./ShareWithYourContacts";
+import MessageActions from "./MessageActons";
+import rounder from "../../../services/rounder";
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenheight = Math.round(Dimensions.get("window").height);
@@ -576,12 +579,12 @@ class ChatRoom extends Component {
         });
     }
     _onChange(event) {
-        let text = event.nativeEvent.text
+        let text = event.nativeEvent.text;
         this.setState({ textValue: text || "" });
         if (text.split("@").length > 1) {
             this.setState({
-                tagging: true
-            })
+                tagging: true,
+            });
         }
         this.setTyingState(this.sender);
         this.adjutRoomDisplay();
@@ -644,7 +647,7 @@ class ChatRoom extends Component {
             let messager = {
                 id: uuid.v1(),
                 type: "text_sender",
-                tags : this.tags,
+                tags: this.tags,
                 text: message,
                 sender: this.sender,
                 reply: this.state.replyContent,
@@ -654,7 +657,7 @@ class ChatRoom extends Component {
             this.scrollToEnd();
             stores.Messages.addMessageToStore(this.roomID, messager).then((data) => {
                 this._resetTextInput();
-                this.tags = null
+                this.tags = null;
                 this.setState({
                     textValue: "",
                     replying: false,
@@ -773,7 +776,7 @@ class ChatRoom extends Component {
             type: (this.state.imageSelected ? "photo" : "video") + "_upload",
             source: this.state.imageSelected ? this.state.image : this.state.video,
             sender: this.sender,
-            tags:this.tags,
+            tags: this.tags,
             reply: this.state.replyContent,
             creator: this.creator,
             created_at: moment().format(),
@@ -787,7 +790,7 @@ class ChatRoom extends Component {
             this.setState({
                 newMessage: true,
             });
-            this.tags = null
+            this.tags = null;
             this.initialzeFlatList();
         });
         this._resetCaptionInput();
@@ -893,16 +896,12 @@ class ChatRoom extends Component {
         });
         this.setState({
             replyContent: null,
-            messageListHeight: this.formHeight(
-                this.state.initialMessaListHeightFactor
-            ),
-            textInputHeight: this.formHeight(this.inittialTextInputHeightFactor),
             replying: false,
         });
     }
     duration = 0;
     _onChangeCaption(event) {
-        let text = event.nativeEvent.text
+        let text = event.nativeEvent.text;
         this.setTyingState(this.sender);
         this.setState({
             tagging: text.split("@").length > 1 ? true : false,
@@ -917,7 +916,7 @@ class ChatRoom extends Component {
         if (this.state.showAudioRecorder) {
             this.refs.AudioRecorder.stopRecordSimple();
         } else {
-            this._textInput.focus()
+            this._textInput.focus();
             this.refs.AudioRecorder.startRecorder();
         }
     }
@@ -926,10 +925,10 @@ class ChatRoom extends Component {
         this.setState({
             replying: false,
             replyContent: null,
-            messageListHeight: this.state.previousMessageHeight,
-            textInputHeight: this.state.previousTextHeight,
-            textHeight: screenheight * 0.1,
-            photoHeight: screenheight * 0.9,
+            //messageListHeight: this.state.previousMessageHeight,
+            //textInputHeight: this.state.previousTextHeight,
+            //textHeight: screenheight * 0.1,
+            //photoHeight: screenheight * 0.9,
         });
         this.adjutRoomDisplay();
     }
@@ -1030,37 +1029,28 @@ class ChatRoom extends Component {
         });
         this.adjutRoomDisplay();
     }
-    options = ["Remove message", "Seen Report", "Copy to clipboard", "Cancel"];
-    showActions(message) {
-        ActionSheet.show(
-            {
-                options: this.options,
-                title: "Choose You Action",
-                cancelButtonIndex: 4,
-            },
-            (index) => {
-                if (index === 0) {
-                    if (GState.connected) {
-                        Requester.deleteMessage(
-                            message.id,
-                            this.props.activity_id,
-                            this.roomID
-                        );
-                    }
-                } else if (index == 2) {
-                    this.props.showContacts(
-                        message.received.map((ele) => {
-                            return { ...ele, phone: ele.phone.replace("+", "00") };
-                        }),
-                        "Seen by"
-                    );
-                } else if (index == 3) {
-                    Clipboard.setString(message.text);
-                    Vibration.vibrate(10);
-                    Toast.show({ text: "copied !" });
-                }
-            }
+    deleteMessageAction() {
+        this.deleteMessage(this.state.currentMessage.id);
+    }
+    showReceived() {
+        this.props.showContacts(
+            this.state.currentMessage.received.map((ele) =>
+                ele.phone.replace("+", "00")
+            ),
+            "Seen by"
         );
+    }
+    copyMessage() {
+        Clipboard.setString(this.state.currentMessage.text);
+        Vibration.vibrate(10);
+        Toast.show({ text: "copied !", type: "success" });
+    }
+    options = ["Remove message", "Seen Report", "Copy to clipboard", "Cancel"];
+    showMessageAction(message) {
+        this.setState({
+            currentMessage: message,
+            showMessageActions: true,
+        });
     }
     hideAndShowHeader() {
         this.setState({
@@ -1086,7 +1076,10 @@ class ChatRoom extends Component {
     formSerachableMembers() {
         stores.TemporalUsersStore.getUsers(
             this.props.members.map((ele) => ele.phone),
-            []
+            [],
+            (users) => {
+                this.searchableMembers = users;
+            }
         );
     }
     searchableMembers = [];
@@ -1107,7 +1100,15 @@ class ChatRoom extends Component {
         });
     }
     transparent = "rgba(50, 51, 53, 0.8)";
-
+    shareWithContacts(message) {
+        this.setState({
+            isShareWithContactsOpened: true,
+        });
+    }
+    scrollToIndex(index){
+        console.warn(index)
+        this.refs.bleashupSectionListOut.scrollToIndex(index)
+    }
     render() {
         headerStyles = {
             flexDirection: "row",
@@ -1206,6 +1207,7 @@ class ChatRoom extends Component {
 
                                             this.state.showVideo ? this.VideoShower() : null
                                         }
+                                        {}
                                     </View>
                                 )}
                             <VerificationModal
@@ -1242,57 +1244,109 @@ class ChatRoom extends Component {
                                     }}
                                 ></MediaTabModal>
                             ) : null}
-                            {/*<Votes takeVotes={votes => {
-                                this.initializeVotes(votes)
-                            }}
-                                shared={false}
-                                share={{
-                                    id: '45xerfds',
-                                    date: moment().format(),
-                                    sharer: stores.LoginStore.user.phone,
-                                    item_id: "6d1d14f0-8d1a-11ea-9234-8b09069818ca",
-                                    event_id: this.props.activity_id
-                                }}
-                                replying={(reply) => {
-                                    this.fucussTextInput()
-                                    this.replying(reply, null)
-                                    //Keyboard.show()
-                                    Vibration.vibrate(this.duration)
-                                    setTimeout(() => {
-                                        this.setState({
-                                            isVoteCreationModalOpened: false
-                                        })
-                                    }, 200)
-                                }}
-                                computedMaster={this.props.computedMaster}
-                                takeVote={(vote => this.createVote(vote))}
-                                voteItem={mess => {
-                                    this.perviousId = mess.id
-                                    this.replaceVote({
-                                        ...mess,
+                            {this.state.isShareWithContactsOpened ? (
+                                <ShareWithYourContacts
+                                    activity_id={this.props.activity_id}
+                                    sender={this.sender}
+                                    committee_id={this.roomID}
+                                    isOpen={this.state.isShareWithContactsOpened}
+                                    message={{
+                                        ...this.state.currentMessage,
                                         id: uuid.v1(),
-                                        created_at: moment().format()
-                                    })
-                                }}
-                                working={this.props.working}
-                                isSingleVote={this.state.single_vote}
-                                vote_id={this.state.vote_id}
-                                startLoader={this.props.showLoader}
-                                roomName={this.props.roomName}
-                                showVoters={(voters) => {
-                                    this.showVoters(voters)
-                                }}
-                                stopLoader={this.props.stopLoader}
-                                activity_name={this.props.activity_name}
-                                committee_id={this.props.firebaseRoom}
-                                event_id={this.props.activity_id}
-                                isOpen={this.state.isVoteCreationModalOpened}
-                                sender={this.sender}
-                                onClosed={() => {
-                                    this.setState({
-                                        isVoteCreationModalOpened: false
-                                    })
-                                }}></Votes>*/}
+                                        created_at: moment().format(),
+                                        sender: this.sender,
+                                        reply: null,
+                                        forwarded: true,
+                                        from_activity: !this.state.currentMessage.from_activity
+                                            ? this.props.activity_id
+                                            : this.state.currentMessage.from_activity,
+                                        from_committee: !this.state.currentMessage.from_committee
+                                            ? this.props.committee_id
+                                            : this.state.currentMessage.from_activity,
+                                        from: this.state.currentMessage.from
+                                            ? this.state.currentMessage.sender
+                                            : this.state.currentMessage.from,
+                                    }}
+                                    onClosed={() => {
+                                        this.setState({
+                                            isShareWithContactsOpened: false,
+                                        });
+                                    }}
+                                ></ShareWithYourContacts>
+                            ) : null}
+                            {this.state.showMessageActions ? (
+                                <MessageActions
+                                    isOpen={this.state.showMessageActions}
+                                    onClosed={() => {
+                                        this.setState({
+                                            showMessageActions: false,
+                                        });
+                                    }}
+                                    deleteMessage={this.deleteMessageAction.bind(this)}
+                                    copyMessage={this.copyMessage.bind(this)}
+                                    // addToVote={this.addVote.bind(this)}
+                                    // starThis={this.addStar.bind(this)}
+                                    // remindThis={this.remindThis.bind(this)}
+                                    forwardToContacts={this.forwardToContacts.bind(this)}
+                                    replyMessage={this.replyMessage.bind(this)}
+                                    seenBy={this.showReceived.bind(this)}
+                                ></MessageActions>
+                            ) : null}
+                            {
+                                <Votes
+                                    takeVotes={(votes) => {
+                                        this.initializeVotes(votes);
+                                    }}
+                                    shared={false}
+                                    share={{
+                                        id: "45xerfds",
+                                        date: moment().format(),
+                                        sharer: stores.LoginStore.user.phone,
+                                        item_id: "6d1d14f0-8d1a-11ea-9234-8b09069818ca",
+                                        event_id: this.props.activity_id,
+                                    }}
+                                    replying={(reply) => {
+                                        this.fucussTextInput();
+                                        this.replying(reply, null);
+                                        //Keyboard.show()
+                                        Vibration.vibrate(this.duration);
+                                        setTimeout(() => {
+                                            this.setState({
+                                                isVoteCreationModalOpened: false,
+                                            });
+                                        }, 200);
+                                    }}
+                                    computedMaster={this.props.computedMaster}
+                                    takeVote={(vote) => this.createVote(vote)}
+                                    voteItem={(mess) => {
+                                        this.perviousId = mess.id;
+                                        this.replaceVote({
+                                            ...mess,
+                                            id: uuid.v1(),
+                                            created_at: moment().format(),
+                                        });
+                                    }}
+                                    working={this.props.working}
+                                    isSingleVote={this.state.single_vote}
+                                    vote_id={this.state.vote_id}
+                                    startLoader={this.props.showLoader}
+                                    roomName={this.props.roomName}
+                                    showVoters={(voters) => {
+                                        this.showVoters(voters);
+                                    }}
+                                    stopLoader={this.props.stopLoader}
+                                    activity_name={this.props.activity_name}
+                                    committee_id={this.props.firebaseRoom}
+                                    event_id={this.props.activity_id}
+                                    isOpen={this.state.isVoteCreationModalOpened}
+                                    sender={this.sender}
+                                    onClosed={() => {
+                                        this.setState({
+                                            isVoteCreationModalOpened: false,
+                                        });
+                                    }}
+                                ></Votes>
+                            }
                             {this.state.showContacts ? (
                                 <ContactsModal
                                     title={this.state.title}
@@ -1342,6 +1396,22 @@ class ChatRoom extends Component {
         }
         return result;
     }
+    addStar() { }
+    forwardToContacts() {
+        this.state.currentMessage.sent
+            ? this.setState({
+                isShareWithContactsOpened: true,
+            })
+            : Toast.show({ text: "cannot forward unsent messages" });
+    }
+    replyMessage() {
+        setTimeout(() => {
+            Vibration.vibrate(40);
+            this._textInput.focus();
+            this.replying(this.state.currentMessage);
+        }, 50);
+    }
+    remindThis() { }
     replaceVote(vote) {
         vote = { ...vote, received: this.received, sent: true };
         stores.Messages.replaceNewMessage(this.roomID, vote).then(() => {
@@ -1388,6 +1458,25 @@ class ChatRoom extends Component {
         ).then(() => { });
     }
     delay = 1;
+    addVote() { }
+    getItemLayout(item, index) {
+        let offset = stores.Messages.messages[this.roomID]
+            ? stores.Messages.messages[this.roomID]
+                .slice(0, index)
+                .reduce(
+                    (a, b) =>
+                        a + (b.dimensions
+                                ? b.dimensions.height
+                                : 70),
+                    0
+                )
+            : index * 70  
+        return {
+            length: item.dimensions ? item.dimensions.height : 70,
+            offset: offset,
+            index: index,
+        };
+    }
     messageList() {
         return (
             <BleashupFlatList
@@ -1403,6 +1492,7 @@ class ChatRoom extends Component {
                         ? stores.Messages.messages[this.roomID].length
                         : 0
                 }
+                getItemLayout={this.getItemLayout.bind(this)}
                 keyExtractor={(item, index) => (item ? item.id : null)}
                 renderItem={(item, index) => {
                     this.delay =
@@ -1417,6 +1507,12 @@ class ChatRoom extends Component {
                             messagelayouts={this.messagelayouts}
                             setCurrentLayout={(layout) => {
                                 this.messagelayouts[item.id] = layout;
+                                (!item.dimensions || item.dimensions.height < layout.height) &&
+                                    stores.Messages.persistMessageDimenssions(
+                                        layout,
+                                        index,
+                                        this.roomID
+                                    );
                             }}
                             newCount={this.props.newMessages.length}
                             index={index}
@@ -1437,7 +1533,7 @@ class ChatRoom extends Component {
                                 index >= 0 ? index + 1 : 0
                                 ]
                             }
-                            showActions={(message) => this.showActions(message)}
+                            showActions={(message) => this.showMessageAction(message)}
                             firebaseRoom={this.props.firebaseRoom}
                             roomName={this.props.roomName}
                             sendMessage={(message) => this.sendTextMessage(message)}
@@ -1459,10 +1555,11 @@ class ChatRoom extends Component {
                             }}
                             message={item}
                             openReply={(replyer) => {
-                                this.setState({
+                                /*this.setState({
                                     replyer: replyer,
                                     showRepliedMessage: true,
-                                });
+                                });*/
+                                this.scrollToIndex(findIndex(stores.Messages.messages[this.roomID],{id:replyer.id}))
                             }}
                             user={this.props.user.phone}
                             creator={this.props.creator}
@@ -1497,19 +1594,24 @@ class ChatRoom extends Component {
         this.toggleAudioRecorder();
         this.markAsRead();
     }
-    tags = null
+    tags = null;
     chooseItem(item) {
-        let element = { phone: item.phone, nickname: "@" + toTitleCase(item.nickname) }
-        this.tags ? this.tags.push(element) : this.tags = [element]
-        let currentText = this.state.textValue
-        currentText = currentText.split("@")
-        currentText[currentText.length - 1] = toTitleCase (item.nickname) + " "
+        let element = {
+            phone: item.phone,
+            nickname: "@" + toTitleCase(item.nickname),
+        };
+        this.tags ? this.tags.push(element) : (this.tags = [element]);
+        let currentText = this.state.textValue;
+        currentText = currentText.split("@");
+        currentText[currentText.length - 1] = toTitleCase(item.nickname) + " ";
         this.setState({
-            textValue: currentText.join("@")
-        })
+            textValue: currentText.join("@"),
+        });
         setTimeout(() => {
-            this.state.showCaption ? this._captionTextInput.focus() : this._textInput.focus()
-        }, 10)
+            this.state.showCaption
+                ? this._captionTextInput.focus()
+                : this._textInput.focus();
+        }, 10);
     }
     tagger() {
         return (
@@ -1521,31 +1623,44 @@ class ChatRoom extends Component {
                     maxHeight: 200,
                     minHeight: 0,
                     borderTopRightRadius: 5,
-                    padding: '2%',
+                    padding: "2%",
                 }}
             >
                 <BleashupFlatList
                     fit
                     empty={() => {
                         this.setState({
-                            tagging: false
-                        })
+                            tagging: false,
+                        });
                     }}
-                    backgroundColor={'transparent'}
+                    backgroundColor={"transparent"}
                     firstIndex={0}
                     renderPerBatch={20}
-                    initialRender={20}
+                    initialRender={7}
                     keyExtractor={(ele) => ele.phone}
-                    dataSource={globalFunctions.returnUserSearch(GState.searchableMembers,
-                        this.state.textValue && this.state.textValue.split('@').length > 1 ?
-                            this.state.textValue.split('@')[this.state.textValue.split('@').length - 1] : "~-pz")}
-                    numberOfItems={GState.searchableMembers.length}
+                    dataSource={globalFunctions.returnUserSearch(
+                        this.searchableMembers,
+                        this.state.textValue && this.state.textValue.split("@").length > 1
+                            ? this.state.textValue.split("@")[
+                            this.state.textValue.split("@").length - 1
+                            ]
+                            : "~-pz"
+                    )}
+                    numberOfItems={this.searchableMembers.length}
                     renderItem={(item) => (
-                        <TouchableWithoutFeedback onPress={() => requestAnimationFrame(() => this.chooseItem(item))}>
-                            <View style={{ width: 150, alignSelf: 'flex-start', }}>
-                                <ProfileSimple searching searchString={this.state.textValue.split('@')
-                                [this.state.textValue.split('@').length - 1]} profile={item}>
-                                </ProfileSimple>
+                        <TouchableWithoutFeedback
+                            onPress={() => requestAnimationFrame(() => this.chooseItem(item))}
+                        >
+                            <View style={{ width: 150, alignSelf: "flex-start" }}>
+                                <ProfileSimple
+                                    searching
+                                    searchString={
+                                        this.state.textValue.split("@")[
+                                        this.state.textValue.split("@").length - 1
+                                        ]
+                                    }
+                                    profile={item}
+                                ></ProfileSimple>
                             </View>
                         </TouchableWithoutFeedback>
                     )}
@@ -1603,11 +1718,22 @@ class ChatRoom extends Component {
                                 width: "88%",
                                 flexDirection: "column",
                                 borderRadius: 20,
-                                borderWidth: .2,
-                                borderColor:'grey',
-                                borderTopLeftRadius: this.state.replying || this.state.tagging || this.state.showAudioRecorder ? 5 : 20,
-                                borderTopRightRadius: this.state.replying || this.state.tagging || this.state.showAudioRecorder ? 5 : 20,
-                            }}>
+                                borderWidth: 0.2,
+                                borderColor: "grey",
+                                borderTopLeftRadius:
+                                    this.state.replying ||
+                                        this.state.tagging ||
+                                        this.state.showAudioRecorder
+                                        ? 5
+                                        : 20,
+                                borderTopRightRadius:
+                                    this.state.replying ||
+                                        this.state.tagging ||
+                                        this.state.showAudioRecorder
+                                        ? 5
+                                        : 20,
+                            }}
+                        >
                             {
                                 //* Reply Message caption */
                                 this.state.replying ? this.replyMessageCaption() : null
@@ -1640,8 +1766,8 @@ class ChatRoom extends Component {
                             />
                             <View
                                 style={{
-                                    marginTop:'auto',
-                                    marginBottom: 'auto', 
+                                    marginTop: "auto",
+                                    marginBottom: "auto",
                                     width: "16%",
                                     position: "absolute",
                                     bottom: 0,
@@ -1653,7 +1779,12 @@ class ChatRoom extends Component {
                                         this.toggleEmojiKeyboard();
                                         this.markAsRead();
                                     }}
-                                    style={{ color: "gray", marginBottom: 11 ,alignSelf: 'flex-end',marginRight: '8%',}}
+                                    style={{
+                                        color: "gray",
+                                        marginBottom: 11,
+                                        alignSelf: "flex-end",
+                                        marginRight: "8%",
+                                    }}
                                     type="Entypo"
                                     name="emoji-flirt"
                                 ></Icon>
@@ -1728,31 +1859,21 @@ class ChatRoom extends Component {
                 <TouchableOpacity
                     onPress={() => requestAnimationFrame(this.cancleReply.bind(this))}
                     style={{
+                        ...rounder(30, colorList.buttonerBackground),
                         position: "absolute",
-                        marginRight: 2,
-                        marginTop: 1,
+                        marginRight: 6,
+                        marginTop: 4,
                         alignSelf: "flex-end",
                     }}
                 >
-                    <Button
+                    <Icon
+                        name={"close"}
+                        type={"EvilIcons"}
                         style={{
-                            backgroundColor: this.transparent,
-                            width: 30,
-                            height: 30,
-                            borderRadius: 20,
-                            justifyContent: "center",
+                            alignSelf: "center",
+                            color: colorList.bodyBackground,
                         }}
-                        rounded
-                    >
-                        <Icon
-                            name={"close"}
-                            type={"EvilIcons"}
-                            style={{
-                                position: "absolute",
-                                color: colorList.bodyBackground,
-                            }}
-                        ></Icon>
-                    </Button>
+                    ></Icon>
                 </TouchableOpacity>
             </View>
         );
@@ -1961,10 +2082,10 @@ class ChatRoom extends Component {
     captionMessageHandler() {
         captionExtraStyles = {
             backgroundColor: colorList.bodyBackground,
-            borderTopLeftRadius: 5, borderTopRightRadius: 5,
-            margin: "1%"
-            ,
-        }
+            borderTopLeftRadius: 5,
+            borderTopRightRadius: 5,
+            margin: "1%",
+        };
         return (
             <View
                 style={{
@@ -2012,7 +2133,7 @@ class ChatRoom extends Component {
                             <View
                                 style={{
                                     marginLeft: "-1%",
-                                    ...captionExtraStyles
+                                    ...captionExtraStyles,
                                 }}
                             >
                                 <ReplyText
@@ -2031,11 +2152,9 @@ class ChatRoom extends Component {
                             </View>
                         ) : null
                     }
-                    {
-                        this.state.tagging ? <View style={{ ...captionExtraStyles }}>
-                            {this.tagger()}
-                        </View> : null
-                    }
+                    {this.state.tagging ? (
+                        <View style={{ ...captionExtraStyles }}>{this.tagger()}</View>
+                    ) : null}
                     <View
                         style={{
                             backgroundColor: "#1FABAB",

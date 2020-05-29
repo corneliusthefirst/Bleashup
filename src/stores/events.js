@@ -1017,17 +1017,18 @@ export default class events {
       })
     })
   }
-  addNewMessage(EventID, messageID, committeeID) {
+  addNewMessage(EventID, message, committeeID) {
     return new Promise((resolve, reject) => {
       let newDate = moment().format()
       this.readFromStore().then(events => {
         let index = findIndex(events, { id: EventID })
-        let newMessage = { message_id: messageID, commitee_id: committeeID }
-        GState.currentCommitee == committeeID ? events[index].new_messages && events[index].new_messages.length > 0 ?
+        let newMessage = { message_id: message.id, commitee_id: committeeID }
+        GState.currentCommitee !== committeeID && (!message.sender ||
+          message.sender.phone.replace("+", "00") !== stores.LoginStore.user.phone) ? events[index].new_messages && events[index].new_messages.length > 0 ?
           events[index].new_messages.push(newMessage) :
           events[index].new_messages = [newMessage] : null
         events[index].new_message_update_at = {
-          message_id: messageID,
+          message_id: message.id,
           previous_updated: events[index].updated_at,
           current_updated_at: newDate
         }

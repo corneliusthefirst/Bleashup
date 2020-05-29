@@ -17,6 +17,15 @@ import stores from "../stores";
    })
   }
 
+  searchInActivities(fieldArray,text){
+     return fieldArray.filter(ele => {
+        const itemData = ele && ele.about && ele.about.title ? 
+        ele.about.title.toUpperCase() : ''.toUpperCase();
+        const textData = text.toUpperCase();
+        return itemData.indexOf(textData) > -1;
+     })
+  }
+
   bleashupSearchUser = (fieldArray,text) => {
    return new Promise((resolve, reject) => {
       const newData = fieldArray.filter(function(item) {

@@ -520,7 +520,7 @@ export default class Message extends Component {
         });
     }
     placeholderStyle =
-        this.props.messagelayouts &&
+       this.props.message.dimensions ? this.props.message.dimensions: this.props.messagelayouts &&
             this.props.messagelayouts[this.props.message.id]
             ? this.props.messagelayouts[this.props.message.id]
             : this.placeHolder[this.props.message.type];
@@ -658,6 +658,13 @@ export default class Message extends Component {
                                             style={GeneralMessageBoxStyle}
                                         >
                                             <View>
+                                            {this.props.message.forwarded?
+                                                <Text style={{
+                                                    fontStyle: 'italic',
+                                                    marginLeft: "2%",
+                                                    fontSize: 10,
+                                            }} note>{"(forwarded)"}</Text>
+                                                :null}
                                                 {this.state.sender && this.state.different ? (
                                                     <TouchableOpacity
                                                         onLongPress={this.handLongPress.bind(this)}

@@ -12,7 +12,6 @@ export default class ProfileViewCall extends Component {
     }
 
    hide = (hidestate) => {
-       console.warn(hidestate);
        this.setState({hide:hidestate})
    } 
 

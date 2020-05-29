@@ -167,6 +167,11 @@ class ChatStore {
             resolve();
         });
     }
+    persistMessageDimenssions(dims,index,roomID){
+        console.warn("persisting dimensions")
+        this.messages[roomID][index].dimensions = dims
+        this.currentModif = moment().format()
+    }
     addNewMessage(roomID, newMessage) {
         return new Promise((resolve, reject) => {
             this.readFromStore().then((olddata) => {
@@ -183,7 +188,7 @@ class ChatStore {
                         this.addToStore(data);
                         resolve(data);
                     } else {
-                        newMessage = { ...newMessage, key: newKey };
+                        newMessage = { ...newMessage};
                         data[roomID]
                             ? data[roomID].unshift(newMessage)
                             : (data[roomID] = [newMessage]);

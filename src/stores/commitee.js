@@ -254,7 +254,8 @@ export default class commitee {
         this.generals[eventID]
           ? (this.generals[eventID].newest_message = message)
           : (this.generals[eventID] = { newest_message: message });
-        GState.currentCommitee !== eventID
+        GState.currentCommitee !== eventID && (!message.sender ||
+          message.sender.phone.replace("+", "00") !== stores.LoginStore.user.phone)
           ? this.generals[eventID].new_messages &&
             this.generals[eventID].new_messages.length > 0
             ? this.generals[eventID].new_messages.push(message.id)
@@ -267,7 +268,8 @@ export default class commitee {
           let index = findIndex(committes[eventID], { id: committeeID });
           committes[eventID][index].newest_message = message;
           committes[eventID][index].updated_at = this.currentDate();
-          GState.currentCommitee !== committes[eventID][index].id
+          GState.currentCommitee === committes[eventID][index].id && (!message.sender ||
+            message.sender.phone.replace("+", "00") !== stores.LoginStore.user.phone)
             ? committes[eventID][index].new_messages &&
               committes[eventID][index].new_messages.length > 0
               ? committes[eventID][index].new_messages.push(message.id)
