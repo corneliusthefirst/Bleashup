@@ -24,7 +24,6 @@ class MessageRequest {
             tcpRequest.messaging(messageData, message.id).then((JSONdata) => {
                 EventListener.sendRequest(JSONdata, message.id).then((response) => {
                     MainUpdater.saveMessage(message, EventID, CommitteeID, notme ? false : true).then(() => {
-                        console.warn(response)
                         resolve(response);
                     });
                 });

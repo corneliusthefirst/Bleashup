@@ -8,7 +8,7 @@ export default async function openLink(url) {
 
             const result = await InAppBrowser.open(url, {
                 // iOS Properties
-                dismissButtonStyle: 'cancel',
+                dismissButtonStyle: 'close',
                 preferredBarTintColor: '#1FABAB',
                 preferredControlTintColor: 'white',
                 readerMode: false,

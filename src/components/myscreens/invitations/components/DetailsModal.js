@@ -153,7 +153,8 @@ export default class DetailsModal extends BleashupModal {
             100
         );
     }
-    modalHeight = this.height * 0.4;
+    swipeToClose=false
+    modalHeight = this.height * 0.5;
     modalBody() {
         const accept = this.state.accept;
         const deny = this.state.deny;
@@ -240,7 +241,7 @@ export default class DetailsModal extends BleashupModal {
                                 ) : null}
                             </Right>
                         </CardItem>
-                        <View style={{ marginLeft: "2%", marginTop: "-1%" }}>
+                        <View style={{  margin:'1%' }}>
                             {
                                 <Creator
                                     creator={this.state.event.creator_phone}

@@ -56,11 +56,13 @@ export default class contacts {
     });
   }
   save() {
-    this.saveKey.data = this.contacts
-    storage.save(this.saveKey).then(() => {
-      console.warn("saving contacts")
-      this.previousTime = this.currentTime
-    })
+    if(Object.keys(this.contacts) > 0){
+      this.saveKey.data = this.contacts
+      storage.save(this.saveKey).then(() => {
+        console.warn("saving contacts")
+        this.previousTime = this.currentTime
+      })
+    }
   }
   currentTime = moment().format()
   previousTime = moment().format()

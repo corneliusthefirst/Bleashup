@@ -70,7 +70,7 @@ class UpdatesDispatcher {
       update.event),
     seen_message: update => MainUpdater.seenMessage(update.new_value.data.message_id,
       update.new_value.committee_id,
-      update.event_id,update.new_value.seer),
+      update.event_id, update.new_value.seer),
     typing_message: update => MainUpdater.sayTyping(update.new_value.committee_id,
       update.new_value.data.typer),
     blocked: update => MainUpdater.blocked(update.updater),
@@ -552,22 +552,6 @@ class UpdatesDispatcher {
               });
             });
             break;
-          case "like_vote":
-            stores.Likes.like(updated.new_value, update.updater, true).then(() => {
-              stores.Votes.likeVote(update.new_value, true).then(() => {
-                GState.eventUpdated = true;
-                resolve();
-              });
-            });
-            break;
-          case "like_contribution":
-            stores.Likes.like(update.new_value, update.updater).then(() => {
-              stores.Contributions.like(update.new_value, true).then(() => {
-                GState.eventUpdated = true;
-                resolve();
-              });
-            });
-            break;
         }
       });
     },
@@ -579,22 +563,6 @@ class UpdatesDispatcher {
               stores.Events.unlikeEvent(update.event_id).then(() => {
                 GState.eventUpdated = true;
                 emitter.emit(`liked_${update.event_id}`) //TODO this signal is beign listen to in the Module current_events>public_event>likes
-                resolve();
-              });
-            });
-            break;
-          case "unlike_vote":
-            stores.Likes.unlike(update.new_value, update.updater).then(() => {
-              stores.Votes.unlikeVote(update.new_value).then(() => {
-                GState.eventUpdated = true;
-                resolve();
-              });
-            });
-            break;
-          case "unlike_contribution":
-            stores.Likes.unlike(update.new_value, update.updater).then(() => {
-              stores.Contributions.unlike(update.new_value).then(() => {
-                GState.eventUpdated = true;
                 resolve();
               });
             });
@@ -1190,7 +1158,7 @@ class UpdatesDispatcher {
             if (Vote.data && Vote.data !== 'empty') {
               let vote = Array.isArray(Vote.data) ? Vote.data[0] : Vote.data
               console.warn(vote)
-              stores.Votes.addVote(vote).then(() => {
+              stores.Votes.addVote(update.event_id,vote).then(() => {
                 stores.Events.addVote(vote.event_id, vote.id).then(() => {
                   stores.CommiteeStore.imIInThisCommttee(update.event_id, stores.LoginStore.user.phone,
                     vote.committee_id).then((state) => {
@@ -1222,7 +1190,7 @@ class UpdatesDispatcher {
               });
             } else {
               let vote = { ...request.Vote(), title: 'Deleted Vote', event_id: update.event_id, id: update.new_value }
-              stores.Votes.addVote(vote).then(() => {
+              stores.Votes.addVote(vote.event_id,vote).then(() => {
                 stores.Events.addVote(vote.event_id, Vote.id).then(() => {
                 })
               })
@@ -1233,7 +1201,7 @@ class UpdatesDispatcher {
     },
     vote_deleted: update => {
       return new Promise((resolve, reject) => {
-        stores.Votes.removeVote(update.new_value).then((vote) => {
+        stores.Votes.removeVote(update.event_id,update.new_value).then((vote) => {
           stores.Events.removeVote(update.event_id, update.new_value).then(
             () => {
               stores.CommiteeStore.imIInThisCommttee(update.event_id, stores.LoginStore.user.phone,
@@ -1264,7 +1232,7 @@ class UpdatesDispatcher {
       });
     },
     restored_vote: update => new Promise((resolve, reject) => {
-      stores.Votes.addVote(update.new_value).then(() => {
+      stores.Votes.addVote(update.event_id,update.new_value).then(() => {
         stores.Events.addVote(update.event_id, update.new_value.id).then(() => {
           stores.CommiteeStore.imIInThisCommttee(update.event_id, stores.LoginStore.user.phone, update.new_value.committee_id).then((state) => {
             if (update.published === 'public' || state) {
@@ -1302,7 +1270,7 @@ class UpdatesDispatcher {
           time: update.time
         };
         stores.ChangeLogs.addChanges(Change).then(() => {
-          stores.Votes.PublishVote(update.new_value).then(() => {
+          stores.Votes.PublishVote(update.event_id,update.new_value).then(() => {
             stores.Events.changeUpdatedStatus(
               update.event_id,
               "vote_updated",
@@ -1317,7 +1285,7 @@ class UpdatesDispatcher {
     },
     vote: update => {
       return new Promise((resolve, reject) => {
-        stores.Votes.vote(update.new_value).then((vote) => {
+        stores.Votes.vote(update.event_id,update.new_value).then((vote) => {
           stores.CommiteeStore.imIInThisCommttee(update.event_id, stores.LoginStore.user.phone,
             vote.committee_id).then((state) => {
               console.warn(state, "--")
@@ -1342,7 +1310,7 @@ class UpdatesDispatcher {
     },
     vote_period_updated: update => {
       return new Promise((resolve, reject) => {
-        stores.Votes.UpdateVotePeriod(update.new_value).then((vote) => {
+        stores.Votes.UpdateVotePeriod(update.event_id,update.new_value).then((vote) => {
           stores.CommiteeStore.imIInThisCommttee(update.event_id, stores.LoginStore.user.phone,
             vote.committee_id).then((state) => {
               if (state || votes.published === 'public') {
@@ -1384,7 +1352,7 @@ class UpdatesDispatcher {
           time: update.time
         };
         stores.ChangeLogs.addChanges(Change).then(() => {
-          stores.Votes.UpdateVoteDescription(
+          stores.Votes.UpdateVoteDescription(update.event_id,
             {
               id: update.new_value.vote_id,
               description: update.new_value.description
@@ -1414,7 +1382,7 @@ class UpdatesDispatcher {
           time: update.time
         };
         stores.ChangeLogs.addChanges(Change).then(() => {
-          stores.Votes.updateVoteTitle(
+          stores.Votes.updateVoteTitle(update.event_id,
             { id: update.new_value.vote_id, title: update.new_value.title },
             true
           ).then(() => {
@@ -1441,7 +1409,7 @@ class UpdatesDispatcher {
           time: update.time
         };
         stores.ChangeLogs.addChanges(Change).then(() => {
-          stores.Votes.addVoteOption(
+          stores.Votes.addVoteOption(update.event_id,
             { id: update.new_value.vote_id, option: update.new_value.option },
             true
           ).then(() => {
@@ -1468,7 +1436,7 @@ class UpdatesDispatcher {
           time: update.time
         };
         stores.ChangeLogs.addChanges(Change).then(() => {
-          stores.Votes.removeVoteOption(
+          stores.Votes.removeVoteOption(update.event_id,
             update.new_value.vote_id,
             update.new_value.vote_option_name_updated,
             true
@@ -1496,7 +1464,7 @@ class UpdatesDispatcher {
           time: update.time
         };
         stores.ChangeLogs.addChanges(Change).then(() => {
-          stores.Votes.UpdateVoteOptionName(
+          stores.Votes.UpdateVoteOptionName(update.event_id,
             update.new_value.vote_id,
             update.new_value.option_name,
             update.new_value.new_name,

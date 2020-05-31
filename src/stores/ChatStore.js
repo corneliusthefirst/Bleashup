@@ -4,13 +4,14 @@ import autobind from "autobind-decorator";
 import moment from "moment";
 import { observable, action } from "mobx";
 import emitter from '../services/eventEmiter';
+import request from '../services/requestObjects';
 
 class ChatStore {
     constructor() {
         //storage.remove({key:this.key})
         this.initializeStore();
         this.saveInterval = setInterval(() => {
-            this.previousModif !== this.currentModif ? this.saver():null;
+            this.previousModif !== this.currentModif ? this.saver() : null;
         }, this.timer);
     }
     previousModif = moment().format();
@@ -24,11 +25,13 @@ class ChatStore {
         message_id ? emitter.emit("updated" + message_id) : null
     }
     saver() {
-        this.saveKey.data = this.messages;
-        storage.save(this.saveKey).then(() => {
-            this.previousModif = this.currentModif;
-            console.warn("saving current messages state");
-        });
+        if (Object.keys(this.messages).length > 0) {
+            this.saveKey.data = this.messages;
+            storage.save(this.saveKey).then(() => {
+                this.previousModif = this.currentModif;
+                console.warn("saving current messages state");
+            });
+        }
     }
     loadLatestMessage(roomID, key) {
         return new Promise((resolve, reject) => {
@@ -167,8 +170,7 @@ class ChatStore {
             resolve();
         });
     }
-    persistMessageDimenssions(dims,index,roomID){
-        console.warn("persisting dimensions")
+    persistMessageDimenssions(dims, index, roomID) {
         this.messages[roomID][index].dimensions = dims
         this.currentModif = moment().format()
     }
@@ -188,7 +190,7 @@ class ChatStore {
                         this.addToStore(data);
                         resolve(data);
                     } else {
-                        newMessage = { ...newMessage};
+                        newMessage = { ...newMessage };
                         data[roomID]
                             ? data[roomID].unshift(newMessage)
                             : (data[roomID] = [newMessage]);
@@ -214,18 +216,15 @@ class ChatStore {
         return new Promise((resolve, reje) => {
             this.readFromStore().then((data) => {
                 let index = findIndex(data[roomID], { id: messageID });
-                console.warn(messageID,index)
                 if (index <= 0 && data[roomID][index + 1].type === "date_separator") {
                     let otherID = data[roomID][index + 1].id;
                     data[roomID] = reject(data[roomID], { id: messageID });
                     data[roomID] = reject(data[roomID], { id: otherID });
                     this.addToStore(data);
-                    this.setProperties(data);
                     resolve(data);
                 } else {
                     data[roomID] = reject(data[roomID], { id: messageID });
                     this.addToStore(data);
-                    this.setProperties(data);
                     resolve();
                 }
             });
@@ -237,7 +236,6 @@ class ChatStore {
                 data[roomID] = reject(data[roomID], { id: newMessage.id });
                 data[roomID].unshift(newMessage);
                 this.addToStore(data);
-                this.setProperties(data);
                 resolve("ok");
             });
         });
@@ -246,9 +244,13 @@ class ChatStore {
         return new Promise((resolve, rejec) => {
             this.readFromStore().then((data) => {
                 index = findIndex(data[roomID], { id: newMessage.id });
-                data[roomID][index] = newMessage;
-                this.addToStore(data);
-                resolve(data);
+                if (index < 0) {
+                    resolve(request.Message())
+                } else {
+                    data[roomID][index] = newMessage;
+                    this.addToStore(data);
+                    resolve(data);
+                }
             });
         });
     }
@@ -404,7 +406,6 @@ class ChatStore {
             .load({ key: this.key })
             .then((chats) => {
                 chats ? (this.messages = chats) : (this.messages = {});
-                console.warn("messages ",chats)
             })
             .catch((error) => {
                 this.messages = {};
@@ -435,7 +436,6 @@ class ChatStore {
                 if (data[roomID][index]) {
                     data[roomID][index].duration = duration;
                     this.addToStore(data);
-                    this.setProperties(data);
                     resolve("ok");
                 } else {
                     resolve("not found");
@@ -452,7 +452,6 @@ class ChatStore {
                     data[roomID][index].received = received;
                     data[roomID][index].source = path;
                     this.addToStore(data);
-                    this.setProperties(data);
                     resolve("ok");
                 } else {
                     resolve("not found");

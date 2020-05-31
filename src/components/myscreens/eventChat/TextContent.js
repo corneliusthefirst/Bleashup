@@ -80,7 +80,7 @@ export default class TextContent extends Component {
                     <ParsedText style={this.props.style || {
                         justifyContent: 'center',
                         fontSize: this.fontSizeFormular(),
-                        color: '#555756'
+                        color: ColorList.bodyIcon
                         //backgroundColor: this.state.sender ? '#FFBFB2' : '#C1FFF2',
                     }} ellipsizeMode={this.state.notShowingAll ? 'tail' : null} numberOfLines={this.state.notShowingAll ? this.props.numberOfLines || 25 : null}
                         parse={

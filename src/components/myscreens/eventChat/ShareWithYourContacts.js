@@ -162,7 +162,7 @@ export default class ShareWithYourContacts extends TabModal {
             <TextInput
               value={this.state.searchString}
               onChange={this.changeSeachString.bind(this)}
-              autoFocus
+              ///autoFocus
               style={{
                 width: "100%",
                 height: "100%",

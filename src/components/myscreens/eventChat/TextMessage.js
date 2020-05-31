@@ -33,7 +33,10 @@ export default class TextMessage extends Component {
             <View style={{alignSelf: "flex-start",marginLeft: ".5%",marginTop: 
             this.props.message.reaction && 
             this.props.message.reaction.length >0?7:0,}}>
-                <TextContent tags={this.props.message.tags} handleLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null} pressingIn={() => this.props.pressingIn()} text={this.props.message.text}></TextContent>
+                <TextContent tags={this.props.message.tags} 
+                handleLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null} 
+                pressingIn={() => this.props.pressingIn()} 
+                text={this.props.message.text}></TextContent>
             </View>
         );
     }

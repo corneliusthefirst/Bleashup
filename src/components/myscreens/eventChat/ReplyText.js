@@ -58,7 +58,7 @@ export default class ReplyText extends Component {
           type={"FontAwesome5"}
           style={{
             fontSize: this.reply_font,
-            color: ColorList.votes,
+            color: ColorList.vote,
           }}
         ></Icon>
       ) : (

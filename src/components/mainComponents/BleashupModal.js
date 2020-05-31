@@ -39,7 +39,7 @@ export default class BleashupModal extends PureComponent {
     isOpened = false
     entry = 'bottom'
 
-    render() {
+    modal(){
         return (
             <Modal
                 backdropOpacity={this.backdropOpacity || 0.7}
@@ -59,14 +59,17 @@ export default class BleashupModal extends PureComponent {
                     backgroundColor: this.modalBackground || '#FFFFFF',
                     height: this.modalHeight,
                     width: this.modalWidth || "100%",
-                    justifyContent: this.jusify?'center':null,
-                    borderRadius:this.borderRadius,
-                    borderTopLeftRadius: this.borderTopLeftRadius ,
-                    borderTopRightRadius: this.borderTopRightRadius ,
+                    justifyContent: this.jusify ? 'center' : null,
+                    borderRadius: this.borderRadius,
+                    borderTopLeftRadius: this.borderTopLeftRadius,
+                    borderTopRightRadius: this.borderTopRightRadius,
                 }}
             >
                 {this.modalBody()}
             </Modal>
         );
+    }
+    render() {
+        return this.modal()
     }
 }

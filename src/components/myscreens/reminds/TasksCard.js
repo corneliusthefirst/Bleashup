@@ -142,73 +142,52 @@ export default class EventTasksCard extends Component {
     }) > 0
     member = findIndex(this.props.item.members,
       { phone: stores.LoginStore.user.phone }) >= 0;
-    return !this.state.mounted ? <Card style={{
-      width: ColorList.containerWidth, height: 220,
-    }}>
-    </Card> : (
+    return !this.state.mounted ? null : (
         <Card style={{
           //marginLeft: "2%", marginRight: "2%", //marginBottom: this.props.isLast ? '25%' : '0%',
         }}>
-          <CardItem>
-            <Left>
-              <View style={{ width: "80%" }}>
-                <Text style={{
-                  width: '100%', fontWeight: "300", fontSize: 14, color: ColorList.bodySubtext,
-                  color: dateDiff({
-                    recurrence: this.state.correspondingDateInterval ?
-                      moment(this.state.correspondingDateInterval.end, format).format() :
-                      this.props.item.period
-                  }) > 0 ? ColorList.bodySubtext : ColorList.iconActive,
-                  alignSelf: 'flex-end',
-                }}
-                >{`${writeDateTime(
-                  this.state.correspondingDateInterval ?
-                    {
-                      period: moment(this.state.correspondingDateInterval.end, format).format(),
-                      recurrence: moment(this.state.correspondingDateInterval.end, format).format(),
-                      title: this.props.item.title
-                    } : {
-                      period: moment(this.state.currentDateIntervals[this.state.currentDateIntervals.length - 1].end, format).format(),
-                      recurrence: moment(this.state.currentDateIntervals[this.state.currentDateIntervals.length - 1].end, format).format(),
-                      title: this.props.item.title
-                    }).
-                  replace("Starting", "Due").
-                  replace("Ended", "Past").
-                  replace("Started", "Past")}`}</Text>
+          <CardItem style={{
+            justifyContent: 'space-between',
+          }}>
+            <View style={{ width: "90%" }}>
+              <Text style={{
+                width: '100%', fontWeight: "300", fontSize: 14, color: ColorList.bodySubtext,
+                color: dateDiff({
+                  recurrence: this.state.correspondingDateInterval ?
+                    moment(this.state.correspondingDateInterval.end, format).format() :
+                    this.props.item.period
+                }) > 0 ? ColorList.bodySubtext : ColorList.iconActive,
+                alignSelf: 'flex-end',
+              }}
+              >{`${writeDateTime(
+                this.state.correspondingDateInterval ?
+                  {
+                    period: moment(this.state.correspondingDateInterval.end, format).format(),
+                    recurrence: moment(this.state.correspondingDateInterval.end, format).format(),
+                    title: this.props.item.title
+                  } : {
+                    period: moment(this.state.currentDateIntervals[this.state.currentDateIntervals.length - 1].end, format).format(),
+                    recurrence: moment(this.state.currentDateIntervals[this.state.currentDateIntervals.length - 1].end, format).format(),
+                    title: this.props.item.title
+                  }).
+                replace("Starting", "Due").
+                replace("Ended", "Past").
+                replace("Started", "Past")}`}</Text>
+            </View>
+            <View style={{ width: "4%",flexDirection: 'row', }}>
+              <View style={{ flexDirection: 'row',alignSelf: 'flex-end', }}>
+                <RemindsMenu
+                  reply={() => this.props.mention({ ...this.props.item, creator: this.state.creator })}
+                  members={() => this.props.showReport(this.props.item, this.state.currentDateIntervals, this.state.correspondingDateInterval)}
+                  update={() => this.props.updateRemind(this.props.item)}
+                  creator={this.state.creator}
+                  addMembers={() => { this.props.addMembers(uniqBy(this.props.item.members, "phone"), this.props.item) }}
+                  removeMembers={() => this.props.removeMembers(uniqBy(this.props.item.members.filter(ele => this.state.creator ||
+                    ele.phone === stores.LoginStore.user.phone), 'phone'), this.props.item)}
+                  deleteRemind={() => this.props.deleteRemind(this.props.item)}
+                ></RemindsMenu>
               </View>
-            </Left>
-
-            <Right>
-              <View style={{ width: "75%" }}>
-                <View style={{ flexDirection: 'row', alignSelf: "flex-end" }}>
-
-                  <View style={{ marginRight: "10%" }}>
-                    <Icon onPress={() => {
-                      this.props.mention({ ...this.props.item, creator: this.state.creator })
-                    }} name={"reply"} style={{ color: ColorList.bodyIcon, fontSize: 25 }} type="Entypo"></Icon>
-                  </View>
-
-                  <View style={{ marginRight: "10%" }}>
-                    <Icon style={{ color: ColorList.bodyIcon, fontSize: 25 }} onPress={() => {
-                      this.props.showReport(this.props.item, this.state.currentDateIntervals, this.state.correspondingDateInterval)
-                    }} name="account-group-outline" type="MaterialCommunityIcons" />
-                  </View>
-
-                  <View style={{ marginRight: "-3%" }} >
-                    <RemindsMenu
-                      update={() => this.props.updateRemind(this.props.item)}
-                      creator={this.state.creator}
-                      addMembers={() => { this.props.addMembers(uniqBy(this.props.item.members, "phone"), this.props.item) }}
-                      removeMembers={() => this.props.removeMembers(uniqBy(this.props.item.members.filter(ele => this.state.creator ||
-                        ele.phone === stores.LoginStore.user.phone), 'phone'), this.props.item)}
-                      deleteRemind={() => this.props.deleteRemind(this.props.item)}
-                    ></RemindsMenu>
-                  </View>
-
-                </View>
-
-              </View>
-            </Right>
+            </View>
           </CardItem>
 
           {this.props.item.location ? <CardItem>
@@ -286,15 +265,17 @@ export default class EventTasksCard extends Component {
 
 
           </CardItem>
-
-          <CardItem>
+          <View style={{
+            alignItems: 'flex-start',
+            padding: 2,
+          }}>
             <Creator giveCreator={(creator) => {
               this.setState({
                 creator: creator,
                 newing: !this.state.newing
               })
             }} creator={this.props.item.creator} created_at={this.props.item.created_at}></Creator>
-          </CardItem>
+          </View>
         </Card>
 
       )

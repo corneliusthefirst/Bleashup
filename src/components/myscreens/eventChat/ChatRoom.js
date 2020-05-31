@@ -445,8 +445,8 @@ class ChatRoom extends Component {
         this.fireRef = this.getRef(this.props.firebaseRoom);
         this.setTypingRef(this.props.firebaseRoom);
         this.props.isComment ? (stores.Messages.messages[this.roomID] = []) : null;
-        //this.keyboardDidShowSub = Keyboard.addListener('keyboardDidShow', this.handleKeyboardDidShow);
-        //this.keyboardDidHideSub = Keyboard.addListener('keyboardDidHide', this.handleKeyboardDidHide);
+        this.keyboardDidShowSub = Keyboard.addListener('keyboardDidShow', this.handleKeyboardDidShow);
+        this.keyboardDidHideSub = Keyboard.addListener('keyboardDidHide', this.handleKeyboardDidHide);
         if (this.BackHandler) this.BackHandler.remove();
         this.BackHandler = BackHandler.addEventListener(
             "hardwareBackPress",
@@ -458,23 +458,32 @@ class ChatRoom extends Component {
         Pickers.CleanAll();
         this.fireRef.off();
         this.typingRef.off();
+        this.keyboardDidHideSub.remove()
+        this.keyboardDidShowSub.remove()
         this.markAsRead();
         GState.currentRoom = null;
         this.BackHandler.remove();
     }
 
     handleKeyboardDidShow = (event) => {
-        //this.adjutRoomDisplay()
+        this.adjutRoomDisplay()
+        this.setState({
+            showEmojiInput: false,
+            showEmojiInputCaption: false
+        })
+        this.openedKeyboard = true
     };
 
-    handleKeyboardDidHide = () => { };
+    handleKeyboardDidHide = () => {
+        this.openedKeyboard = false
+    };
     convertPercentageToInt(data) {
         return parseInt(data.split("%")[0]) / 100;
     }
 
     handleBackButton() {
         if (this.state.showEmojiInput) {
-            this.fucussTextInput();
+            //this.fucussTextInput();
             this.setState({
                 showEmojiInput: false,
             });
@@ -484,21 +493,21 @@ class ChatRoom extends Component {
                 showRepliedMessage: false,
             });
             return true;
-        } else if (this.state.showVideo) {
+        } /*else if (this.state.showVideo) {
             this.setState({
                 showVideo: false,
                 showCaption: false,
             });
             Orientation.lockToPortrait();
             return true;
-        } else if (this.state.showPhoto) {
+        }*/ else if (this.state.showPhoto) {
             this.setState({
                 showPhoto: false,
                 showCaption: false,
             });
             return true;
         } else if (this.state.showEmojiInputCaption) {
-            this._captionTextInput.focus();
+            //this._captionTextInput.focus();
             this.setState({
                 showEmojiInputCaption: false,
             });
@@ -509,10 +518,10 @@ class ChatRoom extends Component {
                 showVideo: false,
             });
             return true;
-        } else if (this.state.showAudioRecorder) {
+        } /*else if (this.state.showAudioRecorder) {
             this.refs.AudioRecorder.stopRecord(true);
             return true;
-        } else {
+        }*/ else {
         }
     }
     state = {
@@ -608,6 +617,17 @@ class ChatRoom extends Component {
     }
     received = [{ phone: this.props.user.phone, date: moment().format() }];
     logOutZoomState = (event, gestureState, zoomableViewEventObject) => { };
+    sendToOtherActivity(message) {
+        return new Promise((resolve, reject) => {
+            Requester.seenMessage(
+                message,
+                message.from_committee,
+                message.from_activity, true).
+                then((response) => {
+                    resolve
+                })
+        })
+    }
     sendMessage(messager) {
         return new Promise((resolve, reject) => {
             if (messager) {
@@ -943,9 +963,10 @@ class ChatRoom extends Component {
                 source: "file://" + (filename || this.filename),
                 duration: duration || this.duration,
                 type: "audio_uploader",
+                text: this.state.textValue,
                 reply: this.state.replyContent,
+                tags: this.tags,
                 sender: this.sender,
-                //user: this.user,
                 content_type: "audio/mp3",
                 total: 0,
                 received: 0,
@@ -955,13 +976,12 @@ class ChatRoom extends Component {
             stores.Messages.addMessageToStore(this.roomID, message).then(() => {
                 this.setState({
                     newMessage: true,
+                    textValue: "",
+                    replying: false,
+                    replyContent: null,
                 });
+                this.tags = null
                 this.initialzeFlatList();
-            });
-            this.setState({
-                newMessage: true,
-                replying: false,
-                replyContent: null,
             });
         }
     }
@@ -994,7 +1014,8 @@ class ChatRoom extends Component {
             id: uuid.v1(),
             text: vote.title,
             type: "vote",
-            vote: { id: vote.id, option: vote.option },
+            sent: true,
+            vote: { ...vote },
             created_at: moment().format(),
             received: [{ phone: stores.LoginStore.phone, date: moment().format() }],
             sender: this.sender,
@@ -1005,7 +1026,6 @@ class ChatRoom extends Component {
                 newMessage: true,
             });
 
-            // this.informMembers()
             this.initialzeFlatList();
         });
         this.sendMessage(message);
@@ -1105,7 +1125,7 @@ class ChatRoom extends Component {
             isShareWithContactsOpened: true,
         });
     }
-    scrollToIndex(index){
+    scrollToIndex(index) {
         console.warn(index)
         this.refs.bleashupSectionListOut.scrollToIndex(index)
     }
@@ -1159,7 +1179,7 @@ class ChatRoom extends Component {
                                                         onPressIn={() => {
                                                             this.scrolling = false;
                                                             this.adjutRoomDisplay();
-                                                            //this.hideAndShowHeader()
+                                                            !this.openedKeyboard && this._textInput.blur()
                                                         }}
                                                     >
                                                         {this.messageList()}
@@ -1261,11 +1281,11 @@ class ChatRoom extends Component {
                                             ? this.props.activity_id
                                             : this.state.currentMessage.from_activity,
                                         from_committee: !this.state.currentMessage.from_committee
-                                            ? this.props.committee_id
-                                            : this.state.currentMessage.from_activity,
+                                            ? this.roomID
+                                            : this.state.currentMessage.committee_id,
                                         from: this.state.currentMessage.from
-                                            ? this.state.currentMessage.sender
-                                            : this.state.currentMessage.from,
+                                            ? this.state.currentMessage.from
+                                            : this.state.currentMessage.sender,
                                     }}
                                     onClosed={() => {
                                         this.setState({
@@ -1320,11 +1340,7 @@ class ChatRoom extends Component {
                                     takeVote={(vote) => this.createVote(vote)}
                                     voteItem={(mess) => {
                                         this.perviousId = mess.id;
-                                        this.replaceVote({
-                                            ...mess,
-                                            id: uuid.v1(),
-                                            created_at: moment().format(),
-                                        });
+                                        this.replaceVote(mess);
                                     }}
                                     working={this.props.working}
                                     isSingleVote={this.state.single_vote}
@@ -1412,14 +1428,40 @@ class ChatRoom extends Component {
         }, 50);
     }
     remindThis() { }
+    voteShare(vote) {
+        vote = {
+            ...vote,
+            id: uuid.v1(),
+            received: this.received,
+            sent: true,
+            sender: this.sender,
+            created_at: moment().format()
+        }
+        console.warn(vote)
+        stores.Messages.replaceNewMessage(this.roomID, vote).then(() => {
+            this.initializeRoom()
+            this.sendToOtherActivity({ ...vote, forwarded: false }).then(() => {
+                this.sendMessage(vote).then(() => {
+
+                })
+            })
+        })
+
+    }
+    initializeRoom() {
+        this.initialzeFlatList();
+        this.setState({
+            newMessage: !this.state.newMessage,
+        });
+    }
     replaceVote(vote) {
-        vote = { ...vote, received: this.received, sent: true };
+        vote = {
+            ...vote, received: this.received, sent: true, id: uuid.v1(),
+            created_at: moment().format()
+        };
         stores.Messages.replaceNewMessage(this.roomID, vote).then(() => {
             this.sendMessage(vote);
-            this.initialzeFlatList();
-            this.setState({
-                newMessage: !this.state.newMessage,
-            });
+
         });
         //  })
     }
@@ -1466,11 +1508,11 @@ class ChatRoom extends Component {
                 .reduce(
                     (a, b) =>
                         a + (b.dimensions
-                                ? b.dimensions.height
-                                : 70),
+                            ? b.dimensions.height
+                            : 70),
                     0
                 )
-            : index * 70  
+            : index * 70
         return {
             length: item.dimensions ? item.dimensions.height : 70,
             offset: offset,
@@ -1499,7 +1541,9 @@ class ChatRoom extends Component {
                         this.delay >= 20 || (item && !item.sent) ? 0 : this.delay + 1;
                     return item ? (
                         <Message
+                            voteShare={this.voteShare.bind(this)}
                             voteItem={(index, vote) => {
+                                console.warn(vote)
                                 emitter.emit("vote-me", index, vote);
                             }}
                             react={this.reactToMessage.bind(this)}
@@ -1507,31 +1551,27 @@ class ChatRoom extends Component {
                             messagelayouts={this.messagelayouts}
                             setCurrentLayout={(layout) => {
                                 this.messagelayouts[item.id] = layout;
-                                (!item.dimensions || item.dimensions.height < layout.height) &&
-                                    stores.Messages.persistMessageDimenssions(
-                                        layout,
-                                        index,
-                                        this.roomID
-                                    );
+                                // (!item.dimensions || item.dimensions.height < layout.height) &&
+                                stores.Messages.persistMessageDimenssions(
+                                    layout,
+                                    index,
+                                    this.roomID
+                                );
                             }}
                             newCount={this.props.newMessages.length}
                             index={index}
                             scrolling={this.scrolling}
                             computedMaster={this.props.computedMaster}
                             showVoters={(voters) => this.showVoters(voters)}
-                            votes={this.state.votes}
+                            votes={stores.Votes.votes[this.props.activity_id]}
+                            activity_id={this.props.activity_id}
                             showProfile={(pro) => this.props.showProfile(pro)}
                             delay={this.delay}
                             room={this.roomID}
                             PreviousMessage={
                                 stores.Messages.messages[this.roomID] &&
-                                stores.Messages.messages[this.roomID][
-                                index >= 0 ? index + 1 : 0
-                                ] &&
-                                stores.Messages.messages[this.roomID] &&
-                                stores.Messages.messages[this.roomID][
-                                index >= 0 ? index + 1 : 0
-                                ]
+                                stores.Messages.messages[this.roomID]
+                                [index >= 0 ? index + 1 : 0]
                             }
                             showActions={(message) => this.showMessageAction(message)}
                             firebaseRoom={this.props.firebaseRoom}
@@ -1559,7 +1599,7 @@ class ChatRoom extends Component {
                                     replyer: replyer,
                                     showRepliedMessage: true,
                                 });*/
-                                this.scrollToIndex(findIndex(stores.Messages.messages[this.roomID],{id:replyer.id}))
+                                this.scrollToIndex(findIndex(stores.Messages.messages[this.roomID], { id: replyer.id }))
                             }}
                             user={this.props.user.phone}
                             creator={this.props.creator}
@@ -1593,6 +1633,7 @@ class ChatRoom extends Component {
     showAudio() {
         this.toggleAudioRecorder();
         this.markAsRead();
+        this.adjutRoomDisplay()
     }
     tags = null;
     chooseItem(item) {
@@ -1618,7 +1659,7 @@ class ChatRoom extends Component {
             <View
                 style={{
                     width: "100%",
-                    backgroundColor: "rgba(34, 0, 0, 0.05)",
+                    backgroundColor: colorList.bottunerLighter,
                     borderTopLeftRadius: 5,
                     maxHeight: 200,
                     minHeight: 0,

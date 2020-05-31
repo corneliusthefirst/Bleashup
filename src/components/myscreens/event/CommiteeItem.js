@@ -193,6 +193,7 @@ export default class CommiteeItem extends PureComponent {
                     tags={tags}
                     style={{
                         fontSize: 14,
+                        color: ColorList.bodyIcon,
                         alignSelf: "flex-start",
                         alignItems: "flex-start",
                     }}
@@ -304,6 +305,7 @@ export default class CommiteeItem extends PureComponent {
                                     numberOfLines={2}
                                     style={{
                                         fontSize: 14,
+                                        color:ColorList.bodyIcon
                                     }}
                                     tags={message.tags}
                                     text={
@@ -346,7 +348,7 @@ export default class CommiteeItem extends PureComponent {
                             <View style={{ marginLeft: "0%", width: "80%" }}>
                                 <TextContent
                                     numberOfLines={2}
-                                    style={{ fontSize: 14, }}
+                                    style={{ fontSize: 14, color: ColorList.bodyIcon }}
                                     tags={message.tags}
                                     text={
                                         message.text
@@ -391,6 +393,7 @@ export default class CommiteeItem extends PureComponent {
                                     style={{
                                         fontSize: 14,
                                         alignSelf: "flex-start",
+                                        color: ColorList.bodyText,
                                         fontWeight: "bold",
                                     }}
                                     tags={message.tags}
@@ -513,6 +516,7 @@ export default class CommiteeItem extends PureComponent {
                                             style={{
                                                 display: "flex",
                                                 justifyContent: "center",
+                                                ...shadower(2)
                                             }}
                                             primary
                                         >
@@ -548,9 +552,6 @@ export default class CommiteeItem extends PureComponent {
                         }}
                     ></EditNameModal>
                 ) : null}
-                {
-                    //<MenuDivider color="#1FABAB" />
-                }
             </View>
         ) : (
                 <View

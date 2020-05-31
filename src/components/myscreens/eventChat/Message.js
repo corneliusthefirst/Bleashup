@@ -30,9 +30,10 @@ import formVoteOptions from "../../../services/formVoteOptions";
 import ColorList from "../../colorList";
 import ReactionModal from "./ReactionsModal";
 import { ScrollView } from "react-native-gesture-handler";
-import stores from '../../../stores';
+import stores from "../../../stores";
 import rounder from "../../../services/rounder";
-import emitter from '../../../services/eventEmiter';
+import emitter from "../../../services/eventEmiter";
+import Votes from "../votes";
 
 export default class Message extends Component {
     constructor(props) {
@@ -45,7 +46,7 @@ export default class Message extends Component {
             this.props.message.sender.phone;
         this.state = {
             showTime: false,
-            refresh:false,
+            refresh: false,
             disabledSwipeout: true,
             openRight: true,
             sender_name:
@@ -228,33 +229,59 @@ export default class Message extends Component {
                     ></AudioUploader>
                 );
             case "vote":
-                return (
-                    <Voter
-                        computedMaster={this.props.computedMaster}
-                        mention={() => this.handleReply()}
-                        takeCreator={(creator) => {
-                            this.voteCreator = creator;
+                console.warn("from committee", this.props.message.from_committee)
+                return this.props.message.forwarded ? (
+                    <Votes
+                        shared
+                        takeVotes={() => {
+
                         }}
-                        vote={(index, vote) =>
-                            this.props.voteItem(index, this.props.message)
-                        }
-                        pressingIn={() => {
-                            this.replying = true;
+                        message={this.props.message}
+                        voteItem={this.props.voteShare}
+                        event_id={this.props.message.from_committee}
+                        handleLongPress={this.handLongPress.bind(this)}
+                        share={{
+                            id: this.props.message.id,
+                            date: this.props.message.created_at,
+                            sharer: this.props.message.from && this.props.message.from.phone,
+                            item_id: this.props.message.vote.id,
+                            event_id: this.props.message.from_activity,
                         }}
-                        placeHolder={this.placeholderStyle}
-                        showVoters={this.props.showVoters}
-                        message={{
-                            ...data,
-                            vote: {
-                                ...(this.props.votes &&
-                                    find(this.props.votes, { id: data.vote.id })),
-                                voter: data.vote.voter,
-                            },
-                        }}
-                        room={this.props.room}
-                        index={data.id}
-                    ></Voter>
-                );
+                    ></Votes>
+                ) : (
+                        <View style={{marginLeft: '2%',marginTop: '1%',}}><Voter
+                            computedMaster={this.props.computedMaster}
+                            handleLongPress ={this.handLongPress.bind(this)}
+                            mention={() => this.handleReply()}
+                            takeCreator={(creator) => {
+                                this.voteCreator = creator;
+                            }}
+                            vote={(index, vote) =>
+                                this.props.voteItem(index, this.props.message)
+                            }
+                            pressingIn={() => {
+                                this.replying = true;
+                            }}
+                            placeHolder={this.placeholderStyle}
+                            showVoters={this.props.showVoters}
+                            message={{
+                                ...data,
+                                vote: {
+                                    ...(this.props.votes &&
+                                        this.props.votes.length > 0 &&
+                                        this.props.message.vote
+                                        ? this.props.votes[data.vote.index] &&
+                                            this.props.votes[data.vote.index].id === data.vote.id
+                                            ? this.props.votes[data.vote.index]
+                                            : find(this.props.votes, { id: data.vote.id })
+                                        : null),
+                                    voter: data.vote && data.vote.voter,
+                                },
+                            }}
+                            room={this.props.room}
+                            index={data.id}
+                        ></Voter></View>
+                    );
             default:
                 return null;
         }
@@ -344,10 +371,15 @@ export default class Message extends Component {
                 break;
             case "vote":
                 let vote =
-                    this.props.votes &&
-                    this.props.votes.length > 0 &&
                     this.props.message.vote &&
-                    find(this.props.votes, { id: this.props.message.vote.id });
+                        this.props.votes &&
+                        this.props.votes.length > 0
+                        ? this.props.votes[this.props.message.vote.index] &&
+                            this.props.votes[this.props.message.vote.index].id ===
+                            this.props.message.id
+                            ? this.props.votes[this.props.message.vote.index]
+                            : find(this.props.votes, { id: this.props.message.vote.id })
+                        : null;
                 this.props.replying({
                     id: vote.id,
                     type_extern: "Votes",
@@ -385,11 +417,13 @@ export default class Message extends Component {
         return (
             <View style={{ flexDirection: "column" }}>
                 <TouchableOpacity
-                onPress={ () => requestAnimationFrame(() => {
-                    this.props.showReacters(element.reaction,element.reacters)
-                })}
+                    onPress={() =>
+                        requestAnimationFrame(() => {
+                            this.props.showReacters(element.reaction, element.reacters);
+                        })
+                    }
                     style={{
-                        ...rounder(20,true),
+                        ...rounder(20, true),
                         marginTop: sender ? "-25%" : 0,
                         marginBottom: !sender ? "-25%" : 0,
                         borderWidth: 1,
@@ -425,13 +459,18 @@ export default class Message extends Component {
     }
     prevVote = null;
     shouldComponentUpdate(nextProps, nextState, nextContext) {
-        peVote = this.prevVote
+        let peVote = this.prevVote
             ? JSON.parse(this.prevVote)
             : this.props.votes &&
-            this.props.votes.length > 0 &&
-            this.props.message.vote &&
-            find(this.props.votes, { id: this.props.message.vote.id });
-        newVote =
+                this.props.votes.length > 0 &&
+                this.props.message.vote
+                ? this.props.votes[this.props.message.vote.index] &&
+                    this.props.votes[this.props.message.vote.index].id ===
+                    this.props.message.vote.id
+                    ? this.props.votes[this.props.message.vote.index]
+                    : find(this.props.votes, { id: this.props.message.vote.id })
+                : null;
+        let newVote =
             nextProps.votes &&
             nextProps.votes.length > 0 &&
             nextProps.message.vote &&
@@ -449,7 +488,8 @@ export default class Message extends Component {
         return (
             this.props.message.sent !== nextProps.message.sent ||
             this.props.received !== nextProps.received ||
-            voter || votePeriod ||
+            voter ||
+            votePeriod ||
             this.state.loaded !== nextState.loaded ||
             (this.props.messagelayouts &&
                 this.props.messagelayouts[this.props.message.id] !==
@@ -460,25 +500,25 @@ export default class Message extends Component {
             this.state.isReacting !== nextState.isReacting
         );
     }
-    previousMessage = JSON.stringify(this.props.message)
-    componentDidUpdate(previousProsps,prevState){
-        this.previousMessage = JSON.stringify(this.props.message)
+    previousMessage = JSON.stringify(this.props.message);
+    componentDidUpdate(previousProsps, prevState) {
+        this.previousMessage = JSON.stringify(this.props.message);
     }
-    refresh(){
+    refresh() {
         this.setState({
-            refresh:!this.state.refresh
-        })
+            refresh: !this.state.refresh,
+        });
     }
-    event = "updated" + this.props.message.id
-    componentWillMount(){
-        emitter.on(this.event,() => {
-            this.refresh()
-        })
+    event = "updated" + this.props.message.id;
+    componentWillMount() {
+        emitter.on(this.event, () => {
+            this.refresh();
+        });
     }
-    componentWillUnmount(){
-        emitter.off(this.event,() => {
-            this.refresh()
-        })
+    componentWillUnmount() {
+        emitter.off(this.event, () => {
+            this.refresh();
+        });
     }
     iconStyles = {
         fontSize: 12,
@@ -502,25 +542,26 @@ export default class Message extends Component {
     isVote() {
         return this.props.message.type === "vote";
     }
-    startReactionShowTimer(){
-        this.reactionsTimer && clearInterval(this.reactionsTimer)
+    startReactionShowTimer() {
+        this.reactionsTimer && clearInterval(this.reactionsTimer);
         this.setState({
             isReacting: true,
-        })
+        });
         this.reactionsTimer = setTimeout(() => {
             this.setState({
                 isReacting: false,
             });
-        },this.reactionTiming)
+        }, this.reactionTiming);
     }
-    reactionTiming = 3000
+    reactionTiming = 3000;
     openReaction() {
         requestAnimationFrame(() => {
-            this.startReactionShowTimer()
+            this.startReactionShowTimer();
         });
     }
-    placeholderStyle =
-       this.props.message.dimensions ? this.props.message.dimensions: this.props.messagelayouts &&
+    placeholderStyle = this.props.message.dimensions
+        ? this.props.message.dimensions
+        : this.props.messagelayouts &&
             this.props.messagelayouts[this.props.message.id]
             ? this.props.messagelayouts[this.props.message.id]
             : this.placeHolder[this.props.message.type];
@@ -541,17 +582,19 @@ export default class Message extends Component {
             minWidth: 60,
             minHeight: 20,
             overflow: "hidden",
-            borderBottomLeftRadius: 5,
+            borderBottomLeftRadius: ColorList.chatboxBorderRadius,
             borderColor: color,
-            borderTopLeftRadius: this.state.sender ? 0 : 5,
+            borderTopLeftRadius: this.state.sender
+                ? 0
+                : ColorList.chatboxBorderRadius,
             // borderWidth: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text)?.7:0:0,
             backgroundColor: color,
             ...shadower(1),
-            borderTopRightRadius: 5,
+            borderTopRightRadius: ColorList.chatboxBorderRadius,
             borderBottomRightRadius: this.state.sender
-                ? 5
+                ? ColorList.chatboxBorderRadius
                 : this.props.message.reply && this.props.message.reply.type_extern
-                    ? 5
+                    ? ColorList.chatboxBorderRadius
                     : null,
         };
         subNameStyle = {
@@ -570,13 +613,15 @@ export default class Message extends Component {
             ...topMostStyle,
             ...this.placeholderStyle,
             backgroundColor: color,
-            borderBottomLeftRadius: 5,
+            borderBottomLeftRadius: ColorList.chatboxBorderRadius,
             borderColor: color,
-            borderTopLeftRadius: this.state.sender ? 0 : 5, // borderWidth: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text)?.7:0:0,
+            borderTopLeftRadius: this.state.sender
+                ? 0
+                : ColorList.chatboxBorderRadius, // borderWidth: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text)?.7:0:0,
             backgroundColor: color,
             ...shadower(1),
             alignSelf: this.state.sender ? "flex-start" : "flex-end",
-            borderTopRightRadius: 5,
+            borderTopRightRadius: ColorList.chatboxBorderRadius,
         };
         reactionContanerStyle = {
             marginTop: "auto",
@@ -658,13 +703,18 @@ export default class Message extends Component {
                                             style={GeneralMessageBoxStyle}
                                         >
                                             <View>
-                                            {this.props.message.forwarded?
-                                                <Text style={{
-                                                    fontStyle: 'italic',
-                                                    marginLeft: "2%",
-                                                    fontSize: 10,
-                                            }} note>{"(forwarded)"}</Text>
-                                                :null}
+                                                {this.props.message.forwarded ? (
+                                                    <Text
+                                                        style={{
+                                                            fontStyle: "italic",
+                                                            marginLeft: "2%",
+                                                            fontSize: 10,
+                                                        }}
+                                                        note
+                                                    >
+                                                        {"(forwarded)"}
+                                                    </Text>
+                                                ) : null}
                                                 {this.state.sender && this.state.different ? (
                                                     <TouchableOpacity
                                                         onLongPress={this.handLongPress.bind(this)}
@@ -818,25 +868,27 @@ export default class Message extends Component {
                                         ...shadower(2),
                                         position: "absolute",
                                         width: 300,
-                                        alignSelf: 'flex-end',
+                                        alignSelf: "flex-end",
                                         height: this.state.containerDims
                                             ? this.state.containerDims.height + 10
                                             : 40,
-                                        justifyContent: 'flex-end',
-                                        margin: '2%',
+                                        justifyContent: "flex-end",
+                                        margin: "2%",
                                     }}
                                 >
                                     <ReactionModal
                                         pressingIn={() => {
-                                            this.startReactionShowTimer()
+                                            this.startReactionShowTimer();
                                         }}
-                                        react={(reaction) => this.props.react(this.props.message.id,reaction)}
+                                        react={(reaction) =>
+                                            this.props.react(this.props.message.id, reaction)
+                                        }
                                         isOpen={this.state.isReacting}
                                         onClosed={() => {
                                             this.setState({
                                                 isReacting: false,
                                             });
-                                            clearInterval(this.reactionsTimer)
+                                            clearInterval(this.reactionsTimer);
                                         }}
                                     ></ReactionModal>
                                 </View>

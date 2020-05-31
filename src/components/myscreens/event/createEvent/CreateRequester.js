@@ -30,12 +30,11 @@ class CreateRequester {
                                 date: event.created_at,
                                 time: null
                             }
+                            resolve(newEvent)
+                            //firebase.database().ref(`activity/${newEvent.id}/participants`).set(newEvent.participant)
+                            stores.ChangeLogs.addChanges(Change).then(res => {
 
-                        })
-                        resolve(newEvent)
-                        //firebase.database().ref(`activity/${newEvent.id}/participants`).set(newEvent.participant)
-                        stores.ChangeLogs.addChanges(Change).then(res => {
-
+                            })
                         })
                     }
                 }).catch((error) => {

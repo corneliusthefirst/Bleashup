@@ -227,10 +227,12 @@ export default class commitee {
     });
   }
   generalSaver() {
-    this.generalsSaveKey.data = this.generals;
-    storage.save(this.generalsSaveKey).then(() => {
-      this.generalPreviousSaveTime = this.generalCurrentSaveTime;
-    });
+    if (Object.keys(this.commitees).length > 0) {
+      this.generalsSaveKey.data = this.generals;
+      storage.save(this.generalsSaveKey).then(() => {
+        this.generalPreviousSaveTime = this.generalCurrentSaveTime;
+      });
+    }
   }
   generalsReadKeys = {
     key: "generals",
@@ -283,12 +285,12 @@ export default class commitee {
   }
   updateLatestMessageText(messageID, text, commiteeID, eventID) {
     return new Promise((resolve, reject) => {
-      if(commiteeID == eventID){
-        this.generals[eventID].newest_message && this.generals[eventID].new_messages?
-        this.generals[eventID].newest_message.text = text:null
+      if (commiteeID == eventID) {
+        this.generals[eventID].newest_message && this.generals[eventID].new_messages ?
+          this.generals[eventID].newest_message.text = text : null
         this.generalCurrentSaveTime = this.currentDate()
         resolve()
-      }else{
+      } else {
         this.readFromStore().then((commitees) => {
           let index = findIndex(commitees[eventID], { id: commiteeID });
           if (
@@ -315,7 +317,7 @@ export default class commitee {
         );
         this.generalCurrentSaveTime = this.currentDate()
         resolve()
-      }else{
+      } else {
         this.readFromStore().then((commitees) => {
           let index = findIndex(commitees[eventID], { id: committeeID });
           commitees[eventID][index].newest_message =

@@ -20,11 +20,13 @@ export default class TemporalUsersStore {
         this.currentTime !== this.previousTime ? this.saveToStore() : null
     }
     saveToStore() {
-        this.saveKey.data = this.Users
-        return storage.save(this.saveKey).then(() => {
-            this.previousTime = this.currentTime
-            console.warn("temporal user store persisted")
-        })
+        if (Object.keys(this.Users).length > 0) {
+            this.saveKey.data = this.Users
+            return storage.save(this.saveKey).then(() => {
+                this.previousTime = this.currentTime
+                console.warn("temporal user store persisted")
+            })
+        }
     }
     initializeStore() {
         return new Promise((resolve, reject) => {
@@ -89,14 +91,14 @@ export default class TemporalUsersStore {
             }
         })
     }
-    getUsers(phones, result,setter) {
+    getUsers(phones, result, setter) {
         if (phones.length !== result.length) {
             this.getUser(phones[result.length]).then(user => {
                 result.push(user)
-                this.getUsers(phones, result,setter)
+                this.getUsers(phones, result, setter)
             })
         } else {
-              setter(result.filter(ele => !ele.response &&
+            setter(result.filter(ele => !ele.response &&
                 ele.phone !== stores.LoginStore.user.phone))
         }
     }

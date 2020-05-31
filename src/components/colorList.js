@@ -28,10 +28,12 @@ class colorlist {
     headerHeight = 55
     headerFontweight = "bold"
     buttonerBackground = 'rgba(52, 52, 52, 0.6)'
+    bottunerLighter = "rgba(34, 0, 0, 0.05)"
     headerFontSize = 16
     reminds = "#2DDFD5"
-    post = "yellow"
+    post = "#F4AC1C"
     vote = "#4B6CF7"
+    chatboxBorderRadius = 5
     copy = "#92E578"
     delete = "red"
 

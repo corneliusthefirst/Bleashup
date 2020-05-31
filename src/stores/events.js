@@ -220,21 +220,28 @@ export default class events {
       });
     });
   }
+  extraEvents = {}
   loadCurrentEventFromRemote(EventID, simple) {
     return new Promise((resolve, reject) => {
-      serverEventListener.GetData(EventID).then(event => {
-        if (event === "no_such_key") {
-          reject()
-        } else {
-          !simple && this.addEvent(event).then(() => {
-            resolve(event)
-          }) || resolve(event)
-        }
-      }).catch(error => {
-        serverEventListener.socket.write = undefined
-        console.warn(error, "in load events")
-        reject(error)
-      })
+      if (this.extraEvents[EventID]) {
+        resolve(this.extraEvents[EventID])
+      } else {
+        serverEventListener.GetData(EventID).then(event => {
+          if (event === "no_such_key") {
+            resolve(request.Event())
+          } else {
+            simple ? this.extraEvents[EventID] = event : null
+            !simple && this.addEvent(event).then(() => {
+              resolve(event)
+            }) || resolve(event)
+          }
+        }).catch(error => {
+          serverEventListener.socket.write = undefined
+          console.warn(error, "in load events")
+          resolve(request.Event())
+        })
+      }
+
     })
   }
   @action loadCurrentEvent(EventID) {
@@ -1025,8 +1032,8 @@ export default class events {
         let newMessage = { message_id: message.id, commitee_id: committeeID }
         GState.currentCommitee !== committeeID && (!message.sender ||
           message.sender.phone.replace("+", "00") !== stores.LoginStore.user.phone) ? events[index].new_messages && events[index].new_messages.length > 0 ?
-          events[index].new_messages.push(newMessage) :
-          events[index].new_messages = [newMessage] : null
+            events[index].new_messages.push(newMessage) :
+            events[index].new_messages = [newMessage] : null
         events[index].new_message_update_at = {
           message_id: message.id,
           previous_updated: events[index].updated_at,
@@ -1053,10 +1060,12 @@ export default class events {
     })
   }
   saver() {
-    this.saveKey.data = this.events
-    storage.save(this.saveKey).then(() => {
-      this.previousTime = this.currentTime
-    })
+    if (this.events.length > 0) {
+      this.saveKey.data = this.events
+      storage.save(this.saveKey).then(() => {
+        this.previousTime = this.currentTime
+      })
+    }
   }
   @action resetEvent(EventID) {
     return new Promise((resolve, reject) => {
