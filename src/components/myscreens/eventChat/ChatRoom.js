@@ -447,11 +447,11 @@ class ChatRoom extends Component {
         this.props.isComment ? (stores.Messages.messages[this.roomID] = []) : null;
         this.keyboardDidShowSub = Keyboard.addListener('keyboardDidShow', this.handleKeyboardDidShow);
         this.keyboardDidHideSub = Keyboard.addListener('keyboardDidHide', this.handleKeyboardDidHide);
-        if (this.BackHandler) this.BackHandler.remove();
-        this.BackHandler = BackHandler.addEventListener(
-            "hardwareBackPress",
-            this.handleBackButton.bind(this)
-        );
+        //if (this.BackHandler) this.BackHandler.remove();
+        //this.BackHandler = BackHandler.addEventListener(
+          //  "hardwareBackPress",
+          //  this.handleBackButton.bind(this)
+      //  );
         Orientation.lockToPortrait();
     }
     componentWillUnmount() {
@@ -462,7 +462,7 @@ class ChatRoom extends Component {
         this.keyboardDidShowSub.remove()
         this.markAsRead();
         GState.currentRoom = null;
-        this.BackHandler.remove();
+        //this.BackHandler.remove();
     }
 
     handleKeyboardDidShow = (event) => {
@@ -481,7 +481,7 @@ class ChatRoom extends Component {
         return parseInt(data.split("%")[0]) / 100;
     }
 
-    handleBackButton() {
+    /*handleBackButton() {
         if (this.state.showEmojiInput) {
             //this.fucussTextInput();
             this.setState({
@@ -500,7 +500,7 @@ class ChatRoom extends Component {
             });
             Orientation.lockToPortrait();
             return true;
-        }*/ else if (this.state.showPhoto) {
+        } else if (this.state.showPhoto) {
             this.setState({
                 showPhoto: false,
                 showCaption: false,
@@ -521,9 +521,9 @@ class ChatRoom extends Component {
         } /*else if (this.state.showAudioRecorder) {
             this.refs.AudioRecorder.stopRecord(true);
             return true;
-        }*/ else {
+        } else {
         }
-    }
+    }*/
     state = {
         sender: false,
         showTime: true,
@@ -1644,11 +1644,6 @@ class ChatRoom extends Component {
         this.setState({
             textValue: currentText.join("@"),
         });
-        setTimeout(() => {
-            this.state.showCaption
-                ? this._captionTextInput.focus()
-                : this._textInput.focus();
-        }, 10);
     }
     tagger() {
         return (
@@ -1671,6 +1666,7 @@ class ChatRoom extends Component {
                         });
                     }}
                     backgroundColor={"transparent"}
+                    keyboardShouldPersistTaps={"always"}
                     firstIndex={0}
                     renderPerBatch={20}
                     initialRender={7}
@@ -1685,7 +1681,7 @@ class ChatRoom extends Component {
                     )}
                     numberOfItems={this.searchableMembers.length}
                     renderItem={(item) => (
-                        <TouchableWithoutFeedback
+                        <TouchableOpacity
                             onPress={() => requestAnimationFrame(() => this.chooseItem(item))}
                         >
                             <View style={{ width: 150, alignSelf: "flex-start" }}>
@@ -1699,7 +1695,7 @@ class ChatRoom extends Component {
                                     profile={item}
                                 ></ProfileSimple>
                             </View>
-                        </TouchableWithoutFeedback>
+                        </TouchableOpacity>
                     )}
                 ></BleashupFlatList>
             </View>
