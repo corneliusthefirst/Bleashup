@@ -619,7 +619,7 @@ class ChatRoom extends Component {
     logOutZoomState = (event, gestureState, zoomableViewEventObject) => { };
     sendToOtherActivity(message) {
         return new Promise((resolve, reject) => {
-            Requester.seenMessage(
+            Requester.sendMessage(
                 message,
                 message.from_committee,
                 message.from_activity, true).
@@ -1066,7 +1066,8 @@ class ChatRoom extends Component {
         Toast.show({ text: "copied !", type: "success" });
     }
     options = ["Remove message", "Seen Report", "Copy to clipboard", "Cancel"];
-    showMessageAction(message) {
+    showMessageAction(message,reply) {
+        this.tempReply = reply
         this.setState({
             currentMessage: message,
             showMessageActions: true,
@@ -1424,27 +1425,19 @@ class ChatRoom extends Component {
         setTimeout(() => {
             Vibration.vibrate(40);
             this._textInput.focus();
-            this.replying(this.state.currentMessage);
+            this.replying(this.tempReply);
         }, 50);
     }
     remindThis() { }
     voteShare(vote) {
-        vote = {
-            ...vote,
-            id: uuid.v1(),
-            received: this.received,
-            sent: true,
-            sender: this.sender,
-            created_at: moment().format()
-        }
         console.warn(vote)
-        stores.Messages.replaceNewMessage(this.roomID, vote).then(() => {
+        stores.Messages.replaceMessage(this.roomID, vote).then(() => {
             this.initializeRoom()
-            this.sendToOtherActivity({ ...vote, forwarded: false }).then(() => {
-                this.sendMessage(vote).then(() => {
+            //this.sendToOtherActivity({ ...vote }).then(() => {
+                /*this.sendMessage(vote).then(() => {
 
-                })
-            })
+                })*/
+           // })
         })
 
     }
@@ -1522,6 +1515,7 @@ class ChatRoom extends Component {
     messageList() {
         return (
             <BleashupFlatList
+                keyboardShouldPersistTaps={'handled'}
                 marginTop
                 firstIndex={0}
                 ref="bleashupSectionListOut"
@@ -1573,7 +1567,7 @@ class ChatRoom extends Component {
                                 stores.Messages.messages[this.roomID]
                                 [index >= 0 ? index + 1 : 0]
                             }
-                            showActions={(message) => this.showMessageAction(message)}
+                            showActions={(message,reply) => this.showMessageAction(message,reply)}
                             firebaseRoom={this.props.firebaseRoom}
                             roomName={this.props.roomName}
                             sendMessage={(message) => this.sendTextMessage(message)}
@@ -1903,7 +1897,7 @@ class ChatRoom extends Component {
                         ...rounder(30, colorList.buttonerBackground),
                         position: "absolute",
                         marginRight: 6,
-                        marginTop: 4,
+                        marginTop: 1,
                         alignSelf: "flex-end",
                     }}
                 >

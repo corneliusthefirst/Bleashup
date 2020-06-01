@@ -102,6 +102,7 @@ export default class BleashupFlatList extends Component {
             }}>
                 {this.props.marginTop ? <View style={{ height: 30 }}></View> : null}
                 <FlatList
+                    keyboardShouldPersistTaps={this.props.keyboardShouldPersistTaps}
                     onScrollEndDrag={({ nativeEvent }) => {
                         if (isTooCloseToBottom(nativeEvent)) {
                             this.props.loadMoreFromRemote && this.props.loadMoreFromRemote()

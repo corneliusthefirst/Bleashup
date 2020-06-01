@@ -474,7 +474,7 @@ export default class EventHighlights extends BleashupModal {
             alignSelf: "center",
           }}
         >
-          <ScrollView showsVerticalScrollIndicator={false} ref={"scrollView"}>
+          <ScrollView keyboardShouldPersistTaps={'handled'} showsVerticalScrollIndicator={false} ref={"scrollView"}>
             <View style={{ height: "100%" }}>
             <View style={{width:this.width,alignSelf: 'center',}}>
             <CreateTextInput

@@ -63,7 +63,7 @@ export default class PhotoMessage extends Component {
                     </CacheImages>
                 </TouchableWithoutFeedback>
                 {this.props.message.text ?
-                    <View style={{ marginBottom: "2%", marginTop: '2%', alignSelf: this.props.sender ? "flex-start" : "flex-end", }}>
+                    <View style={{ alignSelf: 'flex-start',margin: '1%', }}>
                         <TextContent tags={this.props.message.tags} handleLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null} pressingIn={() => this.props.pressingIn()} text={this.props.message.text}></TextContent>
                     </View> : null}
 

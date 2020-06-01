@@ -78,11 +78,10 @@ export default class Votes extends BleashupModal {
     });
   }
   componentWillMount() {
-    !this.props.shared &&
-      emitter.on("votes-updated", (committee_id) => {
+   emitter.on("votes-updated", (committee_id) => {
         console.warn(committee_id, "receiving new update");
         if (this.props.committee_id === committee_id) {
-          this.intializeVote();
+          this.props.shared ? this.initializeSharedVote(): this.intializeVote();
         }
       });
     !this.props.shared &&
@@ -198,7 +197,7 @@ export default class Votes extends BleashupModal {
          this.props.startLoader &&  this.props.startLoader();
           VoteRequest.vote(this.props.event_id, vote.event_id, vote.id, index)
             .then((newVote) => {
-              this.intializeVote();
+             this.props.shared ? this.initializeSharedVote() : this.intializeVote();
              this.props.stopLoader && this.props.stopLoader();
               let mess = {
                 ...meess,

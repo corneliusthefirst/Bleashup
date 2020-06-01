@@ -242,9 +242,9 @@ export default class TasksCreation extends BleashupModal {
 
   @autobind
   back() {
-    this.setState({
-      isExtra:false
-    })
+    //this.setState({
+    //  isExtra:false
+   // })
     this.props.onClosed();
   }
   @autobind
@@ -403,11 +403,12 @@ export default class TasksCreation extends BleashupModal {
   }
 
   updateRemind() {
+    this.back();
     let rem = this.state.currentRemind
     rem.period = this.state.date
-    this.props.updateRemind(JSON.stringify(rem));
-    this.resetRemind();
-    this.back();
+      this.props.updateRemind(JSON.stringify(rem));
+    
+    //this.resetRemind();
   }
 
   @autobind
@@ -502,13 +503,7 @@ export default class TasksCreation extends BleashupModal {
   modalBody() {
     let defaultDate = parseInt(moment(this.state.currentRemind.period).format("x"))
     return !this.state.mounted ? null : (
-
-      < KeyboardAvoidingView
-        behavior={Platform.OS == "ios" ? "padding" : "height"}
-        style={{ flex: 1 ,height: '100%' }}
-
-      >
-        <ScrollView showsVerticalScrollIndicator={false}>
+        <ScrollView keyboardShouldPersistTaps={'handled'} showsVerticalScrollIndicator={false}>
           <View style={{ flex: 1, justifyContent: "flex-end",}}>
             <CreationHeader
               back={this.props.onClosed}
@@ -536,7 +531,10 @@ export default class TasksCreation extends BleashupModal {
             </CreationHeader>
 
             <View style={{ marginTop: '3%', }}>
-              <ScrollView ref={"scrollView"} showsVerticalScrollIndicator={false}>
+              <ScrollView 
+               keyboardShouldPersistTaps={'handled'}
+               ref={"scrollView"} 
+               showsVerticalScrollIndicator={false}>
                 {this.props.shouldRestore && this.props.canRestore ? <View style={{ width: '95%', alignItems: 'flex-end', }}><Button style={{ alignSelf: 'flex-end', margin: '2%', marginRight: '2%', }} onPress={() => {
                   this.props.onClosed()
                   this.props.restore(this.props.remind)
@@ -675,7 +673,7 @@ export default class TasksCreation extends BleashupModal {
                       onChange={this.setCurrentLocation.bind(this)}
                     ></CreateTextInput></View>}
                 </View>
-                {this.isEvent() && this.state.ownership && <View style={{ width:'90%',alignSelf: 'center', }}>
+                {this.isEvent() && this.state.ownership && <View pointerEvents={this.state.ownership ? null : 'none'} style={{ width:'90%',alignSelf: 'center', }}>
                   <PickersUpload
                     currentURL={this.state.currentRemind.remind_url || {}}
                     saveMedia={this.saveURL.bind(this)}
@@ -683,7 +681,7 @@ export default class TasksCreation extends BleashupModal {
                     notAudio>
                   </PickersUpload>
                 </View>}
-                {this.isEvent() && <View style={{ width: '90%', alignSelf: 'center', }}><MediaPreviewer
+                {this.isEvent() && <View pointerEvents={this.state.ownership ? null : 'none'} style={{ width: '90%', alignSelf: 'center', }}><MediaPreviewer
                   cleanMedia={() => this.saveURL(request.Remind().remind_url)}
                   height={height / 3.4}
                   defaultPhoto={require("../../../../assets/new-event.png")}
@@ -701,11 +699,16 @@ export default class TasksCreation extends BleashupModal {
                     onChange={(value) => this.onChangedDescription(value)} />
 
                 </View>}
-                {!this.state.creating ? this.state.ownership && <View style={{ margin: '2%', marginBottom: '4%', }}><CreateButton
+                {!this.state.creating ?
+                   this.state.ownership && <View style={{ margin: '2%', marginBottom: '4%', }}>
+                <CreateButton
                   title={!this.props.update ? "Add Remind" : "Update Remind"}
-                  action={() => this.setState({
+                  action={() => {
+                    this.setState({
                     isExtra: true
-                  })}
+                  })
+                  //this.onClosedModal()
+                }}
                 ></CreateButton></View> :
                   <Spinner></Spinner>}
               </ScrollView>
@@ -750,8 +753,6 @@ export default class TasksCreation extends BleashupModal {
             </View>
           </View>
         </ScrollView>
-      </KeyboardAvoidingView>
-
     );
   }
 }

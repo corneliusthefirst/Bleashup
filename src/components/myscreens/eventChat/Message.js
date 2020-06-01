@@ -229,9 +229,8 @@ export default class Message extends Component {
                     ></AudioUploader>
                 );
             case "vote":
-                console.warn("from committee", this.props.message.from_committee)
                 return this.props.message.forwarded ? (
-                    <Votes
+                    <View style={{marginLeft: this.props.sender && '-1%',}}><Votes
                         shared
                         takeVotes={() => {
 
@@ -247,7 +246,7 @@ export default class Message extends Component {
                             item_id: this.props.message.vote.id,
                             event_id: this.props.message.from_activity,
                         }}
-                    ></Votes>
+                    ></Votes></View>
                 ) : (
                         <View style={{marginLeft: '2%',marginTop: '1%',}}><Voter
                             computedMaster={this.props.computedMaster}
@@ -331,28 +330,23 @@ export default class Message extends Component {
     duration = 10;
     longPressDuration = 50;
     pattern = [1000, 0, 0];
-    handleReply() {
-        Vibration.vibrate(this.duration);
-        let color = this.state.sender ? "#DEDEDE" : "#9EEDD3";
+    choseReply(){
         switch (this.props.message.type) {
             case "text":
                 tempMessage = this.props.message;
                 tempMessage.replyer_name = this.props.message.sender.nickname;
-                this.props.replying(tempMessage);
-                break;
+                return tempMessage;
             case "audio":
                 tempMessage = this.props.message;
                 tempMessage.audio = true;
                 tempMessage.replyer_name = this.props.message.sender.nickname;
-                this.props.replying(tempMessage);
-                break;
+                return tempMessage;
             case "video":
                 tempMessage = this.props.message;
                 tempMessage.video = true;
                 tempMessage.sourcer = this.props.message.thumbnailSource;
                 tempMessage.replyer_name = this.props.message.sender.nickname;
-                this.props.replying(tempMessage);
-                break;
+                return tempMessage;
             case "attachement":
                 tempMessage = this.props.message;
                 tempMessage.replyer_name = this.props.message.sender.nickname;
@@ -360,15 +354,13 @@ export default class Message extends Component {
                 let temp = this.props.message.file_name.split(".");
                 let temper = tempMessage;
                 temper.typer = temp[temp.length - 1];
-                this.props.replying(temper);
+                return temper;
                 //tempMessage = temper
-                break;
             case "photo":
                 tempMessage = this.props.message;
                 tempMessage.replyer_name = this.props.message.sender.nickname;
                 tempMessage.sourcer = this.props.message.photo;
-                this.props.replying(tempMessage);
-                break;
+                return tempMessage;
             case "vote":
                 let vote =
                     this.props.message.vote &&
@@ -380,19 +372,24 @@ export default class Message extends Component {
                             ? this.props.votes[this.props.message.vote.index]
                             : find(this.props.votes, { id: this.props.message.vote.id })
                         : null;
-                this.props.replying({
+                return{
                     id: vote.id,
                     type_extern: "Votes",
                     title: `${vote.title} : \n ${vote.description} \n\n ${formVoteOptions(
                         vote
                     )}`,
                     replyer_phone: this.props.user.phone,
-                });
-                break;
+                };
             default:
                 Toast.show({ text: "unable to reply for unsent messages" });
-                break;
+                return null
         }
+    }
+    handleReply() {
+        Vibration.vibrate(this.duration);
+        let color = this.state.sender ? "#DEDEDE" : "#9EEDD3";
+        let reply = this.choseReply()
+       reply && this.props.replying(reply)
     }
     testReactions = [];
     renderMessageReactions(sender) {
@@ -530,7 +527,8 @@ export default class Message extends Component {
     };
     handLongPress() {
         this.replying = false;
-        this.props.showActions(this.props.message);
+        let reply = this.choseReply()
+        this.props.showActions(this.props.message,reply);
         Vibration.vibrate(this.longPressDuration);
     }
     testForImoji(message) {

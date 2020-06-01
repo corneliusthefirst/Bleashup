@@ -348,7 +348,9 @@ export default class VoteCreation extends BleashupModal {
                 behavior={Platform.OS == "ios" ? "padding" : "height"}
                 style={{ flex: 1 }}
             >
-                <ScrollView>
+                <ScrollView 
+                keyboardShouldPersistTaps={'handled'} 
+                showsVerticalScrollIndicator={false}>
                     <View
                         style={{
                             height: "100%",
@@ -388,6 +390,7 @@ export default class VoteCreation extends BleashupModal {
                             }}
                         >
                             <ScrollView
+                                keyboardShouldPersistTaps={'handled'}
                                 showsVerticalScrollIndicator={false}
                                 style={{ height: "100%" }}
                             >
