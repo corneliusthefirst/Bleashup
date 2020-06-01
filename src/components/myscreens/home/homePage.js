@@ -149,7 +149,7 @@ class Home extends Component {
     }).catch(err => console.error('An error occurred', err));
     AppState.addEventListener('change', this._handleAppStateChange);
     NetInfo.isConnected.addEventListener("connectionChange", this.handleConnectionChange);
-    BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this));
+    //BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this));
   }
   animating = false
   launchAnimation() {
@@ -217,7 +217,7 @@ class Home extends Component {
   timeout = null
   componentWillUnmount() {
 
-    BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton.bind(this));
+    //BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton.bind(this));
     this.removeNotificationDisplayedListener()
     Linking.removeEventListener('url', this.handleUrl);
     this.removeNotificationListener()

@@ -128,7 +128,7 @@ export default class ChangeLogs extends Component {
               flexDirection: "row", alignItems: "center"
             }}>
               <View style={{ width: "10%", paddingLeft: "1%" }} >
-                <Icon onPress={() => { this.props.navigatePage("Home") }}
+                <Icon onPress={this.props.goback}
                   style={{ color: colorList.headerIcon }} type={"MaterialIcons"} name={"arrow-back"}></Icon>
               </View>
               <View style={{ width: '70%', paddingLeft: '2%', justifyContent: "center" }}>

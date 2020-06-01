@@ -57,15 +57,15 @@ export default class CreateEventView extends Component {
 
   }
   componentWillMount() {
-    this.BackHandler = BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this));
+    //this.BackHandler = BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this));
 
   }
-  handleBackButton() {
+  /*handleBackButton() {
     this.props.navigation.navigate('Home')
     return true
-  }
+  }*/
   componentWillUnmount() {
-    this.BackHandler.remove()
+    //this.BackHandler.remove()
   }
 
   componentDidMount() {

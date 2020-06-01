@@ -1972,7 +1972,7 @@ class ChatRoom extends Component {
                         }}
                     >
                         <Icon
-                            onPress={() => this.props.navigatePage("Home")}
+                            onPress={this.props.goback}
                             style={{
                                 color: colorList.headerIcon,
                                 marginLeft: "6%",

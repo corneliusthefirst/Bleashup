@@ -197,6 +197,7 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
       activity_name={this.props.activity_name} // name_of_the_other_user
       close={() => this.props.close()}
       open={() => this.props.open()}
+      goback={this.props.goback}
       addMembers={() => this.props.addMembers()}
       removeMembers={() => this.props.removeMembers()}
       leave={() => this.props.leave()}

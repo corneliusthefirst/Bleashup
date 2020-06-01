@@ -256,7 +256,7 @@ export default class EventDetailView extends Component {
               flexDirection: "row", alignItems: "center",
             }}>
               <View style={{ width: "10%", paddingLeft: "3%" }} >
-                <Icon onPress={() => { BeNavigator.goBack() }}
+                <Icon onPress={this.props.goback}
                   style={{ color: colorList.headerIcon, }} type={"MaterialIcons"} name={"arrow-back"}></Icon>
               </View>
 

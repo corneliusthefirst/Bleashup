@@ -643,7 +643,7 @@ export default class Reminds extends Component {
           }}>
 
             <View style={{ width: '10%', paddingLeft: '3%',backgroundColor:"red",height:"100%",justifyContent:"center" }}>
-              <Icon onPress={() => this.props.navigation.navigate("Home")}
+              <Icon onPress={this.props.goback}
                 style={{ color: colorList.headerIcon }}
                 type={"MaterialIcons"} name={"arrow-back"}></Icon>
             </View>
