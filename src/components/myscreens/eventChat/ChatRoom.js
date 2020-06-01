@@ -1096,7 +1096,9 @@ class ChatRoom extends Component {
     }
     formSerachableMembers() {
         stores.TemporalUsersStore.getUsers(
-            this.props.members.map((ele) => ele.phone),
+           this.props.members?
+           this.props.members.map((ele) => ele.phone):
+           [],
             [],
             (users) => {
                 this.searchableMembers = users;
