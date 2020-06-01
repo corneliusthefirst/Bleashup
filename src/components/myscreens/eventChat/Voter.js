@@ -21,7 +21,6 @@ export default class Voter extends Component {
         }
     }
     componentDidMount() {
-        console.warn("mounting a vote",this.props.message.vote.id)
         setTimeout(() => {
             this.setState({
                 totalVotes: (this.props.message.vote && 

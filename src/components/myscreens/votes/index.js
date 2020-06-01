@@ -170,7 +170,6 @@ export default class Votes extends BleashupModal {
   }
   //voteShared(index,message,vote)
   votex(index, message, foreign) {
-    console.warn(message)
     let vote = message.vote;
     const haveIVoted = (vote) => {
       return findIndex(vote.voter, { phone: stores.LoginStore.user.phone }) >= 0;
@@ -356,7 +355,6 @@ export default class Votes extends BleashupModal {
     );
   }
   renderSharedVote() {
-    console.warn("rendering shared vote; shared condition ", this.state.loaded && !this.shareStore.share,this.state.loaded, this.shareStore && this.shareStore.share)
     if(!this.state.loaded || !this.shareStore.share) this.initializeSharedVote()
     return this.state.loaded ? (
       <ShareFrame

@@ -47,7 +47,7 @@ export default class ShareFrame extends Component {
                         paddingRight: '1%',
                     }}
                 >
-                    {this.props.share && this.props.share.event && <TouchableOpacity style={{flexDirection: 'row',}} onPress={() => requestAnimationFrame(this.openDetails.bind(this))}>
+                    {this.props.share && this.props.share.event && this.props.share.event.about && <TouchableOpacity style={{flexDirection: 'row',}} onPress={() => requestAnimationFrame(this.openDetails.bind(this))}>
                         <View style={{marginTop: 'auto',marginBottom: 'auto',}}><Text style={{fontStyle: 'italic',fontSize: 12,}} note>{'from: '}</Text></View>
                         <View><Text style={{ fontWeight: '500',fontSize: 13, }} >{this.props.share.event.about.title}</Text></View><View 
                         style={{

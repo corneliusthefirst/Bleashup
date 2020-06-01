@@ -162,7 +162,7 @@ export default class ShareWithYourContacts extends TabModal {
             <TextInput
               value={this.state.searchString}
               onChange={this.changeSeachString.bind(this)}
-              ///autoFocus
+              autoFocus
               style={{
                 width: "100%",
                 height: "100%",
@@ -221,6 +221,7 @@ export default class ShareWithYourContacts extends TabModal {
           initialRender={7}
           renderPerBatch={20}
           numberOfItems={items.length}
+          keyboardShouldPersistTaps={"always"}
           dataSource={items}
           keyExtractor={(item, index) => item.phone}
           renderItem={(item, index) => (

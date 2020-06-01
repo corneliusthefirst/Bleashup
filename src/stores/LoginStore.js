@@ -116,7 +116,7 @@ export default class LoginStore {
         })
         .then(data => {
           console.warn("here2",data)
-          UserSevices.changeNickname(data.phone, data.password, newName)
+         UserSevices.changeNickname(data.phone, data.password, newName)
             .then(() => {
               console.warn("here3",newName)
               data.nickname = newName;
@@ -130,7 +130,7 @@ export default class LoginStore {
                   resolve();
                 });
             })
-            .catch(error => {
+           .catch(error => {
               reject(error);
            });
         })
