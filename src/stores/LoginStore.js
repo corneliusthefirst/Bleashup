@@ -116,8 +116,8 @@ export default class LoginStore {
         })
         .then(data => {
           console.warn("here2",data)
-         // UserSevices.changeNickname(data.phone, data.password, newName)
-           // .then(() => {
+          UserSevices.changeNickname(data.phone, data.password, newName)
+            .then(() => {
               console.warn("here3",newName)
               data.nickname = newName;
               storage
@@ -129,10 +129,10 @@ export default class LoginStore {
                   this.user = data;
                   resolve();
                 });
-           // })
-           // .catch(error => {
-           //   reject(error);
-          //  });
+            })
+            .catch(error => {
+              reject(error);
+           });
         })
         .catch(error => {
           reject(error);

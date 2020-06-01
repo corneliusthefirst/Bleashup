@@ -90,7 +90,6 @@ class UserHttpServices {
             fetch(`${this.domainame()}user/change_status?phone=${phone}&password=${password}&status=${newStatus}`, {
                 method: "POST"
             }).then(result => {
-                console.warn('4',result);
                 result.json().then(data => {
                     if (data.message) {
                         reject(data.message)

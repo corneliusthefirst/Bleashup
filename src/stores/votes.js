@@ -15,6 +15,7 @@ import moment from "moment";
 import request from '../services/requestObjects';
 import tcpRequest from '../services/tcpRequestData';
 import EventListener from '../services/severEventListener';
+
 export default class votes {
     constructor() {
         //storage.remove(this.saveKey).then(() => {})
@@ -36,7 +37,7 @@ export default class votes {
         }).catch(() => {
             this.votes = {}
         })
-    }
+    } 
     @observable votes = {};
     saver() {
         if (Object.keys(this.votes > 0)) {
