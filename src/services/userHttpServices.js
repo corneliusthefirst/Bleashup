@@ -85,10 +85,12 @@ class UserHttpServices {
     }
     //same return values as the method above
     changeStatus(phone, password, newStatus) {
+        console.warn('3',newStatus)
         return new Promise((resolve, reject) => {
             fetch(`${this.domainame()}user/change_status?phone=${phone}&password=${password}&status=${newStatus}`, {
                 method: "POST"
             }).then(result => {
+                console.warn('4',result);
                 result.json().then(data => {
                     if (data.message) {
                         reject(data.message)

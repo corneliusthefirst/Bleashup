@@ -263,20 +263,8 @@ class Home extends Component {
   };
 
 
-  setMenuRef = (ref) => {
-    this._menu = ref;
-  }
-  hideMenu = () => {
-    this._menu.hide();
-  };
-
-  showMenu = () => {
-    this._menu.show();
-  };
   settings = () => {
-    this.hideMenu();
     BeNavigator.navigateTo("Settings");
-
   };
 
   handleURL = ({ url }) => {
@@ -322,14 +310,8 @@ class Home extends Component {
                 <Icon name="sc-telegram" active={true} type="EvilIcons" style={{ color: colorList.headerIcon, }} onPress={() => this.navigateToInvitations()} />
               </TouchableOpacity>
 
-              <TouchableOpacity style={{ height: 40, alignItems: "center", justifyContent: "center" }} onPress={this.showMenu}>
-                <Menu
-                  ref={this.setMenuRef}
-                  button={<Icon name="gear" active={true} type="EvilIcons" style={{ color: colorList.headerIcon, marginLeft: width / 35 }} onPress={this.showMenu} />}
-                  style={{ backgroundColor: colorList.bodyBackground }}
-                >
-                  <MenuItem onPress={this.settings}>settings</MenuItem>
-                </Menu>
+              <TouchableOpacity style={{ height: 40, alignItems: "center", justifyContent: "center" }} onPress={this.settings} >
+                  <Icon name="gear" active={true} type="EvilIcons" style={{ color: colorList.headerIcon, marginLeft: width / 35 }} onPress={this.settings}/>
               </TouchableOpacity>
 
             </View>
@@ -358,7 +340,28 @@ export default withInAppNotification(Home);
 
 
 
-{/* <Tabs
+{/* 
+    setMenuRef = (ref) => {
+    this._menu = ref;
+  }
+  hideMenu = () => {
+    this._menu.hide();
+  };
+
+  showMenu = () => {
+    this._menu.show();
+  };
+
+                  <Menu
+                  ref={this.setMenuRef}
+                  button={<Icon name="gear" active={true} type="EvilIcons" style={{ color: colorList.headerIcon, marginLeft: width / 35 }} onPress={this.showMenu} />}
+                  style={{ backgroundColor: colorList.bodyBackground }}
+                >
+                  <MenuItem onPress={this.settings}>settings</MenuItem>
+                </Menu>
+  
+  
+  <Tabs
           locked
           tabContainerStyle={{
              backgroundColor: colorList.headerBackground
