@@ -125,7 +125,7 @@ export default class ProfileView extends Component {
 
       
 
-      {this.state.uploading?<Spinner/>:
+      {this.state.uploading ? <Spinner/>:
              <View style={{height:ColorList.containerHeight/3,width:"100%",justifyContent:"center",alignItems:"center"}}>
           
              <TouchableWithoutFeedback onPress={() => {
@@ -137,11 +137,10 @@ export default class ProfileView extends Component {
              </TouchableWithoutFeedback>
  
              <TouchableWithoutFeedback  onPress={this.TakePhotoFromCamera} >
-               <View style={{...shadower(),height:height/13,width:width/6,borderRadius:30,backgroundColor:"#1FABAB",alignItems:"center",justifyContent:"center",alignSelf:"flex-end",marginTop:-height/20,marginRight:width/25,borderWidth:2,borderColor:ColorList.bodyBackground}}>
+               <View style={{...shadower(),height:52,width:52,borderRadius:26,backgroundColor:"#1FABAB",alignItems:"center",justifyContent:"center",alignSelf:"flex-end",marginTop:-height/20,marginRight:width/25,borderWidth:2,borderColor:ColorList.bodyBackground}}>
                  <Icon name="add-a-photo" active={true} type="MaterialIcons" style={{ color:ColorList.bodyBackground }}  onPress={this.TakePhotoFromCamera} />
                </View>
              </TouchableWithoutFeedback>
- 
          </View>
       }
 

@@ -30,7 +30,7 @@ export default class Reminds {
   keyData = {
     key: "reminds",
     data: []
-  };
+  }; 
   @action addReminds(NewRemind) {
     return new Promise((resolve, Reject) => {
       this.readFromStore().then(Reminds => {

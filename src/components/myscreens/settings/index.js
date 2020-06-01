@@ -27,7 +27,10 @@ export default class SettingView extends Component {
   componentDidMount(){
     setTimeout(() => {
       stores.LoginStore.getUser().then(user => {
-        this.setState({userInfo:user,isMount:true}) })
+        if(!user.status) {
+          user.status = "";
+        }
+        this.setState({userInfo:user,isMount:true}) });
       }, 50)
 
   }

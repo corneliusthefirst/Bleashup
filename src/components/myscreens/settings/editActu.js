@@ -3,7 +3,7 @@ import autobind from "autobind-decorator";
 import {
   Icon,Title,Item,Text
 } from "native-base";
-import { Button,View,Dimensions,TouchableWithoutFeedback,Image,FlatList,ScrollView} from "react-native";
+import { Button,View,Dimensions,TouchableWithoutFeedback,Image,ScrollView} from "react-native";
 
 
 import stores from "../../../stores";
@@ -11,7 +11,7 @@ import { functionDeclaration } from "@babel/types";
 import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
 import EditUserModal from "./editUserModal";
 import shadower from "../../../components/shadower";
-//import BleashupFlatList from '../../BleashupFlatList';
+import BleashupFlatList from '../../BleashupFlatList';
 import { filter,map,find} from "lodash";
 import ColorList from '../../colorList';
 
@@ -27,7 +27,7 @@ export default class ActuView extends Component {
       updatetitle:"",
       position:"",
       coverscreen:true,
-      data:null
+      data:{}
 
     }
    
@@ -57,11 +57,9 @@ updateActu = () => {
 }
 
 updateOptions = (item)=>{
-  //console.warn(item.name,item.state,this.state.data);
-  map(this.state.data,(o)=>{o.state =false});
-  this.state.data[parseInt(item.id, 10)].name = item.name;
-  this.state.data[parseInt(item.id, 10)].state = true;
-  this.setState({data:this.state.data});
+  let newdata = this.state.data;
+  map(newdata,(o)=>{o.id === item.id ? o.state = true :o.state = false});
+  this.setState({data:newdata})
   //console.warn(item.name,item.state,this.state.data);
   stores.LoginStore.updateStatus(item.name).then(()=>{
     stores.LoginStore.updateStatusOptions(this.state.data).then(()=>{
@@ -74,6 +72,7 @@ updateOptions = (item)=>{
 edit = ()=>{
   this.props.navigation.navigate("Profile",{"update":true})
 }
+
   render(){
       return(
         
@@ -125,12 +124,14 @@ edit = ()=>{
               </View>
              <View style={{flex:9}}>
               <View style={{flex:1,alignItems:"center"}}>
-               <FlatList
+               <BleashupFlatList
                     showsVerticalScrollIndicator={false}
-                    data={this.state.data}
+                    dataSource={this.state.data}
                     extraData={this.state}
+                    initialRender={10}
+                    numberOfItems={this.state.data.length}
                     keyExtractor={item=>item.id}
-                    renderItem={({ item, index }) => 
+                    renderItem={( item, index ) => (
                       <View style={{flexDirection:"row",height:height/13,width:width,justifyContent:"center"}}>
                           <View style={{width:3*width/4,justifyContent:"center"}}>
                             <Title style={{fontSize: 18,marginLeft:"6%",alignSelf:"flex-start"}} onPress={()=>{this.updateOptions(item)}} >{item.name}</Title>
@@ -138,12 +139,12 @@ edit = ()=>{
                           <View  style={{width:width/4,justifyContent:"center"}}>
                           {item.state==true?<Icon  style={{fontSize: 18,alignSelf:"flex-end",marginRight:"15%"}} name="md-checkmark" type="Ionicons"></Icon>:null}
                           </View>
-                      </View>
+                      </View> )
                       
                     }
 
                 >
-                </FlatList>
+                </BleashupFlatList>
               </View>
             </View>
 
