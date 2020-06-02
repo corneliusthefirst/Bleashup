@@ -66,23 +66,18 @@ export default class LocalTasksCreation extends Component {
         //console.warn("remind is",remind );
 
           this.setState({currentRemind:remind});
-         // this.setState({recurrence:this.state.currentRemind.recurrence.toString()});
-          
-          
           if(remind.period!=""){
             this.setState({date:remind.period});
             this.setState({time:remind.period});
             this.setState({inputDateValue:moment(remind.period).format().split("T")[0]})
             this.setState({inputTimeValue:moment(remind.period).format().split("T")[1].split("+")[0]});
-            //console.warn(this.state.time,this.state.date ,"date and time value");
-            //console.warn(this.state.inputTimeValue,this.state.inputDateValue ,"dateinput and timeinput value");
            }
 
     })
     }
 
     componentDidMount(){
-       this.init();
+      // this.init();
     }
 
     @autobind
@@ -220,19 +215,8 @@ export default class LocalTasksCreation extends Component {
     if(!this.props.update){
     stores.Reminds.updateRecursiveFrequency(NewRemind,false).then(()=>{});
     }
-  }
+  } 
 
-  /* 
-  @autobind
-  onChangedRecurrence(value){
-    this.setState({recurrence:value});
-    this.state.currentRemind.recurrence = parseInt(value);
-    this.setState({currentRemind:this.state.currentRemind});
-    let NewRemind={remind_id:this.state.currentRemind.id,recurrence:this.state.currentRemind.recurrence}
-     if(!this.props.update){
-    stores.Reminds.updateRecurrence(NewRemind,false).then(()=>{});
-     }
-  } */
   
   @autobind
   resetRemind(){
