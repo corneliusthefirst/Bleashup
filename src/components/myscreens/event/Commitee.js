@@ -66,7 +66,7 @@ import { observer } from 'mobx-react';
     }
     delay = 0
     render() {
-        return (this.state.loaded ?
+        return (
             <View style={{ height: "100%", width: "100%"}}>
                 
                 <View style={{ ...bleashupHeaderStyle, height:colorList.headerHeight, width: "100%",flexDirection:"row",justifyContent:"space-between"}}>
@@ -81,7 +81,7 @@ import { observer } from 'mobx-react';
                 </View>      
              </View>
 
-                <View>{this.state.refresh ? null :
+                <View>{!this.state.loaded || this.state.refresh ? null :
                     <View style={{ height: colorList.containerHeight - (colorList.headerHeight + 25), }}>
                         <BleashupFlatList
                         backgroundColor={colorList.bodyBackground}
@@ -121,7 +121,7 @@ import { observer } from 'mobx-react';
                                 stores.CommiteeStore.commitees[this.props.event_id].length:0}
                         /></View>}
                 </View>
-            </View> : <Spinner></Spinner>
+            </View>
         );
     }
 }

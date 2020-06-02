@@ -228,7 +228,7 @@ export default class Message extends Component {
                         replaceMessage={(data) => this.props.replaceAudioMessage(data)}
                     ></AudioUploader>
                 );
-            case "vote":
+            /*case "vote":
                 return this.props.message.forwarded ? (
                     <View style={{marginLeft: this.props.sender && '-1%',}}><Votes
                         shared
@@ -280,7 +280,7 @@ export default class Message extends Component {
                             room={this.props.room}
                             index={data.id}
                         ></Voter></View>
-                    );
+                    );*/
             default:
                 return null;
         }
