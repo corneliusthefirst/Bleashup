@@ -1987,7 +1987,7 @@ class ChatRoom extends Component {
                                     fontWeight: colorList.headerFontweight,
                                 }}
                             >
-                                {this.props.roomName}
+                                {this.roomID === this.props.activity_id?this.props.activity_name:this.props.roomName}
                             </Title>
                             <View style={{ height: 10, position: "absolute" }}>
                                 {this.state.typing && <TypingIndicator></TypingIndicator>}
@@ -2219,7 +2219,7 @@ class ChatRoom extends Component {
                                 maxHeight: 200,
                                 width: "84%",
                             }}
-                            placeholder={"Enter your text!"}
+                            placeholder={"Type your message!"}
                         />
                         <Icon
                             style={{

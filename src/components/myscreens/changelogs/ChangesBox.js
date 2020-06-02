@@ -55,7 +55,7 @@ export default class ChangeBox extends Component {
                                 <View style={{}}><Icon onPress={() => {
                                     this.props.mention({
                                         id: this.props.change.id,
-                                        title: `${this.props.change.title}: \n ${this.props.change.changed}`,
+                                        title: `${this.props.change.changed}`,
                                         type_extern: this.state.changer.nickname,
                                         new_value: this.props.change.new_value,
                                         updated: this.props.change.updated,
@@ -63,7 +63,7 @@ export default class ChangeBox extends Component {
                                         change_date: this.props.change.date,
                                         sourcer: this.state.changer.profile,
                                         replyer_phone: this.state.changer.phone,
-                                        replyer_name: replies.changes 
+                                        replyer_name:  this.props.change.title
 
                                     })
                                 }} style={{ color: '#555756'}} type="Entypo" name="reply"></Icon></View>
