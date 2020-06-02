@@ -68,6 +68,7 @@ export default class events {
         })
         .catch(error => {
           this.setProperties([])
+          resolve()
         });
     });
   }
@@ -76,7 +77,7 @@ export default class events {
   @action createSearchdata(Events) {
     return new Promise((resolve, reject) => {
 
-      Events.forEach((event) => {
+     Events && Events.forEach((event) => {
         if (event.type && event.type == "relation") {
           event.participant.forEach((participant) => {
             if (participant.phone != stores.LoginStore.user.phone) {

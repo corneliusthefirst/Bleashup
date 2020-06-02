@@ -87,6 +87,7 @@ import toTitleCase from "../../../services/toTitle";
 import ShareWithYourContacts from "./ShareWithYourContacts";
 import MessageActions from "./MessageActons";
 import rounder from "../../../services/rounder";
+import replies from './reply_extern';
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenheight = Math.round(Dimensions.get("window").height);
@@ -145,10 +146,10 @@ class ChatRoom extends Component {
                     .getToken()
                     .then((token) => {
                         PrivacyRequester.saveToken(token);
-                        firebase
+                        /*firebase
                             .database()
                             .ref(`notifications_tokens/${this.user.phone}`)
-                            .set(token);
+                            .set(token);*/
                     })
                     .catch((error) => {
                         console.warn(error);
@@ -445,8 +446,8 @@ class ChatRoom extends Component {
         this.fireRef = this.getRef(this.props.firebaseRoom);
         this.setTypingRef(this.props.firebaseRoom);
         this.props.isComment ? (stores.Messages.messages[this.roomID] = []) : null;
-        this.keyboardDidShowSub = Keyboard.addListener('keyboardDidShow', this.handleKeyboardDidShow);
-        this.keyboardDidHideSub = Keyboard.addListener('keyboardDidHide', this.handleKeyboardDidHide);
+        this.keyboardDidShowSub = Keyboard.addListener('keyboardDidShow', this.handleKeyboardDidShow.bind(this));
+        this.keyboardDidHideSub = Keyboard.addListener('keyboardDidHide', this.handleKeyboardDidHide.bind(this));
         //if (this.BackHandler) this.BackHandler.remove();
         //this.BackHandler = BackHandler.addEventListener(
           //  "hardwareBackPress",
@@ -466,7 +467,7 @@ class ChatRoom extends Component {
     }
 
     handleKeyboardDidShow = (event) => {
-        this.adjutRoomDisplay()
+        //this.adjutRoomDisplay()
         this.setState({
             showEmojiInput: false,
             showEmojiInputCaption: false
@@ -1141,11 +1142,11 @@ class ChatRoom extends Component {
                 !this.state.showCaption),
         };
         return (
-            <View style={{ height: "100%", justifyContent: "flex-end" }}>
+            <View style={{ height: "100%", justifyContent: "flex-end", }}>
                 {
                     // **********************Header************************ //
                     this.state.showHeader ? (
-                        <View style={{ height: "7.5%" }}>{this.header()}</View>
+                        <View style={{ height: "7.5%", }}>{this.header()}</View>
                     ) : null
                 }
 
@@ -1159,7 +1160,7 @@ class ChatRoom extends Component {
                                 <Waiter></Waiter>
                             ) : (
                                     <View style={{}}>
-                                        <View style={{ width: "100%", alignSelf: "center" }}>
+                                        <View style={{ width: "100%", alignSelf: "center", }}>
                                             <ScrollView
                                                 onScroll={() => {
                                                     this.adjutRoomDisplay();
@@ -1174,7 +1175,7 @@ class ChatRoom extends Component {
                                             >
                                                 <View
                                                     style={{
-                                                        height: this.state.messageListHeight,
+                                                        maxHeight: this.state.messageListHeight,
                                                         marginBottom: "0.5%",
                                                     }}
                                                 >
@@ -1188,13 +1189,13 @@ class ChatRoom extends Component {
                                                         {this.messageList()}
                                                     </TouchableWithoutFeedback>
                                                 </View>
-                                                <View>
+                                                <View style={{ minHeight: '3%',}}>
                                                     {!this.props.opened || !this.props.generallyMember ? (
                                                         <Text
                                                             style={{ fontStyle: "italic", marginLeft: "3%" }}
                                                             note
                                                         >
-                                                            {"This commitee has been closed for you"}
+                                                            {`This ${replies.committee}  has been closed for you`}
                                                         </Text>
                                                     ) : (
                                                             // ***************** KeyBoard Displayer *****************************
@@ -1537,11 +1538,10 @@ class ChatRoom extends Component {
                         this.delay >= 20 || (item && !item.sent) ? 0 : this.delay + 1;
                     return item ? (
                         <Message
-                            voteShare={this.voteShare.bind(this)}
-                            voteItem={(index, vote) => {
-                                console.warn(vote)
+                            //voteShare={this.voteShare.bind(this)}
+                            /*voteItem={(index, vote) => {
                                 emitter.emit("vote-me", index, vote);
-                            }}
+                            }}*/
                             react={this.reactToMessage.bind(this)}
                             showReacters={this.showReacters.bind(this)}
                             messagelayouts={this.messagelayouts}
@@ -1987,7 +1987,7 @@ class ChatRoom extends Component {
                                     fontWeight: colorList.headerFontweight,
                                 }}
                             >
-                                {this.props.roomName}
+                                {this.roomID === this.props.activity_id?this.props.activity_name:this.props.roomName}
                             </Title>
                             <View style={{ height: 10, position: "absolute" }}>
                                 {this.state.typing && <TypingIndicator></TypingIndicator>}
@@ -2219,7 +2219,7 @@ class ChatRoom extends Component {
                                 maxHeight: 200,
                                 width: "84%",
                             }}
-                            placeholder={"Enter your text!"}
+                            placeholder={"Type your message!"}
                         />
                         <Icon
                             style={{

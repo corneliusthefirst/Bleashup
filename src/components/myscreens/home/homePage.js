@@ -195,11 +195,6 @@ class Home extends Component {
           // firebase.database().ref(`new_message/${phone}/${event.data.room_key}/new_messages`).set([])
         }
       }
-      setTimeout(() => {
-        this.setState({
-          currentTab: 0
-        })
-      }, 300)
       stores.LoginStore.getUser().then((user) => {
         firebase.messaging().requestPermission().then(staus => {
           firebase.messaging().getToken().then(token => {

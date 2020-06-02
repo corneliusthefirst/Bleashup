@@ -115,6 +115,7 @@ export default class BleashupFlatList extends Component {
                     }
                     }
                     getItemLayout={this.props.getItemLayout}
+                    scrollEnabled={!this.props.disableScroll}
                     nestedScrollEnabled={true}
                     numColumns={this.props.numColumns ? this.props.numColumns : 1}
                     horizontal={this.props.horizontal ? this.props.horizontal : false}

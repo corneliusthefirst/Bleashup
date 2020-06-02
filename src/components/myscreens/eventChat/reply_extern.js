@@ -6,6 +6,8 @@ class reply_extern {
     votes = 'Votes'
     vote = 'Vote'
     changes = 'Updates'
+    committees = 'Commitees'
+    committee  = "Committee"
 }
 const replies = new reply_extern()
 export default replies 

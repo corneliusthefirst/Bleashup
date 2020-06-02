@@ -229,6 +229,7 @@ class ServerEventListener {
     });
   }
   sendRequest(data, id) {
+    console.warn(data)
     return new Promise((resolve, reject) => {
       emitter.once("successful_" + id, (response) => {
         console.warn("result response",response)
@@ -242,7 +243,7 @@ class ServerEventListener {
         console.warn("writing socket", data)
         this.socket.write(data)
       } else {
-        this.socket.write = tcpConnect.socket.write
+        //this.socket.write = tcpConnect.socket.write
         reject("not connected to server")
       }
     })

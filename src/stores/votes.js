@@ -40,7 +40,7 @@ export default class votes {
     } 
     @observable votes = {};
     saver() {
-        if (Object.keys(this.votes > 0)) {
+        if (Object.keys(this.votes) > 0) {
             console.warn("persisiting votes")
             this.saveKey.data = this.votes
             storage.save(this.saveKey).then(() => {

@@ -37,8 +37,9 @@ export
     get(privacy) {
         return new Promise((resolve, reject) => {
             this.sendPrivacyUpdate(privacy, get).then(privacy => {
-                console.warn(privacy.data)
                 resolve(privacy.data.map(ele => ele.item))
+            }).catch((e) => {
+                reject(e)
             })
         })
     }
@@ -48,6 +49,8 @@ export
                 stores.Privacy.updateBlocked(blocked).then(() => {
                     resolve(blocked)
                 })
+            }).catch((e) => {
+                reject(e)
             })
         })
     }
@@ -57,6 +60,8 @@ export
                 stores.Privacy.updateMuted(muted).then(() => {
                     resolve(blocked)
                 })
+            }).catch((e) => {
+                reject(e)
             })
         })
     }
