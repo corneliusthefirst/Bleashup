@@ -1159,7 +1159,7 @@ class ChatRoom extends Component {
                             {!this.state.loaded ? (
                                 <Waiter></Waiter>
                             ) : (
-                                    <View style={{}}>
+                                    <View style={{hieght:'100%',justifyContent: 'space-between',}}>
                                         <View style={{ width: "100%", alignSelf: "center", }}>
                                             <ScrollView
                                                 onScroll={() => {
@@ -1175,7 +1175,7 @@ class ChatRoom extends Component {
                                             >
                                                 <View
                                                     style={{
-                                                        maxHeight: this.state.messageListHeight,
+                                                        height: this.state.messageListHeight,
                                                         marginBottom: "0.5%",
                                                     }}
                                                 >
@@ -1189,7 +1189,7 @@ class ChatRoom extends Component {
                                                         {this.messageList()}
                                                     </TouchableWithoutFeedback>
                                                 </View>
-                                                <View style={{ minHeight: '3%',}}>
+                                                <View>
                                                     {!this.props.opened || !this.props.generallyMember ? (
                                                         <Text
                                                             style={{ fontStyle: "italic", marginLeft: "3%" }}
@@ -1478,9 +1478,6 @@ class ChatRoom extends Component {
     fucussTextInput() {
         this._textInput.focus();
     }
-    persistMessageLayout(id, layout) {
-        stores.Messages.setMessageDimessions(this.roomID, id, layout);
-    }
     showReacters(reaction, reacters) {
         this.setState({
             showReacters: true,
@@ -1515,6 +1512,14 @@ class ChatRoom extends Component {
             index: index,
         };
     }
+    storesLayouts(layout,index){
+        stores.Messages.persistMessageDimenssions(
+            layout,
+            index,
+            this.roomID
+        );
+    }
+    layoutsTimeout = {}
     messageList() {
         return (
             <BleashupFlatList
@@ -1547,12 +1552,17 @@ class ChatRoom extends Component {
                             messagelayouts={this.messagelayouts}
                             setCurrentLayout={(layout) => {
                                 this.messagelayouts[item.id] = layout;
-                                // (!item.dimensions || item.dimensions.height < layout.height) &&
-                                stores.Messages.persistMessageDimenssions(
-                                    layout,
-                                    index,
-                                    this.roomID
-                                );
+                                if(this.layoutsTimeout[item.id]){
+                                    clearTimeout(this.layoutsTimeout[item.id])
+                                    this.layoutsTimeout[item.id] = setTimeout(() => {
+                                        this.storesLayouts(layout,index)
+                                    },500)
+                                }else{
+                                    this.layoutsTimeout[item.id] = setTimeout(() => {
+                                        this.storesLayouts(layout,index)
+                                    },500)
+                                }
+                               
                             }}
                             newCount={this.props.newMessages.length}
                             index={index}
@@ -1563,6 +1573,7 @@ class ChatRoom extends Component {
                             activity_id={this.props.activity_id}
                             showProfile={(pro) => this.props.showProfile(pro)}
                             delay={this.delay}
+                            isfirst={index === 0}
                             room={this.roomID}
                             PreviousMessage={
                                 stores.Messages.messages[this.roomID] &&
