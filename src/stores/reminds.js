@@ -57,33 +57,16 @@ setProperty(reminds) {
 }
 
 
-  loadRemindsFromRemote(EventID) {
-    return new Promise((resolve, reject) => {
-            let EID = request.EventID()()
-            EID.remind_id = remindID
-            tcpRequest.getReminds(EID, EventID + '_get_reminds').then(JSONData => {
-              EventListener.sendRequest(JSONData, event_id + "_get_reminds").then(reminds => {
-                    if (reminds.data === 'empty' || !reminds.data) {
-                        resolve(request.Remind())
-                    } else {
-                        resolve(reminds.data)
-                    }
-                }).catch(() => {
-                    resolve([request.Remind()])
-                })
-            })
-    })
-}
 
 loadRemindFromRemote(remindID, simple) {
   return new Promise((resolve, reject) => {
       //if (this.extraReminds[remindID]) {
       //    resolve(this.extraReminds[remindID])
       //} else {
-          let RID = request.RemindID()()
+          let RID = request.RemindID()
           RID.remind_id = remindID
           tcpRequest.getReminds(RID, remindID + '_get_reminds').then(JSONData => {
-            EventListener.sendRequest(JSONData, event_id + "_get_reminds").then(remind => {
+            EventListener.sendRequest(JSONData, RID.event_id + "_get_reminds").then(remind => {
                   if (remind.data === 'empty' || !remind.data) {
                       resolve(request.Remind())
                   } else {
@@ -112,7 +95,7 @@ loadRemind(EventID, remindID) {
                     resolve(remind)
                 } else {
                     if (remindID === request.Remind().id) {
-                        this.addRemind(EventID, request.Remind()).then(() => {
+                        this.addReminds(EventID, request.Remind()).then(() => {
                             resolve(request.Remind())
                         })
                     } else {
@@ -124,7 +107,7 @@ loadRemind(EventID, remindID) {
                 }
             } else {
                 if (remindID === request.Remind().id) {
-                    this.addRemind(EventID, request.Remind()).then(() => {
+                    this.addReminds(EventID, request.Remind()).then(() => {
                         resolve(request.Remind())
                     })
                 } else {
@@ -139,6 +122,29 @@ loadRemind(EventID, remindID) {
 }
 
 
+loadRemindsFromRemote(EventID) {
+  return new Promise((resolve, reject) => {
+          let EID = request.EventID();
+          EID.event_id = EventID;
+          console.warn('here 2');
+          tcpRequest.getReminds(EID, EventID + '_get_reminds').then(JSONData => {
+            console.warn('here 3');
+            EventListener.sendRequest(JSONData, EID.event_id + "_get_reminds").then(reminds => {
+                  console.warn('here 4');
+                  if (reminds.data === 'empty' || !reminds.data) {
+                      console.warn('here 5');
+                      resolve([request.Remind()]);
+                  } else {
+                      console.warn('here 6');
+                      resolve(reminds.data)
+                  }
+              }).catch(() => {
+                  resolve([request.Remind()])
+              })
+          })
+  })
+}
+
 loadReminds(EventID) {
   return new Promise((resolve, reject) => {
       this.readFromStore().then(Reminds => {
@@ -146,6 +152,7 @@ loadReminds(EventID) {
          resolve(Reminds[EventID]);
         }
         else {
+          console.warn('here 1');
           this.loadRemindsFromRemote(EventID).then((remoteReminds) => {
             console.warn("reminds fetched from remote", remoteReminds)
             resolve(remoteReminds)
@@ -156,7 +163,7 @@ loadReminds(EventID) {
 }
 
 
-addRemind(EventID, Remind) {
+addReminds(EventID, Remind) {
     return new Promise((resolve, rejectPromise) => {
         this.readFromStore().then(Reminds => {
             Reminds[EventID] = reject(Reminds[EventID], { id: Remind.id })
@@ -165,17 +172,11 @@ addRemind(EventID, Remind) {
                     ...Remind,
                     index: Reminds[EventID].length
                 }
-                inform ? Reminds[EventID][index].updated_at = moment().format() : null
-                Reminds[EventID][index].updated = inform
-
                 this.setProperty(Reminds)
                 resolve()
             }
             else {
                 Reminds[EventID] = [{ ...Remind, index: 0 }]
-
-                inform ? Reminds[EventID][index].updated_at = moment().format() : null
-                Reminds[EventID][index].updated = inform
 
                 this.setProperty(Reminds)
                 resolve()
@@ -190,10 +191,7 @@ removeRemind(EventID, RemindID) {
         this.readFromStore().then(Reminds => {
             let remind = find(Reminds[EventID], { id: RemindID })
             Reminds[EventID] = reject(Reminds[EventID], { id: RemindID });
-            RemindId === "newRemindId" ? Reminds[EventID].unshift(request.Remind()) : null
-
-            inform ? Reminds[EventID][index].updated_at = moment().format() : null
-            Reminds[EventID][index].updated = inform
+            RemindID === "newRemindId" ? Reminds[EventID].unshift(request.Remind()) : null
 
             this.setProperty(Reminds)
             resolve(remind);
@@ -323,7 +321,7 @@ addMembers(EventID, Remind) {
   return new Promise((resolve, rejectPromise) => {
       this.readFromStore().then(Reminds => {
           let index = findIndex(Reminds[EventID], { id: NewRemind.remind_id })
-          Reminds = Reminds[EventID][index];
+          //Reminds = Reminds[EventID][index];
 
           if (Reminds[EventID] && Reminds[EventID][index] && Reminds[EventID][index].length > 0) {
               Reminds[EventID][index].members = Remind.members.concat(Reminds[EventID][index].members)

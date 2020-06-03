@@ -67,6 +67,7 @@ export default class TasksCreation extends BleashupModal {
   }
   @autobind
   init() {
+    console.warn('here we are');
     //stores.Reminds.removeRemind("newRemindId").then()
     this.props.remind ? setTimeout(() => {
       let remind = this.props.remind
@@ -81,9 +82,10 @@ export default class TasksCreation extends BleashupModal {
         date: remind && remind.period ? moment(remind.period).format() : moment().format(),
         title: remind && remind.period ? moment(remind.period).format() : moment().format()
       });
-    }) : stores.Reminds.loadRemind(this.props.remind_id ?
-      this.props.remind_id : "newRemindId").then(rem => {
-        if (!rem) stores.Reminds.addReminds(request.Remind())
+    }) : stores.Reminds.loadRemind(this.props.event_id,this.props.remind_id ?this.props.remind_id : "newRemindId").then(rem => {
+      console.warn('here we are 2');
+        //if (!rem) stores.Reminds.addReminds(this.props.event_id,request.Remind()).then(()=>{})
+
         console.warn("remind from render ....", rem)
         let remind = rem ? rem : request.Remind()
         this.setState({
@@ -381,7 +383,7 @@ export default class TasksCreation extends BleashupModal {
         this.props.startLoader()
         this.props.RemindRequest.CreateRemind(newRemind,this.props.event.about.title).then(() => {
           this.resetRemind();
-          stores.Reminds.removeRemind("newRemindId").then(() => { });
+          stores.Reminds.removeRemind(this.props.event_id,"newRemindId").then(() => { });
           this.setState({
             creating: false,
             currentMembers: []

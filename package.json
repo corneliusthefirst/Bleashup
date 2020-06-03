@@ -103,6 +103,7 @@
     "jest": "24.5.0",
     "jetifier": "^1.6.3",
     "metro-react-native-babel-preset": "^0.53.1",
+    "prettier": "2.0.5",
     "react-native-bundle-visualizer": "^1.4.2",
     "react-test-renderer": "16.8.3",
     "rn-nodeify": "^10.0.1"
