@@ -55,7 +55,7 @@ export default class ChangeBox extends Component {
                                 <View style={{}}><Icon onPress={() => {
                                     this.props.mention({
                                         id: this.props.change.id,
-                                        title: `${this.props.change.changed}`,
+                                        title: `${this.props.change.changed} :\n ${this.props.change.new_value.new_value}`,
                                         type_extern: this.state.changer.nickname,
                                         new_value: this.props.change.new_value,
                                         updated: this.props.change.updated,

@@ -11,7 +11,9 @@ import { getcurrentDateIntervalsNoneAsync, getCurrentDateIntervalNonAsync } from
 import { format } from "../services/recurrenceConfigs";
 //import { mapper } from '../services/mapper';
 export default class Reminds {
+  
   constructor() {
+    //storage.remove(this.saveKey)
     this.initilizeReminds()
     this.saveInterval = setInterval(() => {
         this.previousSaveTime !== this.currentSaveTime ?
@@ -36,7 +38,7 @@ initilizeReminds() {
 @observable Reminds = {};
 
 saver() {
-    if (Object.keys(this.Reminds > 0)) {
+    if (Object.keys(this.Reminds).length > 0) {
         console.warn("persisiting reminds")
         this.saveKey.data = this.Reminds
         storage.save(this.saveKey).then(() => {
@@ -65,13 +67,13 @@ loadRemindFromRemote(remindID, simple) {
       //} else {
           let RID = request.RemindID()
           RID.remind_id = remindID
-          tcpRequest.getReminds(RID, remindID + '_get_reminds').then(JSONData => {
-            EventListener.sendRequest(JSONData, RID.event_id + "_get_reminds").then(remind => {
+          tcpRequest.getRemind(RID, remindID + '_get_reminds').then(JSONData => {
+            EventListener.sendRequest(JSONData, remindID + "_get_reminds").then(remind => {
                   if (remind.data === 'empty' || !remind.data) {
                       resolve(request.Remind())
                   } else {
                       this.extraReminds[remindID] = remind.data
-                      simple ? resolve(remind.data) : this.addRemind(EventID, remind.data).then(() => {
+                      simple ? resolve(remind.data) : this.addReminds(EventID, remind.data).then(() => {
                           resolve(remind.data)
                       })
                   }
@@ -100,7 +102,6 @@ loadRemind(EventID, remindID) {
                         })
                     } else {
                         this.loadRemindFromRemote(remindID).then((remoteRemind) => {
-                            console.warn("reminds fetched from remote", remoteRemind)
                             resolve(remoteRemind)
                         })
                     }
@@ -146,16 +147,16 @@ loadRemindsFromRemote(EventID) {
 }
 
 loadReminds(EventID) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve, rejec) => {
       this.readFromStore().then(Reminds => {
         if (Reminds[EventID] && Reminds[EventID].length > 0) {
-         resolve(Reminds[EventID]);
+         resolve(reject(Reminds[EventID],{id:request.Remind().id}));
         }
         else {
           console.warn('here 1');
           this.loadRemindsFromRemote(EventID).then((remoteReminds) => {
             console.warn("reminds fetched from remote", remoteReminds)
-            resolve(remoteReminds)
+            resolve(reject(remoteReminds,{id:request.Remind().id}))
           })
         }
       })
@@ -177,7 +178,6 @@ addReminds(EventID, Remind) {
             }
             else {
                 Reminds[EventID] = [{ ...Remind, index: 0 }]
-
                 this.setProperty(Reminds)
                 resolve()
             }

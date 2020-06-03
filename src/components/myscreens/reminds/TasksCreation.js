@@ -381,7 +381,9 @@ export default class TasksCreation extends BleashupModal {
         newRemind.members = this.state.currentMembers
         this.props.onClosed()
         this.props.startLoader()
-        this.props.RemindRequest.CreateRemind(newRemind,this.props.event.about.title).then(() => {
+        this.props.RemindRequest.CreateRemind(newRemind,
+          this.props.event.about.title).then(() => {
+          this.props.stopLoader()
           this.resetRemind();
           stores.Reminds.removeRemind(this.props.event_id,"newRemindId").then(() => { });
           this.setState({
@@ -389,7 +391,6 @@ export default class TasksCreation extends BleashupModal {
             currentMembers: []
           })
           this.props.updateData(newRemind)
-          this.props.stopLoader()
         }).catch(() => {
           this.props.stopLoader()
           this.setState({

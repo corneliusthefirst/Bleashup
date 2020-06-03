@@ -19,6 +19,7 @@ export default class CreateTextInput extends Component{
 
                 <Input
                 disabled={this.props.disabled}
+                autoCorrect={true}
                 selectTextOnFocus
                     style={{
                         width: "100%",

@@ -159,7 +159,7 @@ export default class Votes extends BleashupModal {
           this.props.stopLoader();
           stores.Votes.clearVoteCreation(this.props.event_id).then(() => { });
           this.intializeVote();
-          this.props.takeVote(newVote);
+          //this.props.takeVote(newVote);
         })
         .catch((er) => {
           this.props.stopLoader();
