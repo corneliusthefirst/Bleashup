@@ -62,10 +62,9 @@ export default class Message extends Component {
                 !isDiff &&
                     this.props.PreviousMessage &&
                     this.props.PreviousMessage.type !== "date_separator" &&
-                    this.props.message &&
-                    moment(this.props.message.created_at).format("X") -
-                    moment(this.props.PreviousMessage.created_at).format("X") <
-                    1
+                    moment(this.props.message.created_at).format("x") -
+                    moment(this.props.PreviousMessage.created_at).format("x") <
+                    1000*60
                     ? ""
                     : moment(this.props.message.created_at).format("HH:mm"),
             creator:
@@ -456,7 +455,7 @@ export default class Message extends Component {
     }
     prevVote = null;
     shouldComponentUpdate(nextProps, nextState, nextContext) {
-        let peVote = this.prevVote
+       /* let peVote = this.prevVote
             ? JSON.parse(this.prevVote)
             : this.props.votes &&
                 this.props.votes.length > 0 &&
@@ -481,13 +480,14 @@ export default class Message extends Component {
         let votePeriod = peVote && newVote && peVote.period !== newVote.period;
         if (voter || votePeriod) {
             this.prevVote = JSON.stringify(newVote);
-        }
+        }*/
         return (
             this.props.message.sent !== nextProps.message.sent ||
             this.props.received !== nextProps.received ||
-            voter ||
-            votePeriod ||
+            //voter ||
+            //votePeriod ||
             this.state.loaded !== nextState.loaded ||
+            this.props.isfirst !== nextProps.isfirst ||
             (this.props.messagelayouts &&
                 this.props.messagelayouts[this.props.message.id] !==
                 nextProps.messagelayouts[nextProps.message.id]) ||
@@ -496,10 +496,6 @@ export default class Message extends Component {
             this.state.refresh !== nextState.refresh ||
             this.state.isReacting !== nextState.isReacting
         );
-    }
-    previousMessage = JSON.stringify(this.props.message);
-    componentDidUpdate(previousProsps, prevState) {
-        this.previousMessage = JSON.stringify(this.props.message);
     }
     refresh() {
         this.setState({
@@ -806,7 +802,7 @@ export default class Message extends Component {
                                                         }}
                                                     >
                                                         <View>
-                                                            {!this.state.sender ? (
+                                                            {!this.state.sender && this.props.isfirst ? (
                                                                 this.props.message.sent ? (
                                                                     this.props.received ? (
                                                                         <Icon
@@ -828,7 +824,7 @@ export default class Message extends Component {
                                                                             name="progress-check"
                                                                         ></Icon>
                                                                     )
-                                                            ) : null}
+                                                                ) : null}
                                                         </View>
                                                         {this.state.time ? (
                                                             <View style={{ marginRight: "4%" }}>
