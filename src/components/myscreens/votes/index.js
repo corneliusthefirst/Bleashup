@@ -114,7 +114,7 @@ export default class Votes extends BleashupModal {
         loaded: status ? false : true,
         vote_id: request.Vote().id,
       });
-    this.props.takeVotes(votes);
+    //this.props.takeVotes(votes);
   }
   onOpenModal() {
     setTimeout(() => {
@@ -203,15 +203,15 @@ export default class Votes extends BleashupModal {
                 vote: this.props.shared ? vote : newVote,
               };
               console.warn(mess)
-              this.props.voteItem(mess);
+              //this.props.voteItem(mess);
             })
-            /*.catch(() => {
+            .catch(() => {
              this.props.stopLoader && this.props.stopLoader();
               Toast.show({
                 text: "unable to perform this request",
                 duration: 4000,
               });
-            });*/
+            });
         } else {
           sayAppBusy();
         }
@@ -224,7 +224,7 @@ export default class Votes extends BleashupModal {
   }
   voteItem(message) {
     this.intializeVote();
-    this.props.voteItem(message);
+    //this.props.voteItem(message);
   }
   updateVote(vote) {
     this.setState({

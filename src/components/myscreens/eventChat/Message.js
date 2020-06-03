@@ -827,7 +827,7 @@ export default class Message extends Component {
                                                                 ) : null}
                                                         </View>
                                                         {this.state.time ? (
-                                                            <View style={{ marginRight: "4%" }}>
+                                                            <View style={{ marginRight: "2%" }}>
                                                                 <Text note>{this.state.time}</Text>
                                                             </View>
                                                         ) : null}
