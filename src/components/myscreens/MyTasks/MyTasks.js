@@ -11,7 +11,7 @@ import autobind from "autobind-decorator";
 import CacheImages from "../../CacheImages";
 import MyTasksCard from "./MyTasksCard"
 import PhotoEnlargeModal from "../invitations/components/PhotoEnlargeModal";
-import  stores from '../../../stores/index';
+import  stores from '../../../stores/index'; 
 import {observer} from 'mobx-react'
 import BleashupFlatList from '../../BleashupFlatList';
 import CreateEvent from '../event/createEvent/CreateEvent';
@@ -51,7 +51,7 @@ componentDidMount(){
 AddRemind(){
   //this.props.navigation.navigate("LocalLocalTasksCreation",{localRemindData:this.state.localRemindData,updateData:this.updateData});
   this.setState({RemindCreationState:true})
-}
+} 
 
 
 

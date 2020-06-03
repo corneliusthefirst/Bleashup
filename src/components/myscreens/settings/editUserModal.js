@@ -72,10 +72,11 @@ export default class EditUserModal extends Component {
       else if(this.props.type == "actu"){
         map(this.props.data,(o)=>{o.state =false});
         stores.LoginStore.updateStatus(this.state.value).then(()=>{
-          stores.LoginStore.updateStatusOptions(this.props.data).then(()=>{})
-          this.props.parent.init();
-          this.props.onClosed();
-          });}  
+          stores.LoginStore.updateStatusOptions(this.props.data).then(()=>{
+            this.props.parent.init();
+            this.props.onClosed();
+          })
+        });}  
       }
 
       cancel = ()=>{
@@ -96,6 +97,7 @@ export default class EditUserModal extends Component {
             }}
             position={this.props.position}
             coverScreen={this.props.coverscreen}
+            backdropPressToClose={false}
            >
              {this.state.isMount?
           <View style={{flexDirection:"column",width:"90%",margin:"5%"}}>

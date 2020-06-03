@@ -31,7 +31,7 @@ class Requester {
                 Remind.event_id + '_currence').then(JSONData => {
                     EventListener.sendRequest(JSONData,
                         Remind.event_id + '_currence').then((response) => {
-                            stores.Reminds.addReminds(Remind).then((res) => {
+                            stores.Reminds.addReminds(Remind.event_id,Remind).then((res) => {
                                 stores.Events.addRemind(Remind.event_id, Remind.id).then(() => {
                                     let Change = {
                                         id: uuid.v1(),

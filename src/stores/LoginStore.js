@@ -118,7 +118,6 @@ export default class LoginStore {
           console.warn("here2",data)
          UserSevices.changeNickname(data.phone, data.password, newName)
             .then(() => {
-              console.warn("here3",newName)
               data.nickname = newName;
               storage
                 .save({

@@ -113,6 +113,7 @@ export default class CreateEventView extends Component {
             this.setState({
               currentEvent: request.Event(),
               title:"",
+              photo:"",
               creating: false
             })
             this.navigateToActivity(res)

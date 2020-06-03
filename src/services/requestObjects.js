@@ -97,6 +97,7 @@ class Request {
         }
     }
     Remind() {
+
         return {
             id: 'newRemindId',
             event_id: "",

@@ -15,6 +15,7 @@ import moment from "moment";
 import request from '../services/requestObjects';
 import tcpRequest from '../services/tcpRequestData';
 import EventListener from '../services/severEventListener';
+
 export default class votes {
     constructor() {
         //storage.remove(this.saveKey).then(() => {})
@@ -36,7 +37,7 @@ export default class votes {
         }).catch(() => {
             this.votes = {}
         })
-    }
+    } 
     @observable votes = {};
     saver() {
         if (Object.keys(this.votes) > 0) {
@@ -51,11 +52,12 @@ export default class votes {
         key: "votes",
         data: {}
     };
-    exraVotes = {}
+    extraVotes = {}
+
     fetchVoteFromRemote(roomID, voteID, simple) {
         return new Promise((resolve, reject) => {
-            //if (this.exraVotes[voteID]) {
-            //    resolve(this.exraVotes[voteID])
+            //if (this.extraVotes[voteID]) {
+            //    resolve(this.extraVotes[voteID])
             //} else {
                 let Vid = request.VID()
                 Vid.vote_id = voteID
@@ -64,7 +66,7 @@ export default class votes {
                         if (vote.data === 'empty' || !vote.data) {
                             resolve(request.Vote())
                         } else {
-                            this.exraVotes[voteID] = vote.data
+                            this.extraVotes[voteID] = vote.data
                             simple ? resolve(vote.data) : this.addVote(roomID, vote.data).then(() => {
                                 resolve(vote.data)
                             })

@@ -32,7 +32,7 @@ export default class CreateEvent extends Component {
      if(!event){
       event =  request.Event();
       event.id = "newEventId";
-        stores.Events.addEvent(event).then(()=>{});
+      stores.Events.addEvent(event).then(()=>{});
 
      }
      this.props.navigation.navigate("CreateEventView");
@@ -48,18 +48,18 @@ export default class CreateEvent extends Component {
   return new Promise((resolve, rejectPromise) => {
 
   stores.Reminds.readFromStore().then(Reminds =>{
-    //console.warn("remind are",Reminds);
-    let remind = find(Reminds,{ id:"newRemindId" }); 
+    console.warn("remind are",Reminds);
+    //let remind = find(Reminds,{ id:"newRemindId" }); 
     //console.warn("remind it is",remind);
 
-    if(!remind){
+   /* if(!remind){
       //console.warn("here")
       remind =  request.Remind();
       remind.id = "newRemindId";
       stores.Reminds.addReminds(remind).then(()=>{});
-    }
+    }*/
    
-    this.props.navigation.navigate("MyTasksView");
+    //this.props.navigation.navigate("MyTasksView");
    })
 
   })
