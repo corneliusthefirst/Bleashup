@@ -26,7 +26,8 @@ export default class TitleView extends Component {
             this.props.Event.id,
             stores.Session.SessionStore.phone).then(status => {
                 if (status) {
-                    BeNavigator.navigateToActivity("EventDetails", find(stores.Events.events, { id: this.props.Event.id }))
+                    BeNavigator.navigateToActivity("EventChat", 
+                    find(stores.Events.events, { id: this.props.Event.id }))
                 } else {
                     this.props.openDetail && this.props.openDetail()
                 }

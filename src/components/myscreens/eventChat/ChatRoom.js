@@ -450,9 +450,9 @@ class ChatRoom extends Component {
         this.keyboardDidHideSub = Keyboard.addListener('keyboardDidHide', this.handleKeyboardDidHide.bind(this));
         //if (this.BackHandler) this.BackHandler.remove();
         //this.BackHandler = BackHandler.addEventListener(
-          //  "hardwareBackPress",
-          //  this.handleBackButton.bind(this)
-      //  );
+        //  "hardwareBackPress",
+        //  this.handleBackButton.bind(this)
+        //  );
         Orientation.lockToPortrait();
     }
     componentWillUnmount() {
@@ -1067,7 +1067,7 @@ class ChatRoom extends Component {
         Toast.show({ text: "copied !", type: "success" });
     }
     options = ["Remove message", "Seen Report", "Copy to clipboard", "Cancel"];
-    showMessageAction(message,reply) {
+    showMessageAction(message, reply) {
         this.tempReply = reply
         this.setState({
             currentMessage: message,
@@ -1097,9 +1097,9 @@ class ChatRoom extends Component {
     }
     formSerachableMembers() {
         stores.TemporalUsersStore.getUsers(
-           this.props.members?
-           this.props.members.map((ele) => ele.phone):
-           [],
+            this.props.members ?
+                this.props.members.map((ele) => ele.phone) :
+                [],
             [],
             (users) => {
                 this.searchableMembers = users;
@@ -1159,17 +1159,16 @@ class ChatRoom extends Component {
                             {!this.state.loaded ? (
                                 <Waiter></Waiter>
                             ) : (
-                                    <View style={{hieght:'100%',justifyContent: 'space-between',}}>
+                                    <View style={{ hieght: '100%', justifyContent: 'space-between', }}>
                                         <View style={{ width: "100%", alignSelf: "center", }}>
                                             <ScrollView
                                                 onScroll={() => {
                                                     this.adjutRoomDisplay();
                                                 }}
-                                                inverted={false}
+                                                inverted={true}
                                                 keyboardShouldPersistTaps={"always"}
                                                 showsVerticalScrollIndicator={false}
                                                 scrollEnabled={false}
-                                                inverted
                                                 nestedScrollEnabled
                                                 ref="scrollViewRef"
                                             >
@@ -1437,10 +1436,10 @@ class ChatRoom extends Component {
         stores.Messages.replaceMessage(this.roomID, vote).then(() => {
             this.initializeRoom()
             //this.sendToOtherActivity({ ...vote }).then(() => {
-                /*this.sendMessage(vote).then(() => {
+            /*this.sendMessage(vote).then(() => {
 
-                })*/
-           // })
+            })*/
+            // })
         })
 
     }
@@ -1512,7 +1511,7 @@ class ChatRoom extends Component {
             index: index,
         };
     }
-    storesLayouts(layout,index){
+    storesLayouts(layout, index) {
         stores.Messages.persistMessageDimenssions(
             layout,
             index,
@@ -1552,17 +1551,17 @@ class ChatRoom extends Component {
                             messagelayouts={this.messagelayouts}
                             setCurrentLayout={(layout) => {
                                 this.messagelayouts[item.id] = layout;
-                                if(this.layoutsTimeout[item.id]){
+                                if (this.layoutsTimeout[item.id]) {
                                     clearTimeout(this.layoutsTimeout[item.id])
                                     this.layoutsTimeout[item.id] = setTimeout(() => {
-                                        this.storesLayouts(layout,index)
-                                    },500)
-                                }else{
+                                        this.storesLayouts(layout, index)
+                                    }, 500)
+                                } else {
                                     this.layoutsTimeout[item.id] = setTimeout(() => {
-                                        this.storesLayouts(layout,index)
-                                    },500)
+                                        this.storesLayouts(layout, index)
+                                    }, 500)
                                 }
-                               
+
                             }}
                             newCount={this.props.newMessages.length}
                             index={index}
@@ -1580,7 +1579,7 @@ class ChatRoom extends Component {
                                 stores.Messages.messages[this.roomID]
                                 [index >= 0 ? index + 1 : 0]
                             }
-                            showActions={(message,reply) => this.showMessageAction(message,reply)}
+                            showActions={(message, reply) => this.showMessageAction(message, reply)}
                             firebaseRoom={this.props.firebaseRoom}
                             roomName={this.props.roomName}
                             sendMessage={(message) => this.sendTextMessage(message)}
@@ -1792,6 +1791,7 @@ class ChatRoom extends Component {
                                 this.audioRecorder()
                             }
                             <TextInput
+                                autoCorrect={true}
                                 value={this.state.textValue}
                                 onChange={(event) => this._onChange(event)}
                                 placeholder={"Your Message"}
@@ -1998,7 +1998,7 @@ class ChatRoom extends Component {
                                     fontWeight: colorList.headerFontweight,
                                 }}
                             >
-                                {this.roomID === this.props.activity_id?this.props.activity_name:this.props.roomName}
+                                {this.roomID === this.props.activity_id ? this.props.activity_name : this.props.roomName}
                             </Title>
                             <View style={{ height: 10, position: "absolute" }}>
                                 {this.state.typing && <TypingIndicator></TypingIndicator>}
@@ -2055,6 +2055,7 @@ class ChatRoom extends Component {
                                 roomID={this.props.firebaseRoom}
                                 public={this.props.public_state}
                                 opened={this.props.opened}
+                                settings={this.props.activity_id === this.roomID ? this.props.openSettings:this.props.editCommitteeName}
                             ></ChatroomMenu>
                         </View>
                         <View
@@ -2216,6 +2217,7 @@ class ChatRoom extends Component {
                             style={{ color: "#0A4E52", marginTop: "3%", width: "8%" }}
                         ></Icon>
                         <TextInput
+                            autoCorrect={true}
                             multiline={true}
                             enableScrollToCaret
                             ref={(r) => {

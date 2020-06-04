@@ -48,7 +48,7 @@ navigateToEventDetails = (item) => {
   let event = find(stores.Events.events , { id:item.id});
   stores.Events.isParticipant(item.id, stores.Session.SessionStore.phone).then(status => {
       if (status) {
-       BeNavigator.pushActivity(event)
+       BeNavigator.pushActivity(event,"EventChat")
       } else {
          this.openDetails(event);
       }

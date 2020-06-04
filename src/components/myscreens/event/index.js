@@ -144,6 +144,9 @@ export default class Event extends Component {
       mounted: true,
     });
   }
+  editCommiteeName(){
+
+  }
   currentWidth = 0.5;
   isOpen = false;
   renderMenu(NewMessages) {
@@ -229,6 +232,8 @@ export default class Event extends Component {
       case "EventChat":
         return (
           <EventChat
+            editCommitteeName={() => this.editCommiteeName()}
+            openSettings={() => this.openSettingsModal()}
             activity_id={this.event.id}
             activity_name={this.event.about.title}
             room_type={"activity"} //!! 'relation' if it's a relation
@@ -663,29 +668,10 @@ export default class Event extends Component {
       this.handleActivityUpdates(change, newValue);
     });
     this.initializeMaster();
-    if (this.backHandler) this.backHandler.remove();
-    this.backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      this.handleBackButton.bind(this)
-    );
   }
   user = null;
   isOpen = true;
   event = this.props.navigation.getParam("Event");
-  handleBackButton() {
-    console.warn("handling backpress from simple activity");
-    if (!this.isOpen) {
-      this.isOpen = true;
-      this.setState({
-        isOpen: true,
-        members: [],
-      });
-      return true;
-    } else {
-      this.goback();
-      return true;
-    }
-  }
   componentDidMount() {
     if (!this.event.calendared && this.event.period) {
       this.addToCalendar();
@@ -744,7 +730,6 @@ export default class Event extends Component {
     GState.reply = null;
     emitter.off(`event_updated_${this.event.id}`);
     GState.currentCommitee = null;
-    this.backHandler.remove();
   }
   componentWillUnmount() {
     this.unInitialize();

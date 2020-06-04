@@ -37,17 +37,6 @@ export default class ActionsView extends Component {
                         <ActionsMenu
                             openSettings={this.props.openSettingsModal}
                             ref={'ActionMenu'}
-                            /*hideMenu={this.props.hideMenu}
-                            sync={this.props.handleSync}
-                            period={this.props.period}
-                            calendared={this.props.calendared}
-                            settings={this.props.openSettingsModal}
-                            ckeckMyActivty={() => this.props.ShowMyActivity(stores.LoginStore.user.phone)}
-                            event_type={this.props.event_type}
-                            inviteContacts={this.inviteContacts.bind(this)}
-                            publish={this.props.publish}
-                            leave={this.props.leaveActivity}
-                            members={this.props.showMembers}*/
                         ></ActionsMenu>
                     </View>
                 }

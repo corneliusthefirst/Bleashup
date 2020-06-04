@@ -91,13 +91,14 @@ export default class ChangeLogs extends Component {
 
         <View style={{ flex: 1, width: "100%" }} >
           <BleashupTimeLine
+            renderCircle={() => <View></View>}
             circleSize={20}
             showPhoto={url => this.props.openPhoto(url)}
             master={this.props.master}
             mention={(data) => this.props.mention(data)}
             restore={(data) => this.props.restore(data)}
             circleColor='white'
-            lineColor='#1FABAB'
+            lineColor= {colorList.indicatorColor}
             timeContainerStyle={{ minWidth: 52, backgroundColor: colorList.bodyBackground, opacity: .8 }}
             timeStyle={{
               marginLeft: "4%",
@@ -105,7 +106,7 @@ export default class ChangeLogs extends Component {
               backgroundColor: colorList.bodyBackground,
               padding: 4,
               borderRadius: 6,
-              color: "#1FABAB",
+              color: colorList.bodyIcon,
               //borderWidth: .7,
               //borderColor: "#1FABAB",
             }}
@@ -137,13 +138,14 @@ export default class ChangeLogs extends Component {
 
               <View style={{ width: '10%', paddingRight: '3%' }}>
                 <Icon
-                  name={"gear"} type="EvilIcons" style={{ color: colorList.headerIcon, alignSelf: 'center', }} />
+                  name={"gear"} type="EvilIcons" style={{ color: colorList.headerIcon, alignSelf: 'flex-end', }} />
               </View>
 
               <View style={{ width: '10%', paddingLeft: '1%', }}>
-                <Icon onPress={() => {
+                {/* <Icon onPress={() => {
                   this.props.openMenu()
                 }} style={{ color: colorList.headerIcon }} type={"Ionicons"} name={"ios-menu"}></Icon>
+              */}
               </View>
 
             </View>

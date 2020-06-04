@@ -65,7 +65,7 @@ export default class RouteView extends Component {
                     <View style={{ display: 'flex', width: "100%", marginTop: '10%', }}>
                         <Icon type="AntDesign" style={{
                             alignSelf: 'center', fontSize: this.fontSize, color: ColorList.bodyIcon
-                        }} name="appstore-o"></Icon>
+                        }} name="staro"></Icon>
                         {/*<Text style={{ padding: "1%", color: this.props.currentPage == "EventDetails" ? "#0A4E52" : "gray", width: "100%" }}>Details</Text>*/}
                     </View>
                 </TouchableOpacity>
