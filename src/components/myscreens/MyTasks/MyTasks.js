@@ -45,7 +45,6 @@ import { find, findIndex, uniqBy, reject, filter } from "lodash";
 import ColorList from "../../colorList";
 import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
 import AccordionComponent from "./AccordionModule";
-//const MyTasksData = stores.Reminds.MyTasksData
 
 const dataArray = [
   { title: "First Element", content: "Lorem ipsum dolor sit amet" },

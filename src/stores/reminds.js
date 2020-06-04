@@ -15,9 +15,8 @@ import { format } from "../services/recurrenceConfigs";
 //import { mapper } from '../services/mapper';
 
 export default class Reminds {
-  
   constructor() {
-    //storage.remove(this.saveKey).then(() => {})
+    //storage.remove(this.saveKey).then(() => {});
     this.initializeReminds();
     this.saveInterval = setInterval(() => {
       this.previousSaveTime !== this.currentSaveTime ? this.saver() : null;
@@ -41,8 +40,8 @@ export default class Reminds {
   @observable Reminds = {};
   extraVotes = {};
   saver() {
-    if (Object.keys(this.Reminds) > 0) {
-      console.warn("persisiting reminds");
+    if (this.Reminds.length > 0) {
+      console.warn("persisiting reminds foolish", this.Reminds);
       this.saveKey.data = this.Reminds;
       storage.save(this.saveKey).then(() => {
         this.previousSaveTime = this.currentSaveTime;
@@ -51,6 +50,7 @@ export default class Reminds {
   }
   setProperty(Reminds) {
     this.Reminds = Reminds;
+    console.warn("here foolish", this.Reminds);
     this.currentSaveTime = moment().format();
   }
   saveKey = {
@@ -66,6 +66,7 @@ export default class Reminds {
     console.warn("new remind is ", NewRemind);
     return new Promise((resolve, Reject) => {
       this.readFromStore().then((Reminds) => {
+        console.warn("from readFrom store", Reminds);
         if (Reminds[EventID] && Reminds[EventID].length > 0) {
           if (Array.isArray(NewRemind)) {
             if (NewRemind.length === 1) {
@@ -86,18 +87,15 @@ export default class Reminds {
         } else {
           Reminds[EventID] = Array.isArray(NewRemind) ? NewRemind : [NewRemind];
         }
-
-        this.keyData.data = Reminds;
-        storage.save(this.keyData).then(() => {
-          console.warn("Remind added here", this.keyData.data);
-          this.Reminds = this.keyData.data;
-          resolve();
-        });
+        console.warn("here is the remind", Reminds);
+        this.setProperty(Reminds);
+        resolve();
       });
     });
   }
 
   loadReminds(EventID, fresh) {
+    console.warn("am in");
     let sorter = (a, b) =>
       a.created_at > b.created_at ? -1 : a.created_at < b.created_at ? 1 : 0;
     return new Promise((resolve, reject) => {
@@ -145,16 +143,18 @@ export default class Reminds {
     });
   }
 
-  @action updateDescription(NewRemind, inform) {
+  @action updateDescription(EventID, NewRemind, inform) {
     return new Promise((resolve, Reject) => {
       this.readFromStore().then((Reminds) => {
-        let Remind = find(Reminds, { id: NewRemind.remind_id });
-        RemindIndex = findIndex(Reminds, { id: NewRemind.remind_id });
+        let Remind = find(Reminds[EventID], { id: NewRemind.remind_id });
+        let RemindIndex = findIndex(Reminds[EventID], {
+          id: NewRemind.remind_id,
+        });
         Remind.description = NewRemind.description;
         Remind.updated_at = moment().format();
         Remind.description_updated = inform;
         Remind.updated = inform;
-        Reminds.splice(RemindIndex, 1, Remind);
+        Reminds[EventID].splice(RemindIndex, 1, Remind);
         this.keyData.data = Reminds;
         storage.save(this.keyData).then(() => {
           GState.eventUpdated = true;
@@ -163,333 +163,340 @@ export default class Reminds {
       });
     });
   }
-  @action updateCalendarID(NewRemind, alarms, inform) {
+  @action updateCalendarID(EventID, NewRemind, alarms, inform) {
     return new Promise((resolve, Reject) => {
       this.readFromStore().then((Reminds) => {
-        RemindIndex = findIndex(Reminds, { id: NewRemind.remind_id });
-        Reminds[RemindIndex].calendar_id = !NewRemind.calendar_id
+        let RemindIndex = findIndex(Reminds[EventID], {
+          id: NewRemind.remind_id,
+        });
+        Reminds[EventID][RemindIndex].calendar_id = !NewRemind.calendar_id
           ? null
           : NewRemind.calendar_id;
-        Reminds[RemindIndex].alarms = Reminds[RemindIndex].alarms
-          ? Reminds[RemindIndex].alarms
+        Reminds[EventID][RemindIndex].alarms = Reminds[EventID][RemindIndex]
+          .alarms
+          ? Reminds[EventID][RemindIndex].alarms
           : alarms;
-        Reminds[RemindIndex].updated_at = moment().format();
-        Reminds[RemindIndex].description_updated = inform;
-        Reminds[RemindIndex].updated = inform;
+        Reminds[EventID][RemindIndex].updated_at = moment().format();
+        Reminds[EventID][RemindIndex].description_updated = inform;
+        Reminds[EventID][RemindIndex].updated = inform;
         this.keyData.data = Reminds;
         storage.save(this.keyData).then(() => {
           GState.eventUpdated = true;
-          resolve(Reminds[RemindIndex]);
+          resolve(Reminds[EventID][RemindIndex]);
         });
       });
     });
   }
-  @action updateTitle(NewRemind, inform) {
+  @action updateTitle(EventID, NewRemind, inform) {
     return new Promise((resolve, Reject) => {
       this.readFromStore().then((Reminds) => {
-        let Remind = find(Reminds, { id: NewRemind.remind_id });
-        RemindIndex = findIndex(Reminds, { id: NewRemind.remind_id });
-        Remind.title = NewRemind.title;
-        Remind.updated_at = moment().format();
-        Remind.description_updated = inform;
-        Remind.updated = inform;
-        Reminds.splice(RemindIndex, 1, Remind);
-        this.keyData.data = Reminds;
-        storage.save(this.keyData).then(() => {
-          GState.eventUpdated = true;
-          resolve(Remind);
+        let RemindIndex = findIndex(Reminds[EventID], {
+          id: NewRemind.remind_id,
         });
-      });
-    });
-  }
-  @action updateStatus(NewRemind, inform) {
-    return new Promise((resolve, Reject) => {
-      this.readFromStore().then((Reminds) => {
-        let Remind = find(Reminds, { id: NewRemind.remind_id });
-        RemindIndex = findIndex(Reminds, { id: NewRemind.remind_id });
-        Remind.status = NewRemind.status;
-        Remind.updated_at = moment().format();
-        Remind.description_updated = inform;
-        Remind.updated = inform;
-        Reminds.splice(RemindIndex, 1, Remind);
-        this.keyData.data = Reminds;
-        storage.save(this.keyData).then(() => {
-          GState.eventUpdated = true;
-          resolve(Remind);
-        });
+        Reminds[EventID][RemindIndex].title = NewRemind.title;
+        Reminds[EventID][RemindIndex].updated_at = moment().format();
+        Reminds[EventID][RemindIndex].description_updated = inform;
+        Reminds[EventID][RemindIndex].updated = inform;
+        Reminds[EventID].splice(RemindIndex, 1, Reminds[EventID][RemindIndex]);
+
+        this.setProperty(Reminds);
+        GState.eventUpdated = true;
+        resolve(Reminds[EventID][RemindIndex]);
       });
     });
   }
 
-  @action updateIsDoneState(NewRemind, inform) {
+  @action updateStatus(EventID, NewRemind, inform) {
     return new Promise((resolve, Reject) => {
       this.readFromStore().then((Reminds) => {
-        let Remind = find(Reminds, { id: NewRemind.remind_id });
-        RemindIndex = findIndex(Reminds, { id: NewRemind.remind_id });
-        Remind.isDone = NewRemind.isDone;
-        Remind.updated_at = moment().format();
-        Remind.description_updated = inform;
-        Remind.updated = inform;
-        Reminds.splice(RemindIndex, 1, Remind);
-        this.keyData.data = Reminds;
-        storage.save(this.keyData).then(() => {
-          GState.eventUpdated = true;
-          resolve();
+        let RemindIndex = findIndex(Reminds[EventID], {
+          id: NewRemind.remind_id,
         });
+        Reminds[EventID][RemindIndex].status = NewRemind.status;
+        Reminds[EventID][RemindIndex].updated_at = moment().format();
+        Reminds[EventID][RemindIndex].description_updated = inform;
+        Reminds[EventID][RemindIndex].updated = inform;
+        Reminds[EventID].splice(RemindIndex, 1, Reminds[EventID][RemindIndex]);
+
+        this.setProperty(Reminds);
+        GState.eventUpdated = true;
+        resolve(Reminds[EventID][RemindIndex]);
       });
     });
   }
 
-  @action updateAll(NewRemind, inform) {
+  @action updateIsDoneState(EventID, NewRemind, inform) {
     return new Promise((resolve, Reject) => {
       this.readFromStore().then((Reminds) => {
-        let Remind = find(Reminds, { id: NewRemind.remind_id });
-        RemindIndex = findIndex(Reminds, { id: NewRemind.remind_id });
-        Remind.title = NewRemind.title;
-        Remind.description = NewRemind.description;
-        Remind.recursive_frequency = NewRemind.recursive_frequency;
-        Remind.period = NewRemind.period;
-        Remind.status = NewRemind.status;
-        Remind.members = NewRemind.members;
-        Remind.updated_at = moment().format();
-        Remind.description_updated = inform;
-        Remind.updated = inform;
-        Reminds.splice(RemindIndex, 1, Remind);
-        this.keyData.data = Reminds;
-        storage.save(this.keyData).then(() => {
-          GState.eventUpdated = true;
-          resolve();
+        let RemindIndex = findIndex(Reminds[EventID], {
+          id: NewRemind.remind_id,
         });
+        Reminds[EventID][RemindIndex].isDone = NewRemind.isDone;
+        Reminds[EventID][RemindIndex].updated_at = moment().format();
+        Reminds[EventID][RemindIndex].description_updated = inform;
+        Reminds[EventID][RemindIndex].updated = inform;
+        Reminds[EventID].splice(RemindIndex, 1, Reminds[EventID][RemindIndex]);
+
+        this.setProperty(Reminds);
+        GState.eventUpdated = true;
+        resolve(Reminds[EventID][RemindIndex]);
       });
     });
   }
-  addMembers(Remind, inform) {
+
+  @action updateRecursiveFrequency(EventID, NewRemind, inform) {
+    console.warn("entered  updateRecursiveFrequenc ");
+    return new Promise((resolve, Reject) => {
+      this.readFromStore().then((Reminds) => {
+        let RemindIndex = findIndex(Reminds[EventID], {
+          id: NewRemind.remind_id,
+        });
+        Reminds[EventID][RemindIndex].recursive_frequency =
+          NewRemind.recursive_frequency;
+        Reminds[EventID][RemindIndex].updated_at = moment().format();
+        Reminds[EventID][RemindIndex].description_updated = inform;
+        Reminds[EventID][RemindIndex].updated = inform;
+        Reminds[EventID].splice(RemindIndex, 1, Reminds[EventID][RemindIndex]);
+
+        this.setProperty(Reminds);
+        GState.eventUpdated = true;
+        resolve(Reminds[EventID][RemindIndex]);
+      });
+    });
+  }
+
+  @action updateLocation(EventID, NewRemind, inform) {
+    return new Promise((resolve, Reject) => {
+      this.readFromStore().then((Reminds) => {
+        let RemindIndex = findIndex(Reminds[EventID], {
+          id: NewRemind.remind_id,
+        });
+        Reminds[EventID][RemindIndex].location = NewRemind.location;
+        Reminds[EventID][RemindIndex].updated_at = moment().format();
+        Reminds[EventID][RemindIndex].description_updated = inform;
+        Reminds[EventID][RemindIndex].updated = inform;
+        Reminds[EventID].splice(RemindIndex, 1, Reminds[EventID][RemindIndex]);
+
+        this.setProperty(Reminds);
+        GState.eventUpdated = true;
+        resolve(Reminds[EventID][RemindIndex]);
+      });
+    });
+  }
+
+  @action updateURL(EventID, NewRemind, inform) {
+    return new Promise((resolve, Reject) => {
+      this.readFromStore().then((Reminds) => {
+        let RemindIndex = findIndex(Reminds[EventID], {
+          id: NewRemind.remind_id,
+        });
+        Reminds[EventID][RemindIndex].remind_url = NewRemind.url;
+        Reminds[EventID][RemindIndex].updated_at = moment().format();
+        Reminds[EventID][RemindIndex].description_updated = inform;
+        Reminds[EventID][RemindIndex].updated = inform;
+        Reminds[EventID].splice(RemindIndex, 1, Reminds[EventID][RemindIndex]);
+
+        this.setProperty(Reminds);
+        GState.eventUpdated = true;
+        resolve(Reminds[EventID][RemindIndex]);
+      });
+    });
+  }
+
+  @action updatePeriod(EventID, NewRemind, inform) {
+    return new Promise((resolve, Reject) => {
+      this.readFromStore().then((Reminds) => {
+        let RemindIndex = findIndex(Reminds[EventID], {
+          id: NewRemind.remind_id,
+        });
+        Reminds[EventID][RemindIndex].period = NewRemind.period;
+        Reminds[EventID][RemindIndex].updated_at = moment().format();
+        Reminds[EventID][RemindIndex].description_updated = inform;
+        Reminds[EventID][RemindIndex].updated = inform;
+        Reminds[EventID].splice(RemindIndex, 1, Reminds[EventID][RemindIndex]);
+
+        this.setProperty(Reminds);
+        GState.eventUpdated = true;
+        resolve(Reminds[EventID][RemindIndex]);
+      });
+    });
+  }
+  @action updateMembers(EventID, NewRemind, inform) {
+    return new Promise((resolve, Reject) => {
+      this.readFromStore().then((Reminds) => {
+        let RemindIndex = findIndex(Reminds[EventID], {
+          id: NewRemind.remind_id,
+        });
+        Reminds[EventID][RemindIndex].members = NewRemind.members;
+        Reminds[EventID][RemindIndex].updated_at = moment().format();
+        Reminds[EventID][RemindIndex].description_updated = inform;
+        Reminds[EventID][RemindIndex].updated = inform;
+        Reminds[EventID].splice(RemindIndex, 1, Reminds[EventID][RemindIndex]);
+
+        this.setProperty(Reminds);
+        GState.eventUpdated = true;
+        resolve(Reminds[EventID][RemindIndex]);
+      });
+    });
+  }
+
+  @action updateAll(EventID, NewRemind, inform) {
+    return new Promise((resolve, Reject) => {
+      this.readFromStore().then((Reminds) => {
+        let RemindIndex = findIndex(Reminds[EventID], {
+          id: NewRemind.remind_id,
+        });
+        Reminds[EventID][RemindIndex].title = NewRemind.title;
+        Reminds[EventID][RemindIndex].description = NewRemind.description;
+        Reminds[EventID][RemindIndex].recursive_frequency =
+          NewRemind.recursive_frequency;
+        Reminds[EventID][RemindIndex].period = NewRemind.period;
+        Reminds[EventID][RemindIndex].status = NewRemind.status;
+        Reminds[EventID][RemindIndex].members = NewRemind.members;
+        Reminds[EventID][RemindIndex].updated_at = moment().format();
+        Reminds[EventID][RemindIndex].description_updated = inform;
+        Reminds[EventID][RemindIndex].updated = inform;
+        Reminds[EventID].splice(RemindIndex, 1, Reminds[EventID][RemindIndex]);
+
+        this.setProperty(Reminds);
+        GState.eventUpdated = true;
+        resolve(Reminds[EventID][RemindIndex]);
+      });
+    });
+  }
+
+  addMembers(EventID, Remind, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then((Reminds) => {
-        let index = findIndex(Reminds, { id: Remind.remind_id });
-        ///console.warn(Reminds[index].members.length, Remind.members)
-        Reminds[index].members && Reminds[index].members.length > 0
-          ? (Reminds[index].members = Array.isArray(Remind.members)
-              ? Remind.members.concat(Reminds[index].members)
-              : [Remind.members].concat(Reminds[index].members))
-          : (Reminds[index].members = Array.isArray(Remind.members)
+        let index = findIndex(Reminds[EventID], { id: Remind.remind_id });
+        Reminds[EventID][index].members &&
+        Reminds[EventID][index].members.length > 0
+          ? (Reminds[EventID][index].members = Array.isArray(Remind.members)
+              ? Remind.members.concat(Reminds[EventID][index].members)
+              : [Remind.members].concat(Reminds[EventID][index].members))
+          : (Reminds[EventID][index].members = Array.isArray(Remind.members)
               ? Remind.members
               : [Remind.members]);
-        inform ? (Reminds[index].updated_at = moment().format()) : null;
-        Reminds[index].updated = true;
-        this.keyData.data = Reminds;
-        storage.save(this.keyData).then(() => {
-          GState.eventUpdated = true;
-          resolve(Reminds[index]);
-        });
+        inform
+          ? (Reminds[EventID][index].updated_at = moment().format())
+          : null;
+        Reminds[EventID][index].updated = true;
+        this.setProperty(Reminds);
+        GState.eventUpdated = true;
+        resolve(Reminds[EventID][index]);
       });
     });
   }
-  updateRequestReportOnComplete(Remind, inform) {
+
+  updateRequestReportOnComplete(EventID, Remind, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then((Reminds) => {
-        let index = findIndex(Reminds, { id: Remind.remind_id });
-        Reminds[index].must_report = Remind.must_report;
+        let index = findIndex(Reminds[EventID], { id: Remind.remind_id });
+        Reminds[EventID][index].must_report = Remind.must_report;
         if (inform) {
-          Reminds[index].updated_at = moment().format();
+          Reminds[EventID][index].updated_at = moment().format();
         }
-        this.keyData.data = Reminds;
-        storage.save(this.keyData).then(() => {
-          resolve(Reminds[index]);
-        });
+        this.setProperty(Reminds);
+        GState.eventUpdated = true;
+        resolve(Reminds[EventID][index]);
       });
     });
   }
-  removeMember(remindUpdate, inform) {
+
+  removeMember(EventID, remindUpdate, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then((Reminds) => {
-        let index = findIndex(Reminds, { id: remindUpdate.remind_id });
-        Reminds[index].members = Reminds[index].members.filter((ele) =>
+        let index = findIndex(Reminds[EventID], { id: remindUpdate.remind_id });
+        Reminds[EventID][index].members = Reminds[EventID][
+          index
+        ].members.filter((ele) =>
           Array.isArray(remindUpdate.members)
             ? remindUpdate.members.indexOf(ele.phone) < 0
             : ele.phone !== remindUpdate.members
         );
-        inform ? (Reminds[index].updated_at = moment().format()) : null;
-        Reminds[index].updated = inform;
-        this.keyData.data = Reminds;
-        storage.save(this.keyData).then(() => {
-          GState.eventUpdated = true;
-          resolve(Reminds[index]);
-        });
+        inform
+          ? (Reminds[EventID][index].updated_at = moment().format())
+          : null;
+        Reminds[EventID][index].updated = inform;
+        this.setProperty(Reminds);
+        GState.eventUpdated = true;
+        resolve(Reminds[EventID][index]);
       });
     });
   }
-  makeAsDone(Remind, inform) {
+
+  makeAsDone(EventID, Remind, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then((Reminds) => {
-        let index = findIndex(Reminds, { id: Remind.remind_id });
-        Reminds[index].donners && Reminds[index].donners.length > 0
-          ? (Reminds[index].donners = Array.isArray(Remind.donners)
-              ? Remind.donners.concat(Reminds[index].donners)
-              : [Remind.donners].concat(Reminds[index].donners))
+        let index = findIndex(Reminds[EventID], { id: Remind.remind_id });
+        Reminds[EventID][index].donners &&
+        Reminds[EventID][index].donners.length > 0
+          ? (Reminds[EventID][index].donners = Array.isArray(Remind.donners)
+              ? Remind.donners.concat(Reminds[EventID][index].donners)
+              : [Remind.donners].concat(Reminds[EventID][index].donners))
           : (Reminds[index].donners = Array.isArray(Remind.donners)
               ? Remind.donners
               : [Remind.donners]);
-        inform ? (Reminds[index].updated_at = moment().format()) : null;
-        Reminds[index].updated = true;
-        this.keyData.data = Reminds;
-        storage.save(this.keyData).then(() => {
-          GState.eventUpdated = true;
-          resolve(Reminds[index]);
-        });
+        inform
+          ? (Reminds[EventID][index].updated_at = moment().format())
+          : null;
+        Reminds[EventID][index].updated = true;
+        this.setProperty(Reminds);
+        GState.eventUpdated = true;
+        resolve(Reminds[EventID][index]);
       });
     });
   }
-  confirm(Remind, inform) {
+
+  confirm(EventID, Remind, inform) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then((Reminds) => {
-        let index = findIndex(Reminds, { id: Remind.remind_id });
-        Reminds[index].confirmed && Reminds[index].confirmed.length > 0
-          ? (Reminds[index].confirmed = Array.isArray(Remind.confirmed)
-              ? [...Remind.confirmed, ...Reminds[index].confirmed]
-              : [...[Remind.confirmed], ...Reminds[index].confirmed])
-          : (Reminds[index].confirmed = Array.isArray(Remind.confirmed)
+        let index = findIndex(Reminds[EventID], { id: Remind.remind_id });
+        Reminds[EventID][index].confirmed &&
+        Reminds[EventID][index].confirmed.length > 0
+          ? (Reminds[EventID][index].confirmed = Array.isArray(Remind.confirmed)
+              ? [...Remind.confirmed, ...Reminds[EventID][index].confirmed]
+              : [...[Remind.confirmed], ...Reminds[EventID][index].confirmed])
+          : (Reminds[EventID][index].confirmed = Array.isArray(Remind.confirmed)
               ? Remind.confirmed
               : [Remind.confirmed]);
-        inform ? (Reminds[index].updated_at = moment().format()) : null;
-        Reminds[index].updated = true;
-        this.keyData.data = Reminds;
-        storage.save(this.keyData).then(() => {
-          GState.eventUpdated = true;
-          resolve(Reminds[index]);
-        });
-      });
-    });
-  }
-  @action updateRecursiveFrequency(rem, inform) {
-    return new Promise((resolve, Reject) => {
-      this.readFromStore().then((Reminds) => {
-        let RemindIndex = findIndex(Reminds, { id: rem.remind_id });
-        Reminds[RemindIndex].recursive_frequency = rem.recursive_frequency;
-        Reminds[RemindIndex].updated_at = moment().format();
-        Reminds[RemindIndex].updated = inform;
-        this.keyData.data = Reminds;
-        storage.save(this.keyData).then(() => {
-          GState.eventUpdated = true;
-          resolve(Reminds[RemindIndex]);
-        });
-      });
-    });
-  }
-  @action updateLocation(rem, inform) {
-    return new Promise((resolve, Reject) => {
-      this.readFromStore().then((Reminds) => {
-        let RemindIndex = findIndex(Reminds, { id: rem.remind_id });
-        Reminds[RemindIndex].location = rem.location;
-        Reminds[RemindIndex].updated_at = moment().format();
-        Reminds[RemindIndex].updated = inform;
-        this.keyData.data = Reminds;
-        storage.save(this.keyData).then(() => {
-          GState.eventUpdated = true;
-          resolve(Reminds[RemindIndex]);
-        });
-      });
-    });
-  }
-  @action updateURL(rem, inform) {
-    return new Promise((resolve, Reject) => {
-      this.readFromStore().then((Reminds) => {
-        let RemindIndex = findIndex(Reminds, { id: rem.remind_id });
-        Reminds[RemindIndex].remind_url = rem.url;
-        Reminds[RemindIndex].updated_at = moment().format();
-        Reminds[RemindIndex].updated = inform;
-        this.keyData.data = Reminds;
-        storage.save(this.keyData).then(() => {
-          GState.eventUpdated = true;
-          resolve(Reminds[RemindIndex]);
-        });
+        inform
+          ? (Reminds[EventID][index].updated_at = moment().format())
+          : null;
+        Reminds[EventID][index].updated = true;
+        this.setProperty(Reminds);
+        GState.eventUpdated = true;
+        resolve(Reminds[EventID][index]);
       });
     });
   }
 
-  @action updateRecurrence(NewRemind, inform) {
-    return new Promise((resolve, Reject) => {
-      this.readFromStore().then((Reminds) => {
-        let Remind = find(Reminds, { id: NewRemind.remind_id });
-        RemindIndex = findIndex(Reminds, { id: NewRemind.remind_id });
-        console.warn(NewRemind.recurrence, "pppp");
-        Remind.recursive_frequency = NewRemind.recurrence;
-        Remind.updated_at = moment().format();
-        Remind.description_updated = inform;
-        Remind.updated = inform;
-        Remind = [Remind][0];
-        Reminds.splice(RemindIndex, 1, Remind);
-        this.keyData.data = Reminds;
-        storage.save(this.keyData).then(() => {
-          GState.eventUpdated = true;
-          resolve(Remind);
-        });
-      });
-    });
-  }
-
-  @action updatePeriod(NewRemind, inform) {
-    return new Promise((resolve, Reject) => {
-      this.readFromStore().then((Reminds) => {
-        let Remind = find(Reminds, { id: NewRemind.remind_id });
-        RemindIndex = findIndex(Reminds, { id: NewRemind.remind_id });
-        Remind.period = NewRemind.period;
-        Remind.updated_at = moment().format();
-        Remind.description_updated = inform;
-        Remind = [Remind][0];
-        Remind.updated = inform;
-        Reminds.splice(RemindIndex, 1, Remind);
-        this.keyData.data = Reminds;
-        storage.save(this.keyData).then(() => {
-          GState.eventUpdated = true;
-          resolve(Remind);
-        });
-      });
-    });
-  }
-
-  @action updateMembers(NewRemind, inform) {
-    return new Promise((resolve, Reject) => {
-      this.readFromStore().then((Reminds) => {
-        let Remind = find(Reminds, { id: NewRemind.remind_id });
-        RemindIndex = findIndex(Reminds, { id: NewRemind.remind_id });
-        Remind.members = NewRemind.members;
-        Remind.updated_at = moment().format();
-        Remind.members_updated = inform;
-        Remind.updated = inform;
-        Reminds.splice(RemindIndex, 1, Remind);
-        this.keyData.data = Reminds;
-        storage.save(this.keyData).then(() => {
-          GState.eventUpdated = true;
-          resolve();
-        });
-      });
-    });
-  }
-
-  @action removeRemind(RemindId) {
+  @action removeRemind(EventID, RemindId) {
     console.warn("removing remind", RemindId);
     return new Promise((resolve, RejectPromise) => {
       this.readFromStore().then((Reminds) => {
-        let OldRemind = find(Reminds, { id: RemindId });
-        Reminds = reject(Reminds, ["id", RemindId]);
-        RemindId === "newRemindId" ? Reminds.unshift(request.Remind()) : null;
-        this.keyData.data = Reminds;
-        storage.save(this.keyData).then(() => {
-          this.Reminds = this.keyData.data;
-          resolve(OldRemind);
-        });
+        let index = find(Reminds[EventID], { id: RemindId });
+        Reminds[EventID] = reject(Reminds[EventID], ["id", RemindId]);
+        RemindId === "newRemindId"
+          ? Reminds[EventID].unshift(request.Remind())
+          : null;
+        this.setProperty(Reminds);
+        GState.eventUpdated = true;
+        resolve(Reminds[EventID][index]);
       });
     });
   }
-  loadRemindFromRemote(id) {
+
+  loadRemindFromRemote(EventID, id) {
+    console.warn("here is the request 1", EventID, id);
     return new Promise((resolve, reject) => {
       let RemindID = request.RemindID();
       RemindID.remind_id = id;
       tcpRequest.getRemind(RemindID, id + "_get_remind").then((JSONData) => {
+        console.warn("here is the request 2", RemindID, id, JSONData);
         EventListener.sendRequest(JSONData, id + "_get_remind").then(
           (Remind) => {
-            console.warn(Remind);
+            console.warn("here is the request 3", Remind);
             if (Remind.data !== "empty") {
               resolve(Remind.data);
             } else {
@@ -500,16 +507,19 @@ export default class Reminds {
       });
     });
   }
-  loadRemind(id) {
+
+  loadRemind(EventID, id) {
+    console.warn("after remote", EventID, id);
     return new Promise((resolve, reject) => {
       this.readFromStore().then((Rems) => {
-        let rem = find(Rems, { id: id });
+        let rem = find(Rems[EventID], { id: id });
         if (rem) {
           resolve(rem);
         } else {
-          this.loadRemindFromRemote(id)
-            .then((remind) => {
-              this.addReminds(remind)
+          this.loadRemindFromRemote(EventID, id)
+            .then((Remind) => {
+              console.warn("after remote 2", Remind);
+              this.addReminds(EventID, Remind)
                 .then(() => {
                   resolve(Remind.data);
                 })
@@ -517,26 +527,26 @@ export default class Reminds {
                   resolve();
                 });
             })
-            .catch(() => {
-              resolve();
+            .catch((error) => {
+              if (id === request.Remind().id) {
+                this.addReminds(EventID, request.Remind())
+                  .then(() => {
+                    console.warn("added boy");
+                    resolve();
+                  })
+                  .catch(() => {
+                    resolve();
+                  });
+              }
+              resolve({});
             });
         }
       });
     });
   }
   readFromStore() {
-    return new Promise((resolve, rejevt) => {
-      storage
-        .load({
-          key: "reminds",
-          autoSync: true,
-        })
-        .then((Contacts) => {
-          resolve(Contacts);
-        })
-        .catch((error) => {
-          resolve([]);
-        });
+    return new Promise((resolve, rejectpromise) => {
+      resolve(this.Reminds);
     });
   }
 }

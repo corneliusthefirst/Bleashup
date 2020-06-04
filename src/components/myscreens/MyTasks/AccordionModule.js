@@ -60,9 +60,9 @@ export default class AccordionComponent extends Component {
     );
   }
   _renderContent = (item) => {
-    stores.Reminds.loadReminds(item.id, true).then((reminds) => {
+    /*stores.Reminds.loadReminds(item.id, true).then((reminds) => {
       console.warn('reminds are', reminds);
-    });
+    });*/
     //this.initializeMaster(item);
     return (
       <Remind
@@ -90,7 +90,7 @@ export default class AccordionComponent extends Component {
         }}
         //goback={this.props.goback()}
         //currentMembers={item.participant}
-        mention={(item) => this.mention(item)}
+        mention={(Item) => this.mention(Item)}
         master={this.master}
         computedMaster={this.computedMaster}
         working={this.state.working}

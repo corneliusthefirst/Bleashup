@@ -626,7 +626,7 @@ export default class Event extends Component {
   }
   restoreRemind(data) {
     this.startLoader();
-    stores.Reminds.loadReminds(this.event.id).then((reminds) => {
+    stores.Reminds.loadReminds(this.event.id, true).then((reminds) => {
       if (findIndex(reminds, { id: data.new_value.new_value.id }) < 0) {
         RemindRequest.restoreRemind(data.new_value.new_value)
           .then(() => {
