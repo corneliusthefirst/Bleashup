@@ -13,6 +13,7 @@ import {
 } from "../services/getCurrentDateInterval";
 import { format } from "../services/recurrenceConfigs";
 //import { mapper } from '../services/mapper';
+
 export default class Reminds {
   constructor() {
     //storage.remove(this.saveKey).then(() => {})
@@ -46,6 +47,10 @@ export default class Reminds {
         this.previousSaveTime = this.currentSaveTime;
       });
     }
+  }
+  setProperty(Reminds) {
+    this.Reminds = Reminds;
+    this.currentSaveTime = moment().format();
   }
   saveKey = {
     key: "reminds",
