@@ -1649,7 +1649,7 @@ class UpdatesDispatcher {
     },
     remind_title_updated: update => {
       return new Promise((resolve, reject) => {
-        stores.Reminds.updateTitle(update.new_value, true).then((oldRemind) => {
+        stores.Reminds.updateTitle(update.event_id,update.new_value, true).then((oldRemind) => {
           let Change = {
             id: uuid.v1(),
             title: `Updates On ${oldRemind.title} Remind`,
@@ -1674,7 +1674,7 @@ class UpdatesDispatcher {
     },
     remind_deleted: update => {
       return new Promise((resolve, reject) => {
-        stores.Reminds.removeRemind(update.new_value, true).then((oldRemind) => {
+        stores.Reminds.removeRemind(update.event_id,update.new_value, true).then((oldRemind) => {
           let Change = {
             id: uuid.v1(),
             title: `Updates On ${oldRemind.title} Remind`,
@@ -1691,7 +1691,7 @@ class UpdatesDispatcher {
             if (oldRemind.calendar_id && findIndex(oldRemind.members,
               { phone: stores.LoginStore.user.phone }) >= 0) {
               CalendarServe.saveEvent({ ...oldRemind, period: null }, null, 'reminds').then(() => {
-                stores.Reminds.updateCalendarID({ remind_id: oldRemind.id, calendar_id: undefined }).then(() => {
+                stores.Reminds.updateCalendarID(update.event_id,{ remind_id: oldRemind.id, calendar_id: undefined }).then(() => {
                   console.warn("calendar_id successfully removed")
                   resolve('ok')
                 })
@@ -1705,7 +1705,7 @@ class UpdatesDispatcher {
     },
     restored_remind: update => {
       return new Promise((resolve, reject) => {
-        stores.Reminds.addReminds(update.new_value.remind).then(() => {
+        stores.Reminds.addReminds(update.event_id,update.new_value.remind).then(() => {
           stores.Events.addRemind(update.new_value.remind.id,
             update.new_value.remind.event_id, true).then(() => {
               let Change = {
@@ -1725,7 +1725,7 @@ class UpdatesDispatcher {
                 if (findIndex(update.new_value.remind.members,
                   { phone: stores.LoginStore.user.phone }) >= 0) {
                   CalendarServe.saveEvent(remind, null, 'reminds').then(calendar_id => {
-                    stores.Reminds.updateCalendarID({
+                    stores.Reminds.updateCalendarID(update.event_id,{
                       remind_id: update.new_value.remind.id,
                       calendar_id: calendar_id
                     }, null).then(() => {
@@ -1740,7 +1740,7 @@ class UpdatesDispatcher {
     },
     remind_public_state: update => {
       return new Promise((resolve, reject) => {
-        stores.Reminds.updateStatus(update.new_value, true).then((oldRemind) => {
+        stores.Reminds.updateStatus(update.event_id,update.new_value, true).then((oldRemind) => {
           let Change = {
             id: uuid.v1(),
             title: `Updates On ${oldRemind.title} Remind`,
@@ -1765,7 +1765,7 @@ class UpdatesDispatcher {
     },
     remind_recurrence: update => {
       return new Promise((resolve, reject) => {
-        stores.Reminds.updateRecursiveFrequency(update.new_value, true).then((oldRemind) => {
+        stores.Reminds.updateRecursiveFrequency(update.event_id,update.new_value, true).then((oldRemind) => {
           let Change = {
             id: uuid.v1(),
             title: `Updates On ${oldRemind.title} Remind`,
@@ -1796,7 +1796,7 @@ class UpdatesDispatcher {
     },
     members_added_to_remind: update => {
       return new Promise((resolve, reject) => {
-        stores.Reminds.addMembers(update.new_value, true).then(oldRemind => {
+        stores.Reminds.addMembers(update.event_id,update.new_value, true).then(oldRemind => {
           let Change = {
             id: uuid.v1(),
             title: `Updates On ${oldRemind.title} Remind`,
@@ -1815,7 +1815,7 @@ class UpdatesDispatcher {
           stores.ChangeLogs.addChanges(Change).then(() => {
             if (findIndex(update.new_value.members, { phone: stores.LoginStore.user.phone }) >= 0) {
               CalendarServe.saveEvent(oldRemind, null, 'reminds').then(calendar_id => {
-                stores.Reminds.updateCalendarID({ remind_id: oldRemind.id, calendar_id: calendar_id }, null).then(() => {
+                stores.Reminds.updateCalendarID(update.event_id,{ remind_id: oldRemind.id, calendar_id: calendar_id }, null).then(() => {
                   GState.eventUpdated = true;
                   resolve('ok')
                 })
@@ -1827,7 +1827,7 @@ class UpdatesDispatcher {
     },
     members_removed_from_remind: update => {
       return new Promise((resolve, reject) => {
-        stores.Reminds.removeMember(update.new_value, true).then(oldRemind => {
+        stores.Reminds.removeMember(update.event_id,update.new_value, true).then(oldRemind => {
           let Change = {
             id: uuid.v1(),
             title: `Updates On ${oldRemind.title} Remind`,
@@ -1847,7 +1847,7 @@ class UpdatesDispatcher {
             if (findIndex(update.new_value.members,
               rlr => rlr === stores.LoginStore.user.phone) >= 0 && oldRemind.calendar_id) {
               CalendarServe.saveEvent({ ...oldRemind, period: null }, null, 'reminds').then(() => {
-                stores.Reminds.updateCalendarID({ remind_id: oldRemind.id, calendar_id: undefined }).then(() => {
+                stores.Reminds.updateCalendarID(update.event_id,{ remind_id: oldRemind.id, calendar_id: undefined }).then(() => {
                   GState.eventUpdated = true;
                   resolve('ok')
                 })
@@ -1859,7 +1859,7 @@ class UpdatesDispatcher {
     },
     mark_as_done: update => {
       return new Promise((resolve, reject) => {
-        stores.Reminds.makeAsDone(update.new_value, true).then(oldRemind => {
+        stores.Reminds.makeAsDone(update.event_id,update.new_value, true).then(oldRemind => {
           let Change = {
             id: uuid.v1(),
             title: `Updates On ${oldRemind.title} Remind`,
@@ -1884,7 +1884,7 @@ class UpdatesDispatcher {
     },
     confirm: update => {
       return new Promise((resolve, reject) => {
-        stores.Reminds.confirm(update.new_value, true).then(oldRemind => {
+        stores.Reminds.confirm(update.event_id,update.new_value, true).then(oldRemind => {
           let Change = {
             id: uuid.v1(),
             title: `Updates On ${oldRemind.title} Remind`,
@@ -1909,7 +1909,7 @@ class UpdatesDispatcher {
     },
     must_report: update => {
       return new Promise((resolve, reject) => {
-        stores.Reminds.updateRequestReportOnComplete(update.new_value, true).then(oldRemind => {
+        stores.Reminds.updateRequestReportOnComplete(update.event_id,update.new_value, true).then(oldRemind => {
           let Change = {
             id: uuid.v1(),
             title: `Updates On ${oldRemind.title} Remind`,

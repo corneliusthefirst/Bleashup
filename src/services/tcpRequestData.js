@@ -1,3 +1,4 @@
+/* eslint-disable quotes */
 import requestObject from "./requestObjects";
 import transfer from "./transferable";
 import stores from "../stores";

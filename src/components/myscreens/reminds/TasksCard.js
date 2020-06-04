@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React, { Component } from "react";
 import {
   Card, CardItem, Text, Icon, Title, Left, Button, Right, Spinner
@@ -112,14 +113,15 @@ export default class EventTasksCard extends Component {
   componentWillUnmount() {
   }
   saveAll(alarms) {
-    this.props.assignToMe(this.props.item, alarms)
+    this.props.assignToMe(this.props.item, alarms);
   }
   accordData = {
     title: null,
     content: null
   }
   render() {
-    hasDoneForThisInterval = find(this.props.item.donners, (ele) =>
+    console.warn("the item is ",this.props.item);
+    let hasDoneForThisInterval = find(this.props.item.donners, (ele) =>
       ele.status.date &&
       this.state.correspondingDateInterval &&
       moment(ele.status.date).format("X") >

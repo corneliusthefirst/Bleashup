@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import storage from "./Storage";
 import {
     observable,
