@@ -49,17 +49,17 @@ export default class CreateEvent extends Component {
 
   stores.Reminds.readFromStore().then(Reminds =>{
     console.warn("remind are",Reminds);
-    //let remind = find(Reminds,{ id:"newRemindId" }); 
-    //console.warn("remind it is",remind);
+    let remind = find(Reminds,{ id:"newRemindId" }); 
+    console.warn("remind it is",remind);
 
-   /* if(!remind){
+    if(!remind){
       //console.warn("here")
       remind =  request.Remind();
       remind.id = "newRemindId";
       stores.Reminds.addReminds(remind).then(()=>{});
-    }*/
+    }
    
-    //this.props.navigation.navigate("MyTasksView");
+    this.props.navigation.navigate("MyTasksView");
    })
 
   })

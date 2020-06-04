@@ -635,7 +635,8 @@ export default class Reminds extends Component {
     return !this.state.mounted ? <View style={{ width: '100%', height: '100%', }}></View> : (
       <View style={{ width: '100%', height: '100%', }}>
       
-        <View style={{ height: colorList.headerHeight, width: '100%',paddingLeft: '1%', paddingRight: '1%',  }}>
+     {this.props.removeHeader ?null:
+       <View style={{ height: colorList.headerHeight, width: '100%',paddingLeft: '1%', paddingRight: '1%',  }}>
           
           <View style={{
             ...bleashupHeaderStyle,
@@ -666,7 +667,7 @@ export default class Reminds extends Component {
 
           </View>
           
-        </View>
+        </View> }   
 
         <View style={{ height: "93%", }}>
           <BleashupFlatList
