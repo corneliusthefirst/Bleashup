@@ -222,7 +222,7 @@ export default class commitee {
   }
   saver() {
     this.saveKey.data = this.commitees;
-    if(Object.keys(this.commitees) > 0){
+    if(Object.keys(this.commitees).length > 0){
       storage.save(this.saveKey).then(() => {
         this.previousSavedTime = this.currentSavedTime;
       });

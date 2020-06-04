@@ -56,7 +56,7 @@ export default class contacts {
     });
   }
   save() {
-    if(Object.keys(this.contacts) > 0){
+    if(Object.keys(this.contacts).length > 0){
       this.saveKey.data = this.contacts
       storage.save(this.saveKey).then(() => {
         console.warn("saving contacts")

@@ -204,6 +204,8 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
       computedMaster={this.props.computedMaster}
       generallyMember={this.props.generallyMember}
       publish={() => this.props.publish()}
+      openSettings={this.props.openSettings}
+      editCommitteeName={this.props.editCommitteeName}
       room_type={this.props.room_type}
       master={this.props.master}
       public_state={this.props.public_state}

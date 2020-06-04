@@ -261,14 +261,8 @@ export default class EventDetailView extends Component {
               </View>
 
               <View style={{ width: '69%', paddingLeft: '9%', justifyContent: "center" }}>
-                <Title style={{ color: colorList.headerText, fontWeight: 'bold', alignSelf: 'flex-start',fontSize:colorList.headerFontSize }}>{this.props.Event.about.title}</Title>
+                <Title style={{ color: colorList.headerText, fontWeight: 'bold', alignSelf: 'flex-start',fontSize:colorList.headerFontSize }}>{"Star Messages"}</Title>
               </View>
-              <View style={{ width: '20%', alignItems: "flex-end" }}>
-                <Icon onPress={() => {
-                  this.props.openMenu()
-                }} style={{ color: colorList.headerIcon, marginRight: "18%" }} type={"Ionicons"} name={"ios-menu"}></Icon>
-              </View>
-
             </View>
           </View>
 

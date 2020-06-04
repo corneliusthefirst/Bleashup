@@ -635,7 +635,7 @@ export default class Reminds extends Component {
     return !this.state.mounted ? <View style={{ width: '100%', height: '100%', }}></View> : (
       <View style={{ width: '100%', height: '100%', }}>
       
-        <View style={{ height: colorList.headerHeight, width: '100%',paddingLeft: '1%', paddingRight: '1%',  }}>
+        <View style={{ height: colorList.headerHeight, width: '100%'  }}>
           
           <View style={{
             ...bleashupHeaderStyle,
@@ -650,7 +650,8 @@ export default class Reminds extends Component {
             </View>
 
             <View style={{ width: '67%', paddingLeft: '9%', justifyContent: "center",height:"100%",justifyContent:"center" }}>
-              <Title style={{ fontWeight: 'bold', alignSelf: 'flex-start', color: colorList.headerText,fontSize: colorList.headerFontSize, }}>{"Reminds"}</Title>
+              <Title style={{ fontWeight: 'bold', alignSelf: 'flex-start', color: colorList.headerText,
+              fontSize: colorList.headerFontSize, }}>{"Reminds"}</Title>
             </View>
 
             <View style={{ width: '13%', paddingRight: '3%',height:"100%",justifyContent:"center" }}>
@@ -658,11 +659,11 @@ export default class Reminds extends Component {
                 name="plus" style={{ color: colorList.headerIcon, alignSelf: 'center', }} />
             </View>
 
-            <View style={{ width: '10%', paddingLeft: '1%',height:"100%",justifyContent:"center" }}>
+            {/*<View style={{ width: '10%', paddingLeft: '1%',height:"100%",justifyContent:"center" }}>
               <Icon onPress={() => {
                 this.props.openMenu()
               }} style={{ color: colorList.headerIcon }} type={"Ionicons"} name={"ios-menu"}></Icon>
-            </View>
+            </View>*/}
 
           </View>
           

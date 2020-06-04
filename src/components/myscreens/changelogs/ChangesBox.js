@@ -39,21 +39,23 @@ export default class ChangeBox extends Component {
                 })
         }, 60 * this.props.delayer)
     }
-    containerStyle = { margin: '2%', borderRadius: 3, backgroundColor: colorList.bodyBackground, ...shadower(3), height: 125 }
+    containerStyle = { margin: '1%', borderRadius: 3, backgroundColor: colorList.bodyBackground, ...shadower(3), }
     render() {
         return (!this.state.loaded ? <View style={{ ...this.containerStyle, width: '95%', height: 120 }}></View> :
             <View>
                 <View style={this.containerStyle}>
-                    {!this.props.change ? null : <View style={{ flexDirection: 'column', margin: '2%', }}>
-                        <View style={{ flexDirection: 'row', height: '45%'}}>
-                        <View style={{ width: '80%', height: '100%' }}><ProfileSimple showPhoto={(url) => {
+                    {!this.props.change ? null : <View style={{ flexDirection: 'column', margin: '1%', }}>
+                        <View style={{ flexDirection: 'row', maxHeight: 40,}}>
+                        <View style={{ width: '93%', height: '100%',justifyContent: 'space-between', }}>
+                        <View style={{width:170,height:'100%'}}><ProfileSimple showPhoto={(url) => {
                                 this.props.showPhoto(url)
                             }} delay={this.props.delayer}
-                                profile={this.state.changer}></ProfileSimple>
+                                profile={this.state.changer}>
+                                </ProfileSimple></View>
                         </View>
-                            <View style={{ alignSelf: 'flex-start', flexDirection: 'row',alignItems:"center" }}>
-                                <View style={{}}><Icon onPress={() => {
-                                    this.props.mention({
+                            <View style={{ alignSelf: 'flex-end', flexDirection: 'row',alignItems:"flex-end" }}>
+                                <View style={{alignSelf: 'flex-end',marginTop: 'auto',marginBottom: 'auto',}}>{!this.props.replying ? <ChangeBoxMenu
+                                    reply={() => this.props.mention({
                                         id: this.props.change.id,
                                         title: `${this.props.change.changed} :\n ${this.props.change.new_value.new_value}`,
                                         type_extern: this.state.changer.nickname,
@@ -63,11 +65,9 @@ export default class ChangeBox extends Component {
                                         change_date: this.props.change.date,
                                         sourcer: this.state.changer.profile,
                                         replyer_phone: this.state.changer.phone,
-                                        replyer_name:  this.props.change.title
+                                        replyer_name: this.props.change.title
 
-                                    })
-                                }} style={{ color: '#555756'}} type="Entypo" name="reply"></Icon></View>
-                                <View>{!this.props.replying ? <ChangeBoxMenu
+                                    })}
                                     master={this.props.master}
                                     change={this.props.change}
                                     restore={() => this.props.restore(this.props.change)}
@@ -79,10 +79,10 @@ export default class ChangeBox extends Component {
                         }}>
                             <View style={{ flexDirection: 'row', }}>
                                 <Text ellipsizeMode='tail' style={{ fontSize: 14, fontWeight: "800", color:colorList.bodyText }}
-                                    numberOfLines={2}>{this.props.change.changed}</Text>
+                                    numberOfLines={4}>{this.props.change.changed}</Text>
                             </View>
                             <Text ellipsizeMode='tail' style={{ fontSize: 13, color: '#555756', fontStyle: 'italic', }}
-                                numberOfLines={1}>{typeof this.props.change.new_value.new_value === "string"
+                                numberOfLines={6}>{typeof this.props.change.new_value.new_value === "string"
                                     && !testForURL(this.props.change.new_value.new_value, true) ? this.props.change.new_value.new_value : ""}</Text>
                         </View>
                     </View>}

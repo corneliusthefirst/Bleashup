@@ -85,7 +85,7 @@ export default class TasksCreation extends BleashupModal {
     }) : stores.Reminds.loadRemind(this.props.event_id,this.props.remind_id ?this.props.remind_id : "newRemindId").then(rem => {
       console.warn('here we are 2');
         //if (!rem) stores.Reminds.addReminds(this.props.event_id,request.Remind()).then(()=>{})
-
+        
         console.warn("remind from render ....", rem)
         let remind = rem ? rem : request.Remind()
         this.setState({

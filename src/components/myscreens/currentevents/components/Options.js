@@ -39,74 +39,12 @@ export default class Options extends Component {
     }
 
     width = "50%"
-    @autobind navigateToHighLights() {
-        stores.Events.isParticipant(this.props.Event.id, stores.Session.SessionStore.phone).then((status) => {
-            if (status) {
-                this.props.navigation.navigate("Event", {
-                    Event: this.props.Event,
-                    tab: "Highlights"
-                });
-            } else {
-                Toast.show({
-                    text: "please join the event to see the updates about !",
-                    buttonText: "ok"
-                })
-            }
-            this.props.seen()
-        })
-    }
-
-    @autobind navigateToEventDetails() {
-        stores.Events.isParticipant(this.props.Event.id, stores.Session.SessionStore.phone).then(status => {
-            if (status) {
-                this.props.navigation.navigate("Event", {
-                    Event: this.props.Event,
-                    tab: "EventDetails"
-                });
-            } else {
-                this.setState({ isDetailsModalOpened: true })
-            }
-            this.props.seen()
-        })
-    }
     @autobind navigateToReminds() {
         stores.Events.isParticipant(this.props.Event.id, stores.Session.SessionStore.phone).then(status => {
             if (status) {
                 this.props.navigation.navigate("Event", {
                     Event: this.props.Event,
                     tab: "Reminds"
-                });
-            } else {
-                Toast.show({
-                    text: "please join the event to see the updates about !",
-                    buttonText: "ok"
-                })
-            }
-            this.props.seen()
-        })
-    }
-    @autobind navigateToEventChat() {
-        stores.Events.isParticipant(this.props.Event.id, stores.Session.SessionStore.phone).then(status => {
-            if (status) {
-                this.props.navigation.navigate("Event", {
-                    Event: this.props.Event,
-                    tab: "EventChat"
-                });
-            } else {
-                Toast.show({
-                    text: "please join the event to see the updates about !",
-                    buttonText: "ok"
-                })
-            }
-            this.props.seen()
-        })
-    }
-    @autobind navigateToVotes() {
-        stores.Events.isParticipant(this.props.Event.id, stores.Session.SessionStore.phone).then((status) => {
-            if (status) {
-                this.props.navigation.navigate("Event", {
-                    Event: this.props.Event,
-                    tab: "Votes"
                 });
             } else {
                 Toast.show({
@@ -130,27 +68,13 @@ export default class Options extends Component {
                     <View style={{ alignSelf: 'flex-end', }}>
                         <Text style={{
                             color: "#1FABAB",
-                            fontSize: 17, fontStyle: 'italic',
+                            fontSize: 17,
                             fontWeight: 'bold',
                             alignSelf: 'center',
                         }} note>reminds</Text>
 
                     </View>
                 </TouchableOpacity>
-
-                <TouchableOpacity style={{ width: "50%", height: "100%", justifyContent: "center", }} onPress={() => requestAnimationFrame(() => this.navigateToEventChat())} >
-                    <View style={{ alignSelf: "flex-end" }}>
-                        <Label style={{
-                            marginLeft: "-13%",
-                            fontSize: 17, fontStyle: 'italic',
-                            alignSelf: 'center',
-                            fontWeight: 'bold',
-                            color: "#1FABAB"
-                        }}>chats</Label>
-                    </View>
-                </TouchableOpacity>
-
-
             </View>
         )
     }
