@@ -150,6 +150,7 @@ class ServerEventListener {
     });
     socket.on("data", datar => {
      let data = datar.toString()
+     console.warn(data)
       if (data.includes("_end__start_")) {
         let dataX = data.split("_end__start_")
         if (dataX[0].includes("_start_")) {

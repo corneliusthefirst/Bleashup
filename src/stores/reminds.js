@@ -15,6 +15,7 @@ import { format } from "../services/recurrenceConfigs";
 //import { mapper } from '../services/mapper';
 
 export default class Reminds {
+  
   constructor() {
     //storage.remove(this.saveKey).then(() => {})
     this.initializeReminds();
