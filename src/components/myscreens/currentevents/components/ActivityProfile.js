@@ -12,7 +12,7 @@ export default class ActivityProfile extends Component {
     render() {
         return (
             <View
-                style={{ flexDirection: "row", flexWrap: "wrap", paddingLeft: "4%" }}
+                style={{ flexDirection: "row", flexWrap: "wrap", }}
             >
                 <TouchableOpacity
                     style={{

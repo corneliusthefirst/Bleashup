@@ -282,7 +282,7 @@ class PublicEvent extends Component {
     backgroundColor: colorList.bodyBackground, 
     width: "100%",
     flexDirection: 'row', }}>
-      <View style={{ flexDirection: 'row', width: '100%', alignItems: "center" }}>
+      <View style={{ flexDirection: 'row', width: '100%', alignItems: "center",marginLeft: "2%", }}>
         <View style={{ width: '90%'}}>
           <ActivityProfile
             join={this.join.bind(this)}
