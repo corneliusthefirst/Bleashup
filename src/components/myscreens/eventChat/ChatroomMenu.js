@@ -57,11 +57,11 @@ export default class ChatroomMenu extends Component {
                         color: colorList.headerIcon,
                     }} onPress={this.showMenu} name="gear" type="EvilIcons"></Icon>}
                 >
-                    <View><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
+                    {this.isGeneral?null: <View><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
                         this.hideMenu()
                         return this.props.showMembers()
                     }
-                    }>View Members</MenuItem></View>
+                    }>View Members</MenuItem></View>}
                     <View><MenuDivider color="gray" /><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
                         this.hideMenu()
                         this.props.showRoomMedia()

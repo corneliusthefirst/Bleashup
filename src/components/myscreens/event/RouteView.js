@@ -115,11 +115,11 @@ export default class RouteView extends Component {
                 }
                 )}>
                     <View style={{ marginTop: '10%', width: "100%" }}>
-                        <Icon type="AntDesign" style={{
+                        <Icon type="Octicons" style={{
                             alignSelf: 'center',
                             fontSize: this.fontSize,
                             color: ColorList.bodyIcon
-                        }} name="clockcircleo"></Icon>
+                        }} name="info"></Icon>
                         {/*<Text style={{ padding: "1%", color: this.props.currentPage == "ChangeLogs" ? "#0A4E52" : "gray", width: "100%" }}>{"Logs"}</Text>*/}
                     </View>
                 </TouchableOpacity>

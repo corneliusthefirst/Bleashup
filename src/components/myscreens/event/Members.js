@@ -75,7 +75,7 @@ export default class Members extends Component {
         <BleashupFlatList
           firstIndex={0}
           renderPerBatch={5}
-          initialRender={10}
+          initialRender={15}
           numberOfItems={this.props.participants.length}
           keyExtractor={this._keyExtractor}
           dataSource={this.props.participants}

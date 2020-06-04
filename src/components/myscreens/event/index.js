@@ -144,7 +144,7 @@ export default class Event extends Component {
       mounted: true,
     });
   }
-  editCommiteeName(){
+  editCommiteeName() {
 
   }
   currentWidth = 0.5;
@@ -593,13 +593,8 @@ export default class Event extends Component {
   mention(data) {
     GState.reply = data;
     Vibration.vibrate(this.duration);
-    this.isOpen = true;
-    !GState.currentCommitee ? (GState.currentCommitee = this.event.id) : null;
-    emitter.emit("mentioning");
-    this.setState({
-      currentPage: "EventChat",
-      isChat: true,
-    });
+    emitter.emit("reply-me", GState.reply);
+    this.goback()
   }
   startLoader() {
     this.setState({
@@ -664,7 +659,7 @@ export default class Event extends Component {
   master = false;
   componentWillMount() {
     this.unmounted = false;
-    emitter.on(`event_updated_${this.event.id}`, (change, newValue) => {
+     emitter.on(`event_updated_${this.event.id}`, (change, newValue) => {
       this.handleActivityUpdates(change, newValue);
     });
     this.initializeMaster();
@@ -673,11 +668,8 @@ export default class Event extends Component {
   isOpen = true;
   event = this.props.navigation.getParam("Event");
   componentDidMount() {
-    if (!this.event.calendared && this.event.period) {
-      this.addToCalendar();
-    }
     let page = this.props.navigation.getParam("tab");
-    let isEventCurrentPage = page === "EventChat";
+    let isEventCurrentPage = this.isChat(page);
     isEventCurrentPage ? (GState.currentCommitee = this.event.id) : null;
     this.setState({
       isChat: isEventCurrentPage ? true : false,
@@ -724,12 +716,15 @@ export default class Event extends Component {
       Toast.show({ text: "App is busy" });
     }
   }
+  isChat(currentPage){
+    return currentPage === "EventChat"
+  }
   unInitialize() {
     this.unmounted = true;
     Pickers.CleanAll();
-    GState.reply = null;
+    this.isChat(this.state.currentPage) ? GState.reply = null : null;
     emitter.off(`event_updated_${this.event.id}`);
-    GState.currentCommitee = null;
+   this.isChat(this.state.currentPage)? GState.currentCommitee = null: null;
   }
   componentWillUnmount() {
     this.unInitialize();
@@ -1393,12 +1388,11 @@ export default class Event extends Component {
     });
   }
   setCurrentPage(page, data) {
-    if (page === "EventChat") {
+    if (this.isChat(page)) {
       this.setState({
         isChat: true,
       });
     } else {
-      this.unInitialize();
       BeNavigator.pushActivity(this.event, page);
     }
   }
@@ -1439,7 +1433,7 @@ export default class Event extends Component {
       <Drawer
         useInteractionManager={true}
         tweenHandler={
-          this.state.currentPage === "EventChat"
+          this.isChat(this.state.currentPage)
             ? null
             : Drawer.tweenPresets.parallax
         }
@@ -1450,7 +1444,7 @@ export default class Event extends Component {
         onClose={() => {
           this.isOpen = false;
           setTimeout(() => {
-            this.state.currentPage !== "EventChat"
+            !this.isChat(this.state.currentPage)
               ? this.setState({
                 isChat: false,
               })

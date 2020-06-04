@@ -154,7 +154,7 @@ export default class SWView extends Component {
                     }}>
                         <TouchableOpacity style={{ alignSelf: 'center', ...shadower(2), borderRadius: 5, width: 55, height: 50, marginBottom: 5 }} onPress={() => requestAnimationFrame(() => this.onSearch()) }>
                             <View style={{ backgroundColor: colorList.bodyBackground, marginBottom: '15%', width: 55, borderRadius: 5, height: 50, justifyContent: "center", alignItems: "center" }}>
-                                <Icon style={{ color: colorList.bodyIcon, fontSize: 50 }} type="Feather" name="activity"></Icon>
+                                <Icon style={{ color: colorList.bodyIcon, fontSize: 50 }} type="AntDesign" name="swap"></Icon>
                             </View>
                         </TouchableOpacity>
                     </View>

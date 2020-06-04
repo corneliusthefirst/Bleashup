@@ -41,23 +41,24 @@ export default class ChangeBox extends Component {
     }
     containerStyle = { margin: '1%', borderRadius: 3, backgroundColor: colorList.bodyBackground, ...shadower(3), }
     render() {
-        return (!this.state.loaded ? <View style={{ ...this.containerStyle, width: '95%', height: 120 }}></View> :
+        return (!this.state.loaded ? <View style={{ ...this.containerStyle, width: '95%', height: 100 }}></View> :
             <View>
                 <View style={this.containerStyle}>
                     {!this.props.change ? null : <View style={{ flexDirection: 'column', margin: '1%', }}>
-                        <View style={{ flexDirection: 'row', maxHeight: 40,}}>
-                        <View style={{ width: '93%', height: '100%',justifyContent: 'space-between', }}>
-                        <View style={{width:170,height:'100%'}}><ProfileSimple showPhoto={(url) => {
-                                this.props.showPhoto(url)
-                            }} delay={this.props.delayer}
-                                profile={this.state.changer}>
+                        <View style={{ flexDirection: 'row', maxHeight: 40, }}>
+                            <View style={{ width: '93%', height: '100%', justifyContent: 'space-between', }}>
+                                <View style={{ width: 170, height: '100%' }}><ProfileSimple showPhoto={(url) => {
+                                    this.props.showPhoto(url)
+                                }} delay={this.props.delayer}
+                                    profile={this.state.changer}>
                                 </ProfileSimple></View>
-                        </View>
-                            <View style={{ alignSelf: 'flex-end', flexDirection: 'row',alignItems:"flex-end" }}>
-                                <View style={{alignSelf: 'flex-end',marginTop: 'auto',marginBottom: 'auto',}}>{!this.props.replying ? <ChangeBoxMenu
+                            </View>
+                            <View style={{ alignSelf: 'flex-end', flexDirection: 'row', alignItems: "flex-end" }}>
+                                <View style={{ alignSelf: 'flex-end', marginTop: 'auto', marginBottom: 'auto', }}>{!this.props.replying ? <ChangeBoxMenu
                                     reply={() => this.props.mention({
                                         id: this.props.change.id,
-                                        title: `${this.props.change.changed} :\n ${this.props.change.new_value.new_value}`,
+                                        title: `${this.props.change.changed} :\n ${typeof this.props.change.new_value.new_value == "string" &&
+                                         this.props.change.new_value.new_value}`,
                                         type_extern: this.state.changer.nickname,
                                         new_value: this.props.change.new_value,
                                         updated: this.props.change.updated,
@@ -78,7 +79,7 @@ export default class ChangeBox extends Component {
                             flexDirection: 'column',
                         }}>
                             <View style={{ flexDirection: 'row', }}>
-                                <Text ellipsizeMode='tail' style={{ fontSize: 14, fontWeight: "800", color:colorList.bodyText }}
+                                <Text ellipsizeMode='tail' style={{ fontSize: 14, fontWeight: "800", color: colorList.bodyText }}
                                     numberOfLines={4}>{this.props.change.changed}</Text>
                             </View>
                             <Text ellipsizeMode='tail' style={{ fontSize: 13, color: '#555756', fontStyle: 'italic', }}
