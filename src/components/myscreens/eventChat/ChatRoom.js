@@ -415,9 +415,9 @@ class ChatRoom extends Component {
         setTimeout(() => {
             GState.reply && !this.alreadyFocussed && this.fucussTextInput();
             this.alreadyFocussed = true;
-            this.refs.scrollViewRef.scrollToEnd({ animated: true, duration: 200 });
+           this.refs && this.refs.scrollViewRef && this.refs.scrollViewRef.scrollToEnd({ animated: true, duration: 200 });
             this.state.showCaption &&
-                this.refs.captionScrollViewRef.scrollToEnd({
+             this.refs && this.refs.captionScrollViewRef &&   this.refs.captionScrollViewRef.scrollToEnd({
                     animated: true,
                     duration: 200,
                 });
@@ -445,6 +445,13 @@ class ChatRoom extends Component {
         this.formSerachableMembers();
         this.fireRef = this.getRef(this.props.firebaseRoom);
         this.setTypingRef(this.props.firebaseRoom);
+        emitter.on("reply-me",(rep) => {
+            this.replying(rep, null)
+            setTimeout(() => {
+                this.alreadyFocussed = false;
+                this.fucussTextInput()
+            },400)
+        })
         this.props.isComment ? (stores.Messages.messages[this.roomID] = []) : null;
         this.keyboardDidShowSub = Keyboard.addListener('keyboardDidShow', this.handleKeyboardDidShow.bind(this));
         this.keyboardDidHideSub = Keyboard.addListener('keyboardDidHide', this.handleKeyboardDidHide.bind(this));
@@ -458,6 +465,9 @@ class ChatRoom extends Component {
     componentWillUnmount() {
         Pickers.CleanAll();
         this.fireRef.off();
+        emitter.off("reply-me", (rep) => {
+            //this.replying(rep, null)
+        })
         this.typingRef.off();
         this.keyboardDidHideSub.remove()
         this.keyboardDidShowSub.remove()
@@ -1475,7 +1485,7 @@ class ChatRoom extends Component {
         });
     }
     fucussTextInput() {
-        this._textInput.focus();
+      this._textInput &&  this._textInput.focus();
     }
     showReacters(reaction, reacters) {
         this.setState({
@@ -2058,7 +2068,10 @@ class ChatRoom extends Component {
                                 settings={this.props.activity_id === this.roomID ? this.props.openSettings:this.props.editCommitteeName}
                             ></ChatroomMenu>
                         </View>
-                        <View
+                        <TouchableOpacity
+                            onPress={() => {
+                                requestAnimationFrame(() => this.props.openMenu())  
+                            }}
                             style={{
                                 height: colorList.headerHeight,
                                 justifyContent: "center",
@@ -2066,14 +2079,11 @@ class ChatRoom extends Component {
                             }}
                         >
                             <Icon
-                                onPress={() => {
-                                    this.props.openMenu();
-                                }}
                                 style={{ color: colorList.headerIcon, fontSize: 35 }}
                                 type={"Ionicons"}
                                 name={"ios-menu"}
                             ></Icon>
-                        </View>
+                        </TouchableOpacity>
                     </View>
                 </View>
             </View>

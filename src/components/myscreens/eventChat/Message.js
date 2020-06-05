@@ -290,7 +290,7 @@ export default class Message extends Component {
             this.setState({
                 loaded: true,
             });
-        }, 20 * this.props.delay);
+        }, 5 * this.props.delay);
     }
     slept = false;
     openingSwipeout() {
