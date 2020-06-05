@@ -40,7 +40,7 @@ export default class Reminds {
   @observable Reminds = {};
   extraVotes = {};
   saver() {
-    if (this.Reminds.length > 0) {
+    if (Object.keys(this.Reminds).length > 0) {
       console.warn("persisiting reminds foolish", this.Reminds);
       this.saveKey.data = this.Reminds;
       storage.save(this.saveKey).then(() => {

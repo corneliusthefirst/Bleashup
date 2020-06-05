@@ -876,34 +876,7 @@ export default class Reminds extends Component {
                   style={{ color: colorList.headerIcon, alignSelf: "center" }}
                 />
               </View>
-
-<<<<<<< HEAD
-              <View
-                style={{
-                  width: "10%",
-                  paddingLeft: "1%",
-                  height: "100%",
-                  justifyContent: "center",
-                }}
-              >
-                <Icon
-                  onPress={() => {
-                    this.props.openMenu();
-                  }}
-                  style={{ color: colorList.headerIcon }}
-                  type={"Ionicons"}
-                  name={"ios-menu"}
-                />
-              </View>
             </View>
-=======
-            {/*<View style={{ width: '10%', paddingLeft: '1%',height:"100%",justifyContent:"center" }}>
-              <Icon onPress={() => {
-                this.props.openMenu()
-              }} style={{ color: colorList.headerIcon }} type={"Ionicons"} name={"ios-menu"}></Icon>
-            </View>*/}
-
->>>>>>> 2c3781b635ba27094a4a0f6196b52bfbd5caf65b
           </View>
         )}
 

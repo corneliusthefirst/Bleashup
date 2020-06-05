@@ -446,10 +446,11 @@ class ChatRoom extends Component {
         this.fireRef = this.getRef(this.props.firebaseRoom);
         this.setTypingRef(this.props.firebaseRoom);
         emitter.on("reply-me",(rep) => {
-            this.alreadyFocussed = false;
+            this.replying(rep, null)
             setTimeout(() => {
-                this.replying(rep, null)
-            },100)
+                this.alreadyFocussed = false;
+                this.fucussTextInput()
+            },400)
         })
         this.props.isComment ? (stores.Messages.messages[this.roomID] = []) : null;
         this.keyboardDidShowSub = Keyboard.addListener('keyboardDidShow', this.handleKeyboardDidShow.bind(this));
@@ -2067,7 +2068,10 @@ class ChatRoom extends Component {
                                 settings={this.props.activity_id === this.roomID ? this.props.openSettings:this.props.editCommitteeName}
                             ></ChatroomMenu>
                         </View>
-                        <View
+                        <TouchableOpacity
+                            onPress={() => {
+                                requestAnimationFrame(() => this.props.openMenu())  
+                            }}
                             style={{
                                 height: colorList.headerHeight,
                                 justifyContent: "center",
@@ -2075,14 +2079,11 @@ class ChatRoom extends Component {
                             }}
                         >
                             <Icon
-                                onPress={() => {
-                                    this.props.openMenu();
-                                }}
                                 style={{ color: colorList.headerIcon, fontSize: 35 }}
                                 type={"Ionicons"}
                                 name={"ios-menu"}
                             ></Icon>
-                        </View>
+                        </TouchableOpacity>
                     </View>
                 </View>
             </View>
