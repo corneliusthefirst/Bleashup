@@ -169,11 +169,12 @@ export default class Reminds extends Component {
     emitter.on("remind-updated", () => {
       this.refreshReminds();
     });
-    results = [];
-    let intervals = [];
-    let thisInterval = {};
+    //let results = [];
+    //let intervals = [];
+    //let thisInterval = {};
     stores.Reminds.loadReminds(this.props.event_id, true).then((Reminds) => {
       console.warn(Reminds);
+      Reminds = reject(Reminds, { id: request.Remind().id });
       setTimeout(() => {
         this.setState({
           mounted: true,
@@ -569,6 +570,16 @@ export default class Reminds extends Component {
       )
     );
   }
+
+  getRemindData = () => {
+    let RemindData = stores.Reminds.Reminds
+      ? reject(stores.Reminds.Reminds[this.props.event_id], {
+          id: "newRemindId",
+        })
+      : [];
+    return RemindData;
+  };
+
   render() {
     return (
       <View>
@@ -877,12 +888,12 @@ export default class Reminds extends Component {
                 />
               </View>
 
-            {/*<View style={{ width: '10%', paddingLeft: '1%',height:"100%",justifyContent:"center" }}>
+              {/*<View style={{ width: '10%', paddingLeft: '1%',height:"100%",justifyContent:"center" }}>
               <Icon onPress={() => {
                 this.props.openMenu()
               }} style={{ color: colorList.headerIcon }} type={"Ionicons"} name={"ios-menu"}></Icon>
             </View>*/}
-
+            </View>
           </View>
         )}
 
@@ -895,10 +906,7 @@ export default class Reminds extends Component {
             firstIndex={0}
             //showVerticalScrollIndicator={false}
             keyExtractor={(item, index) => index.toString()}
-            dataSource={
-              stores.Reminds.Reminds &&
-              stores.Reminds.Reminds[this.props.event_id]
-            }
+            dataSource={this.getRemindData()}
             renderItem={(item, index) => {
               this.delay = index >= 5 ? 0 : this.delay + 1;
               console.warn("flatlist item", item);

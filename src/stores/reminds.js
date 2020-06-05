@@ -1,6 +1,6 @@
 /* eslint-disable quotes */
 import { observable, action } from "mobx";
-import { find, findIndex, uniqBy, reject } from "lodash";
+import { find, findIndex, uniqBy, reject, isEmpty } from "lodash";
 import storage from "./Storage";
 import moment from "moment";
 import GState from "./globalState";
@@ -18,9 +18,7 @@ export default class Reminds {
   constructor() {
     //storage.remove(this.saveKey).then(() => {});
     this.initializeReminds();
-    this.saveInterval = setInterval(() => {
-      this.previousSaveTime !== this.currentSaveTime ? this.saver() : null;
-    }, this.saveInterval);
+    this.timer();
   }
   saveInterval = 2000;
   saverInterval = null;
@@ -37,10 +35,16 @@ export default class Reminds {
         this.Reminds = {};
       });
   }
+  timer = () => {
+    setInterval(() => {
+      this.previousSaveTime !== this.currentSaveTime ? this.saver() : null;
+    }, this.saveInterval);
+  };
+
   @observable Reminds = {};
   extraVotes = {};
   saver() {
-    if (this.Reminds.length > 0) {
+    if (!isEmpty(this.Reminds)) {
       console.warn("persisiting reminds foolish", this.Reminds);
       this.saveKey.data = this.Reminds;
       storage.save(this.saveKey).then(() => {
