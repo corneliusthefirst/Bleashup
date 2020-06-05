@@ -197,7 +197,7 @@ export default class Reminds {
         Reminds[EventID][RemindIndex].updated_at = moment().format();
         Reminds[EventID][RemindIndex].description_updated = inform;
         Reminds[EventID][RemindIndex].updated = inform;
-        Reminds[EventID].splice(RemindIndex, 1, Reminds[EventID][RemindIndex]);
+        //Reminds[EventID].splice(RemindIndex, 1, Reminds[EventID][RemindIndex]);
 
         this.setProperty(Reminds);
         GState.eventUpdated = true;
@@ -216,7 +216,7 @@ export default class Reminds {
         Reminds[EventID][RemindIndex].updated_at = moment().format();
         Reminds[EventID][RemindIndex].description_updated = inform;
         Reminds[EventID][RemindIndex].updated = inform;
-        Reminds[EventID].splice(RemindIndex, 1, Reminds[EventID][RemindIndex]);
+        //Reminds[EventID].splice(RemindIndex, 1, Reminds[EventID][RemindIndex]);
 
         this.setProperty(Reminds);
         GState.eventUpdated = true;
@@ -235,7 +235,7 @@ export default class Reminds {
         Reminds[EventID][RemindIndex].updated_at = moment().format();
         Reminds[EventID][RemindIndex].description_updated = inform;
         Reminds[EventID][RemindIndex].updated = inform;
-        Reminds[EventID].splice(RemindIndex, 1, Reminds[EventID][RemindIndex]);
+       //Reminds[EventID].splice(RemindIndex, 1, Reminds[EventID][RemindIndex]);
 
         this.setProperty(Reminds);
         GState.eventUpdated = true;
@@ -256,7 +256,7 @@ export default class Reminds {
         Reminds[EventID][RemindIndex].updated_at = moment().format();
         Reminds[EventID][RemindIndex].description_updated = inform;
         Reminds[EventID][RemindIndex].updated = inform;
-        Reminds[EventID].splice(RemindIndex, 1, Reminds[EventID][RemindIndex]);
+       // Reminds[EventID].splice(RemindIndex, 1, Reminds[EventID][RemindIndex]);
 
         this.setProperty(Reminds);
         GState.eventUpdated = true;
@@ -275,7 +275,7 @@ export default class Reminds {
         Reminds[EventID][RemindIndex].updated_at = moment().format();
         Reminds[EventID][RemindIndex].description_updated = inform;
         Reminds[EventID][RemindIndex].updated = inform;
-        Reminds[EventID].splice(RemindIndex, 1, Reminds[EventID][RemindIndex]);
+        //Reminds[EventID].splice(RemindIndex, 1, Reminds[EventID][RemindIndex]);
 
         this.setProperty(Reminds);
         GState.eventUpdated = true;
@@ -294,7 +294,7 @@ export default class Reminds {
         Reminds[EventID][RemindIndex].updated_at = moment().format();
         Reminds[EventID][RemindIndex].description_updated = inform;
         Reminds[EventID][RemindIndex].updated = inform;
-        Reminds[EventID].splice(RemindIndex, 1, Reminds[EventID][RemindIndex]);
+        //Reminds[EventID].splice(RemindIndex, 1, Reminds[EventID][RemindIndex]);
 
         this.setProperty(Reminds);
         GState.eventUpdated = true;
@@ -313,7 +313,7 @@ export default class Reminds {
         Reminds[EventID][RemindIndex].updated_at = moment().format();
         Reminds[EventID][RemindIndex].description_updated = inform;
         Reminds[EventID][RemindIndex].updated = inform;
-        Reminds[EventID].splice(RemindIndex, 1, Reminds[EventID][RemindIndex]);
+        //Reminds[EventID].splice(RemindIndex, 1, Reminds[EventID][RemindIndex]);
 
         this.setProperty(Reminds);
         GState.eventUpdated = true;
@@ -331,7 +331,7 @@ export default class Reminds {
         Reminds[EventID][RemindIndex].updated_at = moment().format();
         Reminds[EventID][RemindIndex].description_updated = inform;
         Reminds[EventID][RemindIndex].updated = inform;
-        Reminds[EventID].splice(RemindIndex, 1, Reminds[EventID][RemindIndex]);
+        //Reminds[EventID].splice(RemindIndex, 1, Reminds[EventID][RemindIndex]);
 
         this.setProperty(Reminds);
         GState.eventUpdated = true;
@@ -356,7 +356,7 @@ export default class Reminds {
         Reminds[EventID][RemindIndex].updated_at = moment().format();
         Reminds[EventID][RemindIndex].description_updated = inform;
         Reminds[EventID][RemindIndex].updated = inform;
-        Reminds[EventID].splice(RemindIndex, 1, Reminds[EventID][RemindIndex]);
+        //Reminds[EventID].splice(RemindIndex, 1, Reminds[EventID][RemindIndex]);
 
         this.setProperty(Reminds);
         GState.eventUpdated = true;
@@ -524,7 +524,7 @@ export default class Reminds {
                   resolve(Remind.data);
                 })
                 .catch(() => {
-                  resolve();
+                  reject();
                 });
             })
             .catch((error) => {
@@ -535,10 +535,11 @@ export default class Reminds {
                     resolve();
                   })
                   .catch(() => {
-                    resolve();
+                    resolve(request.Remind());
                   });
+              }else{
+                reject()
               }
-              resolve({});
             });
         }
       });
