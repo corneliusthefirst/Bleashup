@@ -356,7 +356,7 @@ export default class Reminds {
         Reminds[EventID][RemindIndex].updated_at = moment().format();
         Reminds[EventID][RemindIndex].description_updated = inform;
         Reminds[EventID][RemindIndex].updated = inform;
-        //Reminds[EventID].splice(RemindIndex, 1, Reminds[EventID][RemindIndex]);
+        //Reminds[EventID].splice(RemindIndex, 1, Reminds[EventID][RemindIndex]); !this is not neccessary . replacing by index is ok.
 
         this.setProperty(Reminds);
         GState.eventUpdated = true;
@@ -503,7 +503,9 @@ export default class Reminds {
               reject();
             }
           }
-        );
+        ).catch(() => {
+          reject()
+        });
       });
     });
   }
@@ -532,7 +534,7 @@ export default class Reminds {
                 this.addReminds(EventID, request.Remind())
                   .then(() => {
                     console.warn("added boy");
-                    resolve();
+                    resolve(request.Remind());
                   })
                   .catch(() => {
                     resolve(request.Remind());

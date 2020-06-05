@@ -66,7 +66,7 @@ export default class EventTasksCard extends Component {
               this.setState({
                 correspondingDateInterval,
                 currentDateIntervals,
-                hasDoneForThisInterval,
+                //hasDoneForThisInterval,
                 newing: !this.state.newing
               })
               resolve('ok')
