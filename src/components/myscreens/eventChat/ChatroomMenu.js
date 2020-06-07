@@ -53,9 +53,16 @@ export default class ChatroomMenu extends Component {
                 <Menu
                     style={{ backgroundColor: colorList.popMenuBackground }}
                     ref={this.setMenuRef}
-                    button={<Icon style={{
+                    button={<TouchableOpacity 
+                        onPress={ () => 
+                            requestAnimationFrame(() => this.showMenu())
+                    }><Icon style={{
                         color: colorList.headerIcon,
-                    }} onPress={this.showMenu} name="gear" type="EvilIcons"></Icon>}
+                    }}
+                     name="gear" 
+                     type="EvilIcons">
+                    </Icon>
+                    </TouchableOpacity>}
                 >
                     {this.isGeneral?null: <View><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
                         this.hideMenu()

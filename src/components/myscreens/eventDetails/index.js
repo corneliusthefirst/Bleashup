@@ -255,10 +255,10 @@ export default class EventDetailView extends Component {
               paddingLeft: '1%', paddingRight: '1%', backgroundColor: colorList.headerBackground,
               flexDirection: "row", alignItems: "center",
             }}>
-              <View style={{ width: "10%", paddingLeft: "3%" }} >
-                <Icon onPress={this.props.goback}
+              <TouchableOpacity onPress={() => requestAnimationFrame(this.props.goback)} style={{ width: "10%", paddingLeft: "3%" }} >
+                <Icon
                   style={{ color: colorList.headerIcon, }} type={"MaterialIcons"} name={"arrow-back"}></Icon>
-              </View>
+              </TouchableOpacity>
 
               <View style={{ width: '69%', paddingLeft: '9%', justifyContent: "center" }}>
                 <Title style={{ color: colorList.headerText, fontWeight: 'bold', alignSelf: 'flex-start',fontSize:colorList.headerFontSize }}>{"Star Messages"}</Title>

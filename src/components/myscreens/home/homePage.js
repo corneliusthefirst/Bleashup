@@ -52,6 +52,7 @@ import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
 import colorList from "../../colorList";
 import BeNavigator from '../../../services/navigationServices';
 import { PrivacyRequester, shared_post } from '../settings/privacy/Requester';
+import EventListener from '../../../services/severEventListener';
 
 let { height, width } = Dimensions.get('window');
 
@@ -134,6 +135,7 @@ class Home extends Component {
     }
   }
   componentWillMount() {
+    //EventListener.stopConnection()
     Linking.addEventListener('url', this.handleURL)
     DeepLinking.addScheme(GState.DeepLinkURL);
     DeepLinking.addRoute('/tester', response => {

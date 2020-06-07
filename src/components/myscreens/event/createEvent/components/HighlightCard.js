@@ -67,10 +67,21 @@ export default class HighlightCard extends Component {
 
       this.state.mounted ?
         <View style={{ width: ColorList.containerWidth, alignSelf: "center", ...!this.props.shadowless && shadower(1),justifyContent: 'center',marginTop:"1%",borderBottomWidth:0.5,borderColor:"ivory" }}>
-          <View style={{ flexDirection: 'row',width:'92%', justifyContent: 'space-between', marginTop: 2, marginBottom: 2, height:ColorList.containerHeight/20,alignSelf: 'center', }}>
+          <View style={{ 
+          flexDirection: 'row',
+          width:'97%', 
+          justifyContent: 'space-between', 
+          marginTop: 2, 
+          marginBottom: 2,
+          height:ColorList.containerHeight/20,
+          alignSelf: 'center', 
+        }}>
             <View style={{ maxWidth: '100%' }}>
               <Title style={{
-                fontSize: 14, color: ColorList.headerBlackText, fontWeight: 'bold', marginTop:"10%",
+                fontSize: 14, 
+                color: ColorList.headerBlackText, 
+                fontWeight: 'bold', 
+                marginTop:"10%",
               }}>{this.props.item.title ? this.props.item.title : ""}</Title>
             </View>
             <View>

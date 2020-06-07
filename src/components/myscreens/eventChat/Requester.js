@@ -26,6 +26,9 @@ class MessageRequest {
                     MainUpdater.saveMessage(message, EventID, CommitteeID, notme ? false : true).then(() => {
                         resolve(response);
                     });
+                }).catch((error) => {
+                    console.warn(error)
+                    
                 });
             });
         });

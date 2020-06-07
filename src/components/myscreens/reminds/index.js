@@ -848,7 +848,8 @@ export default class Reminds extends Component {
                 alignItems: 'center',
               }}
             >
-              <View
+              <TouchableOpacity
+                onPress={() => requestAnimationFrame(() => this.props.goback())}
                 style={{
                   width: "10%",
                   paddingLeft: "3%",
@@ -857,12 +858,11 @@ export default class Reminds extends Component {
                 }}
               >
                 <Icon
-                  onPress={this.props.goback}
                   style={{ color: colorList.headerIcon }}
                   type={"MaterialIcons"}
                   name={"arrow-back"}
                 />
-              </View>
+              </TouchableOpacity>
 
               <View
                 style={{
@@ -885,21 +885,21 @@ export default class Reminds extends Component {
                 </Title>
               </View>
 
-              <View
+              <TouchableOpacity
                 style={{
                   width: "13%",
                   paddingRight: "3%",
                   height: "100%",
                   justifyContent: "center",
                 }}
+                onPress={() => requestAnimationFrame(() => this.AddRemind())}
               >
                 <Icon
-                  onPress={() => requestAnimationFrame(() => this.AddRemind())}
                   type="AntDesign"
                   name="plus"
                   style={{ color: colorList.headerIcon, alignSelf: "center" }}
                 />
-              </View>
+              </TouchableOpacity>
             </View>
           </View>
         )}
