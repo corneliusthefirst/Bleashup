@@ -16,7 +16,9 @@ import { format } from "../services/recurrenceConfigs";
 
 export default class Reminds {
   constructor() {
-    //storage.remove(this.saveKey).then(() => {});
+    /*storage.remove(this.saveKey).then(() => {
+      console.warn("removed");
+    });*/
     this.initializeReminds();
     this.timer();
   }

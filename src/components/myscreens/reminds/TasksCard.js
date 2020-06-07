@@ -1,10 +1,10 @@
 /* eslint-disable prettier/prettier */
 import React, { Component } from "react";
 import {
-  Card, CardItem, Text, Icon, Title, Left, Button, Right, Spinner
+  Card, CardItem, Text, Icon, Title, Left, Button, Right, Spinner,View,
 } from "native-base";
 
-import { StyleSheet, View, TouchableOpacity, Dimensions } from 'react-native';
+import { StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import Modal from 'react-native-modalbox';
 import autobind from "autobind-decorator";
 import stores from '../../../stores/index';
@@ -176,8 +176,8 @@ export default class EventTasksCard extends Component {
                 replace("Ended", "Past").
                 replace("Started", "Past")}`}</Text>
             </View>
-            <View style={{ width: "4%",flexDirection: 'row', }}>
-              <View style={{ flexDirection: 'row',alignSelf: 'flex-end', }}>
+            <View style={{ width: 22,flexDirection: 'row', }}>
+              <View style={{ flexDirection: 'row',alignSelf: 'flex-end' }}>
                 <RemindsMenu
                   reply={() => this.props.mention({ ...this.props.item, creator: this.state.creator })}
                   members={() => this.props.showReport(this.props.item, this.state.currentDateIntervals, this.state.correspondingDateInterval)}
@@ -228,10 +228,10 @@ export default class EventTasksCard extends Component {
             </TouchableOpacity>
           </CardItem>
 
-          <CardItem style={{ width: "100%", marginTop: '2%', }}>
+          <View style={{ width: "100%", marginTop: '2%',flexDirection:'row', justifyContent:'flex-end',paddingRight:15}}>
             {!member ?
               cannotAssign ? null :
-                <Button style={{ borderWidth: 2, borderRadius: 10, borderColor: ColorList.iconActive, width: "32%", alignItems: 'center', justifyContent: 'center', marginLeft: "67%" }}
+                <Button style={{ borderWidth: 2, borderRadius: 10, borderColor: ColorList.iconActive, width: 105,height:35, alignItems: 'center', justifyContent: 'center'}}
                   onPress={() => this.assignToMe()} transparent >
                   <Text style={{ fontWeight: "500", color: ColorList.darkGrayText, fontSize: 11 }}>Assign To Me</Text>
                 </Button>
@@ -252,8 +252,7 @@ export default class EventTasksCard extends Component {
                 }} transparent><Text style={{ fontWeight: 'bold', color: 'red' }}>{"Missed"}</Text></Button>*/ null
                   : canBeDone ? <Button style={{
                     borderWidth: 2, marginTop: 5, borderRadius: 10, borderColor: "#1FABAB",
-                    width: "21%", alignItems: 'center', justifyContent: 'center',
-                    marginLeft: "78%"
+                    width: 70, alignItems: 'center', justifyContent: 'center',height:35
                   }}
                     onPress={() => this.onDone()} transparent >
                     <Text style={{
@@ -266,7 +265,7 @@ export default class EventTasksCard extends Component {
             }
 
 
-          </CardItem>
+          </View>
           <View style={{
             alignItems: 'flex-start',
             padding: 2,

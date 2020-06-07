@@ -52,7 +52,7 @@ export default class Reminds extends Component {
     super(props);
     this.state = {
       eventRemindData: [],
-      mounted: false,
+      mounted: true,
       newing: false,
       update: false,
       event_id: this.props.event_id,
@@ -124,7 +124,7 @@ export default class Reminds extends Component {
           thisInterval,
           intervals,
         },
-        ...this.state.eventRemindData,
+        ...this.getRemindData(),
       ],
     });
   }
@@ -169,9 +169,15 @@ export default class Reminds extends Component {
     emitter.on("remind-updated", () => {
       this.refreshReminds();
     });
+    this.setState({
+      mounted: true,
+      RemindCreationState: this.props.currentMembers ? true : false,
+    });
     //let results = [];
     //let intervals = [];
     //let thisInterval = {};
+    /* Reminds = reject(Reminds, { id: request.Remind().id });
+
     stores.Reminds.loadReminds(this.props.event_id, true).then((Reminds) => {
       console.warn(Reminds);
       Reminds = reject(Reminds, { id: request.Remind().id });
@@ -182,7 +188,7 @@ export default class Reminds extends Component {
           eventRemindData: Reminds,
         });
       });
-    });
+    });*/
   }
   saveRemoved(members) {
     if (this.props.working) {
@@ -231,11 +237,11 @@ export default class Reminds extends Component {
         .then((res) => {
           if (res) {
             //Toast.show({ text: 'All updates applied', type: 'success' })
-            let reminds = this.state.eventRemindData;
-            thisremind = findIndex(reminds, { id: JSON.parse(newRemind).id });
-            reminds[thisremind] = JSON.parse(newRemind);
+            // let reminds = this.state.eventRemindData;
+            //thisremind = findIndex(reminds, { id: JSON.parse(newRemind).id });
+            //reminds[thisremind] = JSON.parse(newRemind);
             this.setState({
-              eventRemindData: reminds,
+              eventRemindData: this.getRemindData(),
             });
           }
           this.props.stopLoader();
@@ -248,7 +254,14 @@ export default class Reminds extends Component {
     }
   }
   refreshReminds() {
-    this.props.shared
+    this.setState({
+      newing: !this.state.newing,
+      currentTask:
+        this.state.currentTask &&
+        find(this.getRemindData(), { id: this.state.currentTask.id }),
+    });
+
+    /*this.props.shared
       ? stores.Reminds.loadRemindFromRemote(
           this.props.share.item_id,
           false
@@ -273,7 +286,7 @@ export default class Reminds extends Component {
                 find(Reminds, { id: this.state.currentTask.id }),
             });
           }
-        );
+        );*/
   }
 
   updateRemind(data) {
@@ -608,7 +621,7 @@ export default class Reminds extends Component {
           stopLoader={this.props.stopLoader}
           startLoader={this.props.startLoader}
           event={this.props.event}
-          eventRemindData={this.state.eventRemindData}
+          eventRemindData={this.getRemindData()}
         />
         {this.state.isSelectAlarmPatternModalOpened ? (
           <SetAlarmPatternModal
@@ -908,7 +921,7 @@ export default class Reminds extends Component {
                 <View>
                   <TasksCard
                     showMedia={this.showMedia.bind(this)}
-                    isLast={index === this.state.eventRemindData.length - 1}
+                    isLast={index === this.getRemindData().length - 1}
                     phone={stores.LoginStore.user.phone}
                     mention={(itemer) => {
                       this.mention(itemer);
@@ -933,7 +946,7 @@ export default class Reminds extends Component {
                 </View>
               );
             }}
-            numberOfItems={this.state.eventRemindData.length}
+            numberOfItems={this.getRemindData().length}
           />
         </View>
       </View>
