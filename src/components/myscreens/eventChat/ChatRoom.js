@@ -133,6 +133,7 @@ class ChatRoom extends Component {
             showPhoto: false,
             playing: true,
             replyContent: null,
+            height: 20,
         };
         this.BackHandler = null;
     }
@@ -1701,6 +1702,13 @@ class ChatRoom extends Component {
             </View>
         );
     }
+
+    updateSize = (height) => {
+        this.setState({
+          height
+        });
+      }
+
     keyboardView() {
         return (
             <View
@@ -1722,7 +1730,9 @@ class ChatRoom extends Component {
                     <View
                         style={{
                             width: "86%",
+                            height: this.state.height,
                             fontSize: 17,
+                            bottom: 0,
                             flexDirection: "row",
                             justifyContent: "space-between",
                             borderColor: "#1FABAB",
@@ -1737,9 +1747,8 @@ class ChatRoom extends Component {
                             )}
                             style={{
                                 width: "12%",
-                                marginTop: "auto",
-                                alignItems: "center",
-                                justifyContent: "center",
+                                alignSelf:'flex-end',
+                                bottom: 2,
                                 padding: "1%",
                             }}
                         >
@@ -1752,8 +1761,9 @@ class ChatRoom extends Component {
                         <View
                             style={{
                                 width: "88%",
+                                height: this.state.height,
                                 flexDirection: "column",
-                                borderRadius: 20,
+                                borderRadius: 25,
                                 borderWidth: 0.2,
                                 borderColor: "grey",
                                 borderTopLeftRadius:
@@ -1761,13 +1771,13 @@ class ChatRoom extends Component {
                                         this.state.tagging ||
                                         this.state.showAudioRecorder
                                         ? 5
-                                        : 20,
+                                        : 25,
                                 borderTopRightRadius:
                                     this.state.replying ||
                                         this.state.tagging ||
                                         this.state.showAudioRecorder
                                         ? 5
-                                        : 20,
+                                        : 25,
                             }}
                         >
                             {
@@ -1793,24 +1803,23 @@ class ChatRoom extends Component {
                                     left: 0,
                                     right: 0,
                                     width: "84%",
-                                    minHeight: 20,
-                                    maxHeight: 300,
+                                    height:this.state.height,
+                                    borderRadius: 15,
                                     marginLeft: "3%",
                                 }}
                                 placeholderTextColor="#66737C"
                                 multiline={true}
+                                onContentSizeChange={(e) => this.updateSize(e.nativeEvent.contentSize.height)}
                                 ref={(r) => {
                                     this._textInput = r;
                                 }}
                             />
                             <TouchableOpacity
                                 style={{
-                                    marginTop: "auto",
-                                    marginBottom: "auto",
                                     width: "16%",
                                     position: "absolute",
-                                    bottom: 0,
-                                    right: 0,
+                                    bottom: 10,
+                                    right: 5,
                                 }}
                                 onPress={() => requestAnimationFrame(() => {
                                     this.toggleEmojiKeyboard();
@@ -1820,9 +1829,8 @@ class ChatRoom extends Component {
                                 <Icon
                                     style={{
                                         color: "gray",
-                                        marginBottom: 11,
                                         alignSelf: "flex-end",
-                                        marginRight: "8%",
+                                        fontSize:20,
                                     }}
                                     type="Entypo"
                                     name="emoji-flirt"
@@ -1834,7 +1842,8 @@ class ChatRoom extends Component {
                     <TouchableOpacity
                         style={{
                             width: "12%",
-                            marginTop: "auto",
+                            alignSelf:'flex-end',
+                            bottom: 2,
                             padding: "1%",
                         }}
                         onPress={() => requestAnimationFrame(() => {
