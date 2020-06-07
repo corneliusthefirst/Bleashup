@@ -129,16 +129,24 @@ export default class ChangeLogs extends Component {
               flexDirection: "row", alignItems: "center"
             }}>
               <View style={{ width: "10%", paddingLeft: "1%" }} >
-                <Icon onPress={this.props.goback}
-                  style={{ color: colorList.headerIcon }} type={"MaterialIcons"} name={"arrow-back"}></Icon>
+                <TouchableOpacity onPress={() => requestAnimationFrame(this.props.goback)} >
+                <Icon 
+                  style={{ color: colorList.headerIcon }} 
+                  type={"MaterialIcons"} name={"arrow-back"}>
+                  </Icon>
+                </TouchableOpacity>
               </View>
               <View style={{ width: '70%', paddingLeft: '2%', justifyContent: "center" }}>
                 <Title style={{ color: colorList.headerText, fontSize: colorList.headerFontSize, fontWeight: colorList.headerFontweight, alignSelf: 'flex-start' }}>{"History"}</Title>
               </View>
 
               <View style={{ width: '10%', paddingRight: '3%' }}>
+              <TouchableOpacity>
                 <Icon
-                  name={"gear"} type="EvilIcons" style={{ color: colorList.headerIcon, alignSelf: 'flex-end', }} />
+                  name={"gear"} type="EvilIcons" 
+                  style={{ color: colorList.headerIcon,
+                     alignSelf: 'flex-end', }} />
+                </TouchableOpacity>
               </View>
 
               <View style={{ width: '10%', paddingLeft: '1%', }}>

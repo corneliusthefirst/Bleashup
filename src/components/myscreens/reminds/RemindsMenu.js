@@ -41,16 +41,15 @@ export default class RemindsMenu extends Component {
                     style={{ backgroundColor: ColorList.bodyBackground }}
                     ref={this.setMenuRef}
                     button={
-                        <Icon
+                        <TouchableOpacity onPress={() => requestAnimationFrame(this.showMenu)} ><Icon
                             style={{
                                 color: ColorList.bodyIcon,
                                 fontSize: 25,
                                 marginTop: "10%",
                             }}
-                            onPress={this.showMenu}
                             name="dots-three-vertical"
                             type="Entypo"
-                        ></Icon>
+                        ></Icon></TouchableOpacity>
                     }
                 >
                     <View>

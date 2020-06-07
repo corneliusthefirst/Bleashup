@@ -20,10 +20,10 @@ export default class CreationHeader extends Component {
                 }}
             >
                {this.props.back && <TouchableOpacity
+                    onPress={() => requestAnimationFrame(this.props.back)}
                     style={{ width: "7%", marginTop: "auto", marginBottom: "auto" }}
                 >
                     <Icon
-                        onPress={this.props.back}
                         type="MaterialIcons"
                         name="arrow-back"
                         style={{ color: ColorList.headerIcon }}

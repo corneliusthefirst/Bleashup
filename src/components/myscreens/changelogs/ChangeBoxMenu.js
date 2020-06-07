@@ -41,10 +41,15 @@ export default class ChangeBoxMenu extends Component {
                 <Menu
                     style={{ backgroundColor: ColorList.bodyBackground }}
                     ref={this.setMenuRef}
-                    button={<Icon style={{
+                    button={<TouchableOpacity 
+                        onPress={() => requestAnimationFrame(this.showMenu)} >
+                        <Icon style={{
                         color: ColorList.bodyIcon,
                         fontSize: 25,
-                    }} onPress={this.showMenu} name="dots-three-vertical" type="Entypo"></Icon>}
+                    }} 
+                    name="dots-three-vertical" 
+                    type="Entypo"></Icon>
+                    </TouchableOpacity>}
                 >
                 <View>
                         <MenuItem textStyle={{ color: ColorList.bodyIcon }} onPress={() => {

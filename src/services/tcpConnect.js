@@ -1,5 +1,5 @@
 import TcpRequestData from "./tcpRequestData";
-let net = require("react-native-tcp");
+let net = require("@hawkingnetwork/react-native-tcp");
 import ServerEventListener from "./severEventListener";
 import * as config from "../config/bleashup-server-config.json";
 import stores from "../stores";
@@ -31,11 +31,15 @@ class Connection {
   }
   connect(){
     return new Promise((resolve,reject)=>{
+      ServerEventListener.stopConnection()
       let socket = net.createConnection(
         config.bleashup_tcp.port,
         config.bleashup_tcp.host,
         () => {
+          console.warn("connection hand shake was successfull")
           stores.Session.updateSocket(socket).then(session => {
+            console.warn("reconnecting ...");
+            ServerEventListener.listen(socket)
             this.socket = socket
           resolve(socket)
           })
