@@ -124,7 +124,7 @@ class ChatRoom extends Component {
             showCaption: false,
             showEmojiInputCaption: false,
             replyerOffset: 0.1,
-            messageListHeight: this.formHeight((screenheight - 130) / screenheight),
+            messageListHeight: this.formHeight((screenheight - 120) / screenheight),
             textInputHeight: this.formHeight(67 / screenheight),
             inittialTextInputHeightFactor: 67 / screenheight,
             initialMessaListHeightFactor: (screenheight - 67) / screenheight,
@@ -1703,9 +1703,9 @@ class ChatRoom extends Component {
         );
     }
 
-    updateSize = (height) => {
+    updateSize = (heigh) => {
         this.setState({
-          height
+          height:heigh >= 300 ? 300: heigh
         });
       }
 
@@ -1730,7 +1730,6 @@ class ChatRoom extends Component {
                     <View
                         style={{
                             width: "86%",
-                            height: this.state.height,
                             fontSize: 17,
                             bottom: 0,
                             flexDirection: "row",
@@ -1752,16 +1751,23 @@ class ChatRoom extends Component {
                                 padding: "1%",
                             }}
                         >
+                        <View style={{
+                            alignItems: 'center',
+                            ...rounder(30,colorList.indicatorColor)
+                        }}>
                             <Icon
-                                style={{ color: "#696969" }}
+                                style={{ 
+                                    color: colorList.bodyBackground, 
+                                    fontSize: 20, 
+                                    }}
                                 type={"MaterialCommunityIcons"}
                                 name={"image-filter"}
                             ></Icon>
+                            </View>
                         </TouchableOpacity>
                         <View
                             style={{
                                 width: "88%",
-                                height: this.state.height,
                                 flexDirection: "column",
                                 borderRadius: 25,
                                 borderWidth: 0.2,
@@ -1800,6 +1806,7 @@ class ChatRoom extends Component {
                                 placeholder={"Your Message"}
                                 style={{
                                     alignSelf: "flex-start",
+                                    maxHeight: 300,
                                     left: 0,
                                     right: 0,
                                     width: "84%",
@@ -1843,6 +1850,7 @@ class ChatRoom extends Component {
                         style={{
                             width: "12%",
                             alignSelf:'flex-end',
+                            alignItems: 'center',
                             bottom: 2,
                             padding: "1%",
                         }}
@@ -1853,22 +1861,32 @@ class ChatRoom extends Component {
                             this.sendMessageText(this.state.textValue);
                         })}
                     >
-                        {!this.state.textValue && !this.state.showAudioRecorder ? (
+                       <View style={{
+                           alignSelf: 'flex-end',
+                           ...rounder(30,colorList.senTBoxColor),
+                           alignItems: 'center',
+                        }}>{!this.state.textValue && !this.state.showAudioRecorder ? (
                             <Icon
                                 style={{
                                     color: colorList.bodyIcon,
-                                    alignSelf: "flex-end",
+                                    fontSize:23,
+                                    alignSelf: "center",
                                 }}
                                 type={"FontAwesome5"}
                                 name={"microphone-alt"}
                             ></Icon>
                         ) : (
                                 <Icon
-                                    style={{ color: colorList.bodyIcon, alignSelf: "flex-end" }}
+                                    style={{ 
+                                        color: colorList.bodyIcon,
+                                        fontSize:23, 
+                                        alignSelf: "center"
+                                     }}
                                     name="md-send"
                                     type="Ionicons"
                                 ></Icon>
                             )}
+                        </View>
                     </TouchableOpacity>
                 </View>
                 {
