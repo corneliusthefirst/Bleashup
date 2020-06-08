@@ -945,12 +945,14 @@ class ChatRoom extends Component {
         this.setState({
             showAudioRecorder: !this.state.showAudioRecorder,
         });
-        if (this.state.showAudioRecorder) {
-            this.refs.AudioRecorder.stopRecordSimple();
-        } else {
-            this._textInput.focus();
-            this.refs.AudioRecorder.startRecorder();
-        }
+        setTimeout(() => {
+            if (!this.state.showAudioRecorder) {
+                this.refs.AudioRecorder.stopRecordSimple();
+            } else {
+                this._textInput.focus();
+                this.refs.AudioRecorder.startRecorder();
+            }
+        })
     }
     cancleReply() {
         GState.reply = null;
@@ -1015,11 +1017,15 @@ class ChatRoom extends Component {
         );
     }
     scrollToEnd() {
-        this.refs.bleashupSectionListOut.scrollToEnd();
+       this.refs && 
+       this.refs.bleashupSectionListOut && 
+       this.refs.bleashupSectionListOut.scrollToEnd();
     }
     initialzeFlatList() {
-        this.refs.bleashupSectionListOut.resetItemNumbers();
-        this.adjutRoomDisplay();
+    this.refs && 
+    this.refs.bleashupSectionListOut &&  
+    this.refs.bleashupSectionListOut.resetItemNumbers();
+    this.adjutRoomDisplay();
     }
     createVote(vote) {
         let message = {
@@ -1142,7 +1148,12 @@ class ChatRoom extends Component {
     }
     scrollToIndex(index) {
         console.warn(index)
+       this.refs.bleashupSectionListOut &&
         this.refs.bleashupSectionListOut.scrollToIndex(index)
+        setTimeout(() => {
+            this.refs.bleashupSectionListOut && 
+            this.refs.bleashupSectionListOut.scrollToIndex(index)
+        },40)
     }
     render() {
         headerStyles = {
@@ -1492,7 +1503,7 @@ class ChatRoom extends Component {
                     (a, b) =>
                         a + (b.dimensions
                             ? b.dimensions.height
-                            : 70),
+                            : 70)+4,
                     0
                 )
             : index * 70
@@ -1514,6 +1525,7 @@ class ChatRoom extends Component {
         return (
             <BleashupFlatList
                 keyboardShouldPersistTaps={'handled'}
+                windowSize={41}
                 marginTop
                 firstIndex={0}
                 ref="bleashupSectionListOut"
@@ -1629,8 +1641,8 @@ class ChatRoom extends Component {
     }
     showAudio() {
         this.toggleAudioRecorder();
-        this.markAsRead();
-        this.adjutRoomDisplay()
+        this.adjutRoomDisplay();
+        
     }
     tags = null;
     chooseItem(item) {
@@ -1830,7 +1842,6 @@ class ChatRoom extends Component {
                                 }}
                                 onPress={() => requestAnimationFrame(() => {
                                     this.toggleEmojiKeyboard();
-                                    this.markAsRead();
                                 })}
                             >
                                 <Icon

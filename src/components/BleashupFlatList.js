@@ -29,9 +29,6 @@ export default class BleashupFlatList extends Component {
     renderPerBatch = 3
     previousNewRender = 0
     previousRendered = 0
-    componentDidMount() {
-        //console.warn("BleashupFlatlist remounting")
-    }
     _renderItems(array) {
         return array.map((element) => {
             return this.props.renderItem(element, this.props.keyExtractor(element, 1))
@@ -49,26 +46,13 @@ export default class BleashupFlatList extends Component {
             })
         }
     }
-
-    continueScrollTop() {
-        /* this.previousNewRender = this.state.currentNewRender
-         console.warn(this.previousNewRender, "[[[")
-         if (this.state.currentNewRender <= this.props.newData.length - 1) {
-             this.setState({
-                 currentNewRender: this.previousNewRender - this.props.newRenderPerBatch
-             })
-         } else {
-             this.setState({
-                 // endReached: true
-             })
-         }*/
-    }
     scrollToIndex(index){
-        console.warn(index)
         this.setState({
             currentRender: this.props.dataSource.length
         })
-        this.refs.bleashupFlatlist.scrollToIndex({animated:true,index:index})
+        setTimeout(() => {
+            this.refs.bleashupFlatlist.scrollToIndex({ animated: true, index: index })
+        })
     }
     scrollToEnd() {
         this.refs.bleashupFlatlist.scrollToOffset({ animated: true, offset: 0 })
@@ -100,7 +84,7 @@ export default class BleashupFlatList extends Component {
                     this.props.backgroundColor : "#ffffff",
                 ...this.props.style
             }}>
-                {this.props.marginTop ? <View style={{ height: 30 }}></View> : null}
+                {this.props.marginTop ? <View style={{ height: 5 }}></View> : null}
                 <FlatList
                     keyboardShouldPersistTaps={this.props.keyboardShouldPersistTaps}
                     onScrollEndDrag={({ nativeEvent }) => {
@@ -109,8 +93,6 @@ export default class BleashupFlatList extends Component {
                         }
                         if (isCloseToBottom(nativeEvent)) {
                             this.continueScrollDown()
-                        } else if (ifCloseToTop(nativeEvent)) {
-                            this.continueScrollTop()
                         }
                     }
                     }
@@ -122,7 +104,7 @@ export default class BleashupFlatList extends Component {
                     onScroll={this.props.onScroll}
                     centerContent={true}
                     //horizontal={this.props.horizontal}
-                    updateCellsBatchingPeriod={100}
+                    windowSize={this.props.windowSize}
                     ref="bleashupFlatlist"
                     canCancelContentTouches={true}
                     inverted={this.props.inverted ? this.props.inverted : false}

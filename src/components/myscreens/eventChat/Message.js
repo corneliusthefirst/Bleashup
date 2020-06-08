@@ -71,7 +71,7 @@ export default class Message extends Component {
                 this.props.message.sender &&
                 this.props.message.sender.phone == this.props.creator,
             replying: false,
-            loaded: false,
+            loaded: true,
         };
     }
     placeHolder = {
@@ -285,13 +285,13 @@ export default class Message extends Component {
         }
     }
     voteCreator = null;
-    componentDidMount() {
+    /*componentDidMount() {
         setTimeout(() => {
             this.setState({
                 loaded: true,
             });
-        }, 5 * this.props.delay);
-    }
+        }, this.props.delay);
+    }*/
     slept = false;
     openingSwipeout() {
         this.closing++;
@@ -455,44 +455,13 @@ export default class Message extends Component {
     }
     prevVote = null;
     shouldComponentUpdate(nextProps, nextState, nextContext) {
-       /* let peVote = this.prevVote
-            ? JSON.parse(this.prevVote)
-            : this.props.votes &&
-                this.props.votes.length > 0 &&
-                this.props.message.vote
-                ? this.props.votes[this.props.message.vote.index] &&
-                    this.props.votes[this.props.message.vote.index].id ===
-                    this.props.message.vote.id
-                    ? this.props.votes[this.props.message.vote.index]
-                    : find(this.props.votes, { id: this.props.message.vote.id })
-                : null;
-        let newVote =
-            nextProps.votes &&
-            nextProps.votes.length > 0 &&
-            nextProps.message.vote &&
-            find(nextProps.votes, { id: nextProps.message.vote.id });
-        let voter =
-            peVote &&
-            newVote &&
-            peVote.voter &&
-            newVote.voter &&
-            newVote.voter.length !== peVote.voter.length;
-        let votePeriod = peVote && newVote && peVote.period !== newVote.period;
-        if (voter || votePeriod) {
-            this.prevVote = JSON.stringify(newVote);
-        }*/
         return (
             this.props.message.sent !== nextProps.message.sent ||
             this.props.received !== nextProps.received ||
-            //voter ||
-            //votePeriod ||
-            this.state.loaded !== nextState.loaded ||
             this.props.isfirst !== nextProps.isfirst ||
-            (this.props.messagelayouts &&
+            /*(this.props.messagelayouts &&
                 this.props.messagelayouts[this.props.message.id] !==
-                nextProps.messagelayouts[nextProps.message.id]) ||
-            this.props.message.id !== nextProps.message.id ||
-            this.props.message.sent !== nextProps.message.sent ||
+                nextProps.messagelayouts[nextProps.message.id]) ||*/
             this.state.refresh !== nextState.refresh ||
             this.state.isReacting !== nextState.isReacting
         );
@@ -553,14 +522,14 @@ export default class Message extends Component {
             this.startReactionShowTimer();
         });
     }
-    placeholderStyle = this.props.message.dimensions
+    /*placeholderStyle = this.props.message.dimensions
         ? this.props.message.dimensions
         : this.props.messagelayouts &&
             this.props.messagelayouts[this.props.message.id]
             ? this.props.messagelayouts[this.props.message.id]
-            : this.placeHolder[this.props.message.type];
+            : this.placeHolder[this.props.message.type];*/
     render() {
-        topMostStyle = {
+       let topMostStyle = {
             marginLeft: this.state.sender ? "1%" : 0,
             marginRight: !this.state.sender ? "1%" : 0,
             marginTop: this.state.different ? "4%" : "1.2%",
@@ -570,7 +539,7 @@ export default class Message extends Component {
         let color = this.state.sender
             ? ColorList.receivedBox
             : ColorList.senTBoxColor;
-        GeneralMessageBoxStyle = {
+       let GeneralMessageBoxStyle = {
             maxWidth: 300,
             flexDirection: "column",
             minWidth: 60,
@@ -581,7 +550,6 @@ export default class Message extends Component {
             borderTopLeftRadius: this.state.sender
                 ? 0
                 : ColorList.chatboxBorderRadius,
-            // borderWidth: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text)?.7:0:0,
             backgroundColor: color,
             ...shadower(1),
             borderTopRightRadius: ColorList.chatboxBorderRadius,
@@ -591,7 +559,7 @@ export default class Message extends Component {
                     ? ColorList.chatboxBorderRadius
                     : null,
         };
-        subNameStyle = {
+      let subNameStyle = {
             paddingBottom: 0,
             flexDirection: "row",
             margin: "2%",
@@ -603,7 +571,7 @@ export default class Message extends Component {
                     : "transparent",
             // backgroundColor: color,
         };
-        placeholderStyle = {
+        /*placeholderStyle = {
             ...topMostStyle,
             ...this.placeholderStyle,
             backgroundColor: color,
@@ -616,14 +584,14 @@ export default class Message extends Component {
             ...shadower(1),
             alignSelf: this.state.sender ? "flex-start" : "flex-end",
             borderTopRightRadius: ColorList.chatboxBorderRadius,
-        };
-        reactionContanerStyle = {
+        };*/
+       let reactionContanerStyle = {
             marginTop: "auto",
             marginBottom: "auto",
             width: 20,
             justifyContent: "center",
         };
-        nameTextStyle = {
+        let nameTextStyle = {
             fontSize: 14,
             fontWeight: "bold",
             color: ColorList.bodyText,
@@ -644,9 +612,9 @@ export default class Message extends Component {
                     data={this.props.message.id}
                 ></NewSeparator>
             </View>
-        ) : !this.state.loaded ? (
+        ) : /*!this.state.loaded ? (
             <View style={placeholderStyle}></View>
-        ) : (
+        ) :*/ (
                         <View>
                             <View style={topMostStyle}>
                                 {!this.state.sender ? (
