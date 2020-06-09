@@ -65,17 +65,6 @@ export default class DetailsModal extends BleashupModal {
     componentDidMount() {
         this.props.parent ? this.props.parent.onSeen() : null;
     }
-    componentWillReceiveProps(nextProps) {
-        this.setState({
-            details: nextProps.details ? nextProps.details : this.details,
-            isOpen: nextProps.isOpen,
-            location: this.props.location ? this.props.location : this.location,
-            isToBeJoint: this.props.isToBeJoint
-                ? this.props.isToBeJoint
-                : this.isToBeJoint,
-            id: this.props.id ? this.props.id : this.id,
-        });
-    }
     formCreator() {
         return new Promise((resolve, reject) => {
             stores.TemporalUsersStore.getUser(this.props.event.creator_phone).then(

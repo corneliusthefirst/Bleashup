@@ -6,113 +6,166 @@ import UpdatesDispatcher from "./updatesDispatcher";
 import InvitationDispatcher from "./invitationDispatcher";
 import RescheduleDispatcher from "./reschedulDispatcher";
 import GState from "../stores/globalState";
-import { forEach } from "lodash"
-import moment from 'moment';
+import { forEach } from "lodash";
+import moment from "moment";
 import connect from "./tcpConnect";
 
 class ServerEventListener {
+  events = {
+    unsuccessful_: "unsuccessful_",
+    unsuccessful: "unsuccessful",
+    current_events: "current-events",
+    cleared_: "cleared_",
+    successful: "successful",
+    events: "events",
+    successful_: "successful_",
+    current_event: "current_event",
+    cleared: "cleared",
+  };
+  socketEvents = {
+    data: "data",
+    timeout: "timeout",
+    closed: "closed",
+    end: "end",
+  };
+  splitter = {
+    end: "_end_",
+    start: "_start_",
+    end_start: "_end__start_",
+  };
+  responseCases = {
+    not_eligible: "not_eligible",
+    cleared: "cleared",
+    all_updates: "all_updates",
+    current_events: "current_events",
+    presence: "presence",
+    event_changes: "event_changes",
+    current_event: "current_event",
+    events: "events",
+    invitation: "invitation",
+    reschedule: "reschedule",
+    denied_invitation: "denied_invitation",
+    accepted_invitation: "accepted_invitation",
+    seen_invitation: "seen_invitation",
+    received_invitation: "received_invitation",
+    current_event_field: "current_event_field",
+    contacts: "contacts",
+    add_as_contacts: "add_as_contact",
+  };
   constructor() { }
-  socket = () => { }
+  socket = () => { };
   dispatch(data) {
     //console.error(data)
     if (data.response) {
-      // console.warn('eligible_response 1')
       switch (data.response) {
-        case "not_eligible":
-          // console.warn('eligible_response')
-          emitter.emit("unsuccessful_" + data.message.id, data.message.data);
+        case this.responseCases.not_eligible:
+          emitter.emit(
+            this.events.unsuccessful_ + data.message.id,
+            data.message.data
+          );
           break;
-        case "cleared":
-          console.warn("clearing.....")
-          emitter.emit("cleared", data.data);
+        case this.responseCases.cleared:
+          console.warn("clearing.....");
+          emitter.emit(this.events.cleared, data.data);
+          this.informWaiters();
           break;
-        case "all_updates":
-          let sorter = (a, b) => (moment(a.date).format("x") < moment(b.date).format("x") ? 1 : moment(a.date).format("x") > moment(b.date).format("x") ? -1 : 0)
-          if (data.updated.length !== 0) UpdatesDispatcher.dispatchUpdates(data.updated.sort(sorter));
+        case this.responseCases.all_updates:
+          let sorter = (a, b) =>
+            moment(a.date).format("x") < moment(b.date).format("x")
+              ? 1
+              : moment(a.date).format("x") > moment(b.date).format("x")
+                ? -1
+                : 0;
+          if (data.updated.length !== 0)
+            UpdatesDispatcher.dispatchUpdates(data.updated.sort(sorter));
           if (data.new_events.length !== 0) {
             InvitationDispatcher.dispatchUpdates(
               data.new_events,
               "invitation"
-            ).then(() => {
-            });
+            ).then(() => { });
           }
           if (data.reschedules)
             RescheduleDispatcher.dispatchReschedules(data.reschedules);
           if (data.info)
             InvitationDispatcher.dispatchInvitationsUpdates(data.info);
-          tcpRequest.clear().then(JSONData => {
-            emitter.once("cleared", data => {
-              console.warn("cleared all")
-            })
-           this.socket && this.socket.write && this.socket.write(JSONData)
-          })
-          break;
-        case "current_events":
-          emitter.emit("current-events", data.body);
-          break;
-        case "presence":
-          console.warn(data.reference)
-          GState.initialized = true
-          stores.Session.updateReference(data.reference).then(sessios => {
-            tcpRequest.get_all_update().then(JSONData => {
-             this.socket && this.socket.write && this.socket.write(JSONData)
-            })
+          tcpRequest.clear().then((JSONData) => {
+            emitter.once(this.events.cleared, (data) => {
+              console.warn("cleared all");
+            });
+            this.writeToSocket(JSONData);
           });
           break;
-        case "event_changes":
+        case this.responseCases.current_events:
+          emitter.emit(this.events.current_events, data.body);
+          break;
+        case this.responseCases.presence:
+          console.warn(data.reference);
+          GState.initialized = true;
+          stores.Session.updateReference(data.reference).then((sessios) => {
+            tcpRequest.get_all_update().then((JSONData) => {
+              this.writeToSocket(JSONData, true);
+            });
+          });
+          break;
+        case this.responseCases.event_changes:
           UpdatesDispatcher.dispatchUpdate(data.updated).then(() => { });
           break;
-        case "current_event":
-          emitter.emit("successful", "current_event", data.body);
-          break;
-        case "events":
-          emitter.emit("events", data.body);
-          break;
-        case "invitation":
-          InvitationDispatcher.dispatcher(data.body, "invitation").then(
-            () => {
-            }
+        case this.responseCases.current_event:
+          emitter.emit(
+            this.events.successful_ + data.body.id,
+            this.events.current_event,
+            data.body
           );
           break;
-        case "reschedule":
+        case this.responseCases.events:
+          emitter.emit(this.events.events, data.body);
+          break;
+        case this.responseCases.invitation:
+          InvitationDispatcher.dispatcher(
+            data.body,
+            this.responseCases.invitation
+          ).then(() => { });
+          break;
+        case this.responseCases.reschedule:
           RescheduleDispatcher.applyReschedule(body).then(() => { });
           break;
-        case "denied_invitation":
+        case this.responseCases.denied_invitation:
           InvitationDispatcher.dispatcher(
             data.body,
-            "denied_invitation"
+            this.responseCases.denied_invitation
           ).then(() => { });
           break;
-        case "accepted_invitation":
+        case this.responseCases.accepted_invitation:
           InvitationDispatcher.dispatcher(
             data.body,
-            "accepted_invitation"
+            this.responseCases.accepted_invitation
           ).then(() => { });
           break;
-        case "seen_invitation":
-          InvitationDispatcher.dispatcher(data.body, "seen_invitation").then(
-            () => { }
-          );
+        case this.responseCases.seen_invitation:
+          InvitationDispatcher.dispatcher(
+            data.body,
+            this.responseCases.seen_invitation
+          ).then(() => { });
           break;
 
-        case "received_invitation":
+        case this.responseCases.received_invitation:
           InvitationDispatcher.dispatcher(
             data.body,
-            "received_invitation"
+            this.responseCases.received_invitation
           ).then(() => { });
           break;
-        case "current_event_field":
+        case this.responseCases.current_event_field:
           emitter.emit(
-            "current_event-field",
+            this.responseCases.current_event_field,
             data.field_name,
             data.data,
             data.event_id
           );
           break;
-        case "contacts":
-          emitter.emit("successful_" + data.body.id, data.body.data);
+        case this.responseCases.contacts:
+          emitter.emit(this.events.successful_ + data.body.id, data.body.data);
           break;
-        case "add_as_contact":
+        case this.responseCases.add_as_contacts:
         /*case "event_changes":
           emitter.emit("event_changes", data.updated);
           break;*/
@@ -120,185 +173,259 @@ class ServerEventListener {
     }
     if (data.status) {
       switch (data.status) {
-        case "successful":
-          if (data.data) emitter.emit("successful_" + data.id, "data", data.data);
-          if (data.message) emitter.emit("successful_" + data.message.id, data.message);
+        case this.events.successful:
+          if (data.data)
+            emitter.emit(this.events.successful_ + data.id, "data", data.data);
+          if (data.message)
+            emitter.emit(
+              this.events.successful_ + data.message.id,
+              data.message
+            );
           break;
-        case "unsuccessful":
-          if (data.data) emitter.emit("unsuccessful_" + data.id, "data", data.data);
-          if (data.message) emitter.emit("unsuccessful_" + data.message.id, data.message);
+        case this.events.unsuccessful:
+          if (data.data)
+            emitter.emit(
+              this.events.unsuccessful_ + data.id,
+              "data",
+              data.data
+            );
+          if (data.message)
+            emitter.emit(
+              this.events.unsuccessful_ + data.message.id,
+              data.message
+            );
           break;
       }
     }
     if (data.error) {
-      console.warn("reconnection attempted", "deu to ", data)
-      tcpRequest.Presence().then((JSONData) => {
-        this.socket && this.socket.write && this.socket.write(JSONData)
-      })
-      emitter.emit("unsuccessful", data.message)
+      console.warn("reconnection attempted", "deu to ", data);
+      this.initPresence();
+      //emitter.emit("unsuccessful", data.message);
     }
+  }
+  informWaiters() {
+    this.requestUnprocessed &&
+      Object.keys(this.requestUnprocessed).length > 0 &&
+      Object.keys(this.requestUnprocessed).forEach((ele) => {
+        emitter.emit(this.events.cleared_ + ele);
+      });
+    this.initializing = false;
 
   }
-  stopConnection() {
-    this.socket && this.socket.destroy && this.socket.destroy()
-    this.socket = null
+  initPresence() {
+    tcpRequest.Presence().then((JSONData) => {
+      this.writeToSocket(JSONData, true);
+    });
   }
-  accumulator = ""
+  stopConnection() {
+    this.socket && this.socket.destroy && this.socket.destroy();
+    this.socket = null;
+  }
+  initializing = false;
+  accumulator = "";
   listen(socket) {
     //socket.setTimeout(10000);
-    this.socket = socket
-    GState.socket = socket
-    socket.on("error", error => {
+    this.socket = socket;
+    GState.socket = socket;
+    socket.on("error", (error) => {
       console.warn(error.toString(), "error");
-      this.reconnect()      
+      this.reconnect();
     });
-    socket.on("data", datar => {
-      let data = datar.toString()
-      console.warn(data)
-      if (data.includes("_end__start_")) {
-        let dataX = data.split("_end__start_")
-        if (dataX[0].includes("_start_")) {
-          this.dispatch(JSON.parse(dataX[0].replace("_start_", "")))
+    socket.on(this.socketEvents.data, (datar) => {
+      let data = datar.toString();
+      console.warn(data);
+      if (data.includes(this.splitter.end_start)) {
+        let dataX = data.split(this.splitter.end_start);
+        if (dataX[0].includes(this.splitter.start)) {
+          this.dispatch(JSON.parse(dataX[0].replace(this.splitter.start, "")));
         } else {
           console.warn("this is part of the request, ", data);
-          this.accumulator += dataX[0]
-          this.dispatch(JSON.parse(this.accumulator))
-          this.accumulator = ''
+          this.accumulator += dataX[0];
+          this.dispatch(JSON.parse(this.accumulator));
+          this.accumulator = "";
         }
         for (i = 1; i < dataX.length; i++) {
           if (i == dataX.length - 1) {
-            if (dataX[i].includes("_end_")) {
-              this.dispatch(JSON.parse(dataX[i].replace("_end_", "")))
-              this.accumulator = ''
+            if (dataX[i].includes(this.splitter.end)) {
+              this.dispatch(
+                JSON.parse(dataX[i].replace(this.splitter.end, ""))
+              );
+              this.accumulator = "";
             } else {
-              this.accumulator += dataX[i]
+              this.accumulator += dataX[i];
             }
           } else {
-            this.dispatch(JSON.parse(dataX[i]))
+            this.dispatch(JSON.parse(dataX[i]));
           }
         }
       } else {
-        if (data.includes("_start_")) {
-          let dataSub = data.replace("_start_", "")
-          if (dataSub.includes("_end_")) {
-            this.dispatch(JSON.parse(dataSub.replace("_end_", "")))
+        if (data.includes(this.splitter.start)) {
+          let dataSub = data.replace(this.splitter.start, "");
+          if (dataSub.includes(this.splitter.end)) {
+            this.dispatch(JSON.parse(dataSub.replace(this.splitter.end, "")));
           } else {
-            this.accumulator += dataSub
+            this.accumulator += dataSub;
           }
-        } else if (data.includes("_end_")) {
-          let dataSub = data.replace("_end_", "")
-          this.accumulator += dataSub
-          this.dispatch(JSON.parse(this.accumulator))
-          this.accumulator = ""
+        } else if (data.includes(this.splitter.end)) {
+          let dataSub = data.replace(this.splitter.end, "");
+          this.accumulator += dataSub;
+          this.dispatch(JSON.parse(this.accumulator));
+          this.accumulator = "";
         } else {
-          this.accumulator += data
+          this.accumulator += data;
         }
-
       }
     });
-    socket.on("timeout", data => {
-      this.socket = () => { }
-      console.warn("connection timed out", data)
+    socket.on(this.socketEvents.timeout, (data) => {
+      this.socket = () => { };
+      console.warn("connection timed out", data);
     });
-    socket.on("closed", data => {
-      console.warn("connection closed by pear")
+    socket.on(this.socketEvents.closed, (data) => {
+      console.warn("connection closed by pear");
       console.error(data.toString(), "closed");
     });
-    socket.on("end", () => {
+    socket.on(this.socketEvents.closed, () => {
       console.error("onEnd says nothing");
     });
   }
-  requestUnprocessed = {}
-  requestWaitTimeout = 7000
-  noConnectionResponse = "not connected"
-  requestTimedOutResponse = "requestTimeout"
+  requestUnprocessed = {};
+  requestWaitTimeout = 7000;
+  noConnectionResponse = "not connected";
+  requestTimedOutResponse = "requestTimeout";
   get_data(data, id) {
     return new Promise((resolve, reject) => {
-      emitter.on("successful", (response, dataResponse) => {
-        this.requestUnprocessed[id] = null
-        if (dataResponse) {
-          if (dataResponse.id == id) {
-            resolve(dataResponse.data)
-          }
-        }
+      this.requestUnprocessed[id] = true;
+      emitter.once(this.events.successful_ + id, (response, dataResponse) => {
+        this.requestUnprocessed[id] = null;
+
+        resolve(dataResponse.data);
       });
-      emitter.on("unsuccessful", (response, dataError) => {
-        this.requestUnprocessed[id] = null
+      emitter.once(this.events.unsuccessful_ + id, (response, dataError) => {
+        this.requestUnprocessed[id] = null;
+
         reject(dataError);
       });
-      if (this.socket && this.socket.write) {
-        this.requestUnprocessed[id] = true
-        this.socket.write(data)
-      }
-     this.cancelAfterTimeout(id,reject)
+      this.writeToSocket(data);
+      this.startRetryer(data, id, reject);
     });
   }
-  connectionCheck(){
-
-  }
-  reconnect(){
-    console.warn("entering reconnection function")
-    if(!this.reconnecting){
-      this.reconnecting = true
-      connect.connect().then(() => {
-        console.warn(this.reconnectionMessage)
-        this.reconnecting = false
-      })
-      setTimeout(() => {
-        console.warn(this.sayReconnectionTimeout)
-        if(this.reconnecting){
-          this.reconnecting = false 
-        }
-      },this.reconnectionTimeout)
+  writeToSocket(data, init) {
+    if (this.socket && this.socket.write) {
+      init ? (this.initializing = true) : null;
+      this.socket.write(data);
     }
   }
-  sayReconnectionTimeout = "reconnection timeout reached"
-  reconnectionTimeout = 5000
-  reconnectionMessage = "recconnection was successful"
-  reconnecting = false
-  sayConnectionTimedout="connection timed out"
-  cancelAfterTimeout(id,reject){
-    console.warn("entering reconnection timmier")
-    setTimeout(() => {
-      if (this.requestUnprocessed[id]) {
-        console.warn(this.sayConnectionTimedout)
-        this.requestUnprocessed[id] = null
-        reject(this.requestTimedOutResponse)
-        this.reconnect()
-      }
-    }, this.requestWaitTimeout)
+  writeToSocketFresh(data) {
+    let request = JSON.parse(data.
+      replace(this.splitter.start, "").
+      replace(this.splitter.end, ""))
+    tcpRequest.sendData(request.action, request.data, request.id).then(JSONData => {
+      this.writeToSocket(JSONData)
+    })
   }
-  unsentRequest = {}
+  connectionCheck() { }
+  reconnect() {
+    if (!this.reconnecting && !this.initializing) {
+      this.reconnecting = true;
+      connect.connect().then(() => {
+        this.reconnecting = false
+        this.initPresence();
+      });
+      setTimeout(() => {
+        console.warn(this.sayReconnectionTimeout);
+        if (this.reconnecting) {
+          this.reconnecting = false;
+        }
+      }, this.reconnectionTimeout);
+    }
+  }
+  sayReconnectionTimeout = "reconnection timeout reached";
+  reconnectionTimeout = 5000;
+  reconnectionMessage = "recconnection was successful";
+  reconnecting = false;
+  sayConnectionTimedout = "connection timed out";
+  reconnectAfterTimeout(id) {
+    console.warn("entering reconnection timmier");
+    if (this.requestUnprocessed[id]) {
+      this.collectRetries && clearTimeout(this.collectRetries)
+      console.warn(this.sayConnectionTimedout);
+      this.collectRetries = setTimeout(() => {
+        this.reconnect();
+      }, this.collectRetries)
+    }
+  }
+  collectRetriesTimeout = 500
+  collectRetries = null
+  working = false;
+  unsentRequest = {};
   sendRequest(data, id) {
+    console.warn("sending ...", data)
     return new Promise((resolve, reject) => {
-      this.requestUnprocessed[id] = true
-      emitter.once("successful_" + id, (response) => {
-        this.requestUnprocessed[id] = null
-        console.warn("result response", response)
+      this.requestUnprocessed[id] = true;
+      emitter.once(this.events.successful_ + id, (response) => {
+        this.requestUnprocessed[id] = null;
+
+        console.warn("result response", response);
         resolve(response);
       });
-      emitter.once("unsuccessful_" + id, (response) => {
-        this.requestUnprocessed[id] = null
-        console.warn("unsuccessful, " + response)
+      emitter.once(this.events.unsuccessful_ + id, (response) => {
+        this.requestUnprocessed[id] = null;
+
+        console.warn("unsuccessful, " + response);
         reject(response);
       });
-      if (this.socket && this.socket.write) {
-        console.warn("writing socket", data)
-        this.socket.write(data)
-      }
-      this.cancelAfterTimeout(id,reject)
-    })
+      this.writeToSocket(data);
+      this.startRetryer(data, id, reject);
+    });
   }
+  clearRetries(id) {
+    clearInterval(this.retries[id]);
+    this.retriesCounter[id] = null;
+    this.retries[id] = null
+  }
+  allowableTrials = 30
+  startRetryer(data, id, reject) {
+    this.retries[id] = setInterval(() => {
+      emitter.off(this.events.cleared_ +id);
+      if (!this.requestUnprocessed[id]) {
+        this.clearRetries(id);
+      } else if (
+        this.retriesCounter[id] &&
+        this.retriesCounter[id] > this.allowableTrials &&
+        this.requestUnprocessed[id]
+      ) {
+        this.clearRetries(id);
+        this.requestUnprocessed[id] = null;
+        reject();
+      } else {
+        this.retriesCounter[id] = this.retriesCounter[id]
+          ? this.retriesCounter[id] + 1
+          : 1;
+        emitter.once(this.events.cleared_ + id, () => {
+          this.handleRerequest(data,id)
+        });
+        this.reconnectAfterTimeout(id);
+      }
+    }, this.retryInterval);
+  }
+  handleRerequest(data,id){
+    console.warn("clear message received for ", id)
+    this.writeToSocketFresh(data)
+    this.clearRetries(id)
+  }
+  retryInterval = 7000;
+  retriesCounter = {};
+  retries = {};
   GetData(EventId) {
     return new Promise((resolve, reject) => {
-      let EventID = requestObject.EventID()
+      let EventID = requestObject.EventID();
       EventID.event_id = EventId;
-      tcpRequest.getCurrentEvent(EventID, EventId).then(JSONData => {
-        this.get_data(JSONData, EventId).then(Event => {
-          resolve(Event)
+      tcpRequest.getCurrentEvent(EventID, EventId).then((JSONData) => {
+        this.get_data(JSONData, EventId).then((Event) => {
+          resolve(Event);
         });
       });
-    })
+    });
   }
 }
 

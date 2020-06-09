@@ -1,11 +1,10 @@
-import React, { PureComponent } from "react"
+import React from "react"
 import Modal from "react-native-modalbox"
 import { Content, List, ListItem, Body, Left, Right, Text, Container, Spinner } from 'native-base';
 import ImageActivityIndicator from "./myscreens/currentevents/components/imageActivityIndicator";
 import ContactList from "./ContactList";
-import { observer } from "mobx-react";
 import BleashupModal from "./mainComponents/BleashupModal";
-@observer export default class PublishersModal extends BleashupModal {
+export default class PublishersModal extends BleashupModal {
     constructor(props) {
         super(props)
         this.state = {

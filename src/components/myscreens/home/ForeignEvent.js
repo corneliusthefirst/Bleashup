@@ -6,7 +6,6 @@ import HomeRequest from './HomeRequester';
 import request from '../../../services/requestObjects';
 import stores from '../../../stores';
 import Mailer from 'react-native-mail';
-import CalendarServe from '../../../services/CalendarService';
 
 export default class ForeignEvent extends Component {
     constructor(props) {

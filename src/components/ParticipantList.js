@@ -33,12 +33,6 @@ export default class ParticipantList extends Component {
         isOpen: false,
         isloaded: false,
     };
-    /*shouldComponentUpdate(nextProps, nextState) {
-        return nextState.isOpen !== this.state.isOpen ||
-            nextState.isloaded !== this.state.isloaded
-            ? true
-            : false;
-    }*/
     writeParticant(participant) {
         return this.props.creator === participant.phone
             ? "creator"

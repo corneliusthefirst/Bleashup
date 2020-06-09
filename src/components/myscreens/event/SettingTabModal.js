@@ -1,5 +1,5 @@
 import React from "react";
-import { View, ScrollView } from "react-native";
+import { View, ScrollView,TouchableOpacity } from "react-native";
 import { Icon,Title,Text,Spinner } from "native-base";
 import Settings from "./Settings";
 import Members from "./Members";
@@ -33,13 +33,14 @@ export default class SettingsTabModal extends BleashupModal {
               style={{
                 height: ColorList.headerHeight,
                 flexDirection: "row",
+                justifyContent: 'space-between',
                 alignItems: "center",
               }}
             >
+              <TouchableOpacity style={{width:"20%"}} onPress={() => 
+               requestAnimationFrame(this.onClosedModal.bind(this))
+              } >
               <Icon
-                onPress={() => {
-                  this.onClosedModal()
-                }}
                 style={{
                   color: ColorList.headerIcon,
                   marginLeft: "5%",
@@ -48,9 +49,18 @@ export default class SettingsTabModal extends BleashupModal {
                 type={"MaterialIcons"}
                 name={"arrow-back"}
               ></Icon>
-              <Title style={{ color: ColorList.headerText, fontWeight: "800" }}>
+              </TouchableOpacity>
+              <View style={{ 
+                width:"70%"
+               }}>
+              <Title style={{ 
+                color: ColorList.headerText, 
+                fontWeight: "800",
+                alignSelf:'flex-start' 
+              }}>
                 {"@Activity Settings"}
               </Title>
+              </View>
             </View>
           </View>
         </View>
@@ -65,8 +75,10 @@ export default class SettingsTabModal extends BleashupModal {
               closeActivity={this.props.closeActivity}
             ></Settings>
           </View>
-          <View style={{ height: this.height - ColorList.headerHeight }}>
-          {this.TabHeader()}
+          <View style={{ height: this.height - 5 }}>
+            <View style={{
+              height:ColorList.headerHeight
+            }}>{this.TabHeader()}</View>
           {this.state.isMounted ?
             <Members
               currentPhone={this.props.currentPhone}
@@ -84,11 +96,19 @@ export default class SettingsTabModal extends BleashupModal {
   }
   TabHeader() {
     return (
-       <View style={{flexDirection: 'row',justifyContent: 'space-between',margin: '3%',}}>
-       <View><Text note>members</Text></View>
+       <View style={{
+         flexDirection: 'row',
+         justifyContent: 'space-between',
+         margin: '3%',}}>
+        <View style={{
+          marginBottom: 'auto',
+          marginTop: 'auto',
+        }}><Text note>members</Text></View>
        <View
           style={{
             flexDirection: "row",
+            marginBottom: 'auto',
+            marginTop: 'auto',
             alignSelf: "flex-end",
             width: 100,
             justifyContent: "space-between",

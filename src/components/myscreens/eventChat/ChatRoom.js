@@ -466,9 +466,7 @@ class ChatRoom extends Component {
     componentWillUnmount() {
         Pickers.CleanAll();
         this.fireRef.off();
-        emitter.off("reply-me", (rep) => {
-            //this.replying(rep, null)
-        })
+        emitter.off("reply-me")
         this.typingRef.off();
         this.keyboardDidHideSub.remove()
         this.keyboardDidShowSub.remove()
@@ -1525,7 +1523,6 @@ class ChatRoom extends Component {
         return (
             <BleashupFlatList
                 keyboardShouldPersistTaps={'handled'}
-                windowSize={41}
                 marginTop
                 firstIndex={0}
                 ref="bleashupSectionListOut"

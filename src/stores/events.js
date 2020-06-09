@@ -24,9 +24,6 @@ import GState from './globalState/index';
 export default class events {
   constructor() {
     this.inializeStore().then(Events => {
-      this.createSearchdata(Events).then((array) => {
-        this.searchdata = array;
-      })
       this.saveInterval = setInterval(() => {
         this.previousTime !== this.currentTime ? this.saver() : null
       }, this.saveTimer);
@@ -74,9 +71,13 @@ export default class events {
   }
   @observable searchdata = [];
   @observable array = [];
+  initSearch(){
+    this.createSearchdata(this.events).then((array) => {
+      this.searchdata = array;
+    })
+  }
   @action createSearchdata(Events) {
     return new Promise((resolve, reject) => {
-
      Events && Events.forEach((event) => {
         if (event.type && event.type == "relation") {
           event.participant.forEach((participant) => {

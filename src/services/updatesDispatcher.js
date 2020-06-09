@@ -14,15 +14,15 @@ import request from "./requestObjects";
 import MainUpdater from './mainUpdater';
 class UpdatesDispatcher {
   constructor() { }
-  dispatchUpdates(updates) {
+  dispatchUpdates(updates,done) {
     if (updates.length <= 0) {
       console.warn("finishing ...")
-      return "ok";
+      done()
     } else {
       let update = updates.pop()
       this.dispatchUpdate(update).then(() => {
         console.warn("dipatching ", update)
-        this.dispatchUpdates(updates)
+        this.dispatchUpdates(updates,done)
       });
     }
 
