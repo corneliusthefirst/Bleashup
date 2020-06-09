@@ -909,7 +909,7 @@ export default class Reminds extends Component {
             initialRender={3}
             ref="RemindsList"
             renderPerBatch={5}
-            //onScroll={this._onScroll}
+            onScroll={this.props.onscroll}
             firstIndex={0}
             //showVerticalScrollIndicator={false}
             keyExtractor={(item, index) => index.toString()}

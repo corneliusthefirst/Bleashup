@@ -1,18 +1,25 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
 import React, { Component } from 'react';
 import { Text, Icon } from 'native-base';
-import { Dimensions, Platform, UIManager, View } from 'react-native';
+import {
+  Platform,
+  UIManager,
+  View,
+  TouchableOpacity,
+  StyleSheet,
+} from 'react-native';
 import stores from '../../../stores/index';
 import { observer } from 'mobx-react';
-import LocalTasksCreation from './localTasksCreation';
-import { find, findIndex, uniqBy, reject, filter } from 'lodash';
+import { find, reject } from 'lodash';
 import ColorList from '../../colorList';
 import bleashupHeaderStyle from '../../../services/bleashupHeaderStyle';
-import AccordionComponent from './AccordionModule';
-import BleashupFlatList from '../../BleashupFlatList';
-import BleashupScrollView from '../../BleashupScrollView';
+import BleashupSrollView from '../../BleashupScrollView';
+import AccordionModuleNative from './BleashupAccordion';
+import ActivityProfile from "../currentevents/components/ActivityProfile";
+import Remind from "../reminds";
+import moment from "moment";
 
-let { height, width } = Dimensions.get('window');
 @observer
 class MyTasksView extends Component {
   constructor(props) {
@@ -28,13 +35,6 @@ class MyTasksView extends Component {
     }
   }
 
-  updateData = (newremind) => {
-    //console.warn("come back value",newremind)
-    this.setState({
-      localRemindData: [...this.state.localRemindData, newremind],
-    });
-  };
-
   componentDidMount() {
     stores.Events.readFromStore().then((events) => {
       events = reject(events, { id: 'newEventId' });
@@ -47,6 +47,73 @@ class MyTasksView extends Component {
   };
 
   _keyExtractor = (item, index) => item.id;
+
+  _renderHeader = (item, expanded,toggleExpand) => {
+    return (
+      <View style={{
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        backgroundColor: ColorList.bodyBackground,
+      }}>
+        <View style={{marginLeft: 15}}>
+        <ActivityProfile Event={item} joint={true} />
+        </View>
+
+        <TouchableOpacity onPress={() => toggleExpand()}>
+          <View style={{ width: 30 }}>
+            {expanded ? (
+              <Icon style={{ fontSize: 18 }} type="AntDesign" name="up" />
+            ) : (
+              <Icon style={{ fontSize: 18 }} type="AntDesign" name="down" />
+            )}
+          </View>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  _renderContent = (item) => {
+    let user = stores.LoginStore.user;
+    let member = find(item.participant, { phone: user.phone });
+    let master = member.master;
+
+    //console.warn("item is", item);
+    return (
+      <View style={{ height: item.reminds.length > 0 ? 450 : 0 }}>
+        <Remind
+          share={{
+            id: "456322",
+            date: moment().format(),
+            sharer: stores.LoginStore.user.phone,
+            item_id: "a7f976f0-8cd8-11ea-9234-ebf9c3b94af7",
+            event_id: item.id,
+          }}
+          startLoader={() => {
+            this.setState({
+              working: true,
+            });
+          }}
+          stopLoader={() => {
+            this.setState({
+              working: false,
+            });
+          }}
+          openMenu={() => this.openMenu()}
+          clearCurrentMembers={() => {
+            this.setState({ currentRemindMembers: null });
+          }}
+          mention={(Item) => this.mention(Item)}
+          master={master}
+          computedMaster={false}
+          working={false}
+          event={item}
+          event_id={item.id}
+          removeHeader
+        />
+      </View>
+    );
+  };
 
   render() {
     return (
@@ -83,22 +150,11 @@ class MyTasksView extends Component {
                 Tasks / Reminds
               </Text>
             </View>
-
-            {/*<View style={{ width: "18%", alignItems: "center" }}>
-              <TouchableOpacity>
-                <Icon
-                  type="AntDesign"
-                  name="plus"
-                  style={{ color: ColorList.headerIcon }}
-                  onPress={this.AddRemind}
-                />
-              </TouchableOpacity>
-            </View>*/}
           </View>
         </View>
 
         <View style={{ height: '92%' }}>
-          <BleashupScrollView
+          <BleashupSrollView
             firstIndex={0}
             renderPerBatch={7}
             initialRender={10}
@@ -106,7 +162,13 @@ class MyTasksView extends Component {
             keyExtractor={this._keyExtractor}
             dataSource={this.state.dataArray}
             renderItem={(item, index) => {
-              return <AccordionComponent dataArray={[item]} {...this.props} />;
+              return (
+                <AccordionModuleNative
+                  dataArray={item}
+                  _renderHeader={this._renderHeader}
+                  _renderContent={this._renderContent}
+                />
+              );
             }}
           />
         </View>
@@ -114,32 +176,5 @@ class MyTasksView extends Component {
     );
   }
 }
+
 export default MyTasksView;
-
-/**     <View style={{height:"92%"}}>
-        <BleashupFlatList
-          initialRender={5}
-          renderPerBatch={5}
-          onScroll={this._onScroll}
-          firstIndex={0}
-          keyExtractor={this._keyExtractor}
-          dataSource={this.state.localRemindData}
-          renderItem={(item, index) => {
-            return (
-              <MyTasksCard {...this.props} item={item} key={index} parentCardList={this}>
-              </MyTasksCard>
-            );
-          }}
-        >
-        </BleashupFlatList >
-
-
-      </View>
-
-        /*stores.LoginStore.getUser().then((user)=>{
-           stores.Reminds.readFromStore().then((Reminds)=>{
-           let reminds = filter(Reminds,{event_id:user.phone});
-            this.setState({localRemindData:reminds});
-         //console.warn("ok",reminds)
-      })
- })*/
