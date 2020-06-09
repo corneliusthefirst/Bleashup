@@ -30,7 +30,7 @@ export default class TextMessage extends Component {
     pattern = [1000, 0, 0]
     render() {
         return (
-            <View style={{alignSelf: "flex-start",marginLeft: "1%",marginTop: 
+            <View style={{alignSelf: "flex-start",marginLeft: "2%",marginTop: 
             this.props.message.reaction && 
             this.props.message.reaction.length >0?7:0,}}>
                 <TextContent tags={this.props.message.tags} 

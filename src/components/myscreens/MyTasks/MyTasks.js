@@ -1,57 +1,18 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, { Component } from "react";
-import {
-  Content,
-  Card,
-  CardItem,
-  Text,
-  Body,
-  Container,
-  Icon,
-  Header,
-  Form,
-  Item,
-  Title,
-  Spinner,
-  Button,
-  Thumbnail,
-  Alert,
-  Textarea,
-  List,
-  ListItem,
-  Label,
-} from "native-base";
+import React, { Component } from 'react';
+import { Text, Icon } from 'native-base';
+import { Dimensions, Platform, UIManager, View } from 'react-native';
+import stores from '../../../stores/index';
+import { observer } from 'mobx-react';
+import LocalTasksCreation from './localTasksCreation';
+import { find, findIndex, uniqBy, reject, filter } from 'lodash';
+import ColorList from '../../colorList';
+import bleashupHeaderStyle from '../../../services/bleashupHeaderStyle';
+import AccordionComponent from './AccordionModule';
+import BleashupFlatList from '../../BleashupFlatList';
+import BleashupScrollView from '../../BleashupScrollView';
 
-import {
-  StyleSheet,
-  View,
-  Image,
-  TouchableOpacity,
-  FlatList,
-  ScrollView,
-  Dimensions,
-  LayoutAnimation,
-} from "react-native";
-import Modal from "react-native-modalbox";
-import autobind from "autobind-decorator";
-import CacheImages from "../../CacheImages";
-import PhotoEnlargeModal from "../invitations/components/PhotoEnlargeModal";
-import stores from "../../../stores/index";
-import { observer } from "mobx-react";
-import BleashupFlatList from "../../BleashupFlatList";
-import CreateEvent from "../event/createEvent/CreateEvent";
-import LocalTasksCreation from "./localTasksCreation";
-import { find, findIndex, uniqBy, reject, filter } from "lodash";
-import ColorList from "../../colorList";
-import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
-import AccordionComponent from "./AccordionModule";
-
-const dataArray = [
-  { title: "First Element", content: "Lorem ipsum dolor sit amet" },
-  { title: "Second Element", content: "Lorem ipsum dolor sit amet" },
-  { title: "Third Element", content: "Lorem ipsum dolor sit amet" },
-];
-
+let { height, width } = Dimensions.get('window');
 @observer
 class MyTasksView extends Component {
   constructor(props) {
@@ -61,6 +22,10 @@ class MyTasksView extends Component {
       RemindCreationState: false,
       dataArray: [],
     };
+
+    if (Platform.OS === 'android') {
+      UIManager.setLayoutAnimationEnabledExperimental(true);
+    }
   }
 
   updateData = (newremind) => {
@@ -72,38 +37,31 @@ class MyTasksView extends Component {
 
   componentDidMount() {
     stores.Events.readFromStore().then((events) => {
-      events = reject(events, { id: "newEventId" });
+      events = reject(events, { id: 'newEventId' });
       this.setState({ dataArray: events });
     });
   }
 
-  @autobind
-  AddRemind() {
-    //this.props.navigation.navigate("LocalLocalTasksCreation",{localRemindData:this.state.localRemindData,updateData:this.updateData});
-    this.setState({ RemindCreationState: true });
-  }
-
-  @autobind
-  back() {
-    this.props.navigation.navigate("Home");
-  }
+  back = () => {
+    this.props.navigation.navigate('Home');
+  };
 
   _keyExtractor = (item, index) => item.id;
 
   render() {
     return (
       <View style={{ flex: 1, backgroundColor: ColorList.bodyBackground }}>
-        <View style={{ height: "8%" }}>
+        <View style={{ height: '8%' }}>
           <View
             style={{
               height: ColorList.headerHeight,
-              width: "100%",
-              flexDirection: "row",
-              alignItems: "center",
+              width: '100%',
+              flexDirection: 'row',
+              alignItems: 'center',
               ...bleashupHeaderStyle,
             }}
           >
-            <View style={{ width: "18%", alignItems: "center" }}>
+            <View style={{ width: '18%', alignItems: 'center' }}>
               <Icon
                 name="arrow-back"
                 active={true}
@@ -114,19 +72,19 @@ class MyTasksView extends Component {
             </View>
 
             <View
-              style={{ width: "64%", paddingLeft: "4%", alignItems: "center" }}
+              style={{ width: '64%', paddingLeft: '4%', alignItems: 'center' }}
             >
               <Text
                 style={{
                   fontSize: ColorList.headerFontSize,
-                  fontWeight: "bold",
+                  fontWeight: 'bold',
                 }}
               >
                 Tasks / Reminds
               </Text>
             </View>
 
-            <View style={{ width: "18%", alignItems: "center" }}>
+            {/*<View style={{ width: "18%", alignItems: "center" }}>
               <TouchableOpacity>
                 <Icon
                   type="AntDesign"
@@ -135,25 +93,23 @@ class MyTasksView extends Component {
                   onPress={this.AddRemind}
                 />
               </TouchableOpacity>
-            </View>
+            </View>*/}
           </View>
         </View>
 
-        <View style={{ height: "92%" }}>
-          <AccordionComponent
-            dataArray={this.state.dataArray}
-            {...this.props}
+        <View style={{ height: '92%' }}>
+          <BleashupScrollView
+            firstIndex={0}
+            renderPerBatch={7}
+            initialRender={10}
+            numberOfItems={this.state.dataArray.length}
+            keyExtractor={this._keyExtractor}
+            dataSource={this.state.dataArray}
+            renderItem={(item, index) => {
+              return <AccordionComponent dataArray={[item]} {...this.props} />;
+            }}
           />
         </View>
-
-        <LocalTasksCreation
-          isOpen={this.state.RemindCreationState}
-          onClosed={() => {
-            this.setState({ RemindCreationState: false });
-          }}
-          parentComp={this}
-          localRemindData={this.state.localRemindData}
-        />
       </View>
     );
   }

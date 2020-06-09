@@ -45,7 +45,7 @@ class colorlist {
     bodyDarkWhite = "#f4f6fc"
     darkGrayText = "#696969"
     //modal
-
+ 
 
     //pop menu
     popMenuBackground = "white"

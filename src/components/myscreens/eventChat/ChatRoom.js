@@ -240,7 +240,7 @@ class ChatRoom extends Component {
         paddingTop: "3%",
     };
     toastTextStyles = {
-        color: "#0A4E52",
+        color: colorList.bodyBackground,
     };
     typingRef = null;
     setTypingRef(room) {
@@ -1834,7 +1834,7 @@ class ChatRoom extends Component {
                                 style={{
                                     width: "16%",
                                     position: "absolute",
-                                    bottom: 10,
+                                    bottom: 7,
                                     right: 5,
                                 }}
                                 onPress={() => requestAnimationFrame(() => {

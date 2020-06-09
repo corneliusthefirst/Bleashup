@@ -836,8 +836,8 @@ export default class Reminds extends Component {
             style={{
               height: colorList.headerHeight,
               width: "100%",
-              paddingLeft: "1%",
-              paddingRight: "1%",
+              //paddingLeft: "1%",
+              //paddingRight: "1%",
             }}
           >
             <View
@@ -866,7 +866,7 @@ export default class Reminds extends Component {
 
               <View
                 style={{
-                  width: "67%",
+                  width: "80%",
                   paddingLeft: "9%",
                   justifyContent: "center",
                   height: "100%",
@@ -906,7 +906,7 @@ export default class Reminds extends Component {
 
         <View style={{ height: '93%' }}>
           <BleashupFlatList
-            initialRender={5}
+            initialRender={6}
             ref="RemindsList"
             renderPerBatch={5}
             //onScroll={this._onScroll}
@@ -916,7 +916,6 @@ export default class Reminds extends Component {
             dataSource={this.getRemindData()}
             renderItem={(item, index) => {
               this.delay = index >= 5 ? 0 : this.delay + 1;
-              console.warn("flatlist item", item);
               return (
                 <View>
                   <TasksCard

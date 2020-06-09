@@ -44,10 +44,11 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
         return (
             <View style={{
                 flexDirection: 'column',
-                backgroundColor: this.props.backgroundColor ? this.props.backgroundColor : "#FEFFDE",
+                backgroundColor: this.props.backgroundColor ? this.props.backgroundColor : "white",
                 ...this.props.style
             }}>
                 <ScrollView
+                    nestedScrollEnabled={true}
                     onScrollEndDrag={({ nativeEvent }) => {
                         if (isCloseToBottom(nativeEvent)) {
                             this.continueScrollDown()
