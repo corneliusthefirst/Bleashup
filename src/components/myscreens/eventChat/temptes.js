@@ -1731,10 +1731,10 @@ class ChatRoom extends Component {
                         }}
                     >
                         <TouchableOpacity
-                            onPress={() => 
-                                requestAnimationFrame(() => 
-                                this.openCamera()
-                            )}
+                            onPress={() =>
+                                requestAnimationFrame(() =>
+                                    this.openCamera()
+                                )}
                             style={{
                                 width: "12%",
                                 marginTop: "auto",
@@ -1838,10 +1838,10 @@ class ChatRoom extends Component {
                             padding: "1%",
                         }}
                         onPress={() => requestAnimationFrame(() => {
-                            !this.state.textValue && 
-                            !this.state.showAudioRecorder ? 
-                            this.showAudio() : 
-                            this.sendMessageText(this.state.textValue);
+                            !this.state.textValue &&
+                                !this.state.showAudioRecorder ?
+                                this.showAudio() :
+                                this.sendMessageText(this.state.textValue);
                         })}
                     >
                         {!this.state.textValue && !this.state.showAudioRecorder ? (
@@ -1973,18 +1973,18 @@ class ChatRoom extends Component {
                             alignItems: "center",
                         }}
                     >
-                    <TouchableOpacity style={{ 
-                        width:"20%",
-                        alignItems: 'flex-start',
-                        }} onPress={() => requestAnimationFrame(() => this.props.goback() )} >
-                        <Icon
-                            style={{
-                                color: colorList.headerIcon,
-                                marginLeft: "13%",
-                            }}
-                            type={"MaterialIcons"}
-                            name={"arrow-back"}
-                        ></Icon>
+                        <TouchableOpacity style={{
+                            width: "20%",
+                            alignItems: 'flex-start',
+                        }} onPress={() => requestAnimationFrame(() => this.props.goback())} >
+                            <Icon
+                                style={{
+                                    color: colorList.headerIcon,
+                                    marginLeft: "13%",
+                                }}
+                                type={"MaterialIcons"}
+                                name={"arrow-back"}
+                            ></Icon>
                         </TouchableOpacity>
                         <View>
                             <Title

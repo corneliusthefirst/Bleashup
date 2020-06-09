@@ -107,6 +107,7 @@ export default class ReplyText extends Component {
             padding: "1%", //margin: '1%',
             minHeight: 50,
             maxHeight: 350,
+            minWidth: 100,
             borderTopLeftRadius: 5,
             borderTopRightRadius: 5,
           }}
@@ -116,7 +117,7 @@ export default class ReplyText extends Component {
               /* width: "90%",*/ width: this.props.compose ? "100%" : null,
             }}
           >
-            <View style={{ margin: "1%" }}>
+            <View style={{ margin: "1%",minWidth: 100, }}>
               <TouchableOpacity
                 onLongPress={this.props.handLongPress}
                 onPressIn={() => this.props.pressingIn()}
