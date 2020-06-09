@@ -1818,7 +1818,7 @@ class ChatRoom extends Component {
                                 style={{
                                     width: "16%",
                                     position: "absolute",
-                                    bottom: 10,
+                                    bottom: 7,
                                     right: 5,
                                 }}
                                 onPress={() => requestAnimationFrame(() => {

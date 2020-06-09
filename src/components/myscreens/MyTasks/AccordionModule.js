@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import { Accordion, Icon, Text } from "native-base";
 import React, { Component } from "react";
 import { ScrollView, View, Dimensions } from "react-native";
@@ -28,16 +29,7 @@ export default class AccordionComponent extends Component {
 
   initializeMaster = (event) => {
     let member = find(event.participant, { phone: this.user.phone });
-    /*this.master =
-      (member && member.master) || this.event.creator_phone === this.user.phone;
-    this.computedMaster =
-      event.who_can_update === "master"
-        ? this.master
-        : event.who_can_update === "creator"
-        ? event.creator_phone === this.user.phone
-        : true;*/
     this.member = member ? true : false;
-    //this.setState({ working: false });
   };
 
   _renderHeader(item, expanded) {
@@ -63,51 +55,47 @@ export default class AccordionComponent extends Component {
     );
   }
   _renderContent = (item) => {
-    /*stores.Reminds.loadReminds(item.id, true).then((reminds) => {
-      console.warn('reminds are', reminds);
-    });*/
-    //this.initializeMaster(item);
+    console.warn("item is", item);
     return (
-      <View style={{ flex: 1, marginBottom: 0 }}>
-        <Remind
-          //shared={false}
-          /*share={{
-            id: "456322",
-            date: moment().format(),
-            sharer: stores.LoginStore.user.phone,
-            item_id: "a7f976f0-8cd8-11ea-9234-ebf9c3b94af7",
-            event_id: item.id,
-          }}*/
-          startLoader={() => {
-            this.setState({
-              working: true,
-            });
-          }}
-          stopLoader={() => {
-            this.setState({
-              working: false,
-            });
-          }}
-          openMenu={() => this.openMenu()}
-          clearCurrentMembers={() => {
-            this.setState({ currentRemindMembers: null });
-          }}
-          //goback={this.props.goback()}
-          //currentMembers={item.participant}
-          mention={(Item) => this.mention(Item)}
-          master={false}
-          computedMaster={false}
-          working={false}
-          event={item}
-          event_id={item.id}
-          removeHeader
-        />
+      <View style={{ height: item.reminds.length > 0 ? 400 : 0 }}>
+
+          <Remind
+            share={{
+              id: "456322",
+              date: moment().format(),
+              sharer: stores.LoginStore.user.phone,
+              item_id: "a7f976f0-8cd8-11ea-9234-ebf9c3b94af7",
+              event_id: item.id,
+            }}
+            startLoader={() => {
+              this.setState({
+                working: true,
+              });
+            }}
+            stopLoader={() => {
+              this.setState({
+                working: false,
+              });
+            }}
+            openMenu={() => this.openMenu()}
+            clearCurrentMembers={() => {
+              this.setState({ currentRemindMembers: null });
+            }}
+            mention={(Item) => this.mention(Item)}
+            master={false}
+            computedMaster={false}
+            working={false}
+            event={item}
+            event_id={item.id}
+            removeHeader
+          />
+      
       </View>
     );
   };
   render() {
     return (
-      <View style={{ backgroundColor: "white", flex: 1, padding: 5 }}>
+      <View style={{ flex: 1 }}>
         <Accordion
           dataArray={this.props.dataArray}
           animation={true}
