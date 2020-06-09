@@ -48,6 +48,7 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
                 ...this.props.style
             }}>
                 <ScrollView
+                    nestedScrollEnabled={true}
                     onScrollEndDrag={({ nativeEvent }) => {
                         if (isCloseToBottom(nativeEvent)) {
                             this.continueScrollDown()

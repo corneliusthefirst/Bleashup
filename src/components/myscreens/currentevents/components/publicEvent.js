@@ -73,34 +73,6 @@ class PublicEvent extends Component {
       }, this.props.renderDelay)
   }
   counter = 0
-  swipeOutSettings(master, joint) {
-    return {
-      //autoClose: true,
-      sensitivity: 100,
-      left: [
-        {
-          component: <SwipeOutView
-            openInvitationModal={() => { this.invite() }}
-            master={master}
-            publish={() => this.publish()}
-            joint={joint}
-            seen={() => this.markAsSeen()} delete={() => this.delete()
-            }
-            join={() => this.join()}
-            hide={() => this.hide()} {...this.props} ></SwipeOutView >,
-          backgroundColor: colorList.bodyBackground,
-        }
-      ],
-    }
-  }
-
-  showPublishersList() {
-    this.setState({
-      isPublisherModalOpened: true,
-      hide: true
-    })
-    this.markAsSeen()
-  }
 
   invite() {
     stores.Events.isMaster(this.props.Event.id, stores.LoginStore.user.phone).then(mas => {
@@ -206,23 +178,7 @@ class PublicEvent extends Component {
     }
   }
   duration = 10
-  openSwipeOut() {
-    if (this.state.notPressing) {
-      Vibration.vibrate(this.duration)
-      clearTimeout(this.timeOut)
-      this.setState({ notPressing: false })
-    } else {
-      this.setState({
-        notPressing: true
-      })
-      this.timeOut = setTimeout(() => {
-        this.setState({
-          notPressing: false
-        })
-      }, 500)
-    }
 
-  }
   refreshJoint() {
     console.warn("refreshing joint")
     this.setState({
@@ -264,8 +220,8 @@ class PublicEvent extends Component {
             BeNavigator.navigateToActivity("EventChat",this.props.Event))} style={{ width: "65%" }}>
             <ProfileSimple showPhoto={(url) =>
               this.props.showPhoto(url)}
-              profile={stores.TemporalUsersStore.Users[this.props.Event.participant.filter((ele) => 
-                ele.phone !== stores.LoginStore.user.phone)[0].phone]}
+              profile={stores.TemporalUsersStore.Users[this.props.Event.participant.find((ele) => 
+                ele.phone !== stores.LoginStore.user.phone).phone]}
               relation
               style={{height:50,width:50,borderRadius:25}}
               >

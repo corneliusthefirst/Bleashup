@@ -125,7 +125,7 @@ export default class CurrentEvents extends Component {
                 <BleashupFlatList
                 //backgroundColor={"white"} 
                     keyExtractor={(item, index) => item.id}
-                    dataSource={this.props.data}
+                    dataSource={this.props.data||[]}
                     onScroll={this._onScroll}
                     renderItem={(item, index) => {
                         this.delay = index % this.renderPerbatch == 0 ? 0 : this.delay + 1

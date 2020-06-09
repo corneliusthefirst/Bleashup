@@ -57,6 +57,8 @@ export default class ProfileView extends Component {
                         });
                         this.props.setContact ? this.props.setContact(user) : null;
                     }
+                }).catch((err) => {
+                    
                 }),
             20 * this.props.delay ? this.props.delay : 2
         );

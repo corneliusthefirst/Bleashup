@@ -71,7 +71,7 @@ export default class Message extends Component {
                 this.props.message.sender &&
                 this.props.message.sender.phone == this.props.creator,
             replying: false,
-            loaded: true,
+            loaded: false,
         };
     }
     placeHolder = {
@@ -285,13 +285,13 @@ export default class Message extends Component {
         }
     }
     voteCreator = null;
-    /*componentDidMount() {
+    componentDidMount() {
         setTimeout(() => {
             this.setState({
                 loaded: true,
             });
-        }, this.props.delay);
-    }*/
+        }, 5*this.props.delay);
+    }
     slept = false;
     openingSwipeout() {
         this.closing++;
@@ -459,6 +459,7 @@ export default class Message extends Component {
             this.props.message.sent !== nextProps.message.sent ||
             this.props.received !== nextProps.received ||
             this.props.isfirst !== nextProps.isfirst ||
+            this.state.loaded !== nextState.loaded ||
             /*(this.props.messagelayouts &&
                 this.props.messagelayouts[this.props.message.id] !==
                 nextProps.messagelayouts[nextProps.message.id]) ||*/
@@ -478,9 +479,7 @@ export default class Message extends Component {
         });
     }
     componentWillUnmount() {
-        emitter.off(this.event, () => {
-            this.refresh();
-        });
+        emitter.off(this.event);
     }
     iconStyles = {
         fontSize: 12,
@@ -522,12 +521,12 @@ export default class Message extends Component {
             this.startReactionShowTimer();
         });
     }
-    /*placeholderStyle = this.props.message.dimensions
+    placeholderStyle = this.props.message.dimensions
         ? this.props.message.dimensions
         : this.props.messagelayouts &&
             this.props.messagelayouts[this.props.message.id]
             ? this.props.messagelayouts[this.props.message.id]
-            : this.placeHolder[this.props.message.type];*/
+            : this.placeHolder[this.props.message.type];
     render() {
        let topMostStyle = {
             marginLeft: this.state.sender ? "1%" : 0,
@@ -571,7 +570,7 @@ export default class Message extends Component {
                     : "transparent",
             // backgroundColor: color,
         };
-        /*placeholderStyle = {
+        placeholderStyle = {
             ...topMostStyle,
             ...this.placeholderStyle,
             backgroundColor: color,
@@ -584,7 +583,7 @@ export default class Message extends Component {
             ...shadower(1),
             alignSelf: this.state.sender ? "flex-start" : "flex-end",
             borderTopRightRadius: ColorList.chatboxBorderRadius,
-        };*/
+        };
        let reactionContanerStyle = {
             marginTop: "auto",
             marginBottom: "auto",
@@ -612,9 +611,9 @@ export default class Message extends Component {
                     data={this.props.message.id}
                 ></NewSeparator>
             </View>
-        ) : /*!this.state.loaded ? (
+        ) : !this.state.loaded ? (
             <View style={placeholderStyle}></View>
-        ) :*/ (
+        ) : (
                         <View>
                             <View style={topMostStyle}>
                                 {!this.state.sender ? (

@@ -906,7 +906,7 @@ export default class Reminds extends Component {
 
         <View style={{ height: '93%' }}>
           <BleashupFlatList
-            initialRender={3}
+            initialRender={6}
             ref="RemindsList"
             renderPerBatch={5}
             onScroll={this.props.onscroll}
@@ -916,7 +916,6 @@ export default class Reminds extends Component {
             dataSource={this.getRemindData()}
             renderItem={(item, index) => {
               this.delay = index >= 5 ? 0 : this.delay + 1;
-              console.warn("flatlist item", item);
               return (
                 <View>
                   <TasksCard

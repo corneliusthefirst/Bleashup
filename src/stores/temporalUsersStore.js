@@ -75,7 +75,7 @@ export default class TemporalUsersStore {
     getUser(phone) {
         return new Promise((resolve, reject) => {
             if (this.Users[phone] && (!this.Users[phone].updated_at ||
-                (moment().format("X") - moment(this.Users[phone].updated_at).format("X")) <
+                (moment().format("x") - moment(this.Users[phone].updated_at).format("x")) <
                 this.towDayMillisec())) {
                 resolve(this.Users[phone])
             } else {
@@ -87,6 +87,8 @@ export default class TemporalUsersStore {
                         this.setPropterties(this.Users);
                         resolve(profile)
                     }
+                }).catch(err => {
+                    reject(err)
                 })
             }
         })
@@ -102,29 +104,6 @@ export default class TemporalUsersStore {
                 ele.phone !== stores.LoginStore.user.phone))
         }
     }
-    /*getUsers(phones) {
-        return new Promise((resolve, reject) => {
-            let result = []
-            let lacking = []
-            let i = 0
-            phones.map(phone => {
-                if (this.Users[phone]) {
-                    result[result.length] = this.Users[phone]
-                } else {
-                    userHttpServices.checkUser(phone).then((profile) => {
-                        if (!profile.message && !profile.response) {
-                            console.warn(profile)
-                            result[result.length] = profile
-                        }
-                    })
-                }
-                console.warn(i,phones.length,result.length)
-                if (result.length >= phones.length) {
-                    resolve(result)
-                }
-            })
-        })
-    }*/
     setPropterties(NewUsers) {
         this.Users = NewUsers;
         this.currentTime = moment().format()

@@ -63,10 +63,10 @@ export default class MoreMembersMenu extends Component {
                 <Menu
                     style={{ backgroundColor: ColorList.bodyBackground }}
                     ref={this.setMenuRef}
-                    button={<Icon style={{
+                    button={<TouchableOpacity onPress={ () => requestAnimationFrame(this.showMenu)} ><Icon style={{
                         color: ColorList.headerIcon,
                         fontSize: 30,
-                    }} onPress={this.showMenu} name="plus" type="AntDesign"></Icon>}
+                    }} name="plus" type="AntDesign"></Icon></TouchableOpacity>}
                 >
                     {this.props.master && <View><MenuItem textStyle={{ color: ColorList.headerIcon }} onPress={() => {
                         this.hideMenu()

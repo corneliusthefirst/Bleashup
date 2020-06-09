@@ -1,5 +1,4 @@
-import React, { PureComponent } from "react"
-import Modal from "react-native-modalbox"
+import React from "react"
 import { Content, List, ListItem, Body, Left, Right, Text } from "native-base"
 import ImageActivityIndicator from "./myscreens/currentevents/components/imageActivityIndicator";
 import ParticipantList from "./ParticipantList";
@@ -37,7 +36,7 @@ import BleashupModal from './mainComponents/BleashupModal';
         return (
             this.state.loaded ?
                 <ParticipantList close={this.props.onClosed} master={this.props.master} creator={this.props.creator} hide={this.state.hideTitle} participants={this.state.participants} title={"Participants List"}
-                    event_id={this.state.event_id}></ParticipantList> : <Text style={{ padding: "15%" }} note> loading participants</Text>
+                    event_id={this.state.event_id}></ParticipantList> :null
 
         );
     }

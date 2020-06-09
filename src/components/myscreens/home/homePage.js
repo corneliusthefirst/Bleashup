@@ -28,8 +28,6 @@ import {
 } from 'native-base';
 import NetInfo from "@react-native-community/netinfo";
 //import StatusView from "./../Viewer/index";
-import InvitationView from "./../invitations/index";
-import Chats from "../poteschat";
 import SettingView from "./../settings/index";
 import autobind from "autobind-decorator";
 import {
@@ -131,7 +129,7 @@ class Home extends Component {
   navigateToEventDetails(id) {
     let event = find(stores.Events.events, { id: id })
     if (event) {
-      BeNavigator.navigateToActivity("EventDetails", event);
+      BeNavigator.navigateToActivity("EventChat", event);
     }
   }
   componentWillMount() {
@@ -178,10 +176,7 @@ class Home extends Component {
     },1000)
   }
   componentDidMount() {
-    //this.testers()
-    stores.LoginStore.getUser().then((user) => {
-    })
-    stores.Highlights.initializeGetHighlightsListener()
+    stores.Events.initSearch()
     emitter.on("notify", (event) => {
       {
         if (GState.currentRoom !== event.data.room_key) {
@@ -329,97 +324,3 @@ class Home extends Component {
 }
 
 export default withInAppNotification(Home);
-
-
-
-
-
-
-
-
-{/* 
-    setMenuRef = (ref) => {
-    this._menu = ref;
-  }
-  hideMenu = () => {
-    this._menu.hide();
-  };
-
-  showMenu = () => {
-    this._menu.show();
-  };
-
-                  <Menu
-                  ref={this.setMenuRef}
-                  button={<Icon name="gear" active={true} type="EvilIcons" style={{ color: colorList.headerIcon, marginLeft: width / 35 }} onPress={this.showMenu} />}
-                  style={{ backgroundColor: colorList.bodyBackground }}
-                >
-                  <MenuItem onPress={this.settings}>settings</MenuItem>
-                </Menu>
-  
-  
-  <Tabs
-          locked
-          tabContainerStyle={{
-             backgroundColor: colorList.headerBackground
-          }}
-          tabBarPosition="bottom"
-          tabBarUnderlineStyle={{
-            backgroundColor: colorList.headerBackground
-          }}
-          onChangeTab={({ i }) => {
-            this.setState({
-              currentTab: i
-            })
-          }}
-        >
-          <Tab
-            tabStyle={{
-              borderRadius: 0,
-            }}
-            heading={
-              <TabHeading>
-                <View style={{ display: 'flex', }}>
-                  <Icon name="ios-pulse" type="Ionicons" style={{ fontSize: this.state.currentTab == 0 ? 40 : 15, }} />
-                </View>
-              </TabHeading>
-            }
-          >
-            <CurrentEventView {...this.props}></CurrentEventView>
-          </Tab>
-          <Tab
-            heading={
-              <TabHeading>
-                <View>
-                  <Icon name="ios-people" type="Ionicons" style={{ fontSize: this.state.currentTab == 1 ? 50 : 15, }} />
-                </View>
-              </TabHeading>
-            }
-          >
-            <Chats {...this.props} />
-          </Tab>
-          {/*<Tab
-            heading={
-              <TabHeading>
-                <View>
-                  <Icon name="user-alt" type="FontAwesome5" style={{ fontSize: this.state.currentTab == 2 ? 30 : 10, }} />
-                </View>
-              </TabHeading>
-            }
-          >
-            <StatusView {...this.props} />
-          </Tab>
-        </Tabs>
-
-        {this.state.isForeignEventsModalOpened ? <ForeignEventsModal isOpen={this.state.isForeignEventsModalOpened} onClosed={() => {
-          this.setState({
-            isForeignEventsModalOpened: false,
-            foreignEvents: null
-          })
-        }} events={this.state.foreignEvents}>
-        </ForeignEventsModal> : null}
-        {/*<TabModal isOpen={this.state.isTabModalOpened} closed={() => {
-          this.setState({
-            isTabModalOpened: false
-          })
-        }}></TabModal>*/}
