@@ -119,7 +119,7 @@ class mainUpdater {
             });
           });
         } else if (type === shared_post) {
-          stores.Highlights.loadHighlight(itemID).then((post) => {
+          stores.Highlights.loadHighlight(this.props.event_id, itemID).then((post) => {
             resolve({
               item_title: post && post.title,
               activity_name: event && event.about && event.about.title,

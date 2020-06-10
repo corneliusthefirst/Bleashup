@@ -101,8 +101,10 @@ export default class ContactView extends Component {
           this.phoneContacts.push(phoneUser);
         }
       });
+
+      console.warn('here they are',this.phoneContacts);
        this.phoneContacts = concat(this.phoneContacts,stores.Contacts.contacts.phoneContacts);
-       console.warn('here they are',this.phoneContacts);
+
        this.setState({ contacts: this.phoneContacts , searchArray: this.phoneContacts });
 
        this.setState({ isMount: true });

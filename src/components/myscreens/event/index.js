@@ -113,7 +113,7 @@ export default class Event extends Component {
     });
   }
   showHighlightID(id) {
-    stores.Highlights.loadHighlight(id).then((High) => {
+    stores.Highlights.loadHighlight(this.event.id, id).then((High) => {
       High
         ? this.setState({
           isHighlightDetailModalOpened: true,

@@ -52,7 +52,7 @@ delete(){
     }else{
       stores.Events.removeHighlight(this.props.item.event_id,this.props.item.id,false).then(()=>{});
     }
-    stores.Highlights.removeHighlight(this.props.item.id).then(()=>{});
+    stores.Highlights.removeHighlight(this.props.item.event_id, this.props.item.id).then(()=>{});
     this.setState({check:false});
     this.props.deleteHighlight(this.props.item.id);
   });

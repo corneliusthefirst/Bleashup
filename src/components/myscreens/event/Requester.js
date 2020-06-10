@@ -966,7 +966,7 @@ class Request {
             tcpRequest.addHighlight(newHighlight, newHighlight.id).then(JSONData => {
                 serverEventListener.sendRequest(JSONData, newHighlight.id).then(response => {
                     stores.Events.addHighlight(newHighlight.event_id, newHighlight.id).then(res => {
-                        stores.Highlights.addHighlight(newHighlight).then(res => {
+                        stores.Highlights.addHighlight(newHighlight.event_id, newHighlight).then(res => {
                             let Change = {
                                 id: uuid.v1(),
                                 title: "Updates On Main Activity",
@@ -1000,7 +1000,7 @@ class Request {
                 higlightTitle.new_data = newTitle
                 tcpRequest.updateHighlight(higlightTitle, highlightID).then(JSONData => {
                     serverEventListener.sendRequest(JSONData, highlightID).then(response => {
-                        stores.Highlights.updateHighlightTitle({
+                        stores.Highlights.updateHighlightTitle(eventID , {
                             id: highlightID,
                             title: newTitle
                         }, false).then((HighlightJS) => {
@@ -1041,7 +1041,7 @@ class Request {
                 higlightTitle.new_data = newPublicState
                 tcpRequest.updateHighlight(higlightTitle, highlightID).then(JSONData => {
                     serverEventListener.sendRequest(JSONData, highlightID).then(response => {
-                        stores.Highlights.updateHighlightPublicState({
+                        stores.Highlights.updateHighlightPublicState(eventID, {
                             highlight_id: higlightTitle.h_id,
                             public_state: higlightTitle.new_data
                         }, false).then((Highlight) => {
@@ -1080,7 +1080,7 @@ class Request {
                 higlightTitle.new_data = newDescription
                 tcpRequest.updateHighlight(higlightTitle, highlightID).then(JSONData => {
                     serverEventListener.sendRequest(JSONData, highlightID).then(response => {
-                        stores.Highlights.updateHighlightDescription({
+                        stores.Highlights.updateHighlightDescription(eventID, {
                             id: higlightTitle.h_id,
                             description: higlightTitle.new_data
                         }, false).then((Highlight) => {
@@ -1119,7 +1119,7 @@ class Request {
                 newHighlightURL.new_data = newURL
                 tcpRequest.updateHighlight(newHighlightURL, highlightID).then(JSONData => {
                     serverEventListener.sendRequest(JSONData, highlightID).then(response => {
-                        stores.Highlights.updateHighlightUrl({
+                        stores.Highlights.updateHighlightUrl(eventID, {
                             id: newHighlightURL.h_id,
                             url: newHighlightURL.new_data
                         }, false).then((Highlight) => {
@@ -1188,7 +1188,7 @@ class Request {
             HEID.h_id = highlightID
             tcpRequest.deleteHighlight(HEID, highlightID).then(JSONData => {
                 serverEventListener.sendRequest(JSONData, highlightID).then(response => {
-                    stores.Highlights.removeHighlight(highlightID).then((Highlight) => {
+                    stores.Highlights.removeHighlight(eventID, highlightID).then((Highlight) => {
                         stores.Events.removeHighlight(eventID, highlightID).then(res => {
                             let Change = {
                                 id: uuid.v1(),
@@ -1218,7 +1218,7 @@ class Request {
         return new Promise((resolve, reject) => {
             tcpRequest.restoreHighlight(highlight, highlight.id + '_highlight').then(JSONData => {
                 serverEventListener.sendRequest(JSONData, highlight.id + '_highlight').then(response => {
-                    stores.Highlights.addHighlight(highlight).then(() => {
+                    stores.Highlights.addHighlight(highlight.event_id, highlight).then(() => {
                         stores.Events.addHighlight(highlight.event_id, highlight.id, false).then(() => {
                             let Change = {
                                 id: uuid.v1(),

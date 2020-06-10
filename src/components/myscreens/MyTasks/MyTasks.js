@@ -19,6 +19,7 @@ import AccordionModuleNative from './BleashupAccordion';
 import ActivityProfile from "../currentevents/components/ActivityProfile";
 import Remind from "../reminds";
 import moment from "moment";
+import RelationProfile from '../../RelationProfile';
 
 @observer
 class MyTasksView extends Component {
@@ -57,7 +58,8 @@ class MyTasksView extends Component {
         backgroundColor: ColorList.bodyBackground,
       }}>
         <View style={{marginLeft: 15}}>
-        <ActivityProfile Event={item} joint={true} />
+          { item.type === 'relation' ? <RelationProfile Event={item} />  :
+          <ActivityProfile Event={item} joint={true} /> }
         </View>
 
         <TouchableOpacity onPress={() => toggleExpand()}>
