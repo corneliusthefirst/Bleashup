@@ -54,7 +54,7 @@ export default class RemindsMenu extends Component {
                 >
                     <View>
                         <MenuItem
-                            textStyle={{ color: "#0A4E52" }}
+                            textStyle={{ color: ColorList.bodyIcon }}
                             onPress={() => {
                                 this.hideMenu();
                                 this.props.reply();
@@ -62,11 +62,11 @@ export default class RemindsMenu extends Component {
                         >
                             {"Reply"}
                         </MenuItem>
-                        <MenuDivider color="#1FABAB" />
+                        <MenuDivider color={ColorList.indicatorColor}/>
                     </View>
                     <View>
                         <MenuItem
-                            textStyle={{ color: "#0A4E52" }}
+                            textStyle={{ color: ColorList.bodyIcon }}
                             onPress={() => {
                                 this.hideMenu();
                                 this.props.members();
@@ -74,12 +74,12 @@ export default class RemindsMenu extends Component {
                         >
                             {"Members"}
                         </MenuItem>
-                        <MenuDivider color="#1FABAB" />
+                        <MenuDivider color={ColorList.indicatorColor} />
                     </View>
                     {this.props.creator ? (
                         <View>
                             <MenuItem
-                                textStyle={{ color: "#0A4E52" }}
+                                textStyle={{ color: ColorList.bodyIcon }}
                                 onPress={() => {
                                     this.hideMenu();
                                     this.props.addMembers();
@@ -87,12 +87,12 @@ export default class RemindsMenu extends Component {
                             >
                                 {"Assign"}
                             </MenuItem>
-                            <MenuDivider color="#1FABAB" />
+                            <MenuDivider color={ColorList.indicatorColor} />
                         </View>
                     ) : null}
                     <View>
                         <MenuItem
-                            textStyle={{ color: "#0A4E52" }}
+                            textStyle={{ color: ColorList.bodyIcon }}
                             onPress={() => {
                                 this.hideMenu();
                                 this.props.removeMembers();
@@ -100,12 +100,12 @@ export default class RemindsMenu extends Component {
                         >
                             {"Unassign"}
                         </MenuItem>
-                        <MenuDivider color="#1FABAB" />
+                        <MenuDivider color={ColorList.indicatorColor} />
                     </View>
                     {this.props.creator ? (
                         <View>
                             <MenuItem
-                                textStyle={{ color: "#0A4E52" }}
+                                textStyle={{ color: ColorList.bodyIcon }}
                                 onPress={() => {
                                     this.hideMenu();
                                     this.props.update();
@@ -113,13 +113,13 @@ export default class RemindsMenu extends Component {
                             >
                                 {"Update"}
                             </MenuItem>
-                            <MenuDivider color="#1FABAB" />
+                            <MenuDivider color={ColorList.indicatorColor} />
                         </View>
                     ) : null}
                     {this.props.creator ? (
                         <View>
                             <MenuItem
-                                textStyle={{ color: "red" }}
+                                textStyle={{ color: ColorList.delete }}
                                 onPress={() => {
                                     this.hideMenu();
                                     this.props.deleteRemind();
@@ -127,7 +127,7 @@ export default class RemindsMenu extends Component {
                             >
                                 {"Delete"}
                             </MenuItem>
-                            <MenuDivider color="#1FABAB" />
+                            <MenuDivider color={ColorList.indicatorColor} />
                         </View>
                     ) : null}
                 </Menu>
