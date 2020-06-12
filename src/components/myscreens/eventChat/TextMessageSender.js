@@ -21,13 +21,6 @@ export default class TextMessageSnder extends PureComponent {
    }
    timeOut = null
     componentDidMount() {
-        this.setState({
-            text: this.props.message.text,
-            sender_name: this.props.message.sender.nickname,
-            sender: !(this.props.message.sender.phone == this.props.user),
-            time: this.props.message.created_at.split(" ")[1],
-            creator: (this.props.message.sender.phone == this.props.creator)
-        })
     }
     transparent = "rgba(52, 52, 52, 0.0)";
     duration = 10

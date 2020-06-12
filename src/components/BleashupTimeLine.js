@@ -15,6 +15,7 @@ import moment from "moment";
 import ChangeBox from "./myscreens/changelogs/ChangesBox";
 import shadower from "./shadower";
 import colorList from '../components/colorList';
+import stores from "../stores";
 
 
 const defaultCircleSize = 16;
@@ -76,24 +77,25 @@ export default class BleashupTimeLine extends PureComponent {
                     initialRender={10}
                     numberOfItems={this.state.data.length}
                     //extraData={this.state}
-                    renderItem={(item,index) => {
+                    renderItem={(rowData,index) => {
                         this.delayer = this.delayer +1
                         if(this.delayer >= 6) this.delayer = 0
-                        return this._renderItem(item,index,this.delayer)
+                        return <View onLayout={(e) => {
+                        }} >{this._renderItem(rowData,index,this.delayer)}</View>
                     }}
-                    keyExtractor={(item, index) => index + ""}
+                    keyExtractor={(rowData, index) => index + ""}
                     {...this.props.options}
                 />
             </View>
         );
     }
 
-    _renderItem(item, index,delay) {
+    _renderItem(rowData, index,delay) {
         let content = null;
-        switch (item.type) {
+        switch (rowData.type) {
             case "date_separator":
                 content = (<View style={[styles.rowContainer, this.props.rowContainerStyle]}>
-                    {this.renderTimeSeparator(item)}
+                    {this.renderTimeSeparator(rowData)}
                     {null}
                     {null}
                 </View>)
@@ -103,34 +105,34 @@ export default class BleashupTimeLine extends PureComponent {
                     case "single-column-left":
                         content = (
                             <View style={[styles.rowContainer, this.props.rowContainerStyle]}>
-                                {this.renderTime(item, index)}
-                                {this.renderEvent(item, index,delay)}
-                                {this.renderCircle(item, index)}
+                                {this.renderTime(rowData, index)}
+                                {this.renderEvent(rowData, index,delay)}
+                                {this.renderCircle(rowData, index)}
                             </View>
                         );
                         break;
                     case "single-column-right":
                         content = (
                             <View style={[styles.rowContainer, this.props.rowContainerStyle]}>
-                                {this.renderEvent(item, index,delay)}
-                                {this.renderTime(item, index)}
-                                {this.renderCircle(item, index)}
+                                {this.renderEvent(rowData, index,delay)}
+                                {this.renderTime(rowData, index)}
+                                {this.renderCircle(rowData, index)}
                             </View>
                         );
                         break;
                     case "two-column":
                         content =
-                            (item.position && item.position == "right") || (!item.position && index % 2 == 0) ? (
+                            (rowData.position && rowData.position == "right") || (!rowData.position && index % 2 == 0) ? (
                                 <View style={[styles.rowContainer, this.props.rowContainerStyle]}>
-                                    {this.renderTime(item, index)}
-                                    {this.renderEvent(item, index,delay)}
-                                    {this.renderCircle(item, index)}
+                                    {this.renderTime(rowData, index)}
+                                    {this.renderEvent(rowData, index,delay)}
+                                    {this.renderCircle(rowData, index)}
                                 </View>
                             ) : (
                                     <View style={[styles.rowContainer, this.props.rowContainerStyle]}>
-                                        {this.renderEvent(item, index,delay)}
-                                        {this.renderTime(item, index)}
-                                        {this.renderCircle(item, index)}
+                                        {this.renderEvent(rowData, index,delay)}
+                                        {this.renderTime(rowData, index)}
+                                        {this.renderCircle(rowData, index)}
                                     </View>
                                 );
                         break;
@@ -139,8 +141,8 @@ export default class BleashupTimeLine extends PureComponent {
         return <View key={index}>{content}</View>;
     }
 
-    renderTimeSeparator(item) {
-        return <View style={{ alignItems: 'flex-end', }}><DateView backgroundColor={"#1FABAB"} date={item.id}></DateView></View>
+    renderTimeSeparator(rowData) {
+        return <View style={{ alignItems: 'flex-end', }}><DateView backgroundColor={"#1FABAB"} date={rowData.id}></DateView></View>
     }
     _renderTime(rowData, rowID) {
         if (!this.props.showTime) {
@@ -253,15 +255,29 @@ export default class BleashupTimeLine extends PureComponent {
             </View>
         );
     }
-
-    _renderDetail(rowData, rowID,delay) {
+    storesLayouts(event_id,layout,index){
+        stores.ChangeLogs.storeLayouts(event_id,layout,index)
+    }
+    layoutsTimeout = {}
+    _renderDetail(rowData,index,delay) {
         let title = (
             <View>
                 <Text style={[styles.title, this.props.titleStyle]}>
                     {rowData.title}
                 </Text>
                 <View>
-                    <ChangeBox master={this.props.master} 
+                    <ChangeBox takeNewLayout={(layout) => {
+                        if (this.layoutsTimeout[rowData.id]) {
+                            clearTimeout(this.layoutsTimeout[rowData.id])
+                            this.layoutsTimeout[rowData.id] = setTimeout(() => {
+                                this.storesLayouts(rowData.event_id,layout, index)
+                            }, 500)
+                        } else {
+                            this.layoutsTimeout[rowData.id] = setTimeout(() => {
+                                this.storesLayouts(rowData.event_id,layout, index)
+                            }, 500)
+                        }
+                    }} master={this.props.master} 
                     showPhoto={url => this.props.showPhoto(url)}
                     restore={(data) => this.props.restore(data)}
                      mention={(data) => this.props.mention(data)} 

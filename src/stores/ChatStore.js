@@ -22,7 +22,10 @@ class ChatStore {
     addToStore(data, message_id) {
         this.setProperties(data);
         this.currentModif = moment().format();
-        message_id ? emitter.emit("updated" + message_id) : null
+        if(message_id){
+            console.warn("emitting message update")
+            emitter.emit("updated" + message_id)
+        }
     }
     saver() {
         if (Object.keys(this.messages).length > 0) {

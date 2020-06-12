@@ -17,7 +17,6 @@ import PhotoUploader from "./PhotoUploader";
 import VideoUploader from "./VideoUploader";
 import FileAttarchementUploader from "./FileAttarchmantUploader";
 import AudioUploader from "./AudioUploader";
-import Swipeout from "../../SwipeOut";
 import TextMessageSnder from "./TextMessageSender";
 import DateView from "./DateView";
 import NewSeparator from "./NewSeparator";
@@ -29,10 +28,10 @@ import { isEqual } from "lodash";
 import formVoteOptions from "../../../services/formVoteOptions";
 import ColorList from "../../colorList";
 import ReactionModal from "./ReactionsModal";
-import { ScrollView } from "react-native-gesture-handler";
 import stores from "../../../stores";
 import rounder from "../../../services/rounder";
 import emitter from "../../../services/eventEmiter";
+import { SwipeRow } from 'react-native-swipe-list-view';
 import Votes from "../votes";
 
 export default class Message extends Component {
@@ -59,19 +58,19 @@ export default class Message extends Component {
             ),
             different: isDiff,
             time:
-                !isDiff &&
+                /*!isDiff &&
                     this.props.PreviousMessage &&
                     this.props.PreviousMessage.type !== "date_separator" &&
                     moment(this.props.message.created_at).format("x") -
                     moment(this.props.PreviousMessage.created_at).format("x") <
-                    1000*60
+                    1000 * 60
                     ? ""
-                    : moment(this.props.message.created_at).format("HH:mm"),
+                    : */moment(this.props.message.created_at).format("HH:mm"),
             creator:
                 this.props.message.sender &&
                 this.props.message.sender.phone == this.props.creator,
             replying: false,
-            loaded: false,
+            loaded: true,
         };
     }
     placeHolder = {
@@ -227,59 +226,6 @@ export default class Message extends Component {
                         replaceMessage={(data) => this.props.replaceAudioMessage(data)}
                     ></AudioUploader>
                 );
-            /*case "vote":
-                return this.props.message.forwarded ? (
-                    <View style={{marginLeft: this.props.sender && '-1%',}}><Votes
-                        shared
-                        takeVotes={() => {
-
-                        }}
-                        message={this.props.message}
-                        voteItem={this.props.voteShare}
-                        event_id={this.props.message.from_committee}
-                        handleLongPress={this.handLongPress.bind(this)}
-                        share={{
-                            id: this.props.message.id,
-                            date: this.props.message.created_at,
-                            sharer: this.props.message.from && this.props.message.from.phone,
-                            item_id: this.props.message.vote.id,
-                            event_id: this.props.message.from_activity,
-                        }}
-                    ></Votes></View>
-                ) : (
-                        <View style={{marginLeft: '2%',marginTop: '1%',}}><Voter
-                            computedMaster={this.props.computedMaster}
-                            handleLongPress ={this.handLongPress.bind(this)}
-                            mention={() => this.handleReply()}
-                            takeCreator={(creator) => {
-                                this.voteCreator = creator;
-                            }}
-                            vote={(index, vote) =>
-                                this.props.voteItem(index, this.props.message)
-                            }
-                            pressingIn={() => {
-                                this.replying = true;
-                            }}
-                            placeHolder={this.placeholderStyle}
-                            showVoters={this.props.showVoters}
-                            message={{
-                                ...data,
-                                vote: {
-                                    ...(this.props.votes &&
-                                        this.props.votes.length > 0 &&
-                                        this.props.message.vote
-                                        ? this.props.votes[data.vote.index] &&
-                                            this.props.votes[data.vote.index].id === data.vote.id
-                                            ? this.props.votes[data.vote.index]
-                                            : find(this.props.votes, { id: data.vote.id })
-                                        : null),
-                                    voter: data.vote && data.vote.voter,
-                                },
-                            }}
-                            room={this.props.room}
-                            index={data.id}
-                        ></Voter></View>
-                    );*/
             default:
                 return null;
         }
@@ -290,74 +236,45 @@ export default class Message extends Component {
             this.setState({
                 loaded: true,
             });
-        }, 5*this.props.delay);
+        }, 5 * this.props.delay);
     }
     slept = false;
-    openingSwipeout() {
-        this.closing++;
-        if (!this.slept) {
-            setTimeout(() => {
-                this.setState({
-                    openRight: true,
-                });
-            }, 1000);
-            this.slept = true;
-        } else {
-            this.setState({
-                openRight: true,
-            });
-        }
-        setTimeout(() => {
-            if (this.replying) {
-                if (!this.closed) {
-                    this.closing++;
-                    this.closed = true;
-                    this.handleReply();
-                    this.closing = 0;
-                    setTimeout(() => {
-                        this.closed = false;
-                    }, 1000);
-                }
-                this.replying = false;
-            }
-        }, 50);
-    }
     timeoutID = null;
     closing = 0;
     perviousTime = 0;
-    closingSwipeout() { }
     duration = 10;
     longPressDuration = 50;
     pattern = [1000, 0, 0];
-    choseReply(){
+    choseReply() {
+        let nickname = this.props.message.sender && this.props.message.sender.nickname
         switch (this.props.message.type) {
             case "text":
                 tempMessage = this.props.message;
-                tempMessage.replyer_name = this.props.message.sender.nickname;
+                tempMessage.replyer_name = nickname;
                 return tempMessage;
             case "audio":
                 tempMessage = this.props.message;
                 tempMessage.audio = true;
-                tempMessage.replyer_name = this.props.message.sender.nickname;
+                tempMessage.replyer_name = nickname;
                 return tempMessage;
             case "video":
                 tempMessage = this.props.message;
                 tempMessage.video = true;
                 tempMessage.sourcer = this.props.message.thumbnailSource;
-                tempMessage.replyer_name = this.props.message.sender.nickname;
+                tempMessage.replyer_name = nickname;
                 return tempMessage;
             case "attachement":
                 tempMessage = this.props.message;
-                tempMessage.replyer_name = this.props.message.sender.nickname;
+                tempMessage.replyer_name = nickname;
                 tempMessage.file = true;
                 let temp = this.props.message.file_name.split(".");
                 let temper = tempMessage;
                 temper.typer = temp[temp.length - 1];
                 return temper;
-                //tempMessage = temper
+            //tempMessage = temper
             case "photo":
                 tempMessage = this.props.message;
-                tempMessage.replyer_name = this.props.message.sender.nickname;
+                tempMessage.replyer_name = nickname;
                 tempMessage.sourcer = this.props.message.photo;
                 return tempMessage;
             case "vote":
@@ -371,7 +288,7 @@ export default class Message extends Component {
                             ? this.props.votes[this.props.message.vote.index]
                             : find(this.props.votes, { id: this.props.message.vote.id })
                         : null;
-                return{
+                return {
                     id: vote.id,
                     type_extern: "Votes",
                     title: `${vote.title} : \n ${vote.description} \n\n ${formVoteOptions(
@@ -388,7 +305,7 @@ export default class Message extends Component {
         Vibration.vibrate(this.duration);
         let color = this.state.sender ? "#DEDEDE" : "#9EEDD3";
         let reply = this.choseReply()
-       reply && this.props.replying(reply)
+        reply && this.props.replying(reply)
     }
     testReactions = [];
     renderMessageReactions(sender) {
@@ -400,7 +317,6 @@ export default class Message extends Component {
         return (
             <View
                 style={{
-                    width: "100%",
                     flexDirection: "row",
                     flexWrap: "wrap",
                 }}
@@ -475,6 +391,7 @@ export default class Message extends Component {
     event = "updated" + this.props.message.id;
     componentWillMount() {
         emitter.on(this.event, () => {
+            console.warn("receiving message update")
             this.refresh();
         });
     }
@@ -492,7 +409,7 @@ export default class Message extends Component {
     handLongPress() {
         this.replying = false;
         let reply = this.choseReply()
-        this.props.showActions(this.props.message,reply);
+        this.props.showActions(this.props.message, reply);
         Vibration.vibrate(this.longPressDuration);
     }
     testForImoji(message) {
@@ -528,7 +445,7 @@ export default class Message extends Component {
             ? this.props.messagelayouts[this.props.message.id]
             : this.placeHolder[this.props.message.type];
     render() {
-       let topMostStyle = {
+        let topMostStyle = {
             marginLeft: this.state.sender ? "1%" : 0,
             marginRight: !this.state.sender ? "1%" : 0,
             marginTop: this.state.different ? "4%" : "1.2%",
@@ -538,7 +455,7 @@ export default class Message extends Component {
         let color = this.state.sender
             ? ColorList.receivedBox
             : ColorList.senTBoxColor;
-       let GeneralMessageBoxStyle = {
+        let GeneralMessageBoxStyle = {
             maxWidth: 300,
             flexDirection: "column",
             minWidth: 60,
@@ -558,7 +475,7 @@ export default class Message extends Component {
                     ? ColorList.chatboxBorderRadius
                     : null,
         };
-      let subNameStyle = {
+        let subNameStyle = {
             paddingBottom: 0,
             flexDirection: "row",
             margin: "2%",
@@ -579,12 +496,11 @@ export default class Message extends Component {
             borderTopLeftRadius: this.state.sender
                 ? 0
                 : ColorList.chatboxBorderRadius, // borderWidth: this.props.message.text && this.props.message.type === "text" ? this.testForImoji(this.props.message.text)?.7:0:0,
-            backgroundColor: color,
-            ...shadower(1),
+            backgroundColor: 'transparent',
             alignSelf: this.state.sender ? "flex-start" : "flex-end",
             borderTopRightRadius: ColorList.chatboxBorderRadius,
         };
-       let reactionContanerStyle = {
+        let reactionContanerStyle = {
             marginTop: "auto",
             marginBottom: "auto",
             width: 20,
@@ -595,7 +511,13 @@ export default class Message extends Component {
             fontWeight: "bold",
             color: ColorList.bodyText,
         };
-        return this.props.message.type == "date_separator" ? (
+        return <View onLayout={(e) => {
+            this.setState({
+                containerDims: e.nativeEvent.layout,
+            });
+            this.props.setCurrentLayout &&
+                this.props.setCurrentLayout(e.nativeEvent.layout);
+        }}>{this.props.message.type == "date_separator" ? (
             <View style={{ marginTop: "2%", marginBottom: "2%" }}>
                 <DateView date={this.props.message.id}></DateView>
             </View>
@@ -621,46 +543,43 @@ export default class Message extends Component {
                                         {this.reactions(this.state.sender)}
                                     </View>
                                 ) : null}
-                                <Swipeout
-                                    isMessage
-                                    onPress={this.openingSwipeout()}
-                                    ref={"chatSwipeOut"}
-                                    onOpen={() => {
-                                        this.openingSwipeout();
+                                <SwipeRow
+                                    swipeGestureEnded={(key, data) => {
+                                        if (data.translateX >= 100) {
+                                            this.handleReply()
+                                        } else if (data.translateX <= -100) {
+                                            Vibration.vibrate([100, 0, 0, 100])
+                                            this.props.forwardMessage()
+                                        }
                                     }}
-                                    onClose={() => {
-                                        this.closingSwipeout();
-                                    }}
-                                    autoClose={true}
-                                    close={true}
-                                    left={[
-                                        {
-                                            color: "black",
-                                            type: "default",
-                                            backgroundColor: "transparent",
-                                            text: "reply",
-                                            onPress: () => {
-                                                Vibration.vibrate(this.duration);
-                                                this.handleReply();
-                                            },
-                                        },
-                                    ]}
+                                    leftOpenValue={0}
+                                    rightOpenValue={0}
+                                    swipeToClosePercent={50}
                                     style={{ backgroundColor: "transparent", width: "100%" }}
                                 >
+                                    <View
+                                        style={{
+                                            marginTop: 'auto',
+                                            marginBottom: 'auto',
+                                            alignSelf: 'center',
+                                            flexDirection: 'row',
+                                            justifyContent: 'space-between',
+                                            width: "90%",
+                                        }}>
+                                    </View>
                                     <View
                                         style={{
                                             flexDirection: "row",
                                             alignSelf: !this.state.sender ? "flex-end" : "flex-start",
                                         }}
                                     >
+                                        {this.state.time && !this.state.sender ? (
+                                            <View style={{ margin:'1%' ,...reactionContanerStyle,width:30,marginBottom: null,}}>
+                                                <Text note>{this.state.time}</Text>
+                                            </View>
+                                        ) : null}
                                         <View
-                                            onLayout={(e) => {
-                                                this.setState({
-                                                    containerDims: e.nativeEvent.layout,
-                                                });
-                                                this.props.setCurrentLayout &&
-                                                    this.props.setCurrentLayout(e.nativeEvent.layout);
-                                            }}
+
                                             style={GeneralMessageBoxStyle}
                                         >
                                             <View>
@@ -742,8 +661,8 @@ export default class Message extends Component {
                                                     >
                                                         <View
                                                             style={{
-                                                                marginLeft: this.state.sender ? "2%" : 0,
-                                                                marginRight: this.state.sender ? 0 : "2%",
+                                                                marginLeft: '1%',
+                                                                marginRight: '1%',
                                                             }}
                                                         >
                                                             {this.chooseComponent(
@@ -791,22 +710,20 @@ export default class Message extends Component {
                                                                             name="progress-check"
                                                                         ></Icon>
                                                                     )
-                                                                ) : null}
+                                                            ) : null}
                                                         </View>
-                                                        {this.state.time ? (
-                                                            <View style={{ marginRight: "2%" }}>
-                                                                <Text note>{this.state.time}</Text>
-                                                            </View>
-                                                        ) : null}
                                                     </View>
                                                 </TouchableWithoutFeedback>
+                                                {this.state.sender ? <View style={{ alignSelf: 'flex-start', }}>{this.reactions(this.state.sender)}</View> : null}
                                             </View>
                                         </View>
                                         {this.state.sender ? (
                                             <TouchableOpacity
                                                 onLongPress={this.handLongPress.bind(this)}
                                                 onPress={this.openReaction.bind(this)}
-                                                style={{ ...reactionContanerStyle }}
+                                                style={{ ...reactionContanerStyle,
+                                                    ...rounder(13,ColorList.bodyBackground),
+                                                    marginLeft: 5, }}
                                             >
                                                 <Icon
                                                     style={{
@@ -819,9 +736,13 @@ export default class Message extends Component {
                                                 ></Icon>
                                             </TouchableOpacity>
                                         ) : null}
+                                        {this.state.time && this.state.sender ? (
+                                            <View style={{ alignItems:'flex-end',...reactionContanerStyle,width:30,marginBottom: null,marginLeft: -10,}}>
+                                                <Text note>{this.state.time}</Text>
+                                            </View>
+                                        ) : null}
                                     </View>
-                                    {this.state.sender ? this.reactions(this.state.sender) : null}
-                                </Swipeout>
+                                </SwipeRow>
                             </View>
                             {this.state.isReacting ? (
                                 <View
@@ -855,6 +776,6 @@ export default class Message extends Component {
                                 </View>
                             ) : null}
                         </View>
-                    );
+                    )}</View>;
     }
 }
