@@ -22,7 +22,12 @@ export default class BleashupFlatList extends Component {
         this.state = {
             currentRender: this.props.initialRender ? this.props.initialRender : 4,
             currentNewRender: this.props.initialNewRender ? this.props.initialNewRender : 4,
-            endReached: false
+            endReached: false,
+            indexing:false
+        }
+        this.viewabilityConfig = {
+            waitForInteraction: false,
+            viewAreaCoveragePercentThreshold: 100
         }
     }
     initialRender = 3
@@ -86,6 +91,7 @@ export default class BleashupFlatList extends Component {
             }}>
                 {this.props.marginTop ? <View style={{ height: 5 }}></View> : null}
                 <FlatList
+                    viewabilityConfig={this.viewabilityConfig}
                     keyboardShouldPersistTaps={this.props.keyboardShouldPersistTaps}
                     onScrollEndDrag={({ nativeEvent }) => {
                         if (isTooCloseToBottom(nativeEvent)) {
@@ -96,6 +102,8 @@ export default class BleashupFlatList extends Component {
                         }
                     }
                     }
+                    enableEmptySections={false}
+                    disableVirtualization={this.props.disableVirtualization}
                     getItemLayout={this.props.getItemLayout}
                     scrollEnabled={!this.props.disableScroll}
                     nestedScrollEnabled={true}

@@ -27,6 +27,7 @@ export default class FileExachange {
         this.filename = filename
         this.store = store
     }
+    appDir = AppDir
     DetemineRange(path) {
         return new Promise((resolve, reject) => {
             fs.exists(path).then(ext => {

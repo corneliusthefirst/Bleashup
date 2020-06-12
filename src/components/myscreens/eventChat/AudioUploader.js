@@ -21,6 +21,8 @@ import FileExachange from '../../../services/FileExchange';
 import converToHMS from '../highlights_details/convertToHMS';
 import { LogLevel, RNFFmpeg } from 'react-native-ffmpeg';
 import rnFetchBlob from 'rn-fetch-blob';
+import TextContent from './TextContent';
+import ColorList from '../../colorList';
 const { fs } = rnFetchBlob
 
 
@@ -197,6 +199,7 @@ export default class AudioUploader extends Component {
             flexDirection: 'column',
         }
         return (
+            <View>
             <View style={{ disply: 'flex', flexDirection: 'row', width: 300, }}>
                 <View style={textStyle}>
                     <View><Slider value={this.state.currentPosition} onValueChange={(value) => {
@@ -217,8 +220,8 @@ export default class AudioUploader extends Component {
                         size={40}
                         width={3}
                         fill={this.state.uploadState}
-                        tintColor={"#1FABAB"}
-                        backgroundColor={'#F8F7EE'}>
+                        tintColor={ColorList.indicatorColor}
+                        backgroundColor={ColorList.indicatorInverted}>
                         {
                             (fill) => (
                                 <View style={{ marginTop: "-5%" }}>
@@ -226,7 +229,7 @@ export default class AudioUploader extends Component {
                                         <TouchableOpacity onPress={() => this.state.downloading ? this.cancelUpLoad(this.tempSource) :
                                             this.uploadAudio(this.tempSource)}>
                                             <View>
-                                                <Icon style={{ color: "#0A4E52" }} type="EvilIcons"
+                                                <Icon style={{ color: ColorList.bodyText }} type="EvilIcons"
                                                     name={this.state.downloading ? "close" : "arrow-up"}></Icon>
                                             </View>
                                             <View style={{ position: 'absolute', marginTop: '-103%', marginLeft: '-14%', }}>
@@ -234,16 +237,22 @@ export default class AudioUploader extends Component {
                                             </View>
                                         </TouchableOpacity> : !this.state.playing ? <TouchableOpacity
                                             onPress={() => requestAnimationFrame(() => this.plays())}>
-                                            <Icon type="FontAwesome5" style={{ color: "#0A4E52", fontSize: 20 }} name="play">
+                                            <Icon type="FontAwesome5" style={{ color: ColorList.bodyText, fontSize: 20 }} name="play">
                                             </Icon>
                                         </TouchableOpacity> : <TouchableOpacity onPress={() => requestAnimationFrame(() => this.pause())}>
-                                                <Icon type="FontAwesome5" style={{ color: "#0A4E52", fontSize: 20 }} name="pause">
+                                                <Icon type="FontAwesome5" style={{ color: ColorList.bodyText, fontSize: 20 }} name="pause">
                                                 </Icon>
                                             </TouchableOpacity>}
                                 </View>
                             )
                         }
                     </AnimatedCircularProgress></View>
+            </View>
+                {this.props.message.text?<TextContent
+                    handleLongPress={this.props.handleLongPress}
+                    pressingIn={this.props.pressingIn} text={this.props.message.text} tags={this.props.message.tags}
+                >
+                </TextContent>:null}
             </View>
         );
     }

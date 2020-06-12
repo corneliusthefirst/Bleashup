@@ -1,26 +1,13 @@
 import React, { Component } from "react";
 import {
-    Left,
-    Right,
     Icon,
     Text,
-    Spinner,
     Toast,
-    Title,
-    ActionSheet,
-    Button,
-    Item,
 } from "native-base";
 import {
     View,
-    TouchableOpacity,
     Dimensions,
-    BackHandler,
     Keyboard,
-    Platform,
-    TextInput,
-    KeyboardAvoidingView,
-    PermissionsAndroid,
     StatusBar,
     ImageBackground,
     Vibration,
@@ -30,7 +17,6 @@ import {
 import VideoPlayer from "./VideoController";
 import Image from "react-native-scalable-image";
 import Orientation from "react-native-orientation-locker";
-import ReactNativeZoomableView from "@dudigital/react-native-zoomable-view/src/ReactNativeZoomableView";
 import BleashupFlatList from "../../BleashupFlatList";
 import Message from "./Message";
 import {
@@ -44,50 +30,36 @@ import {
     values,
 } from "lodash";
 import moment from "moment";
-import { PulseIndicator } from "react-native-indicators";
-import ReplyText from "./ReplyText";
 import firebase from "react-native-firebase";
-import ChatStore from "../../../stores/ChatStore";
 import {
     TouchableWithoutFeedback,
     ScrollView,
 } from "react-native-gesture-handler";
 import stores from "../../../stores";
+import ReactNativeZoomableView from '@dudigital/react-native-zoomable-view/src/ReactNativeZoomableView';
 import VerificationModal from "../invitations/components/VerificationModal";
 import GState from "../../../stores/globalState";
-import EmojiSelector from "react-native-emoji-selector";
-import ChatroomMenu from "./ChatroomMenu";
 import uuid from "react-native-uuid";
-import dateDisplayer from "../../../services/dates_displayer";
 import {
-    SendNotifications,
     LoadMoreComments,
-    AddMembers,
 } from "../../../services/cloud_services";
-import Pickers from "../../../services/Picker";
-import converToHMS from "../highlights_details/convertToHMS";
 import Waiter from "../loginhome/Waiter";
 import MediaTabModal from "./MediaTabModal";
 import testForURL from "../../../services/testForURL";
-import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
 import Votes from "../votes";
 import emitter from "../../../services/eventEmiter";
-import ChatRoomPlus from "./ChatRoomPlus";
 import ContactsModal from "../../ContactsModal";
-import AudioRecorder from "./AudioRecorder";
-import TypingIndicator from "./TypingIndicator";
 import colorList from "../../colorList";
 import { PrivacyRequester } from "../settings/privacy/Requester";
 import { observer } from "mobx-react";
 import PublishersModal from "../../PublishersModal";
 import Requester from "./Requester";
-import ProfileSimple from "../currentevents/components/ProfileViewSimple";
 import globalFunctions from "../../globalFunctions";
-import toTitleCase from "../../../services/toTitle";
 import ShareWithYourContacts from "./ShareWithYourContacts";
 import MessageActions from "./MessageActons";
-import rounder from "../../../services/rounder";
 import replies from './reply_extern';
+import ChatKeyboard from "./ChatKeyboard";
+import ChatRoomHeader from "./ChatRoomHeader";
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenheight = Math.round(Dimensions.get("window").height);
@@ -97,45 +69,11 @@ class ChatRoom extends Component {
         super(props);
         this.authObserver();
         this.state = {
-            sender: false,
-            user: 2,
-            splicer: 500,
-            creator: true,
-            newMessage: false,
-            hideStatusBar: false,
-            showEmojiInput: false,
-            showAudioRecorder: false,
-            recordTime: 0,
-            keyboardOpened: false,
-            textValue: "",
-            image: null,
-            tagging: false,
             isModalOpened: false,
             showHeader: !this.props.isComment,
-            previousMessageHeight: this.formHeight(
-                (screenheight - 67) / screenheight
-            ),
-            previousTextHeight: this.formHeight(67 / screenheight),
-            replying: false,
-            recording: false,
-            captionText: "",
-            textHeight: screenheight * 0.1,
-            photoHeight: screenheight * 0.9,
-            showCaption: false,
-            showEmojiInputCaption: false,
-            replyerOffset: 0.1,
             messageListHeight: this.formHeight((screenheight - 120) / screenheight),
-            textInputHeight: this.formHeight(67 / screenheight),
-            inittialTextInputHeightFactor: 67 / screenheight,
-            initialMessaListHeightFactor: (screenheight - 67) / screenheight,
-            showRepliedMessage: false,
-            showVideo: false,
-            showPhoto: false,
-            playing: true,
-            replyContent: null,
-            height: 20,
+            
         };
-        this.BackHandler = null;
     }
     saveNotificationToken() {
         firebase
@@ -147,10 +85,6 @@ class ChatRoom extends Component {
                     .getToken()
                     .then((token) => {
                         PrivacyRequester.saveToken(token);
-                        /*firebase
-                            .database()
-                            .ref(`notifications_tokens/${this.user.phone}`)
-                            .set(token);*/
                     })
                     .catch((error) => {
                         console.warn(error);
@@ -239,9 +173,6 @@ class ChatRoom extends Component {
         marginTop: "-10%",
         paddingTop: "3%",
     };
-    toastTextStyles = {
-        color: colorList.bodyBackground,
-    };
     typingRef = null;
     setTypingRef(room) {
         this.typingRef = firebase.database().ref(`typing/${room}`);
@@ -259,7 +190,6 @@ class ChatRoom extends Component {
             }
         }
         this.typingTimeout && clearTimeout(this.typingTimeout);
-        // console.warn(this.currentTyper)
         this.setState({
             typing: true,
         });
@@ -268,10 +198,9 @@ class ChatRoom extends Component {
                 typing: false,
             });
         }, 1000);
-        //Toast.show({ text: `typing ...`, position: "top", textStyle: this.toastTextStyles, style: this.toastStyle })
     }
-    setTyingState(typer) {
-        this.typingRef.set([typer, moment().format()]);
+    setTyingState() {
+        this.typingRef.set([this.sender, moment().format()]);
     }
     formStorableData(messages) {
         messages = uniqBy(messages, "id").sort(this.dateSorter);
@@ -394,7 +323,6 @@ class ChatRoom extends Component {
     }
     initializeRoomListeners() {
         this.typingRef.on("child_changed", (newChild) => {
-            //console.warn(newChild)
             let typer = newChild.phone ? newChild.nickname : newChild;
             this.props.setTyper && this.props.setTyper();
             this.showTypingToast(typer);
@@ -417,11 +345,6 @@ class ChatRoom extends Component {
             GState.reply && !this.alreadyFocussed && this.fucussTextInput();
             this.alreadyFocussed = true;
             this.refs && this.refs.scrollViewRef && this.refs.scrollViewRef.scrollToEnd({ animated: true, duration: 200 });
-            this.state.showCaption &&
-                this.refs && this.refs.captionScrollViewRef && this.refs.captionScrollViewRef.scrollToEnd({
-                    animated: true,
-                    duration: 200,
-                });
             this.temp ? (GState.reply = JSON.parse(this.temp)) : null;
         }, 30);
     }
@@ -443,7 +366,6 @@ class ChatRoom extends Component {
         }
     }
     componentWillMount() {
-        this.formSerachableMembers();
         this.fireRef = this.getRef(this.props.firebaseRoom);
         this.setTypingRef(this.props.firebaseRoom);
         emitter.on("reply-me", (rep) => {
@@ -454,90 +376,19 @@ class ChatRoom extends Component {
             }, 400)
         })
         this.props.isComment ? (stores.Messages.messages[this.roomID] = []) : null;
-        this.keyboardDidShowSub = Keyboard.addListener('keyboardDidShow', this.handleKeyboardDidShow.bind(this));
-        this.keyboardDidHideSub = Keyboard.addListener('keyboardDidHide', this.handleKeyboardDidHide.bind(this));
-        //if (this.BackHandler) this.BackHandler.remove();
-        //this.BackHandler = BackHandler.addEventListener(
-        //  "hardwareBackPress",
-        //  this.handleBackButton.bind(this)
-        //  );
         Orientation.lockToPortrait();
     }
     componentWillUnmount() {
-        Pickers.CleanAll();
         this.fireRef.off();
         emitter.off("reply-me")
         this.typingRef.off();
-        this.keyboardDidHideSub.remove()
-        this.keyboardDidShowSub.remove()
         this.markAsRead();
         GState.currentRoom = null;
-        //this.BackHandler.remove();
     }
 
-    handleKeyboardDidShow = (event) => {
-        //this.adjutRoomDisplay()
-        this.setState({
-            showEmojiInput: false,
-            showEmojiInputCaption: false
-        })
-        this.openedKeyboard = true
-    };
-
-    handleKeyboardDidHide = () => {
-        this.openedKeyboard = false
-    };
     convertPercentageToInt(data) {
         return parseInt(data.split("%")[0]) / 100;
     }
-
-    /*handleBackButton() {
-        if (this.state.showEmojiInput) {
-            //this.fucussTextInput();
-            this.setState({
-                showEmojiInput: false,
-            });
-            return true;
-        } else if (this.state.showRepliedMessage) {
-            this.setState({
-                showRepliedMessage: false,
-            });
-            return true;
-        } /*else if (this.state.showVideo) {
-            this.setState({
-                showVideo: false,
-                showCaption: false,
-            });
-            Orientation.lockToPortrait();
-            return true;
-        } else if (this.state.showPhoto) {
-            this.setState({
-                showPhoto: false,
-                showCaption: false,
-            });
-            return true;
-        } else if (this.state.showEmojiInputCaption) {
-            //this._captionTextInput.focus();
-            this.setState({
-                showEmojiInputCaption: false,
-            });
-            return true;
-        } else if (this.state.showCaption) {
-            this.setState({
-                showCaption: false,
-                showVideo: false,
-            });
-            return true;
-        } /*else if (this.state.showAudioRecorder) {
-            this.refs.AudioRecorder.stopRecord(true);
-            return true;
-        } else {
-        }
-    }*/
-    state = {
-        sender: false,
-        showTime: true,
-    };
     formHeight(factor) {
         return factor * screenheight;
     }
@@ -597,34 +448,9 @@ class ChatRoom extends Component {
             playing: !this.state.playing,
         });
     }
-    _onChange(event) {
-        let text = event.nativeEvent.text;
-        this.setState({ textValue: text || "" });
-        if (text.split("@").length > 1) {
-            this.setState({
-                tagging: true,
-            });
-        }
-        this.setTyingState(this.sender);
-        this.adjutRoomDisplay();
-    }
-    filterFunctionByUnicode = (emoji) => {
-        return emoji.lib.added_in === "6.0" || emoji.lib.added_in === "6.1";
-    };
-    _resetTextInput() {
-        this._textInput.clear();
-    }
+    
     _resetCaptionInput() { }
-    handleEmojieSectionCaption(e) {
-        this.setState({
-            textValue: this.state.textValue + e,
-        });
-    }
-    handleEmojiSelected(e) {
-        this.setState({
-            textValue: this.state.textValue + e,
-        });
-    }
+    
     received = [{ phone: this.props.user.phone, date: moment().format() }];
     logOutZoomState = (event, gestureState, zoomableViewEventObject) => { };
     sendToOtherActivity(message) {
@@ -669,34 +495,7 @@ class ChatRoom extends Component {
             });
         }
     }
-    sendMessageText(message) {
-        if (this.state.showAudioRecorder) {
-            this.refs.AudioRecorder.stopRecord();
-        } else if (this.state.textValue !== "" && message !== "") {
-            this.initialzeFlatList();
-            let messager = {
-                id: uuid.v1(),
-                type: "text_sender",
-                tags: this.tags,
-                text: message,
-                sender: this.sender,
-                reply: this.state.replyContent,
-                creator: this.creator,
-                created_at: moment().format(),
-            };
-            this.scrollToEnd();
-            stores.Messages.addMessageToStore(this.roomID, messager).then((data) => {
-                this._resetTextInput();
-                this.tags = null;
-                this.setState({
-                    textValue: "",
-                    replying: false,
-                    replyContent: null,
-                });
-            });
-        } else {
-        }
-    }
+
     user = this.props.user;
     creator = 1;
     showPhoto(photo) {
@@ -740,23 +539,6 @@ class ChatRoom extends Component {
             this.sendingCaptiomMessages = false;
         }
     }
-    openCamera() {
-        Pickers.SnapPhoto("all").then((snap) => {
-            let isVideo = snap.content_type.includes("video") ? true : false;
-            this.setState({
-                video: snap.source,
-                image: snap.source,
-                showCaption: true,
-                imageSelected: isVideo ? false : true,
-                filename: snap.filename,
-                showVideo: isVideo ? true : false,
-                content_type: snap.content_type,
-                size: snap.size,
-            });
-            this.markAsRead();
-            this.adjutRoomDisplay();
-        });
-    }
 
     sender = {
         phone: this.props.user.phone,
@@ -764,78 +546,10 @@ class ChatRoom extends Component {
     };
     openPhotoSelector() {
         this.scrollToEnd();
-        Pickers.TakeManyPhotos()
-            .then((response) => {
-                response.map((res) => {
-                    message = {
-                        id: uuid.v1(),
-                        type: "photo" + "_upload",
-                        source: res.source,
-                        sender: this.sender,
-                        //user: this.user,
-                        creator: this.creator,
-                        created_at: moment().format(),
-                        total: res.size,
-                        send: 0,
-                        // data: this.state.base64,
-                        content_type: res.content_type,
-                        filename: res.filename,
-                        text: this.state.captionText,
-                    };
-                    stores.Messages.addMessageToStore(this.roomID, message).then(() => {
-                        this.setState({
-                            newMessage: true,
-                        });
-                        this.initialzeFlatList();
-                        this.markAsRead();
-                    });
-                });
-                this.setState({
-                    captionText: "",
-                });
-            })
-            .catch((error) => {
-                console.warn(error);
-            });
+       this.refs.keyboard && this.refs.keyboard.pickMultiplePhotos()
     }
     informMembers() { }
-    _sendCaptionMessage() {
-        this.scrollToEnd();
-        let message = {
-            id: uuid.v1(),
-            type: (this.state.imageSelected ? "photo" : "video") + "_upload",
-            source: this.state.imageSelected ? this.state.image : this.state.video,
-            sender: this.sender,
-            tags: this.tags,
-            reply: this.state.replyContent,
-            creator: this.creator,
-            created_at: moment().format(),
-            total: this.state.size,
-            send: 0,
-            content_type: this.state.content_type,
-            filename: this.state.filename,
-            text: this.state.textValue,
-        };
-        stores.Messages.addMessageToStore(this.roomID, message).then(() => {
-            this.setState({
-                newMessage: true,
-            });
-            this.tags = null;
-            this.initialzeFlatList();
-        });
-        this._resetCaptionInput();
-        let offset = this.state.replying ? 0.1 : 0;
-        this.setState({
-            captionText: "",
-            textValue: "",
-            replyContent: null,
-            replying: false,
-            showEmojiInputCaption: false,
-            showCaption: false,
-            showVideo: false,
-        });
-        this.fucussTextInput();
-    }
+    
     initRoom() {
         console.warn("initing room");
         this.setState({
@@ -896,124 +610,15 @@ class ChatRoom extends Component {
             }
         );
     }
-    verboseLoggingFunction(error) { }
-    async openAudioPicker() {
-        const res = await Pickers.TakeAudio();
-        let temp = this.filename;
-        this.filename = res.uri;
-        this.duration = 0;
-        this.sendAudioMessge(temp, this.duration);
-        this.filename = temp;
+    openAudioPicker() {
+        this.refs.keyboard && this.refs.keyboard.pickAudio()
     }
-    async openFilePicker() {
-        const res = await Pickers.TakeFile();
-        this.scrollToEnd();
-        message = {
-            id: uuid.v1(),
-            source: res.uri,
-            file_name: res.name,
-            reply: this.state.replyContent,
-            sender: this.sender,
-            //user: this.user,
-            creator: 2,
-            type: "attachement_upload",
-            received: 0,
-            total: res.size,
-            created_at: moment().format(),
-        };
-        stores.Messages.addMessageToStore(this.roomID, message).then((data) => {
-            this.initialzeFlatList();
-        });
-        this.setState({
-            replyContent: null,
-            replying: false,
-        });
+     openFilePicker() {
+         this.refs.keyboard &&
+       this.refs.keyboard.pickFile()
     }
     duration = 0;
-    _onChangeCaption(event) {
-        let text = event.nativeEvent.text;
-        this.setTyingState(this.sender);
-        this.setState({
-            tagging: text.split("@").length > 1 ? true : false,
-            textValue: text || "",
-        });
-        this.adjutRoomDisplay();
-    }
-    toggleAudioRecorder() {
-        this.setState({
-            showAudioRecorder: !this.state.showAudioRecorder,
-        });
-        setTimeout(() => {
-            if (!this.state.showAudioRecorder) {
-                this.refs.AudioRecorder.stopRecordSimple();
-            } else {
-                this._textInput.focus();
-                this.refs.AudioRecorder.startRecorder();
-            }
-        })
-    }
-    cancleReply() {
-        GState.reply = null;
-        this.setState({
-            replying: false,
-            replyContent: null,
-            //messageListHeight: this.state.previousMessageHeight,
-            //textInputHeight: this.state.previousTextHeight,
-            //textHeight: screenheight * 0.1,
-            //photoHeight: screenheight * 0.9,
-        });
-        this.adjutRoomDisplay();
-    }
-    sendAudioMessge(filename, duration, dontsend) {
-        this.setState({
-            showAudioRecorder: false,
-        });
-        if (!dontsend) {
-            this.scrollToEnd();
-            let message = {
-                id: uuid.v1(),
-                source: "file://" + (filename || this.filename),
-                duration: duration || this.duration,
-                type: "audio_uploader",
-                text: this.state.textValue,
-                reply: this.state.replyContent,
-                tags: this.tags,
-                sender: this.sender,
-                content_type: "audio/mp3",
-                total: 0,
-                received: 0,
-                file_name: "test.mp3",
-                created_at: moment().format(),
-            };
-            stores.Messages.addMessageToStore(this.roomID, message).then(() => {
-                this.setState({
-                    newMessage: true,
-                    textValue: "",
-                    replying: false,
-                    replyContent: null,
-                });
-                this.tags = null
-                this.initialzeFlatList();
-            });
-        }
-    }
-    toggleEmojiKeyboard() {
-        offset = this.state.replying ? 0.1 : 0;
-        this.temp = GState.reply ? JSON.stringify(GState.reply) : null;
-        GState.reply = null;
-        //!this.state.showEmojiInput ?
-        Keyboard.dismiss();
-        //: this.fucussTextInput()
-        setTimeout(
-            () => {
-                this.setState({
-                    showEmojiInput: !this.state.showEmojiInput,
-                });
-                this.adjutRoomDisplay(true);
-            },
-            this.state.keyboardOpened ? 200 : 0
-        );
-    }
+  
     scrollToEnd() {
        this.refs && 
        this.refs.bleashupSectionListOut && 
@@ -1025,27 +630,6 @@ class ChatRoom extends Component {
     this.refs.bleashupSectionListOut.resetItemNumbers();
     this.adjutRoomDisplay();
     }
-    createVote(vote) {
-        let message = {
-            id: uuid.v1(),
-            text: vote.title,
-            type: "vote",
-            sent: true,
-            vote: { ...vote },
-            created_at: moment().format(),
-            received: [{ phone: stores.LoginStore.phone, date: moment().format() }],
-            sender: this.sender,
-        };
-        stores.Messages.addMessageToStore(this.roomID, message).then(() => {
-            this.setState({
-                //isVoteCreationModalOpened: false,
-                newMessage: true,
-            });
-
-            this.initialzeFlatList();
-        });
-        this.sendMessage(message);
-    }
     verifyNumber(code) {
         stores.TempLoginStore.confirmCode.confirm(code).then((success) => {
             this.setState({
@@ -1054,16 +638,7 @@ class ChatRoom extends Component {
         });
     }
     replying(replyer, color) {
-        // this.fucussTextInput()
-        offset = this.state.replying ? 0.2 : 0;
-        this.setState({
-            loaded: true,
-            replying: true,
-            replyContent: replyer,
-            replyerBackColor: color,
-            photoHeight: screenheight * 0.8,
-        });
-        this.adjutRoomDisplay();
+        this.refs.keyboard.replying(replyer,color)
     }
     deleteMessageAction() {
         this.deleteMessage(this.state.currentMessage.id);
@@ -1089,39 +664,9 @@ class ChatRoom extends Component {
             showMessageActions: true,
         });
     }
-    hideAndShowHeader() {
-        this.setState({
-            showHeader: false,
-        });
-        // this.replying = true
-        setTimeout(
-            () =>
-                this.setState({
-                    showHeader: true,
-                }),
-            5000
-        );
-    }
-    initializeVotes(votes) {
-        this.setState({
-            votes: votes,
-        });
-    }
     showMembers() {
         this.props.showMembers(this.props.members);
     }
-    formSerachableMembers() {
-        stores.TemporalUsersStore.getUsers(
-            this.props.members ?
-                this.props.members.map((ele) => ele.phone) :
-                [],
-            [],
-            (users) => {
-                this.searchableMembers = users;
-            }
-        );
-    }
-    searchableMembers = [];
     messagelayouts = {};
     showRoomMedia() {
         this.setState({
@@ -1138,7 +683,6 @@ class ChatRoom extends Component {
             title: "Voters list ",
         });
     }
-    transparent = "rgba(50, 51, 53, 0.8)";
     shareWithContacts(message) {
         this.setState({
             isShareWithContactsOpened: true,
@@ -1154,14 +698,11 @@ class ChatRoom extends Component {
         },40)
     }
     render() {
-        headerStyles = {
-            flexDirection: "row",
-            ...(!this.state.showVideo &&
-                !this.state.showPhoto &&
-                !this.state.showRepliedMessage &&
-                !this.state.showCaption),
-        };
         return (
+            <ImageBackground style={{
+                resizeMode: "cover",
+                justifyContent: "center"
+            }} source={require("../../../../assets/chat_screen.jpg")}>
             <View style={{ height: "100%", justifyContent: "flex-end", }}>
                 {
                     // **********************Header************************ //
@@ -1190,7 +731,6 @@ class ChatRoom extends Component {
                                             onPressIn={() => {
                                                 this.scrolling = false;
                                                 this.adjutRoomDisplay();
-                                                !this.openedKeyboard && this._textInput.blur()
                                             }}
                                         >
                                             {this.messageList()}
@@ -1212,10 +752,6 @@ class ChatRoom extends Component {
                                     </View>
                                 </ScrollView>
                             )}
-                        {
-                            // **********************New Message Indicator *****************//
-                            // this.newMessages.length > 0 ? this.newMessageIndicator() : null
-                        }
                         <VerificationModal
                             isOpened={this.state.isModalOpened}
                             verifyCode={(code) => this.verifyNumber(code)}
@@ -1300,9 +836,6 @@ class ChatRoom extends Component {
                         ) : null}
                         {
                             <Votes
-                                takeVotes={(votes) => {
-                                    this.initializeVotes(votes);
-                                }}
                                 shared={false}
                                 share={{
                                     id: "45xerfds",
@@ -1314,7 +847,6 @@ class ChatRoom extends Component {
                                 replying={(reply) => {
                                     this.fucussTextInput();
                                     this.replying(reply, null);
-                                    //Keyboard.show()
                                     Vibration.vibrate(this.duration);
                                     setTimeout(() => {
                                         this.setState({
@@ -1324,10 +856,6 @@ class ChatRoom extends Component {
                                 }}
                                 computedMaster={this.props.computedMaster}
                                 takeVote={(vote) => this.createVote(vote)}
-                                voteItem={(mess) => {
-                                    this.perviousId = mess.id;
-                                    this.replaceVote(mess);
-                                }}
                                 working={this.props.working}
                                 isSingleVote={this.state.single_vote}
                                 vote_id={this.state.vote_id}
@@ -1375,18 +903,6 @@ class ChatRoom extends Component {
                         ) : null}
                     </View>
                     {
-                        // **************Captions messages handling ***********************//
-
-                        this.state.showCaption ? this.captionMessageHandler() : null
-                    }
-                    {
-                        //******  Reply Message onClick See Reply handler View ********/
-
-                        this.state.showRepliedMessage
-                            ? this.replyMessageViewer()
-                            : null
-                    }
-                    {
                         // ******************Photo Viewer View ***********************//
                         this.state.showPhoto ? this.PhotoShower() : null
                     }
@@ -1397,6 +913,7 @@ class ChatRoom extends Component {
                     }
                 </View>
             </View>
+            </ImageBackground>
         );
     }
 
@@ -1417,7 +934,7 @@ class ChatRoom extends Component {
     }
     addStar() { }
     forwardToContacts() {
-        this.state.currentMessage.sent
+       this.state.currentMessage && this.state.currentMessage.sent
             ? this.setState({
                 isShareWithContactsOpened: true,
             })
@@ -1426,39 +943,16 @@ class ChatRoom extends Component {
     replyMessage() {
         setTimeout(() => {
             Vibration.vibrate(40);
-            this._textInput.focus();
+            this.refs.keyboard.focus();
             this.replying(this.tempReply);
         }, 50);
     }
     remindThis() { }
-    voteShare(vote) {
-        console.warn(vote)
-        stores.Messages.replaceMessage(this.roomID, vote).then(() => {
-            this.initializeRoom()
-            //this.sendToOtherActivity({ ...vote }).then(() => {
-            /*this.sendMessage(vote).then(() => {
-
-            })*/
-            // })
-        })
-
-    }
     initializeRoom() {
         this.initialzeFlatList();
         this.setState({
             newMessage: !this.state.newMessage,
         });
-    }
-    replaceVote(vote) {
-        vote = {
-            ...vote, received: this.received, sent: true, id: uuid.v1(),
-            created_at: moment().format()
-        };
-        stores.Messages.replaceNewMessage(this.roomID, vote).then(() => {
-            this.sendMessage(vote);
-
-        });
-        //  })
     }
     reactToMessage(messageID, reaction) {
         Requester.reactMessage(
@@ -1475,7 +969,7 @@ class ChatRoom extends Component {
         });
     }
     fucussTextInput() {
-        this._textInput && this._textInput.focus();
+        this.refs.keyboard && this.refs.keyboard.focus();
     }
     showReacters(reaction, reacters) {
         this.setState({
@@ -1501,7 +995,7 @@ class ChatRoom extends Component {
                     (a, b) =>
                         a + (b.dimensions
                             ? b.dimensions.height
-                            : 70)+4,
+                            : 70)-.5,
                     0
                 )
             : index * 70
@@ -1518,12 +1012,19 @@ class ChatRoom extends Component {
             this.roomID
         );
     }
+    handleReply(replyer){
+        let index = findIndex(stores.Messages.messages[this.roomID], { id: replyer.id })
+        index >= 0 && this.scrollToIndex(index)
+    }
     layoutsTimeout = {}
     messageList() {
         return (
             <BleashupFlatList
+                windowSize={21}
+                backgroundColor={"transparent"}
                 keyboardShouldPersistTaps={'handled'}
                 marginTop
+                disableVirtualization={false}
                 firstIndex={0}
                 ref="bleashupSectionListOut"
                 inverted={true}
@@ -1542,10 +1043,6 @@ class ChatRoom extends Component {
                         this.delay >= 20 || (item && !item.sent) ? 0 : this.delay + 1;
                     return item ? (
                         <Message
-                            //voteShare={this.voteShare.bind(this)}
-                            /*voteItem={(index, vote) => {
-                                emitter.emit("vote-me", index, vote);
-                            }}*/
                             react={this.reactToMessage.bind(this)}
                             showReacters={this.showReacters.bind(this)}
                             messagelayouts={this.messagelayouts}
@@ -1563,12 +1060,18 @@ class ChatRoom extends Component {
                                 }
 
                             }}
+                            forwardMessage={() => {
+                                this.setState({
+                                    currentMessage:item
+                                })
+                                setTimeout(() => {
+                                 this.forwardToContacts()
+                                })
+                            }}
                             newCount={this.props.newMessages.length}
                             index={index}
                             scrolling={this.scrolling}
                             computedMaster={this.props.computedMaster}
-                            showVoters={(voters) => this.showVoters(voters)}
-                            votes={stores.Votes.votes[this.props.activity_id]}
                             activity_id={this.props.activity_id}
                             showProfile={(pro) => this.props.showProfile(pro)}
                             delay={this.delay}
@@ -1601,11 +1104,7 @@ class ChatRoom extends Component {
                             }}
                             message={item}
                             openReply={(replyer) => {
-                                /*this.setState({
-                                    replyer: replyer,
-                                    showRepliedMessage: true,
-                                });*/
-                                this.scrollToIndex(findIndex(stores.Messages.messages[this.roomID], { id: replyer.id }))
+                               this.handleReply(replyer)
                             }}
                             user={this.props.user.phone}
                             creator={this.props.creator}
@@ -1636,793 +1135,66 @@ class ChatRoom extends Component {
             this.props.handleReplyExtern(replyer);
         }
     }
-    showAudio() {
-        this.toggleAudioRecorder();
-        this.adjutRoomDisplay();
-        
-    }
-    tags = null;
-    chooseItem(item) {
-        let element = {
-            phone: item.phone,
-            nickname: "@" + toTitleCase(item.nickname),
-        };
-        this.tags ? this.tags.push(element) : (this.tags = [element]);
-        let currentText = this.state.textValue;
-        currentText = currentText.split("@");
-        currentText[currentText.length - 1] = toTitleCase(item.nickname) + " ";
-        this.setState({
-            textValue: currentText.join("@"),
-        });
-    }
-    tagger() {
-        return (
-            <View
-                style={{
-                    width: "100%",
-                    backgroundColor: colorList.bottunerLighter,
-                    borderTopLeftRadius: 5,
-                    maxHeight: 200,
-                    minHeight: 0,
-                    borderTopRightRadius: 5,
-                    padding: "2%",
-                }}
-            >
-                <BleashupFlatList
-                    fit
-                    empty={() => {
-                        this.setState({
-                            tagging: false,
-                        });
-                    }}
-                    backgroundColor={"transparent"}
-                    keyboardShouldPersistTaps={"always"}
-                    firstIndex={0}
-                    renderPerBatch={20}
-                    initialRender={7}
-                    keyExtractor={(ele) => ele.phone}
-                    dataSource={globalFunctions.returnUserSearch(
-                        this.searchableMembers,
-                        this.state.textValue && this.state.textValue.split("@").length > 1
-                            ? this.state.textValue.split("@")[
-                            this.state.textValue.split("@").length - 1
-                            ]
-                            : "~-pz"
-                    )}
-                    numberOfItems={this.searchableMembers.length}
-                    renderItem={(item) => (
-                        <TouchableOpacity
-                            onPress={() => requestAnimationFrame(() => this.chooseItem(item))}
-                        >
-                            <View style={{ width: 150, alignSelf: "flex-start" }}>
-                                <ProfileSimple
-                                    searching
-                                    searchString={
-                                        this.state.textValue.split("@")[
-                                        this.state.textValue.split("@").length - 1
-                                        ]
-                                    }
-                                    profile={item}
-                                ></ProfileSimple>
-                            </View>
-                        </TouchableOpacity>
-                    )}
-                ></BleashupFlatList>
-            </View>
-        );
-    }
-
-    updateSize = (heigh) => {
-        this.setState({
-          height:heigh >= 300 ? 300: heigh
-        });
-      }
-
+    
     keyboardView() {
         return (
-            <View
-                style={{
-                    alignItems: "center",
-                    borderColor: "gray",
-                    padding: "1%",
-                    width: "99%",
-                }}
+            <ChatKeyboard
+                sender={this.sender}
+                ref={"keyboard"}
+                initialzeFlatList={this.initialzeFlatList.bind(this)}
+                scrollToEnd={this.scrollToEnd.bind(this)}
+                roomID={this.roomID}
+                setTyingState={this.setTyingState.bind(this)}
+                adjutRoomDisplay={this.adjutRoomDisplay.bind(this)}
+                members={this.props.members}
+                handleReplyExtern={this.handleReplyExtern.bind(this)}
+                handleReply={this.handleReply.bind(this)}
+                showProfile={this.props.showProfile}
+                markAsRead={this.markAsRead.bind(this)}
+
             >
-                <View
-                    style={{
-                        flexDirection: "row",
-                        alignSelf: "center",
-                        alignSelf: "center",
-                        width: colorList.containerWidth - 8,
-                    }}
-                >
-                    <View
-                        style={{
-                            width: "86%",
-                            fontSize: 17,
-                            bottom: 0,
-                            flexDirection: "row",
-                            justifyContent: "space-between",
-                            borderColor: "#1FABAB",
-                            borderWidth: 0,
-                            borderRadius: 10,
-                        }}
-                    >
-                        <TouchableOpacity
-                            onPress={() => 
-                                requestAnimationFrame(() => 
-                                this.openCamera()
-                            )}
-                            style={{
-                                width: "12%",
-                                alignSelf:'flex-end',
-                                bottom: 2,
-                                padding: "1%",
-                            }}
-                        >
-                        <View style={{
-                            alignItems: 'center',
-                            ...rounder(30,colorList.indicatorColor)
-                        }}>
-                            <Icon
-                                style={{ 
-                                    color: colorList.bodyBackground, 
-                                    fontSize: 20, 
-                                    }}
-                                type={"MaterialCommunityIcons"}
-                                name={"image-filter"}
-                            ></Icon>
-                            </View>
-                        </TouchableOpacity>
-                        <View
-                            style={{
-                                width: "88%",
-                                flexDirection: "column",
-                                borderRadius: 25,
-                                borderWidth: 0.2,
-                                borderColor: "grey",
-                                borderTopLeftRadius:
-                                    this.state.replying ||
-                                        this.state.tagging ||
-                                        this.state.showAudioRecorder
-                                        ? 5
-                                        : 25,
-                                borderTopRightRadius:
-                                    this.state.replying ||
-                                        this.state.tagging ||
-                                        this.state.showAudioRecorder
-                                        ? 5
-                                        : 25,
-                            }}
-                        >
-                            {
-                                //* Reply Message caption */
-                                this.state.replying ? this.replyMessageCaption() : null
-                            }
-                            {
-                                //* Tagger component @Giles e.g *//
-                                this.state.tagging ? this.tagger() : null
-                            }
-                            {
-                                // ******************** Audio Recorder Input ************************//
-
-                                this.audioRecorder()
-                            }
-                            <TextInput
-                                autoCorrect={true}
-                                value={this.state.textValue}
-                                onChange={(event) => this._onChange(event)}
-                                placeholder={"Your Message"}
-                                style={{
-                                    alignSelf: "flex-start",
-                                    maxHeight: 300,
-                                    left: 0,
-                                    right: 0,
-                                    width: "84%",
-                                    height:this.state.height,
-                                    borderRadius: 15,
-                                    marginLeft: "3%",
-                                }}
-                                placeholderTextColor="#66737C"
-                                multiline={true}
-                                onContentSizeChange={(e) => this.updateSize(e.nativeEvent.contentSize.height)}
-                                ref={(r) => {
-                                    this._textInput = r;
-                                }}
-                            />
-                            <TouchableOpacity
-                                style={{
-                                    width: "16%",
-                                    position: "absolute",
-                                    bottom: 7,
-                                    right: 5,
-                                }}
-                                onPress={() => requestAnimationFrame(() => {
-                                    this.toggleEmojiKeyboard();
-                                })}
-                            >
-                                <Icon
-                                    style={{
-                                        color: "gray",
-                                        alignSelf: "flex-end",
-                                        fontSize:20,
-                                    }}
-                                    type="Entypo"
-                                    name="emoji-flirt"
-                                ></Icon>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-
-                    <TouchableOpacity
-                        style={{
-                            width: "12%",
-                            alignSelf:'flex-end',
-                            alignItems: 'center',
-                            bottom: 2,
-                            padding: "1%",
-                        }}
-                        onPress={() => requestAnimationFrame(() => {
-                            !this.state.textValue && 
-                            !this.state.showAudioRecorder ? 
-                            this.showAudio() : 
-                            this.sendMessageText(this.state.textValue);
-                        })}
-                    >
-                       <View style={{
-                           alignSelf: 'flex-end',
-                           ...rounder(30,colorList.senTBoxColor),
-                           alignItems: 'center',
-                        }}>{!this.state.textValue && !this.state.showAudioRecorder ? (
-                            <Icon
-                                style={{
-                                    color: colorList.bodyIcon,
-                                    fontSize:23,
-                                    alignSelf: "center",
-                                }}
-                                type={"FontAwesome5"}
-                                name={"microphone-alt"}
-                            ></Icon>
-                        ) : (
-                                <Icon
-                                    style={{ 
-                                        color: colorList.bodyIcon,
-                                        fontSize:23, 
-                                        alignSelf: "center"
-                                     }}
-                                    name="md-send"
-                                    type="Ionicons"
-                                ></Icon>
-                            )}
-                        </View>
-                    </TouchableOpacity>
-                </View>
-                {
-                    // ***************** Emoji keyBoard Input ***********************//
-                    this.state.showEmojiInput ? this.imojiInput() : null
-                }
-            </View>
+            </ChatKeyboard>
         );
     }
 
-    replyMessageCaption() {
-        return (
-            <View
-                style={{
-                    backgroundColor: this.state.replyerBackColor,
-                    alignSelf: "center",
-                    width: "100%",
-                }}
-            >
-                <ReplyText
-                    compose={true}
-                    openReply={(replyer) => {
-                        replyer.type_extern
-                            ? this.handleReplyExtern(replyer)
-                            : this.setState({
-                                replyer: replyer,
-                                showRepliedMessage: true,
-                            });
-                    }}
-                    pressingIn={() => { }}
-                    showProfile={(pro) => this.props.showProfile(pro)}
-                    reply={this.state.replyContent}
-                ></ReplyText>
-                <TouchableOpacity
-                    onPress={() => requestAnimationFrame(this.cancleReply.bind(this))}
-                    style={{
-                        ...rounder(30, colorList.buttonerBackground),
-                        position: "absolute",
-                        marginRight: 6,
-                        marginTop: 1,
-                        alignSelf: "flex-end",
-                    }}
-                >
-                    <Icon
-                        name={"close"}
-                        type={"EvilIcons"}
-                        style={{
-                            alignSelf: "center",
-                            color: colorList.bodyBackground,
-                        }}
-                    ></Icon>
-                </TouchableOpacity>
-            </View>
-        );
-    }
-
-    audioRecorder() {
-        return (
-            <AudioRecorder
-                justHideMe={() => {
-                    this.setState({
-                        showAudioRecorder: false,
-                    });
-                    this.refs.AudioRecorder.stopRecordSimple();
-                }}
-                showAudioRecorder={this.state.showAudioRecorder}
-                sendAudioMessge={(file, duration, dontsend) =>
-                    this.sendAudioMessge(file, duration, dontsend)
-                }
-                ref={"AudioRecorder"}
-                toggleAudioRecorder={() => this.toggleAudioRecorder()}
-            ></AudioRecorder>
-        );
-    }
-
-    imojiInput() {
-        return (
-            <View style={{ marginLeft: "-1.5%", width: "100%", height: 300 }}>
-                <EmojiSelector
-                    onEmojiSelected={(emoji) => this.handleEmojiSelected(emoji)}
-                    enableSearch={false}
-                    ref={(emojiInput) => (this._emojiInput = emojiInput)}
-                    resetSearch={this.state.reset}
-                    showSearchBar={false}
-                    loggingFunction={this.verboseLoggingFunction.bind(this)}
-                    verboseLoggingFunction={true}
-                    filterFunctions={[this.filterFunctionByUnicode]}
-                ></EmojiSelector>
-            </View>
-        );
-    }
     header() {
         return (
-            <View>
-                <View
-                    style={{
-                        ...bleashupHeaderStyle,
-                        width: colorList.containerWidth,
-                        height: colorList.headerHeight,
-                        backgroundColor: colorList.headerBackground,
-                        flexDirection: "row",
-                        headerStyles,
-                    }}
-                >
-                    <View
-                        style={{
-                            width: "65%",
-                            height: colorList.headerHeight,
-                            flexDirection: "row",
-                            alignSelf: "flex-start",
-                            alignItems: "center",
-                        }}
-                    >
-                    <TouchableOpacity style={{ 
-                        width:"20%",
-                        alignItems: 'flex-start',
-                        }} onPress={() => requestAnimationFrame(() => this.props.goback() )} >
-                        <Icon
-                            style={{
-                                color: colorList.headerIcon,
-                                marginLeft: "13%",
-                            }}
-                            type={"MaterialIcons"}
-                            name={"arrow-back"}
-                        ></Icon>
-                        </TouchableOpacity>
-                        <View>
-                            <Title
-                                style={{
-                                    color: colorList.headerText,
-                                    fontSize: colorList.headerFontSize,
-                                    fontWeight: colorList.headerFontweight,
-                                }}
-                            >
-                                {this.roomID === this.props.activity_id ? this.props.activity_name : this.props.roomName}
-                            </Title>
-                            <View style={{ height: 10, position: "absolute" }}>
-                                {this.state.typing && <TypingIndicator></TypingIndicator>}
-                            </View>
-                        </View>
-
-                        {
-                            //!! you can add the member last seen here if the room has just one member */
-                        }
-                    </View>
-
-                    <View
-                        style={{
-                            width: "35%",
-                            flexDirection: "row",
-                            alignSelf: "flex-end",
-                            alignItems: "center",
-                            justifyContent: "space-between",
-                            height: 50,
-                        }}
-                    >
-                        <View style={{ height: colorList.headerHeight, marginLeft: "10%" }}>
-                            <ChatRoomPlus
-                                computedMaster={this.props.computedMaster}
-                                master={this.props.master}
-                                eventID={this.props.activity_id}
-                                roomID={this.props.firebaseRoom}
-                                public={this.props.public_state}
-                                addAudio={() => {
-                                    this.openAudioPicker();
-                                    this.markAsRead();
-                                }}
-                                addFile={() => this.openFilePicker()}
-                                showVote={() => this.openVoteCreation()}
-                                showReminds={() => {
-                                    this.props.addRemind(this.props.members);
-                                }}
-                                addPhotos={() => this.openPhotoSelector()}
-                                addMembers={() => this.props.addMembers()}
-                            ></ChatRoomPlus>
-                        </View>
-                        <View style={{ height: colorList.headerHeight }}>
-                            <ChatroomMenu
-                                showMembers={() => this.showMembers()}
-                                addMembers={() => this.props.addMembers()}
-                                closeCommitee={() => this.props.close()}
-                                openCommitee={() => this.props.open()}
-                                leaveCommitee={() => this.props.leave()}
-                                showRoomMedia={() => this.showRoomMedia()}
-                                removeMembers={() => this.props.removeMembers()}
-                                publishCommitee={() => this.props.publish()}
-                                master={this.props.master}
-                                eventID={this.props.activity_id}
-                                roomID={this.props.firebaseRoom}
-                                public={this.props.public_state}
-                                opened={this.props.opened}
-                                settings={this.props.activity_id === this.roomID ? this.props.openSettings : this.props.editCommitteeName}
-                            ></ChatroomMenu>
-                        </View>
-                        <TouchableOpacity
-                            onPress={() => {
-                                requestAnimationFrame(() => this.props.openMenu())
-                            }}
-                            style={{
-                                height: colorList.headerHeight,
-                                justifyContent: "center",
-                                marginRight: "10%",
-                            }}
-                        >
-                            <Icon
-                                style={{ color: colorList.headerIcon, fontSize: 35 }}
-                                type={"Ionicons"}
-                                name={"ios-menu"}
-                            ></Icon>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            </View>
-        );
-    }
-
-    newMessageIndicator() {
-        return (
-            <View
-                style={{
-                    position: "absolute",
-                    height: 40,
-                    marginTop: "5%",
-                    alignSelf: "center",
-                }}
+            <ChatRoomHeader
+                goback={this.props.goback}
+                activity_id={this.props.activity_id}
+                roomID={this.roomID}
+                typing={this.state.typing}
+                activity_name={this.props.activity_name}
+                roomName={this.props.roomName}
+                computedMaster={this.props.computedMaster}
+                master={this.props.master}
+                firebaseRoom={this.props.firebaseRoom}
+                public_state={this.props.public_state}
+                members={this.props.members}
+                addMembers={this.props.addMembers}
+                showMembers={this.showMembers.bind(this)}
+                close={this.props.close}
+                open={this.props.open}
+                leave={this.props.leave}
+                showRoomMedia={this.showRoomMedia.bind(this)}
+                openAudioPicker={this.openAudioPicker.bind(this)}
+                markAsRead={this.markAsRead.bind(this)}
+                openFilePicker={this.openFilePicker.bind(this)}
+                openVoteCreation={this.openVoteCreation.bind(this)}
+                addRemind={this.props.addRemind}
+                openPhotoSelector={this.openPhotoSelector.bind(this)}
+                removeMembers={this.props.removeMembers}
+                publish={this.props.publish}
+                master={this.props.master}
+                openSettings={this.props.openSettings}
+                editCommitteeName={this.props.editCommitteeName}
+                openMenu={this.props.openMenu}
             >
-                <View
-                    style={{
-                        alignSelf: "center",
-                        borderRadius: 10,
-                        margin: "2%",
-                        display: "flex",
-                        flexDirection: "row",
-                    }}
-                >
-                    <Text style={{ fontSize: 19, fontWeight: "bold", color: "#00BE71" }}>
-                        {this.props.newMessages.length}
-                        {" new messages"}
-                    </Text>
-                    <Icon
-                        type="EvilIcons"
-                        style={{ color: "#00BE71", marginTop: "3%", fontSize: 19 }}
-                        name="arrow-up"
-                    ></Icon>
-                </View>
-            </View>
-        );
-    }
-    handleCaptionImojiOnPress() {
-        offset = this.state.replying ? 0.1 : 0;
-        this.temp = GState.reply ? JSON.stringify(GState.reply) : null;
-        //!this.state.showEmojiInputCaption ?
-        Keyboard.dismiss();
-        this.adjutRoomDisplay();
-        //: this._captionTextInput.focus();
-        this.setState({
-            showEmojiInputCaption: !this.state.showEmojiInputCaption,
-        });
-        this.adjutRoomDisplay();
-    }
-    captionMessageHandler() {
-        captionExtraStyles = {
-            backgroundColor: colorList.bodyBackground,
-            borderTopLeftRadius: 5,
-            borderTopRightRadius: 5,
-            margin: "1%",
-        };
-        return (
-            <View
-                style={{
-                    position: "absolute",
-                    width: screenWidth,
-                    height: "100%",
-                    backgroundColor: "black",
-                    display: "flex",
-                    width: "100%",
-                    height: "100%",
-                }}
-            >
-                {this.darkStatus()}
-                <ScrollView
-                    scrollEnabled={false}
-                    showsVerticalScrollIndicator={false}
-                    nestedScrollEnabled
-                    keyboardShouldPersistTaps={"always"}
-                    ref={"captionScrollViewRef"}
-                >
-                    <View style={{ height: this.state.photoHeight, width: "100%" }}>
-                        {this.state.image ? (
-                            <ReactNativeZoomableView
-                                maxZoom={1.5}
-                                minZoom={0.5}
-                                zoomStep={0.5}
-                                initialZoom={1}
-                                bindToBorders={true}
-                                onZoomAfter={this.logOutZoomState}
-                            >
-                                {this.state.imageSelected ? (
-                                    <Image
-                                        resizeMode={"contain"}
-                                        width={screenWidth}
-                                        style={{  }}
-                                        source={{ uri: this.state.image }}
-                                    ></Image>
-                                ) : null}
-                            </ReactNativeZoomableView>
-                        ) : null}
-                    </View>
-                    {
-                        //* Reply Message caption */
-                        this.state.replying ? (
-                            <View
-                                style={{
-                                    marginLeft: "-1%",
-                                    ...captionExtraStyles,
-                                }}
-                            >
-                                <ReplyText
-                                    openReply={(replyer) => {
-                                        this.setState({
-                                            replyer: replyer,
-                                            showRepliedMessage: true,
-                                        });
-                                    }}
-                                    showProfile={(prop) => {
-                                        this.showProfile(pro);
-                                    }}
-                                    pressingIn={() => { }}
-                                    reply={this.state.replyContent}
-                                ></ReplyText>
-                            </View>
-                        ) : null
-                    }
-                    {this.state.tagging ? (
-                        <View style={{ ...captionExtraStyles }}>{this.tagger()}</View>
-                    ) : null}
-                    <View
-                        style={{
-                            backgroundColor: "#1FABAB",
-                            width: "100%",
-                            display: "flex",
-                            flexDirection: "row",
-                        }}
-                    >
-                        <Icon
-                            onPress={() => {
-                                this.handleCaptionImojiOnPress();
-                            }}
-                            type="Entypo"
-                            name="emoji-flirt"
-                            style={{ color: "#0A4E52", marginTop: "3%", width: "8%" }}
-                        ></Icon>
-                        <TextInput
-                            autoCorrect={true}
-                            multiline={true}
-                            enableScrollToCaret
-                            ref={(r) => {
-                                this._captionTextInput = r;
-                            }}
-                            value={this.state.textValue}
-                            onChange={(data) => this._onChangeCaption(data)}
-                            style={{
-                                left: 0,
-                                right: 0,
-                                minHeight: 30,
-                                maxHeight: 200,
-                                width: "84%",
-                            }}
-                            placeholder={"Type your message!"}
-                        />
-                        <Icon
-                            style={{
-                                color: colorList.bodyIcon,
-                                marginTop: "3%",
-                                width: "8%",
-                            }}
-                            onPress={() => this._sendCaptionMessage()}
-                            type={"Ionicons"}
-                            name={"md-send"}
-                        ></Icon>
-                    </View>
-                    {
-                        //********** Caption Emoji Keyboard *******************************/
-                        this.state.showEmojiInputCaption ? this.captionImojiInput() : null
-                    }
-                    <View style={{ 
-                    position: "absolute", 
-                    margin: "3%",
-                    alignItems: 'center',
-                    ...rounder(10,colorList.buttonerBackground),
-                    justifyContent: 'center', 
-                }}>
-                        <Icon
-                            style={{ color: colorList.bodyBackground }}
-                            onPress={() => {
-                                this.setState({
-                                    showCaption: false,
-                                    showPhoto: false,
-                                    showVideo: false,
-                                });
-                                //this._resetTextInput()
-                            }}
-                            name="close"
-                            type={"EvilIcons"}
-                        ></Icon>
-                    </View>
-                </ScrollView>
-            </View>
+            </ChatRoomHeader>
         );
     }
 
-    captionImojiInput() {
-        return (
-            <View style={{ width: "100%", height: 300 }}>
-                <EmojiSelector
-                    onEmojiSelected={(emoji) => this.handleEmojieSectionCaption(emoji)}
-                    //enableSearch={false}
-                    ref={(emojiInput) => (this._emojiInputCaption = emojiInput)}
-                    resetSearch={this.state.reset}
-                    showSearchBar={false}
-                    loggingFunction={this.verboseLoggingFunction.bind(this)}
-                    verboseLoggingFunction={true}
-                    filterFunctions={[this.filterFunctionByUnicode]}
-                ></EmojiSelector>
-            </View>
-        );
-    }
     duration = 10;
-    replyMessageViewer() {
-        let message =
-            stores.Messages.messages[this.roomID] &&
-            find(stores.Messages.messages[this.roomID], {
-                id: this.state.replyer.id,
-            });
-        return (
-            <View
-                style={{
-                    height: 1000,
-                    position: "absolute",
-                    backgroundColor: this.transparent,
-                    width: "100%",
-                }}
-            >
-                <View
-                    style={{ display: "flex", flexDirection: "row", marginTop: "3%" }}
-                >
-                    {this.state.replyer.sender.phone == this.sender.phone ? (
-                        <TouchableOpacity
-                            onPress={() => {
-                                this.setState({
-                                    showRepliedMessage: false,
-                                });
-                            }}
-                        >
-                            <Icon
-                                type="EvilIcons"
-                                style={{ margin: "7%", fontSize: 35, color: "#FEFFDE" }}
-                                name={"close"}
-                            ></Icon>
-                        </TouchableOpacity>
-                    ) : null}
-                    <ScrollView style={{ top: 0, bottom: 0, height: screenheight - 60 }}>
-                        <View style={{ display: "flex" }}>
-                            <Text
-                                style={{
-                                    color: "#FEFFDE",
-                                    alignSelf: "center",
-                                    fontWeight: "bold",
-                                }}
-                            >
-                                {dateDisplayer(
-                                    moment(message && message.created_at).format("YYYY/MM/DD")
-                                )}
-                            </Text>
-                            {
-                                <Message
-                                    computedMaster={this.props.computedMaster}
-                                    openReply={(replyer) => {
-                                        console.warn("replying", replyer);
-                                        this.setState({
-                                            replyer: replyer,
-                                            showRepliedMessage: true,
-                                        });
-                                    }}
-                                    handleReplyExtern={(reply) => {
-                                        this.props.handleReplyExtern(reply);
-                                    }}
-                                    showProfile={(pro) => this.props.showProfile(pro)}
-                                    replying={() => { }}
-                                    received={
-                                        this.state.replyer.received && this.props.members
-                                            ? this.state.replyer.received.length >=
-                                            this.props.members.length
-                                            : false
-                                    }
-                                    showPhoto={(photo) => this.showPhoto(photo)}
-                                    playVideo={(source) => this.playVideo(source)}
-                                    creator={2}
-                                    user={this.sender.phone}
-                                    message={message || {}}
-                                />
-                            }
-                        </View>
-                    </ScrollView>
-                    {!(this.state.replyer.sender.phone == this.sender.phone) ? (
-                        <TouchableOpacity
-                            onPress={() => {
-                                this.setState({
-                                    showRepliedMessage: false,
-                                });
-                            }}
-                        >
-                            <Icon
-                                type="EvilIcons"
-                                style={{
-                                    margin: "2%",
-                                    marginTop: "8%",
-                                    fontSize: 35,
-                                    color: "#FEFFDE",
-                                }}
-                                name={"close"}
-                            ></Icon>
-                        </TouchableOpacity>
-                    ) : null}
-                </View>
-            </View>
-        );
-    }
     darkStatus = () => (
         <StatusBar
             hidden={this.state.hideStatusBar}
@@ -2446,7 +1218,7 @@ class ChatRoom extends Component {
                             : 400,
                     position: "absolute",
                     width: this.state.fullScreen ? "100%" : screenWidth,
-                    backgroundColor: this.transparent,
+                    backgroundColor: colorList.buttonerBackground,
                     alignSelf: "center",
                 }}
             >
@@ -2475,7 +1247,7 @@ class ChatRoom extends Component {
                     //fullscreen={true}
                     //controls={true}
                     style={{
-                        backgroundColor: this.transparent,
+                        backgroundColor: colorList.bodyBackground,
                     }}
                     videoStyle={{
                         alignItems: "center",

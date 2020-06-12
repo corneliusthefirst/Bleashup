@@ -238,6 +238,7 @@ export default class AudioMessage extends Component {
     }
     playIconStyle = {
         marginTop: "auto",
+        alignItems: 'center',
         marginBottom: "auto",
     };
     render() {
@@ -252,7 +253,6 @@ export default class AudioMessage extends Component {
                 flexDirection: "column", 
                 alignItems: "center", 
                 width: 290,
-                paddingLeft: '1%', 
             }}
             >
                 <TouchableWithoutFeedback

@@ -26,14 +26,6 @@ export default class PhotoMessage extends Component {
     }
 
     componentDidMount() {
-        this.setState({
-            text: this.props.message.text,
-            url: this.props.message.photo,
-            sender_name: this.props.message.sender.nickname,
-            sender: !(this.props.message.sender.phone == this.props.user),
-            time: this.props.message.created_at.split(" ")[1],
-            creator: (this.props.message.sender.phone == this.props.creator)
-        })
         if (testForURL(this.props.message.photo)) {
             this.exchanger = new FileExachange(this.props.message.photo, this.path, 0, 0, (received, total) => {
 
@@ -51,7 +43,7 @@ export default class PhotoMessage extends Component {
     path = '/Photo/' + this.props.message.filename
     render() {
         return (
-            <View style={{ minHeight: 250, width: 300, marginLeft: this.props.sender ? "-1.2%" : "1%",marginTop: '1%', }}>
+            <View style={{ minHeight: 250, width: null,marginTop: '1%', }}>
                 <TouchableWithoutFeedback
                     onLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null}
                     onPressIn={() => {
@@ -63,7 +55,7 @@ export default class PhotoMessage extends Component {
                     </CacheImages>
                 </TouchableWithoutFeedback>
                 {this.props.message.text ?
-                    <View style={{ alignSelf: 'flex-start',margin: '1%', }}>
+                    <View style={{ alignSelf: 'flex-start',}}>
                         <TextContent tags={this.props.message.tags} handleLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null} pressingIn={() => this.props.pressingIn()} text={this.props.message.text}></TextContent>
                     </View> : null}
 

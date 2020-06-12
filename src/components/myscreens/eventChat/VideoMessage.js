@@ -143,7 +143,6 @@ export default class VideoMessage extends Component {
                         <View>
                             <Image style={{
                                 marginTop: "2%",
-                                marginLeft: "1.2%",
                             }}
                                 borderRadius={5}
                                 source={{ uri: this.props.message.thumbnailSource }}
@@ -188,7 +187,7 @@ export default class VideoMessage extends Component {
                                         <View style={{ marginTop: "5%", ...buttoner, height: 25, width: 75 }}><Text style={{ marginBottom: 7, }} note>{"("}{this.toMB(this.state.received).toFixed(1)}{"/"}
                                             {this.toMB(this.state.total).toFixed(1)}{")Mb"}</Text></View></View>}</View>
                         </View>
-                        {this.props.message.text ? <View style={{ marginTop: "-5%", padding: "2%", alignSelf: this.props.sender ? "flex-start" : "flex-end", }}>
+                        {this.props.message.text ? <View style={{ marginTop: "-5%", padding: "2%", alignSelf: "flex-start" }}>
                             <TextContent tags={this.props.message.tags} onLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null} pressingIn={() => this.props.pressingIn()} text={this.props.message.text}></TextContent>
                         </View> : null}
                     </View>

@@ -80,6 +80,13 @@ export default class PhotoViewer extends BleashupModal {
                <View>
                <StatusBarWhiter></StatusBarWhiter>
                 <View style={{ height: screenheight, width: screenWidth, backgroundColor: "black", }}>
+                    <ReactNativeZoomableView
+                        maxZoom={1.5}
+                        minZoom={0.5}
+                        zoomStep={0.5}
+                        initialZoom={1}
+                        bindToBorders={true}
+                    captureEvent={true}>
                     <View style={{ alignSelf: 'center', width: screenWidth }}>
                         {testForURL(this.props.photo) ? <CacheImages style={{ alignSelf: 'center', }} resizeMode={"contain"} width={screenWidth} height={screenheight}
                             source={{ uri: this.props.photo }}></CacheImages> :
@@ -120,7 +127,7 @@ export default class PhotoViewer extends BleashupModal {
                                 {this.props.created_at ? <Text style={{ color: '#FEFFDE', marginBottom: 6, }} note>{moment(this.props.created_at).calendar()}</Text> : null}
                             </View>
                         </View>
-
+                    </ReactNativeZoomableView>
                     </View>
 
                 </View>    

@@ -38,35 +38,20 @@ export default class ChangeLogs extends Component {
       this.props.activeMember !== nextProps.activeMember
   }
   componentWillMount() {
-    BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this))
     emitter.on('refresh-history', () => {
-      this.setState({ loaded: false })
-      stores.ChangeLogs.fetchchanges(this.props.event_id).then(changes => {
-        this.changes = changes
-        setTimeout(() => {
-          this.setState({
-            newThing: !this.state.newThing,
-            loaded: true
-          })
-        }, 200)
+      this.setState({
+        newThing: !this.state.newThing,
       })
     })
   }
-  handleBackButton() {
-
-  }
   componentWillUnmount() {
     emitter.off('refresh-history')
-    BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton);
   }
   componentDidMount() {
-    stores.ChangeLogs.fetchchanges(this.props.event_id).then(changes => {
-      this.changes = changes
-      setTimeout(() => {
-        this.setState({
-          newThing: !this.state.newThing,
-          loaded: true
-        })
+    setTimeout(() => {
+      this.setState({
+        newThing: !this.state.newThing,
+        loaded: true
       })
     })
   }
@@ -98,7 +83,7 @@ export default class ChangeLogs extends Component {
             mention={(data) => this.props.mention(data)}
             restore={(data) => this.props.restore(data)}
             circleColor='white'
-            lineColor= {colorList.indicatorColor}
+            lineColor={colorList.indicatorColor}
             timeContainerStyle={{ minWidth: 52, backgroundColor: colorList.bodyBackground, opacity: .8 }}
             timeStyle={{
               marginLeft: "4%",
@@ -114,10 +99,14 @@ export default class ChangeLogs extends Component {
             onEventPress={(data) => {
               !GState.showingProfile ? this.props.propcessAndFoward(data) : null
             }}
-            data={this.props.activeMember && this.props.activeMember !== null ?
-              this.changes.filter(ele => ele && ele.updater === this.props.activeMember ||
-                ele && ele.updater && ele.updater.phone === this.props.activeMember ||
-                ele.type === "date_separator") : this.changes}
+            data={this.props.activeMember ?
+              stores.ChangeLogs.changes &&
+              stores.ChangeLogs.changes[this.props.event_id] &&
+              stores.ChangeLogs.changes[this.props.event_id].
+                filter(ele => ele && ele.updater === this.props.activeMember ||
+                  ele && ele.updater && ele.updater.phone === this.props.activeMember ||
+                  ele.type === "date_separator") : 
+                  (stores.ChangeLogs.changes && stores.ChangeLogs.changes[this.props.event_id]|| [])}
           >
           </BleashupTimeLine>
         </View>
@@ -130,9 +119,9 @@ export default class ChangeLogs extends Component {
             }}>
               <View style={{ width: "10%", paddingLeft: "1%" }} >
                 <TouchableOpacity onPress={() => requestAnimationFrame(this.props.goback)} >
-                <Icon 
-                  style={{ color: colorList.headerIcon }} 
-                  type={"MaterialIcons"} name={"arrow-back"}>
+                  <Icon
+                    style={{ color: colorList.headerIcon }}
+                    type={"MaterialIcons"} name={"arrow-back"}>
                   </Icon>
                 </TouchableOpacity>
               </View>
@@ -141,11 +130,13 @@ export default class ChangeLogs extends Component {
               </View>
 
               <View style={{ width: '10%', paddingRight: '3%' }}>
-              <TouchableOpacity>
-                <Icon
-                  name={"gear"} type="EvilIcons" 
-                  style={{ color: colorList.headerIcon,
-                     alignSelf: 'flex-end', }} />
+                <TouchableOpacity>
+                  <Icon
+                    name={"gear"} type="EvilIcons"
+                    style={{
+                      color: colorList.headerIcon,
+                      alignSelf: 'flex-end',
+                    }} />
                 </TouchableOpacity>
               </View>
 

@@ -178,9 +178,9 @@ export default class CommiteeItem extends PureComponent {
         };
     }
     formNickName(user) {
-        return user.phone == stores.LoginStore.user.phone.replace("00", "+")
+        return user && user.phone == stores.LoginStore.user.phone.replace("00", "+")
             ? "You"
-            : user.nickname;
+            : user && user.nickname;
     }
     toMB(data) {
         mb = 1000 * 1000;
@@ -386,7 +386,7 @@ export default class CommiteeItem extends PureComponent {
                         </Title>
                         <View style={{ display: "flex", flexDirection: "row" }}>
                             <View style={{
-                                marginLeft: "2%", width: "95%"
+                                marginLeft: "2%", width: "90%"
                             }}>
                                 <TextContent
                                     numberOfLines={2}
