@@ -180,11 +180,11 @@ updatePhoneContacts = (bool) => {
             status: '',
             found: true,
           };
-          this.array.push(phoneUser);
+          console.warn("here", phoneUser);
+          this.array = [phoneUser].concat(this.array);
         }
       });
 
-    //console.warn(this.array);
     let cons = uniqBy(this.array, 'phone');
     this.setState({ contacts: cons });
     this.setState({ searchArray: cons });
@@ -206,7 +206,7 @@ updatePhoneContacts = (bool) => {
       .then((relation) => {
         BeNavigator.navigateToActivity('EventChat', relation);
       })
-      .catch((err) => {
+      .catch((err) => { 
         console.warn(err);
       });
   };

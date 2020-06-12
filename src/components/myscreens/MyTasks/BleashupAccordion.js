@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
 import React, { Component } from 'react';
 import {
@@ -6,6 +7,9 @@ import {
   Platform,
   UIManager,
   StyleSheet,
+  Text,
+  TouchableOpacity,
+  ScrollView,
 } from "react-native";
 import ColorList from '../../colorList';
 
@@ -22,7 +26,29 @@ export default class AccordionModuleNative extends Component {
   }
 
   render() {
-    return (
+    return this.props.accordionView ? (
+      <View style={{flexDirection:'column'}}>
+        {this.props._renderHeader()}
+      <ScrollView style={{height:this.state.expanded ? 300 : 0}} nestedScrollEnabled={true} showsVerticalScrollIndicator={false} >
+        {this.state.expanded && (
+          <View>{this.props._renderContent()}</View>
+        )}
+      </ScrollView>
+
+      <View style={{ flexDirection: 'row', justifyContent: 'flex-start' }}>
+          <TouchableOpacity onPress={() => this.toggleExpand()}>
+            {this.state.expanded ? (
+              <Text style={{ padding: 5, color: 'blue' }}>View less</Text>
+            ) : (
+              <Text style={{ paddingLeft: 5, paddingTop: 5, color: 'blue' }}>
+                View More
+              </Text>
+            )}
+          </TouchableOpacity>
+        </View>
+
+      </View>
+    ) : (
       <View>
         {this.props._renderHeader(
           this.props.dataArray,
