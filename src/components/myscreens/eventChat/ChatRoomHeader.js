@@ -103,7 +103,7 @@ export default class ChatRoomHeader extends PureComponent {
                             closeCommitee={() => this.props.close()}
                             openCommitee={() => this.props.open()}
                             leaveCommitee={() => this.props.leave()}
-                            showRoomMedia={() => this.showRoomMedia()}
+                            showRoomMedia={() => this.props.showRoomMedia()}
                             removeMembers={() => this.props.removeMembers()}
                             publishCommitee={() => this.props.publish()}
                             master={this.props.master}

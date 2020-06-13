@@ -367,6 +367,8 @@ class ChatRoom extends Component {
     }
     componentWillMount() {
         this.fireRef = this.getRef(this.props.firebaseRoom);
+        this.keyboardDidShowSub = Keyboard.addListener('keyboardDidShow', this.handleKeyboardDidShow.bind(this));
+        this.keyboardDidHideSub = Keyboard.addListener('keyboardDidHide', this.handleKeyboardDidHide.bind(this));
         this.setTypingRef(this.props.firebaseRoom);
         emitter.on("reply-me", (rep) => {
             this.replying(rep, null)
@@ -379,12 +381,21 @@ class ChatRoom extends Component {
         Orientation.lockToPortrait();
     }
     componentWillUnmount() {
+        this.keyboardDidHideSub.remove()
+        this.keyboardDidShowSub.remove()
         this.fireRef.off();
         emitter.off("reply-me")
         this.typingRef.off();
         this.markAsRead();
         GState.currentRoom = null;
     }
+    handleKeyboardDidShow = (event) => {
+        this.openedKeyboard = true
+    };
+
+    handleKeyboardDidHide = () => {
+        this.openedKeyboard = false
+    };
 
     convertPercentageToInt(data) {
         return parseInt(data.split("%")[0]) / 100;
@@ -731,6 +742,7 @@ class ChatRoom extends Component {
                                             onPressIn={() => {
                                                 this.scrolling = false;
                                                 this.adjutRoomDisplay();
+                                               !this.openedKeyboard && this.refs.keyboard && this.refs.keyboard.blur()
                                             }}
                                         >
                                             {this.messageList()}

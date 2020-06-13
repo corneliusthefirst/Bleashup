@@ -161,6 +161,7 @@ export default class ChatKeyboard extends PureComponent {
         this.setState({
             textValue: currentText.join("@"),
         });
+        this.animateLayout()
     }
     formSerachableMembers() {
         stores.TemporalUsersStore.getUsers(
@@ -298,6 +299,7 @@ export default class ChatKeyboard extends PureComponent {
         this.animateLayout()
     }
     openCamera() {
+        this.blur()
         Pickers.SnapPhoto("all").then((snap) => {
             let isVideo = snap.content_type.includes("video") ? true : false;
             this.setState({
@@ -313,7 +315,6 @@ export default class ChatKeyboard extends PureComponent {
                 size: snap.size,
             });
             this.props.markAsRead();
-            //this.props.adjutRoomDisplay();
             this.activateKeyboard()
             this.animateLayout()
         });
@@ -428,6 +429,7 @@ export default class ChatKeyboard extends PureComponent {
             },
             this.state.keyboardOpened ? 200 : 0
         );
+        this.animateLayout()
     }
     showAudio() {
         this.toggleAudioRecorder();
@@ -455,6 +457,7 @@ export default class ChatKeyboard extends PureComponent {
     filename = ""
     logOutZoomState = (event, gestureState, zoomableViewEventObject) => { };
     async pickAudio() {
+        this.blur()
         const res = await Pickers.TakeAudio();
         this.setState({
             audioSouce: res.uri,
@@ -470,9 +473,10 @@ export default class ChatKeyboard extends PureComponent {
     activateKeyboard() {
         setTimeout(() => {
             this.focus()
-        }, 100)
+        })
     }
     async pickFile() {
+        this.blur()
         const res = await Pickers.TakeFile();
         this.props.scrollToEnd();
         message = {
