@@ -58,7 +58,7 @@ import MessageBox from './components/myscreens/eventChat/messageBox';
 import CommentsPage from './components/myscreens/event/createEvent/components/CommentsPage';
 import SearchUser from './components/myscreens/Contacts/searchUser';
 import ColorList from './components/colorList';
-import voteCard from '../src/components/myscreens/votes/components/voteCard';
+
 /*
 let {height, width} = Dimensions.get('window');
 EStyleSheet.build({
@@ -105,7 +105,6 @@ const AppNavigator = createStackNavigator(
     SearchView: { screen: SearchView },
     MessageBox: { screen: MessageBox },
     SearchUser: { screen: SearchUser },
-    voteCard: { screen: voteCard },
   },
   {
     initialRouteName: "LoginHome",
@@ -173,6 +172,5 @@ export default () => {
   }
 }*/
 
-/*
 console.ignoredYellowBox = ['Warning: Each', 'Warning: Failed'];
-console.disableYellowBox = true;*/
+console.disableYellowBox = true;

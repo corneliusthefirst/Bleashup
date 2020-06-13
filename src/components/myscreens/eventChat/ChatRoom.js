@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React, { Component } from "react";
 import {
     Icon,
@@ -71,8 +72,8 @@ class ChatRoom extends Component {
         this.state = {
             isModalOpened: false,
             showHeader: !this.props.isComment,
-            messageListHeight: this.formHeight((screenheight - 120) / screenheight),
-            
+            messageListHeight: this.formHeight( 70 / screenheight),
+            //this.formHeight((screenheight - 120) / screenheight),
         };
     }
     saveNotificationToken() {
@@ -390,7 +391,9 @@ class ChatRoom extends Component {
         return parseInt(data.split("%")[0]) / 100;
     }
     formHeight(factor) {
-        return factor * screenheight;
+        console.warn(screenheight);
+        //return factor * screenheight;
+        return (1-factor) * screenheight;
     }
     playVideo(video) {
         this.setState({
@@ -726,7 +729,7 @@ class ChatRoom extends Component {
                                     showsVerticalScrollIndicator={false}
                                     ref="scrollViewRef"
                                     style={{ hieght: '100%', }}>
-                                    <View style={{ maxHeight: this.state.messageListHeight, }}>
+                                    <View style={{ maxHeight: this.state.messageListHeight }}>
                                         <TouchableWithoutFeedback
                                             onPressIn={() => {
                                                 this.scrolling = false;
