@@ -112,7 +112,7 @@ export default class EventDetailView extends Component {
         isMounted:true
       })
     })
-    stores.Highlights.loadHighlightFromRemote(this.props.share.item_id).
+    stores.Highlights.loadHighlightFromRemote(this.props.Event.id, this.props.share.item_id).
       then((post) => {
         stores.Events.loadCurrentEventFromRemote(this.props.share.event_id,true).
           then((event) => {
@@ -160,7 +160,7 @@ export default class EventDetailView extends Component {
         //console.warn("inside if....")
         //console.warn(this.props.item.id);
         stores.Events.removeHighlight(item.event_id, item.id, false).then(() => {
-          stores.Highlights.removeHighlight(item.id).then(() => {
+          stores.Highlights.removeHighlight(this.props.Event.id, item.id).then(() => {
             this.state.highlightData = reject(this.state.highlightData, { id: item.id });
             this.setState({ highlightData: this.state.highlightData });
             this.props.stopLoader()

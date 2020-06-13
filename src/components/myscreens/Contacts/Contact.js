@@ -101,8 +101,10 @@ export default class ContactView extends Component {
           this.phoneContacts.push(phoneUser);
         }
       });
+
+      console.warn('here they are',this.phoneContacts);
        this.phoneContacts = concat(this.phoneContacts,stores.Contacts.contacts.phoneContacts);
-       console.warn('here they are',this.phoneContacts);
+
        this.setState({ contacts: this.phoneContacts , searchArray: this.phoneContacts });
 
        this.setState({ isMount: true });
@@ -178,11 +180,11 @@ updatePhoneContacts = (bool) => {
             status: '',
             found: true,
           };
-          this.array.push(phoneUser);
+          console.warn("here", phoneUser);
+          this.array = [phoneUser].concat(this.array);
         }
       });
 
-    //console.warn(this.array);
     let cons = uniqBy(this.array, 'phone');
     this.setState({ contacts: cons });
     this.setState({ searchArray: cons });
@@ -204,7 +206,7 @@ updatePhoneContacts = (bool) => {
       .then((relation) => {
         BeNavigator.navigateToActivity('EventChat', relation);
       })
-      .catch((err) => {
+      .catch((err) => { 
         console.warn(err);
       });
   };

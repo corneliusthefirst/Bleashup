@@ -8,7 +8,7 @@ import { Root, StyleProvider } from "native-base";
 import {
   createDrawerNavigator,
   createStackNavigator,
-  createAppContainer
+  createAppContainer,
 } from "react-navigation";
 import { navigationRef, isMountedRef } from './RootNave';
 import getTheme from "./native-base-theme/components";
@@ -45,29 +45,28 @@ import ChangeLogs from "./components/myscreens/changelogs/index";
 import EventDetail from "./components/myscreens/eventDetails";
 import EventChat from "./components/myscreens/eventDetails";
 import Reminds from "./components/myscreens/reminds/index";
-import CreateEventView from "./components/myscreens/event/createEvent/index"
-import EventDetailView from "./components/myscreens/eventDetails/index"
+import CreateEventView from "./components/myscreens/event/createEvent/index";
+import EventDetailView from "./components/myscreens/eventDetails/index";
 import SendInvitations from "./components/myscreens/sent-invitations/index";
-import MyTasksView from './components/myscreens/MyTasks/MyTasks'
+import MyTasksView from './components/myscreens/MyTasks/MyTasks';
 import HighLightsDetails from './components/myscreens/highlights_details';
-import LocalTasksCreation from './components/myscreens/MyTasks/localTasksCreation'
-import TasksCreation from './components/myscreens/reminds/TasksCreation'
-import QRCode from "./components/myscreens/QR"
+import LocalTasksCreation from './components/myscreens/MyTasks/localTasksCreation';
+import TasksCreation from './components/myscreens/reminds/TasksCreation';
+import QRCode from "./components/myscreens/QR";
 import SearchView from './components/myscreens/event/searchView';
 import MessageBox from './components/myscreens/eventChat/messageBox';
 import CommentsPage from './components/myscreens/event/createEvent/components/CommentsPage';
-import SearchUser from './components/myscreens/Contacts/searchUser'
+import SearchUser from './components/myscreens/Contacts/searchUser';
 import ColorList from './components/colorList';
 
 /*
 let {height, width} = Dimensions.get('window');
-EStyleSheet.build({ 
+EStyleSheet.build({
   $rem: width > 340 ? 18 : 16
 });*/
 
 const AppNavigator = createStackNavigator(
   {
-
     Home: { screen: Home },
     CurrentEvent: { screen: CurrentEventView },
     QR: { screen: QRCode },
@@ -103,13 +102,13 @@ const AppNavigator = createStackNavigator(
     EventDetailView: { screen: EventDetailView },
     LocalTasksCreation: { screen: LocalTasksCreation },
     TasksCreation: { screen: TasksCreation },
-    SearchView  : {screen: SearchView },
-    MessageBox  : {screen: MessageBox },
-    SearchUser  : {screen: SearchUser },
+    SearchView: { screen: SearchView },
+    MessageBox: { screen: MessageBox },
+    SearchUser: { screen: SearchUser },
   },
   {
     initialRouteName: "LoginHome",
-    headerMode: "none"
+    headerMode: "none",
   }
 );
 const app = reazy();
@@ -123,16 +122,23 @@ export default () => {
 
     return () => (isMountedRef.current = false);
   }, []);
-  return <Root>
-    <InAppNotificationProvider closeInterval={4000} height={80} openCloseDuration={1000}
-      iconApp={require('../assets/BleashupIcon.png')} backgroundColour={ColorList.indicatorInverted}>
-      <StyleProvider style={getTheme(CommonColor)}>
-        <Provider app={app}>
-          <AppContainer ref={navigationRef} />
-        </Provider>
-      </StyleProvider>
-    </InAppNotificationProvider>
-  </Root>
+  return (
+    <Root>
+      <InAppNotificationProvider
+        closeInterval={4000}
+        height={80}
+        openCloseDuration={1000}
+        iconApp={require('../assets/BleashupIcon.png')}
+        backgroundColour={ColorList.indicatorInverted}
+      >
+        <StyleProvider style={getTheme(CommonColor)}>
+          <Provider app={app}>
+            <AppContainer ref={navigationRef} />
+          </Provider>
+        </StyleProvider>
+      </InAppNotificationProvider>
+    </Root>
+  );
 };
 
 //Todo : Expo app setup
@@ -166,6 +172,5 @@ export default () => {
   }
 }*/
 
-/*
 console.ignoredYellowBox = ['Warning: Each', 'Warning: Failed'];
-console.disableYellowBox = true;*/
+console.disableYellowBox = true;

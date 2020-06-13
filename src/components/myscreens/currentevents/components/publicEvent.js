@@ -44,6 +44,7 @@ import ActivityProfile from "./ActivityProfile";
 import GlobalFunctions from '../../../globalFunctions';
 import {MenuDivider } from 'react-native-material-menu';
 import BeNavigator from '../../../../services/navigationServices';
+import RelationProfile from '../../../RelationProfile';
 
 let globalFunctions =  GlobalFunctions;
 let { height, width } = Dimensions.get('window');
@@ -204,34 +205,8 @@ class PublicEvent extends Component {
         location={this.props.Event.location.string}></MapView></View> : null
   }
   renderprofile() {
-    return (
-      <View
-        style={{
-          paddingBottom: 2,
-          paddingTop: 2,
-          borderRadius: 5,
-          width: "100%"
-        }}
-      >
-        <View style={{ width: "100%", flexDirection: "row", alignItems: "center" }}>
-
-          {<TouchableOpacity onPress={() => 
-            requestAnimationFrame(() => 
-            BeNavigator.navigateToActivity("EventChat",this.props.Event))} style={{ width: "65%" }}>
-            <ProfileSimple showPhoto={(url) =>
-              this.props.showPhoto(url)}
-              profile={stores.TemporalUsersStore.Users[this.props.Event.participant.find((ele) => 
-                ele.phone !== stores.LoginStore.user.phone).phone]}
-              relation
-              style={{height:50,width:50,borderRadius:25}}
-              >
-            </ProfileSimple>
-          </TouchableOpacity>}
-        </View>
-      </View>);
-
+    return <RelationProfile Event={this.props.Event} />;
   }
-
 
   renderTitle() {
     return (<View style={{ marginBottom: '2%', 

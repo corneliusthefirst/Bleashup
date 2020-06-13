@@ -945,7 +945,7 @@ class UpdatesDispatcher {
           serverEventListener.sendRequest(JSONData, update.new_value + "highlight").then(Highlight => {
             if (Highlight.data !== 'empty' && Highlight.data.length > 0) {
               Highlight.data = Array.isArray(Highlight.data) ? Highlight.data[0] : Highlight.data
-              stores.Highlights.addHighlight(Highlight.data).then(() => {
+              stores.Highlights.addHighlight(update.event_id, Highlight.data).then(() => {
                 stores.Events.addHighlight(
                   Highlight.data.event_id,
                   Highlight.data.id
@@ -983,7 +983,7 @@ class UpdatesDispatcher {
 
     highlight_update_description: update => {
       return new Promise((resolve, reject) => {
-        stores.Highlights.updateHighlightDescription(
+        stores.Highlights.updateHighlightDescription(update.event_id,
           {
             id: update.new_value.highlight_id,
             description: update.new_value.new_description
@@ -1018,7 +1018,7 @@ class UpdatesDispatcher {
     },
     highlight_update_url: update => {
       return new Promise((resolve, reject) => {
-        stores.Highlights.updateHighlightUrl(
+        stores.Highlights.updateHighlightUrl(update.event_id,
           {
             id: update.new_value.highlight_id,
             url: update.new_value.new_url
@@ -1046,7 +1046,7 @@ class UpdatesDispatcher {
     },
     highlight_update_title: update => {
       return new Promise((resolve, reject) => {
-        stores.Highlights.updateHighlightTitle(
+        stores.Highlights.updateHighlightTitle(update.event_id,
           {
             id: update.new_value.highlight_id,
             title: update.new_value.new_title
@@ -1075,7 +1075,7 @@ class UpdatesDispatcher {
     },
     highlight_public_state: update => {
       return new Promise((resolve, reject) => {
-        stores.Highlights.updateHighlightPublicState(update.new_value).then((highlight) => {
+        stores.Highlights.updateHighlightPublicState(update.event_id, update.new_value).then((highlight) => {
           let Change = {
             id: uuid.v1(),
             title: `Update On ${highlight.title} Post`,
@@ -1100,7 +1100,7 @@ class UpdatesDispatcher {
     },
     highlight_deleted: update => {
       return new Promise((resolve, reject) => {
-        stores.Highlights.removeHighlight(update.new_value).then((Highlight) => {
+        stores.Highlights.removeHighlight(update.event_id, update.new_value).then((Highlight) => {
           stores.Events.removeHighlight(
             update.event_id,
             update.new_value
@@ -1127,7 +1127,7 @@ class UpdatesDispatcher {
     },
     restored_highlight: update => {
       return new Promise((resolve, reject) => {
-        stores.Highlights.addHighlight(update.new_value).then(() => {
+        stores.Highlights.addHighlight(update.event_id, update.new_value).then(() => {
           stores.Events.addHighlight(update.event_id, update.new_value.id).then(() => {
             let Change = {
               id: uuid.v1(),

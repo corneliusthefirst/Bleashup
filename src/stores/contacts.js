@@ -33,7 +33,7 @@ export default class contacts {
         this.setProperties(Contacts);
         resolve();
       });
-      });
+      }); 
   }
 
   @action addContact(NewContact) {

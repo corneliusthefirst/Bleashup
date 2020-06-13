@@ -41,7 +41,7 @@ class colorlist {
     bodyIcon = "black"
     bodyText = "black"
     bodyBackground = "white"
-    bodySubtext = "gray"
+    bodySubtext = "#696969"
     bodyDarkWhite = "#f4f6fc"
     darkGrayText = "#696969"
     //modal

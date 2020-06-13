@@ -42,7 +42,7 @@ export default class ProfileView extends Component {
                         this.setState({ hide: true }); //this.state.hide = true;
                         this.props.hideMe ? this.props.hideMe(this.state.hide) : null;
                     } else {
-                        //console.error(user)
+                        console.error(user)
                         this.props.contact &&
                             stores.Contacts.addContact({
                                 phone: user.phone,

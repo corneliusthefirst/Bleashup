@@ -268,7 +268,7 @@ class Home extends Component {
     })
   }
   navigateToInvitations() {
-    BeNavigator.navigateTo("Invitation")
+    BeNavigator.navigateTo("voteCard");
   }
   render() {
     const { concat, cos } = Animated
