@@ -20,7 +20,7 @@ export default class highlights {
   currentSaveTime = moment().format();
   previousSaveTime = moment().format();
   initializeReminds() {
-    console.warn("initializing highlights");
+    console.warn("initializing highlights", this.highlights);
     storage
       .load(this.readKey)
       .then((data) => {
@@ -67,7 +67,7 @@ export default class highlights {
   }
 
   @action addHighlights(EventID, NewHighlight) {
-    console.warn("new highlight is ", NewHighlight);
+    console.warn("new highlight is ", EventID, NewHighlight);
     return new Promise((resolve, Reject) => {
       this.readFromStore().then((Highlights) => {
         console.warn("from readFrom store", Highlights);
@@ -315,7 +315,7 @@ export default class highlights {
 
   readFromStore() {
     return new Promise((resolve, rejectpromise) => {
-      resolve(this.Reminds);
+      resolve(this.highlights);
     });
   }
 }
