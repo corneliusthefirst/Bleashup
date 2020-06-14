@@ -40,15 +40,16 @@ export default class PhotoMessage extends Component {
         } else {
         }
     }
+    messageWidth=250
     path = '/Photo/' + this.props.message.filename
     render() {
         return (
-            <View style={{ minHeight: 250, width: null,marginTop: '1%', }}>
+            <View style={{ minHeight: 250, width: this.messageWidth,marginTop: '1%', }}>
                 <TouchableOpacity
                     onLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null}
                     onPress={() => this.props.showPhoto(this.props.message.photo)}>
                     <CacheImages hasJoin onOpen={() => { }}
-                        source={{ uri: this.props.message.photo }} square thumbnails style={{ alignSelf: 'flex-start', width: 200, height: 248, }} borderRadius={5}>
+                        source={{ uri: this.props.message.photo }} square thumbnails style={{ alignSelf: 'flex-start', width: this.messageWidth, height: 248, }} borderRadius={5}>
                     </CacheImages>
                 </TouchableOpacity>
                 {this.props.message.text ?

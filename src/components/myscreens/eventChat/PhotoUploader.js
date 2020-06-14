@@ -89,15 +89,16 @@ export default class PhotoUploader extends Component {
             })
         })
     }
+    messageWidth=250
     render() {
         return (
-            <View>
+            <View style={{width:this.messageWidth}}>
                 <View>
                     <View>
                         <TouchableOpacity onPress={() => this.props.showPhoto(this.props.message.source)}>
                             <Image resizeMode={'contain'} style={{
                                 borderRadius: 9, alignSelf: 'center',
-                                maxWidth: 200,
+                                maxWidth: this.messageWidth,
                             }} source={{ uri: this.props.message.source }} height={340}></Image>
                         </TouchableOpacity>
                     </View>

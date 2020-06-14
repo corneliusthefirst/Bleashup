@@ -133,13 +133,14 @@ export default class VideoMessage extends Component {
     videoPlayer = null
     duration = 10
     pattern = [1000, 0, 0]
+    messageWidth=250
     render() {
         return (
             <View>
                 <TouchableOpacity onPressIn={() => {
                     this.props.pressingIn()
                 }} onLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null}>
-                    <View>
+                    <View style={{width:this.messageWidth}}>
                         <View>
                             <Image style={{
                                 marginTop: "2%",
@@ -147,7 +148,7 @@ export default class VideoMessage extends Component {
                                 borderRadius={5}
                                 source={{ uri: this.props.message.thumbnailSource }}
                                 photo={this.props.message.thumbnailSource}
-                                width={200} height={250}>
+                                width={this.messageWidth} height={250}>
                             </Image>
                             <View style={{ position: 'absolute', marginTop: "50%", marginLeft: "45%", }}>
                                 <View style={{ ...buttoner }}>

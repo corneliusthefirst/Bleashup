@@ -94,13 +94,13 @@ export default class VideoUploader extends Component {
     render() {
         return (
             <View>
-                <View style={{ padding: "1.5%" ,minWidth: 190,}}>
+                <View style={{ padding: "1.5%" ,minWidth: 250,}}>
                     <View>
                         <TouchableOpacity onPress={() => this.props.showPhoto(this.props.message.source)}>
                             <View resizeMode={'contain'} style={{
                                 borderRadius: 15,
                                 alignSelf: 'center',
-                                width: 190,
+                                width: 250,
                                 height: 300,
                                 backgroundColor: 'black',
                             }}>
