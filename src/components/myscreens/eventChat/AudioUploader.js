@@ -9,13 +9,12 @@ import {
     Alert,
     Slider,
     Vibration,
-    Platform
+    Platform, TouchableWithoutFeedback
 } from 'react-native';
 import Sound from 'react-native-sound';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import { Icon, Right, Spinner, Toast } from 'native-base';
 import stores from '../../../stores';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import GState from '../../../stores/globalState';
 import FileExachange from '../../../services/FileExchange';
 import converToHMS from '../highlights_details/convertToHMS';
@@ -57,13 +56,14 @@ export default class AudioUploader extends Component {
         console.warn(error)
     }
     onSuccess(newDir, path, filename) {
+        console.warn(newDir,"new Dir after upload")
         GState.downlading = false
         this.setState({
             uploadState: 100,
             loaded: true,
             downloading: false
         })
-        fs.unlink(this.tempSource).then(() => {
+        //fs.unlink(this.tempSource).then(() => {
             this.initialisePlayer(newDir.replace('file://', ''))
             this.props.message.type = 'audio'
             this.props.message.source = newDir.replace("file://", "")
@@ -78,7 +78,7 @@ export default class AudioUploader extends Component {
                     this.props.replaceMessage(this.props.message)
                 })
             }
-       })
+     //  })
     }
     downloadID = null
     uploadAudio(url) {
@@ -106,9 +106,10 @@ export default class AudioUploader extends Component {
     }
     player = null
     tempSource = this.props.message.source.
-        replace("test", this.props.message.id).
+        replace(this.props.message.file_name, this.props.message.id).
         replace("file://", '')
     componentDidMount() {
+        console.warn(this.tempSource,this.props.message.file_name)
         this.checkIfExist().then(() => {
             this.setState({
                 duration: this.props.message.duration,
@@ -126,7 +127,7 @@ export default class AudioUploader extends Component {
                 this.onSuccess.bind(this), null,
                 this.onError.bind(this),
                 this.props.message.content_type,
-                this.props.message.file_name, "/sound")
+                this.props.message.id, "/sound")
             this.uploadAudio('file://' + this.tempSource)
         })
     }

@@ -1,11 +1,10 @@
 
 import React, { Component } from 'react'
 import Modal from 'react-native-modalbox';
-import { View, Text, TouchableOpacity, DeviceEventEmitter, Image } from 'react-native'
+import { View, Text, TouchableOpacity, DeviceEventEmitter, Image, TouchableHighlight, ScrollView } from 'react-native'
 import { Button, Icon, Card, CardItem,Right,Left } from 'native-base'
 import CacheImages from '../../../CacheImages'
 import autobind from 'autobind-decorator';
-import { TouchableHighlight, ScrollView } from 'react-native-gesture-handler';
 import ImageActivityIndicator from '../../currentevents/imageActivityIndicator';
 import DeckSwiperModule from './deckswiper/index';
 

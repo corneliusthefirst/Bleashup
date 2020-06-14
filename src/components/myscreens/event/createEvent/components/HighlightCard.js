@@ -111,7 +111,7 @@ export default class HighlightCard extends Component {
           activity_id={this.props.activity_id} 
           id={this.props.item.id}></Social>
           </View>
-        </View > : <View style={{ width: ColorList.containerWidth * 1, height: "100%",...!this.props.shadowless && shadower(1) }}></View>
+        </View > : <View style={{ width: ColorList.containerWidth , height: "100%",...!this.props.shadowless && shadower(1) }}></View>
 
     )
   }

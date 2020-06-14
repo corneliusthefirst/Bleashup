@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import { View, TouchableWithoutFeedback, PanResponder } from 'react-native';
+import { View, TouchableWithoutFeedback, PanResponder, ScrollView, TouchableOpacity } from 'react-native';
 import { Text, Content, Icon, Spinner,Title,Thumbnail } from 'native-base';
-import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import firebase from 'react-native-firebase';
 import stores from '../../../stores';
 import BleashupFlatList from '../../BleashupFlatList';

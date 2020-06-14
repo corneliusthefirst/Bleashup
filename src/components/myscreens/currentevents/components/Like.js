@@ -1,10 +1,9 @@
 import React, { Component } from "react";
-import { Animated, View, Easing, TouchableWithoutFeedback } from "react-native";
+import { Animated, View, Easing, TouchableWithoutFeedback, TouchableOpacity} from "react-native";
 import { Icon, Spinner, Text, Toast } from "native-base";
 import Requester from "../Requester";
 import stores from "../../../../stores";
 import { indexOf, dropWhile, uniq, find, findIndex } from "lodash";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import emitter from "../../../../services/eventEmiter";
 import ColorList from "../../../colorList";
 

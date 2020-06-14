@@ -1,6 +1,5 @@
 import React, { Component } from "react";
-import { View, Animated, TouchableWithoutFeedback, Dimensions, PanResponder,ActivityIndicator } from 'react-native';
-import { TouchableOpacity, ScrollView } from "react-native-gesture-handler";
+import { View, Animated, TouchableWithoutFeedback,TouchableOpacity, ScrollView , Dimensions, PanResponder,ActivityIndicator } from 'react-native';
 import { Container, Header, Item, Input, Icon, Button, Text,Title,Thumbnail } from 'native-base';
 import BleashupFlatList from '../../BleashupFlatList';
 import testForURL from '../../../services/testForURL';
@@ -96,7 +95,7 @@ navigateToEventDetails = (item) => {
                   
                      <View style={{flexDirection:"row",width:"100%",marginBottom:"2%",marginTop: '2%',}}>
                       
-                      <View style={{width:colorList.containerWidth/5,alignItems:"center"}}>
+                      <View style={{width:"20%",alignItems:"center"}}>
                       <TouchableWithoutFeedback>
                              {item.background && testForURL(item.image) ? <CacheImages small thumbnails {...this.props}
                                  source={{ uri:item.image}} /> :
@@ -104,8 +103,8 @@ navigateToEventDetails = (item) => {
                          </TouchableWithoutFeedback>
                          </View>
      
-                         <TouchableOpacity style={{width:(4*colorList.containerWidth)/5,marginTop: '2.2%',}} onPress={()=>{requestAnimationFrame(() => this.navigateToEventDetails(item))}} >
-                         <View style={{width:(4*colorList.containerWidth)/5,flexDirection:"row"}}>
+                         <TouchableOpacity style={{width:((4/5)*100).toFixed(1).toString()+"%" ,marginTop: '2.2%',}} onPress={()=>{requestAnimationFrame(() => this.navigateToEventDetails(item))}} >
+                           <View style={{ width: ((4/5)*100).toFixed(1).toString()+"%",flexDirection:"row"}}>
                          <View style={{flexDirection:"column",width:"76%"}}>
                                 <Title style={{alignSelf:"flex-start",marginLeft:2,fontSize:14}}>{item.name}</Title>
                          </View>

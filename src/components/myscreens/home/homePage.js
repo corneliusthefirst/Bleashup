@@ -12,7 +12,6 @@ import {
   TouchableOpacity,
   Image,
 } from 'react-native';
-import Animated, { Easing } from 'react-native-reanimated';
 import {
   Container,
   Header,
@@ -26,8 +25,6 @@ import {
   Toast,
   Thumbnail
 } from 'native-base';
-import NetInfo from "@react-native-community/netinfo";
-//import StatusView from "./../Viewer/index";
 import SettingView from "./../settings/index";
 import autobind from "autobind-decorator";
 import {
@@ -73,7 +70,6 @@ class Home extends Component {
   _menu = null;
 
 
-  spinValue = new Animated.Value(0)
   permisssionListener() {
     firebase.messaging().hasPermission().then(status => {
       if (status) {
@@ -148,22 +144,8 @@ class Home extends Component {
       }
     }).catch(err => console.error('An error occurred', err));
     AppState.addEventListener('change', this._handleAppStateChange);
-    NetInfo.isConnected.addEventListener("connectionChange", this.handleConnectionChange);
-    //BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this));
   }
   animating = false
-  launchAnimation() {
-    if (!this.animating)
-      Animated.timing(
-        this.spinValue,
-        {
-          toValue: 1,
-          duration: 3000,
-          easing: Easing.linear
-        }
-      ).start()
-    this.animating = true
-  }
   realNew = []
   testers(){
     setTimeout(() => {
@@ -246,9 +228,7 @@ class Home extends Component {
     }
     return true;
   }
-  handleConnectionChange(connect) {
-    //connect ? console.warn("connected") : console.warn("not connected")
-  }
+
   state = {
     scroll: true,
     currentTab: 0
@@ -271,11 +251,6 @@ class Home extends Component {
     BeNavigator.navigateTo("voteCard");
   }
   render() {
-    const { concat, cos } = Animated
-    const spin = this.spinValue.interpolate({
-      inputRange: [0, 1],
-      outputRange: [1, 95]
-    })
     setTimeout(() => {
       //this.launchAnimation()
     }, 1000)

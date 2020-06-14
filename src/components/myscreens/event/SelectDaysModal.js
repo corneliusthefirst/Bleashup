@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
-import { View } from "react-native"
+import { View, ScrollView } from "react-native"
 import ModalBox from 'react-native-modalbox';
 import { Button, Icon, Content,Text } from 'native-base';
 import { findIndex } from 'lodash';
-import { SceneView } from 'react-navigation';
-import { ScrollView } from 'react-native-gesture-handler';
 import bleashupHeaderStyle from '../../../services/bleashupHeaderStyle';
 
 export default class SelectDays extends Component {

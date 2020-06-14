@@ -65,7 +65,7 @@ export default class SettingsTabModal extends BleashupModal {
           </View>
         </View>
         <ScrollView nestedScrollEnabled>
-          <View style={{ height: this.height * 0.4 }}>
+          <View style={{ height: 400 }}>
             <Settings
               event={this.props.event}
               master={this.props.master}
@@ -75,7 +75,7 @@ export default class SettingsTabModal extends BleashupModal {
               closeActivity={this.props.closeActivity}
             ></Settings>
           </View>
-          <View style={{ height: this.height - 5 }}>
+          <View style={{ height: 600 }}>
             <View style={{
               height:ColorList.headerHeight
             }}>{this.TabHeader()}</View>
@@ -99,7 +99,9 @@ export default class SettingsTabModal extends BleashupModal {
        <View style={{
          flexDirection: 'row',
          justifyContent: 'space-between',
-         margin: '3%',}}>
+         marginLeft: "1%",
+         marginRight: "1%",
+         }}>
         <View style={{
           marginBottom: 'auto',
           marginTop: 'auto',

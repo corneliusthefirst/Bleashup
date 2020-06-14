@@ -3,15 +3,13 @@ import {
   Text, Icon,Item,
   Button,
 } from "native-base";
-import Textarea from 'react-native-textarea';
 import {View,TouchableOpacity,
   TouchableWithoutFeedback, Dimensions, Keyboard} from 'react-native';
 import Modal from 'react-native-modalbox';
 import autobind from "autobind-decorator";
 import  stores from '../../../../../stores/index';
 import colorList from '../../../../colorList';
-//import { TextInput } from "react-native-gesture-handler";
-
+import CreateTextInput from './CreateTextInput';
 
  
 let {height, width} = Dimensions.get('window');
@@ -108,19 +106,15 @@ export default class EventDescription extends Component {
 
 
             <View style={{ height: "70%",borderRadius: 25,marginTop:"5%" }}>
-              <Textarea containerStyle={{
-                width: "96%", 
-                height: "100%",
-                borderWidth: 1,borderRadius: 25,
-                borderColor:colorList.bodyText,alignSelf: 'center',
-                backgroundColor: "mintcream"
-              }} maxLength={1000}
+              <CreateTextInput 
+                height={"100%"}
+                maxLength={1000}
                style={{
                 margin: 1,
                 textAlignVertical: 'top',  // hack android
                 backgroundColor: "#f5fffa",borderRadius: 25,
               }}
-                placeholder="@activity Description" value={this.state.description} keyboardType="default"
+                placeholder="activity Description" value={this.state.description} keyboardType="default"
                 onChangeText={(value) => this.onChangedEventDescription(value)} />
 
                </View>

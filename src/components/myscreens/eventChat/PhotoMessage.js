@@ -44,16 +44,13 @@ export default class PhotoMessage extends Component {
     render() {
         return (
             <View style={{ minHeight: 250, width: null,marginTop: '1%', }}>
-                <TouchableWithoutFeedback
+                <TouchableOpacity
                     onLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null}
-                    onPressIn={() => {
-                        this.props.pressingIn()
-                    }}
                     onPress={() => this.props.showPhoto(this.props.message.photo)}>
                     <CacheImages hasJoin onOpen={() => { }}
-                        source={{ uri: this.props.message.photo }} square thumbnails style={{ alignSelf: 'flex-start', width: 295, height: 248, }} borderRadius={5}>
+                        source={{ uri: this.props.message.photo }} square thumbnails style={{ alignSelf: 'flex-start', width: 200, height: 248, }} borderRadius={5}>
                     </CacheImages>
-                </TouchableWithoutFeedback>
+                </TouchableOpacity>
                 {this.props.message.text ?
                     <View style={{ alignSelf: 'flex-start',}}>
                         <TextContent tags={this.props.message.tags} handleLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null} pressingIn={() => this.props.pressingIn()} text={this.props.message.text}></TextContent>

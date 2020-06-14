@@ -1,12 +1,11 @@
 import React, { Component } from "react"
 import CacheImages from '../../../CacheImages';
-import { View, Text } from "react-native";
+import { View, Text, TouchableOpacity, TouchableWithoutFeedback} from "react-native";
 import { Body, Accordion, Content, Thumbnail, Title } from "native-base"
 import ImageActivityIndicator from '../../currentevents/components/imageActivityIndicator';
 import ProfileIdicator from "../../currentevents/components/ProfilIndicator";
 import stores from "../../../../stores";
 import ProfileModal from "../../invitations/components/ProfileModal";
-import { TouchableOpacity, TouchableWithoutFeedback } from "react-native-gesture-handler";
 import testForURL from '../../../../services/testForURL';
 import GState from '../../../../stores/globalState/index';
 import Highlighter from 'react-native-highlight-words';

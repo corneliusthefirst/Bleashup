@@ -7,7 +7,6 @@ const screenWidth = Math.round(Dimensions.get('window').width);
 const screenheight = Math.round(Dimensions.get('window').height);
 import ReactNativeZoomableView from '@dudigital/react-native-zoomable-view/src/ReactNativeZoomableView';
 import Image from 'react-native-scalable-image';
-import Orientation from 'react-native-orientation-locker';
 
 import { Icon, Text } from 'native-base';
 import VideoController from '../eventChat/VideoController';
@@ -32,7 +31,6 @@ export default class VideoViewer extends BleashupModal {
     }
     enterFullscreen() {
         Keyboard.dismiss()
-        //this.state.fullScreen ? Orientation.lockToPortrait() : Orientation.lockToLandscapeLeft(); //this will unlock the view to all Orientations
         this.setState({
             fullScreen: !this.state.fullScreen,
         })
@@ -46,7 +44,6 @@ export default class VideoViewer extends BleashupModal {
     entry = "top"
     position = "top"
     onClosedModal() {
-        Orientation.lockToPortrait()
         this.props.hideVideo()
         //StatusBar.setHidden(false, false)
         this.setState({

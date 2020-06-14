@@ -18,6 +18,7 @@ import shadower from "../../../components/shadower";
 import ColorList from '../../colorList';
 import Pickers from '../../../services/Picker';
 import FileExchange from '../../../services/FileExchange';
+import rounder from "../../../services/rounder";
 
 
 let { height, width } = Dimensions.get('window');
@@ -132,7 +133,7 @@ export default class ProfileView extends Component {
                  requestAnimationFrame(() => {this.setState({enlarge:true})});
              }}>
                {this.state.userInfo.profile  && testForURL(this.state.userInfo.profile ) ? <CacheImages   {...this.props}
-                   source={{ uri: this.state.userInfo.profile }} style={{ width:ColorList.containerWidth-ColorList.containerWidth/8, height:ColorList.containerHeight/3,borderRadius:30 }} /> :
+                   source={{ uri: this.state.userInfo.profile }} style={{ ...rounder(30),justifyContent: 'center',alignItems: 'center',textAlign:'center' }} /> :
                 <Image source={require("../../../../Images/profile.png")} style={{height:ColorList.containerHeight/3,width:width-width/9,borderRadius:14}} ></Image>}
              </TouchableWithoutFeedback>
  

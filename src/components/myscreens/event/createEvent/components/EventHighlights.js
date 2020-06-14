@@ -43,7 +43,6 @@ import ActionButton from "react-native-action-button";
 import Modal from "react-native-modalbox";
 import autobind from "autobind-decorator";
 import CacheImages from "../../../../CacheImages";
-import Textarea from "react-native-textarea";
 import HighlightCard from "./HighlightCard";
 import stores from "../../../../../stores/index";
 import { observer } from "mobx-react";

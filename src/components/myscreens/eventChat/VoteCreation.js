@@ -11,7 +11,6 @@ import {
 import { Text, Item, Button, Icon, Content } from "native-base";
 import Textarea from "react-native-textarea";
 import labler from "./labler";
-//import { ScrollView } from 'react-native-gesture-handler';
 import shadower from "../../shadower";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import moment from "moment";

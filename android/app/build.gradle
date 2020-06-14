@@ -168,7 +168,6 @@ android {
 dependencies {
     implementation project(':react-native-permissions')
     implementation project(':react-native-camera')
-    implementation project(':react-native-reanimated')
     implementation project(':react-native-svg')
     implementation project(':react-native-image-crop-picker')
     implementation project(':react-native-ffmpeg')
@@ -180,15 +179,12 @@ dependencies {
     //implementation 'com.android.support:appcompat-v7:27.1.1'
     //implementation 'com.android.support:design:27.1.1'
     implementation project(':react-native-calendar-events')
-    implementation project(':react-native-orientation-locker')
     implementation project(':react-native-sound-recorder')
     implementation project(':react-native-document-picker')
     implementation project(':react-native-file-viewer')
     implementation project(':react-native-video')
     implementation project(':rn-fetch-blob')
     implementation project(':react-native-sound')
-  
-    implementation project(':react-native-community-netinfo')
     implementation project(':@react-native-community_async-storage')
     implementation project(':react-native-vector-icons')
     implementation project(':react-native-tcp')
@@ -202,7 +198,6 @@ dependencies {
     implementation 'com.android.support:design:27.1.1'
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
     implementation "com.facebook.react:react-native:+"  // From node_modules
-    implementation project(':react-native-image-picker')
     
     compile 'com.android.support:multidex:1.0.3'
     implementation fileTree(dir: "libs", include: ["*.jar"])

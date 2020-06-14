@@ -1,6 +1,5 @@
 import React, { Component } from "react";
-import { View, Animated, TouchableWithoutFeedback, Dimensions, PanResponder, StatusBar } from 'react-native';
-import { TouchableOpacity, ScrollView } from "react-native-gesture-handler";
+import { View, Animated, TouchableOpacity, ScrollView, TouchableWithoutFeedback, Dimensions, PanResponder, StatusBar } from 'react-native';
 import UpdateStateIndicator from "../currentevents/components/updateStateIndicator";
 import { List, Icon, Label, Card, CardItem, Text, Header, Thumbnail, Title, Button } from 'native-base';
 import Image from 'react-native-scalable-image';
@@ -129,6 +128,7 @@ export default class SWView extends Component {
                 }}>
                     <View style={{
                         alignItems: 'center',
+                        alignSelf: 'center',
                         height: 70, margin: '1%', padding: '6%',
                     }}><Button rounded style={{ backgroundColor: '#1FABAB', ...shadower() }} onPress={() => requestAnimationFrame(() => this.props.showActivityPhotoAction())}>
                             {this.props.event.background ? <CacheImages thumbnails
@@ -136,12 +136,14 @@ export default class SWView extends Component {
                         </Button>
                     </View>
                     <View style={{ height: 240, alignSelf: 'center', }}>
+                        <ScrollView style={{ height: "100%" }}>
                         <RouteView isChat={this.props.isChat} refreshCommitee={() => this.refreshCommitees()}
                             event_id={this.props.event.id}
                             currentPage={this.props.currentPage}
                             setCurrentPage={(page) => {
                                 this.props.setCurrentPage(page)
                             }}></RouteView>
+                        </ScrollView>
                     </View>
 
 

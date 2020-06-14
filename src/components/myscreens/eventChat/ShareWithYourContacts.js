@@ -217,6 +217,7 @@ export default class ShareWithYourContacts extends TabModal {
         }}
       >
         <BleashupFlatList
+        fit
           firstIndex={0}
           initialRender={7}
           renderPerBatch={20}

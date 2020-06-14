@@ -30,7 +30,6 @@ import {
 import autobind from "autobind-decorator";
 import { filter, find, findIndex, concat, uniqBy, uniq, isEmpty } from "lodash";
 import request from "../../../services/requestObjects";
-import Textarea from "react-native-textarea";
 import stores from "../../../stores/index";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Dropdown } from "react-native-material-dropdown";

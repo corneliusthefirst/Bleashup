@@ -26,7 +26,6 @@ import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
 import HighLightsDetails from '../highlights_details/index';
 import QRDisplayer from "../QR/QRCodeDisplayer";
 import colorList from '../../colorList'
-import { round } from "react-native-reanimated";
 import ColorList from "../../colorList";
 import DescriptionModal from './descriptionModal';
 import Drawer from '../../draggableView';

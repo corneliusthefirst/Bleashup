@@ -2,8 +2,7 @@ import React, { Component } from "react";
 import { Content, Card, CardItem, Text, Body, Icon, Header ,Button} from "native-base";
 import GState from "../../../stores/globalState";
 import { View ,Linking,Alert} from "react-native"
-import { ScrollView } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { ScrollView, TouchableOpacity} from "react-native";
 import Swipeout from "react-native-swipeout";
 
 

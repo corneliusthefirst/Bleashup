@@ -1,9 +1,8 @@
 import React, { Component } from "react";
-import { View } from "react-native";
+import { View, TouchableOpacity } from "react-native";
 import Like from "../../../currentevents/components/Like";
 import { Icon, Text } from "native-base";
 import ColorList from "../../../../colorList";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import SocialTabModal from "./SocialTabModal";
 import ActionsMenu from "../../ActionsMenu";
 import PickersMenu from "./PickerMenu";

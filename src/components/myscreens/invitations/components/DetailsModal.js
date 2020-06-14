@@ -6,6 +6,7 @@ import {
     TouchableOpacity,
     DeviceEventEmitter,
     Image,
+    TouchableHighlight, ScrollView
 } from "react-native";
 import {
     Button,
@@ -24,7 +25,6 @@ import {
 } from "native-base";
 import CacheImages from "../../../CacheImages";
 import autobind from "autobind-decorator";
-import { TouchableHighlight, ScrollView } from "react-native-gesture-handler";
 import ImageActivityIndicator from "../../currentevents/components/imageActivityIndicator";
 import DeckSwiperModule from "./deckswiper/index";
 import MapView from "../../currentevents/components/MapView";

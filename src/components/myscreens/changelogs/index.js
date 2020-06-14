@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, BackHandler } from 'react-native';
+import { View, BackHandler,TouchableOpacity } from 'react-native';
 import {
   Icon,
   Text,
@@ -7,7 +7,6 @@ import {
   Title
 } from 'native-base';
 import autobind from "autobind-decorator";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import stores from '../../../stores';
 import { findIndex } from "lodash";
 import BleashupTimeLine from '../../BleashupTimeLine';

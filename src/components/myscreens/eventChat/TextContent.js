@@ -1,12 +1,11 @@
 import React, { Component } from "react"
 import {
     View, TouchableOpacity, PanResponder, Linking, Vibration,
-    Clipboard, StyleSheet
+    Clipboard, StyleSheet, TouchableWithoutFeedback
 } from 'react-native'
 import { Text, Toast } from "native-base"
 import Hyperlink from 'react-native-hyperlink'
 import ParsedText from 'react-native-parsed-text';
-import { TouchableWithoutFeedback } from "react-native-gesture-handler"
 import openLink from "../event/createEvent/components/openLinkOnBrowser";
 import ColorList from '../../colorList';
 export default class TextContent extends Component {

@@ -33,7 +33,7 @@ import {
   Image,
   TouchableOpacity,
   Dimensions,
-  ScrollView,
+  ScrollView, Textarea
 } from "react-native";
 import Modal from "react-native-modalbox";
 import autobind from 'autobind-decorator';
@@ -54,7 +54,6 @@ import stores from "../../../stores/index";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Dropdown } from "react-native-material-dropdown";
 import moment from 'moment';
-import Textarea from "react-native-textarea";
 
 var uuid = require("react-native-uuid");
 uuid.v1({

@@ -5,11 +5,10 @@ import {
     Button, InputGroup, DatePicker, Thumbnail, Alert, List, ListItem, Label, Toast
 } from "native-base";
 
-import { StyleSheet, View, Image, TouchableOpacity, FlatList, ScrollView, Dimensions, TextInput } from 'react-native';
+import { StyleSheet, View, Image, TouchableOpacity, Textarea, FlatList, ScrollView, Dimensions, TextInput } from 'react-native';
 import ActionButton from 'react-native-action-button';
 import Modal from 'react-native-modalbox';
 import autobind from "autobind-decorator";
-import Textarea from 'react-native-textarea';
 import CacheImages from "../../../../CacheImages";
 import HighlightCard from "./HighlightCard"
 import stores from '../../../../../stores/index';

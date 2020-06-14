@@ -92,12 +92,12 @@ export default class PhotoUploader extends Component {
     render() {
         return (
             <View>
-                <View style={{ padding: "1.5%" }}>
+                <View>
                     <View>
                         <TouchableOpacity onPress={() => this.props.showPhoto(this.props.message.source)}>
                             <Image resizeMode={'contain'} style={{
                                 borderRadius: 9, alignSelf: 'center',
-                                maxWidth: 380,
+                                maxWidth: 200,
                             }} source={{ uri: this.props.message.source }} height={340}></Image>
                         </TouchableOpacity>
                     </View>
@@ -135,7 +135,7 @@ export default class PhotoUploader extends Component {
                 </View>
                 <View>
                     {this.props.message.text ? <TextContent text={this.props.message.text} 
-                    tags={this.props.message.tags} style={{ margin: '2%', }}></TextContent> : null}
+                    tags={this.props.message.tags} ></TextContent> : null}
                 </View>
             </View>
         );

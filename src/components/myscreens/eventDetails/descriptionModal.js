@@ -1,8 +1,7 @@
 import React, { Component } from "react";
 import {  Text,  Icon} from "native-base";
 //import GState from "../../../../../stores/globalState";
-import { View,ScrollView,Linking, } from "react-native"
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { View, ScrollView, Linking, TouchableOpacity} from "react-native"
 import Modal from 'react-native-modalbox';
 import colorList from '../../colorList';
 import Creator from "../reminds/Creator";

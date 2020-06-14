@@ -2,17 +2,17 @@
 import React, { Component } from 'react';
 
 import {
-    StyleSheet, Text, TouchableOpacity, View, ScrollView, Alert, Vibration, Platform
+    StyleSheet, Text, TouchableOpacity, View, ScrollView, Alert, Vibration, Platform, TouchableWithoutFeedback
 } from 'react-native';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import { Icon, Right, Spinner, Toast } from 'native-base';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import GState from '../../../stores/globalState';
 import testForURL from '../../../services/testForURL';
 import FileExachange from '../../../services/FileExchange';
 import Pickers from '../../../services/Picker';
 import stores from '../../../stores';
 import ColorList from '../../colorList';
+import TextContent from './TextContent';
 
 export default class FileAttarchementMessaege extends Component {
     constructor(props) {
@@ -134,7 +134,6 @@ export default class FileAttarchementMessaege extends Component {
         }
         return (
             <View>
-
                 <View style={{ disply: 'flex', flexDirection: 'row', width: 300, }}>
                     <View style={textStyle}>
                         <View>
@@ -180,6 +179,9 @@ export default class FileAttarchementMessaege extends Component {
                                 <Text style={{ fontSize: 10,alignSelf: 'center',justifyContent: 'center', }} note>{"("}{this.toMB(isNaN(this.state.received) ? 0 : this.state.received).toFixed(1)}{"/"}
                                     {this.toMB(this.state.total).toFixed(1)}{")Mb"}</Text>}</View></View>
                 </View>
+                {this.props.message.text ? <TextContent handleLongPress={this.props.handleLongPress}
+                    pressingIn={this.props.pressingIn} text={this.props.message.text}
+                    tags={this.props.message.tags}></TextContent> : null}
             </View>
         );
     }
