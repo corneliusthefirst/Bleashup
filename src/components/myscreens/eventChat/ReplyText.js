@@ -92,7 +92,6 @@ export default class ReplyText extends Component {
   render() {
     return (
       <TouchableWithoutFeedback
-        onPressIn={() => this.props.pressingIn()}
         onLongPress={() =>
           this.props.handLongPress ? this.props.handLongPress() : null
         }

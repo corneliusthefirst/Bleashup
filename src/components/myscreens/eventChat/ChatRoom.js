@@ -60,6 +60,7 @@ import ChatKeyboard from "./ChatKeyboard";
 import ChatRoomHeader from "./ChatRoomHeader";
 import shadower from "../../shadower";
 import InChatVideoPlayer from "./InChatVideoPlayer";
+import { TouchableOpacity } from 'react-native';
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenheight = Math.round(Dimensions.get("window").height);
@@ -735,16 +736,17 @@ class ChatRoom extends Component {
                                     showsVerticalScrollIndicator={false}
                                     ref="scrollViewRef"
                                     style={{ height: screenheight, }}>
-                                    <View style={{ maxHeight: this.state.messageListHeight }}>
-                                        <TouchableWithoutFeedback
+                                    <View style={{ height: this.state.messageListHeight }}>
+                                            <TouchableOpacity
+                                            activeOpacity={1.0}
                                             onPressIn={() => {
                                                 this.scrolling = false;
+                                                console.warn("pressing in")
                                                 this.adjutRoomDisplay();
                                                !this.openedKeyboard && this.refs.keyboard && this.refs.keyboard.blur()
                                             }}
-                                        >
-                                            {this.messageList()}
-                                        </TouchableWithoutFeedback>
+                                            ><View>{this.messageList()}</View>
+                                        </TouchableOpacity>
                                     </View>
                                     <View>
                                         {!this.props.opened || !this.props.generallyMember ? (

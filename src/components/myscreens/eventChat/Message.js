@@ -545,9 +545,9 @@ export default class Message extends Component {
                                 ) : null}
                                 <SwipeRow
                                     swipeGestureEnded={(key, data) => {
-                                        if (data.translateX >= 100) {
+                                        if (data.translateX >= 50) {
                                             this.handleReply()
-                                        } else if (data.translateX <= -100) {
+                                        } else if (data.translateX <= -50) {
                                             Vibration.vibrate([100, 0, 0, 100])
                                             this.props.forwardMessage()
                                         }
@@ -623,10 +623,9 @@ export default class Message extends Component {
                                                     {this.props.message.reply ? (
                                                         <View
                                                             style={{
-                                                                borderRadius: 10,
                                                                 padding: "1%",
                                                                 marginTop: ".4%",
-                                                                width: "100%",
+                                                                //width: "100%",
                                                             }}
                                                         >
                                                             <ReplyText
@@ -649,12 +648,6 @@ export default class Message extends Component {
                                                         </View>
                                                     ) : null}
                                                     <TouchableWithoutFeedback
-                                                        onPressIn={() => {
-                                                            this.replying = true;
-                                                        }}
-                                                        onPress={() => {
-                                                            this.replying = false;
-                                                        }}
                                                         onLongPress={() => {
                                                             this.handLongPress();
                                                         }}
@@ -673,14 +666,6 @@ export default class Message extends Component {
                                                         </View>
                                                     </TouchableWithoutFeedback>
                                                 </View>
-                                                <TouchableWithoutFeedback
-                                                    onPressIn={() => {
-                                                        this.replying = true;
-                                                    }}
-                                                    onLongPress={() => {
-                                                        this.handLongPress();
-                                                    }}
-                                                >
                                                     <View
                                                         style={{
                                                             flexDirection: "row",
@@ -713,7 +698,6 @@ export default class Message extends Component {
                                                             ) : null}
                                                         </View>
                                                     </View>
-                                                </TouchableWithoutFeedback>
                                                 {this.state.sender ? <View style={{ alignSelf: 'flex-start', }}>{this.reactions(this.state.sender)}</View> : null}
                                             </View>
                                         </View>

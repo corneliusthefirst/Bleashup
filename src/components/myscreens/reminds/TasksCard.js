@@ -209,7 +209,7 @@ export default class EventTasksCard extends Component {
             <View style={{ flex: 1, alignItems: 'center', alignSelf: 'center', width: ColorList.containerWidth }}>
               <MedaiView
                 height={ColorList.containerHeight * .39}
-                width={ColorList.containerWidth * 0.96}
+                width={"98%"}
                 url={this.props.item.remind_url}
                 showItem={this.props.showMedia}
               ></MedaiView>

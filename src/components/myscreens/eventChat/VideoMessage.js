@@ -136,7 +136,7 @@ export default class VideoMessage extends Component {
     render() {
         return (
             <View>
-                <TouchableWithoutFeedback onPressIn={() => {
+                <TouchableOpacity onPressIn={() => {
                     this.props.pressingIn()
                 }} onLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null}>
                     <View>
@@ -191,7 +191,7 @@ export default class VideoMessage extends Component {
                             <TextContent tags={this.props.message.tags} onLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null} pressingIn={() => this.props.pressingIn()} text={this.props.message.text}></TextContent>
                         </View> : null}
                     </View>
-                </TouchableWithoutFeedback>
+                </TouchableOpacity>
             </View>
         );
     }

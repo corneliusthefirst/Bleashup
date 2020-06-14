@@ -3,12 +3,12 @@ import {
   View,
   PermissionsAndroid,
   StatusBar,
-  TouchableOpacity,
+  TouchableOpacity, ScrollView, TextInput,
+  TouchableWithoutFeedback 
 } from "react-native";
 import {
-  Text, Item, Button, Icon, Spinner, Label, Title, TextInput,
-  ScrollView,
-  TouchableWithoutFeedback } from "native-base";
+  Text, Item, Button, Icon, Spinner, Label, Title,
+} from "native-base";
 import { Dropdown } from "react-native-material-dropdown";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import NumericInput from "react-native-numeric-input";
@@ -192,12 +192,12 @@ export default class Settings extends Component {
         >
           <View style={{ marginLeft: "4%", flexDirection: "column" }}>
             {this.state.emptyNameError ? (
-              <Text style={{ color: "#A91A84" }} note>
+              <Text style={{ color: colorList.errorColor }} note>
                 {"name cannot be empty"}
               </Text>
             ) : null}
             {this.state.tooLongNameError ? (
-              <Text style={{ color: "#A91A84" }} note>
+              <Text style={{ color: colorList.errorColor }} note>
                 {
                   "name is too long; the name should not be morethan 30 characters"
                 }

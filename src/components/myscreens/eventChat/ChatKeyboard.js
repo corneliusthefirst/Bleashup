@@ -613,7 +613,7 @@ export default class ChatKeyboard extends PureComponent {
                             flexDirection: "row",
                             alignSelf: "center",
                             alignSelf: "center",
-                            width: ColorList.containerWidth - 8,
+                            width: "100%",
                         }}
                     >
                         <View

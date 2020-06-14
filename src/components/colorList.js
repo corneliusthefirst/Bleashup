@@ -7,7 +7,7 @@ class colorlist {
     constructor() {
     }
 
-    //container
+    errorColor = "#A91A84"
     containerHeight = height
     containerWidth = "100%"
     headerTextSize = 14
