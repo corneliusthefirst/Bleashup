@@ -574,7 +574,7 @@ export default class Message extends Component {
                                         }}
                                     >
                                         {this.state.time && !this.state.sender ? (
-                                            <View style={{ margin:'1%' ,...reactionContanerStyle,width:30,marginBottom: null,}}>
+                                            <View style={{ margin: '1%', ...reactionContanerStyle, width: 30, marginBottom: null, }}>
                                                 <Text note>{this.state.time}</Text>
                                             </View>
                                         ) : null}
@@ -624,8 +624,14 @@ export default class Message extends Component {
                                                         <View
                                                             style={{
                                                                 padding: "1%",
+                                                                alignItems: 'center',
+                                                                alignSelf: 'center',
                                                                 marginTop: ".4%",
-                                                                //width: "100%",
+                                                                width: this.props.message && 
+                                                                (this.props.message.type == "photo" ||
+                                                                    this.props.message.type == "video" ||
+                                                                    this.props.message.type == "video_upload" ||
+                                                                    this.props.message.type == "photo_upload") ? 200 : "100%",
                                                             }}
                                                         >
                                                             <ReplyText
@@ -666,38 +672,38 @@ export default class Message extends Component {
                                                         </View>
                                                     </TouchableWithoutFeedback>
                                                 </View>
-                                                    <View
-                                                        style={{
-                                                            flexDirection: "row",
-                                                            justifyContent: "space-between",
-                                                        }}
-                                                    >
-                                                        <View>
-                                                            {!this.state.sender && this.props.isfirst ? (
-                                                                this.props.message.sent ? (
-                                                                    this.props.received ? (
-                                                                        <Icon
-                                                                            style={this.iconStyles}
-                                                                            type="Ionicons"
-                                                                            name="ios-checkmark-circle"
-                                                                        ></Icon>
-                                                                    ) : (
-                                                                            <Icon
-                                                                                style={this.iconStyles}
-                                                                                type={"EvilIcons"}
-                                                                                name="check"
-                                                                            ></Icon>
-                                                                        )
+                                                <View
+                                                    style={{
+                                                        flexDirection: "row",
+                                                        justifyContent: "space-between",
+                                                    }}
+                                                >
+                                                    <View>
+                                                        {!this.state.sender && this.props.isfirst ? (
+                                                            this.props.message.sent ? (
+                                                                this.props.received ? (
+                                                                    <Icon
+                                                                        style={this.iconStyles}
+                                                                        type="Ionicons"
+                                                                        name="ios-checkmark-circle"
+                                                                    ></Icon>
                                                                 ) : (
                                                                         <Icon
-                                                                            style={{ ...this.iconStyles, color: "#FFF" }}
-                                                                            type="MaterialCommunityIcons"
-                                                                            name="progress-check"
+                                                                            style={this.iconStyles}
+                                                                            type={"EvilIcons"}
+                                                                            name="check"
                                                                         ></Icon>
                                                                     )
-                                                            ) : null}
-                                                        </View>
+                                                            ) : (
+                                                                    <Icon
+                                                                        style={{ ...this.iconStyles, color: "#FFF" }}
+                                                                        type="MaterialCommunityIcons"
+                                                                        name="progress-check"
+                                                                    ></Icon>
+                                                                )
+                                                        ) : null}
                                                     </View>
+                                                </View>
                                                 {this.state.sender ? <View style={{ alignSelf: 'flex-start', }}>{this.reactions(this.state.sender)}</View> : null}
                                             </View>
                                         </View>
@@ -705,9 +711,11 @@ export default class Message extends Component {
                                             <TouchableOpacity
                                                 onLongPress={this.handLongPress.bind(this)}
                                                 onPress={this.openReaction.bind(this)}
-                                                style={{ ...reactionContanerStyle,
-                                                    ...rounder(13,ColorList.bodyBackground),
-                                                    marginLeft: 5, }}
+                                                style={{
+                                                    ...reactionContanerStyle,
+                                                    ...rounder(13, ColorList.bodyBackground),
+                                                    marginLeft: 5,
+                                                }}
                                             >
                                                 <Icon
                                                     style={{
@@ -721,7 +729,7 @@ export default class Message extends Component {
                                             </TouchableOpacity>
                                         ) : null}
                                         {this.state.time && this.state.sender ? (
-                                            <View style={{ alignItems:'flex-end',...reactionContanerStyle,width:30,marginBottom: null,marginLeft: -10,}}>
+                                            <View style={{ alignItems: 'flex-end', ...reactionContanerStyle, width: 30, marginBottom: null, marginLeft: -10, }}>
                                                 <Text note>{this.state.time}</Text>
                                             </View>
                                         ) : null}

@@ -478,6 +478,7 @@ export default class ChatKeyboard extends PureComponent {
             file: false,
             audio: true,
         });
+        this.filename = res.uri.split('/').pop()
         this.duration = 0;
         this.props.initialzeFlatList();
         this.animateLayout(true);
@@ -590,10 +591,10 @@ export default class ChatKeyboard extends PureComponent {
                     {this.closeIcon()}
                 </TouchableOpacity>
             </View>
-            ) : <PhotoPreview 
+        ) : <PhotoPreview
             image={this.state.image}
-            showVideo={this.state.showVideo} 
-            video={this.state.video} 
+            showVideo={this.state.showVideo}
+            video={this.state.video}
             hideCaption={this.hideCaption.bind(this)}>
                 </PhotoPreview>
     }
@@ -613,7 +614,7 @@ export default class ChatKeyboard extends PureComponent {
                             flexDirection: "row",
                             alignSelf: "center",
                             alignSelf: "center",
-                            width: "100%",
+                            width: "99%",
                         }}
                     >
                         <View
