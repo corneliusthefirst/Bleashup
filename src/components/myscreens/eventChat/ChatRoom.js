@@ -412,6 +412,7 @@ class ChatRoom extends Component {
             video: video,
             showVideo: true,
         });
+        this.refs.keyboard.animateLayout()
     }
     hideVideo() {
         this.setState({
@@ -420,6 +421,7 @@ class ChatRoom extends Component {
             fullScreen:false,
             showCaption: false,
         });
+        this.refs.keyboard.animateLayout()
     }
     showActions() {
         this.setState({
@@ -464,7 +466,6 @@ class ChatRoom extends Component {
     _resetCaptionInput() { }
     
     received = [{ phone: this.props.user.phone, date: moment().format() }];
-    logOutZoomState = (event, gestureState, zoomableViewEventObject) => { };
     sendToOtherActivity(message) {
         return new Promise((resolve, reject) => {
             Requester.sendMessage(
@@ -990,13 +991,16 @@ class ChatRoom extends Component {
             currentReaction: reaction,
             currentReacters: reacters,
         });
+        this.refs.keyboard.animateLayout()
     }
     deleteMessage(messageID) {
         Requester.deleteMessage(
             messageID,
             this.props.activity_id,
             this.roomID
-        ).then(() => { });
+        ).then(() => { 
+            this.refs.keyboard.animateLayout()
+        });
     }
     delay = 1;
     addVote() { }

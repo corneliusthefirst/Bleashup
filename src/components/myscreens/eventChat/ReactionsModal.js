@@ -1,7 +1,8 @@
 import React from "react";
 
 import BleashupModal from "../../mainComponents/BleashupModal";
-import { View, TouchableOpacity, ScrollView, TouchableWithoutFeedback } from "react-native";
+import { View, TouchableOpacity, ScrollView, } from "react-native";
+import { TouchableWithoutFeedback} from "react-native-gesture-handler"
 import CreationHeader from "../event/createEvent/components/CreationHeader";
 import { Icon, Text } from "native-base";
 import ColorList from "../../colorList";
