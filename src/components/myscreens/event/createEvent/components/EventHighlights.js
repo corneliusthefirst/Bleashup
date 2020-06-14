@@ -109,7 +109,7 @@ export default class EventHighlights extends BleashupModal {
       currentHighlight: request.Highlight(),
       update: false,
       audioState: false,
-      searchImageState: false,
+      searchImageState: false, 
       participant: null,
       isMounted: false,
     };
@@ -130,7 +130,7 @@ export default class EventHighlights extends BleashupModal {
             stores.Highlights.fetchHighlights(event_id).then((Highlights) => {
               this.setState({
                 newing: !this.state.newing,
-                highlightData: Highlights,
+                highlightData: Highlights[this.props.event_id],
                 isMounted: true,
                 currentHighlight: highlight ? highlight : request.Highlight(),
                 update: this.props.highlight_id ? true : false,
