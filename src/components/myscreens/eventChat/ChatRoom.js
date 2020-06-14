@@ -72,7 +72,7 @@ class ChatRoom extends Component {
         this.state = {
             isModalOpened: false,
             showHeader: !this.props.isComment,
-            messageListHeight: this.formHeight( 70 / screenheight),
+            messageListHeight: this.formHeight( 120 / screenheight),
             //this.formHeight((screenheight - 120) / screenheight),
         };
     }
