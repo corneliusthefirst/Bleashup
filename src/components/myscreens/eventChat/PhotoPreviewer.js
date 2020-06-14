@@ -10,8 +10,9 @@ export default class PhotoPreview extends Component {
         super(props)
         this.state = {}
     }
-    shouldComponentUpdate(){
-        return false
+    shouldComponentUpdate(nextProp,nextState){
+        return this.props.video !== nextProp.video || 
+        this.props.image !== nextProp.image
     }
     logOutZoomState = (event, gestureState, zoomableViewEventObject) => { };
     render() {

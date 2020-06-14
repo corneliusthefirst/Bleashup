@@ -7,7 +7,8 @@ export default class InChatVideoPlayer extends Component {
         super(props)
     }
     shouldComponentUpdate(nextProps,nextState){
-        return this.props.fullScreen !== nextProps.fullScreen
+        return this.props.fullScreen !== nextProps.fullScreen || 
+        this.props.video !== nextProps.video
     }
     render(){
         return <View

@@ -1118,7 +1118,11 @@ export default class VideoController extends Component {
                         onLoad={this.events.onLoad}
                         onEnd={this.events.onEnd}
 
-                        style={[styles.player.video, this.styles.videoStyle]}
+                        style={[styles.player.video, {
+                            overflow: 'hidden',
+                            height: '100%',
+                            width:"100%",
+                            position: 'absolute',}, this.styles.videoStyle]}
 
                         source={this.props.source}
                     />
