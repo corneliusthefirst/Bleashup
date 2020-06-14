@@ -2,11 +2,10 @@
 import React, { Component } from 'react';
 
 import {
-    StyleSheet, Text, TouchableOpacity, View, ScrollView, Alert, Vibration, Platform
+    StyleSheet, Text, TouchableOpacity, View, ScrollView, Alert, Vibration, Platform, TouchableWithoutFeedback
 } from 'react-native';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import { Icon, Right, Spinner, Toast } from 'native-base';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import GState from '../../../stores/globalState';
 import FileViewer from 'react-native-file-viewer';
 import FileExachange from '../../../services/FileExchange';

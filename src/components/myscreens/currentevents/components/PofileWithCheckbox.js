@@ -1,9 +1,8 @@
 import React, { PureComponent } from 'react';
 
-import { TouchableOpacity, View } from "react-native"
+import { TouchableOpacity, View, TouchableWithoutFeedback } from "react-native"
 import { Icon } from 'native-base';
 import ProfileView from '../../invitations/components/ProfileView';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 export default class ProfileWithCheckBox extends PureComponent {
     constructor(props) {

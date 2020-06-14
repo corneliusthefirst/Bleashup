@@ -6,7 +6,6 @@ import Relation from "./Relation"
 import { observer } from 'mobx-react';
 import BleashupScrollView from '../../../BleashupScrollView.js';
 import BleashupFlatList from '../../../BleashupFlatList';
-import Orientation from 'react-native-orientation-locker';
 import { ReactNativeZoomableView } from '@dudigital/react-native-zoomable-view';
 import Image from 'react-native-scalable-image';
 import { Icon, ActionSheet } from 'native-base';
@@ -73,7 +72,6 @@ export default class CurrentEvents extends Component {
         })
     }
     componentWillMount() {
-        Orientation.unlockAllOrientations();
         //BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this))
     }
     //handleBackButton() {

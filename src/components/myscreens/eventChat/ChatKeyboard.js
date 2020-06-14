@@ -1,39 +1,41 @@
-import React, { PureComponent } from "react"
-import { View, 
-    TouchableOpacity, 
-    Keyboard, 
-    Image, 
+import React, { PureComponent } from "react";
+import {
+    View,
+    TouchableOpacity,
+    Keyboard,
+    Image,
     UIManager,
-    Platform, 
-    LayoutAnimation} from 'react-native';
+    Platform,
+    LayoutAnimation,
+} from "react-native";
 import ImojieSelector from "./ImojiSelector";
-import Pickers from '../../../services/Picker';
-import rounder from '../../../services/rounder';
+import Pickers from "../../../services/Picker";
+import rounder from "../../../services/rounder";
 import { Icon } from "native-base";
-import GState from '../../../stores/globalState/index';
+import GState from "../../../stores/globalState/index";
 import ReplyText from "./ReplyText";
-import toTitleCase from '../../../services/toTitle';
-import globalFunctions from '../../globalFunctions';
+import toTitleCase from "../../../services/toTitle";
+import globalFunctions from "../../globalFunctions";
 import stores from "../../../stores";
-import BleashupFlatList from '../../BleashupFlatList';
-import ProfileSimple from '../currentevents/components/ProfileViewSimple';
+import BleashupFlatList from "../../BleashupFlatList";
+import ProfileSimple from "../currentevents/components/ProfileViewSimple";
 import AudioRecorder from "./AudioRecorder";
 import GrowingInput from "./GrowingInput";
-import ColorList from '../../colorList';
-import uuid from 'react-native-uuid';
+import ColorList from "../../colorList";
+import uuid from "react-native-uuid";
 import moment from "moment";
-import ReactNativeZoomableView from '@dudigital/react-native-zoomable-view/src/ReactNativeZoomableView';
-import VideoController from './VideoController';
-import AudioFilePreviewer from "./AudioFilePreviewer";
 
+import AudioFilePreviewer from "./AudioFilePreviewer";
+import FilePreview from "./FilePreview";
+import PhotoPreview from "./PhotoPreviewer";
 
 export default class ChatKeyboard extends PureComponent {
     constructor(props) {
-        super(props)
+        super(props);
         this.state = {
-            textValue: ""
-        }
-        if (Platform.OS === 'android') {
+            textValue: "",
+        };
+        if (Platform.OS === "android") {
             UIManager.setLayoutAnimationEnabledExperimental(true);
         }
     }
@@ -45,7 +47,7 @@ export default class ChatKeyboard extends PureComponent {
     }
     sendMessageText(message) {
         if (this.state.showCaption) {
-            this._sendCaptionMessage()
+            this._sendCaptionMessage();
         } else if (this.state.showAudioRecorder) {
             this.refs.AudioRecorder.stopRecord();
         } else if (this.state.textValue !== "" && message !== "") {
@@ -61,16 +63,18 @@ export default class ChatKeyboard extends PureComponent {
                 created_at: moment().format(),
             };
             this.props.scrollToEnd();
-            stores.Messages.addMessageToStore(this.props.roomID, messager).then((data) => {
-                this._resetTextInput();
-                this.tags = null;
-                this.setState({
-                    textValue: "",
-                    replying: false,
-                    replyContent: null,
-                });
-                this.animateLayout()
-            });
+            stores.Messages.addMessageToStore(this.props.roomID, messager).then(
+                (data) => {
+                    this._resetTextInput();
+                    this.tags = null;
+                    this.setState({
+                        textValue: "",
+                        replying: false,
+                        replyContent: null,
+                    });
+                    this.animateLayout();
+                }
+            );
         } else {
         }
     }
@@ -99,21 +103,25 @@ export default class ChatKeyboard extends PureComponent {
                 created_at: moment().format(),
             };
             stores.Messages.addMessageToStore(this.props.roomID, message).then(() => {
-                this._resetTextInput()
-                this.setState({
-                    newMessage: true,
-                    textValue: "",
-                    audioSouce: null,
-                    audio: false,
-                    replying: false,
-                    replyContent: null,
-                });
-                this.tags = null
-                this.focus()
+                this._resetTextInput();
+                this.clearCaption()
+                this.tags = null;
+                this.focus();
                 this.props.initialzeFlatList();
-                this.animateLayout()
+                this.animateLayout();
             });
         }
+    }
+    clearCaption() {
+        this.setState({
+            newMessage: true,
+            textValue: "",
+            audioSouce: null,
+            showCaption: false,
+            audio: false,
+            replying: false,
+            replyContent: null,
+        });
     }
     _onChange(event) {
         let text = event.nativeEvent.text;
@@ -123,26 +131,27 @@ export default class ChatKeyboard extends PureComponent {
                 tagging: true,
             });
         }
-        //this.props.setTyingState(/*this.sender*/);
-        this.props.adjutRoomDisplay();
-        this.animateLayout()
+        this.props.setTyingState(this.props.sender);
+        this.animateLayout();
     }
     imojiInput() {
-        return <ImojieSelector
-            handleEmojiSelected={this.handleEmojiSelected.bind(this)}
-        >
-        </ImojieSelector>
+        return (
+            <ImojieSelector
+                handleEmojiSelected={this.handleEmojiSelected.bind(this)}
+            ></ImojieSelector>
+        );
     }
-    animateLayout(){
+    animateLayout(focus) {
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-        let i = 0
-      this.animationInterval =  setInterval(() => {
-            if(i >= 5){
-                clearInterval(this.animationInterval)
+        let i = 0;
+        this.animationInterval = setInterval(() => {
+            if (i >= 5) {
+                clearInterval(this.animationInterval);
+                focus && this.focus();
             }
-            this.props.adjutRoomDisplay()
-            i = i + 1
-        },50)
+            this.props.adjutRoomDisplay();
+            i = i + 1;
+        }, 50);
     }
     handleEmojiSelected(e) {
         this.setState({
@@ -161,13 +170,11 @@ export default class ChatKeyboard extends PureComponent {
         this.setState({
             textValue: currentText.join("@"),
         });
-        this.animateLayout()
+        this.animateLayout();
     }
     formSerachableMembers() {
         stores.TemporalUsersStore.getUsers(
-            this.props.members ?
-                this.props.members.map((ele) => ele.phone) :
-                [],
+            this.props.members ? this.props.members.map((ele) => ele.phone) : [],
             [],
             (users) => {
                 this.searchableMembers = users;
@@ -238,7 +245,7 @@ export default class ChatKeyboard extends PureComponent {
             replyContent: null,
         });
         this.props.adjutRoomDisplay();
-        this.animateLayout()
+        this.animateLayout();
     }
     replyMessageCaption() {
         return (
@@ -254,7 +261,7 @@ export default class ChatKeyboard extends PureComponent {
                     openReply={(replyer) => {
                         replyer.type_extern
                             ? this.props.handleReplyExtern(replyer)
-                            : this.props.handleReply(replyer)
+                            : this.props.handleReply(replyer);
                     }}
                     pressingIn={() => { }}
                     showProfile={(pro) => this.props.showProfile(pro)}
@@ -274,7 +281,7 @@ export default class ChatKeyboard extends PureComponent {
                         name={"close"}
                         type={"EvilIcons"}
                         style={{
-                            fontSize:15,
+                            fontSize: 15,
                             alignSelf: "center",
                         }}
                     ></Icon>
@@ -283,10 +290,10 @@ export default class ChatKeyboard extends PureComponent {
         );
     }
     focus() {
-        this._textInput.focus()
+        this._textInput.focus();
     }
     blur() {
-        this._textInput.blur()
+        this._textInput.blur();
     }
     replying(replyer, color) {
         this.setState({
@@ -296,16 +303,17 @@ export default class ChatKeyboard extends PureComponent {
             replyerBackColor: color,
         });
         this.props.adjutRoomDisplay();
-        this.animateLayout()
+        this.animateLayout();
     }
     openCamera() {
-        this.blur()
+        this.blur();
         Pickers.SnapPhoto("all").then((snap) => {
             let isVideo = snap.content_type.includes("video") ? true : false;
             this.setState({
                 video: snap.source,
                 image: snap.source,
                 audio: false,
+                file: false,
                 audioSouce: false,
                 showCaption: true,
                 imageSelected: isVideo ? false : true,
@@ -314,44 +322,47 @@ export default class ChatKeyboard extends PureComponent {
                 content_type: snap.content_type,
                 size: snap.size,
             });
-            this.props.markAsRead();
-            this.activateKeyboard()
-            this.animateLayout()
+            this.animateLayout(true);
         });
     }
     _sendCaptionMessage() {
-        if (this.state.audioSouce) {
-            this.sendAudioMessge(this.state.audioSouce, this.duration)
+        if (this.state.file) {
+            this.sendFileMessage();
+        } else if (this.state.audioSouce) {
+            this.sendAudioMessge(this.state.audioSouce, this.duration);
         } else {
-            this.props.scrollToEnd();
-            let message = {
-                id: uuid.v1(),
-                type: (this.state.imageSelected ? "photo" : "video") + "_upload",
-                source: this.state.imageSelected ? this.state.image : this.state.video,
-                sender: this.props.sender,
-                tags: this.tags,
-                reply: this.state.replyContent,
-                created_at: moment().format(),
-                total: this.state.size,
-                send: 0,
-                content_type: this.state.content_type,
-                filename: this.state.filename,
-                text: this.state.textValue,
-            };
-            stores.Messages.addMessageToStore(this.props.roomID, message).then(() => {
-                this.tags = null;
-                this.props.initialzeFlatList();
-            });
-            this.setState({
-                textValue: "",
-                replyContent: null,
-                replying: false,
-                showEmojiInput: false,
-                showCaption: false,
-                showVideo: false,
-            });
-            this.animateLayout()
+            this.sendMedia();
         }
+    }
+    sendMedia() {
+        this.props.scrollToEnd();
+        let message = {
+            id: uuid.v1(),
+            type: (this.state.imageSelected ? "photo" : "video") + "_upload",
+            source: this.state.imageSelected ? this.state.image : this.state.video,
+            sender: this.props.sender,
+            tags: this.tags,
+            reply: this.state.replyContent,
+            created_at: moment().format(),
+            total: this.state.size,
+            send: 0,
+            content_type: this.state.content_type,
+            filename: this.state.filename,
+            text: this.state.textValue,
+        };
+        stores.Messages.addMessageToStore(this.props.roomID, message).then(() => {
+            this.tags = null;
+            this.props.initialzeFlatList();
+        });
+        this.setState({
+            textValue: "",
+            replyContent: null,
+            replying: false,
+            showEmojiInput: false,
+            showCaption: false,
+            showVideo: false,
+        });
+        this.animateLayout();
     }
     toggleAudioRecorder() {
         this.setState({
@@ -364,8 +375,8 @@ export default class ChatKeyboard extends PureComponent {
                 this._textInput.focus();
                 this.refs.AudioRecorder.startRecorder();
             }
-        })
-        this.animateLayout()
+        });
+        this.animateLayout();
     }
     pickMultiplePhotos() {
         Pickers.TakeManyPhotos()
@@ -384,13 +395,14 @@ export default class ChatKeyboard extends PureComponent {
                         content_type: res.content_type,
                         filename: res.filename,
                     };
-                    stores.Messages.addMessageToStore(this.props.roomID, message).then(() => {
-                        this.setState({
-                            newMessage: true,
-                        });
-                        this.props.initialzeFlatList();
-                        this.props.markAsRead();
-                    });
+                    stores.Messages.addMessageToStore(this.props.roomID, message).then(
+                        () => {
+                            this.setState({
+                                newMessage: true,
+                            });
+                            this.props.initialzeFlatList();
+                        }
+                    );
                 });
             })
             .catch((error) => {
@@ -429,339 +441,352 @@ export default class ChatKeyboard extends PureComponent {
             },
             this.state.keyboardOpened ? 200 : 0
         );
-        this.animateLayout()
+        this.animateLayout();
     }
     showAudio() {
         this.toggleAudioRecorder();
         this.props.adjutRoomDisplay();
-
     }
     tags = null;
     resetImoji() {
         setTimeout(() => {
             this.setState({
-                showEmojiInput: false
-            })
+                showEmojiInput: false,
+            });
             //this.props.adjutRoomDisplay()
-        }, 190)
-        this.animateLayout()
+        }, 190);
+        this.animateLayout();
     }
     hideCaption() {
         this.setState({
             showCaption: false,
             audio: false,
-            audioSouce: null
-        })
-        this.animateLayout()
+            file: false,
+            audioSouce: null,
+        });
+        this.animateLayout();
     }
-    filename = ""
-    logOutZoomState = (event, gestureState, zoomableViewEventObject) => { };
+    filename = "";
     async pickAudio() {
-        this.blur()
+        this.blur();
         const res = await Pickers.TakeAudio();
         this.setState({
             audioSouce: res.uri,
             showCaption: true,
-            audio: true
+            filename: res.name,
+            size: res.size,
+            file: false,
+            audio: true,
         });
         this.duration = 0;
-        this.props.initialzeFlatList()
-        //this.sendAudioMessge(temp, this.duration);
-        this.activateKeyboard()
-        this.animateLayout()
+        this.props.initialzeFlatList();
+        this.animateLayout(true);
     }
     activateKeyboard() {
         setTimeout(() => {
-            this.focus()
-        })
+            this.focus();
+        });
     }
     async pickFile() {
-        this.blur()
+        this.blur();
         const res = await Pickers.TakeFile();
+        console.warn(res)
+        this.setState({
+            showCaption: true,
+            file: true,
+            audio: false,
+            type: res.type,
+            filename: res.name,
+            source: res.uri,
+            size: typeof res.size == "function" ? res.size() : res.size,
+        });
+        this.animateLayout(true);
+    }
+    sendFileMessage() {
         this.props.scrollToEnd();
         message = {
             id: uuid.v1(),
-            source: res.uri,
-            file_name: res.name,
+            source: this.state.source,
+            file_name: this.state.filename,
             reply: this.state.replyContent,
             sender: this.props.sender,
-            //user: this.user,
-            creator: 2,
+            content_type: this.state.type,
+            text: this.state.textValue,
             type: "attachement_upload",
             received: 0,
-            total: res.size,
+            total: this.state.size,
             created_at: moment().format(),
         };
-        stores.Messages.addMessageToStore(this.props.roomID, message).then((data) => {
-            this.props.initialzeFlatList();
-        });
+        stores.Messages.addMessageToStore(this.props.roomID, message).then(
+            (data) => {
+                this.props.initialzeFlatList();
+                this.clearCaption()
+            }
+        );
+        this.animateLayout();
     }
-    hideAudioCaption(){
+    hideAudioCaption() {
         this.setState({
-            audio:false,
-            audioSouce:false,
-            showCaption:false
-        })
-        this.animateLayout()
+            audio: false,
+            audioSouce: false,
+            showCaption: false,
+        });
+        this.animateLayout();
+    }
+    closeIcon() {
+        return (
+            <Icon
+                name="close"
+                style={{
+                    fontSize: 15,
+                }}
+                type={"EvilIcons"}
+            ></Icon>
+        );
+    }
+    closeStyle = {
+        position: "absolute",
+        ...rounder(15,
+            ColorList.bodyBackground),
+        alignItems: "center",
+        textAlign: "center",
+        justifyContent: "center",
+        alignSelf: "flex-end",
+    };
+    hideFileCaption() {
+        this.setState({
+            showCaption: false,
+            file: false,
+            filename: null,
+            source: null,
+        });
+        this.animateLayout();
     }
     showMedia() {
-        return this.state.audio ? <View><AudioFilePreviewer source={this.state.audioSouce}
-
-        >
-        </AudioFilePreviewer><TouchableOpacity
-        onPress={() => this.hideAudioCaption()}
-         style={{
-            position: 'absolute',
-            ...rounder(15, ColorList.bodyBackground),
-            alignItems: 'center', textAlign: 'center',
-            justifyContent: 'center',
-            alignSelf: 'flex-end',
-        }}><Icon name="close"
-        style={{
-            fontSize: 15,
-        }}
-            type={"EvilIcons"}></Icon></TouchableOpacity>
-        </View> : !this.state.showVideo ? <View style={{
-            height: 300, width: '100%',
-        }}><ReactNativeZoomableView
-            style={{
-                height: 300,
-                width: '100%'
-            }}
-            maxZoom={1}
-            minZoom={0.5}
-            zoomStep={0.5}
-            initialZoom={1}
-            bindToBorders={true}
-            onZoomAfter={this.logOutZoomState}
-        >
-                <Image
-                    resizeMode={"contain"}
-                    style={{ flex: 1, width: '100%', height: '100%' }}
-                    source={{ uri: this.state.image }}>
-                </Image>
-            </ReactNativeZoomableView>
-            <TouchableOpacity
-                onPress={() => requestAnimationFrame(this.hideCaption.bind(this))}
-                style={{
-                    position: 'absolute',
-                    ...rounder(15, ColorList.bodyBackground),
-                    alignSelf: 'flex-end',
-                    justifyContent: 'center',
-                    justifyContent: 'center',
-                    textAlign: 'center'
-                }}><Icon
-                    name="close"
-                    type="EvilIcons" style={{
-                        fontSize:15,
-                    }}></Icon></TouchableOpacity>
-        </View> :
-                <View style={{ width: '100%', height: 300 }}>
-                    <VideoController
-                        source={{ uri: this.state.video }}
-                        resizeMode={"contain"}
-                        disableVolume={true}
-                        seekColor={ColorList.indicatorColor}
-                        disableFullscreen={true}
-                        onBack={() => this.hideCaption()}
-                        style={{
-                            width: '100%',
-                            height: '100%',
-                            borderTopRightRadius: 5,
-                            borderTopLeftRadius: 5,
-                        }}
-                        videoStyle={{
-                            alignItems: "center",
-                            height: "100%",
-                            width: "100%",
-                            top: 0,
-                            left: 0,
-                            bottom: 0,
-                            right: 0,
-                        }}
-                    >
-                    </VideoController>
-                </View>
+        return this.state.file ? (
+            <View>
+                <FilePreview
+                    filename={this.state.filename}
+                    source={this.state.source}
+                    size={this.state.size}
+                ></FilePreview>
+                <TouchableOpacity
+                    onPress={() => this.hideFileCaption()}
+                    style={this.closeStyle}
+                >
+                    {this.closeIcon()}
+                </TouchableOpacity>
+            </View>
+        ) : this.state.audio ? (
+            <View>
+                <AudioFilePreviewer
+                    filename={this.state.filename}
+                    size={this.state.size}
+                    source={this.state.audioSouce}></AudioFilePreviewer>
+                <TouchableOpacity
+                    onPress={() => this.hideAudioCaption()}
+                    style={this.closeStyle}
+                >
+                    {this.closeIcon()}
+                </TouchableOpacity>
+            </View>
+            ) : <PhotoPreview 
+            image={this.state.image}
+            showVideo={this.state.showVideo} 
+            video={this.state.video} 
+            hideCaption={this.hideCaption.bind(this)}>
+                </PhotoPreview>
     }
     render() {
-        return <View>
-            <View
-                style={{
-                    alignItems: "center",
-                    borderColor: "gray",
-                    padding: "1%",
-                    width: "99%",
-                }}
-            >
+        return (
+            <View>
                 <View
                     style={{
-                        flexDirection: "row",
-                        alignSelf: "center",
-                        alignSelf: "center",
-                        width: ColorList.containerWidth - 8,
+                        alignItems: "center",
+                        borderColor: "gray",
+                        padding: "1%",
+                        width: "99%",
                     }}
                 >
                     <View
                         style={{
-                            width: "86%",
-                            fontSize: 17,
-                            bottom: 0,
                             flexDirection: "row",
-                            justifyContent: "space-between",
-                            borderColor: "#1FABAB",
-                            borderWidth: 0,
-                            borderRadius: 10,
+                            alignSelf: "center",
+                            alignSelf: "center",
+                            width: ColorList.containerWidth - 8,
                         }}
                     >
+                        <View
+                            style={{
+                                width: "86%",
+                                fontSize: 17,
+                                bottom: 0,
+                                flexDirection: "row",
+                                justifyContent: "space-between",
+                                borderColor: "#1FABAB",
+                                borderWidth: 0,
+                                borderRadius: 10,
+                            }}
+                        >
+                            <TouchableOpacity
+                                onPress={() => requestAnimationFrame(() => this.openCamera())}
+                                style={{
+                                    width: "12%",
+                                    alignSelf: "flex-end",
+                                    bottom: 2,
+                                    padding: "1%",
+                                }}
+                            >
+                                <View
+                                    style={{
+                                        alignItems: "center",
+                                        ...rounder(30, ColorList.indicatorColor),
+                                    }}
+                                >
+                                    <Icon
+                                        style={{
+                                            color: ColorList.bodyBackground,
+                                            fontSize: 20,
+                                        }}
+                                        type={"MaterialCommunityIcons"}
+                                        name={"image-filter"}
+                                    ></Icon>
+                                </View>
+                            </TouchableOpacity>
+                            <View
+                                style={{
+                                    width: "88%",
+                                    flexDirection: "column",
+                                    borderRadius: 25,
+                                    backgroundColor: ColorList.bodyBackground,
+                                    borderWidth: 0.2,
+                                    borderColor: "grey",
+                                    borderTopLeftRadius:
+                                        this.state.replying ||
+                                            this.state.tagging ||
+                                            this.state.showAudioRecorder ||
+                                            this.state.showCaption
+                                            ? 5
+                                            : 25,
+                                    borderTopRightRadius:
+                                        this.state.replying ||
+                                            this.state.tagging ||
+                                            this.state.showAudioRecorder ||
+                                            this.state.showCaption
+                                            ? 5
+                                            : 25,
+                                }}
+                            >
+                                {
+                                    //* Reply Message caption */
+                                    this.state.replying ? this.replyMessageCaption() : null
+                                }
+                                {this.state.showCaption ? this.showMedia() : null}
+                                {
+                                    //* Tagger component @Giles e.g *//
+                                    this.state.tagging ? this.tagger() : null
+                                }
+                                {
+                                    // ******************** Audio Recorder Input ************************//
+
+                                    this.audioRecorder()
+                                }
+                                <GrowingInput
+                                    onFocus={this.resetImoji.bind(this)}
+                                    _onChange={this._onChange.bind(this)}
+                                    animateLayout={() =>
+                                        LayoutAnimation.configureNext(
+                                            LayoutAnimation.Presets.easeInEaseOut
+                                        )
+                                    }
+                                    textValue={this.state.textValue}
+                                    ref={(r) => {
+                                        this._textInput = r;
+                                    }}
+                                ></GrowingInput>
+                                <TouchableOpacity
+                                    style={{
+                                        width: "16%",
+                                        position: "absolute",
+                                        bottom: 10,
+                                        right: 5,
+                                    }}
+                                    onPress={() =>
+                                        requestAnimationFrame(() => {
+                                            this.toggleEmojiKeyboard();
+                                        })
+                                    }
+                                >
+                                    <Icon
+                                        style={{
+                                            color: "gray",
+                                            alignSelf: "flex-end",
+                                            fontSize: 20,
+                                        }}
+                                        type="Entypo"
+                                        name="emoji-flirt"
+                                    ></Icon>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+
                         <TouchableOpacity
-                            onPress={() =>
-                                requestAnimationFrame(() =>
-                                    this.openCamera()
-                                )}
                             style={{
                                 width: "12%",
-                                alignSelf: 'flex-end',
+                                alignSelf: "flex-end",
+                                alignItems: "center",
                                 bottom: 2,
                                 padding: "1%",
                             }}
+                            onPress={() =>
+                                requestAnimationFrame(() => {
+                                    !this.state.textValue &&
+                                        !this.state.showAudioRecorder &&
+                                        !this.state.showCaption
+                                        ? this.showAudio()
+                                        : this.sendMessageText(this.state.textValue);
+                                })
+                            }
                         >
-                            <View style={{
-                                alignItems: 'center',
-                                ...rounder(30, ColorList.indicatorColor)
-                            }}>
-                                <Icon
-                                    style={{
-                                        color: ColorList.bodyBackground,
-                                        fontSize: 20,
-                                    }}
-                                    type={"MaterialCommunityIcons"}
-                                    name={"image-filter"}
-                                ></Icon>
+                            <View
+                                style={{
+                                    alignSelf: "flex-end",
+                                    ...rounder(30, ColorList.senTBoxColor),
+                                    alignItems: "center",
+                                }}
+                            >
+                                {!this.state.textValue &&
+                                    !this.state.showAudioRecorder &&
+                                    !this.state.showCaption ? (
+                                        <Icon
+                                            style={{
+                                                color: ColorList.bodyIcon,
+                                                fontSize: 23,
+                                                alignSelf: "center",
+                                            }}
+                                            type={"FontAwesome5"}
+                                            name={"microphone-alt"}
+                                        ></Icon>
+                                    ) : (
+                                        <Icon
+                                            style={{
+                                                color: ColorList.bodyIcon,
+                                                fontSize: 23,
+                                                alignSelf: "center",
+                                            }}
+                                            name="md-send"
+                                            type="Ionicons"
+                                        ></Icon>
+                                    )}
                             </View>
                         </TouchableOpacity>
-                        <View
-                            style={{
-                                width: "88%",
-                                flexDirection: "column",
-                                borderRadius: 25,
-                                backgroundColor: ColorList.bodyBackground,
-                                borderWidth: 0.2,
-                                borderColor: "grey",
-                                borderTopLeftRadius:
-                                    this.state.replying ||
-                                        this.state.tagging ||
-                                        this.state.showAudioRecorder ||
-                                        this.state.showCaption
-                                        ? 5
-                                        : 25,
-                                borderTopRightRadius:
-                                    this.state.replying ||
-                                        this.state.tagging ||
-                                        this.state.showAudioRecorder ||
-                                        this.state.showCaption
-                                        ? 5
-                                        : 25,
-                            }}
-                        >
-                            {
-                                //* Reply Message caption */
-                                this.state.replying ? this.replyMessageCaption() : null
-                            }
-                            {
-                                this.state.showCaption ? this.showMedia() : null
-                            }
-                            {
-                                //* Tagger component @Giles e.g *//
-                                this.state.tagging ? this.tagger() : null
-                            }
-                            {
-                                // ******************** Audio Recorder Input ************************//
-
-                                this.audioRecorder()
-                            }
-                            <GrowingInput
-                                onFocus={this.resetImoji.bind(this)}
-                                _onChange={this._onChange.bind(this)}
-                                animateLayout={() => LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)}
-                                textValue={this.state.textValue}
-                                ref={(r) => {
-                                    this._textInput = r;
-                                }}>
-                            </GrowingInput>
-                            <TouchableOpacity
-                                style={{
-                                    width: "16%",
-                                    position: "absolute",
-                                    bottom: 10,
-                                    right: 5,
-                                }}
-                                onPress={() => requestAnimationFrame(() => {
-                                    this.toggleEmojiKeyboard();
-                                })}
-                            >
-                                <Icon
-                                    style={{
-                                        color: "gray",
-                                        alignSelf: "flex-end",
-                                        fontSize: 20,
-                                    }}
-                                    type="Entypo"
-                                    name="emoji-flirt"
-                                ></Icon>
-                            </TouchableOpacity>
-                        </View>
                     </View>
-
-                    <TouchableOpacity
-                        style={{
-                            width: "12%",
-                            alignSelf: 'flex-end',
-                            alignItems: 'center',
-                            bottom: 2,
-                            padding: "1%",
-                        }}
-                        onPress={() => requestAnimationFrame(() => {
-                            (!this.state.textValue &&
-                                !this.state.showAudioRecorder && !this.state.showCaption) ?
-                                this.showAudio() :
-                                this.sendMessageText(this.state.textValue);
-                        })}
-                    >
-                        <View style={{
-                            alignSelf: 'flex-end',
-                            ...rounder(30, ColorList.senTBoxColor),
-                            alignItems: 'center',
-                        }}>{!this.state.textValue &&
-                            !this.state.showAudioRecorder &&
-                            !this.state.showCaption ? (
-                                <Icon
-                                    style={{
-                                        color: ColorList.bodyIcon,
-                                        fontSize: 23,
-                                        alignSelf: "center",
-                                    }}
-                                    type={"FontAwesome5"}
-                                    name={"microphone-alt"}
-                                ></Icon>
-                            ) : (
-                                <Icon
-                                    style={{
-                                        color: ColorList.bodyIcon,
-                                        fontSize: 23,
-                                        alignSelf: "center"
-                                    }}
-                                    name="md-send"
-                                    type="Ionicons"
-                                ></Icon>
-                            )}
-                        </View>
-                    </TouchableOpacity>
+                    {
+                        // ***************** Emoji keyBoard Input ***********************//
+                        this.state.showEmojiInput ? this.imojiInput() : null
+                    }
                 </View>
-                {
-                    // ***************** Emoji keyBoard Input ***********************//
-                    this.state.showEmojiInput ? this.imojiInput() : null
-                }
             </View>
-        </View>
+        );
     }
 }

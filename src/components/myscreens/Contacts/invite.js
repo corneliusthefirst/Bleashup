@@ -3,7 +3,6 @@ import stores from "../../../stores";
 import Modal from 'react-native-modalbox';
 import { View,Dimensions,TouchableWithoutFeedback,TouchableOpacity,Image,TextInput,Linking} from "react-native";
 import { Title ,Text,Label,Input,Icon,Button,Thumbnail} from "native-base";
-//import { TextInput } from "react-native-gesture-handler";
 import { filter,map,find} from "lodash";
 import Message from "../eventChat/Message";
 import colorList from '../../colorList';

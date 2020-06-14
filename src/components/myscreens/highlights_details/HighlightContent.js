@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import Image from "react-native-scalable-image"
-import { View, TouchableWithoutFeedback, Slider } from "react-native"
+import { View, TouchableWithoutFeedback, TouchableOpacity } from "react-native"
 import { Icon, Button, Text, Right } from 'native-base';
 import TextContent from '../eventChat/TextContent';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import converToHMS from './convertToHMS';
 import SimpleAudioPlayer from './SimpleAudioPlayer';
 import shadower from '../../shadower';

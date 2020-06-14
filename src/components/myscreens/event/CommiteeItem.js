@@ -9,9 +9,8 @@ import {
     Thumbnail,
     Title,
 } from "native-base";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import stores from "../../../stores";
-import { View, TouchableWithoutFeedback } from "react-native";
+import { View, TouchableWithoutFeedback, TouchableOpacity } from "react-native";
 import { find, isEqual } from "lodash";
 import EditNameModal from "./EditNameModal";
 import emitter from "../../../services/eventEmiter";

@@ -1,6 +1,5 @@
 import React, { Component } from "react"
-import { TouchableOpacity, View, Dimensions, } from 'react-native';
-import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import { TouchableOpacity, View, Dimensions, TouchableWithoutFeedback } from 'react-native';
 import { Card, CardItem, Text, Icon, Button } from 'native-base';
 import GState from '../../../stores/globalState';
 import emitter from '../../../services/eventEmiter';

@@ -51,7 +51,7 @@ export default class PhotoMessage extends Component {
                     }}
                     onPress={() => this.props.showPhoto(this.props.message.photo)}>
                     <CacheImages hasJoin onOpen={() => { }}
-                        source={{ uri: this.props.message.photo }} square thumbnails style={{ alignSelf: 'flex-start', width: 295, height: 248, }} borderRadius={5}>
+                        source={{ uri: this.props.message.photo }} square thumbnails style={{ alignSelf: 'flex-start', width: 200, height: 248, }} borderRadius={5}>
                     </CacheImages>
                 </TouchableWithoutFeedback>
                 {this.props.message.text ?

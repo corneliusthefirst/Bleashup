@@ -4,7 +4,6 @@ import android.app.Application;
 import com.facebook.react.ReactApplication;
 import com.reactnativecommunity.rnpermissions.RNPermissionsPackage;
 import org.reactnative.camera.RNCameraPackage;
-import com.swmansion.reanimated.ReanimatedPackage;
 import com.horcrux.svg.SvgPackage;
 import com.reactnative.ivpusic.imagepicker.PickerPackage;
 import com.arthenica.reactnative.RNFFmpegPackage; 
@@ -12,7 +11,6 @@ import io.invertase.firebase.database.RNFirebaseDatabasePackage;
 import io.invertase.firebase.RNFirebasePackage;
 import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
 import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage; // <-- Add this line
-import org.wonday.orientation.OrientationPackage;
 import com.calendarevents.CalendarEventsPackage;
 import com.reactcommunity.rndatetimepicker.RNDateTimePickerPackage;
 import io.invertase.firebase.auth.RNFirebaseAuthPackage; // <-- Add this line
@@ -24,7 +22,6 @@ import com.zmxv.RNSound.RNSoundPackage;
 import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.peel.react.TcpSocketsModule;
-import com.reactnativecommunity.netinfo.NetInfoPackage;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -33,7 +30,6 @@ import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
 import com.chirag.RNMail.*;  // <--- import 
 //import android.support.v7.app.AppCompatActivity;
-import com.imagepicker.ImagePickerPackage;
 import com.proyecto26.inappbrowser.RNInAppBrowserPackage;
 import java.util.Arrays;
 import java.util.List;
@@ -53,12 +49,10 @@ public class MainApplication extends Application implements ReactApplication {
             new MainReactPackage(),
             new RNPermissionsPackage(),
             new RNCameraPackage(),
-            new ReanimatedPackage(),
             new SvgPackage(),
             new RNFFmpegPackage(),
             new RNFirebasePackage(),
             new RNFirebaseAuthPackage(),
-            new OrientationPackage(),
             new RNFirebaseDatabasePackage(),
             new RNFirebaseNotificationsPackage(),
             new RNSoundRecorderPackage(),
@@ -74,10 +68,8 @@ public class MainApplication extends Application implements ReactApplication {
             new VectorIconsPackage(),
             new TcpSocketsModule(),
             new RNMail() ,
-            new NetInfoPackage(),
             new RNGestureHandlerPackage(),
             new RNFetchBlobPackage(),
-            new ImagePickerPackage(),
             new RNInAppBrowserPackage(),
             new ReactNativeContacts()
         );

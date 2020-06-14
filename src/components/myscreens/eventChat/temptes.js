@@ -24,7 +24,8 @@ import {
     StatusBar,
     ImageBackground,
     Vibration,
-    Clipboard,
+    Clipboard, TouchableWithoutFeedback,
+    ScrollView
 } from "react-native";
 
 import VideoPlayer from "./VideoController";
@@ -48,10 +49,6 @@ import { PulseIndicator } from "react-native-indicators";
 import ReplyText from "./ReplyText";
 import firebase from "react-native-firebase";
 import ChatStore from "../../../stores/ChatStore";
-import {
-    TouchableWithoutFeedback,
-    ScrollView,
-} from "react-native-gesture-handler";
 import stores from "../../../stores";
 import VerificationModal from "../invitations/components/VerificationModal";
 import GState from "../../../stores/globalState";

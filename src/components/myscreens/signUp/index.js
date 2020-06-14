@@ -32,8 +32,7 @@ import globalState from "../../../stores/globalState";
 import { observer } from "mobx-react";
 import moment from "moment";
 import firebase from 'react-native-firebase';
-import { TouchableOpacity } from "react-native-gesture-handler";
-import { BackHandler } from 'react-native';
+import { BackHandler, TouchableOpacity } from 'react-native';
 
 @observer
 export default class SignUpView extends Component {

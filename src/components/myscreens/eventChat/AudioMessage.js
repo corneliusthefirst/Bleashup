@@ -9,12 +9,12 @@ import {
     Alert,
     Slider,
     Vibration,
+    TouchableWithoutFeedback,
     Platform,
 } from "react-native";
 import Sound from "react-native-sound";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
 import { Icon, Right, Spinner, Toast } from "native-base";
-import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import GState from "../../../stores/globalState";
 import BarIndicat from "../../BarIndicat";
 import { BarIndicator } from "react-native-indicators";
@@ -239,6 +239,8 @@ export default class AudioMessage extends Component {
     playIconStyle = {
         marginTop: "auto",
         alignItems: 'center',
+        alignSelf: 'center',
+        width: '100%',
         marginBottom: "auto",
     };
     render() {
@@ -249,11 +251,11 @@ export default class AudioMessage extends Component {
         };
         return (
             <View
-                style={{ 
-                flexDirection: "column", 
-                alignItems: "center", 
-                width: 290,
-            }}
+                style={{
+                    flexDirection: "column",
+                    alignItems: "center",
+                    width: 290,
+                }}
             >
                 <TouchableWithoutFeedback
                     onLongPress={() =>
@@ -266,12 +268,12 @@ export default class AudioMessage extends Component {
                             flexDirection: "row",
                             backgroundColor: ColorList.bottunerLighter,
                             borderRadius: ColorList.chatboxBorderRadius,
-                            width: "97%",
+                            width: "100%",
                             alignItems: "center",
+                            marginTop: '1%',
                             paddingLeft: '1%',
                             alignSelf: "flex-end",
                             minHeight: 50,
-                            margin: "1%",
                             justifyContent: "space-between",
                         }}
                     >
@@ -306,7 +308,7 @@ export default class AudioMessage extends Component {
                                 </View>
                             </View>
                         ) : null}
-                        <View style={{ width: "10%", alignItems: "center" }}>
+                        <View style={{ width: this.props.message.duration ? "15%" : "100%", alignItems: "center" }}>
                             {testForURL(this.props.message.source) ? (
                                 <AnimatedCircularProgress
                                     size={40}
@@ -360,14 +362,14 @@ export default class AudioMessage extends Component {
                         </View>
                     </View>
                 </TouchableWithoutFeedback>
-                {this.props.message.text?<View style={{ margin: "1%", alignSelf: "flex-start" }}>
+                {this.props.message.text ? <View style={{ margin: "1%", alignSelf: "flex-start" }}>
                     <TextContent
                         text={this.props.message.text}
                         tags={this.props.message.tags}
                         handleLongPress={this.props.handleLongPress}
                         pressingIn={this.props.pressingIn}
                     ></TextContent>
-                </View>:null}
+                </View> : null}
             </View>
         );
     }

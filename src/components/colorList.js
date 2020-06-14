@@ -9,7 +9,7 @@ class colorlist {
 
     //container
     containerHeight = height
-    containerWidth = width
+    containerWidth = "100%"
     headerTextSize = 14
     containerBackground = "#1FABAB"
     redIcon='red'

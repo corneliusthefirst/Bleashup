@@ -4,7 +4,7 @@ import {
   Button, Toast,Thumbnail,Item,Input
 } from "native-base";
 
-import { StyleSheet, View, Image, TouchableOpacity, Dimensions, BackHandler } from 'react-native';
+import { StyleSheet, View, Image, TouchableOpacity, ScrollView, Dimensions, BackHandler } from 'react-native';
 import autobind from "autobind-decorator";
 import moment from "moment";
 import { head, find, } from "lodash";
@@ -228,7 +228,7 @@ resetPhoto = () => {
         
     </View>
 
-<View style={{height:"92%",flexDirection:"column"}}>
+<ScrollView style={{height:"92%",flexDirection:"column"}}>
 
         <View style={{marginTop:"5%",width:"80%",alignSelf:"center"}}>
           <CreateTextInput
@@ -292,7 +292,7 @@ resetPhoto = () => {
                }}  />
   
 
-  </View>
+  </ScrollView>
 </View>
 
         

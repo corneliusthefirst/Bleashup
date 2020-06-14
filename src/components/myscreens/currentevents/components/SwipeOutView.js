@@ -1,6 +1,5 @@
 import React, { Component } from "react";
-import { View } from 'react-native';
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { View, TouchableOpacity} from 'react-native';
 import UpdateStateIndicator from "./updateStateIndicator";
 import { List, ListItem, Icon, Label } from 'native-base';
 import InvitationModal from "./InvitationModal";

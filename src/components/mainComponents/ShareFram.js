@@ -1,10 +1,9 @@
 import React, { Component } from "react";
-import { View } from "react-native";
+import { View, TouchableOpacity} from "react-native";
 import ActivityProfile from "../myscreens/currentevents/components/ActivityProfile";
 import PhotoViewer from "../myscreens/event/PhotoViewer";
 import DetailsModal from "../myscreens/invitations/components/DetailsModal";
 import ColorList from "../colorList";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import { Icon, Text, CardItem, Card } from "native-base";
 import moment from 'moment';
 import { format } from '../../services/recurrenceConfigs';

@@ -6,7 +6,6 @@ import { View, Text, TouchableOpacity, Image } from 'react-native'
 import { Button, Icon, Card, CardItem, Right,Left } from 'native-base'
 import CacheImages from '../../../CacheImages';
 import autobind from "autobind-decorator";
-import { TouchableHighlight, ScrollView } from 'react-native-gesture-handler';
 import ImageActivityIndicator from '../../currentevents/imageActivityIndicator';
 import DeckSwiper from './deckswiper';
 

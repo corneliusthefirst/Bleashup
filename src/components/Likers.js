@@ -4,7 +4,6 @@ import { View } from "react-native"
 import ImageActivityIndicator from "./myscreens/currentevents/components/imageActivityIndicator";
 import UserService from "../services/userHttpServices"
 import ProfileView from "./myscreens/invitations/components/ProfileView";
-import { FlatList, TouchableOpacity, ScrollView } from "react-native-gesture-handler";
 import { observer } from "mobx-react";
 import Menu, { MenuDivider, MenuItem } from 'react-native-material-menu';
 import BleashupFlatList from './BleashupFlatList';

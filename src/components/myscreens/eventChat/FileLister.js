@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import shadower from '../../shadower';
-import { View,Dimensions} from "react-native"
+import { View, Dimensions, TouchableOpacity, TouchableWithoutFeedback} from "react-native"
 import CacheImages from '../../CacheImages';
 import BleashupFlatList from '../../BleashupFlatList';
-import { TouchableOpacity, TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import testForURL from '../../../services/testForURL';
 import { Thumbnail, Button, Icon, Text } from 'native-base';
 import moment from 'moment';

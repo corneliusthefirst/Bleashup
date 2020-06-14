@@ -147,9 +147,9 @@ export default class VideoMessage extends Component {
                                 borderRadius={5}
                                 source={{ uri: this.props.message.thumbnailSource }}
                                 photo={this.props.message.thumbnailSource}
-                                width={290} height={200}>
+                                width={200} height={250}>
                             </Image>
-                            <View style={{ position: 'absolute', marginTop: "25%", marginLeft: "45%", }}>
+                            <View style={{ position: 'absolute', marginTop: "50%", marginLeft: "45%", }}>
                                 <View style={{ ...buttoner }}>
                                     <TouchableOpacity
                                         onPress={() => this.props.playVideo(this.props.message.source)

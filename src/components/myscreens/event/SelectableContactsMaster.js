@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { View, TouchableHighlight } from 'react-native';
-import { TouchableWithoutFeedback, TouchableOpacity } from 'react-native-gesture-handler';
+import { View, TouchableHighlight, TouchableWithoutFeedback, TouchableOpacity } from 'react-native';
 import ProfileView from '../invitations/components/ProfileView';
 import { Icon, Text, Button } from 'native-base';
 import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';

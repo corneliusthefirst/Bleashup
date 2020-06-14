@@ -13,11 +13,12 @@ import {
     ImageBackground,
     Vibration,
     Clipboard,
+    TouchableWithoutFeedback,
+    ScrollView,
 } from "react-native";
 
 import VideoPlayer from "./VideoController";
 import Image from "react-native-scalable-image";
-import Orientation from "react-native-orientation-locker";
 import BleashupFlatList from "../../BleashupFlatList";
 import Message from "./Message";
 import {
@@ -32,10 +33,6 @@ import {
 } from "lodash";
 import moment from "moment";
 import firebase from "react-native-firebase";
-import {
-    TouchableWithoutFeedback,
-    ScrollView,
-} from "react-native-gesture-handler";
 import stores from "../../../stores";
 import ReactNativeZoomableView from '@dudigital/react-native-zoomable-view/src/ReactNativeZoomableView';
 import VerificationModal from "../invitations/components/VerificationModal";
@@ -61,6 +58,8 @@ import MessageActions from "./MessageActons";
 import replies from './reply_extern';
 import ChatKeyboard from "./ChatKeyboard";
 import ChatRoomHeader from "./ChatRoomHeader";
+import shadower from "../../shadower";
+import InChatVideoPlayer from "./InChatVideoPlayer";
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenheight = Math.round(Dimensions.get("window").height);
@@ -72,7 +71,7 @@ class ChatRoom extends Component {
         this.state = {
             isModalOpened: false,
             showHeader: !this.props.isComment,
-            messageListHeight: this.formHeight( 70 / screenheight),
+            messageListHeight: this.formHeight( 120 / screenheight),
             //this.formHeight((screenheight - 120) / screenheight),
         };
     }
@@ -379,7 +378,6 @@ class ChatRoom extends Component {
             }, 400)
         })
         this.props.isComment ? (stores.Messages.messages[this.roomID] = []) : null;
-        Orientation.lockToPortrait();
     }
     componentWillUnmount() {
         this.keyboardDidHideSub.remove()
@@ -413,10 +411,10 @@ class ChatRoom extends Component {
         });
     }
     hideVideo() {
-        Orientation.lockToPortrait();
         this.setState({
             showVideo: false,
             hideStatusBar: false,
+            fullScreen:false,
             showCaption: false,
         });
     }
@@ -450,9 +448,6 @@ class ChatRoom extends Component {
     }
     enterFullscreen() {
         Keyboard.dismiss();
-        this.state.fullScreen
-            ? Orientation.lockToPortrait()
-            : Orientation.lockToLandscapeLeft(); //this will unlock the view to all Orientations
         this.setState({
             fullScreen: !this.state.fullScreen,
         });
@@ -739,7 +734,7 @@ class ChatRoom extends Component {
                                     keyboardShouldPersistTaps={"always"}
                                     showsVerticalScrollIndicator={false}
                                     ref="scrollViewRef"
-                                    style={{ hieght: '100%', }}>
+                                    style={{ height: screenheight, }}>
                                     <View style={{ maxHeight: this.state.messageListHeight }}>
                                         <TouchableWithoutFeedback
                                             onPressIn={() => {
@@ -1220,61 +1215,14 @@ class ChatRoom extends Component {
     );
     VideoShower() {
         return (
-            <View
-                style={{
-                    height: this.state.fullScreen
-                        ? "100%"
-                        : this.state.keyboardOpened ||
-                            this.state.showEmojiInput ||
-                            this.state.showEmojiInputCaption
-                            ? this.state.replying
-                                ? 255
-                                : 300
-                            : 400,
-                    position: "absolute",
-                    width: this.state.fullScreen ? "100%" : screenWidth,
-                    backgroundColor: colorList.buttonerBackground,
-                    alignSelf: "center",
-                }}
-            >
-                {this.darkStatus()}
-                <VideoPlayer
-                    source={{ uri: this.state.video }} // Can be a URL or a local file.
-                    ref={(ref) => {
-                        this.videoPlayer = ref;
-                    }}
-                    onBuffer={() => this.buffering()} // Callback when remote video is buffering
-                    onError={(error) => {
-                        console.error(error);
-                    }}
-                    toggleResizeModeOnFullscreen={false}
-                    //pictureInPicture={true}
-                    resizeMode={"contain"}
-                    disableVolume={true}
-                    seekColor="#1FABAB"
-                    controlTimeout={null}
-                    //disablePlayPause={true}
-                    //disableFullscreen={true}
-                    onBack={() => this.hideVideo()}
-                    onEnterFullscreen={() => this.enterFullscreen()}
-                    onExitFullscreen={() => this.enterFullscreen()}
-                    fullscreenOrientation={"landscape"}
-                    //fullscreen={true}
-                    //controls={true}
-                    style={{
-                        backgroundColor: colorList.bodyBackground,
-                    }}
-                    videoStyle={{
-                        alignItems: "center",
-                        height: "100%",
-                        width: "100%",
-                        top: 0,
-                        left: 0,
-                        bottom: 0,
-                        right: 0,
-                    }} // Callback when video cannot be loaded
-                />
-            </View>
+           <InChatVideoPlayer
+           video={this.state.video}
+            fullScreen={this.props.fullScreen}
+            buffering={this.buffering.bind(this)}
+            enterFullscreen={this.enterFullscreen.bind(this)}
+            hideVideo={this.hideVideo.bind(this)}
+           >
+           </InChatVideoPlayer>
         );
     }
 

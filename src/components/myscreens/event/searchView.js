@@ -1,6 +1,5 @@
 import React, { Component } from "react";
-import { View, Animated, TouchableWithoutFeedback, Dimensions, PanResponder,ActivityIndicator } from 'react-native';
-import { TouchableOpacity, ScrollView } from "react-native-gesture-handler";
+import { View, Animated, TouchableWithoutFeedback,TouchableOpacity, ScrollView , Dimensions, PanResponder,ActivityIndicator } from 'react-native';
 import { Container, Header, Item, Input, Icon, Button, Text,Title,Thumbnail } from 'native-base';
 import BleashupFlatList from '../../BleashupFlatList';
 import testForURL from '../../../services/testForURL';

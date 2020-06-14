@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import {View} from "react-native"
+import { View, TouchableOpacity} from "react-native"
 import BleashupFlatList from '../../BleashupFlatList';
 import IntervalSeparator from './IntervalSeparator';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import ProfileView from '../invitations/components/ProfileView';
 import { Item } from 'native-base';
 

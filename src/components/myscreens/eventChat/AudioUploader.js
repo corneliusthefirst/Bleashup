@@ -9,13 +9,12 @@ import {
     Alert,
     Slider,
     Vibration,
-    Platform
+    Platform, TouchableWithoutFeedback
 } from 'react-native';
 import Sound from 'react-native-sound';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import { Icon, Right, Spinner, Toast } from 'native-base';
 import stores from '../../../stores';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import GState from '../../../stores/globalState';
 import FileExachange from '../../../services/FileExchange';
 import converToHMS from '../highlights_details/convertToHMS';
