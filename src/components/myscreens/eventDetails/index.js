@@ -91,8 +91,7 @@ export default class EventDetailView extends Component {
         participant: participant
       })
     })*/
-    let participant = find(this.props.Event.participant, { phone: stores.LoginStore.user.phone });
-    this.setState({newing:!this.state.newing,isMounted:true,participant: participant});
+    this.setState({newing:!this.state.newing,isMounted:true});
   }
   initialScrollIndexer = 2
   incrementer = 2
@@ -333,7 +332,7 @@ export default class EventDetailView extends Component {
                         showItem={(item) => {
                           this.props.showHighlight(item)
                         }}
-                        participant={this.state.participant}
+                        participant={find(this.props.Event.participant, { phone: stores.LoginStore.user.phone })}
                         parentComponent={this}
                         item={item}
                          />
