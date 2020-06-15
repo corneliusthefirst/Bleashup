@@ -118,13 +118,16 @@ export default class EventHighlights extends BleashupModal {
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.highlight_id !== this.props.highlight_id) {
       setTimeout(() => {
+        //console.warn('black check 1', this.props.highlight_id);
         stores.Highlights.readFromStore().then((Highlights) => {
           let highlight = find(Highlights[this.props.event_id], {
             id: this.props.highlight_id
               ? this.props.highlight_id
               : "newHighlightId",
           });
+          //console.warn('black check',highlight);
           this.previoushighlight = JSON.stringify(highlight);
+          console.warn('previous',this.previoushighlight);
           if (!this.props.event_id) {
             let event_id = "newEventId";
             stores.Highlights.fetchHighlights(event_id).then((Highlights) => {
@@ -268,29 +271,6 @@ export default class EventHighlights extends BleashupModal {
     //add the new highlights to global highlights
     newHighlight.creator = stores.LoginStore.user.phone;
     newHighlight.created_at = moment().format();
-    if (!this.props.event_id) {
-      stores.Highlights.addHighlight(newHighlight.event_id, newHighlight).then(() => {
-        stores.Events.addHighlight(newHighlight.id, newHighlight.event_id).then(
-          () => {
-            this.setState(
-              {
-                newing: !this.state.newing,
-                highlightData: [...this.state.highlightData, newHighlight],
-              },
-              () => {
-                console.log("after", this.state.highlightData);
-              }
-            );
-            this.resetHighlight();
-            stores.Highlights.removeHighlight(newHighlight.event_id, "newHighlightId").then(() => {
-              this.setState({
-                creating: false,
-              });
-            });
-          }
-        );
-      });
-    } else {
       this.props.startLoader();
       this.props.onClosed();
       if (
@@ -327,7 +307,6 @@ export default class EventHighlights extends BleashupModal {
         });
         this.props.stopLoader();
       }
-    }
   }
 
   @autobind

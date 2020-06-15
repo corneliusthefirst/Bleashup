@@ -1,3 +1,8 @@
+/* eslint-disable no-shadow */
+/* eslint-disable semi */
+/* eslint-disable react/no-string-refs */
+/* eslint-disable comma-dangle */
+/* eslint-disable prettier/prettier */
 import React, { Component } from "react";
 import {
   Content, Card, CardItem, Toast, Text, Spinner, Title, Icon
@@ -62,9 +67,8 @@ export default class EventDetailView extends Component {
       EventHighlightState: false,
       updateTitleState: false,
       viewdetail: false,
-
+      newing:false,
     }
-
   }
   state = {
 
@@ -72,27 +76,34 @@ export default class EventDetailView extends Component {
 
   @autobind
   initializer() {
-    let participant = find(this.props.Event.participant, { phone: stores.LoginStore.user.phone });
+    /*let participant = find(this.props.Event.participant, { phone: stores.LoginStore.user.phone });
+    stores.Highlights.readFromStore().then((H) => {
+       console.warn('here we see 1',H);
+    });
+
     stores.Highlights.fetchHighlights(this.props.Event.id).then(Highlights => {
-      this.setState({
-        highlightData: Highlights,
+        console.warn('here we see',Highlights);
+        this.setState({
+        highlightData: reject(Highlights,{id:'newHighlightId'}),
         creation_date: this.props.Event.created_at,
         isMounted: true,
         EventData: this.props.Event,
         participant: participant
       })
-    })
+    })*/
+    let participant = find(this.props.Event.participant, { phone: stores.LoginStore.user.phone });
+    this.setState({newing:!this.state.newing,isMounted:true,participant: participant});
   }
   initialScrollIndexer = 2
   incrementer = 2
   interval = 4000
   handleRefresh() {
     console.warn('receiving refresh highlights message')
-    stores.Highlights.fetchHighlights(this.props.Event.id).then(Higs => {
+    //stores.Highlights.fetchHighlights(this.props.Event.id).then(Higs => {
       this.setState({
-        highlightData: Higs
+        newing:this.state.newing
       })
-    })
+   // })
   }
   componentWillMount() {
     emitter.on(`refresh-highlights_${this.props.Event.id}`, this.handleRefresh.bind(this))
@@ -102,7 +113,8 @@ export default class EventDetailView extends Component {
   }
   componentDidMount() {
     //this.setState({ animateHighlight: true });
-    this.init()
+    //this.init()
+    this.initializer();
   }
   initShare() {
     this.sharStore = new Share(this.props.share.id)
@@ -133,9 +145,7 @@ export default class EventDetailView extends Component {
     //clearInterval(this.intervalID)
   }
   reinitializeHighlightsList(newHighlight) {
-    this.setState({
-      highlightData: [newHighlight].concat(this.state.highlightData)
-    })
+   this.init()
     this.sendUpdateHighlight()
   }
 
@@ -187,21 +197,27 @@ export default class EventDetailView extends Component {
   _getItemLayout = (data, index) => (
     { length: 100, offset: 100 * index, index }
   )
-  _keyExtractor = (item, index) => index.toString();
+  _keyExtractor = (item, index) => {
+    console.warn(item.id)
+    return item.index;
+  }
 
   updateHighlight(newHighlight, previousHighlight) {
+    console.warn('entered update h', newHighlight,previousHighlight);
     if (!this.props.working) {
-      this.props.startLoader()
-      Requester.applyAllHighlightsUpdate(newHighlight,
-        previousHighlight).then((response) => {
+      this.props.startLoader();
+      Requester.applyAllHighlightsUpdate(newHighlight,previousHighlight).then((response) => {
           if (response) {
             let index = findIndex(this.state.highlightData, { id: newHighlight.id })
-            this.state.highlightData[index] = newHighlight
+            console.warn('here again', index,newHighlight);
+            console.warn('here again 1', this.state.highlightData);
+            this.state.highlightData[index] = newHighlight;
             this.setState({
               highlightData: this.state.highlightData
             })
           }
-          this.props.stopLoader()
+          console.warn('ok');
+          this.props.stopLoader();
           this.sendUpdateHighlight()
         })
     } else {
@@ -237,14 +253,14 @@ export default class EventDetailView extends Component {
     a.created_at < b.created_at ? 1 : 0)
 
   renderPosts() {
+    //console.warn("render post", reject(stores.Highlights.highlights[this.props.Event.id],{id:'newHighlightId'}));
+    let data = reject(stores.Highlights.highlights[this.props.Event.id],{id:'newHighlightId'});
+   //console.warn("render post 1", data);
     return (!this.state.isMounted ? <View style={{ 
       height: colorList.containerHeight, 
       backgroundColor: colorList.bodyBackground, 
       width: '100%' 
     }}></View> :
-      (this.state.EventData.type == "relation" ?
-        (this.relationPost(this.state.EventData.id))
-        :
         <View style={{ flex: 1, width: "100%" }}>
 
           <View style={{ flexDirection: "row", ...bleashupHeaderStyle, height: colorList.headerHeight, width: colorList.headerWidth, backgroundColor: colorList.headerBackground }}>
@@ -270,24 +286,24 @@ export default class EventDetailView extends Component {
           <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled>
             <View style={{ minHeight: colorList.containerHeight - colorList.headerHeight, flexDirection: "column", width: "100%", justifyContent: 'center', }} >
               <View style={{
-                height: this.state.highlightData.length == 0 ? 0 :
-                  colorList.containerHeight - colorList.headerHeight,
+                height: colorList.containerHeight - colorList.headerHeight,
                 width: "100%", alignSelf: 'center',
                 justifyContent: 'center',
                 alignItems: 'center',
               }} >
 
-                {this.state.refresh ? <BleashupFlatList
+                 <BleashupFlatList
                   initialRender={4}
                   horizontal={false}
                   renderPerBatch={5}
                   firstIndex={0}
                   refHorizontal={(ref) => { this.detail_flatlistRef = ref }}
                   keyExtractor={this._keyExtractor}
-                  dataSource={this.state.highlightData.sort(this.sorter)}
-                  numberOfItems={this.state.highlightData.length}
+                  dataSource={data}
+                  numberOfItems={data.length}
                   parentComponent={this}
                   renderItem={(item, index) => {
+                    //console.warn("item is here", item)
                     this.delay = index >= 5 ? 0 : this.delay + 1
                     return (
                       <HighlightCard
@@ -297,10 +313,11 @@ export default class EventDetailView extends Component {
                         activity_name={this.props.Event.about.title}
                         delay={this.delay}
                         update={(hid) => {
+                          console.warn('here comes the id',hid);
                           this.setState({
                             EventHighlightState: true,
                             update: true,
-                            highlight_id: hid
+                            highlight_id: hid 
                           })
                         }}
                         mention={(replyer) => {
@@ -319,12 +336,11 @@ export default class EventDetailView extends Component {
                         participant={this.state.participant}
                         parentComponent={this}
                         item={item}
-                        ancien={true}
-                        ref={"higlightcard"} />
+                         />
                     );
                   }}
                 >
-                </BleashupFlatList> : null}
+                </BleashupFlatList>
               </View>
 
 
@@ -421,8 +437,6 @@ export default class EventDetailView extends Component {
 
         </View>
       )
-
-    )
   }
   renderSharedPost() {
     return this.state.isMounted && <ShareFrame

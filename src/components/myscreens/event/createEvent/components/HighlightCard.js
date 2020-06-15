@@ -31,6 +31,7 @@ export default class HighlightCard extends Component {
     this.state = {
       updating: false,
       deleting: false,
+      mounted:false,
       isOpen: false,
       check: false,
       master: this.props.participant.master == false ? this.props.participant.master : true
@@ -62,9 +63,7 @@ export default class HighlightCard extends Component {
 
   creator = this.props.computedMaster//this.props.item.creator === this.props.phone 
   render() {
-
     return (
-
       this.state.mounted ?
         <View style={{ width: ColorList.containerWidth, alignSelf: "center", ...!this.props.shadowless && shadower(1),justifyContent: 'center',marginTop:"1%",borderBottomWidth:0.5,borderColor:"ivory" }}>
           <View style={{ 
