@@ -151,7 +151,7 @@ export default class ShareWithYourContacts extends TabModal {
         >
           <Item
             style={{
-              height: ColorList.headerHeight - 20,
+              height: ColorList.headerHeight - 10,
               marginTop: "auto",
               marginBottom: "auto",
               marginLeft: "2%",
@@ -217,7 +217,7 @@ export default class ShareWithYourContacts extends TabModal {
         }}
       >
         <BleashupFlatList
-        fit
+          fit
           firstIndex={0}
           initialRender={7}
           renderPerBatch={20}
@@ -231,7 +231,7 @@ export default class ShareWithYourContacts extends TabModal {
                 width: "95%",
                 flexDirection: "row",
                 alignSelf: "center",
-                height: ColorList.headerHeight - 10,
+                height: ColorList.headerHeight - 5,
                 justifyContent: "space-between",
               }}
             >

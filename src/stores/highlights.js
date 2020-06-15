@@ -9,9 +9,9 @@ import serverEventListener from "../services/severEventListener";
 import emitter from "../services/eventEmiter";
 export default class highlights {
   constructor() {
-    /*storage.remove(this.saveKey).then(() => {
-      console.warn("removed");
-    });*/
+    //storage.remove(this.saveKey).then(() => {
+     // console.warn("removed");
+   // });
     this.initializeReminds();
     this.timer();
   }
