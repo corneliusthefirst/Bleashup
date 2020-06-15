@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component ,PureComponent} from "react";
 import {
   Card,
   CardItem,
@@ -31,7 +31,7 @@ import Social from "./Social";
 
 let { height, width } = Dimensions.get("window");
 
-export default class HighlightCard extends Component {
+export default class HighlightCard extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -53,13 +53,15 @@ export default class HighlightCard extends Component {
     this.props.parentComponent.state.currentHighlight = this.props.item;
     this.props.parentComponent.setState({ update: true });
   }
-  shouldComponentUpdate(nextProps, nextState, nextContext) {
+  /*shouldComponentUpdate(nextProps, nextState, nextContext) {
     return (
       this.state.mounted !== nextState.mounted ||
-      !isEqual(this.props.item, nextProps.item) ||
+      this.props.item.title !== nextProps.item.title ||
+      this.props.item.description !== nextProps.item.description || 
+      !isEqual(this.props.item.url, nextProps.item.url) || 
       this.props.computedMaster !== nextProps.computedMaster
     );
-  }
+  }*/
   containsMedia() {
     return this.props.item.url.video ||
       this.props.item.url.audio ||
@@ -119,7 +121,7 @@ export default class HighlightCard extends Component {
                 style={{ alignSelf: "flex-end", justifyContent: "flex-end" }}
               >
                 <PostMenu
-                  creator={this.creator}
+                  creator={this.state.creator}
                   mention={() => this.props.mention(this.props.item)}
                   delete={() => this.props.deleteHighlight(this.props.item)}
                   update={() => this.props.update(this.props.item.id)}
