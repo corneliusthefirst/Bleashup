@@ -259,6 +259,7 @@ export default class EventHighlights extends BleashupModal {
 
   @autobind
   AddHighlight() {
+    console.warn("creating highlight")
     var arr = new Array(32);
     let num = Math.floor(Math.random() * 16);
     uuid.v1(null, arr, num);

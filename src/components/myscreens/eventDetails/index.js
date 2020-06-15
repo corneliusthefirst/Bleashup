@@ -67,7 +67,7 @@ export default class EventDetailView extends Component {
       EventHighlightState: false,
       updateTitleState: false,
       viewdetail: false,
-      newing:false,
+      newing: false,
     }
   }
   state = {
@@ -76,33 +76,21 @@ export default class EventDetailView extends Component {
 
   @autobind
   initializer() {
-    /*let participant = find(this.props.Event.participant, { phone: stores.LoginStore.user.phone });
-    stores.Highlights.readFromStore().then((H) => {
-       console.warn('here we see 1',H);
+    let participant = find(this.props.Event.participant, { phone: stores.LoginStore.user.phone });
+    this.setState({ 
+      newing: !this.state.newing, 
+      isMounted: true, 
+      participant: participant 
     });
-
-    stores.Highlights.fetchHighlights(this.props.Event.id).then(Highlights => {
-        console.warn('here we see',Highlights);
-        this.setState({
-        highlightData: reject(Highlights,{id:'newHighlightId'}),
-        creation_date: this.props.Event.created_at,
-        isMounted: true,
-        EventData: this.props.Event,
-        participant: participant
-      })
-    })*/
-    this.setState({newing:!this.state.newing,isMounted:true});
   }
   initialScrollIndexer = 2
   incrementer = 2
   interval = 4000
   handleRefresh() {
-    console.warn('receiving refresh highlights message')
-    //stores.Highlights.fetchHighlights(this.props.Event.id).then(Higs => {
-      this.setState({
-        newing:this.state.newing
-      })
-   // })
+    //console.warn('receiving refresh highlights message')
+    this.setState({
+      newing: !this.state.newing
+    })
   }
   componentWillMount() {
     emitter.on(`refresh-highlights_${this.props.Event.id}`, this.handleRefresh.bind(this))
@@ -111,20 +99,18 @@ export default class EventDetailView extends Component {
     emitter.off(`refresh-highlights_${this.props.Event.id}`)
   }
   componentDidMount() {
-    //this.setState({ animateHighlight: true });
-    //this.init()
     this.initializer();
   }
   initShare() {
     this.sharStore = new Share(this.props.share.id)
-    this.sharStore.readFromStore().then(()=>{
+    this.sharStore.readFromStore().then(() => {
       this.setState({
-        isMounted:true
+        isMounted: true
       })
     })
     stores.Highlights.loadHighlightFromRemote(this.props.Event.id, this.props.share.item_id).
       then((post) => {
-        stores.Events.loadCurrentEventFromRemote(this.props.share.event_id,true).
+        stores.Events.loadCurrentEventFromRemote(this.props.share.event_id, true).
           then((event) => {
             this.sharStore.saveCurrentState({ ...this.props.share, post: Array.isArray(post) && post[0] || post, event }).then(() => {
               this.setState({
@@ -133,7 +119,7 @@ export default class EventDetailView extends Component {
             })
           })
       }).catch((error) => {
-        console.warn("ERROR: ",error)
+        console.warn("ERROR: ", error)
       })
   }
   init() {
@@ -144,7 +130,7 @@ export default class EventDetailView extends Component {
     //clearInterval(this.intervalID)
   }
   reinitializeHighlightsList(newHighlight) {
-   this.init()
+    this.init()
     this.sendUpdateHighlight()
   }
 
@@ -197,34 +183,33 @@ export default class EventDetailView extends Component {
     { length: 100, offset: 100 * index, index }
   )
   _keyExtractor = (item, index) => {
-    console.warn(item.id)
-    return item.index;
+    return item.id;
   }
 
   updateHighlight(newHighlight, previousHighlight) {
-    console.warn('entered update h', newHighlight,previousHighlight);
+    console.warn('entered update h', newHighlight, previousHighlight);
     if (!this.props.working) {
       this.props.startLoader();
-      Requester.applyAllHighlightsUpdate(newHighlight,previousHighlight).then((response) => {
-          if (response) {
-            let index = findIndex(this.state.highlightData, { id: newHighlight.id })
-            console.warn('here again', index,newHighlight);
-            console.warn('here again 1', this.state.highlightData);
-            this.state.highlightData[index] = newHighlight;
-            this.setState({
-              highlightData: this.state.highlightData
-            })
-          }
-          console.warn('ok');
-          this.props.stopLoader();
-          this.sendUpdateHighlight()
-        })
+      Requester.applyAllHighlightsUpdate(newHighlight, previousHighlight).then((response) => {
+        if (response) {
+          let index = findIndex(this.state.highlightData, { id: newHighlight.id })
+          console.warn('here again', index, newHighlight);
+          console.warn('here again 1', this.state.highlightData);
+          this.state.highlightData[index] = newHighlight;
+          this.setState({
+            highlightData: this.state.highlightData
+          })
+        }
+        console.warn('ok');
+        this.props.stopLoader();
+        this.sendUpdateHighlight()
+      })
     } else {
       Toast.show({ text: 'App is Busy' })
     }
   }
   sendUpdateHighlight() {
-    emitter.emit(`refresh-highlights_${this.props.Event.id}`)
+    //emitter.emit(`refresh-highlights_${this.props.Event.id}`)
   }
   @autobind
   newHighlight() {
@@ -244,205 +229,204 @@ export default class EventDetailView extends Component {
     }) : null
   }
   relationPost(id) {
-     //BeNavigator.navigateTo("HighLightsDetails", { event_id: id })
-     return null;
+    //BeNavigator.navigateTo("HighLightsDetails", { event_id: id })
+    return null;
   }
   delay = 1
   sorter = (a, b) => (a.created_at > b.created_at ? -1 :
     a.created_at < b.created_at ? 1 : 0)
 
   renderPosts() {
-    //console.warn("render post", reject(stores.Highlights.highlights[this.props.Event.id],{id:'newHighlightId'}));
-    let data = reject(stores.Highlights.highlights[this.props.Event.id],{id:'newHighlightId'});
-   //console.warn("render post 1", data);
-    return (!this.state.isMounted ? <View style={{ 
-      height: colorList.containerHeight, 
-      backgroundColor: colorList.bodyBackground, 
-      width: '100%' 
+    let data = reject(stores.Highlights.highlights[this.props.Event.id], { id: 'newHighlightId' });
+    console.warn("render post 1", data);
+    return (!this.state.isMounted ? <View style={{
+      height: colorList.containerHeight,
+      backgroundColor: colorList.bodyBackground,
+      width: '100%'
     }}></View> :
-        <View style={{ flex: 1, width: "100%" }}>
+      <View style={{ flex: 1, width: "100%" }}>
 
-          <View style={{ flexDirection: "row", ...bleashupHeaderStyle, height: colorList.headerHeight, width: colorList.headerWidth, backgroundColor: colorList.headerBackground }}>
+        <View style={{ flexDirection: "row", ...bleashupHeaderStyle, height: colorList.headerHeight, width: colorList.headerWidth, backgroundColor: colorList.headerBackground }}>
 
-            <View style={{
-              flex: 1,
-              paddingLeft: '1%', paddingRight: '1%', backgroundColor: colorList.headerBackground,
-              flexDirection: "row", alignItems: "center",
-            }}>
-              <TouchableOpacity onPress={() => requestAnimationFrame(this.props.goback)} style={{ width: "10%", paddingLeft: "3%" }} >
-                <Icon
-                  style={{ color: colorList.headerIcon, }} type={"MaterialIcons"} name={"arrow-back"}></Icon>
-              </TouchableOpacity>
+          <View style={{
+            flex: 1,
+            paddingLeft: '1%', paddingRight: '1%', backgroundColor: colorList.headerBackground,
+            flexDirection: "row", alignItems: "center",
+          }}>
+            <TouchableOpacity onPress={() => requestAnimationFrame(this.props.goback)} style={{ width: "10%", paddingLeft: "3%" }} >
+              <Icon
+                style={{ color: colorList.headerIcon, }} type={"MaterialIcons"} name={"arrow-back"}></Icon>
+            </TouchableOpacity>
 
-              <View style={{ width: '69%', paddingLeft: '9%', justifyContent: "center" }}>
-                <Title style={{ color: colorList.headerText, fontWeight: 'bold', alignSelf: 'flex-start',fontSize:colorList.headerFontSize }}>{"Star Messages"}</Title>
-              </View>
+            <View style={{ width: '69%', paddingLeft: '9%', justifyContent: "center" }}>
+              <Title style={{ color: colorList.headerText, fontWeight: 'bold', alignSelf: 'flex-start', fontSize: colorList.headerFontSize }}>{"Star Messages"}</Title>
             </View>
           </View>
+        </View>
 
 
 
-          <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled>
-            <View style={{ minHeight: colorList.containerHeight - colorList.headerHeight, flexDirection: "column", width: "100%", justifyContent: 'center', }} >
-              <View style={{
-                height: colorList.containerHeight - colorList.headerHeight,
-                width: "100%", alignSelf: 'center',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }} >
+        <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled>
+          <View style={{ minHeight: colorList.containerHeight - colorList.headerHeight, flexDirection: "column", width: "100%", justifyContent: 'center', }} >
+            <View style={{
+              height: colorList.containerHeight - colorList.headerHeight,
+              width: "100%", alignSelf: 'center',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }} >
 
-                 <BleashupFlatList
-                  initialRender={4}
-                  horizontal={false}
-                  renderPerBatch={5}
-                  firstIndex={0}
-                  refHorizontal={(ref) => { this.detail_flatlistRef = ref }}
-                  keyExtractor={this._keyExtractor}
-                  dataSource={data}
-                  numberOfItems={data.length}
-                  parentComponent={this}
-                  renderItem={(item, index) => {
-                    //console.warn("item is here", item)
-                    this.delay = index >= 5 ? 0 : this.delay + 1
-                    return (
-                      <HighlightCard
-                        height={colorList.containerHeight * .45}
-                        phone={stores.LoginStore.user.phone}
-                        activity_id={this.props.Event.id}
-                        activity_name={this.props.Event.about.title}
-                        delay={this.delay}
-                        update={(hid) => {
-                          console.warn('here comes the id',hid);
-                          this.setState({
-                            EventHighlightState: true,
-                            update: true,
-                            highlight_id: hid 
-                          })
-                        }}
-                        mention={(replyer) => {
-                          this.mention(replyer)
-                        }}
-                        deleteHighlight={(item) => {
-                          this.setState({
-                            current_highlight: item,
-                            isAreYouSureModalOpened: true,
-                          })
-                        }}
-                        computedMaster={this.props.computedMaster}
-                        showItem={(item) => {
-                          this.props.showHighlight(item)
-                        }}
-                        participant={find(this.props.Event.participant, { phone: stores.LoginStore.user.phone })}
-                        parentComponent={this}
-                        item={item}
-                         />
-                    );
-                  }}
-                >
-                </BleashupFlatList>
-              </View>
-
-
+              <BleashupFlatList
+                initialRender={4}
+                horizontal={false}
+                renderPerBatch={5}
+                firstIndex={0}
+                refHorizontal={(ref) => { this.detail_flatlistRef = ref }}
+                keyExtractor={this._keyExtractor}
+                dataSource={data}
+                numberOfItems={data.length}
+                parentComponent={this}
+                renderItem={(item, index) => {
+                  //console.warn("item is here", item)
+                  this.delay = index >= 5 ? 0 : this.delay + 1
+                  return (
+                    <HighlightCard
+                      height={colorList.containerHeight * .45}
+                      phone={stores.LoginStore.user.phone}
+                      activity_id={this.props.Event.id}
+                      activity_name={this.props.Event.about.title}
+                      delay={this.delay}
+                      update={(hid) => {
+                        console.warn('here comes the id', hid);
+                        this.setState({
+                          EventHighlightState: true,
+                          update: true,
+                          highlight_id: hid
+                        })
+                      }}
+                      mention={(replyer) => {
+                        this.mention(replyer)
+                      }}
+                      deleteHighlight={(item) => {
+                        this.setState({
+                          current_highlight: item,
+                          isAreYouSureModalOpened: true,
+                        })
+                      }}
+                      computedMaster={this.props.computedMaster}
+                      showItem={(item) => {
+                        this.props.showHighlight(item)
+                      }}
+                      participant={this.state.participant}
+                      parentComponent={this}
+                      item={item}
+                    />
+                  );
+                }}
+              >
+              </BleashupFlatList>
             </View>
 
-          </ScrollView>
 
-          <EventHighlights
-            closeTeporary={() => {
+          </View>
+
+        </ScrollView>
+
+        <EventHighlights
+          closeTeporary={() => {
+            this.setState({
+              EventHighlightState: false,
+            })
+            setTimeout(() => {
               this.setState({
-                EventHighlightState: false,
+                EventHighlightState: true
               })
-              setTimeout(() => {
-                this.setState({
-                  EventHighlightState: true
-                })
-              }, 600)
-            }}
-            startLoader={() => {
-              this.props.startLoader()
-            }} stopLoader={() => {
-              this.props.stopLoader()
-            }}
-            updateState={this.state.update}
-            highlight_id={this.state.highlight_id}
-            reinitializeHighlightsList={(newHighlight) => {
-              this.reinitializeHighlightsList(newHighlight)
-            }} isOpen={this.state.EventHighlightState} onClosed={() => {
-              this.setState({
-                EventHighlightState: false,
-                highlight_id: null
-              })
-            }}
-            update={(newHighlight, previousHighlight) => this.updateHighlight(newHighlight, previousHighlight)}
-            participant={this.state.participant} 
-            parentComponent={this} 
-            ref={"highlights"} 
-            event={this.props.Event} 
-            event_id={this.props.Event.id} />
+            }, 600)
+          }}
+          startLoader={() => {
+            this.props.startLoader()
+          }} stopLoader={() => {
+            this.props.stopLoader()
+          }}
+          updateState={this.state.update}
+          highlight_id={this.state.highlight_id}
+          reinitializeHighlightsList={(newHighlight) => {
+            this.reinitializeHighlightsList(newHighlight)
+          }} isOpen={this.state.EventHighlightState} onClosed={() => {
+            this.setState({
+              EventHighlightState: false,
+              highlight_id: null
+            })
+          }}
+          update={(newHighlight, previousHighlight) => this.updateHighlight(newHighlight, previousHighlight)}
+          participant={this.state.participant}
+          parentComponent={this}
+          ref={"highlights"}
+          event={this.props.Event}
+          event_id={this.props.Event.id} />
 
 
-          <DescriptionModal Event={this.props.Event} isOpen={this.state.viewdetail} onClosed={() => { this.setState({ viewdetail: false }) }} parent={this}></DescriptionModal>
+        <DescriptionModal Event={this.props.Event} isOpen={this.state.viewdetail} onClosed={() => { this.setState({ viewdetail: false }) }} parent={this}></DescriptionModal>
 
-          {this.state.EventDescriptionState ? <EventDescription updateDesc={(newDesc) => {
-            this.props.updateDesc(newDesc)
-          }} event={this.props.Event} isOpen={this.state.EventDescriptionState} onClosed={() => { this.setState({ EventDescriptionState: false }) }}
-            ref={"description_ref"} eventId={this.props.Event.id} updateDes={true} parentComp={this} /> : null}
+        {this.state.EventDescriptionState ? <EventDescription updateDesc={(newDesc) => {
+          this.props.updateDesc(newDesc)
+        }} event={this.props.Event} isOpen={this.state.EventDescriptionState} onClosed={() => { this.setState({ EventDescriptionState: false }) }}
+          ref={"description_ref"} eventId={this.props.Event.id} updateDes={true} parentComp={this} /> : null}
 
-          {this.state.EventLocationState ? <EventLocation updateLocation={(newLoc) => {
-            this.props.updateLocation(newLoc)
-          }} event={this.props.Event} isOpen={this.state.EventLocationState} onClosed={() => { this.setState({ EventLocationState: false }) }}
-            ref={"location_ref"} updateLoc={true} eventId={this.props.Event.id} parentComp={this} /> : null}
-
-
-          {this.state.isAreYouSureModalOpened ? <BleashupAlert title={"Delete Higlight"} accept={"Yes"} refuse={"No"} message={" Are you sure you want to delete these highlight ?"}
-            deleteFunction={() => this.deleteHighlight(this.state.current_highlight)}
-            isOpen={this.state.isAreYouSureModalOpened} onClosed={() => { this.setState({ isAreYouSureModalOpened: false }) }} /> : null}
+        {this.state.EventLocationState ? <EventLocation updateLocation={(newLoc) => {
+          this.props.updateLocation(newLoc)
+        }} event={this.props.Event} isOpen={this.state.EventLocationState} onClosed={() => { this.setState({ EventLocationState: false }) }}
+          ref={"location_ref"} updateLoc={true} eventId={this.props.Event.id} parentComp={this} /> : null}
 
 
-          <SideButton
-            buttonColor={'rgba(52, 52, 52, 0.8)'}
-            position={"right"}
-            //text={"D"}
-            renderIcon={() => {
-              return <View style={{ backgroundColor: ColorList.bodyBackground, height: 40, width: 40, borderRadius: 30, justifyContent: "center", alignItems: "center", ...shadower(4) }}>
-                <Icon name="file-text" type="Feather" style={{ color: ColorList.bodyIcon, fontSize: 22 }} />
-              </View>
-            }}
-            action={() => { this.setState({ viewdetail: true }) }}
-            //buttonTextStyle={{color:colorList.bodyBackground}}
-            offsetX={10}
-            size={40}
-            offsetY={30}
-          />
+        {this.state.isAreYouSureModalOpened ? <BleashupAlert title={"Delete Higlight"} accept={"Yes"} refuse={"No"} message={" Are you sure you want to delete these highlight ?"}
+          deleteFunction={() => this.deleteHighlight(this.state.current_highlight)}
+          isOpen={this.state.isAreYouSureModalOpened} onClosed={() => { this.setState({ isAreYouSureModalOpened: false }) }} /> : null}
 
-          <SideButton
-            //buttonColor={'rgba(52, 52, 52, 0.8)'}
-            position={"right"}
-            //text={"+"}
-            action={() => requestAnimationFrame(() => this.newHighlight())}
-            buttonTextStyle={{ color: "white" }}
-            renderIcon={() => {
-              return <View style={{ backgroundColor: ColorList.bodyBackground, height: 40, width: 40, borderRadius: 30, justifyContent: "center", alignItems: "center", ...shadower(4) }}>
-                <Icon name="plus" type="AntDesign" style={{ color: ColorList.bodyIcon, fontSize: 22 }} />
-              </View>
-            }}
-            size={40}
-            offsetX={10}
-            offsetY={90}
 
-          />
+        <SideButton
+          buttonColor={'rgba(52, 52, 52, 0.8)'}
+          position={"right"}
+          //text={"D"}
+          renderIcon={() => {
+            return <View style={{ backgroundColor: ColorList.bodyBackground, height: 40, width: 40, borderRadius: 30, justifyContent: "center", alignItems: "center", ...shadower(4) }}>
+              <Icon name="file-text" type="Feather" style={{ color: ColorList.bodyIcon, fontSize: 22 }} />
+            </View>
+          }}
+          action={() => { this.setState({ viewdetail: true }) }}
+          //buttonTextStyle={{color:colorList.bodyBackground}}
+          offsetX={10}
+          size={40}
+          offsetY={30}
+        />
+
+        <SideButton
+          //buttonColor={'rgba(52, 52, 52, 0.8)'}
+          position={"right"}
+          //text={"+"}
+          action={() => requestAnimationFrame(() => this.newHighlight())}
+          buttonTextStyle={{ color: "white" }}
+          renderIcon={() => {
+            return <View style={{ backgroundColor: ColorList.bodyBackground, height: 40, width: 40, borderRadius: 30, justifyContent: "center", alignItems: "center", ...shadower(4) }}>
+              <Icon name="plus" type="AntDesign" style={{ color: ColorList.bodyIcon, fontSize: 22 }} />
+            </View>
+          }}
+          size={40}
+          offsetX={10}
+          offsetY={90}
+
+        />
 
 
 
-        </View>
-      )
+      </View>
+    )
   }
   renderSharedPost() {
     return this.state.isMounted && <ShareFrame
       share={this.sharStore.share}
       sharer={this.sharStore.share.sharer}
       date={this.sharStore.share.date}
-      content={() => <View style={{width:'98%',height:300}}><HighlightCard
+      content={() => <View style={{ width: '98%', height: 300 }}><HighlightCard
         height={colorList.containerHeight * .45}
         shadowless
         phone={stores.LoginStore.user.phone}
@@ -456,7 +440,7 @@ export default class EventDetailView extends Component {
           this.sharStore.share.event.participant &&
           find(this.sharStore.share.event.participant,
             (ele => ele.phone === stores.LoginStore.user.phone))
-          || {phone:stores.LoginStore.user.phone,master:false}}
+          || { phone: stores.LoginStore.user.phone, master: false }}
       ></HighlightCard></View>}
     >
     </ShareFrame>
