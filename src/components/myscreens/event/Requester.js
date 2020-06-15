@@ -991,6 +991,7 @@ class Request {
         })
     }
     updateHighlightTitle(newTitle, oldTitle, highlightID, eventID) {
+        console.warn('we are in',newTitle, oldTitle, highlightID, eventID);
         return new Promise((resolve, reject) => {
             if (newTitle !== oldTitle) {
                 let higlightTitle = request.HUpdate();
@@ -1004,7 +1005,7 @@ class Request {
                             id: highlightID,
                             title: newTitle
                         }, false).then((HighlightJS) => {
-                            Highlight = JSON.parse(HighlightJS)
+                            Highlight = HighlightJS;  //changed json parse
                             let Change = {
                                 id: uuid.v1(),
                                 title: `Update On ${Highlight.title} Post`,
@@ -1151,6 +1152,7 @@ class Request {
     updateCount = 0
     updatedhighlight = null
     applyAllHighlightsUpdate(newHighlight, highlight) {
+        console.warn('here again 8',   JSON.parse(highlight).title );
         return new Promise((resolve, reject) => {
             this.updateHighlightTitle(newHighlight.title, JSON.parse(highlight).title,
                 newHighlight.id,

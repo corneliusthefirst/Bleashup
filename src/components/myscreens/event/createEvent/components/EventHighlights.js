@@ -118,13 +118,16 @@ export default class EventHighlights extends BleashupModal {
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.highlight_id !== this.props.highlight_id) {
       setTimeout(() => {
+        //console.warn('black check 1', this.props.highlight_id);
         stores.Highlights.readFromStore().then((Highlights) => {
           let highlight = find(Highlights[this.props.event_id], {
             id: this.props.highlight_id
               ? this.props.highlight_id
               : "newHighlightId",
           });
+          //console.warn('black check',highlight);
           this.previoushighlight = JSON.stringify(highlight);
+          console.warn('previous',this.previoushighlight);
           if (!this.props.event_id) {
             let event_id = "newEventId";
             stores.Highlights.fetchHighlights(event_id).then((Highlights) => {

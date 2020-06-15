@@ -12,14 +12,14 @@ export default class highlights {
     /*storage.remove(this.saveKey).then(() => {
       console.warn("removed");
     });*/
-    this.initializeReminds();
+    this.initializeHighlights();
     this.timer();
   }
   saveInterval = 2000;
   saverInterval = null;
   currentSaveTime = moment().format();
   previousSaveTime = moment().format();
-  initializeReminds() {
+  initializeHighlights() {
     console.warn("initializing highlights", this.highlights);
     storage
       .load(this.readKey)
@@ -176,7 +176,7 @@ export default class highlights {
     let sorter = (a, b) =>
       a.created_at > b.created_at ? -1 : a.created_at < b.created_at ? 1 : 0;
     return new Promise((resolve, reject) => {
-      if (this.highlights[EventID] && this.highlights[EventID].length === 0) {
+      if (this.highlights[EventID]) {
         this.readFromStore().then((Highlights) => {
           let result = Highlights[EventID].sort(sorter);
 
@@ -199,11 +199,13 @@ export default class highlights {
   }
 
   @action updateHighlightTitle(EventID, NewHighlight, inform) {
+    //console.warn('here im checking', EventID,NewHighlight);
     return new Promise((resolve, Reject) => {
       this.readFromStore().then((Highlights) => {
         let RemindIndex = findIndex(Highlights[EventID], {
-          id: NewHighlight.highlight_id,
+          id: NewHighlight.id,
         });
+        //console.warn('here the remindIndex', RemindIndex);
         Highlights[EventID][RemindIndex].title = NewHighlight.title;
         Highlights[EventID][RemindIndex].updated_date = moment().format();
         Highlights[EventID][RemindIndex].title_updated = inform;
