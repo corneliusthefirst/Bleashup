@@ -253,9 +253,8 @@ export default class EventDetailView extends Component {
     a.created_at < b.created_at ? 1 : 0)
 
   renderPosts() {
-    //console.warn("render post", reject(stores.Highlights.highlights[this.props.Event.id],{id:'newHighlightId'}));
     let data = reject(stores.Highlights.highlights[this.props.Event.id],{id:'newHighlightId'});
-   //console.warn("render post 1", data);
+    console.warn("render post 1", data);
     return (!this.state.isMounted ? <View style={{ 
       height: colorList.containerHeight, 
       backgroundColor: colorList.bodyBackground, 
