@@ -12,6 +12,7 @@ import { Icon, Text } from 'native-base';
 import VideoController from '../eventChat/VideoController';
 import moment from 'moment';
 import BleashupModal from '../../mainComponents/BleashupModal';
+
 export default class VideoViewer extends BleashupModal {
     initialize() {
         this.state = {

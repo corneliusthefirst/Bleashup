@@ -10,9 +10,7 @@ class UserView extends React.PureComponent {
   }
 
   render() {
-    const {
-      props,
-    } = this;
+    const {props} = this;
 
     return (
       <View style={{
@@ -24,36 +22,44 @@ class UserView extends React.PureComponent {
       }}>
         <Image
           source={{ uri: props.profile }}
-          style={styles.image}
+          style={{ width:props.activityMode?40: 50,height:props.activityMode?40:50,borderRadius: 25,
+           marginLeft: 8}}
         />
         <View style={{ flex: 1 ,paddingRight:10}}>
-          { props.activityname?
+           { props.activityname?
             <Text style={styles.name} ellipsizeMode='tail'  numberOfLines={2} >{props.name+" @"+props.activityname}</Text>
             :<Text style={styles.name} >{props.name}</Text>}
          
          {props.swiper?<RenderDate style={styles.time} date={this.props.updated_at} />
          :<Text style={styles.time}>{"Posted "+props.updated_at}</Text>}
         </View>
+        
+       {props.activityMode ? null:
         <TouchableOpacity onPress={props.onClosePress}>
-          <Icon
-            name="close"
-            color="white"
-            size={25}
-            style={{ marginRight: 8 }}
-          />
-        </TouchableOpacity>
+        <Icon
+          name="close"
+          color="white"
+          size={25}
+          style={{ marginRight: 8 }}
+        />
+      </TouchableOpacity>
+       }
+
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
+<<<<<<< HEAD
   image: {
     width: 50,
     height: 50,
     borderRadius: 25,
     marginLeft: 8,
   },
+=======
+>>>>>>> 870f250a4868e259df879e2fba995561eeeb530c
   name: {
     fontSize: 17,
     fontWeight: '500',

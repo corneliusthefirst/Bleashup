@@ -14,7 +14,7 @@ export default class HighLight extends Component {
             showProfile: false
         }
     } 
-    renderContent(highlight) {
+    renderContent(highlight) { 
         return <HighlightContent modal={this.props.modal} showVideo={(url) => this.props.showVideo(url)} showPhoto={(uri) => this.props.showPhoto(uri)} PressingIn={() => {
             this.replying = true
         }} highlight={highlight}></HighlightContent>
