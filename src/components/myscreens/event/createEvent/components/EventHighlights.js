@@ -223,7 +223,7 @@ export default class EventHighlights extends BleashupModal {
       stores.Highlights.updateHighlightTitle(this.props.event_id,
         this.state.currentHighlight,
         false
-      ).then(() => { });
+      ).then(() => {});
     }
   }
   @autobind

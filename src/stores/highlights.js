@@ -104,13 +104,15 @@ export default class highlights {
 
   updateHighlightPublicState(EventID, update) {
     return new Promise((resolve, reject) => {
+      console.warn("update public start");
       this.readFromStore().then((Highlights) => {
         let hIndex = findIndex(Highlights[EventID], {
           id: update.highlight_id,
         });
         Highlights[EventID][hIndex].public_state = update.public_state;
         this.setProperty(Highlights);
-        resolve();
+        console.warn("update public ok", Highlights);
+        resolve(Highlights[EventID][hIndex]);
       });
     });
   }
@@ -119,13 +121,13 @@ export default class highlights {
     console.warn("removing Highlight", HighlightId);
     return new Promise((resolve, RejectPromise) => {
       this.readFromStore().then((Highlights) => {
-        let index = find(Highlights[EventID], { id: HighlightId });
         Highlights[EventID] = reject(Highlights[EventID], ["id", HighlightId]);
         HighlightId === "newHighlightId"
           ? Highlights[EventID].unshift(request.Highlight())
           : null;
         this.setProperty(Highlights);
-        resolve(Highlights[EventID][index]);
+        console.warn("removed ok", Highlights[EventID]);
+        resolve(Highlights[EventID]);
       });
     });
   }

@@ -7,16 +7,21 @@ import Hyperlink from "react-native-hyperlink";
 
 let { height, width } = Dimensions.get("window");
 
-export default class TransparentAccordion extends Component {
+export default class SwipeAccordion extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      starselect: false,
+    };
   }
 
   componentDidMount() {
     console.warn("here we are", this.props.dataArray);
   }
 
-  _renderHeader(item, expanded, toggle) {
+  starClick = () => {};
+
+  _renderHeader = (item, expanded, toggle) => {
     return (
       <View
         style={{
@@ -24,15 +29,31 @@ export default class TransparentAccordion extends Component {
           width: width,
           flexDirection: "row",
           borderColor: "black",
-        }}>
-
+        }}
+      >
         <View
           style={{
             width: width / 3,
             justifyContent: "center",
             alignItems: "center",
           }}
-        ></View>
+        >
+          {this.state.starselect ? (
+            <Icon
+              style={{ fontSize: 30, color: "white" }}
+              type="Entypo"
+              name="star"
+              onPress={() => this.starClick()}
+            />
+          ) : (
+            <Icon
+              style={{ fontSize: 30, color: "white" }}
+              type="Entypo"
+              name="star-outlined"
+              onPress={() => this.starClick()}
+            />
+          )}
+        </View>
 
         <View
           style={{
@@ -101,10 +122,9 @@ export default class TransparentAccordion extends Component {
             height: item.message.length > 0 ? height / 4 : 0,
           }}
         >
-          <Hyperlink linkDefault={true}  linkStyle={ { color: '#2980b9' } }>
-            <Text style={{ padding: 10, color:'white' }}>{item.message}</Text>
+          <Hyperlink linkDefault={true} linkStyle={{ color: '#2980b9' }}>
+            <Text style={{ padding: 8, color: 'white' }}>{item.message}</Text>
           </Hyperlink>
-
         </ScrollView>
       </View>
     );
@@ -114,9 +134,10 @@ export default class TransparentAccordion extends Component {
       <View
         style={{
           position: "absolute",
-          bottom: 10,
+          bottom: 0,
           left: 0,
           right: 0,
+          backgroundColor: 'rgba(52,52,52,0.1)',
           width: width,
           borderColor: "black",
           alignItems: "center",

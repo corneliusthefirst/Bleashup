@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React, { Component,useState } from 'react';
 import {
     View, Dimensions, StatusBar, Keyboard
@@ -8,8 +9,7 @@ const screenheight = Math.round(Dimensions.get('window').height);
 
 import ReactNativeZoomableView from '@dudigital/react-native-zoomable-view/src/ReactNativeZoomableView';
 import Image from 'react-native-scalable-image';
-import Orientation from 'react-native-orientation-locker';
-
+//import Orientation from 'react-native-orientation-locker';
 import { Icon, Text } from 'native-base';
 import VideoViewerController from './videoViewerController';
 import moment from 'moment';
@@ -33,12 +33,12 @@ const VideoView = (props) => {
     const enterFullscreen = () => {
 
         Keyboard.dismiss()
-        Orientation.lockToLandscapeLeft();
+        //Orientation.lockToPortrait()
         setFullScreen(true);
     }
     const exitFullscreen = () => {
         Keyboard.dismiss()
-        Orientation.lockToPortrait()
+        //Orientation.lockToPortrait()
         setFullScreen(false);
 
     }
@@ -48,14 +48,14 @@ const VideoView = (props) => {
 
         return (
                 <View style={{
-                        height: fullScreen ? "100%" : 250,
+                        height: fullScreen ? "100%" : 248,
                         width: fullScreen ? "100%" : screenWidth,
-                        backgroundColor: ColorList.bodyBackgrounddark,
+                        backgroundColor: 'black',
                         //alignSelf: 'center',
                         
                     }}>
                         <VideoViewerController 
-                            source={{ uri: '/storage/emulated/0/beats/APOLOGY Dancehall x Afrobeat x Wizkid Type Beat Instrumental.mp4' }} // Can be a URL or a local file.
+                            source={{ uri: props.video }} // Can be a URL or a local file.
                             ref={(ref) => {
                                 videoPlayer = ref;
                             }} 
@@ -76,14 +76,16 @@ const VideoView = (props) => {
                             onExitFullscreen = {exitFullscreen}
                             fullscreenOrientation={"landscape"}
                             onLoad={props.onLoad}
+                            paused = {true}
                             disableBack={true}
-                            nextPrev={true}
+                            disableFullscreen={true}
+                            nextPrev={false}
                             nextVideo = {props.nextVideo}
                             previousVideo = {props.prevVideo}
                             fullscreen={fullScreen}
                             //controls={true}
                             style={{
-                                backgroundColor: ColorList.bodyBackgrounddark,
+                                backgroundColor: 'black',
                             }} 
                             videoStyle={{
                                 alignItems: 'center',

@@ -4,13 +4,18 @@ import { StyleSheet, Text, View, Dimensions, StatusBar } from 'react-native';
 import Swiper from 'react-native-swiper';
 import media from './constants/index';
 import UserView from '../myscreens/Viewer/components/UserView';
-import TransparentAccordion from '../myscreens/Viewer/components/swipeAccordion';
+import SwipeAccordion from '../myscreens/Viewer/components/swipeAccordion';
 import Post from './Post';
+import Orientation from 'react-native-orientation-locker';
 
 //const ScreenHeight = Dimensions.get('window').height;
 
 export default class SwiperComponent extends Component {
   onClose = () => {};
+
+  componentDidMount(){
+    Orientation.lockToPortrait();
+  }
 
   render() {
     return (
@@ -24,6 +29,13 @@ export default class SwiperComponent extends Component {
         <Swiper style={styles.wrapper} showsPagination={false}>
           {media.map((item, index) => (
             <View style={styles.slide1}>
+              <Post
+                //pause={isPause}
+                post={item}
+                onClose={() => {
+                  this.onClose();
+                }}
+              />
               <UserView
                 name={item.creator.name}
                 profile={item.creator.profile}
@@ -33,15 +45,7 @@ export default class SwiperComponent extends Component {
                 }}
                 swiper
               />
-              <Post
-                //pause={isPause}
-                post={item}
-                onClose={() => {
-                  this.onClose();
-                }}
-              />
-
-              <TransparentAccordion dataArray={item} />
+              <SwipeAccordion dataArray={item} />
             </View>
           ))}
         </Swiper>

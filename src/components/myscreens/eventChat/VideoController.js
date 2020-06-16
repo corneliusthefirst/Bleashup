@@ -28,7 +28,7 @@ export default class VideoController extends Component {
         playWhenInactive: false,
         showOnStart: true,
         resizeMode: 'contain',
-        paused: false,
+        paused: true,
         repeat: false,
         volume: 1,
         muted: false,
