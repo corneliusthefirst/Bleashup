@@ -64,6 +64,7 @@
     "react-native-modalbox": "^1.7.1",
     "react-native-numeric-input": "^1.8.3",
     "react-native-open-maps": "^0.3.3",
+    "react-native-orientation-locker": "^1.1.8",
     "react-native-parsed-text": "0.0.21",
     "react-native-permissions": "^2.0.10",
     "react-native-phone-input": "^0.2.2",

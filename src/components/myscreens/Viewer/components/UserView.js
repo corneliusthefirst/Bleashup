@@ -51,15 +51,12 @@ class UserView extends React.PureComponent {
 }
 
 const styles = StyleSheet.create({
-<<<<<<< HEAD
   image: {
     width: 50,
     height: 50,
     borderRadius: 25,
     marginLeft: 8,
   },
-=======
->>>>>>> 870f250a4868e259df879e2fba995561eeeb530c
   name: {
     fontSize: 17,
     fontWeight: '500',

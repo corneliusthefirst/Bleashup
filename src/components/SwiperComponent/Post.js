@@ -3,6 +3,7 @@ import React from 'react';
 import { Dimensions, Image, StyleSheet, View } from 'react-native';
 import Video from 'react-native-video';
 import PropTypes from 'prop-types';
+import VideoView from '../myscreens/Viewer/components/videoView';
 
 //const ScreenWidth = Dimensions.get('window').width;
 
@@ -21,11 +22,13 @@ const Post = (props) => {
           // width={ScreenWidth}
         />
       ) : (
-        <Video
-          source={{ uri: url }}
-          //paused={props.pause || props.isNewPost}
-          //onLoad={(item) => props.onVideoLoaded(item)}
-          style={styles.content}
+        <VideoView
+          open={this.state.showVideo}
+          onLoad={(item) => {
+            //this.props.onVideoLoaded(item);
+          }}
+          video={url}
+          //nextVideo ={e => this.props.changePost(e.nativeEvent)}
         />
       )}
     </View>
