@@ -9,6 +9,7 @@ import testForURL from '../../../services/testForURL';
 import FileExachange from "../../../services/FileExchange";
 import buttoner from "../../../services/buttoner";
 import ColorList from '../../colorList';
+import stores from "../../../stores";
 
 
 export default class VideoMessage extends Component {
@@ -81,7 +82,7 @@ export default class VideoMessage extends Component {
         this.props.message.duration = this.exchanger.duration
         this.props.message.received = received
         this.props.message.total = total
-        this.props.room.addVideoSizeProperties(this.props.message.id, total, received)
+        stores.Messages.addVideoSizeProperties(this.props.room,this.props.message.id, total, received)
         this.setState({
             downloading: false
         })
@@ -108,7 +109,7 @@ export default class VideoMessage extends Component {
         this.downloadID = setInterval(() => this.download(url), 500)
     }
     setAfterSuccess(res, cap, received) {
-        this.props.room.addVideoProperties(this.props.message.id, this.props.message.source, cap, received).then(() => {
+        stores.Messages.addVideoProperties(this.props.room,this.props.message.id, this.props.message.source, cap, received).then(() => {
             this.setState({
                 loaded: true,
                 downloading: false,
@@ -120,7 +121,7 @@ export default class VideoMessage extends Component {
         this.exchanger.task.cancel((err, taskID) => {
             this.setState({ downloading: false })
         })
-        this.props.room.SetCancledState(this.props.message.id)
+        stores.Messages.SetCancledState(this.props.room,this.props.message.id)
         this.setState({
             downloading: false
         })
@@ -132,24 +133,24 @@ export default class VideoMessage extends Component {
     videoPlayer = null
     duration = 10
     pattern = [1000, 0, 0]
+    messageWidth=250
     render() {
         return (
             <View>
-                <TouchableWithoutFeedback onPressIn={() => {
+                <TouchableOpacity onPressIn={() => {
                     this.props.pressingIn()
                 }} onLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null}>
-                    <View>
+                    <View style={{width:this.messageWidth}}>
                         <View>
                             <Image style={{
                                 marginTop: "2%",
-                                marginLeft: "1.2%",
                             }}
                                 borderRadius={5}
                                 source={{ uri: this.props.message.thumbnailSource }}
                                 photo={this.props.message.thumbnailSource}
-                                width={290} height={200}>
+                                width={this.messageWidth} height={250}>
                             </Image>
-                            <View style={{ position: 'absolute', marginTop: "25%", marginLeft: "45%", }}>
+                            <View style={{ position: 'absolute', marginTop: "50%", marginLeft: "45%", }}>
                                 <View style={{ ...buttoner }}>
                                     <TouchableOpacity
                                         onPress={() => this.props.playVideo(this.props.message.source)
@@ -187,11 +188,11 @@ export default class VideoMessage extends Component {
                                         <View style={{ marginTop: "5%", ...buttoner, height: 25, width: 75 }}><Text style={{ marginBottom: 7, }} note>{"("}{this.toMB(this.state.received).toFixed(1)}{"/"}
                                             {this.toMB(this.state.total).toFixed(1)}{")Mb"}</Text></View></View>}</View>
                         </View>
-                        {this.props.message.text ? <View style={{ marginTop: "-5%", padding: "2%", alignSelf: this.props.sender ? "flex-start" : "flex-end", }}>
-                            <TextContent onLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null} pressingIn={() => this.props.pressingIn()} text={this.props.message.text}></TextContent>
+                        {this.props.message.text ? <View style={{ marginTop: "-5%", padding: "2%", alignSelf: "flex-start" }}>
+                            <TextContent tags={this.props.message.tags} onLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null} pressingIn={() => this.props.pressingIn()} text={this.props.message.text}></TextContent>
                         </View> : null}
                     </View>
-                </TouchableWithoutFeedback>
+                </TouchableOpacity>
             </View>
         );
     }

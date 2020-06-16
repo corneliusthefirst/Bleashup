@@ -6,6 +6,7 @@ import {
     TouchableOpacity,
     DeviceEventEmitter,
     Image,
+    TouchableHighlight, ScrollView
 } from "react-native";
 import {
     Button,
@@ -24,7 +25,6 @@ import {
 } from "native-base";
 import CacheImages from "../../../CacheImages";
 import autobind from "autobind-decorator";
-import { TouchableHighlight, ScrollView } from "react-native-gesture-handler";
 import ImageActivityIndicator from "../../currentevents/components/imageActivityIndicator";
 import DeckSwiperModule from "./deckswiper/index";
 import MapView from "../../currentevents/components/MapView";
@@ -64,17 +64,6 @@ export default class DetailsModal extends BleashupModal {
     id = "";
     componentDidMount() {
         this.props.parent ? this.props.parent.onSeen() : null;
-    }
-    componentWillReceiveProps(nextProps) {
-        this.setState({
-            details: nextProps.details ? nextProps.details : this.details,
-            isOpen: nextProps.isOpen,
-            location: this.props.location ? this.props.location : this.location,
-            isToBeJoint: this.props.isToBeJoint
-                ? this.props.isToBeJoint
-                : this.isToBeJoint,
-            id: this.props.id ? this.props.id : this.id,
-        });
     }
     formCreator() {
         return new Promise((resolve, reject) => {
@@ -153,7 +142,8 @@ export default class DetailsModal extends BleashupModal {
             100
         );
     }
-    modalHeight = this.height * 0.4;
+    swipeToClose=false
+    modalHeight = this.height * 0.5;
     modalBody() {
         const accept = this.state.accept;
         const deny = this.state.deny;
@@ -240,7 +230,7 @@ export default class DetailsModal extends BleashupModal {
                                 ) : null}
                             </Right>
                         </CardItem>
-                        <View style={{ marginLeft: "2%", marginTop: "-1%" }}>
+                        <View style={{  margin:'1%' }}>
                             {
                                 <Creator
                                     creator={this.state.event.creator_phone}

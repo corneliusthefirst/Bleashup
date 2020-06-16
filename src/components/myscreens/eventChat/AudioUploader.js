@@ -9,18 +9,19 @@ import {
     Alert,
     Slider,
     Vibration,
-    Platform
+    Platform, TouchableWithoutFeedback
 } from 'react-native';
 import Sound from 'react-native-sound';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import { Icon, Right, Spinner, Toast } from 'native-base';
 import stores from '../../../stores';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import GState from '../../../stores/globalState';
 import FileExachange from '../../../services/FileExchange';
 import converToHMS from '../highlights_details/convertToHMS';
 import { LogLevel, RNFFmpeg } from 'react-native-ffmpeg';
 import rnFetchBlob from 'rn-fetch-blob';
+import TextContent from './TextContent';
+import ColorList from '../../colorList';
 const { fs } = rnFetchBlob
 
 
@@ -55,13 +56,14 @@ export default class AudioUploader extends Component {
         console.warn(error)
     }
     onSuccess(newDir, path, filename) {
+        console.warn(newDir,"new Dir after upload")
         GState.downlading = false
         this.setState({
             uploadState: 100,
             loaded: true,
             downloading: false
         })
-        fs.unlink(this.tempSource).then(() => {
+        //fs.unlink(this.tempSource).then(() => {
             this.initialisePlayer(newDir.replace('file://', ''))
             this.props.message.type = 'audio'
             this.props.message.source = newDir.replace("file://", "")
@@ -76,7 +78,7 @@ export default class AudioUploader extends Component {
                     this.props.replaceMessage(this.props.message)
                 })
             }
-       })
+     //  })
     }
     downloadID = null
     uploadAudio(url) {
@@ -104,9 +106,10 @@ export default class AudioUploader extends Component {
     }
     player = null
     tempSource = this.props.message.source.
-        replace("test", this.props.message.id).
+        replace(this.props.message.file_name, this.props.message.id).
         replace("file://", '')
     componentDidMount() {
+        console.warn(this.tempSource,this.props.message.file_name)
         this.checkIfExist().then(() => {
             this.setState({
                 duration: this.props.message.duration,
@@ -124,7 +127,7 @@ export default class AudioUploader extends Component {
                 this.onSuccess.bind(this), null,
                 this.onError.bind(this),
                 this.props.message.content_type,
-                this.props.message.file_name, "/sound")
+                this.props.message.id, "/sound")
             this.uploadAudio('file://' + this.tempSource)
         })
     }
@@ -163,7 +166,7 @@ export default class AudioUploader extends Component {
                         currentPosition: seconds / this.props.message.duration,
                         currentTime: seconds
                     })
-                    this.props.room.addDuration(this.props.message.id, seconds).then(status => {
+                    stores.Messages.addDuration(this.props.room,this.props.message.id, seconds).then(status => {
                         //this.player.release()
                     })
                 })
@@ -183,7 +186,7 @@ export default class AudioUploader extends Component {
     cancelUpLoad(url) {
         this.exchanger.task.cancel((err, taskID) => {
         })
-        this.props.room.SetCancledState(this.props.message.id).then(() => {
+        stores.Messages.SetCancledState(this.props.room,this.props.message.id).then(() => {
 
         })
         GState.downlading = false
@@ -197,6 +200,7 @@ export default class AudioUploader extends Component {
             flexDirection: 'column',
         }
         return (
+            <View>
             <View style={{ disply: 'flex', flexDirection: 'row', width: 300, }}>
                 <View style={textStyle}>
                     <View><Slider value={this.state.currentPosition} onValueChange={(value) => {
@@ -217,8 +221,8 @@ export default class AudioUploader extends Component {
                         size={40}
                         width={3}
                         fill={this.state.uploadState}
-                        tintColor={"#1FABAB"}
-                        backgroundColor={'#F8F7EE'}>
+                        tintColor={ColorList.indicatorColor}
+                        backgroundColor={ColorList.indicatorInverted}>
                         {
                             (fill) => (
                                 <View style={{ marginTop: "-5%" }}>
@@ -226,7 +230,7 @@ export default class AudioUploader extends Component {
                                         <TouchableOpacity onPress={() => this.state.downloading ? this.cancelUpLoad(this.tempSource) :
                                             this.uploadAudio(this.tempSource)}>
                                             <View>
-                                                <Icon style={{ color: "#0A4E52" }} type="EvilIcons"
+                                                <Icon style={{ color: ColorList.bodyText }} type="EvilIcons"
                                                     name={this.state.downloading ? "close" : "arrow-up"}></Icon>
                                             </View>
                                             <View style={{ position: 'absolute', marginTop: '-103%', marginLeft: '-14%', }}>
@@ -234,16 +238,22 @@ export default class AudioUploader extends Component {
                                             </View>
                                         </TouchableOpacity> : !this.state.playing ? <TouchableOpacity
                                             onPress={() => requestAnimationFrame(() => this.plays())}>
-                                            <Icon type="FontAwesome5" style={{ color: "#0A4E52", fontSize: 20 }} name="play">
+                                            <Icon type="FontAwesome5" style={{ color: ColorList.bodyText, fontSize: 20 }} name="play">
                                             </Icon>
                                         </TouchableOpacity> : <TouchableOpacity onPress={() => requestAnimationFrame(() => this.pause())}>
-                                                <Icon type="FontAwesome5" style={{ color: "#0A4E52", fontSize: 20 }} name="pause">
+                                                <Icon type="FontAwesome5" style={{ color: ColorList.bodyText, fontSize: 20 }} name="pause">
                                                 </Icon>
                                             </TouchableOpacity>}
                                 </View>
                             )
                         }
                     </AnimatedCircularProgress></View>
+            </View>
+                {this.props.message.text?<TextContent
+                    handleLongPress={this.props.handleLongPress}
+                    pressingIn={this.props.pressingIn} text={this.props.message.text} tags={this.props.message.tags}
+                >
+                </TextContent>:null}
             </View>
         );
     }

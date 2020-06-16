@@ -1,9 +1,8 @@
 import React, { Component } from "react"
-import { View, } from "react-native"
+import { View, TouchableOpacity } from "react-native"
 import { Icon, Text} from "native-base"
 import { countComments } from '../../../../../services/cloud_services';
 import ColorList from '../../../../colorList';
-import { TouchableOpacity } from "react-native-gesture-handler";
 import stores from '../../../../../stores';
 import BeNavigator from '../../../../../services/navigationServices';
 

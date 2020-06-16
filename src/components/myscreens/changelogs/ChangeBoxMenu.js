@@ -4,6 +4,7 @@ import {
 } from 'react-native';
 import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
 import { Icon, } from "native-base"
+import ColorList from '../../colorList';
 
 export default class ChangeBoxMenu extends Component {
     constructor(props) {
@@ -38,18 +39,29 @@ export default class ChangeBoxMenu extends Component {
         return this.state.isMount ? (
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                 <Menu
-                    style={{ backgroundColor: "#9EEDD3" }}
+                    style={{ backgroundColor: ColorList.bodyBackground }}
                     ref={this.setMenuRef}
-                    button={<Icon style={{
-                        color: "#0A4E52",
+                    button={<TouchableOpacity 
+                        onPress={() => requestAnimationFrame(this.showMenu)} >
+                        <Icon style={{
+                        color: ColorList.bodyIcon,
                         fontSize: 25,
-                        marginTop: '10%'
-                    }} onPress={this.showMenu} name="dots-three-vertical" type="Entypo"></Icon>}
+                    }} 
+                    name="dots-three-vertical" 
+                    type="Entypo"></Icon>
+                    </TouchableOpacity>}
                 >
+                <View>
+                        <MenuItem textStyle={{ color: ColorList.bodyIcon }} onPress={() => {
+                            this.hideMenu()
+                            this.props.reply()
+                        }}>{"Reply"}</MenuItem>
+                </View>
                     {this.props.master ? 
                         this.props.change.updated === 'delete_remind' ||
                         this.props.change.updated === 'highlight_delete' 
-                        ? <View><MenuDivider color="#1FABAB" /><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
+                            ? <View><MenuDivider color={ColorList.bodyIcon} />
+                            <MenuItem textStyle={{ color: ColorList.bodyIcon }} onPress={() => {
                             this.hideMenu()
                             this.props.restore()
                         }}>{"Restore"}</MenuItem></View> : null : null}

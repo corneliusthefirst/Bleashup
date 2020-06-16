@@ -16,6 +16,7 @@ import moment from 'moment';
 import shadower from '../../shadower';
 import buttoner from '../../../services/buttoner';
 import BleashupModal from '../../mainComponents/BleashupModal';
+import rounder from '../../../services/rounder';
 let dirs = rnFetchBlob.fs.dirs
 export default class PhotoViewer extends BleashupModal {
     initialize() {
@@ -72,12 +73,20 @@ export default class PhotoViewer extends BleashupModal {
             callback: null,
         })
     }
+    iconStyle = { color: 'ivory', textAlign: 'center', }
     modalBackground = "black"
     modalBody() {
         return (
                <View>
                <StatusBarWhiter></StatusBarWhiter>
                 <View style={{ height: screenheight, width: screenWidth, backgroundColor: "black", }}>
+                    <ReactNativeZoomableView
+                        maxZoom={1.5}
+                        minZoom={0.5}
+                        zoomStep={0.5}
+                        initialZoom={1}
+                        bindToBorders={true}
+                    captureEvent={true}>
                     <View style={{ alignSelf: 'center', width: screenWidth }}>
                         {testForURL(this.props.photo) ? <CacheImages style={{ alignSelf: 'center', }} resizeMode={"contain"} width={screenWidth} height={screenheight}
                             source={{ uri: this.props.photo }}></CacheImages> :
@@ -85,31 +94,29 @@ export default class PhotoViewer extends BleashupModal {
                                 width={screenWidth}
                                 height={screenheight}
                                 source={{ uri: this.props.photo }}></Image>}
-                        <View style={{ flexDirection: 'row', position: 'absolute', width: screenWidth }}>
-                
+                        <View style={{ flexDirection: 'row', position: 'absolute', width: screenWidth, justifyContent: 'space-between', }}>
+            
                                     
-                                     <View style={{...buttoner,width:"15%"}} >
+                                     <View style={{...rounder(50,true)}} >
                                         <Icon type="EvilIcons" onPress={() => {
                                             this.props.hidePhoto()
-                                        }} style={{
-                                            fontSize: 30, color: 'ivory'
-                                        }} name={"close"}></Icon>
+                                        }} style={this.iconStyle} name={"close"}></Icon>
                                        </View>
 
-                                        <View style={{...buttoner, width:"15%" ,marginLeft:"55%"}}>
+                                        <View style={{...rounder(50,true) ,marginLeft:"55%",}}>
                                             <Icon onPress={() => {
                                                 this.handleForwardImage()
-                                            }} style={{color: 'ivory' }}
+                                            }} style={this.iconStyle}
                                                 type={"Entypo"}
                                                 name={"forward"} >
                                             </Icon>
                                         </View>
                                   
 
-                                    <View style={{...buttoner, width:"15%"}}>
+                                    <View style={{...rounder(50,true)}}>
                                         <Icon onPress={() => {
                                             this.downLoadImage()
-                                        }} style={{ color: 'ivory' }}
+                                        }} style={this.iconStyle}
                                             type={"AntDesign"}
                                             name={"clouddownload"}>
                                         </Icon>
@@ -120,7 +127,7 @@ export default class PhotoViewer extends BleashupModal {
                                 {this.props.created_at ? <Text style={{ color: '#FEFFDE', marginBottom: 6, }} note>{moment(this.props.created_at).calendar()}</Text> : null}
                             </View>
                         </View>
-
+                    </ReactNativeZoomableView>
                     </View>
 
                 </View>    

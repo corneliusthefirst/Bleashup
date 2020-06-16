@@ -17,7 +17,7 @@ export default class Relation extends PublicEvent {
     return null
   }
 
-  renderBody() {
+  renderTitle() {
     return this.renderprofile()
   }
 

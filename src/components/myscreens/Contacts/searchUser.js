@@ -1,6 +1,5 @@
 import React, { Component } from "react";
-import { View, Animated, TouchableWithoutFeedback, Dimensions, PanResponder,ActivityIndicator } from 'react-native';
-import { TouchableOpacity, ScrollView } from "react-native-gesture-handler";
+import { View, Animated, TouchableWithoutFeedback, Dimensions, PanResponder, ActivityIndicator, TouchableOpacity, ScrollView } from 'react-native';
 import { Container, Header, Item, Input, Icon, Button, Text,Title,Thumbnail } from 'native-base';
 import BleashupFlatList from '../../BleashupFlatList';
 import testForURL from '../../../services/testForURL';
@@ -12,7 +11,7 @@ import colorList from '../../colorList';
 import ProfileSimple from '../currentevents/components/ProfileViewSimple';
 import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
 
-let globalFunctions = new GlobalFunctions();
+let globalFunctions = GlobalFunctions;
 let { height, width } = Dimensions.get('window');
 export default class SearchUser extends Component {
     constructor(props) {

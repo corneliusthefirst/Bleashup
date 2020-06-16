@@ -1,10 +1,11 @@
 
 import rnFetchBlob from 'rn-fetch-blob';
 import * as configs from "../config/bleashup-server-config.json"
+import { Toast } from 'native-base';
 
-let dirs = rnFetchBlob.fs.dirs
 const { fs, config } = rnFetchBlob
-const AppDir = rnFetchBlob.fs.dirs.SDCardDir + '/Bleashup'
+let dirs = fs.dirs
+const AppDir = fs.dirs.SDCardDir + '/Bleashup'
 export default class FileExachange {
     constructor(url, dir, total, received, progressFunc,
         onSuccess, onFail, onError, content_type,
@@ -27,6 +28,7 @@ export default class FileExachange {
         this.filename = filename
         this.store = store
     }
+    appDir = AppDir
     DetemineRange(path) {
         return new Promise((resolve, reject) => {
             fs.exists(path).then(ext => {
@@ -151,6 +153,39 @@ export default class FileExachange {
                 reject()
             })
         })
+    }
+    cachFile(source){
+        return new Promise((resolve,reject) => {
+            this.appdir = this.appDir + '/cache/'
+            this.tempDir = this.appdir + source.split('/').pop()
+            fs.exists(source).then((state) => {
+                console.warn("existence state ", state)
+                if (state) {
+                    fs.exists(this.appdir).then(() => {
+                        if (!state) {
+                            fs.mkdir(this.appdir).then(() => {
+                                fs.cp(source, this.tempDir).then(() => {
+                                   resolve(this.tempDir)
+                                })
+                            })
+                        } else {
+                            fs.cp(source, this.tempDir).then(() => {
+                               resolve(this.tempDir)
+                            })
+                        }
+                    })
+                } else {
+                    Toast.show({ text: "Audio Picking failed", duration: 4000 })
+                }
+            })
+        })
+    }
+    formCacheURL(source){
+        let appdir = this.appDir + '/cache/'
+        return this.appdir + source.split('/').pop()
+    }
+    clearCache(url){
+        fs.unlink(this.formCacheURL(url))
     }
 
 } 

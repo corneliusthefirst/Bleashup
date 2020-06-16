@@ -20,10 +20,9 @@ import {
   Toast,
   Spinner
 } from "native-base";
-import { without, concat, indexOf, forEach, find, reject } from "lodash"
+import { without, concat, indexOf, forEach, find, reject, FlatList, TouchableWithoutFeedback, ScrollView } from "lodash"
 import stores from "../../../../stores";
 import ProfileView from "../../invitations/components/ProfileView";
-import { FlatList, TouchableWithoutFeedback, ScrollView } from "react-native-gesture-handler";
 import ListItem from "../../../../native-base-theme/components/ListItem";
 import ProfileWithCheckBox from "./PofileWithCheckbox";
 import Request from "../Requester";

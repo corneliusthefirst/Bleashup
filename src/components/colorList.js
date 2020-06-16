@@ -7,9 +7,10 @@ class colorlist {
     constructor() {
     }
 
-    //container
+    errorColor = "#A91A84"
     containerHeight = height
-    containerWidth = width
+    containerWidth = "100%"
+    headerTextSize = 14
     containerBackground = "#1FABAB"
     redIcon='red'
     containerBackground = "white"
@@ -18,22 +19,29 @@ class colorlist {
     iconGray = '#555756'
     iconActive = "#1FABAB"
     iconInactive = "#ADE3D2"
-    
+    replyBackground = "rgba(34, 0, 0, 0.1)"
     headerTextInverted = "black"
     headerIcon = "black"
     headerText = "black"
     headerBlackText = "black"
     headerBackground = "white"
-    headerHeight = 55
+    headerHeight = 45
     headerFontweight = "bold"
-    headerFontSize = 17
-
+    buttonerBackground = 'rgba(52, 52, 52, 0.6)'
+    bottunerLighter = "rgba(34, 0, 0, 0.05)"
+    headerFontSize = 16
+    reminds = "#2DDFD5"
+    post = "#F4AC1C"
+    vote = "#4B6CF7"
+    chatboxBorderRadius = 5
+    copy = "#92E578"
+    delete = "red"
 
     //body
     bodyIcon = "black"
     bodyText = "black"
     bodyBackground = "white"
-    bodySubtext = "gray"
+    bodySubtext = "#696969"
     bodyDarkWhite = "#f4f6fc"
     darkGrayText = "#696969"
     bodyTextBlue = "#1e90ff"
@@ -47,7 +55,7 @@ class colorlist {
     
     
     //modal
-
+ 
 
     //pop menu
     popMenuBackground = "white"

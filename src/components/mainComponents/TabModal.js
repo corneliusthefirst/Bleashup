@@ -9,9 +9,9 @@ const screenheight = Math.round(Dimensions.get("window").height);
 export default class TabModal extends BleashupModal {
   TabHeader() {
     return (
-        <View>
-          {this.tabHeaderContent()}
-        </View>
+      <View>
+        {this.tabHeaderContent()}
+      </View>
     );
   }
   state = {
@@ -23,9 +23,7 @@ export default class TabModal extends BleashupModal {
     }
   }
   tabHeaderContent() {
-    return {
-      backgroundColor: 'transparent',
-    }
+    return null
   }
   onOpenModal() {
     setTimeout(() => {
@@ -64,20 +62,25 @@ export default class TabModal extends BleashupModal {
       );
     });
   }
+  tabHeight = ColorList.headerHeight
+  tabPosition = "top"
   activeTextStyle = null
   underlineStyle = {
     backgroundColor: ColorList.bodyIcon,
   }
+  inialPage = 0
   isOpened = this.props.isOpen;
   modalBody() {
     return (
-      <Container style={{ margin: "1%" }}>
+      <Container style={{ margin: !this.searching ? "1%" : null, }}>
         {this.TabHeader()}
-        <Tabs tabBarUnderlineStyle={this.underlineStyle} onChangeTab={({ i }) => {
+        <Tabs tabBarPosition={this.tabPosition} page={this.state.currentTab} initialPage={this.inialPage} tabBarUnderlineStyle={this.underlineStyle} onChangeTab={({ i }) => {
+          this.inialPage !== 0 && i == 0 ? this.onClosedModal() : null
           this.setState({
-            currentTab: i
+            currentTab: this.inialPage !== 0 && i === 0 ? i + 1 : i
           })
         }} tabContainerStyle={{
+          height: this.tabHeight,
           ...shadower(8),
           borderRadius: 8,
         }}>{this.renderTabs()}</Tabs>

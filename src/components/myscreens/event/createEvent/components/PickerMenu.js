@@ -46,7 +46,6 @@ export default class PickersMenu extends Component {
     return (
       <View
         style={{
-          flex: 1,
           alignItems: "center",
           justifyContent: "center",
         }}
@@ -60,7 +59,7 @@ export default class PickersMenu extends Component {
               <Icon
                 style={{
                   color: ColorList.bodyIcon,
-                  fontSize: 30,
+                  fontSize: this.props.fontSize||30,
                 }}
                 name={this.props.icon.name}
                 type={this.props.icon.type}

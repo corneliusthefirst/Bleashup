@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import { View, TouchableWithoutFeedback, PanResponder } from 'react-native';
+import { View, TouchableWithoutFeedback, PanResponder, ScrollView, TouchableOpacity } from 'react-native';
 import { Text, Content, Icon, Spinner,Title,Thumbnail } from 'native-base';
-import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import firebase from 'react-native-firebase';
 import stores from '../../../stores';
 import BleashupFlatList from '../../BleashupFlatList';
@@ -13,8 +12,10 @@ import emitter from '../../../services/eventEmiter';
 import shadower from '../../shadower';
 import colorList from '../../colorList';
 import bleashupHeaderStyle from '../../../services/bleashupHeaderStyle';
+import { observer } from 'mobx-react';
 
-export default class Commitee extends Component {
+
+@observer class Commitee extends Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -53,20 +54,18 @@ export default class Commitee extends Component {
         return item
     }
     refreshCommitees() {
-        console.warn('refreshing committees')
-        this.setState({
+        /*this.setState({
             refresh: true
         })
         setTimeout(() => {
             this.setState({
                 refresh: false
             })
-        }, 100)
+        }, 100)*/
     }
+    delay = 0
     render() {
-        //console.warn(this.props.commitees,this.props.commitees.length)
-
-        return (this.state.loaded ?
+        return (
             <View style={{ height: "100%", width: "100%"}}>
                 
                 <View style={{ ...bleashupHeaderStyle, height:colorList.headerHeight, width: "100%",flexDirection:"row",justifyContent:"space-between"}}>
@@ -81,17 +80,19 @@ export default class Commitee extends Component {
                 </View>      
              </View>
 
-                <View>{this.state.refresh ? null :
+                <View>{!this.state.loaded || this.state.refresh ? null :
                     <View style={{ height: colorList.containerHeight - (colorList.headerHeight + 25), }}>
                         <BleashupFlatList
                         backgroundColor={colorList.bodyBackground}
                         style={{borderTopRightRadius: 5,
                             width: '100%', borderBottomRightRadius: 1, 
                         }}
-                            dataSource={union([this.generalCommitee], uniq(this.props.commitees))}
+                            dataSource={union([{...stores.CommiteeStore.generals[this.props.event_id], ...this.generalCommitee}], stores.CommiteeStore.commitees[this.props.event_id])}
                             keyExtractor={(item, index) => index.toString()}
-                            renderItem={(item, index) =>
-                                <CommiteeItem
+                            renderItem={(item, index) =>{
+                                this.delay = index >= 7 ? 0:this.delay + 1
+                               return <CommiteeItem
+                                    delay={this.delay}
                                     computedMaster={this.props.computedMaster}
                                     key={index.toString()}
                                     ImICurrentCommitee={item.id && item.id === GState.currentCommitee ||
@@ -111,13 +112,16 @@ export default class Commitee extends Component {
                                     newMessagesCount={4}
                                     id={item.id ? item.id : item} ></CommiteeItem>
                             }
+                            }
                             firstIndex={0}
                             renderPerBatch={7}
                             initialRender={14}
-                            numberOfItems={this.props.commitees.length}
+                            numberOfItems={stores.CommiteeStore.commitees[this.props.event_id]?
+                                stores.CommiteeStore.commitees[this.props.event_id].length:0}
                         /></View>}
                 </View>
-            </View> : <Spinner></Spinner>
+            </View>
         );
     }
 }
+export default Commitee

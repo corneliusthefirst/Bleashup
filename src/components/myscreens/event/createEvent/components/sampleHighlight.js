@@ -5,11 +5,10 @@ import {
     Button, InputGroup, DatePicker, Thumbnail, Alert, List, ListItem, Label, Toast
 } from "native-base";
 
-import { StyleSheet, View, Image, TouchableOpacity, FlatList, ScrollView, Dimensions, TextInput } from 'react-native';
+import { StyleSheet, View, Image, TouchableOpacity, Textarea, FlatList, ScrollView, Dimensions, TextInput } from 'react-native';
 import ActionButton from 'react-native-action-button';
 import Modal from 'react-native-modalbox';
 import autobind from "autobind-decorator";
-import Textarea from 'react-native-textarea';
 import CacheImages from "../../../../CacheImages";
 import HighlightCard from "./HighlightCard"
 import stores from '../../../../../stores/index';
@@ -227,7 +226,7 @@ export default class EventHighlights extends Component {
             stores.Highlights.readFromStore().then(Highlights => {
                 let newHighlight = request.Highlight();
                 console.warn("here5", newHighlight);
-                let highlight = find(Highlights, { id: "newHighlightId" });
+                let highlight = find(Highlights[this.props.event_id], { id: "newHighlightId" });
                 console.warn("here4", highlight)
                 newHighlight = highlight;
                 newHighlight.id = New_id;
@@ -247,7 +246,7 @@ export default class EventHighlights extends Component {
                     console.warn("here3")
                 }
 
-                stores.Highlights.addHighlights(newHighlight).then(() => { });
+                stores.Highlights.addHighlights(this.props.event_id, newHighlight).then(() => { });
                 //add the new highlight id to our newly created event for it to be accessed later when needed using this id
                 stores.Events.addHighlight(newHighlight.event_id, newHighlight.id, false).then(() => { });
                 stores.Events.readFromStore().then((Events) => { console.warn(Events, "After highlight id insertion"); })
@@ -256,8 +255,8 @@ export default class EventHighlights extends Component {
                 this.resetHighlight();
 
                 //delete highlight and add a new highlight empty One
-                stores.Highlights.removeHighlight("newHighlightId").then(() => { });
-                stores.Highlights.addHighlights(this.state.currentHighlight).then(() => { });
+                stores.Highlights.removeHighlight(this.props.event_id, "newHighlightId").then(() => { });
+                stores.Highlights.addHighlights(this.props.event_id, this.state.currentHighlight).then(() => { });
                 //stores.Highlights.resetHighlight(this.state.currentHighlight,false).then(()=>{});
             });
         }
@@ -267,7 +266,7 @@ export default class EventHighlights extends Component {
     @autobind
     updateHighlight() {
 
-        stores.Highlights.updateHighlight(this.state.currentHighlight, false).then(() => { });
+        stores.Highlights.updateHighlight(this.props.event_id, this.state.currentHighlight, false).then(() => { });
         this.resetHighlight();
         this.setState({ update: false });
         this.props.onClosed();

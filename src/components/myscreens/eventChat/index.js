@@ -19,7 +19,7 @@ import { values } from 'lodash';
 import Waiter from '../loginhome/Waiter';
 
 
-export default class EventChat extends Component {
+ export default class EventChat extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -35,30 +35,7 @@ export default class EventChat extends Component {
   newMessageCount = 0
   componentDidMount() {
     let user = stores.LoginStore.user
-    let phone = user.phone.replace("00", "+")
-    firebase.database().ref(`new_message/${this.props.activity_id}/${phone}/${this.props.roomID}/new_messages`).once('value', snapshoot => {
-      this.newMessageCount = snapshoot.val() ? snapshoot.val().length : 0
-      if (this.newMessageCount > 0) {
-        firebase.database().ref(`${this.props.roomID}`).orderByKey().limitToLast(this.newMessageCount).once('value', snapshoot => {
-          firebase.database().ref(`new_message/${this.props.activity_id}/${phone}/${this.props.roomID}/new_messages`).set([])
-          setTimeout(() => {
-            this.setState({
-              user: user,
-              new_messages: values(snapshoot.val()),
-              loaded: true
-            });
-          }, 1)
-        })
-      } else {
-        setTimeout(() => {
-          this.setState({
-            user: user,
-            new_messages: [],
-            loaded: true
-          });
-        }, 1)
-      }
-    }, () => {
+    setTimeout(() => {
       this.setState({
         user: user,
         new_messages: [],
@@ -176,8 +153,7 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
 `,
     duration: Math.floor(0),
     created_at: moment().format(),
-  },
-    , {
+  }, {
     id: Math.random().toString(),
     source: 'http://192.168.43.32:8555/video/get/Black M - Le prince Aladin (Clip officiel) ft. Kev Adams.mp4',
     file_name: 'bm6lgk013ult9gc75vmg_bm6lgk013ult9gc75vn0_bm6lgk013ult9gc75vng.mp4',
@@ -221,12 +197,15 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
       activity_name={this.props.activity_name} // name_of_the_other_user
       close={() => this.props.close()}
       open={() => this.props.open()}
+      goback={this.props.goback}
       addMembers={() => this.props.addMembers()}
       removeMembers={() => this.props.removeMembers()}
       leave={() => this.props.leave()}
       computedMaster={this.props.computedMaster}
       generallyMember={this.props.generallyMember}
       publish={() => this.props.publish()}
+      openSettings={this.props.openSettings}
+      editCommitteeName={this.props.editCommitteeName}
       room_type={this.props.room_type}
       master={this.props.master}
       public_state={this.props.public_state}
@@ -238,7 +217,7 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
       firebaseRoom={this.props.roomID} // relation_id
       members={this.props.members} // relation_members
       activity_id={this.props.activity_id} //reloation
-      navigatePage={(page)=>{this.props.navigation.navigate(page)}}//to navigate
+      navigatePage={(page) => { this.props.navigation.navigate(page) }}//to navigate
       newMessages={this.state.new_messages}
       creator={this.props.creator} ></ChatRoom></View> : <Waiter dontshowSpinner={true}></Waiter>)
   }

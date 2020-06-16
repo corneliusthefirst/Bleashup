@@ -9,7 +9,7 @@ const ifCloseToTop = ({ layoutMeasurement, contentOffset, contentSize }) => {
 const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
     const paddingToBottom = 20;
     return layoutMeasurement.height + contentOffset.y >=
-        ((contentSize.height - paddingToBottom) * (0.70));
+        ((contentSize.height - paddingToBottom) * (0.20));
 };
 const isTooCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
     const paddingToBottom = 20;
@@ -22,16 +22,18 @@ export default class BleashupFlatList extends Component {
         this.state = {
             currentRender: this.props.initialRender ? this.props.initialRender : 4,
             currentNewRender: this.props.initialNewRender ? this.props.initialNewRender : 4,
-            endReached: false
+            endReached: false,
+            indexing:false
+        }
+        this.viewabilityConfig = {
+            waitForInteraction: false,
+            viewAreaCoveragePercentThreshold: 100
         }
     }
     initialRender = 3
     renderPerBatch = 3
     previousNewRender = 0
     previousRendered = 0
-    componentDidMount() {
-        //console.warn("BleashupFlatlist remounting")
-    }
     _renderItems(array) {
         return array.map((element) => {
             return this.props.renderItem(element, this.props.keyExtractor(element, 1))
@@ -49,22 +51,16 @@ export default class BleashupFlatList extends Component {
             })
         }
     }
-
-    continueScrollTop() {
-        /* this.previousNewRender = this.state.currentNewRender
-         console.warn(this.previousNewRender, "[[[")
-         if (this.state.currentNewRender <= this.props.newData.length - 1) {
-             this.setState({
-                 currentNewRender: this.previousNewRender - this.props.newRenderPerBatch
-             })
-         } else {
-             this.setState({
-                 // endReached: true
-             })
-         }*/
+    scrollToIndex(index) {
+        this.setState({
+            currentRender: this.props.dataSource.length
+        })
+        setTimeout(() => {
+           this.refs.bleashupFlatlist && this.refs.bleashupFlatlist.scrollToIndex({ animated: true, index: index })
+        })
     }
     scrollToEnd() {
-        this.refs.bleashupFlatlist.scrollToOffset({ animated: true, offset: 0 })
+       this.refs.bleashupFlatlist && this.refs.bleashupFlatlist.scrollToOffset({ animated: true, offset: 0 })
     }
     resetItemNumbers() {
         this.setState({
@@ -83,34 +79,40 @@ export default class BleashupFlatList extends Component {
         return this.props.newData ? this.props.newData : [];
     }
     render() {
+        if (this.props.dataSource.length <= 0) {
+            this.props.empty ? this.props.empty() : null
+        }
         return (
             <View style={{
-                flexDirection: 'column', height: '100%',
+                flexDirection: 'column', height: this.props.fit ? null : '100%',
                 backgroundColor: this.props.backgroundColor ?
                     this.props.backgroundColor : "#ffffff",
                 ...this.props.style
             }}>
-                {this.props.marginTop ? <View style={{ height: 30 }}></View> : null}
+                {this.props.marginTop ? <View style={{ height: 5 }}></View> : null}
                 <FlatList
+                    viewabilityConfig={this.viewabilityConfig}
+                    keyboardShouldPersistTaps={this.props.keyboardShouldPersistTaps}
                     onScrollEndDrag={({ nativeEvent }) => {
                         if (isTooCloseToBottom(nativeEvent)) {
                             this.props.loadMoreFromRemote && this.props.loadMoreFromRemote()
                         }
                         if (isCloseToBottom(nativeEvent)) {
                             this.continueScrollDown()
-                        } else if (ifCloseToTop(nativeEvent)) {
-                            this.continueScrollTop()
                         }
                     }
                     }
+                    enableEmptySections={false}
+                    disableVirtualization={this.props.disableVirtualization}
                     getItemLayout={this.props.getItemLayout}
+                    scrollEnabled={!this.props.disableScroll}
                     nestedScrollEnabled={true}
                     numColumns={this.props.numColumns ? this.props.numColumns : 1}
                     horizontal={this.props.horizontal ? this.props.horizontal : false}
                     onScroll={this.props.onScroll}
                     centerContent={true}
                     //horizontal={this.props.horizontal}
-                    updateCellsBatchingPeriod={100}
+                    windowSize={this.props.windowSize}
                     ref="bleashupFlatlist"
                     canCancelContentTouches={true}
                     inverted={this.props.inverted ? this.props.inverted : false}

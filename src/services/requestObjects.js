@@ -97,6 +97,7 @@ class Request {
         }
     }
     Remind() {
+
         return {
             id: 'newRemindId',
             event_id: "",
@@ -654,7 +655,26 @@ class Request {
             notif: this.Notification()
         }
     }
-
+    Message(){
+        return {
+            id: "",
+            text:"",
+            photo: "",
+            video:"",
+            created_at:moment().format(),
+            updated_at: moment().format(),
+            received:[{phone:stores.LoginStore.user.phone,date:moment().format()}],
+            committee_id:""
+        }
+    }
+    MessageAction(){
+        return {
+            action : "",
+            data : "",
+            committee_id:"",
+            event_id:""
+        }
+    }
 }
 const request = new Request()
 

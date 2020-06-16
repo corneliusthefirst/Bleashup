@@ -290,7 +290,11 @@ export default class PrivacyStore {
             PrivacyRequester.getBlocked().then((blocked) => {
                 PrivacyRequester.getMuted().then((muted) => {
                     resolve({ ...currentPrivacy, blocked, muted });
+                }).catch(() => {
+                    resolve({blocked})
                 });
+            }).catch(() => {
+                resolve({})
             });
         });
     }

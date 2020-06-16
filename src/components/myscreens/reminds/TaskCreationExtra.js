@@ -47,7 +47,10 @@ export default class TaskCreationExtra extends BleashupModal {
                             ></TextMenu></View>
                     </View>
                     <View style={{ height: 80,margin: '2%', justifyContent: 'center', }}>
-                        <CreateButton title={"Proceed"} action={this.props.proceed}></CreateButton>
+                        <CreateButton title={"Proceed"} action={() => {
+                            this.onClosedModal()
+                            this.props.proceed()
+                        }}></CreateButton>
                     </View>
                 </View>
             </ScrollView>

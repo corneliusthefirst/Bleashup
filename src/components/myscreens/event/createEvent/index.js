@@ -4,7 +4,7 @@ import {
   Button, Toast,Thumbnail,Item,Input
 } from "native-base";
 
-import { StyleSheet, View, Image, TouchableOpacity, Dimensions, BackHandler } from 'react-native';
+import { StyleSheet, View, Image, TouchableOpacity, ScrollView, Dimensions, BackHandler } from 'react-native';
 import autobind from "autobind-decorator";
 import moment from "moment";
 import { head, find, } from "lodash";
@@ -57,15 +57,15 @@ export default class CreateEventView extends Component {
 
   }
   componentWillMount() {
-    this.BackHandler = BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this));
+    //this.BackHandler = BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this));
 
   }
-  handleBackButton() {
+  /*handleBackButton() {
     this.props.navigation.navigate('Home')
     return true
-  }
+  }*/
   componentWillUnmount() {
-    this.BackHandler.remove()
+    //this.BackHandler.remove()
   }
 
   componentDidMount() {
@@ -106,16 +106,14 @@ export default class CreateEventView extends Component {
       let event = this.state.currentEvent
       event.created_at = moment().format()
       event.updated_at = moment().format()
-      //event.recurrence = moment(event.period).add(1, "hours").format()
-      let newEvent = event;
-      newEvent.id = uuid.v1();
-      CreateRequest.createEvent(newEvent).then((res) => {
+      CreateRequest.createEvent(event).then((res) => {
         //console.warn(res)
         stores.Events.delete("newEventId").then(() => {
           firebase.database().ref(`rooms/${res.id}/${res.id}`).set({ name: 'General', members: res.participant }).then(() => {
             this.setState({
               currentEvent: request.Event(),
               title:"",
+              photo:"",
               creating: false
             })
             this.navigateToActivity(res)
@@ -230,7 +228,7 @@ resetPhoto = () => {
         
     </View>
 
-<View style={{height:"92%",flexDirection:"column"}}>
+<ScrollView style={{height:"92%",flexDirection:"column"}}>
 
         <View style={{marginTop:"5%",width:"80%",alignSelf:"center"}}>
           <CreateTextInput
@@ -294,7 +292,7 @@ resetPhoto = () => {
                }}  />
   
 
-  </View>
+  </ScrollView>
 </View>
 
         

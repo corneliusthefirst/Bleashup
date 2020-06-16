@@ -4,10 +4,8 @@ import {
     Text, Icon, Item,
     Button,
 } from "native-base";
-import Textarea from 'react-native-textarea';
-import { View, Dimensions, Keyboard } from 'react-native';
+import { View, Dimensions, Keyboard, ScrollView, Textarea } from 'react-native';
 import Modal from 'react-native-modalbox';
-import { ScrollView } from 'react-native-gesture-handler';
 import ColorList from '../../colorList';
 import CreateTextInput from '../event/createEvent/components/CreateTextInput';
 

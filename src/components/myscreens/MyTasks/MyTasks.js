@@ -1,117 +1,182 @@
-import React, { Component } from "react";
+/* eslint-disable prettier/prettier */
+/* eslint-disable react-native/no-inline-styles */
+import React, { Component } from 'react';
+import { Text, Icon } from 'native-base';
 import {
-  Content, Card, CardItem, Text, Body, Container, Icon, Header,
-  Form, Item, Title, Input, Left, Right, H3, H1, H2, Spinner,
-  Button, InputGroup, DatePicker, Thumbnail, Alert,Textarea,List,ListItem,Label
-} from "native-base";
- 
-import { StyleSheet, View,Image,TouchableOpacity,FlatList,ScrollView, Dimensions,LayoutAnimation} from 'react-native';
-import Modal from 'react-native-modalbox';
-import autobind from "autobind-decorator";
-import CacheImages from "../../CacheImages";
-import MyTasksCard from "./MyTasksCard"
-import PhotoEnlargeModal from "../invitations/components/PhotoEnlargeModal";
-import  stores from '../../../stores/index';
-import {observer} from 'mobx-react'
-import BleashupFlatList from '../../BleashupFlatList';
-import CreateEvent from '../event/createEvent/CreateEvent';
-import LocalTasksCreation from './localTasksCreation';
-import { find, findIndex, uniqBy, reject,filter } from "lodash";
-
-//const MyTasksData = stores.Reminds.MyTasksData
- 
+  Platform,
+  UIManager,
+  View,
+  TouchableOpacity,
+  StyleSheet,
+} from 'react-native';
+import stores from '../../../stores/index';
+import { observer } from 'mobx-react';
+import { find, reject } from 'lodash';
+import ColorList from '../../colorList';
+import bleashupHeaderStyle from '../../../services/bleashupHeaderStyle';
+import BleashupSrollView from '../../BleashupScrollView';
+import AccordionModuleNative from './BleashupAccordion';
+import ActivityProfile from "../currentevents/components/ActivityProfile";
+import Remind from "../reminds";
+import moment from "moment";
+import RelationProfile from '../../RelationProfile';
 
 @observer
-export default class MyTasksView extends Component {
-    constructor(props) {
-        super(props)
-        this.state={
-          localRemindData:[],
-          RemindCreationState:false
-        }
+class MyTasksView extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      localRemindData: [],
+      RemindCreationState: false,
+      dataArray: [],
+    };
+
+    if (Platform.OS === 'android') {
+      UIManager.setLayoutAnimationEnabledExperimental(true);
     }
+  }
 
+  componentDidMount() {
+    stores.Events.readFromStore().then((events) => {
+      events = reject(events, { id: 'newEventId' });
+      this.setState({ dataArray: events });
+    });
+  }
 
-updateData = newremind => {
-  //console.warn("come back value",newremind)
-  this.setState({localRemindData:[ ...this.state.localRemindData, newremind]});
-}
+  back = () => {
+    this.props.navigation.navigate('Home');
+  };
 
-componentDidMount(){
-  stores.LoginStore.getUser().then((user)=>{
-   stores.Reminds.readFromStore().then((Reminds)=>{
-    let reminds = filter(Reminds,{event_id:user.phone});
-    this.setState({localRemindData:reminds});
-    //console.warn("ok",reminds)
-   })
- })
-}
+  _keyExtractor = (item, index) => item.id;
 
-@autobind
-AddRemind(){
-  //this.props.navigation.navigate("LocalLocalTasksCreation",{localRemindData:this.state.localRemindData,updateData:this.updateData});
-  this.setState({RemindCreationState:true})
-}
+  _renderHeader = (item, expanded,toggleExpand) => {
+    return (
+      <View style={{
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        backgroundColor: ColorList.bodyBackground,
+      }}>
+        <View style={{marginLeft: 15}}>
+          { item.type === 'relation' ? <RelationProfile Event={item} />  :
+          <ActivityProfile Event={item} joint={true} /> }
+        </View>
 
+        <TouchableOpacity onPress={() => toggleExpand()}>
+          <View style={{ width: 30 }}>
+            {expanded ? (
+              <Icon style={{ fontSize: 18 }} type="AntDesign" name="up" />
+            ) : (
+              <Icon style={{ fontSize: 18 }} type="AntDesign" name="down" />
+            )}
+          </View>
+        </TouchableOpacity>
+      </View>
+    );
+  };
 
+  _renderContent = (item) => {
+    let user = stores.LoginStore.user;
+    let member = find(item.participant, { phone: user.phone });
+    let master = member.master;
 
-@autobind
-back() {
-  this.props.navigation.navigate('Home');
-
-}
-
-_keyExtractor = (item, index) => item.id
+    //console.warn("item is", item);
+    return (
+      <View style={{ height: item.reminds.length > 0 ? 450 : 0 }}>
+        <Remind
+          share={{
+            id: "456322",
+            date: moment().format(),
+            sharer: stores.LoginStore.user.phone,
+            item_id: "a7f976f0-8cd8-11ea-9234-ebf9c3b94af7",
+            event_id: item.id,
+          }}
+          startLoader={() => {
+            this.setState({
+              working: true,
+            });
+          }}
+          stopLoader={() => {
+            this.setState({
+              working: false,
+            });
+          }}
+          openMenu={() => this.openMenu()}
+          clearCurrentMembers={() => {
+            this.setState({ currentRemindMembers: null });
+          }}
+          mention={(Item) => this.mention(Item)}
+          master={master}
+          computedMaster={false}
+          working={false}
+          event={item}
+          event_id={item.id}
+          removeHeader
+        />
+      </View>
+    );
+  };
 
   render() {
-       
-     return(
+    return (
+      <View style={{ flex: 1, backgroundColor: ColorList.bodyBackground }}>
+        <View style={{ height: '8%' }}>
+          <View
+            style={{
+              height: ColorList.headerHeight,
+              width: '100%',
+              flexDirection: 'row',
+              alignItems: 'center',
+              ...bleashupHeaderStyle,
+            }}
+          >
+            <View style={{ width: '18%', alignItems: 'center' }}>
+              <Icon
+                name="arrow-back"
+                active={true}
+                type="MaterialIcons"
+                style={{ color: ColorList.headerIcon }}
+                onPress={this.back}
+              />
+            </View>
 
-      <View style={{flex:1,backgroundColor:'#FEFFDE'}}>
-        <View style={{height:"8%",width:"96%",justifyContent:"space-between",flexDirection:"row",backgroundColor:"#FEFFDE",alignItems:"center",marginLeft:"2%",marginRight:"2%"}}>
-           <View >
-             <TouchableOpacity>
-                <Icon  onPress={this.back} type='MaterialCommunityIcons' name="keyboard-backspace" style={{color:"#1FABAB"}} />
-             </TouchableOpacity>
-           </View>
+            <View
+              style={{ width: '64%', paddingLeft: '4%', alignItems: 'center' }}
+            >
+              <Text
+                style={{
+                  fontSize: ColorList.headerFontSize,
+                  fontWeight: 'bold',
+                }}
+              >
+                Tasks / Reminds
+              </Text>
+            </View>
+          </View>
+        </View>
 
-             <View >
-               <Text style={{fontSize:18}}>Tasks / Reminds</Text>
-             </View>
-
-              <View >           
-               <TouchableOpacity>  
-                <Icon type='AntDesign' name="pluscircle" style={{color:"#1FABAB"}} onPress={this.AddRemind} />
-               </TouchableOpacity>
-             </View>
-
-         </View>
-
-      <View style={{height:"92%"}}>
-        <BleashupFlatList 
-          initialRender={5}
-          renderPerBatch={5}
-          onScroll={this._onScroll}
-          firstIndex={0}
-          keyExtractor={this._keyExtractor}
-          dataSource={this.state.localRemindData}
-          renderItem={(item, index) => {
-            return (
-              <MyTasksCard {...this.props} item={item} key={index} parentCardList={this}>
-              </MyTasksCard>
-            );
-          }}
-        >
-        </BleashupFlatList >
-  
-
+        <View style={{ height: '92%' }}>
+          <BleashupSrollView
+            firstIndex={0}
+            renderPerBatch={7}
+            initialRender={10}
+            numberOfItems={this.state.dataArray.length}
+            keyExtractor={this._keyExtractor}
+            dataSource={this.state.dataArray}
+            renderItem={(item, index) => {
+              return (
+                <AccordionModuleNative
+                  dataArray={item}
+                  _renderHeader={this._renderHeader}
+                  _renderContent={this._renderContent}
+                />
+              );
+            }}
+          />
+        </View>
       </View>
-      <LocalTasksCreation  isOpen={this.state.RemindCreationState} onClosed={()=>{this.setState({RemindCreationState:false})}} parentComp={this} 
-        localRemindData={this.state.localRemindData}></LocalTasksCreation>
- 
-   </View>
+    );
+  }
+}
 
-   
-   )}
-
- }
+export default MyTasksView;

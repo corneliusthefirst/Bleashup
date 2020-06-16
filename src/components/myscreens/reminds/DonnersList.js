@@ -32,7 +32,7 @@ export default class DonnersList extends Component{
                     return (item.type ? <IntervalSeparator
                         actualInterval={this.props.actualInterval && item.from === this.props.actualInterval.start &&
                             item.to === this.props.actualInterval.end} first={index == 0 ? true : false} from={item.from} to={item.to}></IntervalSeparator> 
-                        : item.data && item.data.phone ? <View style={{ width: "90%", alignSelf: 'center',}}>
+                        : item.data && item.data.phone ? <View style={{ width: "90%", alignSelf: 'center',minHeight: 53,}}>
                             <View style={{ display: 'flex', flexDirection: 'row',}}>
                                     <View style={{  width: "70%",alignSelf: 'center', }}>
                                         <ProfileView delay={this.delay} phone={item.data.phone}></ProfileView>

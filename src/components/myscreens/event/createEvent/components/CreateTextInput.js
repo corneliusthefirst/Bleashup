@@ -19,6 +19,8 @@ export default class CreateTextInput extends Component{
 
                 <Input
                 disabled={this.props.disabled}
+                autoCorrect={true}
+                selectTextOnFocus
                     style={{
                         width: "100%",
                         height: "100%",
@@ -33,7 +35,6 @@ export default class CreateTextInput extends Component{
                     value={this.props.value }
                     maxLength={this.props.maxLength||100}
                     placeholder={`@${this.props.placeholder}`}
-                    keyboardType="email-address"
                     autoCapitalize="sentences"
                     returnKeyType="next"
                     inverse

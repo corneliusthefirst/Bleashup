@@ -3,7 +3,6 @@ import stores from "../../../stores";
 import Modal from 'react-native-modalbox';
 import { Button,View,Dimensions,TouchableWithoutFeedback,Image,TextInput} from "react-native";
 import { Title ,Text,Label,Input} from "native-base";
-//import { TextInput } from "react-native-gesture-handler";
 import { filter,map,find} from "lodash";
 import autobind from "autobind-decorator";
 import ColorList from '.././../colorList';
@@ -62,6 +61,7 @@ export default class EditUserModal extends Component {
             this.setState({value:value});
           }
       }
+      
       save = ()=>{
         if(this.props.type == "nickname"){
          stores.LoginStore.updateName(this.state.value).then(()=>{
@@ -69,39 +69,19 @@ export default class EditUserModal extends Component {
         });
       }
       else if(this.props.type == "actu"){
-        //for data array update
         map(this.props.data,(o)=>{o.state =false});
-        let data = find(this.props.data,{id:"0"});
-        
-        if(data){
-         this.props.data[0].name = this.state.value;
-         this.props.data[0].state = true; 
-        }
-        else{
-         data={id:"0",name:this.state.value,state:true};
-         this.props.data = [data].concat(this.props.data);     
-        }
-
         stores.LoginStore.updateStatus(this.state.value).then(()=>{
-          stores.LoginStore.updateStatusOptions(this.props.data).then(()=>{})
-          this.props.parent.init();
-          this.props.onClosed();
-          });
-      }
-         
+          stores.LoginStore.updateStatusOptions(this.props.data).then(()=>{
+            this.props.parent.init();
+            this.props.onClosed();
+          })
+        });}  
       }
 
       cancel = ()=>{
          this.setState({value:""});
          this.props.onClosed();
       }
-
-      /*unmount = ()=>{
-        this.setState({isMount:false});
-      }
-      componentWillUnmount(){
-         this.unmount()
-      }*/
 
      render(){
         return (
@@ -116,6 +96,7 @@ export default class EditUserModal extends Component {
             }}
             position={this.props.position}
             coverScreen={this.props.coverscreen}
+            backdropPressToClose={false}
            >
              {this.state.isMount?
           <View style={{flexDirection:"column",width:"90%",margin:"5%"}}>
@@ -126,7 +107,7 @@ export default class EditUserModal extends Component {
                 height={height/12}
                 value={this.state.value}
                 onChange={this.textChanged}
-                //placeholder={"Activity name"}
+                placeholder={"@enter new status"}
             >
           </CreateTextInput>
             </View>

@@ -9,6 +9,7 @@ import FileExachange from '../../../services/FileExchange.js';
 import rnFetchBlob from 'rn-fetch-blob';
 import buttoner from '../../../services/buttoner';
 import ColorList from '../../colorList';
+import TextContent from './TextContent';
 const { fs } = rnFetchBlob
 export default class PhotoUploader extends Component {
     constructor(props) {
@@ -88,15 +89,16 @@ export default class PhotoUploader extends Component {
             })
         })
     }
+    messageWidth=250
     render() {
         return (
-            <View>
-                <View style={{ padding: "1.5%" }}>
+            <View style={{width:this.messageWidth}}>
+                <View>
                     <View>
                         <TouchableOpacity onPress={() => this.props.showPhoto(this.props.message.source)}>
                             <Image resizeMode={'contain'} style={{
                                 borderRadius: 9, alignSelf: 'center',
-                                maxWidth: 380,
+                                maxWidth: this.messageWidth,
                             }} source={{ uri: this.props.message.source }} height={340}></Image>
                         </TouchableOpacity>
                     </View>
@@ -133,7 +135,8 @@ export default class PhotoUploader extends Component {
                                     {this.toMB(this.state.total).toFixed(1)}{")Mb"}</Text></View></View>}</View>
                 </View>
                 <View>
-                    {this.props.message.text ? <Text style={{ margin: '3%', }}>{this.props.message.text}</Text> : null}
+                    {this.props.message.text ? <TextContent text={this.props.message.text} 
+                    tags={this.props.message.tags} ></TextContent> : null}
                 </View>
             </View>
         );

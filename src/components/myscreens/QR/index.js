@@ -19,15 +19,15 @@ export default class QRScanner extends Component {
 
     }
     componentWillMount() {
-        BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this));
+        //BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this));
     }
-    handleBackButton() {
+    /*handleBackButton() {
         this.goback()
         return true;
-    }
-    componentWillUnmount() {
+    }*/
+    /*componentWillUnmount() {
         BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton.bind(this));
-    }
+    }*/
     goToActivity(event) {
         //console.error("navigating")
         BeNavigator.pushActivity(event)

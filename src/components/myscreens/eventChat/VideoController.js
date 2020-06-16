@@ -16,6 +16,9 @@ import {
 } from 'react-native';
 import _ from 'lodash';
 import { Icon, Spinner } from 'native-base';
+import ColorList from '../../colorList';
+import rounder from '../../../services/rounder';
+import shadower from '../../shadower';
 
 export default class VideoController extends Component {
 
@@ -892,7 +895,7 @@ export default class VideoController extends Component {
             <Icon
                 name={"close"}
                 type="EvilIcons"
-                style={{ color: "#FEFFDE",}}
+                style={{ color: ColorList.bodyBackground,}}
             />,
             this.events.onBack,
             styles.controls.back
@@ -921,7 +924,7 @@ export default class VideoController extends Component {
                     ]}
                     {...this.player.volumePanResponder.panHandlers}
                 >
-                    <Icon style={styles.volume.icon} style={{ color:"#FEFFDE"}} type="EvilIcons" name="bell" />
+                    <Icon style={styles.volume.icon} style={{ color:ColorList.bodyBackground}} type="EvilIcons" name="bell" />
                 </View>
             </View>
         );
@@ -934,7 +937,7 @@ export default class VideoController extends Component {
 
         return this.renderControl(
             <View>
-                <Icon style={{ color:"#FEFFDE"}} type="MaterialIcons" name="fullscreen">
+                <Icon style={{ color:ColorList.bodyBackground}} type="MaterialIcons" name="fullscreen">
             </Icon>
             </View>,
             this.methods.toggleFullscreen,
@@ -1001,7 +1004,7 @@ export default class VideoController extends Component {
                         styles.seekbar.fill,
                         {
                             width: isNaN(this.state.seekerFillWidth)? "100%" : this.state.seekerPosition,
-                            backgroundColor: this.props.seekColor || '#FEFFDE'
+                            backgroundColor: this.props.seekColor || ColorList.bodyBackground
                         }
                     ]} />
                 </View>
@@ -1014,7 +1017,7 @@ export default class VideoController extends Component {
                 >
                     <View style={[
                         styles.seekbar.circle,
-                        { backgroundColor: this.props.seekColor || '#FEFFDE' }]}
+                        { backgroundColor: this.props.seekColor || ColorList.bodyBackground }]}
                     />
                 </View>
             </View>
@@ -1131,7 +1134,11 @@ export default class VideoController extends Component {
                         onLoad={this.events.onLoad}
                         onEnd={this.events.onEnd}
 
-                        style={[styles.player.video, this.styles.videoStyle]}
+                        style={[styles.player.video, {
+                            overflow: 'hidden',
+                            height: '100%',
+                            width:"100%",
+                            position: 'absolute',}, this.styles.videoStyle]}
 
                         source={this.props.source}
                     />
@@ -1162,19 +1169,17 @@ const styles = {
         },
         video: {
             overflow: 'hidden',
+            height:'100%',
             position: 'absolute',
-            top: 0,
-            right: 0,
-            bottom: 0,
-            left: 0,
         },
     }),
     error: StyleSheet.create({
         container: {
-            backgroundColor: 'rgba( 0, 0, 0, 0.5 )',
+            backgroundColor: 'transparent',
             position: 'absolute',
             top: 0,
             right: 0,
+            height:'100%',
             bottom: 0,
             left: 0,
             justifyContent: 'center',
@@ -1335,7 +1340,7 @@ const styles = {
     seekbar: StyleSheet.create({
         container: {
             alignSelf: 'stretch',
-            height: 28,
+            height: 30,
             marginLeft: 20,
             marginRight: 20,
         },
@@ -1347,7 +1352,7 @@ const styles = {
             //justifyContent:"center",
         },
         track: {
-            backgroundColor: '#333',
+            backgroundColor: ColorList.indicatorInverted,
             height: 1,
             position: 'relative',
             top: 14,
@@ -1355,7 +1360,7 @@ const styles = {
         },
         fill: {
             
-            height: 1,
+            height: 3,
             width: '100%'
         },
         handle: {
@@ -1365,11 +1370,9 @@ const styles = {
             width: 28,
         },
         circle: {
-            borderRadius: 12,
+            ...rounder(20),
             position: 'relative',
-            top: 8, left: 8,
-            height: 12,
-            width: 12,
+            top: 4, left: 8,
         },
     })
 };

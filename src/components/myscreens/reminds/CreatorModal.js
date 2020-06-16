@@ -39,6 +39,9 @@ export default class CreatorModal extends BleashupModal {
                     this.setState({
                         showProfileModal: false
                     })
+                    setTimeout(() => {
+                        this.onClosedModal()
+                    },100)
                 }} profile={this.props.creator} color={this.props.color} ></ProfileModal> : null}
             </View>
         </View>

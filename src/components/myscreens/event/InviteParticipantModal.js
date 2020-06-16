@@ -12,6 +12,7 @@ export default class InviteParticipantModal extends BleashupModal {
     this.state = {
       isOpen: false,
       loaded: false,
+      contacts: [],
       participant: [],
       event_id: null,
       selected: [],
@@ -55,10 +56,9 @@ export default class InviteParticipantModal extends BleashupModal {
             ? contacts.filter((ele) => findIndex(this.props.participant, { phone: ele.phone }) < 0)
             : [],
           event_id: this.props.event_id,
-          loaded: true,
           hideTitle: this.props.hideTitle,
         });
-      }, 20);
+      })
     });
   }
   saveStyles = { fontSize: 40, color: "#1FABAB" }
@@ -66,94 +66,91 @@ export default class InviteParticipantModal extends BleashupModal {
   modalBody() {
     return (
       <View>
-        {this.state.loaded ? (
-          <View>
-            <View
-              style={{
-                width: "100%",
-                height: 53,
-              }}
-            >
-              <View
+        <View
+          style={{
+            width: "100%",
+            height: 53,
+          }}
+        >
+          <View
+            style={{
+              flexDirection: "row",
+              ...bleashupHeaderStyle,
+              padding: "2%",
+              justifyContent: 'space-between',
+            }}
+          >
+            <View style={{ flexDirection: "column" }}>
+              <Text
                 style={{
-                  flexDirection: "row",
-                  ...bleashupHeaderStyle,
-                  padding: "2%",
-                  justifyContent: 'space-between',
+                  fontWeight: "bold",
+                  fontSize: 18,
                 }}
               >
-                <View style={{ flexDirection: "column" }}>
-                  <Text
-                    style={{
-                      fontWeight: "bold",
-                      fontSize: 18,
-                    }}
-                  >
-                    {"Select New Members"}
-                  </Text>
-                  <Text
-                    note
-                    style={{
-                      fontSize: 14,
-                      fontStyle: "italic",
-                    }}
-                  >
-                    {this.state.selected.length}
-                    {" members and "}
-                    {
-                      this.state.selected.filter((ele) => ele.master == true)
-                        .length
-                    }
-                    {" master"}
-                  </Text>
-                </View>
-                {this.state.selected.length > 0 && <View>
-                  <TouchableOpacity
-                    onPress={() =>
-                      requestAnimationFrame(() =>
-                        this.props.invite(this.state.selected)
-                      )
-                    }
-                  >
-                    {this.props.adding ? <Icon type="Entypo" style={this.saveStyles} name="check"></Icon>:<Icon
-                      type={"EvilIcons"}
-                      style={this.saveStyles}
-                      name={"sc-telegram"}
-                    ></Icon>}
-                  </TouchableOpacity>
-                </View>}
-              </View>
-            </View>
-            <View style={{ height: "90%" }}>
-              <BleashupFlatList
-                firstIndex={0}
-                renderPerBatch={5}
-                initialRender={10}
-                numberOfItems={this.state.contacts.length}
-                keyExtractor={this._keyExtractor}
-                dataSource={this.state.contacts}
-                renderItem={(item, index) => {
-                  this.delay = this.delay >= 15 ? 0 : this.delay + 1;
-                  return (
-                    <SelectableContactsMaster
-                      master={this.props.master}
-                      delay={this.delay}
-                      toggleMaster={(member) => this.toggleMaster(member)}
-                      selected={(member) => {
-                        this.addMember(member);
-                      }}
-                      unselected={(member) => this.remove(member)}
-                      key={index}
-                      contact={item}
-                    ></SelectableContactsMaster>
-                  );
+                {"Select New Members"}
+              </Text>
+              <Text
+                note
+                style={{
+                  fontSize: 14,
+                  fontStyle: "italic",
                 }}
-              ></BleashupFlatList>
+              >
+                {this.state.selected.length}
+                {" members and "}
+                {
+                  this.state.selected.filter((ele) => ele.master == true)
+                    .length
+                }
+                {" master"}
+              </Text>
             </View>
+            {this.state.selected.length > 0 && <View>
+              <TouchableOpacity
+                onPress={() =>
+                  requestAnimationFrame(() =>
+                    this.props.invite(this.state.selected)
+                  )
+                }
+              >
+                {this.props.adding ? <Icon type="Entypo" style={this.saveStyles} name="check"></Icon> : <Icon
+                  type={"EvilIcons"}
+                  style={this.saveStyles}
+                  name={"sc-telegram"}
+                ></Icon>}
+              </TouchableOpacity>
+            </View>}
           </View>
-        ) : (
-          <Spinner size={"small"}></Spinner>
-        )}
+        </View>
+        <View style={{ height: "90%" }}>
+          <BleashupFlatList
+            firstIndex={0}
+            renderPerBatch={20}
+            initialRender={10}
+            numberOfItems={this.state.contacts.length}
+            keyExtractor={this._keyExtractor}
+            dataSource={this.state.contacts}
+            renderItem={(item, index) => {
+              let me = this.state.selected.find(ele => ele.phone === item.phone)
+              this.delay = this.delay >= 15 ? 0 : this.delay + 1;
+              return (
+                <SelectableContactsMaster
+                  checked={me && me.phone ? true : false}
+                  masterchecked={me && me.phone && me.master ? true : false}
+                  master={this.props.master}
+                  delay={this.delay}
+                  toggleMaster={(member) => this.toggleMaster(member)}
+                  selected={(member) => {
+                    this.addMember(member);
+                  }}
+                  unselected={(member) => this.remove(member)}
+                  key={index}
+                  contact={item}
+                ></SelectableContactsMaster>
+              );
+            }}
+          ></BleashupFlatList>
+        </View>
       </View>
     );
   }

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import moment from "moment"
-import { View, StatusBar, Dimensions, BackHandler, Keyboard } from 'react-native';
+import { View, StatusBar, Dimensions, BackHandler, Keyboard, ScrollView, TouchableWithoutFeedback } from 'react-native';
 import { Text, Title, Spinner, Toast, Icon } from 'native-base';
 import BleashupSectionList from '../../BleashupSectionList';
 import BleashupFlatList from '../../BleashupFlatList';
@@ -13,7 +13,6 @@ import firebase from 'react-native-firebase';
 import uuid from 'react-native-uuid';
 import ChatStore from '../../../stores/ChatStore';
 import shadower from '../../shadower';
-import { ScrollView, TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import ColorList from '../../colorList';
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenheight = Math.round(Dimensions.get('window').height);
@@ -31,7 +30,6 @@ export default class HighLightsDetails extends Component {
         }
     }
     componentWillMount() {
-        this.room = new ChatStore(this.event_id)
         this.keyboardDidShowSub = Keyboard.addListener('keyboardDidShow', this.handleKeyboardDidShow.bind(this));
         this.keyboardDidHideSub = Keyboard.addListener('keyboardDidHide', this.handleKeyboardDidHide.bind(this));
         this.BackHandler = BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this));
@@ -112,9 +110,9 @@ export default class HighLightsDetails extends Component {
                     messageListHeight: '100%',
                     inputsHeight: 0
                 })
-                this.room ? this.room.addNewMessage(message).then(() => {
+                stores.Messages.addNewMessage(this.event_id,message).then(() => {
                     Toast.show({ text: 'Reaction Sent', type: 'success' })
-                }) : null
+                })
                 this.refs.inputView._clean()
             }
         }))

@@ -9,6 +9,7 @@ import Pickers from '../../../services/Picker';
 import rnFetchBlob from 'rn-fetch-blob';
 import buttoner from '../../../services/buttoner';
 import ColorList from '../../colorList';
+import TextContent from './TextContent';
 const { fs } = rnFetchBlob
 export default class VideoUploader extends Component {
     constructor(props) {
@@ -28,7 +29,8 @@ export default class VideoUploader extends Component {
     task = null
     uploadVideo() {
         this.setState({
-            compressing: false
+            compressing: false,
+            uploading:true
         })
         /*Pickers.CompressVideo({
             source: this.props.message.source,
@@ -85,20 +87,20 @@ export default class VideoUploader extends Component {
         return data / mb
     }
     cancelUpLoad() {
-        Pickers.CancleCompression()
+        //Pickers.CancleCompression()
         this.exchanger.task && this.exchanger.task.cancel((err, taskID) => {
         })
     }
     render() {
         return (
             <View>
-                <View style={{ padding: "1.5%" }}>
+                <View style={{ padding: "1.5%" ,minWidth: 250,}}>
                     <View>
                         <TouchableOpacity onPress={() => this.props.showPhoto(this.props.message.source)}>
                             <View resizeMode={'contain'} style={{
                                 borderRadius: 15,
                                 alignSelf: 'center',
-                                width: 190,
+                                width: 250,
                                 height: 300,
                                 backgroundColor: 'black',
                             }}>
@@ -120,7 +122,7 @@ export default class VideoUploader extends Component {
                                                                 </Icon>
                                                                     <Spinner style={{ position: 'absolute', marginTop: "-136%", marginLeft: "-15%", }}></Spinner>
                                                                 </View>
-                                                            </TouchableWithoutFeedback> : <TouchableWithoutFeedback onPress={() => this.uploadVideo()}>
+                                                            </TouchableWithoutFeedback> : <TouchableWithoutFeedback onPress={() => !this.state.uploading && this.uploadVideo()}>
                                                                     <View>
                                                                         <Icon type="EvilIcons" style={{ color: ColorList.bodyBackground }} name="arrow-up">
                                                                         </Icon>
@@ -153,7 +155,7 @@ export default class VideoUploader extends Component {
                     </View>
                 </View>
                 <View>
-                    {this.props.message.text ? <Text style={{ margin: '3%', }}>{this.props.message.text}</Text> : null}
+                    {this.props.message.text ? <TextContent tags={this.props.message.tags} style={{ margin: '2%', }} text={this.props.message.text}></TextContent> : null}
                 </View>
             </View>
         );

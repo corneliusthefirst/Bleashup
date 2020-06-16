@@ -9,7 +9,7 @@ import { format } from '../../../services/recurrenceConfigs';
 import toTitleCase from '../../../services/toTitle';
 
 class Requester {
-    createVote(Vote, commieeName, activityName) { 
+    createVote(roomID,Vote, commieeName, activityName) { 
         return new Promise((resolve, reject) => {
             let notif = request.Notification()
             notif.notification.title = "New Vote (" + toTitleCase(Vote.title) + ") @ " + commieeName
@@ -19,7 +19,7 @@ class Requester {
             Vote.notif = notif
             tcpRequest.CreateVote(Vote, Vote.id + '_create').then((JSData) => {
                 EventListener.sendRequest(JSData, Vote.id + '_create').then((response) => {
-                    stores.Votes.addVote(Vote).then(() => {
+                    stores.Votes.addVote(roomID,Vote).then(() => {
                         stores.Events.addVote(Vote.event_id, Vote.id).then(() => {
                             let Change = {
                                 id: uuid.v1(),
@@ -32,8 +32,9 @@ class Requester {
                                 date: moment().format(),
                                 time: null
                             }
+                            resolve()
                             stores.ChangeLogs.addChanges(Change).then(() => {
-                                resolve()
+                
                             })
                         })
                     })
@@ -43,14 +44,14 @@ class Requester {
             })
         })
     }
-    deleteVote(voteID, eventID) {
+    deleteVote(roomID,voteID, eventID) {
         return new Promise((resolve, reject) => {
             let VEID = request.VEID()
             VEID.event_id = eventID
             VEID.vote_id = voteID
             tcpRequest.deleteVote(VEID, voteID + '_delete').then(JSData => {
                 EventListener.sendRequest(JSData, voteID + '_delete').then(response => {
-                    stores.Votes.removeVote(voteID).then((vote) => {
+                    stores.Votes.removeVote(roomID,voteID).then((vote) => {
                         stores.Events.removeVote(eventID, voteID).then(() => {
                             let Change = {
                                 id: uuid.v1(),
@@ -63,8 +64,8 @@ class Requester {
                                 date: moment().format(),
                                 time: null
                             };
+                            resolve()
                             stores.ChangeLogs.addChanges(Change).then(() => {
-                                resolve()
                             })
                         })
                     })
@@ -74,11 +75,11 @@ class Requester {
             })
         })
     }
-    restoreVote(vote) {
+    restoreVote(roomID,vote) {
         return new Promise((resolve, reject) => {
             tcpRequest.RestoreVote(Vote, vote.id + "_restore_vote").then((JSData) => {
                 EventListener.sendRequest(JSData, vote.id + '_restore_vote').then((response) => {
-                    stores.Votes.addVote(Vote).then(() => {
+                    stores.Votes.addVote(roomID,Vote).then(() => {
                         stores.Events.addVote(vote.event_id, vote.id).then(() => {
                             let Change = {
                                 id: uuid.v1(),
@@ -91,8 +92,9 @@ class Requester {
                                 date: moment().format(),
                                 time: null
                             };
+                            resolve()
                             stores.ChangeLogs.addChanges(Change).then(() => {
-                                resolve()
+                               
                             })
                         })
                     })
@@ -102,7 +104,7 @@ class Requester {
             })
         })
     }
-    vote(eventID, voteID, option) {
+    vote(roomID,eventID, voteID, option) {
         return new Promise((resolve, reject) => {
             let voter = request.goVote()
             voter.event_id = eventID
@@ -110,7 +112,8 @@ class Requester {
             voter.option = option
             tcpRequest.Vote(voter, voteID + '_go_vote').then((JSData) => {
                 EventListener.sendRequest(JSData, voteID + '_go_vote').then(response => {
-                    stores.Votes.vote({ ...voter, voter: stores.LoginStore.user.phone }).then((resp) => {
+                    stores.Votes.vote(roomID,
+                        { ...voter, voter: stores.LoginStore.user.phone }).then((resp) => {
                         resolve(resp)
                     })
                 }).catch((error) => {
@@ -119,7 +122,7 @@ class Requester {
             })
         })
     }
-    updateVotePeriod(voteID, eventID, newPeriod, oldPeriod) {
+    updateVotePeriod(roomID,voteID, eventID, newPeriod, oldPeriod) {
         return new Promise((resolve, reject) => {
             if (newPeriod !== oldPeriod) {
                 let update = request.VotePeriod()
@@ -128,7 +131,7 @@ class Requester {
                 update.period = newPeriod
                 tcpRequest.changeVotePeriod(update, voteID + '_period').then((JSData) => {
                     EventListener.sendRequest(JSData, voteID + '_period').then(() => {
-                        stores.Votes.UpdateVotePeriod(update).then((vote) => {
+                        stores.Votes.UpdateVotePeriod(roomID,update).then((vote) => {
                             let Change = {
                                 id: uuid.v1(),
                                 event_id: update.event_id,
@@ -145,8 +148,9 @@ class Requester {
                                 date: moment().format(),
                                 time: null
                             };
+                            resolve("ok")
                             stores.ChangeLogs.addChanges(Change).then(() => {
-                                resolve("ok")
+                              
                             })
                         })
                     }).catch((e) => {
@@ -158,9 +162,9 @@ class Requester {
             }
         })
     }
-    applyAllUpdate(newVote, oldVote) {
+    applyAllUpdate(roomID,newVote, oldVote) {
         return new Promise((resolve, reject) => {
-            this.updateVotePeriod(newVote.id, newVote.event_id,
+            this.updateVotePeriod(roomID,newVote.id, newVote.event_id,
                 newVote.period, JSON.parse(oldVote).period).then(t1 => {
                     resolve(t1)
                 }).catch((e) => {

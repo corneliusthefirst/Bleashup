@@ -7,6 +7,7 @@ import {
     Keyboard,
     StyleSheet,
     TouchableWithoutFeedback,
+    TouchableOpacity,
     KeyboardAvoidingView
 } from 'react-native';
 
@@ -14,7 +15,6 @@ import Modal from "react-native-modalbox"
 import { Icon, Button, Text } from 'native-base';
 import EmojiSelector from 'react-native-emoji-selector';
 import ReplyText from '../eventChat/ReplyText';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 export default class InputView extends Component {
     constructor(props) {
         super(props)

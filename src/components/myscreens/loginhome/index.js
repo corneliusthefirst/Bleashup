@@ -59,6 +59,10 @@ In this article, we show you how to solve the error message “URL blocked: This
    // }
   }
    
+
+componentDidMount(){}
+
+
   render() {
   //console.disableYellowBox = true;
     this.requestReadAndWritePermission()

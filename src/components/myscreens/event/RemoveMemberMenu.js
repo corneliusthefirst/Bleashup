@@ -63,10 +63,10 @@ export default class RemoveMemberMenu extends Component {
                 <Menu
                     style={{ backgroundColor: ColorList.bodyBackground }}
                     ref={this.setMenuRef}
-                    button={<Icon style={{
+                    button={<TouchableOpacity onPress={() => requestAnimationFrame(this.showMenu)}><Icon style={{
                         color: ColorList.headerIcon,
                         fontSize: 30,
-                    }} onPress={this.showMenu} name="circle-with-minus" type="Entypo"></Icon>}
+                    }} name="circle-with-minus" type="Entypo"></Icon></TouchableOpacity>}
                 >
                     <View><MenuItem textStyle={{ color: ColorList.headerIcon }} onPress={() => {
                         this.hideMenu()

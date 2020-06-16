@@ -1,3 +1,4 @@
+/* eslint-disable quotes */
 import requestObject from "./requestObjects";
 import transfer from "./transferable";
 import stores from "../stores";
@@ -491,6 +492,9 @@ class tcpRequestData {
   }
   unfollow(data, id) {
     return this.sendData('unfollow', data, id)
+  }
+  messaging(data, id) {
+    return this.sendData("messaging", data, id)
   }
 }
 

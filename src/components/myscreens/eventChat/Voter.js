@@ -12,20 +12,23 @@ import { writeDateTime, dateDiff } from '../../../services/datesWriter';
 import VoteOptionPreviwer from './VoteOptionMediaPreviewer';
 import PickersMenu from '../event/createEvent/components/PickerMenu';
 import ColorList from '../../colorList';
+import rounder from '../../../services/rounder';
 
 export default class Voter extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            totalVotes: (this.props.message.vote && this.props.message.vote.voter && this.props.message.vote.voter.length) || 0
         }
     }
     componentDidMount() {
         setTimeout(() => {
             this.setState({
+                totalVotes: (this.props.message.vote && 
+                    this.props.message.vote.voter && 
+                    this.props.message.vote.voter.length) || 0,
                 loaded: true
             })
-        }, this.props.delay * 5)
+        }, this.props.delay)
     }
     shouldComponentUpdate(nextProps, nextState, nextContex) {
         return !isEqual(JSON.parse(this.previousVote), nextProps.message.vote) ||
@@ -54,17 +57,30 @@ export default class Voter extends Component {
         this.props.vote(index, this.props.message.vote)
     }
     returnOption(item, index) {
-        return this.props.message.vote.always_show || !this.hasVoted() || (this.props.message.vote.period && dateDiff({ recurrence: this.props.message.vote.period }) > 0) ? this.returnOptionWithCount(item, index) : this.returnOptionWithoutCount(item, index)
+        return this.props.message.vote.always_show ||
+            !this.hasVoted() || (this.props.message.vote.period && dateDiff({ recurrence: this.props.message.vote.period }) > 0) ? this.returnOptionWithCount(item, index) :
+            this.returnOptionWithoutCount(item, index)
     }
     creator = stores.LoginStore.user.phone === this.props.message.vote.creator
     hasVoted() {
         return findIndex(this.props.message.vote.voter, (ele) => ele.phone === stores.LoginStore.user.phone) < 0
     }
     returnOptionCount(index) {
-        return (this.props.message.vote && this.props.message.vote.voter && this.props.message.vote.voter.filter(ele => ele.index === index).length) || 0
+        return (this.props.message.vote && 
+            this.props.message.vote.voter && 
+            this.props.message.vote.voter.filter(ele => ele.index === index).length) || 0
     }
     returnOptionWithCount(item, index) {
-        return <View style={{ flexDirection: 'row', width: '100%', height: 40, marginBottom: '8%', alignSelf: 'center', }}>
+        let optionCount = this.returnOptionCount(index);
+        let votPercent = this.calculateVotePercentage(optionCount, 0)
+        let previousVotePercent = this.calculateVotePercentage(optionCount, -1)
+        return <View style={{
+            flexDirection: 'row',
+            width: '100%',
+            height: 40,
+            marginBottom: '8%',
+            alignSelf: 'center',
+        }}>
             <View style={{
                 width: '10%',
                 justifyContent: 'center',
@@ -76,22 +92,23 @@ export default class Voter extends Component {
             <View style={{ width: '75%', height: '80%', }}>
                 <View style={{ width: '100%' }}>
                     <View style={{ flexDirection: 'row', }}>
-                        <Text style={{ color: '#555756', fontSize: 14 }} note>{`${item.name && item.name !== 'undefined' ? item.name : "none"}    ${this.calculateVotePercentage(this.returnOptionCount(index), 0)}%  `}</Text>
+                        <Text style={{ color: '#555756', fontSize: 14 }} note>{`${item.name && item.name !== 'undefined' ? item.name : "none"}    ${votPercent}%  `}</Text>
                         {this.renderOptionMedia(item.option_url, index, item.name)}
                     </View>
                     <View style={{ flexDirection: 'row', height: '60%' }}>
                         <View style={{
-                            height: '110%', ...shadower(2),
+                            height: '110%', ...shadower(1),
                             backgroundColor: ColorList.indicatorColor,
-                            width: `${this.calculateVotePercentage(this.returnOptionCount(index), 0)}%`,
-                            borderTopRightRadius: this.calculateVotePercentage(this.returnOptionCount(index), 0) >= 99 ? 8 :
+                            width: `${votPercent}%`,
+                            borderTopRightRadius: votPercent >= 99 ? 8 :
                                 0,
-                            borderBottomRightRadius: this.calculateVotePercentage(this.returnOptionCount(index), 0) >= 99 ? 8 : 0,
+                            borderBottomRightRadius: votPercent >= 99 ? 8 : 0,
                         }}>
                         </View>
                         <View style={{
-                            width: `${this.calculateVotePercentage(this.returnOptionCount(index), -1)}%`,
-                            height: '100%', ...shadower(2),
+                            width: `${previousVotePercent}%`,
+                            height: '100%', 
+                            ...shadower(1),
                             marginTop: '.4%',
                             borderTopRightRadius: 8, borderBottomRightRadius: 8,
                             backgroundColor: ColorList.indicatorInverted,
@@ -100,18 +117,24 @@ export default class Voter extends Component {
                 </View>
             </View>
             <View style={{ width: '14%', justifyContent: 'center', alignSelf: 'center', marginLeft: '1%', }}>
-                {!this.hasVoted() || dateDiff({ recurrence: this.props.message.vote.period }) > 0 ? null : this.optionVoter(item.index, true)}
+                {!this.hasVoted() || 
+                    dateDiff({ recurrence: this.props.message.vote.period }) > 0 ? null : this.optionVoter(item.index, true)}
             </View>
         </View>
     }
     optionVoter(index, toper) {
-        return <PickersMenu color={ColorList.darkGrayText} icon={{ name: 'check', type: 'FontAwesome' }} menu={[
-            {
-                title: 'Vote',
-                callback: () => this.vote(index),
-                condition: true
-            }
-        ]} ></PickersMenu>
+        return <TouchableOpacity onPress={() => requestAnimationFrame(() => this.vote(index))} style={{
+            ...rounder(20, ColorList.indicatorColor),
+            marginTop: '20%',
+            alignSelf: 'flex-end',
+            textAlign: 'center'
+        }} ><Text style={{
+            fontWeight: 'bold',
+            fontSize: 10,
+            alignSelf: 'center',
+            color: ColorList.bodyBackground
+        }} >Vote</Text></TouchableOpacity>
+
     }
     returnOptionWithoutCount(item, index) {
         return <View style={{ flexDirection: 'row', width: '100%', height: 40, marginBottom: '8%', }}>
@@ -147,33 +170,43 @@ export default class Voter extends Component {
             ...this.props.placeHolder
         }}></View> :
             <View style={{ margin: '1%', }}>
-                <View style={{ alignSelf: 'center', margin: '2%', flexDirection: 'row', }}>
-                    <View style={{ width: '70%', marginLeft: '2%', }}>
+                <View style={{  flexDirection: 'row', justifyContent: 'space-between', }}>
+                    <View style={{ width: '90%', }}>
                         <Text style={{
                             alignSelf: 'flex-start',
                             fontWeight: 'bold',
-                            fontSize: 21,
+                            fontSize: 16,
                         }}>{this.props.message.vote.title}</Text>
                     </View>
-                    <View style={{ flexDirection: 'row', width: '30%' }}>
-                        {this.props.configurable && <View style={{ width: '33.33%', padding: '1%', }}><Icon onPress={() => this.reply()} name={"reply"}
-                            type={"Entypo"} style={{ color: '#555756', alignSelf: 'flex-start', marginRight: '15%', }}></Icon></View>}
-                        {this.props.computedMaster ? <View style={{ width: '38.33%' }}><Icon
-                            style={{ color: '#555756', padding: '1%' }}
-                            onPress={() => {
-                                this.props.showVoters(this.props.message.vote.voter)
-                            }}
-                            name={'ios-people'} type={"Ionicons"}></Icon></View> : null}
-                        {this.props.configurable && this.creator && <TouchableOpacity
-                            onPress={() => requestAnimationFrame(() => this.props.updateVote(this.props.message.vote))}><Icon
-                                style={{ color: '#555756', marginTop: '13%', }} name="gear"
-                                type="EvilIcons"></Icon></TouchableOpacity>}</View>
+                    <View style={{ flexDirection: 'row', width: '5%', alignSelf: 'flex-end', }}>
+                        <PickersMenu fontSize={20} color={ColorList.darkGrayText}
+                            icon={{
+                                name: 'dots-three-vertical', type: 'Entypo' }} menu={[
+                                {
+                                    title: 'Reply',
+                                    callback: () => this.reply(),
+                                    condition: this.props.configurable
+                                }, {
+                                    title: 'View Voters',
+                                    callback: () => this.props.showVoters(this.props.message.vote.voter),
+                                    condition: this.props.computedMaster
+                                }, {
+                                    title: 'Update',
+                                    callback: () => this.props.updateVote(this.props.message.vote),
+                                    condition: this.props.configurable && this.creator
+                                }
+                            ]} ></PickersMenu>
+                    </View>
                 </View>
-                {this.props.message.vote.period ? <View style={{ margin: '4%', alignItems: 'flex-start', }}><Text style={{ color: dateDiff({ recurrence: this.props.message.vote.period }) > 0 ? "gray" : "#1FABAB" }}>{`${writeDateTime({
+                {this.props.message.vote.period ? <View style={{ alignItems: 'flex-start', }}><Text style={{ 
+                    color: dateDiff({ recurrence: this.props.message.vote.period }) > 0 ? 
+                    "gray" : "#1FABAB",
+                    fontSize:15
+                }}>{`${writeDateTime({
                     period: this.props.message.vote.period,
                     recurrence: this.props.message.vote.period
                 }).replace("Starting", "Ends")}`}</Text></View> : null}
-                <View style={{ margin: '4%', }}>
+                <View style={{ margin: '1%', }}>
                     <TextContent
                         pressingIn={() => this.props.pressingIn ? this.props.pressingIn() : null}
                         handleLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null}
@@ -183,9 +216,9 @@ export default class Voter extends Component {
                 <View>
                     {this.renderOptions()}
                 </View>
-                <View><Creator created_at={this.props.message.vote.created_at} pressingIn={() => this.props.pressingIn ? this.props.pressingIn() : null} giveCreator={(creator) => {
+                {this.props.configurable && <View><Creator created_at={this.props.message.vote.created_at} pressingIn={() => this.props.pressingIn ? this.props.pressingIn() : null} giveCreator={(creator) => {
                     this.props.takeCreator ? this.props.takeCreator(creator) : this.takeCreator(creator)
-                }} creator={this.props.message.vote.creator}></Creator></View>
+                }} creator={this.props.message.vote.creator}></Creator></View>}
             </View>
     }
 }

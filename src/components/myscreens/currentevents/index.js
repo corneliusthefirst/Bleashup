@@ -6,6 +6,7 @@ import CurrentEvents from "./components/CurrentEvents";
 import { observer } from "mobx-react";
 import { sortBy, findIndex } from "lodash"
 import stores from "../../../stores";
+import actFilterFunc from './activityFilterFunc';
 
 @observer class CurrentEventView extends Component {
   constructor(props) {
@@ -20,10 +21,7 @@ import stores from "../../../stores";
   render() {
     return (
       <View>
-        <CurrentEvents data={stores.Events.events.filter(event => ((findIndex(event.participant,
-          { phone: stores.LoginStore.user.phone }) >= 0
-           && event.id !== "newEventId") && !event.hiden) || 
-           (event.public && !event.hiden && event.id !== "newEventId"))} {...this.props}></CurrentEvents>
+        <CurrentEvents data={stores.Events.events.filter(actFilterFunc)} {...this.props}></CurrentEvents>
       </View>
     );
   }

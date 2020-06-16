@@ -5,6 +5,8 @@ import ProfileModal from '../invitations/components/ProfileModal';
 import stores from '../../../stores';
 import moment from 'moment';
 import CreatorModal from './CreatorModal';
+import ColorList from '../../colorList';
+import rounder from '../../../services/rounder';
 
 
 export default class Creator extends Component {
@@ -28,24 +30,36 @@ export default class Creator extends Component {
             })
         }, 10)
     }
+    infoTextStyle = {
+        fontWeight: 'bold',
+        fontStyle: 'italic',
+        alignSelf: 'center',
+        textAlign: 'center',
+        color: ColorList.bodyBackground
+    }
     render() {
-        return !this.state.mounted ? <Icon name={"info-with-circle"} type={"Entypo"} style={{ color: 'gray', fontSize: 12, }}></Icon> : (
-            <View>
-                <TouchableOpacity onPressIn={() => this.props.pressingIn ? this.props.pressingIn() : null} onPress={() => requestAnimationFrame(() => {
-                    this.setState({
-                        showCreatorModal: true
-                    })
-                })}>
-                    <View style={{width:40,alignItems:"flex-start"}}>
-                    <Icon name={"info-with-circle"} type={"Entypo"} style={{color:'gray',fontSize: 12}}></Icon>
-                    </View>
-                 </TouchableOpacity>
-                {this.state.showCreatorModal ? <CreatorModal intro={this.props.intro} isOpen={this.state.showCreatorModal} onClosed={() => {
-                    this.setState({
-                        showCreatorModal: false
-                    })
-                }} creator={this.state.creator} created_at={this.props.created_at} color={this.props.color} ></CreatorModal> : null}
-            </View>
-        )
+        return !this.state.mounted ? <Text style={{
+            ...this.infoTextStyle
+        }}>{"i"}</Text> : (
+                <TouchableOpacity
+                    style={{
+                        ...rounder(15, ColorList.bodySubtext),
+                    }}
+                    onPressIn={() => this.props.pressingIn ? this.props.pressingIn() : null}
+                    onPress={() => requestAnimationFrame(() => {
+                        this.setState({
+                            showCreatorModal: true
+                        })
+                    })}>
+                    <Text style={{
+                        ...this.infoTextStyle
+                    }}>{"i"}</Text>
+                    {this.state.showCreatorModal ? <CreatorModal intro={this.props.intro} isOpen={this.state.showCreatorModal} onClosed={() => {
+                        this.setState({
+                            showCreatorModal: false
+                        })
+                    }} creator={this.state.creator} created_at={this.props.created_at} color={this.props.color} ></CreatorModal> : null}
+                </TouchableOpacity>
+            )
     }
 }

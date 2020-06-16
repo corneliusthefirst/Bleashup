@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import { Content, Text, Item, View, Button, Left, Right, Icon } from 'native-base';
+import { ScrollView} from "react-native";
 import Modal from "react-native-modalbox"
-import { ScrollView } from 'react-native-gesture-handler';
 import moment from 'moment';
 import { Root } from 'native-base';
 import ColorList from '../../colorList';

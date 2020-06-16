@@ -53,15 +53,15 @@ import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
       goback(){
         this.props.navigation.goBack()
       }
-      handleBackButton(){
+      /*handleBackButton(){
         this.goback()
         return true
-      }
+      }*/
       componentWillMount() {
-       this.BackPressHandler =  BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this));
+       //this.BackPressHandler =  BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this));
       }
       componentWillUnmount() {
-        this.BackPressHandler.remove()
+        //this.BackPressHandler.remove()
       }
 
   _keyExtractor = (item, index) => item.invitation_id;

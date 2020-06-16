@@ -14,15 +14,15 @@ import request from "./requestObjects";
 import MainUpdater from './mainUpdater';
 class UpdatesDispatcher {
   constructor() { }
-  dispatchUpdates(updates) {
+  dispatchUpdates(updates,done) {
     if (updates.length <= 0) {
       console.warn("finishing ...")
-      return "ok";
+      done()
     } else {
       let update = updates.pop()
       this.dispatchUpdate(update).then(() => {
         console.warn("dipatching ", update)
-        this.dispatchUpdates(updates)
+        this.dispatchUpdates(updates,done)
       });
     }
 
@@ -41,12 +41,38 @@ class UpdatesDispatcher {
       return "done"
     } else {
       let id = ids.pop()
-      stores.CommiteeStore.replaceCommiteeParticipant(id, participant).then((c) => {
+      stores.CommiteeStore.replaceCommiteeParticipant(e, id, participant).then((c) => {
         this.applyToAllCommitees(ids, participant, e)
       })
     }
   }
   UpdatePossibilities = {
+    message_reaction: update => MainUpdater.reactToMessage(update.new_value.data.message_id,
+      update.new_value.committee_id,
+      update.event_id,
+      update.new_value.data.reaction),
+    played_message: update => MainUpdater.
+      playedMessage(update.new_value.data.message_id,
+        update.new_value.committee_id,
+        update.event_id,
+        update.new_value.data.player),
+    new_message: update => MainUpdater.saveMessage(update.new_value.data,
+      update.event_id, update.new_value.
+      committee_id),
+    received_message: update => MainUpdater.receiveMessage(update.new_value.data.message_id,
+      update.new_value.committee_id,
+      update.new_value.data.recieved),
+    update_message: update => MainUpdater.updateMessage(update.new_value.data.message_id,
+      update.new_value.committee_id,
+      update.event_id, update.new_value.data.text),
+    deleted_message: update => MainUpdater.deleteMessage(update.new_value.message_id,
+      update.new_value.committee_id,
+      update.event),
+    seen_message: update => MainUpdater.seenMessage(update.new_value.data.message_id,
+      update.new_value.committee_id,
+      update.event_id, update.new_value.seer),
+    typing_message: update => MainUpdater.sayTyping(update.new_value.committee_id,
+      update.new_value.data.typer),
     blocked: update => MainUpdater.blocked(update.updater),
     un_blocked: update => MainUpdater.unBlocked(update.updater),
     muted: update => MainUpdater.muted(update.updater),
@@ -351,15 +377,15 @@ class UpdatesDispatcher {
           })
       })
     },
-    following: update =>{
+    following: update => {
       return new Promise((resolve, reject) => {
-        stores.Contacts.addFollower(update.updater,"").then(() => {
+        stores.Contacts.addFollower(update.updater, "").then(() => {
           console.warn("following successfully stored")
           resolve()
         })
       })
     },
-    unfollowing : update => {
+    unfollowing: update => {
       return new Promise((resolve, reject) => {
         stores.Contacts.removeFollower(update.updater).then(() => {
           console.warn("unfollowing successfully stored")
@@ -526,22 +552,6 @@ class UpdatesDispatcher {
               });
             });
             break;
-          case "like_vote":
-            stores.Likes.like(updated.new_value, update.updater, true).then(() => {
-              stores.Votes.likeVote(update.new_value, true).then(() => {
-                GState.eventUpdated = true;
-                resolve();
-              });
-            });
-            break;
-          case "like_contribution":
-            stores.Likes.like(update.new_value, update.updater).then(() => {
-              stores.Contributions.like(update.new_value, true).then(() => {
-                GState.eventUpdated = true;
-                resolve();
-              });
-            });
-            break;
         }
       });
     },
@@ -553,22 +563,6 @@ class UpdatesDispatcher {
               stores.Events.unlikeEvent(update.event_id).then(() => {
                 GState.eventUpdated = true;
                 emitter.emit(`liked_${update.event_id}`) //TODO this signal is beign listen to in the Module current_events>public_event>likes
-                resolve();
-              });
-            });
-            break;
-          case "unlike_vote":
-            stores.Likes.unlike(update.new_value, update.updater).then(() => {
-              stores.Votes.unlikeVote(update.new_value).then(() => {
-                GState.eventUpdated = true;
-                resolve();
-              });
-            });
-            break;
-          case "unlike_contribution":
-            stores.Likes.unlike(update.new_value, update.updater).then(() => {
-              stores.Contributions.unlike(update.new_value).then(() => {
-                GState.eventUpdated = true;
                 resolve();
               });
             });
@@ -951,7 +945,7 @@ class UpdatesDispatcher {
           serverEventListener.sendRequest(JSONData, update.new_value + "highlight").then(Highlight => {
             if (Highlight.data !== 'empty' && Highlight.data.length > 0) {
               Highlight.data = Array.isArray(Highlight.data) ? Highlight.data[0] : Highlight.data
-              stores.Highlights.addHighlight(Highlight.data).then(() => {
+              stores.Highlights.addHighlight(update.event_id, Highlight.data).then(() => {
                 stores.Events.addHighlight(
                   Highlight.data.event_id,
                   Highlight.data.id
@@ -989,7 +983,7 @@ class UpdatesDispatcher {
 
     highlight_update_description: update => {
       return new Promise((resolve, reject) => {
-        stores.Highlights.updateHighlightDescription(
+        stores.Highlights.updateHighlightDescription(update.event_id,
           {
             id: update.new_value.highlight_id,
             description: update.new_value.new_description
@@ -1024,7 +1018,7 @@ class UpdatesDispatcher {
     },
     highlight_update_url: update => {
       return new Promise((resolve, reject) => {
-        stores.Highlights.updateHighlightUrl(
+        stores.Highlights.updateHighlightUrl(update.event_id,
           {
             id: update.new_value.highlight_id,
             url: update.new_value.new_url
@@ -1052,7 +1046,7 @@ class UpdatesDispatcher {
     },
     highlight_update_title: update => {
       return new Promise((resolve, reject) => {
-        stores.Highlights.updateHighlightTitle(
+        stores.Highlights.updateHighlightTitle(update.event_id,
           {
             id: update.new_value.highlight_id,
             title: update.new_value.new_title
@@ -1081,7 +1075,7 @@ class UpdatesDispatcher {
     },
     highlight_public_state: update => {
       return new Promise((resolve, reject) => {
-        stores.Highlights.updateHighlightPublicState(update.new_value).then((highlight) => {
+        stores.Highlights.updateHighlightPublicState(update.event_id, update.new_value).then((highlight) => {
           let Change = {
             id: uuid.v1(),
             title: `Update On ${highlight.title} Post`,
@@ -1106,7 +1100,7 @@ class UpdatesDispatcher {
     },
     highlight_deleted: update => {
       return new Promise((resolve, reject) => {
-        stores.Highlights.removeHighlight(update.new_value).then((Highlight) => {
+        stores.Highlights.removeHighlight(update.event_id, update.new_value).then((Highlight) => {
           stores.Events.removeHighlight(
             update.event_id,
             update.new_value
@@ -1133,7 +1127,7 @@ class UpdatesDispatcher {
     },
     restored_highlight: update => {
       return new Promise((resolve, reject) => {
-        stores.Highlights.addHighlight(update.new_value).then(() => {
+        stores.Highlights.addHighlight(update.event_id, update.new_value).then(() => {
           stores.Events.addHighlight(update.event_id, update.new_value.id).then(() => {
             let Change = {
               id: uuid.v1(),
@@ -1164,9 +1158,9 @@ class UpdatesDispatcher {
             if (Vote.data && Vote.data !== 'empty') {
               let vote = Array.isArray(Vote.data) ? Vote.data[0] : Vote.data
               console.warn(vote)
-              stores.Votes.addVote(vote).then(() => {
+              stores.Votes.addVote(update.event_id,vote).then(() => {
                 stores.Events.addVote(vote.event_id, vote.id).then(() => {
-                  stores.CommiteeStore.imIInThisCommttee(stores.LoginStore.user.phone,
+                  stores.CommiteeStore.imIInThisCommttee(update.event_id, stores.LoginStore.user.phone,
                     vote.committee_id).then((state) => {
                       console.warn(state)
                       if (state || vote.published === 'public') {
@@ -1196,7 +1190,7 @@ class UpdatesDispatcher {
               });
             } else {
               let vote = { ...request.Vote(), title: 'Deleted Vote', event_id: update.event_id, id: update.new_value }
-              stores.Votes.addVote(vote).then(() => {
+              stores.Votes.addVote(vote.event_id,vote).then(() => {
                 stores.Events.addVote(vote.event_id, Vote.id).then(() => {
                 })
               })
@@ -1207,10 +1201,10 @@ class UpdatesDispatcher {
     },
     vote_deleted: update => {
       return new Promise((resolve, reject) => {
-        stores.Votes.removeVote(update.new_value).then((vote) => {
+        stores.Votes.removeVote(update.event_id,update.new_value).then((vote) => {
           stores.Events.removeVote(update.event_id, update.new_value).then(
             () => {
-              stores.CommiteeStore.imIInThisCommttee(stores.LoginStore.user.phone,
+              stores.CommiteeStore.imIInThisCommttee(update.event_id, stores.LoginStore.user.phone,
                 vote.committee_id).then((state) => {
                   if (state || vote.published === 'public') {
                     let Change = {
@@ -1238,9 +1232,9 @@ class UpdatesDispatcher {
       });
     },
     restored_vote: update => new Promise((resolve, reject) => {
-      stores.Votes.addVote(update.new_value).then(() => {
+      stores.Votes.addVote(update.event_id,update.new_value).then(() => {
         stores.Events.addVote(update.event_id, update.new_value.id).then(() => {
-          stores.CommiteeStore.imIInThisCommttee(stores.LoginStore.user.phone, update.new_value.committee_id).then((state) => {
+          stores.CommiteeStore.imIInThisCommttee(update.event_id, stores.LoginStore.user.phone, update.new_value.committee_id).then((state) => {
             if (update.published === 'public' || state) {
               let Change = {
                 id: uuid.v1(),
@@ -1276,7 +1270,7 @@ class UpdatesDispatcher {
           time: update.time
         };
         stores.ChangeLogs.addChanges(Change).then(() => {
-          stores.Votes.PublishVote(update.new_value).then(() => {
+          stores.Votes.PublishVote(update.event_id,update.new_value).then(() => {
             stores.Events.changeUpdatedStatus(
               update.event_id,
               "vote_updated",
@@ -1291,8 +1285,8 @@ class UpdatesDispatcher {
     },
     vote: update => {
       return new Promise((resolve, reject) => {
-        stores.Votes.vote(update.new_value).then((vote) => {
-          stores.CommiteeStore.imIInThisCommttee(stores.LoginStore.user.phone,
+        stores.Votes.vote(update.event_id,update.new_value).then((vote) => {
+          stores.CommiteeStore.imIInThisCommttee(update.event_id, stores.LoginStore.user.phone,
             vote.committee_id).then((state) => {
               console.warn(state, "--")
               if (state || vote.published === 'public') {
@@ -1316,8 +1310,8 @@ class UpdatesDispatcher {
     },
     vote_period_updated: update => {
       return new Promise((resolve, reject) => {
-        stores.Votes.UpdateVotePeriod(update.new_value).then((vote) => {
-          stores.CommiteeStore.imIInThisCommttee(stores.LoginStore.user.phone,
+        stores.Votes.UpdateVotePeriod(update.event_id,update.new_value).then((vote) => {
+          stores.CommiteeStore.imIInThisCommttee(update.event_id, stores.LoginStore.user.phone,
             vote.committee_id).then((state) => {
               if (state || votes.published === 'public') {
                 let Change = {
@@ -1358,7 +1352,7 @@ class UpdatesDispatcher {
           time: update.time
         };
         stores.ChangeLogs.addChanges(Change).then(() => {
-          stores.Votes.UpdateVoteDescription(
+          stores.Votes.UpdateVoteDescription(update.event_id,
             {
               id: update.new_value.vote_id,
               description: update.new_value.description
@@ -1388,7 +1382,7 @@ class UpdatesDispatcher {
           time: update.time
         };
         stores.ChangeLogs.addChanges(Change).then(() => {
-          stores.Votes.updateVoteTitle(
+          stores.Votes.updateVoteTitle(update.event_id,
             { id: update.new_value.vote_id, title: update.new_value.title },
             true
           ).then(() => {
@@ -1415,7 +1409,7 @@ class UpdatesDispatcher {
           time: update.time
         };
         stores.ChangeLogs.addChanges(Change).then(() => {
-          stores.Votes.addVoteOption(
+          stores.Votes.addVoteOption(update.event_id,
             { id: update.new_value.vote_id, option: update.new_value.option },
             true
           ).then(() => {
@@ -1442,7 +1436,7 @@ class UpdatesDispatcher {
           time: update.time
         };
         stores.ChangeLogs.addChanges(Change).then(() => {
-          stores.Votes.removeVoteOption(
+          stores.Votes.removeVoteOption(update.event_id,
             update.new_value.vote_id,
             update.new_value.vote_option_name_updated,
             true
@@ -1470,7 +1464,7 @@ class UpdatesDispatcher {
           time: update.time
         };
         stores.ChangeLogs.addChanges(Change).then(() => {
-          stores.Votes.UpdateVoteOptionName(
+          stores.Votes.UpdateVoteOptionName(update.event_id,
             update.new_value.vote_id,
             update.new_value.option_name,
             update.new_value.new_name,
@@ -1655,7 +1649,7 @@ class UpdatesDispatcher {
     },
     remind_title_updated: update => {
       return new Promise((resolve, reject) => {
-        stores.Reminds.updateTitle(update.new_value, true).then((oldRemind) => {
+        stores.Reminds.updateTitle(update.event_id,update.new_value, true).then((oldRemind) => {
           let Change = {
             id: uuid.v1(),
             title: `Updates On ${oldRemind.title} Remind`,
@@ -1680,7 +1674,7 @@ class UpdatesDispatcher {
     },
     remind_deleted: update => {
       return new Promise((resolve, reject) => {
-        stores.Reminds.removeRemind(update.new_value, true).then((oldRemind) => {
+        stores.Reminds.removeRemind(update.event_id,update.new_value, true).then((oldRemind) => {
           let Change = {
             id: uuid.v1(),
             title: `Updates On ${oldRemind.title} Remind`,
@@ -1697,7 +1691,7 @@ class UpdatesDispatcher {
             if (oldRemind.calendar_id && findIndex(oldRemind.members,
               { phone: stores.LoginStore.user.phone }) >= 0) {
               CalendarServe.saveEvent({ ...oldRemind, period: null }, null, 'reminds').then(() => {
-                stores.Reminds.updateCalendarID({ remind_id: oldRemind.id, calendar_id: undefined }).then(() => {
+                stores.Reminds.updateCalendarID(update.event_id,{ remind_id: oldRemind.id, calendar_id: undefined }).then(() => {
                   console.warn("calendar_id successfully removed")
                   resolve('ok')
                 })
@@ -1711,7 +1705,7 @@ class UpdatesDispatcher {
     },
     restored_remind: update => {
       return new Promise((resolve, reject) => {
-        stores.Reminds.addReminds(update.new_value.remind).then(() => {
+        stores.Reminds.addReminds(update.event_id,update.new_value.remind).then(() => {
           stores.Events.addRemind(update.new_value.remind.id,
             update.new_value.remind.event_id, true).then(() => {
               let Change = {
@@ -1731,7 +1725,7 @@ class UpdatesDispatcher {
                 if (findIndex(update.new_value.remind.members,
                   { phone: stores.LoginStore.user.phone }) >= 0) {
                   CalendarServe.saveEvent(remind, null, 'reminds').then(calendar_id => {
-                    stores.Reminds.updateCalendarID({
+                    stores.Reminds.updateCalendarID(update.event_id,{
                       remind_id: update.new_value.remind.id,
                       calendar_id: calendar_id
                     }, null).then(() => {
@@ -1746,7 +1740,7 @@ class UpdatesDispatcher {
     },
     remind_public_state: update => {
       return new Promise((resolve, reject) => {
-        stores.Reminds.updateStatus(update.new_value, true).then((oldRemind) => {
+        stores.Reminds.updateStatus(update.event_id,update.new_value, true).then((oldRemind) => {
           let Change = {
             id: uuid.v1(),
             title: `Updates On ${oldRemind.title} Remind`,
@@ -1771,7 +1765,7 @@ class UpdatesDispatcher {
     },
     remind_recurrence: update => {
       return new Promise((resolve, reject) => {
-        stores.Reminds.updateRecursiveFrequency(update.new_value, true).then((oldRemind) => {
+        stores.Reminds.updateRecursiveFrequency(update.event_id,update.new_value, true).then((oldRemind) => {
           let Change = {
             id: uuid.v1(),
             title: `Updates On ${oldRemind.title} Remind`,
@@ -1802,7 +1796,7 @@ class UpdatesDispatcher {
     },
     members_added_to_remind: update => {
       return new Promise((resolve, reject) => {
-        stores.Reminds.addMembers(update.new_value, true).then(oldRemind => {
+        stores.Reminds.addMembers(update.event_id,update.new_value, true).then(oldRemind => {
           let Change = {
             id: uuid.v1(),
             title: `Updates On ${oldRemind.title} Remind`,
@@ -1821,7 +1815,7 @@ class UpdatesDispatcher {
           stores.ChangeLogs.addChanges(Change).then(() => {
             if (findIndex(update.new_value.members, { phone: stores.LoginStore.user.phone }) >= 0) {
               CalendarServe.saveEvent(oldRemind, null, 'reminds').then(calendar_id => {
-                stores.Reminds.updateCalendarID({ remind_id: oldRemind.id, calendar_id: calendar_id }, null).then(() => {
+                stores.Reminds.updateCalendarID(update.event_id,{ remind_id: oldRemind.id, calendar_id: calendar_id }, null).then(() => {
                   GState.eventUpdated = true;
                   resolve('ok')
                 })
@@ -1833,7 +1827,7 @@ class UpdatesDispatcher {
     },
     members_removed_from_remind: update => {
       return new Promise((resolve, reject) => {
-        stores.Reminds.removeMember(update.new_value, true).then(oldRemind => {
+        stores.Reminds.removeMember(update.event_id,update.new_value, true).then(oldRemind => {
           let Change = {
             id: uuid.v1(),
             title: `Updates On ${oldRemind.title} Remind`,
@@ -1853,7 +1847,7 @@ class UpdatesDispatcher {
             if (findIndex(update.new_value.members,
               rlr => rlr === stores.LoginStore.user.phone) >= 0 && oldRemind.calendar_id) {
               CalendarServe.saveEvent({ ...oldRemind, period: null }, null, 'reminds').then(() => {
-                stores.Reminds.updateCalendarID({ remind_id: oldRemind.id, calendar_id: undefined }).then(() => {
+                stores.Reminds.updateCalendarID(update.event_id,{ remind_id: oldRemind.id, calendar_id: undefined }).then(() => {
                   GState.eventUpdated = true;
                   resolve('ok')
                 })
@@ -1865,7 +1859,7 @@ class UpdatesDispatcher {
     },
     mark_as_done: update => {
       return new Promise((resolve, reject) => {
-        stores.Reminds.makeAsDone(update.new_value, true).then(oldRemind => {
+        stores.Reminds.makeAsDone(update.event_id,update.new_value, true).then(oldRemind => {
           let Change = {
             id: uuid.v1(),
             title: `Updates On ${oldRemind.title} Remind`,
@@ -1890,7 +1884,7 @@ class UpdatesDispatcher {
     },
     confirm: update => {
       return new Promise((resolve, reject) => {
-        stores.Reminds.confirm(update.new_value, true).then(oldRemind => {
+        stores.Reminds.confirm(update.event_id,update.new_value, true).then(oldRemind => {
           let Change = {
             id: uuid.v1(),
             title: `Updates On ${oldRemind.title} Remind`,
@@ -1915,7 +1909,7 @@ class UpdatesDispatcher {
     },
     must_report: update => {
       return new Promise((resolve, reject) => {
-        stores.Reminds.updateRequestReportOnComplete(update.new_value, true).then(oldRemind => {
+        stores.Reminds.updateRequestReportOnComplete(update.event_id,update.new_value, true).then(oldRemind => {
           let Change = {
             id: uuid.v1(),
             title: `Updates On ${oldRemind.title} Remind`,
@@ -1940,7 +1934,7 @@ class UpdatesDispatcher {
     },
     new_commitee: update => {
       return new Promise((resolve, reject) => {
-        stores.CommiteeStore.getCommitee(update.new_value).then(commitee => {
+        stores.CommiteeStore.getCommitee(update.event_id, update.new_value).then(commitee => {
           stores.Events.addEventCommitee(update.event_id, update.new_value).then(() => {
             let Change = {
               id: uuid.v1(),
@@ -1964,7 +1958,7 @@ class UpdatesDispatcher {
     commitee_opened: update => {
       return new Promise((resolve, reject) => {
         return new Promise((resolve, reject) => {
-          stores.CommiteeStore.changeCommiteeOpenedState(update.new_value, true).then(commitee => {
+          stores.CommiteeStore.changeCommiteeOpenedState(update.event_id, update.new_value, true).then(commitee => {
             let Change = {
               id: uuid.v1(),
               updated: update.updated,
@@ -1987,7 +1981,7 @@ class UpdatesDispatcher {
     commitee_closed: update => {
       return new Promise((resolve, reject) => {
         return new Promise((resolve, reject) => {
-          stores.CommiteeStore.changeCommiteeOpenedState(update.new_value, false).then(commitee => {
+          stores.CommiteeStore.changeCommiteeOpenedState(update.event_id, update.new_value, false).then(commitee => {
             let Change = {
               id: uuid.v1(),
               updated: update.updated,
@@ -2008,7 +2002,7 @@ class UpdatesDispatcher {
     },
     removed_commitee: update => {
       return new Promise((resolve, reject) => {
-        stores.CommiteeStore.removeCommitee(update.new_value).then(commitee => {
+        stores.CommiteeStore.removeCommitee(update.event_id, update.new_value).then(commitee => {
           stores.Events.removeCommitee(update.event_id, update.new_value).then(() => {
             let Change = {
               id: uuid.v1(),
@@ -2032,7 +2026,7 @@ class UpdatesDispatcher {
     },
     added_commitee_member: update => {
       return new Promise((resolve, reject) => {
-        stores.CommiteeStore.addMembers(update.new_value.id, update.new_value.member).then((commitee) => {
+        stores.CommiteeStore.addMembers(update.event_id, update.new_value.id, update.new_value.member).then((commitee) => {
           let Change = {
             id: uuid.v1(),
             updated: update.updated,
@@ -2053,7 +2047,7 @@ class UpdatesDispatcher {
     },
     removed_commitee_member: update => {
       return new Promise((resolve, reject) => {
-        stores.CommiteeStore.removeMember(update.new_value.id, update.new_value.phone).then((commitee) => {
+        stores.CommiteeStore.removeMember(update.event_id, update.new_value.id, update.new_value.phone).then((commitee) => {
           let Change = {
             id: uuid.v1(),
             updated: update.updated,
@@ -2074,8 +2068,8 @@ class UpdatesDispatcher {
     },
     commitee_name_updated: update => {
       return new Promise((resolve, reject) => {
-        stores.CommiteeStore.getCommitee(update.new_value.id).then(oldCommitee => {
-          stores.CommiteeStore.updateCommiteeName(update.new_value.id, update.new_value.name).then(commitee => {
+        stores.CommiteeStore.getCommitee(update.event_id, update.new_value.id).then(oldCommitee => {
+          stores.CommiteeStore.updateCommiteeName(update.event_id, update.new_value.id, update.new_value.name).then(commitee => {
             let Change = {
               id: uuid.v1(),
               updated: update.updated,
@@ -2097,7 +2091,7 @@ class UpdatesDispatcher {
     },
     updated_commitee_public_status: update => {
       return new Promise((resolve, reject) => {
-        stores.CommiteeStore.updateCommiteeState(update.new_value.id, update.new_value.state).then((commitee) => {
+        stores.CommiteeStore.updateCommiteeState(update.event_id, update.new_value.id, update.new_value.state).then((commitee) => {
           //console.warn(update.updater)
           let Change = {
             id: uuid.v1(),

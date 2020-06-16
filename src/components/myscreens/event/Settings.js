@@ -3,15 +3,13 @@ import {
   View,
   PermissionsAndroid,
   StatusBar,
-  TouchableOpacity,
+  TouchableOpacity, ScrollView, TextInput,
+  TouchableWithoutFeedback 
 } from "react-native";
-import { Text, Item, Button, Icon, Spinner, Label, Title } from "native-base";
-import { Dropdown } from "react-native-material-dropdown";
 import {
-  TextInput,
-  ScrollView,
-  TouchableWithoutFeedback,
-} from "react-native-gesture-handler";
+  Text, Item, Button, Icon, Spinner, Label, Title,
+} from "native-base";
+import { Dropdown } from "react-native-material-dropdown";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import NumericInput from "react-native-numeric-input";
 import moment from "moment";
@@ -194,12 +192,12 @@ export default class Settings extends Component {
         >
           <View style={{ marginLeft: "4%", flexDirection: "column" }}>
             {this.state.emptyNameError ? (
-              <Text style={{ color: "#A91A84" }} note>
+              <Text style={{ color: colorList.errorColor }} note>
                 {"name cannot be empty"}
               </Text>
             ) : null}
             {this.state.tooLongNameError ? (
-              <Text style={{ color: "#A91A84" }} note>
+              <Text style={{ color: colorList.errorColor }} note>
                 {
                   "name is too long; the name should not be morethan 30 characters"
                 }
@@ -362,7 +360,7 @@ export default class Settings extends Component {
               onPress={this.cancelUpdate.bind(this)}
             ></Icon>
             <Icon
-              style={{ color: colorList.headerIcon }}
+              style={{ color: colorList.indicatorColor }}
               type="EvilIcons"
               onPress={this.saveConfigurations.bind(this)}
               name="check"

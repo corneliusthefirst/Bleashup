@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import ModalBox from 'react-native-modalbox';
-import { View, PermissionsAndroid, StatusBar, TouchableOpacity } from 'react-native';
+import { View, PermissionsAndroid, StatusBar, TouchableOpacity, TextInput, ScrollView} from 'react-native';
 import { Text, Item, Button, Icon, Spinner, Label,Title } from 'native-base'
 import { Dropdown } from 'react-native-material-dropdown';
-import { TextInput, ScrollView } from 'react-native-gesture-handler';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import NumericInput from 'react-native-numeric-input'
 import moment from 'moment';

@@ -20,7 +20,9 @@ export default class BleashupModal extends PureComponent {
     onClosedModal() {
 
     }
+    jusify = false
     backdropOpacity = 0.7
+    borderRadius = 0
     backButtonClose = false
     swipeToClose = true
     position = 'bottom'
@@ -30,14 +32,14 @@ export default class BleashupModal extends PureComponent {
     borderTopLeftRadius = 8
     borderTopRightRadius = 8
     height = screenheight
-
+    coverScreen=true
     modalBody() {
         return <View></View>
     }
     isOpened = false
     entry = 'bottom'
 
-    render() {
+    modal(){
         return (
             <Modal
                 backdropOpacity={this.backdropOpacity || 0.7}
@@ -52,18 +54,22 @@ export default class BleashupModal extends PureComponent {
                     this.onClosedModal()
                 }}
                 isOpen={this.props.isOpen ? true : this.props.open ? true : false}
-                coverScreen={this.nocover}
+                coverScreen={this.coverScreen}
                 style={{
                     backgroundColor: this.modalBackground || '#FFFFFF',
                     height: this.modalHeight,
                     width: this.modalWidth || "100%",
-                    borderTopLeftRadius: this.borderTopLeftRadius || 8,
-                    borderTopRightRadius: this.borderTopRightRadius || 8,
-                    borderRadius:this.borderRadius
+                    justifyContent: this.jusify ? 'center' : null,
+                    borderRadius: this.borderRadius,
+                    borderTopLeftRadius: this.borderTopLeftRadius,
+                    borderTopRightRadius: this.borderTopRightRadius,
                 }}
             >
                 {this.modalBody()}
             </Modal>
         );
+    }
+    render() {
+        return this.modal()
     }
 }

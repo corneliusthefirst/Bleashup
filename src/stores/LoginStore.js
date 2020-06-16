@@ -116,9 +116,8 @@ export default class LoginStore {
         })
         .then(data => {
           console.warn("here2",data)
-         // UserSevices.changeNickname(data.phone, data.password, newName)
-           // .then(() => {
-              console.warn("here3",newName)
+         UserSevices.changeNickname(data.phone, data.password, newName)
+            .then(() => {
               data.nickname = newName;
               storage
                 .save({
@@ -129,10 +128,10 @@ export default class LoginStore {
                   this.user = data;
                   resolve();
                 });
-           // })
-           // .catch(error => {
-           //   reject(error);
-          //  });
+            })
+           .catch(error => {
+              reject(error);
+           });
         })
         .catch(error => {
           reject(error);
@@ -142,14 +141,16 @@ export default class LoginStore {
 
   @action updateStatus(newStatus) {
     return new Promise((resolve, reject) => {
+      console.warn('1',newStatus)
       storage
         .load({
           key: "loginStore",
           autoSync: true
         })
         .then(data => {
-        //  UserSevices.changeStatus(data.phone, data.password, newStatus)
-          //  .then(() => {
+          UserSevices.changeStatus(data.phone, data.password, newStatus)
+            .then(() => {
+              console.warn('2',newStatus)
               data.status = newStatus;
               storage.save({
                   key: "loginStore",
@@ -158,10 +159,10 @@ export default class LoginStore {
                   this.user = data;
                   resolve();
                 });
-           // })
-            //.catch(error => {
-          //    reject(error);
-           // });
+            })
+            .catch(error => {
+             reject(error);
+            });
         })
         .catch(error => {
           reject(error);
@@ -322,7 +323,9 @@ export default class LoginStore {
         });
     });
   }
+  
 
+  /*
   @action async updateAge(newAge) {
     return new Promise((resolve, reject) => {
       storage
@@ -352,7 +355,7 @@ export default class LoginStore {
           reject(error);
         });
     });
-  }
+  }*/
 
 
  @observable statusOptions = [{id:"1",name:"available",state:false},{id:"2",name:"occupied",state:false},{id:"3",name:"At school",state:false},{id:"4",name:"At work",state:false},{id:"5",name:"At cinema",state:false},{id:"6",name:"At metting",state:false},{id:"7",name:"Sleeping",state:false},{id:"8",name:"Urgent calls only",state:false},{id:"9",name:"Battery very low",state:false}]

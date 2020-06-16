@@ -1,16 +1,16 @@
 import React, { Component } from "react";
-import { View } from "react-native";
+import { View, TouchableOpacity} from "react-native";
 import ActivityProfile from "../myscreens/currentevents/components/ActivityProfile";
 import PhotoViewer from "../myscreens/event/PhotoViewer";
 import DetailsModal from "../myscreens/invitations/components/DetailsModal";
 import ColorList from "../colorList";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import { Icon, Text, CardItem, Card } from "native-base";
 import moment from 'moment';
 import { format } from '../../services/recurrenceConfigs';
 import Creator from "../myscreens/reminds/Creator";
 import ProfileView from "../myscreens/invitations/components/ProfileView";
 import request from '../../services/requestObjects';
+import BeNavigator from '../../services/navigationServices';
 export default class ShareFrame extends Component {
     constructor(props) {
         super(props);
@@ -24,75 +24,44 @@ export default class ShareFrame extends Component {
         });
     }
     openDetails(event) {
+        console.warn("showing details")
         this.setState({
             showDetails: true,
         });
     }
     render() {
         return <View>
-            <Card style={{ flexDirection: "column", width: '100%',alignSelf:'flex-start',alignItems: 'flex-start', }}>
-                {/*<CardItem>
-                    <ProfileView phone={this.props.sharer}></ProfileView>
-                </CardItem>*/}
-                <CardItem
+            <View style={{ 
+                flexDirection: "column", 
+                width: '100%', 
+                alignSelf: 'center', 
+            alignItems: 'flex-start', }}>
+                <View
                     style={{
                         width: "90%",
                         alignSelf: "center",
                         alignItems: "flex-start",
-                        borderTopRightRadius: 3,
-                        borderTopLeftRadius: 3,
-                        minHeight: 58,
-                        justifyContent: 'space-between',
-                        flexDirection: 'row',
+                         flexDirection: 'row',
                         paddingLeft: '1%',
                         paddingRight: '1%',
-                        borderWidth: 0.2,
-                        borderBottomWidth: 0,
-                        borderColor: ColorList.bodySubtext,
                     }}
                 >
-                    <View style={{}}>
-                        <ActivityProfile
-                            Event={this.props.share && !Array.isArray(this.props.share.event) ?
-                                this.props.share.event :
-                                request.Event()}
-                            showPhoto={this.showPhoto.bind(this)}
-                            openDetails={this.openDetails.bind(this)}
-                        ></ActivityProfile>
-                    </View>
-                    <View style={{ marginTop: 'auto', marginBottom: 'auto', }}>
-                        <TouchableOpacity>
-                            <Icon
-                                name={"share-outline"}
-                                type={"MaterialCommunityIcons"}
-                                style={{ color: ColorList.bodyIcon }}
-                            >
-                            </Icon>
-                        </TouchableOpacity>
-                    </View>
-                </CardItem>
-                <CardItem style={{ width: '100%' }}>
-                    {this.props.content && this.props.content()}
-                </CardItem>
-                <CardItem style={{
-                    height: 20,
-                    borderBottomLeftRadius: 3,
-                    borderBottomRightRadius: 2,
-                    borderColor: ColorList.bodySubtext,
-                    borderWidth: .2,
-                    borderTopWidth: 0,
-                    flexDirection: 'column',
-                    width: '90%',
-                    alignSelf: 'center',
-                    justifyContent: 'flex-start',
-                    paddingLeft: 2,
-                    paddingTop: 3,
-                }}>
-                <View style={{alignSelf: 'flex-start',}}>
-                    <Creator intro={"Shared"} creator={this.props.share.sharer} date={this.props.share.created_at}></Creator>
+                    {this.props.share && this.props.share.event && this.props.share.event.about && <TouchableOpacity style={{flexDirection: 'row',}} onPress={() => requestAnimationFrame(this.openDetails.bind(this))}>
+                        <View style={{marginTop: 'auto',marginBottom: 'auto',}}><Text style={{fontStyle: 'italic',fontSize: 12,}} note>{'from: '}</Text></View>
+                        <View><Text style={{ fontWeight: '500',fontSize: 13, }} >{this.props.share.event.about.title}</Text></View><View 
+                        style={{
+                            marginTop: 'auto',
+                            marginLeft: '2%',
+                            marginBottom: 'auto',
+                        }} ><Text style={{
+                            fontStyle: 'italic',
+                        }} note>{"(activity)"}</Text></View>
+                    </TouchableOpacity>}
                 </View>
-                </CardItem>
-            </Card>
+                <View style={{ width: '100%',alignSelf: 'center',alignItems: 'center', }}>
+                    {this.props.content && this.props.content()}
+                </View>
+            </View>
             <PhotoViewer
                 open={this.state.showPhoto}
                 hidePhoto={() => {
@@ -102,10 +71,19 @@ export default class ShareFrame extends Component {
                 }}
                 photo={this.state.photo}
             ></PhotoViewer>
-            <DetailsModal
+            {this.state.showDetails ? <DetailsModal
+                goToActivity={
+                    () => BeNavigator.pushActivity(this.props.share.event, 'EventDetails')
+                }
+                isOpen={this.state.showDetails}
+                onClosed={() => {
+                    this.setState({
+                        showDetails: false
+                    })
+                }}
                 isToBeJoint
-                event={this.props.share && this.props.share.activity}
-            ></DetailsModal>
+                event={this.props.share && this.props.share.event}
+            ></DetailsModal> : null}
         </View>;
     }
 }

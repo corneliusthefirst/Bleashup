@@ -10,6 +10,8 @@ import BleashupFlatList from './BleashupFlatList';
 import moment from "moment";
 import bleashupHeaderStyle from "../services/bleashupHeaderStyle";
 import CreationHeader from "./myscreens/event/createEvent/components/CreationHeader";
+import ColorList from './colorList';
+import rounder from "../services/rounder";
 export default class ContactList extends Component {
 
     constructor(props) {
@@ -26,11 +28,12 @@ export default class ContactList extends Component {
         return nextState.isOpen !== this.state.isOpen || nextState.isloaded !== this.state.isloaded ? true : false
     }
     writeDateTime(period) {
-        return moment(period).format("dddd, MMMM Do YYYY, h:mm:ss a")
+        return moment(period).calendar()
     }
 
     componentDidMount() {
-        setTimeout(() => {
+
+        !this.props.reaction ? setTimeout(() => {
             stores.Publishers.getPublishers(this.props.event_id).then(publisher => {
                 if (publisher == 'empty') {
                     this.setState({
@@ -44,21 +47,31 @@ export default class ContactList extends Component {
                     });
                 }
             })
-        }, 3)
+        }, 3) : setTimeout(() => {
+            this.setState({
+                publishers: this.props.reacters,
+                isloaded: true
+            })
+        },30) 
     }
     delay = 0
     _keyExtractor = (item, index) => item.phone
     render() {
         StatusBar.setBarStyle('dark-content', true)
         return <View style={{}}>
-        <CreationHeader
-        back={this.props.back}
-        title={"Shared By "}
-        extra={<Text style={{marginTop: 'auto',marginBottom: 'auto',}} note>{this.state.publishers.length}{" sharer(s)"}</Text>}
-        >
-        </CreationHeader>
+            {!this.props.reaction ? <CreationHeader
+                back={this.props.back}
+                title={"Shared By "}
+                extra={<Text style={{ marginTop: 'auto', marginBottom: 'auto', }} note>{this.state.publishers.length}{" sharer(s)"}</Text>}
+            >
+            </CreationHeader> : <View style={{width:'100%',
+                    justifyContent: 'center',
+                }}><View style={{marginTop: '-10%',}}><View style={{ alignSelf: 'center', backgroundColor: ColorList.bodyBackground,
+                        alignSelf: 'center', ...rounder(100)}}>
+                        <Text style={{textAlign:'center',fontSize: 75,}}>{this.props.reaction}
+                        </Text></View></View></View>}
             {this.state.isloaded ? (
-                <View>
+                <View style={{height:this.props.reaction?'85%':'93%'}}>
                     {this.state.isEmpty ? <Text style={{
                         margin: '10%',
                     }} note>{"sory! there's no connction to the server"}</Text> : <BleashupFlatList
@@ -69,18 +82,19 @@ export default class ContactList extends Component {
                         keyExtractor={this._keyExtractor}
                         dataSource={this.state.publishers}
                         renderItem={(item, index) => {
-                            this.delay = this.delay >= 15 ? 0:this.delay + 1
+                            this.delay = this.delay >= 15 ? 0 : this.delay + 1
                             return <View style={{ margin: 10 }}>
                                 <View>
-                                    <View style={{ display: 'flex', flexDirection: 'row', }} >
+                                    <View style={{ display: 'flex', flexDirection: 'row', height: 50 }} >
                                         <View style={{ width: "50%" }}>
                                             <ProfileView delay={this.delay} phone={item.phone}></ProfileView>
                                         </View>
                                         <View style={{
-                                            width: "45%"
+                                            width: "45%",
+                                            justifyContent: 'center',
                                         }}>
                                             <Text style={{
-                                            }} note>{item.period && this.writeDateTime(item.period.date)}</Text>
+                                            }} note>{this.writeDateTime(item.date) || item.period && this.writeDateTime(item.period.date)}</Text>
                                         </View>
                                     </View>
                                 </View>

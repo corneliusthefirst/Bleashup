@@ -2,20 +2,22 @@
 import React, { Component } from 'react';
 
 import {
-    StyleSheet, Text, TouchableOpacity, View, ScrollView, Alert, Vibration, Platform
+    StyleSheet, Text, TouchableOpacity, View, ScrollView, Alert, Vibration, Platform, TouchableWithoutFeedback
 } from 'react-native';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import { Icon, Right, Spinner, Toast } from 'native-base';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import GState from '../../../stores/globalState';
 import FileViewer from 'react-native-file-viewer';
 import FileExachange from '../../../services/FileExchange';
 import rnFetchBlob from 'rn-fetch-blob';
+import stores from '../../../stores';
+import TextContent from './TextContent';
+import ColorList from '../../colorList';
 const { fs } = rnFetchBlob
 export default class FileAttarchementUploader extends Component {
     constructor(props) {
         super(props);
-          this.state = {
+        this.state = {
             duration: 0,
             received: 0, total: 0,
             uploadState: 1,
@@ -43,10 +45,10 @@ export default class FileAttarchementUploader extends Component {
             loaded: true,
             downloading: false
         })
-        fs.unlink(newDir,() => {})
+        fs.unlink(newDir, () => { })
         this.props.message.type = 'attachement'
         ///this.props.message.thumbnailSource = this.baseURL + response.data.split('.')[0] + '_thumbnail.jpeg'
-        this.props.replaceMessage({...this.props.message,source:path,temp:path,received:this.state.total})
+        this.props.replaceMessage({ ...this.props.message, source: path, temp: path, received: this.state.total })
     }
     onError(error) {
         console.warn(error)
@@ -82,7 +84,7 @@ export default class FileAttarchementUploader extends Component {
             null,
             this.onError.bind(this),
             this.props.message.content_type,
-            this.props.message.file_name, '/other',true)
+            this.props.message.file_name, '/other', true)
         setTimeout(() => {
             this.uploadFile()
         }, 500)
@@ -93,7 +95,7 @@ export default class FileAttarchementUploader extends Component {
         this.exchanger.task.cancel((err, taskID) => {
             this.setState({ downloading: false })
         })
-        this.props.room.SetCancledState(this.props.message.id).then(() => {
+        stores.Messages.SetCancledState(this.props.room, this.props.message.id).then(() => {
 
         })
         this.setState({
@@ -105,41 +107,32 @@ export default class FileAttarchementUploader extends Component {
         return data / mb
     }
     render() {
-        textStyle = {
-            width: "80%", margin: '2%', marginTop: "5%", display: 'flex', alignSelf: 'center',
-            flexDirection: 'column',
-        }
         return (
             <View>
-
-                <View style={{ disply: 'flex', flexDirection: 'row', width: 300, }}>
-                    <View style={textStyle}>
-                        <View>
-                            <View style={{ display: 'flex', flexDirection: 'row', alignContent: 'space-between', }}>
-                                <View style={{ width: "70%" }}>
-                                    <Text style={{}}>{this.props.message.file_name}</Text>
-                                </View>
-                                <Text style={{ fontSize: 30, color: "#0A4E52" }}>{this.props.message.file_name.split(".")
-                                [this.props.message.file_name.split(".").length - 1].toUpperCase()}</Text>
-                                <Right></Right>
-                            </View>
+                <View style={{ flexDirection: 'row', width: 300, justifyContent: 'space-between',margin: '1%', }}>
+                    <View style={{ display: 'flex', flexDirection: 'row', alignContent: 'space-between', width: '81%' }}>
+                        <View style={{ width: "60%",marginBottom: 'auto',marginTop: 'auto', }}>
+                            <Text style={{}}>{this.props.message.file_name}</Text>
                         </View>
+                        <View style={{width:'40%',marginBottom: 'auto',marginTop: 'auto',}}>
+                        <Text elipsizeMode={"tail"} numberOfLines={1} style={{ fontSize: 30, color: ColorList.bodyText 
+                            }}>{this.props.message.file_name.split(".").pop().toUpperCase()}</Text></View>
                     </View>
-                    <View style={{ marginTop: "3%", marginLeft: "-5%", }}>
+                    <View style={{ width: "19%", alignSelf: 'flex-end',marginBottom: 2, }}>
                         <AnimatedCircularProgress
                             size={40}
                             width={3}
                             fill={this.state.uploadState}
-                            tintColor={"#1FABAB"}
-                            backgroundColor={'#F8F7EE'}>
+                            tintColor={ColorList.indicatorColor}
+                            backgroundColor={ColorList.indicatorInverted}>
                             {
                                 (fill) => (
-                                    <View style={{ marginTop: "-2%" }}>
+                                    <View>
                                         {!this.state.loaded ?
                                             <TouchableOpacity onPress={() => this.state.downloading ? this.cancelUpLoad(this.props.message.source) :
                                                 this.uploadFile(this.props.message.source)}>
                                                 <View>
-                                                    <Icon style={{ color: "#0A4E52" }} type="EvilIcons"
+                                                    <Icon style={{ color: ColorList.bodyText }} type="EvilIcons"
                                                         name={this.state.downloading ? "close" : "arrow-up"}></Icon>
                                                 </View>
                                                 <View style={{ position: 'absolute', marginTop: '-103%', marginLeft: '-14%', }}>
@@ -147,7 +140,7 @@ export default class FileAttarchementUploader extends Component {
                                                 </View>
                                             </TouchableOpacity> : <TouchableOpacity
                                                 onPress={() => requestAnimationFrame(() => this.openFile())}>
-                                                <Icon type="FontAwesome" style={{ color: "#0A4E52", fontSize: 22 }} name="folder-open">
+                                                <Icon type="FontAwesome" style={{ color: ColorList.bodyText, fontSize: 22 }} name="folder-open">
                                                 </Icon>
                                             </TouchableOpacity>}
                                     </View>
@@ -158,6 +151,9 @@ export default class FileAttarchementUploader extends Component {
                                 <Text style={{ fontSize: 10 }} note>{"("}{this.toMB(this.state.received).toFixed(1)}{"/"}
                                     {this.toMB(this.state.total).toFixed(1)}{")Mb"}</Text>}</View></View>
                 </View>
+                {this.props.message.text?<TextContent handleLongPress={this.props.handleLongPress}
+                    pressingIn={this.props.pressingIn} text={this.props.message.text} 
+                    tags={this.props.message.tags}></TextContent>:null}
             </View>
         );
     }

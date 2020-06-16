@@ -2,15 +2,17 @@
 import React, { Component } from 'react';
 
 import {
-    StyleSheet, Text, TouchableOpacity, View, ScrollView, Alert, Vibration, Platform
+    StyleSheet, Text, TouchableOpacity, View, ScrollView, Alert, Vibration, Platform, TouchableWithoutFeedback
 } from 'react-native';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import { Icon, Right, Spinner, Toast } from 'native-base';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import GState from '../../../stores/globalState';
 import testForURL from '../../../services/testForURL';
 import FileExachange from '../../../services/FileExchange';
 import Pickers from '../../../services/Picker';
+import stores from '../../../stores';
+import ColorList from '../../colorList';
+import TextContent from './TextContent';
 
 export default class FileAttarchementMessaege extends Component {
     constructor(props) {
@@ -26,8 +28,8 @@ export default class FileAttarchementMessaege extends Component {
     setAfterSuccess(path) {
         GState.downlading = false
         this.props.message.source = Platform.OS === 'android' ? path + "/" : '' + path
-        this.props.room.addStaticFilePath(this.props.message.source, this.props.message.id).then(() => {
-            this.props.room.addAudioSizeProperties(this.props.message.id, this.props.message.total,
+        stores.Messages.addStaticFilePath(this.props.room,this.props.message.source, this.props.message.id).then(() => {
+            stores.Messages.addAudioSizeProperties(this.props.room,this.props.message.id, this.props.message.total,
                 this.props.message.received, this.props.message.duration).then(() => {
                     this.setState({
                         loaded: true,
@@ -84,7 +86,7 @@ export default class FileAttarchementMessaege extends Component {
         this.exchanger.task.cancel((err, taskID) => {
             this.setState({ downloading: false })
         })
-        this.props.room.SetCancledState(this.props.message.id)
+        stores.Messages.SetCancledState(this.props.room,this.props.message.id)
     }
     toMB(data) {
         mb = 1000 * 1000
@@ -109,7 +111,7 @@ export default class FileAttarchementMessaege extends Component {
         GState.downlading = false
         this.props.message.received = received
         this.props.message.total = total
-        this.props.room.addAudioSizeProperties(this.props.message.id,
+        stores.Messages.addAudioSizeProperties(this.props.room,this.props.message.id,
             total, received).then(() => {
                 console.warn("setting failed state")
                 this.setState({
@@ -132,7 +134,6 @@ export default class FileAttarchementMessaege extends Component {
         }
         return (
             <View>
-
                 <View style={{ disply: 'flex', flexDirection: 'row', width: 300, }}>
                     <View style={textStyle}>
                         <View>
@@ -141,8 +142,8 @@ export default class FileAttarchementMessaege extends Component {
                                     <Text elipsizeMode={'tail'} numberOfLines={4} style={{}}>{this.props.message.file_name}</Text>
                                 </View>
                                 <View style={{ width: '35%' }}><Text elipsizeMode={"tail"} numberOfLines={1}
-                                    style={{ fontSize: 30, color: "#0A4E52", alignSelf: 'flex-start' }}>{this.props.message.file_name.split(".")
-                                    [this.props.message.file_name.split(".").length - 1].toUpperCase()}</Text></View>
+                                    style={{ fontSize: 30, color: ColorList.bodyText, alignSelf: 'flex-start' 
+                                }}>{this.props.message.file_name.split(".").pop().toUpperCase()}</Text></View>
                             </View>
                         </View>
                     </View>
@@ -151,15 +152,15 @@ export default class FileAttarchementMessaege extends Component {
                             size={40}
                             width={3}
                             fill={testForURL(this.props.message.source) ? this.state.downloadState : 100}
-                            tintColor={"#1FABAB"}
-                            backgroundColor={'#F8F7EE'}>
+                            tintColor={ColorList.indicatorColor}
+                            backgroundColor={ColorList.indicatorInverted}>
                             {
                                 (fill) => (
                                     <View style={{ marginTop: "-2%" }}>
                                         <TouchableOpacity onPress={() => this.state.downloading ? this.cancelDownLoad(this.props.message.source) :
                                             this.downloadFile(this.props.message.source)}>
                                             <View>
-                                                <Icon style={{ color: "#0A4E52" }} type="EvilIcons"
+                                                <Icon style={{ color: ColorList.bodyText }} type="EvilIcons"
                                                     name={this.state.downloading ? "close" : "arrow-down"}></Icon>
                                             </View>
                                             <View style={{ position: 'absolute', marginTop: '-103%', marginLeft: '-14%', }}>
@@ -171,13 +172,16 @@ export default class FileAttarchementMessaege extends Component {
                             }
                         </AnimatedCircularProgress></View> : <TouchableOpacity
                             onPress={() => requestAnimationFrame(() => this.openFile())}>
-                                <Icon type="FontAwesome" style={{ color: "#0A4E52", fontSize: 22,alignSelf:'center',justifyContent: 'center', }} name="folder-open">
+                                <Icon type="FontAwesome" style={{ color: ColorList.bodyText, fontSize: 22,alignSelf:'center',justifyContent: 'center', }} name="folder-open">
                                 </Icon>
                             </TouchableOpacity>}<View>
                             {!testForURL(this.props.message.source) ? <Text style={{alignSelf: 'center',}}>{this.toMB(this.state.total).toFixed(1)}{"Mb"}</Text> :
                                 <Text style={{ fontSize: 10,alignSelf: 'center',justifyContent: 'center', }} note>{"("}{this.toMB(isNaN(this.state.received) ? 0 : this.state.received).toFixed(1)}{"/"}
                                     {this.toMB(this.state.total).toFixed(1)}{")Mb"}</Text>}</View></View>
                 </View>
+                {this.props.message.text ? <TextContent handleLongPress={this.props.handleLongPress}
+                    pressingIn={this.props.pressingIn} text={this.props.message.text}
+                    tags={this.props.message.tags}></TextContent> : null}
             </View>
         );
     }

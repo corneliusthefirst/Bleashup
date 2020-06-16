@@ -43,7 +43,6 @@ import ActionButton from "react-native-action-button";
 import Modal from "react-native-modalbox";
 import autobind from "autobind-decorator";
 import CacheImages from "../../../../CacheImages";
-import Textarea from "react-native-textarea";
 import HighlightCard from "./HighlightCard";
 import stores from "../../../../../stores/index";
 import { observer } from "mobx-react";
@@ -110,7 +109,7 @@ export default class EventHighlights extends BleashupModal {
       currentHighlight: request.Highlight(),
       update: false,
       audioState: false,
-      searchImageState: false,
+      searchImageState: false, 
       participant: null,
       isMounted: false,
     };
@@ -119,19 +118,22 @@ export default class EventHighlights extends BleashupModal {
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.highlight_id !== this.props.highlight_id) {
       setTimeout(() => {
+        //console.warn('black check 1', this.props.highlight_id);
         stores.Highlights.readFromStore().then((Highlights) => {
-          let highlight = find(Highlights, {
+          let highlight = find(Highlights[this.props.event_id], {
             id: this.props.highlight_id
               ? this.props.highlight_id
               : "newHighlightId",
           });
+          //console.warn('black check',highlight);
           this.previoushighlight = JSON.stringify(highlight);
+          console.warn('previous',this.previoushighlight);
           if (!this.props.event_id) {
             let event_id = "newEventId";
             stores.Highlights.fetchHighlights(event_id).then((Highlights) => {
               this.setState({
                 newing: !this.state.newing,
-                highlightData: Highlights,
+                highlightData: Highlights[this.props.event_id],
                 isMounted: true,
                 currentHighlight: highlight ? highlight : request.Highlight(),
                 update: this.props.highlight_id ? true : false,
@@ -164,7 +166,7 @@ export default class EventHighlights extends BleashupModal {
   componentDidMount() {
     setTimeout(() => {
       stores.Highlights.readFromStore().then((Highlights) => {
-        let highlight = find(Highlights, {
+        let highlight = find(Highlights[this.props.event_id], {
           id: this.props.highlight_id
             ? this.props.highlight_id
             : "newHighlightId",
@@ -218,7 +220,7 @@ export default class EventHighlights extends BleashupModal {
       currentHighlight: this.state.currentHighlight,
     });
     if (!this.props.updateState) {
-      stores.Highlights.updateHighlightTitle(
+      stores.Highlights.updateHighlightTitle(this.props.event_id,
         this.state.currentHighlight,
         false
       ).then(() => { });
@@ -234,7 +236,7 @@ export default class EventHighlights extends BleashupModal {
     });
 
     if (!this.props.updateState) {
-      stores.Highlights.updateHighlightDescription(
+      stores.Highlights.updateHighlightDescription(this.props.event_id,
         this.state.currentHighlight,
         false
       ).then(() => { });
@@ -248,7 +250,7 @@ export default class EventHighlights extends BleashupModal {
       newing: !this.state.newing,
     });
     if (this.props.updateState === false) {
-      stores.Highlights.updateHighlightPublicState({
+      stores.Highlights.updateHighlightPublicState(this.props.event_id, {
         highlight_id: this.state.currentHighlight.id,
         public_state: value,
       }).then((ele) => ele);
@@ -257,6 +259,7 @@ export default class EventHighlights extends BleashupModal {
 
   @autobind
   AddHighlight() {
+    console.warn("creating highlight")
     var arr = new Array(32);
     let num = Math.floor(Math.random() * 16);
     uuid.v1(null, arr, num);
@@ -269,29 +272,6 @@ export default class EventHighlights extends BleashupModal {
     //add the new highlights to global highlights
     newHighlight.creator = stores.LoginStore.user.phone;
     newHighlight.created_at = moment().format();
-    if (!this.props.event_id) {
-      stores.Highlights.addHighlight(newHighlight).then(() => {
-        stores.Events.addHighlight(newHighlight.id, newHighlight.event_id).then(
-          () => {
-            this.setState(
-              {
-                newing: !this.state.newing,
-                highlightData: [...this.state.highlightData, newHighlight],
-              },
-              () => {
-                console.log("after", this.state.highlightData);
-              }
-            );
-            this.resetHighlight();
-            stores.Highlights.removeHighlight("newHighlightId").then(() => {
-              this.setState({
-                creating: false,
-              });
-            });
-          }
-        );
-      });
-    } else {
       this.props.startLoader();
       this.props.onClosed();
       if (
@@ -307,7 +287,7 @@ export default class EventHighlights extends BleashupModal {
           .then(() => {
             this.props.reinitializeHighlightsList(newHighlight);
             this.resetHighlight();
-            stores.Highlights.removeHighlight("newHighlightId").then(() => {
+            stores.Highlights.removeHighlight(newHighlight.event_id, "newHighlightId").then(() => {
               this.props.stopLoader();
               this.setState({
                 creating: false,
@@ -328,7 +308,6 @@ export default class EventHighlights extends BleashupModal {
         });
         this.props.stopLoader();
       }
-    }
   }
 
   @autobind
@@ -349,17 +328,17 @@ export default class EventHighlights extends BleashupModal {
       },
     });
     if (!this.props.updateState) {
-      stores.Highlights.updateHighlightUrl(
+      stores.Highlights.updateHighlightUrl(this.props.event_id,
         this.state.currentHighlight,
         false
       ).then(() => { });
     }
   }
-  
+
   swipeToClose=false
   cleanAudio() {
     if (!this.props.updateState) {
-      stores.Highlights.updateHighlightUrl({
+      stores.Highlights.updateHighlightUrl(this.props.event_id, {
         ...this.state.currentHighlight,
         url: {
           ...this.state.currentHighlight.url,
@@ -412,7 +391,7 @@ export default class EventHighlights extends BleashupModal {
         },
       });
       !this.props.updateState &&
-        stores.Highlights.updateHighlightUrl({
+        stores.Highlights.updateHighlightUrl(this.props.event_id, {
           ...this.state.currentHighlight,
           url: {
             ...this.state.currentHighlight.url,
@@ -474,7 +453,7 @@ export default class EventHighlights extends BleashupModal {
             alignSelf: "center",
           }}
         >
-          <ScrollView showsVerticalScrollIndicator={false} ref={"scrollView"}>
+          <ScrollView keyboardShouldPersistTaps={'handled'} showsVerticalScrollIndicator={false} ref={"scrollView"}>
             <View style={{ height: "100%" }}>
             <View style={{width:this.width,alignSelf: 'center',}}>
             <CreateTextInput

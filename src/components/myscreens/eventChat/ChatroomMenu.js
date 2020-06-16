@@ -6,6 +6,7 @@ import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
 import { Icon, } from "native-base"
 import emitter from '../../../services/eventEmiter';
 import colorList from "../../colorList";
+import replies from './reply_extern';
 
 export default class ChatroomMenu extends Component {
     constructor(props) {
@@ -17,27 +18,6 @@ export default class ChatroomMenu extends Component {
             published: this.props.published,
             isPublisherModalOpened: false
         }
-    }
-    componentDidMount() {
-        this.setState({
-            public: this.props.public,
-            opened: this.props.opened
-        })
-        emitter.on("open-close", (newState) => {
-            console.warn("receiving closed !!")
-            this.setState({
-                opened: newState
-            })
-        })
-        emitter.on("publish-unpublish", (newState) => {
-            this.setState({
-                public: newState
-            })
-        })
-    }
-    componentWillUnmount() {
-        emitter.off('open-close')
-        emitter.off('publish-unpublish')
     }
     componentWillReceiveProps(nextProps) {
         if (nextProps.hide) {
@@ -66,45 +46,60 @@ export default class ChatroomMenu extends Component {
         //this._menu.hide()
 
     }
+    isGeneral = this.props.roomID == this.props.eventID
     render() {
         return this.state.isMount ? (
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                 <Menu
-                    style={{ backgroundColor: colorList.popMenuBackground}}
+                    style={{ backgroundColor: colorList.popMenuBackground }}
                     ref={this.setMenuRef}
-                    button={<Icon style={{
+                    button={<TouchableOpacity 
+                        onPress={ () => 
+                            requestAnimationFrame(() => this.showMenu())
+                    }><Icon style={{
                         color: colorList.headerIcon,
-                    }} onPress={this.showMenu} name="gear" type="EvilIcons"></Icon>}
+                    }}
+                     name="gear" 
+                     type="EvilIcons">
+                    </Icon>
+                    </TouchableOpacity>}
                 >
-                    <View><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
+                    {this.isGeneral?null: <View><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
                         this.hideMenu()
                         return this.props.showMembers()
                     }
-                    }>View Members</MenuItem></View>
+                    }>View Members</MenuItem></View>}
                     <View><MenuDivider color="gray" /><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
                         this.hideMenu()
                         this.props.showRoomMedia()
                     }}>Media</MenuItem><MenuDivider color="#1FABAB" /></View>
-                    {this.props.roomID == this.props.eventID ? null : !this.props.master ? null : <View>
+                    {this.isGeneral ? null : !this.props.master ? null : <View>
                         <MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
                             this.hideMenu()
                             this.props.removeMembers()
                         }}>Remove Members</MenuItem>
                         <MenuDivider color="#1FABAB" /></View>}
-                    {this.props.roomID == this.props.eventID ? null : !this.props.master ? null :
-                        <View><MenuItem textStyle={{ color: this.state.opened ? "red" : "green" }} onPress={() => {
+                    {this.isGeneral ? null : !this.props.master ? null :
+                        <View><MenuItem textStyle={{ color: this.props.opened ? "red" : "green" }} onPress={() => {
                             this.hideMenu()
-                            this.state.opened ? this.props.closeCommitee() : this.props.openCommitee()
-                        }}>{this.state.opened ? "Close Committee" : "Open Committee"}</MenuItem>
+                            this.props.opened ? this.props.closeCommitee() : this.props.openCommitee()
+                        }}>{this.props.opened ? "Close Committee" : "Open Committee"}</MenuItem>
                             <MenuDivider color="#1FABAB" /></View>}
-                    {this.props.roomID === this.props.eventID ? null : !this.props.master ? null :
+                    {this.isGeneral ? null : !this.props.master ? null :
                         <View><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
                             this.hideMenu()
-                            this.state.public ? this.props.publishCommitee() : this.props.publishCommitee()
-                        }}>{this.props.roomID == this.props.eventID ? null : this.state.public ?
+                            this.props.public ? this.props.publishCommitee() : this.props.publishCommitee()
+                        }}>{this.isGeneral ? null : this.props.public ?
                             "Unpublish Committee" : "Publish Committee"}</MenuItem>
                             <MenuDivider color="#1FABAB" /></View>}
-                    {this.props.roomID == this.props.eventID ? null :
+                    {this.isGeneral || (this.props.master) ? <View><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
+                        this.hideMenu()
+                        this.props.settings()
+                    }}>{this.isGeneral ?
+                        "Activity Settings" : `Edit ${replies.committee} Name`}
+                    </MenuItem>
+                        <MenuDivider color="#1FABAB" /></View> : null}
+                    {this.isGeneral ? null :
                         <View><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
                             this.hideMenu()
                             this.props.leaveCommitee()

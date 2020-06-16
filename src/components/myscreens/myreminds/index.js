@@ -7,9 +7,7 @@ export default class CurrentEventView extends Component {
     //this.storage();
     return (
       <Container>
-        <ScrollView
-
-        >
+        <ScrollView>
           <Content>
             <Card style={{ padding: 10 }}>
               <CardItem
@@ -17,7 +15,7 @@ export default class CurrentEventView extends Component {
                   paddingLeft: 0,
                   paddingRight: 0,
                   paddingTop: 0,
-                  paddingBottom: 10
+                  paddingBottom: 10,
                 }}
               >
                 <Body>

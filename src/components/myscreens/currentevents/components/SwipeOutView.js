@@ -1,6 +1,5 @@
 import React, { Component } from "react";
-import { View } from 'react-native';
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { View, TouchableOpacity} from 'react-native';
 import UpdateStateIndicator from "./updateStateIndicator";
 import { List, ListItem, Icon, Label } from 'native-base';
 import InvitationModal from "./InvitationModal";
@@ -18,7 +17,7 @@ export default class SwipeOutView extends Component {
         this.state = {
         }
     }
-    width = "24%"
+    width = "50%"
     padding = "8%"
     indicatorMargin = {
         marginLeft: "5%",
@@ -78,9 +77,14 @@ export default class SwipeOutView extends Component {
     blinkerSize = 26;
     render() {
         return (
-            <View style={{ width: "99%", borderRadius: 4,...shadower(2) ,height:'99.5%',backgroundColor:colorList.bodyBackground,alignItems:"center"}}>
-                <View style={{ flex:1, flexDirection: 'column',justifyContent:"space-around" }}>
-                   
+            <View style={{ width: "99%", 
+            borderRadius: 4,
+            ...shadower(2) ,
+            height:'99.5%',
+            backgroundColor:colorList.bodyBackground,
+            alignItems:"center"
+        }}>
+                <View style={{flexDirection: 'column',justifyContent:"space-around" }}>
                     <View style={{ height: this.width,alignItems:"center" }}>
                         <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                             this.props.publish()
@@ -101,8 +105,6 @@ export default class SwipeOutView extends Component {
                             <Label style={{ fontSize: 14, color: this.props.master || this.props.Event.public ? colorList.bodySubtext : "#bfc6ea" }}>Invite</Label>
                         </TouchableOpacity>}
                     </View>
-
-
                    {/* <View style={{ height: this.width,flexDirection:"column",alignItems:"center" }}>
                         {<TouchableOpacity onPress={() => {
                             this.props.join()

@@ -1,6 +1,6 @@
 import React from "react";
-import { View, ScrollView } from "react-native";
-import { Icon,Title,Text } from "native-base";
+import { View, ScrollView,TouchableOpacity } from "react-native";
+import { Icon,Title,Text,Spinner } from "native-base";
 import Settings from "./Settings";
 import Members from "./Members";
 import MoreMembersMenu from "./MoreMembersMenu";
@@ -12,6 +12,11 @@ import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
 export default class SettingsTabModal extends BleashupModal {
   onClosedModal() {
     this.props.closed();
+  }
+  onOpenModal(){
+      this.setState({
+        isMounted:true
+      })
   }
   swipeToClose = false
   modalBody() {
@@ -28,13 +33,14 @@ export default class SettingsTabModal extends BleashupModal {
               style={{
                 height: ColorList.headerHeight,
                 flexDirection: "row",
+                justifyContent: 'space-between',
                 alignItems: "center",
               }}
             >
+              <TouchableOpacity style={{width:"20%"}} onPress={() => 
+               requestAnimationFrame(this.onClosedModal.bind(this))
+              } >
               <Icon
-                onPress={() => {
-                  this.onClosedModal()
-                }}
                 style={{
                   color: ColorList.headerIcon,
                   marginLeft: "5%",
@@ -43,14 +49,23 @@ export default class SettingsTabModal extends BleashupModal {
                 type={"MaterialIcons"}
                 name={"arrow-back"}
               ></Icon>
-              <Title style={{ color: ColorList.headerText, fontWeight: "800" }}>
+              </TouchableOpacity>
+              <View style={{ 
+                width:"70%"
+               }}>
+              <Title style={{ 
+                color: ColorList.headerText, 
+                fontWeight: "800",
+                alignSelf:'flex-start' 
+              }}>
                 {"@Activity Settings"}
               </Title>
+              </View>
             </View>
           </View>
         </View>
         <ScrollView nestedScrollEnabled>
-          <View style={{ height: this.height * 0.4 }}>
+          <View style={{ height: 400 }}>
             <Settings
               event={this.props.event}
               master={this.props.master}
@@ -60,8 +75,11 @@ export default class SettingsTabModal extends BleashupModal {
               closeActivity={this.props.closeActivity}
             ></Settings>
           </View>
-          <View style={{ height: this.height - ColorList.headerHeight }}>
-          {this.TabHeader()}
+          <View style={{ height: 600 }}>
+            <View style={{
+              height:ColorList.headerHeight
+            }}>{this.TabHeader()}</View>
+          {this.state.isMounted ?
             <Members
               currentPhone={this.props.currentPhone}
               leaveActivity={this.props.leaveActivity}
@@ -70,7 +88,7 @@ export default class SettingsTabModal extends BleashupModal {
               participants={this.props.event.participant}
               master={this.props.master}
               changeMasterState={this.props.changeMasterState}
-            ></Members>
+            ></Members>:<Spinner size={"small"} ></Spinner>}
           </View>
         </ScrollView>
       </View>
@@ -78,11 +96,21 @@ export default class SettingsTabModal extends BleashupModal {
   }
   TabHeader() {
     return (
-       <View style={{flexDirection: 'row',justifyContent: 'space-between',margin: '3%',}}>
-       <View><Text note>members</Text></View>
+       <View style={{
+         flexDirection: 'row',
+         justifyContent: 'space-between',
+         marginLeft: "1%",
+         marginRight: "1%",
+         }}>
+        <View style={{
+          marginBottom: 'auto',
+          marginTop: 'auto',
+        }}><Text note>members</Text></View>
        <View
           style={{
             flexDirection: "row",
+            marginBottom: 'auto',
+            marginTop: 'auto',
             alignSelf: "flex-end",
             width: 100,
             justifyContent: "space-between",

@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import storage from "./Storage";
 import {
     observable,
@@ -15,42 +16,79 @@ import moment from "moment";
 import request from '../services/requestObjects';
 import tcpRequest from '../services/tcpRequestData';
 import EventListener from '../services/severEventListener';
+
 export default class votes {
-    constructor() { }
-    @observable votes = [];
+    constructor() {
+        //storage.remove(this.saveKey).then(() => {})
+        this.initilizeVotes()
+        this.saveInterval = setInterval(() => {
+            this.previousSaveTime !== this.currentSaveTime ?
+                this.saver() : null
+        }, this.saveInterval)
+
+    }
+    saveInterval = 2000
+    saverInterval = null
+    currentSaveTime = moment().format()
+    previousSaveTime = moment().format()
+    initilizeVotes() {
+        console.warn("initializing votes")
+        storage.load(this.readKey).then(data => {
+            this.votes = data
+        }).catch(() => {
+            this.votes = {}
+        })
+    } 
+    @observable votes = {};
+    saver() {
+        if (Object.keys(this.votes).length > 0) {
+            console.warn("persisiting votes")
+            this.saveKey.data = this.votes
+            storage.save(this.saveKey).then(() => {
+                this.previousSaveTime = this.currentSaveTime
+            })
+        }
+    }
     saveKey = {
         key: "votes",
-        data: []
+        data: {}
     };
-    fetchVoteFromRemote(voteID, simple) {
+    extraVotes = {}
+
+    fetchVoteFromRemote(roomID, voteID, simple) {
         return new Promise((resolve, reject) => {
-            let Vid = request.VID()
-            Vid.vote_id = voteID
-            tcpRequest.getVote(Vid, voteID + "_get_vote").then(JSONData => {
-                EventListener.sendRequest(JSONData, voteID + "_get_vote").then(vote => {
-                    if (vote.data === 'empty' || !vote.data) {
-                        resolve(undefined)
-                    } else {
-                        simple ? resolve(vote.data) : this.addVote(vote.data).then(() => {
-                            resolve(vote.data)
-                        })
-                    }
-                }).catch(() => {
-                    resolve()
+            //if (this.extraVotes[voteID]) {
+            //    resolve(this.extraVotes[voteID])
+            //} else {
+                let Vid = request.VID()
+                Vid.vote_id = voteID
+                tcpRequest.getVote(Vid, voteID + "_get_vote").then(JSONData => {
+                    EventListener.sendRequest(JSONData, voteID + "_get_vote").then(vote => {
+                        if (vote.data === 'empty' || !vote.data) {
+                            resolve(request.Vote())
+                        } else {
+                            this.extraVotes[voteID] = vote.data
+                            simple ? resolve(vote.data) : this.addVote(roomID, vote.data).then(() => {
+                                resolve(vote.data)
+                            })
+                        }
+                    }).catch(() => {
+                        resolve(request.Vote())
+                    })
                 })
-            })
+          //  }
         })
     }
-    loadVote(voteID) {
+    loadVote(roomID, voteID) {
         return new Promise((resolve, reject) => {
             this.readFromStore().then(Votes => {
-                if (Votes && Votes.length > 0) {
-                    let vote = find(Votes, { id: voteID })
+                if (Votes[roomID] && Votes[roomID].length > 0) {
+                    let vote = find(Votes[roomID], { id: voteID })
                     if (vote) {
                         resolve(vote)
                     } else {
                         if (voteID === request.Vote().id) {
-                            this.addVote(request.Vote()).then(() => {
+                            this.addVote(roomID, request.Vote()).then(() => {
                                 resolve(request.Vote())
                             })
                         } else {
@@ -61,157 +99,152 @@ export default class votes {
                         }
                     }
                 } else {
-                    this.fetchVoteFromRemote(voteID).then((remoteVote) => {
-                        console.warn("votes fetched from remote",remoteVote)
-                        resolve(remoteVote)
-                    })
+                    if (voteID === request.Vote().id) {
+                        this.addVote(roomID, request.Vote()).then(() => {
+                            resolve(request.Vote())
+                        })
+                    } else {
+                        this.fetchVoteFromRemote(voteID).then((remoteVote) => {
+                            console.warn("votes fetched from remote", remoteVote)
+                            resolve(remoteVote)
+                        })
+                    }
                 }
             })
         })
     }
-    addVote(Vote) {
+    addVote(roomID, Vote) {
         return new Promise((resolve, rejectPromise) => {
             this.readFromStore().then(Votes => {
-                Votes = reject(Votes, { id: Vote.id })
-                if (Votes) this.saveKey.data = uniqBy([Vote, ...Votes], "id");
-                else this.saveKey.data = [Vote];
-                storage.save(this.saveKey).then(() => {
-                    this.votes = this.saveKey.data;
-                    resolve();
-                });
+                Votes[roomID] = reject(Votes[roomID], { id: Vote.id })
+                if (Votes[roomID] && Votes[roomID].length > 0) {
+                    Votes[roomID][Votes[roomID].length] = {
+                        ...Vote,
+                        index: Votes[roomID].length
+                    }
+                    this.setProperty(Votes)
+                    resolve()
+                }
+                else {
+                    Votes[roomID] = [{ ...Vote, index: 0 }]
+                    this.setProperty(Votes)
+                    resolve()
+                }
+
             });
         });
     }
-    removeVote(VoteID) {
+    setProperty(votes) {
+        this.votes = votes
+        this.currentSaveTime = moment().format()
+    }
+    removeVote(roomID, VoteID) {
         return new Promise((resolve, rejectPromise) => {
             this.readFromStore().then(Votes => {
-                let vote = find(Votes, { id: VoteID })
-                this.saveKey.data = reject(votes, { id: VoteID });
-                storage.save(this.saveKey).then(() => {
-                    this.votes = this.saveKey.data;
-                    resolve(vote);
-                });
+                let vote = find(Votes[roomID], { id: VoteID })
+                Votes[roomID] = reject(Votes[roomID], { id: VoteID });
+                this.setProperty(Votes)
+                resolve(vote);
             });
         });
     }
-    vote({ vote_id, voter, option }) {
+    vote(roomID, { vote_id, voter, option }) {
         return new Promise((resolve, reject) => {
             this.readFromStore().then(Votes => {
-                let voteIndex = findIndex(Votes, { id: vote_id })
-                let optionIndex = findIndex(Votes[voteIndex].option, { index: option })
-                Votes[voteIndex].option[optionIndex].vote_count =
-                    Votes[voteIndex].option[optionIndex].vote_count + 1
-                Votes[voteIndex].voter = uniqBy([...Votes[voteIndex].voter ? Votes[voteIndex].voter : [],
-                { phone: voter, index: option }], 'phone')
-                Votes[voteIndex].updated_at = moment().format()
-                storage.save({ ...this.saveKey, data: Votes }).then(() => {
-                    this.votes = Votes
-                    resolve(Votes[voteIndex])
-                })
+                let voteIndex = findIndex(Votes[roomID], { id: vote_id })
+                if (voteIndex < 0) {
+                    resolve(null)
+                } else {
+                    let optionIndex = findIndex(Votes[roomID][voteIndex].option, { index: option })
+                    Votes[roomID][voteIndex].option[optionIndex].vote_count =
+                        Votes[roomID][voteIndex].option[optionIndex].vote_count + 1
+                    Votes[roomID][voteIndex].voter = uniqBy([...Votes[roomID][voteIndex].voter ? Votes[roomID][voteIndex].voter : [],
+                    { phone: voter, index: option }], 'phone')
+                    Votes[roomID][voteIndex].updated_at = moment().format()
+                    this.setProperty(Votes)
+                    resolve(Votes[roomID][voteIndex])
+                }
             })
         })
     }
     fetchVotes(EventID, CommitteeID) {
         return new Promise((resolve, reject) => {
             this.readFromStore().then(Votes => {
-                resolve(filter(Votes, {
-                    event_id: EventID,
-                    committee_id: CommitteeID
-                }));
+                resolve(Votes && Votes[EventID] &&
+                    Votes[EventID].filter(ele => ele.committee_id === CommitteeID));
             });
         });
     }
-    updateVoteTitle(NewVote, inform) {
-        console.warn(NewVote)
+    updateVoteTitle(roomID, NewVote, inform) {
         return new Promise((resolve, reject) => {
             this.readFromStore().then(Votes => {
-                let index = findIndex(Votes, { id: NewVote.vote_id })
-                Votes[index].title = NewVote.new_title
-                this.saveKey.data = Votes
-                storage.save(this.saveKey).then(() => {
-                    this.votes = this.saveKey.data;
-                    resolve(Votes[index]);
-                });
+                let index = findIndex(Votes[roomID], { id: NewVote.vote_id })
+                Votes[roomID][index].title = NewVote.new_title
+                this.setProperty(Votes)
+                resolve(Votes[roomID][index]);
             });
         });
     }
-    UpdateVoteDescription(NewVote, inform) {
+    UpdateVoteDescription(roomID, NewVote, inform) {
         return new Promise((resolve, reject) => {
             this.readFromStore().then(Votes => {
-                let index = findIndex(Votes, { id: NewVote.vote_id })
-                Votes[index].description = NewVote.new_description
-                this.saveKey.data = Votes
-                storage.save(this.saveKey).then(() => {
-                    this.votes = this.saveKey.data;
-                    resolve(Votes[index]);
-                });
+                let index = findIndex(Votes[roomID], { id: NewVote.vote_id })
+                Votes[roomID][index].description = NewVote.new_description
+                this.setProperty(Votes)
+                resolve(Votes[roomID][index]);
             });
         });
     }
 
-    UpdateVotePeriod(NewVote, inform) {
+    UpdateVotePeriod(roomID, NewVote, inform) {
         return new Promise((resolve, reject) => {
             this.readFromStore().then(Votes => {
-                let index = findIndex(Votes, { id: NewVote.vote_id })
-                let previousVote = find(Votes, { id: NewVote.vote_id })
-                Votes[index].period = NewVote.period
-                storage.save({ ...this.saveKey, data: Votes }).then(() => {
-                    this.votes = Votes
-                    resolve(previousVote)
-                })
+                let index = findIndex(Votes[roomID], { id: NewVote.vote_id })
+                let previousVote = Votes[roomID][index]
+                Votes[roomID][index].period = NewVote.period
+                this.setProperty(Votes)
+                resolve(previousVote)
             });
         });
     }
-    updateAlwayShowPercentage(newVote, inform) {
+    updateAlwayShowPercentage(roomID, newVote, inform) {
         return new Promise((resolve, reject) => {
             this.readFromStore().then(Votes => {
-                let index = findIndex(Votes, { id: newVote.vote_id })
-                Votes[index].always_show = newVote.new_always_show
-                this.saveKey.data = Votes
-                storage.save(this.saveKey).then(() => {
-                    this.votes = this.saveKey.data;
-                    resolve(Votes[index]);
-                });
+                let index = findIndex(Votes[roomID], { id: newVote.vote_id })
+                Votes[roomID][index].always_show = newVote.new_always_show
+                this.setProperty(Votes)
+                resolve(Votes[roomID][index]);
             });
         })
     }
-    PublishVote(newVote, inform) {
+    PublishVote(roomID, newVote, inform) {
         return new Promise((resolve, reject) => {
             this.readFromStore().then(Votes => {
-                let index = findIndex(Votes, { id: newVote.vote_id })
-                Votes[index].published = newVote.new_public_state
-                this.saveKey.data = Votes
-                storage.save(this.saveKey).then(() => {
-                    this.votes = this.saveKey.data;
-                    resolve(Votes[index]);
-                });
+                let index = findIndex(Votes[roomID], { id: newVote.vote_id })
+                Votes[roomID][index].published = newVote.new_public_state
+                this.setProperty(Votes)
+                resolve(Votes[roomID][index]);
             });
         });
     }
-    updateVoteOptions(NewVote) {
+    updateVoteOptions(roomID, NewVote) {
         console.warn("updating vote options")
         return new Promise((resolve, reject) => {
             this.readFromStore().then(Votes => {
-                let index = findIndex(Votes, { id: NewVote.vote_id })
-                Votes[index].option = NewVote.new_option
-                this.saveKey.data = Votes
-                storage.save(this.saveKey).then(() => {
-                    this.votes = this.saveKey.data
-                    resolve(Votes[index])
-                })
+                let index = findIndex(Votes[roomID], { id: NewVote.vote_id })
+                Votes[roomID][index].option = NewVote.new_option
+                this.setProperty(Votes)
+                resolve(Votes[roomID][index])
             })
         })
     }
-    clearVoteCreation() {
+    clearVoteCreation(roomID) {
         return new Promise((resolve, reject) => {
             this.readFromStore().then((Votes) => {
-                let index = findIndex(Votes, { id: request.Vote().id })
-                Votes[index] = request.Vote()
-                this.saveKey.data = Votes
-                storage.save(this.saveKey).then(() => {
-                    this.votes = this.saveKey.data
-                    resolve("ok")
-                })
+                let index = findIndex(Votes[roomID], { id: request.Vote().id })
+                Votes[roomID][index] = request.Vote()
+                this.setProperty(Votes)
+                resolve("ok")
             })
         })
     }
@@ -228,19 +261,13 @@ export default class votes {
             });
         });
     }
+    readKey = {
+        key: "votes",
+        autoSync: true
+    }
     readFromStore() {
         return new Promise((resolve, reject) => {
-            storage
-                .load({
-                    key: "votes",
-                    autoSync: true
-                })
-                .then(Votes => {
-                    resolve(Votes);
-                })
-                .catch(error => {
-                    resolve([]);
-                });
+            resolve(this.votes)
         });
     }
 }

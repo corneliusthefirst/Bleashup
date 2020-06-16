@@ -40,6 +40,7 @@ export default {
   CommiteeStore : new commitee(),
   StoriesStore: new   StoriesStore(),
   Privacy:new PrivacyStore(),
+  Messages : new ChatStore(),
   StatusStore : new StatusStore()
 
 

@@ -12,7 +12,6 @@ import {
   TouchableOpacity,
   Image,
 } from 'react-native';
-import Animated, { Easing } from 'react-native-reanimated';
 import {
   Container,
   Header,
@@ -26,10 +25,6 @@ import {
   Toast,
   Thumbnail
 } from 'native-base';
-import NetInfo from "@react-native-community/netinfo";
-//import StatusView from "./../Viewer/index";
-import InvitationView from "./../invitations/index";
-import Chats from "../poteschat";
 import SettingView from "./../settings/index";
 import autobind from "autobind-decorator";
 import {
@@ -52,6 +47,7 @@ import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
 import colorList from "../../colorList";
 import BeNavigator from '../../../services/navigationServices';
 import { PrivacyRequester, shared_post } from '../settings/privacy/Requester';
+import EventListener from '../../../services/severEventListener';
 
 let { height, width } = Dimensions.get('window');
 
@@ -74,7 +70,6 @@ class Home extends Component {
   _menu = null;
 
 
-  spinValue = new Animated.Value(0)
   permisssionListener() {
     firebase.messaging().hasPermission().then(status => {
       if (status) {
@@ -130,10 +125,11 @@ class Home extends Component {
   navigateToEventDetails(id) {
     let event = find(stores.Events.events, { id: id })
     if (event) {
-      BeNavigator.navigateToActivity("EventDetails", event);
+      BeNavigator.navigateToActivity("EventChat", event);
     }
   }
   componentWillMount() {
+    //EventListener.stopConnection()
     Linking.addEventListener('url', this.handleURL)
     DeepLinking.addScheme(GState.DeepLinkURL);
     DeepLinking.addRoute('/tester', response => {
@@ -148,22 +144,8 @@ class Home extends Component {
       }
     }).catch(err => console.error('An error occurred', err));
     AppState.addEventListener('change', this._handleAppStateChange);
-    NetInfo.isConnected.addEventListener("connectionChange", this.handleConnectionChange);
-    BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this));
   }
   animating = false
-  launchAnimation() {
-    if (!this.animating)
-      Animated.timing(
-        this.spinValue,
-        {
-          toValue: 1,
-          duration: 3000,
-          easing: Easing.linear
-        }
-      ).start()
-    this.animating = true
-  }
   realNew = []
   testers(){
     setTimeout(() => {
@@ -176,10 +158,7 @@ class Home extends Component {
     },1000)
   }
   componentDidMount() {
-    //this.testers()
-    stores.LoginStore.getUser().then((user) => {
-    })
-    stores.Highlights.initializeGetHighlightsListener()
+    stores.Events.initSearch()
     emitter.on("notify", (event) => {
       {
         if (GState.currentRoom !== event.data.room_key) {
@@ -195,11 +174,6 @@ class Home extends Component {
           // firebase.database().ref(`new_message/${phone}/${event.data.room_key}/new_messages`).set([])
         }
       }
-      setTimeout(() => {
-        this.setState({
-          currentTab: 0
-        })
-      }, 300)
       stores.LoginStore.getUser().then((user) => {
         firebase.messaging().requestPermission().then(staus => {
           firebase.messaging().getToken().then(token => {
@@ -217,7 +191,7 @@ class Home extends Component {
   timeout = null
   componentWillUnmount() {
 
-    BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton.bind(this));
+    //BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton.bind(this));
     this.removeNotificationDisplayedListener()
     Linking.removeEventListener('url', this.handleUrl);
     this.removeNotificationListener()
@@ -254,29 +228,15 @@ class Home extends Component {
     }
     return true;
   }
-  handleConnectionChange(connect) {
-    //connect ? console.warn("connected") : console.warn("not connected")
-  }
+
   state = {
     scroll: true,
     currentTab: 0
   };
 
 
-  setMenuRef = (ref) => {
-    this._menu = ref;
-  }
-  hideMenu = () => {
-    this._menu.hide();
-  };
-
-  showMenu = () => {
-    this._menu.show();
-  };
   settings = () => {
-    this.hideMenu();
     BeNavigator.navigateTo("Settings");
-
   };
 
   handleURL = ({ url }) => {
@@ -288,14 +248,9 @@ class Home extends Component {
     })
   }
   navigateToInvitations() {
-    BeNavigator.navigateTo("Invitation")
+    BeNavigator.navigateTo("voteCard");
   }
   render() {
-    const { concat, cos } = Animated
-    const spin = this.spinValue.interpolate({
-      inputRange: [0, 1],
-      outputRange: [1, 95]
-    })
     setTimeout(() => {
       //this.launchAnimation()
     }, 1000)
@@ -322,14 +277,8 @@ class Home extends Component {
                 <Icon name="sc-telegram" active={true} type="EvilIcons" style={{ color: colorList.headerIcon, }} onPress={() => this.navigateToInvitations()} />
               </TouchableOpacity>
 
-              <TouchableOpacity style={{ height: 40, alignItems: "center", justifyContent: "center" }} onPress={this.showMenu}>
-                <Menu
-                  ref={this.setMenuRef}
-                  button={<Icon name="gear" active={true} type="EvilIcons" style={{ color: colorList.headerIcon, marginLeft: width / 35 }} onPress={this.showMenu} />}
-                  style={{ backgroundColor: colorList.bodyBackground }}
-                >
-                  <MenuItem onPress={this.settings}>settings</MenuItem>
-                </Menu>
+              <TouchableOpacity style={{ height: 40, alignItems: "center", justifyContent: "center" }} onPress={this.settings} >
+                  <Icon name="gear" active={true} type="EvilIcons" style={{ color: colorList.headerIcon, marginLeft: width / 35 }} onPress={this.settings}/>
               </TouchableOpacity>
 
             </View>
@@ -350,76 +299,3 @@ class Home extends Component {
 }
 
 export default withInAppNotification(Home);
-
-
-
-
-
-
-
-
-{/* <Tabs
-          locked
-          tabContainerStyle={{
-             backgroundColor: colorList.headerBackground
-          }}
-          tabBarPosition="bottom"
-          tabBarUnderlineStyle={{
-            backgroundColor: colorList.headerBackground
-          }}
-          onChangeTab={({ i }) => {
-            this.setState({
-              currentTab: i
-            })
-          }}
-        >
-          <Tab
-            tabStyle={{
-              borderRadius: 0,
-            }}
-            heading={
-              <TabHeading>
-                <View style={{ display: 'flex', }}>
-                  <Icon name="ios-pulse" type="Ionicons" style={{ fontSize: this.state.currentTab == 0 ? 40 : 15, }} />
-                </View>
-              </TabHeading>
-            }
-          >
-            <CurrentEventView {...this.props}></CurrentEventView>
-          </Tab>
-          <Tab
-            heading={
-              <TabHeading>
-                <View>
-                  <Icon name="ios-people" type="Ionicons" style={{ fontSize: this.state.currentTab == 1 ? 50 : 15, }} />
-                </View>
-              </TabHeading>
-            }
-          >
-            <Chats {...this.props} />
-          </Tab>
-          {/*<Tab
-            heading={
-              <TabHeading>
-                <View>
-                  <Icon name="user-alt" type="FontAwesome5" style={{ fontSize: this.state.currentTab == 2 ? 30 : 10, }} />
-                </View>
-              </TabHeading>
-            }
-          >
-            <StatusView {...this.props} />
-          </Tab>
-        </Tabs>
-
-        {this.state.isForeignEventsModalOpened ? <ForeignEventsModal isOpen={this.state.isForeignEventsModalOpened} onClosed={() => {
-          this.setState({
-            isForeignEventsModalOpened: false,
-            foreignEvents: null
-          })
-        }} events={this.state.foreignEvents}>
-        </ForeignEventsModal> : null}
-        {/*<TabModal isOpen={this.state.isTabModalOpened} closed={() => {
-          this.setState({
-            isTabModalOpened: false
-          })
-        }}></TabModal>*/}
