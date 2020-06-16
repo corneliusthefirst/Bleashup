@@ -7,6 +7,7 @@ import {
 import { StyleSheet, View,Image,TouchableOpacity,FlatList,ScrollView,Dimensions} from 'react-native';
 
 import Modal from 'react-native-modalbox';
+import ColorList from '../../../../colorList';
 
 let {height, width} = Dimensions.get('window');
 
@@ -24,7 +25,7 @@ export default class BleashupAlert extends Component {
             isOpen={this.props.isOpen}
             onClosed={this.props.onClosed}
             style={{ height:height/4, borderRadius:10,
-            backgroundColor:"#FEFFDE",borderColor:'black',width: "80%",flexDirection:'column'  }}
+            backgroundColor:ColorList.bodyBackground,borderColor:'black',width: "80%",flexDirection:'column'  }}
             coverScreen={true}
             position={'center'}
             swipeToClose={false}
@@ -34,7 +35,7 @@ export default class BleashupAlert extends Component {
          
            <View style={{flex:1,justifyContent:"space-between",flexDirection:"column"}}>
               <View style={{flex:1}} >
-                <Text style={{fontSize:17,fontWeight:"500",color:"#1FABAB",alignSelf:"center",marginTop:"2%",marginRight:"3%"}}>
+                <Text style={{fontSize:17,fontWeight:"500",color:ColorList.bodyText,alignSelf:"center",marginTop:"2%",marginRight:"3%"}}>
                   {this.props.title}
                 </Text>
               </View>

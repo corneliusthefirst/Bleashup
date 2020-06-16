@@ -2,6 +2,7 @@
 import React from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import RenderDate from './RenderDate';
 
 class UserView extends React.PureComponent {
   constructor(props) {
@@ -14,7 +15,13 @@ class UserView extends React.PureComponent {
     } = this;
 
     return (
-      <View style={styles.userView}>
+      <View style={{
+        flexDirection: 'row',
+        position: 'absolute',
+        top: props.swiper ? 15 : 55,
+        width: '98%',
+        alignItems: 'center',
+      }}>
         <Image
           source={{ uri: props.profile }}
           style={styles.image}
@@ -24,7 +31,8 @@ class UserView extends React.PureComponent {
             <Text style={styles.name} ellipsizeMode='tail'  numberOfLines={2} >{props.name+" @"+props.activityname}</Text>
             :<Text style={styles.name} >{props.name}</Text>}
          
-          <Text style={styles.time}>{"Posted "+props.updated_at}</Text>
+         {props.swiper?<RenderDate style={styles.time} date={this.props.updated_at} />
+         :<Text style={styles.time}>{"Posted "+props.updated_at}</Text>}
         </View>
         <TouchableOpacity onPress={props.onClosePress}>
           <Icon
@@ -45,13 +53,6 @@ const styles = StyleSheet.create({
     height: 50,
     borderRadius: 25,
     marginLeft: 8,
-  },
-  userView: {
-    flexDirection: 'row',
-    position: 'absolute',
-    top: 55,
-    width: '98%',
-    alignItems: 'center',
   },
   name: {
     fontSize: 17,

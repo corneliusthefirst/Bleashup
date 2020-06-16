@@ -9,7 +9,7 @@ import {
     Platform,
 } from "react-native";
 import { Text, Item, Button, Icon, Content } from "native-base";
-import Textarea from "react-native-textarea";
+//import Textarea from "react-native-textarea";
 import labler from "./labler";
 import shadower from "../../shadower";
 import DateTimePicker from "@react-native-community/datetimepicker";

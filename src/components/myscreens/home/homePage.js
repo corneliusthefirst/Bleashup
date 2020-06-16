@@ -253,10 +253,10 @@ class Home extends Component {
   render() {
     setTimeout(() => {
       //this.launchAnimation()
-    }, 1000)
-    StatusBar.setBackgroundColor(colorList.headerBackground, true)
-    StatusBar.setBarStyle('dark-content', true)
-    StatusBar.setHidden(false, true)
+    }, 1000);
+    StatusBar.setBackgroundColor(colorList.headerBackground, true);
+    StatusBar.setBarStyle('dark-content', true);
+    StatusBar.setHidden(false, true);
 
     return (
       <View style={{ height: colorList.containerHeight, backgroundColor: colorList.containerBackground, width: colorList.containerWidth }}>

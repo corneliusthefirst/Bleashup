@@ -21,7 +21,7 @@ export default class CreationHeader extends Component {
             >
                {this.props.back && <TouchableOpacity
                     onPress={() => requestAnimationFrame(this.props.back)}
-                    style={{ width: "7%", marginTop: "auto", marginBottom: "auto" }}
+                    style={{ width: "7%",marginLeft:10, marginTop: "auto", marginBottom: "auto" }}
                 >
                     <Icon
                         type="MaterialIcons"
@@ -29,7 +29,9 @@ export default class CreationHeader extends Component {
                         style={{ color: ColorList.headerIcon }}
                     />
                 </TouchableOpacity>}
-                <Text
+              
+               <View style={{flex:1,alignItems:'flex-start',paddingLeft:20}}>
+               <Text
                     elipsizeMode={"tail"}
                     numberOfLines={1}
                     style={{
@@ -38,13 +40,18 @@ export default class CreationHeader extends Component {
                         marginTop: "auto",
                         fontSize: ColorList.headerFontSize,
                         marginBottom: "auto",
-                        maxWidth: '50%',
+                        //maxWidth: '50%',
                     }}
                 >
+              
+                
                     {this.props.title}
                 </Text>
+                </View>
+
                 <View style={{ minWidth: '40%', justifyContent:'flex-end'}}>{this.props.extra}
                 </View>
+
             </View>
         </View>
     }

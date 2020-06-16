@@ -58,12 +58,13 @@ import MessageBox from './components/myscreens/eventChat/messageBox';
 import CommentsPage from './components/myscreens/event/createEvent/components/CommentsPage';
 import SearchUser from './components/myscreens/Contacts/searchUser';
 import ColorList from './components/colorList';
-
+import SwiperComponent from './components/SwiperComponent/index';
 /*
 let {height, width} = Dimensions.get('window');
 EStyleSheet.build({
   $rem: width > 340 ? 18 : 16
 });*/
+
 
 const AppNavigator = createStackNavigator(
   {
@@ -105,9 +106,10 @@ const AppNavigator = createStackNavigator(
     SearchView: { screen: SearchView },
     MessageBox: { screen: MessageBox },
     SearchUser: { screen: SearchUser },
+    SwiperComponent: { screen: SwiperComponent },
   },
   {
-    initialRouteName: "LoginHome",
+    initialRouteName: "SwiperComponent",
     headerMode: "none",
   }
 );

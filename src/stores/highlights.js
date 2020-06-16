@@ -218,10 +218,11 @@ export default class highlights {
   }
 
   @action updateHighlightDescription(EventID, NewHighlight, inform) {
+    console.warn('here im checking', EventID,NewHighlight);
     return new Promise((resolve, Reject) => {
       this.readFromStore().then((Highlights) => {
         let RemindIndex = findIndex(Highlights[EventID], {
-          id: NewHighlight.highlight_id,
+          id: NewHighlight.id,
         });
         Highlights[EventID][RemindIndex].description = NewHighlight.description;
         Highlights[EventID][RemindIndex].updated_date = moment().format();
@@ -238,7 +239,7 @@ export default class highlights {
     return new Promise((resolve, Reject) => {
       this.readFromStore().then((Highlights) => {
         let RemindIndex = findIndex(Highlights[EventID], {
-          id: NewHighlight.highlight_id,
+          id: NewHighlight.id,
         });
         Highlights[EventID][RemindIndex].url = NewHighlight.url;
         Highlights[EventID][RemindIndex].updated_date = moment().format();
@@ -255,7 +256,7 @@ export default class highlights {
     return new Promise((resolve, Reject) => {
       this.readFromStore().then((Highlights) => {
         let RemindIndex = findIndex(Highlights[EventID], {
-          id: NewHighlight.highlight_id,
+          id: NewHighlight.id,
         });
 
         Highlights[EventID][RemindIndex].title = NewHighlight.title;
