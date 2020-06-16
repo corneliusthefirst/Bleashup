@@ -1,5 +1,5 @@
 /* eslint-disable react/no-unused-prop-types */
-import React, { useState } from 'react';
+import React, { useState, } from 'react';
 import {
     ActivityIndicator,
     Dimensions,
@@ -18,6 +18,7 @@ import UserView from './UserView';
 import Readmore from './Readmore';
 import ProgressArray from './ProgressArray';
 import Modal from 'react-native-modalbox';
+import PostVideo from './postVideo';
 
 const ScreenWidth = Dimensions.get('window').width;
 
@@ -25,20 +26,15 @@ const ScreenWidth = Dimensions.get('window').width;
 
 const PostView = (props) => {
   const { posts,post,isLoaded,isReadMore,isModalOpen,onClose,onImageLoaded,onReadMoreClose,duration,currentIndex,
-          onVideoLoaded,onReadMoreOpen,onPause,changePost,isPause,isNewPost,loading,nextPost,prevPost,activityname } = props;
+          onVideoLoaded,onReadMoreOpen,onPause,changePost,isPause,isNewPost,loading,nextPost,prevPost,activityname,about_activity } = props;
  
   const {name,profile,updated_at } = post.creator || {};
   const length= posts.map((_, i) => i)
   
-
-  
-
-
-  
-  //onsole.warn(isNewPost)
+  //console.warn(isNewPost)
 
   return (
-    
+    post.type ==='image' ?
      <TouchableOpacity
      activeOpacity={1}
      delayLongPress={500}
@@ -49,13 +45,13 @@ const PostView = (props) => {
    >
      <View style={styles.container}>
      
-       <Post onImageLoaded={onImageLoaded} pause={isPause} isNewPost={isNewPost} 
-       onVideoLoaded={onVideoLoaded} post={post} onClose={onClose}
-        />
+     <Post onImageLoaded={onImageLoaded} pause={isPause} isNewPost={isNewPost}
+        onVideoLoaded={onVideoLoaded} post={post} onClose={onClose} 
+      />
 
        {loading()}
 
-       <UserView name={name} profile={profile} updated_at={updated_at} onClosePress={onClose} activityname={activityname}/>
+       <UserView name={name} profile={profile} updated_at={updated_at} onClosePress={onClose} activity_name={about_activity.title}/>
 
        {isReadMore && <Readmore onReadMore={onReadMoreOpen} />}
 
@@ -82,10 +78,20 @@ const PostView = (props) => {
        <WebView source={{ uri: 'https://www.google.com' }} />
      </Modal>
 
-   </TouchableOpacity>
+   </TouchableOpacity> :
+      
+      <PostVideo onImageLoaded={onImageLoaded} pause={isPause} isNewPost={isNewPost} 
+        onVideoLoaded={onVideoLoaded} post={post} onClose={onClose} about_activity={about_activity} changePost = {changePost}
+      />
   
     )
 }
+
+
+
+
+
+
 
 
 const styles = StyleSheet.create({
@@ -96,14 +102,6 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       // paddingTop: 30,
       backgroundColor: 'red',
-    },
-    videocontainer: {
-      flex: 1,
-      width: '100%',
-      justifyContent: 'flex-start',
-      alignItems: 'center',
-      // paddingTop: 30,
-      //backgroundColor: 'red',
     },
 
     modal: {

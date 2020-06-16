@@ -1703,7 +1703,7 @@ export default class ChatRoom extends Component {
                     <Icon type="EvilIcons" style={{ margin: '2%', marginTop: "8%", fontSize: 35, color: "#FEFFDE" }} name={"close"}></Icon>
                 </TouchableOpacity> : null}
             </View>
-        </View>;
+        </View>; 
     }
     darkStatus = () => <StatusBar hidden={this.state.hideStatusBar} animated={true} barStyle="light-content" backgroundColor="#000"></StatusBar>
     VideoShower() {

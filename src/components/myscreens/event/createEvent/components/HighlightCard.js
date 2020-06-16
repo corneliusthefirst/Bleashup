@@ -82,7 +82,7 @@ export default class HighlightCard extends Component {
               </View> : null}
             </View>
           </View>
-         <MedaiView
+         <MedaiView 
             width={ColorList.containerWidth}
             height={this.props.height}
             showItem={() => this.props.showItem(this.props.item)}

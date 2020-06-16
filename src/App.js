@@ -108,7 +108,7 @@ const AppNavigator = createStackNavigator(
     SearchUser  : {screen: SearchUser },
   },
   {
-    initialRouteName: "LoginHome",
+    initialRouteName: "Viewer",
     headerMode: "none"
   }
 );

@@ -1,44 +1,28 @@
 /* eslint-disable react/no-unused-prop-types */
-import React from 'react';
-import { Dimensions, Image, StyleSheet, View } from 'react-native';
-import Video from 'react-native-video';
-// import Image from 'react-native-scalable-image';
+import React, { useState } from 'react';
+import { Dimensions, Image, StyleSheet, View,Keyboard } from 'react-native';
 import PropTypes from 'prop-types';
 import UserView from './UserView';
-
+import VideoViewer from '../../highlights_details/VideoModal';
 
 const ScreenWidth = Dimensions.get('window').width;
 
 const Post = (props) => {
   const { post} = props;
-  const { url, type } = post || {};
-
+  const { url } = post || {};
 
   return (
     <View style={styles.container}>
-
-    
-
-      {type === 'image' ? (
         <Image
           source={{ uri: url }}
-          onLoadEnd={props.onImageLoaded()}
+          onLoadEnd={()=>props.onImageLoaded()}
           style={styles.content}
           resizeMode="stretch"
-          // width={ScreenWidth}
         />
-      )
-        : (
-          <Video
-            source={{ uri: url }}
-            paused={props.pause || props.isNewPost}
-            onLoad={item => props.onVideoLoaded(item)}
-            style={styles.content}
-          />
-        )}
     </View>
   );
 };
+
 
 Post.propTypes = {
   post: PropTypes.oneOfType([
@@ -72,7 +56,12 @@ const styles = StyleSheet.create({
 export default Post;
 
 
-      {/* {!props.isLoaded && (
+
+    /*
+    import Video from 'react-native-video';
+   //import Image from 'react-native-scalable-image';
+    
+    {!props.isLoaded && (
       <View style={styles.loading}>
         <ActivityIndicator color="white" /> 
       </View>
@@ -83,4 +72,13 @@ export default Post;
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-  },*/} 
+  },*/
+
+/*
+  <Video
+  source={{ uri: url }}
+  paused={props.pause || props.isNewPost}
+  onLoad={item => props.onVideoLoaded(item)}
+  style={styles.content}
+/>
+*/

@@ -72,8 +72,7 @@ const Viewer = (props) => {
 
   
   return (
-    <View style={styles.container}>
-
+   
       <Modal
         animationType="slide"
         transparent={false}
@@ -99,16 +98,16 @@ const Viewer = (props) => {
           ))}
         </CubeNavigationHorizontal>
       </Modal>
-    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    height:"100%",
+    width:"100%",
     justifyContent: 'flex-start',
-    paddingVertical: 50,
-    backgroundColor: 'rgba(255,255,255,255)',
+    //paddingVertical: 50,
+    //backgroundColor: 'rgba(255,255,255,255)',
   },
   circle: {
     width: 66,
@@ -119,10 +118,11 @@ const styles = StyleSheet.create({
     borderColor: '#72bec5',
   },
   modal: {
-    flex: 1,
+    flex:1,
   },
   title: {
-    fontSize: 9, textAlign: 'center',
+    fontSize: 9, 
+    textAlign: 'center',
   },
 });
 

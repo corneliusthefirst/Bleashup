@@ -32,7 +32,7 @@ onClosedModal(){
   modalBody() {
     return (
         <View>
-        <CreationHeader
+        <CreationHeader 
           title={'Post Detail'}
           back={() => this.onClosedModal()}
         >

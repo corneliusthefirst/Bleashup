@@ -30,6 +30,7 @@ export default class BleashupModal extends PureComponent {
     borderTopLeftRadius = 8
     borderTopRightRadius = 8
     height = screenheight
+
     modalBody() {
         return <View></View>
     }
@@ -51,7 +52,7 @@ export default class BleashupModal extends PureComponent {
                     this.onClosedModal()
                 }}
                 isOpen={this.props.isOpen ? true : this.props.open ? true : false}
-                coverScreen={true}
+                coverScreen={this.nocover}
                 style={{
                     backgroundColor: this.modalBackground || '#FFFFFF',
                     height: this.modalHeight,

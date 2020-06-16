@@ -9,50 +9,39 @@ class UserView extends React.PureComponent {
   }
 
   render() {
-    const {
-      props,
-    } = this;
+    const {props} = this;
 
     return (
-      <View style={styles.userView}>
+      <View style={[{flexDirection: 'row',width: '98%',alignItems: 'center',},props.viewerMode?{}:{position: 'absolute',top:55,} ]}>
         <Image
           source={{ uri: props.profile }}
-          style={styles.image}
+          style={{ width:props.activityMode?40: 50,height:props.activityMode?40:50,borderRadius: 25,
+           marginLeft: 8}}
         />
         <View style={{ flex: 1 ,paddingRight:10}}>
-          { props.activityname?
+           { props.activityname?
             <Text style={styles.name} ellipsizeMode='tail'  numberOfLines={2} >{props.name+" @"+props.activityname}</Text>
-            :<Text style={styles.name} >{props.name}</Text>}
-         
-          <Text style={styles.time}>{"Posted "+props.updated_at}</Text>
+            :<Text style={styles.name} >{props.name}</Text>} 
+           {props.updated_at? <Text style={styles.time}>{"Posted "+props.updated_at}</Text>:null}
         </View>
+        
+       {props.activityMode ? null:
         <TouchableOpacity onPress={props.onClosePress}>
-          <Icon
-            name="close"
-            color="white"
-            size={25}
-            style={{ marginRight: 8 }}
-          />
-        </TouchableOpacity>
+        <Icon
+          name="close"
+          color="white"
+          size={25}
+          style={{ marginRight: 8 }}
+        />
+      </TouchableOpacity>
+       }
+
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  image: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginLeft: 8,
-  },
-  userView: {
-    flexDirection: 'row',
-    position: 'absolute',
-    top: 55,
-    width: '98%',
-    alignItems: 'center',
-  },
   name: {
     fontSize: 17,
     fontWeight: '500',

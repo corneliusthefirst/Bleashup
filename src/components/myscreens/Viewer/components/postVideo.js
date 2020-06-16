@@ -1,49 +1,108 @@
 /* eslint-disable react/no-unused-prop-types */
-import React, { useState } from 'react';
-import {
-    ActivityIndicator,
-    Dimensions,
-    StyleSheet,
-    TouchableOpacity,
-    StatusBar,
-    View,
-    Platform,
-  } from 'react-native';
-import Video from 'react-native-video';
-// import Image from 'react-native-scalable-image';
-import PropTypes from 'prop-types';
+import React, {Component } from 'react';
+import { Dimensions, Image, StyleSheet, View,Keyboard,ScrollView, TouchableOpacity,Text,StatusBar } from 'react-native';
 import UserView from './UserView';
+import VideoView from './videoView';
+import {Icon,Header} from 'native-base';
+import ColorList from '../../../colorList';
 
-const ScreenWidth = Dimensions.get('window').width;
-const STATUSBAR_HEIGHT = Platform.OS === 'ios' ? 20 : StatusBar.currentHeight;
+const ScreenWidth  = Dimensions.get('window').width;
+const ScreenHeight = Dimensions.get('window').height;
 
-  const MyStatusBar = ({backgroundColor, ...props}) => (
+class PostVideo extends Component {
+  constructor(props) {
+    super(props)
+    this.state={}
+}
+   
+
+componentWillMount(){ }
+
+
+
+ render(){
+  return (
+   
+    <View style={{
+      height:"100%",
+      width:"100%",
+      flexDirection:"column",
+      backgroundColor: ColorList.bodyBackgrounddark,
+      justifyContent: 'space-between',
+    }}>
+     
+       <StatusBar animated={true} barStyle="light-content" backgroundColor="#5F5F5F"></StatusBar>
     
-  <View style={[styles.statusBar, { backgroundColor }]}>
-    <StatusBar translucent backgroundColor={backgroundColor}  {...props} />
-  </View>
- )
+  
+      <View style={{width:"100%",flexDirection:"row",marginTop:5}}>
 
-  const PostVideo = (props) => (
-       <View style={styles.container} >
-        <MyStatusBar backgroundColor="red" barStyle="light-content" />
-       </View>
-    )
+        <View style={{flex:1}}>
+        <UserView name={this.props.about_activity.title} profile={this.props.about_activity.activity_profile} activityMode viewerMode/>
+        </View>
 
+         <View style={{width:110,flexDirection:"row",alignItems:"center"}}>
+            <TouchableOpacity style={{marginLeft:3}}>
+                <Text style={{color:ColorList.bodyTextBlue,fontSize:15}}>Subscribe</Text>
+            </TouchableOpacity>
+            <Icon name="notifications-none" type="MaterialIcons" style={{color:ColorList.bodyTextBlue}}/>   
+         </View>
 
+      </View>
+    
 
+      <View style={{width:"100%"}}>
+         <View style={{width:"94%",alignSelf:"flex-end"}}>
+           <UserView name={this.props.post.creator.name} profile={this.props.post.creator.profile} updated_at={this.props.post.creator.updated_at} onClosePress={this.props.onClose} viewerMode/>
+         </View>
+     </View> 
 
+        <VideoView
+          open={this.state.showVideo}
+          onLoad={item => {this.props.onVideoLoaded(item)}}
+          video={this.props.post.url}
+          nextVideo ={e => this.props.changePost(e.nativeEvent)}
+        ></VideoView>
+
+     <ScrollView style={{flex:1,backgroundColor:ColorList.bodyBackgroundDarkGray}}>
+      <View style={[styles.baseView]} >
+      </View>
+    </ScrollView>
+
+    </View>
+
+  );
+ };
+}
 
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  videoStyle: {
+    //height:240,
+    //width:"100%",
+    flex:1
   },
-  statusBar: {
-    height: STATUSBAR_HEIGHT,
+  baseView:{
+    height:"100%",
+    width:"100%",
   },
+
 });
 
-
-
 export default PostVideo;
+
+
+
+/**
+     <View style={{height:"33.7%",width:"100%"}}>
+     <View style={styles.videoStyle}></View>
+
+      
+      </View>
+       
+     </View> 
+
+
+     
+       <View style={styles.baseview} >
+       
+       </View> */

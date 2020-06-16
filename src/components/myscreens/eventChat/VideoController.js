@@ -187,7 +187,6 @@ export default class VideoController extends Component {
      */
     _onLoad(data = {}) {
         let state = this.state;
-
         state.duration = data.duration;
         state.loading = false;
         this.setState(state);
@@ -850,6 +849,7 @@ export default class VideoController extends Component {
         );
     }
 
+   
     /**
      * Groups the top bar controls together in an animated
      * view and spaces them out.
@@ -942,6 +942,7 @@ export default class VideoController extends Component {
         );
     }
 
+
     /**
      * Render bottom control group and wrap it in a holder
      */
@@ -976,6 +977,14 @@ export default class VideoController extends Component {
             </Animated.View>
         );
     }
+
+    /**
+     * Render center control group and wrap it in a holder
+     */
+    renderCenterControls() {
+        return  null
+    }
+
 
     /**
      * Render the seekbar and attach its handlers
@@ -1018,8 +1027,8 @@ export default class VideoController extends Component {
     renderPlayPause() {
 
         return this.renderControl(
-            <Icon type={!this.state.paused?"MaterialCommunityIcons":"EvilIcons"} 
-            name={!this.state.paused?"pause":"play"} style={{ color: '#FEFFDE'}}></Icon>,
+            <Icon type="MaterialCommunityIcons" 
+            name={!this.state.paused?"pause":"play-circle-outline"} style={{ color: 'white'}}></Icon>,
             this.methods.togglePlayPause,
             styles.controls.playPause
         );
@@ -1029,7 +1038,6 @@ export default class VideoController extends Component {
      * Render our title...if supplied.
      */
     renderTitle() {
-
         if (this.opts.title) {
             return (
                 <View style={[
@@ -1048,6 +1056,14 @@ export default class VideoController extends Component {
 
         return null;
     }
+
+     /**
+     * Render our center content pause,play and next...if supplied.
+     */
+    renderCenter() {
+       return null;
+    }
+
 
     /**
      * Show our timer.
@@ -1098,11 +1114,11 @@ export default class VideoController extends Component {
                 onPress={this.events.onScreenTouch}
                 style={[styles.player.container, this.styles.containerStyle]}
             >
-                <View style={[styles.player.container, this.styles.containerStyle]}>
+                <View style={[styles.player.container, this.styles.containerStyle,]}>
                     <Video
                         {...this.props}
                         ref={videoPlayer => this.player.ref = videoPlayer}
-
+            
                         resizeMode={this.state.resizeMode}
                         volume={this.state.volume}
                         paused={this.state.paused}
@@ -1121,6 +1137,7 @@ export default class VideoController extends Component {
                     />
                     {this.renderError()}
                     {this.renderTopControls()}
+                    {this.renderCenterControls()}
                     {this.renderLoader()}
                     {this.renderBottomControls()}
                 </View>
@@ -1141,7 +1158,7 @@ const styles = {
             backgroundColor: transparent,
             flex: 1,
             alignSelf: 'stretch',
-            justifyContent: 'space-between',
+            justifyContent:"center", //was space-between
         },
         video: {
             overflow: 'hidden',
@@ -1230,16 +1247,31 @@ const styles = {
             justifyContent: 'space-between',
             flexDirection: 'row',
             width: null,
-            margin: 12,
-            marginBottom: 18,
+            paddingTop:10,
+            //margin: 12,
+            //marginBottom: 18,
         },
         bottomControlGroup: {
             alignSelf: 'stretch',
             alignItems: 'center',
             justifyContent: 'space-between',
-            marginLeft: 12,
-            marginRight: 12,
-            marginBottom: 0,
+            marginLeft: 0,
+            marginRight: 0,
+            marginBottom: 10,
+        },
+        bottomControlGroupViewer: {
+            alignSelf: 'stretch',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            marginLeft: 0,
+            marginRight: 0,
+            marginBottom: 17,
+        },
+        centerControlGroup: {
+            alignSelf: 'center',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            //marginBottom: 10,
         },
         volume: {
             flexDirection: 'row',
@@ -1249,8 +1281,8 @@ const styles = {
         },
         playPause: {
             position: 'relative',
-            width: 80,
-            zIndex: 0
+            width: 90,
+            zIndex: 0,
         },
         title: {
             alignItems: 'center',
@@ -1262,13 +1294,13 @@ const styles = {
             textAlign: 'center',
         },
         timer: {
-            width: 80,
+            width: 70,
         },
         timerText: {
             backgroundColor: 'transparent',
             color: '#FEFFDE',
             fontSize: 11,
-            textAlign: 'right',
+            textAlign: 'left',
         },
     }),
     volume: StyleSheet.create({
@@ -1305,7 +1337,14 @@ const styles = {
             alignSelf: 'stretch',
             height: 28,
             marginLeft: 20,
-            marginRight: 20
+            marginRight: 20,
+        },
+        containerViewer: {
+            alignSelf: 'stretch',
+            height: 20,
+            marginLeft: 5,
+            paddingRight: 5,
+            //justifyContent:"center",
         },
         track: {
             backgroundColor: '#333',

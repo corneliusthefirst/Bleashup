@@ -14,7 +14,7 @@ const SCREEN_WIDTH = Dimensions.get('window').width;
 const PostContainer = (props) => {
   const { activity,onClose,isNewPost } = props;
   const { posts = [] } = activity || {};
-  const {activityname} = activity;
+  const {about_activity} = activity;
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isModalOpen, setModal] = useState(false);
   const [isPause, setIsPause] = useState(false);
@@ -119,10 +119,8 @@ const PostContainer = (props) => {
       config={config}
       style={styles.container}
     >
-
-
       <PostView 
-       activityname={activityname}
+       about_activity={about_activity}
        changePost = {changePost}
        nextPost={nextPost}
        prevPost={prevPost}
@@ -151,12 +149,12 @@ const PostContainer = (props) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    width: '100%',
-    justifyContent: 'flex-start',
+    height:"100%",
+    width: "100%",
+    //justifyContent: 'flex-start',
     alignItems: 'center',
     // paddingTop: 30,
-    backgroundColor: '#1a1212',
+    //backgroundColor: '#1a1212',
   },
 
   loading: {

@@ -1583,7 +1583,9 @@ export default class Event extends Component {
             isProfileModalOpened: false
           })
         }}></ProfileModal> : null}
-        {this.state.showVideoModal ? <VideoViewer video={this.state.video} open={this.state.showVideoModal} hideVideo={() => {
+        {this.state.showVideoModal ?
+     
+        <VideoViewer video={this.state.video} open={this.state.showVideoModal} hideVideo={() => {
           this.setState({
             showVideoModal: false,
             isHighlightDetailModalOpened: true
