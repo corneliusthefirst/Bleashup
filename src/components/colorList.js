@@ -25,7 +25,7 @@ class colorlist {
     headerText = "black"
     headerBlackText = "black"
     headerBackground = "white"
-    headerHeight = 45
+    headerHeight = 55
     headerFontweight = "bold"
     buttonerBackground = 'rgba(52, 52, 52, 0.6)'
     bottunerLighter = "rgba(34, 0, 0, 0.05)"
@@ -44,6 +44,16 @@ class colorlist {
     bodySubtext = "#696969"
     bodyDarkWhite = "#f4f6fc"
     darkGrayText = "#696969"
+    bodyTextBlue = "#1e90ff"
+    bodyIconBlue = "#1e90ff"
+
+    //dark body
+    bodyIcondark = "#f4f6fc"
+    bodyTextdark = "#f4f6fc"
+    bodyBackgrounddark = "#101010"
+    bodyBackgroundDarkGray = "#202020"
+    
+    
     //modal
  
 

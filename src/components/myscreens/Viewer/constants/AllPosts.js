@@ -1,6 +1,6 @@
 const posts = [
-  { activity_id: 145333334,
-    activityname: 'Pune Dairies', 
+  { activity_id: 145333334, 
+    about_activity:{title:"Pune Dairies",description:"Troubles on the way is our last tube created on 12 of march 2020.Today getting a million views on youtube,help us promote this song if you like it and thanks to you all in advance",activity_profile:"https://avatars2.githubusercontent.com/u/45196619?s=460&v=4"},
     posts: [
       { 
         id: 1435,
@@ -20,22 +20,8 @@ const posts = [
 
 
   { activity_id: 1453338346,
-    activityname: 'My Gallery here with me boy hahaha', 
+    about_activity:{title:"Troubles on the way",description:"Troubles on the way is our last tube created on 12 of march 2020.Today getting a million views on youtube,help us promote this song if you like it and thanks to you all in advance",activity_profile:"https://images.unsplash.com/photo-1500099817043-86d46000d58f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60"},
     posts: [
-      
-      {
-        id: 8756,
-        url: '/storage/emulated/0/beats/APOLOGY Dancehall x Afrobeat x Wizkid Type Beat Instrumental.mp4',
-        type: 'video',
-        isReadMore: true,
-        description:"",
-        creator:{
-          name: 'Trinadh',
-          profile: 'https://avatars2.githubusercontent.com/u/45196619?s=460&v=4',
-          updated_at:"2hr ago",
-        }
-      },
-
       {
         id: 2546,
         url: 'https://images.unsplash.com/photo-1500099817043-86d46000d58f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60',
@@ -80,7 +66,17 @@ const posts = [
           updated_at:"2hr ago",
         }
       },
-
+      {
+        id: 8756,
+        url: '/storage/emulated/0/beats/APOLOGY Dancehall x Afrobeat x Wizkid Type Beat Instrumental.mp4',
+        type: 'video',
+        isReadMore: true,
+        creator:{
+          name: 'Trinadh',
+          profile: 'https://avatars2.githubusercontent.com/u/45196619?s=460&v=4',
+          updated_at:"2hr ago",
+        }
+      },
 
 
 

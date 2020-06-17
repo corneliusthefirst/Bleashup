@@ -137,6 +137,7 @@ export default class HighlightCard extends PureComponent {
           showItem={() => this.props.showItem(this.props.item)}
           url={this.props.item.url}
         ></MedaiView>
+
         <TouchableOpacity
           onPress={() =>
             requestAnimationFrame(() => this.props.showItem(this.props.item))
@@ -154,16 +155,17 @@ export default class HighlightCard extends PureComponent {
             {this.props.item.description ? this.props.item.description : null}
           </Text>
         </TouchableOpacity>
+
         <View
           style={{ width: "90%", alignSelf: "center", alignItems: "center" }}
-        >
-          <Social
+        > 
+        {/*<Social
             title={this.props.item.title}
             activity_name={this.props.activity_name}
             creator={this.props.item.creator}
             activity_id={this.props.activity_id}
             id={this.props.item.id}
-          ></Social>
+          ></Social>*/}
         </View>
       </View>
     ) : (

@@ -1045,7 +1045,7 @@ class Request {
                         stores.Highlights.updateHighlightPublicState(eventID, {
                             highlight_id: higlightTitle.h_id,
                             public_state: higlightTitle.new_data
-                        }, false).then((Highlight) => {
+                        }).then((Highlight) => {
                             let Change = {
                                 id: uuid.v1(),
                                 title: `Update On ${Highlight.title} Post`,

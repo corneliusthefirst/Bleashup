@@ -73,6 +73,7 @@ export default class DonnersList extends Component {
     render() {
         return <View>
             <AccordionModuleNative
+                hideToggler
                 keyExtractor={this.keyExtractor}
                 _renderHeader={this.renderHeader.bind(this)}
                 _renderContent={this.renderItems.bind(this)}

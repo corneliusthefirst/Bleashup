@@ -61,7 +61,8 @@ export default class Social extends Component {
                                 id={this.props.id}
                             ></Like>
                         </View>
-                        <View style={this.itemStyle}>
+                       {/**
+                        * <View style={this.itemStyle}>
                         <Comments
                         activity_id={this.props.activity_id}
                         activity_name={this.props.activity_name}
@@ -79,9 +80,10 @@ export default class Social extends Component {
                             </Icon>
                             </View>
                         </View>
+                        */}
                     </View>
 
-                    <View
+                    {/*<View
                         style={{
                             width:"25%",
                             flexDirection: "row",
@@ -140,9 +142,9 @@ export default class Social extends Component {
                             ></PickersMenu>
                         </View>
 
-                    </View>
+                    </View>*/}
                 </View>
-                <SocialTabModal
+                {/* <SocialTabModal
                     id={this.props.id}
                     isOpen={this.state.isSocialModalOpened}
                     closed={() => {
@@ -150,7 +152,8 @@ export default class Social extends Component {
                             isSocialModalOpened: false,
                         });
                     }}
-                ></SocialTabModal>
+                  ></SocialTabModal>
+                 */}
             </View>
         );
     }

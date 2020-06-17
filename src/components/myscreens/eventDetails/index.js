@@ -183,7 +183,7 @@ export default class EventDetailView extends Component {
     { length: 100, offset: 100 * index, index }
   )
   _keyExtractor = (item, index) => {
-    return item.id;
+    return index;
   }
 
   updateHighlight(newHighlight, previousHighlight) {
@@ -202,6 +202,9 @@ export default class EventDetailView extends Component {
         }
         console.warn('ok');
         this.props.stopLoader();
+        this.setState({
+          update:false
+        })
         this.sendUpdateHighlight()
       })
     } else {

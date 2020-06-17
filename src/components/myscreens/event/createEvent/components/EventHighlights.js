@@ -223,7 +223,7 @@ export default class EventHighlights extends BleashupModal {
       stores.Highlights.updateHighlightTitle(this.props.event_id,
         this.state.currentHighlight,
         false
-      ).then(() => { });
+      ).then(() => {});
     }
   }
   @autobind
@@ -483,7 +483,7 @@ export default class EventHighlights extends BleashupModal {
               </View>
               <View style={{ marginTop: 5, marginBottom: 5,width:this.width,alignSelf:"center",alignItems:"flex-start" }}>
                 <PickersUpload
-                notAudio
+                  //notAudio
                   creating={!this.props.updateState}
                   currentURL={this.state.currentHighlight.url}
                   id={this.state.currentHighlight.id}

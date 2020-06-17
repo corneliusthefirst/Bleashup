@@ -19,7 +19,7 @@ export default class CreationHeader extends Component {
                     paddingLeft: "1%",
                 }}
             >
-               {this.props.back && <TouchableOpacity
+                {this.props.back && <TouchableOpacity
                     onPress={() => requestAnimationFrame(this.props.back)}
                     style={{ width: 30, marginTop: "auto", marginBottom: "auto" }}
                 >
@@ -29,21 +29,27 @@ export default class CreationHeader extends Component {
                         style={{ color: ColorList.headerIcon }}
                     />
                 </TouchableOpacity>}
-                <Text
-                    elipsizeMode={"tail"}
-                    numberOfLines={1}
-                    style={{
-                        color: ColorList.headerIcon,
-                        fontWeight: "500",
-                        marginTop: "auto",
-                        fontSize: ColorList.headerFontSize,
-                        marginBottom: "auto",
-                        maxWidth: '50%',
-                    }}
-                >
-                    {this.props.title}
-                </Text>
-                <View style={{ minWidth: '45%', justifyContent:'flex-end'}}>{this.props.extra}
+
+                <View style={{ flex: 1, alignItems: 'flex-start', paddingLeft: 20 }}>
+                    <Text
+                        elipsizeMode={"tail"}
+                        numberOfLines={1}
+                        style={{
+                            color: ColorList.headerIcon,
+                            fontWeight: "500",
+                            marginTop: "auto",
+                            fontSize: ColorList.headerFontSize,
+                            marginBottom: "auto",
+                            //maxWidth: '50%',
+                        }}
+                    >
+
+
+                        {this.props.title}
+                    </Text>
+                    <View style={{ minWidth: '45%', justifyContent: 'flex-end' }}>{this.props.extra}
+                    </View>
+
                 </View>
             </View>
         </View>

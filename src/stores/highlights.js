@@ -104,13 +104,15 @@ export default class highlights {
 
   updateHighlightPublicState(EventID, update) {
     return new Promise((resolve, reject) => {
+      console.warn("update public start");
       this.readFromStore().then((Highlights) => {
         let hIndex = findIndex(Highlights[EventID], {
           id: update.highlight_id,
         });
         Highlights[EventID][hIndex].public_state = update.public_state;
         this.setProperty(Highlights);
-        resolve();
+        console.warn("update public ok", Highlights);
+        resolve(Highlights[EventID][hIndex]);
       });
     });
   }
@@ -119,13 +121,13 @@ export default class highlights {
     console.warn("removing Highlight", HighlightId);
     return new Promise((resolve, RejectPromise) => {
       this.readFromStore().then((Highlights) => {
-        let index = find(Highlights[EventID], { id: HighlightId });
         Highlights[EventID] = reject(Highlights[EventID], ["id", HighlightId]);
         HighlightId === "newHighlightId"
           ? Highlights[EventID].unshift(request.Highlight())
           : null;
         this.setProperty(Highlights);
-        resolve(Highlights[EventID][index]);
+        console.warn("removed ok", Highlights[EventID]);
+        resolve(Highlights[EventID]);
       });
     });
   }
@@ -218,10 +220,11 @@ export default class highlights {
   }
 
   @action updateHighlightDescription(EventID, NewHighlight, inform) {
+    console.warn('here im checking', EventID,NewHighlight);
     return new Promise((resolve, Reject) => {
       this.readFromStore().then((Highlights) => {
         let RemindIndex = findIndex(Highlights[EventID], {
-          id: NewHighlight.highlight_id,
+          id: NewHighlight.id,
         });
         Highlights[EventID][RemindIndex].description = NewHighlight.description;
         Highlights[EventID][RemindIndex].updated_date = moment().format();
@@ -238,7 +241,7 @@ export default class highlights {
     return new Promise((resolve, Reject) => {
       this.readFromStore().then((Highlights) => {
         let RemindIndex = findIndex(Highlights[EventID], {
-          id: NewHighlight.highlight_id,
+          id: NewHighlight.id,
         });
         Highlights[EventID][RemindIndex].url = NewHighlight.url;
         Highlights[EventID][RemindIndex].updated_date = moment().format();
@@ -255,7 +258,7 @@ export default class highlights {
     return new Promise((resolve, Reject) => {
       this.readFromStore().then((Highlights) => {
         let RemindIndex = findIndex(Highlights[EventID], {
-          id: NewHighlight.highlight_id,
+          id: NewHighlight.id,
         });
 
         Highlights[EventID][RemindIndex].title = NewHighlight.title;

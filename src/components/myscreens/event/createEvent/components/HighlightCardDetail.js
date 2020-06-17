@@ -32,7 +32,7 @@ onClosedModal(){
   modalBody() {
     return (
         <View>
-        <CreationHeader
+        <CreationHeader 
           title={'Post Detail'}
           back={() => this.onClosedModal()}
         >
@@ -42,7 +42,7 @@ onClosedModal(){
               <View style={{ flex: 1, ...shadower(6) }}>
                 {this.props.shouldRestore ? <View style={{ width: '95%', alignItems: 'flex-end', margin: '2%',height:'100%' }}><Button
                   style={{ alignSelf: 'flex-end', margin: '2%', marginRight: '2%' }} onPress={() => {
-                    this.props.onClosed()
+                    this.props.onClosed() 
                     this.props.restore(this.props.item)
                   }} rounded><Text>{"Restore"}</Text></Button></View> : null}
                 <HighLight 
