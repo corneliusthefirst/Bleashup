@@ -25,7 +25,7 @@ const media = [
       profile: 'https://avatars2.githubusercontent.com/u/45196619?s=460&v=4',
       updated_at: moment().format(),
     },
-  },
+  }, 
 
   {
     id: '2546',
