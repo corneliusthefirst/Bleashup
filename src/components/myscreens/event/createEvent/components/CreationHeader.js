@@ -16,12 +16,12 @@ export default class CreationHeader extends Component {
                     flexDirection: "row",
                     ...bleashupHeaderStyle,
                     justifyContent: 'space-between',
-                    paddingLeft: "2%",
+                    paddingLeft: "1%",
                 }}
             >
                {this.props.back && <TouchableOpacity
                     onPress={() => requestAnimationFrame(this.props.back)}
-                    style={{ width: "7%", marginTop: "auto", marginBottom: "auto" }}
+                    style={{ width: 30, marginTop: "auto", marginBottom: "auto" }}
                 >
                     <Icon
                         type="MaterialIcons"
@@ -43,7 +43,7 @@ export default class CreationHeader extends Component {
                 >
                     {this.props.title}
                 </Text>
-                <View style={{ minWidth: '40%', justifyContent:'flex-end'}}>{this.props.extra}
+                <View style={{ minWidth: '45%', justifyContent:'flex-end'}}>{this.props.extra}
                 </View>
             </View>
         </View>

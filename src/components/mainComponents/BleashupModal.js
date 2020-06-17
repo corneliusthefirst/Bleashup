@@ -32,6 +32,7 @@ export default class BleashupModal extends PureComponent {
     borderTopLeftRadius = 8
     borderTopRightRadius = 8
     height = screenheight
+    style={}
     coverScreen=true
     modalBody() {
         return <View></View>
@@ -62,7 +63,7 @@ export default class BleashupModal extends PureComponent {
                     justifyContent: this.jusify ? 'center' : null,
                     borderRadius: this.borderRadius,
                     borderTopLeftRadius: this.borderTopLeftRadius,
-                    borderTopRightRadius: this.borderTopRightRadius,
+                    borderTopRightRadius: this.borderTopRightRadius,...this.style
                 }}
             >
                 {this.modalBody()}

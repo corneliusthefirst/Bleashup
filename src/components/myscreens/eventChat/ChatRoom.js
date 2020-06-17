@@ -651,7 +651,7 @@ class ChatRoom extends Component {
         });
     }
     replying(replyer, color) {
-        this.refs.keyboard.replying(replyer,color)
+       this.refs.keyboard && this.refs.keyboard.replying(replyer,color)
     }
     deleteMessageAction() {
         this.deleteMessage(this.state.currentMessage.id);

@@ -9,6 +9,7 @@ import ColorList from '../../colorList';
 export default class TaskCreationExtra extends BleashupModal {
 
     modalHeight = 300
+    backdropOpacity=false
     modalWidth = '80%'
     position = "center"
     onClosedModal() {

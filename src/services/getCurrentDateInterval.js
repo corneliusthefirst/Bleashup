@@ -6,15 +6,15 @@ import { find } from "lodash"
 // The interval is of the type {round_parent,round,start,end}
 export function getCurrentDateInterval(intervals, currentDate) {
     return new Promise((resolve, reject) => {
-        resolve(find(intervals, (ele => moment(currentDate, format).format("X") >= moment(ele.start,
-            format).format("X") &&
-            moment(currentDate, format).format("X") < moment(ele.end, format).format("X"))))
+        resolve(find(intervals, (ele => moment(currentDate, format).format("x") >= moment(ele.start,
+            format).format("x") &&
+            moment(currentDate, format).format("x") < moment(ele.end, format).format("x"))))
     })
 }
 export function getCurrentDateIntervalNonAsync(intervals, currentDate) {
-    return find(intervals, (ele => moment(currentDate, format).format("X") >= moment(ele.start,
-        format).format("X") &&
-        moment(currentDate, format).format("X") < moment(ele.end, format).format("X")))
+    return find(intervals, (ele => moment(currentDate, format).format("x") >= moment(ele.start,
+        format).format("x") &&
+        moment(currentDate, format).format("x") < moment(ele.end, format).format("x")))
 }
 export function getcurrentDateIntervals(period, interval, frequency, daysOfWeek) {
     return new Promise((resolve, reject) => {

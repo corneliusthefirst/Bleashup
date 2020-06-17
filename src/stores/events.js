@@ -981,8 +981,7 @@ export default class events {
           id: EventID
         });
         Events[index].updated_at = moment().format();
-        this.saveKey.data = Events;
-        this.setProperties(this.saveKey.data, true);
+        this.setProperties(Events, true);
         resolve();
       });
     })

@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import {
   View,
   LayoutAnimation,
@@ -11,7 +11,9 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import ColorList from '../../colorList';
+import ColorList from "../../colorList";
+import { Icon } from "native-base";
+import BleashupScrollView from '../../BleashupScrollView';
 
 export default class AccordionModuleNative extends Component {
   constructor(props) {
@@ -20,59 +22,72 @@ export default class AccordionModuleNative extends Component {
       expanded: false,
     };
 
-    if (Platform.OS === 'android') {
+    if (Platform.OS === "android") {
       UIManager.setLayoutAnimationEnabledExperimental(true);
     }
   }
-
-  render() {
-    return this.props.accordionView ? (
-      <View style={{flexDirection:'column'}}>
-        {this.props._renderHeader()}
-      <ScrollView style={{height:this.state.expanded ? 300 : 0}} nestedScrollEnabled={true} showsVerticalScrollIndicator={false} >
-        {this.state.expanded && (
-          <View>{this.props._renderContent()}</View>
-        )}
-      </ScrollView>
-
-      <View style={{ flexDirection: 'row', justifyContent: 'flex-start' }}>
-          <TouchableOpacity onPress={() => this.toggleExpand()}>
-            {this.state.expanded ? (
-              <Text style={{ padding: 5, color: 'blue' }}>View less</Text>
-            ) : (
-              <Text style={{ paddingLeft: 5, paddingTop: 5, color: 'blue' }}>
-                View More
-              </Text>
-            )}
-          </TouchableOpacity>
+  renderItem(dataArray,index) {
+    return <View>
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          backgroundColor: ColorList.bodyBackground,
+        }}
+      >
+      <View style={{
+        minWidth:"93%",
+        marginBottom: "auto",
+        marginTop: "auto",
+      }}>
+        {this.props._renderHeader(dataArray,index,() => {
+          this.toggleExpand(dataArray)
+        })}
         </View>
-
+        {!this.props.hideToggler && <TouchableOpacity onPress={() => requestAnimationFrame(() => this.toggleExpand(dataArray))}>
+          <View style={{ width: 30 }}>
+            {this.expanded(dataArray) ? (
+              <Icon style={{ fontSize: 18 }} type="AntDesign" name="up" />
+            ) : (
+                <Icon style={{ fontSize: 18 }} type="AntDesign" name="down" />
+              )}
+          </View>
+        </TouchableOpacity>}
       </View>
-    ) : (
-      <View>
-        {this.props._renderHeader(
-          this.props.dataArray,
-          this.state.expanded,
-          this.toggleExpand
-        )}
-        <View style={styles.parentHr} />
-        {this.state.expanded && (
-          <View>{this.props._renderContent(this.props.dataArray)}</View>
-        )}
-      </View>
-    );
+      <View style={styles.parentHr} />
+      {this.expanded(dataArray) && (
+        <View>{this.props._renderContent(dataArray,index)}</View>
+      )}
+    </View>
+  }
+  expanded(item) {
+    return this.props.keyExtractor && this.state.expanded === this.props.keyExtractor(item) 
   }
 
-  toggleExpand = () => {
+  render() {
+    return <BleashupScrollView
+      firstIndex={0}
+      renderPerBatch={7}
+      initialRender={15}
+      numberOfItems={this.props.dataSource.length}
+      keyExtractor={this.props.keyExtractor}
+      dataSource={this.props.dataSource}
+      renderItem={(item, index) => this.renderItem(item,index)}
+    >
+    </BleashupScrollView>
+  }
+  toggleExpand = (item) => {
+   !this.expanded(item) && this.props.onExpand && this.props.onExpand(item)
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    this.setState({ expanded: !this.state.expanded });
+    this.setState({ expanded: this.props.keyExtractor ? this.state.expanded === this.props.keyExtractor(item) ? null : this.props.keyExtractor(item) : item });
   };
 }
 
 const styles = StyleSheet.create({
   parentHr: {
-    height: 1,
+    //height: 1,
     color: ColorList.bodySubtext,
-    width: '100%',
+    width: "100%",
   },
 });

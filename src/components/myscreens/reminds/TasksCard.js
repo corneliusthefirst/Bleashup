@@ -79,7 +79,7 @@ export default class EventTasksCard extends Component {
       this.setState({
         mounted: true
       })
-    })
+    },50*this.props.delay)
   }
 
   @autobind
@@ -104,11 +104,13 @@ export default class EventTasksCard extends Component {
   }
   componentDidUpdate(prevProps, prevState) {
     this.previousItem = JSON.stringify(this.props.item)
-    if (prevProps.item.period !== this.props.item.period || !isEqual(this.props.item.recursive_frequency,
-      prevProps.item.recursive_frequency) || this.state.mounted !== prevState.mounted) {
-      this.loadIntervals().then(() => {
-      })
-    }
+      setTimeout(() => {
+        if (prevProps.item.period !== this.props.item.period || !isEqual(this.props.item.recursive_frequency,
+          prevProps.item.recursive_frequency) || this.state.mounted !== prevState.mounted) {
+          this.loadIntervals().then(() => {
+          })
+        }
+      },prevState.mounted === false?50*this.props.delay:0)
   }
   componentWillUnmount() {
   }
@@ -181,7 +183,7 @@ export default class EventTasksCard extends Component {
                   reply={() => this.props.mention({ ...this.props.item, creator: this.state.creator })}
                   members={() => this.props.showReport(this.props.item, this.state.currentDateIntervals, this.state.correspondingDateInterval)}
                   update={() => this.props.updateRemind(this.props.item)}
-                  creator={this.state.creator}
+                  creator={this.props.master}
                   addMembers={() => { this.props.addMembers(uniqBy(this.props.item.members, "phone"), this.props.item) }}
                   removeMembers={() => this.props.removeMembers(uniqBy(this.props.item.members.filter(ele => this.state.creator ||
                     ele.phone === stores.LoginStore.user.phone), 'phone'), this.props.item)}
@@ -269,12 +271,15 @@ export default class EventTasksCard extends Component {
             alignItems: 'flex-start',
             padding: 2,
           }}>
-            <Creator giveCreator={(creator) => {
+            <Creator 
+            giveCreator={(creator) => {
               this.setState({
                 creator: creator,
                 newing: !this.state.newing
               })
-            }} creator={this.props.item.creator} created_at={this.props.item.created_at}></Creator>
+            }}
+            creator={this.props.item.creator} 
+            created_at={this.props.item.created_at}></Creator>
           </View>
         </Card>
 

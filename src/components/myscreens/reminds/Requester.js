@@ -13,6 +13,7 @@ import { Toast } from 'native-base';
 class Requester {
     saveToCanlendar(eventID,remind, alarms) {
         if (findIndex(remind.members, { phone: stores.LoginStore.user.phone }) >= 0) {
+            console.warn("saving reminder to calendar")
             CalendarServe.saveEvent(remind, alarms, 'reminds').then(calendar_id => {
                 stores.Reminds.updateCalendarID(eventID,{ remind_id: remind.id, calendar_id: calendar_id }, alarms).then(() => {
                 })
@@ -108,7 +109,7 @@ class Requester {
                 newRemindName.remind_id = remindID
                 tcpRequest.updateRemind(newRemindName, remindID + '_description').then(JSONData => {
                     EventListener.sendRequest(JSONData, remindID + '_description').then((response) => {
-                        stores.Reminds.updateDescription({eventID,
+                        stores.Reminds.updateDescription(eventID,{
                             remind_id: remindID,
                             description: newDescription
                         }, true).then((oldRemind) => {

@@ -4,6 +4,7 @@ import moment from 'moment';
 import { findIndex } from 'lodash'
 import stores from '../stores';
 import GState from '../stores/globalState';
+import { daysOfWeeksDefault, AlarmPatterns } from './recurrenceConfigs';
 
 const BleashupCalendarID = "Bleashup-2018-bleashurs"
 const UTCFormat = "YYYY-MM-DDTHH:mm:ss.SSS[Z]"
@@ -82,7 +83,7 @@ class CalendarService {
     }
     saveEvent(Bevent, alarms, type, all) {
         if (Bevent.period && Bevent.period.includes("T")) {
-            let calendarEvent = type === 'reminds' ? this.translateRemindToCalendar(Bevent, alarms) : this.translateToCalendar(Bevent, alarms)
+            let calendarEvent = this.translateRemindToCalendar(Bevent, alarms)
             /*let calendarEvent = {   
                 title : "test",
                 startDate: (new Date()).toISOString(),
@@ -93,7 +94,8 @@ class CalendarService {
                     endDate: (new Date()).toISOString(),
                 }
             }*/
-            return RNCalendarEvents.saveEvent(type === 'reminds' ? `${Bevent.title}` : Bevent.about.title, calendarEvent)
+            console.warn(calendarEvent)
+            return RNCalendarEvents.saveEvent(calendarEvent.title, calendarEvent)
         } else {
             return new Promise((resolve, reject) => {
                 if (Bevent.calendar_id) {
@@ -107,11 +109,11 @@ class CalendarService {
         }
     }
     translateRemindToCalendar(Bevent, alarms) {
-        console.warn('translating to reminder', this.calendarID, alarms)
+        console.warn('translating to reminder', this.calendarID, alarms, Bevent.recursive_frequency.days_of_week)
         return Platform.OS === 'android' ? {
             id: Bevent.calendar_id ? Bevent.calendar_id : undefined,
             calendarID: this.calendarID,
-            title: `${Bevent.title} reminder`,
+            title: `${Bevent.title}`,
             startDate: moment(Bevent.period).utc().format(UTCFormat),
             allDay: false,
             recurrence: Bevent.recursive_frequency.frequency,
@@ -120,11 +122,15 @@ class CalendarService {
                 frequency: Bevent.recursive_frequency.frequency,
                 interval: Bevent.recursive_frequency.interval,
                 //occurrence: Bevent.recurrence,
-                daysOfWeek: Bevent.recursive_frequency.days_of_week,
+                daysOfWeek: daysOfWeeksDefault.filter(ele => Bevent.recursive_frequency.days_of_week.indexOf(ele.code) >= 0).map(ele => ele.code),
                 endDate: moment(Bevent.recursive_frequency.recurrence).utc().format(UTCFormat)
             },
             //recurrenceInterval:Bevent.recurrent? parseInt(Bevent.interval):null,
-            alarms: alarms,
+            alarms: alarms && alarms.length>0?alarms:AlarmPatterns().filter(ele => ele.autoselected).map(ele => {
+                return {
+                    date:Platform.os === "ios" ? moment().diff(ele.date, 'minutes').toISOString() 
+                : moment().diff(ele.date, 'minutes')}
+            }),
             location: Bevent.location,
             notes: Bevent.description,
             description: GState.DeepLinkURL + "event/" + Bevent.event_id

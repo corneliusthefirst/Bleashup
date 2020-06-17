@@ -27,7 +27,6 @@ export default class Reminds {
   currentSaveTime = moment().format();
   previousSaveTime = moment().format();
   initializeReminds() {
-    console.warn("initializing Reminds");
     storage
       .load(this.readKey)
       .then((data) => {
@@ -47,7 +46,7 @@ export default class Reminds {
   extraVotes = {};
   saver() {
     if (Object.keys(this.Reminds).length > 0) {
-      console.warn("persisiting reminds foolish", this.Reminds);
+      console.warn("persisiting reminds")
       this.saveKey.data = this.Reminds;
       storage.save(this.saveKey).then(() => {
         this.previousSaveTime = this.currentSaveTime;
@@ -56,7 +55,6 @@ export default class Reminds {
   }
   setProperty(Reminds) {
     this.Reminds = Reminds;
-    console.warn("here foolish", this.Reminds);
     this.currentSaveTime = moment().format();
   }
   saveKey = {
@@ -69,10 +67,8 @@ export default class Reminds {
   };
 
   @action addReminds(EventID, NewRemind) {
-    console.warn("new remind is ", NewRemind);
     return new Promise((resolve, Reject) => {
       this.readFromStore().then((Reminds) => {
-        console.warn("from readFrom store", Reminds);
         if (Reminds[EventID] && Reminds[EventID].length > 0) {
           if (Array.isArray(NewRemind)) {
             if (NewRemind.length === 1) {
@@ -93,7 +89,6 @@ export default class Reminds {
         } else {
           Reminds[EventID] = Array.isArray(NewRemind) ? NewRemind : [NewRemind];
         }
-        console.warn("here is the remind", Reminds);
         this.setProperty(Reminds);
         resolve();
       });
@@ -101,7 +96,6 @@ export default class Reminds {
   }
 
   loadReminds(EventID, fresh) {
-    console.warn("am in");
     let sorter = (a, b) =>
       a.created_at > b.created_at ? -1 : a.created_at < b.created_at ? 1 : 0;
     return new Promise((resolve, reject) => {
@@ -119,10 +113,8 @@ export default class Reminds {
           tcpRequest
             .getReminds(getRemind, EventID + "get_reminds")
             .then((JSONData) => {
-              console.warn("here they are ", JSONData);
               EventListener.sendRequest(JSONData, EventID + "get_reminds")
                 .then((response) => {
-                  console.warn("here is the response", response);
                   if (
                     !response.data ||
                     response.data === "empty" ||
@@ -130,7 +122,6 @@ export default class Reminds {
                   ) {
                     resolve(fresh ? JSON.stringify([]) : []);
                   } else {
-                    console.warn("response is ", response.data);
                     this.addReminds(EventID, response.data).then(() => {
                       resolve(
                         fresh
@@ -156,16 +147,13 @@ export default class Reminds {
         let RemindIndex = findIndex(Reminds[EventID], {
           id: NewRemind.remind_id,
         });
-        Remind.description = NewRemind.description;
-        Remind.updated_at = moment().format();
-        Remind.description_updated = inform;
-        Remind.updated = inform;
-        Reminds[EventID].splice(RemindIndex, 1, Remind);
-        this.keyData.data = Reminds;
-        storage.save(this.keyData).then(() => {
-          GState.eventUpdated = true;
-          resolve(Remind);
-        });
+        console.warn(RemindIndex,NewRemind)
+        Reminds[EventID][RemindIndex].description = NewRemind.description;
+        Reminds[EventID][RemindIndex].updated_at = moment().format();
+        Reminds[EventID][RemindIndex].description_updated = inform;
+        Reminds[EventID][RemindIndex].updated = inform;
+        this.setProperty(Reminds)
+        resolve(Reminds[EventID][RemindIndex])
       });
     });
   }
@@ -185,11 +173,8 @@ export default class Reminds {
         Reminds[EventID][RemindIndex].updated_at = moment().format();
         Reminds[EventID][RemindIndex].description_updated = inform;
         Reminds[EventID][RemindIndex].updated = inform;
-        this.keyData.data = Reminds;
-        storage.save(this.keyData).then(() => {
-          GState.eventUpdated = true;
-          resolve(Reminds[EventID][RemindIndex]);
-        });
+       this.setProperty(Reminds)
+       resolve(Reminds[EventID][RemindIndex])
       });
     });
   }
@@ -199,15 +184,14 @@ export default class Reminds {
         let RemindIndex = findIndex(Reminds[EventID], {
           id: NewRemind.remind_id,
         });
+        const oldRem = Reminds[EventID][RemindIndex]
         Reminds[EventID][RemindIndex].title = NewRemind.title;
         Reminds[EventID][RemindIndex].updated_at = moment().format();
         Reminds[EventID][RemindIndex].description_updated = inform;
         Reminds[EventID][RemindIndex].updated = inform;
-        //Reminds[EventID].splice(RemindIndex, 1, Reminds[EventID][RemindIndex]);
-
         this.setProperty(Reminds);
         GState.eventUpdated = true;
-        resolve(Reminds[EventID][RemindIndex]);
+        resolve(oldRem);
       });
     });
   }
@@ -251,7 +235,7 @@ export default class Reminds {
   }
 
   @action updateRecursiveFrequency(EventID, NewRemind, inform) {
-    console.warn("entered  updateRecursiveFrequenc ");
+    console.warn("entered  updateRecursiveFrequenc ",NewRemind);
     return new Promise((resolve, Reject) => {
       this.readFromStore().then((Reminds) => {
         let RemindIndex = findIndex(Reminds[EventID], {
@@ -319,9 +303,7 @@ export default class Reminds {
         Reminds[EventID][RemindIndex].updated_at = moment().format();
         Reminds[EventID][RemindIndex].description_updated = inform;
         Reminds[EventID][RemindIndex].updated = inform;
-        //Reminds[EventID].splice(RemindIndex, 1, Reminds[EventID][RemindIndex]);
-
-        this.setProperty(Reminds);
+         this.setProperty(Reminds);
         GState.eventUpdated = true;
         resolve(Reminds[EventID][RemindIndex]);
       });
@@ -440,7 +422,7 @@ export default class Reminds {
           ? (Reminds[EventID][index].donners = Array.isArray(Remind.donners)
               ? Remind.donners.concat(Reminds[EventID][index].donners)
               : [Remind.donners].concat(Reminds[EventID][index].donners))
-          : (Reminds[index].donners = Array.isArray(Remind.donners)
+          : (Reminds[EventID][index].donners = Array.isArray(Remind.donners)
               ? Remind.donners
               : [Remind.donners]);
         inform
@@ -478,31 +460,30 @@ export default class Reminds {
   }
 
   @action removeRemind(EventID, RemindId) {
-    console.warn("removing remind", RemindId);
+    console.warn("removing remind")
     return new Promise((resolve, RejectPromise) => {
       this.readFromStore().then((Reminds) => {
-        let index = find(Reminds[EventID], { id: RemindId });
-        Reminds[EventID] = reject(Reminds[EventID], ["id", RemindId]);
-        RemindId === "newRemindId"
-          ? Reminds[EventID].unshift(request.Remind())
-          : null;
-        this.setProperty(Reminds);
-        GState.eventUpdated = true;
-        resolve(Reminds[EventID][index]);
+        let index = findIndex(Reminds[EventID], { id: RemindId });
+        console.warn(index,RemindId)
+        const oldRem  = Reminds[EventID][index]
+          Reminds[EventID] = reject(Reminds[EventID], { "id": RemindId });
+          RemindId === request.Remind().id
+            ? Reminds[EventID].unshift(request.Remind())
+            : null;
+          this.setProperty(Reminds);
+          GState.eventUpdated = true;
+          resolve(oldRem);
       });
     });
   }
 
   loadRemindFromRemote(EventID, id) {
-    console.warn("here is the request 1", EventID, id);
     return new Promise((resolve, reject) => {
       let RemindID = request.RemindID();
       RemindID.remind_id = id;
       tcpRequest.getRemind(RemindID, id + "_get_remind").then((JSONData) => {
-        console.warn("here is the request 2", RemindID, id, JSONData);
         EventListener.sendRequest(JSONData, id + "_get_remind").then(
           (Remind) => {
-            console.warn("here is the request 3", Remind);
             if (Remind.data !== "empty") {
               resolve(Remind.data);
             } else {
@@ -517,7 +498,6 @@ export default class Reminds {
   }
 
   loadRemind(EventID, id) {
-    console.warn("after remote", EventID, id);
     return new Promise((resolve, reject) => {
       this.readFromStore().then((Rems) => {
         let rem = find(Rems[EventID], { id: id });
@@ -526,7 +506,7 @@ export default class Reminds {
         } else {
           this.loadRemindFromRemote(EventID, id)
             .then((Remind) => {
-              console.warn("after remote 2", Remind);
+              console.warn("loaded remind from remote ", id)
               this.addReminds(EventID, Remind)
                 .then(() => {
                   resolve(Remind.data);
@@ -539,7 +519,6 @@ export default class Reminds {
               if (id === request.Remind().id) {
                 this.addReminds(EventID, request.Remind())
                   .then(() => {
-                    console.warn("added boy");
                     resolve(request.Remind());
                   })
                   .catch(() => {

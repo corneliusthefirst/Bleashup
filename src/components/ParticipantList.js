@@ -10,6 +10,7 @@ import {
     Title,
     Spinner,
     Icon,
+    Button,
 } from "native-base";
 import { View, FlatList } from "react-native";
 import ImageActivityIndicator from "./myscreens/currentevents/components/imageActivityIndicator";
@@ -20,13 +21,15 @@ import BleashupFlatList from "./BleashupFlatList";
 import Menu, { MenuDivider, MenuItem } from "react-native-material-menu";
 import bleashupHeaderStyle from "../services/bleashupHeaderStyle";
 import ColorList from "./colorList";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import CreationHeader from "./myscreens/event/createEvent/components/CreationHeader";
 
 export default class ParticipantList extends Component {
     constructor(props) {
         super(props);
         this.state = {
             publishers: [],
-            hidden:{}
+            hidden: {},
         };
     }
     state = {
@@ -42,8 +45,8 @@ export default class ParticipantList extends Component {
                     ? "Simple Member"
                     : "";
     }
-    componentDidUpdate(previousProps,previousState){
-        if(this.props.isSelecting !== previousProps.isSelecting){
+    componentDidUpdate(previousProps, previousState) {
+        if (this.props.isSelecting !== previousProps.isSelecting) {
             if (!this.props.participants) {
                 stores.Events.getPaticipants(this.props.event_id).then(
                     (participants) => {
@@ -82,63 +85,54 @@ export default class ParticipantList extends Component {
             }
         }, 3);
     }
+    center = { marginBottom: 'auto', marginTop: 'auto', }
     delay = 0;
     _keyExtractor = (item, index) => item.phone;
     render() {
         return (
-            <View>
-                <View style={{ height: ColorList.headerHeight }}>
-                    <View
-                        style={{
-                            padding: "3%",
-                            flexDirection: "row",
-                            ...bleashupHeaderStyle,
-                            justifyContent: "space-between",
-                        }}
-                    >
-                        <View style={{ width: "10%" }}>
-                            <Icon
-                                onPress={this.props.close}
-                                style={{
-                                    color: ColorList.headerIcon,
-                                }}
-                                name="keyboard-backspace"
-                                type="MaterialCommunityIcons"
-                            ></Icon>
+            <View style={{ height:'100%' }}>
+                <CreationHeader
+                    back={this.props.close}
+                    title={this.props.hide ? "" : this.props.title || "Participants List"}
+                    extra={
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between',width:150 }}>
+                            {this.props.managing && (
+                                <View style={{ ...this.center, flexDirection: 'row', }}>
+                                    <Button
+                                    transparent
+                                    style={{ backgroundColor: ColorList.bodyBackground, }}
+                                        onPress={this.props.addMembers}
+                                    >
+                                        <Icon
+                                            name={"plus"}
+                                            type={"AntDesign"}
+                                            style={{ color: ColorList.headerIcon }}
+                                        ></Icon>
+                                    </Button>
+                                    {this.state.participants &&
+                                        this.state.participants.length > 0 ? (
+                                            <Button transparent style={{
+                                                backgroundColor: ColorList.bodyBackground,
+                                            }}
+                                                onPress={this.props.removeMember}
+                                            >
+                                                <Icon
+                                                    name={"circle-with-minus"}
+                                                    type={"Entypo"}
+                                                    style={{ color: ColorList.headerIcon }}
+                                                ></Icon>
+                                            </Button>
+                                        ) : null}
+                                </View>
+                            )}
+                            <View style={{ ...this.center,  }}>
+                                <Text style={{ marginTop: "2%" }} note>
+                                    {this.state.participants ? this.state.participants.length : 0}
+                                    {" member(s)"}
+                                </Text></View>
                         </View>
-                        <Text
-                            elipziseMode={"tail"}
-                            numberOfLines={1}
-                            style={{ fontWeight: "bold", fontSize: 20, width: "50%" }}
-                        >
-                            {this.props.hide ? "" : this.props.title || "Participants List"}
-                        </Text>
-                       {this.props.managing && <View
-                            style={{
-                                flexDirection: "row",
-                                justifyContent: "space-between",
-                                width: "20%",
-                            }}
-                        >
-                            <Icon
-                                onPress={this.props.addMembers}
-                                name={"plus"}
-                                type={"AntDesign"}
-                                style={{ color: ColorList.headerIcon }}
-                            ></Icon>
-                            <Icon
-                                onPress={this.props.removeMember}
-                                name={"circle-with-minus"}
-                                type={"Entypo"}
-                                style={{ color: ColorList.headerIcon }}
-                            ></Icon>
-                        </View>}
-                        <Text style={{marginTop: '2%',}} note>
-                            {this.state.participants ? this.state.participants.length : 0}
-                            {" member(s)"}
-                        </Text>
-                    </View>
-                </View>
+                    }
+                ></CreationHeader>
                 {this.state.isloaded ? (
                     <View>
                         {this.state.isEmpty ? (
@@ -165,55 +159,51 @@ export default class ParticipantList extends Component {
                                         }
                                         renderItem={(item, index) => {
                                             this.delay = this.delay >= 15 ? 0 : this.delay + 1;
-                                            return item.phone && !(this.state.hidden && this.state.hidden[item.phone]) ? (
-                                                <View style={{ margin: '2%', }}>
-                                                    <View style={{ display: "flex", flexDirection: "row" }}>
-                                                        <View style={{}}>
-                                                            <ProfileView
-                                                            hideMe={() => {
-                                                                let newHidden = this.state.hidden
-                                                                newHidden[item.phone] = true
-                                                                this.setState({
-                                                                hidden : newHidden
-                                                            })
-                                                            }}
-                                                                delay={this.delay}
-                                                                phone={
-                                                                    item.phone
-                                                                        ? item.phone.replace("+", "00")
-                                                                        : null
-                                                                }
-                                                            ></ProfileView>
-                                                        </View>
-                                                        <View
-                                                            style={{
-                                                                marginLeft: "40%",
-                                                                marginTop: "5%",
-                                                            }}
-                                                        >
-                                                            <Text
-                                                                style={{
-                                                                    fontWeight:
-                                                                        this.props.creator == item.phone
-                                                                            ? "bold"
-                                                                            : "normal",
-                                                                    fontStyle:
-                                                                        this.props.creator == item.phone
-                                                                            ? "italic"
-                                                                            : "normal",
-                                                                    color:
-                                                                        this.props.creator == item.phone
-                                                                            ? "#54F5CA"
-                                                                            : "gray",
-                                                                }}
-                                                                note
-                                                            >
-                                                                {this.writeParticant(item)}
-                                                            </Text>
+                                            return item.phone &&
+                                                !(this.state.hidden && this.state.hidden[item.phone]) ? (
+                                                    <View style={{ margin: "2%" }}>
+                                                        <View style={{ display: "flex", flexDirection: "row",justifyContent: 'space-between', }}>
+                                                            <View style={{}}>
+                                                                <ProfileView
+                                                                    hideMe={() => {
+                                                                        let newHidden = this.state.hidden;
+                                                                        newHidden[item.phone] = true;
+                                                                        this.setState({
+                                                                            hidden: newHidden,
+                                                                        });
+                                                                    }}
+                                                                    delay={this.delay}
+                                                                    phone={
+                                                                        item.phone
+                                                                            ? item.phone.replace("+", "00")
+                                                                            : null
+                                                                    }
+                                                                ></ProfileView>
+                                                            </View>
+                                                            <View>
+                                                                <Text
+                                                                    style={{
+                                                                        fontWeight:
+                                                                            this.props.creator == item.phone
+                                                                                ? "bold"
+                                                                                : "normal",
+                                                                        fontStyle:
+                                                                            this.props.creator == item.phone
+                                                                                ? "italic"
+                                                                                : "normal",
+                                                                        color:
+                                                                            this.props.creator == item.phone
+                                                                                ? "#54F5CA"
+                                                                                : "gray",
+                                                                    }}
+                                                                    note
+                                                                >
+                                                                    {this.writeParticant(item)}
+                                                                </Text>
+                                                            </View>
                                                         </View>
                                                     </View>
-                                                </View>
-                                            ) : null;
+                                                ) : null;
                                         }}
                                     ></BleashupFlatList>
                                 </View>
