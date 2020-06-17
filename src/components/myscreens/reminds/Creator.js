@@ -20,15 +20,10 @@ export default class Creator extends Component {
 
     }
     componentDidMount() {
-        setTimeout(() => {
-            stores.TemporalUsersStore.getUser(this.props.creator).then(creator => {
                 this.setState({
                     mounted: true,
-                    creator: creator
                 })
-                this.props.giveCreator ? this.props.giveCreator(creator) : null
-            })
-        }, 10)
+                this.props.giveCreator ? this.props.giveCreator(stores.TemporalUsersStore.Users[this.props.creator]) : null
     }
     infoTextStyle = {
         fontWeight: 'bold',
@@ -58,7 +53,7 @@ export default class Creator extends Component {
                         this.setState({
                             showCreatorModal: false
                         })
-                    }} creator={this.state.creator} created_at={this.props.created_at} color={this.props.color} ></CreatorModal> : null}
+                    }} creator={stores.TemporalUsersStore.Users[this.props.creator]||{}} created_at={this.props.created_at} color={this.props.color} ></CreatorModal> : null}
                 </TouchableOpacity>
             )
     }

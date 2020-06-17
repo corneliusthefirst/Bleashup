@@ -1,5 +1,6 @@
 var moment = require("moment")
 var _ = require("lodash")
+const UTCFormat = "YYYY-MM-DDTHH:mm:ss.SSS[Z]"
 export const frequencyType = [{
     value: 'Day(s)',
 }, {
@@ -9,6 +10,47 @@ export const frequencyType = [{
 }, {
     value: 'Year(s)',
 }];
+
+export function AlarmPatterns() {
+    return [{
+        id: '1',
+        date: moment().subtract(7, 'days'),
+        text: "1 Week Before"
+    }, {
+        id: '2',
+        date: moment().subtract(2, 'days'),
+        text: "2 Days Befors"
+    }, {
+        id: '3',
+        date: moment().subtract(1, 'days'),
+        text: "1 day Before"
+
+    }, {
+        id: '4',
+        autoselected: true,
+        date: moment().subtract(3 * 600, 'seconds'),
+        text: "30 Minuts Before",
+    }, {
+        id: '5',
+        autoselected: true,
+        date: moment().subtract(600, 'seconds'),
+        text: "10 Minuts Before"
+    }, {
+        id: '6',
+        autoselected: true,
+        date: moment().subtract(60 * 5, 'seconds'),
+        text: "5 Minuts Before"
+    }, {
+        id: '7',
+        autoselected: true,
+        date: moment().subtract(60 * 2, 'seconds'),
+        text: "2 Minuts Before"
+    }, {
+        id: '8',
+        date: moment().utc().format(UTCFormat),
+        text: "On Time"
+    }]
+}
 export const daysOfWeeksDefault = [
     { code: "SU", day: 'Sunday' },
     { code: "MO", day: 'Monday' },
@@ -69,15 +111,15 @@ export const format = "dddd, MMMM Do YYYY, h:mm:ss a"
 
 export function returnAllIntervals(period, interval, frequency, daysOfWeek) {
     let i = 0
-    period.end = moment(period.start, format).format('X') >
-        moment(period.end, format).format('X') ? moment(period.start, format).add(1, 'h').format(format) :
+    period.end = moment(period.start, format).format('x') >
+        moment(period.end, format).format('x') ? moment(period.start, format).add(1, 'h').format(format) :
         period.end
     function returnFutureDate(count, interval) {
-        return moment(period.start, format).add(count, intervaler[interval]).format("X")
+        return moment(period.start, format).add(count, intervaler[interval]).format("x")
     }
     let date = returnFutureDate(i, frequency)
     let endDate = returnFutureDate(i + interval, frequency)
-    let end = moment(period.end, format).format('X')
+    let end = moment(period.end, format).format('x')
     let dates = []
     for (let p = 0; p <= 366; p++) {
         date = returnFutureDate(i, frequency)
@@ -85,11 +127,11 @@ export function returnAllIntervals(period, interval, frequency, daysOfWeek) {
         if (date > end) {
             break
         }
-        let formatedDate = moment(date, "X").format(format)
-        let formatedEndDate = moment(endDate, "X").format(format)
+        let formatedDate = moment(date, "x").format(format)
+        let formatedEndDate = moment(endDate, "x").format(format)
         dates[dates.length] = {
             start: formatedDate, round: dates.length + 1,
-            weeks_interval: daysOfWeek && daysOfWeek.length && frequency === 'weekly' > 0 ? formWeekIntervals(daysOfWeek,
+            weeks_interval: daysOfWeek && daysOfWeek.length > 0 && frequency === 'weekly' ? formWeekIntervals(daysOfWeek,
                 {
                     start: formatedDate,
                     end: formatedEndDate
@@ -97,9 +139,9 @@ export function returnAllIntervals(period, interval, frequency, daysOfWeek) {
                 i > 0 ? (dates[dates.length - 1].weeks_interval[dates[dates.length - 1].weeks_interval.length - 1].end) :
                     formatedDate).
                 filter(ele =>
-                    moment(ele.start, format).format("X") >= moment(period.start, format).format("X") &&
-                    moment(ele.start, format).format("X") < moment(period.end, format).format("X") &&
-                    true //moment(el.end, format).format("X") <= moment(period.start, format).format("X")
+                    moment(ele.start, format).format("x") >= moment(period.start, format).format("x") &&
+                    moment(ele.start, format).format("x") < moment(period.end, format).format("x") &&
+                    true //moment(el.end, format).format("x") <= moment(period.start, format).format("x")
                 ) : null,
             end: formatedEndDate
         }
@@ -138,8 +180,8 @@ function formWeekIntervaler(daysOfWeek, period, start) {
 export function filterWeekInervals(daysOfWeek, period, start) {
     let weeksIntervals = formWeekIntervaler(daysOfWeek, period, start);
     return weeksIntervals.filter(ele =>
-        moment(ele.end, format).format("X") <= moment(period.start, format).format("X") &&
-        moment(ele.end, format).format("X") <= moment(period.end, format).format("X")).
+        moment(ele.end, format).format("x") <= moment(period.start, format).format("x") &&
+        moment(ele.end, format).format("x") <= moment(period.end, format).format("x")).
         map(ele => _.find(daysOfWeeksDefault, { day: ele.end.split(",")[0] }).code)
 }
 // This function is used to remove the error noticed that whenever the there is a day in weeks_interval of 
@@ -150,7 +192,7 @@ export function cleanupResult(datesInterval) {
     let temp = ""
     let i = 0
     datesInterval[0].weeks_interval = datesInterval[0].weeks_interval ? datesInterval[0].weeks_interval.map(ele => {
-        temp = moment(ele.end, format).format("X") < moment(ele.start, format).format("X") &&
+        temp = moment(ele.end, format).format("x") < moment(ele.start, format).format("x") &&
             datesInterval[0].weeks_interval.length === 1 ?
             {
                 start: ele.start,
@@ -158,8 +200,8 @@ export function cleanupResult(datesInterval) {
                 end: datesInterval[1].weeks_interval && datesInterval[1].weeks_interval.length > 0 ?
                     datesInterval[1].weeks_interval[0].start : ele.start
             } :
-            moment(ele.end, format).format("X") < moment(ele.start,
-                format).format("X") ? {
+            moment(ele.end, format).format("x") < moment(ele.start,
+                format).format("x") ? {
                     start: ele.start,
                     round: ele.round,
                     end: datesInterval[0].weeks_interval[i + 1].start
@@ -177,7 +219,7 @@ export function cleanupResult(datesInterval) {
 // The return data type is of the type {round_parent,round,start,end}
 
 export function datesIntervalflaterner(period, datesInterval, result, i) {
-    //console.warn(result.length,i)
+    //console.error(result.length,i)
     if (i === datesInterval.length) {
         !result[0] ? console.error(result, datesInterval, i) : null
         let sorter = (a, b) => (a.parent_round > b.parent_round ? 1 : a.parent_round < b.parent_round ? -1 : 0)
@@ -194,8 +236,8 @@ export function datesIntervalflaterner(period, datesInterval, result, i) {
                 round: 0, parent_round: 0, start: moment(result[0].start,
                     format).subtract(1, 'year').format(format), end: result[0].start
             },
-            ...result].filter(ele => moment(ele.end, format).format('X') <=
-                moment(period.end, format).format('X')).sort(sorterx).sort(sorter)
+            ...result].filter(ele => moment(ele.end, format).format('x') <=
+                moment(period.end, format).format('x')).sort(sorterx).sort(sorter)
         }
     }
     else {
@@ -215,7 +257,7 @@ export function datesIntervalflaterner(period, datesInterval, result, i) {
         return datesIntervalflaterner(period, datesInterval, result, i + 1)
     }
 
-   function convertDate(data, newDate) {
+    function convertDate(data, newDate) {
         newDate.start_date = parseInt(this.getUnixTimeStamp(newDate.start_date), 10)
         newDate.end_date = parseInt(this.getUnixTimeStamp(newDate.end_date), 10)
         let newDateDifference = parseInt(newDate.end_date - newDate.start_date, 10);
@@ -260,7 +302,7 @@ export function datesIntervalflaterner(period, datesInterval, result, i) {
             end_date: moment(newDate.end_date).format()
         };
     }
-   function getUnixTimeStamp(dateTime) {
+    function getUnixTimeStamp(dateTime) {
         return moment(dateTime).format("x");
     }
 }

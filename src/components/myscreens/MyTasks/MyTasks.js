@@ -51,27 +51,10 @@ class MyTasksView extends Component {
 
   _renderHeader = (item, expanded,toggleExpand) => {
     return (
-      <View style={{
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        backgroundColor: ColorList.bodyBackground,
-      }}>
         <View style={{marginLeft: 15}}>
           { item.type === 'relation' ? <RelationProfile Event={item} />  :
           <ActivityProfile Event={item} joint={true} /> }
         </View>
-
-        <TouchableOpacity onPress={() => toggleExpand()}>
-          <View style={{ width: 30 }}>
-            {expanded ? (
-              <Icon style={{ fontSize: 18 }} type="AntDesign" name="up" />
-            ) : (
-              <Icon style={{ fontSize: 18 }} type="AntDesign" name="down" />
-            )}
-          </View>
-        </TouchableOpacity>
-      </View>
     );
   };
 
@@ -82,7 +65,7 @@ class MyTasksView extends Component {
 
     //console.warn("item is", item);
     return (
-      <View style={{ height: item.reminds.length > 0 ? 450 : 0 }}>
+      <View style={{ maxHeight: item.reminds.length > 0 ? 450 : 0,flex: 1, }}>
         <Remind
           share={{
             id: "456322",
@@ -156,23 +139,14 @@ class MyTasksView extends Component {
         </View>
 
         <View style={{ height: '92%' }}>
-          <BleashupSrollView
-            firstIndex={0}
-            renderPerBatch={7}
-            initialRender={10}
-            numberOfItems={this.state.dataArray.length}
-            keyExtractor={this._keyExtractor}
-            dataSource={this.state.dataArray}
-            renderItem={(item, index) => {
-              return (
-                <AccordionModuleNative
-                  dataArray={item}
-                  _renderHeader={this._renderHeader}
-                  _renderContent={this._renderContent}
-                />
-              );
-            }}
-          />
+        <View>
+            <AccordionModuleNative
+              keyExtractor={this._keyExtractor}
+              dataSource={this.state.dataArray}
+              _renderHeader={this._renderHeader}
+              _renderContent={this._renderContent}
+            />
+         </View>
         </View>
       </View>
     );

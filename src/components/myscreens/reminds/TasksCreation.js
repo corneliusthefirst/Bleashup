@@ -62,7 +62,6 @@ import RemindMembers from "./RemindMembers";
 import RemindsTypeMenu from "./RemindTypeMenu";
 import PickersUpload from "../event/createEvent/components/PickerUpload";
 import MediaPreviewer from "../event/createEvent/components/MediaPeviewer";
-import TaskCreationExtra from "./TaskCreationExtra";
 
 let { height, width } = Dimensions.get("window");
 
@@ -77,6 +76,7 @@ export default class TasksCreation extends BleashupModal {
       date: "",
       mounted: this.props.isOpen,
       time: "",
+      newing: false,
       defaultDate: new Date(),
       defaultTime: new Date(),
       inputTimeValue: "",
@@ -101,73 +101,66 @@ export default class TasksCreation extends BleashupModal {
   }
   @autobind
   init() {
-    console.warn("here we are");
-    //stores.Reminds.removeRemind("newRemindId").then()
     this.props.remind
       ? setTimeout(() => {
-          let remind = this.props.remind;
-          this.setState({
-            currentRemind: remind,
-            mounted: true,
-            type: this.calculateType(remind),
-            recurrent:
-              remind.recursive_frequency.interval !== 1 &&
-              remind.recursive_frequency.frequency !== "yearly",
-            members: this.props.event.participant,
-            ownership:
-              remind.creator === stores.LoginStore.user.phone &&
-              this.props.update,
-            currentMembers: remind && remind.members ? remind.members : [],
-            date:
-              remind && remind.period
-                ? moment(remind.period).format()
-                : moment().format(),
-            title:
-              remind && remind.period
-                ? moment(remind.period).format()
-                : moment().format(),
-          });
-        })
+        let remind = this.props.remind;
+        this.setState({
+          currentRemind: remind,
+          mounted: true,
+          type: this.calculateType(remind),
+          recurrent:
+            remind.recursive_frequency.interval !== 1 &&
+            remind.recursive_frequency.frequency !== "yearly",
+          members: this.props.event.participant,
+          ownership:
+            remind.creator === stores.LoginStore.user.phone &&
+            this.props.update,
+          currentMembers: remind && remind.members ? remind.members : [],
+          date:
+            remind && remind.period
+              ? moment(remind.period).format()
+              : moment().format(),
+          title:
+            remind && remind.period
+              ? moment(remind.period).format()
+              : moment().format(),
+        });
+      })
       : stores.Reminds.loadRemind(
-          this.props.event_id,
-          this.props.remind_id ? this.props.remind_id : "newRemindId"
-        ).then((rem) => {
-          console.warn("here we are 2", rem);
-          //if (!rem) stores.Reminds.addReminds(this.props.event_id,request.Remind()).then(()=>{})
-
-          console.warn("remind from render ....", rem);
-          let remind = isEmpty(rem) ? request.Remind() : rem;
-          console.warn("remind from render .... 2", remind);
-          this.setState({
-            currentRemind: remind,
-            mounted: true,
-            type: this.calculateType(remind),
-            recurrent:
-              remind &&
-              !(
-                remind.recursive_frequency.interval === 1 &&
-                remind.recursive_frequency.frequency === "yearly"
-              ),
-            members: this.props.event.participant,
-            ownership:
-              remind.creator === stores.LoginStore.user.phone &&
-              (this.props.update || remind.id === "newRemindId"),
-            currentMembers:
-              this.props.currentMembers && this.props.currentMembers.length > 0
-                ? this.props.currentMembers
-                : remind && remind.members
+        this.props.event_id,
+        this.props.remind_id ? this.props.remind_id : request.Remind().id
+      ).then((rem) => {
+        let remind = isEmpty(rem) ? request.Remind() : rem;
+        this.setState({
+          currentRemind: remind,
+          mounted: true,
+          type: this.calculateType(remind),
+          recurrent:
+            remind &&
+            !(
+              remind.recursive_frequency.interval === 1 &&
+              remind.recursive_frequency.frequency === "yearly"
+            ),
+          members: this.props.event.participant,
+          ownership:
+            remind.creator === stores.LoginStore.user.phone &&
+            (this.props.update || remind.id === "newRemindId"),
+          currentMembers:
+            this.props.currentMembers && this.props.currentMembers.length > 0
+              ? this.props.currentMembers
+              : remind && remind.members
                 ? remind.members
                 : [],
-            date:
-              remind && remind.period
-                ? moment(remind.period).format()
-                : moment().format(),
-            title:
-              remind && remind.period
-                ? moment(remind.period).format()
-                : moment().format(),
-          });
+          date:
+            remind && remind.period
+              ? moment(remind.period).format()
+              : moment().format(),
+          title:
+            remind && remind.period
+              ? moment(remind.period).format()
+              : moment().format(),
         });
+      });
   }
 
   getCode(day) {
@@ -180,24 +173,26 @@ export default class TasksCreation extends BleashupModal {
     let newDate =
       data && data.length > 0
         ? moment(
-            formWeekIntervals(
-              data,
-              {
-                start: moment(this.state.date).format(format),
-                end: moment(
-                  this.state.currentRemind.recursive_frequency.recurrence
-                ).format(format),
-              },
-              moment(this.state.currentRemind.period).format(format)
-            )[0].end,
-            format
-          ).format()
+          formWeekIntervals(
+            data,
+            {
+              start: moment(this.state.date).format(format),
+              end: moment(
+                this.state.currentRemind.recursive_frequency.recurrence
+              ).format(format),
+            },
+            moment(this.state.currentRemind.period).format(format)
+          )[0].end,
+          format
+        ).format()
         : this.state.currentRemind.period;
     let NewRemind = {
       remind_id: this.state.currentRemind.id,
       recursive_frequency: {
         ...this.state.currentRemind.recursive_frequency,
-        days_of_week: data,
+        days_of_week: data && data.length > 0 ?
+          data : [daysOfWeeksDefault.find(ele => ele.day ===
+            moment(this.state.date).format(format).split(",")[0]).code],
       },
       period: newDate,
     };
@@ -213,11 +208,12 @@ export default class TasksCreation extends BleashupModal {
             NewRemind,
             false
           ).then((newRem) => {
-            this.setState({ currentRemind: newRem, date: NewRemind.period });
+            this.setState({ currentRemind: newRem, date: NewRemind.period, newing: !this.state.newing });
           });
         } else {
           this.setState({
             currentRemind: newRemind,
+            newing: !this.state.newing,
             date: NewRemind.period,
           });
         }
@@ -262,10 +258,10 @@ export default class TasksCreation extends BleashupModal {
       let currentTime = this.state.date
         ? moment(this.state.date).format().split("T")[1]
         : moment()
-            .startOf("day")
-            .add(moment.duration(1, "hours"))
-            .toISOString()
-            .split("T")[1];
+          .startOf("day")
+          .add(moment.duration(1, "hours"))
+          .toISOString()
+          .split("T")[1];
       let dateTime = newDate + "T" + currentTime;
       //deactivate the date picker before setting the obtain time
       this.setState({
@@ -276,10 +272,10 @@ export default class TasksCreation extends BleashupModal {
       this.props.update
         ? null
         : stores.Reminds.updatePeriod(
-            this.props.event_id,
-            { remind_id: "newRemindId", period: dateTime },
-            false
-          ).then(() => {});
+          this.props.event_id,
+          { remind_id: "newRemindId", period: dateTime },
+          false
+        ).then(() => { });
     } else {
       this.setState({
         isDateTimePickerVisible: false,
@@ -299,10 +295,10 @@ export default class TasksCreation extends BleashupModal {
       this.props.update
         ? null
         : stores.Reminds.updatePeriod(
-            this.props.event_id,
-            { remind_id: "newRemindId", period: dateTime },
-            false
-          ).then(() => {});
+          this.props.event_id,
+          { remind_id: "newRemindId", period: dateTime },
+          false
+        ).then(() => { });
     } else {
       this.setState({
         show: false,
@@ -322,7 +318,7 @@ export default class TasksCreation extends BleashupModal {
         this.props.event_id,
         NewRemind,
         false
-      ).then(() => {});
+      ).then(() => { });
     }
   }
 
@@ -340,7 +336,7 @@ export default class TasksCreation extends BleashupModal {
         this.props.event_id,
         NewRemind,
         false
-      ).then(() => {});
+      ).then(() => { });
     }
   }
 
@@ -358,7 +354,7 @@ export default class TasksCreation extends BleashupModal {
         this.props.event_id,
         NewRemind,
         false
-      ).then(() => {});
+      ).then(() => { });
     }
   }
 
@@ -389,10 +385,11 @@ export default class TasksCreation extends BleashupModal {
         NewRemind,
         false
       ).then((newRemind) => {
-        this.setState({ currentRemind: newRemind });
+        this.setState({ currentRemind: newRemind, newing: !this.state.newing });
       });
     } else {
       this.setState({
+        newing: !this.state.newing,
         currentRemind: {
           ...this.state.currentRemind,
           recursive_frequency: NewRemind.recursive_frequency,
@@ -410,49 +407,49 @@ export default class TasksCreation extends BleashupModal {
   setInterval(value) {
     !this.props.update
       ? stores.Reminds.updateRecursiveFrequency(this.props.event_id, {
+        recursive_frequency: {
+          ...this.state.currentRemind.recursive_frequency,
+          interval: value,
+        },
+        remind_id: this.state.currentRemind.id,
+      }).then((newRemind) => {
+        this.setState({
+          currentRemind: newRemind,
+        });
+      })
+      : this.setState({
+        currentRemind: {
+          ...this.state.currentRemind,
           recursive_frequency: {
             ...this.state.currentRemind.recursive_frequency,
             interval: value,
           },
-          remind_id: this.state.currentRemind.id,
-        }).then((newRemind) => {
-          this.setState({
-            currentRemind: newRemind,
-          });
-        })
-      : this.setState({
-          currentRemind: {
-            ...this.state.currentRemind,
-            recursive_frequency: {
-              ...this.state.currentRemind.recursive_frequency,
-              interval: value,
-            },
-          },
-        });
+        },
+      });
   }
   updateRequestReportOnComplete() {
     !this.props.update
       ? stores.Reminds.updateRequestReportOnComplete(this.props.event_id, {
+        must_report: this.state.currentRemind.must_report
+          ? !this.state.currentRemind.must_report
+          : true,
+        remind_id: this.state.currentRemind.id,
+      }).then(() => {
+        this.setState({
+          currentRemind: {
+            ...this.state.currentRemind,
+            must_report: this.state.currentRemind.must_report ? false : true,
+          },
+        });
+      })
+      : this.setState({
+        currentRemind: {
+          ...this.state.currentRemind,
           must_report: this.state.currentRemind.must_report
             ? !this.state.currentRemind.must_report
             : true,
-          remind_id: this.state.currentRemind.id,
-        }).then(() => {
-          this.setState({
-            currentRemind: {
-              ...this.state.currentRemind,
-              must_report: this.state.currentRemind.must_report ? false : true,
-            },
-          });
-        })
-      : this.setState({
-          currentRemind: {
-            ...this.state.currentRemind,
-            must_report: this.state.currentRemind.must_report
-              ? !this.state.currentRemind.must_report
-              : true,
-          },
-        });
+        },
+      });
   }
   componentDidUpdate(prevProp, prevState) {
     let data = this.state.currentRemind.recursive_frequency.days_of_week
@@ -466,7 +463,7 @@ export default class TasksCreation extends BleashupModal {
     } else if (
       this.state.currentRemind.recursive_frequency.frequency === "weekly" &&
       this.state.currentRemind.recursive_frequency.frequency !==
-        prevState.currentRemind.recursive_frequency.frequency
+      prevState.currentRemind.recursive_frequency.frequency
     ) {
       this.computeDaysOfWeek(data);
     } else if (
@@ -484,74 +481,33 @@ export default class TasksCreation extends BleashupModal {
   @autobind
   addNewRemind() {
     if (!this.props.working) {
-      if (!this.state.date || !this.state.currentRemind.title) {
-        this.setState({
-          isExtra: false,
-        });
-        this.props.onClosed();
-        Toast.show({
-          text: "Remind Must Have Atleat a Title and Data/Time",
-          buttonText: "Okay",
-          duration: 6000,
-          buttonTextStyle: { color: "#008000" },
-          buttonStyle: { backgroundColor: "#5cb85c" },
-          textStyle: { fontSize: 15 },
-        });
-      } else {
-        this.setState({
-          creating: true,
-        });
-        this.props.reinitializeList();
-        let newRemind = request.Remind();
-        newRemind = this.state.currentRemind;
-        newRemind.id = uuid.v1();
-        newRemind.donners = [];
-        newRemind.period = this.state.date;
-        let user = stores.LoginStore.user;
-        newRemind.creator = user.phone;
-        newRemind.recursive_frequency.recurrence = this.state.currentRemind
-          .recursive_frequency.recurrence
-          ? this.state.currentRemind.recursive_frequency.recurrence
-          : moment(this.state.currentRemind.period).add(1, "h").format();
-        newRemind.event_id = this.props.event_id; //user phone is use to uniquely identify locals
-        newRemind.created_at = moment().format();
-        newRemind.members = this.state.currentMembers;
-        this.props.onClosed();
-        this.props.startLoader();
-        this.props.RemindRequest.CreateRemind(
-          newRemind,
-          this.props.event.about.title
-        )
-          .then(() => {
-            this.props.stopLoader();
-            this.resetRemind();
-            stores.Reminds.removeRemind(
-              this.props.event_id,
-              "newRemindId"
-            ).then(() => {});
-            this.setState({
-              creating: false,
-              currentMembers: [],
-            });
-            this.props.updateData(newRemind);
-          })
-          .catch(() => {
-            this.props.stopLoader();
-            this.setState({
-              creating: false,
-            });
-          });
-      }
+      this.props.CreateRemind(
+        {
+          ...this.state.currentRemind, members: this.state.currentMembers,
+          created_at: moment().format(), event_id: this.props.event_id,
+          recursive_frequency:
+          {
+            ...this.state.currentRemind.recursive_frequency,
+            recurrence: this.state.currentRemind
+              .recursive_frequency.recurrence
+              ? this.state.currentRemind.recursive_frequency.recurrence
+              : moment(this.state.currentRemind.period).add(1, "h").format()
+          },
+          creator: stores.LoginStore.user.phone,
+          period: this.state.date,
+          donners: []
+        },
+        this.props.event.about.title
+      )
     } else {
       Toast.show({ text: "App is Busy" });
     }
   }
 
   updateRemind() {
-    this.back();
     let rem = this.state.currentRemind;
     rem.period = this.state.date;
-    this.props.updateRemind(JSON.stringify(rem));
+    this.props.updateRemind(rem);
 
     //this.resetRemind();
   }
@@ -563,7 +519,7 @@ export default class TasksCreation extends BleashupModal {
       stores.Reminds.updateMembers(this.props.event_id, {
         remind_id: this.state.currentRemind.id,
         members: result,
-      }).then(() => {});
+      }).then(() => { });
   }
 
   showEndatePiker() {
@@ -583,34 +539,34 @@ export default class TasksCreation extends BleashupModal {
       let newTime = this.state.date
         ? moment(this.state.date).format().split("T")[1]
         : moment()
-            .startOf("day")
-            .add(moment.duration(1, "hours"))
-            .toISOString()
-            .split("T")[1];
+          .startOf("day")
+          .add(moment.duration(1, "hours"))
+          .toISOString()
+          .split("T")[1];
       let dateTime = newDate + "T" + newTime;
       !this.props.update
         ? stores.Reminds.updateRecursiveFrequency(this.props.event_id, {
+          recursive_frequency: {
+            ...this.state.currentRemind.recursive_frequency,
+            recurrence: dateTime,
+          },
+          remind_id: this.state.currentRemind.id,
+        }).then((newRemind) => {
+          this.setState({
+            showEndatePiker: false,
+            currentRemind: newRemind,
+          });
+        })
+        : this.setState({
+          showEndatePiker: false,
+          currentRemind: {
+            ...this.state.currentRemind,
             recursive_frequency: {
               ...this.state.currentRemind.recursive_frequency,
               recurrence: dateTime,
             },
-            remind_id: this.state.currentRemind.id,
-          }).then((newRemind) => {
-            this.setState({
-              showEndatePiker: false,
-              currentRemind: newRemind,
-            });
-          })
-        : this.setState({
-            showEndatePiker: false,
-            currentRemind: {
-              ...this.state.currentRemind,
-              recursive_frequency: {
-                ...this.state.currentRemind.recursive_frequency,
-                recurrence: dateTime,
-              },
-            },
-          });
+          },
+        });
     }
   }
   setCurrentLocation(value) {
@@ -621,7 +577,7 @@ export default class TasksCreation extends BleashupModal {
       stores.Reminds.updateLocation(this.props.event_id, {
         remind_id: this.state.currentRemind.id,
         location: value,
-      }).then(() => {});
+      }).then(() => { });
   }
   saveURL(url) {
     this.setState({
@@ -634,12 +590,12 @@ export default class TasksCreation extends BleashupModal {
       stores.Reminds.updateURL(this.props.event_id, {
         remind_id: this.state.currentRemind.id,
         url: url || request.Remind().remind_url,
-      }).then(() => {});
+      }).then(() => { });
   }
   computeMax(remind) {
     switch (
-      remind.recursive_frequency.frequency &&
-      remind.recursive_frequency.frequency.toLowerCase()
+    remind.recursive_frequency.frequency &&
+    remind.recursive_frequency.frequency.toLowerCase()
     ) {
       case "daily":
         return 365;
@@ -664,6 +620,25 @@ export default class TasksCreation extends BleashupModal {
       this.state.type === "event"
     );
   }
+  propceed() {
+    if (!this.state.date || !this.state.currentRemind.title) {
+      //this.props.onClosed();
+      Toast.show({
+        text: "Remind Must Have Atleat a Title and Data/Time",
+        buttonText: "Okay",
+        duration: 6000,
+        buttonTextStyle: { color: "#008000" },
+        buttonStyle: { backgroundColor: "#5cb85c" },
+        textStyle: { fontSize: 15 },
+      });
+    } else {
+      if (this.props.update) {
+        this.updateRemind()
+      } else {
+        this.addNewRemind()
+      }
+    }
+  }
   swipeToClose = false;
   modalBody() {
     let defaultDate = parseInt(
@@ -681,8 +656,8 @@ export default class TasksCreation extends BleashupModal {
               !this.state.ownership
                 ? "Remind configs"
                 : this.props.update
-                ? "Update Remind"
-                : "Add Remind"
+                  ? "Update Remind"
+                  : "Add Remind"
             }
             extra={
               this.state.ownership && (
@@ -695,7 +670,7 @@ export default class TasksCreation extends BleashupModal {
                     marginTop: "auto",
                   }}
                 >
-                  <View>
+                  {!this.props.update ? <View>
                     <TouchableOpacity
                       onPress={() =>
                         requestAnimationFrame(() =>
@@ -718,7 +693,7 @@ export default class TasksCreation extends BleashupModal {
                         }}
                       >{` (${this.state.currentMembers.length})`}</Text>
                     </TouchableOpacity>
-                  </View>
+                  </View> : null}
                   <View>
                     <RemindsTypeMenu
                       type={this.isEvent() ? "Event" : "Reminder"}
@@ -818,8 +793,8 @@ export default class TasksCreation extends BleashupModal {
                       <Text style={{ color: ColorList.bodyText }}>
                         {this.state.date
                           ? `${moment(this.state.date).format(
-                              "dddd, MMMM Do YYYY"
-                            )} at ${moment(this.state.date).format("hh:mm a")}`
+                            "dddd, MMMM Do YYYY"
+                          )} at ${moment(this.state.date).format("hh:mm a")}`
                           : "set remind date"}
                       </Text>
                     </TouchableOpacity>
@@ -900,7 +875,7 @@ export default class TasksCreation extends BleashupModal {
                                     this.state.currentRemind.recursive_frequency
                                       .interval
                                       ? this.state.currentRemind
-                                          .recursive_frequency.interval
+                                        .recursive_frequency.interval
                                       : 0
                                   }
                                   onChange={(value) => this.setInterval(value)}
@@ -914,7 +889,7 @@ export default class TasksCreation extends BleashupModal {
                                     this.state.currentRemind.recursive_frequency
                                       .interval
                                       ? this.state.currentRemind
-                                          .recursive_frequency.interval
+                                        .recursive_frequency.interval
                                       : 1
                                   }
                                   reachMaxIncIconStyle={{ color: "red" }}
@@ -945,12 +920,12 @@ export default class TasksCreation extends BleashupModal {
                                     this.state.currentRemind.recursive_frequency
                                       .frequency
                                       ? FrequencyReverser[
-                                          this.state.currentRemind
-                                            .recursive_frequency.frequency
-                                        ]
+                                      this.state.currentRemind
+                                        .recursive_frequency.frequency
+                                      ]
                                       : "none"
                                   }
-                                  onChangeText={this.setRecursiveFrequency}
+                                  onChangeText={this.setRecursiveFrequency.bind(this)}
                                   pickerStyle={{
                                     width: "35%",
                                     margin: "1%",
@@ -970,63 +945,63 @@ export default class TasksCreation extends BleashupModal {
                               </View>
                               {this.state.currentRemind.recursive_frequency
                                 .frequency === "weekly" ? (
-                                <TouchableOpacity
-                                  onPress={() =>
-                                    requestAnimationFrame(() => {
-                                      this.setState({
-                                        isSelectDaysModalOpened: true,
-                                      });
-                                    })
-                                  }
-                                >
-                                  <Text>
-                                    {this.state.ownership
-                                      ? "select days"
-                                      : "view days"}
-                                  </Text>
-                                </TouchableOpacity>
-                              ) : this.state.currentRemind.recursive_frequency
+                                  <TouchableOpacity
+                                    onPress={() =>
+                                      requestAnimationFrame(() => {
+                                        this.setState({
+                                          isSelectDaysModalOpened: true,
+                                        });
+                                      })
+                                    }
+                                  >
+                                    <Text>
+                                      {this.state.ownership
+                                        ? "select days"
+                                        : "view days"}
+                                    </Text>
+                                  </TouchableOpacity>
+                                ) : this.state.currentRemind.recursive_frequency
                                   .frequency === "monthly" ? (
-                                <View
-                                  pointerEvents={
-                                    this.state.ownership ? null : "none"
-                                  }
-                                >
-                                  <TouchableOpacity
-                                    onPress={() => {
-                                      this.showDateTimePicker();
-                                    }}
-                                  >
-                                    <Text>{` on the ${getDayMonth(
-                                      this.state.date
-                                    )}`}</Text>
-                                  </TouchableOpacity>
-                                </View>
-                              ) : this.state.currentRemind.recursive_frequency
-                                  .frequency === "yearly" ? (
-                                <View
-                                  pointerEvents={
-                                    this.state.ownership ? null : "none"
-                                  }
-                                >
-                                  <TouchableOpacity
-                                    onPress={() => {
-                                      this.showDateTimePicker();
-                                    }}
-                                  >
-                                    <Text>{`on ${getMonthDay(
-                                      this.state.date
-                                    )}`}</Text>
-                                  </TouchableOpacity>
-                                </View>
-                              ) : (
-                                <Text>
-                                  {this.state.currentRemind.recursive_frequency
-                                    .interval === 1
-                                    ? "(all days)"
-                                    : `(${this.state.currentRemind.recursive_frequency.interval} days)`}
-                                </Text>
-                              )}
+                                    <View
+                                      pointerEvents={
+                                        this.state.ownership ? null : "none"
+                                      }
+                                    >
+                                      <TouchableOpacity
+                                        onPress={() => {
+                                          this.showDateTimePicker();
+                                        }}
+                                      >
+                                        <Text>{` on the ${getDayMonth(
+                                          this.state.date
+                                        )}`}</Text>
+                                      </TouchableOpacity>
+                                    </View>
+                                  ) : this.state.currentRemind.recursive_frequency
+                                    .frequency === "yearly" ? (
+                                      <View
+                                        pointerEvents={
+                                          this.state.ownership ? null : "none"
+                                        }
+                                      >
+                                        <TouchableOpacity
+                                          onPress={() => {
+                                            this.showDateTimePicker();
+                                          }}
+                                        >
+                                          <Text>{`on ${getMonthDay(
+                                            this.state.date
+                                          )}`}</Text>
+                                        </TouchableOpacity>
+                                      </View>
+                                    ) : (
+                                      <Text>
+                                        {this.state.currentRemind.recursive_frequency
+                                          .interval === 1
+                                          ? "(all days)"
+                                          : `(${this.state.currentRemind.recursive_frequency.interval} days)`}
+                                      </Text>
+                                    )}
                             </View>
                           </View>
                         </Item>
@@ -1043,12 +1018,12 @@ export default class TasksCreation extends BleashupModal {
                           >
                             <Text>
                               {this.state.date &&
-                              this.state.currentRemind.recursive_frequency
-                                .recurrence
+                                this.state.currentRemind.recursive_frequency
+                                  .recurrence
                                 ? `On ${moment(
-                                    this.state.currentRemind.recursive_frequency
-                                      .recurrence
-                                  ).format("dddd, MMMM Do YYYY")}`
+                                  this.state.currentRemind.recursive_frequency
+                                    .recurrence
+                                ).format("dddd, MMMM Do YYYY")}`
                                 : "Select Recurrence Stop Date"}
                             </Text>
                           </Button>
@@ -1058,11 +1033,11 @@ export default class TasksCreation extends BleashupModal {
                                 this.state.currentRemind.recursive_frequency
                                   .recurrence
                                   ? parseInt(
-                                      moment(
-                                        this.state.currentRemind
-                                          .recursive_frequency.recurrence
-                                      ).format("x")
-                                    )
+                                    moment(
+                                      this.state.currentRemind
+                                        .recursive_frequency.recurrence
+                                    ).format("x")
+                                  )
                                   : new Date()
                               }
                               display={this.state.display}
@@ -1147,18 +1122,13 @@ export default class TasksCreation extends BleashupModal {
                       title={
                         !this.props.update ? "Add Remind" : "Update Remind"
                       }
-                      action={() => {
-                        this.setState({
-                          isExtra: true,
-                        });
-                        //this.onClosedModal()
-                      }}
+                      action={this.propceed.bind(this)}
                     />
                   </View>
                 )
               ) : (
-                <Spinner />
-              )}
+                  <Spinner />
+                )}
             </ScrollView>
             <SelectDays
               daysOfWeek={daysOfWeeksDefault}
@@ -1200,22 +1170,6 @@ export default class TasksCreation extends BleashupModal {
                 });
               }}
               takecheckedResult={(members) => this.takecheckedResult(members)}
-            />
-            <TaskCreationExtra
-              proceed={
-                !this.props.update
-                  ? this.addNewRemind.bind(this)
-                  : this.updateRemind.bind(this)
-              }
-              onChangedStatus={this.onChangedStatus.bind(this)}
-              currentRemind={this.state.currentRemind}
-              onComplete={this.updateRequestReportOnComplete.bind(this)}
-              isOpen={this.state.isExtra}
-              onClosed={() => {
-                this.setState({
-                  isExtra: false,
-                });
-              }}
             />
           </View>
         </View>

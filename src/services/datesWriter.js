@@ -8,8 +8,8 @@ export function writeDateTime(event) {
     let end = moment(typeof event.recurrence === "string" ? event.recurrence : null)
     let mathDiff = moment.duration(statDate.diff(currentDate)).asDays()
     let endMathdiff = moment.duration(end.diff(currentDate)).asDays()
-    return mathDiff >= 0 ? `${mathDiff >= 0 ? "Starting" : "Ended"} ${moment(event.period).calendar()}` :
-        `${endMathdiff >= 0 ? "Ends" : "Ended"} ${moment(event.recurrence).calendar()}`
+    return mathDiff >= 0 ? `${mathDiff >= 0 ? "Starting" : "Ended"} ${moment(event.period).isValid()?moment(event.period).calendar():' ...'}` :
+        `${endMathdiff >= 0 ? "Ends" : "Ended"} ${moment(event.recurrence).isValid()?moment(event.recurrence).calendar():' ...'}`
 }
 export function dateDiff(event) {
     let currentDate = moment()

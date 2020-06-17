@@ -8,22 +8,14 @@ import shadower from "../shadower";
 const screenheight = Math.round(Dimensions.get("window").height);
 export default class TabModal extends BleashupModal {
   TabHeader() {
-    return (
-      <View>
-        {this.tabHeaderContent()}
-      </View>
-    );
+    return <View>{this.tabHeaderContent()}</View>;
   }
-  state = {
-
-  }
+  state = {};
   initialize() {
-    this.state = {
-
-    }
+    this.state = {};
   }
   tabHeaderContent() {
-    return null
+    return null;
   }
   onOpenModal() {
     setTimeout(() => {
@@ -39,10 +31,10 @@ export default class TabModal extends BleashupModal {
     });
   }
   isCurrentTab(index) {
-    return this.state.currentTab === index
+    return this.state.currentTab === index;
   }
-  borderTopLeftRadius = 1
-  borderTopRightRadius = 1
+  borderTopLeftRadius = 1;
+  borderTopRightRadius = 1;
   tabs = [
     {
       heading: () => (
@@ -56,34 +48,52 @@ export default class TabModal extends BleashupModal {
   renderTabs() {
     return this.tabs.map((ele) => {
       return (
-        <Tab heading={<TabHeading>{ele.heading()}</TabHeading>}>
+        <Tab
+          heading={<TabHeading>{ele.heading()}</TabHeading>}
+        >
           {ele.body()}
         </Tab>
       );
     });
   }
-  tabHeight = ColorList.headerHeight
-  tabPosition = "top"
-  activeTextStyle = null
+  tabHeight = ColorList.headerHeight;
+  tabPosition = "top";
+  activeTextStyle = null;
   underlineStyle = {
     backgroundColor: ColorList.bodyIcon,
-  }
-  inialPage = 0
+  };
+  inialPage = 0;
   isOpened = this.props.isOpen;
   modalBody() {
     return (
-      <Container style={{ margin: !this.searching ? "1%" : null, }}>
+      <Container style={{ margin: !this.searching ? "1%" : null }}>
         {this.TabHeader()}
-        <Tabs tabBarPosition={this.tabPosition} page={this.state.currentTab} initialPage={this.inialPage} tabBarUnderlineStyle={this.underlineStyle} onChangeTab={({ i }) => {
-          this.inialPage !== 0 && i == 0 ? this.onClosedModal() : null
-          this.setState({
-            currentTab: this.inialPage !== 0 && i === 0 ? i + 1 : i
-          })
-        }} tabContainerStyle={{
-          height: this.tabHeight,
-          ...shadower(8),
-          borderRadius: 8,
-        }}>{this.renderTabs()}</Tabs>
+        <Tabs
+          tabBarPosition={this.tabPosition}
+          page={this.state.currentTab}
+          initialPage={this.inialPage}
+          tabBarUnderlineStyle={{
+            ...this.underlineStyle,
+            backgroundColor:
+              this.tabs[this.state.currentTab] &&
+              this.tabs[this.state.currentTab].tabBarColor
+                ? this.tabs[this.state.currentTab].tabBarColor
+                : ColorList.bodyIcon,
+          }}
+          onChangeTab={({ i }) => {
+            this.inialPage !== 0 && i == 0 ? this.onClosedModal() : null;
+            this.setState({
+              currentTab: this.inialPage !== 0 && i === 0 ? i + 1 : i,
+            });
+          }}
+          tabContainerStyle={{
+            height: this.tabHeight,
+            ...shadower(8),
+            borderRadius: 8,
+          }}
+        >
+          {this.renderTabs()}
+        </Tabs>
       </Container>
     );
   }

@@ -55,7 +55,7 @@ export default class ReportTabModal extends TabModal {
     body: () => null
   },
   {
-    heading: () => <Text>Members</Text>,
+    heading: () => <Icon name={"ios-people"} type="Ionicons"></Icon>,
     body: () => (
       <View style={{ height: "100%" }}>
         {this.state.mounted ? (
@@ -72,30 +72,38 @@ export default class ReportTabModal extends TabModal {
     ),
   },
   {
-    heading: () => <Text>Done</Text>,
+    heading: () => <Icon name={"md-checkmark"} type={"Ionicons"} style={{ 
+      color:ColorList.indicatorColor
+     }}></Icon>,
+     tabBarColor:ColorList.indicatorColor,
     body: () => (
       <View style={{ height: "100%" }}>
         <DonnersList
+          intervals={this.props.intervals}
           donners={this.props.donners}
           master={this.props.master}
           actualInterval={this.props.actualInterval}
-          confirm={(e) => this.props.confirm(e)}
+          confirm={this.props.confirm}
           must_report={this.props.must_report}
         ></DonnersList>
       </View>
     ),
   },
   {
-    heading: () => <Text>Confirmed</Text>,
+    heading: () => <Icon name="check-all" type={"MaterialCommunityIcons"} style={{
+      color:ColorList.likeActive
+    }}></Icon>,
+    tabBarColor:ColorList.likeActive,
     body: () => (
       <View style={{ height: "100%" }}>
-        <ConcerneeList
+        <DonnersList
+          cannotReport
+          intervals={this.props.intervals}
           master={this.props.master}
-          contacts={this.props.confirmed}
-          complexReport={true}
+          donners={this.props.confirmed}
           must_report={this.props.must_report}
           actualInterval={this.props.actualInterval}
-        ></ConcerneeList>
+        ></DonnersList>
       </View>
     ),
   },

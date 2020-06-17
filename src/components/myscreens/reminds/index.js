@@ -45,6 +45,8 @@ import ShareFrame from '../../mainComponents/ShareFram';
 import Share from '../../../stores/share';
 import request from '../../../services/requestObjects';
 import replies from "../eventChat/reply_extern";
+import TaskCreationExtra from './TaskCreationExtra';
+import  uuid  from 'react-native-uuid';
 //const MyTasksData = stores.Reminds.MyTasksData
 
 export default class Reminds extends Component {
@@ -104,7 +106,7 @@ export default class Reminds extends Component {
   }
   updateData(newremind) {
     //this.state.eventRemindData.unshift(newremind)
-    let intervals = getcurrentDateIntervalsNoneAsync(
+    /*let intervals = getcurrentDateIntervalsNoneAsync(
       {
         start: moment(newremind.period).format(format),
         end: moment(newremind.recursive_frequency.recurrence).format(format),
@@ -116,16 +118,17 @@ export default class Reminds extends Component {
     thisInterval = getCurrentDateIntervalNonAsync(
       intervals,
       moment().format(format)
-    );
+    );*/
     this.setState({
-      eventRemindData: [
+      newing:!this.state.newing,
+      /*eventRemindData: [
         {
           ...newremind,
           thisInterval,
           intervals,
         },
         ...this.getRemindData(),
-      ],
+      ],*/
     });
   }
 
@@ -138,8 +141,8 @@ export default class Reminds extends Component {
     this.shareStore.readFromStore().then(() => {
       this.shareStore && this.shareStore.share && this.shareStore.share.event
         ? this.setState({
-            mounted: true,
-          })
+          mounted: true,
+        })
         : null;
     });
     stores.Reminds.loadRemindFromRemote(this.props.share.item_id).then(
@@ -223,25 +226,22 @@ export default class Reminds extends Component {
     } else {
       this.setState({
         RemindCreationState: true,
+        update:false,
         newing: !this.state.newing,
       });
     }
   }
-  sendUpdate(newRemind) {
+  sendUpdate() {
     if (!this.props.working) {
       this.props.startLoader();
       RemindRequest.performAllUpdates(
         this.previousRemind,
-        JSON.parse(newRemind)
+        this.state.currentRemind
       )
         .then((res) => {
           if (res) {
-            //Toast.show({ text: 'All updates applied', type: 'success' })
-            // let reminds = this.state.eventRemindData;
-            //thisremind = findIndex(reminds, { id: JSON.parse(newRemind).id });
-            //reminds[thisremind] = JSON.parse(newRemind);
             this.setState({
-              eventRemindData: this.getRemindData(),
+              newing: !this.state.newing
             });
           }
           this.props.stopLoader();
@@ -260,33 +260,6 @@ export default class Reminds extends Component {
         this.state.currentTask &&
         find(this.getRemindData(), { id: this.state.currentTask.id }),
     });
-
-    /*this.props.shared
-      ? stores.Reminds.loadRemindFromRemote(
-          this.props.share.item_id,
-          false
-        ).then((remind) => {
-          this.shareStore
-            .saveCurrentState({
-              ...this.shareStore.share,
-              remind: Array.isArray(remind) ? remind[0] : remind,
-            })
-            .then(() => {
-              this.setState({
-                mountedx: !this.state.mountedx,
-              });
-            });
-        })
-      : stores.Reminds.loadReminds(this.props.event_id, true).then(
-          (Reminds) => {
-            this.setState({
-              eventRemindData: Reminds,
-              currentTask:
-                this.state.currentTask &&
-                find(Reminds, { id: this.state.currentTask.id }),
-            });
-          }
-        );*/
   }
 
   updateRemind(data) {
@@ -353,15 +326,16 @@ export default class Reminds extends Component {
       AlertIOS.alert(message);
     }
   }
-  confirm(user) {
+  confirm(user,interval) {
+    console.warn(interval)
     if (this.props.working) {
       Toast.show({ text: "App is Busy" });
     } else {
       if (
         findIndex(this.state.currentTask.confirmed, (ele) =>
-          confirmedChecker(ele, user.data.phone, {
-            start: user.start,
-            end: user.end,
+          confirmedChecker(ele, user.phone, {
+            start: interval.start,
+            end: interval.end,
           })
         ) >= 0
       ) {
@@ -369,7 +343,7 @@ export default class Reminds extends Component {
       } else {
         this.props.startLoader();
         RemindRequest.confirm(
-          [user.data],
+          [user],
           this.state.currentTask.id,
           this.state.currentTask.event_id
         )
@@ -447,15 +421,15 @@ export default class Reminds extends Component {
           members: [
             this.props.shared
               ? {
-                  ...request.Participant(),
-                  phone: stores.LoginStore.user.phone,
-                  master: false,
-                  status: "joint",
-                  host: stores.Session.SessionStore.host,
-                }
+                ...request.Participant(),
+                phone: stores.LoginStore.user.phone,
+                master: false,
+                status: "joint",
+                host: stores.Session.SessionStore.host,
+              }
               : find(this.props.event.participant, {
-                  phone: stores.LoginStore.user.phone,
-                }),
+                phone: stores.LoginStore.user.phone,
+              }),
           ],
         },
         alarms
@@ -476,15 +450,29 @@ export default class Reminds extends Component {
     result = [...result, ...array[i]];
     return this.flatterarray(array, result, i + 1);
   }
+  filterDonners(interval){
+    //console.warn(interval)
+    let donners = this.state.currentTask.donners.filter((ele) => this.intervalFilterFunc(ele, interval))
+    return donners
+  }
+  intervalFilterFunc(el,ele){
+   return moment(el.status.date).format("x") >
+      moment(ele.start, format).format('x') &&
+      moment(el.status.date).format("x") <=
+      moment(ele.end, format).format("x")
+  }
+  filterConfirmed(interval){
+    return this.state.currentTask.confirmed.filter(ele => this.intervalFilterFunc(ele,interval))
+  }
   @autobind showReport(item, intervals, thisInterval) {
-    this.props.startLoader();
-    let confirmed = intervals.map((ele) => {
+    //this.props.startLoader();
+    /*let confirmed = intervals.map((ele) => {
       temp = item.confirmed.filter(
         (el) =>
-          moment(el.status.date).format("X") >
-            moment(ele.start, format).format('X') &&
-          moment(el.status.date).format("X") <=
-            moment(ele.end, format).format("X")
+          moment(el.status.date).format("x") >
+          moment(ele.start, format).format('x') &&
+          moment(el.status.date).format("x") <=
+          moment(ele.end, format).format("x")
       );
       temp = [
         { type: "interval", from: ele.start, to: ele.end },
@@ -502,9 +490,9 @@ export default class Reminds extends Component {
       temp = item.donners.filter(
         (el) =>
           moment(el.status.date).format("X") >
-            moment(ele.start, format).format('X') &&
+          moment(ele.start, format).format('X') &&
           moment(el.status.date).format("X") <=
-            moment(ele.end, format).format("X")
+          moment(ele.end, format).format("X")
       );
       temp = [
         {
@@ -521,17 +509,32 @@ export default class Reminds extends Component {
         }),
       ];
       return temp;
-    });
+    });*/
     let members = item.members.map((ele) => ele.phone);
     this.setState({
-      confirmed: this.flatterarray(confirmed, [], 0),
+      //confirmed: this.flatterarray(confirmed, [], 0),
       members: uniq(members),
       actualInterval: thisInterval,
       isReportModalOpened: true,
+      intervals,
       currentTask: item,
-      donners: this.flatterarray(donners, [], 0),
+      //donners: this.flatterarray(donners, [], 0),
       complexReport: false,
     });
+  }
+  addNewRemind() {
+    console.warn("adding remind")
+    this.scrollRemindListToTop()
+    RemindRequest.CreateRemind({...this.state.currentRemind,id:uuid.v1()},
+      this.props.event.about.title).then(() => {
+        this.refs.task_creator.resetRemind()
+        stores.Reminds.removeRemind(this.props.event.id,
+          request.Remind().id).then(() => {
+            this.updateData(this.state.currentRemind)
+          })
+      }).catch(() => {
+        console.warn("an error occured while creating the remind")
+      })
   }
   scrollRemindListToTop() {
     this.refs.RemindsList.scrollToEnd();
@@ -569,7 +572,6 @@ export default class Reminds extends Component {
                 showReport={this.showReport.bind(this)}
                 removeMembers={this.removeMembers}
                 updateRemind={(item) => this.updateRemind(item)}
-                update={(data) => this.updateRemind(data)}
                 deleteRemind={this.removeRemind.bind(this)}
                 item={
                   this.shareStore &&
@@ -587,35 +589,62 @@ export default class Reminds extends Component {
   getRemindData = () => {
     let RemindData = stores.Reminds.Reminds
       ? reject(stores.Reminds.Reminds[this.props.event_id], {
-          id: "newRemindId",
-        })
+        id: request.Remind().id,
+      })
       : [];
     return RemindData;
   };
-
+  onChangedStatus(newStatus) {
+    console.warn(this.state.currentRemind.stauts, newStatus)
+    this.setState({
+      currentRemind: { ...this.state.currentRemind, status: newStatus },
+    });
+  }
+  updateRequestReportOnComplete() {
+    this.setState({
+      currentRemind: {
+        ...this.state.currentRemind,
+        must_report: this.state.currentRemind.must_report
+          ? !this.state.currentRemind.must_report
+          : true,
+      },
+    });
+  }
   render() {
     return (
       <View>
         {!this.props.shared ? this.renderReminds() : this.renderSharedRemind()}
         <TasksCreation
+          CreateRemind={(remind) => {
+            this.setState({
+              currentRemind: remind,
+              RemindCreationState: false,
+              isExtra:true,
+              TaskCreationExtra: true
+            })
+          }}
+          ref={"task_creator"}
           master={this.props.master}
           event_id={this.props.event_id}
           update={this.state.update}
-          RemindRequest={RemindRequest}
           remind_id={this.state.remind_id}
-          updateData={(newRem) => this.updateData(newRem)}
-          updateRemind={(data) => this.sendUpdate(data)}
           isOpen={this.state.RemindCreationState}
           onClosed={() => {
             this.props.clearCurrentMembers();
             this.setState({
               RemindCreationState: false,
-              update: false,
               remind_id: null,
               remind: null,
             });
           }}
-          reinitializeList={() => this.scrollRemindListToTop()}
+          updateRemind={(remind) => {
+            this.setState({
+              currentRemind: remind,
+              TaskCreationExtra: true,
+              isExtra:true,
+              RemindCreationState: false
+            })
+          }}
           working={this.props.working}
           currentMembers={this.props.currentMembers}
           stopLoader={this.props.stopLoader}
@@ -634,6 +663,23 @@ export default class Reminds extends Component {
             }}
           />
         ) : null}
+        {this.state.isExtra ? <TaskCreationExtra
+          proceed={
+            !this.state.update
+              ? this.addNewRemind.bind(this)
+              : this.sendUpdate.bind(this)
+          }
+          onChangedStatus={this.onChangedStatus.bind(this)}
+          currentRemind={this.state.currentRemind}
+          onComplete={this.updateRequestReportOnComplete.bind(this)}
+          isOpen={this.state.isExtra}
+          onClosed={() => {
+            this.setState({
+              isExtra: false,
+              update: false
+            });
+          }}
+        /> : null}
         {this.state.showReportModal ? (
           <AddReport
             report={(report) => {
@@ -683,29 +729,13 @@ export default class Reminds extends Component {
             contacts={this.state.contacts ? this.state.contacts : []}
           />
         ) : null}
-        {this.state.iscontactReportModalOpened ? (
-          <ContactsReportModal
-            actualInterval={this.state.actualInterval}
-            must_report={this.state.currentTask.must_report}
-            master={
-              stores.LoginStore.user.phone === this.state.currentTask.creator
-            }
-            confirm={(user) => this.confirm(user)}
-            isOpen={this.state.iscontactReportModalOpened}
-            members={this.state.contacts}
-            onClosed={() => {
-              this.setState({
-                iscontactReportModalOpened: false,
-              });
-            }}
-          />
-        ) : null}
         {this.state.isReportModalOpened ? (
           <ReportTabModal
             concernees={this.state.members}
-            confirmed={this.state.confirmed}
-            donners={this.state.donners}
-            confirm={(e) => this.confirm(e)}
+            confirmed={this.filterConfirmed.bind(this)}
+            donners={this.filterDonners.bind(this)}
+            intervals={this.state.intervals}
+            confirm={this.confirm.bind(this)}
             master={
               stores.LoginStore.user.phone === this.state.currentTask.creator
             }
@@ -780,10 +810,10 @@ export default class Reminds extends Component {
         itemer.remind_url && itemer.remind_url.video
           ? itemer.remind_url.photo
           : itemer.remind_url && itemer.remind_url.photo
-          ? itemer.remind_url.photo
-          : itemer.remind_url && itemer.remind_url.audio
-          ? itemer.remind_url.audio
-          : null,
+            ? itemer.remind_url.photo
+            : itemer.remind_url && itemer.remind_url.audio
+              ? itemer.remind_url.audio
+              : null,
       type_extern: replies.reminds,
       title: itemer.title + ': \n' + itemer.description,
     });
@@ -830,125 +860,126 @@ export default class Reminds extends Component {
     return !this.state.mounted ? (
       <View style={{ width: "100%", height: "100%" }} />
     ) : (
-      <View style={{ width: "100%", height: "100%" }}>
-        {this.props.removeHeader ? null : (
-          <View
-            style={{
-              height: colorList.headerHeight,
-              width: "100%",
-              //paddingLeft: "1%",
-              //paddingRight: "1%",
-            }}
-          >
+        <View style={{ width: "100%", height: "100%" }}>
+          {this.props.removeHeader ? null : (
             <View
               style={{
-                ...bleashupHeaderStyle,
-                backgroundColor: colorList.headerBackground,
-                flexDirection: "row",
-                alignItems: 'center',
+                height: colorList.headerHeight,
+                width: "100%",
+                //paddingLeft: "1%",
+                //paddingRight: "1%",
               }}
             >
-              <TouchableOpacity
-                onPress={() => requestAnimationFrame(() => this.props.goback())}
-                style={{
-                  width: "10%",
-                  paddingLeft: "3%",
-                  height: "100%",
-                  justifyContent: "center",
-                }}
-              >
-                <Icon
-                  style={{ color: colorList.headerIcon }}
-                  type={"MaterialIcons"}
-                  name={"arrow-back"}
-                />
-              </TouchableOpacity>
-
               <View
                 style={{
-                  width: "80%",
-                  paddingLeft: "9%",
-                  justifyContent: "center",
-                  height: "100%",
-                  justifyContent: "center",
+                  ...bleashupHeaderStyle,
+                  backgroundColor: colorList.headerBackground,
+                  flexDirection: "row",
+                  alignItems: 'center',
                 }}
               >
-                <Title
+                <TouchableOpacity
+                  onPress={() => requestAnimationFrame(() => this.props.goback())}
                   style={{
-                    fontWeight: "bold",
-                    alignSelf: "flex-start",
-                    color: colorList.headerText,
-                    fontSize: colorList.headerFontSize,
+                    width: "10%",
+                    paddingLeft: "3%",
+                    height: "100%",
+                    justifyContent: "center",
                   }}
                 >
-                  {"Reminds"}
-                </Title>
-              </View>
-
-              <TouchableOpacity
-                style={{
-                  width: "13%",
-                  paddingRight: "3%",
-                  height: "100%",
-                  justifyContent: "center",
-                }}
-                onPress={() => requestAnimationFrame(() => this.AddRemind())}
-              >
-                <Icon
-                  type="AntDesign"
-                  name="plus"
-                  style={{ color: colorList.headerIcon, alignSelf: "center" }}
-                />
-              </TouchableOpacity>
-            </View>
-          </View>
-        )}
-
-        <View style={{ height: '93%' }}>
-          <BleashupFlatList
-            initialRender={6}
-            ref="RemindsList"
-            renderPerBatch={5}
-            onScroll={this.props.onscroll}
-            firstIndex={0}
-            //showVerticalScrollIndicator={false}
-            keyExtractor={(item, index) => index.toString()}
-            dataSource={this.getRemindData()}
-            renderItem={(item, index) => {
-              this.delay = index >= 5 ? 0 : this.delay + 1;
-              return (
-                <View>
-                  <TasksCard
-                    showMedia={this.showMedia.bind(this)}
-                    isLast={index === this.getRemindData().length - 1}
-                    phone={stores.LoginStore.user.phone}
-                    mention={(itemer) => {
-                      this.mention(itemer);
-                    }}
-                    master={this.props.master}
-                    markAsDone={(item) => this.markAsDone(item)}
-                    assignToMe={(item) => this.assignToMe(item)}
-                    calendar_id={this.props.event.calendar_id}
-                    delay={this.delay}
-                    addMembers={(currentMembers, item) =>
-                      this.addMembers(currentMembers, item)
-                    }
-                    showMembers={this.showMembers.bind(this)}
-                    showReport={this.showReport.bind(this)}
-                    removeMembers={this.removeMembers}
-                    updateRemind={(item) => this.updateRemind(item)}
-                    update={(data) => this.updateRemind(data)}
-                    deleteRemind={this.removeRemind.bind(this)}
-                    item={item}
-                    key={index}
+                  <Icon
+                    style={{ color: colorList.headerIcon }}
+                    type={"MaterialIcons"}
+                    name={"arrow-back"}
                   />
+                </TouchableOpacity>
+
+                <View
+                  style={{
+                    width: "80%",
+                    paddingLeft: "9%",
+                    justifyContent: "center",
+                    height: "100%",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Title
+                    style={{
+                      fontWeight: "bold",
+                      alignSelf: "flex-start",
+                      color: colorList.headerText,
+                      fontSize: colorList.headerFontSize,
+                    }}
+                  >
+                    {"Reminds"}
+                  </Title>
                 </View>
-              );
-            }}
-            numberOfItems={this.getRemindData().length}
-          />
+
+                <TouchableOpacity
+                  style={{
+                    width: "13%",
+                    paddingRight: "3%",
+                    height: "100%",
+                    justifyContent: "center",
+                  }}
+                  onPress={() => requestAnimationFrame(() => this.AddRemind())}
+                >
+                  <Icon
+                    type="AntDesign"
+                    name="plus"
+                    style={{ color: colorList.headerIcon, alignSelf: "center" }}
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+          )}
+
+          <View style={{ height: '93%' }}>
+            <BleashupFlatList
+              fit={this.props.fit}
+              initialRender={6}
+              ref="RemindsList"
+              renderPerBatch={5}
+              onScroll={this.props.onscroll}
+              firstIndex={0}
+              //showVerticalScrollIndicator={false}
+              keyExtractor={(item, index) => index.toString()}
+              dataSource={this.getRemindData()}
+              renderItem={(item, index) => {
+                this.delay = index >= 5 ? 0 : this.delay + 1;
+                return (
+                  <View>
+                    <TasksCard
+                      showMedia={this.showMedia.bind(this)}
+                      isLast={index === this.getRemindData().length - 1}
+                      phone={stores.LoginStore.user.phone}
+                      mention={(itemer) => {
+                        this.mention(itemer);
+                      }}
+                      master={this.props.master}
+                      markAsDone={(item) => this.markAsDone(item)}
+                      assignToMe={(item) => this.assignToMe(item)}
+                      calendar_id={this.props.event.calendar_id}
+                      delay={this.delay}
+                      addMembers={(currentMembers, item) =>
+                        this.addMembers(currentMembers, item)
+                      }
+                      showMembers={this.showMembers.bind(this)}
+                      showReport={this.showReport.bind(this)}
+                      removeMembers={this.removeMembers}
+                      updateRemind={(item) => this.updateRemind(item)}
+                      update={(data) => this.updateRemind(data)}
+                      deleteRemind={this.removeRemind.bind(this)}
+                      item={item}
+                      key={index}
+                    />
+                  </View>
+                );
+              }}
+              numberOfItems={this.getRemindData().length}
+            />
+          </View>
         </View>
-      </View>
-    );
+      );
   }
 }

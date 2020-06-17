@@ -31,7 +31,7 @@ class mainUpdater {
   updateRemindLocation(eventID, remindID, newLocation, date, updater) {
     return new Promise((resolve, reject) => {
       stores.Reminds.updateLocation(
-        this.props.event_id,
+        eventID,
         { remind_id: remindID, location: newLocation },
         true
       ).then((oldRemind) => {
@@ -61,7 +61,7 @@ class mainUpdater {
   updateRemindURL(eventID, remindID, newURL, date, updater) {
     return new Promise((resolve, reject) => {
       stores.Reminds.updateURL(
-        this.props.event_id,
+        eventID,
         { remind_id: remindID, url: newURL },
         true
       ).then((oldRemind) => {
