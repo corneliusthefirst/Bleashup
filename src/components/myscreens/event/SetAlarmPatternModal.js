@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 /* eslint-disable quotes */
 /* eslint-disable radix */
 /* eslint-disable comma-dangle */
@@ -50,8 +51,8 @@ export default class SetAlarmPatternModal extends BleashupModal {
     }
     position = "center"
     swipeToClose = false
-    modalHeight = "60%"
-    modalWidth = "90%"
+    modalHeight = 355
+    modalWidth = 280
     onClosedModal() {
         this.props.closed();
     }
@@ -59,16 +60,16 @@ export default class SetAlarmPatternModal extends BleashupModal {
     _keyExtractor = (item, index) => { return item ? item.id : null; };
     modalBody() {
         return (
-            <View>
+            <View style={{flex:1,borderRadius:10}}>
                 <View style={{ width: "98%", height: 35, }}>
                     <View style={{ flexDirection: 'row', padding: '2%',justifyContent: 'center', }}>
                         <View style={{ textAlign:'center',alignSelf: 'center', }}>
-                            <Text style={{ fontSize: 18, alignSelf: 'flex-start', fontWeight: 'bold', padding: '1%', alignSelf: 'center',}}>{"Set Alarm Pattern"}</Text>
+                            <Text style={{ fontSize: 18, fontWeight: 'bold', padding: '1%', alignSelf: 'center',}}>{"Set Alarm Pattern"}</Text>
                         </View>
                     </View>
                 </View>
-                <View style={{ margin: '3%', height: "80%" }}>
-                    <View style={{ hieght: "" }}>
+                <View style={{ margin: '3%', height: "80%", }}>
+                    <View style={{ flex: 1 }}>
                         <BleashupFlatList
                             listKey={"contacts"}
                             keyExtractor={this._keyExtractor}
@@ -87,9 +88,9 @@ export default class SetAlarmPatternModal extends BleashupModal {
                             }
                          />
                     </View>
-                    <View style={{ width: '20%', alignSelf: 'center', marginTop: "0%",flexDirection: 'column',justifyContent: 'center',}}>
+                    <View style={{ width: 55,margin: 5,flexDirection: 'column',justifyContent: 'center',alignSelf:'flex-end'}}>
                         <CreateButton title={"Set"} action={() =>
-                            this.save()} style={{ ...shadower(4), borderWidth: 0, backgroundColor: ColorList.bodyDarkWhite, }} />
+                            this.save()} style={{ ...shadower(2), borderWidth: 0, backgroundColor: ColorList.bodyDarkWhite,height:35,borderRadius:10 }} noround />
                     </View>
                 </View>
             </View>
