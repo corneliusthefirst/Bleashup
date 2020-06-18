@@ -77,10 +77,10 @@ export default class EventDetailView extends Component {
   @autobind
   initializer() {
     let participant = find(this.props.Event.participant, { phone: stores.LoginStore.user.phone });
-    this.setState({ 
-      newing: !this.state.newing, 
-      isMounted: true, 
-      participant: participant 
+    this.setState({
+      newing: !this.state.newing,
+      isMounted: true,
+      participant: participant
     });
   }
   initialScrollIndexer = 2
@@ -203,7 +203,7 @@ export default class EventDetailView extends Component {
         console.warn('ok');
         this.props.stopLoader();
         this.setState({
-          update:false
+          update: false
         })
         this.sendUpdateHighlight()
       })
@@ -370,20 +370,20 @@ export default class EventDetailView extends Component {
 
         <DescriptionModal Event={this.props.Event} isOpen={this.state.viewdetail} onClosed={() => { this.setState({ viewdetail: false }) }} parent={this}></DescriptionModal>
 
-        {this.state.EventDescriptionState ? <EventDescription updateDesc={(newDesc) => {
+        <EventDescription updateDesc={(newDesc) => {
           this.props.updateDesc(newDesc)
-        }} event={this.props.Event} isOpen={this.state.EventDescriptionState} onClosed={() => { this.setState({ EventDescriptionState: false }) }}
-          ref={"description_ref"} eventId={this.props.Event.id} updateDes={true} parentComp={this} /> : null}
+        }} event={this.props.Event || {}} isOpen={this.state.EventDescriptionState} onClosed={() => { this.setState({ EventDescriptionState: false }) }}
+          ref={"description_ref"} eventId={this.props.Event.id} updateDes={true} parentComp={this} />
 
-        {this.state.EventLocationState ? <EventLocation updateLocation={(newLoc) => {
+        <EventLocation updateLocation={(newLoc) => {
           this.props.updateLocation(newLoc)
         }} event={this.props.Event} isOpen={this.state.EventLocationState} onClosed={() => { this.setState({ EventLocationState: false }) }}
-          ref={"location_ref"} updateLoc={true} eventId={this.props.Event.id} parentComp={this} /> : null}
+          ref={"location_ref"} updateLoc={true} eventId={this.props.Event.id} parentComp={this} />
 
 
-        {this.state.isAreYouSureModalOpened ? <BleashupAlert title={"Delete Higlight"} accept={"Yes"} refuse={"No"} message={" Are you sure you want to delete these highlight ?"}
+        <BleashupAlert title={"Delete Higlight"} accept={"Yes"} refuse={"No"} message={" Are you sure you want to delete these highlight ?"}
           deleteFunction={() => this.deleteHighlight(this.state.current_highlight)}
-          isOpen={this.state.isAreYouSureModalOpened} onClosed={() => { this.setState({ isAreYouSureModalOpened: false }) }} /> : null}
+          isOpen={this.state.isAreYouSureModalOpened} onClosed={() => { this.setState({ isAreYouSureModalOpened: false }) }} />
 
 
         <SideButton
@@ -395,7 +395,7 @@ export default class EventDetailView extends Component {
               <Icon name="file-text" type="Feather" style={{ color: ColorList.bodyIcon, fontSize: 22 }} />
             </View>
           }}
-          action={() => { this.setState({ viewdetail: true }) }}
+          action={() => requestAnimationFrame(() => { this.setState({ viewdetail: true })})}
           //buttonTextStyle={{color:colorList.bodyBackground}}
           offsetX={10}
           size={40}

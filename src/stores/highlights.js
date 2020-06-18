@@ -277,7 +277,7 @@ export default class highlights {
   loadHighlight(EventID, id) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then((Highlights) => {
-        let high = Highlights[EventID];
+        let high = find(Highlights[EventID], { id: id })
         if (high) {
           resolve(high);
         } else {

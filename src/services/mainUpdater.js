@@ -46,6 +46,7 @@ class mainUpdater {
           date: date,
           time: null,
         };
+        
         oldRemind.calendar_id
           ? CalendarServe.saveEvent(
               { ...oldRemind, location: newLocation },

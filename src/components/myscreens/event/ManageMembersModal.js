@@ -10,6 +10,7 @@ import CacheImages from "../../CacheImages";
 import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
 import BleashupModal from "../../mainComponents/BleashupModal";
 import ColorList from '../../colorList';
+import CreationHeader from "./createEvent/components/CreationHeader";
 export default class ManageMembersModal extends BleashupModal {
     initialize() {
         this.state = {
@@ -79,6 +80,7 @@ export default class ManageMembersModal extends BleashupModal {
         }, 10);
     }
     delay = 0;
+    swipeToClose=false
     modalBody() {
         return (
             <View>
@@ -90,40 +92,26 @@ export default class ManageMembersModal extends BleashupModal {
                                 height: ColorList.headerHeight,
                             }}
                         >
-                            <View
-                                style={{
-                                    flexDirection: "row",
-                                    ...bleashupHeaderStyle,
-                                    paddingLeft: "1%",
-                                    justifyContent: "space-between",
-                                }}
-                            >
-                                <View style={{ marginTop: 15 }}>
-                                    <Text
-                                        style={{
-                                            fontWeight: "bold",
-                                            marginLeft: "2%",
-                                            fontSize: 16,
-                                        }}
+                            <CreationHeader back={this.onClosedModal.bind(this)} title={"Remove Members"} 
+                            extra={<View style={{ 
+                                flexDirection: 'row',
+                                marginBottom: 'auto',
+                                marginTop: 'auto',
+                                alignSelf: 'flex-end',
+                            }}>
+                                {this.state.selected.length > 0 && this.props.master ? (
+                                    <TouchableOpacity
+                                        style={{ marginTop: 'auto', marginBottom: 'auto', marginRight: "2%" }}
+                                        onPress={() => requestAnimationFrame(() => this.apply())}
                                     >
-                                        {"Remove Members"}
-                                    </Text>
-                                </View>
-                                <View>
-                                    {this.state.selected.length > 0 && this.props.master ? (
-                                        <TouchableOpacity
-                                            style={{ marginTop: 15, marginRight: "2%" }}
-                                            onPress={() => requestAnimationFrame(() => this.apply())}
-                                        >
-                                            <Text style={{ color: "red", fontWeight: "bold" }}>
-                                                {"Ban"}
-                                            </Text>
-                                        </TouchableOpacity>
-                                    ) : null}
-                                </View>
-                            </View>
+                                        <Text style={{ color: "red", fontWeight: "bold" }}>
+                                            {"Ban"}
+                                        </Text>
+                                    </TouchableOpacity>
+                                ) : null}
+                            </View>} ></CreationHeader>
                         </View>
-                        <View style={{ height: this.height-ColorList.headerHeight, margin: "2%" }}>
+                        <View style={{ height: "93%", margin: "2%" }}>
                             <BleashupFlatList
                                 firstIndex={0}
                                 renderPerBatch={5}

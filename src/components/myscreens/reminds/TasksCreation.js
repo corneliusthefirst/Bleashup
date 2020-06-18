@@ -101,7 +101,7 @@ export default class TasksCreation extends BleashupModal {
   }
   @autobind
   init() {
-    this.props.remind
+    this.props.remind && typeof this.props.remind == "string"
       ? setTimeout(() => {
         let remind = this.props.remind;
         this.setState({
@@ -144,7 +144,7 @@ export default class TasksCreation extends BleashupModal {
           members: this.props.event.participant,
           ownership:
             remind.creator === stores.LoginStore.user.phone &&
-            (this.props.update || remind.id === "newRemindId"),
+            (this.props.update || remind.id === request.Remind().id),
           currentMembers:
             this.props.currentMembers && this.props.currentMembers.length > 0
               ? this.props.currentMembers

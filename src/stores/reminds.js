@@ -184,14 +184,14 @@ export default class Reminds {
         let RemindIndex = findIndex(Reminds[EventID], {
           id: NewRemind.remind_id,
         });
-        const oldRem = Reminds[EventID][RemindIndex]
+        const oldRem = JSON.stringify(Reminds[EventID][RemindIndex])
         Reminds[EventID][RemindIndex].title = NewRemind.title;
         Reminds[EventID][RemindIndex].updated_at = moment().format();
         Reminds[EventID][RemindIndex].description_updated = inform;
         Reminds[EventID][RemindIndex].updated = inform;
         this.setProperty(Reminds);
         GState.eventUpdated = true;
-        resolve(oldRem);
+        resolve(JSON.parse(oldRem));
       });
     });
   }

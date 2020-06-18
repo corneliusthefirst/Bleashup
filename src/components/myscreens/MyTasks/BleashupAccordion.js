@@ -26,7 +26,7 @@ export default class AccordionModuleNative extends Component {
       UIManager.setLayoutAnimationEnabledExperimental(true);
     }
   }
-  renderItem(dataArray,index) {
+  renderItem(dataArray, index) {
     return <View>
       <View
         style={{
@@ -57,7 +57,7 @@ export default class AccordionModuleNative extends Component {
       </View>
       <View style={styles.parentHr} />
       {this.expanded(dataArray) && (
-        <View>{this.props._renderContent(dataArray,index)}</View>
+        <View>{this.props._renderContent(dataArray, index)}</View>
       )}
     </View>;
   }

@@ -1117,7 +1117,7 @@ export default class VideoController extends Component {
                 onPress={this.events.onScreenTouch}
                 style={[styles.player.container, this.styles.containerStyle]}
             >
-                <View style={[styles.player.container, this.styles.containerStyle,]}>
+                <View style={[styles.player.container, this.styles.containerStyle, this.props.messaging && {borderRadius: 5,...shadower(4)}]}>
                     <Video
                         {...this.props}
                         ref={videoPlayer => this.player.ref = videoPlayer}
@@ -1227,7 +1227,7 @@ const styles = {
         },
         text: {
             backgroundColor: 'transparent',
-            color: '#FEFFDE',
+            color: ColorList.bodyBackground,
             fontSize: 14,
             textAlign: 'center',
         },
@@ -1352,7 +1352,7 @@ const styles = {
             //justifyContent:"center",
         },
         track: {
-            backgroundColor: ColorList.indicatorInverted,
+            backgroundColor: ColorList.bodyBackground,
             height: 1,
             position: 'relative',
             top: 14,

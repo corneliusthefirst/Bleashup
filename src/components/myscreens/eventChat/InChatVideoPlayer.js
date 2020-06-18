@@ -33,6 +33,8 @@ export default class InChatVideoPlayer extends Component {
                 }}
                 toggleResizeModeOnFullscreen={false}
                 //pictureInPicture={true}
+                paused={false}
+                messaging
                 resizeMode={"contain"}
                 disableVolume={true}
                 seekColor={ColorList.indicatorColor}

@@ -10,6 +10,7 @@ import rnFetchBlob from 'rn-fetch-blob';
 import buttoner from '../../../services/buttoner';
 import ColorList from '../../colorList';
 import TextContent from './TextContent';
+import CacheImages from '../../CacheImages';
 const { fs } = rnFetchBlob
 export default class PhotoUploader extends Component {
     constructor(props) {
@@ -96,10 +97,11 @@ export default class PhotoUploader extends Component {
                 <View>
                     <View>
                         <TouchableOpacity onPress={() => this.props.showPhoto(this.props.message.source)}>
-                            <Image resizeMode={'contain'} style={{
-                                borderRadius: 9, alignSelf: 'center',
-                                maxWidth: this.messageWidth,
-                            }} source={{ uri: this.props.message.source }} height={340}></Image>
+                            <CacheImages style={{
+                                 alignSelf: 'center',
+                                width: this.messageWidth, height: 248,
+                            }} source={{ uri: this.props.message.source }} 
+                            borderRadius={5} thumbnails square large width={this.messageWidth}></CacheImages>
                         </TouchableOpacity>
                     </View>
                     <View style={{ alignSelf: 'center', position: 'absolute', marginTop: '45%', }}>

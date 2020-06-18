@@ -11,7 +11,7 @@ export default class IntervalSeparator extends Component {
         super(props)
     }
     render() {
-        return <TouchableOpacity onPress={() => requestAnimationFrame(() => this.props.onPress && this.props.onPress())} style={{ margin: '4%',opacity:.7, backgroundColor: this.props.actualInterval ? ColorList.indicatorInverted : ColorList.bodyBackground, borderRadius: 5, ...shadower(4), height: 40 }}>
+        return <TouchableOpacity onPress={() => requestAnimationFrame(() => this.props.onPress && this.props.onPress())} style={{ margin: '4%', opacity: .7, backgroundColor: this.props.actualInterval ? ColorList.indicatorInverted : ColorList.bodyBackground, borderRadius: 5, ...shadower(1), height: 40 }}>
             <Title style={{ fontWeight: 'bold', alignSelf: 'center', fontSize: 14, marginTop: '2.5%', color: this.props.actualInterval ? ColorList.bodyIcon : ColorList.bodyIcon}} note >{this.props.actualInterval ?  `from ${'now'} -> ${moment(this.props.to, format).calendar()}` :  this.props.first?`started ${moment(this.props.to, format).calendar()}`:`from ${moment(this.props.from,format).calendar()}   ->  ${moment(this.props.to, format).calendar()}`}</Title>
         </TouchableOpacity>
     }
