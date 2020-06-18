@@ -3,7 +3,7 @@ import React from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import {Icon} from 'native-base';
 import RenderDate from './RenderDate';
-
+import SwipeMenu from '../../../SwiperComponent/swipeMenu';
 class UserView extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -25,7 +25,7 @@ class UserView extends React.PureComponent {
       }}>
         <Image
           source={{ uri: props.profile }}
-          style={{ width:props.activityMode||this.props.swiper?40: 50,height:props.activityMode||this.props.swiper?40:50,borderRadius: 25,
+          style={{ width:props.activityMode?40: 50,height:props.activityMode?40:50,borderRadius: 25,
            marginLeft: 8}}
         />
         <View style={{ flex: 1 ,paddingRight:10}}>
@@ -54,7 +54,7 @@ class UserView extends React.PureComponent {
         flexDirection: 'row',
         position: 'absolute',
         top: props.swiper ? 0 : 55,
-        width: '98%',
+        width: '100%',
         padding:10,
         alignItems: 'center',
         backgroundColor: 'rgba(52,52,52,0.1)',
@@ -83,15 +83,24 @@ class UserView extends React.PureComponent {
          :<Text style={styles.time}>{"Posted "+props.updated_at}</Text>}
         </View>
 
-        <TouchableOpacity onPress={props.onClosePress}>
-        <Icon
-          name="dots-three-vertical"
-          type="Entypo"
-          style={{ color:"white",fontSize:20 }}
-        />
-      </TouchableOpacity>
+        <SwipeMenu />
 
-        
+         {/*<View style={{width:70,height:'100%',justifyContent:'center',alignItems:'center',flexDirection:'row'}}>
+
+         <TouchableOpacity onPress={this.props.delete}>
+         <View style={{width:30,height:'100%', justifyContent: 'center',alignItems:'center'}}>
+           <Icon
+              name="delete"
+              type="AntDesign"
+              style={{ color: 'tomato', fontSize: 20 }}
+              onPress={this.props.delete}
+            />
+            </View>
+            </TouchableOpacity>
+
+          
+         </View>  */}
+
       </View>
 
     );

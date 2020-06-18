@@ -2,59 +2,59 @@ import moment from 'moment';
 
 const media = [
   {
-    id: '1435',
+    id: '14354',
     url:
       'https://images.unsplash.com/photo-1532579853048-ec5f8f15f88d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60',
     type: 'image',
     message: 'In 2012 Mark Zuckerberg commented, "The biggest mistake we made as a company was betting too much on HTML as opposed to native".[8] He promised that Facebook would soon deliver a better mobile experience.Inside Facebook, Jordan Walke found a way to generate UI elements for iOS from a background JavaScript thread.[9] They decided to organise an internal Hackathon to perfect this prototype in order to be able to build native apps with this technology.[10]After months of development, Facebook released the first version for the React JavaScript Configuration in 2015. During a technical talk,[11] Christopher Chedeau explained that Facebook was already using React Native in production for their Group App and their Ads Manager App.',
     creator: {
-      name: 'Amit',
+      name: 'Sasuke',
       profile: 'https://avatars0.githubusercontent.com/u/16208872?s=460&v=4',
       updated_at: moment().format(),
     },
   },
 
   {
-    id: '8756',
+    id: '87567',
     url:
       '/storage/emulated/0/beats/APOLOGY Dancehall x Afrobeat x Wizkid Type Beat Instrumental.mp4',
     type: 'video',
     message: 'was betting too much on HTML as opposed https://avatars0.githubusercontent.com/u/16208872?s=460&v=4 ',
     creator: {
-      name: 'Trinadh',
+      name: 'Tunade',
       profile: 'https://avatars2.githubusercontent.com/u/45196619?s=460&v=4',
       updated_at: moment().format(),
     },
   }, 
 
   {
-    id: '2546',
+    id: '25466',
     url:
       'https://images.unsplash.com/photo-1500099817043-86d46000d58f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60',
     type: 'image',
     message: '',
     creator: {
-      name: 'Trinadh',
+      name: 'kakashi',
       profile: 'https://avatars2.githubusercontent.com/u/45196619?s=460&v=4',
       updated_at: moment().format(),
     },
   },
 
   {
-    id: '342',
+    id: '34242',
     url:
       'https://images.unsplash.com/photo-1476292026003-1df8db2694b8?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60',
     type: 'image',
     message: '',
     creator: {
-      name: 'Trinadh',
+      name: 'Naruto',
       profile: 'https://avatars2.githubusercontent.com/u/45196619?s=460&v=4',
       updated_at: moment().format(),
     },
   },
 
   {
-    id: '1423',
+    id: '14236',
     url:
       'https://images.unsplash.com/photo-1498982261566-1c28c9cf4c02?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60',
     type: 'image',
@@ -62,7 +62,7 @@ const media = [
     isReadMore: true,
     message: '',
     creator: {
-      name: 'Trinadh',
+      name: 'sakura',
       profile: 'https://avatars2.githubusercontent.com/u/45196619?s=460&v=4',
       updated_at: moment().format(),
     },
