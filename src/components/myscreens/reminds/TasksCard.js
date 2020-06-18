@@ -150,6 +150,7 @@ export default class EventTasksCard extends Component {
         width:"98%",
         flexDirection: 'column',
         borderRadius: 5,
+        backgroundColor: ColorList.bodyBackground,
         alignSelf: 'center',
         margin: '1%',padding: "1%",...shadower(1)
         //marginLeft: "2%", marginRight: "2%", //marginBottom: this.props.isLast ? '25%' : '0%',
