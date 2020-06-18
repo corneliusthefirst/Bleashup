@@ -1,3 +1,7 @@
+/* eslint-disable quotes */
+/* eslint-disable radix */
+/* eslint-disable comma-dangle */
+/* eslint-disable prettier/prettier */
 import React, { Component } from 'react';
 
 import { View, Platform, TouchableOpacity } from 'react-native';
@@ -6,7 +10,7 @@ import { Button, Content, Text } from 'native-base';
 import moment from 'moment';
 import BleashupFlatList from '../../BleashupFlatList';
 import SelectableAlarmPeriod from './SelectableAlarmPeriod';
-import { reject } from "lodash"
+import { reject } from "lodash";
 import { MenuDivider } from 'react-native-material-menu';
 import bleashupHeaderStyle from '../../../services/bleashupHeaderStyle';
 import { AlarmPatterns } from '../../../services/recurrenceConfigs';
@@ -16,9 +20,9 @@ import ColorList from '../../colorList';
 import BleashupModal from '../../mainComponents/BleashupModal';
 export default class SetAlarmPatternModal extends BleashupModal {
     initialize() {
-        state = {
+        this.state = {
             selected: []
-        }
+        };
     }
     state = {
         selected: []
@@ -26,12 +30,12 @@ export default class SetAlarmPatternModal extends BleashupModal {
     addItem(item) {
         this.setState({
             selected: [...this.state.selected, item]
-        })
+        });
     }
     removeItem(id) {
         this.setState({
             selected: reject(this.state.selected, { id: id })
-        })
+        });
     }
     patterns = AlarmPatterns()
     save() {
@@ -40,19 +44,19 @@ export default class SetAlarmPatternModal extends BleashupModal {
                 date: parseInt(Platform.OS === 'ios'
                     ? moment(this.props.date).diff(ele.date, 'minutes')
                         .toISOString() : moment(this.props.date).diff(ele.date, 'minutes'))
-            }
-        }))
-        this.props.closed()
+            };
+        }));
+        this.props.closed();
     }
     position = "center"
     swipeToClose = false
     modalHeight = "60%"
     modalWidth = "90%"
     onClosedModal() {
-        this.props.closed()
+        this.props.closed();
     }
     borderRadius = 10
-    _keyExtractor = (item, index) => { return item ? item.id : null };
+    _keyExtractor = (item, index) => { return item ? item.id : null; };
     modalBody() {
         return (
             <View>
@@ -77,23 +81,19 @@ export default class SetAlarmPatternModal extends BleashupModal {
                                 // console.error(item, "pppppp")
                                 return item ?
                                     <View style={{ margin: '2%', }}>
-                                        <SelectableAlarmPeriod item={item} timeoute={parseInt(index) * 20} key={index} checked={item => this.addItem(item)} unchecked={(id => this.removeItem(id))}>
-                                        </SelectableAlarmPeriod>
+                                        <SelectableAlarmPeriod item={item} timeoute={parseInt(index) * 20} key={index} checked={item => this.addItem(item)} unchecked={(id => this.removeItem(id))} />
                                         <MenuDivider color="#1FABAB" />
-                                    </View> : null
+                                    </View> : null;
                             }
                             }
-                        >
-
-                        </BleashupFlatList>
+                         />
                     </View>
                     <View style={{ width: '20%', alignSelf: 'center', marginTop: "0%",flexDirection: 'column',justifyContent: 'center',}}>
                         <CreateButton title={"Set"} action={() =>
-                            this.save()} style={{ ...shadower(4), borderWidth: 0, backgroundColor: ColorList.bodyDarkWhite, }}>
-                        </CreateButton>
+                            this.save()} style={{ ...shadower(4), borderWidth: 0, backgroundColor: ColorList.bodyDarkWhite, }} />
                     </View>
                 </View>
             </View>
         );
     }
-} 
+}

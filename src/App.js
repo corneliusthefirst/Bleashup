@@ -109,7 +109,7 @@ const AppNavigator = createStackNavigator(
     SwiperComponent: { screen: SwiperComponent },
   },
   {
-    initialRouteName: "SwiperComponent",
+    initialRouteName: "LoginHome",
     headerMode: "none",
   }
 );
