@@ -63,20 +63,35 @@ export default class InviteParticipantModal extends BleashupModal {
   }
   saveStyles = { fontSize: 40, color: "#1FABAB" }
   delay = 0;
+  swipeToClose=false
   modalBody() {
     return (
       <View>
         <View
           style={{
+            ...bleashupHeaderStyle,
+            padding: "2%",
             width: "100%",
             height: 53,
+            flexDirection: 'row',
           }}
         >
+          <TouchableOpacity onPress={() => requestAnimationFrame(() => this.onClosedModal())} style={{
+            marginBottom: 'auto',
+            marginTop: 'auto',
+            marginLeft: '2%',
+            justifyContent: 'flex-start',
+            flexDirection: 'row',
+            width: 70
+          }}>
+            <Icon type={"MaterialIcons"} name={"arrow-back"}>
+            </Icon>
+          </TouchableOpacity>
           <View
             style={{
+              width:'82%',
+              height:'100%',
               flexDirection: "row",
-              ...bleashupHeaderStyle,
-              padding: "2%",
               justifyContent: 'space-between',
             }}
           >
@@ -122,7 +137,7 @@ export default class InviteParticipantModal extends BleashupModal {
             </View>}
           </View>
         </View>
-        <View style={{ height: "90%" }}>
+        <View style={{ height: "93%" }}>
           <BleashupFlatList
             firstIndex={0}
             renderPerBatch={20}

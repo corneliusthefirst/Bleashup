@@ -143,8 +143,8 @@ export default class HighlightCard extends PureComponent {
             requestAnimationFrame(() => this.props.showItem(this.props.item))
           }
           style={{
-            height: this.containsMedia() ? height / 18 : height / 7,
-            margin: "2%",
+            height: this.containsMedia() ? height / 18 : height / 6,
+            margin: "1%",
           }}
         >
           <Text

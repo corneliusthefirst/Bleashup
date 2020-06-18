@@ -46,7 +46,7 @@ import Share from '../../../stores/share';
 import request from '../../../services/requestObjects';
 import replies from "../eventChat/reply_extern";
 import TaskCreationExtra from './TaskCreationExtra';
-import  uuid  from 'react-native-uuid';
+import uuid from 'react-native-uuid';
 //const MyTasksData = stores.Reminds.MyTasksData
 
 export default class Reminds extends Component {
@@ -120,7 +120,7 @@ export default class Reminds extends Component {
       moment().format(format)
     );*/
     this.setState({
-      newing:!this.state.newing,
+      newing: !this.state.newing,
       /*eventRemindData: [
         {
           ...newremind,
@@ -176,22 +176,6 @@ export default class Reminds extends Component {
       mounted: true,
       RemindCreationState: this.props.currentMembers ? true : false,
     });
-    //let results = [];
-    //let intervals = [];
-    //let thisInterval = {};
-    /* Reminds = reject(Reminds, { id: request.Remind().id });
-
-    stores.Reminds.loadReminds(this.props.event_id, true).then((Reminds) => {
-      console.warn(Reminds);
-      Reminds = reject(Reminds, { id: request.Remind().id });
-      setTimeout(() => {
-        this.setState({
-          mounted: true,
-          RemindCreationState: this.props.currentMembers ? true : false,
-          eventRemindData: Reminds,
-        });
-      });
-    });*/
   }
   saveRemoved(members) {
     if (this.props.working) {
@@ -226,7 +210,7 @@ export default class Reminds extends Component {
     } else {
       this.setState({
         RemindCreationState: true,
-        update:false,
+        update: false,
         newing: !this.state.newing,
       });
     }
@@ -326,8 +310,7 @@ export default class Reminds extends Component {
       AlertIOS.alert(message);
     }
   }
-  confirm(user,interval) {
-    console.warn(interval)
+  confirm(user, interval) {
     if (this.props.working) {
       Toast.show({ text: "App is Busy" });
     } else {
@@ -450,82 +433,35 @@ export default class Reminds extends Component {
     result = [...result, ...array[i]];
     return this.flatterarray(array, result, i + 1);
   }
-  filterDonners(interval){
+  filterDonners(interval) {
     //console.warn(interval)
     let donners = this.state.currentTask.donners.filter((ele) => this.intervalFilterFunc(ele, interval))
     return donners
   }
-  intervalFilterFunc(el,ele){
-   return moment(el.status.date).format("x") >
+  intervalFilterFunc(el, ele) {
+    return moment(el.status.date).format("x") >
       moment(ele.start, format).format('x') &&
       moment(el.status.date).format("x") <=
       moment(ele.end, format).format("x")
   }
-  filterConfirmed(interval){
-    return this.state.currentTask.confirmed.filter(ele => this.intervalFilterFunc(ele,interval))
+  filterConfirmed(interval) {
+    return this.state.currentTask.confirmed.filter(ele => this.intervalFilterFunc(ele, interval))
   }
   @autobind showReport(item, intervals, thisInterval) {
-    //this.props.startLoader();
-    /*let confirmed = intervals.map((ele) => {
-      temp = item.confirmed.filter(
-        (el) =>
-          moment(el.status.date).format("x") >
-          moment(ele.start, format).format('x') &&
-          moment(el.status.date).format("x") <=
-          moment(ele.end, format).format("x")
-      );
-      temp = [
-        { type: "interval", from: ele.start, to: ele.end },
-        ...temp.map((e) => {
-          return {
-            data: e,
-            start: ele.start,
-            end: ele.end,
-          };
-        }),
-      ];
-      return temp;
-    });
-    let donners = intervals.map((ele) => {
-      temp = item.donners.filter(
-        (el) =>
-          moment(el.status.date).format("X") >
-          moment(ele.start, format).format('X') &&
-          moment(el.status.date).format("X") <=
-          moment(ele.end, format).format("X")
-      );
-      temp = [
-        {
-          type: "interval",
-          from: ele.start,
-          to: ele.end,
-        },
-        ...temp.map((e) => {
-          return {
-            data: e,
-            start: ele.start,
-            end: ele.end,
-          };
-        }),
-      ];
-      return temp;
-    });*/
     let members = item.members.map((ele) => ele.phone);
     this.setState({
-      //confirmed: this.flatterarray(confirmed, [], 0),
       members: uniq(members),
       actualInterval: thisInterval,
       isReportModalOpened: true,
       intervals,
       currentTask: item,
-      //donners: this.flatterarray(donners, [], 0),
       complexReport: false,
     });
   }
   addNewRemind() {
     console.warn("adding remind")
     this.scrollRemindListToTop()
-    RemindRequest.CreateRemind({...this.state.currentRemind,id:uuid.v1()},
+    RemindRequest.CreateRemind({ ...this.state.currentRemind, id: uuid.v1() },
       this.props.event.about.title).then(() => {
         this.refs.task_creator.resetRemind()
         stores.Reminds.removeRemind(this.props.event.id,
@@ -595,7 +531,6 @@ export default class Reminds extends Component {
     return RemindData;
   };
   onChangedStatus(newStatus) {
-    console.warn(this.state.currentRemind.stauts, newStatus)
     this.setState({
       currentRemind: { ...this.state.currentRemind, status: newStatus },
     });
@@ -619,7 +554,7 @@ export default class Reminds extends Component {
             this.setState({
               currentRemind: remind,
               RemindCreationState: false,
-              isExtra:true,
+              isExtra: true,
               TaskCreationExtra: true
             })
           }}
@@ -641,7 +576,7 @@ export default class Reminds extends Component {
             this.setState({
               currentRemind: remind,
               TaskCreationExtra: true,
-              isExtra:true,
+              isExtra: true,
               RemindCreationState: false
             })
           }}
@@ -652,25 +587,23 @@ export default class Reminds extends Component {
           event={this.props.event}
           eventRemindData={this.getRemindData()}
         />
-        {this.state.isSelectAlarmPatternModalOpened ? (
-          <SetAlarmPatternModal
-            save={(alarms) => this.saveAlarms(alarms)}
-            isOpen={this.state.isSelectAlarmPatternModalOpened}
-            closed={() => {
-              this.setState({
-                isSelectAlarmPatternModalOpened: false,
-              });
-            }}
-          />
-        ) : null}
-        {this.state.isExtra ? <TaskCreationExtra
+        <SetAlarmPatternModal
+          save={(alarms) => this.saveAlarms(alarms)}
+          isOpen={this.state.isSelectAlarmPatternModalOpened}
+          closed={() => {
+            this.setState({
+              isSelectAlarmPatternModalOpened: false,
+            });
+          }}
+        />
+        <TaskCreationExtra
           proceed={
             !this.state.update
               ? this.addNewRemind.bind(this)
               : this.sendUpdate.bind(this)
           }
           onChangedStatus={this.onChangedStatus.bind(this)}
-          currentRemind={this.state.currentRemind}
+          currentRemind={this.state.currentRemind || {}}
           onComplete={this.updateRequestReportOnComplete.bind(this)}
           isOpen={this.state.isExtra}
           onClosed={() => {
@@ -679,83 +612,75 @@ export default class Reminds extends Component {
               update: false
             });
           }}
-        /> : null}
-        {this.state.showReportModal ? (
-          <AddReport
-            report={(report) => {
-              this.markAsDoneWithReport(report);
-            }}
-            onClosed={() => {
-              this.setState({
-                showReportModal: false,
-              });
-            }}
-            isOpen={this.state.showReportModal}
-          />
-        ) : null}
-        {this.state.isSelectableContactsModalOpened ? (
-          <SelectableContactList
-            adding={this.state.adding}
-            removing={this.state.removing}
-            addMembers={(members) => {
-              this.saveAddMembers(members);
-            }}
-            saveRemoved={(members) => this.saveRemoved(members)}
-            members={
-              this.state.contacts && this.state.contacts.length > 0
-                ? this.state.contacts
-                : []
-            }
-            notcheckall={this.state.notcheckAll}
-            isOpen={this.state.isSelectableContactsModalOpened}
-            close={() => {
-              this.setState({
-                isSelectableContactsModalOpened: false,
-              });
-            }}
-          />
-        ) : null}
-        {this.state.isContactsModalOpened ? (
-          <ContactListModal
-            title={this.state.title}
-            isOpen={this.state.isContactsModalOpened}
-            onClosed={() => {
-              this.setState({
-                isContactsModalOpened: false,
-              });
-            }}
-            complexReport={this.state.complexReport}
-            actualInterval={this.state.actualInterval}
-            contacts={this.state.contacts ? this.state.contacts : []}
-          />
-        ) : null}
-        {this.state.isReportModalOpened ? (
-          <ReportTabModal
-            concernees={this.state.members}
-            confirmed={this.filterConfirmed.bind(this)}
-            donners={this.filterDonners.bind(this)}
-            intervals={this.state.intervals}
-            confirm={this.confirm.bind(this)}
-            master={
-              stores.LoginStore.user.phone === this.state.currentTask.creator
-            }
-            must_report={this.state.currentTask.must_report}
-            stopLoader={() => this.props.stopLoader()}
-            actualInterval={this.state.actualInterval}
-            complexReport={this.state.complexReport}
-            changeComplexReport={() => {
-              this.setState({
-                complexReport: !this.state.complexReport,
-              });
-            }}
-            onClosed={() => {
-              this.setState({
-                isReportModalOpened: false,
-              });
-            }}
-            isOpen={this.state.isReportModalOpened}
-          />
-        ) : null}
+        />
+        <AddReport
+          report={(report) => {
+            this.markAsDoneWithReport(report);
+          }}
+          onClosed={() => {
+            this.setState({
+              showReportModal: false,
+            });
+          }}
+          isOpen={this.state.showReportModal}
+        />
+        <SelectableContactList
+          adding={this.state.adding}
+          removing={this.state.removing}
+          addMembers={(members) => {
+            this.saveAddMembers(members);
+          }}
+          saveRemoved={(members) => this.saveRemoved(members)}
+          members={
+            this.state.contacts && this.state.contacts.length > 0
+              ? this.state.contacts
+              : []
+          }
+          notcheckall={this.state.notcheckAll}
+          isOpen={this.state.isSelectableContactsModalOpened}
+          close={() => {
+            this.setState({
+              isSelectableContactsModalOpened: false,
+            });
+          }}
+        />
+        <ContactListModal
+          title={this.state.title}
+          isOpen={this.state.isContactsModalOpened}
+          onClosed={() => {
+            this.setState({
+              isContactsModalOpened: false,
+            });
+          }}
+          complexReport={this.state.complexReport}
+          actualInterval={this.state.actualInterval}
+          contacts={this.state.contacts ? this.state.contacts : []}
+        />
+        <ReportTabModal
+          concernees={this.state.members}
+          confirmed={this.filterConfirmed.bind(this)}
+          donners={this.filterDonners.bind(this)}
+          intervals={this.state.intervals}
+          confirm={this.confirm.bind(this)}
+          master={
+            this.state.currentTask && stores.LoginStore.user.phone === this.state.currentTask.creator
+          }
+          must_report={this.state.currentTask && this.state.currentTask.must_report}
+          stopLoader={() => this.props.stopLoader()}
+          actualInterval={this.state.actualInterval}
+          complexReport={this.state.complexReport}
+          changeComplexReport={() => {
+            this.setState({
+              complexReport: !this.state.complexReport,
+            });
+          }}
+          onClosed={() => {
+            this.setState({
+              isReportModalOpened: false,
+            });
+          }}
+          isOpen={this.state.isReportModalOpened}
+        />
         <PhotoViewer
           open={this.state.showPhoto}
           photo={this.state.photo}
@@ -774,22 +699,20 @@ export default class Reminds extends Component {
             });
           }}
         />
-        {this.state.isAreYouModalOpened ? (
-          <AreYouSure
-            isOpen={this.state.isAreYouModalOpened}
-            title={"Delete Remind"}
-            closed={() => {
-              this.setState({
-                isAreYouModalOpened: false,
-              });
-            }}
-            ok={'Delete'}
-            callback={() => {
-              this.deleteRemind();
-            }}
-            message={"Are you sure you want to delete this remind?"}
-          />
-        ) : null}
+        <AreYouSure
+          isOpen={this.state.isAreYouModalOpened}
+          title={"Delete Remind"}
+          closed={() => {
+            this.setState({
+              isAreYouModalOpened: false,
+            });
+          }}
+          ok={'Delete'}
+          callback={() => {
+            this.deleteRemind();
+          }}
+          message={"Are you sure you want to delete this remind?"}
+        />
       </View>
     );
   }
@@ -934,7 +857,7 @@ export default class Reminds extends Component {
             </View>
           )}
 
-          <View style={{ height: '93%' }}>
+          <View style={{ height: '92%' }}>
             <BleashupFlatList
               fit={this.props.fit}
               initialRender={6}

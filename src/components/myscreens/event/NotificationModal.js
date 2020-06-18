@@ -1,39 +1,41 @@
-import React, { PureComponent } from 'react';
-import Modal from "react-native-modalbox"
-import { Header, Left, Icon, Text, Label, Right, Title, Thumbnail } from 'native-base';
+import React, { PureComponent } from "react";
+import Modal from "react-native-modalbox";
+import {
+    Header,
+    Left,
+    Icon,
+    Text,
+    Label,
+    Right,
+    Title,
+    Thumbnail,
+} from "native-base";
 import {
     View,
     TouchableWithoutFeedback,
     TouchableHighlight,
     TouchableOpacity,
-} from 'react-native';
+} from "react-native";
 //import BleashupFlatList from './BleashupFlatList';
 //import ProfileWithCheckBox from './myscreens/currentevents/components/PofileWithCheckbox';
-import { indexOf, reject, concat, find } from "lodash"
-import CacheImages from '../../CacheImages';
-import testForURL from '../../../services/testForURL';
-import ProfileView from '../invitations/components/ProfileView';
-import ColorList from '../../colorList';
+import { indexOf, reject, concat, find } from "lodash";
+import CacheImages from "../../CacheImages";
+import testForURL from "../../../services/testForURL";
+import ProfileView from "../invitations/components/ProfileView";
+import ColorList from "../../colorList";
 export default class NotificationModal extends PureComponent {
     constructor(props) {
-        super(props)
+        super(props);
         this.state = {
-            members: []
-        }
+            members: [],
+            opened: false,
+        };
     }
-    state = {
-
-    }
-    componentDidMount() {
-        setTimeout(() =>
-            this.setState({
-                checked: this.props.members,
-                members: this.props.members,
-                check: this.props.notcheckall ? false : true
-            })
-            , 200)
-    }
-    _keyExtractor = (item, index) => { return item ? item.phone : null };
+    state = {};
+    componentDidMount() { }
+    _keyExtractor = (item, index) => {
+        return item ? item.phone : null;
+    };
     render() {
         return (
             <Modal
@@ -49,14 +51,20 @@ export default class NotificationModal extends PureComponent {
                     this.setState({
                         members: [],
                         checked: [],
-                        check: true
-                    })
-                    this.props.close()
+                        opened: false,
+                        check: true,
+                    });
                 }}
                 onOpened={() => {
-                    this.setState({
-
-                    })
+                    setTimeout(() => {
+                        this.setState({
+                            opened: true,
+                            checked: this.props.members,
+                            members: this.props.members,
+                            check: this.props.notcheckall ? false : true,
+                        });
+                        this.props.close();
+                    }, 50);
                 }}
                 style={{
                     height: "128%",
@@ -66,53 +74,126 @@ export default class NotificationModal extends PureComponent {
                     borderColor: ColorList.bodyDarkWhite,
                     borderBottomRightRadius: 8,
                     backgroundColor: ColorList.indicatorInverted,
-                    width: "70%"
+                    width: "70%",
                 }}
             >
-                <TouchableWithoutFeedback onPress={() => requestAnimationFrame(() => {
-                    this.props.onPress()
-                })
-                }>
-                    <View style={{ margin: '2%' }}>
-                        <View style={{ flexDirection: 'column', }}>
-                            <View style={{margin: '2%',}}><Text style={{ fontStyle: 'italic', }} note>New Update</Text></View>
-                            <View style={{ flexDirection: 'row', }}>
-                                <View style={{ width: '90%' }}>
-                                    {typeof this.props.change.updater === 'string' ? <ProfileView phone={this.props.change.updater} ></ProfileView> :
-                                        <View style={{ flexDirection: 'row', }}>
-                                            <View style={{ width: "20%" }}>{this.props.change.updater.profile && testForURL(this.props.change.updater.profile) ?
-                                                <CacheImages thumbnails
-                                                    source={{ uri: this.props.change.updater.profile }}>
-                                                </CacheImages> : <Thumbnail small source={{ uri: this.props.change.updater.profile ? this.change.updater.profile : '' }}></Thumbnail>}
-                                            </View>
-                                            <View style={{ marginTop: "3%", marginLeft: "4%", flexDirection: 'column', width: "65%" }}>
-                                                <Text ellipsizeMode={'tail'} numberOfLines={1} style={{ marginBottom: "2%", fontWeight: 'bold', }}>{this.props.change.updater.nickname}</Text>
-                                                {this.props.change && this.props.change.updater && this.props.change.updater.status && this.props.change.updater.status !== 'undefined'?<Text ellipsizeMode={'tail'} 
-                                                numberOfLines={1} style={{ marginLeft: "2%" }} note>{this.props.change.updater.status}</Text>:null}
-                                            </View>
-                                        </View>}
+                {this.state.opened ? (
+                    <TouchableWithoutFeedback
+                        onPress={() =>
+                            requestAnimationFrame(() => {
+                                this.props.onPress();
+                            })
+                        }
+                    >
+                        <View style={{ margin: "2%" }}>
+                            <View style={{ flexDirection: "column" }}>
+                                <View style={{ margin: "2%" }}>
+                                    <Text style={{ fontStyle: "italic" }} note>
+                                        New Update
+                  </Text>
                                 </View>
-                                <View style={{ width: "10%" }}>
-                                    <TouchableOpacity onPress={() => requestAnimationFrame(() => {
-                                        console.warn("pressing !!!")
-                                        this.props.close()
-                                    })}>
-                                        <Icon type={"EvilIcons"} name={"close"}></Icon>
-                                    </TouchableOpacity>
+                                <View style={{ flexDirection: "row" }}>
+                                    <View style={{ width: "90%" }}>
+                                        {typeof this.props.change.updater === "string" ? (
+                                            <ProfileView
+                                                phone={this.props.change.updater}
+                                            ></ProfileView>
+                                        ) : (
+                                                <View style={{ flexDirection: "row" }}>
+                                                    <View style={{ width: "20%" }}>
+                                                        {this.props.change.updater.profile &&
+                                                            testForURL(this.props.change.updater.profile) ? (
+                                                                <CacheImages
+                                                                    thumbnails
+                                                                    source={{
+                                                                        uri: this.props.change.updater.profile,
+                                                                    }}
+                                                                ></CacheImages>
+                                                            ) : (
+                                                                <Thumbnail
+                                                                    small
+                                                                    source={{
+                                                                        uri: this.props.change.updater.profile
+                                                                            ? this.change.updater.profile
+                                                                            : "",
+                                                                    }}
+                                                                ></Thumbnail>
+                                                            )}
+                                                    </View>
+                                                    <View
+                                                        style={{
+                                                            marginTop: "3%",
+                                                            marginLeft: "4%",
+                                                            flexDirection: "column",
+                                                            width: "65%",
+                                                        }}
+                                                    >
+                                                        <Text
+                                                            ellipsizeMode={"tail"}
+                                                            numberOfLines={1}
+                                                            style={{ marginBottom: "2%", fontWeight: "bold" }}
+                                                        >
+                                                            {this.props.change.updater.nickname}
+                                                        </Text>
+                                                        {this.props.change &&
+                                                            this.props.change.updater &&
+                                                            this.props.change.updater.status &&
+                                                            this.props.change.updater.status !== "undefined" ? (
+                                                                <Text
+                                                                    ellipsizeMode={"tail"}
+                                                                    numberOfLines={1}
+                                                                    style={{ marginLeft: "2%" }}
+                                                                    note
+                                                                >
+                                                                    {this.props.change.updater.status}
+                                                                </Text>
+                                                            ) : null}
+                                                    </View>
+                                                </View>
+                                            )}
+                                    </View>
+                                    <View style={{ width: "10%" }}>
+                                        <TouchableOpacity
+                                            onPress={() =>
+                                                requestAnimationFrame(() => {
+                                                    console.warn("pressing !!!");
+                                                    this.props.close();
+                                                })
+                                            }
+                                        >
+                                            <Icon type={"EvilIcons"} name={"close"}></Icon>
+                                        </TouchableOpacity>
+                                    </View>
                                 </View>
-                            </View>
-                            <View style={{
-                                flexDirection: 'column',
-                            }}>
-                                <View style={{ flexDirection: 'row',marginBottom: "2%", }}>
-                                    <Text ellipsizeMode='tail' numberOfLines={1} style={{ fontWeight: 'bold', }}>{this.props.change && this.props.change.changed}</Text>
+                                <View
+                                    style={{
+                                        flexDirection: "column",
+                                    }}
+                                >
+                                    <View style={{ flexDirection: "row", marginBottom: "2%" }}>
+                                        <Text
+                                            ellipsizeMode="tail"
+                                            numberOfLines={1}
+                                            style={{ fontWeight: "bold" }}
+                                        >
+                                            {this.props.change && this.props.change.changed}
+                                        </Text>
+                                    </View>
+                                    <Text
+                                        ellipsizeMode="tail"
+                                        style={{ fontSize: 12, fontStyle: "italic" }}
+                                        numberOfLines={1}
+                                    >
+                                        {typeof this.props.change.new_value.new_value === "string"
+                                            ? this.props.change.new_value.new_value
+                                            : ""}
+                                    </Text>
                                 </View>
-                                <Text ellipsizeMode='tail' style={{ fontSize: 12, fontStyle: 'italic', }} numberOfLines={1}>{typeof this.props.change.new_value.new_value === "string" ? this.props.change.new_value.new_value : ""}</Text>
                             </View>
                         </View>
-                    </View>
-                </TouchableWithoutFeedback>
+                    </TouchableWithoutFeedback>
+                ) : null}
             </Modal>
         );
     }
-} 
+}

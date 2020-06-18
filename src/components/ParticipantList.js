@@ -95,7 +95,7 @@ export default class ParticipantList extends Component {
                     back={this.props.close}
                     title={this.props.hide ? "" : this.props.title || "Participants List"}
                     extra={
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between',width:150 }}>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between',width:150,marginBottom: 'auto',marginTop: 'auto', }}>
                             {this.props.managing && (
                                 <View style={{ ...this.center, flexDirection: 'row', }}>
                                     <Button
@@ -126,7 +126,7 @@ export default class ParticipantList extends Component {
                                 </View>
                             )}
                             <View style={{ ...this.center,  }}>
-                                <Text style={{ marginTop: "2%" }} note>
+                                <Text style={{ }} note>
                                     {this.state.participants ? this.state.participants.length : 0}
                                     {" member(s)"}
                                 </Text></View>

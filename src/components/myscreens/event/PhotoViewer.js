@@ -81,55 +81,63 @@ export default class PhotoViewer extends BleashupModal {
                <StatusBarWhiter></StatusBarWhiter>
                 <View style={{ height: screenheight, width: screenWidth, backgroundColor: "black", }}>
                     <ReactNativeZoomableView
+                    style={{
+                        height:"100%",
+                        width:"100%"
+                    }}
                         maxZoom={1.5}
                         minZoom={0.5}
                         zoomStep={0.5}
                         initialZoom={1}
-                        bindToBorders={true}
                     captureEvent={true}>
                     <View style={{ alignSelf: 'center', width: screenWidth }}>
                         {testForURL(this.props.photo) ? <CacheImages style={{ alignSelf: 'center', }} resizeMode={"contain"} width={screenWidth} height={screenheight}
                             source={{ uri: this.props.photo }}></CacheImages> :
-                            <Image resizeMode={"contain"}
+                            <CacheImages thumbnails square style={{
+                                borderTopLeftRadius: 5,
+                                borderTopRightRadius: 5,
+                                hieght:'100%',
+                                width:'100%'
+                            }} 
                                 width={screenWidth}
                                 height={screenheight}
-                                source={{ uri: this.props.photo }}></Image>}
-                        <View style={{ flexDirection: 'row', position: 'absolute', width: screenWidth, justifyContent: 'space-between', }}>
-            
-                                    
-                                     <View style={{...rounder(50,true)}} >
-                                        <Icon type="EvilIcons" onPress={() => {
-                                            this.props.hidePhoto()
-                                        }} style={this.iconStyle} name={"close"}></Icon>
-                                       </View>
-
-                                        <View style={{...rounder(50,true) ,marginLeft:"55%",}}>
-                                            <Icon onPress={() => {
-                                                this.handleForwardImage()
-                                            }} style={this.iconStyle}
-                                                type={"Entypo"}
-                                                name={"forward"} >
-                                            </Icon>
-                                        </View>
-                                  
-
-                                    <View style={{...rounder(50,true)}}>
-                                        <Icon onPress={() => {
-                                            this.downLoadImage()
-                                        }} style={this.iconStyle}
-                                            type={"AntDesign"}
-                                            name={"clouddownload"}>
-                                        </Icon>
-                                    </View>                   
-
-                            </View>
-                            <View style={{ margin: '1%', ...buttoner, width: 130, height: 20 }}>
-                                {this.props.created_at ? <Text style={{ color: '#FEFFDE', marginBottom: 6, }} note>{moment(this.props.created_at).calendar()}</Text> : null}
-                            </View>
+                                source={{ uri: this.props.photo }}></CacheImages>}
+                        
                         </View>
                     </ReactNativeZoomableView>
                     </View>
+                <View style={{ flexDirection: 'row', position: 'absolute', width: screenWidth, justifyContent: 'space-between', }}>
 
+
+                    <View style={{ ...rounder(50, true) }} >
+                        <Icon type="EvilIcons" onPress={() => {
+                            this.props.hidePhoto()
+                        }} style={this.iconStyle} name={"close"}></Icon>
+                    </View>
+
+                    <View style={{ ...rounder(50, true), marginLeft: "55%", }}>
+                        <Icon onPress={() => {
+                            this.handleForwardImage()
+                        }} style={this.iconStyle}
+                            type={"Entypo"}
+                            name={"forward"} >
+                        </Icon>
+                    </View>
+
+
+                    <View style={{ ...rounder(50, true) }}>
+                        <Icon onPress={() => {
+                            this.downLoadImage()
+                        }} style={this.iconStyle}
+                            type={"AntDesign"}
+                            name={"clouddownload"}>
+                        </Icon>
+                    </View>
+
+                </View>
+                <View style={{ margin: '1%', ...buttoner, width: 130, height: 20 }}>
+                    {this.props.created_at ? <Text style={{ color: '#FEFFDE', marginBottom: 6, }} note>{moment(this.props.created_at).calendar()}</Text> : null}
+                </View>
                 </View>    
         );
     }

@@ -39,7 +39,7 @@ export default class BleashupModal extends PureComponent {
     }
     isOpened = false
     entry = 'bottom'
-
+    borderWidth=0
     modal(){
         return (
             <Modal
@@ -57,6 +57,7 @@ export default class BleashupModal extends PureComponent {
                 isOpen={this.props.isOpen ? true : this.props.open ? true : false}
                 coverScreen={this.coverScreen}
                 style={{
+                    borderWidth:this.borderWidth,
                     backgroundColor: this.modalBackground || '#FFFFFF',
                     height: this.modalHeight,
                     width: this.modalWidth || "100%",

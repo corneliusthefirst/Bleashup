@@ -81,7 +81,7 @@ class CalendarService {
         return RNCalendarEvents.fetchAllEvents(moment().subtract(8, 'months').utc().format(UTCFormat),
             moment().add(1, 'years').utc().format(UTCFormat))
     }
-    saveEvent(Bevent, alarms, type, all) {
+    saveEvent(Bevent, alarms, type, all, newName) {
         if (Bevent.period && Bevent.period.includes("T")) {
             let calendarEvent = this.translateRemindToCalendar(Bevent, alarms)
             /*let calendarEvent = {   
@@ -95,7 +95,8 @@ class CalendarService {
                 }
             }*/
             console.warn(calendarEvent)
-            return RNCalendarEvents.saveEvent(calendarEvent.title, calendarEvent)
+            return RNCalendarEvents.saveEvent(calendarEvent.title, 
+                { ...calendarEvent, title: newName || calendarEvent.title })
         } else {
             return new Promise((resolve, reject) => {
                 if (Bevent.calendar_id) {
@@ -126,10 +127,11 @@ class CalendarService {
                 endDate: moment(Bevent.recursive_frequency.recurrence).utc().format(UTCFormat)
             },
             //recurrenceInterval:Bevent.recurrent? parseInt(Bevent.interval):null,
-            alarms: alarms && alarms.length>0?alarms:AlarmPatterns().filter(ele => ele.autoselected).map(ele => {
+            alarms: alarms && alarms.length > 0 ? alarms : AlarmPatterns().filter(ele => ele.autoselected).map(ele => {
                 return {
-                    date:Platform.os === "ios" ? moment().diff(ele.date, 'minutes').toISOString() 
-                : moment().diff(ele.date, 'minutes')}
+                    date: Platform.os === "ios" ? moment().diff(ele.date, 'minutes').toISOString()
+                        : moment().diff(ele.date, 'minutes')
+                }
             }),
             location: Bevent.location,
             notes: Bevent.description,

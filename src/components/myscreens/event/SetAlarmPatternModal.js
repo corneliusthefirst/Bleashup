@@ -56,7 +56,7 @@ export default class SetAlarmPatternModal extends BleashupModal {
     modalBody() {
         return (
             <View>
-                <View style={{ width: "90%", height: 50, }}>
+                <View style={{ width: "90%", height: 35, }}>
                     <View style={{ flexDirection: 'row', padding: '2%', }}>
                         <View style={{ width: '80%' }}>
                             <Text style={{ fontSize: 18, alignSelf: 'flex-start', fontWeight: 'bold', padding: '1%', }}>{"Set Alarm Pattern"}</Text>
@@ -87,7 +87,7 @@ export default class SetAlarmPatternModal extends BleashupModal {
 
                         </BleashupFlatList>
                     </View>
-                    <View style={{ width: '20%', alignSelf: 'center', marginTop: "3%",}}>
+                    <View style={{ width: '20%', alignSelf: 'center', marginTop: "0%",flexDirection: 'column',justifyContent: 'center',}}>
                         <CreateButton title={"Set"} action={() =>
                             this.save()} style={{ ...shadower(4), borderWidth: 0, backgroundColor: ColorList.bodyDarkWhite, }}>
                         </CreateButton>

@@ -155,7 +155,7 @@ export default class VideoMessage extends Component {
                                     <TouchableOpacity
                                         onPress={() => this.props.playVideo(this.props.message.source)
                                         }>
-                                        <Icon type="EvilIcons" name="play" style={{
+                                        <Icon onPress={() => this.props.playVideo(this.props.message.source)} type="EvilIcons" name="play" style={{
                                             fontSize: 40,
                                             color: ColorList.bodyBackground
                                         }}></Icon>

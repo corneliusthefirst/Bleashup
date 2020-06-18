@@ -136,7 +136,8 @@ export default class SWView extends Component {
                         </Button>
                     </View>
                     <View style={{ height: 240, alignSelf: 'center', }}>
-                        <ScrollView style={{ height: "100%" }}>
+                        <ScrollView keyboardShouldPersistTaps={"handled"}
+                            nestedScrollEnabled showsVerticalScrollIndicator={false} style={{ height: "100%" }}>
                         <RouteView isChat={this.props.isChat} refreshCommitee={() => this.refreshCommitees()}
                             event_id={this.props.event.id}
                             currentPage={this.props.currentPage}

@@ -5,6 +5,8 @@ import VideoController from "./VideoController";
 import ColorList from '../../colorList';
 import rounder from "../../../services/rounder";
 import { Icon } from "native-base";
+import CacheImages from '../../CacheImages';
+import shadower from "../../shadower";
 export default class PhotoPreview extends Component {
     constructor(props) {
         super(props)
@@ -28,18 +30,19 @@ export default class PhotoPreview extends Component {
                         height: 300,
                         width: "100%",
                     }}
-                    maxZoom={1}
+                    maxZoom={1.5}
                     minZoom={0.5}
                     zoomStep={0.5}
                     initialZoom={1}
                     bindToBorders={true}
                     onZoomAfter={this.logOutZoomState}
                 >
-                    <Image
-                        resizeMode={"contain"}
-                        style={{ flex: 1, width: "100%", height: "100%" }}
+                    <CacheImages thubmnails square
+                        style={{ width: "100%", height: "100%",alignSelf:"center",
+                        borderTopLeftRadius: 5,
+                        borderTopRightRadius: 5, ...shadower(1)}}
                         source={{ uri: this.props.image }}
-                    ></Image>
+                    ></CacheImages>
                 </ReactNativeZoomableView>
                 <TouchableOpacity
                     onPress={() => requestAnimationFrame(this.props.hideCaption)}
@@ -66,6 +69,7 @@ export default class PhotoPreview extends Component {
                     <VideoController
                         source={{ uri: this.props.video }}
                         resizeMode={"contain"}
+                        paused={false}
                         disableVolume={true}
                         seekColor={ColorList.indicatorColor}
                         disableFullscreen={true}
@@ -78,6 +82,8 @@ export default class PhotoPreview extends Component {
                         }}
                         videoStyle={{
                             alignItems: "center",
+                            borderTopLeftRadius: 5,
+                            borderTopRightRadius: 5,
                             height: "100%",
                             width: "100%",
                             top: 0,

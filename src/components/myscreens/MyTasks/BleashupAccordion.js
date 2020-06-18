@@ -26,7 +26,7 @@ export default class AccordionModuleNative extends Component {
       UIManager.setLayoutAnimationEnabledExperimental(true);
     }
   }
-  renderItem(dataArray,index) {
+  renderItem(dataArray, index) {
     return <View>
       <View
         style={{
@@ -36,14 +36,14 @@ export default class AccordionModuleNative extends Component {
           backgroundColor: ColorList.bodyBackground,
         }}
       >
-      <View style={{
-        minWidth:"93%",
-        marginBottom: "auto",
-        marginTop: "auto",
-      }}>
-        {this.props._renderHeader(dataArray,index,() => {
-          this.toggleExpand(dataArray)
-        })}
+        <View style={{
+          minWidth: !this.props.hideToggler ? "93%" : "100%",
+          marginBottom: "auto",
+          marginTop: "auto",
+        }}>
+          {this.props._renderHeader(dataArray, index, () => {
+            this.toggleExpand(dataArray)
+          })}
         </View>
         {!this.props.hideToggler && <TouchableOpacity onPress={() => requestAnimationFrame(() => this.toggleExpand(dataArray))}>
           <View style={{ width: 30 }}>
@@ -57,12 +57,12 @@ export default class AccordionModuleNative extends Component {
       </View>
       <View style={styles.parentHr} />
       {this.expanded(dataArray) && (
-        <View>{this.props._renderContent(dataArray,index)}</View>
+        <View>{this.props._renderContent(dataArray, index)}</View>
       )}
     </View>
   }
   expanded(item) {
-    return this.props.keyExtractor && this.state.expanded === this.props.keyExtractor(item) 
+    return this.props.keyExtractor && this.state.expanded === this.props.keyExtractor(item)
   }
 
   render() {
@@ -73,12 +73,12 @@ export default class AccordionModuleNative extends Component {
       numberOfItems={this.props.dataSource.length}
       keyExtractor={this.props.keyExtractor}
       dataSource={this.props.dataSource}
-      renderItem={(item, index) => this.renderItem(item,index)}
+      renderItem={(item, index) => this.renderItem(item, index)}
     >
     </BleashupScrollView>
   }
   toggleExpand = (item) => {
-   !this.expanded(item) && this.props.onExpand && this.props.onExpand(item)
+    !this.expanded(item) && this.props.onExpand && this.props.onExpand(item)
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     this.setState({ expanded: this.props.keyExtractor ? this.state.expanded === this.props.keyExtractor(item) ? null : this.props.keyExtractor(item) : item });
   };

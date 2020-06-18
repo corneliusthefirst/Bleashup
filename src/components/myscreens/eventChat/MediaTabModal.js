@@ -61,7 +61,7 @@ export default class MediaTabModal extends TabModal {
         {
             heading: () => <Text>Videos</Text>,
             body: () => (
-                <View style={{ height: "100%" }}>
+               this.state.mounted && <View style={{ height: "100%" }}>
                     <Video video={this.props.video}></Video>
                 </View>
             ),
@@ -69,7 +69,7 @@ export default class MediaTabModal extends TabModal {
         {
             heading: () => <Text>Files</Text>,
             body: () => (
-                <View style={{ height: "100%" }}>
+              this.state.mounted &&  <View style={{ height: "100%" }}>
                     <File file={this.props.file}></File>
                 </View>
             ),
