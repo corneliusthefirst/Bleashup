@@ -57,9 +57,9 @@ export default class SetAlarmPatternModal extends BleashupModal {
         return (
             <View>
                 <View style={{ width: "90%", height: 35, }}>
-                    <View style={{ flexDirection: 'row', padding: '2%', }}>
-                        <View style={{ width: '80%' }}>
-                            <Text style={{ fontSize: 18, alignSelf: 'flex-start', fontWeight: 'bold', padding: '1%', }}>{"Set Alarm Pattern"}</Text>
+                    <View style={{ flexDirection: 'row', padding: '2%',justifyContent: 'center', }}>
+                        <View style={{ textAlign:'center',alignSelf: 'center', }}>
+                            <Text style={{ fontSize: 18, alignSelf: 'flex-start', fontWeight: 'bold', padding: '1%', alignSelf: 'center',}}>{"Set Alarm Pattern"}</Text>
                         </View>
                     </View>
                 </View>
@@ -79,7 +79,6 @@ export default class SetAlarmPatternModal extends BleashupModal {
                                     <View style={{ margin: '2%', }}>
                                         <SelectableAlarmPeriod item={item} timeoute={parseInt(index) * 20} key={index} checked={item => this.addItem(item)} unchecked={(id => this.removeItem(id))}>
                                         </SelectableAlarmPeriod>
-                                        <MenuDivider color="#1FABAB" />
                                     </View> : null
                             }
                             }
