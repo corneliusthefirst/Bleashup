@@ -238,7 +238,7 @@ export default class EventTasksCard extends Component {
           </TouchableOpacity>
         </View>
 
-        <View style={{ width: "100%", marginTop: '1%', flexDirection: 'row', justifyContent: 'flex-end', paddingRight: 15 }}>
+        <View style={{ width: "100%", marginTop: '3%', flexDirection: 'row', justifyContent: 'flex-end', paddingRight: 15 }}>
           {!member ?
             cannotAssign ? null :
               <CreateButton title={"Assign To Me"} style={{ borderWidth: 0, 

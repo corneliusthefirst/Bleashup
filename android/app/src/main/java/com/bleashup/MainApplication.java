@@ -2,6 +2,7 @@ package com.bleashup.bleashup;
 
 import android.app.Application;
 import com.facebook.react.ReactApplication;
+import com.bolan9999.SpringScrollViewPackage;
 import org.wonday.orientation.OrientationPackage;
 import com.reactnativecommunity.rnpermissions.RNPermissionsPackage;
 import org.reactnative.camera.RNCameraPackage;
@@ -48,6 +49,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
             new MainReactPackage(),
+            new SpringScrollViewPackage(),
             new OrientationPackage(),
             new RNPermissionsPackage(),
             new RNCameraPackage(),

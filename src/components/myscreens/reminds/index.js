@@ -225,7 +225,8 @@ export default class Reminds extends Component {
         .then((res) => {
           if (res) {
             this.setState({
-              newing: !this.state.newing
+              newing: !this.state.newing,
+              update: false
             });
           }
           this.props.stopLoader();
@@ -394,6 +395,7 @@ export default class Reminds extends Component {
     }
   }
   saveAlarms(alarms) {
+    console.warn(alarms)
     if (this.props.working) {
       Toast.show({ text: "App is Busy" });
     } else {
@@ -609,7 +611,6 @@ export default class Reminds extends Component {
           onClosed={() => {
             this.setState({
               isExtra: false,
-              update: false
             });
           }}
         />

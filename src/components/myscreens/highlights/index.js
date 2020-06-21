@@ -3,7 +3,6 @@ import { Content, Card, CardItem, Text, Body, Icon, Header ,Button} from "native
 import GState from "../../../stores/globalState";
 import { View ,Linking,Alert} from "react-native"
 import { ScrollView, TouchableOpacity} from "react-native";
-import Swipeout from "react-native-swipeout";
 
 
 

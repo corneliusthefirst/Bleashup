@@ -592,9 +592,6 @@ class Requester {
                             if (oldRemind.calendar_id && findIndex(oldRemind.members,
                                 { phone: stores.LoginStore.user.phone }) >= 0) {
                                 CalendarServe.saveEvent({ ...oldRemind, period: null }, null, 'reminds').then(() => {
-                                    stores.Reminds.updateCalendarID({ remind_id: oldRemind.id, calendar_id: undefined }).then(() => {
-                                        console.warn("calendar_id successfully removed")
-                                    })
                                 })
                             }
                             stores.ChangeLogs.addChanges(Change).then(() => {
@@ -629,16 +626,7 @@ class Requester {
                                 date: moment().format(),
                                 time: null
                             }
-                            if (findIndex(remind.members, { phone: stores.LoginStore.user.phone }) >= 0) {
-                                CalendarServe.saveEvent(remind, remind.alams, 'reminds').then(calendar_id => {
-                                    stores.Reminds.updateCalendarID(remind.event_id, {
-                                        remind_id: remind.id,
-                                        calendar_id: calendar_id
-                                    }, remind.alams).then(() => {
-
-                                    })
-                                })
-                            }
+                            this.saveToCanlendar(remind.event_id, remind,null)
                             stores.ChangeLogs.addChanges(Change).then(() => {
 
                             })

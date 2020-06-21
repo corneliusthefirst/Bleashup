@@ -1,9 +1,7 @@
 import React, { Component } from "react";
 import {
   Platform,
-  ScrollView,
   BackHandler,
-  ToastAndroid,
   View,
   StatusBar,
   AppState,
@@ -25,8 +23,6 @@ import {
   Toast,
   Thumbnail
 } from 'native-base';
-import SettingView from "./../settings/index";
-import autobind from "autobind-decorator";
 import {
   find
 } from "lodash"
@@ -36,14 +32,9 @@ import CurrentEventView from '../currentevents';
 import emitter from "../../../services/eventEmiter";
 import firebase from 'react-native-firebase';
 import GState from '../../../stores/globalState';
-import CreateEvent from '../event/createEvent/CreateEvent';
-
-import ForeignEventsModal from "./ForeignEventsModal";
 import DeepLinking from 'react-native-deep-linking';
 import shadower from "../../shadower";
-//import TabModal from "./TabModal";
 import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
-import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
 import colorList from "../../colorList";
 import BeNavigator from '../../../services/navigationServices';
 import { PrivacyRequester, shared_post } from '../settings/privacy/Requester';
@@ -272,10 +263,6 @@ class Home extends Component {
 
 
             <View style={{ height: "100%", alignSelf: "flex-end", display: 'flex', flexDirection: 'row', marginRight: "2%" }}>
-
-              <TouchableOpacity style={{ height: 40, alignItems: "center", justifyContent: "center" }} onPress={() => this.navigateToInvitations()}>
-                <Icon name="sc-telegram" active={true} type="EvilIcons" style={{ color: colorList.headerIcon, }} onPress={() => this.navigateToInvitations()} />
-              </TouchableOpacity>
 
               <TouchableOpacity style={{ height: 40, alignItems: "center", justifyContent: "center" }} onPress={this.settings} >
                   <Icon name="gear" active={true} type="EvilIcons" style={{ color: colorList.headerIcon, marginLeft: width / 35 }} onPress={this.settings}/>

@@ -16,7 +16,7 @@ export default class PickersUpload extends Component {
     super(props);
     this.state = {
       downloadProgess: 0,
-      uploading:false,
+      uploading: false,
     };
   }
   componentDidMount() {
@@ -41,6 +41,9 @@ export default class PickersUpload extends Component {
       this.exchanger.task &&
       this.exchanger.task.cancel &&
       this.exchanger.task.cancel();
+    this.setState({
+      uploading: false
+    })
   }
   handleProgress = (reveived, total) => {
     this.setState({
@@ -123,6 +126,24 @@ export default class PickersUpload extends Component {
       this.audioExchanger.task.cancel &&
       this.audioExchanger.task.cancel();
   }
+  takeFile(){
+    Pickers.TakeFile().then(file => {
+      if(file){
+        console.warn(file)
+        this.setState({
+          newing:!this.state.newing,
+          uploading:true,
+        })
+        this.fileExchange = new FileExachange("file://" + file.uri,'/Others/',0,0,
+        this.handleProgress,
+        (newDir,path,filename) => {
+
+          },null, (error) => {
+            this.sayUploadError();
+          },file.type,file.name,'/others')
+      }
+    })
+  }
   takeAudio() {
     Pickers.TakeAudio().then((audio) => {
       if (audio) {
@@ -191,81 +212,86 @@ export default class PickersUpload extends Component {
   }
   render() {
     return (
-  
-      <View style={{flex:1,flexDirection:'row',alignSelf: 'flex-start',}}>
-         
-        
-          <View style={{width:35}}>
-            <PickersMenu
-              menu={[
-                {
-                  title: "Gallery",
-                  condition: true,
-                  callback: () => this.TakePhotoFromLibrary(false),
-                },
-              ]}
-              icon={{
-                name: "camera",
-                type: "EvilIcons",
-              }}
-            ></PickersMenu>
-           </View>
 
-           <View style={{width:35,}}>
-            <PickersMenu
-              menu={[
-                {
-                  title: "Download Photo",
-                  condition: true,
-                  callback: () =>
-                    this.setState({
-                      searchImageState: true,
-                    }),
-                },
-                {
-                  title: "Video",
-                  condition: this.props.notVideo ? false : true,
-                  callback: () => this.TakePhotoFromLibrary(true),
-                },
-                {
-                  title: "Add Audio",
-                  condition: this.props.notAudio ? false : true,
-                  callback: () => this.takeAudio(),
-                },
-              ]}
-              icon={{
-                name: "plus-small",
-                type: "Octicons",
-              }}
-            ></PickersMenu>
-         </View>
-      
-         {this.state.uploading && (
-                <View style={{flex:1,justifyContent:"center",alignItems:"flex-end",paddingRight:5}}>
-                <AnimatedCircularProgress
-                  size={26}
-                  width={2}
-                  backgroundColor={ColorList.indicatorInverted}
-                  tintColor={
-                    !this.state.uploadError ? ColorList.indicatorColor : "red"
-                  }
-                  fill={parseFloat(this.state.downloadProgess * 100)}
-                >
-                  {(fill) => (
-                    <View>
-                      
-                      <Icon
-                        name="close"
-                        onPress={() => this.cancelAllTasks()}
-                        style={{ color: ColorList.headerIcon,fontSize:20 }}
-                        type={"EvilIcons"}
-                      ></Icon>
-                    </View>
-                  )}
-                </AnimatedCircularProgress>
+      <View style={{ flex: 1, flexDirection: 'row', alignSelf: 'flex-start', }}>
+
+
+        <View style={{ width: 35 }}>
+          <PickersMenu
+            menu={[
+              {
+                title: "Gallery",
+                condition: true,
+                callback: () => this.TakePhotoFromLibrary(false),
+              },
+            ]}
+            icon={{
+              name: "camera",
+              type: "EvilIcons",
+            }}
+          ></PickersMenu>
+        </View>
+
+        <View style={{ width: 35, }}>
+          <PickersMenu
+            menu={[
+              {
+                title: "Download Photo",
+                condition: true,
+                callback: () =>
+                  this.setState({
+                    searchImageState: true,
+                  }),
+              },
+              {
+                title: "Video",
+                condition: this.props.notVideo ? false : true,
+                callback: () => this.TakePhotoFromLibrary(true),
+              },
+              {
+                title: "Add Audio",
+                condition: this.props.notAudio ? false : true,
+                callback: () => this.takeAudio(),
+              },
+              {
+                "title": "Add File",
+                condition: this.props.notFile ? false : true,
+                callback: () => this.taskFile()
+              }
+            ]}
+            icon={{
+              name: "plus-small",
+              type: "Octicons",
+            }}
+          ></PickersMenu>
+        </View>
+
+        {this.state.uploading && (
+          <View style={{ flex: 1, justifyContent: "center", alignItems: "flex-end", paddingRight: 5 }}>
+            <AnimatedCircularProgress
+              size={26}
+              width={2}
+              backgroundColor={ColorList.indicatorInverted}
+              tintColor={
+                !this.state.uploadError ? ColorList.indicatorColor : "red"
+              }
+              fill={parseFloat(this.state.downloadProgess * 100)}
+            >
+              {(fill) => (
+                <View>
+
+                  <Icon
+                    name="close"
+                    onPress={() => this.cancelAllTasks()}
+                    style={{ color: ColorList.headerIcon, fontSize: 20 }}
+                    type={"EvilIcons"}
+                  ></Icon>
                 </View>
-            )}
-            
+              )}
+            </AnimatedCircularProgress>
+          </View>
+        )}
+
         <SearchImage
           openPicker={() => {
             this.TakePhotoFromLibrary();
@@ -279,7 +305,7 @@ export default class PickersUpload extends Component {
           }}
         />
       </View>
-  
+
     );
   }
 }

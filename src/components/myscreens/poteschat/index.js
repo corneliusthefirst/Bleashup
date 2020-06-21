@@ -4,7 +4,6 @@ import GState from "../../../stores/globalState";
 import {View} from "react-native"
 import { ScrollView, TouchableOpacity } from "react-native";
 import stores from "../../../stores";
-import Swipeout from "react-native-swipeout";
 var swipeoutBtns = [
   {
     text: 'Button'

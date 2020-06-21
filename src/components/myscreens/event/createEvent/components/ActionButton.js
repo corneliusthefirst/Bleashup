@@ -10,7 +10,7 @@ export default class CreateButton extends Component{
     }
     render(){
         return  (         
-      <View style={{height:"10%",alignSelf:"center", width:this.props.width,alignItems:"center",}}>
+      <View style={{alignSelf:"center", width:this.props.width,alignItems:"center",}}>
         <TouchableOpacity style={{ width:"100%"}} >
                     <Button onPress={() => requestAnimationFrame(this.props.action)} style={{ borderWidth: 1, borderColor: ColorList.bodyIcon, backgroundColor: ColorList.bodyBackground, ...this.props.style}} rounded>
            <View style={{width:"100%",alignItems:"center"}}>

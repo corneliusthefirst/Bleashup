@@ -8,16 +8,16 @@ import { View, Dimensions, Keyboard, ScrollView, Textarea } from 'react-native';
 import Modal from 'react-native-modalbox';
 import ColorList from '../../colorList';
 import CreateTextInput from '../event/createEvent/components/CreateTextInput';
+import BleashupModal from '../../mainComponents/BleashupModal';
 
 let { height, width } = Dimensions.get('window');
 
-export default class AddReport extends Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            description: ''
-        }
-    }
+export default class AddReport extends BleashupModal {
+   initialize(){
+       this.state = {
+           description: ''
+       }
+   }
     state = {
 
     }
@@ -28,37 +28,33 @@ export default class AddReport extends Component {
     onChangedEventDescription(value) {
         this.setState({ description: value })
     }
-    render() {
-        return (<Modal
-            isOpen={this.props.isOpen}
-            onClosed={() => this.props.onClosed(this.state.description)}
-            style={{
-                height: height / 3, borderRadius: 15, marginTop: "-3%",
-                backgroundColor: ColorList.bodyBackground, borderColor: 'black', borderWidth: 1, width: "98%",
-            }}
-            coverScreen={true}
-            position={'bottom'}
-            backButtonClose={true}
-        //backdropPressToClose={false}
-        >
-            <View style={{ flex: 1, flexDirection: "column" }}>
-                <View style={{ height: "15%" }}>
-                    <Text style={{
-                        alignSelf: 'flex-start', marginLeft: "1%", marginTop: "4%",
-                        fontWeight: "500", fontSize: 18
-                    }} note>say something about what you did </Text>
-                </View>
+    onOpenModal(){
 
+    }
+    onClosedModal(){
+        this.props.onClosed(this.state.description)
+    }
+    modalHeight=300
+    modalWidth=390
+    borderTopLeftRadius=8
+    borderTopRightRadius=8
+    position="bottom"
+    entry="bottom"
+    modalBody() {
+        return (
+            <ScrollView keyboardShouldPersistTaps={"handled"}
+                nestedScrollEnabled showsVerticalScrollIndicator={false} style={{ flex: 1, flexDirection: "column" }}>
                 <View style={{ height: "65%" }}>
                     <CreateTextInput
                     height={150}
+                    
                     maxLength={200} 
-                    placeholder="Short Report Of Your Task/Remind" 
+                    placeholder="Add A Report" 
                     value={this.state.description} keyboardType="default"
                     onChange={(value) => this.onChangedEventDescription(value)} />
 
                 </View>
-                {this.state.description ? <View style={{ height: "10%", marginTop: ".5%" }}>
+                {this.state.description ? <View style={{ height: "10%", marginTop: "5%" }}>
                     <View style={{
                         width: width / 4, height: "100%", alignSelf: "flex-end",
                         marginRight: "1%"
@@ -73,7 +69,6 @@ export default class AddReport extends Component {
                         </Button>
                     </View>
                 </View> : null}
-            </View>
-        </Modal>)
+            </ScrollView>)
     }
 }

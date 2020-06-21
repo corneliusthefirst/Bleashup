@@ -85,30 +85,6 @@ export default class CurrentEvents extends Component {
     componentWillUnmount() {
        // BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton);
     };
-    options = ["View Paricipants", "Shared By", "Cancel"]
-    showActions(id) {
-        let event = find(this.props.data, { id: id })
-        let participants = event.participant
-        ActionSheet.show({
-            options: this.options, title: "Select Action", cancelButtonIndex: 2,
-            modalStyle: { backgroundColor: "#FEFFDE" }, actionSheetStyle: { backgroundColor: "#FEFEDE" }
-        }, (index) => {
-            if (index === 0) {
-                this.setState({
-                    event_id: id,
-                    currentCreator:event.creator_phone,
-                    participant: participants,
-                    isParticipantModalOpened: true
-                })
-            } else if (index === 1) {
-                this.setState({
-                    isPublisherModalOpened: true,
-                    event_id: id
-                })
-            }
-        })
-    }
-
     delay = 0
     renderPerbatch = 10
     componentDidMount() {
@@ -145,7 +121,6 @@ export default class CurrentEvents extends Component {
                                         event: event
                                     })
                                 }}
-                                showActions={(event_id) => this.showActions(event_id)}
                                 renderDelay={this.delay * 5}
                                 showPhoto={(url) => this.showPhoto(url)} key={item.id}  {...this.props} Event={item} />
                     }}
@@ -173,16 +148,7 @@ export default class CurrentEvents extends Component {
                         isPublisherModalOpened: false
                     })
                 }}></PublishersModal>
-                <InvitationModal
-                    isOpen={this.state.isInvitationModalOpened}
-                    public={this.state.event && this.state.event.public}
-                    master={this.state.master}
-                    eventID={this.state.event && this.state.event.id} close={() => {
-                        this.setState({
-                            isInvitationModalOpened: false
-                        })
-                    }}></InvitationModal>
-                {this.state.isDetailsModalOpened ? <DetailsModal goToActivity={() => {
+                {<DetailsModal goToActivity={() => {
                     BeNavigator.navigateToActivity('EventDetails', this.state.event);
                 }} isToBeJoint event={this.state.event}
                     isOpen={this.state.isDetailsModalOpened}
@@ -191,7 +157,7 @@ export default class CurrentEvents extends Component {
                             isDetailsModalOpened: false
                         })
                     }}>
-                </DetailsModal> : null}
+                </DetailsModal>}
 
                 {this.state.isActionButtonVisible ? <CreateEvent {...this.props} /> : null}
             </View>

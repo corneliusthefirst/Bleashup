@@ -70,7 +70,7 @@ export default class AudioMessage extends Component {
                         downloading: false,
                     });
             } else {
-                this.initialisePlayer(this.props.message.source);
+                //this.initialisePlayer(this.props.message.source);
             }
         }, 1000);
     }
@@ -199,23 +199,29 @@ export default class AudioMessage extends Component {
                 });
             }, 1000);
         }
-        this.player.play((success) => {
-            if (success) {
-                this.player.getCurrentTime((seconds) => {
-                    this.props.message.duration = Math.floor(seconds);
-                    this.setState({
-                        playing: false,
-                        currentPosition: seconds / this.props.message.duration,
-                        currentTime: seconds,
-                    });
-                    stores.Messages.addDuration(this.props.room, seconds).then(
-                        (status) => {
-                            //this.player.release()
-                        }
-                    );
+       if(this.player){
+           this.player.play(this.playerCallback);
+       }else{
+           this.initialisePlayer(this.props.message.source)
+           this.player.play(this.playerCallback);
+       }
+    }
+    playerCallback(success){
+        if (success) {
+            this.player.getCurrentTime((seconds) => {
+                this.props.message.duration = Math.floor(seconds);
+                this.setState({
+                    playing: false,
+                    currentPosition: seconds / this.props.message.duration,
+                    currentTime: seconds,
                 });
-            }
-        });
+                stores.Messages.addDuration(this.props.room, seconds).then(
+                    (status) => {
+                        //this.player.release()
+                    }
+                );
+            });
+        }
     }
     showProgress() {
         if (this.props.message.duration) {
