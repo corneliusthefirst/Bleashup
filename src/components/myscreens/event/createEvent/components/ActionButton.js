@@ -1,6 +1,6 @@
-import React,{Component} from "react"
+import React, { Component } from 'react';
 import { View, TouchableOpacity } from 'react-native';
-import { Text,Button } from "native-base";
+import { Text, Button } from "native-base";
 import ColorList from '../../../../colorList';
 import shadower from '../../../../shadower';
 
@@ -19,14 +19,13 @@ export default class CreateButton extends Component{
           </Button>
         </TouchableOpacity>
       </View>
-      )
-        
-    }
+    );
+  }
 }
 
 /** <View style={{ alignSelf: "flex-end",  }}>
             <TouchableOpacity
-                style={{ minHeight: 40, borderRadius: 8, ...shadower(2), backgroundColor: ColorList.headerIcon, 
+                style={{ minHeight: 40, borderRadius: 8, ...shadower(2), backgroundColor: ColorList.headerIcon,
                     justifyContent: 'center', padding: 10, }}
                 onPress={() => requestAnimationFrame(this.props.action)}
             >

@@ -1,3 +1,8 @@
+/* eslint-disable react-native/no-inline-styles */
+/* eslint-disable quotes */
+/* eslint-disable radix */
+/* eslint-disable comma-dangle */
+/* eslint-disable prettier/prettier */
 import React, { Component } from 'react';
 
 import { View, Platform, TouchableOpacity } from 'react-native';
@@ -16,9 +21,9 @@ import ColorList from '../../colorList';
 import BleashupModal from '../../mainComponents/BleashupModal';
 export default class SetAlarmPatternModal extends BleashupModal {
     initialize() {
-        state = {
+        this.state = {
             selected: []
-        }
+        };
     }
     state = {
         selected: []
@@ -31,7 +36,7 @@ export default class SetAlarmPatternModal extends BleashupModal {
     removeItem(id) {
         this.setState({
             selected: reject(this.state.selected, { id: id })
-        })
+        });
     }
     patterns = AlarmPatterns()
     save() {
@@ -40,31 +45,31 @@ export default class SetAlarmPatternModal extends BleashupModal {
                 date: parseInt(Platform.OS === 'ios'
                     ? moment(this.props.date).diff(ele.date, 'minutes')
                         .toISOString() : moment(this.props.date).diff(ele.date, 'minutes'))
-            }
-        }))
-        this.props.closed()
+            };
+        }));
+        this.props.closed();
     }
     position = "center"
     swipeToClose = false
-    modalHeight = "60%"
-    modalWidth = "90%"
+    modalHeight = 355
+    modalWidth = 280
     onClosedModal() {
-        this.props.closed()
+        this.props.closed();
     }
     borderRadius = 10
-    _keyExtractor = (item, index) => { return item ? item.id : null };
+    _keyExtractor = (item, index) => { return item ? item.id : null; };
     modalBody() {
         return (
-            <View>
+            <View style={{flex:1,borderRadius:10}}>
                 <View style={{ width: "98%", height: 35, }}>
                     <View style={{ flexDirection: 'row', padding: '2%',justifyContent: 'center', }}>
                         <View style={{ textAlign:'center',alignSelf: 'center', }}>
-                            <Text style={{ fontSize: 18, alignSelf: 'flex-start', fontWeight: 'bold', padding: '1%', alignSelf: 'center',}}>{"Set Alarm Pattern"}</Text>
+                            <Text style={{ fontSize: 18, fontWeight: 'bold', padding: '1%', alignSelf: 'center',}}>{"Set Alarm Pattern"}</Text>
                         </View>
                     </View>
                 </View>
-                <View style={{ margin: '3%', height: "80%" }}>
-                    <View style={{ hieght: "" }}>
+                <View style={{ margin: '3%', height: "80%", }}>
+                    <View style={{ flex: 1 }}>
                         <BleashupFlatList
                             listKey={"contacts"}
                             keyExtractor={this._keyExtractor}
@@ -77,22 +82,18 @@ export default class SetAlarmPatternModal extends BleashupModal {
                                 // console.error(item, "pppppp")
                                 return item ?
                                     <View style={{ margin: '2%', }}>
-                                        <SelectableAlarmPeriod item={item} timeoute={parseInt(index) * 20} key={index} checked={item => this.addItem(item)} unchecked={(id => this.removeItem(id))}>
-                                        </SelectableAlarmPeriod>
-                                    </View> : null
+                                        <SelectableAlarmPeriod item={item} timeoute={parseInt(index) * 20} key={index} checked={item => this.addItem(item)} unchecked={(id => this.removeItem(id))} />
+                                    </View> : null;
                             }
                             }
-                        >
-
-                        </BleashupFlatList>
+                         />
                     </View>
-                    <View style={{ width: '20%', alignSelf: 'center', marginTop: "2%",flexDirection: 'column',justifyContent: 'center',}}>
+                    <View style={{ width: 55,margin: 5,flexDirection: 'column',justifyContent: 'center',alignSelf:'flex-end'}}>
                         <CreateButton title={"Set"} action={() =>
-                            this.save()} style={{ ...shadower(4), borderWidth: 0, backgroundColor: ColorList.bodyDarkWhite, }}>
-                        </CreateButton>
+                            this.save()} style={{ ...shadower(2), borderWidth: 0, backgroundColor: ColorList.bodyDarkWhite,height:35,borderRadius:10 }} noround />
                     </View>
                 </View>
             </View>
         );
     }
-} 
+}

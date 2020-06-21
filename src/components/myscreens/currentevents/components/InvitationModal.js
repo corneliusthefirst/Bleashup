@@ -20,7 +20,7 @@ import {
   Toast,
   Spinner
 } from "native-base";
-import { without, concat, indexOf, forEach, find, reject, FlatList, TouchableWithoutFeedback, ScrollView } from "lodash"
+import { without, concat, indexOf, forEach, find, reject, FlatList, ScrollView } from "lodash"
 import stores from "../../../../stores";
 import ProfileView from "../../invitations/components/ProfileView";
 import ListItem from "../../../../native-base-theme/components/ListItem";

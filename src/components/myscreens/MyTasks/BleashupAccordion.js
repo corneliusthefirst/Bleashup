@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
-import React, { Component } from "react";
+import React, { Component } from 'react';
 import {
   View,
   LayoutAnimation,
@@ -10,9 +10,9 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
-} from "react-native";
-import ColorList from "../../colorList";
-import { Icon } from "native-base";
+} from 'react-native';
+import ColorList from '../../colorList';
+import { Icon } from 'native-base';
 import BleashupScrollView from '../../BleashupScrollView';
 
 export default class AccordionModuleNative extends Component {
@@ -22,7 +22,7 @@ export default class AccordionModuleNative extends Component {
       expanded: false,
     };
 
-    if (Platform.OS === "android") {
+    if (Platform.OS === 'android') {
       UIManager.setLayoutAnimationEnabledExperimental(true);
     }
   }
@@ -30,20 +30,20 @@ export default class AccordionModuleNative extends Component {
     return <View>
       <View
         style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-          backgroundColor: ColorList.bodyBackground,
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          backgroundColor: this.props.backgroundColor ?  this.props.backgroundColor : ColorList.bodyBackground,
         }}
       >
-        <View style={{
-          minWidth: !this.props.hideToggler ? "93%" : "100%",
-          marginBottom: "auto",
-          marginTop: "auto",
-        }}>
-          {this.props._renderHeader(dataArray, index, () => {
-            this.toggleExpand(dataArray)
-          })}
+      <View style={{
+        minWidth:'93%',
+        marginBottom: 'auto',
+        marginTop: 'auto',
+      }}>
+        {this.props._renderHeader(dataArray,index,() => {
+          this.toggleExpand(dataArray);
+        },this.state.expanded)}
         </View>
         {!this.props.hideToggler && <TouchableOpacity onPress={() => requestAnimationFrame(() => this.toggleExpand(dataArray))}>
           <View style={{ width: 30 }}>
@@ -59,10 +59,10 @@ export default class AccordionModuleNative extends Component {
       {this.expanded(dataArray) && (
         <View>{this.props._renderContent(dataArray, index)}</View>
       )}
-    </View>
+    </View>;
   }
   expanded(item) {
-    return this.props.keyExtractor && this.state.expanded === this.props.keyExtractor(item)
+    return this.props.keyExtractor && this.state.expanded === this.props.keyExtractor(item);
   }
 
   render() {
@@ -73,12 +73,12 @@ export default class AccordionModuleNative extends Component {
       numberOfItems={this.props.dataSource.length}
       keyExtractor={this.props.keyExtractor}
       dataSource={this.props.dataSource}
-      renderItem={(item, index) => this.renderItem(item, index)}
-    >
-    </BleashupScrollView>
+      backgroundColor={this.props.backgroundColor}
+      renderItem={(item, index) => this.renderItem(item,index)}
+     />;
   }
   toggleExpand = (item) => {
-    !this.expanded(item) && this.props.onExpand && this.props.onExpand(item)
+   !this.expanded(item) && this.props.onExpand && this.props.onExpand(item);
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     this.setState({ expanded: this.props.keyExtractor ? this.state.expanded === this.props.keyExtractor(item) ? null : this.props.keyExtractor(item) : item });
   };
@@ -88,6 +88,6 @@ const styles = StyleSheet.create({
   parentHr: {
     //height: 1,
     color: ColorList.bodySubtext,
-    width: "100%",
+    width: '100%',
   },
 });

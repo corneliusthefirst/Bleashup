@@ -7,15 +7,141 @@ import UserView from '../myscreens/Viewer/components/UserView';
 import SwipeAccordion from '../myscreens/Viewer/components/swipeAccordion';
 import Post from './Post';
 import Orientation from 'react-native-orientation-locker';
+import moment from 'moment';
+import { concat } from "lodash";
 
 //const ScreenHeight = Dimensions.get('window').height;
 
+const toaddRight = [
+  {
+    id: '143501',
+    url:
+      'https://images.unsplash.com/photo-1532579853048-ec5f8f15f88d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60',
+    type: 'image',
+    message:
+      'In 2012 Mark Zuckerberg commented, "The biggest mistake we made as a company was betting too much on HTML as opposed to native".[8] He promised that Facebook would soon deliver a better mobile experience.Inside Facebook, Jordan Walke found a way to generate UI elements for iOS from a background JavaScript thread.[9] They decided to organise an internal Hackathon to perfect this prototype in order to be able to build native apps with this technology.[10]After months of development, Facebook released the first version for the React JavaScript Configuration in 2015. During a technical talk,[11] Christopher Chedeau explained that Facebook was already using React Native in production for their Group App and their Ads Manager App.',
+    creator: {
+      name: 'Mark Angel',
+      profile: 'https://avatars0.githubusercontent.com/u/16208872?s=460&v=4',
+      updated_at: moment().format(),
+    },
+  },
+
+  {
+    id: '875601',
+    url:
+      '/storage/emulated/0/beats/APOLOGY Dancehall x Afrobeat x Wizkid Type Beat Instrumental.mp4',
+    type: 'video',
+    message:
+      'was betting too much on HTML as opposed https://avatars0.githubusercontent.com/u/16208872?s=460&v=4 ',
+    creator: {
+      name: 'Lutin Noir',
+      profile: 'https://avatars2.githubusercontent.com/u/45196619?s=460&v=4',
+      updated_at: moment().format(),
+    },
+  },
+
+  {
+    id: '254601',
+    url:
+      'https://images.unsplash.com/photo-1500099817043-86d46000d58f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60',
+    type: 'image',
+    message: '',
+    creator: {
+      name: 'Jacque levantreur',
+      profile: 'https://avatars2.githubusercontent.com/u/45196619?s=460&v=4',
+      updated_at: moment().format(),
+    },
+  },
+];
+
+const toaddLeft = [
+  {
+    id: '143500',
+    url:
+      'https://images.unsplash.com/photo-1532579853048-ec5f8f15f88d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60',
+    type: 'image',
+    message:
+      'In 2012 Mark Zuckerberg commented, "The biggest mistake we made as a company was betting too much on HTML as opposed to native".[8] He promised that Facebook would soon deliver a better mobile experience.Inside Facebook, Jordan Walke found a way to generate UI elements for iOS from a background JavaScript thread.[9] They decided to organise an internal Hackathon to perfect this prototype in order to be able to build native apps with this technology.[10]After months of development, Facebook released the first version for the React JavaScript Configuration in 2015. During a technical talk,[11] Christopher Chedeau explained that Facebook was already using React Native in production for their Group App and their Ads Manager App.',
+    creator: {
+      name: 'Jackson Martinez',
+      profile: 'https://avatars0.githubusercontent.com/u/16208872?s=460&v=4',
+      updated_at: moment().format(),
+    },
+  },
+
+  {
+    id: '875600',
+    url:
+      'https://images.unsplash.com/photo-1500099817043-86d46000d58f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60',
+    type: 'image',
+    message:
+      'was betting too much on HTML as opposed https://avatars0.githubusercontent.com/u/16208872?s=460&v=4 ',
+    creator: {
+      name: 'Dell sapardor',
+      profile: 'https://avatars2.githubusercontent.com/u/45196619?s=460&v=4',
+      updated_at: moment().format(),
+    },
+  },
+
+  {
+    id: '254600',
+    url:
+      'https://images.unsplash.com/photo-1500099817043-86d46000d58f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60',
+    type: 'image',
+    message: '',
+    creator: {
+      name: 'Micheal Tholar',
+      profile: 'https://avatars2.githubusercontent.com/u/45196619?s=460&v=4',
+      updated_at: moment().format(),
+    },
+  },
+];
+
 export default class SwiperComponent extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      media: media,
+      toaddLeft: toaddLeft,
+      toaddRight: toaddRight,
+    };
+  }
+
+  addMediaRight = (data) => {
+    this.state.media = this.state.media.concat(data);
+    this.setState({ media: this.state.media });
+  };
+
+  addMediaLeft = (data, index) => {
+    /* var j = index - 2;
+    if (j > 4) {
+      for (let i = 0; i < data.length; i++) {
+        this.state.media[j] = data[i];
+        console.warn("index j is",j);
+        j--;
+      }
+    }*/
+    //this.setState({ media: data.concat(this.state.media) });
+    //this.swiper.scrollTo(this.state.toaddLeft.length - 1, true);
+    //scrollBy(this.state.toaddLeft.length - 1, true);
+  };
+
   onClose = () => {};
 
-  componentDidMount(){
+  componentDidMount() {
     Orientation.lockToPortrait();
+    //this.swiper.scrollBy(2, true);
   }
+
+  onchageIndex = (index) => {
+    //console.warn("index is", index);
+    if (index >= this.state.media.length - 1) {
+      this.addMediaRight(this.state.toaddRight);
+    } else if (index <= 0) {
+      this.addMediaLeft(this.state.toaddLeft, index);
+    }
+  };
 
   render() {
     return (
@@ -26,28 +152,43 @@ export default class SwiperComponent extends Component {
           translucent={false}
         />
 
-        <Swiper style={styles.wrapper} showsPagination={false}>
-          {media.map((item, index) => (
-            <View style={styles.slide1}>
-              <Post
-                //pause={isPause}
-                post={item}
-                onClose={() => {
-                  this.onClose();
-                }}
-              />
-              <UserView
-                name={item.creator.name}
-                profile={item.creator.profile}
-                updated_at={item.creator.updated_at}
-                onClose={() => {
-                  this.onClose();
-                }}
-                swiper
-              />
-              <SwipeAccordion dataArray={item} />
-            </View>
-          ))}
+        <Swiper
+          ref={(ref) => (this.swiper = ref)}
+          style={styles.wrapper}
+          showsPagination={false}
+          loadMinimal
+          loadMinimalSize={10}
+          index={this.props.initialIndex ? this.props.initialIndex : 2}
+          onMomentumScrollEnd={(e, state, context) =>
+            console.warn('index:', state.index)
+          }
+          onIndexChanged={(index) => this.onchageIndex(index)}
+        >
+          {this.state.media.map((item, index) => {
+            let itemswiper = item; //this.props.formItem();
+            return (
+              <View style={styles.slide1}>
+                <Post
+                  //pause={isPause}
+                  post={itemswiper}
+                  onClose={() => {
+                    this.onClose();
+                  }}
+                />
+                <UserView
+                  name={itemswiper.creator.name}
+                  profile={itemswiper.creator.profile}
+                  updated_at={itemswiper.creator.updated_at}
+                  onClose={() => {
+                    this.onClose();
+                  }}
+                  swiper
+                  removeMessage={() => this.props.removeMessage(item)} //puisque le item c'est le message les appelle ce font directe ici
+                />
+                <SwipeAccordion dataArray={itemswiper} />
+              </View>
+            );
+          })}
         </Swiper>
       </View>
     );
