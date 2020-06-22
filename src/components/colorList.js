@@ -1,82 +1,75 @@
 import React, { Component } from 'react';
 import { Dimensions } from 'react-native';
 
-
 let { height, width } = Dimensions.get('window');
 class colorlist {
-    constructor() {
-    }
+  constructor() {}
 
-    errorColor = "#A91A84"
-    containerHeight = height
-    containerWidth = "100%"
-    headerTextSize = 14
-    containerBackground = "#1FABAB"
-    redIcon='red'
-    containerBackground = "white"
+  errorColor = '#A91A84';
+  containerHeight = height;
+  containerWidth = '100%';
+  headerTextSize = 14;
+  containerBackground = '#1FABAB';
+  redIcon = 'red';
+  containerBackground = 'white';
 
-    //header
-    iconGray = '#555756'
-    iconActive = "#1FABAB"
-    iconInactive = "#ADE3D2"
-    replyBackground = "rgba(34, 0, 0, 0.1)"
-    headerTextInverted = "black"
-    headerIcon = "black"
-    headerText = "black"
-    headerBlackText = "black"
-    headerBackground = "white"
-    headerHeight = 55
-    headerFontweight = "bold"
-    buttonerBackground = 'rgba(52, 52, 52, 0.6)'
-    bottunerLighter = "rgba(34, 0, 0, 0.05)"
-    headerFontSize = 16
-    reminds = "#2DDFD5"
-    post = "#F4AC1C"
-    vote = "#4B6CF7"
-    chatboxBorderRadius = 5
-    copy = "#92E578"
-    delete = "red"
+  //header
+  iconGray = '#555756';
+  iconActive = '#1FABAB';
+  iconInactive = '#ADE3D2';
+  replyBackground = 'rgba(34, 0, 0, 0.1)';
+  headerTextInverted = 'black';
+  headerIcon = 'black';
+  headerText = 'black';
+  headerBlackText = 'black';
+  headerBackground = 'white';
+  headerHeight = 55;
+  headerFontweight = 'bold';
+  buttonerBackground = 'rgba(52, 52, 52, 0.6)';
+  bottunerLighter = 'rgba(34, 0, 0, 0.05)';
+  headerFontSize = 16;
+  reminds = '#2DDFD5';
+  post = '#F4AC1C';
+  vote = '#4B6CF7';
+  chatboxBorderRadius = 5;
+  copy = '#92E578';
+  delete = 'red';
 
-    //body
-    bodyIcon = "black"
-    bodyText = "black"
-    bodyBackground = "white"
-    bodySubtext = "#696969"
-    bodyDarkWhite = "#f4f6fc"
-    darkGrayText = "#696969"
-    bodyTextBlue = "#1e90ff"
-    bodyIconBlue = "#1e90ff"
+  //body
+  bodyIcon = 'black';
+  bodyText = 'black';
+  bodyBackground = 'white';
+  bodySubtext = '#696969';
+  bodyDarkWhite = '#f4f6fc';
+  darkGrayText = '#696969';
+  bodyTextBlue = '#1e90ff';
+  bodyIconBlue = '#1e90ff';
 
-    //dark body
-    bodyIcondark = "#f4f6fc"
-    bodyTextdark = "#f4f6fc"
-    bodyBackgrounddark = "#101010"
-    bodyBackgroundDarkGray = "#202020"
-    
-    
-    //modal
- 
+  //dark body
+  bodyIcondark = '#f4f6fc';
+  bodyTextdark = '#f4f6fc';
+  bodyBackgrounddark = '#101010';
+  bodyBackgroundDarkGray = '#202020';
+  transparent: 'rgba(0, 0, 0, 0.001)';
+  //modal
 
-    //pop menu
-    popMenuBackground = "white"
+  //pop menu
+  popMenuBackground = 'white';
 
-    //likes 
-    heartColor = '#FE1D1D'
-    likeActive = "#1FABAB"
-    likeInactive = "black"
-    indicatorColor = "#057D74"
-    indicatorInverted = "#DDECE9"
-    
-    //messages 
-    senTBoxColor = "#F3F8F7"
-    receivedBox = "#FFFFFF"
+  //likes
+  heartColor = '#FE1D1D';
+  likeActive = '#1FABAB';
+  likeInactive = 'black';
+  indicatorColor = '#057D74';
+  indicatorInverted = '#DDECE9';
 
-
+  //messages
+  senTBoxColor = '#F3F8F7';
+  receivedBox = '#FFFFFF';
 }
 
-const ColorList = new colorlist()
+const ColorList = new colorlist();
 export default ColorList;
-
 
 /**import React, { Component } from 'react';
 import { Dimensions } from 'react-native';
@@ -107,7 +100,7 @@ containerBackground = "#1FABAB"
  bodyBackground = "white"
  bodySubtext = "gray"
  bodyDarkWhite = "#f4f6fc"
-  
+
  //modal
 
 

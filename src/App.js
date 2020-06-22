@@ -59,6 +59,8 @@ import CommentsPage from './components/myscreens/event/createEvent/components/Co
 import SearchUser from './components/myscreens/Contacts/searchUser';
 import ColorList from './components/colorList';
 import SwiperComponent from './components/SwiperComponent/index';
+import CameraScreen from './components/mainComponents/BleashupCamera/index';
+import TimerVideo from './components/mainComponents/BleashupCamera/timer';
 /*
 let {height, width} = Dimensions.get('window');
 EStyleSheet.build({
@@ -107,6 +109,8 @@ const AppNavigator = createStackNavigator(
     MessageBox: { screen: MessageBox },
     SearchUser: { screen: SearchUser },
     SwiperComponent: { screen: SwiperComponent },
+    CameraScreen: { screen: CameraScreen },
+    TimerVideo: { screen: TimerVideo },
   },
   {
     initialRouteName: "LoginHome",

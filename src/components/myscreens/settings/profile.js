@@ -133,8 +133,8 @@ export default class ProfileView extends Component {
                  requestAnimationFrame(() => {this.setState({enlarge:true})});
              }}>
                {this.state.userInfo.profile  && testForURL(this.state.userInfo.profile ) ? <CacheImages   {...this.props}
-                   source={{ uri: this.state.userInfo.profile }} style={{ ...rounder(30),justifyContent: 'center',alignItems: 'center',textAlign:'center' }} /> :
-                <Image source={require("../../../../Images/profile.png")} style={{height:ColorList.containerHeight/3,width:width-width/9,borderRadius:14}} ></Image>}
+                   source={{ uri: this.state.userInfo.profile }} style={{height:ColorList.containerHeight/3,width:width-width/9,borderRadius:14}} /> :
+                <Image source={require("../../../../Images/avatar.svg")} style={{height:ColorList.containerHeight/3,width:width-width/9,borderRadius:14}} ></Image>}
              </TouchableWithoutFeedback>
  
              <TouchableWithoutFeedback  onPress={this.TakePhotoFromCamera} >
