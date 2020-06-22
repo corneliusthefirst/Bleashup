@@ -25,14 +25,7 @@ import {
   Toast,
   Thumbnail,
 } from 'native-base';
-<<<<<<< HEAD
-import SettingView from './../settings/index';
-import autobind from 'autobind-decorator';
-=======
->>>>>>> d84c42a9f3c25662cf721f0f8a41ef6a5137949d
-import {
-  find,
-} from 'lodash';
+import {find,} from 'lodash';
 import { withInAppNotification } from 'react-native-in-app-notification';
 import stores from '../../../stores';
 import CurrentEventView from '../currentevents';
