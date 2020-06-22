@@ -10,9 +10,10 @@ import ProfileSimple from "../currentevents/components/ProfileViewSimple";
 import GState from '../../../stores/globalState/index';
 import colorList from '../../colorList';
 import replies from '../eventChat/reply_extern';
+import AnimatedComponent from '../../AnimatedComponent';
 
 
-export default class ChangeBox extends Component {
+export default class ChangeBox extends AnimatedComponent {
     constructor(props) {
         super(props)
         this.state = {

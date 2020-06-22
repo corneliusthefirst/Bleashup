@@ -38,11 +38,12 @@ import SideButton from '../../sideButton';
 import Share from '../../../stores/share';
 import BeNavigator from '../../../services/navigationServices';
 import ShareFrame from "../../mainComponents/ShareFram";
+import AnimatedComponent from '../../AnimatedComponent';
 
 let { height, width } = Dimensions.get('window');
 
 //@observer
-export default class EventDetailView extends Component {
+export default class EventDetailView extends AnimatedComponent {
 
   constructor(props) {
     super(props)
@@ -77,6 +78,7 @@ export default class EventDetailView extends Component {
   @autobind
   initializer() {
     let participant = find(this.props.Event.participant, { phone: stores.LoginStore.user.phone });
+    this.animateUI()
     this.setState({
       newing: !this.state.newing,
       isMounted: true,

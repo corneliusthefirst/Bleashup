@@ -100,8 +100,11 @@ export default class EventTasksCard extends Component {
   }
   previousItem = null
   shouldComponentUpdate(nextProps, nextState, nextContext) {
+    this.props.animate()
+    let previousItem = JSON.parse(this.previousItem)
     return this.state.mounted !== nextState.mounted ||
-      !isEqual(JSON.parse(this.previousItem), nextProps.item) ||
+      !isEqual(previousItem, nextProps.item) || 
+      previousItem.period !== nextProps.item.period ||
       this.state.newing !== nextState.newing
   }
   componentDidUpdate(prevProps, prevState) {

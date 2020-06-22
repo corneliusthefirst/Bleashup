@@ -255,7 +255,6 @@ export default class ReplyText extends Component {
                         }}
                       >
                           <View>
-                            {testForURL(this.props.reply.sourcer) ? (
                               <CacheImages
                                 thumbnails
                                 square
@@ -274,28 +273,6 @@ export default class ReplyText extends Component {
                                 }}
                                 source={{ uri: this.props.reply.sourcer }}
                               ></CacheImages>
-                            ) : (
-                                <Thumbnail
-                                  thumbnails
-                                  square
-                                  style={{
-                                    width: 70,
-                                    minHeight:
-                                      this.state.currentHeight > 50
-                                        ? this.state.currentHeight
-                                        : 60,
-                                    maxHeight:
-                                      this.state.currentHeight > 50
-                                        ? this.state.currentHeight
-                                        : 60,
-                                    borderBottomRightRadius: 5,
-                                    borderTopRightRadius: 5,
-                                    height: this.state.currentHeight,
-                                    borderRadius: 5,
-                                  }}
-                                  source={{ uri: this.props.reply.sourcer }}
-                                ></Thumbnail>
-                              )}
                           </View>
                           {this.props.reply.video ? (
                             <View

@@ -2,10 +2,11 @@ import React, { PureComponent } from "react";
 import { Dimensions, View } from "react-native"
 import Modal from "react-native-modalbox";
 import ColorList from '../colorList';
+import AnimatedPureComponent from '../AnimatedPureComponent';
 
 const screenheight = Math.round(Dimensions.get('window').height);
 
-export default class BleashupModal extends PureComponent {
+export default class BleashupModal extends AnimatedPureComponent {
     constructor(props) {
         super(props);
         this.state = {}

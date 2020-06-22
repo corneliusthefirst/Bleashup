@@ -2,9 +2,10 @@ import React,{PureComponent} from 'react';
 import {View} from "react-native"
 import EmojiSelector from "react-native-emoji-selector";
 import ColorList from '../../colorList';
+import AnimatedPureComponent from '../../AnimatedPureComponent';
 
 
-export default class ImojieSelector extends PureComponent {
+export default class ImojieSelector extends AnimatedPureComponent {
     constructor(props){
         super(props)
         this.state = {}

@@ -5,6 +5,7 @@ import { View, TouchableOpacity, PermissionsAndroid, BackHandler, Platform } fro
 import SoundRecorder from 'react-native-sound-recorder';
 import converToHMS from '../highlights_details/convertToHMS';
 import rnFetchBlob from 'rn-fetch-blob';
+import ColorList from '../../colorList';
 
 let dirs = rnFetchBlob.fs.dirs
 export default class AudioRecorder extends Component{
@@ -84,7 +85,7 @@ export default class AudioRecorder extends Component{
         this.stopRecordTiming()
         SoundRecorder.stop().then(() => {
             this.setState({
-                recording:false,
+                //recording:false,
                 recordTime:0
             })
         })
@@ -129,17 +130,17 @@ export default class AudioRecorder extends Component{
             backgroundColor: '#5CB99E', height: 50, display: 'flex', flexDirection: 'row',
              borderTopLeftRadius: 5,borderTopRightRadius: 5,
         }}><Left><TouchableOpacity onPress={() => this.props.toggleAudioRecorder()}><Icon type={'EvilIcons'} 
-        name={'close'} style={{ color: "#FEFFDE" }}></Icon>
+        name={'close'} style={{ color: ColorList.bodyBackground }}></Icon>
         </TouchableOpacity></Left>{this.state.recording ? 
             <View style={{ marginLeft: "-40%", marginTop: "1.8%", display: 'flex', flexDirection: 'row', }}>
-            <Icon type={"Entypo"} onPress={() => this.stopRecord()} name={"controller-stop"} style={{ color: "#FEFFDE", fontSize: 35, }}></Icon>
-            <Icon type={"FontAwesome"} name={"pause"} onPress={() => this.pauseRecorder()} style={{ marginTop: "5%", marginLeft: "10%", color: "#FEFFDE", fontSize: 26, }}></Icon>
+            <Icon type={"Entypo"} onPress={() => this.stopRecord()} name={"controller-stop"} style={{ color: ColorList.bodyBackground, fontSize: 35, }}></Icon>
+            <Icon type={"FontAwesome"} name={"pause"} onPress={() => this.pauseRecorder()} style={{ marginTop: "5%", marginLeft: "10%", color: ColorList.bodyBackground, fontSize: 26, }}></Icon>
         </View> :
          <View style={{ marginLeft: "-40%", marginTop: "1.8%", display: 'flex', flexDirection: 'row', }}>
-                <Icon type={"Entypo"} onPress={() => this.resumAudioRecoder()} name={"controller-record"} style={{ color: "#FEFFDE", fontSize: 35, }}></Icon>
+                <Icon type={"Entypo"} onPress={() => this.resumAudioRecoder()} name={"controller-record"} style={{ color: ColorList.bodyBackground, fontSize: 35, }}></Icon>
             </View>}
             <Right><View style={{ display: 'flex', flexDirection: 'row', marginLeft: "30%", }}>
-                <Text style={{ marginTop: "6%", fontSize: 22, color: "#FEFFDE" }}>
+                <Text style={{ marginTop: "6%", fontSize: 22, color: ColorList.bodyBackground }}>
                     {converToHMS(this.state.recordTime)}</Text>
                 <PulseIndicator color={'red'}>
                 </PulseIndicator></View></Right></View>;

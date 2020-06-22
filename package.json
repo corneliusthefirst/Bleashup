@@ -46,6 +46,7 @@
     "react-native-document-picker": "^3.2.4",
     "react-native-drawer": "^2.5.1",
     "react-native-emoji-selector": "^0.1.7",
+    "react-native-fast-image": "^8.1.5",
     "react-native-ffmpeg": "^0.4.0",
     "react-native-file-viewer": "^2.0.0",
     "react-native-firebase": "^5.5.6",

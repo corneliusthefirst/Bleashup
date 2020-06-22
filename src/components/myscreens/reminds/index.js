@@ -47,11 +47,11 @@ import request from '../../../services/requestObjects';
 import replies from "../eventChat/reply_extern";
 import TaskCreationExtra from './TaskCreationExtra';
 import uuid from 'react-native-uuid';
+import AnimatedComponent from '../../AnimatedComponent';
 //const MyTasksData = stores.Reminds.MyTasksData
 
-export default class Reminds extends Component {
-  constructor(props) {
-    super(props);
+export default class Reminds extends AnimatedComponent {
+  initialize(){
     this.state = {
       eventRemindData: [],
       mounted: true,
@@ -239,6 +239,7 @@ export default class Reminds extends Component {
     }
   }
   refreshReminds() {
+    this.animateUI()
     this.setState({
       newing: !this.state.newing,
       currentTask:
@@ -498,6 +499,7 @@ export default class Reminds extends Component {
           content={() => (
             <View style={{ width: "100%" }}>
               <TasksCard
+                animate={this.animateUI}
                 showMedia={this.showMedia.bind(this)}
                 phone={stores.LoginStore.user.phone}
                 mention={(itemer) => {
@@ -874,6 +876,7 @@ export default class Reminds extends Component {
                 return (
                   <View>
                     <TasksCard
+                      animate={this.animateUI}
                       showMedia={this.showMedia.bind(this)}
                       isLast={index === this.getRemindData().length - 1}
                       phone={stores.LoginStore.user.phone}

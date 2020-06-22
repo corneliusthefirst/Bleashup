@@ -19,10 +19,11 @@ import DetailsModal from '../../invitations/components/DetailsModal.js';
 import PhotoViewer from '../../event/PhotoViewer.js';
 import CreateEvent from '../../event/createEvent/CreateEvent';
 import BeNavigator from "../../../../services/navigationServices"
+import AnimatedComponent from '../../../AnimatedComponent.js';
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenheight = Math.round(Dimensions.get('window').height);
 
-export default class CurrentEvents extends Component {
+export default class CurrentEvents extends AnimatedComponent {
     constructor(props) {
         super(props)
         this.state = {

@@ -50,6 +50,66 @@ export default class PickersUpload extends Component {
       downloadProgess: reveived / total,
     });
   };
+  upload(snaper,isVideo){
+    this.exchanger = new FileExachange(
+      snaper.source,
+      isVideo ? "/Video/" : "/Photo/",
+      0,
+      0,
+      this.handleProgress,
+      (newDir, path, filename, baseURL) => {
+        rnFetchBlob.fs.unlink(newDir).then(() => {
+        });
+        if (this.previousPhoto) {
+          let deleter = new FileExachange()
+          deleter.deleteFile(this.previousPhoto, true).then(() => {
+
+          })
+        }
+        if (this.previousVideo) {
+          let deleter = new FileExachange()
+          deleter.deleteFile(this.previousVideo, true)
+        }
+        if (isVideo) {
+          RNFFmpeg.getMediaInformation(path).then((info) => {
+            let photoVid = baseURL + filename.split(".")[0] + "_thumbnail.jpeg"
+            this.props.saveMedia({
+              ...this.props.currentURL,
+              photo: isVideo
+                ? photoVid
+                : path,
+              video: isVideo && path,
+              video_duration: Math.ceil(info.duration / 1000),
+            });
+            this.previousPhoto = photoVid
+            this.previousVideo = path
+          });
+        } else {
+          this.props.saveMedia({
+            ...this.props.currentURL,
+            photo: path,
+            video: isVideo && path,
+          });
+        }
+        this.previousPhoto = path
+        this.setState({
+          uploading: false,
+        });
+      },
+      null,
+      (error) => {
+        this.sayUploadError();
+        this.setState({
+          newing: !this.state.newing,
+        });
+        console.warn(error);
+      },
+      snaper.content_type,
+      snaper.filename,
+      isVideo ? "/video" : "/photo"
+    );
+    this.exchanger.upload();
+  }
   TakePhotoFromLibrary(vid) {
     Pickers.SnapPhoto(!vid).then((snaper) => {
       this.setState({
@@ -60,64 +120,14 @@ export default class PickersUpload extends Component {
       this.cancelUploadError();
       //Pickers.CompressVideo(snaper).then(snap => {
       let isVideo = snaper.content_type.includes("video");
-      this.exchanger = new FileExachange(
-        snaper.source,
-        isVideo ? "/Video/" : "/Photo/",
-        0,
-        0,
-        this.handleProgress,
-        (newDir, path, filename, baseURL) => {
-          rnFetchBlob.fs.unlink(newDir).then(() => {
-          });
-          if (this.previousPhoto) {
-            let deleter = new FileExachange()
-            deleter.deleteFile(this.previousPhoto, true).then(() => {
-
-            })
-          }
-          if (this.previousVideo) {
-            let deleter = new FileExachange()
-            deleter.deleteFile(this.previousVideo, true)
-          }
-          if (isVideo) {
-            RNFFmpeg.getMediaInformation(path).then((info) => {
-              let photoVid = baseURL + filename.split(".")[0] + "_thumbnail.jpeg"
-              this.props.saveMedia({
-                ...this.props.currentURL,
-                photo: isVideo
-                  ? photoVid
-                  : path,
-                video: isVideo && path,
-                video_duration: Math.ceil(info.duration / 1000),
-              });
-              this.previousPhoto = photoVid
-              this.previousVideo = path
-            });
-          } else {
-            this.props.saveMedia({
-              ...this.props.currentURL,
-              photo: path,
-              video: isVideo && path,
-            });
-          }
-          this.previousPhoto = path
-          this.setState({
-            uploading: false,
-          });
-        },
-        null,
-        (error) => {
-          this.sayUploadError();
-          this.setState({
-            newing: !this.state.newing,
-          });
-          console.warn(error);
-        },
-        snaper.content_type,
-        snaper.filename,
-        isVideo ? "/video" : "/photo"
-      );
-      this.exchanger.upload();
+      if(!isVideo){
+        Pickers.resizePhoto(snaper.source).then(source => {
+          this.upload({...snaper,source},isVideo)
+        })
+      }else{
+        this.upload(snaper,isVideo)
+      }
+      
     });
   }
   clearAudio() {

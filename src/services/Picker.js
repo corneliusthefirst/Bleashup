@@ -40,7 +40,6 @@ class Picker {
             let size = 0
             let file = response.source.split('/')
             let temp = file[file.length - 1].split('.')
-            let temp2 = file.pop()
             let ext = temp.pop()
             let nameString = temp.join('.')
             let fileinfo = {
@@ -66,6 +65,17 @@ class Picker {
                         size: size,
                     })
                 })
+        })
+    }
+    resizePhoto(file){
+        return new Promise((resolve,reject) => {
+            let temp = file.split(".")
+            temp[temp.length-2] = temp[temp.length-2]+"_compress"
+            let compressed = temp.join(".")
+            RNFFmpeg.executeWithArguments(["-i", file.replace('file://', ''), 
+            "-vf", "scale=300:-1", compressed.replace('file://', '')]).then(() => {
+                resolve(compressed)
+            })
         })
     }
     CancleCompression() {

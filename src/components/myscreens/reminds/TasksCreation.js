@@ -511,7 +511,15 @@ export default class TasksCreation extends BleashupModal {
   updateRemind() {
     let rem = this.state.currentRemind;
     rem.period = this.state.date;
-    this.props.updateRemind(rem);
+    this.props.updateRemind({
+      ...rem,
+      recursive_frequency: {
+        ...rem.recursive_frequency,
+        recurrence: moment(rem.period).format("x") >= 
+        moment(rem.recursive_frequency.recurrence).format("x") ? 
+        moment(rem.period).add(1, "h").format() : rem.recursive_frequency.recurrence
+      }
+    });
 
     //this.resetRemind();
   }
@@ -715,8 +723,8 @@ export default class TasksCreation extends BleashupModal {
                   </View>
                 </View>
               ) :
-                this.props.shouldRestore && this.props.canRestore ? (
-                  <View style={{ width: "60%", alignSelf: "flex-end", margin: '1%', height: 30,marginBottom: 'auto',marginTop: 'auto', }}>
+                this.props.shouldRestore && this.props.canRestore && false ? (
+                  <View style={{ width: "60%", alignSelf: "flex-end", margin: '1%', height: 30, marginBottom: 'auto', marginTop: 'auto', }}>
                     <CreateButton
                       style={{
                         height: '100%'
