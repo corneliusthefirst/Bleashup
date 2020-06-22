@@ -236,8 +236,8 @@ class Home extends Component {
 
 
   settings = () => {
-    //BeNavigator.navigateTo("Settings");
-    BeNavigator.navigateTo("TimerVideo");
+    BeNavigator.navigateTo("Settings");
+    //BeNavigator.navigateTo("TimerVideo");
     //this.setState({ openBCamera: true });
   };
 
