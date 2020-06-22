@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { Content, Card, CardItem, Text, Body, Icon, Header, Button } from "native-base";
 //import GState from "../../../../../stores/globalState";
 import { View, Linking, Alert, Dimensions, ScrollView, TouchableOpacity } from "react-native"
-import Swipeout from "react-native-swipeout";
 import InAppBrowser from 'react-native-inappbrowser-reborn';
 import Modal from 'react-native-modalbox';
 import autobind from "autobind-decorator";

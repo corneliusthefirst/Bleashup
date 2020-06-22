@@ -11,6 +11,7 @@ import buttoner from '../../../services/buttoner';
 import ColorList from '../../colorList';
 import TextContent from './TextContent';
 import CacheImages from '../../CacheImages';
+import Pickers from '../../../services/Picker';
 const { fs } = rnFetchBlob
 export default class PhotoUploader extends Component {
     constructor(props) {
@@ -22,15 +23,18 @@ export default class PhotoUploader extends Component {
     }
     state = {}
     componentDidMount() {
-        this.exchanger = new FileExachange(this.props.message.source,
-            "/Photo/", this.props.message.total ?
-            this.props.message.total : 0, this.props.message.received ?
-            this.props.message.received : 0,
-            this.progress.bind(this), this.onSuccess.bind(this),
-            null, this.onError.bind(this),
-            this.props.message.content_type,
-            this.props.message.filename, '/photo')
-        this.uploaderPhoto()
+        Pickers.resizePhoto(this.props.message.source).then(source => {
+            console.warn("compress photo uplad source ",source)
+            this.exchanger = new FileExachange(source,
+                "/Photo/", this.props.message.total ?
+                this.props.message.total : 0, this.props.message.received ?
+                this.props.message.received : 0,
+                this.progress.bind(this), this.onSuccess.bind(this),
+                null, this.onError.bind(this),
+                this.props.message.content_type,
+                this.props.message.filename, '/photo')
+            this.uploaderPhoto()
+        })
     }
     task = null
     uploaderPhoto() {

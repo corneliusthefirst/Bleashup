@@ -37,7 +37,7 @@ export default class AccordionModuleNative extends Component {
         }}
       >
       <View style={{
-        minWidth:'93%',
+          minWidth: this.props.hideToggler?'100%':'93%',
         marginBottom: 'auto',
         marginTop: 'auto',
       }}>
@@ -79,7 +79,14 @@ export default class AccordionModuleNative extends Component {
   }
   toggleExpand = (item) => {
    !this.expanded(item) && this.props.onExpand && this.props.onExpand(item);
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    LayoutAnimation.configureNext({
+                duration: 300,
+                create: {
+                    type: LayoutAnimation.Types.easeInEaseOut,
+                  property: LayoutAnimation.Properties.scaleX,
+                },
+                update: { type: LayoutAnimation.Types.easeInEaseOut },
+            });
     this.setState({ expanded: this.props.keyExtractor ? this.state.expanded === this.props.keyExtractor(item) ? null : this.props.keyExtractor(item) : item });
   };
 }

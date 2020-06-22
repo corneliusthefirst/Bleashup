@@ -11,7 +11,7 @@ import { Button, Content, Text } from 'native-base';
 import moment from 'moment';
 import BleashupFlatList from '../../BleashupFlatList';
 import SelectableAlarmPeriod from './SelectableAlarmPeriod';
-import { reject } from "lodash";
+import { reject,uniqBy } from "lodash"
 import { MenuDivider } from 'react-native-material-menu';
 import bleashupHeaderStyle from '../../../services/bleashupHeaderStyle';
 import { AlarmPatterns } from '../../../services/recurrenceConfigs';
@@ -30,8 +30,8 @@ export default class SetAlarmPatternModal extends BleashupModal {
     }
     addItem(item) {
         this.setState({
-            selected: [...this.state.selected, item]
-        });
+            selected: uniqBy([...this.state.selected, item],"id")
+        })
     }
     removeItem(id) {
         this.setState({

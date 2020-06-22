@@ -10,7 +10,6 @@ import {
   DatePicker, CheckBox, List, Accordion, DeckSwiper, Label, Toast
 } from "native-base";
 
-import Swipeout from 'react-native-swipeout';
 import styles from './style';
 import CacheImages from "../../CacheImages";
 import Exstyles from './style';
@@ -250,7 +249,6 @@ class CardListItem extends Component {
   }
   render() {
     return this.state.loading ? <Card style={{ height: 230 }}></Card> : <View style={{ width: "98%",alignSelf: 'center', }}>
-      <Swipeout style={{ width: "100%", }} {...this.swipeSettings}>
         <Card>
           <CardItem>
             <Text style={{ color: "#A91A84", fontSize: 14, }} note>
@@ -354,19 +352,7 @@ class CardListItem extends Component {
             accept={this.state.accept} isJoining={this.state.isJoining} hasJoin={this.state.hasJoin}
             joined={() => this.setState({ hasJoin: true, actioning: !this.state.actioning })} />}
 
-
-          {/*this.state.loading ? null : <DetailsModal isOpen={this.state.isOpenDetails} details={this.state.card} location={this.state.item.location}
-            event_organiser_name={this.state.item.event_organiser_name}
-            created_date={this.state.item.created_date}
-            onClosed={() => {
-              this.setState({ opening: false, isOpenDetails: false, actioning: !this.state.actioning })
-              this.onSeen()
-            }
-            } item={this.state.item}
-            OpenLinkZoom={this.OpenLinkZoom} OpenLink={this.OpenLink} onAccept={this.onAccept} onDenied={this.onDenied} deny={this.state.deny}
-          accept={this.state.accept} isJoining={this.state.isJoining} hasJoin={this.state.hasJoin} joined={() => this.setState({ hasJoin: true, actioning: !this.state.actioning })} />*/}
-        </Card>
-      </Swipeout>
+             </Card>
     </View>
 
 

@@ -24,6 +24,7 @@ import ColorList from "../../colorList";
 import ShareFrame from "../../mainComponents/ShareFram";
 import Share from "../../../stores/share";
 import replies from "../eventChat/reply_extern";
+import AnimatedComponent from '../../AnimatedComponent';
 let { height, width } = Dimensions.get("window");
 
 export default class Votes extends BleashupModal {

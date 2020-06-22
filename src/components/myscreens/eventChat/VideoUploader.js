@@ -104,7 +104,7 @@ export default class VideoUploader extends Component {
                                 height: 300,
                                 backgroundColor: 'black',
                             }}>
-                                <View style={{ alignSelf: 'flex-start', margin: '2%', marginTop: '100%',}}>
+                                <View style={{ alignSelf: 'flex-start', margin: '2%', marginTop: '80%',}}>
                                     {this.state.loaded ? <View style={{ marginTop: 0, ...buttoner, width: 70, height: 25 }}><View><Text
                                         style={{ color: ColorList.bodyBackground }}>
                                         {this.toMB(this.state.total).toFixed(2)} {"Mb"}</Text></View></View> :

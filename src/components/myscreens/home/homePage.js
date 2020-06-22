@@ -3,9 +3,7 @@
 import React, { Component } from 'react';
 import {
   Platform,
-  ScrollView,
   BackHandler,
-  ToastAndroid,
   View,
   StatusBar,
   AppState,
@@ -27,8 +25,11 @@ import {
   Toast,
   Thumbnail,
 } from 'native-base';
+<<<<<<< HEAD
 import SettingView from './../settings/index';
 import autobind from 'autobind-decorator';
+=======
+>>>>>>> d84c42a9f3c25662cf721f0f8a41ef6a5137949d
 import {
   find,
 } from 'lodash';
@@ -38,6 +39,7 @@ import CurrentEventView from '../currentevents';
 import emitter from '../../../services/eventEmiter';
 import firebase from 'react-native-firebase';
 import GState from '../../../stores/globalState';
+<<<<<<< HEAD
 import CreateEvent from '../event/createEvent/CreateEvent';
 
 import ForeignEventsModal from './ForeignEventsModal';
@@ -47,6 +49,12 @@ import shadower from '../../shadower';
 import bleashupHeaderStyle from '../../../services/bleashupHeaderStyle';
 import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
 import colorList from '../../colorList';
+=======
+import DeepLinking from 'react-native-deep-linking';
+import shadower from "../../shadower";
+import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
+import colorList from "../../colorList";
+>>>>>>> d84c42a9f3c25662cf721f0f8a41ef6a5137949d
 import BeNavigator from '../../../services/navigationServices';
 import { PrivacyRequester, shared_post } from '../settings/privacy/Requester';
 import EventListener from '../../../services/severEventListener';
@@ -279,11 +287,15 @@ class Home extends Component {
 
             <View style={{ height: '100%', alignSelf: 'flex-end', display: 'flex', flexDirection: 'row', marginRight: '2%' }}>
 
+<<<<<<< HEAD
               <TouchableOpacity style={{ height: 40, alignItems: 'center', justifyContent: 'center' }} onPress={() => this.navigateToInvitations()}>
                 <Icon name="sc-telegram" active={true} type="EvilIcons" style={{ color: colorList.headerIcon }} onPress={() => this.navigateToInvitations()} />
               </TouchableOpacity>
 
               <TouchableOpacity style={{ height: 40, alignItems: 'center', justifyContent: 'center' }} onPress={this.settings} >
+=======
+              <TouchableOpacity style={{ height: 40, alignItems: "center", justifyContent: "center" }} onPress={this.settings} >
+>>>>>>> d84c42a9f3c25662cf721f0f8a41ef6a5137949d
                   <Icon name="gear" active={true} type="EvilIcons" style={{ color: colorList.headerIcon, marginLeft: width / 35 }} onPress={this.settings}/>
               </TouchableOpacity>
 

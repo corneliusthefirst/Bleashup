@@ -26,11 +26,11 @@ export default class PhotoMessage extends Component {
     }
 
     componentDidMount() {
-        if (testForURL(this.props.message.photo)) {
+        /*if (testForURL(this.props.message.photo)) {
             this.exchanger = new FileExachange(this.props.message.photo, this.path, 0, 0, (received, total) => {
 
             }, (dir, received, total) => {
-                stores.Messages.replaceMessage(this.props.room,{ ...this.props.message, photo: 'file://' + dir }).then(() => {
+                stores.Messages.replaceMessage(this.props.room, { ...this.props.message, photo: 'file://' + dir }).then(() => {
 
                 })
             }, (error) => {
@@ -38,22 +38,27 @@ export default class PhotoMessage extends Component {
             })
             this.exchanger.download(0, 0)
         } else {
-        }
+        }*/
     }
-    messageWidth=250
+    getPhotoSmall() {
+        return this.props.message.sender && stores.LoginStore.user.phone.replace("00", "+") === this.props.message.sender.phone ?
+            this.props.message.source :
+            this.props.message.photo
+    }
+    messageWidth = 250
     path = '/Photo/' + this.props.message.filename
     render() {
         return (
-            <View style={{ minHeight: 250, width: this.messageWidth,marginTop: '1%', }}>
+            <View style={{ minHeight: 250, width: this.messageWidth, marginTop: '1%', }}>
                 <TouchableOpacity
                     onLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null}
                     onPress={() => this.props.showPhoto(this.props.message.photo)}>
                     <CacheImages hasJoin onOpen={() => { }}
-                        source={{ uri: this.props.message.photo }} square thumbnails style={{ alignSelf: 'flex-start', width: this.messageWidth, height: 248, }} borderRadius={5}>
+                        source={{ uri: this.getPhotoSmall() }} square thumbnails style={{ alignSelf: 'flex-start', width: this.messageWidth, height: 248, }} borderRadius={5}>
                     </CacheImages>
                 </TouchableOpacity>
                 {this.props.message.text ?
-                    <View style={{ alignSelf: 'flex-start',}}>
+                    <View style={{ alignSelf: 'flex-start', }}>
                         <TextContent tags={this.props.message.tags} handleLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null} pressingIn={() => this.props.pressingIn()} text={this.props.message.text}></TextContent>
                     </View> : null}
 

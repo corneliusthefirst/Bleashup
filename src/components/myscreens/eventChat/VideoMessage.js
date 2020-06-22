@@ -10,6 +10,7 @@ import FileExachange from "../../../services/FileExchange";
 import buttoner from "../../../services/buttoner";
 import ColorList from '../../colorList';
 import stores from "../../../stores";
+import CacheImages from '../../CacheImages';
 
 
 export default class VideoMessage extends Component {
@@ -137,35 +138,31 @@ export default class VideoMessage extends Component {
     render() {
         return (
             <View>
-                <TouchableOpacity onPressIn={() => {
-                    this.props.pressingIn()
-                }} onLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null}>
+                <TouchableOpacity onPress={() => this.props.playVideo(this.props.message.source)
+                }  onLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null}>
                     <View style={{width:this.messageWidth}}>
                         <View>
-                            <Image style={{
+                            <CacheImages thumbnails square style={{
                                 marginTop: "2%",
+                                width: this.messageWidth,
+                                height:250
                             }}
-                                borderRadius={5}
-                                source={{ uri: this.props.message.thumbnailSource }}
-                                photo={this.props.message.thumbnailSource}
-                                width={this.messageWidth} height={250}>
-                            </Image>
+                            borderRadius={5}
+                            source={{ uri: this.props.message.thumbnailSource }}
+                            >
+                            </CacheImages>
                             <View style={{ position: 'absolute', marginTop: "50%", marginLeft: "45%", }}>
                                 <View style={{ ...buttoner }}>
-                                    <TouchableOpacity
-                                        onPress={() => this.props.playVideo(this.props.message.source)
-                                        }>
                                         <Icon onPress={() => this.props.playVideo(this.props.message.source)} type="EvilIcons" name="play" style={{
                                             fontSize: 40,
                                             color: ColorList.bodyBackground
                                         }}></Icon>
-                                    </TouchableOpacity>
                                 </View>
                             </View>
                             <View style={{ alignSelf: this.state.sender ? 'flex-start' : 'flex-end', margin: '2%', justifyContent: 'center', }}>
                                 {this.state.loaded ? <View style={{ marginTop: "-20%" }}><View style={{ ...buttoner, height: 25, width: 65 }}><Text style={{ color: ColorList.bodyBackground }}>
                                     {this.toMB(this.state.total).toFixed(2)} {"Mb"}</Text></View></View> :
-                                    <View style={{ marginTop: "-30%", flexDirection: 'column', alignItems: 'center', }}>
+                                    <View style={{ marginTop: "-40%", flexDirection: 'column', alignItems: 'center', }}>
                                         <View style={{ height: 43 }}>
                                             <AnimatedCircularProgress size={40}
                                                 width={2}

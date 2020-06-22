@@ -11,8 +11,6 @@ import {
   DatePicker, CheckBox, List, Accordion, DeckSwiper
 } from "native-base";
 
-import Swipeout from 'react-native-swipeout';
-import Modal from 'react-native-modalbox';
 import styles from './style';
 import CacheImages from "../../CacheImages";
 import Exstyles from './style';
@@ -183,7 +181,6 @@ class CardListItem extends Component {
 
   render() {
     return (this.state.loading ? <Card style={{ height: 220 }}></Card> : <View style={{ width: "98%",alignSelf: 'center', }}>
-      <Swipeout style={{ width: "100%", }} {...this.swipeSettings}>
         <Card >
           <CardItem>
             <Text style={{ fontSize: 14, }} note>
@@ -271,7 +268,6 @@ class CardListItem extends Component {
             joined={() => this.setState({ hasJoin: true })} />}
 
         </Card>
-      </Swipeout>
     </View>
     );
   }

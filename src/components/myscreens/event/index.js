@@ -12,7 +12,6 @@ import EventDetails from "../eventDetails";
 import Remind from "../reminds";
 import Highlights from "../highlights";
 import Votes from "../votes";
-import { reject } from "lodash";
 import EventChat from "../eventChat";
 import Contributions from "../contributions";
 import SWView from "./SWView";
@@ -627,7 +626,7 @@ export default class Event extends Component {
   }
   restoreRemind(data) {
     this.startLoader();
-    stores.Reminds.loadReminds(this.event.id, true).then((reminds) => {
+    stores.Reminds.loadReminds(this.event.id).then((reminds) => {
       if (findIndex(reminds, { id: data.new_value.new_value.id }) < 0) {
         RemindRequest.restoreRemind(data.new_value.new_value)
           .then(() => {
@@ -1699,7 +1698,7 @@ export default class Event extends Component {
           shouldRestore={this.state.shouldRestore}
           canRestore={
             this.state.remind &&
-            this.state.remind.creator === this.user.phone
+            (this.state.remind.creator === this.user.phone||this.master)
           }
           restore={(item) =>
             this.restoreRemind({ new_value: { new_value: item } })

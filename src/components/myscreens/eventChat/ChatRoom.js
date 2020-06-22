@@ -63,11 +63,13 @@ import {
     ScrollView,
 } from "react-native-gesture-handler";
 import { TouchableOpacity } from 'react-native';
+import CacheImages from "../../CacheImages";
+import AnimatedPureComponent from '../../AnimatedPureComponent';
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenheight = Math.round(Dimensions.get("window").height);
 @observer
-class ChatRoom extends Component {
+class ChatRoom extends AnimatedPureComponent {
     constructor(props) {
         super(props);
         this.authObserver();
@@ -75,7 +77,6 @@ class ChatRoom extends Component {
             isModalOpened: false,
             showHeader: !this.props.isComment,
             messageListHeight: this.formHeight( 120 / screenheight),
-            //this.formHeight((screenheight - 120) / screenheight),
         };
     }
     saveNotificationToken() {
@@ -522,7 +523,7 @@ class ChatRoom extends Component {
     captionMessages = [];
     sendingCaptionMessages = false;
     uselessSentCount = 0;
-    captionSender() {
+    /*captionSender() {
         if (this.uselessSentCount <= 20) {
             if (this.captionMessages.length <= 0) {
                 setTimeout(() => {
@@ -551,7 +552,7 @@ class ChatRoom extends Component {
         } else {
             this.sendingCaptiomMessages = false;
         }
-    }
+    }*/
 
     sender = {
         phone: this.props.user.phone,
@@ -1253,12 +1254,10 @@ class ChatRoom extends Component {
                         bindToBorders={true}
                         onZoomAfter={this.logOutZoomState}
                     >
-                        <Image
-                            resizeMode={"contain"}
-                            width={screenWidth}
-                            height={screenheight}
+                        <CacheImages
+                            style={{ width: screenWidth, height: screenheight}}
                             source={{ uri: this.state.photo }}
-                        ></Image>
+                        ></CacheImages>
                     </ReactNativeZoomableView>
                     <Icon
                         type="EvilIcons"

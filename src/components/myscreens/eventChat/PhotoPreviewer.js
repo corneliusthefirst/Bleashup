@@ -22,25 +22,30 @@ export default class PhotoPreview extends Component {
             <View
                 style={{
                     height: 300,
+                    borderTopLeftRadius: 5, backgroundColor: ColorList.bodyBackground,
+                    borderTopRightRadius: 5,
                     width: "100%",
                 }}
             >
                 <ReactNativeZoomableView
                     style={{
                         height: 300,
+                        borderTopLeftRadius: 5, backgroundColor: ColorList.bodyBackground,
+                        borderTopRightRadius: 5,
+                        backgroundColor: ColorList.bodyBackground,
                         width: "100%",
                     }}
-                    maxZoom={1.5}
+                    maxZoom={1}
                     minZoom={0.5}
                     zoomStep={0.5}
                     initialZoom={1}
                     bindToBorders={true}
                     onZoomAfter={this.logOutZoomState}
                 >
-                    <CacheImages thubmnails square
-                        style={{ width: "100%", height: "100%",alignSelf:"center",
-                        borderTopLeftRadius: 5,
-                        borderTopRightRadius: 5, ...shadower(1)}}
+                    <CacheImages thumbnails square
+                        style={{ width: "98%", height: "98%",alignSelf:"center",margin: '1%',
+                        borderTopLeftRadius: 5,backgroundColor: ColorList.bodyBackground,
+                        borderTopRightRadius: 5,}}
                         source={{ uri: this.props.image }}
                     ></CacheImages>
                 </ReactNativeZoomableView>

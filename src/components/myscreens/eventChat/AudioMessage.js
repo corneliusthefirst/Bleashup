@@ -24,6 +24,7 @@ import FileExachange from "../../../services/FileExchange";
 import ColorList from "../../colorList";
 import stores from "../../../stores";
 import TextContent from "./TextContent";
+import emitter from '../../../services/eventEmiter';
 export default class AudioMessage extends Component {
     constructor(props) {
         super(props);
@@ -38,6 +39,7 @@ export default class AudioMessage extends Component {
     componentWillUnmount() {
         this.player && this.player.stop();
         clearInterval(this.downloadID);
+        emitter.off(this.playingEvent)
     }
     componentDidMount() {
         console.warn(this.props.message.source);
@@ -70,7 +72,7 @@ export default class AudioMessage extends Component {
                         downloading: false,
                     });
             } else {
-                this.initialisePlayer(this.props.message.source);
+                //this.initialisePlayer(this.props.message.source);
             }
         }, 1000);
     }
@@ -167,9 +169,10 @@ export default class AudioMessage extends Component {
             this.download(url);
         }, 500);
     }
-    initialisePlayer(source) {
+    initialisePlayer(source,play) {
         this.player = new Sound(source, "/", (error) => {
             console.warn(error, "error");
+            play && this.player.play(this.playerCallback.bind(this))
         });
     }
     player = null;
@@ -178,6 +181,7 @@ export default class AudioMessage extends Component {
             playing: false,
         });
         this.player.pause();
+        emitter.off(this.playingEvent)
     }
     task = null;
     previousTime = 0;
@@ -199,23 +203,36 @@ export default class AudioMessage extends Component {
                 });
             }, 1000);
         }
-        this.player.play((success) => {
-            if (success) {
-                this.player.getCurrentTime((seconds) => {
-                    this.props.message.duration = Math.floor(seconds);
-                    this.setState({
-                        playing: false,
-                        currentPosition: seconds / this.props.message.duration,
-                        currentTime: seconds,
-                    });
-                    stores.Messages.addDuration(this.props.room, seconds).then(
-                        (status) => {
-                            //this.player.release()
-                        }
-                    );
+        emitter.emit(this.playingEvent)
+       if(this.player){
+           this.player.play(this.playerCallback.bind(this));
+           emitter.on(this.playingEvent, this.handlePLaying.bind(this))
+       }else{
+           this.initialisePlayer(this.props.message.source,true)
+           emitter.on(this.playingEvent, this.handlePLaying.bind(this))
+       }
+    }
+    handlePLaying(){
+        this.pause()
+    }
+    playingEvent = "playing"
+    playerCallback(success){
+        if (success) {
+            emitter.off(this.playingEvent)
+            this.player.getCurrentTime((seconds) => {
+                this.props.message.duration = Math.floor(seconds);
+                this.setState({
+                    playing: false,
+                    currentPosition: seconds / this.props.message.duration,
+                    currentTime: seconds,
                 });
-            }
-        });
+                stores.Messages.addDuration(this.props.room, seconds).then(
+                    (status) => {
+                        //this.player.release()
+                    }
+                );
+            });
+        }
     }
     showProgress() {
         if (this.props.message.duration) {

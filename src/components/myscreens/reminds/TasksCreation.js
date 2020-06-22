@@ -101,7 +101,7 @@ export default class TasksCreation extends BleashupModal {
   }
   @autobind
   init() {
-    this.props.remind && typeof this.props.remind == "string"
+    this.props.remind && typeof this.props.remind !== "string"
       ? setTimeout(() => {
         let remind = this.props.remind;
         this.setState({
@@ -120,10 +120,10 @@ export default class TasksCreation extends BleashupModal {
             remind && remind.period
               ? moment(remind.period).format()
               : moment().format(),
-          title:
+          /*title:
             remind && remind.period
               ? moment(remind.period).format()
-              : moment().format(),
+              : moment().format(),*/
         });
       })
       : stores.Reminds.loadRemind(
@@ -153,12 +153,12 @@ export default class TasksCreation extends BleashupModal {
                 : [],
           date:
             remind && remind.period
-              ? moment(remind.period).format()
+              ? remind.period
               : moment().format(),
-          title:
+          /*title:
             remind && remind.period
               ? moment(remind.period).format()
-              : moment().format(),
+              : moment().format(),*/
         });
       });
   }
@@ -452,11 +452,15 @@ export default class TasksCreation extends BleashupModal {
       });
   }
   componentDidUpdate(prevProp, prevState) {
-    let data = this.state.currentRemind.recursive_frequency.days_of_week
+    let data = this.state.currentRemind.recursive_frequency.days_of_week &&
+      this.state.currentRemind.recursive_frequency.frequency === "weekly"
       ? this.state.currentRemind.recursive_frequency.days_of_week
       : [this.getCode(getDay(moment(this.state.currentRemind.period)))];
     if (this.props.currentMembers !== prevProp.currentMembers) {
       this.init();
+    }
+    if (this.props.remind !== prevProp.remind) {
+      this.init()
     }
     if (this.props.remind_id !== prevProp.remind_id) {
       this.init();
@@ -491,7 +495,7 @@ export default class TasksCreation extends BleashupModal {
             recurrence: this.state.currentRemind
               .recursive_frequency.recurrence
               ? this.state.currentRemind.recursive_frequency.recurrence
-              : moment(this.state.currentRemind.period).add(1, "h").format()
+              : moment(this.state.date).add(1, "h").format()
           },
           creator: stores.LoginStore.user.phone,
           period: this.state.date,
@@ -507,7 +511,15 @@ export default class TasksCreation extends BleashupModal {
   updateRemind() {
     let rem = this.state.currentRemind;
     rem.period = this.state.date;
-    this.props.updateRemind(rem);
+    this.props.updateRemind({
+      ...rem,
+      recursive_frequency: {
+        ...rem.recursive_frequency,
+        recurrence: moment(rem.period).format("x") >= 
+        moment(rem.recursive_frequency.recurrence).format("x") ? 
+        moment(rem.period).add(1, "h").format() : rem.recursive_frequency.recurrence
+      }
+    });
 
     //this.resetRemind();
   }
@@ -660,7 +672,7 @@ export default class TasksCreation extends BleashupModal {
                   : "Add Remind"
             }
             extra={
-              this.state.ownership && (
+              this.state.ownership ? (
                 <View
                   style={{
                     flexDirection: "row",
@@ -710,7 +722,23 @@ export default class TasksCreation extends BleashupModal {
                     />
                   </View>
                 </View>
-              )
+              ) :
+                this.props.shouldRestore && this.props.canRestore && false ? (
+                  <View style={{ width: "60%", alignSelf: "flex-end", margin: '1%', height: 30, marginBottom: 'auto', marginTop: 'auto', }}>
+                    <CreateButton
+                      style={{
+                        height: '100%'
+                      }}
+                      action={() => {
+                        this.props.onClosed();
+                        this.props.restore(this.props.remind);
+                      }}
+                      rounded
+                      title="Restore"
+                    />
+                  </View>
+                ) : null
+
             }
           />
 
@@ -720,24 +748,6 @@ export default class TasksCreation extends BleashupModal {
               ref={"scrollView"}
               showsVerticalScrollIndicator={false}
             >
-              {this.props.shouldRestore && this.props.canRestore ? (
-                <View style={{ width: "95%", alignItems: "flex-end" }}>
-                  <Button
-                    style={{
-                      alignSelf: "flex-end",
-                      margin: "2%",
-                      marginRight: "2%",
-                    }}
-                    onPress={() => {
-                      this.props.onClosed();
-                      this.props.restore(this.props.remind);
-                    }}
-                    rounded
-                  >
-                    <Text>{"Restore"}</Text>
-                  </Button>
-                </View>
-              ) : null}
               <View
                 pointerEvents={this.state.ownership ? null : "none"}
                 style={{ height: height / 12, alignItems: "center" }}

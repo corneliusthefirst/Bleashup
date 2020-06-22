@@ -51,6 +51,7 @@ export default class MediaPreviewer extends Component {
             testForURL(this.props.url.photo) ? (
               <CacheImages
                 thumbnails
+                square
                 source={{ uri: this.props.url.photo }}
                 style={{
                   alignSelf: "center",
@@ -58,7 +59,7 @@ export default class MediaPreviewer extends Component {
                   width: "100%",
                   borderColor: "#1FABAB",
                   borderRadius:
-                    this.props.url.photo || this.props.url.video ? 10 : 100,
+                    (this.props.url.photo || this.props.url.video) ? 10 : 100,
                 }}
               />
             ) : (

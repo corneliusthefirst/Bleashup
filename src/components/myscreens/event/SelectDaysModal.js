@@ -29,7 +29,7 @@ export default class SelectDays extends BleashupModal {
     onClosedModal() {
         this.props.onClosed()
     }
-    swipeToClose = "false"
+    swipeToClose = false
     modalBody() {
         return (
             <View>

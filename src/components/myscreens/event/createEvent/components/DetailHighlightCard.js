@@ -8,7 +8,6 @@ import { StyleSheet, View,Image,TouchableOpacity,FlatList,ScrollView,Dimensions}
 import ActionButton from 'react-native-action-button';
 import Modal from 'react-native-modalbox';
 import autobind from "autobind-decorator";
-import Swipeout from 'react-native-swipeout';
 import HighlightCardDetail from "./HighlightCardDetail";
 import  stores from '../../../../../stores/index';
 import {observer} from 'mobx-react'

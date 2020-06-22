@@ -275,9 +275,9 @@ export default class Message extends Component {
             case "photo":
                 tempMessage = this.props.message;
                 tempMessage.replyer_name = nickname;
-                tempMessage.sourcer = this.props.message.photo;
+                tempMessage.sourcer = this.props.message.source;
                 return tempMessage;
-            case "vote":
+            /*case "vote":
                 let vote =
                     this.props.message.vote &&
                         this.props.votes &&
@@ -295,7 +295,7 @@ export default class Message extends Component {
                         vote
                     )}`,
                     replyer_phone: this.props.user.phone,
-                };
+                };*/
             default:
                 Toast.show({ text: "unable to reply for unsent messages" });
                 return null
@@ -420,6 +420,18 @@ export default class Message extends Component {
     }
     isVote() {
         return this.props.message.type === "vote";
+    }
+    handlePress(){
+        switch(this.props.message.type){
+            case "video":
+                this.props.playVideo(this.props.message.source)
+                break;
+            case "photo":
+                this.props.showPhoto(this.props.message.photo)
+                break;
+            default:
+             console.warn("message pressed")
+        }
     }
     startReactionShowTimer() {
         this.reactionsTimer && clearInterval(this.reactionsTimer);
@@ -654,6 +666,7 @@ export default class Message extends Component {
                                                         </View>
                                                     ) : null}
                                                     <TouchableWithoutFeedback
+                                                    onPress={this.handlePress.bind(this)}
                                                         onLongPress={() => {
                                                             this.handLongPress();
                                                         }}

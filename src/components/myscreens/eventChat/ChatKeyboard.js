@@ -378,11 +378,23 @@ export default class ChatKeyboard extends PureComponent {
         });
         this.animateLayout();
     }
+    sendAllPhoto(photos,index,completed){
+        if(index == photos.length - 1){
+            completed()
+        }else{
+            stores.Messages.addMessageToStore(this.props.roomID, photos[index]).then(
+                () => {
+                    //this.props.initialzeFlatList();
+                    this.sendAllPhoto(photos, index + 1, completed)
+                }
+            );
+        }
+    }
     pickMultiplePhotos() {
         Pickers.TakeManyPhotos()
             .then((response) => {
-                response.map((res) => {
-                    message = {
+              this.sendAllPhoto(response.map((res) => {
+                   return {
                         id: uuid.v1(),
                         type: "photo" + "_upload",
                         source: res.source,
@@ -395,14 +407,9 @@ export default class ChatKeyboard extends PureComponent {
                         content_type: res.content_type,
                         filename: res.filename,
                     };
-                    stores.Messages.addMessageToStore(this.props.roomID, message).then(
-                        () => {
-                            this.setState({
-                                newMessage: true,
-                            });
-                            this.props.initialzeFlatList();
-                        }
-                    );
+                    
+                }),0,() => {
+                    this.props.initialzeFlatList()
                 });
             })
             .catch((error) => {

@@ -7,7 +7,6 @@ import { StyleSheet, View, Image, TouchableOpacity, FlatList, ScrollView, Dimens
 import ActionButton from 'react-native-action-button';
 import Modal from 'react-native-modalbox';
 import autobind from "autobind-decorator";
-import Swipeout from 'react-native-swipeout';
 import PhotoEnlargeModal from "../../../invitations/components/PhotoEnlargeModal";
 import CacheImages from '../../../../CacheImages';
 import testForURL from '../../../../../services/testForURL';
