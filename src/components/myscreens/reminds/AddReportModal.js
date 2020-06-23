@@ -47,8 +47,8 @@ export default class AddReport extends BleashupModal {
                 <View style={{ height: "65%" }}>
                     <CreateTextInput
                     height={150}
-                    
-                    maxLength={200} 
+                    maxLength={200}
+                    multiline
                     placeholder="Add A Report" 
                     value={this.state.description} keyboardType="default"
                     onChange={(value) => this.onChangedEventDescription(value)} />
