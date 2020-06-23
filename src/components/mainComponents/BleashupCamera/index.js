@@ -16,14 +16,15 @@ import {
 import { RNCamera as Camera } from 'react-native-camera';
 import {Icon} from 'native-base';
 import propTypes from 'prop-types';
-import ColorList from '../../colorList';
+//import ColorList from '../../colorList';
 import BleashupModal from '../BleashupModal';
 import PickedImage from './pickedImage';
 import ZoomView from './zoomView';
+import  Stopwatch from './timer/stopwatch';
+import ImagePicker from 'react-native-image-crop-picker';
 
 //VARIABLES
 const ZOOM = { MIN: 0, MAX: 1.0 };
-
 const { height , width } = Dimensions.get('window');
 
 export default class CameraScreen extends BleashupModal {
@@ -37,12 +38,19 @@ export default class CameraScreen extends BleashupModal {
       orientation: Camera.Constants.Type.back,
       paused:false,
       videoActivated:false,
-      pickedImage:false,
+      picked:false,
       data:{photo:'',video:''},
+      stopwatchStart: false,
+      stopwatchReset: false,
+      recordOptions: {
+        mute: false,
+        maxDuration: 10800,
+        quality: Camera.Constants.VideoQuality['480p'],
+      },
+      isRecording: false,
     };
 
   }
-
   borderRadius = 0;
   modalHeight = "100%";
   modalWidth = "100%";
@@ -57,14 +65,44 @@ export default class CameraScreen extends BleashupModal {
     if (this.camera) {
       const options = { quality: 0.5, base64: false };
       let result = await this.camera.takePictureAsync(options);
+
       this.state.data.photo = result.uri;
-      this.setState({data:this.state.data,pickedImage:true});
+      this.setState({data:this.state.data});
+
+      if(this.props.directreturn){
+        this.props.onCaptureFinish(this.state.data);
+        this.props.onClosed();
+      }
+
+      this.setState({picked:true});
+
     }
   };
 
-  takeVideo = async () => {
+  takeVideo = async function() {
+    if (this.camera) {
+      try {
+        const promise = this.camera.recordAsync(this.state.recordOptions);
 
-  }
+        if (promise) {
+          this.setState({ isRecording: true });
+          const data = await promise;
+
+          this.state.data.video = data.uri;
+          this.setState({data:this.state.data});
+
+          this.setState({ isRecording: false });
+          //console.warn('takeVideo', data);
+          if(this.props.directreturn){
+            this.props.onCaptureFinish(this.state.data);
+            this.props.onClosed();
+          }
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  };
 
   onPressFlashMode = () => {
     let modeList = [];
@@ -141,60 +179,109 @@ export default class CameraScreen extends BleashupModal {
     }
   };
 
+  /*
   componentWillMount = () => {
     //StatusBar.setHidden(true);
+    //StatusBar.setBackgroundColor('#000000', true);
   };
 
   componentWillUnmount(){
     //StatusBar.setHidden(false);
-  }
- openGallery = () => {
+    //StatusBar.setBackgroundColor('#FFFFFF', true);
+  }*/
 
+ openGallery = () => {
+  ImagePicker.openPicker({
+    compressImageQuality: Platform.Os == 'ios'?0.6:0.7,
+  }).then((data) => {
+     //console.warn("data is",data);
+     let type = data.mime.slice(0,5);
+     if(type == "video"){
+       
+       this.state.data.video = data.path;
+       this.setState({data:this.state.data});
+
+       if(this.props.directreturn){
+        this.props.onCaptureFinish(this.state.data);
+        this.props.onClosed();
+       }
+       else{
+         this.setState({picked:true});
+       }
+
+     }
+     else{
+
+      this.state.data.photo = data.path;
+      this.setState({data:this.state.data});
+
+      if(this.props.directreturn){
+        this.props.onCaptureFinish(this.state.data);
+        this.props.onClosed();
+       }
+       else{
+         this.setState({picked:true});
+       }
+
+     }
+  });
  }
 
 
 
 activateVideo = () => {
   this.setState({videoActivated:true});
-  console.warn("video activated",this.state.videoActivated);
+  this.takeVideo();
+  this.toggleStopwatch();
+  //console.warn("video activated",this.state.videoActivated);
   //then call required functions
-}
+};
 
 deactivateVideo = () => {
+  this.camera.stopRecording();  //stop recording
   this.setState({videoActivated:false});
-  console.warn("video deactivated",this.state.videoActivated);
-  //then call required functions
+  this.setState({picked:true});
+  this.resetStopwatch();
 }
 
 pauseVideo = () => {
+  this.state.paused ? this.camera.resumePreview() : this.camera.pausePreview();
   this.setState({paused:!this.state.paused});
+  this.toggleStopwatch();
 }
 
 
-//for pinch handling
-onPinchProgress = (scale) => {
-    this.setState({ scale:  parseFloat(scale.toPrecision(1)) });
-}
-onPinchStart = () => {
-  console.warn("pinch started");
-  this.setState({ previousScale:  this.state.scale });
+//for video time recording
+toggleStopwatch = () => {
+  this.setState({stopwatchStart: !this.state.stopwatchStart, stopwatchReset: false});
 }
 
-onPinchEnd = () => {
-  if (this.state.previousScale < this.state.scale){
-    this.onPressZoom('PLUS');
+resetStopwatch = () => {
+  this.setState({stopwatchStart: false, stopwatchReset: true});
+}
+
+getFormattedTime(time) {
+    this.currentTime = time;
+};
+
+//close picked
+
+closepicked = (data) => {
+
+  if(data.photo.length > 0 || data.video.length > 0 ){
+    this.props.onCaptureFinish(data);
+    this.setState({picked:false , data:{photo:'',video:''}});
+    this.props.onClosed();
   }
   else {
-    this.onPressZoom('MINUS');
+    this.setState({picked:false , data:{photo:'',video:''}});
   }
-  //console.warn("pinch ended",this.state.scale);
+
 }
-
-
   modalBody() {
 
     return (
-     <ZoomView style={[styles.container, { position: 'relative' }]} /*onPinchProgress={this.onPinchProgress} onPinchStart={this.onPinchStart} onPinchEnd={this.onPinchEnd} */ >
+  
         <Animated.View style={[styles.container, { position: 'relative' }]}>
 
         <Camera
@@ -202,6 +289,7 @@ onPinchEnd = () => {
             this.camera = ref;
           }}
           zoom={this.state.zoom}
+          useNativeZoom={true}
           style={{ flex: 1 }}
           type={this.state.orientation}
           flashMode={this.state.flashMode}
@@ -225,7 +313,7 @@ onPinchEnd = () => {
 
           <View style={{ flex: 1 }}>
 
-            <View style={{ flexDirection: 'row',height:50 }}>
+            <View style={{ flexDirection: 'row',height:50 ,backgroundColor:"rgba(0, 0, 0, 0.2)"}}>
 
 
             <View style={{ height:'100%' ,alignItems: 'center' }}>
@@ -270,7 +358,7 @@ onPinchEnd = () => {
                 <TouchableOpacity onPress={this.onPressFlashMode}   style={{height:'100%' ,paddingLeft:10,justifyContent:'center'}} >
                   <Icon
                     name={this.renderFlashIcon()}
-                    style={{color:'white', fontSize:25,marginRight:15 }}
+                    style={{color:'white', fontSize:25,marginRight:10 }}
                     type="MaterialCommunityIcons"
                   />
                 </TouchableOpacity>
@@ -286,13 +374,13 @@ onPinchEnd = () => {
           <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',padding: 10}}>
             <View style={{ flex: 1, alignItems: 'flex-end' }}>
 
-                <TouchableOpacity onPress={this.onPressZoom.bind(this, 'PLUS')} style={{padding:10}}>
+                <TouchableOpacity onPress={this.onPressZoom.bind(this, 'PLUS')} style={{padding:5,backgroundColor:"rgba(0, 0, 0, 0.3)",borderRadius:20}}>
                   <Icon size={25} name="zoom-in" type="Feather"  style={{color:'white', fontSize:25 }} />
                 </TouchableOpacity>
 
                 <TouchableOpacity
                   onPress={this.onPressZoom.bind(this, 'MINUS')}
-                  style={{padding:10}}
+                  style={{padding:5,marginTop:15,backgroundColor:"rgba(0, 0, 0, 0.3)",borderRadius:20}}
                 >
                   <Icon size={25} name="zoom-out" type="Feather"   style={{color:'white', fontSize:25 }} />
                 </TouchableOpacity>
@@ -303,11 +391,11 @@ onPinchEnd = () => {
 
 
 
-          <View  style={{flexDirection:'row', height:75}}>
+          <View  style={{flexDirection:'row', height:75,backgroundColor:"rgba(0, 0, 0, 0.3)",paddingTop:5}}>
 
 
 
-          {this.state.videoActivated ? <TouchableOpacity
+          {this.state.videoActivated && this.state.isRecording ? <TouchableOpacity
                  onPress={this.pauseVideo}
                  style={{
                    height:'100%',
@@ -326,7 +414,7 @@ onPinchEnd = () => {
            }}>
                   <Icon
                     name="pausecircle"
-                    style={{color:this.state.paused ? 'white' : 'red', fontSize:35 , marginLeft:15}}
+                    style={{color:this.state.paused ? 'white' : '#f94c4c', fontSize:35 , marginLeft:15}}
                     type="AntDesign"
                     onPress={this.pauseVideo}
                   />
@@ -367,7 +455,7 @@ onPinchEnd = () => {
              {this.state.videoActivated ?
                       <TouchableOpacity
                        onLongPress={() => this.deactivateVideo()}
-                       delayLongPress={500}
+                       delayLongPress={200}
                        style={{
                         height:'100%',
                          width:width / 3,
@@ -380,7 +468,7 @@ onPinchEnd = () => {
                      <View style={{alignItems:'center',justifyContent:'center'}}>
                      <Icon name="circle-thin" type="FontAwesome" style={{color:'white', fontSize:70 , position:'relative'}} />
                       <View style={{ alignSelf: 'center',alignItems:'center',justifyContent:'center',height:44,width:44,borderRadius:22,backgroundColor:'white',marginTop:-57.5}}>
-                            <Icon name="circle" type="FontAwesome" style={{color:'red', fontSize:18 }} />
+                            <Icon name="circle" type="FontAwesome" style={{color:'#f94c4c', fontSize:18 }} />
                       </View>
                      </View>
 
@@ -403,15 +491,34 @@ onPinchEnd = () => {
                      </TouchableOpacity>
            }
 
+            {this.state.videoActivated && this.state.isRecording  ? <View
+                 onPress={this.pauseVideo}
+                 style={{
+                   height:'100%',
+                   alignSelf: 'center',
+                   alignItems:'flex-end',
+                   justifyContent:'center',
+                   width:width / 3,
+                   marginBottom: 10,
+                   paddingRight:15
+                 }}
+             >
+             <Stopwatch laps={false} msecs={false} start={this.state.stopwatchStart}
+                 reset={this.state.stopwatchReset}
+                 options={options}
+                 getTime={this.getFormattedTime} />
+
+            </View> : null}
+
 
           </View>
 
         </View>
 
-        <PickedImage   isOpen={this.state.pickedImage} onClosed={()=>{this.setState({pickedImage:false});}} data={this.state.data} onCaptureFinish={this.props.onCaptureFinish} />
+        {this.state.picked && <PickedImage   isOpen={this.state.picked} onClosed={(data)=>{this.closepicked(data)}} data={this.state.data} nomessage={this.props.nomessage} />}
 
       </Animated.View>
-     </ZoomView>
+   
 
 
 
@@ -424,6 +531,22 @@ CameraScreen.propTypes = {
   onMountError: propTypes.func,
   onCaptureFinish: propTypes.func.isRequired,
 };
+
+const options = {
+  container: {
+    backgroundColor: '#f94c4c',
+    paddingTop: 4,
+    paddingBottom:4,
+    borderRadius: 15,
+    width: 55,
+  },
+  text: {
+    fontSize: 10,
+    color: '#FFF',
+    marginLeft: 7,
+  }
+};
+
 
 const styles = StyleSheet.create({
   container: {

@@ -229,9 +229,9 @@ class Home extends Component {
 
 
   settings = () => {
-    BeNavigator.navigateTo("Settings");
+    //BeNavigator.navigateTo("Settings");
     //BeNavigator.navigateTo("TimerVideo");
-    //this.setState({ openBCamera: true });
+    this.setState({ openBCamera: true });
   };
 
   handleURL = ({ url }) => {
@@ -284,7 +284,7 @@ class Home extends Component {
           <CurrentEventView {...this.props} />
         </View>
 
-        <BleashupCamera  isOpen={this.state.openBCamera} onClosed={()=>{this.setState({openBCamera:false});}} onCaptureFinish={(result)=>{console.warn(result)}}/>
+       {this.state.openBCamera &&  <BleashupCamera  isOpen={this.state.openBCamera} onClosed={()=>{this.setState({openBCamera:false});}} onCaptureFinish={(result)=>{console.warn("capture finished",result)}} nomessage={true}/**nomessage is not required if direct-return is set*/  directreturn={true} onCameraReady={()=>{console.warn('camera is  ready')}}  onMountError = {(e)=>{console.warn(e)}} />}
 
       </View>
     );

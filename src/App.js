@@ -38,7 +38,7 @@ import SearchUser from './components/myscreens/Contacts/searchUser';
 import ColorList from './components/colorList';
 import SwiperComponent from './components/SwiperComponent/index';
 import CameraScreen from './components/mainComponents/BleashupCamera/index';
-import TimerVideo from './components/mainComponents/BleashupCamera/timer';
+import TimerVideo from './components/mainComponents/BleashupCamera/timer/timer';
 /*
 let {height, width} = Dimensions.get('window');
 EStyleSheet.build({

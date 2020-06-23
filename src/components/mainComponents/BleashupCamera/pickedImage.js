@@ -5,17 +5,19 @@ const { height , width } = Dimensions.get('window');
 import React from 'react';
 import {
   View,
-  StatusBar,
-  TouchableOpacity,
-  StyleSheet,
   Image,
-  Text,
+  StyleSheet,
+  TouchableWithoutFeedback ,
   Dimensions,
 } from 'react-native';
 import {Icon} from 'native-base';
 import ColorList from '../../colorList';
 import BleashupModal from '../BleashupModal';
+import VideoView from '../../myscreens/Viewer/components/videoView';
+import CreateTextInput from '../../myscreens/event/createEvent/components/CreateTextInput';
 
+const screenHeight  =  Dimensions.get('window').height;
+const screenWidth  =  Dimensions.get('window').width;
 export default class PickedImage extends BleashupModal {
   constructor(props) {
     super(props);
@@ -27,29 +29,92 @@ export default class PickedImage extends BleashupModal {
   borderRadius = 0;
   modalHeight = '100%';
   modalWidth = '100%';
+  borderTopLeftRadius = 0
+  borderTopRightRadius = 0
   height='100%'
 
 
-  onClosedModal() {
-    this.props.onClosed();
+  onClosedModal = () => {
+    this.setState({message:''});
+    data = {photo:"",video:"",message:""}
+    this.props.onClosed(data);
  }
 
  componentDidMount(){
   //console.warn("here we are",this.props.data);
  }
 
-  sendBackSelected = () => {
-    if (typeof this.props.onCaptureFinish  === 'function') {
-         this.props.onCaptureFinish({...this.props.data,message:this.state.message});
-      }
-  }
-
+ onChangedMessage = (value) => {
+     this.setState({message:value});
+ }
+ validate = () => {
+    data = {photo:this.props.data.photo,video:this.props.data.video,message:this.state.message}
+    this.setState({message:''});
+    this.props.onClosed(data);
+ }
 
   modalBody = () => {
     return (
       <View style={[styles.container, { position: 'relative' }]}>
 
+        {this.props.data.photo != "" ? 
          <Image  source={{uri:this.props.data.photo}}  style={{height: height, width: width }} />
+         :
+         <View style={{marginTop:50}}>
+         <VideoView
+          open={true}
+          onLoad={(item) => {
+            //this.props.onVideoLoaded(item);
+          }}
+          height={screenHeight -170}
+          width={screenWidth-14}
+          top={65}
+          video={this.props.data.video}
+         />
+         </View>
+        }
+        <View style={{position:'absolute',height:50,width:'100%',top:0,alignItems:'flex-end',
+              justifyContent:'center',backgroundColor:this.props.data.photo != ""? "rgba(0, 0, 0, 0.3)" : "rgba(0, 0, 0, 0.9)"}}>
+              <Icon
+                    name="close"
+                    style={{color:'white', fontSize:25 , marginRight:15}}
+                    type="AntDesign"
+                    onPress={this.onClosedModal}
+                />
+       </View>
+
+       <View style={{position:'absolute',width:'100%',bottom:0,paddingBottom:15,paddingTop:15,flexDirection:'row',justifyContent:'flex-end',backgroundColor:this.props.data.photo != ""? "rgba(0, 0, 0, 0.3)" : "rgba(0, 0, 0, 0.9)" }}>
+       {this.props.nomessage == false ? <View style={{width:'80%',paddingLeft:10,alignSelf:'center'}}>
+          <CreateTextInput
+            height={screenHeight /11}
+            value={this.state.message}
+            onChange={this.onChangedMessage}
+            placeholder={"write something ..."}
+            backgroundColor={ColorList.transparent}
+            color={ColorList.bodyBackground}
+            placeholderTextColor={"#F5FFFA"}
+            multiline={true}
+            //numberOfLines={4}
+            maxLength={2000}
+           >
+          </CreateTextInput>
+       </View> : null}
+
+       <View style={{width:'20%',alignItems:'center',justifyContent:'center'}}>
+        <TouchableWithoutFeedback onPress={this.validate}>
+            <View style={{height:44,width:44,borderRadius:22,backgroundColor:ColorList.indicatorColor,alignItems:'center',justifyContent:'center'}}>
+                  <Icon
+                    name="send"
+                    style={{color:'white', fontSize:25 }}
+                    type="Feather"
+                    onPress={this.validate}
+                  />
+           </View>
+        </TouchableWithoutFeedback>
+
+         </View>
+
+       </View>
 
       </View>
     );
@@ -61,5 +126,7 @@ export default class PickedImage extends BleashupModal {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    alignItems:'center',
+    backgroundColor:'black',
   },
 });

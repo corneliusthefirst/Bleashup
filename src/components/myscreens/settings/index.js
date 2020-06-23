@@ -79,6 +79,7 @@ export default class SettingView extends Component {
                            <Title style={{alignSelf:"flex-start"}}>{this.state.userInfo.nickname}</Title>
                            <Title style={{color:"gray",alignSelf:"flex-start",fontSize:15}}>{this.state.userInfo.status}</Title>
                     </View>
+  
           </View>
           
         </View>

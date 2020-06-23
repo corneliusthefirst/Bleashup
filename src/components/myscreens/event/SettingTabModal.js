@@ -37,28 +37,28 @@ export default class SettingsTabModal extends BleashupModal {
                 alignItems: "center",
               }}
             >
-              <TouchableOpacity style={{width:"20%"}} onPress={() => 
+              <TouchableOpacity style={{width:"20%", marginRight: 10, background:'red'}} onPress={() => 
                requestAnimationFrame(this.onClosedModal.bind(this))
               } >
               <Icon
                 style={{
                   color: ColorList.headerIcon,
-                  marginLeft: "5%",
-                  marginRight: "3%",
+                  marginLeft: 20,
                 }}
                 type={"MaterialIcons"}
                 name={"arrow-back"}
               ></Icon>
               </TouchableOpacity>
               <View style={{ 
-                width:"70%"
+                width:"80%"
                }}>
               <Title style={{ 
                 color: ColorList.headerText, 
-                fontWeight: "800",
+                fontWeight: "600",
+                fontSize:ColorList.fontSize,
                 alignSelf:'flex-start' 
               }}>
-                {"@Activity Settings"}
+                {"Activity Settings"}
               </Title>
               </View>
             </View>

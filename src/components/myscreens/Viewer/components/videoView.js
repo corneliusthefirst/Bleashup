@@ -48,8 +48,8 @@ const VideoView = (props) => {
 
         return (
                 <View style={{
-                        height: fullScreen ? "100%" : 248,
-                        width: fullScreen ? "100%" : screenWidth,
+                        height: fullScreen ? "100%" : (props.height?props.height:248),
+                        width: fullScreen ? "100%" : (props.width?props.width:screenWidth),
                         backgroundColor: 'black',
                         //alignSelf: 'center',
                         
@@ -91,7 +91,7 @@ const VideoView = (props) => {
                                 alignItems: 'center',
                                 height: "100%",
                                 width: "100%",
-                                top: 0,
+                                top:0,
                                 left: 0,
                                 bottom: 0,
                                 right: 0,

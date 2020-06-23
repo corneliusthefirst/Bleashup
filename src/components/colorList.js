@@ -50,7 +50,7 @@ class colorlist {
   bodyTextdark = '#f4f6fc';
   bodyBackgrounddark = '#101010';
   bodyBackgroundDarkGray = '#202020';
-  transparent: 'rgba(0, 0, 0, 0.001)';
+  transparent = "rgba(0, 0, 0, 0.001)";
   //modal
 
   //pop menu
