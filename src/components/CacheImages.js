@@ -56,8 +56,9 @@ class CacheImages extends Component {
       resizeMode={this.props.thumbnails ? FastImage.resizeMode.cover : FastImage.resizeMode.contain}
       source={{...this.props.source,
         uri:testForURL(this.props.source.uri) && !this.state.mounted ? 
-        this.getPhotoSmall(this.props.source.uri):this.getRealURL(this.props.source.uri)}}
-      fallback
+          this.getPhotoSmall(this.props.source.uri) : this.getRealURL(this.props.source.uri), 
+        priority: FastImage.priority.high,
+      }}
       defaultSource={this.props.source}
 
     >

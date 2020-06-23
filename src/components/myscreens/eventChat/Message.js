@@ -271,31 +271,11 @@ export default class Message extends Component {
                 let temper = tempMessage;
                 temper.typer = temp[temp.length - 1];
                 return temper;
-            //tempMessage = temper
             case "photo":
                 tempMessage = this.props.message;
                 tempMessage.replyer_name = nickname;
                 tempMessage.sourcer = this.props.message.source;
                 return tempMessage;
-            /*case "vote":
-                let vote =
-                    this.props.message.vote &&
-                        this.props.votes &&
-                        this.props.votes.length > 0
-                        ? this.props.votes[this.props.message.vote.index] &&
-                            this.props.votes[this.props.message.vote.index].id ===
-                            this.props.message.id
-                            ? this.props.votes[this.props.message.vote.index]
-                            : find(this.props.votes, { id: this.props.message.vote.id })
-                        : null;
-                return {
-                    id: vote.id,
-                    type_extern: "Votes",
-                    title: `${vote.title} : \n ${vote.description} \n\n ${formVoteOptions(
-                        vote
-                    )}`,
-                    replyer_phone: this.props.user.phone,
-                };*/
             default:
                 Toast.show({ text: "unable to reply for unsent messages" });
                 return null
