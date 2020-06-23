@@ -1,4 +1,6 @@
-import React, { Component } from "react";
+/* eslint-disable react-native/no-inline-styles */
+/* eslint-disable prettier/prettier */
+import React, { Component } from 'react';
 import {
   Platform,
   BackHandler,
@@ -21,15 +23,13 @@ import {
   Body,
   TabHeading,
   Toast,
-  Thumbnail
+  Thumbnail,
 } from 'native-base';
-import {
-  find
-} from "lodash"
+import {find,} from 'lodash';
 import { withInAppNotification } from 'react-native-in-app-notification';
-import stores from "../../../stores";
+import stores from '../../../stores';
 import CurrentEventView from '../currentevents';
-import emitter from "../../../services/eventEmiter";
+import emitter from '../../../services/eventEmiter';
 import firebase from 'react-native-firebase';
 import GState from '../../../stores/globalState';
 import DeepLinking from 'react-native-deep-linking';
@@ -39,6 +39,7 @@ import colorList from "../../colorList";
 import BeNavigator from '../../../services/navigationServices';
 import { PrivacyRequester, shared_post } from '../settings/privacy/Requester';
 import EventListener from '../../../services/severEventListener';
+import BleashupCamera from '../../mainComponents/BleashupCamera/index';
 
 let { height, width } = Dimensions.get('window');
 
@@ -50,9 +51,10 @@ class Home extends Component {
       appState: 'active',
       isTabModalOpened: false,
       currentTab: 0,
-      setting: false
+      setting: false,
+      openBCamera: false,
     };
-    this.permisssionListener()
+    this.permisssionListener();
   }
   state = {
 
@@ -64,71 +66,71 @@ class Home extends Component {
   permisssionListener() {
     firebase.messaging().hasPermission().then(status => {
       if (status) {
-        this.initializeNotificationListeners()
+        this.initializeNotificationListeners();
       } else {
         firebase.messaging().requestPermission().then(permission => {
           if (permission) {
-            this.permisssionListener()
+            this.permisssionListener();
           } else {
-            console.warn("unable to get permission !")
+            console.warn('unable to get permission !');
           }
-        })
+        });
       }
-    })
+    });
   }
   navigateToChat(data) {
-    this.handleNotif(data)
+    this.handleNotif(data);
   }
   handleNotif(data) {
     switch (data.type) {
-      case "new_message_activity": {
+      case 'new_message_activity': {
         stores.Events.loadCurrentEvent(data.activity_id).then(event => {
-          BeNavigator.navigateToActivity('EventChat', event)
-        })
+          BeNavigator.navigateToActivity('EventChat', event);
+        });
         break;
       }
-      case "relation": {
-        break
+      case 'relation': {
+        break;
       }
       //break;
       default:
-        console.warn('defaulting.=------')
-        break
+        console.warn('defaulting.=------');
+        break;
     }
   }
   handleNotifications(data) {
-    this.handleNotif(data)
+    this.handleNotif(data);
   }
   initializeNotificationListeners() {
     this.removeNotificationOpenedListener = firebase.notifications().onNotificationOpened((notifiation) => {
-      this.navigateToChat(notifiation.notification._data)
-      firebase.notifications().removeAllDeliveredNotifications()
-    })
+      this.navigateToChat(notifiation.notification._data);
+      firebase.notifications().removeAllDeliveredNotifications();
+    });
     this.removeNotificationListener = firebase.notifications().onNotification(notification => {
-      console.warn(notification._data)
-      GState.currentCommitee !== notification._data.room_key && emitter.emit(notification._data.activity_id + '_refresh-commitee')
-      emitter.emit("notify", { body: notification._body, title: notification._title, action: "new_message", data: notification._data })
-    })
+      console.warn(notification._data);
+      GState.currentCommitee !== notification._data.room_key && emitter.emit(notification._data.activity_id + '_refresh-commitee');
+      emitter.emit('notify', { body: notification._body, title: notification._title, action: 'new_message', data: notification._data });
+    });
     this.removeNotificationDisplayedListener = firebase.notifications().onNotificationDisplayed(notification => {
-      console.warn(notification)
-    })
+      console.warn(notification);
+    });
   }
   navigateToEventDetails(id) {
-    let event = find(stores.Events.events, { id: id })
+    let event = find(stores.Events.events, { id: id });
     if (event) {
-      BeNavigator.navigateToActivity("EventChat", event);
+      BeNavigator.navigateToActivity('EventChat', event);
     }
   }
   componentWillMount() {
     //EventListener.stopConnection()
-    Linking.addEventListener('url', this.handleURL)
+    Linking.addEventListener('url', this.handleURL);
     DeepLinking.addScheme(GState.DeepLinkURL);
     DeepLinking.addRoute('/tester', response => {
       console.warn('responding to this nice test', response);
-    })
+    });
     DeepLinking.addRoute('/event/:id', response => {
-      this.navigateToEventDetails(response.id)
-    })
+      this.navigateToEventDetails(response.id);
+    });
     Linking.getInitialURL().then((url) => {
       if (url) {
         Linking.openURL(url);
@@ -140,24 +142,24 @@ class Home extends Component {
   realNew = []
   testers(){
     setTimeout(() => {
-      PrivacyRequester.shareWithSome("vKgCzYsA6iOzc2SJBujwSnlHlETWjhAbIa7",
-      "740a5530-8b20-11ea-9234-9b01561bce6b",
+      PrivacyRequester.shareWithSome('vKgCzYsA6iOzc2SJBujwSnlHlETWjhAbIa7',
+      '740a5530-8b20-11ea-9234-9b01561bce6b',
       shared_post,
-      "Pink Pink","Filbee","",[{phone:'002375465643933',host:""},{phone:'00335345645323',host:""}]).then((res) => {
-        console.warn("privacy test response", res)
-      })
-    },1000)
+      'Pink Pink','Filbee','',[{phone:'002375465643933',host:''},{phone:'00335345645323',host:''}]).then((res) => {
+        console.warn('privacy test response', res);
+      });
+    },1000);
   }
   componentDidMount() {
-    stores.Events.initSearch()
-    emitter.on("notify", (event) => {
+    stores.Events.initSearch();
+    emitter.on('notify', (event) => {
       {
         if (GState.currentRoom !== event.data.room_key) {
           this.props.showNotification({
             title: event.title,
             message: event.body,
             vibrate: false,
-            onPress: () => this.handleNotifications(event.data)
+            onPress: () => this.handleNotifications(event.data),
 
           });
         } else {
@@ -170,34 +172,34 @@ class Home extends Component {
           firebase.messaging().getToken().then(token => {
             //console.warn(token)
             //GState.socket.close()
-            firebase.database().ref(`notifications_tokens/${user.phone.replace('00', '+')}`).set(token)
+            firebase.database().ref(`notifications_tokens/${user.phone.replace('00', '+')}`).set(token);
           }).catch(error => {
-            console.warn(error)
-          })
-        })
-      })
-    })
+            console.warn(error);
+          });
+        });
+      });
+    });
   }
   exiting = false
   timeout = null
   componentWillUnmount() {
 
     //BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton.bind(this));
-    this.removeNotificationDisplayedListener()
+    this.removeNotificationDisplayedListener();
     Linking.removeEventListener('url', this.handleUrl);
-    this.removeNotificationListener()
+    this.removeNotificationListener();
     AppState.removeEventListener('change', this._handleAppStateChange);
-    this.removeNotificationOpenedListener()
+    this.removeNotificationOpenedListener();
   }
   _handleAppStateChange = (nextAppState) => {
     if (nextAppState !== 'active') {
-      firebase.database().ref(`current_room/${stores.LoginStore.user.phone.replace("00", "+")}`).set(null)
+      firebase.database().ref(`current_room/${stores.LoginStore.user.phone.replace('00', '+')}`).set(null);
     }
     if (
       this.state.appState.match(/inactive|background/) &&
       nextAppState === 'active'
     ) {
-      firebase.database().ref(`current_room/${stores.LoginStore.user.phone.replace("00", "+")}`).set(GState.currentRoom)
+      firebase.database().ref(`current_room/${stores.LoginStore.user.phone.replace('00', '+')}`).set(GState.currentRoom);
       console.log('App has come to the foreground!');
     } else {
       //firebase.database().ref(`current_room/${stores.LoginStore.user.phone.replace("00","+")}`).set(null)
@@ -207,39 +209,41 @@ class Home extends Component {
   handleBackButton() {
     //BackHandler.exitApp()
     if (this.exiting) {
-      clearTimeout(this.timeout)
-      BackHandler.exitApp()
-      return true
+      clearTimeout(this.timeout);
+      BackHandler.exitApp();
+      return true;
     } else {
-      this.exiting = true
-      Toast.show({ text: "Press again to leave" });
+      this.exiting = true;
+      Toast.show({ text: 'Press again to leave' });
       this.timeout = setTimeout(() => {
-        this.exiting = false
-      }, 2000)
+        this.exiting = false;
+      }, 2000);
     }
     return true;
   }
 
   state = {
     scroll: true,
-    currentTab: 0
+    currentTab: 0,
   };
 
 
   settings = () => {
     BeNavigator.navigateTo("Settings");
+    //BeNavigator.navigateTo("TimerVideo");
+    //this.setState({ openBCamera: true });
   };
 
   handleURL = ({ url }) => {
-    console.warn("responding to links")
+    console.warn('responding to links');
     Linking.canOpenURL(url).then(support => {
       if (support) {
-        DeepLinking.evaluateUrl(url)
+        DeepLinking.evaluateUrl(url);
       }
-    })
+    });
   }
   navigateToInvitations() {
-    BeNavigator.navigateTo("voteCard");
+    BeNavigator.navigateTo('voteCard');
   }
   render() {
     setTimeout(() => {
@@ -252,17 +256,17 @@ class Home extends Component {
     return (
       <View style={{ height: colorList.containerHeight, backgroundColor: colorList.containerBackground, width: colorList.containerWidth }}>
 
-        <View style={{ height: colorList.headerHeight, backgroundColor: colorList.headerBackground, width: "100%",marginBottom:5 }}>
+        <View style={{ height: colorList.headerHeight, backgroundColor: colorList.headerBackground, width: '100%',marginBottom:5 }}>
 
 
-          <View style={{ ...bleashupHeaderStyle, backgroundColor: colorList.headerBackground, flexDirection: "row", justifyContent: "space-between", width: "100%", }}>
+          <View style={{ ...bleashupHeaderStyle, backgroundColor: colorList.headerBackground, flexDirection: 'row', justifyContent: 'space-between', width: '100%' }}>
 
-            <View style={{ alignSelf: "flex-start", justifyContent: "center", height: "95%" }}>
-              <Thumbnail source={require("../../../../assets/bleashuptitle1.png")} style={{ width: 120 }}></Thumbnail>
+            <View style={{ alignSelf: 'flex-start', justifyContent: 'center', height: '95%' }}>
+              <Thumbnail source={require('../../../../assets/bleashuptitle1.png')} style={{ width: 120 }} />
             </View>
 
 
-            <View style={{ height: "100%", alignSelf: "flex-end", display: 'flex', flexDirection: 'row', marginRight: "2%" }}>
+            <View style={{ height: '100%', alignSelf: 'flex-end', display: 'flex', flexDirection: 'row', marginRight: '2%' }}>
 
               <TouchableOpacity style={{ height: 40, alignItems: "center", justifyContent: "center" }} onPress={this.settings} >
                   <Icon name="gear" active={true} type="EvilIcons" style={{ color: colorList.headerIcon, marginLeft: width / 35 }} onPress={this.settings}/>
@@ -273,12 +277,14 @@ class Home extends Component {
 
 
           </View>
-          
+
         </View>
 
         <View style={{ marginBottom: 100 }}>
-          <CurrentEventView {...this.props}></CurrentEventView>
+          <CurrentEventView {...this.props} />
         </View>
+
+        <BleashupCamera  isOpen={this.state.openBCamera} onClosed={()=>{this.setState({openBCamera:false});}} onCaptureFinish={(result)=>{console.warn(result)}}/>
 
       </View>
     );
