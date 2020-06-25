@@ -351,10 +351,10 @@ class ServerEventListener {
       console.warn(this.sayConnectionTimedout);
       this.collectRetries = setTimeout(() => {
         this.reconnect();
-      }, this.collectRetries)
+      }, this.collectRetriesTimeout)
     }
   }
-  collectRetriesTimeout = 500
+  collectRetriesTimeout = 1000
   collectRetries = null
   working = false;
   unsentRequest = {};
@@ -383,7 +383,7 @@ class ServerEventListener {
     this.retriesCounter[id] = null;
     this.retries[id] = null
   }
-  allowableTrials = 30
+  allowableTrials = 50
   startRetryer(data, id, reject) {
     this.retries[id] = setInterval(() => {
       emitter.off(this.events.cleared_ +id);

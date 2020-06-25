@@ -11,13 +11,14 @@ import Waiter from "./Waiter";
 import Voter from "../eventChat/Voter";
 import GState from '../../../stores/globalState/index';
 import BeNavigator from '../../../services/navigationServices';
+import AnimatedComponent from '../../AnimatedComponent';
 const AppDir = rnFetchBlob.fs.dirs.SDCardDir + '/Bleashup'
 const PhotoDir = AppDir + '/Photo'
 const SounDir = AppDir + '/Sound'
 const VideoDir = AppDir + '/Video'
 const OthersDir = AppDir + '/Others'
 const { fs } = rnFetchBlob
-export default class LoginHomeView extends Component {
+export default class LoginHomeView extends AnimatedComponent   {
   constructor(props) {
     super(props);
     GState.nav = this.props.navigation

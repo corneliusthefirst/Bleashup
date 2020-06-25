@@ -703,9 +703,7 @@ export default class ChatKeyboard extends PureComponent {
                                     onFocus={this.resetImoji.bind(this)}
                                     _onChange={this._onChange.bind(this)}
                                     animateLayout={() =>
-                                        LayoutAnimation.configureNext(
-                                            LayoutAnimation.Presets.easeInEaseOut
-                                        )
+                                        this.animateLayout()
                                     }
                                     textValue={this.state.textValue}
                                     ref={(r) => {
