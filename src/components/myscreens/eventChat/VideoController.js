@@ -1144,8 +1144,9 @@ export default class VideoController extends Component {
                     />
                     {this.renderError()}
                     {this.renderTopControls()}
-                    {this.renderCenterControls()}
-                    {this.renderLoader()}
+                    {this.state.loading
+                       ? this.renderLoader()
+                    : this.renderCenterControls()}
                     {this.renderBottomControls()}
                 </View>
             </TouchableWithoutFeedback>

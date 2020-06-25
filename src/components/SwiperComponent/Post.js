@@ -29,6 +29,7 @@ class Post extends Component {
           />
         ) : (
           <VideoView
+            isPause={this.props.isPause}
             open={true}
             onLoad={(item) => {
               //this.props.onVideoLoaded(item);
