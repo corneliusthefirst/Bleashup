@@ -14,7 +14,7 @@ export const mute = "mute"
 export const unmute = "unmute"
 export const blocked = "blocked"
 export const muted = "muted"
-export const meBlocked = "me_blocked"
+export const meBlocked = "me_blocked" 
 export const meMuted = "me_muted"
 export const get = "get"
 export const shared_post = 'post-share'
@@ -23,8 +23,8 @@ export const shared_votes = 'vote-share'
 export const contacts_scope = 'contacts'
 export const follewers_scope = 'follow'
 export const some = 'some'
-export
-    class Requster {
+export class Requster {
+
     saveToken(token, phone) {
         return new Promise((resolve, reject) => {
             this.sendPrivacyUpdate(token, storeToken).then((res) => {
@@ -34,6 +34,7 @@ export
             })
         });
     }
+
     get(privacy) {
         return new Promise((resolve, reject) => {
             this.sendPrivacyUpdate(privacy, get).then(privacy => {
@@ -43,7 +44,9 @@ export
             })
         })
     }
+
     getBlocked() {
+        /** these takes all users blocked by the user (its takes from the server) you dont see any of theirs stuff*/
         return new Promise((resolve, reject) => {
             this.get("blocked").then(blocked => {
                 stores.Privacy.updateBlocked(blocked).then(() => {
@@ -54,7 +57,9 @@ export
             })
         })
     }
+
     getMuted() {
+        /** these takes all users(ids) muted by the user (its takes from the server) the users are not notify of changes done by these users*/
         return new Promise((resolve, reject) => {
             this.get("muted").then(muted => {
                 stores.Privacy.updateMuted(muted).then(() => {
@@ -65,7 +70,9 @@ export
             })
         })
     }
+
     blocked(member) {
+        /**to know if a phone is blocked then add that phone to the blocked store and server block else you unblock return a boolean */
         return new Promise((resolve, reject) => {
             this.sendPrivacyUpdate(member, blocked).then((res) => {
                 if (res.data) stores.Privacy.block(member).then(() => {
@@ -77,7 +84,9 @@ export
             })
         })
     }
+
     muted(member) {
+        /**same as blocked but for muted case */
         return new Promise((resolve, reject) => {
             this.sendPrivacyUpdate(member, muted).then((res) => {
                 if (res.data) stores.Privacy.mute(member).then(() => {
@@ -89,7 +98,9 @@ export
             })
         })
     }
+
     meMuted(member) {
+        /**to check if i am muted by someone or not */
         return new Promise((resolve, reject) => {
             this.sendPrivacyUpdate(member, meMuted).then(res => {
                 if (res.data) stores.Privacy.muteMe(member).then(() => {
@@ -101,7 +112,9 @@ export
             })
         })
     }
+
     meBlocked(member) {
+         /**to check if i am blocked by someone or not */
         return new Promise((resolve, reject) => {
             this.sendPrivacyUpdate(member, meBlocked).then(res => {
                 if (res.data) stores.Privacy.blockMe(member).then(() => {
@@ -113,7 +126,9 @@ export
             })
         })
     }
+
     block(member) {
+         /**to block a user */
         return new Promise((resolve, reject) => {
             this.sendPrivacyUpdate(member, block).then((res) => {
                 stores.Privacy.block(member)
@@ -121,7 +136,9 @@ export
             })
         });
     }
+
     unblock(member) {
+         /**to unblock a user */
         return new Promise((resolve, reject) => {
             this.sendPrivacyUpdate(member, unblock).then(() => {
                 stores.Privacy.unblock(member).then(() => {
@@ -130,7 +147,9 @@ export
             })
         })
     }
+
     mute(member) {
+         /**to mute a user */
         return new Promise((resovle, reject) => {
             this.sendPrivacyUpdate(member, mute).then((res) => {
                 stores.Privacy.mute(member)
@@ -138,7 +157,9 @@ export
             })
         })
     }
+
     unmute(member) {
+         /**to unmute a muted user */
         return new Promise((resolve, reject) => {
             this.sendPrivacyUpdate(member, unmute).then((res) => {
                 stores.Privacy.unmute(member)
@@ -146,6 +167,8 @@ export
             })
         })
     }
+
+
     sendPrivacyUpdate(data, action) {
         return new Promise((resolve, reject) => {
             let id = uuid.v1()
@@ -164,6 +187,7 @@ export
                 });
         })
     }
+
     formShareNotifTitle(action) {
         if (action == shared_post) {
             return "Post"

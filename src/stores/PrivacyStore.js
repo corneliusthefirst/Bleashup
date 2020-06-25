@@ -14,7 +14,7 @@ export default class PrivacyStore {
     };
     saveKey = {
         key: "privacy",
-        data: {},
+        data: {}, 
     };
     @observable privacy = {};
     s_muted(item) {
