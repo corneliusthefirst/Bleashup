@@ -25,7 +25,7 @@ import {
   Toast,
   Thumbnail,
 } from 'native-base';
-import {find,} from 'lodash';
+import {find} from 'lodash';
 import { withInAppNotification } from 'react-native-in-app-notification';
 import stores from '../../../stores';
 import CurrentEventView from '../currentevents';
@@ -33,13 +33,14 @@ import emitter from '../../../services/eventEmiter';
 import firebase from 'react-native-firebase';
 import GState from '../../../stores/globalState';
 import DeepLinking from 'react-native-deep-linking';
-import shadower from "../../shadower";
-import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
-import colorList from "../../colorList";
+import shadower from '../../shadower';
+import bleashupHeaderStyle from '../../../services/bleashupHeaderStyle';
+import colorList from '../../colorList';
 import BeNavigator from '../../../services/navigationServices';
 import { PrivacyRequester, shared_post } from '../settings/privacy/Requester';
 import EventListener from '../../../services/severEventListener';
 import BleashupCamera from '../../mainComponents/BleashupCamera/index';
+import media from '../../SwiperComponent/constants/index';
 
 let { height, width } = Dimensions.get('window');
 
@@ -227,11 +228,14 @@ class Home extends Component {
     currentTab: 0,
   };
 
+  mapFunction = (item) => {
+     return item;
+  }
 
   settings = () => {
     //BeNavigator.navigateTo("Settings");
-    //BeNavigator.navigateTo("TimerVideo");
-    this.setState({ openBCamera: true });
+    BeNavigator.pushTo('SwiperComponent',{dataArray: media,mapFunction:this.mapFunction});
+    //this.setState({ openBCamera: true });
   };
 
   handleURL = ({ url }) => {
@@ -268,7 +272,7 @@ class Home extends Component {
 
             <View style={{ height: '100%', alignSelf: 'flex-end', display: 'flex', flexDirection: 'row', marginRight: '2%' }}>
 
-              <TouchableOpacity style={{ height: 40, alignItems: "center", justifyContent: "center" }} onPress={this.settings} >
+              <TouchableOpacity style={{ height: 40, alignItems: 'center', justifyContent: 'center' }} onPress={this.settings} >
                   <Icon name="gear" active={true} type="EvilIcons" style={{ color: colorList.headerIcon, marginLeft: width / 35 }} onPress={this.settings}/>
               </TouchableOpacity>
 
@@ -284,7 +288,7 @@ class Home extends Component {
           <CurrentEventView {...this.props} />
         </View>
 
-       {this.state.openBCamera &&  <BleashupCamera  isOpen={this.state.openBCamera} onClosed={()=>{this.setState({openBCamera:false});}} onCaptureFinish={(result)=>{console.warn("capture finished",result)}} nomessage={true}/**nomessage is not required if direct-return is set*/  directreturn={true} onCameraReady={()=>{console.warn('camera is  ready')}}  onMountError = {(e)=>{console.warn(e)}} />}
+       {this.state.openBCamera &&  <BleashupCamera  isOpen={this.state.openBCamera} onClosed={()=>{this.setState({openBCamera:false});}} onCaptureFinish={(result)=>{console.warn('capture finished',result);}} nomessage={true}/**nomessage is not required if direct-return is set*/  directreturn={true} onCameraReady={()=>{console.warn('camera is  ready');}}  onMountError = {(e)=>{console.warn(e);}} />}
 
       </View>
     );

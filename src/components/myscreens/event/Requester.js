@@ -1030,7 +1030,7 @@ class Request {
             } else {
                 resolve()
             }
-        })
+        }) 
     }
     updateHightlightPublicState(newPublicState, oldPublicState, highlightID, eventID) {
         return new Promise((resolve, reject) => {

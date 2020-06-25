@@ -2,17 +2,103 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, Dimensions, StatusBar } from 'react-native';
 import Swiper from 'react-native-swiper';
-import media from './constants/index';
+//import media from './constants/index';
 import UserView from '../myscreens/Viewer/components/UserView';
 import SwipeAccordion from '../myscreens/Viewer/components/swipeAccordion';
 import Post from './Post';
-import Orientation from 'react-native-orientation-locker';
-import moment from 'moment';
-import { concat } from "lodash";
 
 //const ScreenHeight = Dimensions.get('window').height;
 
-const toaddRight = [
+export default class SwiperComponent extends Component {
+  constructor(props) {
+    super(props);
+  }
+
+  componentDidMount() {
+    //this.swiper.scrollBy(2, true);
+  }
+
+  onchageIndex = (index) => {
+    //console.warn("index is", index);
+    /*if (index >= this.state.media.length - 1) {
+      this.addMediaRight(this.state.toaddRight);
+    } else if (index <= 0) {
+      this.addMediaLeft(this.state.toaddLeft, index);
+    }*/
+  };
+
+  render() {
+    const media = this.props.navigation.getParam('dataArray');
+    const mapFunction = this.props.navigation.getParam('mapFunction');
+    return (
+      <View style={{ flex: 1 }}>
+        <StatusBar
+          barStyle={'light-content'}
+          backgroundColor={'black'}
+          translucent={false}
+        />
+
+        <Swiper
+          ref={(ref) => (this.swiper = ref)}
+          style={styles.wrapper}
+          showsPagination={false}
+          loadMinimal
+          loop={false}
+          loadMinimalSize={5}
+          index={this.props.initialIndex ? this.props.initialIndex : 0}
+          onMomentumScrollEnd={(e, state, context) =>
+            console.warn('index:', state.index)
+          }
+          onIndexChanged={(index) => this.onchageIndex(index)}
+        >
+          {media.map((item, index) => {
+            let itemswiper = mapFunction(item);
+
+            return (
+              <View style={styles.slide1}>
+                <Post
+                  //pause={isPause}
+                  post={itemswiper}
+                  onClose={() => {
+                    this.props.navigation.goBack();
+                  }}
+                />
+                <UserView
+                  name={itemswiper.creator.name}
+                  profile={itemswiper.creator.profile}
+                  updated_at={itemswiper.creator.updated_at}
+                  onClose={() => {
+                    this.props.navigation.goBack();
+                  }}
+                  swiper
+                  removeMessage={() => this.props.removeMessage(itemswiper)} //puisque le item c'est le message les appelle ce font directe ici
+                />
+                <SwipeAccordion dataArray={itemswiper} />
+              </View>
+            );
+          })}
+        </Swiper>
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  wrapper: {},
+  slide1: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'black',
+  },
+  text: {
+    color: '#fff',
+    fontSize: 30,
+    fontWeight: 'bold',
+  },
+});
+
+/**const toaddRight = [
   {
     id: '143501',
     url:
@@ -98,114 +184,21 @@ const toaddLeft = [
   },
 ];
 
-export default class SwiperComponent extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      media: media,
-      toaddLeft: toaddLeft,
-      toaddRight: toaddRight,
-    };
-  }
-
   addMediaRight = (data) => {
-    this.state.media = this.state.media.concat(data);
-    this.setState({ media: this.state.media });
+    //this.state.media = this.state.media.concat(data);
+    //this.setState({ media: this.state.media });
   };
 
   addMediaLeft = (data, index) => {
-    /* var j = index - 2;
+     var j = index - 2;
     if (j > 4) {
       for (let i = 0; i < data.length; i++) {
         this.state.media[j] = data[i];
         console.warn("index j is",j);
         j--;
       }
-    }*/
+    }
     //this.setState({ media: data.concat(this.state.media) });
     //this.swiper.scrollTo(this.state.toaddLeft.length - 1, true);
     //scrollBy(this.state.toaddLeft.length - 1, true);
-  };
-
-  onClose = () => {};
-
-  componentDidMount() {
-    Orientation.lockToPortrait();
-    //this.swiper.scrollBy(2, true);
-  }
-
-  onchageIndex = (index) => {
-    //console.warn("index is", index);
-    if (index >= this.state.media.length - 1) {
-      this.addMediaRight(this.state.toaddRight);
-    } else if (index <= 0) {
-      this.addMediaLeft(this.state.toaddLeft, index);
-    }
-  };
-
-  render() {
-    return (
-      <View style={{ flex: 1 }}>
-        <StatusBar
-          barStyle={'light-content'}
-          backgroundColor={'black'}
-          translucent={false}
-        />
-
-        <Swiper
-          ref={(ref) => (this.swiper = ref)}
-          style={styles.wrapper}
-          showsPagination={false}
-          loadMinimal
-          loadMinimalSize={10}
-          index={this.props.initialIndex ? this.props.initialIndex : 2}
-          onMomentumScrollEnd={(e, state, context) =>
-            console.warn('index:', state.index)
-          }
-          onIndexChanged={(index) => this.onchageIndex(index)}
-        >
-          {this.state.media.map((item, index) => {
-            let itemswiper = item; //this.props.formItem();
-            return (
-              <View style={styles.slide1}>
-                <Post
-                  //pause={isPause}
-                  post={itemswiper}
-                  onClose={() => {
-                    this.onClose();
-                  }}
-                />
-                <UserView
-                  name={itemswiper.creator.name}
-                  profile={itemswiper.creator.profile}
-                  updated_at={itemswiper.creator.updated_at}
-                  onClose={() => {
-                    this.onClose();
-                  }}
-                  swiper
-                  removeMessage={() => this.props.removeMessage(item)} //puisque le item c'est le message les appelle ce font directe ici
-                />
-                <SwipeAccordion dataArray={itemswiper} />
-              </View>
-            );
-          })}
-        </Swiper>
-      </View>
-    );
-  }
-}
-
-const styles = StyleSheet.create({
-  wrapper: {},
-  slide1: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'black',
-  },
-  text: {
-    color: '#fff',
-    fontSize: 30,
-    fontWeight: 'bold',
-  },
-});
+   */

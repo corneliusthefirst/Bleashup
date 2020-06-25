@@ -60,7 +60,7 @@ class UserView extends React.PureComponent {
         backgroundColor: 'rgba(52,52,52,0.1)',
       }}>
         
-        <TouchableOpacity onPress={props.onClosePress}>
+        <TouchableOpacity onPress={props.onClose}>
         <Icon
           name="arrow-back"
           type="MaterialIcons"
