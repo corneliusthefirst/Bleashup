@@ -59,6 +59,7 @@ class CacheImages extends Component {
           this.getPhotoSmall(this.props.source.uri) : this.getRealURL(this.props.source.uri), 
         priority: FastImage.priority.high,
       }}
+      fallback
       defaultSource={this.props.source}
 
     >

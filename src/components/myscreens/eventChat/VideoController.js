@@ -448,6 +448,14 @@ export default class VideoController extends Component {
     /**
      * Toggle playing state on <Video> component
      */
+    _pausePlayer(){
+        let state = this.state;
+        state.paused = true;
+        if (state.paused) {
+            typeof this.events.onPause === 'function' && this.events.onPause();
+        }
+        this.setState(state);
+    }
     _togglePlayPause() {
         let state = this.state;
         state.paused = !state.paused;

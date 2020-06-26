@@ -70,12 +70,15 @@ export default class InChatVideoPlayer extends Component {
                             </Icon>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => {
-                            this.videoPlayer._togglePlayPause()
+                            this.videoPlayer._pausePlayer()
                             this.props.forward(this.props.message)
                         }} style={this.containerStyle}>
                             <Icon name="forward" style={this.iconStyles} type={"Entypo"}></Icon>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={this.props.openFullscreen} style={{ ...this.containerStyle }}>
+                        <TouchableOpacity onPress={() => {
+                            this.videoPlayer._pausePlayer()
+                            this.props.enterFullscreen()
+                        }} style={{ ...this.containerStyle }}>
                             <Icon style={{ color: ColorList.bodyBackground, marginBottom: 'auto', marginTop: 'auto', }} type="MaterialIcons" name="fullscreen">
                             </Icon>
                         </TouchableOpacity>

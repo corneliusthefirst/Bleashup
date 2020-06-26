@@ -65,6 +65,7 @@ import {
 import { TouchableOpacity } from 'react-native';
 import CacheImages from "../../CacheImages";
 import AnimatedPureComponent from '../../AnimatedPureComponent';
+import BeNavigator from '../../../services/navigationServices';
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenheight = Math.round(Dimensions.get("window").height);
@@ -454,10 +455,8 @@ class ChatRoom extends AnimatedPureComponent {
         return data.map((element) => this.chooseComponent(element));
     }
     enterFullscreen() {
-        Keyboard.dismiss();
-        this.setState({
-            fullScreen: !this.state.fullScreen,
-        });
+        this.navigateToFullView()
+       //console.error("entering fullscreen")
     }
     togglePlay() {
         this.setState({
@@ -1235,7 +1234,30 @@ class ChatRoom extends AnimatedPureComponent {
            </InChatVideoPlayer>
         );
     }
-
+    navigateToFullView(){
+        BeNavigator.pushTo('SwiperComponent', { 
+            dataArray: stores.Messages.messages[this.roomID].filter(ele => 
+            ele.type == "photo" || 
+            ele.type == "video" || 
+            ele.type == "photo_upload" ||
+            ele.type == "video_upload"), mapFunction: this.mapFunction });
+    }
+    mapFunction = (ele) => {
+        let senderPhone = ele.sender && ele.sender.phone && ele.sender.phone.replace && ele.sender.phone.replace("+","00")
+        return {
+            ...ele,
+            url: ele.source || ele.photo,
+            message:ele.text,
+            type: ele.type == "photo" || ele.type == "photo_upload" ? "image":"video",
+            creator:{
+                name: stores.TemporalUsersStore.Users[senderPhone] && 
+                stores.TemporalUsersStore.Users[senderPhone].nickname,
+                profile: stores.TemporalUsersStore.Users[senderPhone] &&
+                    stores.TemporalUsersStore.Users[senderPhone].nickname,
+                updated_at:ele.created_at
+            }
+        }
+    }
     PhotoShower() {
         return (
             <View
