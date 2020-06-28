@@ -186,9 +186,6 @@ export default class AudioMessage extends Component {
     task = null;
     previousTime = 0;
     plays() {
-        this.setState({
-            playing: true,
-        });
         if (this.props.message.duration) {
             let refreshID = setInterval(() => {
                 this.player.getCurrentTime((time) => {
@@ -197,6 +194,7 @@ export default class AudioMessage extends Component {
                         this.previousTime = time;
                         this.setState({
                             currentPosition: time / this.props.message.duration,
+                            playing: true,
                             currentTime: time,
                         });
                     }
@@ -218,17 +216,16 @@ export default class AudioMessage extends Component {
     playingEvent = "playing"
     playerCallback(success){
         if (success) {
-            emitter.off(this.playingEvent)
             this.player.getCurrentTime((seconds) => {
                 this.props.message.duration = Math.floor(seconds);
                 this.setState({
-                    playing: false,
                     currentPosition: seconds / this.props.message.duration,
                     currentTime: seconds,
                 });
+                this.pause()
                 stores.Messages.addDuration(this.props.room, seconds).then(
                     (status) => {
-                        //this.player.release()
+                        
                     }
                 );
             });
@@ -300,13 +297,12 @@ export default class AudioMessage extends Component {
                                     <Slider
                                         value={this.state.currentPosition}
                                         onValueChange={(value) => {
-                                            this.player.setCurrentTime(
-                                                value * this.props.message.duration
-                                            );
-                                            this.setState({
-                                                currentPosition: value,
-                                                currentTime: value * this.props.message.duration,
-                                            });
+                                          this.plays()
+                                          setTimeout(() => {
+                                              this.player.setCurrentTime(
+                                                  value * this.props.message.duration
+                                              );
+                                          })
                                         }}
                                     ></Slider>
                                 </View>

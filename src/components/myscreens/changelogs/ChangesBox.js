@@ -50,7 +50,7 @@ export default class ChangeBox extends AnimatedComponent {
                     {!this.props.change ? null : <View style={{ flexDirection: 'column', margin: '1%', }}>
                         <View style={{ flexDirection: 'row', maxHeight: 40, }}>
                             <View style={{ width: '93%', height: '100%', justifyContent: 'space-between', }}>
-                                <View style={{ width: 170, height: '100%' }}><ProfileSimple showPhoto={(url) => {
+                                <View style={{ width: 170, height: '100%' }}><ProfileSimple hidePhoto showPhoto={(url) => {
                                     this.props.showPhoto(url)
                                 }} delay={this.props.delayer}
                                     profile={this.state.changer}>

@@ -36,7 +36,7 @@ export default class ProfileSimple extends Component {
 
             <View style={{ flexDirection: "row", width: "100%", alignItems: "center", marginBottom: "4%" }}>
 
-                <View style={{ width: this.props.invite ? "15%" : "23%", paddingLeft: this.props.relation ? "4%" : "0%" }}>
+                {!this.props.hidePhoto && <View style={{ width: this.props.invite ? "15%" : "23%", paddingLeft: this.props.relation ? "4%" : "0%" }}>
                     {this.props.profile && this.props.profile.profile && testForURL(this.props.profile.profile) ?
                         <TouchableWithoutFeedback onPress={() => {
                             requestAnimationFrame(() => {
@@ -48,11 +48,11 @@ export default class ProfileSimple extends Component {
                                 }, 50)
                             });
                         }}>
-                            <CacheImages small thumbnails {...this.props} source={{ uri: this.props.profile.profile }} />
+                            <CacheImages staySmall small thumbnails {...this.props} source={{ uri: this.props.profile.profile }} />
                         </TouchableWithoutFeedback> :
 
                         <Thumbnail small style={this.props.style ? this.props.style : null} source={require("../../../../../Images/images.jpeg")} ></Thumbnail>}
-                </View>
+                </View>}
 
                 {this.props.searching ?
                     <View style={textStyles}>

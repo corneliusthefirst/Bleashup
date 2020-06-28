@@ -37,6 +37,7 @@ export default class ActivityProfile extends Component {
                     >
                         {this.props.Event.background ? (
                             <CacheImages
+                                staySmall
                                 small={this.props.small ? true : false}
                                 thumbnails
                                 source={{ uri: this.props.Event.background }}

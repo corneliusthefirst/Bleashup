@@ -85,13 +85,14 @@ export default class ProfileView extends Component {
                         });
                     }}
                 >
-                    <View style={{ alignSelf: "center" }} transparent>
+                    {!this.props.hidePhoto && <View style={{ alignSelf: "center" }} transparent>
                         {stores.TemporalUsersStore.Users &&
                             testForURL(
                                 stores.TemporalUsersStore.Users[this.props.phone] &&
                                 stores.TemporalUsersStore.Users[this.props.phone].profile
                             ) ? (
                                 <CacheImages
+                                    staySmall
                                     small
                                     thumbnails
                                     {...this.props}
@@ -108,7 +109,7 @@ export default class ProfileView extends Component {
                                     source={require("../../../../../Images/images.jpeg")}
                                 ></Thumbnail>
                             )}
-                    </View>
+                    </View>}
                 </TouchableOpacity>
                 <View
                     style={{
