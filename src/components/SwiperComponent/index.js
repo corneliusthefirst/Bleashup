@@ -15,7 +15,9 @@ export default class SwiperComponent extends Component {
     this.state = {
       itemswiper: {},
       isPause: true,
-      currentIndex: props.currentIndex ? props.currentIndex : 0,
+      currentIndex: props.navigation.getParam('currentIndex')
+        ? props.navigation.getParam('currentIndex')
+        : 0,
       media: props.navigation.getParam('dataArray'),
       mapFunction: props.navigation.getParam('mapFunction'),
     };
@@ -70,7 +72,7 @@ export default class SwiperComponent extends Component {
           loadMinimal
           loop={false}
           loadMinimalSize={5}
-          index={this.props.currentIndex ? this.props.currentIndex : 0}
+          index={this.state.currentIndex}
           onTouchStartCapture={(e, state, context) =>
             this.onTouchStartCapture(state)
           }
