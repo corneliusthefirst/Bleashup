@@ -256,6 +256,7 @@ export default class ReplyText extends Component {
                       >
                           <View>
                               <CacheImages
+                                staySmall
                                 thumbnails
                                 square
                                 style={{
