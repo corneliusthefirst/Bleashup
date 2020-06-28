@@ -66,11 +66,11 @@ export default class PickedImage extends BleashupModal {
          <VideoView
           open={true}
           onLoad={(item) => {
-            console.warn("item loaded", item);
+            //console.warn("item loaded", item);
             //this.props.onVideoLoaded(item);
           }}
-          height={screenHeight -170}
-          width={screenWidth-14}
+          height={screenHeight - 170}
+          width={screenWidth - 14}
           top={65}
           video={this.props.data.video}
          />
