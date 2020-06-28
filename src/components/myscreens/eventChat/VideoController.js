@@ -19,6 +19,7 @@ import { Icon, Spinner } from 'native-base';
 import ColorList from '../../colorList';
 import rounder from '../../../services/rounder';
 import shadower from '../../shadower';
+import { TouchableOpacity } from 'react-native';
 
 export default class VideoController extends Component {
 
@@ -447,6 +448,14 @@ export default class VideoController extends Component {
     /**
      * Toggle playing state on <Video> component
      */
+    _pausePlayer(){
+        let state = this.state;
+        state.paused = true;
+        if (state.paused) {
+            typeof this.events.onPause === 'function' && this.events.onPause();
+        }
+        this.setState(state);
+    }
     _togglePlayPause() {
         let state = this.state;
         state.paused = !state.paused;
@@ -852,7 +861,7 @@ export default class VideoController extends Component {
         );
     }
 
-   
+
     /**
      * Groups the top bar controls together in an animated
      * view and spaces them out.
@@ -895,7 +904,7 @@ export default class VideoController extends Component {
             <Icon
                 name={"close"}
                 type="EvilIcons"
-                style={{ color: ColorList.bodyBackground,}}
+                style={{ color: ColorList.bodyBackground, }}
             />,
             this.events.onBack,
             styles.controls.back
@@ -924,7 +933,7 @@ export default class VideoController extends Component {
                     ]}
                     {...this.player.volumePanResponder.panHandlers}
                 >
-                    <Icon style={styles.volume.icon} style={{ color:ColorList.bodyBackground}} type="EvilIcons" name="bell" />
+                    <Icon style={styles.volume.icon} style={{ color: ColorList.bodyBackground }} type="EvilIcons" name="bell" />
                 </View>
             </View>
         );
@@ -936,11 +945,14 @@ export default class VideoController extends Component {
     renderFullscreen() {
 
         return this.renderControl(
-            <View>
-                <Icon style={{ color:ColorList.bodyBackground}} type="MaterialIcons" name="fullscreen">
-            </Icon>
+            <View style={{ flexDirection: 'row', }}>
+                {this.props.extra?this.props.extra:
+                <TouchableOpacity onPress={this.methods.toggleFullscreen} style={{ width: 50, flexDirection: 'row', justifyContent: 'center', ...this.props.expandContainerStyle }}>
+                    <Icon style={{ color: ColorList.bodyBackground, marginBottom: 'auto', marginTop: 'auto', }} type="MaterialIcons" name="fullscreen">
+                    </Icon>
+                </TouchableOpacity>}
             </View>,
-            this.methods.toggleFullscreen,
+            !this.props.extra ? this.methods.toggleFullscreen:() => {},
             styles.controls.fullscreen
         );
     }
@@ -985,7 +997,7 @@ export default class VideoController extends Component {
      * Render center control group and wrap it in a holder
      */
     renderCenterControls() {
-        return  null
+        return null
     }
 
 
@@ -1003,7 +1015,7 @@ export default class VideoController extends Component {
                     <View style={[
                         styles.seekbar.fill,
                         {
-                            width: isNaN(this.state.seekerFillWidth)? "100%" : this.state.seekerPosition,
+                            width: isNaN(this.state.seekerFillWidth) ? "100%" : this.state.seekerPosition,
                             backgroundColor: this.props.seekColor || ColorList.bodyBackground
                         }
                     ]} />
@@ -1030,8 +1042,8 @@ export default class VideoController extends Component {
     renderPlayPause() {
 
         return this.renderControl(
-            <Icon type="MaterialCommunityIcons" 
-            name={!this.state.paused?"pause":"play-circle-outline"} style={{ color: 'white'}}></Icon>,
+            <Icon type="MaterialCommunityIcons"
+                name={!this.state.paused ? "pause" : "play-circle-outline"} style={{ color: 'white' }}></Icon>,
             this.methods.togglePlayPause,
             styles.controls.playPause
         );
@@ -1060,11 +1072,11 @@ export default class VideoController extends Component {
         return null;
     }
 
-     /**
-     * Render our center content pause,play and next...if supplied.
-     */
+    /**
+    * Render our center content pause,play and next...if supplied.
+    */
     renderCenter() {
-       return null;
+        return null;
     }
 
 
@@ -1088,7 +1100,7 @@ export default class VideoController extends Component {
     renderLoader() {
         if (this.state.loading) {
             return (
-               <Spinner></Spinner>
+                <Spinner></Spinner>
             );
         }
         return null;
@@ -1117,11 +1129,11 @@ export default class VideoController extends Component {
                 onPress={this.events.onScreenTouch}
                 style={[styles.player.container, this.styles.containerStyle]}
             >
-                <View style={[styles.player.container, this.styles.containerStyle, this.props.messaging && {borderRadius: 5,...shadower(4)}]}>
+                <View style={[styles.player.container, this.styles.containerStyle, this.props.messaging && { borderRadius: 5, ...shadower(4) }]}>
                     <Video
                         {...this.props}
                         ref={videoPlayer => this.player.ref = videoPlayer}
-            
+
                         resizeMode={this.state.resizeMode}
                         volume={this.state.volume}
                         paused={this.state.paused}
@@ -1137,8 +1149,9 @@ export default class VideoController extends Component {
                         style={[styles.player.video, {
                             overflow: 'hidden',
                             height: '100%',
-                            width:"100%",
-                            position: 'absolute',}, this.styles.videoStyle]}
+                            width: "100%",
+                            position: 'absolute',
+                        }, this.styles.videoStyle]}
 
                         source={this.props.source}
                     />
@@ -1166,11 +1179,11 @@ const styles = {
             backgroundColor: transparent,
             flex: 1,
             alignSelf: 'stretch',
-            justifyContent:"center", //was space-between
+            justifyContent: "center", //was space-between
         },
         video: {
             overflow: 'hidden',
-            height:'100%',
+            height: '100%',
             position: 'absolute',
         },
     }),
@@ -1180,7 +1193,7 @@ const styles = {
             position: 'absolute',
             top: 0,
             right: 0,
-            height:'100%',
+            height: '100%',
             bottom: 0,
             left: 0,
             justifyContent: 'center',
@@ -1253,7 +1266,7 @@ const styles = {
             justifyContent: 'space-between',
             flexDirection: 'row',
             width: null,
-            paddingTop:10,
+            paddingTop: 10,
             //margin: 12,
             //marginBottom: 18,
         },
@@ -1325,7 +1338,7 @@ const styles = {
             marginLeft: 7,
         },
         fill: {
-            
+
             height: 1,
         },
         handle: {
@@ -1360,7 +1373,7 @@ const styles = {
             width: '100%'
         },
         fill: {
-            
+
             height: 3,
             width: '100%'
         },

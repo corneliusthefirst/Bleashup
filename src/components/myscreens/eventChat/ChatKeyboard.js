@@ -28,6 +28,7 @@ import moment from "moment";
 import AudioFilePreviewer from "./AudioFilePreviewer";
 import FilePreview from "./FilePreview";
 import PhotoPreview from "./PhotoPreviewer";
+import CameraScreen from '../../mainComponents/BleashupCamera/index';
 
 export default class ChatKeyboard extends PureComponent {
     constructor(props) {
@@ -308,22 +309,25 @@ export default class ChatKeyboard extends PureComponent {
     openCamera() {
         this.blur();
         Pickers.SnapPhoto("all").then((snap) => {
-            let isVideo = snap.content_type.includes("video") ? true : false;
-            this.setState({
-                video: snap.source,
-                image: snap.source,
-                audio: false,
-                file: false,
-                audioSouce: false,
-                showCaption: true,
-                imageSelected: isVideo ? false : true,
-                filename: snap.filename,
-                showVideo: isVideo ? true : false,
-                content_type: snap.content_type,
-                size: snap.size,
-            });
-            this.animateLayout(true);
+           this.concludePicking(snap)
         });
+    }
+    concludePicking(snap){
+        let isVideo = snap.content_type.includes("video") ? true : false;
+        this.setState({
+            video: snap.source,
+            image: snap.source,
+            audio: false,
+            file: false,
+            audioSouce: false,
+            showCaption: true,
+            imageSelected: isVideo ? false : true,
+            filename: snap.filename,
+            showVideo: isVideo ? true : false,
+            content_type: snap.content_type,
+            size: snap.size,
+        });
+        this.animateLayout(true);
     }
     _sendCaptionMessage() {
         if (this.state.file) {
@@ -570,6 +574,11 @@ export default class ChatKeyboard extends PureComponent {
         });
         this.animateLayout();
     }
+    endCamera(){
+        this.setState({
+            isCameraOpened: false
+        })
+    }
     showMedia() {
         return this.state.file ? (
             <View>
@@ -605,6 +614,11 @@ export default class ChatKeyboard extends PureComponent {
             hideCaption={this.hideCaption.bind(this)}>
                 </PhotoPreview>
     }
+    showSnapper(){
+        this.setState({
+            isCameraOpened:true
+        })
+    }
     render() {
         return (
             <View>
@@ -637,7 +651,8 @@ export default class ChatKeyboard extends PureComponent {
                             }}
                         >
                             <TouchableOpacity
-                                onPress={() => requestAnimationFrame(() => this.openCamera())}
+                                onPress={() => requestAnimationFrame(() => /*this.showSnapper()*/ this.openCamera()
+                                    )}
                                 style={{
                                     width: "12%",
                                     alignSelf: "flex-end",
@@ -703,9 +718,7 @@ export default class ChatKeyboard extends PureComponent {
                                     onFocus={this.resetImoji.bind(this)}
                                     _onChange={this._onChange.bind(this)}
                                     animateLayout={() =>
-                                        LayoutAnimation.configureNext(
-                                            LayoutAnimation.Presets.easeInEaseOut
-                                        )
+                                        this.animateLayout()
                                     }
                                     textValue={this.state.textValue}
                                     ref={(r) => {
@@ -794,6 +807,14 @@ export default class ChatKeyboard extends PureComponent {
                         this.state.showEmojiInput ? this.imojiInput() : null
                     }
                 </View>
+                <CameraScreen isOpen={this.state.isCameraOpened} onClosed={() => {
+                   this.endCamera()
+                }} nomessage directreturn={false} onMountError={() => {
+                    this.endCamera()
+                    this.openCamera()
+                    }} onCaptureFinish={(snap) => {
+                        this.concludePicking(snap)
+                    }}></CameraScreen>
             </View>
         );
     }

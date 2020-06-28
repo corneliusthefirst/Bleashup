@@ -16,12 +16,13 @@ export default class PhotoPreview extends Component {
         return this.props.video !== nextProp.video || 
         this.props.image !== nextProp.image
     }
+    containerHeight=150
     logOutZoomState = (event, gestureState, zoomableViewEventObject) => { };
     render() {
         return !this.props.showVideo ? (
             <View
                 style={{
-                    height: 300,
+                    height: this.containerHeight,
                     borderTopLeftRadius: 5, backgroundColor: ColorList.bodyBackground,
                     borderTopRightRadius: 5,
                     width: "100%",
@@ -29,7 +30,7 @@ export default class PhotoPreview extends Component {
             >
                 <ReactNativeZoomableView
                     style={{
-                        height: 300,
+                        height: this.containerHeight,
                         borderTopLeftRadius: 5, backgroundColor: ColorList.bodyBackground,
                         borderTopRightRadius: 5,
                         backgroundColor: ColorList.bodyBackground,
@@ -70,18 +71,20 @@ export default class PhotoPreview extends Component {
                 </TouchableOpacity>
             </View>
         ) : (
-                <View style={{ width: "100%", height: 300 }}>
+                <View style={{ width: "100%", height: this.containerHeight }}>
                     <VideoController
                         source={{ uri: this.props.video }}
                         resizeMode={"contain"}
-                        paused={false}
+                        paused={true}
                         disableVolume={true}
                         seekColor={ColorList.indicatorColor}
                         disableFullscreen={true}
                         onBack={this.props.hideCaption}
                         style={{
-                            width: "100%",
-                            height: "100%",
+                            width: "98%",
+                            height: "98%",
+                            alignSelf: 'center',
+                            marginTop: '1%',
                             borderTopRightRadius: 5,
                             borderTopLeftRadius: 5,
                         }}
@@ -89,7 +92,7 @@ export default class PhotoPreview extends Component {
                             alignItems: "center",
                             borderTopLeftRadius: 5,
                             borderTopRightRadius: 5,
-                            height: "100%",
+                            height: "95%",
                             width: "100%",
                             top: 0,
                             left: 0,

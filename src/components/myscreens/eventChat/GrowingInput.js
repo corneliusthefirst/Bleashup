@@ -24,12 +24,20 @@ export default class GrowingInput extends PureComponent{
     blur(){
         this._textInput.blur()
     }
+    componentDidMount(){
+        this.setState({
+            mounted:true
+        })
+    }
     render(){
        return <View>
             <TextInput
                 autoCorrect={true}
                 value={this.props.textValue}
-                onChange={(event) => this.props._onChange(event)}
+                onChange={(event) => {
+                    this.state.mounted && this.props.animateLayout()
+                    this.props._onChange(event)
+                }}
                 placeholder={"Your Message"}
                 onFocus={this.props.onFocus}
                 style={{

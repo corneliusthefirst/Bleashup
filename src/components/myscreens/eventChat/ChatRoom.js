@@ -65,6 +65,7 @@ import {
 import { TouchableOpacity } from 'react-native';
 import CacheImages from "../../CacheImages";
 import AnimatedPureComponent from '../../AnimatedPureComponent';
+import BeNavigator from '../../../services/navigationServices';
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenheight = Math.round(Dimensions.get("window").height);
@@ -408,8 +409,9 @@ class ChatRoom extends AnimatedPureComponent {
         //return factor * screenheight;
         return (1-factor) * screenheight;
     }
-    playVideo(video) {
+    playVideo(video,message) {
         this.setState({
+            playingMessage:message,
             video: video,
             showVideo: true,
         });
@@ -453,10 +455,8 @@ class ChatRoom extends AnimatedPureComponent {
         return data.map((element) => this.chooseComponent(element));
     }
     enterFullscreen() {
-        Keyboard.dismiss();
-        this.setState({
-            fullScreen: !this.state.fullScreen,
-        });
+        this.navigateToFullView()
+       //console.error("entering fullscreen")
     }
     togglePlay() {
         this.setState({
@@ -844,7 +844,7 @@ class ChatRoom extends AnimatedPureComponent {
                                 // addToVote={this.addVote.bind(this)}
                                 // starThis={this.addStar.bind(this)}
                                 // remindThis={this.remindThis.bind(this)}
-                                forwardToContacts={this.forwardToContacts.bind(this)}
+                                forwardToContacts={() => this.forwardToContacts(this.state.currentMessage)}
                                 replyMessage={this.replyMessage.bind(this)}
                                 seenBy={this.showReceived.bind(this)}
                             ></MessageActions>
@@ -948,10 +948,11 @@ class ChatRoom extends AnimatedPureComponent {
         return result;
     }
     addStar() { }
-    forwardToContacts() {
-       this.state.currentMessage && this.state.currentMessage.sent
+    forwardToContacts(message) {
+       message && message.sent
             ? this.setState({
                 isShareWithContactsOpened: true,
+                currentMessage:message
             })
             : Toast.show({ text: "cannot forward unsent messages" });
     }
@@ -1079,12 +1080,7 @@ class ChatRoom extends AnimatedPureComponent {
 
                             }}
                             forwardMessage={() => {
-                                this.setState({
-                                    currentMessage:item
-                                })
-                                setTimeout(() => {
-                                 this.forwardToContacts()
-                                })
+                                this.forwardToContacts(item)
                             }}
                             newCount={this.props.newMessages.length}
                             index={index}
@@ -1127,7 +1123,7 @@ class ChatRoom extends AnimatedPureComponent {
                             user={this.props.user.phone}
                             creator={this.props.creator}
                             replaceMessageFile={(data) => this.replaceMessageFile(data)}
-                            playVideo={(source) => this.playVideo(source)}
+                            playVideo={(source) => this.playVideo(source,item)}
                         ></Message>
                     ) : null;
                 }}
@@ -1224,6 +1220,11 @@ class ChatRoom extends AnimatedPureComponent {
     VideoShower() {
         return (
            <InChatVideoPlayer
+           reply={this.replying.bind(this)}
+           focusInput={this.fucussTextInput.bind(this)}
+           react={(reaction) => this.reactToMessage(this.state.playingMessage.id,reaction)}
+           forward={this.forwardToContacts.bind(this)}
+           message={this.state.playingMessage}
            video={this.state.video}
             fullScreen={this.props.fullScreen}
             buffering={this.buffering.bind(this)}
@@ -1233,7 +1234,30 @@ class ChatRoom extends AnimatedPureComponent {
            </InChatVideoPlayer>
         );
     }
-
+    navigateToFullView(){
+        BeNavigator.pushTo('SwiperComponent', { 
+            dataArray: stores.Messages.messages[this.roomID].filter(ele => 
+            ele.type == "photo" || 
+            ele.type == "video" || 
+            ele.type == "photo_upload" ||
+            ele.type == "video_upload"), mapFunction: this.mapFunction });
+    }
+    mapFunction = (ele) => {
+        let senderPhone = ele.sender && ele.sender.phone && ele.sender.phone.replace && ele.sender.phone.replace("+","00")
+        return {
+            ...ele,
+            url: ele.source || ele.photo,
+            message:ele.text,
+            type: ele.type == "photo" || ele.type == "photo_upload" ? "image":"video",
+            creator:{
+                name: stores.TemporalUsersStore.Users[senderPhone] && 
+                stores.TemporalUsersStore.Users[senderPhone].nickname,
+                profile: stores.TemporalUsersStore.Users[senderPhone] &&
+                    stores.TemporalUsersStore.Users[senderPhone].nickname,
+                updated_at:ele.created_at
+            }
+        }
+    }
     PhotoShower() {
         return (
             <View
