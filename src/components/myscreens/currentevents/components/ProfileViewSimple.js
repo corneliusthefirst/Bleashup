@@ -1,7 +1,7 @@
 import React, { Component } from "react"
 import CacheImages from '../../../CacheImages';
 import { View, Text, TouchableOpacity, TouchableWithoutFeedback} from "react-native";
-import { Body, Accordion, Content, Thumbnail, Title } from "native-base"
+import { Body, Accordion, Content, Thumbnail, Title, Icon } from "native-base"
 import ImageActivityIndicator from '../../currentevents/components/imageActivityIndicator';
 import ProfileIdicator from "../../currentevents/components/ProfilIndicator";
 import stores from "../../../../stores";
@@ -29,8 +29,8 @@ export default class ProfileSimple extends Component {
     showingProfile = false
     render() {
         let textStyles = {
-            justifyContent: 'center', width: this.props.invite && this.props.profile && !this.props.profile.found ? "67%" : "77%",
-            flexDirection: "column", paddingLeft: this.props.relation ? "11.6%" : "1.7%"
+            justifyContent: 'flex-start', width: this.props.invite && this.props.profile && !this.props.profile.found ? "67%" : "77%",
+            flexDirection: "column", paddingLeft: this.props.relation ? "4.6%" : "1.7%"
         }
         return (
 
@@ -51,7 +51,12 @@ export default class ProfileSimple extends Component {
                             <CacheImages staySmall small thumbnails {...this.props} source={{ uri: this.props.profile.profile }} />
                         </TouchableWithoutFeedback> :
 
-                        <Thumbnail small style={this.props.style ? this.props.style : null} source={require("../../../../../Images/images.jpeg")} ></Thumbnail>}
+                        <Icon type={"FontAwesome"} style={{
+                            color:ColorList.photoPlaceHolderColor,
+                            fontSize: 50,
+                        }} name={"user-circle-o"}>
+
+                        </Icon>}
                 </View>}
 
                 {this.props.searching ?

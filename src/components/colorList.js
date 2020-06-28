@@ -11,7 +11,9 @@ class colorlist {
   headerTextSize = 14;
   containerBackground = '#1FABAB';
   redIcon = 'red';
+  photoPlaceHolderColor = "#C5C5C5"
   containerBackground = 'white';
+  profilePlaceHolderHeight = 50
 
   //header
   iconGray = '#555756';

@@ -410,9 +410,10 @@ class ChatRoom extends AnimatedComponent {
         //return factor * screenheight;
         return (1-factor) * screenheight;
     }
-    playVideo(video,message) {
+    playVideo(video,message,index) {
         this.setState({
             playingMessage:message,
+            playingIndex:index,
             video: video,
             showVideo: true,
         });
@@ -456,7 +457,7 @@ class ChatRoom extends AnimatedComponent {
         return data.map((element) => this.chooseComponent(element));
     }
     enterFullscreen() {
-        this.navigateToFullView()
+        this.navigateToFullView(this.state.playingIndex)
        //console.error("entering fullscreen")
     }
     togglePlay() {
@@ -1081,7 +1082,7 @@ class ChatRoom extends AnimatedComponent {
                             user={this.props.user.phone}
                             creator={this.props.creator}
                             replaceMessageFile={(data) => this.replaceMessageFile(data)}
-                            playVideo={(source) => this.playVideo(source,item)}
+                            playVideo={(source) => this.playVideo(source,item,index)}
                         ></Message>
                     ) : null;
                 }}
@@ -1192,13 +1193,13 @@ class ChatRoom extends AnimatedComponent {
            </InChatVideoPlayer>
         );
     }
-    navigateToFullView(){
+    navigateToFullView(index){
         BeNavigator.pushTo('SwiperComponent', { 
             dataArray: stores.Messages.messages[this.roomID].filter(ele => 
             ele.type == "photo" || 
             ele.type == "video" || 
             ele.type == "photo_upload" ||
-            ele.type == "video_upload"), mapFunction: this.mapFunction });
+            ele.type == "video_upload"), mapFunction: this.mapFunction,currentIndex:index });
     }
     mapFunction = (ele) => {
         let senderPhone = ele.sender && ele.sender.phone && ele.sender.phone.replace && ele.sender.phone.replace("+","00")
@@ -1220,7 +1221,7 @@ class ChatRoom extends AnimatedComponent {
         return (
             <View
                 style={{
-                    height: "90%",
+                    height: "80%",
                     marginTop: '3%',
                     width: 350,
                     position: "absolute",

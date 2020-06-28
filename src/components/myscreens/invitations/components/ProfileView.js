@@ -9,6 +9,7 @@ import {
     Thumbnail,
     Button,
     Title,
+    Icon,
 } from "native-base";
 import ImageActivityIndicator from "../../currentevents/components/imageActivityIndicator";
 import ProfileIdicator from "../../currentevents/components/ProfilIndicator";
@@ -104,10 +105,12 @@ export default class ProfileView extends Component {
                                     }}
                                 />
                             ) : (
-                                <Thumbnail
-                                    small
-                                    source={require("../../../../../Images/images.jpeg")}
-                                ></Thumbnail>
+                                <Icon type={"FontAwesome"} style={{
+                                    fontSize: ColorList.profilePlaceHolderHeight,
+                                    color:ColorList.photoPlaceHolderColor
+                                }} name={"user-circle-o"}>
+
+                               </Icon>
                             )}
                     </View>}
                 </TouchableOpacity>

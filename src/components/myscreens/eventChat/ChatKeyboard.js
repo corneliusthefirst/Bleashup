@@ -676,7 +676,7 @@ export default class ChatKeyboard extends PureComponent {
                                             fontSize: 20,
                                         }}
                                         type={"MaterialCommunityIcons"}
-                                        name={"image-filter"}
+                                        name={"camera"}
                                     ></Icon>
                                 </View>
                             </TouchableOpacity>

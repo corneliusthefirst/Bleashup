@@ -4,7 +4,9 @@ import { View } from "react-native";
 import { TouchableOpacity } from "react-native";
 import TitleView from "./TitleView";
 import CacheImages from "../../../CacheImages";
-import { Thumbnail } from "native-base";
+import { Thumbnail, Icon } from "native-base";
+import ColorList from '../../../colorList';
+import rounder from "../../../../services/rounder";
 export default class ActivityProfile extends Component {
     constructor(props) {
         super(props);
@@ -38,16 +40,22 @@ export default class ActivityProfile extends Component {
                         {this.props.Event.background ? (
                             <CacheImages
                                 staySmall
+                                dim={this.props.dim}
                                 small={this.props.small ? true : false}
                                 thumbnails
                                 source={{ uri: this.props.Event.background }}
 
                             ></CacheImages>
-                        ) : (
-                                <Thumbnail
-                                    small={this.props.small?true:false}
-                                    source={require("../../../../../assets/default_event_image.jpeg")}
-                                ></Thumbnail>
+                        ) : (<View style={{
+                            ...rounder(50,ColorList.photoPlaceHolderColor)
+                        }}>
+                                <Icon name={"calendar"} type={"AntDesign"} style={{
+                                    alignSelf: 'center',
+                                    color:ColorList.bodyBackground,
+                                    fontSize: ColorList.profilePlaceHolderHeight - 10,
+                                }}>
+                            </Icon>
+                            </View>
                             )}
                     </View>
                 </TouchableOpacity>
@@ -57,7 +65,7 @@ export default class ActivityProfile extends Component {
                         width: "75%",
                         paddingLeft: 6,
                         marginTop: "4.75%",
-                        paddingLeft: "6%",
+                        paddingLeft: "3%",
                     }}
                 >
                     <TitleView

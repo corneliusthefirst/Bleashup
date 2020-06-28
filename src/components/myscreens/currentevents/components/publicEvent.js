@@ -217,6 +217,7 @@ class PublicEvent extends Component {
         <View style={{ width: '90%'}}>
           <ActivityProfile
             join={this.join.bind(this)}
+            dim={50}
             showPhoto={this.props.showPhoto}
             openDetails={this.props.openDetails}
             markAsSeen={this.markAsSeen.bind(this)}

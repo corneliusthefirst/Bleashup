@@ -36,7 +36,7 @@ class CacheImages extends Component {
     "large": {
       ...this.props.square? {
         height: 60, width: 60, borderRadius: this.props.borderRadius||1,
-      }:rounder(60),
+      }:rounder(this.props.dim||60),
       justifyContent: 'center',
       alignItems: 'center',
     }
