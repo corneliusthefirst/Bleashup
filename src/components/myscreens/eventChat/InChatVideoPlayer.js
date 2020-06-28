@@ -5,7 +5,6 @@ import VideoController from './VideoController';
 import { Icon } from "native-base";
 import rounder from "../../../services/rounder";
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import ReactionModal from "./ReactionsModal";
 export default class InChatVideoPlayer extends Component {
     constructor(props) {
         super(props)

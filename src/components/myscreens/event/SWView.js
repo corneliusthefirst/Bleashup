@@ -167,7 +167,7 @@ export default class SWView extends Component {
 
 
 
-                <ScrollView nestedScrollEnabled={true} showsVerticalScrollIndicator={false}>
+                {this.state.showCommittees && <ScrollView nestedScrollEnabled={true} showsVerticalScrollIndicator={false}>
                     <View style={{
                         height: '100%',
                         width: screenWidth * .56,
@@ -192,7 +192,7 @@ export default class SWView extends Component {
                             event_id={this.props.event.id}>
                         </Commitee>
                     </View>
-                </ScrollView>
+                </ScrollView>}
             </View>
         </View>)
     }

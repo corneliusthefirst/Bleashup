@@ -62,7 +62,7 @@ export default class changelogs {
             this.readFromStore().then(Changes => {
                 Changes[Newchange.event_id] = Changes && 
                 Changes[Newchange.event_id] && 
-                Changes[Newchange.event_id].length == 0 ? [] : Changes[Newchange.event_id]
+                Changes[Newchange.event_id].length > 0 ? Changes[Newchange.event_id]:[]
                 let date = moment(Newchange.date).format("YYYY/MM/DD");
                 let index = findIndex(Changes[Newchange.event_id], { id: date, event_id: Newchange.event_id })
                 if (index < 0) {

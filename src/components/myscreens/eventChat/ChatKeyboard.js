@@ -133,7 +133,7 @@ export default class ChatKeyboard extends PureComponent {
             });
         }
         this.props.setTyingState(this.props.sender);
-        this.animateLayout();
+        //  this.animateLayout();
     }
     imojiInput() {
         return (
@@ -172,6 +172,11 @@ export default class ChatKeyboard extends PureComponent {
             textValue: currentText.join("@"),
         });
         this.animateLayout();
+    }
+    componentDidUpdate(previousProps,prevState){
+        if(previousProps.members.length !== this.props.members.length){
+            this.formSerachableMembers()
+        }
     }
     formSerachableMembers() {
         stores.TemporalUsersStore.getUsers(
@@ -383,12 +388,11 @@ export default class ChatKeyboard extends PureComponent {
         this.animateLayout();
     }
     sendAllPhoto(photos,index,completed){
-        if(index == photos.length - 1){
+        if(index == photos.length){
             completed()
         }else{
             stores.Messages.addMessageToStore(this.props.roomID, photos[index]).then(
                 () => {
-                    //this.props.initialzeFlatList();
                     this.sendAllPhoto(photos, index + 1, completed)
                 }
             );

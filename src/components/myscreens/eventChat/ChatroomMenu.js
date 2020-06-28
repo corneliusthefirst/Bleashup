@@ -69,10 +69,10 @@ export default class ChatroomMenu extends Component {
                         return this.props.showMembers()
                     }
                     }>View Members</MenuItem></View>}
-                    <View><MenuDivider color="gray" /><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
+                    {/*<View><MenuDivider color="gray" /><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
                         this.hideMenu()
                         this.props.showRoomMedia()
-                    }}>Media</MenuItem><MenuDivider color="#1FABAB" /></View>
+                    }}>Media</MenuItem><MenuDivider color="#1FABAB" /></View>*/}
                     {this.isGeneral ? null : !this.props.master ? null : <View>
                         <MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
                             this.hideMenu()

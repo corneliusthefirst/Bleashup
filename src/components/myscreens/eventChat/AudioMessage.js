@@ -42,7 +42,7 @@ export default class AudioMessage extends Component {
         emitter.off(this.playingEvent)
     }
     componentDidMount() {
-        console.warn(this.props.message.source);
+        //console.warn(this.props.message.source);
         this.setState({
             duration: null,
             currentPosition: 0,

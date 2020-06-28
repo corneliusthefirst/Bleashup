@@ -64,13 +64,13 @@ import {
 } from "react-native-gesture-handler";
 import { TouchableOpacity } from 'react-native';
 import CacheImages from "../../CacheImages";
-import AnimatedPureComponent from '../../AnimatedPureComponent';
 import BeNavigator from '../../../services/navigationServices';
+import AnimatedComponent from '../../AnimatedComponent';
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenheight = Math.round(Dimensions.get("window").height);
 @observer
-class ChatRoom extends AnimatedPureComponent {
+class ChatRoom extends AnimatedComponent {
     constructor(props) {
         super(props);
         this.authObserver();
@@ -523,37 +523,6 @@ class ChatRoom extends AnimatedPureComponent {
     captionMessages = [];
     sendingCaptionMessages = false;
     uselessSentCount = 0;
-    /*captionSender() {
-        if (this.uselessSentCount <= 20) {
-            if (this.captionMessages.length <= 0) {
-                setTimeout(() => {
-                    this.uselessSentCount = this.uselessSentCount + 1;
-                    this.captionSender();
-                }, 1000);
-            } else {
-                this.sendingCaptiomMessages = true;
-                this.uselessSentCount = 0;
-                this.scrollToEnd();
-                let tobeSent = [...this.captionMessages];
-                this.captionMessages = [];
-                tobeSent.map((newMessage) => {
-                    newMessage = { ...newMessage, received: this.received, sent: true };
-                    this.sendMessage({ ...newMessage, photo: newMessage.source }).then(
-                        (mess) => {
-                            stores.Messages.replaceMessage(this.roomID, {
-                                ...newMessage,
-                                key: mess.key,
-                            }).then(() => { });
-                        }
-                    );
-                });
-                this.captionSender();
-            }
-        } else {
-            this.sendingCaptiomMessages = false;
-        }
-    }*/
-
     sender = {
         phone: this.props.user.phone,
         nickname: this.props.user.name,
@@ -772,20 +741,19 @@ class ChatRoom extends AnimatedPureComponent {
                             verifyCode={(code) => this.verifyNumber(code)}
                             phone={this.props.user.phone}
                         ></VerificationModal>
-                        {this.state.isMediaModalOpened ? (
-                            <MediaTabModal
-                                video={this.groupByWeek(
+                            {/*<MediaTabModal
+                                video={this.state.messages && this.groupByWeek(
                                     JSON.parse(this.state.messages).filter(
                                         (ele) =>
                                             ele && ele.type === "video" && !testForURL(ele.source)
                                     )
                                 )}
-                                photo={this.groupByWeek(
+                                photo={this.state.messages && this.groupByWeek(
                                     JSON.parse(this.state.messages).filter(
                                         (ele) => ele && ele.type === "photo"
                                     )
                                 )}
-                                file={this.groupByWeek(
+                                file={this.state.messages && this.groupByWeek(
                                     JSON.parse(this.state.messages).filter(
                                         (ele) =>
                                             ele &&
@@ -799,15 +767,13 @@ class ChatRoom extends AnimatedPureComponent {
                                         isMediaModalOpened: false,
                                     });
                                 }}
-                            ></MediaTabModal>
-                        ) : null}
-                        {this.state.isShareWithContactsOpened ? (
+                            ></MediaTabModal>*/}
                             <ShareWithYourContacts
                                 activity_id={this.props.activity_id}
                                 sender={this.sender}
                                 committee_id={this.roomID}
                                 isOpen={this.state.isShareWithContactsOpened}
-                                message={{
+                                message={this.state.currentMessage && {
                                     ...this.state.currentMessage,
                                     id: uuid.v1(),
                                     created_at: moment().format(),
@@ -830,8 +796,6 @@ class ChatRoom extends AnimatedPureComponent {
                                     });
                                 }}
                             ></ShareWithYourContacts>
-                        ) : null}
-                        {this.state.showMessageActions ? (
                             <MessageActions
                                 isOpen={this.state.showMessageActions}
                                 onClosed={() => {
@@ -848,9 +812,7 @@ class ChatRoom extends AnimatedPureComponent {
                                 replyMessage={this.replyMessage.bind(this)}
                                 seenBy={this.showReceived.bind(this)}
                             ></MessageActions>
-                        ) : null}
-                        {
-                            <Votes
+                            {/*<Votes
                                 shared={false}
                                 share={{
                                     id: "45xerfds",
@@ -890,10 +852,8 @@ class ChatRoom extends AnimatedPureComponent {
                                         isVoteCreationModalOpened: false,
                                     });
                                 }}
-                            ></Votes>
-                        }
-                        {this.state.showContacts ? (
-                            <ContactsModal
+                            ></Votes>*/}
+                            {/*<ContactsModal
                                 title={this.state.title}
                                 contacts={this.state.voters}
                                 isOpen={this.state.showContacts}
@@ -902,9 +862,7 @@ class ChatRoom extends AnimatedPureComponent {
                                         showContacts: false,
                                     });
                                 }}
-                            ></ContactsModal>
-                        ) : null}
-                        {this.state.showReacters ? (
+                            ></ContactsModal>*/}
                             <PublishersModal
                                 isOpen={this.state.showReacters}
                                 onClosed={() => {
@@ -915,7 +873,6 @@ class ChatRoom extends AnimatedPureComponent {
                                 reaction={this.state.currentReaction}
                                 reacters={this.state.currentReacters}
                             ></PublishersModal>
-                        ) : null}
                     </View>
                     {
                         // ******************Photo Viewer View ***********************//
@@ -1049,7 +1006,7 @@ class ChatRoom extends AnimatedPureComponent {
                 inverted={true}
                 loadMoreFromRemote={() => this.props.isComment && this.loadComments()}
                 renderPerBatch={20}
-                initialRender={20}
+                initialRender={30}
                 numberOfItems={
                     stores.Messages.messages[this.roomID]
                         ? stores.Messages.messages[this.roomID].length

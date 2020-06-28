@@ -74,11 +74,11 @@ export default class MoreMembersMenu extends Component {
                     }}>{"Add Members"}</MenuItem>
                         <MenuDivider color={ColorList.iconActive} /></View>}
 
-                    <View><MenuItem textStyle={{ color: ColorList.headerIcon }} onPress={() => {
+                    {/*<View><MenuItem textStyle={{ color: ColorList.headerIcon }} onPress={() => {
                         this.hideMenu()
                         this.props.invite()
                     }}>{"Invite Members"}</MenuItem>
-                        <MenuDivider color={ColorList.iconActive} /></View>
+                <MenuDivider color={ColorList.iconActive} /></View>*/}
                 </Menu>
             </View>
         ) : <ImageActivityIndicator />;

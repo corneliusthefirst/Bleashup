@@ -576,6 +576,7 @@ export default class Event extends Component {
       this.member = member ? true : false;
       this.setState({
         working: false,
+        roomMembers:GState.currentCommitee === this.event.id ? this.event.participant : this.state.roomMembers
       });
     });
   }
@@ -676,7 +677,7 @@ export default class Event extends Component {
       currentPage: page,
       mounted: true,
     });
-    this.isOpen = isEventCurrentPage ? true : false;
+    this.isOpen = false // isEventCurrentPage ? true : false;
 
     this.refreshePage();
   }
@@ -1777,15 +1778,16 @@ export default class Event extends Component {
   }
   render() {
     StatusBar.setHidden(false, true);
-    return (!this.isChat(this.state.currentPage) ? <View style={{ height: '100%' }}>{this.renderMenu()}
+    return !this.state.mounted?null:(!this.isChat(this.state.currentPage) ? <View style={{ height: '100%' }}>{this.renderMenu()}
     {this.renderExtra()}
     </View> :
       <Drawer
         useInteractionManager={true}
         tweenHandler={
-          this.isChat(this.state.currentPage)
-            ? null
-            : Drawer.tweenPresets.parallax
+          //this.isChat(this.state.currentPage)
+          //  ? null
+           // : 
+            Drawer.tweenPresets.parallax
         }
         open={this.isOpen}
         onOpen={() => {
@@ -1805,9 +1807,13 @@ export default class Event extends Component {
         panOpenMask={0.1}
         acceptDoubleTap={true}
         panOpenMask={0.2}
-        elevation={this.state.isChat ? 16 : null}
-        openDrawerOffset={this.state.isChat ? 0.23 : 0.815}
-        type={this.state.isChat ? "overlay" : "static"}
+        elevation={//this.state.isChat ? 16 : 
+          null
+        }
+        openDrawerOffset={//this.state.isChat ? 0.23 : 
+          0.815}
+        type={//this.state.isChat ? "overlay" : 
+        "static"}
         styles={{
           drawer: {
             shadowColor: "#000000",

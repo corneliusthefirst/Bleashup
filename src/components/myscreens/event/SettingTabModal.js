@@ -116,11 +116,12 @@ export default class SettingsTabModal extends BleashupModal {
             justifyContent: "space-between",
           }}
         >
-          <MoreMembersMenu
+          
+        {this.props.master && <MoreMembersMenu
             master={this.props.master}
             addMembers={this.props.addMembers}
             invite={this.props.invite}
-          ></MoreMembersMenu>
+          ></MoreMembersMenu>}
           {this.props.master && (
             <RemoveMemberMenu remove={this.props.remove}></RemoveMemberMenu>
           )}

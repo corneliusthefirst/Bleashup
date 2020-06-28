@@ -33,11 +33,11 @@ export default class ChatRoomPlus extends Component {
                     type="AntDesign">
                     </Icon>
                 </TouchableOpacity>}>
-                <View><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
+                {/*<View><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
                     this.hideMenu()
                     return this.props.showVote()
                 }
-                }>Votes</MenuItem></View>
+                }>Votes</MenuItem></View>*/}
                 {this.props.computedMaster?<View><MenuDivider color="#1FABAB" /><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
                     this.hideMenu()
                     this.props.showReminds()
