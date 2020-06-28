@@ -73,7 +73,7 @@ export default class CameraScreen extends BleashupModal {
       this.setState({data:this.state.data, dataToreturn:{source:result.uri,content_type:'image',filename:temp[temp.length - 1]}});
 
 
-      if(this.props.directreturn){
+      if (this.props.directreturn){
         this.props.onCaptureFinish(this.state.data);
         this.props.onClosed();
       }
@@ -104,7 +104,7 @@ export default class CameraScreen extends BleashupModal {
           }
         }
       } catch (e) {
-        console.error(e);
+        this.setState({videoActivated:false});
       }
     }
   };

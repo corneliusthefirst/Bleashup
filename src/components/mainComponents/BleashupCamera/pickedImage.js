@@ -60,18 +60,17 @@ export default class PickedImage extends BleashupModal {
       <View style={[styles.container, { position: 'relative' }]}>
 
         {this.props.data.photo !== '' ?
-         <Image  source={{uri:this.props.data.photo}}  style={{height: height, width: width }} />
+         <Image  source={{uri:this.props.data.photo}}  style={{height: screenHeight - (screenHeight / 4), width: screenWidth,marginTop:screenHeight / 8 }} />
          :
-         <View style={{marginTop:50}}>
+         <View style={{marginTop: screenHeight / 8}}>
          <VideoView
           open={true}
           onLoad={(item) => {
             //console.warn("item loaded", item);
             //this.props.onVideoLoaded(item);
           }}
-          height={screenHeight - 170}
+          height={screenHeight - (screenHeight / 4)}
           width={screenWidth - 14}
-          top={65}
           video={this.props.data.video}
          />
          </View>
@@ -106,9 +105,9 @@ export default class PickedImage extends BleashupModal {
         <TouchableWithoutFeedback onPress={this.validate}>
             <View style={{height:44,width:44,borderRadius:22,backgroundColor:ColorList.indicatorColor,alignItems:'center',justifyContent:'center'}}>
                   <Icon
-                    name="send"
+                    name={this.props.nomessage ? 'ios-arrow-round-forward' : 'send'}
                     style={{color:'white', fontSize:25 }}
-                    type="Feather"
+                    type={this.props.nomessage ? "Ionicons" : "Feather"}
                     onPress={this.validate}
                   />
            </View>
