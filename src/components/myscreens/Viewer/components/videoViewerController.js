@@ -394,7 +394,7 @@ const styles = {
     seekbar: StyleSheet.create({
         container: {
             alignSelf: 'stretch',
-            height: 28,
+            height: 30,
             marginLeft: 20,
             marginRight: 20,
         },
@@ -414,7 +414,7 @@ const styles = {
         },
         fill: {
             
-            height: 1,
+            height: 3,
             width: '100%'
         },
         handle: {

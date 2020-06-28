@@ -21,7 +21,8 @@ import BleashupModal from '../BleashupModal';
 import PickedImage from './pickedImage';
 import ZoomView from './zoomView';
 import  Stopwatch from './timer/stopwatch';
-import ImagePicker from 'react-native-image-crop-picker';
+//import ImagePicker from 'react-native-image-crop-picker';
+import Pickers from '../../../services/Picker';
 
 //VARIABLES
 const ZOOM = { MIN: 0, MAX: 1.0 };
@@ -40,6 +41,7 @@ export default class CameraScreen extends BleashupModal {
       videoActivated:false,
       picked:false,
       data:{photo:'',video:''},
+      dataToreturn:{},
       stopwatchStart: false,
       stopwatchReset: false,
       recordOptions: {
@@ -65,9 +67,11 @@ export default class CameraScreen extends BleashupModal {
     if (this.camera) {
       const options = { quality: 0.5, base64: false };
       let result = await this.camera.takePictureAsync(options);
-
+      // console.warn("result is", result);
       this.state.data.photo = result.uri;
-      this.setState({data:this.state.data});
+      let temp = result.uri.split('/');
+      this.setState({data:this.state.data, dataToreturn:{source:result.uri,content_type:'video',filename:temp[temp.length - 1]}});
+
 
       if(this.props.directreturn){
         this.props.onCaptureFinish(this.state.data);
@@ -89,11 +93,12 @@ export default class CameraScreen extends BleashupModal {
           const data = await promise;
 
           this.state.data.video = data.uri;
-          this.setState({data:this.state.data});
+          let temp = data.uri.split('/');
+          this.setState({data:this.state.data, dataToreturn:{source:data.uri,content_type:'video',filename:temp[temp.length - 1]}});
 
           this.setState({ isRecording: false });
           //console.warn('takeVideo', data);
-          if(this.props.directreturn){
+          if (this.props.directreturn){
             this.props.onCaptureFinish(this.state.data);
             this.props.onClosed();
           }
@@ -179,52 +184,40 @@ export default class CameraScreen extends BleashupModal {
     }
   };
 
-  /*
-  componentWillMount = () => {
-    //StatusBar.setHidden(true);
-    //StatusBar.setBackgroundColor('#000000', true);
-  };
-
-  componentWillUnmount(){
-    //StatusBar.setHidden(false);
-    //StatusBar.setBackgroundColor('#FFFFFF', true);
-  }*/
 
  openGallery = () => {
-  ImagePicker.openPicker({
-    compressImageQuality: Platform.Os == 'ios'?0.6:0.7,
-  }).then((data) => {
-     //console.warn("data is",data);
-     let type = data.mime.slice(0,5);
-     if(type == "video"){
-       
-       this.state.data.video = data.path;
-       this.setState({data:this.state.data});
-
-       if(this.props.directreturn){
-        this.props.onCaptureFinish(this.state.data);
-        this.props.onClosed();
-       }
-       else{
-         this.setState({picked:true});
-       }
-
-     }
-     else{
-
-      this.state.data.photo = data.path;
-      this.setState({data:this.state.data});
+  Pickers.SnapPhoto('all').then((data)=>{
+    //console.warn("from picker is",data);
+    let type = data.content_type.slice(0,5);
+    if(type == "video"){
+      this.state.data.video = data.source;
+      this.setState({data:this.state.data,dataToreturn:data});
 
       if(this.props.directreturn){
-        this.props.onCaptureFinish(this.state.data);
-        this.props.onClosed();
-       }
-       else{
-         this.setState({picked:true});
-       }
+       this.props.onCaptureFinish(this.state.dataToreturn);
+       this.props.onClosed();
+      }
+      else{
+        this.setState({picked:true});
+      }
 
-     }
+    }
+    else{
+
+     this.state.data.photo =  data.source;
+     this.setState({data:this.state.data,dataToreturn:data});
+
+     if(this.props.directreturn){
+       this.props.onCaptureFinish(this.state.dataToreturn);
+       this.props.onClosed();
+      }
+      else{
+        this.setState({picked:true});
+      }
+
+    }
   });
+
  }
 
 
@@ -267,21 +260,21 @@ getFormattedTime(time) {
 //close picked
 
 closepicked = (data) => {
-
-  if(data.photo.length > 0 || data.video.length > 0 ){
+  console.warn("data to return is",data);
+   if (data.source){
     this.props.onCaptureFinish(data);
     this.setState({picked:false , data:{photo:'',video:''}});
     this.props.onClosed();
-  }
-  else {
+   }
+   else {
+
     this.setState({picked:false , data:{photo:'',video:''}});
-  }
+   }
 
 }
   modalBody() {
 
     return (
-  
         <Animated.View style={[styles.container, { position: 'relative' }]}>
 
         <Camera
@@ -515,7 +508,7 @@ closepicked = (data) => {
 
         </View>
 
-        {this.state.picked && <PickedImage   isOpen={this.state.picked} onClosed={(data)=>{this.closepicked(data)}} data={this.state.data} nomessage={this.props.nomessage} />}
+        {this.state.picked && <PickedImage   isOpen={this.state.picked} onClosed={(data)=>{this.closepicked(data)}} dataToreturn={this.state.dataToreturn} data={this.state.data} nomessage={this.props.nomessage} />}
 
       </Animated.View>
    
@@ -554,6 +547,17 @@ const styles = StyleSheet.create({
   },
 });
 
+
+  /*
+  componentWillMount = () => {
+    //StatusBar.setHidden(true);
+    //StatusBar.setBackgroundColor('#000000', true);
+  };
+
+  componentWillUnmount(){
+    //StatusBar.setHidden(false);
+    //StatusBar.setBackgroundColor('#FFFFFF', true);
+  }*/
 
         /*
           <Icon name="ios-camera" type="Ionicons" style={{color:'black', fontSize:45 }} />

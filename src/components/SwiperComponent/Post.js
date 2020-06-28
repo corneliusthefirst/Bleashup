@@ -4,19 +4,41 @@ import { Dimensions, Image, StyleSheet, View } from 'react-native';
 import Video from 'react-native-video';
 import PropTypes from 'prop-types';
 import VideoView from '../myscreens/Viewer/components/videoView';
+import _ from 'lodash';
 
 //const ScreenWidth = Dimensions.get('window').width;
-class Post extends Component {
+export default class Post extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      showVideo: false,
+      isPause: true,
     };
   }
 
-  render() {
-    //this.props.post.type !== 'image' ? this.setState({showVideo:true}) : this.setState({showVideo:false}) ;
+  shouldComponentUpdate(nextProps) {
+    if (_.isEqual(this.state, nextProps.state)) {
+      return false;
+    }
+    return true;
+  }
 
+  onScrollStart = () => {
+    if (this.state.isPause === false) {
+      console.warn("here1", this.state.isPause);
+      this.setState({ isPause: true });
+      console.warn("here after 1", this.state.isPause);
+    }
+  };
+
+  onScrollEnd = () => {
+    if (this.state.isPause === true) {
+      console.warn("here", this.state.isPause);
+      this.setState({ isPause: false });
+      console.warn("here after", this.state.isPause);
+    }
+  };
+
+  render() {
     return (
       <View style={styles.container}>
         {this.props.post.type === 'image' ? (
@@ -29,7 +51,7 @@ class Post extends Component {
           />
         ) : (
           <VideoView
-            isPause={this.props.isPause}
+            //isPause={this.state.isPause}
             open={true}
             onLoad={(item) => {
               //this.props.onVideoLoaded(item);
@@ -59,5 +81,3 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
-
-export default Post;

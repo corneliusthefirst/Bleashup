@@ -14,7 +14,7 @@ export default class SwiperComponent extends Component {
     super(props);
     this.state = {
       itemswiper: {},
-      isPause: false,
+      isPause: true,
       currentIndex: props.currentIndex ? props.currentIndex : 0,
       media: props.navigation.getParam('dataArray'),
       mapFunction: props.navigation.getParam('mapFunction'),
@@ -25,6 +25,7 @@ export default class SwiperComponent extends Component {
     this.setState({
       itemswiper: this.state.mapFunction(this.state.media[currentIndex]),
     });
+    this.post.setState({ isPause: false });
   };
 
   componentDidMount() {
@@ -35,15 +36,22 @@ export default class SwiperComponent extends Component {
   onchageIndex = (index) => {
     this.setState({
       itemswiper: this.state.mapFunction(this.state.media[index]),
-      isPause: true,
+      // isPause: true,
     });
-    //console.warn(this.state.itemswiper);
-    //console.warn("index is", index);
-    /*if (index >= this.state.this.state.media.length - 1) {
-      this.addMediaRight(this.state.toaddRight);
-    } else if (index <= 0) {
-      this.addMediaLeft(this.state.toaddLeft, index);
-    }*/
+    this.post.setState({ isPause: false });
+  };
+
+  onMomentumScrollEnd = (state) => {
+    //this.post.onScrollEnd();
+    //this.setState({ isPause: !this.state.isPause });
+  };
+
+  onScrollBeginDrag = (state) => {
+    // this.post.onScrollStart();
+  };
+
+  onTouchStartCapture = (state) => {
+    //this.post.onScrollEnd();
   };
 
   render() {
@@ -63,9 +71,15 @@ export default class SwiperComponent extends Component {
           loop={false}
           loadMinimalSize={5}
           index={this.props.currentIndex ? this.props.currentIndex : 0}
-          onMomentumScrollEnd={(e, state, context) => {
-            //console.warn('index:', state.index)
-          }}
+          onTouchStartCapture={(e, state, context) =>
+            this.onTouchStartCapture(state)
+          }
+          onMomentumScrollEnd={(e, state, context) =>
+            this.onMomentumScrollEnd(state)
+          }
+          onScrollBeginDrag={(e, state, context) =>
+            this.onScrollBeginDrag(state)
+          }
           onIndexChanged={(index) => this.onchageIndex(index)}
         >
           {this.state.media.map((item, index) => {
@@ -74,7 +88,8 @@ export default class SwiperComponent extends Component {
             return (
               <View style={styles.slide1}>
                 <Post
-                  pause={this.state.isPause}
+                  ref={(ref) => (this.post = ref)}
+                  //isPause={this.state.isPause}
                   post={itemswiper}
                   onClose={() => {
                     this.props.navigation.goBack();
@@ -95,7 +110,7 @@ export default class SwiperComponent extends Component {
             swiper
             removeMessage={() =>
               this.props.removeMessage(this.state.itemswiper)
-            } //puisque le item c'est le message les appelle ce font directe ici
+            }
           />
         ) : null}
         {this.state.itemswiper.creator ? (

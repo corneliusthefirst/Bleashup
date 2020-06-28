@@ -1127,7 +1127,7 @@ export default class VideoController extends Component {
                         paused={this.state.paused}
                         muted={this.state.muted}
                         rate={this.state.rate}
-
+                        playInBackground={false} 
                         onLoadStart={this.events.onLoadStart}
                         onProgress={this.events.onProgress}
                         onError={this.events.onError}

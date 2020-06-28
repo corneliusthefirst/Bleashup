@@ -1,3 +1,5 @@
+/* eslint-disable react-native/no-inline-styles */
+/* eslint-disable quotes */
 /* eslint-disable prettier/prettier */
 import React, { Component,useState } from 'react';
 import {
@@ -22,29 +24,32 @@ const VideoView = (props) => {
     const [hidden, setHidden] = useState(false);
     const [fullScreen, setFullScreen] = useState(false);
     const [buffering, setBuffering] = useState(false);
+    console.warn("paused is", props.isPause);
 
     const Buffering = () => {
         setBuffering(true);
 
         setTimeout(() => {
             setBuffering(false);
-        }, 5000)
-    }
+        }, 5000);
+    };
+
     const enterFullscreen = () => {
 
-        Keyboard.dismiss()
+        Keyboard.dismiss();
         //Orientation.lockToPortrait()
         setFullScreen(true);
-    }
+    };
+
     const exitFullscreen = () => {
-        Keyboard.dismiss()
+        Keyboard.dismiss();
         //Orientation.lockToPortrait()
         setFullScreen(false);
 
-    }
+    };
 
 
-    transparent = "rgba(50, 51, 53, 0.8)";
+   const  transparent = "rgba(50, 51, 53, 0.8)";
 
         return (
                 <View style={{
@@ -52,12 +57,11 @@ const VideoView = (props) => {
                         width: fullScreen ? "100%" : (props.width?props.width:screenWidth),
                         backgroundColor: 'black',
                         //alignSelf: 'center',
-                        
                     }}>
                         <VideoViewerController 
                             source={{ uri: props.video }} // Can be a URL or a local file.
                             ref={(ref) => {
-                                videoPlayer = ref;
+                                this.videoPlayer = ref;
                             }} 
                             onBuffer={Buffering} // Callback when remote video is buffering
                             onError={(error) => {
@@ -76,7 +80,7 @@ const VideoView = (props) => {
                             onExitFullscreen = {exitFullscreen}
                             fullscreenOrientation={"landscape"}
                             onLoad={props.onLoad}
-                            paused = {true}
+                            paused = {props.isPause && props.isPause}
                             disableBack={true}
                             disableFullscreen={true}
                             nextPrev={false}
@@ -95,7 +99,7 @@ const VideoView = (props) => {
                                 left: 0,
                                 bottom: 0,
                                 right: 0,
-                                opacity:0.7
+                                opacity:0.7,
                             }} // Callback when video cannot be loaded
                         />
                     </View>

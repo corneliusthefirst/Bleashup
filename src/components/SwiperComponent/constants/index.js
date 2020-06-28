@@ -25,7 +25,7 @@ const media = [
       profile: 'https://avatars2.githubusercontent.com/u/45196619?s=460&v=4',
       updated_at: moment().format(),
     },
-  }, 
+  },
 
   {
     id: '25466',
@@ -48,6 +48,18 @@ const media = [
     message: '',
     creator: {
       name: 'Naruto',
+      profile: 'https://avatars2.githubusercontent.com/u/45196619?s=460&v=4',
+      updated_at: moment().format(),
+    },
+  },
+  {
+    id: '875688',
+    url:
+      '/storage/emulated/0/beats/APOLOGY Dancehall x Afrobeat x Wizkid Type Beat Instrumental.mp4',
+    type: 'video',
+    message: 'was betting too much on HTML as opposed https://avatars0.githubusercontent.com/u/16208872?s=460&v=4 that akatsuki was leading the game at another level ',
+    creator: {
+      name: 'Mandara Uchiwa',
       profile: 'https://avatars2.githubusercontent.com/u/45196619?s=460&v=4',
       updated_at: moment().format(),
     },
