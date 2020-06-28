@@ -70,7 +70,7 @@ export default class CameraScreen extends BleashupModal {
       // console.warn("result is", result);
       this.state.data.photo = result.uri;
       let temp = result.uri.split('/');
-      this.setState({data:this.state.data, dataToreturn:{source:result.uri,content_type:'video',filename:temp[temp.length - 1]}});
+      this.setState({data:this.state.data, dataToreturn:{source:result.uri,content_type:'image',filename:temp[temp.length - 1]}});
 
 
       if(this.props.directreturn){
@@ -448,7 +448,7 @@ closepicked = (data) => {
              {this.state.videoActivated ?
                       <TouchableOpacity
                        onLongPress={() => this.deactivateVideo()}
-                       delayLongPress={200}
+                       delayLongPress={100}
                        style={{
                         height:'100%',
                          width:width / 3,
@@ -511,9 +511,6 @@ closepicked = (data) => {
         {this.state.picked && <PickedImage   isOpen={this.state.picked} onClosed={(data)=>{this.closepicked(data)}} dataToreturn={this.state.dataToreturn} data={this.state.data} nomessage={this.props.nomessage} />}
 
       </Animated.View>
-   
-
-
 
     );
   };
