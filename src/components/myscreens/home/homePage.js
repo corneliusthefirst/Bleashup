@@ -234,8 +234,8 @@ class Home extends Component {
 
   settings = () => {
     //BeNavigator.navigateTo("Settings");
-    //BeNavigator.pushTo('SwiperComponent',{dataArray: media,mapFunction:this.mapFunction});
-    this.setState({ openBCamera: true });
+    BeNavigator.pushTo('SwiperComponent',{dataArray: media,mapFunction:this.mapFunction,currentIndex: 0});
+    //this.setState({ openBCamera: true });
   };
 
   handleURL = ({ url }) => {

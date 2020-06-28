@@ -24,7 +24,7 @@ const VideoView = (props) => {
     const [hidden, setHidden] = useState(false);
     const [fullScreen, setFullScreen] = useState(false);
     const [buffering, setBuffering] = useState(false);
-    console.warn("paused is", props.isPause);
+   // console.warn("paused is", props.isPause);
 
     const Buffering = () => {
         setBuffering(true);

@@ -96,6 +96,7 @@ export default class PickedImage extends BleashupModal {
             color={ColorList.bodyBackground}
             placeholderTextColor={'#F5FFFA'}
             multiline={true}
+            autogrow
             //numberOfLines={4}
             maxLength={2000}
             />
