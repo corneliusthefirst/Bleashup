@@ -97,7 +97,15 @@ export default class SwipeAccordion extends Component {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity onPress={this.props.reply}>
+        <TouchableOpacity
+          onPress={this.props.reply}
+          style={{
+            width: width / 3,
+            borderWidth: 0,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
           <View
             style={{
               width: width / 3,
@@ -113,7 +121,6 @@ export default class SwipeAccordion extends Component {
             />
           </View>
         </TouchableOpacity>
-
       </View>
     );
   };

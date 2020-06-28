@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, Dimensions, StatusBar } from 'react-native';
 import Swiper from 'react-native-swiper';
-//import media from './constants/index';
+//import this.state.media from './constants/index';
 import UserView from '../myscreens/Viewer/components/UserView';
 import SwipeAccordion from '../myscreens/Viewer/components/swipeAccordion';
 import Post from './Post';
@@ -12,24 +12,49 @@ import Post from './Post';
 export default class SwiperComponent extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      itemswiper: {},
+      isPause: true,
+      currentIndex: props.currentIndex ? props.currentIndex : 0,
+      media: props.navigation.getParam('dataArray'),
+      mapFunction: props.navigation.getParam('mapFunction'),
+    };
   }
 
+  init = (currentIndex) => {
+    this.setState({
+      itemswiper: this.state.mapFunction(this.state.media[currentIndex]),
+    });
+    this.post.setState({ isPause: false });
+  };
+
   componentDidMount() {
-    //this.swiper.scrollBy(2, true);
+    this.init(this.state.currentIndex);
+    //this.swiper.scrollBy(this.state.currentIndex, true);
   }
 
   onchageIndex = (index) => {
-    //console.warn("index is", index);
-    /*if (index >= this.state.media.length - 1) {
-      this.addMediaRight(this.state.toaddRight);
-    } else if (index <= 0) {
-      this.addMediaLeft(this.state.toaddLeft, index);
-    }*/
+    this.setState({
+      itemswiper: this.state.mapFunction(this.state.media[index]),
+      // isPause: true,
+    });
+    this.post.setState({ isPause: false });
+  };
+
+  onMomentumScrollEnd = (state) => {
+    //this.post.onScrollEnd();
+    //this.setState({ isPause: !this.state.isPause });
+  };
+
+  onScrollBeginDrag = (state) => {
+    // this.post.onScrollStart();
+  };
+
+  onTouchStartCapture = (state) => {
+    //this.post.onScrollEnd();
   };
 
   render() {
-    const media = this.props.navigation.getParam('dataArray');
-    const mapFunction = this.props.navigation.getParam('mapFunction');
     return (
       <View style={{ flex: 1 }}>
         <StatusBar
@@ -45,39 +70,52 @@ export default class SwiperComponent extends Component {
           loadMinimal
           loop={false}
           loadMinimalSize={5}
-          index={this.props.initialIndex ? this.props.initialIndex : 0}
+          index={this.props.currentIndex ? this.props.currentIndex : 0}
+          onTouchStartCapture={(e, state, context) =>
+            this.onTouchStartCapture(state)
+          }
           onMomentumScrollEnd={(e, state, context) =>
-            console.warn('index:', state.index)
+            this.onMomentumScrollEnd(state)
+          }
+          onScrollBeginDrag={(e, state, context) =>
+            this.onScrollBeginDrag(state)
           }
           onIndexChanged={(index) => this.onchageIndex(index)}
         >
-          {media.map((item, index) => {
-            let itemswiper = mapFunction(item);
+          {this.state.media.map((item, index) => {
+            let itemswiper = this.state.mapFunction(item);
 
             return (
               <View style={styles.slide1}>
                 <Post
-                  //pause={isPause}
+                  ref={(ref) => (this.post = ref)}
+                  //isPause={this.state.isPause}
                   post={itemswiper}
                   onClose={() => {
                     this.props.navigation.goBack();
                   }}
                 />
-                <UserView
-                  name={itemswiper.creator.name}
-                  profile={itemswiper.creator.profile}
-                  updated_at={itemswiper.creator.updated_at}
-                  onClose={() => {
-                    this.props.navigation.goBack();
-                  }}
-                  swiper
-                  removeMessage={() => this.props.removeMessage(itemswiper)} //puisque le item c'est le message les appelle ce font directe ici
-                />
-                <SwipeAccordion dataArray={itemswiper} />
               </View>
             );
           })}
         </Swiper>
+        {this.state.itemswiper.creator ? (
+          <UserView
+            name={this.state.itemswiper.creator.name}
+            profile={this.state.itemswiper.creator.profile}
+            updated_at={this.state.itemswiper.creator.updated_at}
+            onClose={() => {
+              this.props.navigation.goBack();
+            }}
+            swiper
+            removeMessage={() =>
+              this.props.removeMessage(this.state.itemswiper)
+            }
+          />
+        ) : null}
+        {this.state.itemswiper.creator ? (
+          <SwipeAccordion dataArray={this.state.itemswiper} />
+        ) : null}
       </View>
     );
   }
@@ -185,20 +223,20 @@ const toaddLeft = [
 ];
 
   addMediaRight = (data) => {
-    //this.state.media = this.state.media.concat(data);
-    //this.setState({ media: this.state.media });
+    //this.state.this.state.media = this.state.this.state.media.concat(data);
+    //this.setState({ this.state.media: this.state.this.state.media });
   };
 
   addMediaLeft = (data, index) => {
      var j = index - 2;
     if (j > 4) {
       for (let i = 0; i < data.length; i++) {
-        this.state.media[j] = data[i];
+        this.state.this.state.media[j] = data[i];
         console.warn("index j is",j);
         j--;
       }
     }
-    //this.setState({ media: data.concat(this.state.media) });
+    //this.setState({ this.state.media: data.concat(this.state.this.state.media) });
     //this.swiper.scrollTo(this.state.toaddLeft.length - 1, true);
     //scrollBy(this.state.toaddLeft.length - 1, true);
    */

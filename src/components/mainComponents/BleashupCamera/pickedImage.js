@@ -36,21 +36,23 @@ export default class PickedImage extends BleashupModal {
 
   onClosedModal = () => {
     this.setState({message:''});
-    data = {photo:"",video:"",message:""}
+    let data = {photo:"",video:"",message:""};
     this.props.onClosed(data);
- }
-
- componentDidMount(){
-  //console.warn("here we are",this.props.data);
  }
 
  onChangedMessage = (value) => {
      this.setState({message:value});
  }
+
  validate = () => {
-    data = {photo:this.props.data.photo,video:this.props.data.video,message:this.state.message}
+   if (this.props.nomessage){
+    //console.warn("before return s",this.props.dataToreturn);
+    this.props.onClosed(this.props.dataToreturn);
+   }
+   else {
+    this.props.onClosed({...this.props.dataToreturn,message:this.state.message});
     this.setState({message:''});
-    this.props.onClosed(data);
+   }
  }
 
   modalBody = () => {
@@ -64,10 +66,11 @@ export default class PickedImage extends BleashupModal {
          <VideoView
           open={true}
           onLoad={(item) => {
+            //console.warn("item loaded", item);
             //this.props.onVideoLoaded(item);
           }}
-          height={screenHeight -170}
-          width={screenWidth-14}
+          height={screenHeight - 170}
+          width={screenWidth - 14}
           top={65}
           video={this.props.data.video}
          />
