@@ -655,7 +655,7 @@ export default class ChatKeyboard extends PureComponent {
                             }}
                         >
                             <TouchableOpacity
-                                onPress={() => requestAnimationFrame(() => /*this.showSnapper()*/ this.openCamera()
+                                onPress={() => requestAnimationFrame(() => this.showSnapper() //this.openCamera()
                                     )}
                                 style={{
                                     width: "12%",

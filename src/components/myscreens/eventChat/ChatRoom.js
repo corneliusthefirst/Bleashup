@@ -66,6 +66,7 @@ import { TouchableOpacity } from 'react-native';
 import CacheImages from "../../CacheImages";
 import BeNavigator from '../../../services/navigationServices';
 import AnimatedComponent from '../../AnimatedComponent';
+import ColorList from '../../colorList';
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenheight = Math.round(Dimensions.get("window").height);
@@ -1219,16 +1220,23 @@ class ChatRoom extends AnimatedComponent {
         return (
             <View
                 style={{
-                    height: "100%",
-                    width: "100%",
+                    height: "90%",
+                    marginTop: '3%',
+                    width: 350,
                     position: "absolute",
-                    backgroundColor: "black",
+                    alignSelf: 'center',
+                    borderRadius: 5,
+                    backgroundColor: colorList.buttonerBackground,
+                    ...shadower(3),
                 }}
             >
                 {this.darkStatus()}
-                <View style={{ alignSelf: "center" }}>
+                <View style={{ alignSelf: "center", width: "100%", height: "100%" }}>
                     <ReactNativeZoomableView
                         maxZoom={1.5}
+                        style={{
+                            width: "100%", height: "100%"
+                        }}
                         minZoom={0.5}
                         zoomStep={0.5}
                         initialZoom={1}
@@ -1236,7 +1244,7 @@ class ChatRoom extends AnimatedComponent {
                         onZoomAfter={this.logOutZoomState}
                     >
                         <CacheImages
-                            style={{ width: screenWidth, height: screenheight}}
+                            style={{ width: "100%", height: "100%"}}
                             source={{ uri: this.state.photo }}
                         ></CacheImages>
                     </ReactNativeZoomableView>
