@@ -44,7 +44,7 @@ export default class AddReport extends BleashupModal {
         return (
             <ScrollView keyboardShouldPersistTaps={"handled"}
                 nestedScrollEnabled showsVerticalScrollIndicator={false} style={{ flex: 1, flexDirection: "column" }}>
-                <View style={{ height: "65%" }}>
+                <View style={{ height: "65%",width:"95%",alignSelf: 'center', }}>
                     <CreateTextInput
                     height={150}
                     maxLength={200}

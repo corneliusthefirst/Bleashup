@@ -30,7 +30,7 @@ export default class ProfileSimple extends Component {
     render() {
         let textStyles = {
             justifyContent: 'flex-start', width: this.props.invite && this.props.profile && !this.props.profile.found ? "67%" : "77%",
-            flexDirection: "column", paddingLeft: this.props.relation ? "4.6%" : "1.7%"
+            flexDirection: "column", paddingLeft: this.props.relation ? "4.6%" : "4.6%"
         }
         return (
 
@@ -53,7 +53,7 @@ export default class ProfileSimple extends Component {
 
                         <Icon type={"FontAwesome"} style={{
                             color:ColorList.photoPlaceHolderColor,
-                            fontSize: 50,
+                            fontSize: this.props.searching?35:ColorList.profilePlaceHolderHeight,
                         }} name={"user-circle-o"}>
 
                         </Icon>}

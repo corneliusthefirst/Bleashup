@@ -415,6 +415,7 @@ class ChatRoom extends AnimatedComponent {
             playingMessage:message,
             playingIndex:index,
             video: video,
+            showPhoto:false,
             showVideo: true,
         });
         this.refs.keyboard.animateLayout()
@@ -514,13 +515,18 @@ class ChatRoom extends AnimatedComponent {
 
     user = this.props.user;
     creator = 1;
-    showPhoto(photo) {
+    showPhoto(photo,item) {
         this.setState({
-            photo: photo,
-            showPhoto: true,
+            //photo: photo,
+            //showPhoto: true,
+            playingMessage:item,
+            showVideo:false
             //hideStatusBar: true
+        },() => {
+            Keyboard.dismiss();
+            this.navigateToFullView()
+
         });
-        Keyboard.dismiss();
     }
     captionMessages = [];
     sendingCaptionMessages = false;
@@ -722,6 +728,15 @@ class ChatRoom extends AnimatedComponent {
                                             ><View>{this.messageList()}</View>
                                         </TouchableWithoutFeedback>
                                     </View>
+                                        {
+                                            // ******************Photo Viewer View ***********************//
+                                            this.state.showPhoto ? this.PhotoShower() : null
+                                        }
+                                        {
+                                            //** ####### Vidoe PLayer View ################ */
+
+                                            this.state.showVideo ? this.VideoShower() : null
+                                        }
                                     <View>
                                         {!this.props.opened || !this.props.generallyMember ? (
                                             <Text
@@ -876,15 +891,6 @@ class ChatRoom extends AnimatedComponent {
                                 reacters={this.state.currentReacters}
                             ></PublishersModal>
                     </View>
-                    {
-                        // ******************Photo Viewer View ***********************//
-                        this.state.showPhoto ? this.PhotoShower() : null
-                    }
-                    {
-                        //** ####### Vidoe PLayer View ################ */
-
-                        this.state.showVideo ? this.VideoShower() : null
-                    }
                 </View>
             </View>
             </ImageBackground>
@@ -1065,7 +1071,7 @@ class ChatRoom extends AnimatedComponent {
                                     : false
                             }
                             replaceMessageVideo={(data) => this.replaceMessageVideo(data)}
-                            showPhoto={(photo) => this.showPhoto(photo)}
+                            showPhoto={(photo) => this.showPhoto(photo,item)}
                             replying={(replyer, color) => {
                                 this.fucussTextInput();
                                 this.replying(replyer, color);
@@ -1194,12 +1200,15 @@ class ChatRoom extends AnimatedComponent {
         );
     }
     navigateToFullView(index){
-        BeNavigator.pushTo('SwiperComponent', { 
-            dataArray: stores.Messages.messages[this.roomID].filter(ele => 
-            ele.type == "photo" || 
-            ele.type == "video" || 
+        let data = stores.Messages.messages[this.roomID].filter(ele =>
+            ele.type == "photo" ||
+            ele.type == "video" ||
             ele.type == "photo_upload" ||
-            ele.type == "video_upload"), mapFunction: this.mapFunction,currentIndex:index });
+            ele.type == "video_upload")
+        BeNavigator.pushTo('SwiperComponent', { 
+            dataArray:data , 
+            mapFunction: this.mapFunction,
+            currentIndex:data.findIndex(ele => ele.id === this.state.playingMessage.id) });
     }
     mapFunction = (ele) => {
         let senderPhone = ele.sender && ele.sender.phone && ele.sender.phone.replace && ele.sender.phone.replace("+","00")
@@ -1249,23 +1258,26 @@ class ChatRoom extends AnimatedComponent {
                             source={{ uri: this.state.photo }}
                         ></CacheImages>
                     </ReactNativeZoomableView>
-                    <Icon
-                        type="EvilIcons"
-                        onPress={() => {
-                            this.setState({
-                                showPhoto: false,
-                                showCaption: false,
-                                //hideStatusBar: false
-                            });
-                        }}
-                        style={{
-                            margin: "1%",
-                            position: "absolute",
-                            fontSize: 30,
-                            color: "#FEFFDE",
-                        }}
-                        name={"close"}
-                    ></Icon>
+                    <View style={{
+                        margin: "1%",
+                        position: "absolute",
+                    }}>
+                        <Icon
+                            type="EvilIcons"
+                            onPress={() => {
+                                this.setState({
+                                    showPhoto: false,
+                                    showCaption: false,
+                                    //hideStatusBar: false
+                                });
+                            }}
+                            style={{
+                                fontSize: 30,
+                                color: ColorList.bodyBackground,
+                            }}
+                            name={"close"}
+                        ></Icon>
+                    </View>
                 </View>
             </View>
         );
