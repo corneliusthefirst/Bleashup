@@ -126,7 +126,7 @@ export default class SwipeAccordion extends Component {
   };
 
   _renderContent = (item) => {
-    return (
+    return item.message ? (
       <View
         style={{
           height: item.message.length > 0 ? height / 4 : 0,
@@ -143,7 +143,7 @@ export default class SwipeAccordion extends Component {
           </Hyperlink>
         </ScrollView>
       </View>
-    );
+    ) : null;
   };
 
   _keyExtractor = (item, index) => item.id;

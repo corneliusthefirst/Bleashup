@@ -36,7 +36,7 @@ export default class PickedImage extends BleashupModal {
 
   onClosedModal = () => {
     this.setState({message:''});
-    let data = {photo:"",video:"",message:""};
+    let data = {photo:'',video:'',message:''};
     this.props.onClosed(data);
  }
 
@@ -59,7 +59,7 @@ export default class PickedImage extends BleashupModal {
     return (
       <View style={[styles.container, { position: 'relative' }]}>
 
-        {this.props.data.photo != "" ? 
+        {this.props.data.photo !== '' ?
          <Image  source={{uri:this.props.data.photo}}  style={{height: height, width: width }} />
          :
          <View style={{marginTop:50}}>
@@ -77,7 +77,7 @@ export default class PickedImage extends BleashupModal {
          </View>
         }
         <View style={{position:'absolute',height:50,width:'100%',top:0,alignItems:'flex-end',
-              justifyContent:'center',backgroundColor:this.props.data.photo != ""? "rgba(0, 0, 0, 0.3)" : "rgba(0, 0, 0, 0.9)"}}>
+              justifyContent:'center',backgroundColor:this.props.data.photo !== '' ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.9)'}}>
               <Icon
                     name="close"
                     style={{color:'white', fontSize:25 , marginRight:15}}
@@ -86,21 +86,20 @@ export default class PickedImage extends BleashupModal {
                 />
        </View>
 
-       <View style={{position:'absolute',width:'100%',bottom:0,paddingBottom:15,paddingTop:15,flexDirection:'row',justifyContent:'flex-end',backgroundColor:this.props.data.photo != ""? "rgba(0, 0, 0, 0.3)" : "rgba(0, 0, 0, 0.9)" }}>
-       {this.props.nomessage == false ? <View style={{width:'80%',paddingLeft:10,alignSelf:'center'}}>
+       <View style={{position:'absolute',width:'100%',bottom:0,paddingBottom:15,paddingTop:15,flexDirection:'row',justifyContent:'flex-end',backgroundColor:this.props.data.photo != '' ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.9)' }}>
+       {this.props.nomessage === false ? <View style={{width:'80%',paddingLeft:10,alignSelf:'center'}}>
           <CreateTextInput
-            height={screenHeight /11}
+            height={screenHeight / 11}
             value={this.state.message}
             onChange={this.onChangedMessage}
-            placeholder={"write something ..."}
+            placeholder={'write something ...'}
             backgroundColor={ColorList.transparent}
             color={ColorList.bodyBackground}
-            placeholderTextColor={"#F5FFFA"}
+            placeholderTextColor={'#F5FFFA'}
             multiline={true}
             //numberOfLines={4}
             maxLength={2000}
-           >
-          </CreateTextInput>
+            />
        </View> : null}
 
        <View style={{width:'20%',alignItems:'center',justifyContent:'center'}}>
