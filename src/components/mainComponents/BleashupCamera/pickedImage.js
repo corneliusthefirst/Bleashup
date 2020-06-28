@@ -60,7 +60,7 @@ export default class PickedImage extends BleashupModal {
       <View style={[styles.container, { position: 'relative' }]}>
 
         {this.props.data.photo !== '' ?
-         <Image  source={{uri:this.props.data.photo}}  style={{height: screenHeight - (screenHeight / 4), width: screenWidth,marginTop:screenHeight / 8 }} />
+         <Image  source={{uri:this.props.data.photo}}  style={{height: screenHeight - (screenHeight / 4), width: screenWidth,marginTop:screenHeight / 8 }} resizeMode={"contain"} />
          :
          <View style={{marginTop: screenHeight / 8}}>
          <VideoView
@@ -82,7 +82,7 @@ export default class PickedImage extends BleashupModal {
                     style={{color:'white', fontSize:25 , marginRight:15}}
                     type="AntDesign"
                     onPress={this.onClosedModal}
-                />
+               />
        </View>
 
        <View style={{position:'absolute',width:'100%',bottom:0,paddingBottom:15,paddingTop:15,flexDirection:'row',justifyContent:'flex-end',backgroundColor:this.props.data.photo != '' ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.9)' }}>
@@ -96,6 +96,7 @@ export default class PickedImage extends BleashupModal {
             color={ColorList.bodyBackground}
             placeholderTextColor={'#F5FFFA'}
             multiline={true}
+            autogrow
             //numberOfLines={4}
             maxLength={2000}
             />

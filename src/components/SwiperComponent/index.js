@@ -6,10 +6,10 @@ import Swiper from 'react-native-swiper';
 import UserView from '../myscreens/Viewer/components/UserView';
 import SwipeAccordion from '../myscreens/Viewer/components/swipeAccordion';
 import Post from './Post';
-
+import AnimatedComponent from '../AnimatedComponent';
 //const ScreenHeight = Dimensions.get('window').height;
 
-export default class SwiperComponent extends Component {
+export default class SwiperComponent extends AnimatedComponent {
   constructor(props) {
     super(props);
     this.state = {

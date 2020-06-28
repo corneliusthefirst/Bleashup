@@ -24,17 +24,17 @@ export default class Post extends Component {
 
   onScrollStart = () => {
     if (this.state.isPause === false) {
-      console.warn("here1", this.state.isPause);
+     // console.warn("here1", this.state.isPause);
       this.setState({ isPause: true });
-      console.warn("here after 1", this.state.isPause);
+     // console.warn("here after 1", this.state.isPause);
     }
   };
 
   onScrollEnd = () => {
     if (this.state.isPause === true) {
-      console.warn("here", this.state.isPause);
+      //console.warn("here", this.state.isPause);
       this.setState({ isPause: false });
-      console.warn("here after", this.state.isPause);
+      //console.warn("here after", this.state.isPause);
     }
   };
 
