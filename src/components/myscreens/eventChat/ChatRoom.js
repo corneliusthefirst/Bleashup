@@ -10,6 +10,7 @@ import {
     Dimensions,
     Keyboard,
     StatusBar,
+    KeyboardAvoidingView,
     ImageBackground,
     Vibration,
     Clipboard,
@@ -67,6 +68,7 @@ import CacheImages from "../../CacheImages";
 import BeNavigator from '../../../services/navigationServices';
 import AnimatedComponent from '../../AnimatedComponent';
 import ColorList from '../../colorList';
+import { Platform } from 'react-native';
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenheight = Math.round(Dimensions.get("window").height);
@@ -707,6 +709,11 @@ class ChatRoom extends AnimatedComponent {
                         {!this.state.loaded ? (
                             <Waiter></Waiter>
                         ) : (
+                                <KeyboardAvoidingView behavior={Platform.OS == "android" ? null: "padding"} style={{
+                                    width:'100%',
+                                    height:'100%' 
+
+                                 }}>
                                 <ScrollView
                                     onScroll={() => {
                                         this.adjutRoomDisplay();
@@ -752,6 +759,7 @@ class ChatRoom extends AnimatedComponent {
                                             )}
                                     </View>
                                 </ScrollView>
+                                </KeyboardAvoidingView>
                             )}
                         <VerificationModal
                             isOpened={this.state.isModalOpened}

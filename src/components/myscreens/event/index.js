@@ -130,12 +130,12 @@ export default class Event extends Component {
     });
   }
   addRemindForCommittee(members) {
-    emitter.emit("leave-chat");
-    this.setState({
+    BeNavigator.pushActivity(this.event, "Reminds", { currentRemindMembers: members})
+    /*this.setState({
       currentPage: "Reminds",
       isChat: false,
       currentRemindMembers: members,
-    });
+    });*/
   }
   openMenu() {
     this.isOpen = !this.isOpen;
@@ -211,9 +211,9 @@ export default class Event extends Component {
             }}
             openMenu={() => this.openMenu()}
             clearCurrentMembers={() => {
-              this.setState({
-                currentRemindMembers: null,
-              });
+              if(this.state.currentRemindMembers){
+                this.goback()
+              }
             }}
             goback={this.goback.bind(this)}
             currentMembers={this.state.currentRemindMembers}
@@ -668,6 +668,7 @@ export default class Event extends Component {
   user = null;
   isOpen = true;
   event = this.props.navigation.getParam("Event");
+  currentRemindMembers = this.props.navigation.getParam("currentRemindMembers")
   componentDidMount() {
     let page = this.props.navigation.getParam("tab");
     let isEventCurrentPage = this.isChat(page);
@@ -675,6 +676,7 @@ export default class Event extends Component {
     this.setState({
       isChat: isEventCurrentPage ? true : false,
       currentPage: page,
+      currentRemindMembers:this.currentRemindMembers,
       mounted: true,
     });
     this.isOpen = false // isEventCurrentPage ? true : false;

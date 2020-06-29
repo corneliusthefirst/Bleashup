@@ -72,7 +72,10 @@ export default class BleashupFlatList extends Component {
     extractData() {
         let temporaryResult = []
         let possibleFilter = []
-        return this.props.dataSource.slice(this.previousData.length, this.state.currentRender)
+        return this.props.dataSource
+        //.slice(this.previousData.length, 
+            //this.state.currentRender
+            //)
 
     }
     renderNewData() {
@@ -93,7 +96,7 @@ export default class BleashupFlatList extends Component {
                 <FlatList
                     viewabilityConfig={this.viewabilityConfig}
                     keyboardShouldPersistTaps={this.props.keyboardShouldPersistTaps}
-                    onScrollEndDrag={({ nativeEvent }) => {
+                    /*onScrollEndDrag={({ nativeEvent }) => {
                         if (isTooCloseToBottom(nativeEvent)) {
                             this.props.loadMoreFromRemote && this.props.loadMoreFromRemote()
                         }
@@ -101,7 +104,7 @@ export default class BleashupFlatList extends Component {
                             this.continueScrollDown()
                         }
                     }
-                    }
+                    }*/
                     enableEmptySections={false}
                     disableVirtualization={this.props.disableVirtualization}
                     getItemLayout={this.props.getItemLayout}
@@ -109,29 +112,29 @@ export default class BleashupFlatList extends Component {
                     nestedScrollEnabled={true}
                     numColumns={this.props.numColumns ? this.props.numColumns : 1}
                     horizontal={this.props.horizontal ? this.props.horizontal : false}
-                    onScroll={this.props.onScroll}
+                    //onScroll={this.props.onScroll}
                     centerContent={true}
-                    //horizontal={this.props.horizontal}
+                    horizontal={this.props.horizontal}
                     windowSize={this.props.windowSize}
                     ref="bleashupFlatlist"
-                    canCancelContentTouches={true}
+                    //canCancelContentTouches={true}
                     inverted={this.props.inverted ? this.props.inverted : false}
                     style={this.props.style}
-                    ItemSeparatorComponent={this.props.ItemSeparatorComponent}
+                    //ItemSeparatorComponent={this.props.ItemSeparatorComponent}
                     maxToRenderPerBatch={this.props.renderPerBatch ? this.props.renderPerBatch : this.props.inverted ? 5 : this.state.endReached ? 1 : 3}
                     //updateCellsBatchingPeriod={10}
                     showsHorizontalScrollIndicator={false}
                     showsVerticalScrollIndicator={false}
                     keyExtractor={this.props.keyExtractor}
-                    data={this.renderNewData().concat(this.extractData())}
+                    data={this.props.dataSource}
                     renderItem={({ item, index }) => this.props.renderItem(item, index)}
-                    ListFooterComponent={() =>
+                    /*ListFooterComponent={() =>
                         this.state.currentRender >= this.props.numberOfItems - 1 ? null : <CardItem style={{ width: "100%", height: 25 }} >
                             {this.state.endReached ? <Text style={{
                                 marginLeft: "35%"
                             }}>no more data to load</Text> : (this.props.noSpinner ? null : <Spinner size={"small"}></Spinner>)}
                         </CardItem>
-                    }
+                    }*/
                 >
                 </FlatList>
             </View>)

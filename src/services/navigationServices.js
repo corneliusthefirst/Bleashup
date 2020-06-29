@@ -14,8 +14,8 @@ class NavigatorClass {
     pushTo(page, param){
         GState.nav.push(page, param)
     }
-    pushActivity(event, page) {
-        GState.nav.push('Event', { Event: event, tab: page || 'EventDetails' })
+    pushActivity(event, page,options) {
+        GState.nav.push('Event', { Event: event, tab: page || 'EventDetails',...options })
     }
     goBack() {
         GState.nav.goBack()

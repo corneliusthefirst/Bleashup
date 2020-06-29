@@ -17,6 +17,15 @@ export default class AudioFilePreviewer extends PureComponent {
     componentWillMount() {
         this.initalizePlayer()
     }
+    componentDidUpdate(previousProps,prevState){
+        if(previousProps.source !== this.props.source){
+            this.player && this.player.stop && this.player.stop()
+            this.setState({
+                playing:false
+            })
+            this.initalizePlayer()
+        }
+    }
     componentWillUnmount() {
         this.player && this.player.stop()
        this.ext.clearCache(this.props.source)
@@ -26,15 +35,15 @@ export default class AudioFilePreviewer extends PureComponent {
         this.player && this.setState({
             playing: true
         })
-        this.player && this.player.play((state) => {
+        this.player && this.player.play && this.player.play((state) => {
             console.warn("finishing playing audio player")
             this.setState({
-                playing: fasle
+                playing: false
             })
         })
     }
     pauseAudio() {
-        this.player && this.player.pause()
+        this.player && this.player.pause  && this.player.pause()
         this.setState({
             playing: false
         })
