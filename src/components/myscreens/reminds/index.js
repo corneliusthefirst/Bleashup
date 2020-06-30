@@ -174,7 +174,7 @@ export default class Reminds extends AnimatedComponent {
     });
     this.setState({
       mounted: true,
-      RemindCreationState: this.props.currentMembers ? true : false,
+      RemindCreationState: this.props.currentMembers || this.props.remind ? true : false,
     });
   }
   saveRemoved(members) {
@@ -563,13 +563,14 @@ export default class Reminds extends AnimatedComponent {
             })
           }}
           ref={"task_creator"}
+          starRemind={this.props.remind}
           master={this.props.master}
           event_id={this.props.event_id}
           update={this.state.update}
           remind_id={this.state.remind_id}
           isOpen={this.state.RemindCreationState}
-          onClosed={() => {
-            this.props.clearCurrentMembers();
+          onClosed={(exernal) => {
+           exernal && this.props.clearCurrentMembers();
             this.setState({
               RemindCreationState: false,
               remind_id: null,

@@ -83,11 +83,7 @@ export default class ReplyText extends Component {
       );
   }
   handleReply(){
-    this.props.reply.replyer_name &&
-      (this.props.reply.replyer_phone ||
-        this.props.reply.sender.phone)
-      ? this.showReplyer()
-      : this.props.openReply(this.props.reply);
+     this.props.openReply(this.props.reply);
   }
   render() {
     return (
@@ -117,15 +113,6 @@ export default class ReplyText extends Component {
             }}
           >
             <View style={{ margin: "1%",minWidth: 100, }}>
-              <TouchableOpacity
-                onLongPress={this.props.handLongPress}
-                onPressIn={() => this.props.pressingIn()}
-                onPress={() =>
-                  requestAnimationFrame(() => {
-                   this.handleReply()
-                  })
-                }
-              >
                 <View style={{ flexDirection: "column" }}>
                   {this.props.reply.forwarded ? (
                     <Text style={{ fontSize: 10, fontStyle: "italic" }} note>
@@ -180,7 +167,6 @@ export default class ReplyText extends Component {
                     </View>
                   ) : null}
                 </View>
-              </TouchableOpacity>
               <View></View>
               {this.props.reply.audio || this.props.reply.file ? (
                 <View style={{ display: "flex", flexDirection: "row" }}>

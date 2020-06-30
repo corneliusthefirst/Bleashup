@@ -39,10 +39,17 @@ export default class SwipeMenu extends React.PureComponent {
               </TouchableOpacity>
           }
         >
-          <MenuItem onPress={this.hideMenu}>All Medias</MenuItem>
-          <MenuItem onPress={this.hideMenu}>Define as ...</MenuItem>
-          <MenuItem onPress={this.hideMenu}>Share</MenuItem>
-          <MenuItem onPress={this.hideMenu}>delete</MenuItem>
+          {/*<MenuItem onPress={this.hideMenu}>All Medias</MenuItem>*/}
+          {/*<MenuItem onPress={this.hideMenu}>Define as ...</MenuItem>*/}
+          <MenuItem onPress={() => {
+            this.hideMenu()
+            this.props.forward()
+          }
+          }>Forward</MenuItem>
+          <MenuItem onPress={() => {
+            this.hideMenu()
+            this.props.reply()
+          }}>Reply</MenuItem>
 
         </Menu>
       </View>

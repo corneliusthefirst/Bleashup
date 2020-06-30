@@ -61,23 +61,36 @@ export default class InChatVideoPlayer extends Component {
                     alignContent: 'flex-end',
                 }}>
                     <View style={{ flexDirection: 'row', }}>
-                        <TouchableOpacity onPress={() => {
+                        <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                             this.props.focusInput()
                             this.props.reply(this.props.message)
-                        }} style={this.containerStyle}>
+                        })} style={this.containerStyle}>
                             <Icon name={"reply"} style={this.iconStyles} type={"Entypo"}>
                             </Icon>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => {
+                        <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                             this.videoPlayer._pausePlayer()
                             this.props.forward(this.props.message)
-                        }} style={this.containerStyle}>
+                        })} style={this.containerStyle}>
                             <Icon name="forward" style={this.iconStyles} type={"Entypo"}></Icon>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => {
+                        <TouchableOpacity onPress={() => requestAnimationFrame(() => {
+                            this.videoPlayer._pausePlayer()
+                            this.props.starThis(this.props.message)
+                        })} style={this.containerStyle}>
+                            <Icon name={"star"} style={this.iconStyles} type={"AntDesign"}>
+                            </Icon>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => requestAnimationFrame(() => {
+                            this.videoPlayer._pausePlayer()
+                            this.props.remindThis(this.props.message)
+                        })} style={this.containerStyle}>
+                            <Icon name="bell" style={this.iconStyles} type={"Entypo"}></Icon>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                             this.videoPlayer._pausePlayer()
                             this.props.enterFullscreen()
-                        }} style={{ ...this.containerStyle }}>
+                        })} style={{ ...this.containerStyle }}>
                             <Icon style={{ color: ColorList.bodyBackground, marginBottom: 'auto', marginTop: 'auto', }} type="MaterialIcons" name="fullscreen">
                             </Icon>
                         </TouchableOpacity>

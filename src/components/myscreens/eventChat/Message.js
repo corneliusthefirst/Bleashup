@@ -242,50 +242,10 @@ export default class Message extends Component {
     timeoutID = null;
     closing = 0;
     perviousTime = 0;
-    duration = 10;
     longPressDuration = 50;
     pattern = [1000, 0, 0];
-    choseReply() {
-        let nickname = this.props.message.sender && this.props.message.sender.nickname
-        switch (this.props.message.type) {
-            case "text":
-                tempMessage = this.props.message;
-                tempMessage.replyer_name = nickname;
-                return tempMessage;
-            case "audio":
-                tempMessage = this.props.message;
-                tempMessage.audio = true;
-                tempMessage.replyer_name = nickname;
-                return tempMessage;
-            case "video":
-                tempMessage = this.props.message;
-                tempMessage.video = true;
-                tempMessage.sourcer = this.props.message.thumbnailSource;
-                tempMessage.replyer_name = nickname;
-                return tempMessage;
-            case "attachement":
-                tempMessage = this.props.message;
-                tempMessage.replyer_name = nickname;
-                tempMessage.file = true;
-                let temp = this.props.message.file_name.split(".");
-                let temper = tempMessage;
-                temper.typer = temp[temp.length - 1];
-                return temper;
-            case "photo":
-                tempMessage = this.props.message;
-                tempMessage.replyer_name = nickname;
-                tempMessage.sourcer = this.props.message.source;
-                return tempMessage;
-            default:
-                Toast.show({ text: "unable to reply for unsent messages" });
-                return null
-        }
-    }
     handleReply() {
-        Vibration.vibrate(this.duration);
-        let color = this.state.sender ? "#DEDEDE" : "#9EEDD3";
-        let reply = this.choseReply()
-        reply && this.props.replying(reply)
+        this.props.replying(this.props.message)
     }
     testReactions = [];
     renderMessageReactions(sender) {
@@ -388,7 +348,7 @@ export default class Message extends Component {
     };
     handLongPress() {
         this.replying = false;
-        let reply = this.choseReply()
+        let reply = this.props.choseReply(this.props.message)
         this.props.showActions(this.props.message, reply);
         Vibration.vibrate(this.longPressDuration);
     }

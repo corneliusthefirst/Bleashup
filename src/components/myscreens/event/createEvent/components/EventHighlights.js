@@ -186,7 +186,7 @@ export default class EventHighlights extends BleashupModal {
           this.setState({
             newing: !this.state.newing,
             isMounted: true,
-            currentHighlight: highlight ? highlight : request.Highlight(),
+            currentHighlight:this.props.star?this.props.star:highlight ? highlight : request.Highlight(),
             update: this.props.highlight_id ? true : false,
           });
         }
@@ -198,7 +198,7 @@ export default class EventHighlights extends BleashupModal {
   @autobind
   back() {
     this.setState({ newing: !this.state.newing, animateHighlight: false });
-    this.props.onClosed();
+    this.props.onClosed(this.props.star);
   }
 
   @autobind

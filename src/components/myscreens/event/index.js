@@ -146,6 +146,12 @@ export default class Event extends Component {
   editCommiteeName() {
 
   }
+  startThis(star){
+    BeNavigator.pushActivity(this.event,"EventDetails",{star})
+  }
+  remindThis(remind){
+    BeNavigator.pushActivity(this.event,"Reminds",{remind})
+  }
   currentWidth = 0.5;
   isOpen = false;
   renderMenu(NewMessages) {
@@ -155,6 +161,7 @@ export default class Event extends Component {
         return (
           <EventDetails
             shared={false}
+            star={this.star}
             share={{
               id: "1434",
               date: moment().format(),
@@ -199,6 +206,7 @@ export default class Event extends Component {
               item_id: "a7f976f0-8cd8-11ea-9234-ebf9c3b94af7",
               event_id: this.event.id,
             }}
+            remind={this.remind}
             startLoader={() => {
               this.setState({
                 working: true,
@@ -211,9 +219,7 @@ export default class Event extends Component {
             }}
             openMenu={() => this.openMenu()}
             clearCurrentMembers={() => {
-              if(this.state.currentRemindMembers){
                 this.goback()
-              }
             }}
             goback={this.goback.bind(this)}
             currentMembers={this.state.currentRemindMembers}
@@ -232,6 +238,8 @@ export default class Event extends Component {
       case "EventChat":
         return (
           <EventChat
+            startThis={this.startThis.bind(this)}
+            remindThis={this.remindThis.bind(this)}
             editCommitteeName={() => this.editCommiteeName()}
             openSettings={() => this.openSettingsModal()}
             activity_id={this.event.id}
@@ -667,6 +675,8 @@ export default class Event extends Component {
   }
   user = null;
   isOpen = true;
+  star = this.props.navigation.getParam("star")
+  remind = this.props.navigation.getParam("remind")
   event = this.props.navigation.getParam("Event");
   currentRemindMembers = this.props.navigation.getParam("currentRemindMembers")
   componentDidMount() {

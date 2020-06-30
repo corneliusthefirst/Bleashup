@@ -13,7 +13,7 @@ class colorlist {
   redIcon = 'red';
   photoPlaceHolderColor = "#C5C5C5"
   containerBackground = 'white';
-  profilePlaceHolderHeight = 50
+  profilePlaceHolderHeight = 35
 
   //header
   iconGray = '#555756';
