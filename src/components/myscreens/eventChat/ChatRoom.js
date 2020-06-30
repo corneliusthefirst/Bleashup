@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
 import React, { Component } from "react";
 import {
@@ -408,9 +409,11 @@ class ChatRoom extends AnimatedComponent {
         return parseInt(data.split("%")[0]) / 100;
     }
     formHeight(factor) {
-        console.warn(screenheight);
-        //return factor * screenheight;
-        return (1-factor) * screenheight;
+        let height = (1-factor) * screenheight;
+        if ((screenheight-height) > 60){
+           height = height + ((screenheight - height) - 60);
+        }
+        return height;
     }
     playVideo(video,message,index) {
         this.setState({

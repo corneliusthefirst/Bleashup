@@ -125,8 +125,8 @@ export default class SWView extends Component {
         }}>
             <StatusBar color={'white'}></StatusBar>
 
-            <View style={{backgroundColor:ColorList.bodyBackground,height:ColorList.headerHeight, ...shadower(5)}}>
-
+            <View style={{backgroundColor:ColorList.bodyBackgroundz,height:ColorList.headerHeight, ...shadower(2),justifyContent:'center', alignItems:'center'}}>
+                <Icon style={{ color: colorList.bodyIcon, fontSize: 35 }} type="EvilIcons" name="gear"></Icon>
             </View>
 
             <View style={{ flexDirection: 'row', height: colorList.containerHeight - ColorList.headerHeight }}>
