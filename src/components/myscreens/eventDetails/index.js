@@ -82,6 +82,7 @@ export default class EventDetailView extends AnimatedComponent {
     this.setState({
       newing: !this.state.newing,
       isMounted: true,
+      EventHighlightState:this.props.star?true:false,
       participant: participant
     });
   }
@@ -356,11 +357,15 @@ export default class EventDetailView extends AnimatedComponent {
           highlight_id={this.state.highlight_id}
           reinitializeHighlightsList={(newHighlight) => {
             this.reinitializeHighlightsList(newHighlight)
-          }} isOpen={this.state.EventHighlightState} onClosed={() => {
+          }} 
+          star={this.props.star}
+          isOpen={this.state.EventHighlightState} 
+          onClosed={(staring) => {
             this.setState({
               EventHighlightState: false,
               highlight_id: null
             })
+            staring && this.props.goback()
           }}
           update={(newHighlight, previousHighlight) => this.updateHighlight(newHighlight, previousHighlight)}
           participant={this.state.participant}

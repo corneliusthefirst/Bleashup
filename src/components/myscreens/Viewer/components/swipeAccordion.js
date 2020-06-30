@@ -20,7 +20,7 @@ export default class SwipeAccordion extends Component {
   }
 
   starClick = () => {
-    this.setState({ starselect: !this.state.starselect });
+    this.props.startThis()
   };
 
   _renderHeader = (item, index, toggle, expanded) => {
@@ -82,14 +82,14 @@ export default class SwipeAccordion extends Component {
                 <Icon
                   style={{ fontSize: 30, color: "white" }}
                   type="FontAwesome"
-                  name="angle-double-up"
+                  name="angle-double-down"
                   onPress={toggle}
                 />
               ) : (
                 <Icon
                   style={{ fontSize: 30, color: "white" }}
                   type="FontAwesome"
-                  name="angle-double-down"
+                    name="angle-double-up"
                   onPress={toggle}
                 />
               )}
@@ -116,8 +116,8 @@ export default class SwipeAccordion extends Component {
           >
             <Icon
               style={{ fontSize: 30, color: "white" }}
-              type="SimpleLineIcons"
-              name="action-redo"
+              type="Entypo"
+              name="bell"
             />
           </View>
         </TouchableOpacity>

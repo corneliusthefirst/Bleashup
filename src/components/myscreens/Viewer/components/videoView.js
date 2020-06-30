@@ -80,7 +80,7 @@ const VideoView = (props) => {
                             onExitFullscreen = {exitFullscreen}
                             fullscreenOrientation={"landscape"}
                             onLoad={props.onLoad}
-                            paused = {props.isPause && props.isPause}
+                            //paused = {props.isPause && props.isPause}
                             disableBack={true}
                             disableFullscreen={true}
                             nextPrev={false}

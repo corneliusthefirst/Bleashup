@@ -83,7 +83,7 @@ class UserView extends React.PureComponent {
          :<Text style={styles.time}>{"Posted "+props.updated_at}</Text>}
         </View>
 
-        <SwipeMenu />
+          <SwipeMenu forward={this.props.forward} reply={this.props.reply} />
 
          {/*<View style={{width:70,height:'100%',justifyContent:'center',alignItems:'center',flexDirection:'row'}}>
 

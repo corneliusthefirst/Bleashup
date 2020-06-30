@@ -210,6 +210,8 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
       master={this.props.master}
       public_state={this.props.public_state}
       opened={this.props.opened}
+      remindThis={this.props.remindThis}
+      startThis={this.props.startThis}
       newMessageNumber={this.state.new_messages.length}
       showContacts={this.props.showContacts}
       showMembers={() => this.props.showMembers()}

@@ -126,10 +126,10 @@ export default class MessageActions extends BleashupModal {
                         }}></Icon>
                     </View>
                     <View style={{ ...this.textContainerStyle }}>
-                        <Text>{"Add to starts"}</Text>
+                        <Text>{"Star This"}</Text>
                     </View>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => {
+                {/*<TouchableOpacity onPress={() => {
                     this.onClosedModal()
                     this.props.addToVote()
                 }} style={{
@@ -143,7 +143,7 @@ export default class MessageActions extends BleashupModal {
                     <View style={{ ...this.textContainerStyle }}>
                         <Text>{"Create a poll"}</Text>
                     </View>
-                </TouchableOpacity>
+                    </TouchableOpacity>*/}
                 <TouchableOpacity onPress={() => {
                     this.onClosedModal()
                     this.props.copyMessage()

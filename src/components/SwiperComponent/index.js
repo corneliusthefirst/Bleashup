@@ -55,7 +55,12 @@ export default class SwiperComponent extends AnimatedComponent {
   onTouchStartCapture = (state) => {
     //this.post.onScrollEnd();
   };
-
+  goBack(){
+    this.props.navigation.goBack()
+  }
+  execParam(method){
+    this.props.navigation.getParam(method) && this.props.navigation.getParam(method)(this.state.itemswiper)
+  }
   render() {
     return (
       <View style={{ flex: 1 }}>
@@ -85,14 +90,14 @@ export default class SwiperComponent extends AnimatedComponent {
           onIndexChanged={(index) => this.onchageIndex(index)}
         >
           {this.state.media.map((item, index) => {
-            let itemswiper = this.state.mapFunction(item);
+            let itemswiper = item
 
             return (
               <View style={styles.slide1}>
                 <Post
                   ref={(ref) => (this.post = ref)}
                   //isPause={this.state.isPause}
-                  post={itemswiper}
+                  post={this.state.mapFunction(itemswiper)}
                   onClose={() => {
                     this.props.navigation.goBack();
                   }}
@@ -103,11 +108,16 @@ export default class SwiperComponent extends AnimatedComponent {
         </Swiper>
         {this.state.itemswiper.creator ? (
           <UserView
+            forward={() => this.execParam("forward") }
+            reply={() => {
+              this.goBack()
+              this.execParam("reply")
+            }}
             name={this.state.itemswiper.creator.name}
             profile={this.state.itemswiper.creator.profile}
             updated_at={this.state.itemswiper.creator.updated_at}
             onClose={() => {
-              this.props.navigation.goBack();
+              this.goBack()
             }}
             swiper
             removeMessage={() =>
@@ -116,7 +126,15 @@ export default class SwiperComponent extends AnimatedComponent {
           />
         ) : null}
         {this.state.itemswiper.creator ? (
-          <SwipeAccordion dataArray={this.state.itemswiper} />
+          <SwipeAccordion 
+          startThis={() => {
+              this.execParam("starThis")
+          }
+          }
+          reply={() => {
+            this.execParam("remindThis")
+          }}
+          dataArray={this.state.itemswiper} />
         ) : null}
       </View>
     );

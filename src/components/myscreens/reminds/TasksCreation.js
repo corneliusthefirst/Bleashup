@@ -130,7 +130,8 @@ export default class TasksCreation extends BleashupModal {
         this.props.event_id,
         this.props.remind_id ? this.props.remind_id : request.Remind().id
       ).then((rem) => {
-        let remind = isEmpty(rem) ? request.Remind() : rem;
+        rem = isEmpty(rem) ? request.Remind() : rem
+        let remind = this.props.starRemind || rem;
         this.setState({
           currentRemind: remind,
           mounted: true,
@@ -148,8 +149,8 @@ export default class TasksCreation extends BleashupModal {
           currentMembers:
             this.props.currentMembers && this.props.currentMembers.length > 0
               ? this.props.currentMembers
-              : remind && remind.members
-                ? remind.members
+              : rem && rem.members
+                ? rem.members
                 : [],
           date:
             remind && remind.period
@@ -651,6 +652,9 @@ export default class TasksCreation extends BleashupModal {
       }
     }
   }
+  goback(){
+    this.props.onClosed(this.props.currentMembers||this.props.starRemind)
+  }
   swipeToClose = false;
   modalBody() {
     let defaultDate = parseInt(
@@ -663,7 +667,7 @@ export default class TasksCreation extends BleashupModal {
       >
         <View style={{ flex: 1, justifyContent: "flex-end" }}>
           <CreationHeader
-            back={this.props.onClosed}
+            back={this.goback.bind(this)}
             title={
               !this.state.ownership
                 ? "Remind configs"

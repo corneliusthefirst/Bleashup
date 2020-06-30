@@ -86,11 +86,11 @@ export default class CreateTextInput extends Component {
               color: this.props.color
                 ? this.props.color
                 : colorList.bodySubtext,
-              backgroundColor: this.props.multiline
+              /*backgroundColor: this.props.multiline
                 ? "rgba(0, 0, 0, 0.1)"
-                : null,
+                : null,*/
             }}
-          >{`${(this.props.value && this.props.value.length) || 0} / ${
+          note>{`${(this.props.value && this.props.value.length) || 0} / ${
             this.props.maxLength || 100
           }`}</Text>
         </View>

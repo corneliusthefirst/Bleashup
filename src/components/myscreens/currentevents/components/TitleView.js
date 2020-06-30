@@ -36,7 +36,9 @@ export default class TitleView extends Component {
     }
     render() {
         return (<View style={{ flex: 1, marginTop: "2.5%" }}>
-            <TouchableOpacity onPress={() => requestAnimationFrame(() => {
+            <TouchableOpacity style={{
+                height:"100%"
+            }} onPress={() => requestAnimationFrame(() => {
                 this.navigateToEventDetails()
             })}>
                 <View style={{ flexDirection: "column", alignItems: "flex-start" }}>
