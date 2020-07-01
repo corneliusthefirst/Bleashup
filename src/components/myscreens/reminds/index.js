@@ -48,6 +48,7 @@ import replies from "../eventChat/reply_extern";
 import TaskCreationExtra from './TaskCreationExtra';
 import uuid from 'react-native-uuid';
 import AnimatedComponent from '../../AnimatedComponent';
+import MessageActions from '../eventChat/MessageActons';
 //const MyTasksData = stores.Reminds.MyTasksData
 
 export default class Reminds extends AnimatedComponent {
@@ -454,9 +455,9 @@ export default class Reminds extends AnimatedComponent {
     let members = item.members.map((ele) => ele.phone);
     this.setState({
       members: uniq(members),
-      actualInterval: thisInterval,
+      //actualInterval: thisInterval,
       isReportModalOpened: true,
-      intervals,
+      //intervals,
       currentTask: item,
       complexReport: false,
     });
@@ -548,6 +549,66 @@ export default class Reminds extends AnimatedComponent {
           : true,
       },
     });
+  }
+  actionIndex = this.state.currentIndex ? this.state.currentIndex() : {}
+  remindsActions =() => [
+    {
+      title:'Reply',
+      callback:() => this.mention(this.state.remind),
+      iconName:"reply",
+      condition:() => true,
+      iconType:"Entypo",
+      color:colorList.replyColor
+    },
+    {
+      title:"Members",
+      callback: () => this.showReport(this.state.remind),
+      condition:() => true,
+      iconName:"ios-people",
+      iconType:"Ionicons",
+      color:colorList.likeActive
+    },
+    {
+      title:"updateRemind",
+      condition:() => this.actionIndex.creator || this.props.master,
+      callback:() => this.updateRemind(this.state.remind),
+      iconName:"history",
+      iconType:"MaterialIcons",
+      color:colorList.darkGrayText
+    },
+    {
+      title:"Assign members",
+      condition:() => this.props.master,
+      callback:() => this.addMembers(uniqBy(this.state.remind.members,"phone"),this.state.remind),
+      iconName: "addusergroup",
+      iconType: "AntDesign",
+      color:colorList.indicatorColor
+    },{
+      title: "Unassign members",
+      condition:() => this.props.master,
+      callback: () => this.removeMembers(uniqBy(this.state.remind.members.filter(ele => this.state.creator ||
+        ele.phone === stores.LoginStore.user.phone)),this.state.remind),
+      iconName:"deleteusergroup",
+      iconType:"AntDesign",
+      color:"orange"
+    },
+    {
+      title:"Delete Remind",
+      callback:() => this.removeRemind(this.state.remind),
+      condition:() => this.props.master,
+      iconName: "delete-forever",
+      iconType: "MaterialCommunityIcons",
+      color:colorList.delete
+    }
+  ]
+  showRemindActions(remind,intervals,thisInterval,creator){
+    this.setState({
+      intervals,
+      creator,
+      actualInterval:thisInterval,
+      showRemindActions:true,
+      remind:remind
+    })
   }
   render() {
     return (
@@ -717,6 +778,17 @@ export default class Reminds extends AnimatedComponent {
           }}
           message={"Are you sure you want to delete this remind?"}
         />
+        <MessageActions
+        title={"remind actions"}
+        actions={this.remindsActions}
+        isOpen={this.state.showRemindActions}
+        onClosed={() => {
+          this.setState({
+            showRemindActions:false
+          })
+        }}
+        >
+        </MessageActions>
       </View>
     );
   }
@@ -783,6 +855,9 @@ export default class Reminds extends AnimatedComponent {
       isAreYouModalOpened: true,
     });
   };
+  share(){
+
+  }
   renderReminds() {
     return !this.state.mounted ? (
       <View style={{ width: "100%", height: "100%" }} />
@@ -875,8 +950,10 @@ export default class Reminds extends AnimatedComponent {
               renderItem={(item, index) => {
                 this.delay = index >= 5 ? 0 : this.delay + 1;
                 return (
-                  <View>
                     <TasksCard
+                      showRemindActions={(intervals,thisInterval,creator) => {
+                        this.showRemindActions(item,intervals,thisInterval,creator)
+                      }}
                       animate={this.animateUI}
                       showMedia={this.showMedia.bind(this)}
                       isLast={index === this.getRemindData().length - 1}
@@ -901,7 +978,6 @@ export default class Reminds extends AnimatedComponent {
                       item={item}
                       key={index}
                     />
-                  </View>
                 );
               }}
               numberOfItems={this.getRemindData().length}

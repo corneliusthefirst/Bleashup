@@ -33,24 +33,21 @@ export default class ProfileSimple extends Component {
             flexDirection: "column", paddingLeft: this.props.relation ? "4.6%" : "4.6%"
         }
         return (
-
+            <TouchableWithoutFeedback onPress={() => {
+                requestAnimationFrame(() => {
+                    GState.showingProfile = true
+                    this.setState({ isModalOpened: true })
+                    //this.props.showPhoto(this.props.profile.profile)
+                    setTimeout(() => {
+                        GState.showingProfile = false
+                    }, 50)
+                });
+            }}>
             <View style={{ flexDirection: "row", width: "100%", alignItems: "center", marginBottom: "4%" }}>
 
                 {!this.props.hidePhoto && <View style={{ width: this.props.invite ? "15%" : "23%", paddingLeft: this.props.relation ? "4%" : "0%" }}>
                     {this.props.profile && this.props.profile.profile && testForURL(this.props.profile.profile) ?
-                        <TouchableWithoutFeedback onPress={() => {
-                            requestAnimationFrame(() => {
-                                GState.showingProfile = true
-                                this.setState({ isModalOpened: true })
-                                //this.props.showPhoto(this.props.profile.profile)
-                                setTimeout(() => {
-                                    GState.showingProfile = false
-                                }, 50)
-                            });
-                        }}>
-                            <CacheImages staySmall small thumbnails {...this.props} source={{ uri: this.props.profile.profile }} />
-                        </TouchableWithoutFeedback> :
-
+                            <CacheImages staySmall small thumbnails {...this.props} source={{ uri: this.props.profile.profile }} />:
                         <Icon type={"FontAwesome"} style={{
                             color:ColorList.photoPlaceHolderColor,
                             fontSize: this.props.searching?35:ColorList.profilePlaceHolderHeight,
@@ -113,6 +110,7 @@ export default class ProfileSimple extends Component {
 
                 <Invite isOpen={this.state.invite} onClosed={() => { this.setState({ invite: false }) }} />
             </View>
+            </TouchableWithoutFeedback> 
         )
     }
 }

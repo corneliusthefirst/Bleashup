@@ -410,11 +410,14 @@ class ChatRoom extends AnimatedComponent {
         return parseInt(data.split("%")[0]) / 100;
     }
     formHeight(factor) {
-        let height = (1-factor) * screenheight;
+        console.warn(screenheight);
+        //return factor * screenheight;
+        return (1 - factor) * screenheight;
+        /*let height = (1-factor) * screenheight;
         if ((screenheight-height) > 60){
            height = height + ((screenheight - height) - 60);
         }
-        return height;
+        return height;*/
     }
     playVideo(video, message, index) {
         this.setState({
@@ -654,9 +657,10 @@ class ChatRoom extends AnimatedComponent {
         Toast.show({ text: "copied !", type: "success" });
     }
     options = ["Remove message", "Seen Report", "Copy to clipboard", "Cancel"];
-    showMessageAction(message, reply) {
+    showMessageAction(message, reply,sender) {
         this.tempReply = reply
         this.setState({
+            sender:sender,
             currentMessage: message,
             showMessageActions: true,
         });
@@ -694,6 +698,67 @@ class ChatRoom extends AnimatedComponent {
                 this.refs.bleashupSectionListOut.scrollToIndex(index)
         }, 40)
     }
+    messageActions = () => [
+        {
+            title:"Seen By ...",
+            iconName: "check",
+            condition:() => this.state.sender,
+            iconType: "FontAwesome",
+            color: ColorList.replyColor,
+            callback: () => this.showReceived()
+        },
+        {
+            title: "Reply to message",
+            iconName: "reply",
+            condition:() => true,
+            iconType: "Entypo",
+            callback: () => this.replyMessage()
+        },
+        {
+            title: "Forward message",
+            iconName: "forward",
+            condition:() => true,
+            iconType: "Entypo",
+            color:ColorList.darkGrayText,
+            callback: () => this.forwardToContacts(this.state.currentMessage)
+        }
+        ,
+        {
+            title: "Remind this",
+            iconName: "bell",
+            condition:() => true,
+            iconType: "Entypo",
+            color: ColorList.reminds,
+            callback: () => this.remindThis(this.state.currentMessage)
+        }
+        ,
+        {
+            title: "Star this",
+            iconName: "star",
+            condition:() => true,
+            iconType: "AntDesign",
+            color: ColorList.post,
+            callback: () => this.addStar(this.state.currentMessage)
+        }
+        ,
+        {
+            title: "Copy Message",
+            condition:() => true,
+            iconName: "copy",
+            iconType: "Feather",
+            color: ColorList.copy,
+            callback: () => this.copyMessage()
+        }
+        ,
+        {
+            title: "Remove Message",
+            condition:() => this.state.sender,
+            iconName: "delete-circle-outline",
+            iconType: "MaterialCommunityIcons",
+            color: ColorList.delete,
+            callback: () => this.deleteMessageAction()
+        }
+    ]
     render() {
         return (
             <ImageBackground style={{
@@ -739,15 +804,6 @@ class ChatRoom extends AnimatedComponent {
                                                 ><View>{this.messageList()}</View>
                                                 </TouchableWithoutFeedback>
                                             </View>
-                                            {
-                                                // ******************Photo Viewer View ***********************//
-                                                this.state.showPhoto ? this.PhotoShower() : null
-                                            }
-                                            {
-                                                //** ####### Vidoe PLayer View ################ */
-
-                                                this.state.showVideo ? this.VideoShower() : null
-                                            }
                                             <View>
                                                 {!this.props.opened || !this.props.generallyMember ? (
                                                     <Text
@@ -828,20 +884,14 @@ class ChatRoom extends AnimatedComponent {
                                 }}
                             ></ShareWithYourContacts>
                             <MessageActions
+                            title={"message actions"}
+                            actions={this.messageActions}
                                 isOpen={this.state.showMessageActions}
                                 onClosed={() => {
                                     this.setState({
                                         showMessageActions: false,
                                     });
                                 }}
-                                deleteMessage={this.deleteMessageAction.bind(this)}
-                                copyMessage={this.copyMessage.bind(this)}
-                                // addToVote={this.addVote.bind(this)}
-                                starThis={() => this.addStar(this.state.currentMessage)}
-                                remindThis={() => this.remindThis(this.state.currentMessage)}
-                                forwardToContacts={() => this.forwardToContacts(this.state.currentMessage)}
-                                replyMessage={this.replyMessage.bind(this)}
-                                seenBy={this.showReceived.bind(this)}
                             ></MessageActions>
                             {/*<Votes
                                 shared={false}
@@ -904,6 +954,15 @@ class ChatRoom extends AnimatedComponent {
                                 reacters={this.state.currentReacters}
                             ></PublishersModal>
                         </View>
+                        {
+                            // ******************Photo Viewer View ***********************//
+                            this.state.showPhoto ? this.PhotoShower() : null
+                        }
+                        {
+                            //** ####### Vidoe PLayer View ################ */
+
+                            this.state.showVideo ? this.VideoShower() : null
+                        }
                     </View>
                 </View>
             </ImageBackground>
@@ -928,7 +987,7 @@ class ChatRoom extends AnimatedComponent {
     addStar(message) {
         let start = request.Highlight()
         start.title = message.text && message.text.split(".")[0]
-        start.description = message.text && message.text.split(".").slice(1,
+        start.description = message.text && message.text.split(".").slice(0,
             message.text.split(".").length - 1).join(".")
         start.url = message.type === "photo" || message.type === "image" ? {
             photo: testForURL(message.photo) ? message.photo : message.source
@@ -959,7 +1018,7 @@ class ChatRoom extends AnimatedComponent {
     remindThis(message) {
         let start = request.Remind()
         start.title = message.text && message.text.split(".")[0]
-        start.description = message.text && message.text.split(".").slice(1,
+        start.description = message.text && message.text.split(".").slice(0,
             message.text.split(".").length - 1).join(".")
         start.remind_url = message.type === "photo" || message.type === "image" ? {
             photo: testForURL(message.photo) ? message.photo : message.source
@@ -1150,7 +1209,7 @@ class ChatRoom extends AnimatedComponent {
                                 stores.Messages.messages[this.roomID]
                                 [index >= 0 ? index + 1 : 0]
                             }
-                            showActions={(message, reply) => this.showMessageAction(message, reply)}
+                            showActions={(message, reply,sender) => this.showMessageAction(message, reply,sender)}
                             firebaseRoom={this.props.firebaseRoom}
                             roomName={this.props.roomName}
                             sendMessage={(message) => this.sendTextMessage(message)}
@@ -1275,7 +1334,7 @@ class ChatRoom extends AnimatedComponent {
         return (
             <InChatVideoPlayer
                 reply={(mess) => {
-                    this.replying(mess)
+                    this.initReply(mess)
                 }}
                 focusInput={this.fucussTextInput.bind(this)}
                 react={(reaction) => this.reactToMessage(this.state.playingMessage.id, reaction)}

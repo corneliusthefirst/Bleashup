@@ -11,6 +11,7 @@ import GState from '../../../stores/globalState/index';
 import colorList from '../../colorList';
 import replies from '../eventChat/reply_extern';
 import AnimatedComponent from '../../AnimatedComponent';
+import Swipeout from '../eventChat/Swipeout';
 
 
 export default class ChangeBox extends AnimatedComponent {
@@ -40,12 +41,31 @@ export default class ChangeBox extends AnimatedComponent {
                 })
         }, 60 * this.props.delayer)
     }
+    mention(){
+        this.props.mention({
+            id: this.props.change.id,
+            title: `${this.props.change.changed} :\n ${typeof this.props.change.new_value.new_value == "string" &&
+                !testForURL(this.props.change.new_value.new_value) ?
+                this.props.change.new_value.new_value : ""}`,
+            type_extern: this.state.changer.nickname,
+            new_value: this.props.change.new_value,
+            updated: this.props.change.updated,
+            //photo: true,
+            change_date: this.props.change.date,
+            //sourcer: this.state.changer.profile,
+            replyer_phone: this.state.changer.phone,
+            replyer_name: this.props.change.title
+
+        })
+    }
     containerStyle = { margin: '1%', borderRadius: 3, backgroundColor: colorList.bodyBackground, ...shadower(3), }
     render() {
         return (!this.state.loaded ? <View style={{ 
             ...this.containerStyle, width: '95%', height: 100,
             ...this.props.change && this.props.change.dimensions,  }}></View> :
-            <View>
+            <Swipeout swipeRight={() => {
+                this.mention()
+            }}>
                 <View onLayout={(e) => this.props.takeNewLayout(e.nativeEvent.layout)} style={this.containerStyle}>
                     {!this.props.change ? null : <View style={{ flexDirection: 'column', margin: '1%', }}>
                         <View style={{ flexDirection: 'row', maxHeight: 40, }}>
@@ -58,21 +78,7 @@ export default class ChangeBox extends AnimatedComponent {
                             </View>
                             <View style={{ alignSelf: 'flex-end', flexDirection: 'row', alignItems: "flex-end" }}>
                                 <View style={{ alignSelf: 'flex-end', marginTop: 'auto', marginBottom: 'auto', }}>{!this.props.replying ? <ChangeBoxMenu
-                                    reply={() => this.props.mention({
-                                        id: this.props.change.id,
-                                        title: `${this.props.change.changed} :\n ${typeof this.props.change.new_value.new_value == "string" && 
-                                        !testForURL(this.props.change.new_value.new_value) ?
-                                         this.props.change.new_value.new_value:""}`,
-                                        type_extern: this.state.changer.nickname,
-                                        new_value: this.props.change.new_value,
-                                        updated: this.props.change.updated,
-                                        photo: true,
-                                        change_date: this.props.change.date,
-                                        sourcer: this.state.changer.profile,
-                                        replyer_phone: this.state.changer.phone,
-                                        replyer_name: this.props.change.title
-
-                                    })}
+                                    reply={() => this.mention()}
                                     master={this.props.master}
                                     change={this.props.change}
                                     restore={() => this.props.restore(this.props.change)}
@@ -92,7 +98,7 @@ export default class ChangeBox extends AnimatedComponent {
                         </View>
                     </View>}
                 </View>
-            </View>
+            </Swipeout>
         )
     }
 }
