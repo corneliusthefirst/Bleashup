@@ -22,7 +22,6 @@ import DateView from "./DateView";
 import NewSeparator from "./NewSeparator";
 import moment from "moment";
 import shadower from "../../shadower";
-import Voter from "./Voter";
 import { find } from "lodash";
 import { isEqual } from "lodash";
 import formVoteOptions from "../../../services/formVoteOptions";
@@ -31,8 +30,7 @@ import ReactionModal from "./ReactionsModal";
 import stores from "../../../stores";
 import rounder from "../../../services/rounder";
 import emitter from "../../../services/eventEmiter";
-import { SwipeRow } from 'react-native-swipe-list-view';
-import Votes from "../votes";
+import Swipeout from './Swipeout';
 
 export default class Message extends Component {
     constructor(props) {
@@ -349,7 +347,7 @@ export default class Message extends Component {
     handLongPress() {
         this.replying = false;
         let reply = this.props.choseReply(this.props.message)
-        this.props.showActions(this.props.message, reply);
+        this.props.showActions(this.props.message, reply,!this.state.sender);
         Vibration.vibrate(this.longPressDuration);
     }
     testForImoji(message) {
@@ -495,30 +493,15 @@ export default class Message extends Component {
                                         {this.reactions(this.state.sender)}
                                     </View>
                                 ) : null}
-                                <SwipeRow
-                                    swipeGestureEnded={(key, data) => {
-                                        if (data.translateX >= 50) {
-                                            this.handleReply()
-                                        } else if (data.translateX <= -50) {
-                                            Vibration.vibrate([100, 0, 0, 100])
-                                            this.props.forwardMessage()
-                                        }
+                                <Swipeout
+                                    onLongPress={this.handLongPress.bind(this)}
+                                    swipeRight={this.handleReply.bind(this)}
+                                    swipeLeft={() => {
+                                        Vibration.vibrate([100, 0, 0, 100])
+                                        this.props.forwardMessage()
                                     }}
-                                    leftOpenValue={0}
-                                    rightOpenValue={0}
-                                    swipeToClosePercent={50}
-                                    style={{ backgroundColor: "transparent", width: "100%" }}
+                                    
                                 >
-                                    <View
-                                        style={{
-                                            marginTop: 'auto',
-                                            marginBottom: 'auto',
-                                            alignSelf: 'center',
-                                            flexDirection: 'row',
-                                            justifyContent: 'space-between',
-                                            width: "90%",
-                                        }}>
-                                    </View>
                                     <View
                                         style={{
                                             flexDirection: "row",
@@ -687,7 +670,7 @@ export default class Message extends Component {
                                             </View>
                                         ) : null}
                                     </View>
-                                </SwipeRow>
+                                </Swipeout>
                             </View>
                             {this.state.isReacting ? (
                                 <View

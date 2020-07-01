@@ -1,10 +1,10 @@
 /* eslint-disable prettier/prettier */
 import React, { Component } from "react";
 import {
-  Card, CardItem, Text, Icon, Title, Left, Button, Right, Spinner, View,
+  Text, Icon, 
 } from "native-base";
 
-import { StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
+import { StyleSheet, Dimensions, View, TouchableOpacity } from 'react-native';
 import Modal from 'react-native-modalbox';
 import autobind from "autobind-decorator";
 import stores from '../../../stores/index';
@@ -22,6 +22,7 @@ import MedaiView from "../event/createEvent/components/MediaView";
 import { createOpenLink } from "react-native-open-maps";
 import CreateButton from "../event/createEvent/components/ActionButton";
 import shadower from "../../shadower";
+import Swipeout from "../eventChat/Swipeout";
 
 let { height, width } = Dimensions.get('window')
 
@@ -149,7 +150,12 @@ export default class EventTasksCard extends Component {
     member = findIndex(this.props.item.members,
       { phone: stores.LoginStore.user.phone }) >= 0;
     return !this.state.mounted ? null : (
-      <View style={{
+      <Swipeout onLongPress={() => {
+        this.props.showRemindActions(this.state.currentDateIntervals,
+          this.state.correspondingDateInterval,this.state.creator)
+      }} disabled swipeRight={() => {
+        this.props.mention(this.props.item)
+      }}><View style={{
         width:"98%",
         flexDirection: 'column',
         borderRadius: 5,
@@ -158,6 +164,7 @@ export default class EventTasksCard extends Component {
         margin: '1%',padding: "1%",...shadower(1)
         //marginLeft: "2%", marginRight: "2%", //marginBottom: this.props.isLast ? '25%' : '0%',
       }}>
+      <View>
         <View style={{
           justifyContent: 'space-between',
           flexDirection: 'row',
@@ -188,7 +195,7 @@ export default class EventTasksCard extends Component {
               replace("Started", "Past")}`}</Text>
           </View>
           <View style={{ width: 22, flexDirection: 'row', }}>
-            <View style={{ flexDirection: 'row', alignSelf: 'flex-end' }}>
+            {/*<View style={{ flexDirection: 'row', alignSelf: 'flex-end' }}>
               <RemindsMenu
                 reply={() => this.props.mention({ ...this.props.item, creator: this.state.creator })}
                 members={() => this.props.showReport(this.props.item, this.state.currentDateIntervals, this.state.correspondingDateInterval)}
@@ -199,7 +206,7 @@ export default class EventTasksCard extends Component {
                   ele.phone === stores.LoginStore.user.phone), 'phone'), this.props.item)}
                 deleteRemind={() => this.props.deleteRemind(this.props.item)}
               ></RemindsMenu>
-            </View>
+                </View>*/}
           </View>
         </View>
 
@@ -212,21 +219,20 @@ export default class EventTasksCard extends Component {
           </TouchableOpacity>
         </View> : null}
         <View style={{flexDirection: 'row',}}>
-          <Left>
-            <Text ellipsizeMode={'tail'} numberOfLines={3} style={{ fontWeight: "500", marginBottom: "5%", marginLeft: "0%", fontSize: 17, color: ColorList.bodyText, textTransform: "capitalize", }}>{this.props.item.title}</Text>
-          </Left>
+          <View>
+            <Text ellipsizeMode={'tail'} numberOfLines={7} style={{ fontWeight: "500", marginBottom: "5%", marginLeft: "0%", fontSize: 17, color: ColorList.bodyText, textTransform: "capitalize", }}>{this.props.item.title}</Text>
+          </View>
         </View>
         {this.props.item.remind_url &&
           (this.props.item.remind_url.photo || this.props.item.remind_url.video) ?
-          <View style={{ flex: 1, alignItems: 'center', alignSelf: 'center', width: ColorList.containerWidth }}>
             <MedaiView
               height={ColorList.containerHeight * .39}
-              width={"98%"}
+              width={"100%"}
               url={this.props.item.remind_url}
               showItem={this.props.showMedia}
             ></MedaiView>
 
-          </View> : null}
+          : null}
 
         <View style={{
           flexDirection: 'row',
@@ -296,7 +302,10 @@ export default class EventTasksCard extends Component {
             creator={this.props.item.creator}
             created_at={this.props.item.created_at}></Creator>
         </View>
-      </View>
+        </View>
+        </View>
+        </Swipeout>
+
 
     )
   }

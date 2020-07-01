@@ -30,6 +30,7 @@ export default class CreateTextInput extends Component {
           backgroundColor: this.props.backgroundColor
             ? this.props.backgroundColor
             : colorList.bodyBackground,
+            ...this.props.style
         }}
       >
         <Input

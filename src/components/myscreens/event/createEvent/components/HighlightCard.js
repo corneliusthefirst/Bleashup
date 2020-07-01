@@ -12,7 +12,7 @@ import {
   Thumbnail,
 } from "native-base";
 
-import { View, TouchableOpacity, Dimensions, Text } from "react-native";
+import { View, Dimensions, Text } from "react-native";
 import Modal from "react-native-modalbox";
 import autobind from "autobind-decorator";
 import moment from "moment";
@@ -25,8 +25,10 @@ import shadower from "../../../../shadower";
 import PostMenu from "./PostMenu";
 import ColorList from "../../../../colorList";
 import buttoner from "../../../../../services/buttoner";
+import { TouchableOpacity} from "react-native-gesture-handler"
 import MedaiView from "./MediaView";
 import Social from "./Social";
+import Swipeout from '../../../eventChat/Swipeout';
 
 let { height, width } = Dimensions.get("window");
 
@@ -80,6 +82,9 @@ export default class HighlightCard extends PureComponent {
 
   render() {
     return this.state.mounted ? (
+      <Swipeout swipeLeft={() => { }} swipeRight={() => {
+        this.props.mention(this.props.item)
+      }}>
       <View
         style={{
           width: ColorList.containerWidth,
@@ -167,6 +172,7 @@ export default class HighlightCard extends PureComponent {
           ></Social>*/}
         </View>
       </View>
+      </Swipeout>
     ) : (
       <View
         style={{

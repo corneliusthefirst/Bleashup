@@ -102,6 +102,8 @@ export default class EventDescription extends BleashupModal {
             maxLength={1000}
             style={{
               margin: 1,
+              width:'95%',
+              alignSelf: 'center',
               textAlignVertical: 'top',  // hack android
               backgroundColor: "#f5fffa", borderRadius: 25,
             }}
@@ -110,7 +112,7 @@ export default class EventDescription extends BleashupModal {
 
         </View>
 
-        <View style={{ height: "25%", justifyContent: "center", marginTop: '-4%' }}>
+        <View style={{ height: "25%", justifyContent: "center", }}>
           <CreateButton style={{ width: '90%' }} title={"Update Description"} action={this.updateDescription.bind(this)}></CreateButton>
         </View>
 
