@@ -720,7 +720,9 @@ export default class Message extends Component {
                                     ></ReactionModal>
                                 </View>
                             ) : null}
+                             
                         </View>
+                       
                     )}</View>;
     }
 }

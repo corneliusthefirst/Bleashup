@@ -22,6 +22,8 @@ import bleashupHeaderStyle from '../../../services/bleashupHeaderStyle';
 import colorList from '../../colorList';
 import SearchView from './searchView';
 import ColorList from '../../colorList';
+import rounder from '../../../services/rounder';
+import BeNavigator from '../../../services/navigationServices';
 
 
 const screenWidth = Math.round(Dimensions.get('window').width);
@@ -125,15 +127,13 @@ export default class SWView extends Component {
         }}>
             <StatusBar color={'white'}></StatusBar>
 
-            <View style={{backgroundColor:ColorList.bodyBackgroundz,height:ColorList.headerHeight, ...shadower(2),justifyContent:'center', alignItems:'center'}}>
-                <Icon style={{ color: colorList.bodyIcon, fontSize: 35 }} type="EvilIcons" name="gear"></Icon>
-            </View>
 
-            <View style={{ flexDirection: 'row', height: colorList.containerHeight - ColorList.headerHeight }}>
+
+            <View style={{ flexDirection: 'row', height: colorList.containerHeight  }}>
 
                 <View style={{
                     backgroundColor: 'white', borderTopLeftRadius: 5,borderTopRightRadius: 5,
-                    width: screenWidth * 0.18, ...shadower(2), padding: 2, height: '100%',
+                    width: screenWidth * 0.18, ...shadower(1), padding: 2, height: '100%',flexDirection: 'column',
                 }}>
                     <View style={{
                         alignItems: 'center',
@@ -173,6 +173,23 @@ export default class SWView extends Component {
                             </View>
                         </TouchableOpacity>
                     </View>
+
+                    <View style={{
+                        width: '100%',
+                        alignSelf: 'center',
+                        backgroundColor: 'white',
+                        marginTop:5,
+                    }}>
+                        <TouchableOpacity style={{ alignSelf: 'center',  width: 55, height: 50, marginBottom: 5 }} onPress={() => this.props.openSettingsModal()} >
+                            <View style={{...rounder(50,"white"), alignItems:'center' }}>
+                            <Icon style={{ color: colorList.bodyIcon, fontSize: 35 }} type="EvilIcons" name="gear" onPress={() => this.props.openSettingsModal()}></Icon>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+
+                    <View style={{height:50 ,justifyContent:'center', alignItems:'center',position:'absolute',bottom:0,width:screenWidth * 0.18}}>
+                        <Icon style={{ color: colorList.bodyIcon, fontSize: 50 }} type="EvilIcons" name="user" onPress={() => BeNavigator.navigateTo("Profile")}></Icon>
+                     </View>
 
                 </View>
 

@@ -21,6 +21,7 @@ import BleashupFlatList from "../../BleashupFlatList";
 import ProfileSimple from "../currentevents/components/ProfileViewSimple";
 import AudioRecorder from "./AudioRecorder";
 import GrowingInput from "./GrowingInput";
+import  OptionsModal from "./optionsModal";
 import ColorList from "../../colorList";
 import uuid from "react-native-uuid";
 import moment from "moment";
@@ -35,6 +36,7 @@ export default class ChatKeyboard extends PureComponent {
         super(props);
         this.state = {
             textValue: "",
+            isOptionsOpened: false,
         };
         if (Platform.OS === "android") {
             UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -623,6 +625,11 @@ export default class ChatKeyboard extends PureComponent {
             isCameraOpened:true
         })
     }
+    showOptionsModal(){
+        this.setState({
+            isOptionsOpened:true
+        })  
+    }
     render() {
         return (
             <View>
@@ -644,7 +651,7 @@ export default class ChatKeyboard extends PureComponent {
                     >
                         <View
                             style={{
-                                width: "86%",
+                                width: "88%",
                                 fontSize: 17,
                                 bottom: 0,
                                 flexDirection: "row",
@@ -680,9 +687,37 @@ export default class ChatKeyboard extends PureComponent {
                                     ></Icon>
                                 </View>
                             </TouchableOpacity>
+
+                            <TouchableOpacity
+                                onPress={() => requestAnimationFrame(() => this.showOptionsModal() //this.openCamera()
+                                    )}
+                                style={{
+                                    width: "12%",
+                                    alignSelf: "flex-end",
+                                    bottom: 2,
+                                    padding: "1%",
+                                }}
+                            >
+                                <View
+                                    style={{
+                                        alignItems: "center",
+                                        ...rounder(30, ColorList.indicatorColor),
+                                    }}
+                                >
+                                    <Icon
+                                        style={{
+                                            color: ColorList.bodyBackground,
+                                            fontSize: 20,
+                                        }}
+                                        type={"Ionicons"}
+                                        name={"ios-add"}
+                                    ></Icon>
+                                </View>
+                            </TouchableOpacity>
+
                             <View
                                 style={{
-                                    width: "88%",
+                                    width: "76%",
                                     flexDirection: "column",
                                     borderRadius: 25,
                                     backgroundColor: ColorList.bodyBackground,
@@ -819,6 +854,15 @@ export default class ChatKeyboard extends PureComponent {
                     }} onCaptureFinish={(snap) => {
                         this.concludePicking(snap)
                     }}></CameraScreen>
+
+                    < OptionsModal isOpen={this.state.isOptionsOpened} onClosed={()=> this.setState({isOptionsOpened:false})}
+
+                        openAudioPicker={this.props.openAudioPicker}
+                        openFilePicker={this.props.openFilePicker}
+                        addRemind={this.props.addRemind}
+                        openPhotoSelector={this.props.openPhotoSelector}
+                        
+                    />
             </View>
         );
     }

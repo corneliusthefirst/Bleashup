@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React, { Component } from "react"
 import CacheImages from '../../../CacheImages';
 import { View, Text, TouchableOpacity, TouchableWithoutFeedback} from "react-native";
@@ -52,9 +53,9 @@ export default class ProfileSimple extends Component {
                         </TouchableWithoutFeedback> :
 
                         <Icon type={"FontAwesome"} style={{
-                            color:ColorList.photoPlaceHolderColor,
+                            color:ColorList.colorArray[Math.floor(Math.random() * 14)],
                             fontSize: this.props.searching?35:ColorList.profilePlaceHolderHeight,
-                        }} name={"user-circle-o"}>
+                        }} name={"user-circle"}>
 
                         </Icon>}
                 </View>}

@@ -45,46 +45,13 @@ export default class CreateEvent extends Component {
     super(props);
   }
 
-  onClickNewEvent() {
-    return new Promise((resolve, rejectPromise) => {
-      //stores.Events.delete("newEventId").then(()=>{console.warn("event deleted")});
+  onClickNewEvent = () => {
+    this.props.navigation.navigate("CreateEventView");
+  };
 
-      stores.Events.readFromStore().then((Events) => {
-        let event = find(Events, { id: 'newEventId' });
-        //console.warn(Events);
-
-        if (!event) {
-          event = request.Event();
-          event.id = "newEventId";
-          stores.Events.addEvent(event).then(() => {});
-        }
-        this.props.navigation.navigate("CreateEventView");
-        resolve();
-      });
-    });
-  }
-
-  onClickNewRemind() {
-    return new Promise((resolve, rejectPromise) => {
-      stores.Reminds.readFromStore().then((Reminds) => {
-        console.warn('remind are', Reminds);
-        let remind = find(Reminds, { id: 'newRemindId' });
-        console.warn('remind it is', remind);
-
-        if (!remind) {
-          //console.warn("here")
-          remind = request.Remind();
-          remind.id = "newRemindId";
-          stores.Reminds.addReminds(
-            stores.LoginStore.user.phone,
-            remind
-          ).then(() => {});
-        }
-
-        this.props.navigation.navigate("MyTasksView");
-      });
-    });
-  }
+  onClickNewRemind = () => {
+    this.props.navigation.navigate("MyTasksView");
+  };
 
   onClickNewContact() {
     this.props.navigation.navigate("Contacts");
@@ -124,7 +91,7 @@ export default class CreateEvent extends Component {
         }}
       >
         <ActionButton.Item
-          buttonColor="#1CDBAB"
+          buttonColor="#3D90E3"
           /*title="New Relation"*/ onPress={() => {
             this.onClickNewContact();
           }}
@@ -137,17 +104,24 @@ export default class CreateEvent extends Component {
             style={styles.actionButtonIcon}
           />
         </ActionButton.Item>
+
         <ActionButton.Item
-          buttonColor="#9b59b6"
-          /*title=" New Activity  "*/ onPress={() => {
-            this.onClickNewEvent().then(() => {});
+          buttonColor="#663399"
+          /*title=" New Activity  "*/
+          onPress={() => {
+            this.onClickNewEvent();
           }}
           size={65}
         >
-          <Icon name="md-create" style={styles.actionButtonIcon} />
+          <Icon
+            type={'MaterialIcons'}
+            name={'group-add'}
+            style={styles.actionButtonIcon}
+          />
         </ActionButton.Item>
+
         <ActionButton.Item
-          buttonColor="#3D90E3"
+          buttonColor="#cd5c5c"
           /*title="Join Activity"*/ onPress={() => {
             this.navigateToQRScanner();
           }}
@@ -157,12 +131,14 @@ export default class CreateEvent extends Component {
             name="barcode-scan"
             active={true}
             type="MaterialCommunityIcons"
-            style={{ color: '#FEFFDE' }}
+            style={styles.actionButtonIcon}
           />
         </ActionButton.Item>
+
         <ActionButton.Item
           buttonColor="#1abc9c"
-          /*title="My Tasks"*/ onPress={() => {
+          /*title="All Reminds"*/
+          onPress={() => {
             this.onClickNewRemind();
           }}
           size={45}

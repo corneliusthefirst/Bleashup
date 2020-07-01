@@ -4,18 +4,35 @@ import { Text, Button } from "native-base";
 import ColorList from '../../../../colorList';
 import shadower from '../../../../shadower';
 
-export default class CreateButton extends Component{
-    constructor(props){
-        super(props)
-    }
-    render(){
-        return  (         
-      <View style={{alignSelf:"center", width:this.props.width,alignItems:"center",}}>
-        <TouchableOpacity style={{ width:"100%"}} >
-                    <Button onPress={() => requestAnimationFrame(this.props.action)} style={{ borderWidth: 1, borderColor: ColorList.bodyIcon, backgroundColor: ColorList.bodyBackground, ...this.props.style}} rounded>
-           <View style={{width:"100%",alignItems:"center"}}>
-           <Text style={{ color: ColorList.bodyText, fontWeight: 'bold'}}>{this.props.title}</Text>
-           </View> 
+export default class CreateButton extends Component {
+  constructor(props) {
+    super(props);
+  }
+  render() {
+    return (
+      <View
+        style={{
+          alignSelf: 'center',
+          width: this.props.width,
+          alignItems: 'center',
+        }}
+      >
+        <TouchableOpacity style={{ width: "100%" }}>
+          <Button
+            onPress={() => requestAnimationFrame(this.props.action)}
+            style={{
+              borderWidth: 1,
+              borderColor: ColorList.bodyIcon,
+              backgroundColor: ColorList.bodyBackground,
+              ...this.props.style,
+            }}
+            rounded
+          >
+            <View style={{ width: '100%', alignItems: 'center' }}>
+              <Text style={{ color: ColorList.bodyText, fontWeight: 'bold' }}>
+                {this.props.title}
+              </Text>
+            </View>
           </Button>
         </TouchableOpacity>
       </View>

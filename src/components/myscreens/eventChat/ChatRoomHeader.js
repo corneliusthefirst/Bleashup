@@ -1,3 +1,5 @@
+/* eslint-disable react-native/no-inline-styles */
+/* eslint-disable prettier/prettier */
 import React, { PureComponent } from 'react';
 import { View, TouchableOpacity  } from 'react-native';
 import bleashupHeaderStyle from '../../../services/bleashupHeaderStyle';
@@ -9,41 +11,41 @@ import ChatroomMenu from './ChatroomMenu';
 
 export default class ChatRoomHeader extends PureComponent {
     constructor(props){
-        super(props)
-        this.state = {}
+        super(props);
+        this.state = {};
     }
     render(){
         return <View>
             <View
                 style={{
                     ...bleashupHeaderStyle,
-                    width: "100%",
+                    width: '100%',
                     height: ColorList.headerHeight,
                     backgroundColor: ColorList.headerBackground,
-                    flexDirection: "row",
+                    flexDirection: 'row',
                 }}
             >
                 <View
                     style={{
-                        width: "65%",
+                        flex:1,
                         height: ColorList.headerHeight,
-                        flexDirection: "row",
-                        alignSelf: "flex-start",
-                        alignItems: "center",
+                        flexDirection: 'row',
+                        alignSelf: 'flex-start',
+                        alignItems: 'center',
                     }}
                 >
                     <TouchableOpacity style={{
-                        width: "20%",
+                        width: '20%',
                         alignItems: 'flex-start',
                     }} onPress={() => requestAnimationFrame(() => this.props.goback())} >
                         <Icon
                             style={{
                                 color: ColorList.headerIcon,
-                                marginLeft: "13%",
+                                marginLeft: '13%',
                             }}
-                            type={"MaterialIcons"}
-                            name={"arrow-back"}
-                        ></Icon>
+                            type={'MaterialIcons'}
+                            name={'arrow-back'}
+                         />
                     </TouchableOpacity>
                     <View>
                         <Text
@@ -56,8 +58,8 @@ export default class ChatRoomHeader extends PureComponent {
                         >
                             {this.props.roomID === this.props.activity_id ? this.props.activity_name : this.props.roomName}
                         </Text>
-                        <View style={{ height: 10, position: "absolute" }}>
-                            {this.props.typing && <TypingIndicator></TypingIndicator>}
+                        <View style={{ height: 10, position: 'absolute' }}>
+                            {this.props.typing && <TypingIndicator />}
                         </View>
                     </View>
 
@@ -68,15 +70,39 @@ export default class ChatRoomHeader extends PureComponent {
 
                 <View
                     style={{
-                        width: "35%",
-                        flexDirection: "row",
-                        alignSelf: "flex-end",
-                        alignItems: "center",
-                        justifyContent: "space-between",
+                        width: 55,
+                        justifyContent:'center',
+                        alignSelf:'flex-end',
+                        alignItems: 'center',
                         height: 50,
                     }}
                 >
-                    <View style={{ height: ColorList.headerHeight, marginLeft: "10%" }}>
+
+                    <TouchableOpacity
+                        onPress={() => {
+                            requestAnimationFrame(() => this.props.openMenu());
+                        }}
+                        style={{
+                            height: ColorList.headerHeight,
+                            justifyContent: 'center',
+                        }}
+                    >
+                        <Icon
+                            style={{ color: ColorList.headerIcon, fontSize: 35 }}
+                            type={'Ionicons'}
+                            name={'ios-menu'}
+                         />
+                    </TouchableOpacity>
+
+                </View>
+
+            </View>
+        </View>;
+    }
+}
+
+
+                    /*<View style={{ height: ColorList.headerHeight, marginLeft: "10%" }}>
                         <ChatRoomPlus
                             computedMaster={this.props.computedMaster}
                             master={this.props.master}
@@ -95,8 +121,9 @@ export default class ChatRoomHeader extends PureComponent {
                             addPhotos={() => this.props.openPhotoSelector()}
                             addMembers={() => this.props.addMembers()}
                         ></ChatRoomPlus>
-                    </View>
-                    <View style={{ height: ColorList.headerHeight }}>
+                        </View>*/
+
+                    /*<View style={{ height: ColorList.headerHeight }}>
                         <ChatroomMenu
                             showMembers={() => this.props.showMembers()}
                             addMembers={() => this.props.addMembers()}
@@ -112,26 +139,5 @@ export default class ChatRoomHeader extends PureComponent {
                             public={this.props.public_state}
                             opened={this.props.opened}
                             settings={this.props.activity_id === this.props.roomID ? this.props.openSettings : this.props.editCommitteeName}
-                        ></ChatroomMenu>
-                    </View>
-                    <TouchableOpacity
-                        onPress={() => {
-                            requestAnimationFrame(() => this.props.openMenu())
-                        }}
-                        style={{
-                            height: ColorList.headerHeight,
-                            justifyContent: "center",
-                            marginRight: "10%",
-                        }}
-                    >
-                        <Icon
-                            style={{ color: ColorList.headerIcon, fontSize: 35 }}
-                            type={"Ionicons"}
-                            name={"ios-menu"}
-                        ></Icon>
-                    </TouchableOpacity>
-                </View>
-            </View>
-        </View>
-    }
-}
+                         />
+                    </View>*/
