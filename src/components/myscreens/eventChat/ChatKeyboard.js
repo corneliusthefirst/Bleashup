@@ -648,8 +648,9 @@ export default class ChatKeyboard extends PureComponent {
                         style={{
                             flexDirection: "row",
                             alignSelf: "center",
+                            marginBottom: 5,
                             alignSelf: "center",
-                            width: "99%",
+                            width: "100%",
                         }}
                     >
                         <View
@@ -658,6 +659,7 @@ export default class ChatKeyboard extends PureComponent {
                                 fontSize: 17,
                                 bottom: 0,
                                 flexDirection: "row",
+                                marginBottom: 3,
                                 justifyContent: "space-between",
                                 borderColor: "#1FABAB",
                                 borderWidth: 0,
