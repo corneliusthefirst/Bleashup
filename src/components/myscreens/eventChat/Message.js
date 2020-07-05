@@ -405,8 +405,8 @@ export default class Message extends Component {
             alignSelf: this.state.sender ? "flex-start" : "flex-end",
         };
         let color = this.state.sender
-            ? senTBoxColor[Math.floor(Math.random() * 6)]//ColorList.receivedBox
-            : ColorList.senTBoxColor[Math.floor(Math.random() * 6)];
+            ? ColorList.senTBoxColor[ColorList.sendRand()]//ColorList.receivedBox
+            : ColorList.senTBoxColor[ColorList.sendRand()];
         let GeneralMessageBoxStyle = {
             maxWidth: 300,
             flexDirection: "column",
