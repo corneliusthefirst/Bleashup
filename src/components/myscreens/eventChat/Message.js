@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import React, { Component, PureComponent } from "react";
 import {
     View,
@@ -23,6 +22,7 @@ import DateView from "./DateView";
 import NewSeparator from "./NewSeparator";
 import moment from "moment";
 import shadower from "../../shadower";
+import Voter from "./Voter";
 import { find } from "lodash";
 import { isEqual } from "lodash";
 import formVoteOptions from "../../../services/formVoteOptions";
@@ -31,8 +31,9 @@ import ReactionModal from "./ReactionsModal";
 import stores from "../../../stores";
 import rounder from "../../../services/rounder";
 import emitter from "../../../services/eventEmiter";
-import Swipeout from './Swipeout';
-import BleashupShapes from '../../mainComponents/BleashupShapes';
+import { SwipeRow } from 'react-native-swipe-list-view';
+import Votes from "../votes";
+
 export default class Message extends Component {
     constructor(props) {
         super(props);
@@ -67,7 +68,7 @@ export default class Message extends Component {
                     : */moment(this.props.message.created_at).format("HH:mm"),
             creator:
                 this.props.message.sender &&
-                this.props.message.sender.phone === this.props.creator,
+                this.props.message.sender.phone == this.props.creator,
             replying: false,
             loaded: true,
         };
@@ -348,7 +349,7 @@ export default class Message extends Component {
     handLongPress() {
         this.replying = false;
         let reply = this.props.choseReply(this.props.message)
-        this.props.showActions(this.props.message, reply,!this.state.sender);
+        this.props.showActions(this.props.message, reply);
         Vibration.vibrate(this.longPressDuration);
     }
     testForImoji(message) {
@@ -395,15 +396,7 @@ export default class Message extends Component {
             this.props.messagelayouts[this.props.message.id]
             ? this.props.messagelayouts[this.props.message.id]
             : this.placeHolder[this.props.message.type];
-
-
-
-
     render() {
-
-        let  additionalStyles = !this.state.sender && this.props.isfirst ? {paddingTop:5,paddingLeft:5} : {padding:5};
-        let  viewdifferentStyle =    !this.state.sender ? (this.state.different ? {marginRight:0} : {marginRight:10}) : (this.state.different ? {marginLeft:0} : {marginLeft:10}) ;
-
         let topMostStyle = {
             marginLeft: this.state.sender ? "1%" : 0,
             marginRight: !this.state.sender ? "1%" : 0,
@@ -415,11 +408,12 @@ export default class Message extends Component {
             ? ColorList.receivedBox
             : ColorList.senTBoxColor;
         let GeneralMessageBoxStyle = {
-            maxWidth: 295,
+            maxWidth: 300,
             flexDirection: "column",
             minWidth: 60,
             minHeight: 20,
             overflow: "hidden",
+            borderBottomLeftRadius: ColorList.chatboxBorderRadius,
             borderColor: color,
             borderTopLeftRadius: this.state.sender
                 ? 0
@@ -432,10 +426,7 @@ export default class Message extends Component {
                 : this.props.message.reply && this.props.message.reply.type_extern
                     ? ColorList.chatboxBorderRadius
                     : null,
-            borderBottomLeftRadius: this.state.sender
-               ? 0 : ColorList.chatboxBorderRadius,
         };
-
         let subNameStyle = {
             paddingBottom: 0,
             flexDirection: "row",
@@ -504,21 +495,30 @@ export default class Message extends Component {
                                         {this.reactions(this.state.sender)}
                                     </View>
                                 ) : null}
-                                <Swipeout
-                                    onLongPress={this.handLongPress.bind(this)}
-                                    swipeRight={this.handleReply.bind(this)}
-                                    swipeLeft={() => {
-                                        Vibration.vibrate([100, 0, 0, 100])
-                                        this.props.forwardMessage()
+                                <SwipeRow
+                                    swipeGestureEnded={(key, data) => {
+                                        if (data.translateX >= 50) {
+                                            this.handleReply()
+                                        } else if (data.translateX <= -50) {
+                                            Vibration.vibrate([100, 0, 0, 100])
+                                            this.props.forwardMessage()
+                                        }
                                     }}
+                                    leftOpenValue={0}
+                                    rightOpenValue={0}
+                                    swipeToClosePercent={50}
+                                    style={{ backgroundColor: "transparent", width: "100%" }}
                                 >
-                                <View style={{flexDirection:'row', ... viewdifferentStyle }}>
-
-                                {this.state.different && this.state.sender ?
-                                        BleashupShapes.triangleCornerBottomRight({alignSelf:'flex-end', borderTopColor:ColorList.receivedBox,marginRight:-5})
-                                 :  null}
-
-
+                                    <View
+                                        style={{
+                                            marginTop: 'auto',
+                                            marginBottom: 'auto',
+                                            alignSelf: 'center',
+                                            flexDirection: 'row',
+                                            justifyContent: 'space-between',
+                                            width: "90%",
+                                        }}>
+                                    </View>
                                     <View
                                         style={{
                                             flexDirection: "row",
@@ -615,7 +615,6 @@ export default class Message extends Component {
                                                             style={{
                                                                 marginLeft: '1%',
                                                                 marginRight: '1%',
-                                                                ...additionalStyles,                              
                                                             }}
                                                         >
                                                             {this.chooseComponent(
@@ -688,16 +687,7 @@ export default class Message extends Component {
                                             </View>
                                         ) : null}
                                     </View>
-
-
-                                     {this.state.different && !this.state.sender ?
-                                        BleashupShapes.triangleCornerBottomLeft({alignSelf:'flex-end', borderTopColor: ColorList.senTBoxColor,marginLeft:-5})
-                                      : null}
-
-                                    </View>
-
-
-                                </Swipeout>
+                                </SwipeRow>
                             </View>
                             {this.state.isReacting ? (
                                 <View
@@ -730,9 +720,7 @@ export default class Message extends Component {
                                     ></ReactionModal>
                                 </View>
                             ) : null}
-                             
                         </View>
-                       
                     )}</View>;
     }
 }
