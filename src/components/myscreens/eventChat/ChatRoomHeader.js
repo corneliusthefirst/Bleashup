@@ -89,7 +89,7 @@ export default class ChatRoomHeader extends PureComponent {
                         }}
                     >
                         <Icon
-                            style={{ color: ColorList.senTBoxColor, fontSize: 25 }}
+                            style={{ color: ColorList.likeActive, fontSize: 25 }}
                             type={'Entypo'}
                             name={'phone'}
                          />

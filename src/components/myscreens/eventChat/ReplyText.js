@@ -291,7 +291,7 @@ export default class ReplyText extends Component {
                         style={{
                           alignSelf:"flex-end",
                           marginLeft: this.props.reply.sourcer ? "1%" : null,
-                          width: this.props.reply.sourcer ? "74%" : "94%",
+                          width: this.props.reply.sourcer ? "74%" : "100%",
                         }}
                       >
                         {this.props.reply.title ? (

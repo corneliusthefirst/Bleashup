@@ -406,7 +406,7 @@ export default class Message extends Component {
         };
         let color = this.state.sender
             ? ColorList.receivedBox
-            : ColorList.senTBoxColor;
+            : ColorList.senTBoxColor[Math.floor(Math.random() * 6)];
         let GeneralMessageBoxStyle = {
             maxWidth: 300,
             flexDirection: "column",
@@ -575,7 +575,6 @@ export default class Message extends Component {
                                                     {this.props.message.reply ? (
                                                         <View
                                                             style={{
-                                                                padding: "1%",
                                                                 alignItems: 'center',
                                                                 alignSelf: 'center',
                                                                 marginTop: ".4%",
@@ -583,7 +582,7 @@ export default class Message extends Component {
                                                                 (this.props.message.type == "photo" ||
                                                                     this.props.message.type == "video" ||
                                                                     this.props.message.type == "video_upload" ||
-                                                                    this.props.message.type == "photo_upload") ? 250 : "100%",
+                                                                    this.props.message.type == "photo_upload") ? 240 : "98%",
                                                             }}
                                                         >
                                                             <ReplyText

@@ -68,7 +68,14 @@ class colorlist {
   indicatorInverted = '#DDECE9';
 
   //messages
-  senTBoxColor = '#48d1cc';
+  senTBoxColor = ["#FEF0EF", "#FEF7EF", "#FEFDEF", "#EFFEF8", "#EFF8FE", "#F8EFFE"]
+  //7 "#FEF7EF"
+  // 6 "#FEFDEF"
+  // 5 "#EFFEF8"
+   //4 "#EFF8FE" 
+  // 3"#F8EFFE"
+  //2 "#D2E5FB"
+  //1 '#BCEFD7';
   receivedBox = 'white';
 
   //Array Iterate

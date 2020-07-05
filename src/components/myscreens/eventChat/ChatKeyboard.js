@@ -674,12 +674,12 @@ export default class ChatKeyboard extends PureComponent {
                                 <View
                                     style={{
                                         alignItems: "center",
-                                        ...rounder(30, ColorList.senTBoxColor),
+                                        ...rounder(30, ColorList.bodyBackground),
                                     }}
                                 >
                                     <Icon
                                         style={{
-                                            color: ColorList.bodyBackground,
+                                            color: ColorList.indicatorColor,
                                             fontSize: 20,
                                         }}
                                         type={"MaterialCommunityIcons"}
@@ -701,16 +701,16 @@ export default class ChatKeyboard extends PureComponent {
                                 <View
                                     style={{
                                         alignItems: "center",
-                                        ...rounder(30, ColorList.senTBoxColor),
+                                        ...rounder(30, ColorList.bodyBackground),
                                     }}
                                 >
                                     <Icon
                                         style={{
-                                            color: ColorList.bodyBackground,
+                                            color: ColorList.indicatorColor,
                                             fontSize: 20,
                                         }}
                                         type={"Ionicons"}
-                                        name={"ios-add"}
+                                        name={this.state.isOptionsOpened ? "ios-close": "ios-add"}
                                     ></Icon>
                                 </View>
                             </TouchableOpacity>
@@ -779,7 +779,7 @@ export default class ChatKeyboard extends PureComponent {
                                 >
                                     <Icon
                                         style={{
-                                            color: "gray",
+                                            color: ColorList.likeActive,
                                             alignSelf: "flex-end",
                                             fontSize: 20,
                                         }}
@@ -811,7 +811,7 @@ export default class ChatKeyboard extends PureComponent {
                             <View
                                 style={{
                                     alignSelf: "flex-end",
-                                    ...rounder(30, ColorList.senTBoxColor),
+                                    ...rounder(30, ColorList.bodyBackground),
                                     alignItems: "center",
                                 }}
                             >
@@ -820,7 +820,7 @@ export default class ChatKeyboard extends PureComponent {
                                     !this.state.showCaption ? (
                                         <Icon
                                             style={{
-                                                color: ColorList.bodyIcon,
+                                                color: ColorList.likeActive,
                                                 fontSize: 23,
                                                 alignSelf: "center",
                                             }}
@@ -830,7 +830,7 @@ export default class ChatKeyboard extends PureComponent {
                                     ) : (
                                         <Icon
                                             style={{
-                                                color: ColorList.bodyIcon,
+                                                color: ColorList.likeActive,
                                                 fontSize: 23,
                                                 alignSelf: "center",
                                             }}

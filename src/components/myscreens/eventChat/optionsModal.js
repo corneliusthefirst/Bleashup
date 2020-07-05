@@ -25,6 +25,7 @@ export default class OptionsModal extends BleashupModal {
   position = 'bottom';
   modalWidth = '96%'
   modalHeight = 220;
+  
   style = {bottom:60}
   coverScreen= true;
 

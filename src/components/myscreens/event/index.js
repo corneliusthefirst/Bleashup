@@ -262,7 +262,7 @@ export default class Event extends Component {
             openMenu={() => this.openMenu()}
             showLoader={() => this.startLoader()}
             working={this.state.working}
-            addRemind={(members) => this.addRemindForCommittee(members)}
+            addRemind={(members) => this.addRemindForCommittee(this.state.roomMembers)}
             stopLoader={() => this.stopLoader()}
             showProfile={(pro) => this.showProfile(pro)}
             roomName={this.state.roomName}
