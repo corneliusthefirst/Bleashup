@@ -816,7 +816,7 @@ class ChatRoom extends AnimatedComponent {
                                                 ) : (
                                                         // ***************** KeyBoard Displayer *****************************
 
-                                                        <View>{this.keyboardView()}</View>
+                                                        <View style={{ flex: 1, justifyContent: 'flex-end' }}>{this.keyboardView()}</View>
                                                     )}
                                             </View>
                                         </ScrollView>

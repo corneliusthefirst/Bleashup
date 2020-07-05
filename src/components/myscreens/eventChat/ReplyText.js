@@ -101,6 +101,7 @@ export default class ReplyText extends Component {
             backgroundColor: ColorList.replyBackground,
             padding: "1%", //margin: '1%',
             minHeight: 50,
+            maxWidth:"100%",
             maxHeight: 350,
             minWidth: 100,
             borderTopLeftRadius: 5,
