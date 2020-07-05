@@ -1,17 +1,35 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { View, StyleSheet } from 'react-native';
 
-var TriangleCorner = React.createClass({
-  render: function () {
-    return <View style={[styles.triangleCorner, this.props.style]} />;
-  },
-});
+class BleashupShape extends Component {
+  TriangleCorner = (style) => {
+    return <View style={[styles.triangleCorner, style]} />;
+  };
 
-var TriangleCornerTopRight = React.createClass({
-  render: function () {
-    return <TriangleCorner style={styles.triangleCornerTopRight} />;
-  },
-});
+  TriangleCornerTopRight = (style) => {
+    return (
+      <View
+        style={[styles.triangleCorner, styles.triangleCornerTopRight, style]}
+      />
+    );
+  };
+
+  triangleCornerBottomLeft = (style) => {
+    return (
+      <View
+        style={[styles.triangleCorner, styles.triangleCornerBottomLeft, style]}
+      />
+    );
+  };
+
+  triangleCornerBottomRight = (style) => {
+    return (
+      <View
+        style={[styles.triangleCorner, styles.triangleCornerBottomRight, style]}
+      />
+    );
+  };
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -21,15 +39,21 @@ const styles = StyleSheet.create({
     width: 0,
     height: 0,
     backgroundColor: 'transparent',
-    borderStyle: 'solid',
-    borderRightWidth: 100,
-    borderTopWidth: 100,
+    //borderStyle: 'solid',
+    borderRightWidth: 20,
+    borderTopWidth: 15,
     borderRightColor: 'transparent',
-    borderTopColor: 'red',
   },
   triangleCornerTopRight: {
     transform: [{ rotate: '90deg' }],
   },
+  triangleCornerBottomLeft: {
+    transform: [{ rotate: '270deg' }],
+  },
+  triangleCornerBottomRight: {
+    transform: [{ rotate: '180deg' }],
+  },
 });
 
-export default { TriangleCorner, TriangleCornerTopRight };
+const BleashupShapes = new BleashupShape();
+export default BleashupShapes;

@@ -115,6 +115,14 @@ export default class SWView extends Component {
         this.props.navigatePage('Home');
     }
 
+    navigateToProfile = () => {
+        stores.LoginStore.getUser().then(user => {
+          !user.status ? user.status = "" : null;
+          BeNavigator.navigateTo("Profile",{userInfo:user});
+         });
+     }
+
+
     render() {
         return (<View style={{
             backgroundColor: colorList.bodyBackground,
@@ -188,7 +196,7 @@ export default class SWView extends Component {
                     </View>
 
                     <View style={{height:50 ,justifyContent:'center', alignItems:'center',position:'absolute',bottom:0,width:screenWidth * 0.18}}>
-                        <Icon style={{ color: colorList.bodyIcon, fontSize: 50 }} type="EvilIcons" name="user" onPress={() => BeNavigator.navigateTo("Profile")}></Icon>
+                        <Icon style={{ color: colorList.bodyIcon, fontSize: 50 }} type="EvilIcons" name="user" onPress={() => this.navigateToProfile()}></Icon>
                      </View>
 
                 </View>

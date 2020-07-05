@@ -39,6 +39,9 @@ import ColorList from './components/colorList';
 import SwiperComponent from './components/SwiperComponent/index';
 import CameraScreen from './components/mainComponents/BleashupCamera/index';
 import TimerVideo from './components/mainComponents/BleashupCamera/timer/timer';
+import MuteView from './components/myscreens/settings/mutepage';
+import BlockView from './components/myscreens/settings/blockpage';
+import ActuView from './components/myscreens/settings/editActu';
 /*
 let {height, width} = Dimensions.get('window');
 EStyleSheet.build({
@@ -73,6 +76,9 @@ const AppNavigator = createStackNavigator(
     SwiperComponent: { screen: SwiperComponent },
     CameraScreen: { screen: CameraScreen },
     TimerVideo: { screen: TimerVideo },
+    MuteView: { screen: MuteView },
+    BlockView: { screen: BlockView },
+    Actu: { screen: ActuView },
   },
   {
     initialRouteName: "LoginHome",

@@ -31,7 +31,7 @@ export default class SettingView extends Component {
           user.status = "";
         }
         this.setState({userInfo:user,isMount:true}) });
-      }, 50)
+      }, 20)
 
   }
 

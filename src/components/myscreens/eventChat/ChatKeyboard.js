@@ -674,7 +674,7 @@ export default class ChatKeyboard extends PureComponent {
                                 <View
                                     style={{
                                         alignItems: "center",
-                                        ...rounder(30, ColorList.indicatorColor),
+                                        ...rounder(30, ColorList.senTBoxColor),
                                     }}
                                 >
                                     <Icon
@@ -701,7 +701,7 @@ export default class ChatKeyboard extends PureComponent {
                                 <View
                                     style={{
                                         alignItems: "center",
-                                        ...rounder(30, ColorList.indicatorColor),
+                                        ...rounder(30, ColorList.senTBoxColor),
                                     }}
                                 >
                                     <Icon

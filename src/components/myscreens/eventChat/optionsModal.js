@@ -20,7 +20,7 @@ export default class OptionsModal extends BleashupModal {
   }
   backdropOpacity = 0.01
   borderRadius = 10
-  modalBackground = "rgba(255,255,255,0.8)";
+  modalBackground = "rgba(255,255,255,255)";
   entry = 'bottom';
   position = 'bottom';
   modalWidth = '96%'
@@ -367,7 +367,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'transparent',
         borderLeftColor: 'transparent',
         borderRightColor: 'transparent',
-        borderTopColor: "rgba(255,255,255,0.8)",
+        borderTopColor: "rgba(255,255,255,255)",
         marginLeft:'11%',
      },
 });

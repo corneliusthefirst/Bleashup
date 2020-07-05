@@ -69,9 +69,9 @@ const VideoView = (props) => {
                             }} 
                             toggleResizeModeOnFullscreen={false}
                             //pictureInPicture={true}
-                            resizeMode={"contain"} 
-                            disableVolume={true} 
-                            seekColor="white" 
+                            resizeMode={props.resizeMode ? props.resizeMode : "contain"}
+                            disableVolume={true}
+                            seekColor="white"
                             controlTimeout={null}
                             //disablePlayPause={true}
                             //disableFullscreen={true}

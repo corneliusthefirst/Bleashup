@@ -60,7 +60,7 @@ export default class PickedImage extends BleashupModal {
       <View style={[styles.container, { position: 'relative' }]}>
 
         {this.props.data.photo !== '' ?
-         <Image  source={{uri:this.props.data.photo}}  style={{height: screenHeight - (screenHeight / 4), width: screenWidth,marginTop:screenHeight / 8 }} resizeMode={"contain"} />
+         <Image  source={{uri:this.props.data.photo}}  style={{height: screenHeight - (screenHeight / 4), width: screenWidth,marginTop:screenHeight / 8 }} resizeMode={"cover"} />
          :
          <View style={{marginTop: screenHeight / 8}}>
          <VideoView
@@ -69,6 +69,7 @@ export default class PickedImage extends BleashupModal {
             //console.warn("item loaded", item);
             //this.props.onVideoLoaded(item);
           }}
+          resizeMode={"cover"}
           height={screenHeight - (screenHeight / 4)}
           width={screenWidth - 14}
           video={this.props.data.video}
@@ -91,14 +92,13 @@ export default class PickedImage extends BleashupModal {
             height={screenHeight / 11}
             value={this.state.message}
             onChange={this.onChangedMessage}
-            placeholder={'write something ...'}
+            placeholder={this.props.messagePlaceHolder}
             backgroundColor={ColorList.transparent}
             color={ColorList.bodyBackground}
             placeholderTextColor={'#F5FFFA'}
-            multiline={true}
-            autogrow
-            //numberOfLines={4}
-            maxLength={2000}
+            multiline={this.props.multiline}
+            autogrow= {this.props.multiline ? true : false}
+            maxLength={this.props.maxLength}
             />
        </View> : null}
 

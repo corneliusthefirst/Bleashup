@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React, { Component } from "react";
 import autobind from "autobind-decorator";
 import {
@@ -19,6 +20,9 @@ import ColorList from '../../colorList';
 import Pickers from '../../../services/Picker';
 import FileExchange from '../../../services/FileExchange';
 import rounder from "../../../services/rounder";
+import BeNavigator from "../../../services/navigationServices";
+import BleashupCamera from '../../mainComponents/BleashupCamera/index';
+import SwiperView from '../../mainComponents/swipeViews';
 
 
 let { height, width } = Dimensions.get('window');
@@ -35,6 +39,7 @@ export default class ProfileView extends Component {
       coverscreen:true,
       uploading:false,
       photo:"",
+      openBCamera:false,
     }
     if(this.props.navigation.getParam("update")==true){
          this.init
@@ -44,8 +49,7 @@ export default class ProfileView extends Component {
     setTimeout(() => {
       this.setState({isMount:true,userInfo:this.props.navigation.getParam("userInfo")})
       this.setState({photo:this.state.userInfo.profile})
-  }, 50)
-   
+  }, 50);
   }
   componentDidMount(){
     this.init();
@@ -53,18 +57,21 @@ export default class ProfileView extends Component {
 
   updateName = () => {
     this.setState({updatetitle:"Write your name"})
-    this.setState({position:"bottom"})
+    this.setState({position:"bottom"});
     this.setState({coverscreen:true});
-    this.setState({update:true})
+    this.setState({update:true});
 
   }
-  editActu = ()=>{
+
+  editActu = () => {
+    console.warn("here");
     this.props.navigation.navigate("Actu",{userInfo:this.state.userInfo});
   }
 
     //for photo
-    TakePhotoFromCamera = ()=>{    
-      Pickers.SnapPhoto(true).then(res => {
+    TakePhotoFromCamera = () => {
+      this.setState({openBCamera:true});
+      /*Pickers.SnapPhoto(true).then(res => {
         this.setState({uploading:true})
         let exchanger = new FileExchange(res.source,'/Photo/',res.size,0,null,(newDir,path,total)=>{
           this.state.userInfo.profile = path;
@@ -75,108 +82,103 @@ export default class ProfileView extends Component {
           })
         },() => {
         Toast.show({text:'Unable To upload photo',position:'top'})
-        this.setState({uploading:false})
+        this.setState({uploading:false});
         },(error) => {
             Toast.show({ text: 'Unable To upload photo', position: 'top' })
             this.setState({uploading: false})
         },res.content_type,res.filename,'/photo')
         this.state.photo?exchanger.deleteFile(this.state.photo):null
         exchanger.upload(0,res.size)
-      });
+      });*/
   }
 
+  photoTaken = (result) => {
+    this.state.userInfo.profile = result.source;
+    this.state.userInfo.status = result.message;
+    this.setState({photo:result.source});
+    this.setState({userInfo: this.state.userInfo});
+    stores.LoginStore.updateProfile(result.source).then(() => {
+      /*stores.LoginStore.updateStatus(result.message).then(() => {
+        this.setState({uploading: false});
+        console.warn("user is", this.state.userInfo);
+      });*/
+    });
+  }
 
-  
-  render() {
+  uploadError = (e) => {
+    this.setState({uploading: false});
+  }
+
+  renderPhoto = () => {
     return (
-      <Container style={{ backgroundColor: ColorList.bodyBackground,flexDirection:"column",width:"100%",height:"100%" }}>
+      this.state.uploading ? <Spinner/>:
+        <View style={{height:300,width:"100%",justifyContent:"center",alignItems:"center"}}>
+        <TouchableWithoutFeedback onPress={() => {
+            requestAnimationFrame(() => {this.setState({enlarge:true})});
+        }}>
+          {this.state.userInfo.profile  && testForURL(this.state.userInfo.profile ) ? <CacheImages   {...this.props}
+              source={{ uri: this.state.userInfo.profile }} style={{height:ColorList.containerHeight/3,width:ColorList.containerHeight/3,borderRadius:ColorList.containerHeight/6}} /> :
+           <Image source={require("../../../../Images/avatar.svg")} style={{height:ColorList.containerHeight/3,width:ColorList.containerHeight/3,borderRadius:ColorList.containerHeight/6}} ></Image>}
+        </TouchableWithoutFeedback>
 
-        <View style={{ height:ColorList.headerHeight, }}>
-           <View style={{
-                ...bleashupHeaderStyle,
-                height:ColorList.headerHeight
-              }}>
-                 <View style={{flex:1,flexDirection:"row",width:width/3,marginLeft:width/25,justifyContent:"space-between",alignItems:"center"}}>
-                 <Icon name="arrow-back" active={true} type="MaterialIcons" style={{ color: ColorList.headerIcon, }} onPress={() => this.props.navigation.navigate("Settings")} />
-                 <Text style={{fontSize:18,fontWeight:"bold",marginRight:"16%"}}>Profile</Text>
-                 </View>
+        <TouchableWithoutFeedback  onPress={this.TakePhotoFromCamera} >
+          <View style={{...shadower(),...rounder(52,ColorList.senTBoxColor),alignItems:"center",borderWidth:2,borderColor:ColorList.bodyBackground,position:'absolute',right:width/6,bottom:40}}>
+            <Icon name="add-a-photo" active={true} type="MaterialIcons" style={{ color:ColorList.bodyBackground }}  onPress={this.TakePhotoFromCamera} />
           </View>
-        </View>
-        
-    { this.state.isMount? 
-    <View style={{flexDirection:"column",height:height - height/10,width:"100%"}}>
-    
-       <View style={{width:"100%",justifyContent:"center",height:height/8,flexDirection:"row",marginTop:height/30}}>
+        </TouchableWithoutFeedback>
+    </View>
+
+    );
+  }
+
+  renderProfileInfo = () => {
+    return (
+      <View style={{height:300,width:"85%",justifyContent:"center",alignItems:"center",flexDirection:'column'}}>
+
+       <View style={{width:"100%",justifyContent:"center",height:height/8,flexDirection:"row",marginTop:15}}>
           <View style={{width:"80%",flexDirection:"row"}}>
-            <View style={{width:"10%"}}>
+
             <Icon name="user" active={true} type="AntDesign" style={{ color: ColorList.headerIcon, }}/>
-            </View>
-            <View style={{width:"65%",marginLeft:"5%",flexDirection:"column"}}>
+
+            <View style={{flex:1,marginLeft:"5%",flexDirection:"column"}}>
                <Text style={{alignSelf:"flex-start"}} note>Name</Text>
                <Title style={{alignSelf:"flex-start"}}>{this.state.userInfo.nickname}</Title>
             </View>
           </View>
-         
+
           <View style={{width:"10%"}}>
-             <Icon name="edit" active={true} type="MaterialIcons" style={{ color:ColorList.bodySubtext }} onPress={this.updateName} />
+             <Icon name="edit" type="MaterialIcons" style={{ color:ColorList.bodySubtext }} onPress={this.updateName} />
           </View>
-         
 
         </View>
 
-      
+        <View style={{width:"100%",justifyContent:"center",height:height/8,flexDirection:"row",marginTop:15}}>
 
-      {this.state.uploading ? <Spinner/>:
-             <View style={{height:ColorList.containerHeight/3,width:"100%",justifyContent:"center",alignItems:"center"}}>
-          
-             <TouchableWithoutFeedback onPress={() => {
-                 requestAnimationFrame(() => {this.setState({enlarge:true})});
-             }}>
-               {this.state.userInfo.profile  && testForURL(this.state.userInfo.profile ) ? <CacheImages   {...this.props}
-                   source={{ uri: this.state.userInfo.profile }} style={{height:ColorList.containerHeight/3,width:width-width/9,borderRadius:14}} /> :
-                <Image source={require("../../../../Images/avatar.svg")} style={{height:ColorList.containerHeight/3,width:width-width/9,borderRadius:14}} ></Image>}
-             </TouchableWithoutFeedback>
- 
-             <TouchableWithoutFeedback  onPress={this.TakePhotoFromCamera} >
-               <View style={{...shadower(),height:52,width:52,borderRadius:26,backgroundColor:"#1FABAB",alignItems:"center",justifyContent:"center",alignSelf:"flex-end",marginTop:-height/20,marginRight:width/25,borderWidth:2,borderColor:ColorList.bodyBackground}}>
-                 <Icon name="add-a-photo" active={true} type="MaterialIcons" style={{ color:ColorList.bodyBackground }}  onPress={this.TakePhotoFromCamera} />
-               </View>
-             </TouchableWithoutFeedback>
-         </View>
-      }
+          <View style={{width:"80%",flexDirection:"row"}}>
 
-            
-     
-
-        <View style={{width:"100%",justifyContent:"center",flexDirection:"row",marginTop:height/30}}>
-          <View style={{width:"90%",flexDirection:"column"}}>
-            <View style={{flexDirection:"row",justifyContent:"flex-start"}}>
             <Icon name="infocirlceo" active={true} type="AntDesign" style={{ color:ColorList.headerIcon, }}/>
-            <Text style={{alignSelf:"flex-start",marginLeft:"3%"}} note>Actu</Text>
-            </View>
 
-            <View style={{width:"92%",marginLeft:"12%",flexDirection:"row"}}>
-              <View style={{width:"75%"}}>
-              <Title style={{alignSelf:"flex-start"}} numberOfLines={1}  >{this.state.userInfo.status}</Title>
-            </View>
-
-               <View style={{width:"20%",marginLeft:"7%"}}>
-               <Icon name="edit" active={true} type="MaterialIcons" style={{ color:ColorList.bodySubtext }} onPress={this.editActu}/>
-               </View>
+            <View style={{flex:1,marginLeft:"5%",flexDirection:"column"}}>
+            <Text style={{alignSelf:"flex-start"}} note>Actu</Text>
+            <Title style={{alignSelf:"flex-start"}} numberOfLines={1}  >{this.state.userInfo.status}</Title>
             </View>
 
           </View>
 
+          <View style={{width:"10%"}}>
+          <Icon name="edit"  type="MaterialIcons" style={{ color:ColorList.bodySubtext }} onPress={this.editActu}/>
+          </View>
 
         </View>
 
 
         <View style={{width:"100%",justifyContent:"center",flexDirection:"row",marginTop:height/30}}>
+
           <View style={{width:"90%",flexDirection:"row"}}>
-            <View style={{width:"10%"}}>
+
             <Icon name="phone" active={true} type="FontAwesome" style={{ color:ColorList.headerIcon }}/>
-            </View>
-            <View style={{width:"65%",marginLeft:"2%",flexDirection:"column"}}>
+
+            <View style={{flex:1,marginLeft:"5%",flexDirection:"column"}}>
                <Text style={{alignSelf:"flex-start"}} note>Telephone</Text>
                <Title style={{alignSelf:"flex-start",marginLeft:2}}>{this.state.userInfo.phone}</Title>
             </View>
@@ -184,16 +186,70 @@ export default class ProfileView extends Component {
 
         </View>
 
-  
-        <EditUserModal isOpen={this.state.update} onClosed={()=>{this.setState({update:false})}} type="nickname" userInfo={this.state.userInfo} title={this.state.updatetitle} position={this.state.position} coverscreen={this.state.coverscreen} maxLength={20} />
 
+      </View>
+    );
+  }
+
+
+
+
+
+
+
+  render() {
+    return (
+      <Container style={{ backgroundColor: ColorList.bodyBackground,flexDirection:"column",width:"100%",height:"100%" }}>
+
+        <View style={{ height:ColorList.headerHeight}}>
+           <View style={{
+                ...bleashupHeaderStyle,
+                height:ColorList.headerHeight
+              }}>
+                 <View style={{flex:1,flexDirection:"row",width:width/3,marginLeft:width/25,justifyContent:"space-between",alignItems:"center"}}>
+                 <Icon name="arrow-back" active={true} type="MaterialIcons" style={{ color: ColorList.headerIcon }} onPress={() => this.props.navigation.goBack()} />
+                 <Text style={{fontSize:18,fontWeight:"bold",marginRight:"16%"}}>Profile</Text>
+                 </View>
+          </View>
+        </View>
+
+     { this.state.isMount ?
+      <View style={{flexDirection:"column",height:height - height/10,width:"100%"}}>
+
+        <SwiperView swipeArray = {[this.renderPhoto(),this.renderProfileInfo()]} backgroundColor="white" height={300} />
+
+       <View style={{flexDirection:1,flexDirection:'column',alignItems:'center'}}>
+
+           <View style={{width:'80%',flexDirection:'row',marginTop:50}}>
+            <Icon name="sound-mute" active={true} type="Entypo" style={{ color: ColorList.headerIcon, }} onPress={() => this.props.navigation.navigate("Settings")} />
+            <TouchableWithoutFeedback  style={{flex:1}} onPress={()=> BeNavigator.navigateTo("MuteView")}>
+              <Text style={{fontSize:17,fontWeight:"400",marginLeft:"5%"}}>Mute Settings</Text>
+            </TouchableWithoutFeedback>
+
+           </View>
+
+            <View style={{width:'80%',flexDirection:'row',marginTop:25}}>
+              <Icon name="block" active={true} type="MaterialIcons" style={{ color: 'red', }} onPress={() => this.props.navigation.navigate("Settings")} />
+              <TouchableWithoutFeedback style={{flex:1}}  onPress={()=> BeNavigator.navigateTo("BlockView")}>
+               <Text style={{fontSize:17,fontWeight:"400",marginLeft:"5%"}}>Block Settings</Text>
+              </TouchableWithoutFeedback>
+            </View>
+
+       </View>
+
+
+
+
+        <EditUserModal isOpen={this.state.update} onClosed={()=>{this.setState({update:false});}} type="nickname" userInfo={this.state.userInfo} title={this.state.updatetitle} position={this.state.position} coverscreen={this.state.coverscreen} maxLength={20} />
 
         </View>
-        :null}
-        
-     
+      : null}
+
+        {this.state.openBCamera &&  <BleashupCamera  isOpen={this.state.openBCamera} onClosed={()=>{this.setState({openBCamera:false});}} onCaptureFinish={(result)=>{this.photoTaken(result)}} 
+        nomessage={false} novideo={true} messagePlaceHolder = {"say something for your status"} maxLength={30} multiline={false}
+         directreturn={false} onCameraReady={()=>{console.log('camera is  ready');}}  onMountError = {(e)=>this.uploadError(e)} />}
         {this.state.enlarge ? <PhotoViewer open={this.state.enlarge} hidePhoto={() => this.setState({ enlarge: false })} photo={this.state.userInfo.profile} /> : null}
       </Container>
-    )
+    );
   }
 }

@@ -232,11 +232,19 @@ class Home extends Component {
      return item;
   }
 
+  /*
   settings = () => {
-    //BeNavigator.navigateTo("Settings");
-    BeNavigator.pushTo('SwiperComponent',{dataArray: media,mapFunction:this.mapFunction,currentIndex: 0});
+    BeNavigator.navigateTo("Settings");
+    //BeNavigator.pushTo('SwiperComponent',{dataArray: media,mapFunction:this.mapFunction,currentIndex: 0});
     //this.setState({ openBCamera: true });
-  };
+  };*/
+
+  settings = () => {
+    stores.LoginStore.getUser().then(user => {
+      !user.status ? user.status = "" : null;
+      BeNavigator.navigateTo("Profile",{userInfo:user});
+    });
+ }
 
   handleURL = ({ url }) => {
     console.warn('responding to links');

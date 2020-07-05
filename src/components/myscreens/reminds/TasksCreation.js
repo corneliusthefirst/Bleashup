@@ -62,6 +62,7 @@ import RemindMembers from "./RemindMembers";
 import RemindsTypeMenu from "./RemindTypeMenu";
 import PickersUpload from "../event/createEvent/components/PickerUpload";
 import MediaPreviewer from "../event/createEvent/components/MediaPeviewer";
+import rounder from "../../../services/rounder";
 
 let { height, width } = Dimensions.get("window");
 
@@ -665,7 +666,7 @@ export default class TasksCreation extends BleashupModal {
         keyboardShouldPersistTaps={"handled"}
         showsVerticalScrollIndicator={false}
       >
-        <View style={{ flex: 1, justifyContent: "flex-end" }}>
+        <View style={{ flex: 1, justifyContent: "flex-end"}}>
           <CreationHeader
             back={this.goback.bind(this)}
             title={
@@ -746,7 +747,7 @@ export default class TasksCreation extends BleashupModal {
             }
           />
 
-          <View style={{ marginTop: "3%" }}>
+          <View style={{ marginTop: 20 }}>
             <ScrollView
               keyboardShouldPersistTaps={"handled"}
               ref={"scrollView"}
@@ -758,9 +759,9 @@ export default class TasksCreation extends BleashupModal {
               >
                 <View style={{ width: "90%", alignSelf: "center" }}>
                   <CreateTextInput
-                    height={height / 15}
+                    height={50}
                     value={this.state.currentRemind.title}
-                    placeholder={"remind"}
+                    placeholder={this.isEvent()?"Your event title":"Your remind message"}
                     onChange={this.onChangedTitle}
                   />
                 </View>
@@ -777,6 +778,7 @@ export default class TasksCreation extends BleashupModal {
                     height: 30,
                     width: "90%",
                     alignSelf: "center",
+                    marginTop: 20,
                   }}
                 >
                   <View
@@ -837,8 +839,7 @@ export default class TasksCreation extends BleashupModal {
                   <TouchableOpacity
                     style={{
                       flexDirection: "row",
-                      marginTop: "auto",
-                      marginBottom: "auto",
+                      marginTop: 20,
                     }}
                     onPress={() =>
                       requestAnimationFrame(() => this.setRecurrencyState())
@@ -853,17 +854,17 @@ export default class TasksCreation extends BleashupModal {
                   </TouchableOpacity>
                 </View>
                 {this.state.recurrent ? (
-                  <Item style={{ marginLeft: "4%" }}>
+                  <View style={{ marginLeft: "4%" }}>
                     <View
                       style={{
                         width: "95%",
                         flexDirection: "column",
                         justifyContent: "space-between",
-                        marginTop: "1%",
+                        
                       }}
                     >
                       <View>
-                        <Item
+                        <View
                           style={{
                             width: "100%",
                             marginLeft: "3%",
@@ -1018,7 +1019,7 @@ export default class TasksCreation extends BleashupModal {
                                     )}
                             </View>
                           </View>
-                        </Item>
+                        </View>
                         <Item
                           pointerEvents={this.state.ownership ? null : "none"}
                           style={{ marginLeft: "4%" }}
@@ -1064,7 +1065,7 @@ export default class TasksCreation extends BleashupModal {
                         </Item>
                       </View>
                     </View>
-                  </Item>
+                  </View>
                 ) : null}
                 {this.isEvent() && (
                   <View
@@ -1072,13 +1073,12 @@ export default class TasksCreation extends BleashupModal {
                     style={{
                       width: "90%",
                       alignSelf: "center",
-                      marginTop: "2%",
-                      marginBottom: "2%",
+                      marginTop: 20,
                     }}
                   >
                     <CreateTextInput
-                      height={height / 20}
-                      maxLength={70}
+                      height={50}
+                      maxLength={100}
                       placeholder={"Venue"}
                       value={this.state.currentRemind.location}
                       onChange={this.setCurrentLocation.bind(this)}
@@ -1089,7 +1089,7 @@ export default class TasksCreation extends BleashupModal {
               {this.isEvent() && this.state.ownership && (
                 <View
                   pointerEvents={this.state.ownership ? null : "none"}
-                  style={{ width: "90%", alignSelf: "center" }}
+                  style={{ width: "90%", alignSelf: "center" , marginTop:20}}
                 >
                   <PickersUpload
                     currentURL={this.state.currentRemind.remind_url || {}}
@@ -1106,7 +1106,7 @@ export default class TasksCreation extends BleashupModal {
                 >
                   <MediaPreviewer
                     cleanMedia={() => this.saveURL(request.Remind().remind_url)}
-                    height={height / 3.4}
+                    height={180}
                     defaultPhoto={require("../../../../assets/new-event.png")}
                     url={this.state.currentRemind.remind_url || {}}
                   />
@@ -1115,15 +1115,16 @@ export default class TasksCreation extends BleashupModal {
               {this.isEvent() && (
                 <View
                   pointerEvents={!this.state.ownership ? "none" : null}
-                  style={{ width: "90%", alignSelf: "center", marginTop: "1%" }}
+                  style={{ width: "90%", alignSelf: "center", marginTop: 20 }}
                 >
                   <CreateTextInput
                     multiline
                     numberOfLines={30}
-                    height={(height / (this.state.ownership ? 3.5 : 1.5)) * 0.7}
+                    autogrow
+                    height={60}
                     disabled={!this.state.ownership}
                     value={this.state.currentRemind.description}
-                    placeholder="details"
+                    placeholder="event details"
                     maxLength={2000}
                     onChange={(value) => this.onChangedDescription(value)}
                   />
@@ -1131,14 +1132,12 @@ export default class TasksCreation extends BleashupModal {
               )}
               {!this.state.creating ? (
                 this.state.ownership && (
-                  <View style={{ margin: "2%", marginBottom: "4%" }}>
-                    <CreateButton
-                      title={
-                        !this.props.update ? "Add Remind" : "Update Remind"
-                      }
-                      action={this.propceed.bind(this)}
-                    />
+                  <TouchableOpacity onPress={()=> this.propceed.bind(this)} style={{ margin: '5%',alignSelf:'flex-end',height:30,width:30}}>
+                  <View style={{ alignSelf:'center',alignItems:'center',...rounder(30,ColorList.senTBoxColor)}}>
+                     <Text>ok</Text>
                   </View>
+                  </TouchableOpacity>
+                
                 )
               ) : (
                   <Spinner />

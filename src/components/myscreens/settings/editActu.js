@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React, { Component } from "react";
 import autobind from "autobind-decorator";
 import {
@@ -48,7 +49,6 @@ export default class ActuView extends Component {
   }
 
 updateActu = () => {
-    
     this.setState({updatetitle:"Write your actu"})
     this.setState({position:"bottom"})
     this.setState({coverscreen:true});
@@ -65,8 +65,7 @@ updateOptions = (item)=>{
     stores.LoginStore.updateStatusOptions(this.state.data).then(()=>{
         this.state.userInfo.status = item.name;
         this.setState({userInfo:this.state.userInfo});
-        
-    })} )
+    })});
 }
 
 edit = ()=>{
@@ -159,13 +158,8 @@ edit = ()=>{
              </View>
               :null}
 
-        
-
             </View>
-            
-
-          
-      )
+    )
   }
 
 }

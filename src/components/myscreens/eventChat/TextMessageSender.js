@@ -1,7 +1,9 @@
+/* eslint-disable prettier/prettier */
 import React, { PureComponent } from "react"
 import { StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View, Vibration } from 'react-native';
 import { Text } from "native-base"
 import TextContent from "./TextContent";
+import ColorList from '../../colorList';
 export default class TextMessageSnder extends PureComponent {
     constructor(props) {
         super(props)
@@ -28,7 +30,7 @@ export default class TextMessageSnder extends PureComponent {
     render() {
         return (
             <TouchableWithoutFeedback onPressIn={()=> this.senderMessage}>
-            <View style={{ alignSelf: 'flex-start', }}>
+            <View style={{ alignSelf: 'flex-start',borderColor: !this.state.sender ? ColorList.senTBoxColor : ColorList.receivedBox }}>
                 <TextContent tags={this.props.message.tags} text={this.props.message.text}></TextContent>
                 </View></TouchableWithoutFeedback>
         );

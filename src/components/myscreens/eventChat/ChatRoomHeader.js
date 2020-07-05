@@ -25,7 +25,7 @@ export default class ChatRoomHeader extends PureComponent {
                     flexDirection: 'row',
                 }}
             >
-                <View
+                 <View
                     style={{
                         flex:1,
                         height: ColorList.headerHeight,
@@ -36,12 +36,12 @@ export default class ChatRoomHeader extends PureComponent {
                 >
                     <TouchableOpacity style={{
                         width: '20%',
-                        alignItems: 'flex-start',
+                        alignItems: 'center',
                     }} onPress={() => requestAnimationFrame(() => this.props.goback())} >
                         <Icon
                             style={{
                                 color: ColorList.headerIcon,
-                                marginLeft: '13%',
+                                //marginLeft: '5%',
                             }}
                             type={'MaterialIcons'}
                             name={'arrow-back'}
@@ -70,13 +70,30 @@ export default class ChatRoomHeader extends PureComponent {
 
                 <View
                     style={{
-                        width: 55,
-                        justifyContent:'center',
+                        width: 90,
+                        paddingRight:15,
                         alignSelf:'flex-end',
                         alignItems: 'center',
+                        flexDirection:'row',
+                        justifyContent:'space-between',
                         height: 50,
                     }}
                 >
+                    <TouchableOpacity
+                        onPress={() => {
+                            requestAnimationFrame(() => this.props.openMenu());
+                        }}
+                        style={{
+                            height: ColorList.headerHeight,
+                            justifyContent: 'center',
+                        }}
+                    >
+                        <Icon
+                            style={{ color: ColorList.senTBoxColor, fontSize: 25 }}
+                            type={'Entypo'}
+                            name={'phone'}
+                         />
+                    </TouchableOpacity>
 
                     <TouchableOpacity
                         onPress={() => {
@@ -88,7 +105,7 @@ export default class ChatRoomHeader extends PureComponent {
                         }}
                     >
                         <Icon
-                            style={{ color: ColorList.headerIcon, fontSize: 35 }}
+                            style={{ color: ColorList.headerIcon, fontSize: 30 }}
                             type={'Ionicons'}
                             name={'ios-menu'}
                          />

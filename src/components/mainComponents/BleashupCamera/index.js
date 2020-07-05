@@ -185,8 +185,8 @@ export default class CameraScreen extends BleashupModal {
   };
 
 
- openGallery = () => {
-  Pickers.SnapPhoto('all').then((data)=>{
+ openGallery = (option) => {
+  Pickers.SnapPhoto(option).then((data)=>{
     //console.warn("from picker is",data);
     let type = data.content_type.slice(0,5);
     if(type == "video"){
@@ -417,7 +417,7 @@ closepicked = (data) => {
             </TouchableOpacity> :
 
             <TouchableOpacity
-                 onPress={this.openGallery}
+                 onPress={() => {this.props.novideo ? this.openGallery('photo') : this.openGallery('all')}}
                  style={{
                    height:'100%',
                    alignSelf: 'center',
@@ -437,7 +437,7 @@ closepicked = (data) => {
                     name="photo-library"
                     style={{color:'white', fontSize:35 , marginLeft:15}}
                     type="MaterialIcons"
-                    onPress={this.openGallery}
+                    onPress={() => {this.props.novideo ? this.openGallery('photo') : this.openGallery('all')}}
                   />
 
              </View>
@@ -469,7 +469,7 @@ closepicked = (data) => {
                    :
                     <TouchableOpacity
                               onPress={this.takePicture}
-                              onLongPress={()=>this.activateVideo()}
+                              onLongPress={()=>{ !this.props.novideo ? this.activateVideo() : null; }}
                               delayLongPress={500}
                               style={{
                                 height:'100%',
@@ -500,7 +500,6 @@ closepicked = (data) => {
                  reset={this.state.stopwatchReset}
                  options={options}
                  getTime={this.getFormattedTime} />
-
             </View> : null}
 
 
@@ -508,7 +507,12 @@ closepicked = (data) => {
 
         </View>
 
-        {this.state.picked && <PickedImage   isOpen={this.state.picked} onClosed={(data)=>{this.closepicked(data)}} dataToreturn={this.state.dataToreturn} data={this.state.data} nomessage={this.props.nomessage} />}
+        {this.state.picked && <PickedImage   isOpen={this.state.picked} onClosed={(data)=>{this.closepicked(data)}} dataToreturn={this.state.dataToreturn} data={this.state.data} 
+        nomessage={this.props.nomessage}
+         messagePlaceHolder={this.props.messagePlaceHolder ? this.props.messagePlaceHolder : "write something..."}
+         maxLength={this.props.maxLength ? this.props.maxLength : 2000}
+         multiline={this.props.multiline ? this.props.multiline : false}
+         />}
 
       </Animated.View>
 
