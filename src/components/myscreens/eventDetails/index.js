@@ -39,6 +39,9 @@ import Share from '../../../stores/share';
 import BeNavigator from '../../../services/navigationServices';
 import ShareFrame from "../../mainComponents/ShareFram";
 import AnimatedComponent from '../../AnimatedComponent';
+import MessageActions from '../eventChat/MessageActons';
+import Vibrator from '../../../services/Vibrator';
+import GState from '../../../stores/globalState/index';
 
 let { height, width } = Dimensions.get('window');
 
@@ -74,7 +77,7 @@ export default class EventDetailView extends AnimatedComponent {
   state = {
 
   }
-
+  scrolled = 0
   @autobind
   initializer() {
     let participant = find(this.props.Event.participant, { phone: stores.LoginStore.user.phone });
@@ -85,6 +88,13 @@ export default class EventDetailView extends AnimatedComponent {
       EventHighlightState:this.props.star?true:false,
       participant: participant
     });
+   this.props.id && setTimeout(() => {
+    let scrolling = setInterval(() => {
+       this.refs.postList.scrollToIndex(findIndex(stores.Highlights.highlights[this.props.Event.id], { id: this.props.id }))
+       this.scrolled = this.scrolled + 1
+       if(this.scrolled >= 5) clearInterval(scrolling) 
+     },500)
+    },1000)
   }
   initialScrollIndexer = 2
   incrementer = 2
@@ -182,9 +192,6 @@ export default class EventDetailView extends AnimatedComponent {
 
 
   width = width / 2 - width / 40
-  _getItemLayout = (data, index) => (
-    { length: 100, offset: 100 * index, index }
-  )
   _keyExtractor = (item, index) => {
     return index;
   }
@@ -241,10 +248,54 @@ export default class EventDetailView extends AnimatedComponent {
   delay = 1
   sorter = (a, b) => (a.created_at > b.created_at ? -1 :
     a.created_at < b.created_at ? 1 : 0)
-
+showActions(item){
+  Vibrator.vibrateShort()
+  this.setState({
+    selectedItem:item,
+    showActions:true
+  })
+}
+preDeleteHighlight = (item) => {
+    this.setState({
+      current_highlight: item,
+      isAreYouSureModalOpened: true,
+    })
+}
+  preUpdate = (hid) => {
+    this.setState({
+      EventHighlightState: true,
+      update: true,
+      highlight_id: hid
+    })
+  }
+action = () => [
+   {
+    title: 'Reply',
+    callback: () => this.mention(this.state.selectedItem),
+    iconName: "reply",
+    condition: () => true,
+    iconType: "Entypo",
+    color: colorList.replyColor
+  },
+  {
+    title: "update Star",
+    condition: () => this.props.master,
+    callback: () => this.preUpdate(this.state.selectedItem.id),
+    iconName: "history",
+    iconType: "MaterialIcons",
+    color: colorList.darkGrayText
+  },
+  {
+    title: "Delete Delete",
+    callback: () => this.preDeleteHighlight(this.state.selectedItem),
+    condition: () => this.props.master,
+    iconName: "delete-forever",
+    iconType: "MaterialCommunityIcons",
+    color: colorList.delete
+  }
+]
   renderPosts() {
-    let data = reject(stores.Highlights.highlights[this.props.Event.id], { id: 'newHighlightId' });
-    console.warn("render post 1", data);
+    let data = stores.Highlights.highlights[this.props.Event.id];
     return (!this.state.isMounted ? <View style={{
       height: colorList.containerHeight,
       backgroundColor: colorList.bodyBackground,
@@ -283,41 +334,31 @@ export default class EventDetailView extends AnimatedComponent {
 
               <BleashupFlatList
                 initialRender={4}
+                ref={"postList"}
                 horizontal={false}
                 renderPerBatch={5}
                 firstIndex={0}
+                getItemLayout={(item,index) => GState.getItemLayout(item,index,data)}
                 refHorizontal={(ref) => { this.detail_flatlistRef = ref }}
                 keyExtractor={this._keyExtractor}
                 dataSource={data}
                 numberOfItems={data.length}
                 parentComponent={this}
                 renderItem={(item, index) => {
-                  //console.warn("item is here", item)
                   this.delay = index >= 5 ? 0 : this.delay + 1
-                  return (
+                  return (item.id === request.Highlight().id ? null:
                     <HighlightCard
+                      onLayout={(layout) => {
+                        GState.itemDebounce(item,() => {
+                          stores.Highlights.persistDimenssion(index,item.event_id,layout)
+                        })
+                      }}
+                      showActions={() => this.showActions(item)}
                       height={colorList.containerHeight * .45}
                       phone={stores.LoginStore.user.phone}
                       activity_id={this.props.Event.id}
                       activity_name={this.props.Event.about.title}
                       delay={this.delay}
-                      update={(hid) => {
-                        console.warn('here comes the id', hid);
-                        this.setState({
-                          EventHighlightState: true,
-                          update: true,
-                          highlight_id: hid
-                        })
-                      }}
-                      mention={(replyer) => {
-                        this.mention(replyer)
-                      }}
-                      deleteHighlight={(item) => {
-                        this.setState({
-                          current_highlight: item,
-                          isAreYouSureModalOpened: true,
-                        })
-                      }}
                       computedMaster={this.props.computedMaster}
                       showItem={(item) => {
                         this.props.showHighlight(item)
@@ -374,7 +415,7 @@ export default class EventDetailView extends AnimatedComponent {
           event={this.props.Event}
           event_id={this.props.Event.id} />
 
-
+        {/*
         <DescriptionModal Event={this.props.Event} isOpen={this.state.viewdetail} onClosed={() => { this.setState({ viewdetail: false }) }} parent={this}></DescriptionModal>
 
         <EventDescription updateDesc={(newDesc) => {
@@ -386,14 +427,19 @@ export default class EventDetailView extends AnimatedComponent {
           this.props.updateLocation(newLoc)
         }} event={this.props.Event} isOpen={this.state.EventLocationState} onClosed={() => { this.setState({ EventLocationState: false }) }}
           ref={"location_ref"} updateLoc={true} eventId={this.props.Event.id} parentComp={this} />
+      */}
 
-
+        <MessageActions title={"star actions"} actions={this.action} onClosed={() => {
+          this.setState({
+            showActions:false
+          })
+        }} isOpen={this.state.showActions}></MessageActions>
         <BleashupAlert title={"Delete Higlight"} accept={"Yes"} refuse={"No"} message={" Are you sure you want to delete these highlight ?"}
           deleteFunction={() => this.deleteHighlight(this.state.current_highlight)}
           isOpen={this.state.isAreYouSureModalOpened} onClosed={() => { this.setState({ isAreYouSureModalOpened: false }) }} />
 
 
-        <SideButton
+        {/*<SideButton
           buttonColor={'rgba(52, 52, 52, 0.8)'}
           position={"right"}
           //text={"D"}
@@ -407,7 +453,7 @@ export default class EventDetailView extends AnimatedComponent {
           offsetX={10}
           size={40}
           offsetY={30}
-        />
+        />*/}
 
         <SideButton
           //buttonColor={'rgba(52, 52, 52, 0.8)'}

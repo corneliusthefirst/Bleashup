@@ -150,8 +150,40 @@ export default class globalState {
   get timeError() {
     return this.timeError;
   }
+  layoutsTimeout = {}
   set timeError(newValue) {
     this.timeError = newValue;
+  }
+  getItemLayout(item, index,dataArray,defaultVal) {
+    let def = defaultVal||70
+    let offset = dataArray
+      ? dataArray
+        .slice(0, index)
+        .reduce(
+          (a, b) =>
+            a + (b.dimensions
+              ? b.dimensions.height
+              :def ) - .5,
+          0
+        )
+      : index * def
+    return {
+      length: item.dimensions ? item.dimensions.height : def,
+      offset: offset,
+      index: index,
+    };
+  }
+  itemDebounce(item, callback, delay){
+    if (this.layoutsTimeout[item.id]) {
+      clearTimeout(this.layoutsTimeout[item.id])
+      this.layoutsTimeout[item.id] = setTimeout(() => {
+        callback()
+      }, delay)
+    } else {
+      this.layoutsTimeout[item.id] = setTimeout(() => {
+        callback()
+      }, delay||500)
+    }
   }
 
 

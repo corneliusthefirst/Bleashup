@@ -41,29 +41,15 @@ export default class ChangeBox extends AnimatedComponent {
                 })
         }, 60 * this.props.delayer)
     }
-    mention(){
-        this.props.mention({
-            id: this.props.change.id,
-            title: `${this.props.change.changed} :\n ${typeof this.props.change.new_value.new_value == "string" &&
-                !testForURL(this.props.change.new_value.new_value) ?
-                this.props.change.new_value.new_value : ""}`,
-            type_extern: this.state.changer.nickname,
-            new_value: this.props.change.new_value,
-            updated: this.props.change.updated,
-            //photo: true,
-            change_date: this.props.change.date,
-            //sourcer: this.state.changer.profile,
-            replyer_phone: this.state.changer.phone,
-            replyer_name: this.props.change.title
-
-        })
-    }
+   mention(){
+       this.props.mention(this.props.change)
+   }
     containerStyle = { margin: '1%', borderRadius: 3, backgroundColor: colorList.bodyBackground, ...shadower(3), }
     render() {
         return (!this.state.loaded ? <View style={{ 
             ...this.containerStyle, width: '95%', height: 100,
             ...this.props.change && this.props.change.dimensions,  }}></View> :
-            <Swipeout swipeRight={() => {
+            <Swipeout disabled onLongPress={() => this.props.onLongPress(this.state.changer)} swipeRight={() => {
                 this.mention()
             }}>
                 <View onLayout={(e) => this.props.takeNewLayout(e.nativeEvent.layout)} style={this.containerStyle}>
@@ -75,14 +61,6 @@ export default class ChangeBox extends AnimatedComponent {
                                 }} delay={this.props.delayer}
                                     profile={this.state.changer}>
                                 </ProfileSimple></View>
-                            </View>
-                            <View style={{ alignSelf: 'flex-end', flexDirection: 'row', alignItems: "flex-end" }}>
-                                <View style={{ alignSelf: 'flex-end', marginTop: 'auto', marginBottom: 'auto', }}>{!this.props.replying ? <ChangeBoxMenu
-                                    reply={() => this.mention()}
-                                    master={this.props.master}
-                                    change={this.props.change}
-                                    restore={() => this.props.restore(this.props.change)}
-                                ></ChangeBoxMenu> : null}</View>
                             </View>
                         </View>
                         <View style={{

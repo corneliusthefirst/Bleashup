@@ -58,7 +58,7 @@ export default class TitleView extends Component {
                         ellipsizeMode={'tail'}
                         numberOfLines={1}
                         style={{
-                            fontSize: 16,
+                            fontSize: 14,
                             fontWeight: "500",
                             textTransform: "capitalize",
                             color: "black",

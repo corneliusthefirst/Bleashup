@@ -49,6 +49,8 @@ import TaskCreationExtra from './TaskCreationExtra';
 import uuid from 'react-native-uuid';
 import AnimatedComponent from '../../AnimatedComponent';
 import MessageActions from '../eventChat/MessageActons';
+import Vibrator from '../../../services/Vibrator';
+import GState from '../../../stores/globalState/index';
 //const MyTasksData = stores.Reminds.MyTasksData
 
 export default class Reminds extends AnimatedComponent {
@@ -169,6 +171,7 @@ export default class Reminds extends AnimatedComponent {
       }
     );
   }
+  scrolled = 0
   initReminds() {
     emitter.on("remind-updated", () => {
       this.refreshReminds();
@@ -177,6 +180,15 @@ export default class Reminds extends AnimatedComponent {
       mounted: true,
       RemindCreationState: this.props.currentMembers || this.props.remind ? true : false,
     });
+    this.props.id && setTimeout(() => {
+      console.warn("scrolling to index")
+      let scrolling = setInterval(() => {
+       this.refs.RemindsList && this.refs.RemindsList.scrollToIndex(findIndex(stores.Reminds.Reminds[this.props.event_id],
+          { id: this.props.id }))
+        this.scrolled = this.scrolled + 1
+        if(this.scrolled > 10) clearInterval(scrolling)
+      },500)
+    }, 1000)
   }
   saveRemoved(members) {
     if (this.props.working) {
@@ -529,9 +541,7 @@ export default class Reminds extends AnimatedComponent {
 
   getRemindData = () => {
     let RemindData = stores.Reminds.Reminds
-      ? reject(stores.Reminds.Reminds[this.props.event_id], {
-        id: request.Remind().id,
-      })
+      ? stores.Reminds.Reminds[this.props.event_id]
       : [];
     return RemindData;
   };
@@ -559,6 +569,14 @@ export default class Reminds extends AnimatedComponent {
       condition:() => true,
       iconType:"Entypo",
       color:colorList.replyColor
+    },
+    {
+      title:'Share Remind',
+      callback:() => this.share(),
+      condition:() => true,
+      iconName:"forward",
+      iconType:"Entypo",
+      color:colorList.indicatorColor
     },
     {
       title:"Members",
@@ -939,6 +957,7 @@ export default class Reminds extends AnimatedComponent {
           <View style={{ height: '92%' }}>
             <BleashupFlatList
               fit={this.props.fit}
+              getItemLayout={(item,index) => GState.getItemLayout(item,index,this.getRemindData())}
               initialRender={6}
               ref="RemindsList"
               renderPerBatch={5}
@@ -949,9 +968,13 @@ export default class Reminds extends AnimatedComponent {
               dataSource={this.getRemindData()}
               renderItem={(item, index) => {
                 this.delay = index >= 5 ? 0 : this.delay + 1;
-                return (
+                return (item.id == request.Remind().id ? null:
                     <TasksCard
+                    onLayout={(layout) => GState.itemDebounce(item,() => {
+                      stores.Reminds.persistDimenssion(index,item.event_id,layout)
+                    },500)}
                       showRemindActions={(intervals,thisInterval,creator) => {
+                        Vibrator.vibrateShort()
                         this.showRemindActions(item,intervals,thisInterval,creator)
                       }}
                       animate={this.animateUI}
