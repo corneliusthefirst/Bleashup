@@ -146,5 +146,5 @@ export default () => {
   }
 }*/
 
-//console.ignoredYellowBox = ['Warning: Each', 'Warning: Failed'];
-//console.disableYellowBox = true;
+console.ignoredYellowBox = ['Warning: Each', 'Warning: Failed'];
+console.disableYellowBox = true;

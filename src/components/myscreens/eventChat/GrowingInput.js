@@ -41,14 +41,14 @@ export default class GrowingInput extends PureComponent{
                 placeholder={"Your Message"}
                 onFocus={this.props.onFocus}
                 style={{
-                    alignSelf: "flex-start",
+                    alignSelf: "center",
                     maxHeight: 300,
                     left: 0,
                     right: 0,
                     width: "84%",
                     height: this.state.height,
                     borderRadius: 15,
-                    marginLeft: "3%",
+                    //marginLeft: "3%",
                 }}
                 placeholderTextColor="#66737C"
                 multiline={true}

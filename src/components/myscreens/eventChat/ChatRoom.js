@@ -805,7 +805,7 @@ class ChatRoom extends AnimatedComponent {
                                                 ><View>{this.messageList()}</View>
                                                 </TouchableWithoutFeedback>
                                             </View>
-                                            <View>
+                                            <View style={{flex:1,justifyContent:'flex-end'}}>
                                                 {!this.props.opened || !this.props.generallyMember ? (
                                                     <Text
                                                         style={{ fontStyle: 'italic', marginLeft: '3%' }}
