@@ -688,7 +688,7 @@ export default class ChatKeyboard extends PureComponent {
                                 </View>
                             </TouchableOpacity>
 
-                            <TouchableOpacity
+                            {this.state.textValue.length <= 0 && <TouchableOpacity
                                 onPress={() => requestAnimationFrame(() => this.showOptionsModal() //this.openCamera()
                                     )}
                                 style={{
@@ -713,11 +713,11 @@ export default class ChatKeyboard extends PureComponent {
                                         name={this.state.isOptionsOpened ? "ios-close": "ios-add"}
                                     ></Icon>
                                 </View>
-                            </TouchableOpacity>
+                            </TouchableOpacity>}
 
                             <View
                                 style={{
-                                    width: "76%",
+                                    width: this.state.textValue.length <= 0 ? "76%" : "88%",
                                     flexDirection: "column",
                                     borderRadius: 25,
                                     backgroundColor: ColorList.bodyBackground,
@@ -820,7 +820,7 @@ export default class ChatKeyboard extends PureComponent {
                                     !this.state.showCaption ? (
                                         <Icon
                                             style={{
-                                                color: ColorList.likeActive,
+                                                color: ColorList.indicatorColor,
                                                 fontSize: 23,
                                                 alignSelf: "center",
                                             }}
@@ -830,7 +830,7 @@ export default class ChatKeyboard extends PureComponent {
                                     ) : (
                                         <Icon
                                             style={{
-                                                color: ColorList.likeActive,
+                                                color: ColorList.indicatorColor,
                                                 fontSize: 23,
                                                 alignSelf: "center",
                                             }}

@@ -66,9 +66,9 @@ class colorlist {
   likeInactive = 'black';
   indicatorColor = '#057D74';
   indicatorInverted = '#DDECE9';
-  sendRand = () => Math.floor(Math.random() * this.senTBoxColor.length-1)
+  sendRand = () => Math.floor(Math.random() * (this.senTBoxColor.length-1))
   //messages
-  senTBoxColor = ["#FEF0EF", "#FEF7EF", "#FEFDEF", "#EFFEF8", "#EFF8FE", "#F8EFFE"]
+  senTBoxColor = ["#EFF8FE"]
   //7 "#FEF7EF"
   // 6 "#FEFDEF"
   // 5 "#EFFEF8"
