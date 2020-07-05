@@ -154,12 +154,24 @@ export default class Event extends Component {
   }
   currentWidth = 0.5;
   isOpen = false;
+  handleReplyExtern =
+    (reply) => {
+      if (reply.type_extern.toLowerCase().includes("reminds")) {
+        reply.id ? BeNavigator.pushActivity(this.event,"Reminds",{id:reply.id}) : null;
+      } else if (reply.type_extern.toLowerCase().includes("posts")) {
+        reply.id ? BeNavigator.pushActivity(this.event,"EventDetails",{id:reply.id}) : null;
+      } else {
+        reply.id ? this.showChanges(reply) : null;
+      }
+    }
+  
   renderMenu(NewMessages) {
     ///console.error(this.state.currentPage)
     switch (this.state.currentPage) {
       case "EventDetails":
         return (
           <EventDetails
+            id={this.id}
             shared={false}
             star={this.star}
             share={{
@@ -199,6 +211,7 @@ export default class Event extends Component {
         return (
           <Remind
             //shared={false}
+            id={this.id}
             share={{
               id: "456322",
               date: moment().format(),
@@ -268,15 +281,7 @@ export default class Event extends Component {
             close={() => this.closeCommitee(this.state.roomID)}
             open={() => this.openCommitee(this.state.roomID)}
             master={this.master}
-            handleReplyExtern={(reply) => {
-              if (reply.type_extern.toLowerCase().includes("reminds")) {
-                reply.id ? this.showRemindID(reply.id) : null;
-              } else if (reply.type_extern.toLowerCase().includes("posts")) {
-                reply.id ? this.showHighlightID(reply.id) : null;
-              } else {
-                reply.id ? this.showChanges(reply) : null;
-              }
-            }}
+            handleReplyExtern={this.handleReplyExtern.bind(this)}
             generallyMember={this.member}
             public_state={this.state.public_state}
             opened={this.state.opened}
@@ -316,6 +321,7 @@ export default class Event extends Component {
       case "ChangeLogs":
         return (
           <ChangeLogs
+            index={this.index}
             goback={this.goback.bind(this)}
             propcessAndFoward={(change) => this.propcessAndFoward(change)}
             mention={(data) => this.mention(data)}
@@ -351,7 +357,17 @@ export default class Event extends Component {
       //changer : data.replyer_phone,
       new_value: data.new_value,
     };
-    this.propcessAndFoward(change);
+    let index = findIndex(stores.ChangeLogs.changes[this.event.id],(ele) => {
+      return ele.updater == data.updater && 
+      ele.updated == data.updated && 
+        ele.new_value.data == data.new_value.data //&& 
+        //ele.new_value.new_value == data.new_value.data.new_value
+    })
+    if(index >=0){
+      BeNavigator.pushActivity(this.event,"ChangeLogs",{index})
+    }else{
+      this.propcessAndFoward(change);
+    }
   }
   propcessAndFoward(change) {
     if (change.updated === "add_highlight") {
@@ -673,14 +689,19 @@ export default class Event extends Component {
     });
     this.initializeMaster();
   }
+  getParam(key){
+    return this.props.navigation.getParam(key)
+  }
+  id = this.getParam("id")
+  index = this.getParam("index")
   user = null;
   isOpen = true;
-  star = this.props.navigation.getParam("star")
-  remind = this.props.navigation.getParam("remind")
-  event = this.props.navigation.getParam("Event");
-  currentRemindMembers = this.props.navigation.getParam("currentRemindMembers")
+  star = this.getParam("star")
+  remind = this.getParam("remind")
+  event = this.getParam("Event")
+  currentRemindMembers = this.getParam("currentRemindMembers")
   componentDidMount() {
-    let page = this.props.navigation.getParam("tab");
+    let page = this.getParam("tab");
     let isEventCurrentPage = this.isChat(page);
     isEventCurrentPage ? (GState.currentCommitee = this.event.id) : null;
     this.setState({

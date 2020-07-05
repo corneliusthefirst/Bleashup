@@ -317,6 +317,10 @@ export default class highlights {
         });
     });
   }
+  persistDimenssion(index,eventID,layout){
+    this.highlights[eventID][index].dimensions = layout
+    this.setProperty(this.highlights)
+  }
 
   readFromStore() {
     return new Promise((resolve, rejectpromise) => {

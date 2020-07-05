@@ -10,6 +10,7 @@ export default class MessageActions extends BleashupModal {
 
     modalHeight = "45%"
     modalWidth = "100%"
+    modalMinHieight=50
     borderRadius = 0
 
     actionsContainerStyles = {
@@ -59,7 +60,7 @@ export default class MessageActions extends BleashupModal {
             justifyContent: 'space-between',
         }}><View 
         style={{
-            height:'5%',
+            height:10,
             justifyContent: 'center',
             flexDirection: 'row',}}>
         <Text style={{ fontSize: 8, }} note>{this.props.title}</Text></View><ScrollView showsVerticalScrollIndicator={false}>
@@ -68,7 +69,7 @@ export default class MessageActions extends BleashupModal {
                 justifyContent: 'space-between',
                 alignSelf: 'center',
                 width: '95%',
-                height: '90%',
+                height: '80%',
                 margin: 'auto'
             }}>
                 {this.renderActions()}

@@ -381,11 +381,12 @@ class ChatRoom extends AnimatedComponent {
         this.keyboardDidHideSub = Keyboard.addListener('keyboardDidHide', this.handleKeyboardDidHide.bind(this));
         this.setTypingRef(this.props.firebaseRoom);
         emitter.on("reply-me", (rep) => {
+            this.props.openMenu()
             this.replying(rep, null)
             setTimeout(() => {
                 this.alreadyFocussed = false;
                 this.fucussTextInput()
-            }, 400)
+            }, 700)
         })
         this.props.isComment ? (stores.Messages.messages[this.roomID] = []) : null;
     }
@@ -1074,22 +1075,8 @@ class ChatRoom extends AnimatedComponent {
     delay = 1;
     addVote() { }
     getItemLayout(item, index) {
-        let offset = stores.Messages.messages[this.roomID]
-            ? stores.Messages.messages[this.roomID]
-                .slice(0, index)
-                .reduce(
-                    (a, b) =>
-                        a + (b.dimensions
-                            ? b.dimensions.height
-                            : 70) - .5,
-                    0
-                )
-            : index * 70
-        return {
-            length: item.dimensions ? item.dimensions.height : 70,
-            offset: offset,
-            index: index,
-        };
+      return GState.getItemLayout(item,index,
+        stores.Messages.messages[this.roomID])
     }
     choseReply(message) {
         let nickname = message.sender && message.sender.nickname
@@ -1148,7 +1135,6 @@ class ChatRoom extends AnimatedComponent {
         let index = findIndex(stores.Messages.messages[this.roomID], { id: replyer.id })
         index >= 0 && this.scrollToIndex(index)
     }
-    layoutsTimeout = {}
     messageList() {
         return (
             <BleashupFlatList
@@ -1180,16 +1166,9 @@ class ChatRoom extends AnimatedComponent {
                             messagelayouts={this.messagelayouts}
                             setCurrentLayout={(layout) => {
                                 this.messagelayouts[item.id] = layout;
-                                if (this.layoutsTimeout[item.id]) {
-                                    clearTimeout(this.layoutsTimeout[item.id])
-                                    this.layoutsTimeout[item.id] = setTimeout(() => {
-                                        this.storesLayouts(layout, index)
-                                    }, 500)
-                                } else {
-                                    this.layoutsTimeout[item.id] = setTimeout(() => {
-                                        this.storesLayouts(layout, index)
-                                    }, 500)
-                                }
+                                GState.itemDebounce(item,() =>{
+                                    this.storesLayouts(layout, index)
+                                }, 500)
 
                             }}
                             forwardMessage={() => {

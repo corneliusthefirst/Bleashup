@@ -48,21 +48,6 @@ export default class HighlightCard extends PureComponent {
     };
   }
 
-  @autobind
-  update() {
-    //new highlight update when event is not yet created but highlight already created
-    this.props.parentComponent.state.currentHighlight = this.props.item;
-    this.props.parentComponent.setState({ update: true });
-  }
-  /*shouldComponentUpdate(nextProps, nextState, nextContext) {
-    return (
-      this.state.mounted !== nextState.mounted ||
-      this.props.item.title !== nextProps.item.title ||
-      this.props.item.description !== nextProps.item.description || 
-      !isEqual(this.props.item.url, nextProps.item.url) || 
-      this.props.computedMaster !== nextProps.computedMaster
-    );
-  }*/
   containsMedia() {
     return this.props.item.url.video ||
       this.props.item.url.audio ||
@@ -82,10 +67,14 @@ export default class HighlightCard extends PureComponent {
 
   render() {
     return this.state.mounted ? (
-      <Swipeout swipeLeft={() => { }} swipeRight={() => {
+      <Swipeout disabled onLongPress={this.props.showActions} swipeLeft={() => { }} swipeRight={() => {
         this.props.mention(this.props.item)
       }}>
       <View
+          onLayout={(e) => {
+            console.warn(e.nativeEvent.layout.height)
+            this.props.onLayout(e.nativeEvent.layout)}
+          }
         style={{
           width: ColorList.containerWidth,
           alignSelf: "center",
@@ -120,19 +109,6 @@ export default class HighlightCard extends PureComponent {
             </Title>
           </View>
           <View>
-            {this.state.creator ? (
-              <View
-                style={{ alignSelf: "flex-end", justifyContent: "flex-end" }}
-              >
-                <PostMenu
-                  creator={this.state.creator}
-                  mention={() => this.props.mention(this.props.item)}
-                  delete={() => this.props.deleteHighlight(this.props.item)}
-                  update={() => this.props.update(this.props.item.id)}
-                  master={this.props.participant.master}
-                ></PostMenu>
-              </View>
-            ) : null}
           </View>
         </View>
         <MedaiView

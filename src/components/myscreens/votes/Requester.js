@@ -27,7 +27,7 @@ class Requester {
                                 updated: 'new_vote',
                                 changed: `Added ${Vote.title} Vote`,
                                 title: `Update On Main Activity`,
-                                updater: stores.LoginStore.user,
+                                updater: stores.LoginStore.user.phone,
                                 new_value: { data: null, new_value: Vote.title },
                                 date: moment().format(),
                                 time: null
@@ -59,7 +59,7 @@ class Requester {
                                 updated: 'vote_deleted',
                                 title: `Update On Main Activity`,
                                 changed: `Deleted ${vote.title} vote`,
-                                updater: stores.LoginStore.user,
+                                updater: stores.LoginStore.user.phone,
                                 new_value: { data: null, new_value: vote },
                                 date: moment().format(),
                                 time: null
@@ -87,7 +87,7 @@ class Requester {
                                 updated: 'vote_restored',
                                 title: `Update on ${vote.title} vote`,
                                 changed: `Restored ${vote.title} vote`,
-                                updater: stores.LoginStore.user,
+                                updater: stores.LoginStore.user.phone,
                                 new_value: { data: null, new_value: vote.id },
                                 date: moment().format(),
                                 time: null
@@ -140,7 +140,7 @@ class Requester {
                                 changed: newPeriod && vote.period ? `Changed Voting End Date of ${vote.title} Vote To: ` :
                                     newPeriod && !vote.period ? `Added Voting End Date To ${vote.title} Vote : `
                                         : 'Remove Voting End Date From ${vote.title} Vote',
-                                updater: stores.LoginStore.user,
+                                updater: stores.LoginStore.user.phone,
                                 new_value: {
                                     data: null,
                                     new_value: newPeriod ? moment(newPeriod).format(format) : null

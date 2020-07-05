@@ -155,7 +155,7 @@ export default class EventTasksCard extends Component {
           this.state.correspondingDateInterval,this.state.creator)
       }} disabled swipeRight={() => {
         this.props.mention(this.props.item)
-      }}><View style={{
+        }}><View onLayout={(e) => this.props.onLayout(e.nativeEvent.layout)} style={{
         width:"98%",
         flexDirection: 'column',
         borderRadius: 5,

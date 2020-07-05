@@ -532,6 +532,10 @@ export default class Reminds {
       });
     });
   }
+  persistDimenssion(index,eventID,layout){
+    this.Reminds[eventID][index].dimensions = layout
+    this.setProperty(this.Reminds)
+  }
   readFromStore() {
     return new Promise((resolve, rejectpromise) => {
       resolve(this.Reminds);

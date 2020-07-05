@@ -16,6 +16,10 @@ import ChangeBox from "./myscreens/changelogs/ChangesBox";
 import shadower from "./shadower";
 import colorList from '../components/colorList';
 import stores from "../stores";
+import MessageActions from "./myscreens/eventChat/MessageActons";
+import Vibrator from '../services/Vibrator';
+import testForURL from '../services/testForURL';
+import GState from '../stores/globalState/index';
 
 
 const defaultCircleSize = 16;
@@ -63,14 +67,24 @@ export default class BleashupTimeLine extends PureComponent {
 
         return null;
     }
+    getItemLayout(item, index) {
+        return GState.getItemLayout(item, index, this.state.data)
+    }
+    componentDidMount(){
+        this.props.index && setTimeout(() => {
+            this.refs.changeList.scrollToIndex(this.props.index)
+        },1000)
+    }
     delayer = 0
     render() {
         return (
             <View style={[styles.container, this.props.style]}>
                 <BleashupFlatList
                     marginTop
+                    ref={"changeList"}
                     style={[styles.listview, this.props.listViewStyle]}
                     dataSource={this.state.data}
+                    getItemLayout={this.getItemLayout.bind(this)}
                     inverted={true}
                     firstIndex={0}
                     renderPerBatch={10}
@@ -86,6 +100,13 @@ export default class BleashupTimeLine extends PureComponent {
                     keyExtractor={(rowData, index) => index + ""}
                     {...this.props.options}
                 />
+            <MessageActions title={"logs actions"} onClosed={() => {
+                this.setState({
+                    showActions:false
+                })
+            }} isOpen={this.state.showActions} actions={this.actions}>
+            
+            </MessageActions>
             </View>
         );
     }
@@ -255,31 +276,60 @@ export default class BleashupTimeLine extends PureComponent {
             </View>
         );
     }
-    storesLayouts(event_id, layout, index) {
+    storesLayouts(event_id, layout, index) {        
         stores.ChangeLogs.storeLayouts(event_id, layout, index)
     }
+    actions=() => [
+        {
+            title: 'Reply',
+            callback: () => this.mention(this.state.selectedItem),
+            iconName: "reply",
+            condition: () => true,
+            iconType: "Entypo",
+            color: colorList.replyColor
+        },
+    ]
     layoutsTimeout = {}
+    selectItem(data,changer){
+        Vibrator.vibrateShort()
+        this.setState({
+            showActions:true,
+            selectedItem:data,
+            changer
+        })
+    }
+    mention(change) {
+        this.props.mention({
+            id: change.id,
+            title: `${change.changed} :\n ${typeof change.new_value.new_value == "string" &&
+                !testForURL(change.new_value.new_value) ?
+                change.new_value.new_value : ""}`,
+            type_extern: this.state.changer.nickname,
+            new_value: change.new_value,
+            updated: change.updated,
+            change_date: change.date,
+            replyer_phone: this.state.changer.phone,
+            replyer_name: change.title
+
+        })
+    }
     _renderDetail(rowData, index, delay) {
         let title = (
             <View>
                 <Text style={[styles.title, this.props.titleStyle]}>
                     {rowData.title}
                 </Text>
-                <ChangeBox showChange={() => this.props.onEventPress(rowData)} takeNewLayout={(layout) => {
-                    if (this.layoutsTimeout[rowData.id]) {
-                        clearTimeout(this.layoutsTimeout[rowData.id])
-                        this.layoutsTimeout[rowData.id] = setTimeout(() => {
-                            this.storesLayouts(rowData.event_id, layout, index)
-                        }, 500)
-                    } else {
-                        this.layoutsTimeout[rowData.id] = setTimeout(() => {
-                            this.storesLayouts(rowData.event_id, layout, index)
-                        }, 500)
-                    }
+                <ChangeBox onLongPress={(changer) => {
+                    this.selectItem(rowData,changer)
+                }} showChange={() => this.props.onEventPress(rowData)} 
+                takeNewLayout={(layout) => {
+                    GState.itemDebounce(rowData,() => {
+                        this.storesLayouts(rowData.event_id, layout, index)
+                    }, 500)
                 }} master={this.props.master}
                     showPhoto={url => this.props.showPhoto(url)}
                     restore={(data) => this.props.restore(data)}
-                    mention={(data) => this.props.mention(data)}
+                    mention={(data) => this.mention(data)}
                     delayer={delay} change={rowData}></ChangeBox>
             </View>
         )

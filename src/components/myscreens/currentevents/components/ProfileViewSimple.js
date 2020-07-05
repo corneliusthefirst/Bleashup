@@ -73,9 +73,9 @@ export default class ProfileSimple extends Component {
                     <View style={textStyles}>
                         <Text ellipsizeMode={'tail'} numberOfLines={1} style={{
                             marginBottom: "2%",
-                            fontWeight: 'bold', alignSelf: "flex-start", color: (this.props.profile && this.props.profile.found) || this.props.relation ? "black" : "#494949", fontSize: 16
+                            fontWeight: 'bold', alignSelf: "flex-start", color: (this.props.profile && this.props.profile.found) || this.props.relation ? "black" : "#494949", fontSize: 14
                         }}>{this.props.profile && this.props.profile.phone === stores.LoginStore.user.phone ? "You " : this.props.profile && this.props.profile.nickname}</Text>
-                        {this.props.profile && this.props.profile.status && this.props.profile.status !== 'undefined' ? <Title style={{ fontStyle: 'italic', alignSelf: "flex-start", fontSize: 12, color: "gray" }} >{this.props.profile && this.props.profile.status}</Title> : null}
+                        {this.props.profile && this.props.profile.status && this.props.profile.status !== 'undefined' ? <Title style={{ fontStyle: 'italic', alignSelf: "flex-start", fontSize: 14, color: "gray" }} >{this.props.profile && this.props.profile.status}</Title> : null}
 
                     </View>}
 

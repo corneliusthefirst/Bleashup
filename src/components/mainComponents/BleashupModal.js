@@ -38,6 +38,7 @@ export default class BleashupModal extends AnimatedPureComponent {
     modalBody() {
         return <View></View>
     }
+    modalMinHieight=null
     isOpened = false
     entry = 'bottom'
     borderWidth=0
@@ -60,7 +61,9 @@ export default class BleashupModal extends AnimatedPureComponent {
                 style={{
                     borderWidth:this.borderWidth,
                     backgroundColor: this.modalBackground || '#FFFFFF',
-                    height: this.modalHeight,
+                    height: !this.modalMinHieight ?this.modalHeight: null,
+                    minHeight:this.modalMinHieight? this.modalMinHieight:null,
+                    maxHeight: this.modalMinHieight && this.modalHeight,
                     width: this.modalWidth || "100%",
                     justifyContent: this.jusify ? 'center' : null,
                     borderRadius: this.borderRadius,

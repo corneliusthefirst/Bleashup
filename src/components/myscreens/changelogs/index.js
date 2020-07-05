@@ -63,9 +63,16 @@ export default class ChangeLogs extends Component {
   renderDetail(item, sectionID, rowID) {
     return (<View><Text>{item.changed}</Text></View>)
   }
-
+  
   render() {
-    //console.warn(this.props.forMember, "poo")
+    let data = this.props.activeMember ?
+      stores.ChangeLogs.changes &&
+      stores.ChangeLogs.changes[this.props.event_id] &&
+      stores.ChangeLogs.changes[this.props.event_id].
+        filter(ele => ele && ele.updater === this.props.activeMember ||
+          ele && ele.updater && ele.updater.phone === this.props.activeMember ||
+          ele.type === "date_separator") :
+      (stores.ChangeLogs.changes && stores.ChangeLogs.changes[this.props.event_id] || [])
     return (!this.state.loaded ? <View style={{
       width: '100%', height: '100%',
       backgroundColor: colorList.bodyBackground,
@@ -75,6 +82,7 @@ export default class ChangeLogs extends Component {
 
         <View style={{ flex: 1, width: "100%" }} >
           <BleashupTimeLine
+            index={this.props.index}
             renderCircle={() => <View></View>}
             circleSize={20}
             showPhoto={url => this.props.openPhoto(url)}
@@ -98,14 +106,7 @@ export default class ChangeLogs extends Component {
             onEventPress={(data) => {
               !GState.showingProfile ? this.props.propcessAndFoward(data) : null
             }}
-            data={this.props.activeMember ?
-              stores.ChangeLogs.changes &&
-              stores.ChangeLogs.changes[this.props.event_id] &&
-              stores.ChangeLogs.changes[this.props.event_id].
-                filter(ele => ele && ele.updater === this.props.activeMember ||
-                  ele && ele.updater && ele.updater.phone === this.props.activeMember ||
-                  ele.type === "date_separator") : 
-                  (stores.ChangeLogs.changes && stores.ChangeLogs.changes[this.props.event_id]|| [])}
+            data={data}
           >
           </BleashupTimeLine>
         </View>

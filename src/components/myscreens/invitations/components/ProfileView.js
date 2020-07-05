@@ -127,6 +127,7 @@ export default class ProfileView extends Component {
                         style={{
                             color: ColorList.bodyText,
                             fontWeight: "bold",
+                            fontSize: 14,
                             //marginTop: "4%",
                         }}
                     >
