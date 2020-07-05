@@ -636,6 +636,9 @@ export default class ChatKeyboard extends PureComponent {
                 <View
                     style={{
                         alignItems: "center",
+                        flexDirection: 'column',
+                        justifyContent: 'flex-end',
+                        alignSelf: 'flex-end',
                         borderColor: "gray",
                         padding: "1%",
                         width: "99%",
