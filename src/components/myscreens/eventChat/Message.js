@@ -582,7 +582,7 @@ export default class Message extends Component {
                                                                 (this.props.message.type == "photo" ||
                                                                     this.props.message.type == "video" ||
                                                                     this.props.message.type == "video_upload" ||
-                                                                    this.props.message.type == "photo_upload") ? 248 : "98%",
+                                                                    this.props.message.type == "photo_upload") ? 248 : "99%",
                                                             }}
                                                         >
                                                             <ReplyText

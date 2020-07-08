@@ -136,7 +136,6 @@ export default class Reminds extends AnimatedComponent {
   }
 
   componentDidMount() {
-    console.warn("reminds present", stores.Reminds.Reminds);
     !this.props.shared ? this.initReminds() : this.initShared();
   }
   initShared() {
@@ -180,13 +179,13 @@ export default class Reminds extends AnimatedComponent {
       mounted: true,
       RemindCreationState: this.props.currentMembers || this.props.remind ? true : false,
     });
-    this.props.id && setTimeout(() => {
+    if(this.props.id) this.waitToScroll = setTimeout(() => {
       console.warn("scrolling to index")
-      let scrolling = setInterval(() => {
+      this.scrolling = setInterval(() => {
        this.refs.RemindsList && this.refs.RemindsList.scrollToIndex(findIndex(stores.Reminds.Reminds[this.props.event_id],
           { id: this.props.id }))
         this.scrolled = this.scrolled + 1
-        if(this.scrolled > 10) clearInterval(scrolling)
+        if(this.scrolled > 10) clearInterval(this.scrolling)
       },500)
     }, 1000)
   }
@@ -211,6 +210,9 @@ export default class Reminds extends AnimatedComponent {
   }
   componentWillUnmount() {
     emitter.off("remind-updated");
+    clearTimeout(this.waitToScroll)
+    clearInterval(this.scrolling)
+    
   }
 
   @autobind

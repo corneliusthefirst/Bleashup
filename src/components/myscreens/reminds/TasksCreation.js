@@ -1132,9 +1132,13 @@ export default class TasksCreation extends BleashupModal {
               )}
               {!this.state.creating ? (
                 this.state.ownership && (
-                  <TouchableOpacity onPress={()=> this.propceed()} style={{ margin: '5%',alignSelf:'flex-end',height:30,width:30}}>
-                  <View style={{ alignSelf:'center',alignItems:'center',...rounder(30,ColorList.senTBoxColor[ColorList.sendRand()])}}>
-                     <Text>ok</Text>
+                  <TouchableOpacity onPress={()=> this.propceed()} style={{ margin: '5%',alignSelf:'flex-end',}}>
+                  <View style={{ alignSelf:'center',alignItems:'center',...rounder(40,ColorList.likeActive)}}>
+                     <Text style={{
+                       fontWeight: '400',
+                       color:ColorList.bodyBackground,
+                       fontSize: 20,
+                     }}>ok</Text>
                   </View>
                   </TouchableOpacity>
                 

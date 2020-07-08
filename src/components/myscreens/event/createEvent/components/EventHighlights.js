@@ -123,13 +123,13 @@ export default class EventHighlights extends BleashupModal {
           let highlight = find(Highlights[this.props.event_id], {
             id: this.props.highlight_id
               ? this.props.highlight_id
-              : "newHighlightId",
+              : request.Highlight().id,
           });
           //console.warn('black check',highlight);
           this.previoushighlight = JSON.stringify(highlight);
           console.warn('previous',this.previoushighlight);
           if (!this.props.event_id) {
-            let event_id = "newEventId";
+            let event_id = request.Highlight().id;
             stores.Highlights.fetchHighlights(event_id).then((Highlights) => {
               this.setState({
                 newing: !this.state.newing,
@@ -169,10 +169,10 @@ export default class EventHighlights extends BleashupModal {
         let highlight = find(Highlights[this.props.event_id], {
           id: this.props.highlight_id
             ? this.props.highlight_id
-            : "newHighlightId",
+            : request.Highlight().id,
         });
         if (!this.props.event_id) {
-          let event_id = "newEventId";
+          let event_id = request.Highlight().id;
           stores.Highlights.fetchHighlights(event_id).then((Highlights) => {
             this.setState({
               newing: !this.state.newing,
@@ -204,7 +204,7 @@ export default class EventHighlights extends BleashupModal {
   @autobind
   resetHighlight() {
     this.state.currentHighlight = request.Highlight();
-    this.state.currentHighlight.id = "newHighlightId";
+    this.state.currentHighlight.id = request.Highlight().id;
     this.setState({
       newing: !this.state.newing,
       currentHighlight: this.state.currentHighlight,
@@ -287,7 +287,7 @@ export default class EventHighlights extends BleashupModal {
           .then(() => {
             this.props.reinitializeHighlightsList(newHighlight);
             this.resetHighlight();
-            stores.Highlights.removeHighlight(newHighlight.event_id, "newHighlightId").then(() => {
+            stores.Highlights.removeHighlight(newHighlight.event_id, request.Highlight().id).then(() => {
               this.props.stopLoader();
               this.setState({
                 creating: false,

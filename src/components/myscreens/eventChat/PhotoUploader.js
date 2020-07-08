@@ -22,6 +22,9 @@ export default class PhotoUploader extends Component {
         }
     }
     state = {}
+    componentWillUnmount(){
+        clearInterval(this.uploadTimeout)
+    }
     componentDidMount() {
         Pickers.resizePhoto(this.props.message.source).then(source => {
             console.warn("compress photo uplad source ",source)
@@ -40,7 +43,7 @@ export default class PhotoUploader extends Component {
     uploaderPhoto() {
         console.warn("calling download")
         if (!GState.downlading) this.uploadPhoto()
-        else setTimeout(() => {
+        else this.uploadTimeout = setTimeout(() => {
             this.uploaderPhoto()
         }, 1000)
     }

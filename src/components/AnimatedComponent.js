@@ -17,7 +17,7 @@ export default class AnimatedComponent extends Component{
         //if(this.animationTimeout) clearTimeout(this.animationTimeout)
         //this.animationTimeout = setTimeout(() => {
             LayoutAnimation.configureNext({
-                duration: 300,
+                duration: 250,
                 create: {
                     type: LayoutAnimation.Types.easeInEaseOut,
                     property: LayoutAnimation.Properties.scaleX,

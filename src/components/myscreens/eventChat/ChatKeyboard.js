@@ -197,7 +197,7 @@ export default class ChatKeyboard extends PureComponent {
                     width: "100%",
                     backgroundColor: ColorList.bottunerLighter,
                     borderTopLeftRadius: 5,
-                    maxHeight: 200,
+                    maxHeight: 150,
                     minHeight: 0,
                     borderTopRightRadius: 5,
                     padding: "2%",
@@ -638,7 +638,7 @@ export default class ChatKeyboard extends PureComponent {
                         alignItems: "center",
                         flexDirection: 'column',
                         justifyContent: 'flex-end',
-                        flex: 1,
+                        //minHeight: 20,
                         alignSelf: 'flex-end',
                         borderColor: "gray",
                         padding: "1%",
@@ -694,7 +694,8 @@ export default class ChatKeyboard extends PureComponent {
                                 </View>
                             </TouchableOpacity>
 
-                            {this.state.textValue.length <= 0 && <TouchableOpacity
+                            {this.state.textValue.length <= 0 ?
+                                 <TouchableOpacity
                                 onPress={() => requestAnimationFrame(() => this.showOptionsModal() //this.openCamera()
                                     )}
                                 style={{
@@ -719,13 +720,16 @@ export default class ChatKeyboard extends PureComponent {
                                         name={this.state.isOptionsOpened ? "ios-close": "ios-add"}
                                     ></Icon>
                                 </View>
-                            </TouchableOpacity>}
+                            </TouchableOpacity>:null}
 
                             <View
                                 style={{
-                                    width: this.state.textValue.length <= 0 ? "76%" : "88%",
+                                    width: //this.state.textValue.length <= 0 ? 
+                                    "76%" //: "88%"
+                                    ,
                                     flexDirection: "column",
                                     borderRadius: 25,
+                                    maxHeight: 300,
                                     backgroundColor: ColorList.bodyBackground,
                                     borderWidth: 0.2,
                                     borderColor: "grey",

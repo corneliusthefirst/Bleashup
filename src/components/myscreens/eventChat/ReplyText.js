@@ -71,16 +71,7 @@ export default class ReplyText extends Component {
                 }}
               ></Icon>
             )
-    ) : (
-        <Icon
-          name={"chat-bubble"}
-          type={"MaterialIcons"}
-          style={{
-            color: ColorList.bodyIcon,
-            fontSize: this.reply_font,
-          }}
-        ></Icon>
-      );
+    ) : null
   }
   handleReply(){
      this.props.openReply(this.props.reply);
@@ -102,7 +93,7 @@ export default class ReplyText extends Component {
             padding: "1%", //margin: '1%',
             minHeight: 50,
             maxWidth:"100%",
-            maxHeight: 350,
+            maxHeight: 120,
             minWidth: 100,
             borderTopLeftRadius: 5,
             borderTopRightRadius: 5,
@@ -121,11 +112,12 @@ export default class ReplyText extends Component {
                     </Text>
                   ) : null}
                   <View style={{ flexDirection: "row" }}>
-                    <View style={{width:13,justifyContent: 'flex-start',flexDirection: 'row',
+                  <View style={{
+                    width: !this.props.reply.type_extern ? 0 : 13,justifyContent: 'flex-start',flexDirection: 'row',
                     marginBottom: 'auto',
                     marginTop: 'auto',}}>
                     {this.renderReplyIcon(this.props.reply.type_extern)}</View>
-                    <View style={{width:"93%"}}>
+                  <View style={{ width: !this.props.reply.type_extern ? "100%" : "93%"}}>
                       <Text
                         note
                         ellipsizeMode={"tail"}
@@ -133,40 +125,17 @@ export default class ReplyText extends Component {
                         style={{
                           fontWeight: "bold",
                           color: ColorList.indicatorColor,
-                          maxWidth: "90%",
+                          maxWidth: "100%",
                         }}
                       >
                         {`${
                           this.props.reply.replyer_name
                             ? this.props.reply.replyer_name
-                            : this.props.reply.type_extern
+                        : this.props.reply.title.split(": \n")[0]
                           }`}
                       </Text>
                     </View>
                   </View>
-                  {this.props.reply.type_extern ? (
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        minWidth: "75%",
-                        maxWidth: "90%",
-                      }}
-                    >
-                      <Text
-                        ellipsizeMode={"tail"}
-                        numberOfLines={3}
-                        style={{
-                          fontWeight: "bold",
-                          fontSize: 12,
-                          width: "100%",
-                        }}
-                      >{`${
-                        this.props.reply.replyer_name
-                          ? this.props.reply.type_extern
-                          : this.props.reply.title.split(": \n")[0]
-                        }`}</Text>
-                    </View>
-                  ) : null}
                 </View>
               <View></View>
               {this.props.reply.audio || this.props.reply.file ? (
@@ -212,7 +181,7 @@ export default class ReplyText extends Component {
                               this.props.reply.url.duration) ||
                               this.props.reply.duration
                               ? converToHMS(
-                                this.props.reply.type_extern === "Posts"
+                                this.props.reply.type_extern === replies.posts
                                   ? this.props.reply.url.duration
                                   : this.props.reply.duration
                               )
@@ -239,6 +208,7 @@ export default class ReplyText extends Component {
                         style={{
                         /*width: this.props.reply.sourcer ? "20%" : "0%",*/ marginRight:
                             "1%",
+                            marginTop: 3,
                         }}
                       >
                           <View>
@@ -262,7 +232,7 @@ export default class ReplyText extends Component {
                                 source={{ uri: this.props.reply.sourcer }}
                               ></CacheImages>
                           </View>
-                          {this.props.reply.video ? (
+                          {/*this.props.reply.video ? (
                             <View
                               style={{
                                 ...rounder(30, ColorList.buttonerBackground),
@@ -280,7 +250,7 @@ export default class ReplyText extends Component {
                                   color: ColorList.bodyBackground,
                                 }}
                               ></Icon>
-                            </View>) : null}
+                              </View>) : null*/}
                       </View>
                       ) : null}
                       <View
@@ -305,9 +275,9 @@ export default class ReplyText extends Component {
                             numberOfLines={
                               this.props.reply.sourcer
                                 ? this.props.reply.replyer_name
-                                  ? 13
-                                  : 15
-                                : 15
+                                  ? 5
+                                  : 5
+                                : 7
                             }
                             style={{ fontSize: 12, color: "#1F4237" }}
                             text={
@@ -326,9 +296,9 @@ export default class ReplyText extends Component {
                             numberOfLines={
                               this.props.reply.sourcer
                                 ? this.props.reply.replyer_name
-                                  ? 13
-                                  : 14
-                                : 14
+                                  ? 5
+                                  : 6
+                                : 4
                             }
                             style={{ fontSize: 12 }}
                             text={this.props.reply.text}

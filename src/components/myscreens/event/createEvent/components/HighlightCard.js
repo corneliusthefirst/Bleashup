@@ -72,7 +72,6 @@ export default class HighlightCard extends PureComponent {
       }}>
       <View
           onLayout={(e) => {
-            console.warn(e.nativeEvent.layout.height)
             this.props.onLayout(e.nativeEvent.layout)}
           }
         style={{
@@ -102,7 +101,7 @@ export default class HighlightCard extends PureComponent {
                 fontSize: 14,
                 color: ColorList.headerBlackText,
                 fontWeight: "bold",
-                marginTop: "10%",
+                //marginTop: "10%",
               }}
             >
               {this.props.item.title ? this.props.item.title : ""}

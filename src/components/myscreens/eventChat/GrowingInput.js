@@ -11,7 +11,7 @@ export default class GrowingInput extends PureComponent{
     }
     updateSize = (heigh) => {
         this.setState({
-            height: heigh >= 300 ? 300 : heigh
+            height: heigh >= 100 ? 100 : heigh
         });
        // this.props.animateLayout()
     }
@@ -41,11 +41,13 @@ export default class GrowingInput extends PureComponent{
                 placeholder={"Your Message"}
                 onFocus={this.props.onFocus}
                 style={{
-                    alignSelf: "center",
-                    maxHeight: 300,
+                    alignSelf: "flex-start",
+                    marginLeft: 4,
+                    maxHeight: 100,
                     left: 0,
                     right: 0,
-                    width: "84%",
+                    minHeight: 15,
+                    width: "90%",
                     height: this.state.height,
                     borderRadius: 15,
                     //marginLeft: "3%",

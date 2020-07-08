@@ -793,7 +793,8 @@ class ChatRoom extends AnimatedComponent {
                                             keyboardShouldPersistTaps={'always'}
                                             showsVerticalScrollIndicator={false}
                                             ref="scrollViewRef"
-                                            style={{ height: screenheight }}>
+                                            //style={{ height: screenheight }}
+                                            >
                                             <View style={{ height: this.state.messageListHeight }}>
                                                 <TouchableWithoutFeedback
                                                     onPressIn={() => {
@@ -805,7 +806,15 @@ class ChatRoom extends AnimatedComponent {
                                                 ><View>{this.messageList()}</View>
                                                 </TouchableWithoutFeedback>
                                             </View>
-                                            <View style={{flex:1,justifyContent:'flex-end'}}>
+                                            <View style={{
+                                                //height:"3%",
+                                                justifyContent:'flex-end',
+                                                flexDirection: 'column',
+                                                alignSelf: 'flex-end',
+                                                alignItems: 'flex-end',
+                                                marginTop: 'auto',
+                                                //marginBottom: "1%",
+                                            }}>
                                                 {!this.props.opened || !this.props.generallyMember ? (
                                                     <Text
                                                         style={{ fontStyle: 'italic', marginLeft: '3%' }}
@@ -816,7 +825,7 @@ class ChatRoom extends AnimatedComponent {
                                                 ) : (
                                                         // ***************** KeyBoard Displayer *****************************
 
-                                                        <View style={{ flex: 1, justifyContent: 'flex-end' }}>{this.keyboardView()}</View>
+                                                        <View style={{  justifyContent: 'flex-end' }}>{this.keyboardView()}</View>
                                                     )}
                                             </View>
                                         </ScrollView>
@@ -1155,7 +1164,7 @@ class ChatRoom extends AnimatedComponent {
                         : 0
                 }
                 getItemLayout={this.getItemLayout.bind(this)}
-                keyExtractor={(item, index) => (item ? item.id : null)}
+                keyExtractor={(item, index) => (item ? item.id : index)}
                 renderItem={(item, index) => {
                     this.delay =
                         this.delay >= 20 || (item && !item.sent) ? 0 : this.delay + 1;
