@@ -7,10 +7,7 @@ import bleashupHeaderStyle from '../../../services/bleashupHeaderStyle';
 import BleashupModal from '../../mainComponents/BleashupModal';
 
 export default class SelectDays extends BleashupModal {
-    constructor(props) {
-        super(props)
-        this.state = {}
-    }
+    
     checked = (code) => findIndex(this.props.daysSelected, (ele) => ele === code) >= 0 ? true : false
     renderItem(item) {
         return <Button style={{ width: "100%" }} key={item.code} onPress={() => this.checked(item.code) ? this.props.removeCode(item.code) : this.props.addCode(item.code)} transparent><Text>{`${item.day}`}</Text><Icon style={{ alignSelf: 'flex-end', }} type={"MaterialIcons"} name={this.checked(item.code) ? "radio-button-checked" : "radio-button-unchecked"}></Icon></Button>

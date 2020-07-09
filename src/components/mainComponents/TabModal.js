@@ -18,15 +18,15 @@ export default class TabModal extends BleashupModal {
     return null;
   }
   onOpenModal() {
-    setTimeout(() => {
-      this.setState({
+   this.openModalTimeout = setTimeout(() => {
+      this.setStatePure({
         content: this.props.content,
       });
     }, 20);
   }
   onClosedModal() {
     this.props.closed();
-    this.setState({
+    this.setStatePure({
       content: null,
     });
   }
@@ -82,7 +82,7 @@ export default class TabModal extends BleashupModal {
           }}
           onChangeTab={({ i }) => {
             this.inialPage !== 0 && i == 0 ? this.onClosedModal() : null;
-            this.setState({
+            this.setStatePure({
               currentTab: this.inialPage !== 0 && i === 0 ? i + 1 : i,
             });
           }}

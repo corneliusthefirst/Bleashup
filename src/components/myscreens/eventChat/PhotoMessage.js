@@ -11,8 +11,9 @@ import CacheImages from '../../CacheImages';
 import FileExachange from '../../../services/FileExchange';
 import testForURL from '../../../services/testForURL';
 import stores from "../../../stores";
+import BePureComponent from '../../BePureComponent';
 
-export default class PhotoMessage extends Component {
+export default class PhotoMessage extends BePureComponent {
     constructor(props) {
         super(props)
         this.state = {

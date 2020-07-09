@@ -36,9 +36,6 @@ import bleashupHeaderStyle from "../../../../services/bleashupHeaderStyle";
 import BleashupModal from '../../../mainComponents/BleashupModal';
 import CreationHeader from "../../event/createEvent/components/CreationHeader";
 export default class InvitationModal extends BleashupModal {
-  constructor(props) {
-    super(props);
-  }
   initialize(){
     this.state = {
       inviteViaEmail: false,
@@ -55,10 +52,10 @@ export default class InvitationModal extends BleashupModal {
     this.previousState = this.state.inviteViaEmail;
   }
   onRefresh() {
-    this.setState({ refreshing: true })
+    this.setStatePure({ refreshing: true })
     //call your callback function here
     this.addInvitation()
-    this.setState({ refreshing: false })
+    this.setStatePure({ refreshing: false })
   }
   invite(members, status) {
     this.props.close()
@@ -68,14 +65,14 @@ export default class InvitationModal extends BleashupModal {
       if (this.props.master) {
         this.prepareInvites(members, status).then(invites => {
           Request.invite(invites, this.props.eventID).then((response => {
-            this.setState({
+            this.setStatePure({
               checked: [],
               inviting: false,
               masterStatus: false
             })
             Toast.show({ type: "success", text: "invitations successfully sent !", position: "bottom", buttonText: "OK" })
           })).catch(eror => {
-            this.setState({
+            this.setStatePure({
               checked: [],
               inviting: false,
               masterStatus: false
@@ -155,12 +152,12 @@ export default class InvitationModal extends BleashupModal {
       stores.Contacts.getContacts(stores.Session.SessionStore.phone).then(
         contacts => {
           if (contacts == "empty") {
-            this.setState({
+            this.setStatePure({
               isEmpty: true,
               loading: false
             })
           } else {
-            this.setState({ contacts: contacts, loading: false });
+            this.setStatePure({ contacts: contacts, loading: false });
           }
         }
       );
@@ -168,7 +165,7 @@ export default class InvitationModal extends BleashupModal {
   }
   onClosedModal(){
     this.props.close()
-    this.setState({
+    this.setStatePure({
       contacts: null,
       check: [],
       loading: true
@@ -204,12 +201,12 @@ export default class InvitationModal extends BleashupModal {
                 return (<View style={{ margin: 4 }}>
                   <ProfileWithCheckBox delay={this.delay} checked={false}
                     index={indexOf(this.state.checked, item.phone)} phone={item.phone} check={(phone) =>
-                      this.setState({
+                      this.setStatePure({
                         checked: concat(this.state.checked, [item]),
                       })
                     }
                     uncheck={(phone) =>
-                      this.setState({ checked: reject(this.state.checked, ele => ele.phone == phone) })
+                      this.setStatePure({ checked: reject(this.state.checked, ele => ele.phone == phone) })
                     }></ProfileWithCheckBox>
                   <MenuDivider color="#1FABAB" />
                 </View>)

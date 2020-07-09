@@ -100,12 +100,15 @@ export default class TasksCreation extends BleashupModal {
       ? "event"
       : "reminder";
   }
+  unmountingComponent(){
+    clearTimeout(this.initTimeout)
+  }
   @autobind
   init() {
     this.props.remind && typeof this.props.remind !== "string"
-      ? setTimeout(() => {
+      ? this.initTimeout = setTimeout(() => {
         let remind = this.props.remind;
-        this.setState({
+        this.setStatePure({
           currentRemind: remind,
           mounted: true,
           type: this.calculateType(remind),
@@ -133,7 +136,7 @@ export default class TasksCreation extends BleashupModal {
       ).then((rem) => {
         rem = isEmpty(rem) ? request.Remind() : rem
         let remind = this.props.starRemind || rem;
-        this.setState({
+        this.setStatePure({
           currentRemind: remind,
           mounted: true,
           type: this.calculateType(remind),
@@ -210,10 +213,10 @@ export default class TasksCreation extends BleashupModal {
             NewRemind,
             false
           ).then((newRem) => {
-            this.setState({ currentRemind: newRem, date: NewRemind.period, newing: !this.state.newing });
+            this.setStatePure({ currentRemind: newRem, date: NewRemind.period, newing: !this.state.newing });
           });
         } else {
-          this.setState({
+          this.setStatePure({
             currentRemind: newRemind,
             newing: !this.state.newing,
             date: NewRemind.period,
@@ -221,7 +224,7 @@ export default class TasksCreation extends BleashupModal {
         }
       });
     } else {
-      this.setState({
+      this.setStatePure({
         currentRemind: {
           ...this.state.currentRemind,
           recursive_frequency: NewRemind.recursive_frequency,
@@ -236,7 +239,7 @@ export default class TasksCreation extends BleashupModal {
   }
   @autobind
   show(mode) {
-    this.setState({
+    this.setStatePure({
       show: true,
       mode,
     });
@@ -250,7 +253,7 @@ export default class TasksCreation extends BleashupModal {
   //for date
   @autobind
   showDateTimePicker() {
-    this.setState({ isDateTimePickerVisible: true });
+    this.setStatePure({ isDateTimePickerVisible: true });
   }
 
   @autobind
@@ -266,7 +269,7 @@ export default class TasksCreation extends BleashupModal {
           .split("T")[1];
       let dateTime = newDate + "T" + currentTime;
       //deactivate the date picker before setting the obtain time
-      this.setState({
+      this.setStatePure({
         date: dateTime,
         isDateTimePickerVisible: false,
         show: true,
@@ -279,7 +282,7 @@ export default class TasksCreation extends BleashupModal {
           false
         ).then(() => { });
     } else {
-      this.setState({
+      this.setStatePure({
         isDateTimePickerVisible: false,
       });
     }
@@ -293,7 +296,7 @@ export default class TasksCreation extends BleashupModal {
         ? moment(this.state.date).format().split("T")[0]
         : moment().format().split("T")[0];
       let dateTime = newDate + "T" + time;
-      this.setState({ show: false, date: dateTime });
+      this.setStatePure({ show: false, date: dateTime });
       this.props.update
         ? null
         : stores.Reminds.updatePeriod(
@@ -302,7 +305,7 @@ export default class TasksCreation extends BleashupModal {
           false
         ).then(() => { });
     } else {
-      this.setState({
+      this.setStatePure({
         show: false,
       });
     }
@@ -311,7 +314,7 @@ export default class TasksCreation extends BleashupModal {
   @autobind
   onChangedTitle(value) {
     this.state.currentRemind.title = value;
-    this.setState({
+    this.setStatePure({
       currentRemind: { ...this.state.currentRemind, title: value },
     });
     let NewRemind = { remind_id: this.state.currentRemind.id, title: value };
@@ -326,7 +329,7 @@ export default class TasksCreation extends BleashupModal {
 
   @autobind
   onChangedDescription(value) {
-    this.setState({
+    this.setStatePure({
       currentRemind: { ...this.state.currentRemind, description: value },
     });
     let NewRemind = {
@@ -344,7 +347,7 @@ export default class TasksCreation extends BleashupModal {
 
   onChangedStatus(status) {
     let newstatus = status;
-    this.setState({
+    this.setStatePure({
       currentRemind: { ...this.state.currentRemind, status: newstatus },
     });
     let NewRemind = {
@@ -362,12 +365,12 @@ export default class TasksCreation extends BleashupModal {
 
   @autobind
   onClickMembers() {
-    this.setState({ selectMemberState: true });
+    this.setStatePure({ selectMemberState: true });
   }
 
   @autobind
   back() {
-    //this.setState({
+    //this.setStatePure({
     //  isExtra:false
     // })
     this.props.onClosed();
@@ -387,10 +390,10 @@ export default class TasksCreation extends BleashupModal {
         NewRemind,
         false
       ).then((newRemind) => {
-        this.setState({ currentRemind: newRemind, newing: !this.state.newing });
+        this.setStatePure({ currentRemind: newRemind, newing: !this.state.newing });
       });
     } else {
-      this.setState({
+      this.setStatePure({
         newing: !this.state.newing,
         currentRemind: {
           ...this.state.currentRemind,
@@ -402,7 +405,7 @@ export default class TasksCreation extends BleashupModal {
 
   @autobind
   resetRemind() {
-    this.setState({
+    this.setStatePure({
       currentRemind: request.Remind(),
     });
   }
@@ -415,11 +418,11 @@ export default class TasksCreation extends BleashupModal {
         },
         remind_id: this.state.currentRemind.id,
       }).then((newRemind) => {
-        this.setState({
+        this.setStatePure({
           currentRemind: newRemind,
         });
       })
-      : this.setState({
+      : this.setStatePure({
         currentRemind: {
           ...this.state.currentRemind,
           recursive_frequency: {
@@ -437,14 +440,14 @@ export default class TasksCreation extends BleashupModal {
           : true,
         remind_id: this.state.currentRemind.id,
       }).then(() => {
-        this.setState({
+        this.setStatePure({
           currentRemind: {
             ...this.state.currentRemind,
             must_report: this.state.currentRemind.must_report ? false : true,
           },
         });
       })
-      : this.setState({
+      : this.setStatePure({
         currentRemind: {
           ...this.state.currentRemind,
           must_report: this.state.currentRemind.must_report
@@ -528,7 +531,7 @@ export default class TasksCreation extends BleashupModal {
 
   @autobind
   takecheckedResult(result) {
-    this.setState({ currentMembers: uniqBy(result, "phone") });
+    this.setStatePure({ currentMembers: uniqBy(result, "phone") });
     !this.props.update &&
       stores.Reminds.updateMembers(this.props.event_id, {
         remind_id: this.state.currentRemind.id,
@@ -537,7 +540,7 @@ export default class TasksCreation extends BleashupModal {
   }
 
   showEndatePiker() {
-    this.setState({
+    this.setStatePure({
       showEndatePiker: true,
       mode: "date",
       display: "calendar",
@@ -545,7 +548,7 @@ export default class TasksCreation extends BleashupModal {
   }
   changeEndDate(e, date) {
     if (date === undefined) {
-      this.setState({
+      this.setStatePure({
         showEndatePiker: false,
       });
     } else {
@@ -566,12 +569,12 @@ export default class TasksCreation extends BleashupModal {
           },
           remind_id: this.state.currentRemind.id,
         }).then((newRemind) => {
-          this.setState({
+          this.setStatePure({
             showEndatePiker: false,
             currentRemind: newRemind,
           });
         })
-        : this.setState({
+        : this.setStatePure({
           showEndatePiker: false,
           currentRemind: {
             ...this.state.currentRemind,
@@ -584,7 +587,7 @@ export default class TasksCreation extends BleashupModal {
     }
   }
   setCurrentLocation(value) {
-    this.setState({
+    this.setStatePure({
       currentRemind: { ...this.state.currentRemind, location: value },
     });
     !this.props.update &&
@@ -594,7 +597,7 @@ export default class TasksCreation extends BleashupModal {
       }).then(() => { });
   }
   saveURL(url) {
-    this.setState({
+    this.setStatePure({
       currentRemind: {
         ...this.state.currentRemind,
         remind_url: url || request.Remind().remind_url,
@@ -624,7 +627,7 @@ export default class TasksCreation extends BleashupModal {
     }
   }
   setRecurrencyState() {
-    this.setState({
+    this.setStatePure({
       recurrent: !this.state.recurrent,
     });
   }
@@ -691,7 +694,7 @@ export default class TasksCreation extends BleashupModal {
                     <TouchableOpacity
                       onPress={() =>
                         requestAnimationFrame(() =>
-                          this.setState({ selectMemberState: true })
+                          this.setStatePure({ selectMemberState: true })
                         )
                       }
                       style={{ flexDirection: "row" }}
@@ -715,12 +718,12 @@ export default class TasksCreation extends BleashupModal {
                     <RemindsTypeMenu
                       type={this.isEvent() ? "Event" : "Reminder"}
                       reminder={() => {
-                        this.setState({
+                        this.setStatePure({
                           type: "reminder",
                         });
                       }}
                       event={() => {
-                        this.setState({
+                        this.setStatePure({
                           type: "event",
                         });
                       }}
@@ -963,7 +966,7 @@ export default class TasksCreation extends BleashupModal {
                                   <TouchableOpacity
                                     onPress={() =>
                                       requestAnimationFrame(() => {
-                                        this.setState({
+                                        this.setStatePure({
                                           isSelectDaysModalOpened: true,
                                         });
                                       })
@@ -1132,9 +1135,13 @@ export default class TasksCreation extends BleashupModal {
               )}
               {!this.state.creating ? (
                 this.state.ownership && (
-                  <TouchableOpacity onPress={()=> this.propceed()} style={{ margin: '5%',alignSelf:'flex-end',height:30,width:30}}>
-                  <View style={{ alignSelf:'center',alignItems:'center',...rounder(30,ColorList.senTBoxColor[ColorList.sendRand()])}}>
-                     <Text>ok</Text>
+                  <TouchableOpacity onPress={()=> this.propceed()} style={{ margin: '5%',alignSelf:'flex-end',}}>
+                  <View style={{ alignSelf:'center',alignItems:'center',...rounder(40,ColorList.likeActive)}}>
+                     <Text style={{
+                       fontWeight: '400',
+                       color:ColorList.bodyBackground,
+                       fontSize: 20,
+                     }}>ok</Text>
                   </View>
                   </TouchableOpacity>
                 
@@ -1167,7 +1174,7 @@ export default class TasksCreation extends BleashupModal {
               }
               isOpen={this.state.isSelectDaysModalOpened}
               onClosed={() => {
-                this.setState({
+                this.setStatePure({
                   isSelectDaysModalOpened: false,
                 });
               }}
@@ -1178,7 +1185,7 @@ export default class TasksCreation extends BleashupModal {
               participants={this.props.event.participant}
               creator={this.props.event.creator_phone}
               onClosed={() => {
-                this.setState({
+                this.setStatePure({
                   selectMemberState: false,
                 });
               }}

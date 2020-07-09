@@ -11,9 +11,6 @@ import BleashupModal from "../../mainComponents/BleashupModal";
 import CreationHeader from "./createEvent/components/CreationHeader";
 
 export default class ContactListModal extends BleashupModal {
-    constructor(props) {
-        super(props);
-    }
     initialize() {
         this.state = {
             loaded: false,
@@ -25,8 +22,8 @@ export default class ContactListModal extends BleashupModal {
         return item && item.phone ? item.phone : item;
     }
     onOpenModal() {
-        setTimeout(() => {
-            this.setState({
+       this.openModalTimeout = setTimeout(() => {
+            this.setStatePure({
                 contacts: this.props.contacts,
                 //event_id: this.props.event_id,
                 loaded: true,

@@ -1,8 +1,9 @@
 import React,{PureComponent} from "react"
 import { View, TextInput } from 'react-native';
 import ColorList from '../../colorList';
+import BePureComponent from '../../BePureComponent';
 
-export default class GrowingInput extends PureComponent{
+export default class GrowingInput extends BePureComponent{
     constructor(props){
         super(props)
         this.state = {
@@ -10,8 +11,8 @@ export default class GrowingInput extends PureComponent{
         }
     }
     updateSize = (heigh) => {
-        this.setState({
-            height: heigh >= 300 ? 300 : heigh
+        this.setStatePure({
+            height: heigh >= 100 ? 100 : heigh
         });
        // this.props.animateLayout()
     }
@@ -25,7 +26,7 @@ export default class GrowingInput extends PureComponent{
         this._textInput.blur()
     }
     componentDidMount(){
-        this.setState({
+        this.setStatePure({
             mounted:true
         })
     }
@@ -42,13 +43,15 @@ export default class GrowingInput extends PureComponent{
                 onFocus={this.props.onFocus}
                 style={{
                     alignSelf: "flex-start",
-                    maxHeight: 300,
+                    marginLeft: 4,
+                    maxHeight: 100,
                     left: 0,
                     right: 0,
-                    width: "84%",
+                    minHeight: 15,
+                    width: "90%",
                     height: this.state.height,
                     borderRadius: 15,
-                    marginLeft: "3%",
+                    //marginLeft: "3%",
                 }}
                 placeholderTextColor="#66737C"
                 multiline={true}

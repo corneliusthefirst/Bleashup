@@ -1,8 +1,9 @@
 
 import React, { PureComponent } from "react"
 import { Platform, LayoutAnimation, UIManager } from 'react-native';
+import BePureComponent from './BePureComponent';
 
-export default class AnimatedPureComponent extends PureComponent {
+export default class AnimatedPureComponent extends BePureComponent {
     constructor(props) {
         super(props)
         if (Platform.OS === 'android') {
@@ -17,7 +18,7 @@ export default class AnimatedPureComponent extends PureComponent {
         //if(this.animationTimeout) clearTimeout(this.animationTimeout)
         //this.animationTimeout = setTimeout(() => {
         LayoutAnimation.configureNext({
-            duration: 300,
+            duration: 250,
             create: {
                 type: LayoutAnimation.Types.easeInEaseOut,
                 property: LayoutAnimation.Properties.scaleX,

@@ -6,7 +6,7 @@ import { View } from 'react-native';
 
 export default class RemindMembers extends BleashupModal {
     onClosedModal(){
-        this.setState({
+        this.setStatePure({
             selectMemberState: false
         })
         this.props.onClosed()
@@ -22,13 +22,13 @@ export default class RemindMembers extends BleashupModal {
                        
                 }}
                     addMembers={() => {
-                        this.setState({
+                        this.setStatePure({
                             selectMemberState: true,
                             adding: true,
                         });
                     }}
                     removeMember={() => {
-                        this.setState({
+                        this.setStatePure({
                             selectMemberState: true,
                             adding: false,
                         });
@@ -40,7 +40,7 @@ export default class RemindMembers extends BleashupModal {
                 <SelectableContactList
                     isOpen={this.state.selectMemberState}
                     close={() => {
-                        this.setState({
+                        this.setStatePure({
                             selectMemberState: false,
                         });
                     }}

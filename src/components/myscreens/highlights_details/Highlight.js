@@ -94,10 +94,10 @@ export default class HighLight extends Component {
                         alignSelf: 'center', margin: '1%',
                         backgroundColor: this.props.background ? this.props.background : "#9EEDD3",
                     }}>
-                        <View style={{ height: 50, opacity: 0.8, borderRadius: 8, }}>
-                            <Text style={{
+                        <View style={{ height: 50,  borderRadius: 8, }}>
+                            <Text ellipsizeMode={"tail"} numberOfLines={2} style={{
                                 alignSelf: 'center',
-                                margin: '3%', fontWeight: 'bold', fontSize: 22,
+                                margin: '3%', fontWeight: 'bold', fontSize: 15,
                             }}>
                                 {this.props.highlight.title}
                             </Text>

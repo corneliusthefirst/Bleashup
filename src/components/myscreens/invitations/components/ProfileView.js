@@ -19,8 +19,9 @@ import testForURL from "../../../../services/testForURL";
 import ColorList from "../../../colorList";
 import ProfileSimple from "../../currentevents/components/ProfileViewSimple";
 import { check_user_error_1, check_user_error_2 } from '../../../../stores/temporalUsersStore';
+import BeComponent from '../../../BeComponent';
 
-export default class ProfileView extends Component {
+export default class ProfileView extends BeComponent {
     constructor(props) {
         super(props);
         this.state = {isMount:false,hide:false}
@@ -40,7 +41,7 @@ export default class ProfileView extends Component {
                         user.response == check_user_error_1 ||
                         user.response === check_user_error_2
                     ) {
-                        this.setState({ hide: true }); //this.state.hide = true;
+                        this.setStatePure({ hide: true }); //this.state.hide = true;
                         this.props.hideMe ? this.props.hideMe(this.state.hide) : null;
                     } else {
                         this.props.contact &&
@@ -50,7 +51,7 @@ export default class ProfileView extends Component {
                             }).then(() => { });
                         this.props.contact && this.props.updateContact(user);
 
-                        this.setState({
+                        this.setStatePure({
                             profile: user,
                             isModalOpened: false,
                             isMount: true,
@@ -72,7 +73,7 @@ export default class ProfileView extends Component {
     }
 
     openModal() {
-        this.setState({ isModalOpened: true });
+        this.setStatePure({ isModalOpened: true });
     }
 
     render() {
@@ -168,7 +169,7 @@ export default class ProfileView extends Component {
                         isToBeJoint
                         joined={this.props.joined}
                         onClosed={() => {
-                            this.setState({ isModalOpened: false });
+                            this.setStatePure({ isModalOpened: false });
                         }}
                         profile={
                             stores.TemporalUsersStore.Users &&

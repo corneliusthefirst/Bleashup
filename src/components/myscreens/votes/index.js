@@ -24,7 +24,6 @@ import ColorList from "../../colorList";
 import ShareFrame from "../../mainComponents/ShareFram";
 import Share from "../../../stores/share";
 import replies from "../eventChat/reply_extern";
-import AnimatedComponent from '../../AnimatedComponent';
 let { height, width } = Dimensions.get("window");
 
 export default class Votes extends BleashupModal {
@@ -36,7 +35,7 @@ export default class Votes extends BleashupModal {
   state = {};
   onClosedModal() {
     this.props.onClosed();
-    this.setState({
+    this.setStatePure({
       loaded: false,
       isVoteCreationModalOpened: false,
     });
@@ -51,7 +50,7 @@ export default class Votes extends BleashupModal {
     this.shareStore = new Share(this.props.share.id);
     this.shareStore.readFromStore().then(() => {
       this.shareStore.share && this.shareStore.share.event
-        ? this.setState({
+        ? this.setStatePure({
           loaded: true,
         })
         : null;
@@ -70,7 +69,7 @@ export default class Votes extends BleashupModal {
               vote: Array.isArray(vote) ? vote[0] : vote,
             })
             .then(() => {
-              this.setState({
+              this.setStatePure({
                 loaded: true,
               });
             });
@@ -78,7 +77,7 @@ export default class Votes extends BleashupModal {
       );
     });
   }
-  componentWillMount() {
+  componentMounting() {
    emitter.on("votes-updated", (committee_id) => {
         console.warn(committee_id, "receiving new update");
         if (this.props.committee_id === committee_id) {
@@ -110,7 +109,7 @@ export default class Votes extends BleashupModal {
           vote: Array.isArray(vote) ? vote[0] : vote,
         });
       })
-      : this.setState({
+      : this.setStatePure({
         votes: votes,
         loaded: status ? false : true,
         vote_id: request.Vote().id,
@@ -118,19 +117,19 @@ export default class Votes extends BleashupModal {
     //this.props.takeVotes(votes);
   }
   onOpenModal() {
-    setTimeout(() => {
-      this.setState({
+   this.openModalTimeout = setTimeout(() => {
+      this.setStatePure({
         loaded: true,
       });
     })
   }
-  componentWillUnmount() {
+  unmountingComponent() {
     !this.props.shared && emitter.off("votes-updated");
     !this.props.shared && emitter.off("vote-me");
   }
   delay = 0;
   AddVote() {
-    this.setState({
+    this.setStatePure({
       isVoteCreationModalOpened: true,
       update: false,
       vote: null,
@@ -138,7 +137,7 @@ export default class Votes extends BleashupModal {
     });
   }
   createVote(vote) {
-    this.setState({
+    this.setStatePure({
       isVoteCreationModalOpened: false,
       vote_id: null,
     });
@@ -228,14 +227,14 @@ export default class Votes extends BleashupModal {
     //this.props.voteItem(message);
   }
   updateVote(vote) {
-    this.setState({
+    this.setStatePure({
       isVoteCreationModalOpened: true,
       update: true,
       vote: vote,
     });
   }
   appdateVote(previousVote, currentVote) {
-    this.setState({
+    this.setStatePure({
       isVoteCreationModalOpened: false,
     });
     if (!this.props.working) {
@@ -412,7 +411,7 @@ export default class Votes extends BleashupModal {
           vote_id={this.state.vote_id}
           isOpen={this.state.isVoteCreationModalOpened}
           onClosed={() => {
-            this.setState({
+            this.setStatePure({
               isVoteCreationModalOpened: false,
             });
           }}

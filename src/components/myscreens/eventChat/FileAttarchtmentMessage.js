@@ -13,8 +13,9 @@ import Pickers from '../../../services/Picker';
 import stores from '../../../stores';
 import ColorList from '../../colorList';
 import TextContent from './TextContent';
+import BePureComponent from '../../BePureComponent';
 
-export default class FileAttarchementMessaege extends Component {
+export default class FileAttarchementMessaege extends BePureComponent {
     constructor(props) {
         super(props);
         this.state = {
@@ -31,7 +32,7 @@ export default class FileAttarchementMessaege extends Component {
         stores.Messages.addStaticFilePath(this.props.room,this.props.message.source, this.props.message.id).then(() => {
             stores.Messages.addAudioSizeProperties(this.props.room,this.props.message.id, this.props.message.total,
                 this.props.message.received, this.props.message.duration).then(() => {
-                    this.setState({
+                    this.setStatePure({
                         loaded: true,
                         downlading: false
                     })
@@ -45,7 +46,7 @@ export default class FileAttarchementMessaege extends Component {
     downloadID = null
     download(url) {
         clearInterval(this.downloadID)
-        this.setState({
+        this.setStatePure({
             downloading: true
         })
         GState.downlading = true
@@ -62,7 +63,7 @@ export default class FileAttarchementMessaege extends Component {
         Pickers.openFile(this.props.message.source)
     }
     componentDidMount() {
-        this.setState({
+        this.setStatePure({
             duration: null,
             currentPosition: 0,
             playing: false,
@@ -84,7 +85,7 @@ export default class FileAttarchementMessaege extends Component {
     previousTime = 0
     cancelDownLoad(url) {
         this.exchanger.task.cancel((err, taskID) => {
-            this.setState({ downloading: false })
+            this.setStatePure({ downloading: false })
         })
         stores.Messages.SetCancledState(this.props.room,this.props.message.id)
     }
@@ -95,7 +96,7 @@ export default class FileAttarchementMessaege extends Component {
     progress(received, total) {
         let newTotal = this.state.total && this.state.total > 0 && this.state.total > total ? this.state.total : total
         newTotal = parseInt(newTotal)
-        this.setState({
+        this.setStatePure({
             downloadState: (received / newTotal) * 100,
             total: newTotal, received: received
         })
@@ -114,7 +115,7 @@ export default class FileAttarchementMessaege extends Component {
         stores.Messages.addAudioSizeProperties(this.props.room,this.props.message.id,
             total, received).then(() => {
                 console.warn("setting failed state")
-                this.setState({
+                this.setStatePure({
                     downloading: false
                 })
             })
@@ -122,7 +123,7 @@ export default class FileAttarchementMessaege extends Component {
     onError(error) {
         GState.downlading = false
         console.warn(error)
-        this.setState({
+        this.setStatePure({
             downloading: false,
             error: true
         })

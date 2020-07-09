@@ -4,8 +4,9 @@ import { View, TouchableOpacity } from 'react-native';
 import ProfileSimple from '../components/myscreens/currentevents/components/ProfileViewSimple';
 import stores from '../stores/index';
 import BeNavigator from '../services/navigationServices';
+import BeComponent from './BeComponent';
 
-export default class RelationProfile extends Component {
+export default class RelationProfile extends BeComponent {
   constructor(props) {
     super(props);
   }

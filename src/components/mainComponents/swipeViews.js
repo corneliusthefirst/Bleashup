@@ -9,10 +9,7 @@ import ColorList from '../colorList';
 const ScreenHeight = Dimensions.get('window').height;
 
 export default class SwiperView extends AnimatedComponent {
-  constructor(props) {
-    super(props);
-  }
-
+  
   render() {
     return (
         <View style={{height:this.props.height ? this.props.height : ScreenHeight,

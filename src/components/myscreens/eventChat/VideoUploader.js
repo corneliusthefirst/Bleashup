@@ -10,8 +10,9 @@ import rnFetchBlob from 'rn-fetch-blob';
 import buttoner from '../../../services/buttoner';
 import ColorList from '../../colorList';
 import TextContent from './TextContent';
+import BePureComponent from '../../BePureComponent';
 const { fs } = rnFetchBlob
-export default class VideoUploader extends Component {
+export default class VideoUploader extends BePureComponent {
     constructor(props) {
         super(props)
         this.state = {
@@ -28,7 +29,7 @@ export default class VideoUploader extends Component {
     }
     task = null
     uploadVideo() {
-        this.setState({
+        this.setStatePure({
             compressing: false,
             uploading:true
         })
@@ -38,7 +39,7 @@ export default class VideoUploader extends Component {
             size: this.props.message.total,
             content_type: this.props.message.content_type
         }).then(res => {
-            this.setState({
+            this.setStatePure({
                 compressing: false
             })*/
         this.exchanger = new FileExachange(this.props.message.source, '/Video/',
@@ -51,7 +52,7 @@ export default class VideoUploader extends Component {
        // })
     }
     onSuccess(newDir, path, filename, baseUrl) {
-        this.setState({
+        this.setStatePure({
             uploadState: 100,
             loaded: true,
             uploading: false
@@ -69,7 +70,7 @@ export default class VideoUploader extends Component {
         this.props.replaceMessage(this.props.message)
     }
     progress(writen, total) {
-        this.setState({
+        this.setStatePure({
             total: parseInt(total),
             uploading: true,
             received: parseInt(writen),
@@ -78,7 +79,7 @@ export default class VideoUploader extends Component {
     }
     onError(error) {
         console.warn(error)
-        this.setState({
+        this.setStatePure({
             uploading: false
         })
     }

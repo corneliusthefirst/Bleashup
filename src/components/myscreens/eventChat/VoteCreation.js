@@ -45,11 +45,11 @@ export default class VoteCreation extends BleashupModal {
     componentDidMount() {
         //if (!this.props.update) {
         if (this.props.update) {
-            this.setState({
+            this.setStatePure({
                 vote: this.props.vote,
             });
         } else {
-            this.setState({
+            this.setStatePure({
                 vote_id: this.props.vote_id,
             });
         }
@@ -64,7 +64,7 @@ export default class VoteCreation extends BleashupModal {
     setOption(value, index) {
         let options = this.state.vote.option;
         options[index] = { ...options[index], name: value, index, vote_count: 0 };
-        this.setState({
+        this.setStatePure({
             vote: { ...this.state.vote, option: options },
         });
         this.updateVoteOtions(options);
@@ -77,7 +77,7 @@ export default class VoteCreation extends BleashupModal {
             index,
             vote_count: 0,
         };
-        this.setState({
+        this.setStatePure({
             vote: { ...this.state.vote, option: options },
         });
         this.updateVoteOtions(options);
@@ -94,7 +94,7 @@ export default class VoteCreation extends BleashupModal {
         stores.Votes.loadVote(this.props.committee_id, request.Vote().id).then(
             (vote) => {
                 console.warn(this.props.committee_id, vote);
-                this.setState({
+                this.setStatePure({
                     vote: !vote ? request.Vote() : vote,
                 });
             }
@@ -164,7 +164,7 @@ export default class VoteCreation extends BleashupModal {
             }
         } else {
             if (!isEqual(JSON.parse(this.previousVote), this.props.vote)) {
-                this.setState({
+                this.setStatePure({
                     vote: this.props.vote,
                 });
                 this.previousVote = JSON.stringify(this.props.vote);
@@ -174,7 +174,7 @@ export default class VoteCreation extends BleashupModal {
     removeNote(index) {
         this.state.vote.option.splice(index, 1);
         let options = this.state.vote.option;
-        this.setState({
+        this.setStatePure({
             vote: { ...this.state.vote, option: options },
             showVoteOptionError: options.length <= 1 ? true : false,
         });
@@ -240,17 +240,17 @@ export default class VoteCreation extends BleashupModal {
         );
     }
     showVoteOptionError() {
-        this.setState({
+        this.setStatePure({
             showVoteOptionError: true,
         });
     }
     showVoteContentError() {
-        this.setState({
+        this.setStatePure({
             showVoteContentError: true,
         });
     }
     showMustSpecifyVotePeriodError() {
-        this.setState({
+        this.setStatePure({
             nowVotePeriod: true,
         });
     }
@@ -268,7 +268,7 @@ export default class VoteCreation extends BleashupModal {
         }
     }
     changeAlwaysShowState() {
-        this.setState({
+        this.setStatePure({
             vote: { ...this.state.vote, always_show: !this.state.vote.always_show },
         });
     }
@@ -280,7 +280,7 @@ export default class VoteCreation extends BleashupModal {
             };
         });
         options.unshift({ name: "", index: 0, vote_count: 0 });
-        this.setState({
+        this.setStatePure({
             vote: {
                 ...this.state.vote,
                 option: options,
@@ -292,7 +292,7 @@ export default class VoteCreation extends BleashupModal {
     }
     changeEndTime(e, date) {
         if (date === undefined) {
-            this.setState({
+            this.setStatePure({
                 showDatePicker: false,
             });
         } else {
@@ -305,7 +305,7 @@ export default class VoteCreation extends BleashupModal {
                     .toISOString()
                     .split("T")[1];
             let newDateTime = newDate + "T" + newTime;
-            this.setState({
+            this.setStatePure({
                 nowVotePeriod: false,
                 vote: { ...this.state.vote, period: newDateTime },
                 showDatePicker: false,
@@ -315,7 +315,7 @@ export default class VoteCreation extends BleashupModal {
     }
     changeTime(e, date) {
         if (date === undefined) {
-            this.setState({
+            this.setStatePure({
                 showTimePicker: false,
             });
         } else {
@@ -323,7 +323,7 @@ export default class VoteCreation extends BleashupModal {
             let newDate = this.state.vote.period
                 ? moment(this.state.vote.period).format().split("T")[0]
                 : moment().format().split("T")[0];
-            this.setState({
+            this.setStatePure({
                 nowVotePeriod: false,
                 showTimePicker: false,
                 vote: { ...this.state.vote, period: newDate + "T" + newTime },
@@ -428,7 +428,7 @@ export default class VoteCreation extends BleashupModal {
                                             }
                                             placeholder={"vote"}
                                             onChange={(text) => {
-                                                this.setState({
+                                                this.setStatePure({
                                                     vote: { ...this.state.vote, title: text },
                                                     showVoteContentError:
                                                         (!text || text.length <= 0) &&
@@ -449,7 +449,7 @@ export default class VoteCreation extends BleashupModal {
                                             placeholder="details"
                                             value={this.state.vote && this.state.vote.description}
                                             onChange={(value) => {
-                                                this.setState({
+                                                this.setStatePure({
                                                     vote: { ...this.state.vote, description: value },
                                                     showVoteContentError:
                                                         (!value || value.length <= 0) &&
@@ -477,7 +477,7 @@ export default class VoteCreation extends BleashupModal {
                                     <View style={{ width: this.width }}>
                                         <Button
                                             onPress={() => {
-                                                this.setState({
+                                                this.setStatePure({
                                                     showDatePicker: true,
                                                 });
                                             }}

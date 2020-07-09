@@ -117,21 +117,19 @@ export default class EventHighlights extends BleashupModal {
 
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.highlight_id !== this.props.highlight_id) {
-      setTimeout(() => {
-        //console.warn('black check 1', this.props.highlight_id);
-        stores.Highlights.readFromStore().then((Highlights) => {
+         stores.Highlights.readFromStore().then((Highlights) => {
           let highlight = find(Highlights[this.props.event_id], {
             id: this.props.highlight_id
               ? this.props.highlight_id
-              : "newHighlightId",
+              : request.Highlight().id,
           });
           //console.warn('black check',highlight);
           this.previoushighlight = JSON.stringify(highlight);
           console.warn('previous',this.previoushighlight);
           if (!this.props.event_id) {
-            let event_id = "newEventId";
+            let event_id = request.Highlight().id;
             stores.Highlights.fetchHighlights(event_id).then((Highlights) => {
-              this.setState({
+              this.setStatePure({
                 newing: !this.state.newing,
                 highlightData: Highlights[this.props.event_id],
                 isMounted: true,
@@ -140,7 +138,7 @@ export default class EventHighlights extends BleashupModal {
               });
             });
           } else {
-            this.setState({
+            this.setStatePure({
               newing: !this.state.newing,
               isMounted: true,
               currentHighlight: highlight ? highlight : request.Highlight(),
@@ -153,28 +151,27 @@ export default class EventHighlights extends BleashupModal {
             this.highlight_flatlistRef.scrollToIndex({ animated: true, index: this.state.initialScrollIndex, viewOffset: 0, viewPosition: 0 });
   
             if (this.state.initialScrollIndex >= (this.state.highlightData.length) - 2) {
-              this.setState({ newing: !this.state.newing, initialScrollIndex: 0 })
+              this.setStatePure({ newing: !this.state.newing, initialScrollIndex: 0 })
             } else {
-              this.setState({ newing: !this.state.newing, initialScrollIndex: this.state.initialScrollIndex + 2 })
+              this.setStatePure({ newing: !this.state.newing, initialScrollIndex: this.state.initialScrollIndex + 2 })
             }
           }
         }, 4000)*/
-      }, 100);
     }
   }
 
   componentDidMount() {
-    setTimeout(() => {
+   this.openModalTimeout = setTimeout(() => {
       stores.Highlights.readFromStore().then((Highlights) => {
         let highlight = find(Highlights[this.props.event_id], {
           id: this.props.highlight_id
             ? this.props.highlight_id
-            : "newHighlightId",
+            : request.Highlight().id,
         });
         if (!this.props.event_id) {
-          let event_id = "newEventId";
+          let event_id = request.Highlight().id;
           stores.Highlights.fetchHighlights(event_id).then((Highlights) => {
-            this.setState({
+            this.setStatePure({
               newing: !this.state.newing,
               highlightData: Highlights,
               isMounted: true,
@@ -183,7 +180,7 @@ export default class EventHighlights extends BleashupModal {
             });
           });
         } else {
-          this.setState({
+          this.setStatePure({
             newing: !this.state.newing,
             isMounted: true,
             currentHighlight:this.props.star?this.props.star:highlight ? highlight : request.Highlight(),
@@ -197,15 +194,15 @@ export default class EventHighlights extends BleashupModal {
 
   @autobind
   back() {
-    this.setState({ newing: !this.state.newing, animateHighlight: false });
+    this.setStatePure({ newing: !this.state.newing, animateHighlight: false });
     this.props.onClosed(this.props.star);
   }
 
   @autobind
   resetHighlight() {
     this.state.currentHighlight = request.Highlight();
-    this.state.currentHighlight.id = "newHighlightId";
-    this.setState({
+    this.state.currentHighlight.id = request.Highlight().id;
+    this.setStatePure({
       newing: !this.state.newing,
       currentHighlight: this.state.currentHighlight,
     });
@@ -213,9 +210,9 @@ export default class EventHighlights extends BleashupModal {
 
   @autobind
   onChangedTitle(value) {
-    //this.setState({newing:!this.state.newing,title:value})
+    //this.setStatePure({newing:!this.state.newing,title:value})
     this.state.currentHighlight.title = value;
-    this.setState({
+    this.setStatePure({
       newing: !this.state.newing,
       currentHighlight: this.state.currentHighlight,
     });
@@ -228,9 +225,9 @@ export default class EventHighlights extends BleashupModal {
   }
   @autobind
   onChangedDescription(value) {
-    //this.setState({newing:!this.state.newing,description:value})
+    //this.setStatePure({newing:!this.state.newing,description:value})
     this.state.currentHighlight.description = value;
-    this.setState({
+    this.setStatePure({
       newing: !this.state.newing,
       currentHighlight: this.state.currentHighlight,
     });
@@ -245,7 +242,7 @@ export default class EventHighlights extends BleashupModal {
 
   @autobind
   onchangeHighLightPublicState(value) {
-    this.setState({
+    this.setStatePure({
       currentHighlight: { ...this.state.currentHighlight, public_state: value },
       newing: !this.state.newing,
     });
@@ -280,23 +277,23 @@ export default class EventHighlights extends BleashupModal {
         newHighlight.url.photo ||
         newHighlight.url.video
       ) {
-        this.setState({
+        this.setStatePure({
           creating: true,
         });
         Requester.createHighlight(newHighlight,this.props.event.about.title)
           .then(() => {
             this.props.reinitializeHighlightsList(newHighlight);
             this.resetHighlight();
-            stores.Highlights.removeHighlight(newHighlight.event_id, "newHighlightId").then(() => {
+            stores.Highlights.removeHighlight(newHighlight.event_id, request.Highlight().id).then(() => {
               this.props.stopLoader();
-              this.setState({
+              this.setStatePure({
                 creating: false,
               });
             });
           })
           .catch(() => {
             this.props.stopLoader();
-            this.setState({
+            this.setStatePure({
               creating: false,
             });
           });
@@ -312,7 +309,7 @@ export default class EventHighlights extends BleashupModal {
 
   @autobind
   updateHighlight() {
-    this.setState({ newing: !this.state.newing, update: false });
+    this.setStatePure({ newing: !this.state.newing, update: false });
     if (this.props.highlight_id) {
       this.props.update(this.state.currentHighlight, this.previoushighlight);
       this.props.onClosed();
@@ -320,7 +317,7 @@ export default class EventHighlights extends BleashupModal {
     }
   }
   applySave(url) {
-    this.setState({
+    this.setStatePure({
       newing: !this.state.newing,
       currentHighlight: {
         ...this.state.currentHighlight,
@@ -348,7 +345,7 @@ export default class EventHighlights extends BleashupModal {
       },
         false
       ).then(() => {
-        this.setState({
+        this.setStatePure({
           newing: !this.state.newing,
           currentHighlight: {
             ...this.state.currentHighlight,
@@ -361,7 +358,7 @@ export default class EventHighlights extends BleashupModal {
         });
       });
     } else {
-      this.setState({
+      this.setStatePure({
         newing: !this.state.newing,
         currentHighlight: {
           ...this.state.currentHighlight,
@@ -377,7 +374,7 @@ export default class EventHighlights extends BleashupModal {
   exchanger = null;
   cleanMedia() {
     if (!this.props.updateState) {
-      this.setState({
+      this.setStatePure({
         newing: !this.state.newing,
         currentHighlight: {
           ...this.state.currentHighlight,
@@ -400,7 +397,7 @@ export default class EventHighlights extends BleashupModal {
           },
         });
     } else {
-      this.setState({
+      this.setStatePure({
         newing: !this.state.newing,
         currentHighlight: {
           ...this.state.currentHighlight,
@@ -416,7 +413,7 @@ export default class EventHighlights extends BleashupModal {
   @autobind
   deleteHighlight(id) {
     this.state.highlightData = reject(this.state.highlightData, { id, id });
-    this.setState({
+    this.setStatePure({
       newing: !this.state.newing,
       highlightData: this.state.highlightData,
     });
@@ -432,7 +429,7 @@ export default class EventHighlights extends BleashupModal {
   rendering = 0;
   onClosedModal() {
     this.props.onClosed();
-    this.setState({
+    this.setStatePure({
       animateHighlight: false,
     });
   }

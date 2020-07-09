@@ -25,7 +25,8 @@ import ColorList from "../../colorList";
 import stores from "../../../stores";
 import TextContent from "./TextContent";
 import emitter from '../../../services/eventEmiter';
-export default class AudioMessage extends Component {
+import BePureComponent from '../../BePureComponent';
+export default class AudioMessage extends BePureComponent {
     constructor(props) {
         super(props);
         this.state = {
@@ -36,14 +37,14 @@ export default class AudioMessage extends Component {
             downloading: true,
         };
     }
-    componentWillUnmount() {
+    unmountingComponent() {
         this.player && this.player.stop();
         clearInterval(this.downloadID);
         emitter.off(this.playingEvent)
     }
     componentDidMount() {
         //console.warn(this.props.message.source);
-        this.setState({
+        this.setStatePure({
             duration: null,
             currentPosition: 0,
             playing: false,
@@ -64,11 +65,11 @@ export default class AudioMessage extends Component {
             this.onFail.bind(this),
             this.onError.bind(this)
         );
-        setTimeout(() => {
+       this.mountTimeout = setTimeout(() => {
             if (testForURL(this.props.message.source)) {
                 !this.props.message.cancled
                     ? this.downloadAudio(this.props.message.source)
-                    : this.setState({
+                    : this.setStatePure({
                         downloading: false,
                     });
             } else {
@@ -93,7 +94,7 @@ export default class AudioMessage extends Component {
                 this.props.message.duration
             ).then(() => {
                 this.initialisePlayer(this.props.message.source);
-                this.setState({
+                this.setStatePure({
                     loaded: true,
                 });
             });
@@ -101,7 +102,7 @@ export default class AudioMessage extends Component {
     }
     success(path, total, received) {
         this.props.message.duration = this.exchanger.duration;
-        this.setState({
+        this.setStatePure({
             total: total,
             received: received,
         });
@@ -114,7 +115,7 @@ export default class AudioMessage extends Component {
                 ? this.state.total
                 : total;
         newTotal = parseInt(newTotal);
-        this.setState({
+        this.setStatePure({
             downloadState: (newReceived / newTotal) * 100,
             total: newTotal,
             received: newReceived,
@@ -127,7 +128,7 @@ export default class AudioMessage extends Component {
     download(url) {
         clearInterval(this.downloadID);
         GState.downlading = true;
-        this.setState({
+        this.setStatePure({
             downloading: true,
         });
         this.exchanger.download(this.state.received);
@@ -135,7 +136,7 @@ export default class AudioMessage extends Component {
     onError(error) {
         GState.downlading = false;
         console.warn(error);
-        this.setState({
+        this.setStatePure({
             downloading: false,
             error: true,
         });
@@ -143,7 +144,7 @@ export default class AudioMessage extends Component {
     onFail(received, total) {
         //console.warn(total,received)
         this.props.message.duration = this.exchanger.duration;
-        this.setState({
+        this.setStatePure({
             received: received,
             downloading: false,
             total:
@@ -160,7 +161,7 @@ export default class AudioMessage extends Component {
             this.state.received,
             this.props.message.duration
         ).then(() => {
-            this.setState({});
+            this.setStatePure({});
         });
     }
     downloadID = null;
@@ -177,9 +178,10 @@ export default class AudioMessage extends Component {
     }
     player = null;
     pause() {
-        this.setState({
+        this.setStatePure({
             playing: false,
         });
+        clearInterval(this.refreshID)
         this.player.pause();
         emitter.off(this.playingEvent)
     }
@@ -187,12 +189,12 @@ export default class AudioMessage extends Component {
     previousTime = 0;
     plays() {
         if (this.props.message.duration) {
-            let refreshID = setInterval(() => {
+            this.refreshID = setInterval(() => {
                 this.player.getCurrentTime((time) => {
-                    if (this.previousTime == time) clearInterval(refreshID);
+                    if (this.previousTime == time) clearInterval(this.refreshID);
                     else {
                         this.previousTime = time;
-                        this.setState({
+                        this.setStatePure({
                             currentPosition: time / this.props.message.duration,
                             playing: true,
                             currentTime: time,
@@ -218,7 +220,7 @@ export default class AudioMessage extends Component {
         if (success) {
             this.player.getCurrentTime((seconds) => {
                 this.props.message.duration = Math.floor(seconds);
-                this.setState({
+                this.setStatePure({
                     currentPosition: seconds / this.props.message.duration,
                     currentTime: seconds,
                 });
@@ -233,11 +235,13 @@ export default class AudioMessage extends Component {
     }
     showProgress() {
         if (this.props.message.duration) {
-            this.setState({
+            this.setStatePure({
                 showProgress: true,
             });
-            setTimeout(() => {
-                this.setState({ showProgress: false });
+            this.progressTimout = setTimeout(() => {
+                this.setStatePure({ showProgress: false },() =>{
+                    clearTimeout(this.progressTimout)
+                });
             }, 5000);
         }
     }
@@ -246,7 +250,7 @@ export default class AudioMessage extends Component {
             this.exchanger.task.cancel((err, taskID) => { });
         }
         stores.Messages.SetCancledState(this.props.room, this.props.message.id);
-        this.setState({
+        this.setStatePure({
             downloading: false,
         });
     }

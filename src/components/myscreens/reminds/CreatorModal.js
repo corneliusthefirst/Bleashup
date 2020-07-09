@@ -9,10 +9,6 @@ import BleashupModal from '../../mainComponents/BleashupModal';
 import ColorList from '../../colorList';
 
 export default class CreatorModal extends BleashupModal {
-    constructor(props) {
-        super(props)
-
-    }
     initialize() {
         this.state = {}
     }
@@ -24,10 +20,13 @@ export default class CreatorModal extends BleashupModal {
     entry = 'bottom'
     modalBackground = this.props.color ? this.props.color : ColorList.bodyBackground
     modalHeight = 76
+    unmountingComponent(){
+        clearTimeout(this.closeTimeout)
+    }
     modalBody() {
         return <View>
             <View><TouchableOpacity onPress={() => {
-                this.setState({
+                this.setStatePure({
                     showProfileModal: true
                 })
             }}>
@@ -36,10 +35,10 @@ export default class CreatorModal extends BleashupModal {
                 <Text style={{ margin: "1%", fontSize: 11, color: "gray" }} >{"On "}{moment(this.props.created_at).format(format)}</Text>
             </TouchableOpacity>
                 {this.state.showProfileModal && this.props.creator.profile ? <ProfileModal isOpen={this.state.showProfileModal} onClosed={() => {
-                    this.setState({
+                    this.setStatePure({
                         showProfileModal: false
                     })
-                    setTimeout(() => {
+                    this.closeTimeout = setTimeout(() => {
                         this.onClosedModal()
                     },100)
                 }} profile={this.props.creator} color={this.props.color} ></ProfileModal> : null}

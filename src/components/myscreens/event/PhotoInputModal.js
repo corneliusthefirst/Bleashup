@@ -15,7 +15,7 @@ export default class PhotoInputModal extends BleashupModal {
     }
     onClosedModal() {
         this.props.closed()
-        this.setState({
+        this.setStatePure({
             message: null,
             title: null,
             callback: null,

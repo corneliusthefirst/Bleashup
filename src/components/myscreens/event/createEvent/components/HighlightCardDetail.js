@@ -19,8 +19,7 @@ import CreationHeader from "./CreationHeader";
 let { height, width } = Dimensions.get('window')
 
 export default class HighlightCardDetail extends BleashupModal {
-  constructor(props) {
-    super(props)
+  initialize(){
     this.state = {
       enlargeImage: false
     }

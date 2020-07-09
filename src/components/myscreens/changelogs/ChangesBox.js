@@ -15,8 +15,7 @@ import Swipeout from '../eventChat/Swipeout';
 
 
 export default class ChangeBox extends AnimatedComponent {
-    constructor(props) {
-        super(props)
+    initialize(){
         this.state = {
             loaded: false,
             newThing: false
@@ -28,14 +27,14 @@ export default class ChangeBox extends AnimatedComponent {
             this.state.newThing !== nextState.newThing
     }
     componentDidMount() {
-        setTimeout(() => {
+       this.mountTimeout = setTimeout(() => {
             typeof this.props.change.updater === 'string' ? stores.TemporalUsersStore.getUser(this.props.change.updater).then(user => {
-                this.setState({
+                this.setStatePure({
                     loaded: true,
                     changer: user
                 })
             }) :
-                this.setState({
+                this.setStatePure({
                     loaded: true,
                     changer: this.props.change.updater
                 })

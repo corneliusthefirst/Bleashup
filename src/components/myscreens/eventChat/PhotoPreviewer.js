@@ -7,7 +7,8 @@ import rounder from "../../../services/rounder";
 import { Icon } from "native-base";
 import CacheImages from '../../CacheImages';
 import shadower from "../../shadower";
-export default class PhotoPreview extends Component {
+import BeComponent from '../../BeComponent';
+export default class PhotoPreview extends BeComponent {
     constructor(props) {
         super(props)
         this.state = {}
@@ -16,7 +17,7 @@ export default class PhotoPreview extends Component {
         return this.props.video !== nextProp.video || 
         this.props.image !== nextProp.image
     }
-    containerHeight=150
+    containerHeight=100
     logOutZoomState = (event, gestureState, zoomableViewEventObject) => { };
     render() {
         return !this.props.showVideo ? (

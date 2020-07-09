@@ -5,7 +5,8 @@ import VideoController from './VideoController';
 import { Icon } from "native-base";
 import rounder from "../../../services/rounder";
 import { TouchableOpacity } from 'react-native-gesture-handler';
-export default class InChatVideoPlayer extends Component {
+import BeComponent from '../../BeComponent';
+export default class InChatVideoPlayer extends BeComponent {
     constructor(props) {
         super(props)
         this.state = {
@@ -28,7 +29,7 @@ export default class InChatVideoPlayer extends Component {
         justifyContent: 'center',
     }
     showReactionModal() {
-        this.setState({
+        this.setStatePure({
             isReactionOpened: true,
         }, () => {
             this.videoPlayer._toggleControls()

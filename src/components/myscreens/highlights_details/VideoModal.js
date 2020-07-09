@@ -21,18 +21,21 @@ export default class VideoViewer extends BleashupModal {
         }
     }
     buffering() {
-        this.setState({
+        this.setStatePure({
             buffering: true
         })
-        setTimeout(() => {
-            this.setState({
+       this.bufferingTimeout = setTimeout(() => {
+            this.setStatePure({
                 buffering: false
             })
         }, 5000)
     }
+    unmountingComponent(){
+        clearTimeout(this.buffering)
+    }
     enterFullscreen() {
         Keyboard.dismiss()
-        this.setState({
+        this.setStatePure({
             fullScreen: !this.state.fullScreen,
         })
 
@@ -47,7 +50,7 @@ export default class VideoViewer extends BleashupModal {
     onClosedModal() {
         this.props.hideVideo()
         //StatusBar.setHidden(false, false)
-        this.setState({
+        this.setStatePure({
             message: null,
             fullScreen: true,
             title: null,
@@ -57,7 +60,7 @@ export default class VideoViewer extends BleashupModal {
     modalBackground = this.transparent
     modalHeight = this.state.fullScreen ? screenheight : 400
     onOpenModal() {
-        setTimeout(() => this.setState({
+       this.openModalTimeout= setTimeout(() => this.setStatePure({
             hidden: true,
         }), 100)
 

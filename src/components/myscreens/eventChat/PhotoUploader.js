@@ -12,8 +12,9 @@ import ColorList from '../../colorList';
 import TextContent from './TextContent';
 import CacheImages from '../../CacheImages';
 import Pickers from '../../../services/Picker';
+import BePureComponent from '../../BePureComponent';
 const { fs } = rnFetchBlob
-export default class PhotoUploader extends Component {
+export default class PhotoUploader extends BePureComponent {
     constructor(props) {
         super(props)
         this.state = {
@@ -22,6 +23,9 @@ export default class PhotoUploader extends Component {
         }
     }
     state = {}
+    unmountingComponent(){
+        clearInterval(this.uploadTimeout)
+    }
     componentDidMount() {
         Pickers.resizePhoto(this.props.message.source).then(source => {
             console.warn("compress photo uplad source ",source)
@@ -40,12 +44,12 @@ export default class PhotoUploader extends Component {
     uploaderPhoto() {
         console.warn("calling download")
         if (!GState.downlading) this.uploadPhoto()
-        else setTimeout(() => {
+        else this.uploadTimeout = setTimeout(() => {
             this.uploaderPhoto()
         }, 1000)
     }
     progress(writen, total) {
-        this.setState({
+        this.setStatePure({
             uploading: true,
             total: parseInt(total),
             received: parseInt(writen),
@@ -54,14 +58,14 @@ export default class PhotoUploader extends Component {
     }
     onError(error) {
         GState.downlading = false
-        this.setState({
+        this.setStatePure({
             uploading: false
         })
         console.warn(error)
     }
     uploadPhoto() {
         GState.downlading = true
-        this.setState({
+        this.setStatePure({
             uploading: true
         })
         this.exchanger.upload(this.state.written, this.state.total)
@@ -69,7 +73,7 @@ export default class PhotoUploader extends Component {
     }
     onSuccess(newDir, path) {
         console.warn("successfully uploaded",newDir)
-        this.setState({
+        this.setStatePure({
             uploadState: 100,
             uploading: false,
             loaded: true
@@ -89,7 +93,7 @@ export default class PhotoUploader extends Component {
     cancelUpLoad() {
         this.exchanger.task.cancel((err, taskID) => {
             GState.downlading = false
-            this.setState({
+            this.setStatePure({
                 uploading: false
             })
         })

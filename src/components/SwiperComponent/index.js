@@ -10,21 +10,19 @@ import AnimatedComponent from '../AnimatedComponent';
 //const ScreenHeight = Dimensions.get('window').height;
 
 export default class SwiperComponent extends AnimatedComponent {
-  constructor(props) {
-    super(props);
+  initialize(){
     this.state = {
       itemswiper: {},
       isPause: true,
-      currentIndex: props.navigation.getParam('currentIndex')
-        ? props.navigation.getParam('currentIndex')
+      currentIndex: this.props.navigation.getParam('currentIndex')
+        ? this.props.navigation.getParam('currentIndex')
         : 0,
-      media: props.navigation.getParam('dataArray'),
-      mapFunction: props.navigation.getParam('mapFunction'),
+      media: this.props.navigation.getParam('dataArray'),
+      mapFunction: this.props.navigation.getParam('mapFunction'),
     };
   }
-
   init = (currentIndex) => {
-    this.setState({
+    this.setStatePure({
       itemswiper: this.state.mapFunction(this.state.media[currentIndex]),
     });
     this.post.setState({ isPause: false });
@@ -36,7 +34,7 @@ export default class SwiperComponent extends AnimatedComponent {
   }
 
   onchageIndex = (index) => {
-    this.setState({
+    this.setStatePure({
       itemswiper: this.state.mapFunction(this.state.media[index]),
       // isPause: true,
     });
@@ -45,7 +43,7 @@ export default class SwiperComponent extends AnimatedComponent {
 
   onMomentumScrollEnd = (state) => {
     //this.post.onScrollEnd();
-    //this.setState({ isPause: !this.state.isPause });
+    //this.setStatePure({ isPause: !this.state.isPause });
   };
 
   onScrollBeginDrag = (state) => {

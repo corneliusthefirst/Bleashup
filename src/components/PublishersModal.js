@@ -5,8 +5,7 @@ import ImageActivityIndicator from "./myscreens/currentevents/components/imageAc
 import ContactList from "./ContactList";
 import BleashupModal from "./mainComponents/BleashupModal";
 export default class PublishersModal extends BleashupModal {
-    constructor(props) {
-        super(props)
+    initialize(){
         this.state = {
             isOpen: false,
             loaded: false
@@ -14,7 +13,7 @@ export default class PublishersModal extends BleashupModal {
     }
     onClosedModal() {
         this.props.onClosed()
-        this.setState({
+        this.setStatePure({
             event_id: null,
             loaded: false
         })
@@ -24,8 +23,8 @@ export default class PublishersModal extends BleashupModal {
     modalWidth = this.props.reaction ? "80%" : this.modalWidth
     position = this.props.reaction ? 'center' : 'top'
     onOpenModal() {
-        setTimeout(() => {
-            this.setState({
+       this.openModalTimeout = setTimeout(() => {
+            this.setStatePure({
                 loaded: true,
                 event_id: this.props.event_id
             })

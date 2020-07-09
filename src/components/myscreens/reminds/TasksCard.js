@@ -23,11 +23,12 @@ import { createOpenLink } from "react-native-open-maps";
 import CreateButton from "../event/createEvent/components/ActionButton";
 import shadower from "../../shadower";
 import Swipeout from "../eventChat/Swipeout";
+import BeComponent from '../../BeComponent';
 
 let { height, width } = Dimensions.get('window')
 
 
-export default class EventTasksCard extends Component {
+export default class EventTasksCard extends BeComponent {
   constructor(props) {
     super(props)
     this.state = {
@@ -54,7 +55,7 @@ export default class EventTasksCard extends Component {
     }
 
   }
-  componentWillMount() {
+  componentMounting() {
 
   }
   loadIntervals() {
@@ -66,7 +67,7 @@ export default class EventTasksCard extends Component {
         this.props.item.recursive_frequency.days_of_week).then((currentDateIntervals) => {
           getCurrentDateInterval(currentDateIntervals,
             moment().format(format)).then(correspondingDateInterval => {
-              this.setState({
+              this.setStatePure({
                 correspondingDateInterval,
                 currentDateIntervals,
                 //hasDoneForThisInterval,
@@ -78,8 +79,8 @@ export default class EventTasksCard extends Component {
     })
   }
   componentDidMount() {
-    setTimeout(() => {
-      this.setState({
+    this.mountTimeout = setTimeout(() => {
+      this.setStatePure({
         mounted: true
       })
     }, 30 * this.props.delay)
@@ -116,7 +117,7 @@ export default class EventTasksCard extends Component {
       })
     }
   }
-  componentWillUnmount() {
+  unmountingComponent() {
   }
   saveAll(alarms) {
     this.props.assignToMe(this.props.item, alarms);
@@ -238,7 +239,7 @@ export default class EventTasksCard extends Component {
           flexDirection: 'row',
         }}>
           <TouchableOpacity onPress={() => {
-            this.setState({
+            this.setStatePure({
               showAll: !this.state.showAll,
               newing: !this.state.newing
             })
@@ -294,7 +295,7 @@ export default class EventTasksCard extends Component {
         }}>
           <Creator
             giveCreator={(creator) => {
-              this.setState({
+              this.setStatePure({
                 creator: creator,
                 newing: !this.state.newing
               })

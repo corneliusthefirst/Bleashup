@@ -123,7 +123,7 @@ class CalendarService {
                 frequency: Bevent.recursive_frequency.frequency,
                 interval: Bevent.recursive_frequency.interval,
                 //occurrence: Bevent.recurrence,
-                daysOfWeek: daysOfWeeksDefault.filter(ele => Bevent.recursive_frequency.days_of_week.indexOf(ele.code) >= 0).map(ele => ele.code),
+                daysOfWeek: Bevent.recursive_frequency.days_of_week && daysOfWeeksDefault.filter(ele => Bevent.recursive_frequency.days_of_week.indexOf(ele.code) >= 0).map(ele => ele.code),
                 endDate: moment(Bevent.recursive_frequency.recurrence).utc().format(UTCFormat)
             },
             //recurrenceInterval:Bevent.recurrent? parseInt(Bevent.interval):null,
