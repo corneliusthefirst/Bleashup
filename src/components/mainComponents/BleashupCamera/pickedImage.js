@@ -23,6 +23,7 @@ export default class PickedImage extends BleashupModal {
     super(props);
     this.state = {
       message:'',
+      paused: false,
     };
   }
 
@@ -60,23 +61,25 @@ export default class PickedImage extends BleashupModal {
       <View style={[styles.container, { position: 'relative' }]}>
 
         {this.props.data.photo !== '' ?
-         <Image  source={{uri:this.props.data.photo}}  style={{height: screenHeight - (screenHeight / 4), width: screenWidth,marginTop:screenHeight / 8 }} resizeMode={"cover"} />
+         <Image  source={{uri:this.props.data.photo}}  style={{height: screenHeight - 120, width: screenWidth,marginTop: 60 }} resizeMode={"cover"} />
          :
-         <View style={{marginTop: screenHeight / 8}}>
+         <View style={{marginTop: 60, height:screenHeight - 120,backgroundColor:'black',width:'100%'}}>
          <VideoView
           open={true}
           onLoad={(item) => {
+            this.setState({paused:true});
             //console.warn("item loaded", item);
             //this.props.onVideoLoaded(item);
           }}
-          resizeMode={"cover"}
-          height={screenHeight - (screenHeight / 4)}
-          width={screenWidth - 14}
+          onEnd={() => {
+            this.setState({paused:true});
+          }}
+          paused={this.state.paused}
           video={this.props.data.video}
          />
          </View>
         }
-        <View style={{position:'absolute',height:50,width:'100%',top:0,alignItems:'flex-end',
+        <View style={{position:'absolute',height:60,width:'100%',top:0,alignItems:'flex-end',
               justifyContent:'center',backgroundColor:this.props.data.photo !== '' ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.9)'}}>
               <Icon
                     name="close"
@@ -89,7 +92,7 @@ export default class PickedImage extends BleashupModal {
        <View style={{position:'absolute',width:'100%',bottom:0,paddingBottom:15,paddingTop:15,flexDirection:'row',justifyContent:'flex-end',backgroundColor:this.props.data.photo != '' ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.9)' }}>
        {this.props.nomessage === false ? <View style={{width:'80%',paddingLeft:10,alignSelf:'center'}}>
           <CreateTextInput
-            height={screenHeight / 11}
+            height={60}
             value={this.state.message}
             onChange={this.onChangedMessage}
             placeholder={this.props.messagePlaceHolder}

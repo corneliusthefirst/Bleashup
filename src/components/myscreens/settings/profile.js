@@ -1,3 +1,4 @@
+/* eslint-disable react/self-closing-comp */
 /* eslint-disable prettier/prettier */
 import React, { Component } from "react";
 import autobind from "autobind-decorator";
@@ -122,7 +123,7 @@ export default class ProfileView extends Component {
         </TouchableWithoutFeedback>
 
         <TouchableWithoutFeedback  onPress={this.TakePhotoFromCamera} >
-          <View style={{...shadower(),...rounder(52,ColorList.senTBoxColor),alignItems:"center",borderWidth:2,borderColor:ColorList.bodyBackground,position:'absolute',right:width/6,bottom:40}}>
+          <View style={{...shadower(),...rounder(52,ColorList.indicatorColor),alignItems:"center",borderWidth:2,borderColor:ColorList.bodyBackground,position:'absolute',right:width/6,bottom:40}}>
             <Icon name="add-a-photo" active={true} type="MaterialIcons" style={{ color:ColorList.bodyBackground }}  onPress={this.TakePhotoFromCamera} />
           </View>
         </TouchableWithoutFeedback>

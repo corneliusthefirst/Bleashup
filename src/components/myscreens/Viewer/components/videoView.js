@@ -52,13 +52,7 @@ const VideoView = (props) => {
    const  transparent = "rgba(50, 51, 53, 0.8)";
 
         return (
-                <View style={{
-                        height: fullScreen ? "100%" : (props.height?props.height:248),
-                        width: fullScreen ? "100%" : (props.width?props.width:screenWidth),
-                        backgroundColor: 'black',
-                        //alignSelf: 'center',
-                    }}>
-                        <VideoViewerController 
+                        <VideoViewerController
                             source={{ uri: props.video }} // Can be a URL or a local file.
                             ref={(ref) => {
                                 this.videoPlayer = ref;
@@ -68,24 +62,24 @@ const VideoView = (props) => {
                                 console.error(error);
                             }} 
                             toggleResizeModeOnFullscreen={false}
-                            //pictureInPicture={true}
+                            pictureInPicture={true}
                             resizeMode={props.resizeMode ? props.resizeMode : "contain"}
                             disableVolume={true}
                             seekColor="white"
                             controlTimeout={null}
-                            //disablePlayPause={true}
-                            //disableFullscreen={true}
+                            disablePlayPause={false}
+                            disableFullscreen={true}
                             onBack={() => props.hideVideo()}
                             onEnterFullscreen={enterFullscreen}
                             onExitFullscreen = {exitFullscreen}
                             fullscreenOrientation={"landscape"}
                             onLoad={props.onLoad}
-                            //paused = {props.isPause && props.isPause}
+                            onEnd={props.onEnd}
+                            paused = {props.paused}
                             disableBack={true}
-                            disableFullscreen={true}
                             nextPrev={false}
-                            nextVideo = {props.nextVideo}
-                            previousVideo = {props.prevVideo}
+                            nextVideo = {props.nextVideo ? props.nextVideo : false}
+                            previousVideo = {props.prevVideo ? props.prevVideo : false}
                             fullscreen={fullScreen}
                             //controls={true}
                             style={{
@@ -102,9 +96,8 @@ const VideoView = (props) => {
                                 opacity:0.7,
                             }} // Callback when video cannot be loaded
                         />
-                    </View>
         );
-}
+};
 
 export default VideoView;
 

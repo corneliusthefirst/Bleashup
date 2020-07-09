@@ -240,10 +240,11 @@ class Home extends Component {
   };*/
 
   settings = () => {
-    stores.LoginStore.getUser().then(user => {
+    this.setState({ openBCamera: true });
+    /*stores.LoginStore.getUser().then(user => {
       !user.status ? user.status = "" : null;
       BeNavigator.navigateTo("Profile",{userInfo:user});
-    });
+    });*/
  }
 
   handleURL = ({ url }) => {

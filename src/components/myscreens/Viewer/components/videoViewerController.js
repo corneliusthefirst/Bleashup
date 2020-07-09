@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React, { Component } from 'react';
 import VideoController from '../../eventChat/VideoController';
 import {Animated,View,StyleSheet,} from 'react-native';
@@ -70,11 +71,11 @@ export default class VideoViewerController  extends VideoController {
     /**
      * Render the play/pause button and show the respective icon
      */
-    renderPlayPause() {
+    renderPlayPause() { 
 
         return this.renderControl(
             <Icon type="MaterialCommunityIcons" 
-            name={!this.state.paused?"pause":"play-circle-outline"} style={{ color: 'white',fontSize:55}}></Icon>,
+            name={this.state.paused?"play-circle-outline":"pause"} style={{ color: 'white',fontSize:55}}></Icon>,
             this.methods.togglePlayPause,
             styles.controls.playPause
         );
