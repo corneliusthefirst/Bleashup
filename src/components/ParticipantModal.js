@@ -15,7 +15,7 @@ import BleashupModal from './mainComponents/BleashupModal';
     state = {}
     onClosedModal() {
         this.props.onClosed()
-        this.setState({
+        this.setStatePure({
             participants: [],
             loaded: false,
             event_id: null,
@@ -23,8 +23,8 @@ import BleashupModal from './mainComponents/BleashupModal';
         })
     }
     onOpenModal() {
-        setTimeout(() => {
-            this.setState({
+       this.openModalTimeout = setTimeout(() => {
+            this.setStatePure({
                 participants: this.props.participants,
                 event_id: this.props.event_id,
                 loaded: true,

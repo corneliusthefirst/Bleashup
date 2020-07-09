@@ -83,7 +83,8 @@ export default class BleashupFlatList extends Component {
         if (this.props.dataSource.length <= 0) {
             this.props.empty ? this.props.empty() : null
         }
-        let data = this.props.dataSource //this.extractData()
+        let data = //this.props.dataSource 
+        this.extractData()
         return (
             <View style={{
                 flexDirection: 'column', height: this.props.fit ? null : '100%',
@@ -95,7 +96,7 @@ export default class BleashupFlatList extends Component {
                 <FlatList
                     viewabilityConfig={this.viewabilityConfig}
                     keyboardShouldPersistTaps={this.props.keyboardShouldPersistTaps}
-                    /*onScrollEndDrag={({ nativeEvent }) => {
+                    onScrollEndDrag={({ nativeEvent }) => {
                         if (isTooCloseToBottom(nativeEvent)) {
                             this.props.loadMoreFromRemote && this.props.loadMoreFromRemote()
                         }
@@ -103,7 +104,7 @@ export default class BleashupFlatList extends Component {
                             this.continueScrollDown()
                         }
                     }
-                    }*/
+                    }
                     enableEmptySections={false}
                     disableVirtualization={this.props.disableVirtualization}
                     getItemLayout={this.props.getItemLayout}
@@ -126,6 +127,7 @@ export default class BleashupFlatList extends Component {
                     showsVerticalScrollIndicator={false}
                     keyExtractor={this.props.keyExtractor}
                     data={data}
+                    extraData={this.props.extraData}
                     //heightForIndexPath={(index) =>  
                      //   data[index.row].dimensions?data[index.row].dimensions.height:70}
                     //renderIndexPath={(index) => <View>{this.props.renderItem(data[index.row], index.row)}</View>}

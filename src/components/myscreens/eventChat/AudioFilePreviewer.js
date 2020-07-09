@@ -6,45 +6,46 @@ import Sound from 'react-native-sound';
 import shadower from '../../shadower';
 import FileExachange from '../../../services/FileExchange';
 import ColorList from '../../colorList';
+import BePureComponent from '../../BePureComponent';
 
-export default class AudioFilePreviewer extends PureComponent {
+export default class AudioFilePreviewer extends BePureComponent {
     constructor(props) {
         super(props)
         this.state = {
             playing: false
         }
     }
-    componentWillMount() {
+    componentMounting() {
         this.initalizePlayer()
     }
     componentDidUpdate(previousProps,prevState){
         if(previousProps.source !== this.props.source){
             this.player && this.player.stop && this.player.stop()
-            this.setState({
+            this.setStatePure({
                 playing:false
             })
             this.initalizePlayer()
         }
     }
-    componentWillUnmount() {
+    unmountingComponent() {
         this.player && this.player.stop()
        this.ext.clearCache(this.props.source)
     }
     mbSize = this.props.size / (1000 * 1000);
     playAudio() {
-        this.player && this.setState({
+        this.player && this.setStatePure({
             playing: true
         })
         this.player && this.player.play && this.player.play((state) => {
             console.warn("finishing playing audio player")
-            this.setState({
+            this.setStatePure({
                 playing: false
             })
         })
     }
     pauseAudio() {
         this.player && this.player.pause  && this.player.pause()
-        this.setState({
+        this.setStatePure({
             playing: false
         })
     }

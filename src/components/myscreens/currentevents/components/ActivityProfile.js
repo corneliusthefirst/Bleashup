@@ -7,7 +7,8 @@ import CacheImages from "../../../CacheImages";
 import { Thumbnail, Icon } from "native-base";
 import ColorList from '../../../colorList';
 import rounder from "../../../../services/rounder";
-export default class ActivityProfile extends Component {
+import BePureComponent from '../../../BePureComponent';
+export default class ActivityProfile extends BePureComponent {
     constructor(props) {
         super(props);
     }

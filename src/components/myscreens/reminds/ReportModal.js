@@ -9,21 +9,20 @@ import BleashupModal from '../../mainComponents/BleashupModal';
 import rounder from '../../../services/rounder';
 
 export default class RemindReportContent extends BleashupModal {
-    constructor(props) {
-        super(props)
+    initialize(){
         this.state = {
             content: null
         }
     }
     onClosedModal() {
         this.props.closed()
-        this.setState({
+        this.setStatePure({
             content: null
         })
     }
     onOpenModal() {
-        setTimeout(() => {
-            this.setState({
+       this.openModalTimeout = setTimeout(() => {
+            this.setStatePure({
                 content: this.props.content
             })
         }, 20)

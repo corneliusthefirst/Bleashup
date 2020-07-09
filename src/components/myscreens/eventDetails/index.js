@@ -47,9 +47,7 @@ let { height, width } = Dimensions.get('window');
 
 //@observer
 export default class EventDetailView extends AnimatedComponent {
-
-  constructor(props) {
-    super(props)
+  initialize(){
     this.state = {
       enlargeImage: false,
       initialScrollIndex: 2,
@@ -82,7 +80,7 @@ export default class EventDetailView extends AnimatedComponent {
   initializer() {
     let participant = find(this.props.Event.participant, { phone: stores.LoginStore.user.phone });
     this.animateUI()
-    this.setState({
+    this.setStatePure({
       newing: !this.state.newing,
       isMounted: true,
       EventHighlightState:this.props.star?true:false,
@@ -94,6 +92,7 @@ export default class EventDetailView extends AnimatedComponent {
        this.scrolled = this.scrolled + 1
        if(this.scrolled >= 5) clearInterval(this.scrolling) 
      },500)
+     clearTimeout(this.waitToScroll)
     },1000)
   }
   initialScrollIndexer = 2
@@ -101,14 +100,14 @@ export default class EventDetailView extends AnimatedComponent {
   interval = 4000
   handleRefresh() {
     //console.warn('receiving refresh highlights message')
-    this.setState({
+    this.setStatePure({
       newing: !this.state.newing
     })
   }
-  componentWillMount() {
+  componentMounting() {
     emitter.on(`refresh-highlights_${this.props.Event.id}`, this.handleRefresh.bind(this))
   }
-  componentWillUnmount() {
+  unmountingComponent() {
     emitter.off(`refresh-highlights_${this.props.Event.id}`)
     clearInterval(this.scrolling)
     clearTimeout(this.waitToScroll)
@@ -120,7 +119,7 @@ export default class EventDetailView extends AnimatedComponent {
   initShare() {
     this.sharStore = new Share(this.props.share.id)
     this.sharStore.readFromStore().then(() => {
-      this.setState({
+      this.setStatePure({
         isMounted: true
       })
     })
@@ -129,7 +128,7 @@ export default class EventDetailView extends AnimatedComponent {
         stores.Events.loadCurrentEventFromRemote(this.props.share.event_id, true).
           then((event) => {
             this.sharStore.saveCurrentState({ ...this.props.share, post: Array.isArray(post) && post[0] || post, event }).then(() => {
-              this.setState({
+              this.setStatePure({
                 isMountedSec: true
               })
             })
@@ -155,7 +154,7 @@ export default class EventDetailView extends AnimatedComponent {
 
   @autobind
   back() {
-    this.setState({ animateHighlight: false })
+    this.setStatePure({ animateHighlight: false })
     //add backward navigation to calling page
   }
 
@@ -163,7 +162,7 @@ export default class EventDetailView extends AnimatedComponent {
   deleteHighlight(item) {
     if (!this.props.working) {
       this.props.startLoader()
-      this.setState({ isAreYouSureModalOpened: false });
+      this.setStatePure({ isAreYouSureModalOpened: false });
       //console.warn("deleting....")
       //remove the higlight id from event then remove the highlight from the higlights store
       if (item.event_id == "newEventId") {
@@ -172,7 +171,7 @@ export default class EventDetailView extends AnimatedComponent {
         stores.Events.removeHighlight(item.event_id, item.id, false).then(() => {
           stores.Highlights.removeHighlight(this.props.Event.id, item.id).then(() => {
             this.state.highlightData = reject(this.state.highlightData, { id: item.id });
-            this.setState({ highlightData: this.state.highlightData });
+            this.setStatePure({ highlightData: this.state.highlightData });
             this.props.stopLoader()
           });
         });
@@ -181,7 +180,7 @@ export default class EventDetailView extends AnimatedComponent {
         Requester.deleteHighlight(item.id, item.event_id).then(() => {
           this.props.stopLoader()
           this.state.highlightData = reject(this.state.highlightData, { id: item.id });
-          this.setState({ highlightData: this.state.highlightData });
+          this.setStatePure({ highlightData: this.state.highlightData });
           this.sendUpdateHighlight()
         }).catch((error) => {
           this.props.stopLoader()
@@ -209,13 +208,13 @@ export default class EventDetailView extends AnimatedComponent {
           console.warn('here again', index, newHighlight);
           console.warn('here again 1', this.state.highlightData);
           this.state.highlightData[index] = newHighlight;
-          this.setState({
+          this.setStatePure({
             highlightData: this.state.highlightData
           })
         }
         console.warn('ok');
         this.props.stopLoader();
-        this.setState({
+        this.setStatePure({
           update: false
         })
         this.sendUpdateHighlight()
@@ -229,7 +228,7 @@ export default class EventDetailView extends AnimatedComponent {
   }
   @autobind
   newHighlight() {
-    this.props.computedMaster ? this.setState({ EventHighlightState: true }) :
+    this.props.computedMaster ? this.setStatePure({ EventHighlightState: true }) :
       Toast.show({ text: "you don't have enough priviledges to add a post", duration: 4000 })
   }
   deleteHighlightHighlight(highlights) {
@@ -239,7 +238,7 @@ export default class EventDetailView extends AnimatedComponent {
     this.props.mention(replyer)
   }
   showCreator() {
-    this.state.creatorInfo ? this.setState({
+    this.state.creatorInfo ? this.setStatePure({
       showProfileModal: true,
       profile: this.state.creatorInfo
     }) : null
@@ -253,19 +252,19 @@ export default class EventDetailView extends AnimatedComponent {
     a.created_at < b.created_at ? 1 : 0)
 showActions(item){
   Vibrator.vibrateShort()
-  this.setState({
+  this.setStatePure({
     selectedItem:item,
     showActions:true
   })
 }
 preDeleteHighlight = (item) => {
-    this.setState({
+    this.setStatePure({
       current_highlight: item,
       isAreYouSureModalOpened: true,
     })
 }
   preUpdate = (hid) => {
-    this.setState({
+    this.setStatePure({
       EventHighlightState: true,
       update: true,
       highlight_id: hid
@@ -383,11 +382,11 @@ action = () => [
 
         <EventHighlights
           closeTeporary={() => {
-            this.setState({
+            this.setStatePure({
               EventHighlightState: false,
             })
            this.closeTeporary = setTimeout(() => {
-              this.setState({
+              this.setStatePure({
                 EventHighlightState: true
               })
             }, 600)
@@ -405,7 +404,7 @@ action = () => [
           star={this.props.star}
           isOpen={this.state.EventHighlightState} 
           onClosed={(staring) => {
-            this.setState({
+            this.setStatePure({
               EventHighlightState: false,
               highlight_id: null
             })
@@ -419,27 +418,27 @@ action = () => [
           event_id={this.props.Event.id} />
 
         {/*
-        <DescriptionModal Event={this.props.Event} isOpen={this.state.viewdetail} onClosed={() => { this.setState({ viewdetail: false }) }} parent={this}></DescriptionModal>
+        <DescriptionModal Event={this.props.Event} isOpen={this.state.viewdetail} onClosed={() => { this.setStatePure({ viewdetail: false }) }} parent={this}></DescriptionModal>
 
         <EventDescription updateDesc={(newDesc) => {
           this.props.updateDesc(newDesc)
-        }} event={this.props.Event || {}} isOpen={this.state.EventDescriptionState} onClosed={() => { this.setState({ EventDescriptionState: false }) }}
+        }} event={this.props.Event || {}} isOpen={this.state.EventDescriptionState} onClosed={() => { this.setStatePure({ EventDescriptionState: false }) }}
           ref={"description_ref"} eventId={this.props.Event.id} updateDes={true} parentComp={this} />
 
         <EventLocation updateLocation={(newLoc) => {
           this.props.updateLocation(newLoc)
-        }} event={this.props.Event} isOpen={this.state.EventLocationState} onClosed={() => { this.setState({ EventLocationState: false }) }}
+        }} event={this.props.Event} isOpen={this.state.EventLocationState} onClosed={() => { this.setStatePure({ EventLocationState: false }) }}
           ref={"location_ref"} updateLoc={true} eventId={this.props.Event.id} parentComp={this} />
       */}
 
         <MessageActions title={"star actions"} actions={this.action} onClosed={() => {
-          this.setState({
+          this.setStatePure({
             showActions:false
           })
         }} isOpen={this.state.showActions}></MessageActions>
         <BleashupAlert title={"Delete Higlight"} accept={"Yes"} refuse={"No"} message={" Are you sure you want to delete these highlight ?"}
           deleteFunction={() => this.deleteHighlight(this.state.current_highlight)}
-          isOpen={this.state.isAreYouSureModalOpened} onClosed={() => { this.setState({ isAreYouSureModalOpened: false }) }} />
+          isOpen={this.state.isAreYouSureModalOpened} onClosed={() => { this.setStatePure({ isAreYouSureModalOpened: false }) }} />
 
 
         {/*<SideButton
@@ -451,7 +450,7 @@ action = () => [
               <Icon name="file-text" type="Feather" style={{ color: ColorList.bodyIcon, fontSize: 22 }} />
             </View>
           }}
-          action={() => requestAnimationFrame(() => { this.setState({ viewdetail: true })})}
+          action={() => requestAnimationFrame(() => { this.setStatePure({ viewdetail: true })})}
           //buttonTextStyle={{color:colorList.bodyBackground}}
           offsetX={10}
           size={40}

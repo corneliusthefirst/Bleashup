@@ -13,8 +13,9 @@ import rnFetchBlob from 'rn-fetch-blob';
 import stores from '../../../stores';
 import TextContent from './TextContent';
 import ColorList from '../../colorList';
+import BePureComponent from '../../BePureComponent';
 const { fs } = rnFetchBlob
-export default class FileAttarchementUploader extends Component {
+export default class FileAttarchementUploader extends BePureComponent {
     constructor(props) {
         super(props);
         this.state = {
@@ -33,14 +34,14 @@ export default class FileAttarchementUploader extends Component {
         this.exchanger.upload(this.state.writen, this.state.total)
     }
     progress(writen, total) {
-        this.setState({
+        this.setStatePure({
             total: parseInt(total),
             received: parseInt(writen),
             uploadState: (parseInt(writen) / parseInt(total)) * 100
         })
     }
     onSuccess(newDir, path, filename) {
-        this.setState({
+        this.setStatePure({
             uploadState: 100,
             loaded: true,
             downloading: false
@@ -52,7 +53,7 @@ export default class FileAttarchementUploader extends Component {
     }
     onError(error) {
         console.warn(error)
-        this.setState({
+        this.setStatePure({
             downloading: false
         })
     }
@@ -64,7 +65,7 @@ export default class FileAttarchementUploader extends Component {
         })
     }
     componentDidMount() {
-        this.setState({
+        this.setStatePure({
             duration: null,
             currentPosition: 0,
             playing: false,
@@ -93,12 +94,12 @@ export default class FileAttarchementUploader extends Component {
     previousTime = 0
     cancelUpLoad(url) {
         this.exchanger.task.cancel((err, taskID) => {
-            this.setState({ downloading: false })
+            this.setStatePure({ downloading: false })
         })
         stores.Messages.SetCancledState(this.props.room, this.props.message.id).then(() => {
 
         })
-        this.setState({
+        this.setStatePure({
             downloading: false
         })
     }

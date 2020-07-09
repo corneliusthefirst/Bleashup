@@ -67,7 +67,7 @@ export default class PhotoViewer extends BleashupModal {
     onClosedModal() {
         this.props.hidePhoto()
         //StatusBar.setHidden(false, false)
-        this.setState({
+        this.setStatePure({
             message: null,
             title: null,
             callback: null,

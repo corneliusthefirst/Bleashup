@@ -76,8 +76,7 @@ const screenWidth = Math.round(Dimensions.get('window').width);
 const screenheight = Math.round(Dimensions.get('window').height);
 @observer
 class ChatRoom extends AnimatedComponent {
-    constructor(props) {
-        super(props);
+    initialize(){
         this.authObserver();
         this.state = {
             isModalOpened: false,
@@ -120,7 +119,7 @@ class ChatRoom extends AnimatedComponent {
                 .auth()
                 .signInWithPhoneNumber(this.props.user.phone)
                 .then((confirmCode) => {
-                    this.setState({
+                    this.setStatePure({
                         isModalOpened: true,
                     });
                     stores.TempLoginStore.confirmCode = confirmCode;
@@ -172,7 +171,7 @@ class ChatRoom extends AnimatedComponent {
                     .database()
                     .ref(`${this.props.firebaseRoom}/${message.key}`)
                     .remove((error) => {
-                        this.setState({
+                        this.setStatePure({
                             newMessage: true,
                         });
                     });
@@ -200,13 +199,14 @@ class ChatRoom extends AnimatedComponent {
             }
         }
         this.typingTimeout && clearTimeout(this.typingTimeout);
-        this.setState({
+        this.setStatePure({
             typing: true,
         });
         this.typingTimeout = setTimeout(() => {
-            this.setState({
+            this.setStatePure({
                 typing: false,
             });
+            clearTimeout(this.typingTimeout)
         }, 1000);
     }
     setTyingState() {
@@ -246,7 +246,7 @@ class ChatRoom extends AnimatedComponent {
                     if (snapshot.val()) {
                         this.formStorableData(values(snapshot.val())).then((newVal) => {
                             stores.Messages.messages[this.roomID] = newVal;
-                            this.setState({
+                            this.setStatePure({
                                 newMessage: !this.state.newMessage,
                                 commentLoaded: true,
                                 loaded: true,
@@ -254,7 +254,7 @@ class ChatRoom extends AnimatedComponent {
                             this.adjutRoomDisplay();
                         });
                     } else {
-                        this.setState({
+                        this.setStatePure({
                             commentLoaded: true,
                             loaded: true,
                         });
@@ -275,7 +275,7 @@ class ChatRoom extends AnimatedComponent {
                                 stores.Messages.messages[this.roomID].concat(mess),
                                 'id'
                             );
-                            this.setState({
+                            this.setStatePure({
                                 newMessage: !this.state.newMessage,
                                 loaded: true,
                             });
@@ -305,13 +305,14 @@ class ChatRoom extends AnimatedComponent {
                             },
                         ]
                         : [];
-                setTimeout(() => {
+               this.initTimeout = setTimeout(() => {
                     GState.reply
                         ? this.replying(GState.reply, null)
-                        : this.setState({
+                        : this.setStatePure({
                             loaded: true,
                         });
                     this.adjutRoomDisplay();
+                    clearTimeout(this.initTimeout)
                 }, 100);
                 if (this.props.newMessages.length > 0) {
                     stores.Messages.insertBulkMessages(
@@ -351,11 +352,12 @@ class ChatRoom extends AnimatedComponent {
         }
     }
     adjutRoomDisplay(dontToggle) {
-        setTimeout(() => {
+        this.adjustDisplayTimeout = setTimeout(() => {
             GState.reply && !this.alreadyFocussed && this.fucussTextInput();
             this.alreadyFocussed = true;
             this.refs && this.refs.scrollViewRef && this.refs.scrollViewRef.scrollToEnd({ animated: true, duration: 200 });
             this.temp ? (GState.reply = JSON.parse(this.temp)) : null;
+            clearTimeout(this.adjustDisplayTimeout)
         }, 30);
     }
     markAsRead() {
@@ -370,12 +372,12 @@ class ChatRoom extends AnimatedComponent {
             );
             this.newMessages = [];
             this.showMessage = [];
-            this.setState({
+            this.setStatePure({
                 newMessage: true,
             });
         }
     }
-    componentWillMount() {
+    componentMounting() {
         this.fireRef = this.getRef(this.props.firebaseRoom);
         this.keyboardDidShowSub = Keyboard.addListener('keyboardDidShow', this.handleKeyboardDidShow.bind(this));
         this.keyboardDidHideSub = Keyboard.addListener('keyboardDidHide', this.handleKeyboardDidHide.bind(this));
@@ -383,14 +385,15 @@ class ChatRoom extends AnimatedComponent {
         emitter.on("reply-me", (rep) => {
             this.props.openMenu()
             this.replying(rep, null)
-            setTimeout(() => {
+            this.focusInputTimeout = setTimeout(() => {
                 this.alreadyFocussed = false;
                 this.fucussTextInput()
+                clearTimeout(this.focusInputTimeout)
             }, 700)
         })
         this.props.isComment ? (stores.Messages.messages[this.roomID] = []) : null;
     }
-    componentWillUnmount() {
+    unmountingComponent() {
         this.keyboardDidHideSub.remove();
         this.keyboardDidShowSub.remove();
         this.fireRef.off();
@@ -421,7 +424,7 @@ class ChatRoom extends AnimatedComponent {
         return height;*/
     }
     playVideo(video, message, index) {
-        this.setState({
+        this.setStatePure({
             playingMessage: message,
             playingIndex: index,
             video: video,
@@ -431,7 +434,7 @@ class ChatRoom extends AnimatedComponent {
         this.refs.keyboard.animateLayout();
     }
     hideVideo() {
-        this.setState({
+        this.setStatePure({
             showVideo: false,
             hideStatusBar: false,
             fullScreen: false,
@@ -440,22 +443,26 @@ class ChatRoom extends AnimatedComponent {
         this.refs.keyboard.animateLayout();
     }
     showActions() {
-        this.setState({
+        this.setStatePure({
             showActions: true,
         });
-        setTimeout(() => {
-            this.setState({
+       this.actionsTimeout = setTimeout(() => {
+            this.setStatePure({
                 showActions: false,
+            },() => {
+                clearTimeout(this.actionsTimeout)
             });
         }, 5000);
     }
     buffering() {
-        this.setState({
+        this.setStatePure({
             buffering: true,
         });
-        setTimeout(() => {
-            this.setState({
+       this.bufferingTimeout = setTimeout(() => {
+            this.setStatePure({
                 buffering: false,
+            },() => {
+                clearTimeout(this.bufferingTimeout)
             });
         }, 5000);
     }
@@ -471,7 +478,7 @@ class ChatRoom extends AnimatedComponent {
         this.navigateToFullView(this.state.playingIndex);
     }
     togglePlay() {
-        this.setState({
+        this.setStatePure({
             playing: !this.state.playing,
         });
     }
@@ -525,7 +532,7 @@ class ChatRoom extends AnimatedComponent {
     user = this.props.user;
     creator = 1;
     showPhoto(photo, item) {
-        this.setState({
+        this.setStatePure({
             //photo: photo,
             //showPhoto: true,
             playingMessage: item,
@@ -552,7 +559,7 @@ class ChatRoom extends AnimatedComponent {
 
     initRoom() {
         console.warn('initing room');
-        this.setState({
+        this.setStatePure({
             newMessage: !this.state.newMessage,
         });
     }
@@ -632,7 +639,7 @@ class ChatRoom extends AnimatedComponent {
     }
     verifyNumber(code) {
         stores.TempLoginStore.confirmCode.confirm(code).then((success) => {
-            this.setState({
+            this.setStatePure({
                 isModalOpened: false,
             });
         });
@@ -660,7 +667,7 @@ class ChatRoom extends AnimatedComponent {
     options = ["Remove message", "Seen Report", "Copy to clipboard", "Cancel"];
     showMessageAction(message, reply,sender) {
         this.tempReply = reply
-        this.setState({
+        this.setStatePure({
             sender:sender,
             currentMessage: message,
             showMessageActions: true,
@@ -671,7 +678,7 @@ class ChatRoom extends AnimatedComponent {
     }
     messagelayouts = {};
     showRoomMedia() {
-        this.setState({
+        this.setStatePure({
             isMediaModalOpened: true,
             messages: stores.Messages.messages[this.roomID]
                 ? JSON.stringify(stores.Messages.messages[this.roomID])
@@ -679,14 +686,14 @@ class ChatRoom extends AnimatedComponent {
         });
     }
     showVoters(voters) {
-        this.setState({
+        this.setStatePure({
             showContacts: true,
             voters: voters,
             title: 'Voters list ',
         });
     }
     shareWithContacts(message) {
-        this.setState({
+        this.setStatePure({
             isShareWithContactsOpened: true,
         });
     }
@@ -694,9 +701,10 @@ class ChatRoom extends AnimatedComponent {
         console.warn(index);
         this.refs.bleashupSectionListOut &&
             this.refs.bleashupSectionListOut.scrollToIndex(index);
-        setTimeout(() => {
+        this.scrollToTimeout = setTimeout(() => {
             this.refs.bleashupSectionListOut &&
                 this.refs.bleashupSectionListOut.scrollToIndex(index);
+                clearTimeout(this.scrollToTimeout)
         }, 40);
     }
     messageActions = () => [
@@ -858,7 +866,7 @@ class ChatRoom extends AnimatedComponent {
                                 )}
                                 isOpen={this.state.isMediaModalOpened}
                                 closed={() => {
-                                    this.setState({
+                                    this.setStatePure({
                                         isMediaModalOpened: false,
                                     });
                                 }}
@@ -888,7 +896,7 @@ class ChatRoom extends AnimatedComponent {
                                         : this.state.currentMessage.sender,
                                 }}
                                 onClosed={() => {
-                                    this.setState({
+                                    this.setStatePure({
                                         isShareWithContactsOpened: false,
                                     });
                                 }}
@@ -898,7 +906,7 @@ class ChatRoom extends AnimatedComponent {
                             actions={this.messageActions}
                                 isOpen={this.state.showMessageActions}
                                 onClosed={() => {
-                                    this.setState({
+                                    this.setStatePure({
                                         showMessageActions: false,
                                     });
                                 }}
@@ -916,7 +924,7 @@ class ChatRoom extends AnimatedComponent {
                                     this.fucussTextInput();
                                     this.replying(reply, null);
                                     setTimeout(() => {
-                                        this.setState({
+                                        this.setStatePure({
                                             isVoteCreationModalOpened: false,
                                         });
                                     }, 200);
@@ -938,7 +946,7 @@ class ChatRoom extends AnimatedComponent {
                                 isOpen={this.state.isVoteCreationModalOpened}
                                 sender={this.sender}
                                 onClosed={() => {
-                                    this.setState({
+                                    this.setStatePure({
                                         isVoteCreationModalOpened: false,
                                     });
                                 }}
@@ -948,7 +956,7 @@ class ChatRoom extends AnimatedComponent {
                                 contacts={this.state.voters}
                                 isOpen={this.state.showContacts}
                                 onClosed={() => {
-                                    this.setState({
+                                    this.setStatePure({
                                         showContacts: false,
                                     });
                                 }}
@@ -956,7 +964,7 @@ class ChatRoom extends AnimatedComponent {
                             <PublishersModal
                                 isOpen={this.state.showReacters}
                                 onClosed={() => {
-                                    this.setState({
+                                    this.setStatePure({
                                         showReacters: false,
                                     });
                                 }}
@@ -1013,16 +1021,17 @@ class ChatRoom extends AnimatedComponent {
     }
     forwardToContacts(message) {
         message && message.sent
-            ? this.setState({
+            ? this.setStatePure({
                 isShareWithContactsOpened: true,
                 currentMessage: message,
             })
             : Toast.show({ text: 'cannot forward unsent messages' });
     }
     replyMessage() {
-        setTimeout(() => {
+       this.replyTimout = setTimeout(() => {
             this.refs.keyboard.focus();
             this.replying(this.tempReply);
+            clearTimeout(this.replyTimout)
         }, 50);
     }
     remindThis(message) {
@@ -1043,7 +1052,7 @@ class ChatRoom extends AnimatedComponent {
      }
     initializeRoom() {
         this.initialzeFlatList();
-        this.setState({
+        this.setStatePure({
             newMessage: !this.state.newMessage,
         });
     }
@@ -1056,7 +1065,7 @@ class ChatRoom extends AnimatedComponent {
         ).then(() => { });
     }
     openVoteCreation() {
-        this.setState({
+        this.setStatePure({
             isVoteCreationModalOpened: true,
             single_vote: false,
         });
@@ -1065,7 +1074,7 @@ class ChatRoom extends AnimatedComponent {
         this.refs.keyboard && this.refs.keyboard.focus();
     }
     showReacters(reaction, reacters) {
-        this.setState({
+        this.setStatePure({
             showReacters: true,
             currentReaction: reaction,
             currentReacters: reacters,
@@ -1089,24 +1098,21 @@ class ChatRoom extends AnimatedComponent {
     }
     choseReply(message) {
         let nickname = message.sender && message.sender.nickname;
+        let tempMessage = {...message,change_date:message.created_at}
         switch (message.type) {
             case 'text':
-                tempMessage = message;
                 tempMessage.replyer_name = nickname;
                 return tempMessage;
             case 'audio':
-                tempMessage = message;
                 tempMessage.audio = true;
                 tempMessage.replyer_name = nickname;
                 return tempMessage;
             case 'video':
-                tempMessage = message;
                 tempMessage.video = true;
                 tempMessage.sourcer = message.thumbnailSource;
                 tempMessage.replyer_name = nickname;
                 return tempMessage;
             case 'attachement':
-                tempMessage = message;
                 tempMessage.replyer_name = nickname;
                 tempMessage.file = true;
                 let temp = message.file_name.split('.');
@@ -1114,12 +1120,10 @@ class ChatRoom extends AnimatedComponent {
                 temper.typer = temp[temp.length - 1];
                 return temper;
             case 'photo':
-                tempMessage = message;
                 tempMessage.replyer_name = nickname;
                 tempMessage.sourcer = message.source;
                 return tempMessage;
             case 'image':
-                tempMessage = message;
                 tempMessage.replyer_name = nickname;
                 tempMessage.sourcer = message.source;
                 return tempMessage;
@@ -1241,7 +1245,7 @@ class ChatRoom extends AnimatedComponent {
     }
     handleReplyExtern(replyer) {
         if (replyer.type_extern === 'Votes') {
-            this.setState({
+            this.setStatePure({
                 isVoteCreationModalOpened: true,
                 single_vote: true,
                 vote_id: replyer.id,
@@ -1412,7 +1416,7 @@ class ChatRoom extends AnimatedComponent {
                         <Icon
                             type="EvilIcons"
                             onPress={() => {
-                                this.setState({
+                                this.setStatePure({
                                     showPhoto: false,
                                     showCaption: false,
                                     //hideStatusBar: false

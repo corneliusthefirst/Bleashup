@@ -1,8 +1,9 @@
 import React,{PureComponent} from "react"
 import { View, TextInput } from 'react-native';
 import ColorList from '../../colorList';
+import BePureComponent from '../../BePureComponent';
 
-export default class GrowingInput extends PureComponent{
+export default class GrowingInput extends BePureComponent{
     constructor(props){
         super(props)
         this.state = {
@@ -10,7 +11,7 @@ export default class GrowingInput extends PureComponent{
         }
     }
     updateSize = (heigh) => {
-        this.setState({
+        this.setStatePure({
             height: heigh >= 100 ? 100 : heigh
         });
        // this.props.animateLayout()
@@ -25,7 +26,7 @@ export default class GrowingInput extends PureComponent{
         this._textInput.blur()
     }
     componentDidMount(){
-        this.setState({
+        this.setStatePure({
             mounted:true
         })
     }

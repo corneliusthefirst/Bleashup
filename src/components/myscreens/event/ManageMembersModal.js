@@ -23,7 +23,7 @@ export default class ManageMembersModal extends BleashupModal {
     }
 
     toggleMaster(memberPhone) {
-        this.setState({
+        this.setStatePure({
             selected: this.state.selected.map((ele) =>
                 ele.phone === memberPhone ? { ...ele, master: !ele.master } : ele
             ),
@@ -32,7 +32,7 @@ export default class ManageMembersModal extends BleashupModal {
     apply() {
         this.props.bandMembers(this.state.selected);
         emitter.once("parti_removed", () => {
-            this.setState({
+            this.setStatePure({
                 contacts: reject(
                     this.state.contacts,
                     (ele) => findIndex(this.state.selected, { phone: ele.phone }) >= 0
@@ -41,12 +41,12 @@ export default class ManageMembersModal extends BleashupModal {
         });
     }
     addMember(member) {
-        this.setState({
+        this.setStatePure({
             selected: [...this.state.selected, member],
         });
     }
     remove(memberPhone) {
-        this.setState({
+        this.setStatePure({
             selected: reject(this.state.selected, { phone: memberPhone }),
         });
     }
@@ -55,7 +55,7 @@ export default class ManageMembersModal extends BleashupModal {
     }
     onClosedModal() {
         this.props.onClosed();
-        this.setState({
+        this.setStatePure({
             participants: [],
             selected: [],
             contacts: [],
@@ -65,8 +65,8 @@ export default class ManageMembersModal extends BleashupModal {
         });
     }
     onOpenModal() {
-        setTimeout(() => {
-            this.setState({
+       this.openModalTimeout = setTimeout(() => {
+            this.setStatePure({
                 contacts: uniqBy(this.props.participants, "phone").filter(
                     (ele) =>
                         !Array.isArray(ele) &&

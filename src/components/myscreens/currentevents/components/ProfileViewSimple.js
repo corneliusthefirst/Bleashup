@@ -13,8 +13,9 @@ import GState from '../../../../stores/globalState/index';
 import Highlighter from 'react-native-highlight-words';
 import Invite from '../../Contacts/invite';
 import ColorList from '../../../colorList';
+import BeComponent from '../../../BeComponent';
 
-export default class ProfileSimple extends Component {
+export default class ProfileSimple extends BeComponent {
     constructor(props) {
         super(props)
         this.state = {
@@ -24,7 +25,7 @@ export default class ProfileSimple extends Component {
     }
 
     openModal() {
-        this.setState({
+        this.setStatePure({
             isModalOpened: true
         })
     }
@@ -43,7 +44,7 @@ export default class ProfileSimple extends Component {
                         <TouchableWithoutFeedback onPress={() => {
                             requestAnimationFrame(() => {
                                 GState.showingProfile = true
-                                this.setState({ isModalOpened: true })
+                                this.setStatePure({ isModalOpened: true })
                                 //this.props.showPhoto(this.props.profile.profile)
                                 setTimeout(() => {
                                     GState.showingProfile = false
@@ -90,7 +91,7 @@ export default class ProfileSimple extends Component {
                     <View style={{ width: "17%" }}>
                         <TouchableWithoutFeedback onPress={() => {
                             requestAnimationFrame(() => {
-                                this.setState({ invite: true })
+                                this.setStatePure({ invite: true })
                             })
                         }} >
                             <Text style={{ fontWeight: "500", color: ColorList.indicatorColor }}>invite</Text>
@@ -106,14 +107,14 @@ export default class ProfileSimple extends Component {
                     joined={this.props.joined}
                     parent={this}
                     onClosed={() => {
-                        this.setState({ isModalOpened: false })
+                        this.setStatePure({ isModalOpened: false })
                         //this.props.onOpen()
                     }
                     }
                     profile={this.props.profile}
                 ></ProfileModal>}
 
-                <Invite isOpen={this.state.invite} onClosed={() => { this.setState({ invite: false }) }} />
+                <Invite isOpen={this.state.invite} onClosed={() => { this.setStatePure({ invite: false }) }} />
             </View>
         )
     }

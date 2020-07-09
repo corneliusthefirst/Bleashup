@@ -29,10 +29,11 @@ import { TouchableOpacity} from "react-native-gesture-handler"
 import MedaiView from "./MediaView";
 import Social from "./Social";
 import Swipeout from '../../../eventChat/Swipeout';
+import BePureComponent from '../../../../BePureComponent';
 
 let { height, width } = Dimensions.get("window");
 
-export default class HighlightCard extends PureComponent {
+export default class HighlightCard extends BePureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -58,7 +59,7 @@ export default class HighlightCard extends PureComponent {
 
   componentDidMount() {
     setTimeout(() => {
-      this.setState({
+      this.setStatePure({
         mounted: true,
         creator: this.props.computedMaster, //this.props.item.creator === this.props.phone
       });

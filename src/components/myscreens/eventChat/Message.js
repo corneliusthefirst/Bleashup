@@ -33,8 +33,9 @@ import rounder from "../../../services/rounder";
 import emitter from "../../../services/eventEmiter";
 import { SwipeRow } from 'react-native-swipe-list-view';
 import Votes from "../votes";
+import BeComponent from '../../BeComponent';
 
-export default class Message extends Component {
+export default class Message extends BeComponent {
     constructor(props) {
         super(props);
         let isDiff =
@@ -232,8 +233,8 @@ export default class Message extends Component {
     }
     voteCreator = null;
     componentDidMount() {
-        setTimeout(() => {
-            this.setState({
+        this.mountTimeout = setTimeout(() => {
+            this.setStatePure({
                 loaded: true,
             });
         }, 5 * this.props.delay);
@@ -324,18 +325,18 @@ export default class Message extends Component {
         );
     }
     refresh() {
-        this.setState({
+        this.setStatePure({
             refresh: !this.state.refresh,
         });
     }
     event = "updated" + this.props.message.id;
-    componentWillMount() {
+    componentMounting() {
         emitter.on(this.event, () => {
             console.warn("receiving message update")
             this.refresh();
         });
     }
-    componentWillUnmount() {
+    unmountingComponent() {
         emitter.off(this.event);
     }
     iconStyles = {
@@ -375,13 +376,14 @@ export default class Message extends Component {
     }
     startReactionShowTimer() {
         this.reactionsTimer && clearInterval(this.reactionsTimer);
-        this.setState({
+        this.setStatePure({
             isReacting: true,
         });
         this.reactionsTimer = setTimeout(() => {
-            this.setState({
+            this.setStatePure({
                 isReacting: false,
             });
+            clearTimeout(this.reactionsTimer)
         }, this.reactionTiming);
     }
     reactionTiming = 3000;
@@ -464,7 +466,7 @@ export default class Message extends Component {
             color: ColorList.bodyText,
         };
         return <View onLayout={(e) => {
-            this.setState({
+            this.setStatePure({
                 containerDims: e.nativeEvent.layout,
             });
             this.props.setCurrentLayout &&
@@ -711,7 +713,7 @@ export default class Message extends Component {
                                         }
                                         isOpen={this.state.isReacting}
                                         onClosed={() => {
-                                            this.setState({
+                                            this.setStatePure({
                                                 isReacting: false,
                                             });
                                             clearInterval(this.reactionsTimer);

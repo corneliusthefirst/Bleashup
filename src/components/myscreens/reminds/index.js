@@ -69,7 +69,7 @@ export default class Reminds extends AnimatedComponent {
   state = {};
   addMembers(currentMembers, item) {
     console.warn('pressing add contacts');
-    this.setState({
+    this.setStatePure({
       isSelectableContactsModalOpened: true,
       currentTask: item,
       adding: true,
@@ -122,7 +122,7 @@ export default class Reminds extends AnimatedComponent {
       intervals,
       moment().format(format)
     );*/
-    this.setState({
+    this.setStatePure({
       newing: !this.state.newing,
       /*eventRemindData: [
         {
@@ -142,7 +142,7 @@ export default class Reminds extends AnimatedComponent {
     this.shareStore = new Share(this.props.share.id);
     this.shareStore.readFromStore().then(() => {
       this.shareStore && this.shareStore.share && this.shareStore.share.event
-        ? this.setState({
+        ? this.setStatePure({
           mounted: true,
         })
         : null;
@@ -158,7 +158,7 @@ export default class Reminds extends AnimatedComponent {
                 event,
               })
               .then(() => {
-                this.setState({
+                this.setStatePure({
                   mountedx: true,
                   mounted: true,
                 });
@@ -175,7 +175,7 @@ export default class Reminds extends AnimatedComponent {
     emitter.on("remind-updated", () => {
       this.refreshReminds();
     });
-    this.setState({
+    this.setStatePure({
       mounted: true,
       RemindCreationState: this.props.currentMembers || this.props.remind ? true : false,
     });
@@ -187,6 +187,7 @@ export default class Reminds extends AnimatedComponent {
         this.scrolled = this.scrolled + 1
         if(this.scrolled > 10) clearInterval(this.scrolling)
       },500)
+      clearTimeout(this.waitToScroll)
     }, 1000)
   }
   saveRemoved(members) {
@@ -208,7 +209,7 @@ export default class Reminds extends AnimatedComponent {
         });
     }
   }
-  componentWillUnmount() {
+  unmountingComponent() {
     emitter.off("remind-updated");
     clearTimeout(this.waitToScroll)
     clearInterval(this.scrolling)
@@ -223,7 +224,7 @@ export default class Reminds extends AnimatedComponent {
         duration: 4000,
       });
     } else {
-      this.setState({
+      this.setStatePure({
         RemindCreationState: true,
         update: false,
         newing: !this.state.newing,
@@ -239,7 +240,7 @@ export default class Reminds extends AnimatedComponent {
       )
         .then((res) => {
           if (res) {
-            this.setState({
+            this.setStatePure({
               newing: !this.state.newing,
               update: false
             });
@@ -255,7 +256,7 @@ export default class Reminds extends AnimatedComponent {
   }
   refreshReminds() {
     this.animateUI()
-    this.setState({
+    this.setStatePure({
       newing: !this.state.newing,
       currentTask:
         this.state.currentTask &&
@@ -265,7 +266,7 @@ export default class Reminds extends AnimatedComponent {
 
   updateRemind(data) {
     this.previousRemind = JSON.stringify(data);
-    this.setState({
+    this.setStatePure({
       RemindCreationState: true,
       update: true,
       newing: !this.state.newing,
@@ -278,7 +279,7 @@ export default class Reminds extends AnimatedComponent {
     this.props.navigation.navigate("Home");
   }
   assignToMe(item) {
-    this.setState({
+    this.setStatePure({
       isSelectAlarmPatternModalOpened: true,
       currentTask: item,
     });
@@ -288,7 +289,7 @@ export default class Reminds extends AnimatedComponent {
       Toast.show({ text: "App is Busy" });
     } else {
       if (item.must_report) {
-        this.setState({
+        this.setStatePure({
           showReportModal: true,
           currentTask: item,
         });
@@ -362,7 +363,7 @@ export default class Reminds extends AnimatedComponent {
     if (this.props.working) {
       Toast.show({ text: "App is Busy" });
     } else {
-      this.setState({
+      this.setStatePure({
         showReportModal: false,
       });
       this.props.startLoader();
@@ -467,7 +468,7 @@ export default class Reminds extends AnimatedComponent {
   }
   @autobind showReport(item, intervals, thisInterval) {
     let members = item.members.map((ele) => ele.phone);
-    this.setState({
+    this.setStatePure({
       members: uniq(members),
       //actualInterval: thisInterval,
       isReportModalOpened: true,
@@ -548,12 +549,12 @@ export default class Reminds extends AnimatedComponent {
     return RemindData;
   };
   onChangedStatus(newStatus) {
-    this.setState({
+    this.setStatePure({
       currentRemind: { ...this.state.currentRemind, status: newStatus },
     });
   }
   updateRequestReportOnComplete() {
-    this.setState({
+    this.setStatePure({
       currentRemind: {
         ...this.state.currentRemind,
         must_report: this.state.currentRemind.must_report
@@ -622,7 +623,7 @@ export default class Reminds extends AnimatedComponent {
     }
   ]
   showRemindActions(remind,intervals,thisInterval,creator){
-    this.setState({
+    this.setStatePure({
       intervals,
       creator,
       actualInterval:thisInterval,
@@ -636,7 +637,7 @@ export default class Reminds extends AnimatedComponent {
         {!this.props.shared ? this.renderReminds() : this.renderSharedRemind()}
         <TasksCreation
           CreateRemind={(remind) => {
-            this.setState({
+            this.setStatePure({
               currentRemind: remind,
               RemindCreationState: false,
               isExtra: true,
@@ -652,14 +653,14 @@ export default class Reminds extends AnimatedComponent {
           isOpen={this.state.RemindCreationState}
           onClosed={(exernal) => {
            exernal && this.props.clearCurrentMembers();
-            this.setState({
+            this.setStatePure({
               RemindCreationState: false,
               remind_id: null,
               remind: null,
             });
           }}
           updateRemind={(remind) => {
-            this.setState({
+            this.setStatePure({
               currentRemind: remind,
               TaskCreationExtra: true,
               isExtra: true,
@@ -677,7 +678,7 @@ export default class Reminds extends AnimatedComponent {
           save={(alarms) => this.saveAlarms(alarms)}
           isOpen={this.state.isSelectAlarmPatternModalOpened}
           closed={() => {
-            this.setState({
+            this.setStatePure({
               isSelectAlarmPatternModalOpened: false,
             });
           }}
@@ -693,7 +694,7 @@ export default class Reminds extends AnimatedComponent {
           onComplete={this.updateRequestReportOnComplete.bind(this)}
           isOpen={this.state.isExtra}
           onClosed={() => {
-            this.setState({
+            this.setStatePure({
               isExtra: false,
             });
           }}
@@ -703,7 +704,7 @@ export default class Reminds extends AnimatedComponent {
             this.markAsDoneWithReport(report);
           }}
           onClosed={() => {
-            this.setState({
+            this.setStatePure({
               showReportModal: false,
             });
           }}
@@ -724,7 +725,7 @@ export default class Reminds extends AnimatedComponent {
           notcheckall={this.state.notcheckAll}
           isOpen={this.state.isSelectableContactsModalOpened}
           close={() => {
-            this.setState({
+            this.setStatePure({
               isSelectableContactsModalOpened: false,
             });
           }}
@@ -733,7 +734,7 @@ export default class Reminds extends AnimatedComponent {
           title={this.state.title}
           isOpen={this.state.isContactsModalOpened}
           onClosed={() => {
-            this.setState({
+            this.setStatePure({
               isContactsModalOpened: false,
             });
           }}
@@ -755,12 +756,12 @@ export default class Reminds extends AnimatedComponent {
           actualInterval={this.state.actualInterval}
           complexReport={this.state.complexReport}
           changeComplexReport={() => {
-            this.setState({
+            this.setStatePure({
               complexReport: !this.state.complexReport,
             });
           }}
           onClosed={() => {
-            this.setState({
+            this.setStatePure({
               isReportModalOpened: false,
             });
           }}
@@ -770,7 +771,7 @@ export default class Reminds extends AnimatedComponent {
           open={this.state.showPhoto}
           photo={this.state.photo}
           hidePhoto={() => {
-            this.setState({
+            this.setStatePure({
               showPhoto: false,
             });
           }}
@@ -779,7 +780,7 @@ export default class Reminds extends AnimatedComponent {
           video={this.state.video}
           isOpen={this.state.showVideo}
           hideVideo={() => {
-            this.setState({
+            this.setStatePure({
               showVideo: false,
             });
           }}
@@ -788,7 +789,7 @@ export default class Reminds extends AnimatedComponent {
           isOpen={this.state.isAreYouModalOpened}
           title={"Delete Remind"}
           closed={() => {
-            this.setState({
+            this.setStatePure({
               isAreYouModalOpened: false,
             });
           }}
@@ -803,7 +804,7 @@ export default class Reminds extends AnimatedComponent {
         actions={this.remindsActions}
         isOpen={this.state.showRemindActions}
         onClosed={() => {
-          this.setState({
+          this.setStatePure({
             showRemindActions:false
           })
         }}
@@ -840,19 +841,19 @@ export default class Reminds extends AnimatedComponent {
   showMedia = (url) => {
     if (url.video) {
       console.warn('showing video');
-      this.setState({
+      this.setStatePure({
         showVideo: true,
         video: url.video,
       });
     } else {
-      this.setState({
+      this.setStatePure({
         showPhoto: true,
         photo: url.photo,
       });
     }
   };
   showMembers = (members) => {
-    this.setState({
+    this.setStatePure({
       contacts: members,
       isContactsModalOpened: true,
       title: 'Concernees',
@@ -860,7 +861,7 @@ export default class Reminds extends AnimatedComponent {
     });
   };
   removeMembers = (currentMembers, item) => {
-    this.setState({
+    this.setStatePure({
       isSelectableContactsModalOpened: true,
       currentTask: item,
       contacts: currentMembers,
@@ -870,7 +871,7 @@ export default class Reminds extends AnimatedComponent {
     });
   };
   removeRemind = (item) => {
-    this.setState({
+    this.setStatePure({
       currentTask: item,
       isAreYouModalOpened: true,
     });

@@ -6,9 +6,10 @@ import SoundRecorder from 'react-native-sound-recorder';
 import converToHMS from '../highlights_details/convertToHMS';
 import rnFetchBlob from 'rn-fetch-blob';
 import ColorList from '../../colorList';
+import BeComponent from '../../BeComponent';
 
 let dirs = rnFetchBlob.fs.dirs
-export default class AudioRecorder extends Component{
+export default class AudioRecorder extends BeComponent{
     constructor(props){
         super(props)
         this.state = {
@@ -17,7 +18,7 @@ export default class AudioRecorder extends Component{
         }
         this.BackHandler = null
     }
-    componentWillMount(){
+    componentMounting(){
          }
     stopRecordTiming() {
         clearInterval(this.recordInterval)
@@ -68,7 +69,7 @@ export default class AudioRecorder extends Component{
         }
     }
     filename = dirs.DocumentDir + "/test.mp3"
-    componentWillUnmount(){
+    unmountingComponent(){
         SoundRecorder.stop().then(() => {
             //this.BackHandler.remove()
         })
@@ -84,7 +85,7 @@ export default class AudioRecorder extends Component{
     stopRecordSimple(){
         this.stopRecordTiming()
         SoundRecorder.stop().then(() => {
-            this.setState({
+            this.setStatePure({
                 //recording:false,
                 recordTime:0
             })
@@ -92,7 +93,7 @@ export default class AudioRecorder extends Component{
     }
     duration = 0
     stopRecord(dontsend) {
-        this.setState({
+        this.setStatePure({
             //recording: !this.state.recording,
             showAudioRecorder: false,
             recordTime: 0
@@ -102,14 +103,14 @@ export default class AudioRecorder extends Component{
     pauseRecorder() {
         this.stopRecordTiming()
         SoundRecorder.pause().then(() => {
-            this.setState({
+            this.setStatePure({
                 recording: false,
             })
         })
     }
     startRecordTiming() {
         this.recordInterval = setInterval(() => {
-            this.setState({
+            this.setStatePure({
                 recordTime: this.state.recordTime + 1
             })
         }, 1000)
@@ -117,7 +118,7 @@ export default class AudioRecorder extends Component{
     resumAudioRecoder() {
         this.startRecordTiming()
         SoundRecorder.resume().then(() => {
-            this.setState({
+            this.setStatePure({
                 recording: true
             })
         })

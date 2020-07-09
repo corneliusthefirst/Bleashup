@@ -19,10 +19,9 @@ import CreateTextInput from '../../myscreens/event/createEvent/components/Create
 const screenHeight  =  Dimensions.get('window').height;
 const screenWidth  =  Dimensions.get('window').width;
 export default class PickedImage extends BleashupModal {
-  constructor(props) {
-    super(props);
+  initialize(){
     this.state = {
-      message:'',
+      message: '',
     };
   }
 
@@ -35,13 +34,13 @@ export default class PickedImage extends BleashupModal {
 
 
   onClosedModal = () => {
-    this.setState({message:''});
+    this.setStatePure({message:''});
     let data = {photo:'',video:'',message:''};
     this.props.onClosed(data);
  }
 
  onChangedMessage = (value) => {
-     this.setState({message:value});
+     this.setStatePure({message:value});
  }
 
  validate = () => {
@@ -51,7 +50,7 @@ export default class PickedImage extends BleashupModal {
    }
    else {
     this.props.onClosed({...this.props.dataToreturn,message:this.state.message});
-    this.setState({message:''});
+    this.setStatePure({message:''});
    }
  }
 

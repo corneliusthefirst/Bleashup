@@ -14,7 +14,7 @@ export default class SettingsTabModal extends BleashupModal {
     this.props.closed();
   }
   onOpenModal(){
-      this.setState({
+      this.setStatePure({
         isMounted:true
       })
   }

@@ -29,19 +29,18 @@ const ZOOM = { MIN: 0, MAX: 1.0 };
 const { height , width } = Dimensions.get('window');
 
 export default class CameraScreen extends BleashupModal {
-  constructor(props) {
-    super(props);
+  initialize(){
     this.state = {
       zoom: 0,
       scale: 0,
       previousScale: 0,
       flashMode: 'off',
       orientation: Camera.Constants.Type.back,
-      paused:false,
-      videoActivated:false,
-      picked:false,
-      data:{photo:'',video:''},
-      dataToreturn:{},
+      paused: false,
+      videoActivated: false,
+      picked: false,
+      data: { photo: '', video: '' },
+      dataToreturn: {},
       stopwatchStart: false,
       stopwatchReset: false,
       recordOptions: {
@@ -51,7 +50,6 @@ export default class CameraScreen extends BleashupModal {
       },
       isRecording: false,
     };
-
   }
   borderRadius = 0;
   modalHeight = "100%";
@@ -70,7 +68,7 @@ export default class CameraScreen extends BleashupModal {
       // console.warn("result is", result);
       this.state.data.photo = result.uri;
       let temp = result.uri.split('/');
-      this.setState({data:this.state.data, dataToreturn:{source:result.uri,content_type:'image',filename:temp[temp.length - 1]}});
+      this.setStatePure({data:this.state.data, dataToreturn:{source:result.uri,content_type:'image',filename:temp[temp.length - 1]}});
 
 
       if (this.props.directreturn){
@@ -78,7 +76,7 @@ export default class CameraScreen extends BleashupModal {
         this.props.onClosed();
       }
 
-      this.setState({picked:true});
+      this.setStatePure({picked:true});
 
     }
   };
@@ -89,14 +87,14 @@ export default class CameraScreen extends BleashupModal {
         const promise = this.camera.recordAsync(this.state.recordOptions);
 
         if (promise) {
-          this.setState({ isRecording: true });
+          this.setStatePure({ isRecording: true });
           const data = await promise;
 
           this.state.data.video = data.uri;
           let temp = data.uri.split('/');
-          this.setState({data:this.state.data, dataToreturn:{source:data.uri,content_type:'video',filename:temp[temp.length - 1]}});
+          this.setStatePure({data:this.state.data, dataToreturn:{source:data.uri,content_type:'video',filename:temp[temp.length - 1]}});
 
-          this.setState({ isRecording: false });
+          this.setStatePure({ isRecording: false });
           //console.warn('takeVideo', data);
           if (this.props.directreturn){
             this.props.onCaptureFinish(this.state.data);
@@ -104,7 +102,7 @@ export default class CameraScreen extends BleashupModal {
           }
         }
       } catch (e) {
-        this.setState({videoActivated:false});
+        this.setStatePure({videoActivated:false});
       }
     }
   };
@@ -123,7 +121,7 @@ export default class CameraScreen extends BleashupModal {
         } else {
           nextMode = modeList[0];
         }
-        this.setState({ flashMode: nextMode });
+        this.setStatePure({ flashMode: nextMode });
         break;
       }
     }
@@ -132,7 +130,7 @@ export default class CameraScreen extends BleashupModal {
   onPressOrientation = () => {
     let { front, back } = Camera.Constants.Type;
     let newOrientation = this.state.orientation === front ? back : front;
-    this.setState({ orientation: newOrientation });
+    this.setStatePure({ orientation: newOrientation });
   };
 
   onPressZoom = (command) => {
@@ -140,13 +138,13 @@ export default class CameraScreen extends BleashupModal {
     switch (command) {
       case 'PLUS': {
         if (currentZoom < ZOOM.MAX) {
-          this.setState({ zoom: currentZoom + 0.1 });
+          this.setStatePure({ zoom: currentZoom + 0.1 });
         }
         break;
       }
       case 'MINUS': {
         if (currentZoom > ZOOM.MIN) {
-          this.setState({ zoom: currentZoom - 0.1 });
+          this.setStatePure({ zoom: currentZoom - 0.1 });
         }
         break;
       }
@@ -171,14 +169,13 @@ export default class CameraScreen extends BleashupModal {
   };
 
   onCameraReady = () => {
-    this.setState({ ready: true });
+    this.setStatePure({ ready: true });
     if (typeof this.props.onCameraReady === 'function') {
         this.props.onCameraReady && this.props.onCameraReady();
     }
   };
 
   onMountError = (e) => {
-    console.log(e);
     if (typeof this.props.onMountError === 'function') {
         this.props.onMountError && this.props.onMountError(e);
     }
@@ -191,28 +188,28 @@ export default class CameraScreen extends BleashupModal {
     let type = data.content_type.slice(0,5);
     if(type == "video"){
       this.state.data.video = data.source;
-      this.setState({data:this.state.data,dataToreturn:data});
+      this.setStatePure({data:this.state.data,dataToreturn:data});
 
       if(this.props.directreturn){
        this.props.onCaptureFinish(this.state.dataToreturn);
        this.props.onClosed();
       }
       else{
-        this.setState({picked:true});
+        this.setStatePure({picked:true});
       }
 
     }
     else{
 
      this.state.data.photo =  data.source;
-     this.setState({data:this.state.data,dataToreturn:data});
+     this.setStatePure({data:this.state.data,dataToreturn:data});
 
      if(this.props.directreturn){
        this.props.onCaptureFinish(this.state.dataToreturn);
        this.props.onClosed();
       }
       else{
-        this.setState({picked:true});
+        this.setStatePure({picked:true});
       }
 
     }
@@ -223,7 +220,7 @@ export default class CameraScreen extends BleashupModal {
 
 
 activateVideo = () => {
-  this.setState({videoActivated:true});
+  this.setStatePure({videoActivated:true});
   this.takeVideo();
   this.toggleStopwatch();
   //console.warn("video activated",this.state.videoActivated);
@@ -232,25 +229,25 @@ activateVideo = () => {
 
 deactivateVideo = () => {
   this.camera.stopRecording();  //stop recording
-  this.setState({videoActivated:false});
-  this.setState({picked:true});
+  this.setStatePure({videoActivated:false});
+  this.setStatePure({picked:true});
   this.resetStopwatch();
 }
 
 pauseVideo = () => {
   this.state.paused ? this.camera.resumePreview() : this.camera.pausePreview();
-  this.setState({paused:!this.state.paused});
+  this.setStatePure({paused:!this.state.paused});
   this.toggleStopwatch();
 }
 
 
 //for video time recording
 toggleStopwatch = () => {
-  this.setState({stopwatchStart: !this.state.stopwatchStart, stopwatchReset: false});
+  this.setStatePure({stopwatchStart: !this.state.stopwatchStart, stopwatchReset: false});
 }
 
 resetStopwatch = () => {
-  this.setState({stopwatchStart: false, stopwatchReset: true});
+  this.setStatePure({stopwatchStart: false, stopwatchReset: true});
 }
 
 getFormattedTime(time) {
@@ -263,12 +260,12 @@ closepicked = (data) => {
   console.warn("data to return is",data);
    if (data.source){
     this.props.onCaptureFinish(data);
-    this.setState({picked:false , data:{photo:'',video:''}});
+    this.setStatePure({picked:false , data:{photo:'',video:''}});
     this.props.onClosed();
    }
    else {
 
-    this.setState({picked:false , data:{photo:'',video:''}});
+    this.setStatePure({picked:false , data:{photo:'',video:''}});
    }
 
 }

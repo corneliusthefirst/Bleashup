@@ -30,8 +30,9 @@ import AudioFilePreviewer from "./AudioFilePreviewer";
 import FilePreview from "./FilePreview";
 import PhotoPreview from "./PhotoPreviewer";
 import CameraScreen from '../../mainComponents/BleashupCamera/index';
+import BeComponent from "../../BeComponent";
 
-export default class ChatKeyboard extends PureComponent {
+export default class ChatKeyboard extends BeComponent {
     constructor(props) {
         super(props);
         this.state = {
@@ -42,7 +43,7 @@ export default class ChatKeyboard extends PureComponent {
             UIManager.setLayoutAnimationEnabledExperimental(true);
         }
     }
-    componentWillMount() {
+    componentMounting() {
         this.formSerachableMembers();
     }
     _resetTextInput() {
@@ -70,7 +71,7 @@ export default class ChatKeyboard extends PureComponent {
                 (data) => {
                     this._resetTextInput();
                     this.tags = null;
-                    this.setState({
+                    this.setStatePure({
                         textValue: "",
                         replying: false,
                         replyContent: null,
@@ -81,11 +82,11 @@ export default class ChatKeyboard extends PureComponent {
         } else {
         }
     }
-    componentWillUnmount() {
+    unmountingComponent() {
         Pickers.CleanAll();
     }
     sendAudioMessge(filename, duration, dontsend) {
-        this.setState({
+        this.setStatePure({
             showAudioRecorder: false,
         });
         if (!dontsend) {
@@ -116,7 +117,7 @@ export default class ChatKeyboard extends PureComponent {
         }
     }
     clearCaption() {
-        this.setState({
+        this.setStatePure({
             newMessage: true,
             textValue: "",
             audioSouce: null,
@@ -128,9 +129,9 @@ export default class ChatKeyboard extends PureComponent {
     }
     _onChange(event) {
         let text = event.nativeEvent.text;
-        this.setState({ textValue: text || "" });
+        this.setStatePure({ textValue: text || "" });
         if (text.split("@").length > 1) {
-            this.setState({
+            this.setStatePure({
                 tagging: true,
             });
         }
@@ -157,7 +158,7 @@ export default class ChatKeyboard extends PureComponent {
         }, 50);
     }
     handleEmojiSelected(e) {
-        this.setState({
+        this.setStatePure({
             textValue: this.state.textValue + e,
         });
     }
@@ -170,7 +171,7 @@ export default class ChatKeyboard extends PureComponent {
         let currentText = this.state.textValue;
         currentText = currentText.split("@");
         currentText[currentText.length - 1] = toTitleCase(item.nickname) + " ";
-        this.setState({
+        this.setStatePure({
             textValue: currentText.join("@"),
         });
         this.animateLayout();
@@ -206,7 +207,7 @@ export default class ChatKeyboard extends PureComponent {
                 <BleashupFlatList
                     fit
                     empty={() => {
-                        this.setState({
+                        this.setStatePure({
                             tagging: false,
                         });
                     }}
@@ -248,7 +249,7 @@ export default class ChatKeyboard extends PureComponent {
     }
     cancleReply() {
         GState.reply = null;
-        this.setState({
+        this.setStatePure({
             replying: false,
             replyContent: null,
         });
@@ -304,7 +305,7 @@ export default class ChatKeyboard extends PureComponent {
         this._textInput.blur();
     }
     replying(replyer, color) {
-        this.setState({
+        this.setStatePure({
             loaded: true,
             replying: true,
             replyContent: replyer,
@@ -321,7 +322,7 @@ export default class ChatKeyboard extends PureComponent {
     }
     concludePicking(snap){
         let isVideo = snap.content_type.includes("video") ? true : false;
-        this.setState({
+        this.setStatePure({
             video: snap.source,
             image: snap.source,
             audio: false,
@@ -365,7 +366,7 @@ export default class ChatKeyboard extends PureComponent {
             this.tags = null;
             this.props.initialzeFlatList();
         });
-        this.setState({
+        this.setStatePure({
             textValue: "",
             replyContent: null,
             replying: false,
@@ -376,7 +377,7 @@ export default class ChatKeyboard extends PureComponent {
         this.animateLayout();
     }
     toggleAudioRecorder() {
-        this.setState({
+        this.setStatePure({
             showAudioRecorder: !this.state.showAudioRecorder,
         });
         setTimeout(() => {
@@ -430,7 +431,7 @@ export default class ChatKeyboard extends PureComponent {
         return (
             <AudioRecorder
                 justHideMe={() => {
-                    this.setState({
+                    this.setStatePure({
                         showAudioRecorder: false,
                     });
                     this.refs.AudioRecorder.stopRecordSimple();
@@ -449,10 +450,12 @@ export default class ChatKeyboard extends PureComponent {
         this.temp = GState.reply ? JSON.stringify(GState.reply) : null;
         GState.reply = null;
         Keyboard.dismiss();
-        setTimeout(
+       this.toggleTimeout = setTimeout(
             () => {
-                this.setState({
+                this.setStatePure({
                     showEmojiInput: !this.state.showEmojiInput,
+                },() => {
+                    clearTimeout(this.toggleTimeout)
                 });
                 this.props.adjutRoomDisplay(true);
             },
@@ -466,16 +469,18 @@ export default class ChatKeyboard extends PureComponent {
     }
     tags = null;
     resetImoji() {
-        setTimeout(() => {
-            this.setState({
+        this.toggleTimeout =  setTimeout(() => {
+            this.setStatePure({
                 showEmojiInput: false,
+            },() => {
+                clearTimeout(this.toggleTimeout)
             });
             //this.props.adjutRoomDisplay()
         }, 190);
         this.animateLayout();
     }
     hideCaption() {
-        this.setState({
+        this.setStatePure({
             showCaption: false,
             audio: false,
             file: false,
@@ -487,7 +492,7 @@ export default class ChatKeyboard extends PureComponent {
     async pickAudio() {
         this.blur();
         const res = await Pickers.TakeAudio();
-        this.setState({
+        this.setStatePure({
             audioSouce: res.uri,
             showCaption: true,
             filename: res.name,
@@ -501,15 +506,16 @@ export default class ChatKeyboard extends PureComponent {
         this.animateLayout(true);
     }
     activateKeyboard() {
-        setTimeout(() => {
+       this.activateKeyboardTimeout = setTimeout(() => {
             this.focus();
+            clearTimeout(this.activateKeyboardTimeout)
         });
     }
     async pickFile() {
         this.blur();
         const res = await Pickers.TakeFile();
         console.warn(res)
-        this.setState({
+        this.setStatePure({
             showCaption: true,
             file: true,
             audio: false,
@@ -544,7 +550,7 @@ export default class ChatKeyboard extends PureComponent {
         this.animateLayout();
     }
     hideAudioCaption() {
-        this.setState({
+        this.setStatePure({
             audio: false,
             audioSouce: false,
             showCaption: false,
@@ -572,7 +578,7 @@ export default class ChatKeyboard extends PureComponent {
         alignSelf: "flex-end",
     };
     hideFileCaption() {
-        this.setState({
+        this.setStatePure({
             showCaption: false,
             file: false,
             filename: null,
@@ -581,7 +587,7 @@ export default class ChatKeyboard extends PureComponent {
         this.animateLayout();
     }
     endCamera(){
-        this.setState({
+        this.setStatePure({
             isCameraOpened: false
         })
     }
@@ -621,12 +627,12 @@ export default class ChatKeyboard extends PureComponent {
                 </PhotoPreview>
     }
     showSnapper(){
-        this.setState({
+        this.setStatePure({
             isCameraOpened:true
         })
     }
     showOptionsModal(){
-        this.setState({
+        this.setStatePure({
             isOptionsOpened:true
         })  
     }
@@ -865,7 +871,7 @@ export default class ChatKeyboard extends PureComponent {
                         this.concludePicking(snap)
                     }}></CameraScreen>
 
-                    < OptionsModal isOpen={this.state.isOptionsOpened} onClosed={()=> this.setState({isOptionsOpened:false})}
+                    < OptionsModal isOpen={this.state.isOptionsOpened} onClosed={()=> this.setStatePure({isOptionsOpened:false})}
 
                         openAudioPicker={this.props.openAudioPicker}
                         openFilePicker={this.props.openFilePicker}

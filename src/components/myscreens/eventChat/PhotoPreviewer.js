@@ -7,7 +7,8 @@ import rounder from "../../../services/rounder";
 import { Icon } from "native-base";
 import CacheImages from '../../CacheImages';
 import shadower from "../../shadower";
-export default class PhotoPreview extends Component {
+import BeComponent from '../../BeComponent';
+export default class PhotoPreview extends BeComponent {
     constructor(props) {
         super(props)
         this.state = {}

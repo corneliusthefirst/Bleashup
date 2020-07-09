@@ -17,9 +17,10 @@ import moment from 'moment';
 import firebase from 'react-native-firebase';
 import { values } from 'lodash';
 import Waiter from '../loginhome/Waiter';
+import BeComponent from '../../BeComponent';
 
 
- export default class EventChat extends Component {
+ export default class EventChat extends BeComponent {
   constructor(props) {
     super(props)
     this.state = {
@@ -35,8 +36,8 @@ import Waiter from '../loginhome/Waiter';
   newMessageCount = 0
   componentDidMount() {
     let user = stores.LoginStore.user
-    setTimeout(() => {
-      this.setState({
+   this.mountTimeout = setTimeout(() => {
+      this.setStatePure({
         user: user,
         new_messages: [],
         loaded: true

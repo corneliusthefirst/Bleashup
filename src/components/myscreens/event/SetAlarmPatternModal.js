@@ -29,12 +29,12 @@ export default class SetAlarmPatternModal extends BleashupModal {
         selected: []
     }
     addItem(item) {
-        this.setState({
+        this.setStatePure({
             selected: uniqBy([...this.state.selected, item],"id")
         })
     }
     removeItem(id) {
-        this.setState({
+        this.setStatePure({
             selected: reject(this.state.selected, { id: id })
         });
     }

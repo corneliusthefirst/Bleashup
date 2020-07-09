@@ -22,10 +22,11 @@ import { LogLevel, RNFFmpeg } from 'react-native-ffmpeg';
 import rnFetchBlob from 'rn-fetch-blob';
 import TextContent from './TextContent';
 import ColorList from '../../colorList';
+import BePureComponent from '../../BePureComponent';
 const { fs } = rnFetchBlob
 
 
-export default class AudioUploader extends Component {
+export default class AudioUploader extends BePureComponent {
     constructor(props) {
         super(props);
         this.state = {
@@ -42,7 +43,7 @@ export default class AudioUploader extends Component {
         this.exchanger.upload(this.state.received, this.state.total)
     }
     progress(writen, total) {
-        this.setState({
+        this.setStatePure({
             total: parseInt(total),
             received: parseInt(writen),
             uploadState: (parseInt(writen) / parseInt(total)) * 100
@@ -50,7 +51,7 @@ export default class AudioUploader extends Component {
     }
     onError(error) {
         GState.downlading = false
-        this.setState({
+        this.setStatePure({
             downloading: false
         })
         console.warn(error)
@@ -58,7 +59,7 @@ export default class AudioUploader extends Component {
     onSuccess(newDir, path, filename) {
         console.warn(newDir,"new Dir after upload")
         GState.downlading = false
-        this.setState({
+        this.setStatePure({
             uploadState: 100,
             loaded: true,
             downloading: false
@@ -111,7 +112,7 @@ export default class AudioUploader extends Component {
     componentDidMount() {
         console.warn(this.tempSource,this.props.message.file_name)
         this.checkIfExist().then(() => {
-            this.setState({
+            this.setStatePure({
                 duration: this.props.message.duration,
                 currentPosition: 0,
                 playing: false,
@@ -132,7 +133,7 @@ export default class AudioUploader extends Component {
         })
     }
     pause() {
-        this.setState({
+        this.setStatePure({
             playing: false
         })
         this.player.pause()
@@ -140,7 +141,7 @@ export default class AudioUploader extends Component {
     task = null
     previousTime = 0
     plays() {
-        this.setState({
+        this.setStatePure({
             playing: true
         })
         if (this.props.message.duration) {
@@ -149,7 +150,7 @@ export default class AudioUploader extends Component {
                     if (this.previousTime == time) clearInterval(refreshID)
                     else {
                         this.previousTime = time
-                        this.setState({
+                        this.setStatePure({
                             currentPosition: time / this.props.message.duration,
                             currentTime: time
                         })
@@ -161,7 +162,7 @@ export default class AudioUploader extends Component {
             if (success) {
                 this.player.getCurrentTime((seconds) => {
                     this.props.message.duration = Math.floor(seconds)
-                    this.setState({
+                    this.setStatePure({
                         playing: false,
                         currentPosition: seconds / this.props.message.duration,
                         currentTime: seconds
@@ -175,11 +176,11 @@ export default class AudioUploader extends Component {
     }
     showProgress() {
         if (this.props.message.duration) {
-            this.setState({
+            this.setStatePure({
                 showProgress: true
             })
             setTimeout(() => {
-                this.setState({ showProgress: false })
+                this.setStatePure({ showProgress: false })
             }, 5000)
         }
     }
@@ -190,7 +191,7 @@ export default class AudioUploader extends Component {
 
         })
         GState.downlading = false
-        this.setState({
+        this.setStatePure({
             downloading: false
         })
     }
@@ -205,7 +206,7 @@ export default class AudioUploader extends Component {
                 <View style={textStyle}>
                     <View><Slider value={this.state.currentPosition} onValueChange={(value) => {
                         this.player.setCurrentTime(value * this.props.message.duration)
-                        this.setState({
+                        this.setStatePure({
                             currentPosition: value,
                             currentTime: value * this.props.message.duration
                         })

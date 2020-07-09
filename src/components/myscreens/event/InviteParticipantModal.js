@@ -19,19 +19,19 @@ export default class InviteParticipantModal extends BleashupModal {
     };
   }
   toggleMaster(memberPhone) {
-    this.setState({
+    this.setStatePure({
       selected: this.state.selected.map((ele) =>
         ele.phone === memberPhone ? { ...ele, master: !ele.master } : ele
       ),
     });
   }
   addMember(member) {
-    this.setState({
+    this.setStatePure({
       selected: [...this.state.selected, member],
     });
   }
   remove(memberPhone) {
-    this.setState({
+    this.setStatePure({
       selected: reject(this.state.selected, { phone: memberPhone }),
     });
   }
@@ -40,7 +40,7 @@ export default class InviteParticipantModal extends BleashupModal {
   }
   onClosedModal() {
     this.props.onClosed();
-    this.setState({
+    this.setStatePure({
       participant: [],
       selected: [],
       loaded: false,
@@ -50,8 +50,8 @@ export default class InviteParticipantModal extends BleashupModal {
   }
   onOpenModal() {
     stores.Contacts.getContacts().then((contacts) => {
-      setTimeout(() => {
-        this.setState({
+     this.openModalTimeout = setTimeout(() => {
+        this.setStatePure({
           contacts: contacts
             ? contacts.filter((ele) => findIndex(this.props.participant, { phone: ele.phone }) < 0)
             : [],
@@ -141,7 +141,9 @@ export default class InviteParticipantModal extends BleashupModal {
           <BleashupFlatList
             firstIndex={0}
             renderPerBatch={20}
+            //key={JSON.stringify(this.state.selected)}
             initialRender={10}
+            extraData={this.props}
             numberOfItems={this.state.contacts.length}
             keyExtractor={this._keyExtractor}
             dataSource={this.state.contacts}

@@ -18,8 +18,9 @@ import ColorList from "../../colorList";
 import TextContent from "./TextContent";
 import replies from "./reply_extern";
 import rounder from '../../../services/rounder';
+import BePureComponent from '../../BePureComponent';
 let stores = null;
-export default class ReplyText extends Component {
+export default class ReplyText extends BePureComponent {
   constructor(props) {
     super(props);
     this.state = {};
@@ -254,11 +255,11 @@ export default class ReplyText extends Component {
                       </View>
                       ) : null}
                       <View
-                        onLayout={(e) => {
-                          this.setState({
+                        /*onLayout={(e) => {
+                          this.setStatePure({
                             currentHeight: e.nativeEvent.layout.height,
                           });
-                        }}
+                        }}*/
                         style={{
                           alignSelf:"flex-end",
                           marginLeft: this.props.reply.sourcer ? "1%" : null,
@@ -307,9 +308,9 @@ export default class ReplyText extends Component {
                       </View>
                     </View>
                     {this.props.reply.change_date ? (
-                      <Text note>{`On: ${moment(
+                      <Text note>{`${moment(
                         this.props.reply.change_date
-                      ).format("dddd, MMMM Do YYYY, h:mm:ss a")}`}</Text>
+                      ).calendar()}`}</Text>
                     ) : null}
                   </View>
                 )}

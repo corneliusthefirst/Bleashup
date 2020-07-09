@@ -1,8 +1,9 @@
 
 import React, { PureComponent } from "react"
 import { Platform, LayoutAnimation, UIManager } from 'react-native';
+import BePureComponent from './BePureComponent';
 
-export default class AnimatedPureComponent extends PureComponent {
+export default class AnimatedPureComponent extends BePureComponent {
     constructor(props) {
         super(props)
         if (Platform.OS === 'android') {

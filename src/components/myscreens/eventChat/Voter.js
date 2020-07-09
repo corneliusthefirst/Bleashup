@@ -13,16 +13,17 @@ import VoteOptionPreviwer from './VoteOptionMediaPreviewer';
 import PickersMenu from '../event/createEvent/components/PickerMenu';
 import ColorList from '../../colorList';
 import rounder from '../../../services/rounder';
+import BeComponent from '../../BeComponent';
 
-export default class Voter extends Component {
+export default class Voter extends BeComponent {
     constructor(props) {
         super(props)
         this.state = {
         }
     }
     componentDidMount() {
-        setTimeout(() => {
-            this.setState({
+       this.mountTimeout = setTimeout(() => {
+            this.setStatePure({
                 totalVotes: (this.props.message.vote && 
                     this.props.message.vote.voter && 
                     this.props.message.vote.voter.length) || 0,

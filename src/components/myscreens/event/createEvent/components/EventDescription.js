@@ -29,7 +29,7 @@ export default class EventDescription extends BleashupModal {
 
   @autobind
   init() {
-    this.setState({
+    this.setStatePure({
       description: this.props.event.about.description,
       event_id: this.props.event.id,
       update: this.props.updateDes ? this.props.updateDes : false
@@ -61,7 +61,7 @@ export default class EventDescription extends BleashupModal {
   @autobind
   onChangedEventDescription(value) {
 
-    this.setState({ description: value });
+    this.setStatePure({ description: value });
     if (!this.state.update) {
       stores.Events.updateDescription(this.state.event_id, value, false).then(() => { });
     }

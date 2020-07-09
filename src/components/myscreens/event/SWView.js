@@ -24,12 +24,13 @@ import SearchView from './searchView';
 import ColorList from '../../colorList';
 import rounder from '../../../services/rounder';
 import BeNavigator from '../../../services/navigationServices';
+import BeComponent from '../../BeComponent';
 
 
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenheight = Math.round(Dimensions.get('window').height);
 
-export default class SWView extends Component {
+export default class SWView extends BeComponent {
     constructor(props) {
         super(props);
         this.state = {
@@ -67,13 +68,13 @@ export default class SWView extends Component {
             if (status) {
                 this.props.navigation.navigate('ChangeLogs', { ...this.props });
             } else {
-                this.setState({ isDetailsModalOpened: true });
+                this.setStatePure({ isDetailsModalOpened: true });
             }
             this.props.seen();
         });
     }
     invite() {
-        this.setState({
+        this.setStatePure({
             openInviteModal: true,
         });
     }
@@ -85,7 +86,7 @@ export default class SWView extends Component {
                     tab: 'EventDetails',
                 });
             } else {
-                this.setState({ isDetailsModalOpened: true });
+                this.setStatePure({ isDetailsModalOpened: true });
             }
             this.props.seen();
         });
@@ -105,9 +106,9 @@ export default class SWView extends Component {
     setAction = () => {
 
         if (this.state.action == false) {
-            this.setState({ action: true });
+            this.setStatePure({ action: true });
         } else {
-            this.setState({ action: false });
+            this.setStatePure({ action: false });
         }
     }
 

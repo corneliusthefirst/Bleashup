@@ -11,9 +11,10 @@ import buttoner from "../../../services/buttoner";
 import ColorList from '../../colorList';
 import stores from "../../../stores";
 import CacheImages from '../../CacheImages';
+import BePureComponent from '../../BePureComponent';
 
 
-export default class VideoMessage extends Component {
+export default class VideoMessage extends BePureComponent {
     constructor(props) {
         super(props)
         this.state = {
@@ -31,7 +32,7 @@ export default class VideoMessage extends Component {
     transparent = "rgba(52, 52, 52, 0.3)";
     componentDidMount() {
         let downloadState = (this.props.message.received / this.props.message.total) * 100
-        this.setState({
+        this.setStatePure({
             text: this.props.message.text,
             url: this.props.message.photo,
             sender_name: this.props.message.sender.nickname,
@@ -57,7 +58,7 @@ export default class VideoMessage extends Component {
         let newReceived = parseInt(received);
         let newTotal = this.state.total && this.state.total > 0 && this.state.total > total ? this.state.total : total
         newTotal = parseInt(newTotal)
-        this.setState({
+        this.setStatePure({
             error: false,
             downloadState: (newReceived / newTotal) * 100,
             total: newTotal, received: newReceived
@@ -65,7 +66,7 @@ export default class VideoMessage extends Component {
     }
     success(path, total, received) {
         GState.downlading = false
-        this.setState({
+        this.setStatePure({
             total: this.state.total && this.state.total > 0 && this.state.total > total ? this.state.total : total,
             received: received
         })
@@ -75,7 +76,7 @@ export default class VideoMessage extends Component {
     }
     onFail(received, total) {
         console.warn(total, received)
-        this.setState({
+        this.setStatePure({
             total: this.state.total && this.state.total > 0 && this.state.total > total ? this.state.total : total,
             received: received
         })
@@ -84,14 +85,14 @@ export default class VideoMessage extends Component {
         this.props.message.received = received
         this.props.message.total = total
         stores.Messages.addVideoSizeProperties(this.props.room,this.props.message.id, total, received)
-        this.setState({
+        this.setStatePure({
             downloading: false
         })
     }
     onError(error) {
         GState.downlading = false
         console.warn(error)
-        this.setState({
+        this.setStatePure({
             downloading: false,
             error: true
         })
@@ -100,7 +101,7 @@ export default class VideoMessage extends Component {
     download(url) {
         clearInterval(this.downloadID)
         GState.downlading = true
-        this.setState({
+        this.setStatePure({
             downloading: true
         })
         this.exchanger.download(this.state.received, this.state.total)
@@ -111,7 +112,7 @@ export default class VideoMessage extends Component {
     }
     setAfterSuccess(res, cap, received) {
         stores.Messages.addVideoProperties(this.props.room,this.props.message.id, this.props.message.source, cap, received).then(() => {
-            this.setState({
+            this.setStatePure({
                 loaded: true,
                 downloading: false,
                 downloadState: 100
@@ -120,10 +121,10 @@ export default class VideoMessage extends Component {
     }
     cancelDownLoad(url) {
         this.exchanger.task.cancel((err, taskID) => {
-            this.setState({ downloading: false })
+            this.setStatePure({ downloading: false })
         })
         stores.Messages.SetCancledState(this.props.room,this.props.message.id)
-        this.setState({
+        this.setStatePure({
             downloading: false
         })
     }

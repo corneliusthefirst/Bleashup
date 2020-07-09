@@ -20,7 +20,7 @@ export default class ContactsModal extends BleashupModal {
 
     }
     onOpenModal(){
-        this.setState({
+        this.setStatePure({
             contacts: this.props.contacts
         })
     }

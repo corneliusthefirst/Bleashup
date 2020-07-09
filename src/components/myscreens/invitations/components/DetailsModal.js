@@ -38,9 +38,6 @@ import TitleView from "../../currentevents/components/TitleView";
 import Creator from "../../reminds/Creator";
 import BleashupModal from "../../../mainComponents/BleashupModal";
 export default class DetailsModal extends BleashupModal {
-    constructor(props) {
-        super(props);
-    }
     state = {};
     initialize() {
         this.state = {
@@ -96,19 +93,19 @@ export default class DetailsModal extends BleashupModal {
                 phone: stores.LoginStore.user.phone,
             }) < 0
         ) {
-            this.setState({
+            this.setStatePure({
                 isJoining: true,
             });
             Request.join(this.state.event.id, this.state.event.event_host)
                 .then((status) => {
-                    this.setState({
+                    this.setStatePure({
                         isJoining: false,
                     });
                     this.props.onClosed();
                 })
                 .catch((error) => {
                     console.warn(error, " error which occured while joining ");
-                    this.setState({ isJoining: false });
+                    this.setStatePure({ isJoining: false });
                     Toast.show({
                         text: "unable to perform this action",
                         buttonText: "Okay",
@@ -126,11 +123,11 @@ export default class DetailsModal extends BleashupModal {
         this.props.onClosed();
     }
     onOpenModal() {
-        setTimeout(
+     this.openModalTimeout = setTimeout(
             () =>
                 this.formDetailModal(this.props.event).then((details) => {
                     this.formCreator().then((creator) => {
-                        this.setState({
+                        this.setStatePure({
                             event: this.props.event,
                             details: details,
                             creator: creator,
@@ -164,7 +161,7 @@ export default class DetailsModal extends BleashupModal {
                                     style={{ width: "30%" }}
                                     onPress={() =>
                                         requestAnimationFrame(() => {
-                                            this.setState({
+                                            this.setStatePure({
                                                 showPhoto: true,
                                             });
                                         })
@@ -244,7 +241,7 @@ export default class DetailsModal extends BleashupModal {
                             open={this.state.showPhoto}
                             photo={this.state.event.background}
                             hidePhoto={() => {
-                                this.setState({
+                                this.setStatePure({
                                     showPhoto: false,
                                 });
                             }}

@@ -7,8 +7,9 @@ import PhotoViewer from "../../PhotoViewer";
 import VideoViewer from "../../../highlights_details/VideoModal";
 import buttoner from "../../../../../services/buttoner";
 import ColorList from '../../../../colorList';
+import BeComponent from '../../../../BeComponent';
 
-export default class MediaPreviewer extends Component {
+export default class MediaPreviewer extends BeComponent {
   constructor(props) {
     super(props);
     this.state = {};
@@ -16,11 +17,11 @@ export default class MediaPreviewer extends Component {
   state = {};
   choseAction(url) {
     if (url.video) {
-      this.setState({
+      this.setStatePure({
           showVideo:true
       })
     } else {
-      this.setState({
+      this.setStatePure({
         enlargeImage: true,
       });
     }
@@ -136,7 +137,7 @@ export default class MediaPreviewer extends Component {
           <PhotoViewer
             open={this.state.enlargeImage}
             hidePhoto={() =>
-              this.setState({
+              this.setStatePure({
                 enlargeImage: false,
               })
             }
@@ -147,7 +148,7 @@ export default class MediaPreviewer extends Component {
           <VideoViewer
             open={this.state.showVideo}
             hideVideo={() => {
-              this.setState({
+              this.setStatePure({
                 showVideo: false,
               });
             }}

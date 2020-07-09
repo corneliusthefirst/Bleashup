@@ -32,9 +32,9 @@ export default class SelectableContactList extends BleashupModal {
         };
     }
     componentDidMount() {
-        setTimeout(
+       this.openModalTimeout = setTimeout(
             () =>
-                this.setState({
+                this.setStatePure({
                     checked: this.props.members,
                     members: this.props.members,
                     check: this.props.notcheckall ? false : true,
@@ -43,7 +43,7 @@ export default class SelectableContactList extends BleashupModal {
         );
     }
     onOpenModal() {
-        this.setState({
+        this.setStatePure({
             members: this.props.members
                 ? this.props.members.filter((ele) => ele.phone !== this.props.phone)
                 : [],
@@ -56,7 +56,7 @@ export default class SelectableContactList extends BleashupModal {
         });
     }
     onClosedModal() {
-        this.setState({
+        this.setStatePure({
             members: [],
             checked: [],
             check: true,
@@ -83,7 +83,7 @@ export default class SelectableContactList extends BleashupModal {
                                         : this.props.adding
                                             ? this.props.addMembers(this.state.checked)
                                             : this.props.takecheckedResult(this.state.checked);
-                                    this.setState({ checked: [] });
+                                    this.setStatePure({ checked: [] });
                                     this.props.close();
                                 })
                             }
@@ -126,7 +126,7 @@ export default class SelectableContactList extends BleashupModal {
                                                 index={indexOf(this.state.checked, item.phone)}
                                                 phone={item.phone}
                                                 check={(phone) =>
-                                                    this.setState({
+                                                    this.setStatePure({
                                                         checked: concat(this.state.checked, [
                                                             find(this.state.members, { phone: phone }),
                                                         ]),
@@ -134,7 +134,7 @@ export default class SelectableContactList extends BleashupModal {
                                                     })
                                                 }
                                                 uncheck={(phone) =>
-                                                    this.setState({
+                                                    this.setStatePure({
                                                         checked: reject(this.state.checked, { phone: phone }),
                                                         check: false,
                                                     })

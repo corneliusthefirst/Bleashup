@@ -45,10 +45,11 @@ import GlobalFunctions from '../../../globalFunctions';
 import {MenuDivider } from 'react-native-material-menu';
 import BeNavigator from '../../../../services/navigationServices';
 import RelationProfile from '../../../RelationProfile';
+import BeComponent from '../../../BeComponent';
 
 let globalFunctions =  GlobalFunctions;
 let { height, width } = Dimensions.get('window');
-class PublicEvent extends Component {
+class PublicEvent extends BeComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -68,7 +69,7 @@ class PublicEvent extends Component {
   swipperComponent = null
   componentDidMount() { 
       setTimeout(() => {
-        this.setState({
+        this.setStatePure({
           isMount: true,
         })
       }, this.props.renderDelay)
@@ -84,13 +85,13 @@ class PublicEvent extends Component {
   publish() {
     if (this.props.Event.public) {
       Requester.publish(this.props.Event.id).then(() => {
-        this.setState({
+        this.setStatePure({
           publishing: false,
           public: true
         })
 
       }).catch(error => {
-        this.setState({
+        this.setStatePure({
           publishing: false
         })
         Toast.show({
@@ -126,11 +127,11 @@ class PublicEvent extends Component {
     this.markAsSeen()
   }
   delete() {
-    this.setState({
+    this.setStatePure({
       deleting: true
     })
     Requester.delete(this.props.Event.id).then(() => {
-      this.setState({
+      this.setStatePure({
         deleting: false,
         hiden: true
       })
@@ -142,11 +143,11 @@ class PublicEvent extends Component {
       stores.Events.markAsSeen(this.props.Event.id).then(() => {
       })
     }
-    this.setState({
+    this.setStatePure({
       hiding: true
     })
     Requester.hide(this.props.Event.id).then(() => {
-      this.setState({
+      this.setStatePure({
         hiden: true,
         hiding: false
       })
@@ -158,17 +159,17 @@ class PublicEvent extends Component {
         stores.Events.markAsSeen(this.props.Event.id).then(() => {
         })
       }
-      this.setState({
+      this.setStatePure({
         isJoining: true
       })
       Requester.join(this.props.Event.id, this.props.Event.event_host, this.props.Event.participant).then((status) => {
         Toast.show({ text: "Event Successfully Joint !", type: "success", buttonText: "ok" })
-        this.setState({
+        this.setStatePure({
           joint: true
         })
         emitter.emit(`left_${this.props.Event.id}`)
       }).catch((error) => {
-        this.setState({ isJoining: false })
+        this.setStatePure({ isJoining: false })
         Toast.show({
           text: 'unable to connect to the server ',
           buttonText: 'Okay'
@@ -182,12 +183,12 @@ class PublicEvent extends Component {
 
   refreshJoint() {
     console.warn("refreshing joint")
-    this.setState({
+    this.setStatePure({
       fresh: true,
       isMount: false
     })
     setTimeout(() => {
-      this.setState({
+      this.setStatePure({
         fresh: false,
         isMount: true
       })

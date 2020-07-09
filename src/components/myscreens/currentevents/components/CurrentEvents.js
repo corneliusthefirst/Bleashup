@@ -24,8 +24,7 @@ const screenWidth = Math.round(Dimensions.get('window').width);
 const screenheight = Math.round(Dimensions.get('window').height);
 
 export default class CurrentEvents extends AnimatedComponent {
-    constructor(props) {
-        super(props)
+    initialize(){
         this.state = {
             participants: [],
             event_id: null,
@@ -58,7 +57,7 @@ export default class CurrentEvents extends AnimatedComponent {
         const isActionButtonVisible = direction === 'up'
         if (isActionButtonVisible !== this.state.isActionButtonVisible) {
             LayoutAnimation.configureNext(CustomLayoutLinear)
-            this.setState({ isActionButtonVisible })
+            this.setStatePure({ isActionButtonVisible })
         }
         // Update your scroll position
         this._listViewOffset = currentOffset
@@ -67,23 +66,23 @@ export default class CurrentEvents extends AnimatedComponent {
 
 
     showPhoto(url) {
-        this.setState({
+        this.setStatePure({
             showPhoto: true,
             photo: url
         })
     }
-    componentWillMount() {
+    componentMounting() {
         //BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this))
     }
     //handleBackButton() {
      //   if (this.state.showPhoto) {
-     //       this.setState({
+     //       this.setStatePure({
        //         showPhoto: false
      //       })
      //       return true
      //   }
    // }
-    componentWillUnmount() {
+    unmountingComponent() {
        // BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton);
     };
     delay = 0
@@ -107,7 +106,7 @@ export default class CurrentEvents extends AnimatedComponent {
                         return item.type && item.type == "relation" ?<Relation
                         key={item.id}
                             openDetails={(event) => {
-                                this.setState({
+                                this.setStatePure({
                                     isDetailsModalOpened: true,
                                     event: event
                                 })
@@ -117,7 +116,7 @@ export default class CurrentEvents extends AnimatedComponent {
                             :<PublicEvent
                             key={item.id}
                                 openDetails={(event) => {
-                                    this.setState({
+                                    this.setStatePure({
                                         isDetailsModalOpened: true,
                                         event: event
                                     })
@@ -134,18 +133,18 @@ export default class CurrentEvents extends AnimatedComponent {
                 {
                     // ******************Photo Viewer View ***********************//
                     <PhotoViewer photo={this.state.photo} open={this.state.showPhoto} hidePhoto={() => {
-                        this.setState({
+                        this.setStatePure({
                             showPhoto: false
                         })
                     }}></PhotoViewer>
                 }
                 <ParticipantModal creator={this.state.currentCreator} isOpen={this.state.isParticipantModalOpened} hideTitle={false} participants={this.state.participant} onClosed={() => {
-                    this.setState({
+                    this.setStatePure({
                         isParticipantModalOpened: false
                     })
                 }}  ></ParticipantModal>
                  <PublishersModal isOpen={this.state.isPublisherModalOpened} event_id={this.state.event_id} onClosed={() => {
-                    this.setState({
+                    this.setStatePure({
                         isPublisherModalOpened: false
                     })
                 }}></PublishersModal>
@@ -154,7 +153,7 @@ export default class CurrentEvents extends AnimatedComponent {
                 }} isToBeJoint event={this.state.event}
                     isOpen={this.state.isDetailsModalOpened}
                     onClosed={() => {
-                        this.setState({
+                        this.setStatePure({
                             isDetailsModalOpened: false
                         })
                     }}>
@@ -198,11 +197,11 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
     continueScrollDown(renderPerBatch) {
         this.previousRendered = this.state.currentRender
         if (this.state.currentRender <= this.props.data.length - 1) {
-            this.setState({
+            this.setStatePure({
                 currentRender: this.previousRendered + this.renderPerBatch
             })
         } else {
-            this.setState({
+            this.setStatePure({
                 endReached: true
             })
         }
@@ -264,7 +263,7 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
             this.two += renderPerBatch
             this.three += renderPerBatch
             this.currentRendered += renderPerBatch
-            this.setState({
+            this.setStatePure({
                 zero: this.zero,
                 one: this.one,
                 two: this.two,
@@ -275,7 +274,7 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
                 this.refs._scrollView.scrollTo({ x: 0, y: 650.1, animated: true });
             this.scroll = 0;
         } else {
-            this.setState({
+            this.setStatePure({
                 endReached: true
             })
         }
@@ -287,7 +286,7 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
             this.two -= renderPerBatch
             this.three -= renderPerBatch
             this.currentRendered -= renderPerBatch
-            this.setState({
+            this.setStatePure({
                 zero: this.zero,
                 one: this.one,
                 two: this.two,
@@ -300,7 +299,7 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
                 this.refs._scrollView.scrollToEnd({ animated: true, duration: 5 }) :
                 this.refs._scrollView.scrollTo({ x: 0.5, y: 400, animated: true });
         } else {
-            this.setState({
+            this.setStatePure({
                 topReached: true
             })
         }
@@ -317,7 +316,7 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
                 onScrollEndDrag={({ nativeEvent }) => {
                     if (this.scroll < 20) {
                         if (ifCloseToTop(nativeEvent)) {
-                            this.setState({
+                            this.setStatePure({
                                 topReached: false
                             })
                             this.continueSrollUp(this.renderPerBatch)
@@ -327,7 +326,7 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
                         }
                     } else if (this.scroll <= 100 && this.scroll >= 20) {
                         if (ifCloseToTop(nativeEvent)) {
-                            this.setState({
+                            this.setStatePure({
                                 topReached: false
                             })
                             this.continueSrollUp(1)
@@ -391,7 +390,7 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
     }
 
     add3TinitialArra() {
-        this.setState({
+        this.setStatePure({
             list: new DataProvider((r1, r2) => r1 !== r2).cloneWithRows(this.props.data.slice(0, 3))
         })
     }

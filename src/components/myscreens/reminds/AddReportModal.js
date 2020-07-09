@@ -26,7 +26,7 @@ export default class AddReport extends BleashupModal {
         Keyboard.dismiss()
     }
     onChangedEventDescription(value) {
-        this.setState({ description: value })
+        this.setStatePure({ description: value })
     }
     onOpenModal(){
 

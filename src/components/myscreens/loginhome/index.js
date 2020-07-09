@@ -104,7 +104,7 @@ componentDidMount(){}
        );
 
       /* return <Voter voteItem={(item) => {
-         this.setState({
+         this.setStatePure({
            vote:item.vote
           })
        }} message={{vote:this.state.vote}} showVoters={(members) => {

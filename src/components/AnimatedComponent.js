@@ -1,8 +1,9 @@
 
 import React,{Component} from "react"
 import { Platform, LayoutAnimation, UIManager } from 'react-native';
+import BeComponent from './BeComponent';
 
-export default class AnimatedComponent extends Component{
+export default class AnimatedComponent extends BeComponent {
     constructor(props){
         super(props)
         if (Platform.OS === 'android') {
