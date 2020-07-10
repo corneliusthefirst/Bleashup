@@ -9,8 +9,9 @@ import { View } from 'react-native'
 import { Thumbnail } from "native-base"
 import testForURL from '../services/testForURL';
 import rounder from "../services/rounder";
+import BeComponent from './BeComponent';
 
-class CacheImages extends Component {
+class CacheImages extends BeComponent {
   constructor(props) {
     super(props)
   }
@@ -19,8 +20,8 @@ class CacheImages extends Component {
     mounted:false
   }
   componentDidMount() {
-  setTimeout(() => {
-    this.setState({
+  this.mountTimeout = setTimeout(() => {
+    this.setStatePure({
       mounted:true
     })
   },2000)

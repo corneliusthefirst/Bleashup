@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import PickersMenu from "./PickerMenu";
 import FileExachange from "../../../../../services/FileExchange";
-import { RNFFmpeg } from "react-native-ffmpeg";
+import { RNFFmpeg, RNFFprobe} from "react-native-ffmpeg";
 import { View } from "react-native";
 import Pickers from "../../../../../services/Picker";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
@@ -10,13 +10,14 @@ import ColorList from "../../../../colorList";
 import { Icon } from "native-base";
 import SearchImage from "./SearchImage";
 import rnFetchBlob from "rn-fetch-blob";
+import BeComponent from '../../../../BeComponent';
 
-export default class PickersUpload extends Component {
+export default class PickersUpload extends BeComponent {
   constructor(props) {
     super(props);
     this.state = {
       downloadProgess: 0,
-      uploading: false,
+      newing:false,
     };
   }
   componentDidMount() {
@@ -36,21 +37,22 @@ export default class PickersUpload extends Component {
   state = {
     downloadProgess: 0,
   };
-  clear() {
+  clear(stop) {
     this.exchanger &&
       this.exchanger.task &&
       this.exchanger.task.cancel &&
       this.exchanger.task.cancel();
-    this.setState({
+   !stop && this.setStatePure({
       uploading: false
     })
   }
   handleProgress = (reveived, total) => {
-    this.setState({
+    this.setStatePure({
       downloadProgess: reveived / total,
     });
   };
   upload(snaper,isVideo){
+    console.warn(snaper,isVideo)
     this.exchanger = new FileExachange(
       snaper.source,
       isVideo ? "/Video/" : "/Photo/",
@@ -71,7 +73,7 @@ export default class PickersUpload extends Component {
           deleter.deleteFile(this.previousVideo, true)
         }
         if (isVideo) {
-          RNFFmpeg.getMediaInformation(path).then((info) => {
+          RNFFprobe.getMediaInformation(path).then((info) => {
             let photoVid = baseURL + filename.split(".")[0] + "_thumbnail.jpeg"
             this.props.saveMedia({
               ...this.props.currentURL,
@@ -92,14 +94,14 @@ export default class PickersUpload extends Component {
           });
         }
         this.previousPhoto = path
-        this.setState({
+        this.setStatePure({
           uploading: false,
         });
       },
       null,
       (error) => {
         this.sayUploadError();
-        this.setState({
+        this.setStatePure({
           newing: !this.state.newing,
         });
         console.warn(error);
@@ -112,11 +114,12 @@ export default class PickersUpload extends Component {
   }
   TakePhotoFromLibrary(vid) {
     Pickers.SnapPhoto(!vid).then((snaper) => {
-      this.setState({
+      console.warn(snaper,"oooo")
+      this.setStatePure({
         newing: !this.state.newing,
         uploading: true,
       });
-      this.clear();
+      this.clear(true);
       this.cancelUploadError();
       //Pickers.CompressVideo(snaper).then(snap => {
       let isVideo = snaper.content_type.includes("video");
@@ -140,7 +143,7 @@ export default class PickersUpload extends Component {
     Pickers.TakeFile().then(file => {
       if(file){
         console.warn(file)
-        this.setState({
+        this.setStatePure({
           newing:!this.state.newing,
           uploading:true,
         })
@@ -158,7 +161,7 @@ export default class PickersUpload extends Component {
     Pickers.TakeAudio().then((audio) => {
       if (audio) {
         console.warn(audio);
-        this.setState({
+        this.setStatePure({
           newing: !this.state.newing,
           uploading: true,
         });
@@ -171,7 +174,7 @@ export default class PickersUpload extends Component {
           0,
           this.handleProgress,
           (newDir, path, filename) => {
-            RNFFmpeg.getMediaInformation(path).then((info) => {
+            RNFFprobe.getMediaInformation(path).then((info) => {
               rnFetchBlob.fs.unlink(newDir).then(() => { });
               if (this.previousAudio) {
                 let deleter = new FileExachange()
@@ -185,7 +188,7 @@ export default class PickersUpload extends Component {
                 duration: Math.ceil(info.duration / 1000),
               });
               this.previousAudio = path
-              this.setState({
+              this.setStatePure({
                 uploading: false,
               });
             });
@@ -203,12 +206,12 @@ export default class PickersUpload extends Component {
     });
   }
   sayUploadError() {
-    this.setState({
+    this.setStatePure({
       uploadError: true,
     });
   }
   cancelUploadError() {
-    this.setState({
+    this.setStatePure({
       uploadError: false,
     });
   }
@@ -217,16 +220,20 @@ export default class PickersUpload extends Component {
     this.clear();
     this.clearAudio();
   }
-  componentWillUnmount() {
+  unmountingComponent() {
     this.cancelAllTasks();
+  }
+  center = {
+    marginTop: "auto",
+    marginBottom: "auto",
   }
   render() {
     return (
 
-      <View style={{ flex: 1, flexDirection: 'row', alignSelf: 'flex-start', }}>
+      <View style={{ flexDirection: 'row', alignSelf: 'flex-start',width:"100%" }}>
 
 
-        <View style={{ width: 35 }}>
+        <View style={{ width: 35,...this.center }}>
           <PickersMenu
             menu={[
               {
@@ -242,14 +249,14 @@ export default class PickersUpload extends Component {
           ></PickersMenu>
         </View>
 
-        <View style={{ width: 35, }}>
+        <View style={{ width: 35,...this.center }}>
           <PickersMenu
             menu={[
               {
                 title: "Download Photo",
                 condition: true,
                 callback: () =>
-                  this.setState({
+                  this.setStatePure({
                     searchImageState: true,
                   }),
               },
@@ -262,11 +269,6 @@ export default class PickersUpload extends Component {
                 title: "Add Audio",
                 condition: this.props.notAudio ? false : true,
                 callback: () => this.takeAudio(),
-              },
-              {
-                "title": "Add File",
-                condition: this.props.notFile ? false : true,
-                callback: () => this.taskFile()
               }
             ]}
             icon={{
@@ -276,8 +278,8 @@ export default class PickersUpload extends Component {
           ></PickersMenu>
         </View>
 
-        {this.state.uploading && (
-          <View style={{ flex: 1, justifyContent: "center", alignItems: "flex-end", paddingRight: 5 }}>
+        {!this.state.uploading ? null: (
+          <View style={{marginLeft: "auto", alignItems: "flex-end", paddingRight: 5 }}>
             <AnimatedCircularProgress
               size={26}
               width={2}
@@ -309,7 +311,7 @@ export default class PickersUpload extends Component {
           h_modal={true}
           isOpen={this.state.searchImageState}
           onClosed={(mother) => {
-            this.setState({
+            this.setStatePure({
               searchImageState: false,
             });
           }}

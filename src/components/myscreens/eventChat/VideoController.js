@@ -20,8 +20,9 @@ import ColorList from '../../colorList';
 import rounder from '../../../services/rounder';
 import shadower from '../../shadower';
 import { TouchableOpacity } from 'react-native';
+import BeComponent from '../../BeComponent';
 
-export default class VideoController extends Component {
+export default class VideoController extends BeComponent {
 
     static defaultProps = {
         toggleResizeModeOnFullscreen: true,
@@ -175,7 +176,7 @@ export default class VideoController extends Component {
         let state = this.state;
         state.loading = true;
         this.loadAnimation();
-        this.setState(state);
+        this.setStatePure(state);
 
         if (typeof this.props.onLoadStart === 'function') {
             this.props.onLoadStart(...arguments);
@@ -193,7 +194,7 @@ export default class VideoController extends Component {
         let state = this.state;
         state.duration = data.duration;
         state.loading = false;
-        this.setState(state);
+        this.setStatePure(state);
 
         if (state.showControls) {
             this.setControlTimeout();
@@ -223,7 +224,7 @@ export default class VideoController extends Component {
             this.props.onProgress(...arguments);
         }
 
-        this.setState(state);
+        this.setStatePure(state);
     }
 
     /**
@@ -245,7 +246,7 @@ export default class VideoController extends Component {
         state.error = true;
         state.loading = false;
 
-        this.setState(state);
+        this.setStatePure(state);
     }
 
     /**
@@ -266,7 +267,7 @@ export default class VideoController extends Component {
         this.methods.toggleControls();
         state.lastScreenPress = time;
 
-        this.setState(state);
+        this.setStatePure(state);
     }
 
 
@@ -397,7 +398,7 @@ export default class VideoController extends Component {
             state.showControls = false;
             this.hideControlAnimation();
 
-            this.setState(state);
+            this.setStatePure(state);
         }
     }
 
@@ -418,7 +419,7 @@ export default class VideoController extends Component {
             this.clearControlTimeout();
         }
 
-        this.setState(state);
+        this.setStatePure(state);
     }
 
     /**
@@ -442,7 +443,7 @@ export default class VideoController extends Component {
             typeof this.events.onExitFullscreen === 'function' && this.events.onExitFullscreen();
         }
 
-        this.setState(state);
+        this.setStatePure(state);
     }
 
     /**
@@ -454,7 +455,7 @@ export default class VideoController extends Component {
         if (state.paused) {
             typeof this.events.onPause === 'function' && this.events.onPause();
         }
-        this.setState(state);
+        this.setStatePure(state);
     }
     _togglePlayPause() {
         let state = this.state;
@@ -467,7 +468,7 @@ export default class VideoController extends Component {
             typeof this.events.onPlay === 'function' && this.events.onPlay();
         }
 
-        this.setState(state);
+        this.setStatePure(state);
     }
 
     /**
@@ -477,7 +478,7 @@ export default class VideoController extends Component {
     _toggleTimer() {
         let state = this.state;
         state.showTimeRemaining = !state.showTimeRemaining;
-        this.setState(state);
+        this.setStatePure(state);
     }
 
     /**
@@ -545,7 +546,7 @@ export default class VideoController extends Component {
             state.seekerOffset = position
         };
 
-        this.setState(state);
+        this.setStatePure(state);
     }
 
     /**
@@ -597,7 +598,7 @@ export default class VideoController extends Component {
         let state = this.state;
         state.currentTime = time;
         this.player.ref.seek(time);
-        this.setState(state);
+        this.setStatePure(state);
     }
 
     /**
@@ -621,7 +622,7 @@ export default class VideoController extends Component {
             state.volumeTrackWidth = 150;
         }
 
-        this.setState(state);
+        this.setStatePure(state);
     }
 
     /**
@@ -678,7 +679,7 @@ export default class VideoController extends Component {
      * Before mounting, init our seekbar and volume bar
      * pan responders.
      */
-    componentWillMount() {
+    componentMounting() {
         this.initSeekPanResponder();
         this.initVolumePanResponder();
     }
@@ -689,7 +690,7 @@ export default class VideoController extends Component {
      */
     componentWillReceiveProps(nextProps) {
         if (this.state.paused !== nextProps.paused) {
-            this.setState({
+            this.setStatePure({
                 paused: nextProps.paused
             })
         }
@@ -706,14 +707,14 @@ export default class VideoController extends Component {
         state.volumeOffset = position;
         this.mounted = true;
 
-        this.setState(state);
+        this.setStatePure(state);
     }
 
     /**
      * When the component is about to unmount kill the
      * timeout less it fire in the prev/next scene
      */
-    componentWillUnmount() {
+    unmountingComponent() {
         this.mounted = false;
         this.clearControlTimeout();
     }
@@ -737,7 +738,7 @@ export default class VideoController extends Component {
                 let state = this.state;
                 this.clearControlTimeout();
                 state.seeking = true;
-                this.setState(state);
+                this.setStatePure(state);
             },
 
             /**
@@ -764,7 +765,7 @@ export default class VideoController extends Component {
                     this.setControlTimeout();
                     state.seeking = false;
                 }
-                this.setState(state);
+                this.setStatePure(state);
             }
         });
     }
@@ -799,7 +800,7 @@ export default class VideoController extends Component {
                     state.muted = false;
                 }
 
-                this.setState(state);
+                this.setStatePure(state);
             },
 
             /**
@@ -809,7 +810,7 @@ export default class VideoController extends Component {
                 let state = this.state;
                 state.volumeOffset = state.volumePosition;
                 this.setControlTimeout();
-                this.setState(state);
+                this.setStatePure(state);
             }
         });
     }
