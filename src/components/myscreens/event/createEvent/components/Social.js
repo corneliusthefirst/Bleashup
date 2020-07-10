@@ -29,20 +29,6 @@ export default class Social extends Component {
     render() {
         return (
             <View style={{ width: "100%", margin: 3 }}>
-                <TouchableOpacity
-                    onPress={() =>
-                        requestAnimationFrame(() =>
-                            this.setState({
-                                isSocialModalOpened: true,
-                            })
-                        )
-                    }
-                    style={{ margin: "1%" }}
-                >
-                    <Text
-                        note
-                    >{`${isNaN(this.state.likesCount)?0:this.state.likesCount} like(s), ${this.state.commentCount} comment(s), ${this.state.supportCount} supports`}</Text>
-                </TouchableOpacity>
                 <View style={{ flexDirection: "row", }}>
                     <View style={{ width:"60%", flexDirection: "row",alignSelf: 'center',justifyContent: 'space-between', }}>
                         <View style={{...this.itemStyle,width:'20%'}}>
@@ -144,7 +130,23 @@ export default class Social extends Component {
 
                     </View>*/}
                 </View>
-                {/* <SocialTabModal
+                <TouchableOpacity
+                    onPress={() =>
+                        requestAnimationFrame(() =>
+                            this.setState({
+                                isSocialModalOpened: true,
+                            })
+                        )
+                    }
+                    style={{ margin: "1%" }}
+                >
+                    <Text
+                        note
+                    >{`${isNaN(this.state.likesCount) ? 0 : this.state.likesCount} like(s)`
+                            //, ${this.state.commentCount} comment(s), ${this.state.supportCount} supports`
+                        }</Text>
+                </TouchableOpacity>
+                {/*<SocialTabModal
                     id={this.props.id}
                     isOpen={this.state.isSocialModalOpened}
                     closed={() => {
@@ -152,8 +154,7 @@ export default class Social extends Component {
                             isSocialModalOpened: false,
                         });
                     }}
-                  ></SocialTabModal>
-                 */}
+                ></SocialTabModal>*/}
             </View>
         );
     }

@@ -59,7 +59,7 @@ class CacheImages extends BeComponent {
         uri:(testForURL(this.props.source.uri) && !this.state.mounted) || 
         this.props.staySmall || 
           (this.props.thumbnails && !(this.props.style && this.props.style.width))
-           || this.props.source.uri.includes("thumbnail") ? 
+          || (this.props.source.uri && this.props.source.uri.includes("thumbnail")) ? 
           this.getPhotoSmall(this.props.source.uri, 20):
           this.props.thumbnails && testForURL(this.props.source.uri) ? 
               this.getPhotoSmall(this.props.source.uri,100) : 

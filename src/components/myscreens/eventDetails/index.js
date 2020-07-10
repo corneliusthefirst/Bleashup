@@ -417,7 +417,7 @@ action = () => [
           event={this.props.Event}
           event_id={this.props.Event.id} />
 
-        {/*
+        
         <DescriptionModal Event={this.props.Event} isOpen={this.state.viewdetail} onClosed={() => { this.setStatePure({ viewdetail: false }) }} parent={this}></DescriptionModal>
 
         <EventDescription updateDesc={(newDesc) => {
@@ -429,7 +429,6 @@ action = () => [
           this.props.updateLocation(newLoc)
         }} event={this.props.Event} isOpen={this.state.EventLocationState} onClosed={() => { this.setStatePure({ EventLocationState: false }) }}
           ref={"location_ref"} updateLoc={true} eventId={this.props.Event.id} parentComp={this} />
-      */}
 
         <MessageActions title={"star actions"} actions={this.action} onClosed={() => {
           this.setStatePure({
@@ -441,7 +440,7 @@ action = () => [
           isOpen={this.state.isAreYouSureModalOpened} onClosed={() => { this.setStatePure({ isAreYouSureModalOpened: false }) }} />
 
 
-        {/*<SideButton
+        <SideButton
           buttonColor={'rgba(52, 52, 52, 0.8)'}
           position={"right"}
           //text={"D"}
@@ -455,7 +454,7 @@ action = () => [
           offsetX={10}
           size={40}
           offsetY={30}
-        />*/}
+        />
 
         <SideButton
           //buttonColor={'rgba(52, 52, 52, 0.8)'}

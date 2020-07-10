@@ -34,7 +34,7 @@ export default class DescriptionModal extends BleashupModal {
         }}>
           <View style={{ flexDirection: 'row', justifyContent: "space-between", height: "20%", alignItems: "center" }}><Text style={{ fontWeight: "500", color: colorList.bodyText }}>@Activity description</Text>
             {this.props.parent.props.computedMaster ? <TouchableOpacity onPress={() => requestAnimationFrame(() => {
-              this.props.parent.this.setStatePure({ EventDescriptionState: true })
+              this.props.parent.setStatePure({ EventDescriptionState: true })
             })}><Icon name={"pencil"} type={"EvilIcons"}></Icon></TouchableOpacity> : null}</View>
 
           <ScrollView keyboardShouldPersistTaps={"handled"}
