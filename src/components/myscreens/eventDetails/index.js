@@ -297,7 +297,7 @@ action = () => [
   }
 ]
   renderPosts() {
-    let data = stores.Highlights.highlights[this.props.Event.id];
+    let data = stores.Highlights.highlights[this.props.Event.id]||[];
     return (!this.state.isMounted ? <View style={{
       height: colorList.containerHeight,
       backgroundColor: colorList.bodyBackground,

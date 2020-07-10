@@ -41,9 +41,9 @@ class CacheImages extends Component {
       alignItems: 'center',
     }
   }
-  getPhotoSmall(source) {
+  getPhotoSmall(source,size) {
     let nameArr = source.split(".") 
-    nameArr[nameArr.length - 2] = nameArr[nameArr.length - 2] + "_100x100.jpeg"
+    nameArr[nameArr.length - 2] = nameArr[nameArr.length - 2] + `_${size}x${size}.jpeg`
     //console.error(nameArr.slice(0, nameArr.length - 1))
     return nameArr.slice(0, nameArr.length - 1).join(".")
   }
@@ -55,8 +55,14 @@ class CacheImages extends Component {
       style={{ ...this.props.thumbnails? this.props.small ? this.styles.small : this.styles.large : {height:'100%',width:'100%'} ,...this.props.style ,}}
       resizeMode={this.props.thumbnails ? FastImage.resizeMode.cover : FastImage.resizeMode.contain}
       source={{...this.props.source,
-        uri:(testForURL(this.props.source.uri) && !this.state.mounted) || this.props.staySmall ? 
-          this.getPhotoSmall(this.props.source.uri) : this.getRealURL(this.props.source.uri), 
+        uri:(testForURL(this.props.source.uri) && !this.state.mounted) || 
+        this.props.staySmall || 
+          (this.props.thumbnails && !(this.props.style && this.props.style.width))
+           || this.props.source.uri.includes("thumbnail") ? 
+          this.getPhotoSmall(this.props.source.uri, 20):
+          this.props.thumbnails && testForURL(this.props.source.uri) ? 
+              this.getPhotoSmall(this.props.source.uri,100) : 
+          this.getRealURL(this.props.source.uri), 
         priority: FastImage.priority.high,
       }}
       fallback
