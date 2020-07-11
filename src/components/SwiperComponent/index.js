@@ -10,7 +10,7 @@ import AnimatedComponent from '../AnimatedComponent';
 //const ScreenHeight = Dimensions.get('window').height;
 
 export default class SwiperComponent extends AnimatedComponent {
-  initialize(){
+  initialize() {
     this.state = {
       itemswiper: {},
       isPause: true,
@@ -25,7 +25,7 @@ export default class SwiperComponent extends AnimatedComponent {
     this.setStatePure({
       itemswiper: this.state.mapFunction(this.state.media[currentIndex]),
     });
-    this.post.setState({ isPause: false });
+    //this.post.setPause(false);  //modified
   };
 
   componentDidMount() {
@@ -38,7 +38,7 @@ export default class SwiperComponent extends AnimatedComponent {
       itemswiper: this.state.mapFunction(this.state.media[index]),
       // isPause: true,
     });
-    this.post.setState({ isPause: false });
+   // this.post.setPause(false); //modified
   };
 
   onMomentumScrollEnd = (state) => {
@@ -53,11 +53,12 @@ export default class SwiperComponent extends AnimatedComponent {
   onTouchStartCapture = (state) => {
     //this.post.onScrollEnd();
   };
-  goBack(){
-    this.props.navigation.goBack()
+  goBack() {
+    this.props.navigation.goBack();
   }
-  execParam(method){
-    this.props.navigation.getParam(method) && this.props.navigation.getParam(method)(this.state.itemswiper)
+  execParam(method) {
+    this.props.navigation.getParam(method) &&
+      this.props.navigation.getParam(method)(this.state.itemswiper);
   }
   render() {
     return (
@@ -88,7 +89,7 @@ export default class SwiperComponent extends AnimatedComponent {
           onIndexChanged={(index) => this.onchageIndex(index)}
         >
           {this.state.media.map((item, index) => {
-            let itemswiper = item
+            let itemswiper = item;
 
             return (
               <View style={styles.slide1}>
@@ -106,16 +107,16 @@ export default class SwiperComponent extends AnimatedComponent {
         </Swiper>
         {this.state.itemswiper.creator ? (
           <UserView
-            forward={() => this.execParam("forward") }
+            forward={() => this.execParam("forward")}
             reply={() => {
-              this.goBack()
-              this.execParam("reply")
+              this.goBack();
+              this.execParam("reply");
             }}
             name={this.state.itemswiper.creator.name}
             profile={this.state.itemswiper.creator.profile}
             updated_at={this.state.itemswiper.creator.updated_at}
             onClose={() => {
-              this.goBack()
+              this.goBack();
             }}
             swiper
             removeMessage={() =>
@@ -124,15 +125,15 @@ export default class SwiperComponent extends AnimatedComponent {
           />
         ) : null}
         {this.state.itemswiper.creator ? (
-          <SwipeAccordion 
-          startThis={() => {
-              this.execParam("starThis")
-          }
-          }
-          reply={() => {
-            this.execParam("remindThis")
-          }}
-          dataArray={this.state.itemswiper} />
+          <SwipeAccordion
+            startThis={() => {
+              this.execParam("starThis");
+            }}
+            reply={() => {
+              this.execParam('remindThis');
+            }}
+            dataArray={this.state.itemswiper}
+          />
         ) : null}
       </View>
     );
