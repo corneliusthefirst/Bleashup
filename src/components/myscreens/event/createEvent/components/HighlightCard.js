@@ -139,13 +139,13 @@ export default class HighlightCard extends BePureComponent {
         <View
           style={{ width: "90%", alignSelf: "center", alignItems: "center" }}
         > 
-        {/*<Social
+        <Social
             title={this.props.item.title}
             activity_name={this.props.activity_name}
             creator={this.props.item.creator}
             activity_id={this.props.activity_id}
             id={this.props.item.id}
-          ></Social>*/}
+          ></Social>
         </View>
       </View>
       </Swipeout>

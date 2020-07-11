@@ -6,11 +6,9 @@ import stores from "../../../../stores";
 import { indexOf, dropWhile, uniq, find, findIndex } from "lodash";
 import emitter from "../../../../services/eventEmiter";
 import ColorList from "../../../colorList";
+import AnimatedComponent from '../../../AnimatedComponent';
 
-export default class Like extends Component {
-    constructor(props) {
-        super(props);
-    }
+export default class Like extends AnimatedComponent {
     state = {
         likes: 0,
         liked: false,
@@ -43,7 +41,7 @@ export default class Like extends Component {
         stores.Likes.loadLikes(this.props.id).then((like) => {
             if (like) {
                 this.setLikesCount(parseInt(like.likes))
-                this.setState({
+                this.setStatePure({
                     liked: findIndex(like.likers, ele => ele === stores.LoginStore.user.phone) >= 0,
                     likesCount: like.likes,
                     loaded: true
@@ -53,7 +51,7 @@ export default class Like extends Component {
         stores.Likes.getLikesFromRemote(this.props.id, "count", 0, 0).then(
             (data) => {
                 this.setLikesCount(data.count)
-                this.setState({
+                this.setStatePure({
                     likesCount: data.count,
                     liked: data.liked,
                     loaded: true,
@@ -79,7 +77,7 @@ export default class Like extends Component {
     }
     setLikesCount(count) {
         this.props.setLikesCount && this.props.setLikesCount(count)
-        this.setState({
+        this.setStatePure({
             likesCount:  count
         })
     }
@@ -93,7 +91,7 @@ export default class Like extends Component {
             Requester.like(this.props.id, this.state.likesCount+1)
                 .then((response) => {
                     this.liking = false;
-                    this.setState({
+                    this.setStatePure({
                         liked: true,
                     });
                     this.setLikesCount(this.state.likesCount + 1)
@@ -117,7 +115,7 @@ export default class Like extends Component {
             Requester.unlike(this.props.id, this.state.likesCount - 1)
                 .then((response) => {
                     this.unliking = false;
-                    this.setState({
+                    this.setStatePure({
                         liked: false,
                     });
                     this.setLikesCount(this.state.likesCount -1)
@@ -136,7 +134,7 @@ export default class Like extends Component {
     }
     /*  componentWillReceiveProps(nextProps) {
               this.didILiked(stores.Likes.likes, nextProps.id).then(result => {
-                  this.setState({
+                  this.setStatePure({
                       likes: result.likes.likers ? result.likes.likers.length : 0,
                       liked: result.status,
                       likers: result.likes.likers,
@@ -158,22 +156,22 @@ export default class Like extends Component {
             <View>
                 <TouchableWithoutFeedback
                     onPress={() => {
-                        this.scaleValue.setValue(0);
+                        /*this.scaleValue.setValue(0);
                         Animated.timing(this.scaleValue, {
                             toValue: 1,
                             duration: 300,
                             easing: Easing.linear,
                             userNativeDriver: true,
-                        }).start();
+                        }).start();*/
                         return this.action();
                     }}
                     onPressOut={() => {
-                        Animated.timing(this.scaleValue, {
+                        /*Animated.timing(this.scaleValue, {
                             toValue: 1,
                             duration: 200,
                             easing: Easing.linear,
                             userNativeDriver: true,
-                        }).start();
+                        }).start();*/
                         
                     }}
                 >
