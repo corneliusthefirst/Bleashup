@@ -109,6 +109,7 @@ export default class Message extends BeComponent {
                     <TextMessage
                         handleLongPress={() => this.handLongPress()}
                         pressingIn={() => {
+                            this.handlePressIn()
                             this.replying = true;
                         }}
                         firebaseRoom={this.props.firebaseRoom}
@@ -138,7 +139,7 @@ export default class Message extends BeComponent {
                         handleLongPress={() => this.handLongPress()}
                         pressingIn={() => {
                             this.replying = true;
-                            // this.props.hideAndshow()
+                            this.handlePressIn()
                         }}
                         firebaseRoom={this.props.firebaseRoom}
                         showPhoto={(url) => this.props.showPhoto(url)}
@@ -156,7 +157,7 @@ export default class Message extends BeComponent {
                         room={this.props.room}
                         pressingIn={() => {
                             this.replying = true;
-                            //this.props.hideAndshow()
+                            this.handlePress()
                         }}
                         index={index}
                         sender={sender}
@@ -169,6 +170,7 @@ export default class Message extends BeComponent {
                         handleLongPress={() => this.handLongPress()}
                         pressingIn={() => {
                             this.replying = true;
+                            this.handlePressIn()
                         }}
                         room={this.props.room}
                         index={index}
@@ -182,6 +184,9 @@ export default class Message extends BeComponent {
             case "attachement":
                 return (
                     <FileAttarchementMessaege
+                        pressingIn={() => {
+                            this.handlePressIn()
+                        }}
                         handleLongPress={() => this.handLongPress()}
                         room={this.props.room}
                         sender={sender}
@@ -512,21 +517,30 @@ export default class Message extends BeComponent {
                                         {this.reactions(this.state.sender)}
                                     </View>
                                 ) : null}
-                                <Swipeout
-                                onPressIn={this.handlePressIn.bind(this)}
-                                onLongPress={this.handLongPress.bind(this)}
-                                 swipeRight={() => {
-                                            this.handleReply()
-                                 }}
-                                 swipeLeft={() => {
-                                     Vibration.vibrate([100, 0, 0, 100])
-                                     this.props.forwardMessage()
-                                 }}
-                                leftOpenValue={0}
-                                rightOpenValue={0}
-                                swipeToClosePercent={50}
-                                    style={{ backgroundColor: "transparent", width: "100%" }}
-                                >
+                                    <SwipeRow
+                                        swipeGestureEnded={(key, data) => {
+                                            if (data.translateX >= 50) {
+                                                this.handleReply()
+                                            } else if (data.translateX <= -50) {
+                                                Vibration.vibrate([100, 0, 0, 100])
+                                                this.props.forwardMessage()
+                                            }
+                                        }}
+                                        leftOpenValue={0}
+                                        rightOpenValue={0}
+                                        swipeToClosePercent={50}
+                                        style={{ backgroundColor: "transparent", width: "100%" }}
+                                    >
+                                    <View
+                                    style={{
+                                        marginTop: 'auto',
+                                        marginBottom: 'auto',
+                                        alignSelf: 'center',
+                                        flexDirection: 'row',
+                                        justifyContent: 'space-between',
+                                        width: "90%",
+                                    }}>
+                                </View>
                                     <View
                                         style={{
                                             flexDirection: "row",
@@ -557,6 +571,7 @@ export default class Message extends BeComponent {
                                                 ) : null}
                                                 {this.state.sender && this.state.different ? (
                                                     <TouchableOpacity
+                                                    onPressIn={this.handlePressIn.bind(this)}
                                                         onLongPress={this.handLongPress.bind(this)}
                                                         onPress={() =>
                                                             requestAnimationFrame(() => {
@@ -597,6 +612,7 @@ export default class Message extends BeComponent {
                                                                 handLongPress={() => this.handLongPress()}
                                                                 showProfile={(pro) => this.props.showProfile(pro)}
                                                                 pressingIn={() => {
+                                                                    this.handlePressIn()
                                                                     this.replying = true;
                                                                 }}
                                                                 openReply={(replyer) => {
@@ -613,6 +629,7 @@ export default class Message extends BeComponent {
                                                         </View>
                                                     ) : null}
                                                     <TouchableWithoutFeedback
+                                                    onPressIn={this.handlePressIn.bind(this)}
                                                     onPress={this.handlePress.bind(this)}
                                                         onLongPress={() => {
                                                             this.handLongPress();
@@ -695,7 +712,7 @@ export default class Message extends BeComponent {
                                             </View>
                                         ) : null}
                                     </View>
-                                </Swipeout>
+                                </SwipeRow>
                             </View>
                             {this.state.isReacting ? (
                                 <View
