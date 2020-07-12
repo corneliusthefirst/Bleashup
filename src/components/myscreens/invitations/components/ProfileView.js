@@ -108,7 +108,7 @@ export default class ProfileView extends BeComponent {
                             ) : (
                                 <Icon type={"FontAwesome"} style={{
                                     fontSize: ColorList.profilePlaceHolderHeight,
-                                    color:ColorList.photoPlaceHolderColor
+                                    color: ColorList.colorArray[Math.floor(Math.random() * 14)]
                                 }} name={"user-circle-o"}>
 
                                </Icon>

@@ -701,7 +701,6 @@ class ChatRoom extends AnimatedComponent {
         Vibration.vibrate(10);
         Toast.show({ text: 'copied !', type: 'success' });
     }
-    options = ["Remove message", "Seen Report", "Copy to clipboard", "Cancel"];
     showMessageAction(message, reply,sender) {
         this.tempReply = reply
         this.setStatePure({
@@ -1034,8 +1033,8 @@ class ChatRoom extends AnimatedComponent {
                                         showReacters: false,
                                     });
                                 }}
-                                reaction={this.state.currentReaction}
-                                reacters={this.state.currentReacters}
+                                reaction={this.state.currentReaction||{}}
+                                reacters={this.state.currentReacters||[]}
                              />
                         </View>
                         {
@@ -1262,7 +1261,6 @@ class ChatRoom extends AnimatedComponent {
                     return item ? (
                         <Message
                             react={this.reactToMessage.bind(this)}
-                            toggleDownScroller={this.toggleDownScroller.bind(this)}
                             showReacters={this.showReacters.bind(this)}
                             messagelayouts={this.messagelayouts}
                             setCurrentLayout={(layout) => {
@@ -1460,7 +1458,7 @@ class ChatRoom extends AnimatedComponent {
         });
     }
     mapFunction = (ele) => {
-        let senderPhone = ele.sender && ele.sender.phone && ele.sender.phone.replace && ele.sender.phone.replace('+', '00');
+        let senderPhone = ele && ele.sender && ele.sender.phone && ele.sender.phone.replace && ele.sender.phone.replace('+', '00');
         return {
             ...ele,
             url: ele.source || ele.photo,

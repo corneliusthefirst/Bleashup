@@ -68,7 +68,7 @@ export default class BleashupModal extends AnimatedPureComponent {
                     justifyContent: this.jusify ? 'center' : null,
                     borderRadius: this.borderRadius,
                     borderTopLeftRadius: this.borderTopLeftRadius,
-                    borderTopRightRadius: this.borderTopRightRadius,...this.style
+                    borderTopRightRadius: this.borderTopRightRadius,//...this.style
                 }}
             >
                 {this.modalBody()}

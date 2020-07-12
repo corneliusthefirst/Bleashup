@@ -196,9 +196,17 @@ export default class SWView extends BeComponent {
                         </TouchableOpacity>
                     </View>
 
-                    <View style={{height:50 ,justifyContent:'center', alignItems:'center',position:'absolute',bottom:0,width:screenWidth * 0.18}}>
+                    <View style={{height:"30%" ,justifyContent:'center', width:"100%",justifyContent: 'flex-end',paddingHorizontal: 'auto',}}>
+                    <View style={{
+                        ...rounder(50,ColorList.bodyDarkWhite),
+                        marginLeft:"auto",
+                        marginRight: "auto",
+                        justifyContent: 'center',
+
+                    }}>
                         <Icon style={{ color: colorList.bodyIcon, fontSize: 50 }} type="EvilIcons" name="user" onPress={() => this.navigateToProfile()}></Icon>
                      </View>
+                    </View>
 
                 </View>
 

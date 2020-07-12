@@ -32,7 +32,7 @@ export default class Swipeout extends PureComponent {
                     width: "90%",
                 }}>
             </View>
-            <TouchableOpacity onLongPress={this.props.onLongPress}>
+            <TouchableOpacity onPressIn={this.props.onPressIn} onLongPress={this.props.onLongPress}>
             <View>
             {this.props.children}
             </View>
