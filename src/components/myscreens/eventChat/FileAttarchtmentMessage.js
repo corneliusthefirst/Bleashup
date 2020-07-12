@@ -135,7 +135,14 @@ export default class FileAttarchementMessaege extends BePureComponent {
         }
         return (
             <View>
-                <View style={{ disply: 'flex', flexDirection: 'row', width: 300, }}>
+                <View style={{ 
+                marginTop: 2,
+                borderRadius: 5,
+                disply: 'flex', 
+                flexDirection: 'row', 
+                width: "99%",
+                alignSelf: 'center',
+                backgroundColor: ColorList.bottunerLighter, }}>
                     <View style={textStyle}>
                         <View>
                             <View style={{ display: 'flex', flexDirection: 'row', alignContent: 'space-between', }}>

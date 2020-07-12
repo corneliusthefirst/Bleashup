@@ -18,7 +18,7 @@ import stores from '../../../stores';
 import GState from '../../../stores/globalState';
 import FileExachange from '../../../services/FileExchange';
 import converToHMS from '../highlights_details/convertToHMS';
-import { LogLevel, RNFFmpeg } from 'react-native-ffmpeg';
+import { LogLevel, RNFFprobe } from 'react-native-ffmpeg';
 import rnFetchBlob from 'rn-fetch-blob';
 import TextContent from './TextContent';
 import ColorList from '../../colorList';
@@ -74,7 +74,7 @@ export default class AudioUploader extends BePureComponent {
             if (this.props.message.duration) {
                 this.props.replaceMessage(this.props.message)
             } else {
-                RNFFmpeg.getMediaInformation(path).then(info => {
+                RNFFprobe.getMediaInformation(path).then(info => {
                     this.props.message.duration = Math.ceil(info.duration / 1000)
                     this.props.replaceMessage(this.props.message)
                 })

@@ -23,6 +23,7 @@ import ZoomView from './zoomView';
 import  Stopwatch from './timer/stopwatch';
 //import ImagePicker from 'react-native-image-crop-picker';
 import Pickers from '../../../services/Picker';
+import GState from '../../../stores/globalState/index';
 
 //VARIABLES
 const ZOOM = { MIN: 0, MAX: 1.0 };
@@ -30,6 +31,7 @@ const { height , width } = Dimensions.get('window');
 
 export default class CameraScreen extends BleashupModal {
   initialize(){
+    this.props.navigation ? GState.nav = this.props.navigation : null
     this.state = {
       zoom: 0,
       scale: 0,
@@ -56,9 +58,12 @@ export default class CameraScreen extends BleashupModal {
   modalWidth = "100%";
   height='100%'
 
+  getParam = (route) => this.props.navigation && this.props.navigation.getParam(route)
+  callback = this.getParam("callback")
+  directreturn = this.getParam("directReturn")
 
   onClosedModal() {
-    this.props.onClosed();
+    this.callback ? this.props.navigation.goBack() : this.props.onClosed();
 }
 
   takePicture = async () => {
@@ -71,13 +76,13 @@ export default class CameraScreen extends BleashupModal {
       this.setStatePure({data:this.state.data, dataToreturn:{source:result.uri,content_type:'image',filename:temp[temp.length - 1]}});
 
 
-      if (this.props.directreturn){
+      if (this.directreturn || this.props.directreturn){
+        this.callback?this.callback(this.state.dataToreturn):
         this.props.onCaptureFinish(this.state.data);
-        this.props.onClosed();
+        this.onClosedModal()
+      }else{
+        this.setStatePure({ picked: true });
       }
-
-      this.setStatePure({picked:true});
-
     }
   };
 
@@ -96,9 +101,12 @@ export default class CameraScreen extends BleashupModal {
 
           this.setStatePure({ isRecording: false });
           //console.warn('takeVideo', data);
-          if (this.props.directreturn){
+          if (this.directreturn || this.props.directreturn){
+            this.callback ? this.callback(this.state.dataToreturn):
             this.props.onCaptureFinish(this.state.data);
-            this.props.onClosed();
+            this.onClosedModal()
+          }else{
+            this.setStatePure({ picked: true });
           }
         }
       } catch (e) {
@@ -190,9 +198,9 @@ export default class CameraScreen extends BleashupModal {
       this.state.data.video = data.source;
       this.setStatePure({data:this.state.data,dataToreturn:data});
 
-      if(this.props.directreturn){
-       this.props.onCaptureFinish(this.state.dataToreturn);
-       this.props.onClosed();
+      if(this.directreturn || this.props.directreturn){
+      this.callback? this.callback(this.state.dataToreturn) : this.props.onCaptureFinish(this.state.dataToreturn);
+       this.onClosedModal()
       }
       else{
         this.setStatePure({picked:true});
@@ -204,9 +212,9 @@ export default class CameraScreen extends BleashupModal {
      this.state.data.photo =  data.source;
      this.setStatePure({data:this.state.data,dataToreturn:data});
 
-     if(this.props.directreturn){
-       this.props.onCaptureFinish(this.state.dataToreturn);
-       this.props.onClosed();
+      if (this.directreturn || this.props.directreturn){
+       this.callback ? this.callback(this.state.dataToreturn) :  this.props.onCaptureFinish(this.state.dataToreturn);
+       this.onClosedModal();
       }
       else{
         this.setStatePure({picked:true});
@@ -230,7 +238,6 @@ activateVideo = () => {
 deactivateVideo = () => {
   this.camera.stopRecording();  //stop recording
   this.setStatePure({videoActivated:false});
-  this.setStatePure({picked:true});
   this.resetStopwatch();
 }
 
@@ -259,15 +266,18 @@ getFormattedTime(time) {
 closepicked = (data) => {
   console.warn("data to return is",data);
    if (data.source){
-    this.props.onCaptureFinish(data);
+   this.callback?this.callback(data): this.props.onCaptureFinish(data);
     this.setStatePure({picked:false , data:{photo:'',video:''}});
-    this.props.onClosed();
+    this.onClosedModal()
    }
    else {
 
     this.setStatePure({picked:false , data:{photo:'',video:''}});
    }
 
+}
+render(){
+  return this.callback ? <View style={{height:"100%"}}><StatusBar></StatusBar>{this.modalBody()}</View> : this.modal()
 }
   modalBody() {
 
@@ -309,7 +319,7 @@ closepicked = (data) => {
             <View style={{ height:'100%' ,alignItems: 'center' }}>
 
               <TouchableOpacity
-                 onPress={()=>{this.props.onClosed();}}
+                 onPress={()=>{this.onClosedModal();}}
                  style={{
                   height:'100%' ,
                    alignItems:'center',
@@ -327,7 +337,7 @@ closepicked = (data) => {
                     name="close"
                     style={{color:'white', fontSize:25 , marginLeft:15}}
                     type="AntDesign"
-                    onPress={()=>{this.props.onClosed();}}
+                    onPress={()=>{this.onClosedModal();}}
                   />
 
              </View>
