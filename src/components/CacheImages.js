@@ -43,10 +43,14 @@ class CacheImages extends BeComponent {
     }
   }
   getPhotoSmall(source,size) {
-    let nameArr = source.split(".") 
-    nameArr[nameArr.length - 2] = nameArr[nameArr.length - 2] + `_${size}x${size}.jpeg`
-    //console.error(nameArr.slice(0, nameArr.length - 1))
-    return nameArr.slice(0, nameArr.length - 1).join(".")
+    let nameArr = source && source.split(".")
+    if(nameArr){
+      nameArr[nameArr.length - 2] = nameArr[nameArr.length - 2] + `_${size}x${size}.jpeg`
+      //console.error(nameArr.slice(0, nameArr.length - 1))
+      return nameArr.slice(0, nameArr.length - 1).join(".")
+    }else{
+      return ""
+    }
   }
   getRealURL(source){
     return source

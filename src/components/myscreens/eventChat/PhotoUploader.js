@@ -141,7 +141,7 @@ export default class PhotoUploader extends BePureComponent {
                                         </View>)
                                     }
                                 </AnimatedCircularProgress></View>
-                                <View style={{ marginTop: "15%", ...buttoner, width: 75, height: 25, }}><Text style={{ color: '#FEFFDE' }} note>{"("}{this.toMB(this.state.received).toFixed(1)}{"/"}
+                                <View style={{ marginTop: "15%", ...buttoner, width: 75, height: 25, }}><Text style={{ color: ColorList.bodyBackground }} note>{"("}{this.toMB(this.state.received).toFixed(1)}{"/"}
                                     {this.toMB(this.state.total).toFixed(1)}{")Mb"}</Text></View></View>}</View>
                 </View>
                 <View>

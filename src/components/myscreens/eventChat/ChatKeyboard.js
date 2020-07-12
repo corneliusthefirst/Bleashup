@@ -630,10 +630,11 @@ export default class ChatKeyboard extends BeComponent {
         })  
     }
     keyBoardActionContainer = {
-        width: "16%",
+        width: 20,
         position: "absolute",
+        height:20,
         bottom: 10,
-        right: 5,
+        right: 2,
     }
     attemptAudio(){
         Vibrator.vibrateShort()
@@ -732,8 +733,8 @@ export default class ChatKeyboard extends BeComponent {
                                             : 25,
                                 }}
                             >
-                                {this.state.textValue.length <= 0?<TouchableOpacity
-                                    onPress={() => requestAnimationFrame(() => this.props.openOptions() //this.openCamera()
+                                <TouchableOpacity
+                                    onPress={() => requestAnimationFrame(() => this.toggleEmojiKeyboard()//this.openCamera()
                                     )}
                                     style={
                                         {...this.keyBoardActionContainer,
@@ -749,13 +750,14 @@ export default class ChatKeyboard extends BeComponent {
                                 >
                                     <Icon
                                         style={{
-                                            color: ColorList.indicatorColor,
-                                            fontSize: 30,
+                                            color: ColorList.likeActive,
+                                            alignSelf: "flex-end",
+                                            fontSize: 20,
                                         }}
-                                        type={"Ionicons"}
-                                        name={this.props.showOptions ? "ios-close" : "ios-add"}
-                                    ></Icon>   
-                                </TouchableOpacity>:null}
+                                        type="Entypo"
+                                        name="emoji-flirt"
+                                    ></Icon>
+                                </TouchableOpacity>
                                 {
                                     //* Reply Message caption */
                                     this.state.replying ? this.replyMessageCaption() : null
@@ -781,24 +783,23 @@ export default class ChatKeyboard extends BeComponent {
                                         this._textInput = r;
                                     }}
                                 ></GrowingInput>
-                                <TouchableOpacity
-                                    style={this.keyBoardActionContainer}
+                                {this.state.textValue.length <= 0 ? <TouchableOpacity
+                                    style={{...this.keyBoardActionContainer,bottom:15}}
                                     onPress={() =>
                                         requestAnimationFrame(() => {
-                                            this.toggleEmojiKeyboard();
+                                            this.props.openOptions() 
                                         })
                                     }
                                 >
                                     <Icon
                                         style={{
-                                            color: ColorList.likeActive,
-                                            alignSelf: "flex-end",
-                                            fontSize: 20,
+                                            color: ColorList.indicatorColor,
+                                            fontSize: 30,
                                         }}
-                                        type="Entypo"
-                                        name="emoji-flirt"
-                                    ></Icon>
-                                </TouchableOpacity>
+                                        type={"Ionicons"}
+                                        name={this.props.showOptions ? "ios-close" : "ios-add"}
+                                    ></Icon> 
+                                </TouchableOpacity>:null}
                             </View>
                         </View>
 

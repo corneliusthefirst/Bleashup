@@ -262,7 +262,7 @@ export default class ReplyText extends BePureComponent {
                         }}
                         style={{
                           alignSelf:"flex-end",
-                          marginLeft: this.props.reply.sourcer ? "1%" : null,
+                          marginLeft: this.props.reply.sourcer ? ".5%" : null,
                           width: this.props.reply.sourcer ? "74%" : "100%",
                         }}
                       >
@@ -283,7 +283,7 @@ export default class ReplyText extends BePureComponent {
                             style={{ fontSize: 12, color: "#1F4237" }}
                             text={
                               this.props.reply.replyer_name
-                                ? this.props.reply.title
+                                ? this.props.reply.title && this.props.reply.title
                                 : this.props.reply.title.split(": \n")[1]
                             }
                           ></TextContent>

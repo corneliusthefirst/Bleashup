@@ -338,11 +338,12 @@ const styles = StyleSheet.create({
         borderLeftWidth: 15,
         borderRightWidth: 15,
         borderTopWidth: 15,
+        alignSelf: 'flex-end',
         borderStyle: 'solid',
         backgroundColor: 'transparent',
         borderLeftColor: 'transparent',
         borderRightColor: 'transparent',
         borderTopColor: ColorList.bodyBackground,
-        marginLeft: '8.5%',
+        marginRight: '9%',
     },
 });
