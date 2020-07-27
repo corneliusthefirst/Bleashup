@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React, { PureComponent } from 'react';
 import { Content, Text, Button, Icon } from 'native-base';
 import { View } from "react-native"
@@ -43,12 +44,28 @@ export default class PhotoInputModal extends BleashupModal {
                         borderRadius: 5
                     }} thumbnails square></CacheImages>
                 </Button>
-                <View style={{ margin: '2%', flexDirection: 'row', alignSelf: 'center', borderRadius: 4, }}>
-                    <PickersUpload currentURL={{ photo:this.props.photo }} saveMedia={(url) => this.props.saveBackground(url.photo)} creating={false} notVideo notAudio></PickersUpload>
-                    {this.props.photo ? <Button danger onPress={() => this.props.removePhoto()}
-                        transparent><Icon style={{ color: 'red',marginBottom: '30%', }}
+
+
+
+                <View style={{ flexDirection: 'row', alignSelf: 'center',alignItems:'center', borderRadius: 4, width:'100%'}}>
+                   <View style={{width:'50%'}}>
+                      <PickersUpload currentURL={{ photo:this.props.photo }} saveMedia={(url) => this.props.saveBackground(url.photo)} creating={false} notVideo notAudio></PickersUpload>
+                   </View>
+                 
+                   <View style={{flexDirection:'row',flex:1,justifyContent:'flex-end', alignItems:'center'}}>
+                   {this.props.photo ? <Button danger onPress={() => this.props.removePhoto()}
+                        transparent><Icon style={{ color: 'red' }}
                             name="trash" transparent type="EvilIcons"></Icon></Button> : null}
+                    
+                    <Icon name="sound-mute" active={true} type="Entypo" style={{ color: 'black',fontSize:22 }} onPress={() => {}} />
+                    <Icon name="block" active={true} type="MaterialIcons" style={{ color: 'red',fontSize:22,marginLeft:15 , marginRight:5 }} onPress={() => {}} />
+
+                   </View>
+                 
                 </View>
+
+
+
             </Content>
         );
     }

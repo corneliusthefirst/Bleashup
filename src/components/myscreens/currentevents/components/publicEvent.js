@@ -1,11 +1,5 @@
 import React, { Component } from "react";
-import {
-  View,
-  Vibration,
-  TouchableWithoutFeedback,
-  TouchableOpacity,
-  Dimensions,
-} from 'react-native';
+import { View, Vibration, TouchableWithoutFeedback, TouchableOpacity, Dimensions } from 'react-native';
 import {
   Card,
   CardItem,
@@ -20,15 +14,14 @@ import {
   Spinner,
   Thumbnail,
   Toast,
-  Button,
+  Button
 } from 'native-base';
-
 import autobind from "autobind-decorator";
 import UpdateStateIndicator from "./updateStateIndicator";
 import stores from "../../../../stores";
-import OptionList from "./OptionList";
+import OptionList from "./OptionList"
 import ProfileView from "../../invitations/components/ProfileView";
-import PublishersView from "./PublishersView";
+import PublishersView from "./PublishersView"
 import PhotoView from "./PhotoView";
 import MapView from "./MapView";
 import Requester from "../Requester";
@@ -40,28 +33,28 @@ import TitleView from "./TitleView";
 import SwipeOutView from "./SwipeOutView";
 import emitter from "../../../../services/eventEmiter";
 import Swipeout from '../../../SwipeOut';
-import { findIndex, isEqual, find } from "lodash";
+import { findIndex, isEqual, find } from "lodash"
 import InvitationModal from './InvitationModal';
 import ProfileSimple from './ProfileViewSimple';
 import shadower from "../../../shadower";
 import colorList from "../../../colorList";
 import CacheImages from "../../../CacheImages";
-import PhotoViewer from "../../event/PhotoViewer";
+import PhotoViewer from "../../event/PhotoViewer"
 import ActivityProfile from "./ActivityProfile";
 import GlobalFunctions from '../../../globalFunctions';
-import { MenuDivider } from 'react-native-material-menu';
+import {MenuDivider } from 'react-native-material-menu';
 import BeNavigator from '../../../../services/navigationServices';
 import RelationProfile from '../../../RelationProfile';
 import BeComponent from '../../../BeComponent';
 
-let globalFunctions = GlobalFunctions;
+let globalFunctions =  GlobalFunctions;
 let { height, width } = Dimensions.get('window');
 class PublicEvent extends BeComponent {
   constructor(props) {
     super(props);
     this.state = {
       isMount: false,
-      joint: true,
+      joint:true,
       swipeClosed: true,
       master: false,
     };
@@ -69,238 +62,196 @@ class PublicEvent extends BeComponent {
 
   /*shouldComponentUpdate(nextProps, nextState, nextContext) {
     return this.state.isMount !== nextState.isMount ||
-      !isEqual(this.props.Event, nextProps.Event) ||
+      !isEqual(this.props.Event, nextProps.Event) || 
       this.props.Event.background !== nextProps.Event.background ||
       this.state.fresh !== nextState.fresh
   }*/
-  swipperComponent = null;
-  componentDidMount() {
-    setTimeout(() => {
-      this.setStatePure({
-        isMount: true,
-      });
-    }, this.props.renderDelay);
+  swipperComponent = null
+  componentDidMount() { 
+      setTimeout(() => {
+        this.setStatePure({
+          isMount: true,
+        })
+      }, this.props.renderDelay)
   }
-  counter = 0;
+  counter = 0
 
   invite() {
-    stores.Events.isMaster(
-      this.props.Event.id,
-      stores.LoginStore.user.phone
-    ).then((mas) => {
-      this.props.quickInvite({ event: this.props.Event, master: mas });
-    });
+    stores.Events.isMaster(this.props.Event.id, stores.LoginStore.user.phone).then(mas => {
+    this.props.quickInvite({ event: this.props.Event, master: mas })
+    })
   }
 
   publish() {
     if (this.props.Event.public) {
-      Requester.publish(this.props.Event.id)
-        .then(() => {
-          this.setStatePure({
-            publishing: false,
-            public: true,
-          });
+      Requester.publish(this.props.Event.id).then(() => {
+        this.setStatePure({
+          publishing: false,
+          public: true
         })
-        .catch((error) => {
-          this.setStatePure({
-            publishing: false,
-          });
-          Toast.show({
-            text: 'unable to connect to the server ',
-            buttonText: 'Okay',
-          });
-        });
+
+      }).catch(error => {
+        this.setStatePure({
+          publishing: false
+        })
+        Toast.show({
+          text: 'unable to connect to the server ',
+          buttonText: 'Okay'
+        })
+      })
     } else {
-      stores.Events.isMaster(
-        this.props.Event.id,
-        stores.Session.SessionStore.phone
-      ).then((status) => {
+      stores.Events.isMaster(this.props.Event.id, stores.Session.SessionStore.phone).then(status => {
         if (status) {
-          Toast.show({
-            text:
-              'Please First Configure This Activity As Public In The Settings',
-            duration: 5000,
-          });
+          Toast.show({ text: "Please First Configure This Activity As Public In The Settings", duration: 5000 })
         } else {
           Toast.show({
             text: "This Activity Is Not Yet Public",
-            buttonText: "OK",
-          });
+            buttonText: "OK"
+          })
         }
-      });
+      })
     }
-    this.markAsSeen();
+    this.markAsSeen()
   }
   markAsSeen() {
     setTimeout(() => {
       if (this.props.Event.new) {
-        stores.Events.markAsSeen(this.props.Event.id).then(() => {});
+        stores.Events.markAsSeen(this.props.Event.id).then(() => {
+        })
       }
-    }, 150);
+    }, 150)
   }
-  onOpenPhotoModal() {}
+  onOpenPhotoModal() {
+  }
   onOpenDetaiProfileModal() {
-    this.markAsSeen();
+    this.markAsSeen()
   }
   delete() {
     this.setStatePure({
-      deleting: true,
-    });
+      deleting: true
+    })
     Requester.delete(this.props.Event.id).then(() => {
       this.setStatePure({
         deleting: false,
-        hiden: true,
-      });
-    });
-    this.markAsSeen();
+        hiden: true
+      })
+    })
+    this.markAsSeen()
   }
   hide() {
     if (this.props.Event.new) {
-      stores.Events.markAsSeen(this.props.Event.id).then(() => {});
+      stores.Events.markAsSeen(this.props.Event.id).then(() => {
+      })
     }
     this.setStatePure({
-      hiding: true,
-    });
+      hiding: true
+    })
     Requester.hide(this.props.Event.id).then(() => {
       this.setStatePure({
         hiden: true,
-        hiding: false,
-      });
-    });
+        hiding: false
+      })
+    })
   }
   join() {
-    if (
-      findIndex(this.props.Event.participant, {
-        phone: stores.LoginStore.user.phone,
-      }) < 0
-    ) {
+    if (findIndex(this.props.Event.participant, { phone: stores.LoginStore.user.phone }) < 0) {
       if (this.props.Event.new) {
-        stores.Events.markAsSeen(this.props.Event.id).then(() => {});
+        stores.Events.markAsSeen(this.props.Event.id).then(() => {
+        })
       }
       this.setStatePure({
-        isJoining: true,
-      });
-      Requester.join(
-        this.props.Event.id,
-        this.props.Event.event_host,
-        this.props.Event.participant
-      )
-        .then((status) => {
-          Toast.show({
-            text: 'Event Successfully Joint !',
-            type: 'success',
-            buttonText: 'ok',
-          });
-          this.setStatePure({
-            joint: true,
-          });
-          emitter.emit(`left_${this.props.Event.id}`);
+        isJoining: true
+      })
+      Requester.join(this.props.Event.id, this.props.Event.event_host, this.props.Event.participant).then((status) => {
+        Toast.show({ text: "Event Successfully Joint !", type: "success", buttonText: "ok" })
+        this.setStatePure({
+          joint: true
         })
-        .catch((error) => {
-          this.setStatePure({ isJoining: false });
-          Toast.show({
-            text: 'unable to connect to the server ',
-            buttonText: 'Okay',
-          });
-        });
+        emitter.emit(`left_${this.props.Event.id}`)
+      }).catch((error) => {
+        this.setStatePure({ isJoining: false })
+        Toast.show({
+          text: 'unable to connect to the server ',
+          buttonText: 'Okay'
+        })
+      })
     } else {
-      Toast.show({ text: "Joint Already !", buttonText: "ok" });
+      Toast.show({ text: "Joint Already !", buttonText: "ok" })
     }
   }
-  duration = 10;
+  duration = 10
 
   refreshJoint() {
-    console.warn("refreshing joint");
+    console.warn("refreshing joint")
     this.setStatePure({
       fresh: true,
-      isMount: false,
-    });
+      isMount: false
+    })
     setTimeout(() => {
       this.setStatePure({
         fresh: false,
-        isMount: true,
-      });
-    }, 100);
+        isMount: true
+      })
+    }, 100)
   }
-  onCloseSwipeout() {}
+  onCloseSwipeout() {
+  }
   showPhoto(url) {
-    url === this.props.Event.background && !this.state.audio
-      ? this.props.showPhoto(url)
-      : this.props.navigation.navigate('HighLightsDetails', {
-          event_id: this.props.Event.id,
-        });
+    url === this.props.Event.background && !this.state.audio ? this.props.showPhoto(url) :
+      this.props.navigation.navigate("HighLightsDetails", { event_id: this.props.Event.id })
   }
   renderMap() {
-    return this.state.isMount && this.props.Event.location.string ? (
-      <View style={{ alignSelf: 'center' }}>
-        <MapView card location={this.props.Event.location.string} />
-      </View>
-    ) : null;
+    return this.state.isMount && this.props.Event.location.string ?
+      <View style={{ alignSelf: 'center', }}><MapView card
+        location={this.props.Event.location.string}></MapView></View> : null
   }
   renderprofile() {
     return <RelationProfile Event={this.props.Event} />;
   }
 
   renderTitle() {
-    return (
-      <View
-        style={{
-          marginBottom: '2%',
-          backgroundColor: colorList.bodyBackground,
-          width: "100%",
-          flexDirection: 'row',
-        }}
-      >
-        <View
-          style={{
-            flexDirection: 'row',
-            width: '100%',
-            alignItems: 'center',
-            marginLeft: '2%',
-          }}
-        >
-          <View style={{ width: '90%' }}>
-            <ActivityProfile
-              join={this.join.bind(this)}
-              dim={50}
-              showPhoto={this.props.showPhoto}
-              openDetails={this.props.openDetails}
-              markAsSeen={this.markAsSeen.bind(this)}
-              Event={this.props.Event || {}}
-            />
-          </View>
+    return (<View style={{ marginBottom: '2%', 
+    backgroundColor: colorList.bodyBackground, 
+    width: "100%",
+    flexDirection: 'row', }}>
+      <View style={{ flexDirection: 'row', width: '100%', alignItems: "center",marginLeft: "2%", }}>
+        <View style={{ width: '90%'}}>
+          <ActivityProfile
+            join={this.join.bind(this)}
+            dim={50}
+            showPhoto={this.props.showPhoto}
+            openDetails={this.props.openDetails}
+            markAsSeen={this.markAsSeen.bind(this)}
+            Event={this.props.Event||{}}
+            ></ActivityProfile>
         </View>
       </View>
-    );
+    </View>
+    )
   }
 
   renderBody() {
-    return (
-      <View
-        style={{
-          paddingTop: 4,
-          paddingBottom: 6,
-          flexDirection: 'row',
-          backgroundColor: colorList.bodyBackground,
-          width: "100%",
-          height: 200,
-        }}
-      />
-    );
+    return (<View
+      style={{
+        paddingTop: 4,
+        paddingBottom: 6,
+        flexDirection: 'row',
+        backgroundColor: colorList.bodyBackground,
+        width: "100%",
+        height: 200
+      }}
+    >
+    </View>)
   }
 
   renderMarkAsSeen() {
-    return null;
+    return null
   }
   render() {
-    return this.state.isMount ? (
-      <View
-        style={{
-          backgroundColor: colorList.bodyBackground,
-          width: colorList.containerWidth,
-          alignSelf: 'center',
-        }}
-      >
+    return (this.state.isMount ? <View style={{
+      backgroundColor: colorList.bodyBackground,
+      width: colorList.containerWidth, alignSelf: "center"
+    }}>
         <View
           style={{
             backgroundColor: colorList.bodyBackground,
@@ -311,22 +262,17 @@ class PublicEvent extends BeComponent {
         >
           {this.renderTitle()}
         </View>
-        <MenuDivider />
-      </View>
-    ) : (
-      <View style={{}}>
-        <View
-          style={{
-            height: 120,
-            alignSelf: 'center',
-            backgroundColor: colorList.bodyBackground,
-            width: '100%',
-          }}
-        />
-      </View>
-    );
+        <MenuDivider></MenuDivider>
+    </View> : <View style={{}}><View style={{
+      height: 120, 
+      alignSelf: 'center', 
+      backgroundColor: colorList.bodyBackground,
+      width: "100%"
+    }}></View></View>
+    )
   }
 }
-export default PublicEvent;
+export default PublicEvent
+
 
 /* {this.renderMap()} */
