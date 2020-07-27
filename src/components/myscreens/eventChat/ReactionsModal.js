@@ -54,6 +54,7 @@ export default class ReactionModal extends BleashupModal {
                 })}
                 style={{
                     ...rounder(40),
+                    marginHorizontal: 'auto',
                     backgroundColor: ColorList.bodyBackground,
                 }}
             >
@@ -61,9 +62,19 @@ export default class ReactionModal extends BleashupModal {
             </TouchableOpacity>
         ));
     }
+    render(){
+        return this.props.isOpen && this.modalBody()
+    }
     modalBody() {
         return (
-            <TouchableWithoutFeedback onPressIn={this.props.pressingIn}>
+            <TouchableWithoutFeedback style={{
+                height: 70,
+                flexDirection: 'column',
+                ...shadower(2),
+                borderRadius: 8,
+                justifyContent: 'center',
+                backgroundColor: ColorList.bodyBackground,
+            }} onPressIn={this.props.pressingIn}>
                 <View
                     style={{
                         flexDirection: "row-reverse",
@@ -76,6 +87,7 @@ export default class ReactionModal extends BleashupModal {
                         style={{
                             width: "15%",
                             margin: "auto",
+                            ...shadower(2),
                             justifyContent: "center",
                             borderRadius: this.borderRadius,
                             backgroundColor: ColorList.indicatorInverted,
@@ -84,8 +96,7 @@ export default class ReactionModal extends BleashupModal {
                     >
                         <View
                             style={{
-                                ...rounder(30),
-                                backgroundColor: ColorList.indicatorColor,
+                                ...rounder(30, ColorList.indicatorColor),
                                 alignSelf: "center",
                             }}
                         >
@@ -97,8 +108,10 @@ export default class ReactionModal extends BleashupModal {
                             ></Icon>
                         </View>
                     </View>
-                    <View style={{ width: "80%" }}>
-                        <ScrollView keyboardShouldPersistTaps={'handled'}
+                    <View style={{ width: "80%",flexDirection: 'column',justifyContent: 'center',marginTop: 5, }}>
+                        <ScrollView style={{
+
+                        }} keyboardShouldPersistTaps={'handled'}
                             horizontal showsHorizontalScrollIndicator={false}>
                             <View style={{ width: "100%", flexDirection: "row" }}>
                                 {this.renderReactions()}

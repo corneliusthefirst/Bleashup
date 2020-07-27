@@ -220,13 +220,13 @@ export default class ReplyText extends BePureComponent {
                                 style={{
                                   width: 70,
                                   minHeight:
-                                    this.state.currentHeight > 50
+                                    this.state.currentHeight > 30
                                       ? this.state.currentHeight
-                                      : 60,
+                                      : 40,
                                   maxHeight:
-                                    this.state.currentHeight > 50
+                                    this.state.currentHeight > 30
                                       ? this.state.currentHeight
-                                      : 60,
+                                      : 40,
                                   borderBottomRightRadius: 5,
                                   borderTopRightRadius: 5,
                                 }}
@@ -255,14 +255,14 @@ export default class ReplyText extends BePureComponent {
                       </View>
                       ) : null}
                       <View
-                        /*onLayout={(e) => {
+                        onLayout={(e) => {
                           this.setStatePure({
                             currentHeight: e.nativeEvent.layout.height,
                           });
-                        }}*/
+                        }}
                         style={{
                           alignSelf:"flex-end",
-                          marginLeft: this.props.reply.sourcer ? "1%" : null,
+                          marginLeft: this.props.reply.sourcer ? ".5%" : null,
                           width: this.props.reply.sourcer ? "74%" : "100%",
                         }}
                       >
@@ -283,7 +283,7 @@ export default class ReplyText extends BePureComponent {
                             style={{ fontSize: 12, color: "#1F4237" }}
                             text={
                               this.props.reply.replyer_name
-                                ? this.props.reply.title
+                                ? this.props.reply.title && this.props.reply.title
                                 : this.props.reply.title.split(": \n")[1]
                             }
                           ></TextContent>
@@ -307,14 +307,14 @@ export default class ReplyText extends BePureComponent {
                         ) : null}
                       </View>
                     </View>
-                    {this.props.reply.change_date ? (
-                      <Text note>{`${moment(
-                        this.props.reply.change_date
-                      ).calendar()}`}</Text>
-                    ) : null}
                   </View>
                 )}
             </View>
+            {this.props.reply.change_date ? (
+              <Text note>{`${moment(
+                this.props.reply.change_date
+              ).calendar()}`}</Text>
+            ) : null}
           </View>
         </View>
       </TouchableWithoutFeedback>

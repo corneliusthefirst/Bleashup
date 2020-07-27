@@ -590,7 +590,7 @@ export default class Reminds extends AnimatedComponent {
       color:colorList.likeActive
     },
     {
-      title:"updateRemind",
+      title:"Update Remind",
       condition:() => this.actionIndex.creator || this.props.master,
       callback:() => this.updateRemind(this.state.remind),
       iconName:"history",
@@ -605,7 +605,7 @@ export default class Reminds extends AnimatedComponent {
       iconType: "AntDesign",
       color:colorList.indicatorColor
     },{
-      title: "Unassign members",
+      title: "Unassign Members",
       condition:() => this.props.master,
       callback: () => this.removeMembers(uniqBy(this.state.remind.members.filter(ele => this.state.creator ||
         ele.phone === stores.LoginStore.user.phone)),this.state.remind),

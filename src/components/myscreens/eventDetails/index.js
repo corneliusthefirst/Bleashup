@@ -195,7 +195,7 @@ export default class EventDetailView extends AnimatedComponent {
 
   width = width / 2 - width / 40
   _keyExtractor = (item, index) => {
-    return index;
+    return item.id;
   }
 
   updateHighlight(newHighlight, previousHighlight) {

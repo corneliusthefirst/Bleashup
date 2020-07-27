@@ -110,7 +110,14 @@ export default class FileAttarchementUploader extends BePureComponent {
     render() {
         return (
             <View>
-                <View style={{ flexDirection: 'row', width: 300, justifyContent: 'space-between',margin: '1%', }}>
+                <View style={{
+                    marginTop: 2,
+                    borderRadius: 5,
+                    disply: 'flex',
+                    flexDirection: 'row',
+                    width: "99%",
+                    alignSelf: 'center',
+                    backgroundColor: ColorList.bottunerLighter,}}>
                     <View style={{ display: 'flex', flexDirection: 'row', alignContent: 'space-between', width: '81%' }}>
                         <View style={{ width: "60%",marginBottom: 'auto',marginTop: 'auto', }}>
                             <Text style={{}}>{this.props.message.file_name}</Text>

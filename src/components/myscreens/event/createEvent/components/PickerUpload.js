@@ -230,7 +230,7 @@ export default class PickersUpload extends BeComponent {
   render() {
     return (
 
-      <View style={{ flexDirection: 'row', alignSelf: 'flex-start',width:"100%" }}>
+      <View style={{ flexDirection: 'row', alignSelf: 'flex-start' }}>
 
 
         <View style={{ width: 35,...this.center }}>

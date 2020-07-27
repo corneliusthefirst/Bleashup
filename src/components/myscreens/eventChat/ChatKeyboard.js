@@ -11,7 +11,7 @@ import {
 import ImojieSelector from "./ImojiSelector";
 import Pickers from "../../../services/Picker";
 import rounder from "../../../services/rounder";
-import { Icon } from "native-base";
+import { Icon,Toast } from "native-base";
 import GState from "../../../stores/globalState/index";
 import ReplyText from "./ReplyText";
 import toTitleCase from "../../../services/toTitle";
@@ -21,7 +21,6 @@ import BleashupFlatList from "../../BleashupFlatList";
 import ProfileSimple from "../currentevents/components/ProfileViewSimple";
 import AudioRecorder from "./AudioRecorder";
 import GrowingInput from "./GrowingInput";
-import  OptionsModal from "./optionsModal";
 import ColorList from "../../colorList";
 import uuid from "react-native-uuid";
 import moment from "moment";
@@ -29,8 +28,9 @@ import moment from "moment";
 import AudioFilePreviewer from "./AudioFilePreviewer";
 import FilePreview from "./FilePreview";
 import PhotoPreview from "./PhotoPreviewer";
-import CameraScreen from '../../mainComponents/BleashupCamera/index';
 import BeComponent from "../../BeComponent";
+import BeNavigator from '../../../services/navigationServices';
+import Vibrator from '../../../services/Vibrator';
 
 export default class ChatKeyboard extends BeComponent {
     constructor(props) {
@@ -52,7 +52,7 @@ export default class ChatKeyboard extends BeComponent {
     sendMessageText(message) {
         if (this.state.showCaption) {
             this._sendCaptionMessage();
-        } else if (this.state.showAudioRecorder) {
+        } else if (this.props.showAudioRecorder) {
             this.refs.AudioRecorder.stopRecord();
         } else if (this.state.textValue !== "" && message !== "") {
             this.props.initialzeFlatList();
@@ -86,9 +86,7 @@ export default class ChatKeyboard extends BeComponent {
         Pickers.CleanAll();
     }
     sendAudioMessge(filename, duration, dontsend) {
-        this.setStatePure({
-            showAudioRecorder: false,
-        });
+        this.props.toggleAudio()
         if (!dontsend) {
             this.props.scrollToEnd();
             let message = {
@@ -336,6 +334,10 @@ export default class ChatKeyboard extends BeComponent {
             size: snap.size,
         });
         this.animateLayout(true);
+        this.focusTimeout =  setTimeout(() => {
+            this.focus()
+            clearTimeout(this.focusTimeout)
+        },700)
     }
     _sendCaptionMessage() {
         if (this.state.file) {
@@ -377,17 +379,16 @@ export default class ChatKeyboard extends BeComponent {
         this.animateLayout();
     }
     toggleAudioRecorder() {
-        this.setStatePure({
-            showAudioRecorder: !this.state.showAudioRecorder,
-        });
-        setTimeout(() => {
-            if (!this.state.showAudioRecorder) {
+       this.props.toggleAudio()
+       this.toggleAudioTimeout = setTimeout(() => {
+            if (!this.props.showAudioRecorder) {
                 this.refs.AudioRecorder.stopRecordSimple();
             } else {
                 this._textInput.focus();
                 this.refs.AudioRecorder.startRecorder();
             }
-        });
+            clearTimeout(this.toggleAudioTimeout)
+        },50);
         this.animateLayout();
     }
     sendAllPhoto(photos,index,completed){
@@ -436,7 +437,7 @@ export default class ChatKeyboard extends BeComponent {
                     });
                     this.refs.AudioRecorder.stopRecordSimple();
                 }}
-                showAudioRecorder={this.state.showAudioRecorder}
+                showAudioRecorder={this.props.showAudioRecorder}
                 sendAudioMessge={(file, duration, dontsend) =>
                     this.sendAudioMessge(file, duration, dontsend)
                 }
@@ -452,11 +453,8 @@ export default class ChatKeyboard extends BeComponent {
         Keyboard.dismiss();
        this.toggleTimeout = setTimeout(
             () => {
-                this.setStatePure({
-                    showEmojiInput: !this.state.showEmojiInput,
-                },() => {
-                    clearTimeout(this.toggleTimeout)
-                });
+                this.props.showingImoji?this.props.hideImoji():this.props.showImoji()
+                clearTimeout(this.toggleTimeout)
                 this.props.adjutRoomDisplay(true);
             },
             this.state.keyboardOpened ? 200 : 0
@@ -470,11 +468,8 @@ export default class ChatKeyboard extends BeComponent {
     tags = null;
     resetImoji() {
         this.toggleTimeout =  setTimeout(() => {
-            this.setStatePure({
-                showEmojiInput: false,
-            },() => {
-                clearTimeout(this.toggleTimeout)
-            });
+            this.props.hideImoji()
+            clearTimeout(this.toggleTimeout)
             //this.props.adjutRoomDisplay()
         }, 190);
         this.animateLayout();
@@ -627,14 +622,23 @@ export default class ChatKeyboard extends BeComponent {
                 </PhotoPreview>
     }
     showSnapper(){
-        this.setStatePure({
-            isCameraOpened:true
-        })
+        BeNavigator.pushTo("CameraScreen",{callback:(souce) => this.concludePicking(souce),directReturn:true})
     }
     showOptionsModal(){
         this.setStatePure({
             isOptionsOpened:true
         })  
+    }
+    keyBoardActionContainer = {
+        width: 20,
+        position: "absolute",
+        height:20,
+        bottom: 10,
+        right: 2,
+    }
+    attemptAudio(){
+        Vibrator.vibrateShort()
+        Toast.show({"text":"Long press to start recording"})
     }
     render() {
         return (
@@ -673,37 +677,10 @@ export default class ChatKeyboard extends BeComponent {
                                 borderRadius: 10,
                             }}
                         >
-                            <TouchableOpacity
-                                onPress={() => requestAnimationFrame(() => this.showSnapper() //this.openCamera()
-                                    )}
-                                style={{
-                                    width: "12%",
-                                    alignSelf: "flex-end",
-                                    bottom: 2,
-                                    padding: "1%",
-                                }}
-                            >
-                                <View
-                                    style={{
-                                        alignItems: "center",
-                                        ...rounder(30, ColorList.bodyBackground),
-                                    }}
-                                >
-                                    <Icon
-                                        style={{
-                                            color: ColorList.indicatorColor,
-                                            fontSize: 20,
-                                        }}
-                                        type={"MaterialCommunityIcons"}
-                                        name={"camera"}
-                                    ></Icon>
-                                </View>
-                            </TouchableOpacity>
-
-                            {this.state.textValue.length <= 0 ?
+                            {//this.state.textValue.length <= 0 ?
                                  <TouchableOpacity
-                                onPress={() => requestAnimationFrame(() => this.showOptionsModal() //this.openCamera()
-                                    )}
+                                onPress={() => requestAnimationFrame(() => this.showSnapper() //this.openCamera()
+                                )}
                                 style={{
                                     width: "12%",
                                     alignSelf: "flex-end",
@@ -717,21 +694,22 @@ export default class ChatKeyboard extends BeComponent {
                                         ...rounder(30, ColorList.bodyBackground),
                                     }}
                                 >
-                                    <Icon
-                                        style={{
-                                            color: ColorList.indicatorColor,
-                                            fontSize: 20,
-                                        }}
-                                        type={"Ionicons"}
-                                        name={this.state.isOptionsOpened ? "ios-close": "ios-add"}
-                                    ></Icon>
+                                        <Icon
+                                            style={{
+                                                color: ColorList.indicatorColor,
+                                                fontSize: 20,
+                                            }}
+                                            type={"MaterialCommunityIcons"}
+                                            name={"camera"}
+                                        ></Icon>
                                 </View>
-                            </TouchableOpacity>:null}
+                            </TouchableOpacity>//:null
+                        }
 
                             <View
                                 style={{
                                     width: //this.state.textValue.length <= 0 ? 
-                                    "76%" //: "88%"
+                                    "88%" //: "88%"
                                     ,
                                     flexDirection: "column",
                                     borderRadius: 25,
@@ -742,19 +720,44 @@ export default class ChatKeyboard extends BeComponent {
                                     borderTopLeftRadius:
                                         this.state.replying ||
                                             this.state.tagging ||
-                                            this.state.showAudioRecorder ||
+                                            this.props.showAudioRecorder ||
                                             this.state.showCaption
                                             ? 5
                                             : 25,
                                     borderTopRightRadius:
                                         this.state.replying ||
                                             this.state.tagging ||
-                                            this.state.showAudioRecorder ||
+                                            this.props.showAudioRecorder ||
                                             this.state.showCaption
                                             ? 5
                                             : 25,
                                 }}
                             >
+                                <TouchableOpacity
+                                    onPress={() => requestAnimationFrame(() => this.toggleEmojiKeyboard()//this.openCamera()
+                                    )}
+                                    style={
+                                        {...this.keyBoardActionContainer,
+                                            right:null,
+                                            width:25,
+                                            height:25,
+                                            paddingTop: 3,
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            flexDirection: 'row',
+                                            left:2
+                                        }}
+                                >
+                                    <Icon
+                                        style={{
+                                            color: ColorList.likeActive,
+                                            alignSelf: "flex-end",
+                                            fontSize: 20,
+                                        }}
+                                        type="Entypo"
+                                        name="emoji-flirt"
+                                    ></Icon>
+                                </TouchableOpacity>
                                 {
                                     //* Reply Message caption */
                                     this.state.replying ? this.replyMessageCaption() : null
@@ -780,29 +783,23 @@ export default class ChatKeyboard extends BeComponent {
                                         this._textInput = r;
                                     }}
                                 ></GrowingInput>
-                                <TouchableOpacity
-                                    style={{
-                                        width: "16%",
-                                        position: "absolute",
-                                        bottom: 10,
-                                        right: 5,
-                                    }}
+                                {this.state.textValue.length <= 0 ? <TouchableOpacity
+                                    style={{...this.keyBoardActionContainer,bottom:15}}
                                     onPress={() =>
                                         requestAnimationFrame(() => {
-                                            this.toggleEmojiKeyboard();
+                                            this.props.openOptions() 
                                         })
                                     }
                                 >
                                     <Icon
                                         style={{
-                                            color: ColorList.likeActive,
-                                            alignSelf: "flex-end",
-                                            fontSize: 20,
+                                            color: ColorList.indicatorColor,
+                                            fontSize: 30,
                                         }}
-                                        type="Entypo"
-                                        name="emoji-flirt"
-                                    ></Icon>
-                                </TouchableOpacity>
+                                        type={"Ionicons"}
+                                        name={this.props.showOptions ? "ios-close" : "ios-add"}
+                                    ></Icon> 
+                                </TouchableOpacity>:null}
                             </View>
                         </View>
 
@@ -814,12 +811,13 @@ export default class ChatKeyboard extends BeComponent {
                                 bottom: 2,
                                 padding: "1%",
                             }}
+                            onLongPress={() => !this.state.textValue && this.showAudio()}
                             onPress={() =>
                                 requestAnimationFrame(() => {
                                     !this.state.textValue &&
-                                        !this.state.showAudioRecorder &&
+                                        !this.props.showAudioRecorder &&
                                         !this.state.showCaption
-                                        ? this.showAudio()
+                                        ? this.attemptAudio()
                                         : this.sendMessageText(this.state.textValue);
                                 })
                             }
@@ -832,7 +830,7 @@ export default class ChatKeyboard extends BeComponent {
                                 }}
                             >
                                 {!this.state.textValue &&
-                                    !this.state.showAudioRecorder &&
+                                    !this.props.showAudioRecorder &&
                                     !this.state.showCaption ? (
                                         <Icon
                                             style={{
@@ -859,26 +857,9 @@ export default class ChatKeyboard extends BeComponent {
                     </View>
                     {
                         // ***************** Emoji keyBoard Input ***********************//
-                        this.state.showEmojiInput ? this.imojiInput() : null
+                        this.props.showingImoji ? this.imojiInput() : null
                     }
                 </View>
-                <CameraScreen isOpen={this.state.isCameraOpened} onClosed={() => {
-                   this.endCamera()
-                }} nomessage directreturn={false} onMountError={() => {
-                    this.endCamera()
-                    this.openCamera()
-                    }} onCaptureFinish={(snap) => {
-                        this.concludePicking(snap)
-                    }}></CameraScreen>
-
-                    < OptionsModal isOpen={this.state.isOptionsOpened} onClosed={()=> this.setStatePure({isOptionsOpened:false})}
-
-                        openAudioPicker={this.props.openAudioPicker}
-                        openFilePicker={this.props.openFilePicker}
-                        addRemind={this.props.addRemind}
-                        openPhotoSelector={this.props.openPhotoSelector}
-                        
-                    />
             </View>
         );
     }

@@ -89,7 +89,7 @@ export default class InChatVideoPlayer extends BeComponent {
                             <Icon name="bell" style={this.iconStyles} type={"Entypo"}></Icon>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => requestAnimationFrame(() => {
-                            this.videoPlayer._pausePlayer()
+                            //this.videoPlayer._pausePlayer()
                             this.props.enterFullscreen()
                         })} style={{ ...this.containerStyle }}>
                             <Icon style={{ color: ColorList.bodyBackground, marginBottom: 'auto', marginTop: 'auto', }} type="MaterialIcons" name="fullscreen">

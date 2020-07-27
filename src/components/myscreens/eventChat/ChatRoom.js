@@ -71,6 +71,9 @@ import AnimatedComponent from '../../AnimatedComponent';
 import ColorList from '../../colorList';
 import { Platform } from 'react-native';
 import request from '../../../services/requestObjects';
+import Options from './optionsModal';
+import { BackHandler } from 'react-native';
+import SideButton from '../../sideButton';
 
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenheight = Math.round(Dimensions.get('window').height);
@@ -80,6 +83,7 @@ class ChatRoom extends AnimatedComponent {
         this.authObserver();
         this.state = {
             isModalOpened: false,
+            showOptions:false,
             showHeader: !this.props.isComment,
             messageListHeight: this.formHeight(120 / screenheight),
         };
@@ -377,10 +381,39 @@ class ChatRoom extends AnimatedComponent {
             });
         }
     }
+    showImoji(){
+        this.setStatePure({showingImoji:true})
+    }
+    hideImoji(){
+        this.setStatePure({showingImoji:false})
+    }
+    handleBackButton(){
+        if (this.state.fullScreen) {
+            this.enterFullscreen()
+            return true
+        }else if(this.state.showVideo){
+            this.hideVideo()
+            return true
+        } else if(this.state.showingImoji){
+            this.hideImoji()
+            return true
+        } else if(this.state.showOptions){
+            this.setStatePure({
+                showOptions:false
+            })
+            return true
+        }else if(this.state.showAudioRecorder){
+         this.refs.keyboard && this.refs.keyboard.toggleAudioRecorder()
+         return true
+        } else{
+            return false
+        }
+    }
     componentMounting() {
         this.fireRef = this.getRef(this.props.firebaseRoom);
         this.keyboardDidShowSub = Keyboard.addListener('keyboardDidShow', this.handleKeyboardDidShow.bind(this));
         this.keyboardDidHideSub = Keyboard.addListener('keyboardDidHide', this.handleKeyboardDidHide.bind(this));
+        BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this));
         this.setTypingRef(this.props.firebaseRoom);
         emitter.on("reply-me", (rep) => {
             this.props.openMenu()
@@ -394,6 +427,7 @@ class ChatRoom extends AnimatedComponent {
         this.props.isComment ? (stores.Messages.messages[this.roomID] = []) : null;
     }
     unmountingComponent() {
+        BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton.bind(this));
         this.keyboardDidHideSub.remove();
         this.keyboardDidShowSub.remove();
         this.fireRef.off();
@@ -475,7 +509,10 @@ class ChatRoom extends AnimatedComponent {
         return data.map((element) => this.chooseComponent(element));
     }
     enterFullscreen() {
-        this.navigateToFullView(this.state.playingIndex);
+       // this.navigateToFullView(this.state.playingIndex);
+       this.setStatePure({
+           fullScreen:!this.state.fullScreen
+       })
     }
     togglePlay() {
         this.setStatePure({
@@ -664,7 +701,6 @@ class ChatRoom extends AnimatedComponent {
         Vibration.vibrate(10);
         Toast.show({ text: 'copied !', type: 'success' });
     }
-    options = ["Remove message", "Seen Report", "Copy to clipboard", "Cancel"];
     showMessageAction(message, reply,sender) {
         this.tempReply = reply
         this.setStatePure({
@@ -803,7 +839,7 @@ class ChatRoom extends AnimatedComponent {
                                             ref="scrollViewRef"
                                             //style={{ height: screenheight }}
                                             >
-                                            <View style={{ height: this.state.messageListHeight }}>
+                                            <View style={{ height: this.state.messageListHeight,flexDirection: 'column',justifyContent: 'flex-end', }}>
                                                 <TouchableWithoutFeedback
                                                     onPressIn={() => {
                                                         this.scrolling = false;
@@ -811,8 +847,37 @@ class ChatRoom extends AnimatedComponent {
                                                         this.adjutRoomDisplay();
                                                         !this.openedKeyboard && this.refs.keyboard && this.refs.keyboard.blur();
                                                     }}
-                                                ><View>{this.messageList()}</View>
+                                                ><View>
+                                                {this.messageList()}
+                                                </View>
+                                                   {this.state.showDownScroller && <SideButton
+                                                        buttonColor={'rgba(52, 52, 52, 0.8)'}
+                                                        position={"right"}
+                                                        //text={"D"}
+                                                        renderIcon={() => {
+                                                            return <TouchableOpacity onPress={() => requestAnimationFrame(() => { this.scrollToEnd() })} style={{ backgroundColor: ColorList.bodyBackground, height: 40, width: 40, borderRadius: 30, justifyContent: "center", alignItems: "center", ...shadower(4) }}>
+                                                                <Icon name="arrow-down" type="SimpleLineIcons" style={{ color: ColorList.bodyIcon, fontSize: 22 }} />
+                                                            </TouchableOpacity>
+                                                        }}
+                                                        action={() => requestAnimationFrame(() => { this.scrollToEnd() })}
+                                                        //buttonTextStyle={{color:colorList.bodyBackground}}
+                                                        //offsetX={20}
+                                                        size={20}
+                                                        //offsetY={20}
+                                                    />}
                                                 </TouchableWithoutFeedback>
+                                                {
+                                                this.state.showOptions && <Options 
+                                                    openAudioPicker={this.openAudioPicker.bind(this)}
+                                                    openFilePicker={this.openFilePicker.bind(this)}
+                                                    addRemind={this.props.addRemind}
+                                                    openPhotoSelector={this.openPhotoSelector.bind(this)}
+                                                onClosed={() => {
+                                                    this.setStatePure({
+                                                        showOptions:false
+                                                    })
+                                                }}></Options>
+                                                }
                                             </View>
                                             <View style={{
                                                 //height:"3%",
@@ -968,8 +1033,8 @@ class ChatRoom extends AnimatedComponent {
                                         showReacters: false,
                                     });
                                 }}
-                                reaction={this.state.currentReaction}
-                                reacters={this.state.currentReacters}
+                                reaction={this.state.currentReaction||{}}
+                                reacters={this.state.currentReacters||[]}
                              />
                         </View>
                         {
@@ -1148,9 +1213,30 @@ class ChatRoom extends AnimatedComponent {
         let index = findIndex(stores.Messages.messages[this.roomID], { id: replyer.id });
         index >= 0 && this.scrollToIndex(index);
     }
+    toggleDownScroller(val){
+        this.setStatePure({
+            showDownScroller:val
+        })
+    }
+    onScroll(event){
+        
+        // Check if the user is scrolling up or down by confronting the new scroll position with your own one
+        const currentOffset = event.nativeEvent.contentOffset.y
+        const direction = (currentOffset > 0 && currentOffset > this._listViewOffset)
+            ? 'down'
+            : 'up'
+        // If the user is scrolling down (and the action-button is still visible) hide it
+        if (currentOffset>100) {
+            this.toggleDownScroller(true)
+        }else{
+            this.toggleDownScroller(false)
+        }
+        this._listViewOffset = currentOffset
+    }
     messageList() {
         return (
             <BleashupFlatList
+                onScroll={this.onScroll.bind(this)}
                 windowSize={21}
                 backgroundColor={'transparent'}
                 keyboardShouldPersistTaps={'handled'}
@@ -1254,11 +1340,27 @@ class ChatRoom extends AnimatedComponent {
             this.props.handleReplyExtern(replyer);
         }
     }
-
+    openOptions(){
+        this.setStatePure({
+            showOptions:!this.state.showOptions
+        })
+    }
+    toggleAudio(){
+        this.setStatePure({
+            showAudioRecorder: !this.state.showAudioRecorder,
+        });
+    }
     keyboardView() {
         return (
             <ChatKeyboard
+                toggleAudio={this.toggleAudio.bind(this)}
+                showAudioRecorder={this.state.showAudioRecorder}
+                showImoji={this.showImoji.bind(this)}
+                hideImoji={this.hideImoji.bind(this)}
+                showingImoji={this.state.showingImoji}
+                openOptions={this.openOptions.bind(this)}
                 sender={this.sender}
+                showOptions={this.state.showOptions}
                 ref={'keyboard'}
                 initialzeFlatList={this.initialzeFlatList.bind(this)}
                 scrollToEnd={this.scrollToEnd.bind(this)}
@@ -1270,11 +1372,6 @@ class ChatRoom extends AnimatedComponent {
                 handleReply={this.handleReply.bind(this)}
                 showProfile={this.props.showProfile}
                 markAsRead={this.markAsRead.bind(this)}
-
-                openAudioPicker={this.openAudioPicker.bind(this)}
-                openFilePicker={this.openFilePicker.bind(this)}
-                addRemind={this.props.addRemind}
-                openPhotoSelector={this.openPhotoSelector.bind(this)}
              />
         );
     }
@@ -1340,7 +1437,7 @@ class ChatRoom extends AnimatedComponent {
                 remindThis={() => this.remindThis(this.state.playingMessage)}
                 starThis={() => this.addStar(this.state.playingMessage)}
                 video={this.state.video}
-                fullScreen={this.props.fullScreen}
+                fullScreen={this.state.fullScreen}
                 buffering={this.buffering.bind(this)}
                 enterFullscreen={this.enterFullscreen.bind(this)}
                 hideVideo={this.hideVideo.bind(this)}
@@ -1349,8 +1446,7 @@ class ChatRoom extends AnimatedComponent {
     }
     navigateToFullView(index) {
         let data = stores.Messages.messages[this.roomID].filter(ele =>
-            ele.type == 'photo' ||
-            ele.type == 'video');
+            ele.type == 'photo');
         BeNavigator.pushTo('SwiperComponent', {
             dataArray: data,
             reply:(mess) => this.initReply({...mess,url:null}),
@@ -1362,12 +1458,12 @@ class ChatRoom extends AnimatedComponent {
         });
     }
     mapFunction = (ele) => {
-        let senderPhone = ele.sender && ele.sender.phone && ele.sender.phone.replace && ele.sender.phone.replace('+', '00');
+        let senderPhone = ele && ele.sender && ele.sender.phone && ele.sender.phone.replace && ele.sender.phone.replace('+', '00');
         return {
             ...ele,
             url: ele.source || ele.photo,
             message: ele.text,
-            type: ele.type == 'photo' || ele.type == 'photo_upload' ? 'image' : 'video',
+            type: ele.type == 'photo' ? 'image' : 'video',
             creator: {
                 name: stores.TemporalUsersStore.Users[senderPhone] &&
                     stores.TemporalUsersStore.Users[senderPhone].nickname,

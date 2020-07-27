@@ -63,8 +63,8 @@ export default class RouteView extends Component {
                 )}>
                     <View style={{ display: 'flex', width: "100%", marginTop: '10%', }}>
                         <Icon type="AntDesign" style={{
-                            alignSelf: 'center', fontSize: this.fontSize, color: ColorList.bodyIcon
-                        }} name="staro"></Icon>
+                            alignSelf: 'center', fontSize: this.fontSize, color: ColorList.post
+                        }} name="star"></Icon>
                         {/*<Text style={{ padding: "1%", color: this.props.currentPage == "EventDetails" ? "#0A4E52" : "gray", width: "100%" }}>Details</Text>*/}
                     </View>
                 </TouchableOpacity>
@@ -98,11 +98,11 @@ export default class RouteView extends Component {
                     this.props.setCurrentPage("Reminds")
                 })}>
                     <View style={{ width: "100%", marginTop: '10%', }}>
-                        <Icon type="FontAwesome" style={{
+                        <Icon type="Entypo" style={{
                             alignSelf: 'center',
                             fontSize: this.fontSize,
-                            color: ColorList.bodyIcon
-                        }} name="bell-o"></Icon>
+                            color: ColorList.reminds
+                        }} name="bell"></Icon>
                     </View>
                 </TouchableOpacity>
                 <TouchableOpacity style={{
@@ -114,11 +114,11 @@ export default class RouteView extends Component {
                 }
                 )}>
                     <View style={{ marginTop: '10%', width: "100%" }}>
-                        <Icon type="Octicons" style={{
+                        <Icon type="MaterialIcons" style={{
                             alignSelf: 'center',
                             fontSize: this.fontSize,
-                            color: ColorList.bodyIcon
-                        }} name="info"></Icon>
+                            color: ColorList.darkGrayText
+                        }} name="history"></Icon>
                         {/*<Text style={{ padding: "1%", color: this.props.currentPage == "ChangeLogs" ? "#0A4E52" : "gray", width: "100%" }}>{"Logs"}</Text>*/}
                     </View>
                 </TouchableOpacity>

@@ -139,7 +139,7 @@ export default class VideoMessage extends BePureComponent {
     render() {
         return (
             <View>
-                <TouchableOpacity onPress={() => this.props.playVideo(this.props.message.source)
+                <TouchableOpacity onPressIn={this.props.pressingIn} onPress={() => this.props.playVideo(this.props.message.source)
                 }  onLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null}>
                     <View style={{width:this.messageWidth}}>
                         <View>
@@ -187,7 +187,7 @@ export default class VideoMessage extends BePureComponent {
                                             {this.toMB(this.state.total).toFixed(1)}{")Mb"}</Text></View></View>}</View>
                         </View>
                         {this.props.message.text ? <View style={{ marginTop: "-5%", padding: "2%", alignSelf: "flex-start" }}>
-                            <TextContent tags={this.props.message.tags} onLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null} pressingIn={() => this.props.pressingIn()} text={this.props.message.text}></TextContent>
+                            <TextContent tags={this.props.message.tags} pressingIn={this.props.pressingIn} handleLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null} pressingIn={() => this.props.pressingIn()} text={this.props.message.text}></TextContent>
                         </View> : null}
                     </View>
                 </TouchableOpacity>
