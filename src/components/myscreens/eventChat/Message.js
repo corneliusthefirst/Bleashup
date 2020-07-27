@@ -548,7 +548,7 @@ export default class Message extends BeComponent {
                                         }}
                                     >
                                         {this.state.time && !this.state.sender ? (
-                                            <View style={{ margin: '1%', ...reactionContanerStyle, width: 30, marginBottom: null, }}>
+                                            <View style={{ margin: '1%', ...reactionContanerStyle, width: 50, marginBottom: null, }}>
                                                 <Text note>{this.state.time}</Text>
                                             </View>
                                         ) : null}
@@ -707,7 +707,7 @@ export default class Message extends BeComponent {
                                             </TouchableOpacity>
                                         ) : null}
                                         {this.state.time && this.state.sender ? (
-                                            <View style={{ alignItems: 'flex-end', ...reactionContanerStyle, width: 30, marginBottom: null, marginLeft: -10, }}>
+                                            <View style={{ alignItems: 'flex-end', ...reactionContanerStyle, width: 50, marginBottom: null, marginLeft: -10, }}>
                                                 <Text note>{this.state.time}</Text>
                                             </View>
                                         ) : null}

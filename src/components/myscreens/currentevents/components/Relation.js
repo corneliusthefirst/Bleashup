@@ -1,6 +1,4 @@
 import React, { Component } from "react";
-import { View, TouchableOpacity } from 'react-native';
-import { CardItem } from 'native-base';
 import PublicEvent from './publicEvent';
 
 

@@ -2,6 +2,7 @@ package com.bleashup.bleashup;
 
 import android.app.Application;
 import com.facebook.react.ReactApplication;
+import com.swmansion.rnscreens.RNScreensPackage;
 import com.dylanvann.fastimage.FastImageViewPackage;
 import com.bolan9999.SpringScrollViewPackage;
 import org.wonday.orientation.OrientationPackage;
@@ -50,6 +51,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
             new MainReactPackage(),
+            new RNScreensPackage(),
             new FastImageViewPackage(),
             new SpringScrollViewPackage(),
             new OrientationPackage(),

@@ -1,39 +1,32 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, { Component } from 'react';
-import { View, TouchableOpacity } from 'react-native';
-import ProfileSimple from '../components/myscreens/currentevents/components/ProfileViewSimple';
-import stores from '../stores/index';
-import BeNavigator from '../services/navigationServices';
-import BeComponent from './BeComponent';
+import React, { Component } from "react";
+import { View, TouchableOpacity, StyleSheet } from "react-native";
+import ProfileSimple from "../components/myscreens/currentevents/components/ProfileViewSimple";
+import stores from "../stores/index";
+import BeNavigator from "../services/navigationServices";
+import BeComponent from "./BeComponent";
 
 export default class RelationProfile extends BeComponent {
   constructor(props) {
     super(props);
+    this.navigateToRelation = this.navigateToRelation.bind(this);
+  }
+  navigateToRelation() {
+    requestAnimationFrame(() =>
+      BeNavigator.navigateToActivity("EventChat", this.props.Event)
+    );
   }
   render() {
     return (
-      <View
-        style={{
-          paddingBottom: 2,
-          paddingTop: 2,
-          borderRadius: 5,
-          width: '100%',
-        }}
-      >
-        <View
-          style={{ width: '100%', flexDirection: 'row', alignItems: 'center' }}
-        >
+      <View style={styles.mainContainer}>
+        <View style={styles.subContainer}>
           {
             <TouchableOpacity
-              onPress={() =>
-                requestAnimationFrame(() =>
-                  BeNavigator.navigateToActivity('EventChat', this.props.Event)
-                )
-              }
-              style={{ width: '65%' }}
+              onPress={this.navigateToRelation}
+              style={styles.profileContainer}
             >
               <ProfileSimple
-                showPhoto={(url) => this.props.showPhoto(url)}
+                showPhoto={this.props.showPhoto}
                 profile={
                   stores.TemporalUsersStore.Users[
                     this.props.Event.participant.find(
@@ -42,7 +35,7 @@ export default class RelationProfile extends BeComponent {
                   ]
                 }
                 relation
-                style={{ height: 50, width: 50, borderRadius: 25 }}
+                style={styles.profile}
               />
             </TouchableOpacity>
           }
@@ -51,3 +44,25 @@ export default class RelationProfile extends BeComponent {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  mainContainer: {
+    paddingBottom: 2,
+    paddingTop: 2,
+    borderRadius: 5,
+    width: "100%",
+  },
+  subContainer: {
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  profileContainer: {
+    width: "65%",
+  },
+  profile: {
+    height: 50,
+    width: 50,
+    borderRadius: 25,
+  },
+});

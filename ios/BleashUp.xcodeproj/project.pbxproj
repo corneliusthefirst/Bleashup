@@ -5,6 +5,7 @@
 	};
 	objectVersion = 46;
 	objects = {
+
 /* Begin PBXBuildFile section */
 		00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
 		00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302BA1ABCB90400DB3ED1 /* libRCTGeolocation.a */; };
@@ -84,6 +85,8 @@
 		A114B8A6DF4A4F91A4B4729B /* libRNSpringScrollView.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A59816901F304DEFB4408E26 /* libRNSpringScrollView.a */; };
 		B338F0596E9A49B0B5BAA1FF /* libFastImage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6F0795023E82435EA590A08D /* libFastImage.a */; };
 		BD4F598F618147D48A3A1AB5 /* libFastImage-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F4C71841643464386DD060A /* libFastImage-tvOS.a */; };
+		1081C3FCDE4F44388CB272BE /* libRNScreens.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B066F46B3A4E4F33ABB13A3F /* libRNScreens.a */; };
+		3839EB9FE20F4693A696A595 /* libRNScreens-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 033CC5C1F85C4004865DC310 /* libRNScreens-tvOS.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -473,6 +476,9 @@
 		2563B6F88528442BAA6216E9 /* FastImage.xcodeproj */ = {isa = PBXFileReference; name = "FastImage.xcodeproj"; path = "../node_modules/react-native-fast-image/ios/FastImage.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		6F0795023E82435EA590A08D /* libFastImage.a */ = {isa = PBXFileReference; name = "libFastImage.a"; path = "libFastImage.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 		4F4C71841643464386DD060A /* libFastImage-tvOS.a */ = {isa = PBXFileReference; name = "libFastImage-tvOS.a"; path = "libFastImage-tvOS.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		08480BB63067425D9734734C /* RNScreens.xcodeproj */ = {isa = PBXFileReference; name = "RNScreens.xcodeproj"; path = "../node_modules/react-native-screens/ios/RNScreens.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		B066F46B3A4E4F33ABB13A3F /* libRNScreens.a */ = {isa = PBXFileReference; name = "libRNScreens.a"; path = "libRNScreens.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		033CC5C1F85C4004865DC310 /* libRNScreens-tvOS.a */ = {isa = PBXFileReference; name = "libRNScreens-tvOS.a"; path = "libRNScreens-tvOS.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -539,6 +545,7 @@
 				650C1BD02FEB4EC39AFE3052 /* libRNPermissions.a in Frameworks */,
 				A114B8A6DF4A4F91A4B4729B /* libRNSpringScrollView.a in Frameworks */,
 				B338F0596E9A49B0B5BAA1FF /* libFastImage.a in Frameworks */,
+				1081C3FCDE4F44388CB272BE /* libRNScreens.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -562,6 +569,7 @@
 				ECBB6DA63D454D0289D9325D /* libRNDeviceInfo-tvOS.a in Frameworks */,
 				1701CB4A8407400996E8382C /* libRNReanimated-tvOS.a in Frameworks */,
 				BD4F598F618147D48A3A1AB5 /* libFastImage-tvOS.a in Frameworks */,
+				3839EB9FE20F4693A696A595 /* libRNScreens-tvOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -772,6 +780,7 @@
 				D622F8D542C24804A714A82D /* RNPermissions.xcodeproj */,
 				ABBF656FB6444614908C342D /* RNSpringScrollView.xcodeproj */,
 				2563B6F88528442BAA6216E9 /* FastImage.xcodeproj */,
+				08480BB63067425D9734734C /* RNScreens.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1444,6 +1453,8 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1483,6 +1494,7 @@
 					"$(SRCROOT)/../node_modules/react-native-permissions/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-spring-scrollview/ios/SpringScrollView",
 					"$(SRCROOT)/../node_modules/react-native-fast-image/ios/FastImage",
+					"$(SRCROOT)/../node_modules/react-native-screens/ios",
 				);
 			};
 			name = Debug;
@@ -1549,6 +1561,8 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1588,6 +1602,7 @@
 					"$(SRCROOT)/../node_modules/react-native-permissions/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-spring-scrollview/ios/SpringScrollView",
 					"$(SRCROOT)/../node_modules/react-native-fast-image/ios/FastImage",
+					"$(SRCROOT)/../node_modules/react-native-screens/ios",
 				);
 			};
 			name = Release;
@@ -1646,6 +1661,7 @@
 					"$(SRCROOT)/../node_modules/react-native-permissions/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-spring-scrollview/ios/SpringScrollView",
 					"$(SRCROOT)/../node_modules/react-native-fast-image/ios/FastImage",
+					"$(SRCROOT)/../node_modules/react-native-screens/ios",
 				);
 			};
 			name = Debug;
@@ -1703,6 +1719,7 @@
 					"$(SRCROOT)/../node_modules/react-native-permissions/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-spring-scrollview/ios/SpringScrollView",
 					"$(SRCROOT)/../node_modules/react-native-fast-image/ios/FastImage",
+					"$(SRCROOT)/../node_modules/react-native-screens/ios",
 				);
 			};
 			name = Release;
@@ -1777,6 +1794,8 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1816,6 +1835,7 @@
 					"$(SRCROOT)/../node_modules/react-native-permissions/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-spring-scrollview/ios/SpringScrollView",
 					"$(SRCROOT)/../node_modules/react-native-fast-image/ios/FastImage",
+					"$(SRCROOT)/../node_modules/react-native-screens/ios",
 				);
 			};
 			name = Debug;
@@ -1890,6 +1910,8 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1929,6 +1951,7 @@
 					"$(SRCROOT)/../node_modules/react-native-permissions/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-spring-scrollview/ios/SpringScrollView",
 					"$(SRCROOT)/../node_modules/react-native-fast-image/ios/FastImage",
+					"$(SRCROOT)/../node_modules/react-native-screens/ios",
 				);
 			};
 			name = Release;
@@ -2002,6 +2025,8 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2041,6 +2066,7 @@
 					"$(SRCROOT)/../node_modules/react-native-permissions/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-spring-scrollview/ios/SpringScrollView",
 					"$(SRCROOT)/../node_modules/react-native-fast-image/ios/FastImage",
+					"$(SRCROOT)/../node_modules/react-native-screens/ios",
 				);
 			};
 			name = Debug;
@@ -2114,6 +2140,8 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2153,6 +2181,7 @@
 					"$(SRCROOT)/../node_modules/react-native-permissions/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-spring-scrollview/ios/SpringScrollView",
 					"$(SRCROOT)/../node_modules/react-native-fast-image/ios/FastImage",
+					"$(SRCROOT)/../node_modules/react-native-screens/ios",
 				);
 			};
 			name = Release;

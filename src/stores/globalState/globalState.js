@@ -15,6 +15,9 @@ export default class globalState {
   @observable connected = true
   @observable initialized = false
   @observable currentRoom = null;
+  @observable lang = "en"
+  profilePlaceHolder = require("../../../Images/images.jpeg")
+  bleashupImage = require('../../../assets/bleashuptitle1.png')
   @observable reply = null
   @observable success = false;
   @observable previousCommitee = null;
