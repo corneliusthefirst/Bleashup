@@ -24,7 +24,7 @@ const Pdata = [
     //isPaused: false,
     description: "",
     creator: {
-      name: "Trinadh",
+      name: "Thomas",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "5hr ago",
     },
@@ -41,7 +41,7 @@ const Pdata = [
     //isPaused: true,
     description: "",
     creator: {
-      name: "Trinadh",
+      name: "BraySack",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "4hr ago",
     },
@@ -58,7 +58,7 @@ const Pdata = [
     //isPaused: true,
     description: "",
     creator: {
-      name: "Trinadh",
+      name: "Santia",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "2hr ago",
     },
@@ -70,7 +70,7 @@ const Pdata = [
     type: "video",
     isReadMore: true,
     creator: {
-      name: "Trinadh",
+      name: "andre",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "2hr ago",
     },
@@ -85,7 +85,7 @@ const Pdata = [
     isReadMore: true,
     description: "",
     creator: {
-      name: "Amit",
+      name: "myriam",
       profile: "https://avatars0.githubusercontent.com/u/16208872?s=460&v=4",
       updated_at: "3hr ago",
     },
@@ -101,7 +101,7 @@ const Pdata = [
     //isPaused: false,
     description: "",
     creator: {
-      name: "Trinadh",
+      name: "Joana",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "5hr ago",
     },
@@ -118,7 +118,7 @@ const Pdata = [
     //isPaused: true,
     description: "",
     creator: {
-      name: "Trinadh",
+      name: "jonas",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "4hr ago",
     },
@@ -135,7 +135,7 @@ const Pdata = [
     //isPaused: true,
     description: "",
     creator: {
-      name: "Trinadh",
+      name: "Daniel",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "2hr ago",
     },
@@ -147,7 +147,7 @@ const Pdata = [
     type: "video",
     isReadMore: true,
     creator: {
-      name: "Trinadh",
+      name: "mika",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "2hr ago",
     },
@@ -162,7 +162,7 @@ const Pdata = [
     isReadMore: true,
     description: "",
     creator: {
-      name: "Amit",
+      name: "zeka",
       profile: "https://avatars0.githubusercontent.com/u/16208872?s=460&v=4",
       updated_at: "3hr ago",
     },
@@ -178,7 +178,7 @@ const Pdata = [
     //isPaused: false,
     description: "",
     creator: {
-      name: "Trinadh",
+      name: "lilius",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "5hr ago",
     },
@@ -195,7 +195,7 @@ const Pdata = [
     //isPaused: true,
     description: "",
     creator: {
-      name: "Trinadh",
+      name: "jack",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "4hr ago",
     },
@@ -212,7 +212,7 @@ const Pdata = [
     //isPaused: true,
     description: "",
     creator: {
-      name: "Trinadh",
+      name: "stall",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "2hr ago",
     },
@@ -224,7 +224,7 @@ const Pdata = [
     type: "video",
     isReadMore: true,
     creator: {
-      name: "Trinadh",
+      name: "black",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "2hr ago",
     },
@@ -239,7 +239,7 @@ const Pdata = [
     isReadMore: true,
     description: "",
     creator: {
-      name: "Amit",
+      name: "Mr white",
       profile: "https://avatars0.githubusercontent.com/u/16208872?s=460&v=4",
       updated_at: "3hr ago",
     },
@@ -255,7 +255,7 @@ const Pdata = [
     //isPaused: false,
     description: "",
     creator: {
-      name: "Trinadh",
+      name: "gnome",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "5hr ago",
     },
@@ -272,7 +272,7 @@ const Pdata = [
     //isPaused: true,
     description: "",
     creator: {
-      name: "Trinadh",
+      name: "glaus",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "4hr ago",
     },
@@ -289,7 +289,7 @@ const Pdata = [
     //isPaused: true,
     description: "",
     creator: {
-      name: "Trinadh",
+      name: "judas",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "2hr ago",
     },
@@ -301,7 +301,7 @@ const Pdata = [
     type: "video",
     isReadMore: true,
     creator: {
-      name: "Trinadh",
+      name: "jugal",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "2hr ago",
     },
@@ -316,7 +316,7 @@ const Pdata = [
     isReadMore: true,
     description: "",
     creator: {
-      name: "Amit",
+      name: "Adam",
       profile: "https://avatars0.githubusercontent.com/u/16208872?s=460&v=4",
       updated_at: "3hr ago",
     },
@@ -332,7 +332,7 @@ const Pdata = [
     //isPaused: false,
     description: "",
     creator: {
-      name: "Trinadh",
+      name: "michael",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "5hr ago",
     },
@@ -349,7 +349,7 @@ const Pdata = [
     //isPaused: true,
     description: "",
     creator: {
-      name: "Trinadh",
+      name: "Molias",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "4hr ago",
     },
@@ -366,7 +366,7 @@ const Pdata = [
     //isPaused: true,
     description: "",
     creator: {
-      name: "Trinadh",
+      name: "Thanos",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "2hr ago",
     },
@@ -378,7 +378,7 @@ const Pdata = [
     type: "video",
     isReadMore: true,
     creator: {
-      name: "Trinadh",
+      name: "elyse",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "2hr ago",
     },
@@ -393,7 +393,7 @@ const Pdata = [
     isReadMore: true,
     description: "",
     creator: {
-      name: "Amit",
+      name: "fence",
       profile: "https://avatars0.githubusercontent.com/u/16208872?s=460&v=4",
       updated_at: "3hr ago",
     },
@@ -409,7 +409,7 @@ const Pdata = [
     //isPaused: false,
     description: "",
     creator: {
-      name: "Trinadh",
+      name: "Slack",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "5hr ago",
     },
@@ -426,7 +426,7 @@ const Pdata = [
     //isPaused: true,
     description: "",
     creator: {
-      name: "Trinadh",
+      name: "danone",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "4hr ago",
     },
@@ -443,7 +443,7 @@ const Pdata = [
     //isPaused: true,
     description: "",
     creator: {
-      name: "Trinadh",
+      name: "Mick",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "2hr ago",
     },
@@ -455,7 +455,7 @@ const Pdata = [
     type: "video",
     isReadMore: true,
     creator: {
-      name: "Trinadh",
+      name: "Loca",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "2hr ago",
     },
@@ -470,7 +470,7 @@ const Pdata = [
     isReadMore: true,
     description: "",
     creator: {
-      name: "Amit",
+      name: "Startos",
       profile: "https://avatars0.githubusercontent.com/u/16208872?s=460&v=4",
       updated_at: "3hr ago",
     },
@@ -486,7 +486,7 @@ const Pdata = [
     //isPaused: false,
     description: "",
     creator: {
-      name: "Trinadh",
+      name: "Eco",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "5hr ago",
     },
@@ -503,7 +503,7 @@ const Pdata = [
     //isPaused: true,
     description: "",
     creator: {
-      name: "Trinadh",
+      name: "cloya",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "4hr ago",
     },
@@ -520,7 +520,7 @@ const Pdata = [
     //isPaused: true,
     description: "",
     creator: {
-      name: "Trinadh",
+      name: "fraya",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "2hr ago",
     },
@@ -532,7 +532,7 @@ const Pdata = [
     type: "video",
     isReadMore: true,
     creator: {
-      name: "Trinadh",
+      name: "jana",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "2hr ago",
     },
@@ -547,7 +547,7 @@ const Pdata = [
     isReadMore: true,
     description: "",
     creator: {
-      name: "Amit",
+      name: "Domingo",
       profile: "https://avatars0.githubusercontent.com/u/16208872?s=460&v=4",
       updated_at: "3hr ago",
     },
@@ -563,7 +563,7 @@ const Pdata = [
     //isPaused: false,
     description: "",
     creator: {
-      name: "Trinadh",
+      name: "dona",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "5hr ago",
     },
@@ -580,7 +580,7 @@ const Pdata = [
     //isPaused: true,
     description: "",
     creator: {
-      name: "Trinadh",
+      name: "bancos",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "4hr ago",
     },
@@ -597,7 +597,7 @@ const Pdata = [
     //isPaused: true,
     description: "",
     creator: {
-      name: "Trinadh",
+      name: "Rums",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "2hr ago",
     },
@@ -609,7 +609,7 @@ const Pdata = [
     type: "video",
     isReadMore: true,
     creator: {
-      name: "Trinadh",
+      name: "Santa",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "2hr ago",
     },
@@ -624,7 +624,7 @@ const Pdata = [
     isReadMore: true,
     description: "",
     creator: {
-      name: "Amit",
+      name: "Genos",
       profile: "https://avatars0.githubusercontent.com/u/16208872?s=460&v=4",
       updated_at: "3hr ago",
     },
@@ -640,7 +640,7 @@ const Pdata = [
     //isPaused: false,
     description: "",
     creator: {
-      name: "Trinadh",
+      name: "Lafta",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "5hr ago",
     },
@@ -657,7 +657,7 @@ const Pdata = [
     //isPaused: true,
     description: "",
     creator: {
-      name: "Trinadh",
+      name: "Somata",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "4hr ago",
     },
@@ -674,7 +674,7 @@ const Pdata = [
     //isPaused: true,
     description: "",
     creator: {
-      name: "Trinadh",
+      name: "franc",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "2hr ago",
     },
@@ -686,7 +686,7 @@ const Pdata = [
     type: "video",
     isReadMore: true,
     creator: {
-      name: "Trinadh",
+      name: "frosa",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "2hr ago",
     },
@@ -701,7 +701,7 @@ const Pdata = [
     isReadMore: true,
     description: "",
     creator: {
-      name: "Amit",
+      name: "Mike",
       profile: "https://avatars0.githubusercontent.com/u/16208872?s=460&v=4",
       updated_at: "3hr ago",
     },
@@ -717,7 +717,7 @@ const Pdata = [
     //isPaused: false,
     description: "",
     creator: {
-      name: "Trinadh",
+      name: "fropad",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "5hr ago",
     },
@@ -734,7 +734,7 @@ const Pdata = [
     //isPaused: true,
     description: "",
     creator: {
-      name: "Trinadh",
+      name: "Dalius",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "4hr ago",
     },
@@ -751,7 +751,7 @@ const Pdata = [
     //isPaused: true,
     description: "",
     creator: {
-      name: "Trinadh",
+      name: "Cornelius",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "2hr ago",
     },
@@ -763,7 +763,7 @@ const Pdata = [
     type: "video",
     isReadMore: true,
     creator: {
-      name: "Trinadh",
+      name: "Kona",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "2hr ago",
     },
@@ -778,7 +778,7 @@ const Pdata = [
     isReadMore: true,
     description: "",
     creator: {
-      name: "Amit",
+      name: "Grosae",
       profile: "https://avatars0.githubusercontent.com/u/16208872?s=460&v=4",
       updated_at: "3hr ago",
     },
@@ -794,7 +794,7 @@ const Pdata = [
     //isPaused: false,
     description: "",
     creator: {
-      name: "Trinadh",
+      name: "Malick",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "5hr ago",
     },
@@ -811,7 +811,7 @@ const Pdata = [
     //isPaused: true,
     description: "",
     creator: {
-      name: "Trinadh",
+      name: "Aquato",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "4hr ago",
     },
@@ -828,7 +828,7 @@ const Pdata = [
     //isPaused: true,
     description: "",
     creator: {
-      name: "Trinadh",
+      name: "Pokemo",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "2hr ago",
     },
@@ -840,7 +840,7 @@ const Pdata = [
     type: "video",
     isReadMore: true,
     creator: {
-      name: "Trinadh",
+      name: "Sansho",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "2hr ago",
     },
@@ -855,7 +855,7 @@ const Pdata = [
     isReadMore: true,
     description: "",
     creator: {
-      name: "Amit",
+      name: "Mosafica",
       profile: "https://avatars0.githubusercontent.com/u/16208872?s=460&v=4",
       updated_at: "3hr ago",
     },
@@ -871,7 +871,7 @@ const Pdata = [
     //isPaused: false,
     description: "",
     creator: {
-      name: "Trinadh",
+      name: "El moda",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "5hr ago",
     },
@@ -888,7 +888,7 @@ const Pdata = [
     //isPaused: true,
     description: "",
     creator: {
-      name: "Trinadh",
+      name: "Greek safa",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "4hr ago",
     },
@@ -905,7 +905,7 @@ const Pdata = [
     //isPaused: true,
     description: "",
     creator: {
-      name: "Trinadh",
+      name: "Lasopida",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "2hr ago",
     },
@@ -917,7 +917,7 @@ const Pdata = [
     type: "video",
     isReadMore: true,
     creator: {
-      name: "Trinadh",
+      name: "Endapo",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "2hr ago",
     },
@@ -932,7 +932,7 @@ const Pdata = [
     isReadMore: true,
     description: "",
     creator: {
-      name: "Amit",
+      name: "Maria",
       profile: "https://avatars0.githubusercontent.com/u/16208872?s=460&v=4",
       updated_at: "3hr ago",
     },
@@ -948,7 +948,7 @@ const Pdata = [
     //isPaused: false,
     description: "",
     creator: {
-      name: "Trinadh",
+      name: "Loiusa",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "5hr ago",
     },
@@ -965,7 +965,7 @@ const Pdata = [
     //isPaused: true,
     description: "",
     creator: {
-      name: "Trinadh",
+      name: "Tralics",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "4hr ago",
     },
@@ -994,7 +994,7 @@ const Pdata = [
     type: "video",
     isReadMore: true,
     creator: {
-      name: "Trinadh",
+      name: "Lomba",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "2hr ago",
     },
@@ -1025,7 +1025,7 @@ const Pdata = [
     //isPaused: false,
     description: "",
     creator: {
-      name: "Trinadh",
+      name: "jugal",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "5hr ago",
     },
@@ -1042,7 +1042,7 @@ const Pdata = [
     //isPaused: true,
     description: "",
     creator: {
-      name: "Trinadh",
+      name: "Cornelius",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "4hr ago",
     },
@@ -1059,7 +1059,7 @@ const Pdata = [
     //isPaused: true,
     description: "",
     creator: {
-      name: "Trinadh",
+      name: "Rugal",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "2hr ago",
     },
@@ -1071,7 +1071,7 @@ const Pdata = [
     type: "video",
     isReadMore: true,
     creator: {
-      name: "Trinadh",
+      name: "Giles",
       profile: "https://avatars2.githubusercontent.com/u/45196619?s=460&v=4",
       updated_at: "2hr ago",
     },

@@ -42,12 +42,13 @@ import TimerVideo from './components/mainComponents/BleashupCamera/timer/timer';
 import MuteView from './components/myscreens/settings/mutepage';
 import BlockView from './components/myscreens/settings/blockpage';
 import ActuView from './components/myscreens/settings/editActu';
+import PaginationView from './components/myscreens/Viewer/constants/paginationSwipe';
+
 /*
 let {height, width} = Dimensions.get('window');
 EStyleSheet.build({
   $rem: width > 340 ? 18 : 16
 });*/
-
 
 const AppNavigator = createStackNavigator(
   {
@@ -79,6 +80,7 @@ const AppNavigator = createStackNavigator(
     MuteView: { screen: MuteView },
     BlockView: { screen: BlockView },
     Actu: { screen: ActuView },
+    PaginationView: { screen: PaginationView },
   },
   {
     initialRouteName: "LoginHome",

@@ -240,7 +240,8 @@ class Home extends Component {
   };*/
 
   settings = () => {
-    BeNavigator.pushTo('SwiperComponent',{dataArray: media,mapFunction:this.mapFunction,currentIndex: 0});
+    //BeNavigator.pushTo('SwiperComponent',{dataArray: media,mapFunction:this.mapFunction,currentIndex: 0});
+    BeNavigator.pushTo('PaginationView');
     //this.setState({ openBCamera: true });
     /*stores.LoginStore.getUser().then(user => {
       !user.status ? user.status = "" : null;
