@@ -3,10 +3,12 @@ import { createStackNavigator, createNavigationContainer } from "react-navigatio
 import homePage from "./components/myscreens/home/homePage"
 import { enableScreens } from 'react-native-screens';
 import Event from './components/myscreens/event/index';
+import PaginationView from "./components/myscreens/Viewer/constants/paginationSwipe";
 
 enableScreens()
 const HomeNavigator = createStackNavigator({
     Home: { screen: homePage },
+    PaginationView: { screen: PaginationView },
     Event: { screen: Event },
 }, {
     initialRouteName: "Home",
