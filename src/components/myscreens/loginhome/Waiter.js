@@ -1,6 +1,5 @@
 import React,{Component} from "react"
-import {Image,View,StatusBar} from "react-native"
-import { Spinner} from "native-base"
+import { Image, View, StatusBar, StyleSheet, Text} from "react-native"
 import ColorList from '../../colorList';
 export default class Waiter extends Component{
     constructor(props){
@@ -18,7 +17,15 @@ export default class Waiter extends Component{
         }}>
             <StatusBar animated={true} backgroundColor={ColorList.headerBackground} barStyle="dark-content"></StatusBar>
             <Image resizeMode={"contain"} source={require("../../../../assets/Bleashup.png")}></Image>
-            {!this.props.dontshowSpinner?<Spinner size="small" color={ColorList.indicatorColor} />:null}
+            {!this.props.dontshowSpinner?<Text style={styles.watingText} note>loading ...</Text>:null}
         </View>
     }
+
 }
+const styles = StyleSheet.create({
+    watingText:{
+        fontStyle: 'italic',
+        fontSize: 12,
+        color:ColorList.bodySubtext
+    }
+})

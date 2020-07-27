@@ -1,12 +1,5 @@
 import React, { Component } from "react";
-
-import imageCacheHoc from "react-native-image-cache-hoc";
 import FastImage from 'react-native-fast-image'
-import ImageActivityIndicator from "./myscreens/currentevents/components/imageActivityIndicator";
-import { activityIndicatorStyle, Image } from "react-native";
-import { View } from 'react-native'
-
-import { Thumbnail } from "native-base"
 import testForURL from '../services/testForURL';
 import rounder from "../services/rounder";
 import BeComponent from './BeComponent';
@@ -71,17 +64,10 @@ class CacheImages extends BeComponent {
         priority: FastImage.priority.high,
       }}
       fallback
-      defaultSource={this.props.source}
+      defaultSource={1}
 
     >
     </FastImage>
-    /*return (
-      testForURL(this.props.source.uri) ? this.state.CacheableImages ?
-        <this.state.CacheableImages {...this.props} /> :
-        <View style={{ ...this.props.style, justifyContent: 'center', }}><ImageActivityIndicator {...this.props} rect={this.props.thumbnails && this.props.square} /></View> :
-        this.props.thumbnails ? <Thumbnail {...this.props}></Thumbnail> :
-          <Image {...this.props}></Image>
-    )*/
   }
 }
 

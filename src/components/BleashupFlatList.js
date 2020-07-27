@@ -1,8 +1,5 @@
 import React, { Component } from "react"
-import { FlatList, View } from "react-native";
-import { Spinner, CardItem, Text, List } from "native-base";
-import { moment } from "moment"
-import {LargeList} from "react-native-largelist-v3"
+import { FlatList, View, StyleSheet, Text } from "react-native";
 
 const ifCloseToTop = ({ layoutMeasurement, contentOffset, contentSize }) => {
     return contentOffset.y == 0;
@@ -26,6 +23,8 @@ export default class BleashupFlatList extends Component {
             endReached: false,
             indexing:false
         }
+        this.continueScroll = this.continueScroll.bind(this)
+        this.renderItem = this.renderItem.bind(this)
         this.viewabilityConfig = {
             waitForInteraction: false,
             viewAreaCoveragePercentThreshold: 100
@@ -79,32 +78,34 @@ export default class BleashupFlatList extends Component {
     renderNewData() {
         return this.props.newData ? this.props.newData : [];
     }
+    continueScroll({ nativeEvent }){
+        if (isTooCloseToBottom(nativeEvent)) {
+            this.props.loadMoreFromRemote && this.props.loadMoreFromRemote()
+        }
+        if (isCloseToBottom(nativeEvent)) {
+            this.continueScrollDown()
+        }
+    }
+    renderItem({ item, index }){
+        return <View style={styles.item}>{this.props.renderItem(item, index)}</View>
+    }
+    extraStyles = {
+        height: this.props.fit ? null : '100%', backgroundColor: this.props.backgroundColor ?
+            this.props.backgroundColor : "#ffffff"
+    }
     render() {
         if (this.props.dataSource.length <= 0) {
             this.props.empty ? this.props.empty() : null
         }
-        let data = //this.props.dataSource 
+        this.data = //this.props.dataSource 
         this.extractData()
         return (
-            <View style={{
-                flexDirection: 'column', height: this.props.fit ? null : '100%',
-                backgroundColor: this.props.backgroundColor ?
-                    this.props.backgroundColor : "#ffffff",
-                ...this.props.style
-            }}>
-                {this.props.marginTop ? <View style={{ height: 5 }}></View> : null}
+            <View style={[styles.container,this.extraStyles,{...this.props.styles}]}>
+                {this.props.marginTop ? <View style={styles.padder}></View> : null}
                 <FlatList
                     viewabilityConfig={this.viewabilityConfig}
                     keyboardShouldPersistTaps={this.props.keyboardShouldPersistTaps}
-                    onScrollEndDrag={({ nativeEvent }) => {
-                        if (isTooCloseToBottom(nativeEvent)) {
-                            this.props.loadMoreFromRemote && this.props.loadMoreFromRemote()
-                        }
-                        if (isCloseToBottom(nativeEvent)) {
-                            this.continueScrollDown()
-                        }
-                    }
-                    }
+                    onScrollEndDrag={this.continueScroll}
                     enableEmptySections={false}
                     disableVirtualization={this.props.disableVirtualization}
                     getItemLayout={this.props.getItemLayout}
@@ -126,12 +127,12 @@ export default class BleashupFlatList extends Component {
                     showsHorizontalScrollIndicator={false}
                     showsVerticalScrollIndicator={false}
                     keyExtractor={this.props.keyExtractor}
-                    data={data}
+                    data={this.data}
                     extraData={this.props.extraData}
                     //heightForIndexPath={(index) =>  
                      //   data[index.row].dimensions?data[index.row].dimensions.height:70}
                     //renderIndexPath={(index) => <View>{this.props.renderItem(data[index.row], index.row)}</View>}
-                    renderItem={({ item, index }) => <View style={{}}>{this.props.renderItem(item, index)}</View>}
+                    renderItem={this.renderItem}
                     /*ListFooterComponent={() =>
                         this.state.currentRender >= this.props.numberOfItems - 1 ? null : <CardItem style={{ width: "100%", height: 25 }} >
                             {this.state.endReached ? <Text style={{
@@ -143,3 +144,16 @@ export default class BleashupFlatList extends Component {
             </View>)
     }
 }
+const styles = StyleSheet.create({
+    container: {
+        flexDirection: 'column', 
+        height: '100%',
+        backgroundColor: "#ffffff",
+    },
+    padder: { 
+        height: 5 
+    },
+    item: {
+       
+    }
+});

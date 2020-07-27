@@ -65,7 +65,7 @@ export default class ProfileModal extends Component {
                 <TouchableOpacity onPress={() =>
                     this.props.onClosed()
                 } >
-                    <CacheImages thumbnails source={{ uri: this.props.profile.profile }}
+                    <CacheImages thumbnails source={{ uri: this.props.profile && this.props.profile.profile }}
                         square style={{ marginTop: 20, width: 350, height: 200 }} />
                 </TouchableOpacity>
                 {this.state.profile.status.length > 35 ?

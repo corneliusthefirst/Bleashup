@@ -1275,6 +1275,7 @@ class ChatRoom extends AnimatedComponent {
                             }}
                             newCount={this.props.newMessages.length}
                             index={index}
+                            key={item.id}
                             scrolling={this.scrolling}
                             computedMaster={this.props.computedMaster}
                             activity_id={this.props.activity_id}
